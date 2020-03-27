@@ -1,0 +1,19 @@
+language: node_js
+sudo: required
+notifications:
+node_js:
+- '10'
+install:
+- npm ci
+- npm install -g codecov
+script:
+  - npm run travis:verify
+after_success:
+  - codecov
+  - curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
+env:
+  global:
+  - REPO="git@github.com:gundersanne/osbuild-installer-frontend-build"
+  - REPO_DIR="osbuild-installer-frontend-build"
+  - BRANCH=${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+  - NODE_OPTIONS="--max-old-space-size=4096 --max_old_space_size=4096"
