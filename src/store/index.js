@@ -1,6 +1,8 @@
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
 
+import { composeReducer } from '../SmartComponents/redux/reducers';
+
 let registry;
 
 export function init (...middleware) {
@@ -12,6 +14,10 @@ export function init (...middleware) {
         promiseMiddleware,
         ...middleware
     ]);
+
+    registry.register({
+        composes: composeReducer,
+    });
 
     return registry;
 }

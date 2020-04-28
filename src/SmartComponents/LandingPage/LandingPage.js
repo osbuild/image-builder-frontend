@@ -9,7 +9,7 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 
 import CreateImageCard from './CreateImageCard';
-import PendingImagesCard from './PendingImagesCard.js';
+import ImagesCard from './ImagesCard.js';
 
 /**
  * A smart component that handles all the api calls and data needed by the dumb components.
@@ -21,20 +21,7 @@ import PendingImagesCard from './PendingImagesCard.js';
 class LandingPage extends Component {
     constructor(props) {
         super(props);
-
-        this.state = {
-            pendingComposeIds: [],
-        };
-
-        this.onPendingCompose = this.onPendingCompose.bind(this);
     }
-
-    onPendingCompose(composeId) {
-        this.setState(oldState => {
-            return { pendingComposeIds: oldState.pendingComposeIds.concat(composeId) };
-        });
-    }
-
     render() {
         return (
             <React.Fragment>
@@ -44,10 +31,10 @@ class LandingPage extends Component {
                 <Main>
                     <Flex>
                         <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
-                            <CreateImageCard onCompose={ this.onPendingCompose } />
+                            <CreateImageCard />
                         </FlexItem>
                         <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
-                            <PendingImagesCard pendingComposeIds={ this.state.pendingComposeIds } />
+                            <ImagesCard />
                         </FlexItem>
                     </Flex>
                 </Main>

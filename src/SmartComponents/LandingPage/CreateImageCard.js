@@ -1,5 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { actions } from '../redux';
 
 import {
     Button,
@@ -32,8 +34,21 @@ class CreateImageCard extends Component {
                 }]
         };
         let api = new DefaultApi();
+        let { updateCompose } = this.props;
         api.composeImage(request).then(response => {
-            this.props.onCompose(response.data.compose_id);
+            /* request failed? */
+            if (response.data.compose_id === undefined) {
+                return;
+            }
+
+            let compose = {};
+            compose[response.data.compose_id] = {
+                status: 'request sent',
+                distribution: request.image_builds[0].distribution,
+                architecture: request.image_builds[0].architecture,
+                image_type: request.image_builds[0].image_type,
+            };
+            updateCompose(compose);
         });
     }
 
@@ -54,8 +69,14 @@ class CreateImageCard extends Component {
     }
 }
 
+function mapDispatchToProps(dispatch) {
+    return {
+        updateCompose: (compose) => dispatch(actions.updateCompose(compose)),
+    };
+}
+
 CreateImageCard.propTypes = {
-    onCompose: PropTypes.func,
+    updateCompose: PropTypes.func,
 };
 
-export default CreateImageCard;
+export default connect(() => {}, mapDispatchToProps)(CreateImageCard);
