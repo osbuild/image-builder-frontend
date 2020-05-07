@@ -4,6 +4,7 @@ import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
 
 const LandingPage = asyncComponent(() => import('./SmartComponents/LandingPage/LandingPage'));
+const CreateImageWizard = asyncComponent(() => import('./SmartComponents/CreateImageWizard/CreateImageWizard'));
 
 const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
     const root = document.getElementById('root');
@@ -22,6 +23,7 @@ export const Routes = () => {
     return (
         <Switch>
             <InsightsRoute exact path='/landing' component={ LandingPage } rootClass='landingpage'/>
+            <InsightsRoute exact path='/imagewizard' component={ CreateImageWizard } rootClass='imagewizard'/>
             <Redirect to='/landing'/>
         </Switch>
     );

@@ -9,7 +9,7 @@ import {
     CardBody,
 } from '@patternfly/react-core';
 
-import { DefaultApi } from '@redhat-cloud-services/osbuild-installer';
+import api from '../../api.js';
 
 class ImagesCard extends Component {
     constructor(props) {
@@ -21,13 +21,16 @@ class ImagesCard extends Component {
         this.interval = setInterval(() => this.pollComposeStatuses(), 8000);
     }
 
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
     pollComposeStatuses() {
-        let api = new DefaultApi();
         let { updateCompose, composes } = this.props;
         Object.entries(composes).map(([ id, compose ]) => {
             api.getComposeStatus(id).then(response => {
                 let newCompose = {};
-                newCompose[id] = Object.assign({}, compose, { status: response.data.status });
+                newCompose[id] = Object.assign({}, compose, { status: response.status });
                 updateCompose(newCompose);
             });
         });
