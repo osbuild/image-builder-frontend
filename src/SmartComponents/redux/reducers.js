@@ -15,8 +15,6 @@ export function composeReducer(state = { }, action) {
         case types.UPDATE_COMPOSE:
             return Object.assign({}, state, action.compose);
         default:
-            return {
-                ...state
-            };
+            return state;
     }
 }

@@ -22,6 +22,7 @@ class LandingPage extends Component {
     constructor(props) {
         super(props);
     }
+
     render() {
         return (
             <React.Fragment>
@@ -33,7 +34,7 @@ class LandingPage extends Component {
                         <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
                             <CreateImageCard />
                         </FlexItem>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
+                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-2'] }] }>
                             <ImagesCard />
                         </FlexItem>
                     </Flex>
