@@ -1,5 +1,5 @@
 {
-  "name": "osbuild-installer",
+  "name": "image-builder",
   "version": "1.1.0",
   "private": false,
   "dependencies": {
@@ -80,6 +80,6 @@
     "verify": "npm run travis:verify"
   },
   "insights": {
-    "appname": "osbuild-installer"
+    "appname": "image-builder"
   }
 }

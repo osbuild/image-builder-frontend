@@ -1,1 +1,1 @@
-export const OSBUILD_INSTALLER_API = '/api/osbuild-installer/v1';
+export const IMAGE_BUILDER_API = '/api/image-builder/v1';
