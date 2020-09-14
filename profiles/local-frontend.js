@@ -1,7 +1,7 @@
 /*global module*/
 
 const SECTION = 'apps';
-const APP_ID = 'osbuild-installer';
+const APP_ID = 'image-builder';
 const FRONTEND_PORT = 8002;
 const routes = {};
 

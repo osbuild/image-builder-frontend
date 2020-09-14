@@ -14,7 +14,7 @@ class App extends Component {
 
     componentDidMount () {
         insights.chrome.init();
-        insights.chrome.identifyApp('osbuild-installer');
+        insights.chrome.identifyApp('image-builder');
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
         insights.chrome.auth.getUser().then(data => {
             this.setState({ identity: data.identity });

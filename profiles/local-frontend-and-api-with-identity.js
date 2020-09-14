@@ -5,7 +5,7 @@ const fs = require('fs');
 const base64 = require('base-64');
 
 const SECTION = 'apps';
-const APP_ID = 'osbuild-installer';
+const APP_ID = 'image-builder';
 const FRONTEND_PORT = 8002;
 const API_PORT = 8086;
 const routes = {};
