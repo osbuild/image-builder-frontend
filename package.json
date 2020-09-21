@@ -70,14 +70,17 @@
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
     "build:prod": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
-    "test": "jest --verbose",
+    "deploy": "npm-run-all build:prod lint test",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
+    "nightly": "npm run deploy",
+    "prod": "NODE_ENV=production webpack-dev-server --config config/dev.webpack.config.js",
+    "server:ctr": "node src/server/generateServerKey.js",
     "start": "NODE_ENV=development webpack-dev-server --config config/dev.webpack.config.js",
-    "travis:verify": "npm-run-all build lint test",
-    "verify": "npm run travis:verify"
+    "test": "jest --verbose",
+    "verify": "npm-run-all build lint test"
   },
   "insights": {
     "appname": "image-builder"

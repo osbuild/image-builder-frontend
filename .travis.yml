@@ -1,15 +1,15 @@
 language: node_js
 sudo: required
 notifications:
+  email: false
 node_js:
-- '10'
+  - '10'
 install:
-- npm ci
-- npm install -g codecov
+  - npm ci
 script:
-  - npm run travis:verify
+  - npm run verify
+  - npx codecov
 after_success:
-  - codecov
   - curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
 env:
   global:
