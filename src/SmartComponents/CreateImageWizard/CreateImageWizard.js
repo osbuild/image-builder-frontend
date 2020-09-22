@@ -98,7 +98,7 @@ AmazonUploadComponent.propTypes = {
 
 const UploadComponent = (props) => {
     const uploadTypes = [
-        { value: 'aws', label: 'Amazon Machine Image (.vhdx)' },
+        { value: 'aws', label: 'Amazon Machine Image (.raw)' },
     ];
 
     return (
