@@ -69,17 +69,17 @@
   },
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
-    "build:prod": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
-    "deploy": "npm-run-all build:prod lint test",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
-    "nightly": "npm run deploy",
+    "nightly": "npm run travis:verify",
     "prod": "NODE_ENV=production webpack-dev-server --config config/dev.webpack.config.js",
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "NODE_ENV=development webpack-dev-server --config config/dev.webpack.config.js",
     "test": "jest --verbose",
+    "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
+    "travis:verify": "npm-run-all travis:build lint test",
     "verify": "npm-run-all build lint test"
   },
   "insights": {
