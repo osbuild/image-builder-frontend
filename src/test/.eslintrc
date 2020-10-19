@@ -1,0 +1,10 @@
+{
+  "env": {
+    "jest": true,
+    "es6": true
+  },
+  "rules": {
+    "react/display-name": "off",
+    "react/prop-types": "off"
+  }
+}
