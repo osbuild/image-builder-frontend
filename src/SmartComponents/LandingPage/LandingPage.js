@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 
 import { Flex, FlexItem, FlexModifiers } from '@patternfly/react-core';
 import {
-    Main,
     PageHeader,
     PageHeaderTitle
 } from '@redhat-cloud-services/frontend-components';
@@ -29,16 +28,14 @@ class LandingPage extends Component {
                 <PageHeader>
                     <PageHeaderTitle title='Image Builder' />
                 </PageHeader>
-                <Main>
-                    <Flex>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
-                            <CreateImageCard />
-                        </FlexItem>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-2'] }] }>
-                            <ImagesCard />
-                        </FlexItem>
-                    </Flex>
-                </Main>
+                <Flex>
+                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-1'] }] }>
+                        <CreateImageCard />
+                    </FlexItem>
+                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers.column }, { modifier: FlexModifiers['flex-2'] }] }>
+                        <ImagesCard />
+                    </FlexItem>
+                </Flex>
             </React.Fragment>
         );
     }
