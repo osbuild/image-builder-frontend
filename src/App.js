@@ -2,6 +2,9 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import {
+    Main,
+} from '@redhat-cloud-services/frontend-components';
 import { Routes } from './Routes';
 import './App.scss';
 
@@ -27,7 +30,9 @@ class App extends Component {
 
     render () {
         return (
-            <Routes childProps={ this.props } />
+            <Main>
+                <Routes childProps={ this.props } />
+            </Main>
         );
     }
 }
