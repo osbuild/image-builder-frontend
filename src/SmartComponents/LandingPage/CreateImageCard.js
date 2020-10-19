@@ -20,7 +20,7 @@ class CreateImageCard extends Component {
 
     render() {
         return (
-            <Card>
+            <Card data-testid="create-image-card">
                 <CardHeader>Create a new image</CardHeader>
                 <CardBody>
                     <Form>
