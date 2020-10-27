@@ -12,7 +12,7 @@ async function composeImage(body) {
 }
 
 async function getComposeStatus(id) {
-    let path = '/compose/' + id;
+    let path = '/composes/' + id;
     const request = await axios.get(IMAGE_BUILDER_API.concat(path));
     return request.data;
 }
