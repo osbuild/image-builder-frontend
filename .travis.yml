@@ -8,7 +8,7 @@ cache:
   directories:
   - node_modules
 install:
-  - npm ci
+  - npm install
 script:
   - npm run travis:verify
   - npx codecov
