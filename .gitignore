@@ -21,3 +21,6 @@ coverage
 
 *~
 bots
+
+# using npm-upate we keep all packages updated
+package-lock.json
