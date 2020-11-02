@@ -8,7 +8,7 @@
     "@patternfly/react-core": "3.134.2",
     "@patternfly/react-table": "^2.25.6",
     "@redhat-cloud-services/frontend-components": "1.0.2",
-    "@redhat-cloud-services/frontend-components-utilities": "1.0.0",
+    "@redhat-cloud-services/frontend-components-utilities": "1.0.4",
     "classnames": "^2.2.6",
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
