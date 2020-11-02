@@ -7,18 +7,14 @@ describe('Landing Page', () => {
     beforeEach(() => {
         renderWithReduxRouter(<LandingPage />);
     });
-    test('renders component', () => {
+    test('renders page heading', () => {
         // check heading
-        screen.getByRole('heading', { name: /image builder/i });
+        screen.getByRole('heading', { name: /images/i });
     });
-    test('renders CreateImageCard child component', () => {
-        // check CreateImageCard loads
-        screen.getByTestId('create-image-card');
-        // and has correct contents
-        screen.getByText(/create a new image/i);
-        screen.getByRole('button', { name: /create image/i });
-    });
-    test('renders ImagesCard child component', () => {
-        screen.getByText(/pending composes/i);
+    test('renders ImagesTable child component', () => {
+        // check action loads
+        screen.getByTestId('create-image-action');
+        // check table loads
+        screen.getByTestId('images-table');
     });
 });
