@@ -271,7 +271,7 @@ class CreateImageWizard extends Component {
                 organization: null,
                 'activation-key': null,
                 'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'http:cdn.redhat.com/',
+                'base-url': 'https://cdn.redhat.com/',
                 insights: true
             },
             subscribeNow: false,
