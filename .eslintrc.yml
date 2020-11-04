@@ -60,6 +60,12 @@ rules:
       - objectLiterals:
         - never
     - children: true
+  react/jsx-tag-spacing:
+    - error
+    - beforeClosing: never
+  react/jsx-closing-bracket-location:
+    - error
+    - location: after-props
   key-spacing: 2
   keyword-spacing: 2
   linebreak-style:

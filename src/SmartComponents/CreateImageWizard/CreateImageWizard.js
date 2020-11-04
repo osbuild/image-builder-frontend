@@ -33,7 +33,7 @@ const ReleaseComponent = (props) => {
             <FormGroup label="Release" fieldId="release-select">
                 <FormSelect value={ props.value } onChange={ value => props.setRelease(value) }
                     aria-label="Select release input" id="release-select" data-testid="release-select">
-                    { options.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label }/>) }
+                    { options.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label } />) }
                 </FormSelect>
             </FormGroup>
         </Form>
@@ -55,36 +55,36 @@ const AmazonUploadComponent = (props) => {
         <>
             <FormGroup isRequired label="Access key ID" fieldId="amazon-access-id"
                 helperTextInvalid={ (props.errors['amazon-access-id'] && props.errors['amazon-access-id'].value) || '' }
-                validated={ (props.errors['amazon-access-id'] && 'error') || 'default' } >
+                validated={ (props.errors['amazon-access-id'] && 'error') || 'default' }>
                 <TextInput value={ props.upload.options.access_key_id || '' }
                     type="text" aria-label="amazon access key ID" id="amazon-access-id"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { access_key_id: value })) }/>
+                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { access_key_id: value })) } />
             </FormGroup>
             <FormGroup isRequired label="Secret access key" fieldId="amazon-access-secret"
                 helperTextInvalid={ (props.errors['amazon-access-secret'] && props.errors['amazon-access-secret'].value)  || '' }
                 validated={ (props.errors['amazon-access-secret'] && 'error') || 'default' }>
                 <TextInput value={ props.upload.options.secret_access_key || '' }
                     type="password" aria-label="amazon secret access key" id="amazon-access-secret"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { secret_access_key: value })) }/>
+                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { secret_access_key: value })) } />
             </FormGroup>
             <FormGroup isRequired label="Service" fieldId="amazon-service">
                 <FormSelect value={ props.upload.options.service } aria-label="Select amazon service" id="amazon-service"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { service: value })) } >
-                    { serviceOptions.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label }/>) }
+                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { service: value })) }>
+                    { serviceOptions.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label } />) }
                 </FormSelect>
             </FormGroup>
             <FormGroup isRequired label="Region" fieldId="amazon-region"
                 helperTextInvalid={ (props.errors['amazon-region'] && props.errors['amazon-region'].value) || '' }
                 validated={ (props.errors['amazon-region'] && 'error') || 'default' }>
                 <TextInput value={ props.upload.options.region } type="text" aria-label="amazon region" id="amazon-region"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { region: value })) }/>
+                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { region: value })) } />
             </FormGroup>
             { props.upload.options.service === 's3' &&
               <FormGroup isRequired label="Bucket" fieldId="amazon-bucket"
                   helperTextInvalid={ (props.errors['amazon-bucket'] && props.errors['amazon-bucket'].value) || '' }
                   validated={ (props.errors['amazon-bucket'] && 'error') || 'default' }>
                   <TextInput value={ props.upload.options.bucket || '' } type="text" aria-label="amazon bucket" id="amazon-bucket"
-                      onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { bucket: value })) }/>
+                      onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { bucket: value })) } />
               </FormGroup> }
         </>
     );
@@ -107,11 +107,11 @@ const UploadComponent = (props) => {
                 <FormGroup isRequired label="Destination" fieldId="upload-destination">
                     <FormSelect value={ props.upload.type || '' } id="upload-destination"
                         onChange={ value => props.setUpload({ type: value, options: null }) } aria-label="Select upload destination">
-                        { uploadTypes.map(type => <FormSelectOption key={ type.value } value={ type.value } label={ type.label }/>) }
+                        { uploadTypes.map(type => <FormSelectOption key={ type.value } value={ type.value } label={ type.label } />) }
                     </FormSelect>
                 </FormGroup>
                 { props.upload.type === 'aws' &&
-                  <AmazonUploadComponent upload={ props.upload } setUploadOptions={ props.setUploadOptions } errors={ props.errors }/> }
+                  <AmazonUploadComponent upload={ props.upload } setUploadOptions={ props.setUploadOptions } errors={ props.errors } /> }
             </Form>
         </>
     );
@@ -130,7 +130,7 @@ const SubscriptionComponent = (props) => {
             <FormGroup isRequired label="Register the system" fieldId="subscribe-radio">
                 <Radio name="subscribe-radio" isChecked={ props.subscribeNow } id="subscribe-radio"
                     label="Embed an activation key and register systems on first boot"
-                    onChange={ () => props.setSubscribeNow(true) }/>
+                    onChange={ () => props.setSubscribeNow(true) } />
                 <Radio name="subscribe-radio" isChecked={ !props.subscribeNow }
                     label="Register the system later" id="subscribe-radio"
                     onChange={ () => props.setSubscribeNow(false) } />
@@ -143,10 +143,10 @@ const SubscriptionComponent = (props) => {
                   </FormGroup>
                   <FormGroup isRequired label="Activation key" fieldId="subscription-activation"
                       helperTextInvalid={ (props.errors['subscription-activation'] && props.errors['subscription-activation'].value) || '' }
-                      validated={ (props.errors['subscription-activation'] && 'error') || 'default' } >
+                      validated={ (props.errors['subscription-activation'] && 'error') || 'default' }>
                       <TextInput value={ props.subscription['activation-key'] || '' } type="password"
                           id="subscription-activation" aria-label="Subscription activation key"
-                          onChange={ value => props.setSubscription(Object.assign(props.subscription, { 'activation-key': value })) }/>
+                          onChange={ value => props.setSubscription(Object.assign(props.subscription, { 'activation-key': value })) } />
                   </FormGroup>
               </> }
         </Form>
@@ -197,7 +197,7 @@ const ReviewComponent = (props) => {
                             { error.label }
                         </FlexItem>
                         <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
-                            <ExclamationCircleIcon className="error"/> { error.value }
+                            <ExclamationCircleIcon className="error" /> { error.value }
                         </FlexItem>
                     </Flex>);
                 })}
@@ -221,7 +221,7 @@ const ReviewComponent = (props) => {
                             { error.label }
                         </FlexItem>
                         <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
-                            <ExclamationCircleIcon className="error"/> { error.value }
+                            <ExclamationCircleIcon className="error" /> { error.value }
                         </FlexItem>
                     </Flex>);
                 })}

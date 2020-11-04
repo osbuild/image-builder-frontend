@@ -79,8 +79,7 @@ class ImagesTable extends Component {
                     aria-label="Images"
                     rows={ rows }
                     cells={ this.state.columns }
-                    data-testid="images-table"
-                >
+                    data-testid="images-table">
                     <TableHeader />
                     <TableBody />
                 </Table>

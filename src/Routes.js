@@ -22,9 +22,9 @@ InsightsRoute.propTypes = {
 export const Routes = () => {
     return (
         <Switch>
-            <InsightsRoute exact path='/landing' component={ LandingPage } rootClass='landingpage'/>
-            <InsightsRoute exact path='/imagewizard' component={ CreateImageWizard } rootClass='imagewizard'/>
-            <Redirect to='/landing'/>
+            <InsightsRoute exact path='/landing' component={ LandingPage } rootClass='landingpage' />
+            <InsightsRoute exact path='/imagewizard' component={ CreateImageWizard } rootClass='imagewizard' />
+            <Redirect to='/landing' />
         </Switch>
     );
 };
