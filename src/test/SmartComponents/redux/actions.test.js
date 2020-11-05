@@ -17,9 +17,6 @@ describe('updateCompose', () => {
         // this function updates the type attribute and
         // returns everything else unchanged
         expect(result.type).toBe(types.UPDATE_COMPOSE);
-        expect(result.compose['xxxx-xxxx-xxxx-xxxx'].state).toBe('uploading');
-        expect(result.compose['xxxx-xxxx-xxxx-xxxx'].distribution).toBe('fedora-31');
-        expect(result.compose['xxxx-xxxx-xxxx-xxxx'].image_type).toBe('qcow2');
-        expect(result.compose['xxxx-xxxx-xxxx-xxxx'].architecture).toBe('x86_64');
+        expect(result.compose).toBe(compose);
     });
 });
