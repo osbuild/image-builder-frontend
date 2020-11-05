@@ -32,7 +32,7 @@ const ReleaseComponent = (props) => {
         <Form isHorizontal>
             <FormGroup label="Release" fieldId="release-select">
                 <FormSelect value={ props.value } onChange={ value => props.setRelease(value) }
-                    aria-label="Select release input" id="release-select">
+                    aria-label="Select release input" id="release-select" data-testid="release-select">
                     { options.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label }/>) }
                 </FormSelect>
             </FormGroup>
