@@ -23,7 +23,8 @@
     "collectCoverage": true,
     "collectCoverageFrom": [
       "src/**/*.js",
-      "!src/**/stories/*"
+      "!src/**/stories/*",
+      "!src/entry-dev.js"
     ],
     "roots": [
       "<rootDir>/src/"
