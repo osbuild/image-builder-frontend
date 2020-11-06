@@ -3,8 +3,16 @@
     "jest": true,
     "es6": true
   },
+  "plugins": [
+    "testing-library",
+    "jest-dom"
+  ],
   "rules": {
     "react/display-name": "off",
     "react/prop-types": "off"
-  }
+  },
+  "extends": [
+    "plugin:testing-library/react",
+    "plugin:jest-dom/recommended"
+  ]
 }
