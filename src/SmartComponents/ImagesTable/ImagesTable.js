@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';
 
+import ImageBuildStatus from '../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
+
 import api from '../../api.js';
 
 class ImagesTable extends Component {
@@ -63,7 +65,7 @@ class ImagesTable extends Component {
                     id,
                     compose.image_type,
                     compose.distribution,
-                    compose.status,
+                    { title: <ImageBuildStatus status={ compose.status } /> },
                     ''
                 ]
             };
