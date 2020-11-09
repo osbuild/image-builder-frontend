@@ -145,6 +145,7 @@ const SubscriptionComponent = (props) => {
                       helperTextInvalid={ (props.errors['subscription-activation'] && props.errors['subscription-activation'].value) || '' }
                       validated={ (props.errors['subscription-activation'] && 'error') || 'default' }>
                       <TextInput value={ props.subscription['activation-key'] || '' } type="password"
+                          data-testid="subscription-activation" isRequired
                           id="subscription-activation" aria-label="Subscription activation key"
                           onChange={ value => props.setSubscription(Object.assign(props.subscription, { 'activation-key': value })) } />
                   </FormGroup>

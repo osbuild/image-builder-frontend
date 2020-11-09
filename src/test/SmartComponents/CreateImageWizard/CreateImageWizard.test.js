@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitFor } from '@testing-library/react';
+import { screen, getByText, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
 
@@ -141,6 +141,43 @@ describe('Step Registration', () => {
     test('clicking Cancel loads landing page', async () => {
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel);
+    });
+
+    test('should allow choosing activation keys', () => {
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+
+        const organizationId = screen.getByLabelText('Organization ID');
+        expect(organizationId).not.toHaveValue();
+        expect(organizationId).toBeDisabled();
+
+        // can't getByLabelText b/c the label contains an extra <span>
+        // with a `*` to denote required
+        const activationKey = screen.getByTestId('subscription-activation');
+        expect(activationKey).toHaveValue('');
+        expect(activationKey).toBeEnabled();
+        expect(activationKey).toBeRequired();
+    });
+
+    test('should hide input fields when clicking Register the system later', async () => {
+        // first check the other radio button which causes extra widgets to be shown
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+
+        // then click the first radio button which should remove any input fields
+        screen
+            .getByLabelText('Register the system later')
+            .click();
+
+        waitForElementToBeRemoved(screen.queryByLabelText('Organization ID')).then(() =>
+            expect(screen.queryByLabelText('Organization ID')).not.toBeInTheDocument()
+        );
+
+        waitForElementToBeRemoved(screen.queryByTestId('subscription-activation')).then(() =>
+            expect(screen.queryByTestId('subscription-activation')).not.toBeInTheDocument()
+        );
     });
 });
 
