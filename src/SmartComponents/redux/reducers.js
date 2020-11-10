@@ -2,8 +2,8 @@ import types from './types';
 
 // Example of action.compose
 // {
-//     "xxxx-xxxx-xxxx-xxxx": {
-//         state: "uploading",
+//     "77e4c693-0497-4b85-936d-b2a3ad69571b": {
+//         status: "uploading",
 //         distribution: "fedora-31",
 //         architecture: "x86_64",
 //         image_type: "qcow2"

@@ -2,8 +2,8 @@ import actions from '../../../SmartComponents/redux/actions';
 import types from '../../../SmartComponents/redux/types';
 
 const compose = {
-    'xxxx-xxxx-xxxx-xxxx': {
-        state: 'uploading',
+    '77e4c693-0497-4b85-936d-b2a3ad69571b': {
+        status: 'uploading',
         distribution: 'fedora-31',
         architecture: 'x86_64',
         image_type: 'qcow2'
