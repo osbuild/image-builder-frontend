@@ -6,7 +6,7 @@ import { createMemoryHistory } from 'history';
 import configureStore from 'redux-mock-store';
 
 const defaultStore = {
-    composes: {}
+    composes: []
 };
 
 export const renderWithReduxRouter = (component, mockedStore = defaultStore, route = '/') => {

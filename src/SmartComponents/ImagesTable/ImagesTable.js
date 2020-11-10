@@ -102,7 +102,7 @@ function mapDispatchToProps(dispatch) {
 }
 
 ImagesTable.propTypes = {
-    composes: PropTypes.object,
+    composes: PropTypes.array,
     updateCompose: PropTypes.func,
 };
 
