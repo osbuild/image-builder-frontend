@@ -7,6 +7,14 @@ node_js:
 cache:
   directories:
   - node_modules
+before_install:
+  - |
+        git config --global user.email "travis@image-builder.frontend"
+        git config --global user.name "Travis CI"
+        git remote add image-builder-frontend https://github.com/${TRAVIS_REPO_SLUG}.git
+        git fetch image-builder-frontend $TRAVIS_BRANCH
+        git log -1 --pretty=format:%H image-builder-frontend/${TRAVIS_BRANCH}
+        git rebase image-builder-frontend/${TRAVIS_BRANCH}
 install:
   - npm install
 script:
