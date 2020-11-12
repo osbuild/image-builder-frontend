@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 
 import React from 'react';
 import { screen, getByText, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
 
@@ -77,6 +78,13 @@ describe('Step Release', () => {
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel);
     });
+
+    test('allows chosing a release', () => {
+        const release = screen.getByTestId('release-select');
+        expect(release).toBeEnabled();
+
+        userEvent.selectOptions(release, [ 'rhel-8' ]);
+    });
 });
 
 describe('Step Target environment', () => {
@@ -108,6 +116,66 @@ describe('Step Target environment', () => {
     test('clicking Cancel loads landing page', async () => {
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel);
+    });
+
+    test('choosing S3 shows region and bucket fields', () => {
+        // change the select to enable the bucket field
+        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
+
+        const destination = screen.getByTestId('upload-destination');
+        expect(destination).toBeEnabled();
+        expect(destination).toBeRequired();
+
+        const accessKeyId = screen.getByTestId('aws-access-key');
+        expect(accessKeyId).toHaveValue('');
+        expect(accessKeyId).toBeEnabled();
+        expect(accessKeyId).toBeRequired();
+
+        const secretAccessKey = screen.getByTestId('aws-secret-access-key');
+        expect(secretAccessKey).toHaveValue('');
+        expect(secretAccessKey).toBeEnabled();
+        expect(secretAccessKey).toBeRequired();
+
+        const region = screen.getByTestId('aws-region');
+        expect(region).toHaveValue('eu-west-2');
+        expect(region).toBeEnabled();
+        expect(region).toBeRequired();
+
+        const bucket = screen.getByTestId('aws-bucket');
+        expect(bucket).toHaveValue('');
+        expect(bucket).toBeEnabled();
+        expect(bucket).toBeRequired();
+    });
+
+    test('choosing EC2 shows region field', async () => {
+        // change the select to enable the bucket field
+        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
+
+        const destination = screen.getByTestId('upload-destination');
+        expect(destination).toBeEnabled();
+        expect(destination).toBeRequired();
+
+        const accessKeyId = screen.getByTestId('aws-access-key');
+        expect(accessKeyId).toHaveValue('');
+        expect(accessKeyId).toBeEnabled();
+        expect(accessKeyId).toBeRequired();
+
+        const secretAccessKey = screen.getByTestId('aws-secret-access-key');
+        expect(secretAccessKey).toHaveValue('');
+        expect(secretAccessKey).toBeEnabled();
+        expect(secretAccessKey).toBeRequired();
+
+        const region = screen.getByTestId('aws-region');
+        expect(region).toHaveValue('eu-west-2');
+        expect(region).toBeEnabled();
+        expect(region).toBeRequired();
+
+        // change the select to hide the bucket field
+        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 'ec2' ]);
+
+        waitForElementToBeRemoved(screen.queryByTestId('aws-bucket')).then(() =>
+            expect(screen.queryByTestId('aws-bucket')).not.toBeInTheDocument()
+        );
     });
 });
 
@@ -211,5 +279,43 @@ describe('Step Review', () => {
     test('clicking Cancel loads landing page', async () => {
         const cancel = screen.getByRole('button', { name: /Cancel/ });
         verifyCancelButton(cancel);
+    });
+});
+
+describe('Click through all steps', () => {
+    beforeEach(() => {
+        renderWithReduxRouter(<CreateImageWizard />);
+    });
+
+    test('with valid values', async () => {
+        const next = screen.getByRole('button', { name: /Next/ });
+
+        // select release
+        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
+        next.click();
+
+        // select upload target
+        await screen.findByTestId('upload-destination');
+        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        userEvent.type(screen.getByTestId('aws-access-key'), 'key');
+        userEvent.type(screen.getByTestId('aws-secret-access-key'), 'secret');
+        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
+        userEvent.type(screen.getByTestId('aws-region'), 'us-east-1');
+        userEvent.type(screen.getByTestId('aws-bucket'), 'imagebuilder');
+        next.click();
+
+        // registration
+        await screen.findByTestId('subscription-activation');
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        next.click();
+
+        await screen.
+            findByText('Review the information and click Create image to create the image using the following criteria.');
+        await screen.findByText('rhel-8');
+        await screen.findByText('aws');
+        await screen.findByText('Register the system on first boot');
     });
 });
