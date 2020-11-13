@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, getByText, waitFor } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
 
@@ -171,13 +171,13 @@ describe('Step Registration', () => {
             .getByLabelText('Register the system later')
             .click();
 
-        waitForElementToBeRemoved(screen.queryByLabelText('Organization ID')).then(() =>
-            expect(screen.queryByLabelText('Organization ID')).not.toBeInTheDocument()
-        );
+        await waitFor(() => {
+            expect(screen.queryByLabelText('Organization ID')).not.toBeInTheDocument();
+        });
 
-        waitForElementToBeRemoved(screen.queryByTestId('subscription-activation')).then(() =>
-            expect(screen.queryByTestId('subscription-activation')).not.toBeInTheDocument()
-        );
+        await waitFor(() => {
+            expect(screen.queryByTestId('subscription-activation')).not.toBeInTheDocument();
+        });
     });
 });
 
