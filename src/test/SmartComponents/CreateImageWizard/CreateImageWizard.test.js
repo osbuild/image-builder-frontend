@@ -170,12 +170,11 @@ describe('Step Target environment', () => {
         expect(region).toBeEnabled();
         expect(region).toBeRequired();
 
+        const p1 = waitForElementToBeRemoved(() => screen.queryByTestId('aws-bucket'));
+
         // change the select to hide the bucket field
         userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 'ec2' ]);
-
-        waitForElementToBeRemoved(screen.queryByTestId('aws-bucket')).then(() =>
-            expect(screen.queryByTestId('aws-bucket')).not.toBeInTheDocument()
-        );
+        await p1;
     });
 });
 
@@ -234,18 +233,15 @@ describe('Step Registration', () => {
             .getByLabelText('Embed an activation key and register systems on first boot')
             .click();
 
+        const p1 = waitForElementToBeRemoved(() => screen.queryByLabelText('Organization ID'));
+        const p2 = waitForElementToBeRemoved(() => screen.queryByTestId('subscription-activation'));
+
         // then click the first radio button which should remove any input fields
         screen
             .getByLabelText('Register the system later')
             .click();
-
-        waitForElementToBeRemoved(screen.queryByLabelText('Organization ID')).then(() =>
-            expect(screen.queryByLabelText('Organization ID')).not.toBeInTheDocument()
-        );
-
-        waitForElementToBeRemoved(screen.queryByTestId('subscription-activation')).then(() =>
-            expect(screen.queryByTestId('subscription-activation')).not.toBeInTheDocument()
-        );
+        await p1;
+        await p2;
     });
 });
 
