@@ -112,7 +112,7 @@ const UploadComponent = (props) => {
                 <FormGroup isRequired label="Destination" fieldId="upload-destination">
                     <FormSelect value={ props.upload.type || '' } id="upload-destination"
                         data-testid="upload-destination" isRequired
-                        onChange={ value => props.setUpload({ type: value, options: null }) } aria-label="Select upload destination">
+                        onChange={ value => props.setUpload({ type: value, options: props.upload.options }) } aria-label="Select upload destination">
                         { uploadTypes.map(type => <FormSelectOption key={ type.value } value={ type.value } label={ type.label } />) }
                     </FormSelect>
                 </FormGroup>
