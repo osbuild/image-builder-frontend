@@ -27,6 +27,30 @@ async function verifyCancelButton(cancel) {
     );
 }
 
+// mock the insights dependency
+beforeAll(() => {
+    global.insights = {
+        chrome: {
+            auth: {
+                getUser: () => {
+                    return {
+                        identity: {
+                            internal: {
+                                org_id: 5
+                            }
+                        }
+                    };
+                }
+            }
+        }
+    };
+});
+
+// restore global mock
+afterAll(() => {
+    global.insights = undefined;
+});
+
 describe('Create Image Wizard', () => {
     beforeEach(() => {
         renderWithReduxRouter(<CreateImageWizard />);
@@ -216,7 +240,7 @@ describe('Step Registration', () => {
             .click();
 
         const organizationId = screen.getByLabelText('Organization ID');
-        expect(organizationId).not.toHaveValue();
+        expect(organizationId).toHaveValue('5');
         expect(organizationId).toBeDisabled();
 
         // can't getByLabelText b/c the label contains an extra <span>
