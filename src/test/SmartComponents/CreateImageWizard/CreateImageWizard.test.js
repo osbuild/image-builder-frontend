@@ -21,8 +21,8 @@ async function verifyCancelButton(cancel) {
     // this goes back to the landing page
     await waitFor(
         () => [
-            screen.getByRole('heading', { name: /Image Builder/ }),
             screen.getByText('Create a new image'),
+            screen.getByRole('button', { name: /Create image/ }),
         ]
     );
 }
