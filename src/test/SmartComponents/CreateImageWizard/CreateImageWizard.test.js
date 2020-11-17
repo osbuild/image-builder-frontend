@@ -257,13 +257,14 @@ describe('Step Registration', () => {
             .getByLabelText('Embed an activation key and register systems on first boot')
             .click();
 
-        const p1 = waitForElementToBeRemoved(() => screen.queryByLabelText('Organization ID'));
+        const p1 = waitForElementToBeRemoved(() => screen.queryByTestId('organization-id'));
         const p2 = waitForElementToBeRemoved(() => screen.queryByTestId('subscription-activation'));
 
         // then click the first radio button which should remove any input fields
         screen
-            .getByLabelText('Register the system later')
+            .getByTestId('register-later-radio-button')
             .click();
+
         await p1;
         await p2;
     });
@@ -325,10 +326,10 @@ describe('Click through all steps', () => {
         next.click();
 
         // registration
-        await screen.findByTestId('subscription-activation');
         screen
             .getByLabelText('Embed an activation key and register systems on first boot')
             .click();
+        await screen.findByTestId('subscription-activation');
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
         next.click();
 

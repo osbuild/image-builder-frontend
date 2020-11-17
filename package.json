@@ -80,6 +80,7 @@
     "server:ctr": "node src/server/generateServerKey.js",
     "start": "NODE_ENV=development webpack-dev-server --config config/dev.webpack.config.js",
     "test": "jest --verbose",
+    "test:single": "jest --verbose -w 1",
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
     "travis:verify": "npm-run-all travis:build lint test",
     "verify": "npm-run-all build lint test"

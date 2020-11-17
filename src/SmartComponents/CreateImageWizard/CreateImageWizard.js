@@ -136,16 +136,19 @@ const SubscriptionComponent = (props) => {
             <FormGroup isRequired label="Register the system" fieldId="subscribe-radio">
                 <Radio name="subscribe-radio" isChecked={ props.subscribeNow } id="subscribe-radio"
                     label="Embed an activation key and register systems on first boot"
-                    onChange={ () => props.setSubscribeNow(true) } />
+                    onChange={ () => props.setSubscribeNow(true) }
+                    data-testid="register-now-radio-button" />
                 <Radio name="subscribe-radio" isChecked={ !props.subscribeNow }
                     label="Register the system later" id="subscribe-radio"
-                    onChange={ () => props.setSubscribeNow(false) } />
+                    onChange={ () => props.setSubscribeNow(false) }
+                    data-testid="register-later-radio-button" />
             </FormGroup>
             { props.subscribeNow &&
               <>
                   <FormGroup label="Organization ID" fieldId="subscription-organization">
                       <TextInput isDisabled value={ props.subscription.organization || '' } type="text"
-                          id="subscription-organization" aria-label="Subscription organization ID" />
+                          id="subscription-organization" aria-label="Subscription organization ID"
+                          data-testid="organization-id" />
                   </FormGroup>
                   <FormGroup isRequired label="Activation key" fieldId="subscription-activation"
                       helperTextInvalid={ (props.errors['subscription-activation'] && props.errors['subscription-activation'].value) || '' }
