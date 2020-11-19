@@ -339,4 +339,37 @@ describe('Click through all steps', () => {
         await screen.findByText('aws');
         await screen.findByText('Register the system on first boot');
     });
+
+    test('with missing values', async () => {
+        const next = screen.getByRole('button', { name: /Next/ });
+
+        // select release
+        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
+        next.click();
+
+        // select upload target
+        await screen.findByTestId('upload-destination');
+        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        // leave AWS access keys empty
+        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
+        userEvent.clear(screen.getByTestId('aws-region'));
+        next.click();
+
+        // registration
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+        await screen.findByTestId('subscription-activation');
+        userEvent.clear(screen.getByTestId('subscription-activation'));
+        next.click();
+
+        await screen.
+            findByText('Review the information and click Create image to create the image using the following criteria.');
+        await screen.findByText('rhel-8');
+        await screen.findByText('aws');
+        await screen.findByText('Register the system on first boot');
+
+        const errorMessages = await screen.findAllByText('A value is required');
+        expect(errorMessages.length).toBe(5);
+    });
 });
