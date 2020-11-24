@@ -258,8 +258,10 @@ describe('Step Registration', () => {
             .getByLabelText('Embed an activation key and register systems on first boot')
             .click();
 
-        const p1 = waitForElementToBeRemoved(() => screen.queryByTestId('organization-id'));
-        const p2 = waitForElementToBeRemoved(() => screen.queryByTestId('subscription-activation'));
+        const p1 = waitForElementToBeRemoved(() => [
+            screen.getByTestId('organization-id'),
+            screen.getByTestId('subscription-activation'),
+        ]);
 
         // then click the first radio button which should remove any input fields
         screen
@@ -267,7 +269,6 @@ describe('Step Registration', () => {
             .click();
 
         await p1;
-        await p2;
     });
 });
 
