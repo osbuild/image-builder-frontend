@@ -22,8 +22,8 @@ async function verifyCancelButton(cancel) {
     // this goes back to the landing page
     await waitFor(
         () => [
-            screen.getByText('Create a new image'),
-            screen.getByRole('button', { name: /Create image/ }),
+            screen.getByTestId('create-image-action'),
+            screen.getByTestId('images-table'),
         ]
     );
 }
@@ -352,8 +352,8 @@ describe('Click through all steps', () => {
         // returns back to the landing page
         // await waitFor(
         //    () => [
-        //        screen.getByText('Create a new image'),
-        //        screen.getByRole('button', { name: /Create image/ }),
+        //        screen.getByTestId('create-image-action'),
+        //        screen.getByTestId('images-table'),
         //    ]
         // );
     });
