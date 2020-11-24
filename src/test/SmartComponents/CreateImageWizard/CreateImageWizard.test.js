@@ -16,11 +16,11 @@ function verifyButtons() {
     return [ next, back, cancel ];
 }
 
-async function verifyCancelButton(cancel) {
+function verifyCancelButton(cancel) {
     cancel.click();
 
     // this goes back to the landing page
-    await waitFor(
+    return waitFor(
         () => [
             screen.getByTestId('create-image-action'),
             screen.getByTestId('images-table'),
@@ -101,7 +101,7 @@ describe('Step Release', () => {
 
     test('clicking Cancel loads landing page', async () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel);
+        await verifyCancelButton(cancel);
     });
 
     test('allows chosing a release', () => {
@@ -140,7 +140,7 @@ describe('Step Target environment', () => {
 
     test('clicking Cancel loads landing page', async () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel);
+        await verifyCancelButton(cancel);
     });
 
     test('choosing S3 shows region and bucket fields', () => {
@@ -232,7 +232,7 @@ describe('Step Registration', () => {
 
     test('clicking Cancel loads landing page', async () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel);
+        await verifyCancelButton(cancel);
     });
 
     test('should allow choosing activation keys', () => {
@@ -299,7 +299,7 @@ describe('Step Review', () => {
 
     test('clicking Cancel loads landing page', async () => {
         const cancel = screen.getByRole('button', { name: /Cancel/ });
-        verifyCancelButton(cancel);
+        await verifyCancelButton(cancel);
     });
 });
 
