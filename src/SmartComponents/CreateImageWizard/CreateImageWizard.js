@@ -3,12 +3,12 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from '../redux';
+import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
 import {
     Alert,
     Flex,
     FlexItem,
-    FlexModifiers,
     Form,
     FormGroup,
     FormSelect,
@@ -16,7 +16,6 @@ import {
     Radio,
     TextContent,
     TextInput,
-    Title,
     Wizard,
 } from '@patternfly/react-core';
 
@@ -185,52 +184,52 @@ const ReviewComponent = (props) => {
                 </small>
                 <h3>Release</h3>
                 <Flex>
-                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-1'] }] }>
+                    <FlexItem flex={ { default: 'flex_1' } }>
                         Release
                     </FlexItem>
-                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                    <FlexItem flex={ { default: 'flex_2' } }>
                         { props.release }
                     </FlexItem>
                 </Flex>
                 <h3>Image output</h3>
                 <Flex>
-                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-1'] }] }>
+                    <FlexItem flex={ { default: 'flex_1' } }>
                         Destination
                     </FlexItem>
-                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                    <FlexItem flex={ { default: 'flex_2' } }>
                         { props.upload && <>{ props.upload.type }</> }
                     </FlexItem>
                 </Flex>
                 { Object.entries(props.uploadErrors).map(([ key, error ]) => {
                     return (<Flex key={ key }>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-1'] }] }>
+                        <FlexItem flex={ { default: 'flex_1' } }>
                             { error.label }
                         </FlexItem>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                        <FlexItem flex={ { default: 'flex_2' } }>
                             <ExclamationCircleIcon className="error" /> { error.value }
                         </FlexItem>
                     </Flex>);
                 })}
                 <h3>Registration</h3>
                 <Flex>
-                    <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-1'] }] }>
+                    <FlexItem flex={ { default: 'flex_1' } }>
                         Subscription
                     </FlexItem>
                     { !props.subscribeNow &&
-                      <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                      <FlexItem flex={ { default: 'flex_2' } }>
                           Register the system later
                       </FlexItem> }
                     { props.subscribeNow &&
-                      <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                      <FlexItem flex={ { default: 'flex_2' } }>
                           Register the system on first boot
                       </FlexItem> }
                 </Flex>
                 { Object.entries(props.subscriptionErrors).map(([ key, error ]) => {
                     return (<Flex key={ key }>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-1'] }] }>
+                        <FlexItem flex={ { default: 'flex_1' } }>
                             { error.label }
                         </FlexItem>
-                        <FlexItem breakpointMods={ [{ modifier: FlexModifiers['flex-2'] }] }>
+                        <FlexItem flex={ { default: 'flex_2' } }>
                             <ExclamationCircleIcon className="error" /> { error.value }
                         </FlexItem>
                     </Flex>);
@@ -468,11 +467,9 @@ class CreateImageWizard extends Component {
 
         return (
             <>
-                <section className="pf-c-page__main-section">
-                    <Title size="2xl">
-                        Create a new image
-                    </Title>
-                </section>
+                <PageHeader>
+                    <PageHeaderTitle title='Create a new image' />
+                </PageHeader>
                 <Wizard
                     onNext={ this.onStep }
                     onGoToStep={ this.onStep }
