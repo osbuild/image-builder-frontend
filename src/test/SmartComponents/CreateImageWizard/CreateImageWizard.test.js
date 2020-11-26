@@ -313,7 +313,8 @@ describe('Step Review', () => {
 
 describe('Click through all steps', () => {
     beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
     });
 
     test('with valid values', async () => {
@@ -349,22 +350,18 @@ describe('Click through all steps', () => {
 
         // mock the backend API
         const composeImage = jest.spyOn(api, 'composeImage');
-        composeImage.mockImplementation(async () => ({ id: 'test-me' }));
+        composeImage.mockResolvedValue({ id: 'test-me' });
 
         const create = screen.getByRole('button', { name: /Create/ });
         create.click();
 
         // API request sent to backend
-        expect(composeImage).toHaveBeenCalled();
+        await expect(composeImage).toHaveBeenCalledTimes(1);
 
-        // todo: assertion fails, can't find the button and we don't know why !
         // returns back to the landing page
-        // await waitFor(
-        //    () => [
-        //        screen.getByTestId('create-image-action'),
-        //        screen.getByTestId('images-table'),
-        //    ]
-        // );
+        // but jsdom will not render the new page so we can't assert on that
+        await expect(historySpy).toHaveBeenCalledTimes(1);
+        await expect(historySpy).toHaveBeenCalledWith('/landing');
     });
 
     test('with missing values', async () => {
