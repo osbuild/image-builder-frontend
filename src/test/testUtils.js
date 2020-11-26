@@ -18,6 +18,7 @@ export const renderWithReduxRouter = (component, mockedStore = defaultStore, rou
             <Provider store={ store }>
                 <Router history={ history }>{component}</Router>
             </Provider>
-        )
+        ),
+        history
     };
 };

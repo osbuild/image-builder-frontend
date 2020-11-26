@@ -1,11 +1,13 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, getByText, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
 import api from '../../../api.js';
+
+let historySpy = undefined;
 
 function verifyButtons() {
     // these buttons exist everywhere
@@ -16,16 +18,13 @@ function verifyButtons() {
     return [ next, back, cancel ];
 }
 
-function verifyCancelButton(cancel) {
+function verifyCancelButton(cancel, history) {
     cancel.click();
 
     // this goes back to the landing page
-    return waitFor(
-        () => [
-            screen.getByTestId('create-image-action'),
-            screen.getByTestId('images-table'),
-        ]
-    );
+    // but jsdom will not render the new page so we can't assert on that
+    expect(history).toHaveBeenCalledTimes(1);
+    expect(history).toHaveBeenCalledWith('/landing');
 }
 
 // mock the insights dependency
@@ -45,6 +44,11 @@ beforeAll(() => {
             }
         }
     };
+});
+
+afterEach(() => {
+    jest.clearAllMocks();
+    historySpy = undefined;
 });
 
 // restore global mock
@@ -73,7 +77,8 @@ describe('Create Image Wizard', () => {
 
 describe('Step Release', () => {
     beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -99,9 +104,9 @@ describe('Step Release', () => {
         expect(back).toHaveClass('pf-m-disabled');
     });
 
-    test('clicking Cancel loads landing page', async () => {
+    test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        await verifyCancelButton(cancel);
+        verifyCancelButton(cancel, historySpy);
     });
 
     test('allows chosing a release', () => {
@@ -114,7 +119,8 @@ describe('Step Release', () => {
 
 describe('Step Target environment', () => {
     beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -138,9 +144,9 @@ describe('Step Target environment', () => {
         screen.getByTestId('release-select');
     });
 
-    test('clicking Cancel loads landing page', async () => {
+    test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        await verifyCancelButton(cancel);
+        verifyCancelButton(cancel, historySpy);
     });
 
     test('choosing S3 shows region and bucket fields', () => {
@@ -205,7 +211,8 @@ describe('Step Target environment', () => {
 
 describe('Step Registration', () => {
     beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -230,9 +237,9 @@ describe('Step Registration', () => {
         screen.getByText('Secret access key');
     });
 
-    test('clicking Cancel loads landing page', async () => {
+    test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        await verifyCancelButton(cancel);
+        verifyCancelButton(cancel, historySpy);
     });
 
     test('should allow choosing activation keys', () => {
@@ -274,7 +281,8 @@ describe('Step Registration', () => {
 
 describe('Step Review', () => {
     beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -297,9 +305,9 @@ describe('Step Review', () => {
         screen.getByText('Register the system');
     });
 
-    test('clicking Cancel loads landing page', async () => {
+    test('clicking Cancel loads landing page', () => {
         const cancel = screen.getByRole('button', { name: /Cancel/ });
-        await verifyCancelButton(cancel);
+        verifyCancelButton(cancel, historySpy);
     });
 });
 
