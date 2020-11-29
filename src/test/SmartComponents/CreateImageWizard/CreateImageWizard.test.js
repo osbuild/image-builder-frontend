@@ -68,31 +68,30 @@ describe('Create Image Wizard', () => {
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
 
-        getByText(sidebar, 'Release');
-        getByText(sidebar, 'Target environment');
+        getByText(sidebar, 'Image output');
         getByText(sidebar, 'Registration');
         getByText(sidebar, 'Review');
     });
 });
 
-describe('Step Release', () => {
+describe('Step Image output', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Release');
+        const anchor = getByText(sidebar, 'Image output');
+        screen.getByTestId('upload-destination');
 
         // load from sidebar
         anchor.click();
     });
 
-    test('clicking Next loads Target environment', () => {
+    test('clicking Next loads Upload to AWS', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Destination');
         screen.getByText('Secret access key');
     });
 
@@ -115,16 +114,22 @@ describe('Step Release', () => {
 
         userEvent.selectOptions(release, [ 'rhel-8' ]);
     });
+
+    test('target environment is required', () => {
+        const destination = screen.getByTestId('upload-destination');
+        expect(destination).toBeEnabled();
+        expect(destination).toBeRequired();
+    });
 });
 
-describe('Step Target environment', () => {
+describe('Step Upload to AWS', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Target environment');
+        const anchor = getByText(sidebar, 'Upload to AWS');
 
         // load from sidebar
         anchor.click();
@@ -153,10 +158,6 @@ describe('Step Target environment', () => {
         // change the select to enable the bucket field
         userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
 
-        const destination = screen.getByTestId('upload-destination');
-        expect(destination).toBeEnabled();
-        expect(destination).toBeRequired();
-
         const accessKeyId = screen.getByTestId('aws-access-key');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
@@ -181,10 +182,6 @@ describe('Step Target environment', () => {
     test('choosing EC2 shows region field', async () => {
         // change the select to enable the bucket field
         userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
-
-        const destination = screen.getByTestId('upload-destination');
-        expect(destination).toBeEnabled();
-        expect(destination).toBeRequired();
 
         const accessKeyId = screen.getByTestId('aws-access-key');
         expect(accessKeyId).toHaveValue('');
@@ -229,11 +226,11 @@ describe('Step Registration', () => {
         screen.getByText('Review the information and click Create image to create the image using the following criteria.');
     });
 
-    test('clicking Back loads Target environment', () => {
+    test('clicking Back loads Upload to AWS', () => {
         const [ , back, ] = verifyButtons();
         back.click();
 
-        screen.getByText('Destination');
+        screen.getByText('Access key ID');
         screen.getByText('Secret access key');
     });
 
@@ -320,13 +317,13 @@ describe('Click through all steps', () => {
     test('with valid values', async () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
-        // select release
+        // select image output
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
+        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
         next.click();
 
         // select upload target
-        await screen.findByTestId('upload-destination');
-        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        await screen.findByTestId('aws-access-key');
         userEvent.type(screen.getByTestId('aws-access-key'), 'key');
         userEvent.type(screen.getByTestId('aws-secret-access-key'), 'secret');
         userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
@@ -342,10 +339,10 @@ describe('Click through all steps', () => {
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
         next.click();
 
+        // review
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await screen.findByText('rhel-8');
-        await screen.findByText('aws');
+        await screen.findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -369,11 +366,9 @@ describe('Click through all steps', () => {
 
         // select release
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
+        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
         next.click();
 
-        // select upload target
-        await screen.findByTestId('upload-destination');
-        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
         // leave AWS access keys empty
         userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
         userEvent.clear(screen.getByTestId('aws-region'));
@@ -389,8 +384,7 @@ describe('Click through all steps', () => {
 
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await screen.findByText('rhel-8');
-        await screen.findByText('aws');
+        await screen.findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');
