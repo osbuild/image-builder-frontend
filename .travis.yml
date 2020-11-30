@@ -7,8 +7,10 @@ node_js:
 cache:
   directories:
   - node_modules
+  - ~/.cache/Cypress
 install:
   - npm install
+  - cypress install
 script:
   - npm run travis:verify
   - npx codecov

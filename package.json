@@ -42,6 +42,9 @@
     "@babel/preset-flow": "^7.8.3",
     "@babel/preset-react": "^7.8.3",
     "@redhat-cloud-services/frontend-components-config": "1.0.0",
+    "@testing-library/cypress": "^7.0.2",
+    "cypress-react-selector": "^2.2.1",
+    "cypress": "^6.0.0",
     "@testing-library/react": "^11.0.4",
     "@testing-library/jest-dom": "^5.10.1",
     "@testing-library/user-event": "^12.2.2",
@@ -71,6 +74,7 @@
   },
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
+    "cy:run": "cypress run",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
@@ -82,8 +86,8 @@
     "test": "jest --verbose",
     "test:single": "jest --verbose -w 1",
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
-    "travis:verify": "npm-run-all travis:build lint test",
-    "verify": "npm-run-all build lint test"
+    "travis:verify": "npm-run-all travis:build lint test cy:run",
+    "verify": "npm-run-all build lint test cy:run"
   },
   "insights": {
     "appname": "image-builder"
