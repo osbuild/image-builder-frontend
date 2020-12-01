@@ -35,11 +35,7 @@ class CreateImageWizard extends Component {
             upload: {
                 type: 'aws',
                 options: {
-                    service: 'ec2',
-                    region: 'eu-west-2',
-                    access_key_id: null,
-                    secret_access_key: null,
-                    bucket: null,
+                    share_with_accounts: [],
                 }
             },
             subscription: {
@@ -89,25 +85,10 @@ class CreateImageWizard extends Component {
 
     validateUploadAmazon() {
         let uploadErrors = {};
-        if (!this.state.upload.options.access_key_id) {
-            uploadErrors['amazon-access-id'] =
-                { label: 'Access key ID', value: 'A value is required' };
-        }
-
-        if (!this.state.upload.options.secret_access_key) {
-            uploadErrors['amazon-access-secret'] =
-                { label: 'Secret access key', value: 'A value is required' };
-        }
-
-        if (!this.state.upload.options.region) {
-            uploadErrors['amazon-region'] =
-                { label: 'Region', value: 'A value is required' };
-        }
-
-        if (this.state.upload.options.service === 's3' &&
-            !this.state.upload.options.bucket) {
-            uploadErrors['amazon-bucket'] =
-                { label: 'Bucket', value: 'A value is required' };
+        let share = this.state.upload.options.share_with_accounts;
+        if (share.length === 0 || share[0].length !== 12 || isNaN(share[0])) {
+            uploadErrors['aws-account-id'] =
+                { label: 'AWS account ID', value: 'A 12-digit number is required' };
         }
 
         this.setState({ uploadErrors });
@@ -160,16 +141,7 @@ class CreateImageWizard extends Component {
                     upload_requests: [{
                         type: 'aws',
                         options: {
-                            region: this.state.upload.options.region,
-                            s3: {
-                                access_key_id: this.state.upload.options.access_key_id,
-                                secret_access_key: this.state.upload.options.secret_access_key,
-                                bucket: this.state.upload.options.bucket,
-                            },
-                            ec2: {
-                                access_key_id: this.state.upload.options.access_key_id,
-                                secret_access_key: this.state.upload.options.secret_access_key,
-                            },
+                            share_with_accounts: this.state.upload.options.share_with_accounts,
                         },
                     }],
                 }],
