@@ -45,51 +45,16 @@ ReleaseComponent.propTypes = {
 };
 
 const AmazonUploadComponent = (props) => {
-    const serviceOptions = [
-        { value: 'ec2', label: 'Amazon Elastic Compute Cloud (ec2)' },
-        { value: 's3', label: 'Amazon Simple Storage Service (s3)' },
-    ];
-
     return (
         <>
-            <FormGroup isRequired label="Access key ID" fieldId="amazon-access-id"
-                helperTextInvalid={ (props.errors['amazon-access-id'] && props.errors['amazon-access-id'].value) || '' }
+            <FormGroup isRequired label="AWS account ID" fieldId="aws-account-id"
+                helperTextInvalid={ (props.errors['aws-account-id'] && props.errors['aws-account-id'].value) || '' }
                 validated={ (props.errors['amazon-access-id'] && 'error') || 'default' }>
-                <TextInput value={ props.upload.options.access_key_id || '' }
-                    type="text" aria-label="amazon access key ID" id="amazon-access-id"
-                    data-testid="aws-access-key" isRequired
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { access_key_id: value })) } />
+                <TextInput value={ props.upload.options.share_with_accounts || '' }
+                    type="text" aria-label="amazon access key ID" id="aws-account-id"
+                    data-testid="aws-account-id" isRequired
+                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { share_with_accounts: [ value ]})) } />
             </FormGroup>
-            <FormGroup isRequired label="Secret access key" fieldId="amazon-access-secret"
-                helperTextInvalid={ (props.errors['amazon-access-secret'] && props.errors['amazon-access-secret'].value)  || '' }
-                validated={ (props.errors['amazon-access-secret'] && 'error') || 'default' }>
-                <TextInput value={ props.upload.options.secret_access_key || '' }
-                    data-testid="aws-secret-access-key" isRequired
-                    type="password" aria-label="amazon secret access key" id="amazon-access-secret"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { secret_access_key: value })) } />
-            </FormGroup>
-            <FormGroup isRequired label="Service" fieldId="amazon-service">
-                <FormSelect value={ props.upload.options.service } aria-label="Select amazon service" id="amazon-service"
-                    data-testid="aws-service-select"
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { service: value })) }>
-                    { serviceOptions.map(option => <FormSelectOption key={ option.value } value={ option.value } label={ option.label } />) }
-                </FormSelect>
-            </FormGroup>
-            <FormGroup isRequired label="Region" fieldId="amazon-region"
-                helperTextInvalid={ (props.errors['amazon-region'] && props.errors['amazon-region'].value) || '' }
-                validated={ (props.errors['amazon-region'] && 'error') || 'default' }>
-                <TextInput value={ props.upload.options.region } type="text" aria-label="amazon region" id="amazon-region"
-                    data-testid="aws-region" isRequired
-                    onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { region: value })) } />
-            </FormGroup>
-            { props.upload.options.service === 's3' &&
-              <FormGroup isRequired label="Bucket" fieldId="amazon-bucket"
-                  helperTextInvalid={ (props.errors['amazon-bucket'] && props.errors['amazon-bucket'].value) || '' }
-                  validated={ (props.errors['amazon-bucket'] && 'error') || 'default' }>
-                  <TextInput value={ props.upload.options.bucket || '' } type="text" aria-label="amazon bucket" id="amazon-bucket"
-                      data-testid="aws-bucket" isRequired
-                      onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { bucket: value })) } />
-              </FormGroup> }
         </>
     );
 };
@@ -102,7 +67,7 @@ AmazonUploadComponent.propTypes = {
 
 const UploadComponent = (props) => {
     const uploadTypes = [
-        { value: 'aws', label: 'Amazon Machine Image (.raw)' },
+        { value: 'aws', label: 'Amazon Machine Image (.ami)' },
     ];
 
     return (
@@ -269,11 +234,7 @@ class CreateImageWizard extends Component {
             upload: {
                 type: 'aws',
                 options: {
-                    service: 'ec2',
-                    region: 'eu-west-2',
-                    access_key_id: null,
-                    secret_access_key: null,
-                    bucket: null,
+                    share_with_accounts: [],
                 }
             },
             subscription: {
@@ -323,25 +284,10 @@ class CreateImageWizard extends Component {
 
     validateUploadAmazon() {
         let uploadErrors = {};
-        if (!this.state.upload.options.access_key_id) {
-            uploadErrors['amazon-access-id'] =
-                { label: 'Access key ID', value: 'A value is required' };
-        }
-
-        if (!this.state.upload.options.secret_access_key) {
-            uploadErrors['amazon-access-secret'] =
-                { label: 'Secret access key', value: 'A value is required' };
-        }
-
-        if (!this.state.upload.options.region) {
-            uploadErrors['amazon-region'] =
-                { label: 'Region', value: 'A value is required' };
-        }
-
-        if (this.state.upload.options.service === 's3' &&
-            !this.state.upload.options.bucket) {
-            uploadErrors['amazon-bucket'] =
-                { label: 'Bucket', value: 'A value is required' };
+        let share = this.state.upload.options.share_with_accounts;
+        if (share.length === 0 || share[0].length !== 12 || isNaN(share[0])) {
+            uploadErrors['aws-account-id'] =
+                { label: 'AWS account ID', value: 'A 12-digit number is required' };
         }
 
         this.setState({ uploadErrors });
@@ -394,16 +340,7 @@ class CreateImageWizard extends Component {
                     upload_requests: [{
                         type: 'aws',
                         options: {
-                            region: this.state.upload.options.region,
-                            s3: {
-                                access_key_id: this.state.upload.options.access_key_id,
-                                secret_access_key: this.state.upload.options.secret_access_key,
-                                bucket: this.state.upload.options.bucket,
-                            },
-                            ec2: {
-                                access_key_id: this.state.upload.options.access_key_id,
-                                secret_access_key: this.state.upload.options.secret_access_key,
-                            },
+                            share_with_accounts: this.state.upload.options.share_with_accounts,
                         },
                     }],
                 }],

@@ -93,7 +93,7 @@ describe('Step Release', () => {
         next.click();
 
         screen.getByText('Destination');
-        screen.getByText('Secret access key');
+        screen.getByText('AWS account ID');
     });
 
     test('Back button is disabled', () => {
@@ -149,63 +149,11 @@ describe('Step Target environment', () => {
         verifyCancelButton(cancel, historySpy);
     });
 
-    test('choosing S3 shows region and bucket fields', () => {
-        // change the select to enable the bucket field
-        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
-
-        const destination = screen.getByTestId('upload-destination');
-        expect(destination).toBeEnabled();
-        expect(destination).toBeRequired();
-
-        const accessKeyId = screen.getByTestId('aws-access-key');
+    test('the aws account id fieldis shown and required', () => {
+        const accessKeyId = screen.getByTestId('aws-account-id');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
         expect(accessKeyId).toBeRequired();
-
-        const secretAccessKey = screen.getByTestId('aws-secret-access-key');
-        expect(secretAccessKey).toHaveValue('');
-        expect(secretAccessKey).toBeEnabled();
-        expect(secretAccessKey).toBeRequired();
-
-        const region = screen.getByTestId('aws-region');
-        expect(region).toHaveValue('eu-west-2');
-        expect(region).toBeEnabled();
-        expect(region).toBeRequired();
-
-        const bucket = screen.getByTestId('aws-bucket');
-        expect(bucket).toHaveValue('');
-        expect(bucket).toBeEnabled();
-        expect(bucket).toBeRequired();
-    });
-
-    test('choosing EC2 shows region field', async () => {
-        // change the select to enable the bucket field
-        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
-
-        const destination = screen.getByTestId('upload-destination');
-        expect(destination).toBeEnabled();
-        expect(destination).toBeRequired();
-
-        const accessKeyId = screen.getByTestId('aws-access-key');
-        expect(accessKeyId).toHaveValue('');
-        expect(accessKeyId).toBeEnabled();
-        expect(accessKeyId).toBeRequired();
-
-        const secretAccessKey = screen.getByTestId('aws-secret-access-key');
-        expect(secretAccessKey).toHaveValue('');
-        expect(secretAccessKey).toBeEnabled();
-        expect(secretAccessKey).toBeRequired();
-
-        const region = screen.getByTestId('aws-region');
-        expect(region).toHaveValue('eu-west-2');
-        expect(region).toBeEnabled();
-        expect(region).toBeRequired();
-
-        const p1 = waitForElementToBeRemoved(() => screen.queryByTestId('aws-bucket'));
-
-        // change the select to hide the bucket field
-        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 'ec2' ]);
-        await p1;
     });
 });
 
@@ -234,7 +182,7 @@ describe('Step Registration', () => {
         back.click();
 
         screen.getByText('Destination');
-        screen.getByText('Secret access key');
+        screen.getByText('AWS account ID');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -327,11 +275,7 @@ describe('Click through all steps', () => {
         // select upload target
         await screen.findByTestId('upload-destination');
         userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
-        userEvent.type(screen.getByTestId('aws-access-key'), 'key');
-        userEvent.type(screen.getByTestId('aws-secret-access-key'), 'secret');
-        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
-        userEvent.type(screen.getByTestId('aws-region'), 'us-east-1');
-        userEvent.type(screen.getByTestId('aws-bucket'), 'imagebuilder');
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         next.click();
 
         // registration
@@ -374,9 +318,7 @@ describe('Click through all steps', () => {
         // select upload target
         await screen.findByTestId('upload-destination');
         userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
-        // leave AWS access keys empty
-        userEvent.selectOptions(screen.getByTestId('aws-service-select'), [ 's3' ]);
-        userEvent.clear(screen.getByTestId('aws-region'));
+        // leave AWS account id empty
         next.click();
 
         // registration
@@ -394,6 +336,43 @@ describe('Click through all steps', () => {
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');
-        expect(errorMessages.length).toBe(5);
+        expect(errorMessages.length).toBe(1);
+
+        const uploadErrorMessage = await screen.findAllByText('A 12-digit number is required');
+        expect(uploadErrorMessage.length).toBe(1);
+    });
+
+    test('with invalid values', async () => {
+        const next = screen.getByRole('button', { name: /Next/ });
+
+        // select release
+        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
+        next.click();
+
+        // select upload target
+        await screen.findByTestId('upload-destination');
+        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        userEvent.type(screen.getByTestId('aws-account-id'), 'invalid, isNaN');
+        next.click();
+
+        // registration
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+        await screen.findByTestId('subscription-activation');
+        userEvent.clear(screen.getByTestId('subscription-activation'));
+        next.click();
+
+        await screen.
+            findByText('Review the information and click Create image to create the image using the following criteria.');
+        await screen.findByText('rhel-8');
+        await screen.findByText('aws');
+        await screen.findByText('Register the system on first boot');
+
+        const errorMessages = await screen.findAllByText('A value is required');
+        expect(errorMessages.length).toBe(1);
+
+        const uploadErrorMessage = await screen.findAllByText('A 12-digit number is required');
+        expect(uploadErrorMessage.length).toBe(1);
     });
 });
