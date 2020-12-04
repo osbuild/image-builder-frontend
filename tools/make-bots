@@ -5,6 +5,8 @@
 
 set -e
 
+COCKPIT_BOTS_REF=pull/1444/head
+
 if [ ! -d bots ]; then
     git clone --quiet --reference-if-able ${XDG_CACHE_HOME:-$HOME/.cache}/cockpit-project/bots https://github.com/cockpit-project/bots.git
     if [ -n "$COCKPIT_BOTS_REF" ]; then
