@@ -5,6 +5,7 @@ import { actions } from '../redux';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';
+import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
 
 import ImageBuildStatus from '../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
 import Release from '../../PresentationalComponents/Release/Release';
@@ -77,9 +78,13 @@ class ImagesTable extends Component {
         return (
             <React.Fragment>
                 <TableToolbar>
-                    <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
-                        Create image
-                    </Link>
+                    <ToolbarGroup>
+                        <ToolbarItem>
+                            <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
+                                Create image
+                            </Link>
+                        </ToolbarItem>
+                    </ToolbarGroup>
                 </TableToolbar>
                 <Table
                     aria-label="Images"
