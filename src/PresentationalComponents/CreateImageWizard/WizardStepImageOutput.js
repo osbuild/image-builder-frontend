@@ -5,7 +5,7 @@ import { Form, FormGroup, FormSelect, FormSelectOption, Title } from '@patternfl
 
 const WizardStepImageOutput = (props) => {
     const releaseOptions = [
-        { value: 'rhel-8', label: 'Red Hat Enterprise Linux (RHEL) 8.2' },
+        { value: 'rhel-8', label: 'Red Hat Enterprise Linux (RHEL) 8.3' },
     ];
     const uploadOptions = [
         { value: 'aws', label: 'Amazon Web Services' },

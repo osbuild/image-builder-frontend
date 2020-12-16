@@ -8,7 +8,7 @@ import './WizardStepReview.scss';
 
 const WizardStepReview = (props) => {
     const releaseOptions = {
-        'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.2'
+        'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.3'
     };
     const uploadOptions = {
         aws: 'Amazon Web Services'
@@ -30,7 +30,7 @@ const WizardStepReview = (props) => {
                         Release
                     </dt>
                     <dd>
-                        { releaseOptions[props.release]}
+                        { releaseOptions[props.release] }
                     </dd>
                     <dt>
                         Target environment
