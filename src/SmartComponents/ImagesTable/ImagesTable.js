@@ -60,11 +60,14 @@ class ImagesTable extends Component {
 
     render() {
         let { composes } = this.props;
+        const uploadOptions = {
+            aws: 'Amazon Web Services'
+        };
         const rows = Object.entries(composes).map(([ id, compose ]) => {
             return {
                 cells: [
                     id,
-                    compose.image_type,
+                    uploadOptions[compose.image_type] ? uploadOptions[compose.image_type] : compose.image_type,
                     { title: <Release release={ compose.distribution } /> },
                     { title: <ImageBuildStatus status={ compose.status } /> },
                     ''
