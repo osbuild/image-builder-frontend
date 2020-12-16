@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
-import { Main } from '@redhat-cloud-services/frontend-components';
 import './App.scss';
 
 class App extends Component {
@@ -28,9 +27,9 @@ class App extends Component {
 
     render () {
         return (
-            <Main style={ { marginLeft: 0, padding: 0 } }>
+            <React.Fragment>
                 <Routes childProps={ this.props } />
-            </Main>
+            </React.Fragment>
         );
     }
 }
