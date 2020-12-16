@@ -7,6 +7,7 @@ import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternf
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';
 
 import ImageBuildStatus from '../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
+import Release from '../../PresentationalComponents/Release/Release';
 
 import api from '../../api.js';
 
@@ -64,7 +65,7 @@ class ImagesTable extends Component {
                 cells: [
                     id,
                     compose.image_type,
-                    compose.distribution,
+                    { title: <Release release={ compose.distribution } /> },
                     { title: <ImageBuildStatus status={ compose.status } /> },
                     ''
                 ]
