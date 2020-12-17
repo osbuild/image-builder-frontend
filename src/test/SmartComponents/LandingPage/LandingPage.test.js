@@ -11,10 +11,10 @@ describe('Landing Page', () => {
         // check heading
         screen.getByRole('heading', { name: /images/i });
     });
-    test('renders ImagesTable child component', () => {
+    test('renders EmptyState child component', () => {
         // check action loads
         screen.getByTestId('create-image-action');
         // check table loads
-        screen.getByTestId('images-table');
+        screen.getByTestId('empty-state');
     });
 });
