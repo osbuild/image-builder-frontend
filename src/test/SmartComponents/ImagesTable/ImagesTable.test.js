@@ -2,7 +2,7 @@ import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../SmartComponents/ImagesTable/ImagesTable';
-import ImageBuildStatus from '../../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
+import ImageBuildStatus from '../../../PresentationalComponents/ImagesTable/ImageBuildStatus';
 import '@testing-library/jest-dom';
 
 const store = {
@@ -39,7 +39,7 @@ describe('Images Table', () => {
 
         // make sure the empty-state message isn't present
         const emptyState = screen.queryByTestId('empty-state');
-        expect(emptyState).toBeNull();
+        expect(emptyState).not.toBeInTheDocument();
 
         // check table
         const table = screen.getByTestId('images-table');

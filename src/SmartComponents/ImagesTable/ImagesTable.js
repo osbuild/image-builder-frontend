@@ -8,8 +8,8 @@ import { TableToolbar } from '@redhat-cloud-services/frontend-components';
 import { ToolbarGroup, ToolbarItem, EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
-import ImageBuildStatus from '../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
-import Release from '../../PresentationalComponents/Release/Release';
+import ImageBuildStatus from '../../PresentationalComponents/ImagesTable/ImageBuildStatus';
+import Release from '../../PresentationalComponents/ImagesTable/Release';
 
 import api from '../../api.js';
 
