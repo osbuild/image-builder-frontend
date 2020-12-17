@@ -37,6 +37,10 @@ describe('Images Table', () => {
         // check action loads
         screen.getByTestId('create-image-action');
 
+        // make sure the empty-state message isn't present
+        const emptyState = screen.queryByTestId('empty-state');
+        expect(emptyState).toBeNull();
+
         // check table
         const table = screen.getByTestId('images-table');
         expect(table.rows).toHaveLength(4);
