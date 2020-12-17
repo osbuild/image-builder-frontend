@@ -5,7 +5,8 @@ import { actions } from '../redux';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';
-import { ToolbarGroup, ToolbarItem } from '@patternfly/react-core';
+import { ToolbarGroup, ToolbarItem, EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, Title } from '@patternfly/react-core';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import ImageBuildStatus from '../../PresentationalComponents/ImageBuildStatus/ImageBuildStatus';
 import Release from '../../PresentationalComponents/Release/Release';
@@ -77,23 +78,41 @@ class ImagesTable extends Component {
         });
         return (
             <React.Fragment>
-                <TableToolbar>
-                    <ToolbarGroup>
-                        <ToolbarItem>
-                            <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
-                                Create image
-                            </Link>
-                        </ToolbarItem>
-                    </ToolbarGroup>
-                </TableToolbar>
-                <Table
-                    aria-label="Images"
-                    rows={ rows }
-                    cells={ this.state.columns }
-                    data-testid="images-table">
-                    <TableHeader />
-                    <TableBody />
-                </Table>
+                { Object.keys(composes).length === 0 && (
+                    <EmptyState variant={ EmptyStateVariant.large } data-testid="empty-state">
+                        <EmptyStateIcon icon={ PlusCircleIcon } />
+                        <Title headingLevel="h4" size="lg">
+                            Create an image
+                        </Title>
+                        <EmptyStateBody>
+                            Create RHEL OS images for deployment in Amazon Web Services. Images can include
+                            an activation key to automate the registration process.
+                        </EmptyStateBody>
+                        <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
+                        Create image
+                        </Link>
+                    </EmptyState>
+                ) || (
+                    <React.Fragment>
+                        <TableToolbar>
+                            <ToolbarGroup>
+                                <ToolbarItem>
+                                    <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
+                                        Create image
+                                    </Link>
+                                </ToolbarItem>
+                            </ToolbarGroup>
+                        </TableToolbar>
+                        <Table
+                            aria-label="Images"
+                            rows={ rows }
+                            cells={ this.state.columns }
+                            data-testid="images-table">
+                            <TableHeader />
+                            <TableBody />
+                        </Table>
+                    </React.Fragment>
+                )}
             </React.Fragment>
         );
     }
