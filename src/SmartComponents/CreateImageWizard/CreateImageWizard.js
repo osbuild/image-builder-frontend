@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { actions } from '../redux';
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
-import { Wizard, Stack, StackItem } from '@patternfly/react-core';
+import { Wizard } from '@patternfly/react-core';
 
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
@@ -238,13 +238,11 @@ class CreateImageWizard extends Component {
         ];
 
         return (
-            <Stack className="pf-u-h-100">
-                <StackItem>
-                    <PageHeader>
-                        <PageHeaderTitle title='Create a new image' />
-                    </PageHeader>
-                </StackItem>
-                <StackItem isFilled>
+            <>
+                <PageHeader>
+                    <PageHeaderTitle title='Create a new image' />
+                </PageHeader>
+                <section className="pf-c-page__main-wizard pf-m-limit-width">
                     <Wizard
                         onNext={ this.onStep }
                         onGoToStep={ this.onStep }
@@ -252,8 +250,8 @@ class CreateImageWizard extends Component {
                         steps={ steps }
                         onClose={ this.onClose }
                         onSave={ this.onSave } />
-                </StackItem>
-            </Stack>
+                </section>
+            </>
         );
     }
 }
