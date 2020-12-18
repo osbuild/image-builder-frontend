@@ -15,9 +15,9 @@ const WizardStepUploadAWS = (props) => {
             </p>
             <FormGroup isRequired label="AWS account ID" fieldId="aws-account-id"
                 helperTextInvalid={ (props.errors['aws-account-id'] && props.errors['aws-account-id'].value) || '' }
-                validated={ (props.errors['amazon-access-id'] && 'error') || 'default' }>
+                validated={ (props.errors['aws-account-id'] && 'error') || 'default' }>
                 <TextInput value={ props.upload.options.share_with_accounts || '' }
-                    type="text" aria-label="amazon access key ID" id="aws-account-id"
+                    type="text" aria-label="AWS account ID" id="aws-account-id"
                     data-testid="aws-account-id" isRequired
                     onChange={ value => props.setUploadOptions(Object.assign(props.upload.options, { share_with_accounts: [ value ]})) } />
             </FormGroup>
