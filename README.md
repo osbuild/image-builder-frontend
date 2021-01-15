@@ -2,12 +2,14 @@
 
 ## Development
 
+You can skip step 3 and 4 if you don't need the full stack locally. However
+while it's possible to click around the page and use mock data, it won't be able
+to build images.
+
 1. Clone the following repositories:
     * https://github.com/osbuild/image-builder-frontend
     * https://github.com/osbuild/image-builder
     * https://github.com/RedHatInsights/insights-proxy
-
-Optional: https://github.com/osbuild/osbuild-composer
 
 2. Setting up the proxy
 
@@ -22,28 +24,32 @@ Optional: https://github.com/osbuild/osbuild-composer
         sudo -E insights-proxy/scripts/run.sh
     ```
 
-3. Starting up osbuild-composer-cloud
+3. Setting up osbuild-composer(-api)
 
-    Make sure osbuild-composer is installed and osbuild-composer-cloud is
-    enabled:
-
-    `sudo systemctl enable --now osbuild-composer-cloud.socket`
-
-    Start a remote worker like so:
-
-    `sudo systemctl enable --now osbuild-remote-worker@localhost:8704`
+    The easiest way to do this is to call `schutzbots/provision-composer.sh` from
+    the `osbuild/image-builder` project. This will install composer, generate
+    the needed certs, and put the configuration in place.
 
 4. Starting up image-builder
+
+    Point the URL to wherever composer is hosted, the client certificates and CA
+    should be reused or copied over from the composer host, they're located in
+    `/etc/osbuild-composer`.
+
     In the image-builder checkout directory
 
     ```
         make build
-        OSBUILD_SERVICE="http://127.0.0.1:8703/" ./image-builder
+        OSBUILD_URL="https://$composer-url:$composer-port/api/composer/v1" \
+        OSBUILD_CERT_PATH=/path/to/client-crt.pem \
+        OSBUILD_KEY_PATH=/path/to/client-key.pem \
+        OSBUILD_CA_PATH=/path/to/ca-crt.pem \
+        ./image-builder
     ```
 
 5. Starting up image-builder-frontend
 
-    In the image-builder-frontend checkout direcotry
+    In the image-builder-frontend checkout directory
 
     ```
         npm install
