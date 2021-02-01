@@ -1,0 +1,129 @@
+{
+  "dummyPackageList": [
+    {
+      "name": "0ad",
+      "summary": "Cross-Platform RTS Game of Ancient Warfare",
+      "description": "0 A.D. (pronounced \"zero ey-dee\") is a free, open-source, cross-platform\nreal-time strategy (RTS) game of ancient warfare. In short, it is a\nhistorically-based war/economy game that allows players to relive or rewrite\nthe history of Western civilizations, focusing on the years between 500 B.C.\nand 500 A.D. The project is highly ambitious, involving state-of-the-art 3D\ngraphics, detailed artwork, sound, and a flexible and powerful custom-built\ngame engine.\n\nThe game has been in development by Wildfire Games (WFG), a group of volunteer,\nhobbyist game developers, since 2001.",
+      "homepage": "http://play0ad.com",
+      "upstream_vcs": "UPSTREAM_VCS",
+      "builds": [
+        {
+          "arch": "x86_64",
+          "build_time": "2020-07-31T23:48:35",
+          "epoch": 0,
+          "release": "21.fc33",
+          "source": {
+            "license": "GPLv2+ and BSD and MIT and IBM",
+            "version": "0.0.23b",
+            "source_ref": "SOURCE_REF",
+            "metadata": {}
+          },
+          "changelog": "CHANGELOG_NEEDED",
+          "build_config_ref": "BUILD_CONFIG_REF",
+          "build_env_ref": "BUILD_ENV_REF",
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "name": "0ad-data",
+      "summary": "The Data Files for 0 AD",
+      "description": "0 A.D. (pronounced \"zero ey-dee\") is a free, open-source, cross-platform\nreal-time strategy (RTS) game of ancient warfare. In short, it is a\nhistorically-based war/economy game that allows players to relive or rewrite\nthe history of Western civilizations, focusing on the years between 500 B.C.\nand 500 A.D. The project is highly ambitious, involving state-of-the-art 3D\ngraphics, detailed artwork, sound, and a flexible and powerful custom-built\ngame engine.\n\nThis package contains the 0ad data files.",
+      "homepage": "http://play0ad.com",
+      "upstream_vcs": "UPSTREAM_VCS",
+      "builds": [
+        {
+          "arch": "noarch",
+          "build_time": "2020-07-27T10:16:23",
+          "epoch": 0,
+          "release": "5.fc33",
+          "source": {
+            "license": "CC-BY-SA",
+            "version": "0.0.23b",
+            "source_ref": "SOURCE_REF",
+            "metadata": {}
+          },
+          "changelog": "CHANGELOG_NEEDED",
+          "build_config_ref": "BUILD_CONFIG_REF",
+          "build_env_ref": "BUILD_ENV_REF",
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "name": "0xFFFF",
+      "summary": "The Open Free Fiasco Firmware Flasher",
+      "description": "The 'Open Free Fiasco Firmware Flasher' aka 0xFFFF utility implements\na free (GPL3) userspace handler for the NOLO bootloader and related\nutilities for the Nokia Internet Tablets like flashing setting device\noptions, packing/unpacking FIASCO firmware format and more.",
+      "homepage": "https://talk.maemo.org/showthread.php?t=87996",
+      "upstream_vcs": "UPSTREAM_VCS",
+      "builds": [
+        {
+          "arch": "x86_64",
+          "build_time": "2020-07-27T10:12:04",
+          "epoch": 0,
+          "release": "4.fc33",
+          "source": {
+            "license": "GPLv3",
+            "version": "0.8",
+            "source_ref": "SOURCE_REF",
+            "metadata": {}
+          },
+          "changelog": "CHANGELOG_NEEDED",
+          "build_config_ref": "BUILD_CONFIG_REF",
+          "build_env_ref": "BUILD_ENV_REF",
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "name": "2048-cli",
+      "summary": "The game 2048 for your Linux terminal",
+      "description": "A cli version of the game 2048 for your Linux terminal.",
+      "homepage": "https://github.com/Tiehuis/2048-cli",
+      "upstream_vcs": "UPSTREAM_VCS",
+      "builds": [
+        {
+          "arch": "x86_64",
+          "build_time": "2020-07-27T10:12:36",
+          "epoch": 0,
+          "release": "10.fc33",
+          "source": {
+            "license": "MIT",
+            "version": "0.9.1",
+            "source_ref": "SOURCE_REF",
+            "metadata": {}
+          },
+          "changelog": "CHANGELOG_NEEDED",
+          "build_config_ref": "BUILD_CONFIG_REF",
+          "build_env_ref": "BUILD_ENV_REF",
+          "metadata": {}
+        }
+      ]
+    },
+    {
+      "name": "2048-cli-nocurses",
+      "summary": "The game 2048 for your Linux terminal (non-ncurses)",
+      "description": "A non-ncurses cli version of the game 2048 for your Linux terminal.",
+      "homepage": "https://github.com/Tiehuis/2048-cli",
+      "upstream_vcs": "UPSTREAM_VCS",
+      "builds": [
+        {
+          "arch": "x86_64",
+          "build_time": "2020-07-27T10:12:36",
+          "epoch": 0,
+          "release": "10.fc33",
+          "source": {
+            "license": "MIT",
+            "version": "0.9.1",
+            "source_ref": "SOURCE_REF",
+            "metadata": {}
+          },
+          "changelog": "CHANGELOG_NEEDED",
+          "build_config_ref": "BUILD_CONFIG_REF",
+          "build_env_ref": "BUILD_ENV_REF",
+          "metadata": {}
+        }
+      ]
+    }
+  ]
+}

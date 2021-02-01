@@ -9,10 +9,12 @@ import { Wizard } from '@patternfly/react-core';
 
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
+import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard/WizardStepPackages';
 import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
 import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
 
 import api from './../../api.js';
+import { dummyPackageList } from '../../store/packages.json';
 
 class CreateImageWizard extends Component {
     constructor(props) {
@@ -23,6 +25,16 @@ class CreateImageWizard extends Component {
         this.setUploadOptions = this.setUploadOptions.bind(this);
         this.setSubscription = this.setSubscription.bind(this);
         this.setSubscribeNow = this.setSubscribeNow.bind(this);
+        this.setPackagesSearchName = this.setPackagesSearchName.bind(this);
+        this.handlePackagesSearch = this.handlePackagesSearch.bind(this);
+        this.handleAddPackage = this.handleAddPackage.bind(this);
+        this.handleRemovePackage = this.handleRemovePackage.bind(this);
+        this.sortPackagesDescending = this.sortPackagesDescending.bind(this);
+        this.clearPackagesSearch = this.clearPackagesSearch.bind(this);
+        this.setPagePackagesSearch = this.setPagePackagesSearch.bind(this);
+        this.setPerPagePackagesSearch = this.setPerPagePackagesSearch.bind(this);
+        this.setPagePackagesSelected = this.setPagePackagesSelected.bind(this);
+        this.setPerPagePackagesSelected = this.setPerPagePackagesSelected.bind(this);
         this.onStep = this.onStep.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onClose = this.onClose.bind(this);
@@ -49,6 +61,14 @@ class CreateImageWizard extends Component {
             /* errors take form of $fieldId: error */
             uploadErrors: {},
             subscriptionErrors: {},
+            packages: dummyPackageList,
+            selectedPackages: [],
+            packagesSearchName: '',
+            showPackagesSearch: false,
+            packagesSearchPage: 1,
+            packagesSearchPerPage: 5,
+            packagesSelectedPage: 1,
+            packagesSelectedPerPage: 5,
         };
     }
 
@@ -131,6 +151,83 @@ class CreateImageWizard extends Component {
         this.setState({ subscription }, this.validate);
     }
 
+    setPackagesSearchName(packagesSearchName) {
+        this.setState({ packagesSearchName });
+    }
+
+    handlePackagesSearch() {
+        this.setState({ showPackagesSearch: true });
+    }
+
+    sortPackagesDescending(packages, field) {
+        if (field === 'name') {
+            return packages.sort((a, b) => {
+                if (a[field] < b[field]) {return -1;}
+
+                if (a[field] > b[field]) {return 1;}
+
+                return 0;
+            });
+        }
+    }
+
+    handleAddPackage(selectedPackage) {
+        // if a package is added it needs to display the correct state
+        const updatedSelectedPackage = Object.assign({}, selectedPackage, {
+            selected: true
+        });
+
+        // updated the selected package in the list of available packages
+        const updatedPackages = this.state.packages.map(pack => pack.name === selectedPackage.name ? updatedSelectedPackage : pack);
+
+        // add the selected package to the list of selected packages
+        let updatedSelectedPackages = this.state.selectedPackages.concat([ updatedSelectedPackage ]);
+        // sort the updated list of selected packages by name
+        updatedSelectedPackages = this.sortPackagesDescending(updatedSelectedPackages, 'name');
+
+        this.setState({
+            packages: updatedPackages,
+            selectedPackages: updatedSelectedPackages
+        });
+    }
+
+    handleRemovePackage(selectedPackage) {
+        // if a package is removed it needs to display the correct state
+        const updatedSelectedPackage = Object.assign({}, selectedPackage, {
+            selected: false
+        });
+
+        // updated the selected package in the list of available packages
+        const updatedPackages = this.state.packages.map(pack => pack.name === selectedPackage.name ? updatedSelectedPackage : pack);
+        // remove the no longer selected package from the list of selected packages
+        const updatedSelectedPackages = this.state.selectedPackages.filter(pack => pack.name !== selectedPackage.name);
+
+        this.setState({
+            packages: updatedPackages,
+            selectedPackages: updatedSelectedPackages
+        });
+    }
+
+    clearPackagesSearch() {
+        this.setState({ showPackagesSearch: false, packagesSearchName: '' });
+    }
+
+    setPagePackagesSearch(_event, packagesSearchPage) {
+        this.setState({ packagesSearchPage });
+    }
+
+    setPerPagePackagesSearch(_event, packagesSearchPerPage) {
+        this.setState({ packagesSearchPerPage });
+    }
+
+    setPagePackagesSelected(_event, packagesSelectedPage) {
+        this.setState({ packagesSelectedPage });
+    }
+
+    setPerPagePackagesSelected(_event, packagesSelectedPerPage) {
+        this.setState({ packagesSelectedPerPage });
+    }
+
     onSave () {
         let request = {
             distribution: this.state.release,
@@ -196,6 +293,27 @@ class CreateImageWizard extends Component {
                     setSubscription={ this.setSubscription }
                     setSubscribeNow={ this.setSubscribeNow }
                     errors={ this.state.subscriptionErrors } /> },
+            {
+                name: 'Packages',
+                component: <WizardStepPackages
+                    release={ this.state.release }
+                    packages={ this.state.packages }
+                    selectedPackages={ this.state.selectedPackages }
+                    handleAddPackage={ this.handleAddPackage }
+                    handleRemovePackage={ this.handleRemovePackage }
+                    showPackagesSearch={ this.state.showPackagesSearch }
+                    handlePackagesSearch={ this.handlePackagesSearch }
+                    clearPackagesSearch={ this.clearPackagesSearch }
+                    setPackagesSearchName={ this.setPackagesSearchName }
+                    setPagePackagesSearch={ this.setPagePackagesSearch }
+                    setPerPagePackagesSearch={ this.setPerPagePackagesSearch }
+                    setPagePackagesSelected={ this.setPerPagePackagesSelected }
+                    setPerPagePackagesSelected={ this.setPerPagePackagesSelected }
+                    packagesSearchName={ this.state.packagesSearchName }
+                    packagesSearchPage={ this.state.packagesSearchPage }
+                    packagesSearchPerPage={ this.state.packagesSearchPerPage }
+                    packagesSelectedPage={ this.state.packagesSelectedPage }
+                    packagesSelectedPerPage={ this.state.packagesSelectedPerPage } /> },
             {
                 name: 'Review',
                 component: <WizardStepReview
