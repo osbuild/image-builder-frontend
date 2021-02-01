@@ -4,10 +4,11 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from '../redux';
 
-import { Wizard } from '@patternfly/react-core';
+import { Wizard, TextContent } from '@patternfly/react-core';
 
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
+import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard/WizardStepPackages';
 import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
 import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
 
@@ -18,10 +19,15 @@ class CreateImageWizard extends Component {
     constructor(props) {
         super(props);
 
+        this.handlePackagesSearch = this.handlePackagesSearch.bind(this);
+        this.handlePackagesFilter = this.handlePackagesFilter.bind(this);
+        this.packageListChange = this.packageListChange.bind(this);
+        this.mapPackagesToComponent = this.mapPackagesToComponent.bind(this);
         this.setRelease = this.setRelease.bind(this);
         this.setUploadOptions = this.setUploadOptions.bind(this);
         this.setSubscription = this.setSubscription.bind(this);
         this.setSubscribeNow = this.setSubscribeNow.bind(this);
+        this.setPackagesSearchName = this.setPackagesSearchName.bind(this);
         this.toggleUploadDestination = this.toggleUploadDestination.bind(this);
         this.onStep = this.onStep.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -70,6 +76,11 @@ class CreateImageWizard extends Component {
             uploadAzureErrors: {},
             uploadGoogleErrors: {},
             subscriptionErrors: {},
+            packagesAvailableComponents: [],
+            packagesSelectedComponents: [],
+            packagesFilteredComponents: [],
+            packagesSelectedNames: [],
+            packagesSearchName: '',
         };
     }
 
@@ -190,6 +201,53 @@ class CreateImageWizard extends Component {
         this.setState({ subscription }, this.validate);
     }
 
+    setPackagesSearchName(packagesSearchName) {
+        this.setState({ packagesSearchName });
+    }
+
+    mapPackagesToComponent(packages) {
+        return packages.map((pack) =>
+            <TextContent key={ pack }>
+                <span className="pf-c-dual-list-selector__item-text">{ pack.name }</span>
+                <small>{ pack.summary }</small>
+            </TextContent>
+        );
+    }
+
+    // this digs into the component properties to extract the package name
+    mapComponentToPackageName(component) {
+        return component.props.children[0].props.children;
+    }
+
+    handlePackagesSearch() {
+        api.getPackages(this.state.release, this.state.arch, this.state.packagesSearchName).then(response => {
+            const packageComponents = this.mapPackagesToComponent(response.data);
+            this.setState({
+                packagesAvailableComponents: packageComponents
+            });
+        });
+    };
+
+    handlePackagesFilter(filter) {
+        const filteredPackages = this.state.packagesSelectedComponents.filter(component => {
+            const name = this.mapComponentToPackageName(component);
+            return name.includes(filter);
+        });
+        this.setState({
+            packagesFilteredComponents: filteredPackages
+        });
+    }
+
+    packageListChange(newAvailablePackages, newChosenPackages) {
+        const chosenNames = newChosenPackages.map(component => this.mapComponentToPackageName(component));
+        this.setState({
+            packagesAvailableComponents: newAvailablePackages,
+            packagesSelectedComponents: newChosenPackages,
+            packagesFilteredComponents: newChosenPackages,
+            packagesSelectedNames: chosenNames
+        });
+    }
+
     onSave () {
         let requests = [];
         Object.keys(this.state.uploadDestinations).forEach(provider => {
@@ -298,6 +356,16 @@ class CreateImageWizard extends Component {
                     setSubscription={ this.setSubscription }
                     setSubscribeNow={ this.setSubscribeNow }
                     errors={ this.state.subscriptionErrors } /> },
+            {
+                name: 'Packages',
+                component: <WizardStepPackages
+                    packageListChange={ this.packageListChange }
+                    release={ this.state.release }
+                    packagesAvailableComponents={ this.state.packagesAvailableComponents }
+                    packagesFilteredComponents={ this.state.packagesFilteredComponents }
+                    handlePackagesSearch={ this.handlePackagesSearch }
+                    handlePackagesFilter= { this.handlePackagesFilter }
+                    setPackagesSearchName={ this.setPackagesSearchName } /> },
             {
                 name: 'Review',
                 component: <WizardStepReview

@@ -17,6 +17,17 @@ async function getComposeStatus(id) {
     return request.data;
 }
 
+async function getPackages(distribution, architecture, search) {
+    const params = new URLSearchParams({
+        distribution,
+        architecture,
+        search,
+    });
+    let path = '/packages?' + params.toString();
+    const request = await axios.get(IMAGE_BUILDER_API.concat(path));
+    return request.data;
+}
+
 async function getVersion() {
     let path = '/version';
     const request = await axios.get(IMAGE_BUILDER_API.concat(path));
@@ -26,5 +37,6 @@ async function getVersion() {
 export default {
     composeImage,
     getComposeStatus,
+    getPackages,
     getVersion,
 };

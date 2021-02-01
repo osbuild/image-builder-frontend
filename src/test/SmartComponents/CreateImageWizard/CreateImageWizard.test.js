@@ -186,11 +186,11 @@ describe('Step Registration', () => {
         anchor.click();
     });
 
-    test('clicking Next loads Review', () => {
+    test('clicking Next loads Packages', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Review the information and click Create image to create the image using the following criteria.');
+        screen.getByText('Optionally add additional packages to your image');
     });
 
     test('clicking Back loads Upload to AWS', () => {
@@ -242,6 +242,50 @@ describe('Step Registration', () => {
     });
 });
 
+describe('Step Packages', () => {
+    beforeEach(() => {
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
+
+        // left sidebar navigation
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Packages');
+
+        // load from sidebar
+        anchor.click();
+    });
+
+    test('clicking Next loads Review', () => {
+        const [ next, , ] = verifyButtons();
+        next.click();
+
+        screen.getByText('Review the information and click Create image to create the image using the following criteria.');
+    });
+
+    test('clicking Back loads Register', () => {
+        const back = screen.getByRole('button', { name: /Back/ });
+        back.click();
+
+        screen.getByText('Register the system');
+    });
+
+    test('clicking Cancel loads landing page', () => {
+        const [ , , cancel ] = verifyButtons();
+        verifyCancelButton(cancel, historySpy);
+    });
+
+    test('should display search bar and button', () => {
+        const search = screen.getByRole('searchbox', { name: 'Available search input' });
+        search.click();
+
+        userEvent.type(search, 'test');
+
+        screen.getByRole('button', {
+            name: 'Search button for available packages'
+        });
+    });
+});
+
 describe('Step Review', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
@@ -265,11 +309,11 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Cancel/ });
     });
 
-    test('clicking Back loads Register', () => {
+    test('clicking Back loads Packages', () => {
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Optionally add additional packages to your image');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -302,6 +346,10 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        next.click();
+
+        // packages
+        screen.getByText('Optionally add additional packages to your image');
         next.click();
 
         // review
@@ -346,9 +394,13 @@ describe('Click through all steps', () => {
         userEvent.clear(screen.getByTestId('subscription-activation'));
         next.click();
 
-        const imageOutput = screen.getByTestId('review-image-output');
+        // packages
+        screen.getByText('Optionally add additional packages to your image');
+        next.click();
+
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
+        const imageOutput = screen.getByTestId('review-image-output');
         await within(imageOutput).findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
@@ -379,9 +431,13 @@ describe('Click through all steps', () => {
         userEvent.clear(screen.getByTestId('subscription-activation'));
         next.click();
 
-        const imageOutput = screen.getByTestId('review-image-output');
+        // packages
+        screen.getByText('Optionally add additional packages to your image');
+        next.click();
+
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
+        const imageOutput = screen.getByTestId('review-image-output');
         await within(imageOutput).findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
