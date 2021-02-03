@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
+// eslint-disable-next-line no-unused-vars
 import { screen, getByText, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
@@ -175,11 +176,11 @@ describe('Step Registration', () => {
         anchor.click();
     });
 
-    test('clicking Next loads Review', () => {
+    test('clicking Next loads Packages', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Review the information and click Create image to create the image using the following criteria.');
+        screen.getByText('Add additional packages to your image');
     });
 
     test('clicking Back loads Upload to AWS', () => {
@@ -231,6 +232,57 @@ describe('Step Registration', () => {
     });
 });
 
+describe('Step Packages', () => {
+    beforeEach(() => {
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
+
+        // left sidebar navigation
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Packages');
+
+        // load from sidebar
+        anchor.click();
+    });
+
+    test('clicking Next loads Review', () => {
+        const [ next, , ] = verifyButtons();
+        next.click();
+
+        screen.getByText('Review the information and click Create image to create the image using the following criteria.');
+    });
+
+    test('clicking Back loads Register', () => {
+        const back = screen.getByRole('button', { name: /Back/ });
+        back.click();
+
+        screen.getByText('Register the system');
+    });
+
+    test('clicking Cancel loads landing page', () => {
+        const [ , , cancel ] = verifyButtons();
+        verifyCancelButton(cancel, historySpy);
+    });
+
+    test('should allow searching for and adding package', () => {
+        const search = screen.getByRole('searchbox', { name: /search packages input/ });
+        search.click();
+
+        userEvent.type(search, 'test');
+
+        const button = screen.getByRole('button', {
+            name: /search button for search packages input/i
+        });
+        button.click();
+
+        screen.getByText(/cross-platform rts game of ancient warfare/i);
+        const addButtons = screen.getAllByRole('button', {
+            name: 'Add'
+        });
+        userEvent.click(addButtons[0]);
+    });
+});
+
 describe('Step Review', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
@@ -250,11 +302,11 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Cancel/ });
     });
 
-    test('clicking Back loads Register', () => {
+    test('clicking Back loads Packages', () => {
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Add additional packages to your image');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -287,6 +339,10 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        next.click();
+
+        // packages
+        screen.getByText('Add additional packages to your image');
         next.click();
 
         // review
@@ -330,6 +386,10 @@ describe('Click through all steps', () => {
         userEvent.clear(screen.getByTestId('subscription-activation'));
         next.click();
 
+        // packages
+        screen.getByText('Add additional packages to your image');
+        next.click();
+
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
         await screen.findByText('Amazon Web Services');
@@ -360,6 +420,10 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.clear(screen.getByTestId('subscription-activation'));
+        next.click();
+
+        // packages
+        screen.getByText('Add additional packages to your image');
         next.click();
 
         await screen.
