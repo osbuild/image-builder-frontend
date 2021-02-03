@@ -5,11 +5,16 @@ import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
 
+import api from './api.js';
+import PermissionDenied from './PresentationalComponents/LandingPage/PermissionDenied';
+
 class App extends Component {
     constructor() {
         super();
 
-        this.state = {};
+        this.state = {
+            permission: true,
+        };
     }
 
     componentDidMount () {
@@ -19,6 +24,13 @@ class App extends Component {
         insights.chrome.auth.getUser().then(data => {
             this.setState({ identity: data.identity });
         });
+
+        api.getVersion().then(() => {
+            this.setState({ permission: true });
+        }).catch(() => {
+            this.setState({ permission: false });
+        });
+
     }
 
     componentWillUnmount () {
@@ -28,7 +40,7 @@ class App extends Component {
     render () {
         return (
             <React.Fragment>
-                <Routes childProps={ this.props } />
+                { this.state.permission ? <Routes childProps={ this.props } /> : <PermissionDenied /> }
             </React.Fragment>
         );
     }
