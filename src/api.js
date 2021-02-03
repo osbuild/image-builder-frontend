@@ -17,7 +17,14 @@ async function getComposeStatus(id) {
     return request.data;
 }
 
+async function getVersion() {
+    let path = '/version';
+    const request = await axios.get(IMAGE_BUILDER_API.concat(path));
+    return request.data;
+}
+
 export default {
     composeImage,
     getComposeStatus,
+    getVersion,
 };
