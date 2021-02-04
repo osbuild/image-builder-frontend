@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from '../redux';
-import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
 import { Wizard } from '@patternfly/react-core';
 
@@ -208,21 +207,17 @@ class CreateImageWizard extends Component {
                 nextButtonText: 'Create',
             }
         ];
-
         return (
-            <>
-                <PageHeader>
-                    <PageHeaderTitle title='Create a new image' />
-                </PageHeader>
-                <section className="pf-c-page__main-wizard pf-m-limit-width">
-                    <Wizard
-                        onNext={ this.onStep }
-                        onGoToStep={ this.onStep }
-                        steps={ steps }
-                        onClose={ this.onClose }
-                        onSave={ this.onSave } />
-                </section>
-            </>
+            <React.Fragment>
+                <Wizard
+                    title={ 'Create image' }
+                    onNext={ this.onStep }
+                    onGoToStep={ this.onStep }
+                    steps={ steps }
+                    onClose={ this.onClose }
+                    onSave={ this.onSave }
+                    isOpen />
+            </React.Fragment>
         );
     }
 }
