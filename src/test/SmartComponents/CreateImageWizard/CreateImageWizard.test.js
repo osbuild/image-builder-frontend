@@ -63,7 +63,7 @@ describe('Create Image Wizard', () => {
 
     test('renders component', () => {
         // check heading
-        screen.getByRole('heading', { name: /Create a new image/ });
+        screen.getByRole('heading', { name: /Create image/ });
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
