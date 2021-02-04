@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, getByText, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
@@ -82,8 +82,10 @@ describe('Step Image output', () => {
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
         const anchor = getByText(sidebar, 'Image output');
-        screen.getByTestId('upload-destination');
 
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
         // load from sidebar
         anchor.click();
     });
@@ -116,9 +118,10 @@ describe('Step Image output', () => {
     });
 
     test('target environment is required', () => {
-        const destination = screen.getByTestId('upload-destination');
+        const destination = screen.getByTestId('target-select');
+        const required = within(destination).getByText('*');
         expect(destination).toBeEnabled();
-        expect(destination).toBeRequired();
+        expect(destination).toContainElement(required);
     });
 });
 
@@ -127,9 +130,13 @@ describe('Step Upload to AWS', () => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
 
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Upload to AWS');
+        const anchor = getByText(sidebar, 'Amazon Web Services');
 
         // load from sidebar
         anchor.click();
@@ -166,6 +173,10 @@ describe('Step Registration', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
+
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -236,6 +247,10 @@ describe('Step Review', () => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
 
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
         const anchor = getByText(sidebar, 'Review');
@@ -274,7 +289,7 @@ describe('Click through all steps', () => {
 
         // select image output
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
-        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        screen.getByTestId('upload-aws').click();
         next.click();
 
         // select upload target
@@ -290,9 +305,10 @@ describe('Click through all steps', () => {
         next.click();
 
         // review
+        const imageOutput = screen.getByTestId('review-image-output');
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await screen.findByText('Amazon Web Services');
+        await within(imageOutput).findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -307,7 +323,7 @@ describe('Click through all steps', () => {
 
         // returns back to the landing page
         // but jsdom will not render the new page so we can't assert on that
-        await expect(historySpy).toHaveBeenCalledTimes(1);
+        await waitFor(() => expect(historySpy).toHaveBeenCalledTimes(1));
         await expect(historySpy).toHaveBeenCalledWith('/landing');
     });
 
@@ -316,7 +332,7 @@ describe('Click through all steps', () => {
 
         // select release
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
-        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        screen.getByTestId('upload-aws').click();
         next.click();
 
         // leave AWS account id empty
@@ -330,9 +346,10 @@ describe('Click through all steps', () => {
         userEvent.clear(screen.getByTestId('subscription-activation'));
         next.click();
 
+        const imageOutput = screen.getByTestId('review-image-output');
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await screen.findByText('Amazon Web Services');
+        await within(imageOutput).findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');
@@ -348,7 +365,7 @@ describe('Click through all steps', () => {
         // select release
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         // select upload target
-        userEvent.selectOptions(screen.getByTestId('upload-destination'), [ 'aws' ]);
+        screen.getByTestId('upload-aws').click();
         next.click();
 
         userEvent.type(screen.getByTestId('aws-account-id'), 'invalid, isNaN');
@@ -362,9 +379,10 @@ describe('Click through all steps', () => {
         userEvent.clear(screen.getByTestId('subscription-activation'));
         next.click();
 
+        const imageOutput = screen.getByTestId('review-image-output');
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await screen.findByText('Amazon Web Services');
+        await within(imageOutput).findByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');

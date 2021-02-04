@@ -12,16 +12,17 @@ import WizardStepRegistration from '../../PresentationalComponents/CreateImageWi
 import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
 
 import api from './../../api.js';
+import './CreateImageWizard.scss';
 
 class CreateImageWizard extends Component {
     constructor(props) {
         super(props);
 
         this.setRelease = this.setRelease.bind(this);
-        this.setUpload = this.setUpload.bind(this);
         this.setUploadOptions = this.setUploadOptions.bind(this);
         this.setSubscription = this.setSubscription.bind(this);
         this.setSubscribeNow = this.setSubscribeNow.bind(this);
+        this.toggleUploadDestination = this.toggleUploadDestination.bind(this);
         this.onStep = this.onStep.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onClose = this.onClose.bind(this);
@@ -30,12 +31,31 @@ class CreateImageWizard extends Component {
         this.validateSubscription = this.validateSubscription.bind(this);
 
         this.state = {
+            arch: 'x86_64',
+            imageType: 'qcow2',
             release: 'rhel-8',
-            upload: {
+            uploadAWS: {
                 type: 'aws',
                 options: {
-                    share_with_accounts: [],
+                    share_with_accounts: []
                 }
+            },
+            uploadAzure: {
+                type: 'azure',
+                options: {
+                    temp: ''
+                }
+            },
+            uploadGoogle: {
+                type: 'google',
+                options: {
+                    temp: ''
+                }
+            },
+            uploadDestinations: {
+                aws: false,
+                azure: false,
+                google: false
             },
             subscription: {
                 organization: null,
@@ -46,7 +66,9 @@ class CreateImageWizard extends Component {
             },
             subscribeNow: true,
             /* errors take form of $fieldId: error */
-            uploadErrors: {},
+            uploadAWSErrors: {},
+            uploadAzureErrors: {},
+            uploadGoogleErrors: {},
             subscriptionErrors: {},
         };
     }
@@ -68,11 +90,23 @@ class CreateImageWizard extends Component {
 
     validate() {
         /* upload */
-        if (this.state.upload.type === 'aws') {
-            this.validateUploadAmazon();
-        } else {
-            this.setState({ uploadErrors: {}});
-        }
+        Object.keys(this.state.uploadDestinations).forEach(provider => {
+            switch (provider) {
+                case 'aws':
+                    this.validateUploadAmazon();
+                    break;
+                case 'azure':
+                    break;
+                case 'google':
+                    break;
+                default:
+                    this.setState({
+                        uploadAWSErrors: {},
+                        uploadAzureErrors: {},
+                        uploadGoogleErrors: {},
+                    });
+            }
+        });
 
         /* subscription */
         if (this.state.subscribeNow) {
@@ -83,14 +117,14 @@ class CreateImageWizard extends Component {
     }
 
     validateUploadAmazon() {
-        let uploadErrors = {};
-        let share = this.state.upload.options.share_with_accounts;
+        let uploadAWSErrors = {};
+        let share = this.state.uploadAWS.options.share_with_accounts;
         if (share.length === 0 || share[0].length !== 12 || isNaN(share[0])) {
-            uploadErrors['aws-account-id'] =
+            uploadAWSErrors['aws-account-id'] =
                 { label: 'AWS account ID', value: 'A 12-digit number is required' };
         }
 
-        this.setState({ uploadErrors });
+        this.setState({ uploadAWSErrors });
     }
 
     validateSubscription() {
@@ -107,19 +141,45 @@ class CreateImageWizard extends Component {
         this.setState({ release });
     }
 
-    setUpload(upload) {
-        this.setState({ upload });
+    toggleUploadDestination(provider) {
+        this.setState(prevState => ({
+            ...prevState,
+            uploadDestinations: {
+                ...prevState.uploadDestinations,
+                [provider]: !prevState.uploadDestinations[provider]
+            }
+        }));
     }
 
-    setUploadOptions(uploadOptions) {
-        this.setState(oldState => {
-            return {
-                upload: {
-                    type: oldState.upload.type,
-                    options: uploadOptions
-                }
-            };
-        });
+    setUploadOptions(provider, uploadOptions) {
+        switch (provider) {
+            case 'aws':
+                this.setState({
+                    uploadAWS: {
+                        type: provider,
+                        options: uploadOptions
+                    }
+                });
+                break;
+            case 'azure':
+                this.setState({
+                    uploadAzure: {
+                        type: provider,
+                        options: uploadOptions
+                    }
+                });
+                break;
+            case 'google':
+                this.setState({
+                    uploadGoogle: {
+                        type: provider,
+                        options: uploadOptions
+                    }
+                });
+                break;
+            default:
+                break;
+        }
     }
 
     setSubscribeNow(subscribeNow) {
@@ -131,38 +191,52 @@ class CreateImageWizard extends Component {
     }
 
     onSave () {
-        let request = {
-            distribution: this.state.release,
-            image_requests: [
-                {
-                    architecture: 'x86_64',
-                    image_type: 'ami',
-                    upload_requests: [{
-                        type: 'aws',
-                        options: {
-                            share_with_accounts: this.state.upload.options.share_with_accounts,
+        let requests = [];
+        Object.keys(this.state.uploadDestinations).forEach(provider => {
+            switch (provider) {
+                case 'aws': {
+                    let request = {
+                        distribution: this.state.release,
+                        image_requests: [
+                            {
+                                architecture: this.state.arch,
+                                image_type: 'ami',
+                                upload_requests: [ this.state.uploadAWS ],
+                            }],
+                        customizations: {
+                            subscription: this.state.subscription,
                         },
-                    }],
-                }],
-            customizations: {
-                subscription: this.state.subscription,
-            },
-        };
+                    };
+                    requests.push(request);
+                    break;
+                }
 
-        let { updateCompose } = this.props;
-        api.composeImage(request).then(response => {
-            let compose = {};
-            compose[response.id] = {
-                image_status: {
-                    status: 'pending',
-                },
-                distribution: request.distribution,
-                architecture: request.image_requests[0].architecture,
-                image_type: request.image_requests[0].image_type,
-            };
-            updateCompose(compose);
-            this.props.history.push('/landing');
+                case 'azure':
+                    break;
+                case 'google':
+                    break;
+                default:
+                    break;
+            }
         });
+
+        const composeRequests = [];
+        requests.forEach(request => {
+            const composeRequest = api.composeImage(request).then(response => {
+                let compose = {};
+                compose[response.id] = {
+                    image_status: {
+                        status: 'pending',
+                    },
+                    distribution: request.distribution,
+                    architecture: request.image_requests[0].architecture,
+                    image_type: request.image_requests[0].image_type,
+                };
+                this.props.updateCompose(compose);
+            });
+            composeRequests.push(composeRequest);
+        });
+        Promise.all(composeRequests).then(() => this.props.history.push('/landing'));
     }
 
     onClose () {
@@ -174,21 +248,48 @@ class CreateImageWizard extends Component {
             name: 'Image output',
             component: <WizardStepImageOutput
                 value={ this.state.release }
-                upload={ this.state.upload }
                 setRelease={ this.setRelease }
-                setUpload={ this.setUpload } />
+                toggleUploadDestination={ this.toggleUploadDestination }
+                uploadDestinations={ this.state.uploadDestinations } />
         };
+
         const StepUploadAWS = {
-            name: 'Upload to AWS',
+            name: 'Amazon Web Services',
             component: <WizardStepUploadAWS
-                upload={ this.state.upload }
+                uploadAWS={ this.state.uploadAWS }
                 setUploadOptions={ this.setUploadOptions }
-                errors={ this.state.uploadErrors } />
+                errors={ this.state.uploadAWSErrors } />
+        };
+
+        const StepUploadAzure = {
+            name: 'Microsoft Azure'
+        };
+
+        const StepUploadGoogle = {
+            name: 'Google Cloud Platform'
+        };
+
+        const uploadDestinationSteps = [];
+        if (this.state.uploadDestinations.aws) {
+            uploadDestinationSteps.push(StepUploadAWS);
+        }
+
+        if (this.state.uploadDestinations.azure) {
+            uploadDestinationSteps.push(StepUploadAzure);
+        }
+
+        if (this.state.uploadDestinations.google) {
+            uploadDestinationSteps.push(StepUploadGoogle);
+        }
+
+        const StepTargetEnv = {
+            name: 'Target environment',
+            steps: uploadDestinationSteps
         };
 
         const steps = [
             StepImageOutput,
-            ...(this.state.upload.type === 'aws' ? [ StepUploadAWS ] : []),
+            ...(StepTargetEnv.steps.length > 0 ? [ StepTargetEnv ] : []),
             {
                 name: 'Registration',
                 component: <WizardStepRegistration
@@ -201,10 +302,10 @@ class CreateImageWizard extends Component {
                 name: 'Review',
                 component: <WizardStepReview
                     release={ this.state.release }
-                    upload={ this.state.upload }
+                    uploadAWS={ this.state.uploadAWS }
                     subscription={ this.state.subscription }
                     subscribeNow={ this.state.subscribeNow }
-                    uploadErrors={ this.state.uploadErrors }
+                    uploadAWSErrors={ this.state.uploadAWSErrors }
                     subscriptionErrors={ this.state.subscriptionErrors } />,
                 nextButtonText: 'Create',
             }
