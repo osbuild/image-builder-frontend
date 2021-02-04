@@ -16,7 +16,7 @@ const WizardStepReview = (props) => {
     };
     return (
         <>
-            { (Object.keys(props.uploadErrors).length > 0 ||
+            { (Object.keys(props.uploadAWSErrors).length > 0 ||
                Object.keys(props.subscriptionErrors).length > 0) &&
               <Alert variant="danger" className="pf-u-mb-xl" isInline title="Required information is missing" /> }
             <Title headingLevel="h2" size="xl">Create image</Title>
@@ -26,7 +26,7 @@ const WizardStepReview = (props) => {
                     to create the image using the following criteria.
                 </small>
                 <h3>Image output</h3>
-                <dl>
+                <dl data-testid='review-image-output'>
                     <dt>
                         Release
                     </dt>
@@ -37,14 +37,14 @@ const WizardStepReview = (props) => {
                         Target environment
                     </dt>
                     <dd>
-                        { props.upload && <>{ uploadOptions[props.upload.type] }</> }
+                        { props.uploadAWS && <>{ uploadOptions.aws }</> }
                     </dd>
                 </dl>
-                { Object.entries(props.uploadErrors).length > 0 && (
+                { Object.entries(props.uploadAWSErrors).length > 0 && (
                     <h3>Upload to AWS</h3>
                 )}
                 <dl>
-                    { Object.entries(props.uploadErrors).map(([ key, error ]) => {
+                    { Object.entries(props.uploadAWSErrors).map(([ key, error ]) => {
                         return (<React.Fragment key={ key }>
                             <dt>
                                 { error.label }
@@ -86,10 +86,10 @@ const WizardStepReview = (props) => {
 
 WizardStepReview.propTypes = {
     release: PropTypes.string,
-    upload: PropTypes.object,
+    uploadAWS: PropTypes.object,
     subscription: PropTypes.object,
     subscribeNow: PropTypes.bool,
-    uploadErrors: PropTypes.object,
+    uploadAWSErrors: PropTypes.object,
     subscriptionErrors: PropTypes.object,
 };
 
