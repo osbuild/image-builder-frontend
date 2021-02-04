@@ -218,7 +218,6 @@ class CreateImageWizard extends Component {
                     <Wizard
                         onNext={ this.onStep }
                         onGoToStep={ this.onStep }
-                        isInPage
                         steps={ steps }
                         onClose={ this.onClose }
                         onSave={ this.onSave } />
