@@ -136,7 +136,7 @@ class CreateImageWizard extends Component {
             image_requests: [
                 {
                     architecture: 'x86_64',
-                    image_type: 'qcow2',
+                    image_type: 'ami',
                     upload_requests: [{
                         type: 'aws',
                         options: {
