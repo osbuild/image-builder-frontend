@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { InfoCircleIcon } from '@patternfly/react-icons';
-import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, Title } from '@patternfly/react-core';
+import { Button, EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, Title } from '@patternfly/react-core';
 
 const PermissionDenied = () => {
     return (
@@ -13,8 +13,9 @@ const PermissionDenied = () => {
             <EmptyStateBody>
             Image Builder is in early development and not ready for use yet.
             If you&apos;re interested in trying it out once it reaches beta,
-            there will be a contact form up soon to notify anyone who signs up.
+            fill out your contact information in the sign up form, and we&apos;ll be in touch once it&apos;s ready.
             </EmptyStateBody>
+            <Button id="beta-signup-button" variant="primary">Sign up</Button>
         </EmptyState>
     );
 };
