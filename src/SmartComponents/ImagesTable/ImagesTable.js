@@ -52,6 +52,9 @@ class ImagesTable extends Component {
     pollComposeStatuses() {
         let { updateCompose, composes } = this.props;
         Object.entries(composes).map(([ id, compose ]) => {
+            /* Skip composes that have been complete */
+            if (compose.status === 'success' || compose.status === 'failure')
+                return
             api.getComposeStatus(id).then(response => {
                 let newCompose = {};
                 newCompose[id] = Object.assign({}, compose, { status: response.status });
