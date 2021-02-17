@@ -153,7 +153,9 @@ class CreateImageWizard extends Component {
         api.composeImage(request).then(response => {
             let compose = {};
             compose[response.id] = {
-                status: 'request sent',
+                image_status: {
+                    status: 'pending',
+                },
                 distribution: request.distribution,
                 architecture: request.image_requests[0].architecture,
                 image_type: request.image_requests[0].image_type,
