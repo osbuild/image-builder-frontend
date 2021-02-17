@@ -8,19 +8,37 @@ import '@testing-library/jest-dom';
 const store = {
     composes: {
         'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa': {
-            status: 'building',
+            image_status: {
+                status: 'running',
+                upload_status: {
+                    type: 'aws',
+                    status: 'success'
+                }
+            },
             distribution: 'fedora-31',
             architecture: 'x86_64',
             image_type: 'qcow2'
         },
         '61b0effa-c901-4ee5-86b9-2010b47f1b22': {
-            status: 'uploading',
+            image_status: {
+                status: 'failure',
+                upload_status: {
+                    type: 'aws',
+                    status: 'failure'
+                }
+            },
             distribution: 'fedora-31',
             architecture: 'x86_64',
             image_type: 'qcow2'
         },
         '551de6f6-1533-4b46-a69f-7924051f9bc6': {
-            status: 'success',
+            image_status: {
+                status: 'running',
+                upload_status: {
+                    type: 'aws',
+                    status: ''
+                }
+            },
             distribution: 'fedora-31',
             architecture: 'x86_64',
             image_type: 'qcow2'
@@ -54,7 +72,7 @@ describe('Images Table', () => {
 
             // render the expected <ImageBuildStatus /> and compare the text content
             let testElement = document.createElement('testElement');
-            render(<ImageBuildStatus status={ compose.status } />, { container: testElement });
+            render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
             expect(row.cells[3]).toHaveTextContent(testElement.textContent);
         }
     });
