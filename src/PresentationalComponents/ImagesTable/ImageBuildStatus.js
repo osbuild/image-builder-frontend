@@ -26,7 +26,7 @@ const ImageBuildStatus = (props) => {
                 text: 'Image build, Upload, Cloud registration pending'
             }
         ],
-        building: [
+        running: [
             {
                 icon: <Spinner size="md" />,
                 text: 'Image build in progress'
@@ -34,22 +34,6 @@ const ImageBuildStatus = (props) => {
             {
                 icon: <PendingIcon />,
                 text: 'Upload, Cloud registration pending'
-            }
-        ],
-        uploading: [
-            {
-                icon: <Spinner size="md" />,
-                text: 'Upload in progress'
-            },
-            {
-                icon: <PendingIcon />,
-                text: 'Cloud registration pending'
-            }
-        ],
-        registering: [
-            {
-                icon: <Spinner size="md" />,
-                text: 'Cloud registration in progress'
             }
         ]
     };
