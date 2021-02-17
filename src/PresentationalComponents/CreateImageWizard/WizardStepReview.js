@@ -8,7 +8,8 @@ import './WizardStepReview.scss';
 
 const WizardStepReview = (props) => {
     const releaseOptions = {
-        'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.3'
+        'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.3',
+        'centos-8': 'CentOS Stream 8'
     };
     const uploadOptions = {
         aws: 'Amazon Web Services'
