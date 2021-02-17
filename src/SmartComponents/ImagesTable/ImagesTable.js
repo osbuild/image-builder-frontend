@@ -53,11 +53,13 @@ class ImagesTable extends Component {
         let { updateCompose, composes } = this.props;
         Object.entries(composes).map(([ id, compose ]) => {
             /* Skip composes that have been complete */
-            if (compose.status === 'success' || compose.status === 'failure')
-                return
+            if (compose.image_status.status === 'success' || compose.image_status.status === 'failure') {
+                return;
+            }
+
             api.getComposeStatus(id).then(response => {
                 let newCompose = {};
-                newCompose[id] = Object.assign({}, compose, { status: response.status });
+                newCompose[id] = Object.assign({}, compose, { image_status: response.image_status });
                 updateCompose(newCompose);
             });
         });
@@ -74,7 +76,7 @@ class ImagesTable extends Component {
                     id,
                     uploadOptions[compose.image_type] ? uploadOptions[compose.image_type] : compose.image_type,
                     { title: <Release release={ compose.distribution } /> },
-                    { title: <ImageBuildStatus status={ compose.status } /> },
+                    { title: <ImageBuildStatus status={ compose.image_status.status } /> },
                     ''
                 ]
             };
