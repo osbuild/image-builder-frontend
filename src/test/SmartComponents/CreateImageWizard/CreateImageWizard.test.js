@@ -353,10 +353,10 @@ describe('Click through all steps', () => {
         next.click();
 
         // review
-        const imageOutput = screen.getByTestId('review-image-output');
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        await within(imageOutput).findByText('Amazon Web Services');
+        const main = screen.getByRole('main', { name: 'Create image' });
+        within(main).getByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -400,8 +400,8 @@ describe('Click through all steps', () => {
 
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        const imageOutput = screen.getByTestId('review-image-output');
-        await within(imageOutput).findByText('Amazon Web Services');
+        const main = screen.getByRole('main', { name: 'Create image' });
+        within(main).getByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');
@@ -437,8 +437,8 @@ describe('Click through all steps', () => {
 
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
-        const imageOutput = screen.getByTestId('review-image-output');
-        await within(imageOutput).findByText('Amazon Web Services');
+        const main = screen.getByRole('main', { name: 'Create image' });
+        within(main).getByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
 
         const errorMessages = await screen.findAllByText('A value is required');

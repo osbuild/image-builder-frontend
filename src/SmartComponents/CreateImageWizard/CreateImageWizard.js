@@ -100,24 +100,14 @@ class CreateImageWizard extends Component {
     }
 
     validate() {
-        /* upload */
-        Object.keys(this.state.uploadDestinations).forEach(provider => {
-            switch (provider) {
-                case 'aws':
-                    this.validateUploadAmazon();
-                    break;
-                case 'azure':
-                    break;
-                case 'google':
-                    break;
-                default:
-                    this.setState({
-                        uploadAWSErrors: {},
-                        uploadAzureErrors: {},
-                        uploadGoogleErrors: {},
-                    });
-            }
-        });
+        if (this.state.uploadDestinations.aws) {this.validateUploadAmazon();}
+        else {
+            this.setState({
+                uploadAWSErrors: {},
+                uploadAzureErrors: {},
+                uploadGoogleErrors: {},
+            });
+        }
 
         /* subscription */
         if (this.state.subscribeNow) {
@@ -372,6 +362,7 @@ class CreateImageWizard extends Component {
                 component: <WizardStepReview
                     release={ this.state.release }
                     uploadAWS={ this.state.uploadAWS }
+                    uploadDestinations={ this.state.uploadDestinations }
                     subscription={ this.state.subscription }
                     subscribeNow={ this.state.subscribeNow }
                     uploadAWSErrors={ this.state.uploadAWSErrors }

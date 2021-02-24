@@ -4,7 +4,6 @@
 // Increasing margins for h3 for better spacing and readability
 .pf-c-content h3 {
     margin-top: var(--pf-global--spacer--xl);
-    margin-bottom: var(--pf-global--spacer--md);
 }
 // Decreasing gap between dl items for better spacing and readability
 // Also setting a first column width to 25% instead of auto, 
@@ -14,4 +13,9 @@
         grid-template: 1fr / 25% 1fr;
         grid-gap: var(--pf-global--spacer--sm);
     }
+}
+
+#destination-header {
+    font-size: 18px;
+    margin-bottom: var(--pf-global--spacer--sm);
 }
