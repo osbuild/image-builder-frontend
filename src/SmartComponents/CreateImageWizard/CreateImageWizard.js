@@ -8,6 +8,7 @@ import { Wizard, TextContent } from '@patternfly/react-core';
 
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
+import WizardStepUploadAzure from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAzure';
 import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard/WizardStepPackages';
 import WizardStepUploadGoogle from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadGoogle';
 import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
@@ -51,7 +52,9 @@ class CreateImageWizard extends Component {
             uploadAzure: {
                 type: 'azure',
                 options: {
-                    temp: ''
+                    tenant_id: null,
+                    subscription_id: null,
+                    resource_group: null,
                 }
             },
             uploadGoogle: {
@@ -103,14 +106,21 @@ class CreateImageWizard extends Component {
     }
 
     validate() {
-        if (this.state.uploadDestinations.aws) {this.validateUploadAmazon();}
-        else {
-            this.setState({
-                uploadAWSErrors: {},
-                uploadAzureErrors: {},
-                uploadGoogleErrors: {},
-            });
-        }
+        /* upload */
+        Object.keys(this.state.uploadDestinations).forEach(provider => {
+            switch (provider) {
+                case 'aws':
+                    this.validateUploadAmazon();
+                    break;
+                case 'azure':
+                    this.validateUploadAzure();
+                    break;
+                case 'google':
+                    break;
+                default:
+                    break;
+            }
+        });
 
         /* subscription */
         if (this.state.subscribeNow) {
@@ -129,6 +139,29 @@ class CreateImageWizard extends Component {
         }
 
         this.setState({ uploadAWSErrors });
+    }
+
+    validateUploadAzure() {
+        let uploadAzureErrors = {};
+
+        let tenant_id = this.state.uploadAzure.options.tenant_id;
+        if (tenant_id === null || tenant_id === '') {
+            uploadAzureErrors['azure-resource-group'] =
+                { label: 'Azure tenant ID', value: 'A tenant ID is required' };
+        }
+
+        let subscriptionId = this.state.uploadAzure.options.subscription_id;
+        if (subscriptionId === null || subscriptionId === '') {
+            uploadAzureErrors['azure-subscription-id'] =
+                { label: 'Azure subscription ID', value: 'A subscription ID is required' };
+        }
+
+        let resource_group = this.state.uploadAzure.options.resource_group;
+        if (resource_group === null || resource_group === '') {
+            uploadAzureErrors['azure-resource-group'] =
+                { label: 'Azure resource group', value: 'A resource group is required' };
+        }
+        // TODO check oauth2 thing too here?
     }
 
     validateSubscription() {
@@ -306,6 +339,30 @@ class CreateImageWizard extends Component {
             requests.push(request);
         }
 
+        if (this.state.uploadDestinations.azure) {
+            let request = {
+                distribution: this.state.release,
+                image_requests: [
+                    {
+                        architecture: this.state.arch,
+                        image_type: 'vhd',
+                        upload_requests: [{
+                            type: 'azure',
+                            options: {
+                                tenant_id: this.state.uploadAzure.options.tenant_id,
+                                subscription_id: this.state.uploadAzure.options.subscription_id,
+                                resource_group: this.state.uploadAzure.options.resource_group,
+                            },
+                        }],
+                    }],
+                customizations: {
+                    subscription: this.state.subscription,
+                },
+            };
+            requests.push(request);
+
+        }
+
         const composeRequests = [];
         requests.forEach(request => {
             const composeRequest = api.composeImage(request).then(response => {
@@ -348,7 +405,11 @@ class CreateImageWizard extends Component {
         };
 
         const StepUploadAzure = {
-            name: 'Microsoft Azure'
+            name: 'Microsoft Azure',
+            component: <WizardStepUploadAzure
+                uploadAzure={ this.state.uploadAzure }
+                setUploadOptions={ this.setUploadOptions }
+                errors={ this.state.uploadAzureErrors } />
         };
 
         const StepUploadGoogle = {
