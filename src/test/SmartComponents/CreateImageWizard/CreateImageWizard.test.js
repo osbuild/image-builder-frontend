@@ -169,6 +169,50 @@ describe('Step Upload to AWS', () => {
     });
 });
 
+describe('Step Upload to Google', () => {
+    beforeEach(() => {
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
+
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-google');
+        awsTile.click();
+
+        // left sidebar navigation
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Google Cloud Platform');
+
+        // load from sidebar
+        anchor.click();
+    });
+
+    test('clicking Next loads Registration', () => {
+        const [ next, , ] = verifyButtons();
+        next.click();
+
+        screen.getByText('Register the system');
+    });
+
+    test('clicking Back loads Release', () => {
+        const [ , back, ] = verifyButtons();
+        back.click();
+
+        screen.getByTestId('release-select');
+    });
+
+    test('clicking Cancel loads landing page', () => {
+        const [ , , cancel ] = verifyButtons();
+        verifyCancelButton(cancel, historySpy);
+    });
+
+    test('the google account id field is shown and required', () => {
+        const accessKeyId = screen.getByTestId('input-google-user');
+        expect(accessKeyId).toHaveValue('');
+        expect(accessKeyId).toBeEnabled();
+        expect(accessKeyId).toBeRequired();
+    });
+});
+
 describe('Step Registration', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
@@ -344,10 +388,14 @@ describe('Click through all steps', () => {
         // select image output
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         screen.getByTestId('upload-aws').click();
+        screen.getByTestId('upload-google').click();
         next.click();
 
         // select upload target
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        next.click();
+
+        userEvent.type(screen.getByTestId('input-google-user'), 'test@test.com');
         next.click();
 
         // registration
@@ -367,6 +415,7 @@ describe('Click through all steps', () => {
             findByText('Review the information and click Create image to create the image using the following criteria.');
         const main = screen.getByRole('main', { name: 'Create image' });
         within(main).getByText('Amazon Web Services');
+        within(main).getByText('Google Cloud Platform');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -377,7 +426,7 @@ describe('Click through all steps', () => {
         create.click();
 
         // API request sent to backend
-        await expect(composeImage).toHaveBeenCalledTimes(1);
+        await expect(composeImage).toHaveBeenCalledTimes(2);
 
         // returns back to the landing page
         // but jsdom will not render the new page so we can't assert on that

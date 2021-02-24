@@ -9,6 +9,7 @@ import { Wizard, TextContent } from '@patternfly/react-core';
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
 import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard/WizardStepPackages';
+import WizardStepUploadGoogle from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadGoogle';
 import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
 import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
 
@@ -28,6 +29,7 @@ class CreateImageWizard extends Component {
         this.setSubscription = this.setSubscription.bind(this);
         this.setSubscribeNow = this.setSubscribeNow.bind(this);
         this.setPackagesSearchName = this.setPackagesSearchName.bind(this);
+        this.setGoogleAccountType = this.setGoogleAccountType.bind(this);
         this.toggleUploadDestination = this.toggleUploadDestination.bind(this);
         this.onStep = this.onStep.bind(this);
         this.onSave = this.onSave.bind(this);
@@ -53,9 +55,10 @@ class CreateImageWizard extends Component {
                 }
             },
             uploadGoogle: {
-                type: 'google',
+                type: 'gcp',
+                accountType: 'googleAccount',
                 options: {
-                    temp: ''
+                    share_with_accounts: []
                 }
             },
             uploadDestinations: {
@@ -173,7 +176,7 @@ class CreateImageWizard extends Component {
             case 'google':
                 this.setState({
                     uploadGoogle: {
-                        type: provider,
+                        ...this.state.uploadGoogle,
                         options: uploadOptions
                     }
                 });
@@ -181,6 +184,15 @@ class CreateImageWizard extends Component {
             default:
                 break;
         }
+    }
+
+    setGoogleAccountType(_, event) {
+        this.setState({
+            uploadGoogle: {
+                ...this.state.uploadGoogle,
+                accountType: event.target.value
+            }
+        });
     }
 
     setSubscribeNow(subscribeNow) {
@@ -240,34 +252,40 @@ class CreateImageWizard extends Component {
 
     onSave () {
         let requests = [];
-        Object.keys(this.state.uploadDestinations).forEach(provider => {
-            switch (provider) {
-                case 'aws': {
-                    let request = {
-                        distribution: this.state.release,
-                        image_requests: [
-                            {
-                                architecture: this.state.arch,
-                                image_type: 'ami',
-                                upload_requests: [ this.state.uploadAWS ],
-                            }],
-                        customizations: {
-                            subscription: this.state.subscription,
-                            packages: this.state.packagesSelectedNames,
-                        },
-                    };
-                    requests.push(request);
-                    break;
-                }
+        if (this.state.uploadDestinations.aws) {
+            let request = {
+                distribution: this.state.release,
+                image_requests: [
+                    {
+                        architecture: this.state.arch,
+                        image_type: 'ami',
+                        upload_requests: [ this.state.uploadAWS ],
+                    }],
+                customizations: {
+                    subscription: this.state.subscription,
+                    packages: this.state.packagesSelectedNames,
+                },
+            };
+            requests.push(request);
+        }
 
-                case 'azure':
-                    break;
-                case 'google':
-                    break;
-                default:
-                    break;
-            }
-        });
+        if (this.state.uploadDestinations.google) {
+            const upload_google = this.state.uploadGoogle;
+            delete upload_google.accountType;
+            let request = {
+                distribution: this.state.release,
+                image_requests: [
+                    {
+                        architecture: this.state.arch,
+                        image_type: 'gcp',
+                        upload_requests: [ upload_google ],
+                    }],
+                customizations: {
+                    subscription: this.state.subscription,
+                },
+            };
+            requests.push(request);
+        }
 
         const composeRequests = [];
         requests.forEach(request => {
@@ -315,7 +333,12 @@ class CreateImageWizard extends Component {
         };
 
         const StepUploadGoogle = {
-            name: 'Google Cloud Platform'
+            name: 'Google Cloud Platform',
+            component: <WizardStepUploadGoogle
+                uploadGoogle={ this.state.uploadGoogle }
+                setGoogleAccountType={ this.setGoogleAccountType }
+                setUploadOptions={ this.setUploadOptions }
+                errors={ this.state.uploadGoogleErrors } />
         };
 
         const uploadDestinationSteps = [];
@@ -362,6 +385,7 @@ class CreateImageWizard extends Component {
                 component: <WizardStepReview
                     release={ this.state.release }
                     uploadAWS={ this.state.uploadAWS }
+                    uploadGoogle={ this.state.uploadGoogle }
                     uploadDestinations={ this.state.uploadDestinations }
                     subscription={ this.state.subscription }
                     subscribeNow={ this.state.subscribeNow }
