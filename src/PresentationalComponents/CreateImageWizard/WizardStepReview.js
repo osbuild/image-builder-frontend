@@ -32,6 +32,50 @@ const WizardStepReview = (props) => {
         </>
     );
 
+    const googleReview = (
+        <>
+            <Text id="destination-header">Google Cloud Platform</Text>
+            <TextList component={ TextListVariants.dl } data-testid='review-image-upload-google'>
+                {props.uploadGoogle.accountType === 'googleAccount' && (
+                    <>
+                        <TextListItem component={ TextListItemVariants.dt }>Google account</TextListItem>
+                        <TextListItem component={ TextListItemVariants.dd }>{props.uploadGoogle.options.share_with_accounts[0] ?
+                            props.uploadGoogle.options.share_with_accounts[0].user || '' :
+                            ''}
+                        </TextListItem>
+                    </>
+                )}
+                {props.uploadGoogle.accountType === 'serviceAccount' && (
+                    <>
+                        <TextListItem component={ TextListItemVariants.dt }>Service account</TextListItem>
+                        <TextListItem component={ TextListItemVariants.dd }>{props.uploadGoogle.options.share_with_accounts[0] ?
+                            props.uploadGoogle.options.share_with_accounts[0].serviceAccount || '' :
+                            ''}
+                        </TextListItem>
+                    </>
+                )}
+                {props.uploadGoogle.accountType === 'googleGroup' && (
+                    <>
+                        <TextListItem component={ TextListItemVariants.dt }>Google group</TextListItem>
+                        <TextListItem component={ TextListItemVariants.dd }>{props.uploadGoogle.options.share_with_accounts[0] ?
+                            props.uploadGoogle.options.share_with_accounts[0].group || '' :
+                            ''}
+                        </TextListItem>
+                    </>
+                )}
+                {props.uploadGoogle.accountType === 'domain' && (
+                    <>
+                        <TextListItem component={ TextListItemVariants.dt }>Domain</TextListItem>
+                        <TextListItem component={ TextListItemVariants.dd }>{props.uploadGoogle.options.share_with_accounts[0] ?
+                            props.uploadGoogle.options.share_with_accounts[0].domain || '' :
+                            ''}
+                        </TextListItem>
+                    </>
+                )}
+            </TextList>
+        </>
+    );
+
     let subscriptionReview = <TextListItem component={ TextListItemVariants.dd }>Register the system later</TextListItem>;
     if (props.subscribeNow) {
         subscriptionReview = (<>
@@ -67,6 +111,7 @@ const WizardStepReview = (props) => {
                 </TextList>
                 <Text component={ TextVariants.h3 }>Target environment</Text>
                 {props.uploadDestinations.aws && awsReview }
+                {props.uploadDestinations.google && googleReview }
                 <Text component={ TextVariants.h3 }>Registration</Text>
                 <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
                     <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
@@ -80,6 +125,7 @@ const WizardStepReview = (props) => {
 WizardStepReview.propTypes = {
     release: PropTypes.string,
     uploadAWS: PropTypes.object,
+    uploadGoogle: PropTypes.object,
     uploadDestinations: PropTypes.object,
     subscription: PropTypes.object,
     subscribeNow: PropTypes.bool,

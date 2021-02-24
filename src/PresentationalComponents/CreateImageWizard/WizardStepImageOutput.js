@@ -56,8 +56,7 @@ const WizardStepImageOutput = (props) => {
                             onClick={ () => props.toggleUploadDestination('google') }
                             isSelected={ props.uploadDestinations.google }
                             isStacked
-                            isDisplayLarge
-                            isDisabled />
+                            isDisplayLarge />
                     </div>
                 </FormGroup>
             </Form>
