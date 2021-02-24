@@ -44,8 +44,7 @@ const WizardStepImageOutput = (props) => {
                             onClick={ () => props.toggleUploadDestination('azure') }
                             isSelected={ props.uploadDestinations.azure }
                             isStacked
-                            isDisplayLarge
-                            isDisabled />
+                            isDisplayLarge />
                         <Tile
                             className="tile"
                             data-testid="upload-google"

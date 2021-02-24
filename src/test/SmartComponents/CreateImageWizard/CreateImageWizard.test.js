@@ -213,6 +213,60 @@ describe('Step Upload to Google', () => {
     });
 });
 
+describe('Step Upload to Azure', () => {
+    beforeEach(() => {
+        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        historySpy = jest.spyOn(history, 'push');
+
+        // select aws as upload destination
+        const azureTile = screen.getByTestId('upload-azure');
+        azureTile.click();
+
+        // left sidebar navigation
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Microsoft Azure');
+
+        // load from sidebar
+        anchor.click();
+    });
+
+    test('clicking Next loads Registration', () => {
+        const [ next, , ] = verifyButtons();
+        next.click();
+
+        screen.getByText('Register the system');
+    });
+
+    test('clicking Back loads Release', () => {
+        const [ , back, ] = verifyButtons();
+        back.click();
+
+        screen.getByTestId('release-select');
+    });
+
+    test('clicking Cancel loads landing page', () => {
+        const [ , , cancel ] = verifyButtons();
+        verifyCancelButton(cancel, historySpy);
+    });
+
+    test('the azure upload fields are shown and required', () => {
+        const tenantId = screen.getByTestId('azure-tenant-id');
+        expect(tenantId).toHaveValue('');
+        expect(tenantId).toBeEnabled();
+        expect(tenantId).toBeRequired();
+
+        const subscription = screen.getByTestId('azure-subscription-id');
+        expect(subscription).toHaveValue('');
+        expect(subscription).toBeEnabled();
+        expect(subscription).toBeRequired();
+
+        const resourceGroup = screen.getByTestId('azure-resource-group');
+        expect(resourceGroup).toHaveValue('');
+        expect(resourceGroup).toBeEnabled();
+        expect(resourceGroup).toBeRequired();
+    });
+});
+
 describe('Step Registration', () => {
     beforeEach(() => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
