@@ -263,6 +263,7 @@ class CreateImageWizard extends Component {
                             }],
                         customizations: {
                             subscription: this.state.subscription,
+                            packages: this.state.packagesSelectedNames,
                         },
                     };
                     requests.push(request);
