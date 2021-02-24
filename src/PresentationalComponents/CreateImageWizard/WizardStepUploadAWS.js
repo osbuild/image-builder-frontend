@@ -6,10 +6,10 @@ import { Form, FormGroup, TextInput, Title } from '@patternfly/react-core';
 const WizardStepUploadAWS = (props) => {
     return (
         <Form>
-            <Title headingLevel="h2" size="xl">Upload to AWS</Title>
+            <Title headingLevel="h2" size="xl">Target Environment - Upload to AWS</Title>
             <p>
-            Your image will be uploaded to a temporary account on Amazon Web Services.
-            The image will be shared with the account ID you provide below. <br />
+            Your image will be uploaded to a temporary account on Amazon Web Services. <br />
+            The image will be shared with the account you provide below. <br />
             Within the next 14 days you will need to copy the shared image to your own account.
             After 14 days it will be unavailable and will have to be regenerated.
             </p>
