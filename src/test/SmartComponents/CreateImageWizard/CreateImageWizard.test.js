@@ -355,6 +355,10 @@ describe('Step Packages', () => {
         const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
         historySpy = jest.spyOn(history, 'push');
 
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
         const anchor = getByText(sidebar, 'Packages');

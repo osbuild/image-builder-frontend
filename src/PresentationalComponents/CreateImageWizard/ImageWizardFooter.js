@@ -14,24 +14,32 @@ const ImageWizardFooter = (props) => {
                     {({ activeStep, onNext, onBack, onClose }) => {
                         let nextButtonText = 'Next';
                         if (activeStep.name === 'Review') {
-                            nextButtonText = props.disable ? 'Creating...' : 'Create';
+                            nextButtonText = props.isSaveInProgress ? 'Creating...' : 'Create';
+                        }
+
+                        let nextButtonIsDisabled = props.isSaveInProgress;
+
+                        if ((activeStep.name === 'Image output' || activeStep.name === 'Review') && !props.isValidUploadDestination) {
+                            nextButtonIsDisabled = true;
                         }
 
                         return (
                             <>
                                 <Button aria-label={ activeStep.name === 'Review' ? 'Create' : 'Next' } variant={ ButtonVariant.primary }
-                                    onClick={ onNext } isDisabled={ props.disable }>
+                                    onClick={ onNext } isDisabled={ nextButtonIsDisabled }>
                                     { nextButtonText }
                                 </Button>
                                 <Button aria-label="Back" variant={ ButtonVariant.secondary }
-                                    onClick={ onBack } isDisabled={ props.disable || activeStep.name === 'Image output' }>
+                                    onClick={ onBack } isDisabled={ props.isSaveInProgress || activeStep.name === 'Image output' }>
                                 Back
                                 </Button>
                                 <Button aria-label="Cancel" variant={ ButtonVariant.link }
-                                    onClick={ onClose } isDisabled={ props.disable }>
+                                    onClick={ onClose } isDisabled={ props.isSaveInProgress }>
                                 Cancel
                                 </Button>
-                            </>);}}
+                            </>
+                        );
+                    }}
                 </WizardContextConsumer>
                 { props.error && (
                     <TextContent className="footer-error">
@@ -44,7 +52,8 @@ const ImageWizardFooter = (props) => {
 };
 
 ImageWizardFooter.propTypes = {
-    disable: PropTypes.bool,
+    isValidUploadDestination: PropTypes.bool,
+    isSaveInProgress: PropTypes.bool,
     error: PropTypes.string,
 };
 

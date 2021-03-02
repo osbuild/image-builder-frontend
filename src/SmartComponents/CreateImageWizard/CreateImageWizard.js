@@ -89,7 +89,7 @@ class CreateImageWizard extends Component {
             packagesFilteredComponents: [],
             packagesSelectedNames: [],
             packagesSearchName: '',
-            onSaveInProgress: false,
+            isSaveInProgress: false,
             onSaveError: null,
         };
     }
@@ -289,7 +289,7 @@ class CreateImageWizard extends Component {
 
     onSave() {
         this.setState({
-            onSaveInProgress: true,
+            isSaveInProgress: true,
         });
 
         let requests = [];
@@ -398,7 +398,7 @@ class CreateImageWizard extends Component {
                 this.props.history.push('/landing');
             })
             .catch(err => {
-                this.setState({ onSaveInProgress: false });
+                this.setState({ isSaveInProgress: false });
                 if (err.response.status === 500) {
                     this.setState({ onSaveError: 'Error: Something went wrong serverside' });
                 }
@@ -410,6 +410,10 @@ class CreateImageWizard extends Component {
     }
 
     render() {
+        const isValidUploadDestination = this.state.uploadDestinations.aws ||
+            this.state.uploadDestinations.azure ||
+            this.state.uploadDestinations.google;
+
         const StepImageOutput = {
             name: 'Image output',
             component: <WizardStepImageOutput
@@ -497,6 +501,7 @@ class CreateImageWizard extends Component {
                 nextButtonText: 'Create',
             }
         ];
+
         return (
             <React.Fragment>
                 <Wizard
@@ -506,7 +511,10 @@ class CreateImageWizard extends Component {
                     steps={ steps }
                     onClose={ this.onClose }
                     onSave={ this.onSave }
-                    footer={ <ImageWizardFooter disable={ this.state.onSaveInProgress } error={ this.state.onSaveError } /> }
+                    footer={ <ImageWizardFooter
+                        isValidUploadDestination={ isValidUploadDestination }
+                        isSaveInProgress={ this.state.isSaveInProgress }
+                        error={ this.state.onSaveError } /> }
                     isOpen />
             </React.Fragment>
         );
