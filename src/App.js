@@ -13,7 +13,7 @@ class App extends Component {
         super();
 
         this.state = {
-            permission: true,
+            permission: false,
         };
     }
 
@@ -23,14 +23,12 @@ class App extends Component {
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
         insights.chrome.auth.getUser().then(data => {
             this.setState({ identity: data.identity });
+            api.getVersion().then(() => {
+                this.setState({ permission: true });
+            }).catch(() => {
+                this.setState({ permission: false });
+            });
         });
-
-        api.getVersion().then(() => {
-            this.setState({ permission: true });
-        }).catch(() => {
-            this.setState({ permission: false });
-        });
-
     }
 
     componentWillUnmount () {
