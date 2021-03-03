@@ -32,6 +32,23 @@ const WizardStepReview = (props) => {
         </>
     );
 
+    let subscriptionReview = <TextListItem component={ TextListItemVariants.dd }>Register the system later</TextListItem>;
+    if (props.subscribeNow) {
+        subscriptionReview = (<>
+            <TextListItem component={ TextListItemVariants.dd }>Register the system on first boot</TextListItem>
+            <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
+            { props.subscriptionErrors['subscription-activation'] ? (
+                <TextListItem component={ TextListItemVariants.dd }>
+                    <ExclamationCircleIcon className="error" /> { props.subscriptionErrors['subscription-activation'].value }
+                </TextListItem>
+            ) : (
+                <TextListItem component={ TextListItemVariants.dd } type="password">
+                    {'*'.repeat(props.subscription['activation-key'].length)}
+                </TextListItem>
+            )}
+        </>);
+    }
+
     return (
         <>
             { (Object.keys(props.uploadAWSErrors).length > 0 ||
@@ -53,21 +70,7 @@ const WizardStepReview = (props) => {
                 <Text component={ TextVariants.h3 }>Registration</Text>
                 <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
                     <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
-                    { props.subscribeNow ? (
-                        <TextListItem component={ TextListItemVariants.dd }>Register the system on first boot</TextListItem>
-                    ) : (
-                        <TextListItem component={ TextListItemVariants.dd }>Register the system later</TextListItem>
-                    )}
-                    <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
-                    { props.subscriptionErrors['subscription-activation'] ? (
-                        <TextListItem component={ TextListItemVariants.dd }>
-                            <ExclamationCircleIcon className="error" /> { props.subscriptionErrors['subscription-activation'].value }
-                        </TextListItem>
-                    ) : (
-                        <TextListItem component={ TextListItemVariants.dd } type="password">
-                            {'*'.repeat(props.subscription['activation-key'].length)}
-                        </TextListItem>
-                    )}
+                    { subscriptionReview }
                 </TextList>
             </TextContent>
         </>

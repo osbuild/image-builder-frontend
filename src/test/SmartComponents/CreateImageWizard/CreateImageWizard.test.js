@@ -205,7 +205,7 @@ describe('Step Registration', () => {
         verifyCancelButton(cancel, historySpy);
     });
 
-    test('should allow choosing activation keys', () => {
+    test('should allow choosing activation keys', async () => {
         screen
             .getByLabelText('Embed an activation key and register systems on first boot')
             .click();
@@ -220,6 +220,11 @@ describe('Step Registration', () => {
         expect(activationKey).toHaveValue('');
         expect(activationKey).toBeEnabled();
         expect(activationKey).toBeRequired();
+
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Review');
+        anchor.click();
+        await screen.findByText('Register the system on first boot');
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
@@ -239,6 +244,11 @@ describe('Step Registration', () => {
             .click();
 
         await p1;
+
+        const sidebar = screen.getByRole('navigation');
+        const anchor = getByText(sidebar, 'Review');
+        anchor.click();
+        await screen.findByText('Register the system later');
     });
 });
 
