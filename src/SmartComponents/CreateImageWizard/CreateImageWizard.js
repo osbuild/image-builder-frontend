@@ -13,6 +13,7 @@ import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard
 import WizardStepUploadGoogle from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadGoogle';
 import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
 import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
+import ImageWizardFooter from '../../PresentationalComponents/CreateImageWizard/ImageWizardFooter';
 
 import api from './../../api.js';
 import './CreateImageWizard.scss';
@@ -87,6 +88,8 @@ class CreateImageWizard extends Component {
             packagesFilteredComponents: [],
             packagesSelectedNames: [],
             packagesSearchName: '',
+            onSaveInProgress: false,
+            onSaveError: null,
         };
     }
 
@@ -284,6 +287,10 @@ class CreateImageWizard extends Component {
     }
 
     onSave () {
+        this.setState({
+            onSaveInProgress: true,
+        });
+
         let requests = [];
         if (this.state.uploadDestinations.aws) {
             let request = {
@@ -380,7 +387,15 @@ class CreateImageWizard extends Component {
             });
             composeRequests.push(composeRequest);
         });
-        Promise.all(composeRequests).then(() => this.props.history.push('/landing'));
+
+        Promise.all(composeRequests)
+            .then(() => this.props.history.push('/landing'))
+            .catch(err => {
+                this.setState({ onSaveInProgress: false });
+                if (err.response.status === 500) {
+                    this.setState({ onSaveError: 'Error: Something went wrong serverside' });
+                }
+            });
     }
 
     onClose () {
@@ -484,6 +499,7 @@ class CreateImageWizard extends Component {
                     steps={ steps }
                     onClose={ this.onClose }
                     onSave={ this.onSave }
+                    footer={ <ImageWizardFooter disable={ this.state.onSaveInProgress } error={ this.state.onSaveError } /> }
                     isOpen />
             </React.Fragment>
         );
