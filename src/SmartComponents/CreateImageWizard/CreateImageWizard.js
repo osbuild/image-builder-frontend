@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { actions } from '../redux';
 
 import { Wizard, TextContent } from '@patternfly/react-core';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
 import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
@@ -286,7 +287,7 @@ class CreateImageWizard extends Component {
         });
     }
 
-    onSave () {
+    onSave() {
         this.setState({
             onSaveInProgress: true,
         });
@@ -389,7 +390,13 @@ class CreateImageWizard extends Component {
         });
 
         Promise.all(composeRequests)
-            .then(() => this.props.history.push('/landing'))
+            .then(() => {
+                this.props.addNotification({
+                    variant: 'success',
+                    title: 'Your image is being created',
+                });
+                this.props.history.push('/landing');
+            })
             .catch(err => {
                 this.setState({ onSaveInProgress: false });
                 if (err.response.status === 500) {
@@ -509,11 +516,13 @@ class CreateImageWizard extends Component {
 function mapDispatchToProps(dispatch) {
     return {
         updateCompose: (compose) => dispatch(actions.updateCompose(compose)),
+        addNotification: (not) => dispatch(addNotification(not)),
     };
 }
 
 CreateImageWizard.propTypes = {
     updateCompose: PropTypes.func,
+    addNotification: PropTypes.func,
     history: PropTypes.object,
 };
 

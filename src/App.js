@@ -4,6 +4,7 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
 import './App.scss';
+import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
 
 import api from './api.js';
 import PermissionDenied from './PresentationalComponents/LandingPage/PermissionDenied';
@@ -38,6 +39,7 @@ class App extends Component {
     render () {
         return (
             <React.Fragment>
+                <NotificationsPortal />
                 { this.state.permission ? <Routes childProps={ this.props } /> : <PermissionDenied /> }
             </React.Fragment>
         );
