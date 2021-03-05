@@ -300,7 +300,7 @@ class CreateImageWizard extends Component {
                     {
                         architecture: this.state.arch,
                         image_type: 'ami',
-                        upload_requests: [ this.state.uploadAWS ],
+                        upload_request: this.state.uploadAWS,
                     }],
                 customizations: {
                     subscription: this.state.subscription,
@@ -333,12 +333,12 @@ class CreateImageWizard extends Component {
                     {
                         architecture: this.state.arch,
                         image_type: 'vhd',
-                        upload_requests: [{
+                        upload_request: {
                             type: 'gcp',
                             options: {
                                 share_with_accounts: [ share ],
                             },
-                        }],
+                        },
                     }],
                 customizations: {
                     subscription: this.state.subscription,
@@ -354,14 +354,14 @@ class CreateImageWizard extends Component {
                     {
                         architecture: this.state.arch,
                         image_type: 'vhd',
-                        upload_requests: [{
+                        upload_request: {
                             type: 'azure',
                             options: {
                                 tenant_id: this.state.uploadAzure.options.tenant_id,
                                 subscription_id: this.state.uploadAzure.options.subscription_id,
                                 resource_group: this.state.uploadAzure.options.resource_group,
                             },
-                        }],
+                        },
                     }],
                 customizations: {
                     subscription: this.state.subscription,
@@ -382,7 +382,7 @@ class CreateImageWizard extends Component {
                     distribution: request.distribution,
                     architecture: request.image_requests[0].architecture,
                     image_type: request.image_requests[0].image_type,
-                    upload_type: request.image_requests[0].upload_requests[0].type,
+                    upload_type: request.image_requests[0].upload_request.type,
                 };
                 this.props.updateCompose(compose);
             });
