@@ -270,15 +270,34 @@ class CreateImageWizard extends Component {
         }
 
         if (this.state.uploadDestinations.google) {
-            const upload_google = this.state.uploadGoogle;
-            delete upload_google.accountType;
+            let share = '';
+            switch (this.state.uploadGoogle.accountType) {
+                case 'googleAccount':
+                    share = 'user:' + this.state.uploadGoogle.options.share_with_accounts[0].user;
+                    break;
+                case 'serviceAccount':
+                    share = 'serviceAccount:' + this.state.uploadGoogle.options.share_with_accounts[0].serviceAccount;
+                    break;
+                case 'googleGroup':
+                    share = 'group:' + this.state.uploadGoogle.options.share_with_accounts[0].group;
+                    break;
+                case 'domain':
+                    share = 'domain:' + this.state.uploadGoogle.options.share_with_accounts[0].domain;
+                    break;
+            }
+
             let request = {
                 distribution: this.state.release,
                 image_requests: [
                     {
                         architecture: this.state.arch,
                         image_type: 'gcp',
-                        upload_requests: [ upload_google ],
+                        upload_requests: [{
+                            type: 'gcp',
+                            options: {
+                                share_with_accounts: [ share ],
+                            },
+                        }],
                     }],
                 customizations: {
                     subscription: this.state.subscription,
