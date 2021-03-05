@@ -291,7 +291,7 @@ class CreateImageWizard extends Component {
                 image_requests: [
                     {
                         architecture: this.state.arch,
-                        image_type: 'gcp',
+                        image_type: 'vhd',
                         upload_requests: [{
                             type: 'gcp',
                             options: {
