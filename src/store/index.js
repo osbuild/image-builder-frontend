@@ -1,5 +1,6 @@
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
+import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import { composeReducer } from '../SmartComponents/redux/reducers';
 
@@ -17,6 +18,7 @@ export function init (...middleware) {
 
     registry.register({
         composes: composeReducer,
+        notifications: notificationsReducer,
     });
 
     return registry;
