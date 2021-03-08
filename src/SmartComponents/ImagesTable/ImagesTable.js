@@ -88,7 +88,8 @@ class ImagesTable extends Component {
                             Create an image
                         </Title>
                         <EmptyStateBody>
-                            Create RHEL OS images for deployment in Amazon Web Services. Images can include
+                            Create OS images for deployment in Amazon Web Services, Azure and
+                            Google Cloud Platform. Images can include a custom package set and
                             an activation key to automate the registration process.
                         </EmptyStateBody>
                         <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
