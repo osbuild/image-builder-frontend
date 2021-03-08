@@ -10,6 +10,7 @@ import { PlusCircleIcon } from '@patternfly/react-icons';
 
 import ImageBuildStatus from '../../PresentationalComponents/ImagesTable/ImageBuildStatus';
 import Release from '../../PresentationalComponents/ImagesTable/Release';
+import Upload from '../../PresentationalComponents/ImagesTable/Upload';
 
 import api from '../../api.js';
 
@@ -67,14 +68,11 @@ class ImagesTable extends Component {
 
     render() {
         let { composes } = this.props;
-        const uploadOptions = {
-            aws: 'Amazon Web Services'
-        };
         const rows = Object.entries(composes).map(([ id, compose ]) => {
             return {
                 cells: [
                     id,
-                    uploadOptions[compose.image_type] ? uploadOptions[compose.image_type] : compose.image_type,
+                    { title: <Upload uploadType={ compose.upload_type } /> },
                     { title: <Release release={ compose.distribution } /> },
                     { title: <ImageBuildStatus status={ compose.image_status.status } /> },
                     ''

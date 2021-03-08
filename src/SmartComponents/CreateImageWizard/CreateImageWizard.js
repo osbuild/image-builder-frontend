@@ -374,6 +374,7 @@ class CreateImageWizard extends Component {
                     distribution: request.distribution,
                     architecture: request.image_requests[0].architecture,
                     image_type: request.image_requests[0].image_type,
+                    upload_type: request.image_requests[0].upload_requests[0].type,
                 };
                 this.props.updateCompose(compose);
             });
