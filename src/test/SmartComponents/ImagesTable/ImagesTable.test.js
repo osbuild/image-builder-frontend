@@ -3,6 +3,7 @@ import { screen, render } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../SmartComponents/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../PresentationalComponents/ImagesTable/ImageBuildStatus';
+import Upload from '../../../PresentationalComponents/ImagesTable/Upload';
 import '@testing-library/jest-dom';
 
 const store = {
@@ -17,19 +18,21 @@ const store = {
             },
             distribution: 'fedora-31',
             architecture: 'x86_64',
-            image_type: 'qcow2'
+            image_type: 'ami',
+            upload_type: 'aws',
         },
         '61b0effa-c901-4ee5-86b9-2010b47f1b22': {
             image_status: {
                 status: 'failure',
                 upload_status: {
-                    type: 'aws',
+                    type: 'gcp',
                     status: 'failure'
                 }
             },
             distribution: 'fedora-31',
             architecture: 'x86_64',
-            image_type: 'qcow2'
+            image_type: 'vhd',
+            upload_type: 'gcp',
         },
         '551de6f6-1533-4b46-a69f-7924051f9bc6': {
             image_status: {
@@ -41,7 +44,8 @@ const store = {
             },
             distribution: 'fedora-31',
             architecture: 'x86_64',
-            image_type: 'qcow2'
+            image_type: 'vhd',
+            upload_type: 'azure',
         }
     }
 };
@@ -74,6 +78,10 @@ describe('Images Table', () => {
             let testElement = document.createElement('testElement');
             render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
             expect(row.cells[3]).toHaveTextContent(testElement.textContent);
+
+            // do the same for the upload/target column
+            render(<Upload uploadType={ compose.upload_type } />, { container: testElement });
+            expect(row.cells[1]).toHaveTextContent(testElement.textContent);
         }
     });
 });
