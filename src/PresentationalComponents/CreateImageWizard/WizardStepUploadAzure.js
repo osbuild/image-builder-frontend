@@ -24,7 +24,7 @@ const WizardStepUploadAzure = (props) => {
                 </Text>
 
                 <a href="https://login.microsoftonline.com/common/oauth2/authorize?client_id=b94bb246-b02c-4985-9c22-d44e66f657f4
-&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient">
+&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient" target="_blank" rel="noopener noreferrer">
             Authorize Image Builder on Azure <ExternalLinkAltIcon />
                 </a>
             </TextContent>
