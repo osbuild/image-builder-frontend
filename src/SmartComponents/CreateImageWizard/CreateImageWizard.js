@@ -78,7 +78,7 @@ class CreateImageWizard extends Component {
                 'base-url': 'https://cdn.redhat.com/',
                 insights: true
             },
-            subscribeNow: true,
+            subscribeNow: false,
             /* errors take form of $fieldId: error */
             uploadAWSErrors: {},
             uploadAzureErrors: {},
