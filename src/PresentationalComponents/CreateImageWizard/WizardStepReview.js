@@ -81,9 +81,9 @@ const WizardStepReview = (props) => {
         subscriptionReview = (<>
             <TextListItem component={ TextListItemVariants.dd }>Register the system on first boot</TextListItem>
             <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
-            { props.subscriptionErrors['subscription-activation'] ? (
+            { !props.isValidSubscription || !props.subscription['activation-key'] ? (
                 <TextListItem component={ TextListItemVariants.dd }>
-                    <ExclamationCircleIcon className="error" /> { props.subscriptionErrors['subscription-activation'].value }
+                    <ExclamationCircleIcon className="error" /> { 'A value is required' }
                 </TextListItem>
             ) : (
                 <TextListItem component={ TextListItemVariants.dd } type="password">
@@ -96,7 +96,7 @@ const WizardStepReview = (props) => {
     return (
         <>
             { (Object.keys(props.uploadAWSErrors).length > 0 ||
-               Object.keys(props.subscriptionErrors).length > 0) &&
+               !props.isValidSubscription) &&
               <Alert variant="danger" className="pf-u-mb-xl" isInline title="Required information is missing" /> }
             <Title headingLevel="h2" size="xl">Review</Title>
             <TextContent>
@@ -130,7 +130,7 @@ WizardStepReview.propTypes = {
     subscription: PropTypes.object,
     subscribeNow: PropTypes.bool,
     uploadAWSErrors: PropTypes.object,
-    subscriptionErrors: PropTypes.object,
+    isValidSubscription: PropTypes.bool,
 };
 
 export default WizardStepReview;

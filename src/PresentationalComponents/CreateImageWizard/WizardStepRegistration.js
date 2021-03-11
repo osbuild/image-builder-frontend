@@ -18,21 +18,26 @@ const WizardStepRegistration = (props) => {
                     data-testid="register-later-radio-button" />
             </FormGroup>
             { props.subscribeNow &&
-              <>
-                  <FormGroup label="Organization ID" fieldId="subscription-organization">
-                      <TextInput isDisabled value={ props.subscription.organization || '' } type="text"
-                          id="subscription-organization" aria-label="Subscription organization ID"
-                          data-testid="organization-id" />
-                  </FormGroup>
-                  <FormGroup isRequired label="Activation key" fieldId="subscription-activation"
-                      helperTextInvalid={ (props.errors['subscription-activation'] && props.errors['subscription-activation'].value) || '' }
-                      validated={ (props.errors['subscription-activation'] && 'error') || 'default' }>
-                      <TextInput value={ props.subscription['activation-key'] || '' } type="password"
-                          data-testid="subscription-activation" isRequired
-                          id="subscription-activation" aria-label="Subscription activation key"
-                          onChange={ value => props.setSubscription(Object.assign(props.subscription, { 'activation-key': value })) } />
-                  </FormGroup>
-              </> }
+                <>
+                    <FormGroup label="Organization ID" fieldId="subscription-organization">
+                        <TextInput isDisabled value={ props.subscription.organization || '' } type="text"
+                            id="subscription-organization" aria-label="Subscription organization ID"
+                            data-testid="organization-id" />
+                    </FormGroup>
+                    <FormGroup isRequired label="Activation key" fieldId="subscription-activation"
+                        helperTextInvalid={ 'A value is required' }
+                        validated={ !props.isValidSubscription && props.subscription['activation-key'] !== null ? 'error' : 'default' }>
+                        <TextInput
+                            value={ props.subscription['activation-key'] || '' }
+                            type="password"
+                            data-testid="subscription-activation"
+                            id="subscription-activation"
+                            aria-label="Subscription activation key"
+                            onChange={ value => props.setSubscription(Object.assign(props.subscription, { 'activation-key': value })) }
+                            validated={ !props.isValidSubscription && props.subscription['activation-key'] !== null ? 'error' : 'default' }
+                            isRequired />
+                    </FormGroup>
+                </> }
         </Form>
     );
 };
@@ -42,7 +47,7 @@ WizardStepRegistration.propTypes = {
     setSubscribeNow: PropTypes.func,
     subscription: PropTypes.object,
     subscribeNow: PropTypes.bool,
-    errors: PropTypes.object,
+    isValidSubscription: PropTypes.bool,
 };
 
 export default WizardStepRegistration;

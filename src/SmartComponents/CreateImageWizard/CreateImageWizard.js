@@ -39,7 +39,6 @@ class CreateImageWizard extends Component {
         this.onClose = this.onClose.bind(this);
         this.validate = this.validate.bind(this);
         this.validateUploadAmazon = this.validateUploadAmazon.bind(this);
-        this.validateSubscription = this.validateSubscription.bind(this);
 
         this.state = {
             arch: 'x86_64',
@@ -83,13 +82,13 @@ class CreateImageWizard extends Component {
             uploadAWSErrors: {},
             uploadAzureErrors: {},
             uploadGoogleErrors: {},
-            subscriptionErrors: {},
             packagesAvailableComponents: [],
             packagesSelectedComponents: [],
             packagesFilteredComponents: [],
             packagesSelectedNames: [],
             packagesSearchName: '',
             isSaveInProgress: false,
+            isValidSubscription: true,
             onSaveError: null,
         };
     }
@@ -125,13 +124,6 @@ class CreateImageWizard extends Component {
                     break;
             }
         });
-
-        /* subscription */
-        if (this.state.subscribeNow) {
-            this.validateSubscription();
-        } else {
-            this.setState({ subscriptionErrors: {}});
-        }
     }
 
     validateUploadAmazon() {
@@ -166,16 +158,6 @@ class CreateImageWizard extends Component {
                 { label: 'Azure resource group', value: 'A resource group is required' };
         }
         // TODO check oauth2 thing too here?
-    }
-
-    validateSubscription() {
-        let subscriptionErrors = {};
-        if (!this.state.subscription['activation-key']) {
-            subscriptionErrors['subscription-activation'] =
-                { label: 'Activation key', value: 'A value is required' };
-        }
-
-        this.setState({ subscriptionErrors });
     }
 
     setRelease(release) {
@@ -233,11 +215,23 @@ class CreateImageWizard extends Component {
     }
 
     setSubscribeNow(subscribeNow) {
-        this.setState({ subscribeNow });
+        // if subscribe now the subscription will be invalid, else the subscription is valid since none is required
+        this.setState({
+            subscription: {
+                ...this.state.subscription,
+                'activation-key': null
+            },
+            subscribeNow,
+            isValidSubscription: !subscribeNow
+        });
     }
 
     setSubscription(subscription) {
-        this.setState({ subscription }, this.validate);
+        if (subscription['activation-key']) {
+            this.setState({ subscription, isValidSubscription: true });
+        } else {
+            this.setState({ subscription, isValidSubscription: false });
+        }
     }
 
     setPackagesSearchName(packagesSearchName) {
@@ -476,7 +470,7 @@ class CreateImageWizard extends Component {
                     subscribeNow={ this.state.subscribeNow }
                     setSubscription={ this.setSubscription }
                     setSubscribeNow={ this.setSubscribeNow }
-                    errors={ this.state.subscriptionErrors } /> },
+                    isValidSubscription={ this.state.isValidSubscription } /> },
             {
                 name: 'Packages',
                 component: <WizardStepPackages
@@ -497,7 +491,7 @@ class CreateImageWizard extends Component {
                     subscription={ this.state.subscription }
                     subscribeNow={ this.state.subscribeNow }
                     uploadAWSErrors={ this.state.uploadAWSErrors }
-                    subscriptionErrors={ this.state.subscriptionErrors } />,
+                    isValidSubscription={ this.state.isValidSubscription } />,
                 nextButtonText: 'Create',
             }
         ];
@@ -514,6 +508,7 @@ class CreateImageWizard extends Component {
                     footer={ <ImageWizardFooter
                         isValidUploadDestination={ isValidUploadDestination }
                         isSaveInProgress={ this.state.isSaveInProgress }
+                        isValidSubscription={ this.state.isValidSubscription }
                         error={ this.state.onSaveError } /> }
                     isOpen />
             </React.Fragment>

@@ -509,11 +509,9 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.clear(screen.getByTestId('subscription-activation'));
-        next.click();
-
-        // packages
-        screen.getByText('Optionally add additional packages to your image');
-        next.click();
+        const sidebar = screen.getByRole('navigation');
+        const reviewStep = getByText(sidebar, 'Review');
+        reviewStep.click();
 
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
@@ -546,11 +544,9 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.clear(screen.getByTestId('subscription-activation'));
-        next.click();
-
-        // packages
-        screen.getByText('Optionally add additional packages to your image');
-        next.click();
+        const sidebar = screen.getByRole('navigation');
+        const reviewStep = getByText(sidebar, 'Review');
+        reviewStep.click();
 
         await screen.
             findByText('Review the information and click Create image to create the image using the following criteria.');
