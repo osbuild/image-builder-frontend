@@ -23,6 +23,10 @@ const ImageWizardFooter = (props) => {
                             nextButtonIsDisabled = true;
                         }
 
+                        if ((activeStep.name === 'Registration'  || activeStep.name === 'Review') && !props.isValidSubscription) {
+                            nextButtonIsDisabled = true;
+                        }
+
                         return (
                             <>
                                 <Button aria-label={ activeStep.name === 'Review' ? 'Create' : 'Next' } variant={ ButtonVariant.primary }
@@ -54,6 +58,7 @@ const ImageWizardFooter = (props) => {
 ImageWizardFooter.propTypes = {
     isValidUploadDestination: PropTypes.bool,
     isSaveInProgress: PropTypes.bool,
+    isValidSubscription: PropTypes.bool,
     error: PropTypes.string,
 };
 
