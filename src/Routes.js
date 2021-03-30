@@ -6,17 +6,14 @@ import asyncComponent from './Utilities/asyncComponent';
 const LandingPage = asyncComponent(() => import('./SmartComponents/LandingPage/LandingPage'));
 const CreateImageWizard = asyncComponent(() => import('./SmartComponents/CreateImageWizard/CreateImageWizard'));
 
-const InsightsRoute = ({ component: Component, rootClass, ...rest }) => {
-    const root = document.getElementById('root');
-    root.removeAttribute('class');
-    root.classList.add(`page__${rootClass}`, 'pf-c-page__main');
-    root.setAttribute('role', 'main');
+const InsightsRoute = ({ component: Component, title, ...rest }) => {
+    title ? document.title = title : null;
     return (<Route { ...rest } component={ Component } />);
 };
 
 InsightsRoute.propTypes = {
     component: PropTypes.func,
-    rootClass: PropTypes.string
+    title: PropTypes.string
 };
 
 export const Routes = () => {
