@@ -20,7 +20,9 @@ class App extends Component {
 
     componentDidMount () {
         insights.chrome.init();
-        insights.chrome.identifyApp('image-builder');
+        insights.chrome.identifyApp('image-builder').catch(() => {
+            /* We are not in the menu so this call is allowed to fail */
+        });
         this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
         insights.chrome.auth.getUser().then(data => {
             this.setState({ identity: data.identity });
