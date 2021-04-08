@@ -1,4 +1,4 @@
-import { composeReducer } from '../../../store/reducers/composes';
+import { composes } from '../../../store/reducers/composes';
 import types from '../../../store/types';
 
 const compose = {
@@ -10,9 +10,9 @@ const compose = {
     }
 };
 
-describe('composeReducer', () => {
+describe('composes', () => {
     test('returns state for unknown actions', () => {
-        const result = composeReducer({}, {
+        const result = composes({}, {
             type: 'THIS-IS-UNKNOWN',
         });
 
@@ -23,7 +23,7 @@ describe('composeReducer', () => {
         const state = {
             testAttr: 'test-me'
         };
-        const result = composeReducer(state, {
+        const result = composes(state, {
             type: types.UPDATE_COMPOSE,
             compose
         });
