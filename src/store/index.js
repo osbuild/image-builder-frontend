@@ -2,7 +2,8 @@ import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilitie
 import promiseMiddleware from 'redux-promise-middleware';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import { composeReducer } from './reducers/composes';
+import composes from './reducers/composes';
+import pendingCompose from './reducers/pendingCompose';
 
 let registry;
 
@@ -17,7 +18,8 @@ export function init (store = {}, ...middleware) {
     ]);
 
     registry.register({
-        composes: composeReducer,
+        composes,
+        pendingCompose,
         notifications: notificationsReducer,
     });
 

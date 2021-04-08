@@ -4,17 +4,17 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from '../../store/actions';
 
-import { Wizard, TextContent } from '@patternfly/react-core';
+import { Wizard } from '@patternfly/react-core';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import WizardStepImageOutput from '../../PresentationalComponents/CreateImageWizard/WizardStepImageOutput';
-import WizardStepUploadAWS from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAWS';
-import WizardStepUploadAzure from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadAzure';
-import WizardStepPackages from '../../PresentationalComponents/CreateImageWizard/WizardStepPackages';
-import WizardStepUploadGoogle from '../../PresentationalComponents/CreateImageWizard/WizardStepUploadGoogle';
-import WizardStepRegistration from '../../PresentationalComponents/CreateImageWizard/WizardStepRegistration';
-import WizardStepReview from '../../PresentationalComponents/CreateImageWizard/WizardStepReview';
-import ImageWizardFooter from '../../PresentationalComponents/CreateImageWizard/ImageWizardFooter';
+import WizardStepImageOutput from './WizardStepImageOutput';
+import WizardStepUploadAWS from './WizardStepUploadAWS';
+import WizardStepUploadAzure from './WizardStepUploadAzure';
+import WizardStepPackages from './WizardStepPackages';
+import WizardStepUploadGoogle from './WizardStepUploadGoogle';
+import WizardStepRegistration from './WizardStepRegistration';
+import WizardStepReview from './WizardStepReview';
+import ImageWizardFooter from './ImageWizardFooter';
 
 import api from './../../api.js';
 import './CreateImageWizard.scss';
@@ -23,17 +23,6 @@ class CreateImageWizard extends Component {
     constructor(props) {
         super(props);
 
-        this.handlePackagesSearch = this.handlePackagesSearch.bind(this);
-        this.handlePackagesFilter = this.handlePackagesFilter.bind(this);
-        this.packageListChange = this.packageListChange.bind(this);
-        this.mapPackagesToComponent = this.mapPackagesToComponent.bind(this);
-        this.setRelease = this.setRelease.bind(this);
-        this.setUploadOptions = this.setUploadOptions.bind(this);
-        this.setSubscription = this.setSubscription.bind(this);
-        this.setSubscribeNow = this.setSubscribeNow.bind(this);
-        this.setPackagesSearchName = this.setPackagesSearchName.bind(this);
-        this.setGoogleAccountType = this.setGoogleAccountType.bind(this);
-        this.toggleUploadDestination = this.toggleUploadDestination.bind(this);
         this.onStep = this.onStep.bind(this);
         this.onSave = this.onSave.bind(this);
         this.onClose = this.onClose.bind(this);
@@ -41,52 +30,10 @@ class CreateImageWizard extends Component {
         this.validateUploadAmazon = this.validateUploadAmazon.bind(this);
 
         this.state = {
-            arch: 'x86_64',
-            imageType: 'qcow2',
-            release: 'rhel-8',
-            uploadAWS: {
-                type: 'aws',
-                options: {
-                    share_with_accounts: []
-                }
-            },
-            uploadAzure: {
-                type: 'azure',
-                options: {
-                    tenant_id: null,
-                    subscription_id: null,
-                    resource_group: null,
-                }
-            },
-            uploadGoogle: {
-                type: 'gcp',
-                accountType: 'googleAccount',
-                options: {
-                    share_with_accounts: []
-                }
-            },
-            uploadDestinations: {
-                aws: false,
-                azure: false,
-                google: false
-            },
-            subscription: {
-                organization: null,
-                'activation-key': null,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-                insights: true
-            },
-            subscribeNow: false,
             /* errors take form of $fieldId: error */
             uploadAWSErrors: {},
             uploadAzureErrors: {},
             uploadGoogleErrors: {},
-            packagesAvailableComponents: [],
-            packagesSelectedComponents: [],
-            packagesFilteredComponents: [],
-            packagesSelectedNames: [],
-            packagesSearchName: '',
             isSaveInProgress: false,
             isValidSubscription: true,
             onSaveError: null,
@@ -110,7 +57,7 @@ class CreateImageWizard extends Component {
 
     validate() {
         /* upload */
-        Object.keys(this.state.uploadDestinations).forEach(provider => {
+        Object.keys(this.props.uploadDestinations).forEach(provider => {
             switch (provider) {
                 case 'aws':
                     this.validateUploadAmazon();
@@ -124,11 +71,17 @@ class CreateImageWizard extends Component {
                     break;
             }
         });
+        /* subscription */
+        if (this.props.subscribeNow) {
+            this.setState({ isValidSubscription: this.props.subscription.activationKey ? true : false });
+        } else {
+            this.setState({ isValidSubscription: true });
+        }
     }
 
     validateUploadAmazon() {
         let uploadAWSErrors = {};
-        let share = this.state.uploadAWS.options.share_with_accounts;
+        let share = this.props.uploadAWS.shareWithAccounts;
         if (share.length === 0 || share[0].length !== 12 || isNaN(share[0])) {
             uploadAWSErrors['aws-account-id'] =
                 { label: 'AWS account ID', value: 'A 12-digit number is required' };
@@ -140,19 +93,19 @@ class CreateImageWizard extends Component {
     validateUploadAzure() {
         let uploadAzureErrors = {};
 
-        let tenant_id = this.state.uploadAzure.options.tenant_id;
+        let tenant_id = this.props.uploadAzure.tenantId;
         if (tenant_id === null || tenant_id === '') {
             uploadAzureErrors['azure-resource-group'] =
                 { label: 'Azure tenant ID', value: 'A tenant ID is required' };
         }
 
-        let subscriptionId = this.state.uploadAzure.options.subscription_id;
+        let subscriptionId = this.props.uploadAzure.subscriptionId;
         if (subscriptionId === null || subscriptionId === '') {
             uploadAzureErrors['azure-subscription-id'] =
                 { label: 'Azure subscription ID', value: 'A subscription ID is required' };
         }
 
-        let resource_group = this.state.uploadAzure.options.resource_group;
+        let resource_group = this.props.uploadAzure.resourceGroup;
         if (resource_group === null || resource_group === '') {
             uploadAzureErrors['azure-resource-group'] =
                 { label: 'Azure resource group', value: 'A resource group is required' };
@@ -160,172 +113,66 @@ class CreateImageWizard extends Component {
         // TODO check oauth2 thing too here?
     }
 
-    setRelease(release) {
-        this.setState({ release });
-    }
-
-    toggleUploadDestination(provider) {
-        this.setState(prevState => ({
-            ...prevState,
-            uploadDestinations: {
-                ...prevState.uploadDestinations,
-                [provider]: !prevState.uploadDestinations[provider]
-            }
-        }));
-    }
-
-    setUploadOptions(provider, uploadOptions) {
-        switch (provider) {
-            case 'aws':
-                this.setState({
-                    uploadAWS: {
-                        type: provider,
-                        options: uploadOptions
-                    }
-                });
-                break;
-            case 'azure':
-                this.setState({
-                    uploadAzure: {
-                        type: provider,
-                        options: uploadOptions
-                    }
-                });
-                break;
-            case 'google':
-                this.setState({
-                    uploadGoogle: {
-                        ...this.state.uploadGoogle,
-                        options: uploadOptions
-                    }
-                });
-                break;
-            default:
-                break;
-        }
-    }
-
-    setGoogleAccountType(_, event) {
-        this.setState({
-            uploadGoogle: {
-                ...this.state.uploadGoogle,
-                accountType: event.target.value
-            }
-        });
-    }
-
-    setSubscribeNow(subscribeNow) {
-        // if subscribe now the subscription will be invalid, else the subscription is valid since none is required
-        this.setState({
-            subscription: {
-                ...this.state.subscription,
-                'activation-key': null
-            },
-            subscribeNow,
-            isValidSubscription: !subscribeNow
-        });
-    }
-
-    setSubscription(subscription) {
-        if (subscription['activation-key']) {
-            this.setState({ subscription, isValidSubscription: true });
-        } else {
-            this.setState({ subscription, isValidSubscription: false });
-        }
-    }
-
-    setPackagesSearchName(packagesSearchName) {
-        this.setState({ packagesSearchName });
-    }
-
-    mapPackagesToComponent(packages) {
-        return packages.map((pack) =>
-            <TextContent key={ pack }>
-                <span className="pf-c-dual-list-selector__item-text">{ pack.name }</span>
-                <small>{ pack.summary }</small>
-            </TextContent>
-        );
-    }
-
-    // this digs into the component properties to extract the package name
-    mapComponentToPackageName(component) {
-        return component.props.children[0].props.children;
-    }
-
-    handlePackagesSearch() {
-        api.getPackages(this.state.release, this.state.arch, this.state.packagesSearchName).then(response => {
-            const packageComponents = this.mapPackagesToComponent(response.data);
-            this.setState({
-                packagesAvailableComponents: packageComponents
-            });
-        });
-    };
-
-    handlePackagesFilter(filter) {
-        const filteredPackages = this.state.packagesSelectedComponents.filter(component => {
-            const name = this.mapComponentToPackageName(component);
-            return name.includes(filter);
-        });
-        this.setState({
-            packagesFilteredComponents: filteredPackages
-        });
-    }
-
-    packageListChange(newAvailablePackages, newChosenPackages) {
-        const chosenNames = newChosenPackages.map(component => this.mapComponentToPackageName(component));
-        this.setState({
-            packagesAvailableComponents: newAvailablePackages,
-            packagesSelectedComponents: newChosenPackages,
-            packagesFilteredComponents: newChosenPackages,
-            packagesSelectedNames: chosenNames
-        });
-    }
-
     onSave() {
         this.setState({
             isSaveInProgress: true,
         });
 
+        let customizations = {
+            packages: this.props.selectedPackages,
+        };
+        if (this.props.subscribeNow) {
+            customizations.subscription = {
+                'activation-key': this.props.subscription.activationKey,
+                insights: this.props.subscription.insights,
+                organization: this.props.subscription.organization,
+                'server-url': 'subscription.rhsm.redhat.com',
+                'base-url': 'https://cdn.redhat.com/',
+            };
+        }
+
         let requests = [];
-        if (this.state.uploadDestinations.aws) {
+        if (this.props.uploadDestinations.aws) {
             let request = {
-                distribution: this.state.release,
+                distribution: this.props.release.distro,
                 image_requests: [
                     {
-                        architecture: this.state.arch,
+                        architecture: this.props.release.arch,
                         image_type: 'ami',
-                        upload_request: this.state.uploadAWS,
+                        upload_request: {
+                            type: 'aws',
+                            options: {
+                                share_with_accounts: this.props.uploadAWS.shareWithAccounts,
+                            },
+                        },
                     }],
-                customizations: {
-                    subscription: this.state.subscription,
-                    packages: this.state.packagesSelectedNames,
-                },
+                customizations,
             };
             requests.push(request);
         }
 
-        if (this.state.uploadDestinations.google) {
+        if (this.props.uploadDestinations.google) {
             let share = '';
-            switch (this.state.uploadGoogle.accountType) {
+            switch (this.props.uploadGoogle.accountType) {
                 case 'googleAccount':
-                    share = 'user:' + this.state.uploadGoogle.options.share_with_accounts[0].user;
+                    share = 'user:' + this.props.uploadGoogle.shareWithAccounts[0].user;
                     break;
                 case 'serviceAccount':
-                    share = 'serviceAccount:' + this.state.uploadGoogle.options.share_with_accounts[0].serviceAccount;
+                    share = 'serviceAccount:' + this.props.uploadGoogle.shareWithAccounts[0].serviceAccount;
                     break;
                 case 'googleGroup':
-                    share = 'group:' + this.state.uploadGoogle.options.share_with_accounts[0].group;
+                    share = 'group:' + this.props.uploadGoogle.shareWithAccounts[0].group;
                     break;
                 case 'domain':
-                    share = 'domain:' + this.state.uploadGoogle.options.share_with_accounts[0].domain;
+                    share = 'domain:' + this.props.uploadGoogle.shareWithAccounts[0].domain;
                     break;
             }
 
             let request = {
-                distribution: this.state.release,
+                distribution: this.props.release.distro,
                 image_requests: [
                     {
-                        architecture: this.state.arch,
+                        architecture: this.props.release.arch,
                         image_type: 'vhd',
                         upload_request: {
                             type: 'gcp',
@@ -334,32 +181,29 @@ class CreateImageWizard extends Component {
                             },
                         },
                     }],
-                customizations: {
-                    subscription: this.state.subscription,
-                },
+                customizations,
             };
+
             requests.push(request);
         }
 
-        if (this.state.uploadDestinations.azure) {
+        if (this.props.uploadDestinations.azure) {
             let request = {
-                distribution: this.state.release,
+                distribution: this.props.release.distro,
                 image_requests: [
                     {
-                        architecture: this.state.arch,
+                        architecture: this.props.release.arch,
                         image_type: 'vhd',
                         upload_request: {
                             type: 'azure',
                             options: {
-                                tenant_id: this.state.uploadAzure.options.tenant_id,
-                                subscription_id: this.state.uploadAzure.options.subscription_id,
-                                resource_group: this.state.uploadAzure.options.resource_group,
+                                tenant_id: this.props.uploadAzure.tenantId,
+                                subscription_id: this.props.uploadAzure.subscriptionId,
+                                resource_group: this.props.uploadAzure.resourceGroup,
                             },
                         },
                     }],
-                customizations: {
-                    subscription: this.state.subscription,
-                },
+                customizations,
             };
             requests.push(request);
 
@@ -392,6 +236,7 @@ class CreateImageWizard extends Component {
                 this.props.history.push('/landing');
             })
             .catch(err => {
+                console.log('ERR', err);
                 this.setState({ isSaveInProgress: false });
                 if (err.response.status === 500) {
                     this.setState({ onSaveError: 'Error: Something went wrong serverside' });
@@ -404,54 +249,43 @@ class CreateImageWizard extends Component {
     }
 
     render() {
-        const isValidUploadDestination = this.state.uploadDestinations.aws ||
-            this.state.uploadDestinations.azure ||
-            this.state.uploadDestinations.google;
+        const isValidUploadDestination = this.props.uploadDestinations.aws ||
+            this.props.uploadDestinations.azure ||
+            this.props.uploadDestinations.google;
 
         const StepImageOutput = {
             name: 'Image output',
-            component: <WizardStepImageOutput
-                value={ this.state.release }
-                setRelease={ this.setRelease }
-                toggleUploadDestination={ this.toggleUploadDestination }
-                uploadDestinations={ this.state.uploadDestinations } />
+            component: <WizardStepImageOutput />
         };
 
         const StepUploadAWS = {
             name: 'Amazon Web Services',
             component: <WizardStepUploadAWS
-                uploadAWS={ this.state.uploadAWS }
-                setUploadOptions={ this.setUploadOptions }
                 errors={ this.state.uploadAWSErrors } />
         };
 
         const StepUploadAzure = {
             name: 'Microsoft Azure',
             component: <WizardStepUploadAzure
-                uploadAzure={ this.state.uploadAzure }
-                setUploadOptions={ this.setUploadOptions }
                 errors={ this.state.uploadAzureErrors } />
         };
 
         const StepUploadGoogle = {
             name: 'Google Cloud Platform',
             component: <WizardStepUploadGoogle
-                uploadGoogle={ this.state.uploadGoogle }
-                setGoogleAccountType={ this.setGoogleAccountType }
-                setUploadOptions={ this.setUploadOptions }
                 errors={ this.state.uploadGoogleErrors } />
         };
 
         const uploadDestinationSteps = [];
-        if (this.state.uploadDestinations.aws) {
+        if (this.props.uploadDestinations.aws) {
             uploadDestinationSteps.push(StepUploadAWS);
         }
 
-        if (this.state.uploadDestinations.azure) {
+        if (this.props.uploadDestinations.azure) {
             uploadDestinationSteps.push(StepUploadAzure);
         }
 
-        if (this.state.uploadDestinations.google) {
+        if (this.props.uploadDestinations.google) {
             uploadDestinationSteps.push(StepUploadGoogle);
         }
 
@@ -466,30 +300,13 @@ class CreateImageWizard extends Component {
             {
                 name: 'Registration',
                 component: <WizardStepRegistration
-                    subscription={ this.state.subscription }
-                    subscribeNow={ this.state.subscribeNow }
-                    setSubscription={ this.setSubscription }
-                    setSubscribeNow={ this.setSubscribeNow }
                     isValidSubscription={ this.state.isValidSubscription } /> },
             {
                 name: 'Packages',
-                component: <WizardStepPackages
-                    packageListChange={ this.packageListChange }
-                    release={ this.state.release }
-                    packagesAvailableComponents={ this.state.packagesAvailableComponents }
-                    packagesFilteredComponents={ this.state.packagesFilteredComponents }
-                    handlePackagesSearch={ this.handlePackagesSearch }
-                    handlePackagesFilter= { this.handlePackagesFilter }
-                    setPackagesSearchName={ this.setPackagesSearchName } /> },
+                component: <WizardStepPackages /> },
             {
                 name: 'Review',
                 component: <WizardStepReview
-                    release={ this.state.release }
-                    uploadAWS={ this.state.uploadAWS }
-                    uploadGoogle={ this.state.uploadGoogle }
-                    uploadDestinations={ this.state.uploadDestinations }
-                    subscription={ this.state.subscription }
-                    subscribeNow={ this.state.subscribeNow }
                     uploadAWSErrors={ this.state.uploadAWSErrors }
                     isValidSubscription={ this.state.isValidSubscription } />,
                 nextButtonText: 'Create',
@@ -516,6 +333,19 @@ class CreateImageWizard extends Component {
     }
 }
 
+function mapStateToProps(state) {
+    return {
+        release: state.pendingCompose.release,
+        uploadDestinations: state.pendingCompose.uploadDestinations,
+        uploadAWS: state.pendingCompose.uploadAWS,
+        uploadAzure: state.pendingCompose.uploadAzure,
+        uploadGoogle: state.pendingCompose.uploadGoogle,
+        selectedPackages: state.pendingCompose.selectedPackages,
+        subscription: state.pendingCompose.subscription,
+        subscribeNow: state.pendingCompose.subscribeNow,
+    };
+}
+
 function mapDispatchToProps(dispatch) {
     return {
         updateCompose: (compose) => dispatch(actions.updateCompose(compose)),
@@ -527,6 +357,14 @@ CreateImageWizard.propTypes = {
     updateCompose: PropTypes.func,
     addNotification: PropTypes.func,
     history: PropTypes.object,
+    release: PropTypes.object,
+    uploadDestinations: PropTypes.object,
+    uploadAWS: PropTypes.object,
+    uploadAzure: PropTypes.object,
+    uploadGoogle: PropTypes.object,
+    subscription: PropTypes.object,
+    subscribeNow: PropTypes.bool,
+    selectedPackages: PropTypes.array,
 };
 
-export default connect(null, mapDispatchToProps)(withRouter(CreateImageWizard));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(CreateImageWizard));

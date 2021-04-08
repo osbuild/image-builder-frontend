@@ -86,6 +86,7 @@ describe('Step Image output', () => {
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
+
         // load from sidebar
         anchor.click();
     });
@@ -446,11 +447,17 @@ describe('Click through all steps', () => {
         // select image output
         userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         screen.getByTestId('upload-aws').click();
+        screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();
         next.click();
 
         // select upload target
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        next.click();
+
+        userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
+        userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
+        userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
         next.click();
 
         userEvent.type(screen.getByTestId('input-google-user'), 'test@test.com');
@@ -477,14 +484,93 @@ describe('Click through all steps', () => {
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
-        const composeImage = jest.spyOn(api, 'composeImage');
-        composeImage.mockResolvedValue({ id: 'test-me' });
+        const composeImage = jest
+            .spyOn(api, 'composeImage')
+            .mockImplementation(body => {
+
+                if (body.image_requests[0].upload_request.type === 'aws') {
+                    expect(body).toEqual({
+                        distribution: 'rhel-8',
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'ami',
+                            upload_request: {
+                                type: 'aws',
+                                options: {
+                                    share_with_accounts: [ '012345678901' ],
+                                }
+                            },
+                        }],
+                        customizations: {
+                            packages: [],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });
+                } else if (body.image_requests[0].upload_request.type === 'gcp') {
+                    expect(body).toEqual({
+                        distribution: 'rhel-8',
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'vhd',
+                            upload_request: {
+                                type: 'gcp',
+                                options: {
+                                    share_with_accounts: [ 'user:test@test.com' ],
+                                }
+                            },
+                        }],
+                        customizations: {
+                            packages: [],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });
+                } else if (body.image_requests[0].upload_request.type === 'azure') {
+                    expect(body).toEqual({
+                        distribution: 'rhel-8',
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'vhd',
+                            upload_request: {
+                                type: 'azure',
+                                options: {
+                                    tenant_id: 'testTenant',
+                                    subscription_id: 'testSubscriptionId',
+                                    resource_group: 'testResourceGroup',
+                                }
+                            },
+                        }],
+                        customizations: {
+                            packages: [],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });                  }
+
+                return Promise.resolve({ id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58' });
+            });
 
         const create = screen.getByRole('button', { name: /Create/ });
         create.click();
 
         // API request sent to backend
-        await expect(composeImage).toHaveBeenCalledTimes(2);
+        await expect(composeImage).toHaveBeenCalledTimes(3);
 
         // returns back to the landing page
         // but jsdom will not render the new page so we can't assert on that
