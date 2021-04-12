@@ -52,6 +52,8 @@ rules:
       MemberExpression: 1
       ImportDeclaration: 1
       ObjectExpression: 1
+      ignoredNodes:
+      - TemplateLiteral # https://github.com/babel/babel-eslint/issues/530
   react/jsx-curly-spacing:
     - error
     - always
