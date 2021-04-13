@@ -1,8 +1,8 @@
 import types from '../types';
 
-function updateCompose(compose) {
+function composeUpdated(compose) {
     return {
-        type: types.UPDATE_COMPOSE,
+        type: types.COMPOSE_UPDATED,
         compose
     };
 }
@@ -84,7 +84,7 @@ function setSubscribeNow(subscribeNow) {
 }
 
 export default {
-    updateCompose,
+    composeUpdated,
     setRelease,
     setUploadDestinations,
     setUploadAWS,

@@ -14,7 +14,7 @@ import types from '../types';
 
 export function composes(state = { }, action) {
     switch (action.type) {
-        case types.UPDATE_COMPOSE:
+        case types.COMPOSE_UPDATED:
             return Object.assign({}, state, action.compose);
         default:
             return state;

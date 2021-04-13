@@ -51,7 +51,7 @@ class ImagesTable extends Component {
     }
 
     pollComposeStatuses() {
-        let { updateCompose, composes } = this.props;
+        let { composeUpdated, composes } = this.props;
         Object.entries(composes).map(([ id, compose ]) => {
             /* Skip composes that have been complete */
             if (compose.image_status.status === 'success' || compose.image_status.status === 'failure') {
@@ -61,7 +61,7 @@ class ImagesTable extends Component {
             api.getComposeStatus(id).then(response => {
                 let newCompose = {};
                 newCompose[id] = Object.assign({}, compose, { image_status: response.image_status });
-                updateCompose(newCompose);
+                composeUpdated(newCompose);
             });
         });
     }
@@ -131,13 +131,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateCompose: (compose) => dispatch(actions.updateCompose(compose)),
+        composeUpdated: (compose) => dispatch(actions.composeUpdated(compose)),
     };
 }
 
 ImagesTable.propTypes = {
     composes: PropTypes.object,
-    updateCompose: PropTypes.func,
+    composeUpdated: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImagesTable);
