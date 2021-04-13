@@ -6,12 +6,12 @@ import { composeReducer } from './reducers/composes';
 
 let registry;
 
-export function init (...middleware) {
+export function init (store = {}, ...middleware) {
     if (registry) {
         throw new Error('store already initialized');
     }
 
-    registry = new ReducerRegistry({}, [
+    registry = new ReducerRegistry(store, [
         promiseMiddleware,
         ...middleware
     ]);
@@ -30,4 +30,9 @@ export function getStore () {
 
 export function register (...args) {
     return registry.register(...args);
+}
+
+/* added for testing purposes only */
+export function clearStore() {
+    registry = undefined;
 }

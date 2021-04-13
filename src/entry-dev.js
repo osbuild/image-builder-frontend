@@ -8,7 +8,7 @@ import logger from 'redux-logger';
 import getBaseName from './Utilities/getBaseName';
 
 ReactDOM.render(
-    <Provider store={ init(logger).getStore() }>
+    <Provider store={ init({}, logger).getStore() }>
         <Router basename={ getBaseName(window.location.pathname) }>
             <App />
         </Router>
