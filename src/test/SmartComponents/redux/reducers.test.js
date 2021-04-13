@@ -19,12 +19,12 @@ describe('composes', () => {
         expect(result).toEqual({});
     });
 
-    test('returns updates state for types.UPDATE_COMPOSE', () => {
+    test('returns updates state for types.COMPOSE_UPDATED', () => {
         const state = {
             testAttr: 'test-me'
         };
         const result = composes(state, {
-            type: types.UPDATE_COMPOSE,
+            type: types.COMPOSE_UPDATED,
             compose
         });
 

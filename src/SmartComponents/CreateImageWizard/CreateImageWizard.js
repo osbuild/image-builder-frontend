@@ -222,7 +222,7 @@ class CreateImageWizard extends Component {
                     image_type: request.image_requests[0].image_type,
                     upload_type: request.image_requests[0].upload_request.type,
                 };
-                this.props.updateCompose(compose);
+                this.props.composeUpdated(compose);
             });
             composeRequests.push(composeRequest);
         });
@@ -348,13 +348,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        updateCompose: (compose) => dispatch(actions.updateCompose(compose)),
+        composeUpdated: (compose) => dispatch(actions.composeUpdated(compose)),
         addNotification: (not) => dispatch(addNotification(not)),
     };
 }
 
 CreateImageWizard.propTypes = {
-    updateCompose: PropTypes.func,
+    composeUpdated: PropTypes.func,
     addNotification: PropTypes.func,
     history: PropTypes.object,
     release: PropTypes.object,

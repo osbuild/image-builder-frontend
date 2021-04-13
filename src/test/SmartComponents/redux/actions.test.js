@@ -10,13 +10,13 @@ const compose = {
     }
 };
 
-describe('updateCompose', () => {
+describe('composeUpdated', () => {
     test('returns dict', () => {
-        const result = actions.updateCompose(compose);
+        const result = actions.composeUpdated(compose);
 
         // this function updates the type attribute and
         // returns everything else unchanged
-        expect(result.type).toBe(types.UPDATE_COMPOSE);
+        expect(result.type).toBe(types.COMPOSE_UPDATED);
         expect(result.compose).toBe(compose);
     });
 });
