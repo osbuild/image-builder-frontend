@@ -1,5 +1,5 @@
-import { composeReducer } from '../../../SmartComponents/redux/reducers';
-import types from '../../../SmartComponents/redux/types';
+import { composeReducer } from '../../../store/reducers/composes';
+import types from '../../../store/types';
 
 const compose = {
     '77e4c693-0497-4b85-936d-b2a3ad69571b': {
