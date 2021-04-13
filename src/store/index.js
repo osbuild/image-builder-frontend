@@ -2,7 +2,7 @@ import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilitie
 import promiseMiddleware from 'redux-promise-middleware';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import { composeReducer } from '../SmartComponents/redux/reducers';
+import { composeReducer } from './reducers/composes';
 
 let registry;
 

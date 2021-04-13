@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { actions } from '../redux';
+import { actions } from '../../store/actions';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';

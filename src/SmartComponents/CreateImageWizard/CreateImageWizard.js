@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { actions } from '../redux';
+import { actions } from '../../store/actions';
 
 import { Wizard, TextContent } from '@patternfly/react-core';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
