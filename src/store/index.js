@@ -1,5 +1,6 @@
 import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
+import thunk from 'redux-thunk';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import composes from './reducers/composes';
@@ -14,6 +15,7 @@ export function init (store = {}, ...middleware) {
 
     registry = new ReducerRegistry(store, [
         promiseMiddleware,
+        thunk,
         ...middleware
     ]);
 
