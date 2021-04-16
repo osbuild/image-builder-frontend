@@ -52,15 +52,14 @@ class ImagesTable extends Component {
 
     pollComposeStatuses() {
         let { composeUpdated, composes } = this.props;
-        Object.entries(composes).map(([ id, compose ]) => {
+        Object.entries(composes.byId).map(([ id, compose ]) => {
             /* Skip composes that have been complete */
             if (compose.image_status.status === 'success' || compose.image_status.status === 'failure') {
                 return;
             }
 
             api.getComposeStatus(id).then(response => {
-                let newCompose = {};
-                newCompose[id] = Object.assign({}, compose, { image_status: response.image_status });
+                const newCompose = Object.assign({}, compose, { image_status: response.image_status });
                 composeUpdated(newCompose);
             });
         });
@@ -68,11 +67,11 @@ class ImagesTable extends Component {
 
     render() {
         let { composes } = this.props;
-        const rows = Object.entries(composes).map(([ id, compose ]) => {
+        const rows = Object.entries(composes.byId).map(([ id, compose ]) => {
             return {
                 cells: [
                     id,
-                    { title: <Upload uploadType={ compose.upload_type } /> },
+                    { title: <Upload uploadType={ compose.image_requests[0].image_type } /> },
                     { title: <Release release={ compose.distribution } /> },
                     { title: <ImageBuildStatus status={ compose.image_status.status } /> },
                     ''
@@ -81,7 +80,7 @@ class ImagesTable extends Component {
         });
         return (
             <React.Fragment>
-                { Object.keys(composes).length === 0 && (
+                { composes.allIds.length === 0 && (
                     <EmptyState variant={ EmptyStateVariant.large } data-testid="empty-state">
                         <EmptyStateIcon icon={ PlusCircleIcon } />
                         <Title headingLevel="h4" size="lg">

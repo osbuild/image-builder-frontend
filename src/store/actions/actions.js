@@ -1,11 +1,39 @@
+import api from '../../api';
 import types from '../types';
 
 function composeUpdated(compose) {
     return {
         type: types.COMPOSE_UPDATED,
-        compose
+        payload: { compose },
     };
 }
+
+export const composeFailed = (error) => ({
+    type: types.COMPOSE_FAILED,
+    payload: { error }
+});
+
+export const composeAdded = (compose) => ({
+    type: types.COMPOSE_ADDED,
+    payload: { compose },
+});
+
+export const composeStart = (composeRequest) => async dispatch => {
+    // response will be of the format {id: ''}
+    const request = api.composeImage(composeRequest);
+    return request.then(response => {
+        // add the compose id to the composeRequest object to provide access to the
+        // id if iterating through composes and add an image status of 'pending'.
+        const compose = Object.assign({}, composeRequest, response, { image_status: { status: 'pending' }});
+        dispatch(composeAdded(compose));
+    }).catch(err => {
+        if (err.response.status === 500) {
+            dispatch(composeFailed('Error: Something went wrong serverside'));
+        } else {
+            dispatch(composeFailed('Error: Something went wrong with the compose'));
+        }
+    });
+};
 
 function setRelease({ arch, distro }) {
     return {
@@ -84,6 +112,7 @@ function setSubscribeNow(subscribeNow) {
 }
 
 export default {
+    composeStart,
     composeUpdated,
     setRelease,
     setUploadDestinations,

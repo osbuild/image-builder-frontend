@@ -16,7 +16,6 @@ import WizardStepRegistration from './WizardStepRegistration';
 import WizardStepReview from './WizardStepReview';
 import ImageWizardFooter from './ImageWizardFooter';
 
-import api from './../../api.js';
 import './CreateImageWizard.scss';
 
 class CreateImageWizard extends Component {
@@ -36,7 +35,6 @@ class CreateImageWizard extends Component {
             uploadGoogleErrors: {},
             isSaveInProgress: false,
             isValidSubscription: true,
-            onSaveError: null,
         };
     }
 
@@ -114,9 +112,7 @@ class CreateImageWizard extends Component {
     }
 
     onSave() {
-        this.setState({
-            isSaveInProgress: true,
-        });
+        this.setState({ isSaveInProgress: true });
 
         let customizations = {
             packages: this.props.selectedPackages,
@@ -206,41 +202,21 @@ class CreateImageWizard extends Component {
                 customizations,
             };
             requests.push(request);
-
         }
 
-        const composeRequests = [];
-        requests.forEach(request => {
-            const composeRequest = api.composeImage(request).then(response => {
-                let compose = {};
-                compose[response.id] = {
-                    image_status: {
-                        status: 'pending',
-                    },
-                    distribution: request.distribution,
-                    architecture: request.image_requests[0].architecture,
-                    image_type: request.image_requests[0].image_type,
-                    upload_type: request.image_requests[0].upload_request.type,
-                };
-                this.props.composeUpdated(compose);
-            });
-            composeRequests.push(composeRequest);
-        });
+        const composeRequests = requests.map(request => this.props.composeStart(request));
 
         Promise.all(composeRequests)
             .then(() => {
-                this.props.addNotification({
-                    variant: 'success',
-                    title: 'Your image is being created',
-                });
-                this.props.history.push('/landing');
-            })
-            .catch(err => {
-                console.log('ERR', err);
-                this.setState({ isSaveInProgress: false });
-                if (err.response.status === 500) {
-                    this.setState({ onSaveError: 'Error: Something went wrong serverside' });
+                if (!this.props.composesError) {
+                    this.props.addNotification({
+                        variant: 'success',
+                        title: 'Your image is being created',
+                    });
+                    this.props.history.push('/landing');
                 }
+
+                this.setState({ isSaveInProgress: false });
             });
     }
 
@@ -326,7 +302,7 @@ class CreateImageWizard extends Component {
                         isValidUploadDestination={ isValidUploadDestination }
                         isSaveInProgress={ this.state.isSaveInProgress }
                         isValidSubscription={ this.state.isValidSubscription }
-                        error={ this.state.onSaveError } /> }
+                        error={ this.props.composesError } /> }
                     isOpen />
             </React.Fragment>
         );
@@ -335,6 +311,7 @@ class CreateImageWizard extends Component {
 
 function mapStateToProps(state) {
     return {
+        composesError: state.composes.error,
         release: state.pendingCompose.release,
         uploadDestinations: state.pendingCompose.uploadDestinations,
         uploadAWS: state.pendingCompose.uploadAWS,
@@ -349,12 +326,15 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         composeUpdated: (compose) => dispatch(actions.composeUpdated(compose)),
+        composeStart: (composeRequest) => dispatch(actions.composeStart(composeRequest)),
         addNotification: (not) => dispatch(addNotification(not)),
     };
 }
 
 CreateImageWizard.propTypes = {
+    composesError: PropTypes.string,
     composeUpdated: PropTypes.func,
+    composeStart: PropTypes.func,
     addNotification: PropTypes.func,
     history: PropTypes.object,
     release: PropTypes.object,
