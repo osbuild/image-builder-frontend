@@ -2,12 +2,21 @@ import { composes } from '../../../store/reducers/composes';
 import types from '../../../store/types';
 
 const compose = {
-    '77e4c693-0497-4b85-936d-b2a3ad69571b': {
+    id: '77e4c693-0497-4b85-936d-b2a3ad69571b',
+    distribution: 'rhel-8',
+    image_requests: [
+        {
+            architecture: 'x86_64',
+            image_type: 'ami',
+            upload_request: {
+                type: 'aws',
+                options: {}
+            }
+        }
+    ],
+    image_status: {
         status: 'uploading',
-        distribution: 'fedora-31',
-        architecture: 'x86_64',
-        image_type: 'qcow2'
-    }
+    },
 };
 
 describe('composes', () => {
@@ -19,17 +28,59 @@ describe('composes', () => {
         expect(result).toEqual({});
     });
 
-    test('returns updates state for types.COMPOSE_UPDATED', () => {
+    test('returns updated state for types.COMPOSE_ADDED', () => {
         const state = {
-            testAttr: 'test-me'
+            allIds: [],
+            byId: {},
+            errors: null,
+        };
+        const result = composes(state, {
+            type: types.COMPOSE_ADDED,
+            payload: { compose }
+        });
+
+        expect(result.allIds)
+            .toEqual([ '77e4c693-0497-4b85-936d-b2a3ad69571b' ]);
+        expect(result.byId['77e4c693-0497-4b85-936d-b2a3ad69571b'])
+            .toEqual(compose);
+        expect(result.error)
+            .toEqual(null);
+    });
+
+    test('returns updated state for types.COMPOSE_UPDATED', () => {
+        const state = {
+            allIds: [ '77e4c693-0497-4b85-936d-b2a3ad69571b' ],
+            byId: {
+                '77e4c693-0497-4b85-936d-b2a3ad69571b': {},
+            },
+            error: null,
         };
         const result = composes(state, {
             type: types.COMPOSE_UPDATED,
-            compose
+            payload: { compose }
         });
 
-        expect(result.testAttr).toBe('test-me');
-        expect(result['77e4c693-0497-4b85-936d-b2a3ad69571b'])
-            .toEqual(compose['77e4c693-0497-4b85-936d-b2a3ad69571b']);
+        expect(result.allIds)
+            .toEqual([ '77e4c693-0497-4b85-936d-b2a3ad69571b' ]);
+        expect(result.byId['77e4c693-0497-4b85-936d-b2a3ad69571b'])
+            .toEqual(compose);
+        expect(result.error)
+            .toEqual(null);
     });
+
+    test('returns updated state for types.COMPOSE_FAILED', () => {
+        const state = {
+            allIds: [],
+            byId: {},
+            error: null,
+        };
+        const result = composes(state, {
+            type: types.COMPOSE_FAILED,
+            payload: { error: 'test error' }
+        });
+
+        expect(result.error)
+            .toEqual('test error');
+    });
+
 });
