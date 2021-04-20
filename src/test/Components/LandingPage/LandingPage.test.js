@@ -1,7 +1,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
-import LandingPage from '../../../SmartComponents/LandingPage/LandingPage';
+import LandingPage from '../../../Components/LandingPage/LandingPage';
 import api from '../../../api.js';
 
 describe('Landing Page', () => {
