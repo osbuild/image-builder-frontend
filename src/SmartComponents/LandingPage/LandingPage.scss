@@ -1,0 +1,11 @@
+.title {
+    display: inline;
+}
+
+.pf-c-form__group-label-help {
+    color: var(--pf-global--icon--Color--light);
+}
+
+.pf-c-form__group-label-help:active {
+    color: var(--pf-global--icon--Color--dark);
+}
