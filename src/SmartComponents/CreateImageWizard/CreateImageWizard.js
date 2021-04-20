@@ -4,7 +4,8 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { actions } from '../../store/actions';
 
-import { Wizard } from '@patternfly/react-core';
+import { Button, Text, Wizard } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import WizardStepImageOutput from './WizardStepImageOutput';
@@ -293,6 +294,20 @@ class CreateImageWizard extends Component {
             <React.Fragment>
                 <Wizard
                     title={ 'Create image' }
+                    description={ <Text>
+                        Create a RHEL image and push it to cloud providers.
+                        {' '}
+                        <Button
+                            component="a"
+                            target="_blank"
+                            variant="link"
+                            icon={ <ExternalLinkAltIcon /> }
+                            iconPosition="right"
+                            isInline
+                            href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8-beta/">
+                                Documentation
+                        </Button>
+                    </Text> }
                     onNext={ this.onStep }
                     onGoToStep={ this.onStep }
                     steps={ steps }
