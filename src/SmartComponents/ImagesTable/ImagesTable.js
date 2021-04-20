@@ -5,8 +5,11 @@ import { actions } from '../../store/actions';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
 import { TableToolbar } from '@redhat-cloud-services/frontend-components';
-import { ToolbarGroup, ToolbarItem, EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, Title } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { Button,
+    ToolbarGroup, ToolbarItem,
+    EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
+    Title } from '@patternfly/react-core';
+import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import ImageBuildStatus from '../../PresentationalComponents/ImagesTable/ImageBuildStatus';
 import Release from '../../PresentationalComponents/ImagesTable/Release';
@@ -95,6 +98,18 @@ class ImagesTable extends Component {
                         <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
                         Create image
                         </Link>
+                        <EmptyStateSecondaryActions>
+                            <Button
+                                component="a"
+                                target="_blank"
+                                variant="link"
+                                icon={ <ExternalLinkAltIcon /> }
+                                iconPosition="right"
+                                isInline
+                                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8-beta/">
+                                    Documentation
+                            </Button>
+                        </EmptyStateSecondaryActions>
                     </EmptyState>
                 ) || (
                     <React.Fragment>
