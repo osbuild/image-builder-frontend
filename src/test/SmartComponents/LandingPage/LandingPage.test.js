@@ -12,7 +12,7 @@ describe('Landing Page', () => {
         const composeImage = jest.spyOn(api, 'getVersion');
         composeImage.mockResolvedValue({ version: '1.0' });
         // check heading
-        screen.getByRole('heading', { name: /images/i });
+        screen.getByRole('heading', { name: /Image Builder/i });
     });
     test('renders EmptyState child component', async () => {
         // check action loads
