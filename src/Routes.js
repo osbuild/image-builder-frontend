@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import asyncComponent from './Utilities/asyncComponent';
 
-const LandingPage = asyncComponent(() => import('./SmartComponents/LandingPage/LandingPage'));
-const CreateImageWizard = asyncComponent(() => import('./SmartComponents/CreateImageWizard/CreateImageWizard'));
+const LandingPage = asyncComponent(() => import('./Components/LandingPage/LandingPage'));
+const CreateImageWizard = asyncComponent(() => import('./Components/CreateImageWizard/CreateImageWizard'));
 
 const InsightsRoute = ({ component: Component, title, ...rest }) => {
     title ? document.title = title : null;

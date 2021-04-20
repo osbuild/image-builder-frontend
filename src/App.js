@@ -7,7 +7,7 @@ import './App.scss';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
 
 import api from './api.js';
-import PermissionDenied from './PresentationalComponents/LandingPage/PermissionDenied';
+import PermissionDenied from './Components/LandingPage/PermissionDenied';
 
 class App extends Component {
     constructor() {

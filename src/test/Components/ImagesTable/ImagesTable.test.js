@@ -1,9 +1,9 @@
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
-import ImagesTable from '../../../SmartComponents/ImagesTable/ImagesTable';
-import ImageBuildStatus from '../../../PresentationalComponents/ImagesTable/ImageBuildStatus';
-import Upload from '../../../PresentationalComponents/ImagesTable/Upload';
+import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
+import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
+import Upload from '../../../Components/ImagesTable/Upload';
 import '@testing-library/jest-dom';
 
 const store = {

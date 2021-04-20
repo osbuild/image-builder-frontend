@@ -1,5 +1,5 @@
-import { actions } from '../../../store/actions';
-import types from '../../../store/types';
+import { actions } from '../../store/actions';
+import types from '../../store/types';
 
 const compose = {
     '77e4c693-0497-4b85-936d-b2a3ad69571b': {

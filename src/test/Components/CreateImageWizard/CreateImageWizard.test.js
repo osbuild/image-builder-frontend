@@ -4,7 +4,7 @@ import React from 'react';
 import { screen, getByText, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
-import CreateImageWizard from '../../../SmartComponents/CreateImageWizard/CreateImageWizard';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import api from '../../../api.js';
 
 let historySpy = undefined;

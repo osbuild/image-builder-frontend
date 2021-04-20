@@ -11,9 +11,9 @@ import { Button,
     Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
-import ImageBuildStatus from '../../PresentationalComponents/ImagesTable/ImageBuildStatus';
-import Release from '../../PresentationalComponents/ImagesTable/Release';
-import Upload from '../../PresentationalComponents/ImagesTable/Upload';
+import ImageBuildStatus from './ImageBuildStatus';
+import Release from './Release';
+import Upload from './Upload';
 
 import api from '../../api.js';
 
