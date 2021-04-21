@@ -63,6 +63,17 @@ export function composes(state = initialComposesState, action) {
                     [action.payload.compose.id]: action.payload.compose,
                 }
             };
+        case types.COMPOSE_UPDATED_STATUS:
+            return {
+                ...state,
+                byId: {
+                    ...state.byId,
+                    [action.payload.id]: {
+                        ...state.byId[action.payload.id],
+                        image_status: action.payload.status,
+                    }
+                }
+            };
         default:
             return state;
     }
