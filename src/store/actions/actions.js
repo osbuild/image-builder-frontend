@@ -35,6 +35,17 @@ export const composeStart = (composeRequest) => async dispatch => {
     });
 };
 
+export const composeUpdatedStatus = (id, status) => ({
+    type: types.COMPOSE_UPDATED_STATUS,
+    payload: { id, status }
+});
+
+export const composeGetStatus = (id) => async dispatch => {
+    const request = await api.getComposeStatus(id);
+    dispatch(composeUpdatedStatus(id, request.image_status));
+};
+
+
 function setRelease({ arch, distro }) {
     return {
         type: types.SET_RELEASE,
@@ -114,6 +125,7 @@ function setSubscribeNow(subscribeNow) {
 export default {
     composeStart,
     composeUpdated,
+    composeGetStatus,
     setRelease,
     setUploadDestinations,
     setUploadAWS,

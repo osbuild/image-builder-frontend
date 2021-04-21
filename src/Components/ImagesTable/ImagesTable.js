@@ -14,9 +14,6 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Upload from './Upload';
-
-import api from '../../api.js';
-
 class ImagesTable extends Component {
     constructor(props) {
         super(props);
@@ -54,17 +51,14 @@ class ImagesTable extends Component {
     }
 
     pollComposeStatuses() {
-        let { composeUpdated, composes } = this.props;
+        let { composes } = this.props;
         Object.entries(composes.byId).map(([ id, compose ]) => {
             /* Skip composes that have been complete */
             if (compose.image_status.status === 'success' || compose.image_status.status === 'failure') {
                 return;
             }
 
-            api.getComposeStatus(id).then(response => {
-                const newCompose = Object.assign({}, compose, { image_status: response.image_status });
-                composeUpdated(newCompose);
-            });
+            this.props.composeGetStatus(id);
         });
     }
 
@@ -145,13 +139,13 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        composeUpdated: (compose) => dispatch(actions.composeUpdated(compose)),
+        composeGetStatus: (id) => dispatch(actions.composeGetStatus(id)),
     };
 }
 
 ImagesTable.propTypes = {
     composes: PropTypes.object,
-    composeUpdated: PropTypes.func,
+    composeGetStatus: PropTypes.func,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImagesTable);
