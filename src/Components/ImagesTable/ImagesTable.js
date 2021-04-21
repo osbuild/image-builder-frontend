@@ -43,6 +43,7 @@ class ImagesTable extends Component {
     }
 
     componentDidMount() {
+        this.props.composeGetAll();
         this.interval = setInterval(() => this.pollComposeStatuses(), 8000);
     }
 
@@ -139,12 +140,14 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
+        composeGetAll: () => dispatch(actions.composeGetAll()),
         composeGetStatus: (id) => dispatch(actions.composeGetStatus(id)),
     };
 }
 
 ImagesTable.propTypes = {
     composes: PropTypes.object,
+    composeGetAll: PropTypes.func,
     composeGetStatus: PropTypes.func,
 };
 

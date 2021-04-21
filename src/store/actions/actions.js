@@ -45,6 +45,14 @@ export const composeGetStatus = (id) => async dispatch => {
     dispatch(composeUpdatedStatus(id, request.image_status));
 };
 
+export const composeGetAll = () => async dispatch => {
+    // only search for the first 10 composes for now
+    const request = await api.getComposes(10, 0);
+    request.data.map(compose => {
+        dispatch(composeAdded(compose));
+        dispatch(composeGetStatus(compose.id));
+    });
+};
 
 function setRelease({ arch, distro }) {
     return {
@@ -123,6 +131,7 @@ function setSubscribeNow(subscribeNow) {
 }
 
 export default {
+    composeGetAll,
     composeStart,
     composeUpdated,
     composeGetStatus,
