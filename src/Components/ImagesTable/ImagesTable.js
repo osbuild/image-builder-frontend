@@ -74,9 +74,9 @@ class ImagesTable extends Component {
             return {
                 cells: [
                     id,
-                    { title: <Upload uploadType={ compose.image_requests[0].image_type } /> },
-                    { title: <Release release={ compose.distribution } /> },
-                    { title: <ImageBuildStatus status={ compose.image_status.status } /> },
+                    { title: <Upload uploadType={ compose.request.image_requests[0].image_type } /> },
+                    { title: <Release release={ compose.request.distribution } /> },
+                    { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
                     ''
                 ]
             };

@@ -3,18 +3,21 @@ import types from '../types';
 // Example of action.compose
 // {
 //     "77e4c693-0497-4b85-936d-b2a3ad69571b": {
+//         created_at: "2021-04-21 11:20:46.927594 +0000 UTC",
 //         id: "77e4c693-0497-4b85-936d-b2a3ad69571b",
-//         distribution: "rhel-8",
-//         image_requests: [
-//             {
-//                 architecture: "x86_64",
-//                 image_type: "ami",
-//                 upload_request: {
-//                     type: "aws",
-//                     options: {}
+//         request: {
+//             distribution: "rhel-8",
+//             image_requests: [
+//                 {
+//                     architecture: "x86_64",
+//                     image_type: "ami",
+//                     upload_request: {
+//                         type: "aws",
+//                         options: {}
+//                     }
 //                 }
-//             }
-//         ]
+//             ]
+//         },
 //         image_status: {
 //             status: "uploading",
 //         },
