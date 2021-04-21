@@ -22,9 +22,9 @@ export const composeStart = (composeRequest) => async dispatch => {
     // response will be of the format {id: ''}
     const request = api.composeImage(composeRequest);
     return request.then(response => {
-        // add the compose id to the composeRequest object to provide access to the
-        // id if iterating through composes and add an image status of 'pending'.
-        const compose = Object.assign({}, composeRequest, response, { image_status: { status: 'pending' }});
+        // add the compose id to the compose object to provide access to the id if iterating through
+        // composes and add an image status of 'pending' alongside the compose request.
+        const compose = Object.assign({}, response, { request: composeRequest },  { image_status: { status: 'pending' }});
         dispatch(composeAdded(compose));
     }).catch(err => {
         if (err.response.status === 500) {
