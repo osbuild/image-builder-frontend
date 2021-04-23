@@ -246,9 +246,6 @@ describe('Images Table', () => {
     });
 
     test('render ImagesTable', () => {
-        // check action loads
-        screen.getByTestId('create-image-action');
-
         // make sure the empty-state message isn't present
         const emptyState = screen.queryByTestId('empty-state');
         expect(emptyState).not.toBeInTheDocument();
@@ -273,5 +270,18 @@ describe('Images Table', () => {
             render(<Upload uploadType={ compose.request.image_requests[0].image_type } />, { container: testElement });
             expect(row.cells[1]).toHaveTextContent(testElement.textContent);
         }
+    });
+});
+
+describe('Images Table Toolbar', () => {
+    beforeEach(() => {
+        renderWithReduxRouter(<ImagesTable />, store);
+    });
+    test('render toolbar', () => {
+        // check create image button
+        screen.getByTestId('create-image-action');
+
+        // check pagination renders
+        screen.getByTestId('images-pagination');
     });
 });
