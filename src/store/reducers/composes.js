@@ -30,15 +30,15 @@ const initialComposesState = {
     error: null,
 };
 
+// only add to array if compose does not exist
+const updateAllIds = (allIds, id) => allIds.includes(id) ? allIds : allIds.concat(id);
+
 export function composes(state = initialComposesState, action) {
     switch (action.type) {
         case types.COMPOSE_ADDED:
             return {
                 ...state,
-                allIds: [
-                    ...state.allIds,
-                    action.payload.compose.id
-                ],
+                allIds: updateAllIds(state.allIds, action.payload.compose.id),
                 byId: {
                     ...state.byId,
                     [action.payload.compose.id]: action.payload.compose,
