@@ -45,12 +45,18 @@ export const composeGetStatus = (id) => async dispatch => {
     dispatch(composeUpdatedStatus(id, request.image_status));
 };
 
+export const composesUpdatedCount = (count) => ({
+    type: types.COMPOSES_UPDATED_COUNT,
+    payload: { count }
+});
+
 export const composesGet = (limit, offset) => async dispatch => {
     const request = await api.getComposes(limit, offset);
     request.data.map(compose => {
         dispatch(composeAdded(compose));
         dispatch(composeGetStatus(compose.id));
     });
+    dispatch(composesUpdatedCount(request.meta.count));
 };
 
 function setRelease({ arch, distro }) {

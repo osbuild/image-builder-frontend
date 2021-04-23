@@ -25,6 +25,7 @@ import types from '../types';
 // };
 
 const initialComposesState = {
+    count: 0,
     allIds: [],
     byId: {},
     error: null,
@@ -62,6 +63,11 @@ export function composes(state = initialComposesState, action) {
                     ...state.byId,
                     [action.payload.compose.id]: action.payload.compose,
                 }
+            };
+        case types.COMPOSES_UPDATED_COUNT:
+            return {
+                ...state,
+                count: action.payload.count,
             };
         case types.COMPOSE_UPDATED_STATUS:
             return {
