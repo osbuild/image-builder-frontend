@@ -4,10 +4,9 @@ import { connect } from 'react-redux';
 import { actions } from '../../store/actions';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
-import { TableToolbar } from '@redhat-cloud-services/frontend-components';
 import { Button,
-    ToolbarGroup, ToolbarItem,
     EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
+    Toolbar, ToolbarContent, ToolbarItem,
     Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
@@ -108,15 +107,15 @@ class ImagesTable extends Component {
                     </EmptyState>
                 ) || (
                     <React.Fragment>
-                        <TableToolbar>
-                            <ToolbarGroup>
+                        <Toolbar>
+                            <ToolbarContent>
                                 <ToolbarItem>
                                     <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
                                         Create image
                                     </Link>
                                 </ToolbarItem>
-                            </ToolbarGroup>
-                        </TableToolbar>
+                            </ToolbarContent>
+                        </Toolbar>
                         <Table
                             aria-label="Images"
                             rows={ rows }
