@@ -32,6 +32,7 @@ describe('composes', () => {
         const state = {
             allIds: [],
             byId: {},
+            count: 1,
             errors: null,
         };
         const result = composes(state, {
@@ -43,6 +44,8 @@ describe('composes', () => {
             .toEqual([ '77e4c693-0497-4b85-936d-b2a3ad69571b' ]);
         expect(result.byId['77e4c693-0497-4b85-936d-b2a3ad69571b'])
             .toEqual(compose);
+        expect(result.count)
+            .toEqual(1);
         expect(result.error)
             .toEqual(null);
     });
@@ -53,6 +56,7 @@ describe('composes', () => {
             byId: {
                 '77e4c693-0497-4b85-936d-b2a3ad69571b': {},
             },
+            count: 2,
             error: null,
         };
         const result = composes(state, {
@@ -64,6 +68,8 @@ describe('composes', () => {
             .toEqual([ '77e4c693-0497-4b85-936d-b2a3ad69571b' ]);
         expect(result.byId['77e4c693-0497-4b85-936d-b2a3ad69571b'])
             .toEqual(compose);
+        expect(result.count)
+            .toEqual(2);
         expect(result.error)
             .toEqual(null);
     });
@@ -72,6 +78,7 @@ describe('composes', () => {
         const state = {
             allIds: [],
             byId: {},
+            count: 0,
             error: null,
         };
         const result = composes(state, {
@@ -83,4 +90,21 @@ describe('composes', () => {
             .toEqual('test error');
     });
 
+    test('returns updated state for types.COMPOSES_UPDATED_COUNT', () => {
+        const state = {
+            allIds: [],
+            byId: {},
+            count: 0,
+            error: null,
+        };
+
+        const result = composes(state, {
+            type: types.COMPOSES_UPDATED_COUNT,
+            payload: { count: 1 }
+        });
+
+        expect(result.count)
+            .toEqual(1);
+
+    });
 });
