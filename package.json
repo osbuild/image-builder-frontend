@@ -4,9 +4,9 @@
   "private": false,
   "dependencies": {
     "@babel/runtime": "7.13.17",
-    "@patternfly/patternfly": "4.102.1",
-    "@patternfly/react-core": "4.115.1",
-    "@patternfly/react-table": "4.26.6",
+    "@patternfly/patternfly": "4.102.2",
+    "@patternfly/react-core": "4.115.2",
+    "@patternfly/react-table": "4.26.7",
     "@redhat-cloud-services/frontend-components": "2.5.10",
     "@redhat-cloud-services/frontend-components-notifications": "3.1.0",
     "@redhat-cloud-services/frontend-components-utilities": "2.2.9",
