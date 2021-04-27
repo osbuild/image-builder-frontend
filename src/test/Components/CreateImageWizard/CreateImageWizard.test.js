@@ -472,7 +472,28 @@ describe('Click through all steps', () => {
         next.click();
 
         // packages
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => {
+                return Promise.resolve({
+                    meta: { count: 100 },
+                    links: { first: '', last: '' },
+                    data: [
+                        {
+                            name: 'testPkg',
+                            summary: 'test package summary',
+                            version: '1.0',
+                        }
+                    ],
+                });
+            });
+
         screen.getByText('Optionally add additional packages to your image');
+        userEvent.type(screen.getByRole('searchbox', { name: /Available search input/ }), 'test');
+        screen.getByTestId('search-pkgs-button').click();
+        await expect(getPackages).toHaveBeenCalledTimes(1);
+        screen.getByRole('button', { name: /testPkg test package summary/ }).click();
+        screen.getByRole('button', { name: /Add selected/ }).click();
         next.click();
 
         // review
@@ -502,7 +523,7 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
-                            packages: [],
+                            packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': '1234567890',
                                 insights: true,
@@ -526,7 +547,7 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
-                            packages: [],
+                            packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': '1234567890',
                                 insights: true,
@@ -552,7 +573,7 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
-                            packages: [],
+                            packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': '1234567890',
                                 insights: true,
