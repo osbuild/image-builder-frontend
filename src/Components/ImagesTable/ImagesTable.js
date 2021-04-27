@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from '../../store/actions';
 import { Link } from 'react-router-dom';
-import { Table, TableHeader, TableBody, classNames, Visibility } from '@patternfly/react-table';
+import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { Button,
     EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
     Pagination,
@@ -18,26 +18,6 @@ class ImagesTable extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            columns: [
-                {
-                    title: 'Image'
-                },
-                'Target',
-                'Release',
-                'Status',
-                {
-                    title: '',
-                    props: { className: 'pf-u-text-align-right' },
-                    columnTransforms: [
-                        classNames(
-                            Visibility.hiddenOnXs,
-                            Visibility.hiddenOnSm,
-                            Visibility.hiddenOnMd,
-                            Visibility.visibleOnLg
-                        )
-                    ]
-                }
-            ],
             page: 1,
             perPage: 10,
         };
@@ -93,6 +73,13 @@ class ImagesTable extends Component {
     render() {
         let { composes } = this.props;
 
+        const columns = [
+            'Image',
+            'Release',
+            'Target',
+            'Status',
+        ];
+
         // the state.page is not an index so must be reduced by 1 get the starting index
         const itemsStartInclusive = (this.state.page - 1) * this.state.perPage;
         const itemsEndExlcusive = itemsStartInclusive + this.state.perPage;
@@ -102,13 +89,13 @@ class ImagesTable extends Component {
             return {
                 cells: [
                     id,
-                    { title: <Upload uploadType={ compose.request.image_requests[0].image_type } /> },
                     { title: <Release release={ compose.request.distribution } /> },
+                    { title: <Upload uploadType={ compose.request.image_requests[0].upload_request.type } /> },
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
-                    ''
                 ]
             };
         });
+
         return (
             <React.Fragment>
                 { composes.allIds.length === 0 && (
@@ -164,7 +151,7 @@ class ImagesTable extends Component {
                         <Table
                             aria-label="Images"
                             rows={ rows }
-                            cells={ this.state.columns }
+                            cells={ columns }
                             data-testid="images-table">
                             <TableHeader />
                             <TableBody />

@@ -263,12 +263,12 @@ describe('Images Table', () => {
 
             // render the expected <ImageBuildStatus /> and compare the text content
             let testElement = document.createElement('testElement');
-            render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
+            render(<Upload uploadType={ compose.request.image_requests[0].upload_request.type } />, { container: testElement });
             expect(row.cells[3]).toHaveTextContent(testElement.textContent);
 
-            // do the same for the upload/target column
-            render(<Upload uploadType={ compose.request.image_requests[0].image_type } />, { container: testElement });
-            expect(row.cells[1]).toHaveTextContent(testElement.textContent);
+            // render the expected <ImageBuildStatus /> and compare the text content
+            render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
+            expect(row.cells[4]).toHaveTextContent(testElement.textContent);
         }
     });
 });
