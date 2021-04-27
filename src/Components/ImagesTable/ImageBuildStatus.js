@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Flex, Spinner } from '@patternfly/react-core';
-import { CheckCircleIcon, PendingIcon, ExclamationCircleIcon } from '@patternfly/react-icons';
+import { Flex } from '@patternfly/react-core';
+import { CheckCircleIcon, PendingIcon, ExclamationCircleIcon, InProgressIcon } from '@patternfly/react-icons';
 
 import './ImageBuildStatus.scss';
 
@@ -29,49 +29,25 @@ const ImageBuildStatus = (props) => {
         // Keep "running" for backward compatibility
         running: [
             {
-                icon: <Spinner size="md" />,
+                icon: <InProgressIcon className="pending" />,
                 text: 'Image build in progress'
-            },
-            {
-                icon: <PendingIcon />,
-                text: 'Upload, Cloud registration pending'
             }
         ],
         building: [
             {
-                icon: <Spinner size="md" />,
+                icon: <InProgressIcon className="pending" />,
                 text: 'Image build in progress'
-            },
-            {
-                icon: <PendingIcon />,
-                text: 'Upload, Cloud registration pending'
             }
         ],
         uploading: [
             {
-                icon: <CheckCircleIcon />,
-                text: 'Image build finished'
-            },
-            {
-                icon: <Spinner size="md" />,
+                icon: <InProgressIcon className="pending" />,
                 text: 'Image upload in progress'
-            },
-            {
-                icon: <PendingIcon />,
-                text: 'Cloud registration pending'
             }
         ],
         registering: [
             {
-                icon: <CheckCircleIcon />,
-                text: 'Image build finished'
-            },
-            {
-                icon: <CheckCircleIcon />,
-                text: 'Image upload finished'
-            },
-            {
-                icon: <Spinner size="md" />,
+                icon: <InProgressIcon className="pending" />,
                 text: 'Cloud registration in progress'
             }
         ]
