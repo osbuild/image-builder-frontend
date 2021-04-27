@@ -16,11 +16,11 @@ class WizardStepPackages extends Component {
         this.packageListChange = this.packageListChange.bind(this);
         this.mapPackagesToComponent = this.mapPackagesToComponent.bind(this);
 
+        const comps = this.mapPackagesToComponent(this.props.selectedPackages);
         this.state = {
             packagesAvailableComponents: [],
-            packagesSelectedComponents: [],
-            packagesFilteredComponents: [],
-            packagesSelectedNames: [],
+            packagesSelectedComponents: comps,
+            packagesFilteredComponents: comps,
             packagesSearchName: '',
         };
     }
@@ -38,9 +38,9 @@ class WizardStepPackages extends Component {
         );
     }
 
-    // this digs into the component properties to extract the package name
-    mapComponentToPackageName(component) {
-        return component.props.children[0].props.children;
+    // this digs into the component properties to extract the package
+    mapComponentToPackage(component) {
+        return { name: component.props.children[0].props.children, summary: component.props.children[1].props.children };
     }
 
     handlePackagesSearch() {
@@ -54,8 +54,7 @@ class WizardStepPackages extends Component {
 
     handlePackagesFilter(filter) {
         const filteredPackages = this.state.packagesSelectedComponents.filter(component => {
-            const name = this.mapComponentToPackageName(component);
-            return name.includes(filter);
+            return this.mapComponentToPackage(component).name.includes(filter);
         });
         this.setState({
             packagesFilteredComponents: filteredPackages
@@ -63,14 +62,14 @@ class WizardStepPackages extends Component {
     }
 
     packageListChange(newAvailablePackages, newChosenPackages) {
-        const chosenNames = newChosenPackages.map(component => this.mapComponentToPackageName(component));
+        const chosenPkgs = newChosenPackages.map(component => this.mapComponentToPackage(component));
         this.setState({
             packagesAvailableComponents: newAvailablePackages,
             packagesSelectedComponents: newChosenPackages,
             packagesFilteredComponents: newChosenPackages,
         });
 
-        this.props.setSelectedPackages(chosenNames);
+        this.props.setSelectedPackages(chosenPkgs);
     }
 
     render() {
@@ -78,6 +77,7 @@ class WizardStepPackages extends Component {
             <Button
                 aria-label="Search button for available packages"
                 key="availableSearchButton"
+                data-testid="search-pkgs-button"
                 onClick={ this.handlePackagesSearch }>
                 Search
             </Button>

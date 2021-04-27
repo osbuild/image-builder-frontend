@@ -116,7 +116,7 @@ class CreateImageWizard extends Component {
         this.setState({ isSaveInProgress: true });
 
         let customizations = {
-            packages: this.props.selectedPackages,
+            packages: this.props.selectedPackages.map(p => p.name),
         };
         if (this.props.subscribeNow) {
             customizations.subscription = {
