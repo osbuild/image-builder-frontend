@@ -24,6 +24,7 @@ class ImagesTable extends Component {
         this.pollComposeStatuses = this.pollComposeStatuses.bind(this);
         this.onSetPage = this.onSetPage.bind(this);
         this.onPerPageSelect = this.onPerPageSelect.bind(this);
+        this.timestampToDisplayString = this.timestampToDisplayString.bind(this);
     }
 
     componentDidMount() {
@@ -70,11 +71,27 @@ class ImagesTable extends Component {
         this.setState({ perPage, page: 1 });
     }
 
+    timestampToDisplayString(ts) {
+        // timestamp has format 2021-04-27 12:31:12.794809 +0000 UTC
+        // must be converted to ms timestamp and then reformatted to Apr 27, 2021
+        if (!ts) {
+            return '';
+        }
+
+        // get YYYY-MM-DD format
+        const date = ts.slice(0, 10);
+        const ms = Date.parse(date);
+        const options = { month: 'short', day: 'numeric', year: 'numeric' };
+        const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
+        return tsDisplay;
+    }
+
     render() {
         let { composes } = this.props;
 
         const columns = [
             'Image',
+            'Created',
             'Release',
             'Target',
             'Status',
@@ -89,6 +106,7 @@ class ImagesTable extends Component {
             return {
                 cells: [
                     id,
+                    this.timestampToDisplayString(compose.created_at),
                     { title: <Release release={ compose.request.distribution } /> },
                     { title: <Upload uploadType={ compose.request.image_requests[0].upload_request.type } /> },
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
