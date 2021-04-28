@@ -1,6 +1,6 @@
 /*global module*/
 
-const SECTION = 'apps';
+const SECTION = 'insights';
 const APP_ID = 'image-builder';
 const FRONTEND_PORT = 8002;
 const API_PORT = 8086;

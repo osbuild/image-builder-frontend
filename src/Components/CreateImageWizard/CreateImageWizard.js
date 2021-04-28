@@ -293,6 +293,7 @@ class CreateImageWizard extends Component {
         return (
             <React.Fragment>
                 <Wizard
+                    className="image-builder"
                     title={ 'Create image' }
                     description={ <>
                         Create a RHEL image and push it to cloud providers.

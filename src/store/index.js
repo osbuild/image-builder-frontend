@@ -1,4 +1,4 @@
-import ReducerRegistry from '@redhat-cloud-services/frontend-components-utilities/files/ReducerRegistry';
+import { ReducerRegistry } from '@redhat-cloud-services/frontend-components-utilities/ReducerRegistry';
 import promiseMiddleware from 'redux-promise-middleware';
 import thunk from 'redux-thunk';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
