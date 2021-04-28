@@ -4,7 +4,7 @@ const cookie = require('cookie');
 const fs = require('fs');
 const base64 = require('base-64');
 
-const SECTION = 'apps';
+const SECTION = 'insights';
 const APP_ID = 'image-builder';
 const FRONTEND_PORT = 8002;
 const API_PORT = 8086;
@@ -113,6 +113,8 @@ routes[`/apps/${APP_ID}`]            = { host: `http://localhost:${FRONTEND_PORT
 routes[`/api/${APP_ID}`]             = { host: `http://localhost:${API_PORT}` };
 routes['/apps/chrome']               = { host: PORTAL_BACKEND_MARKER };
 routes['/apps/beta/chrome']          = { host: PORTAL_BACKEND_MARKER };
+routes[`/beta/config`]            =    { host: `http://localhost:8889` };
+routes[`/config`]                 =    { host: `http://localhost:8889` };
 
 module.exports = {
     bs: {
