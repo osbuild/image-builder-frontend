@@ -107,7 +107,7 @@ class WizardStepReview extends Component {
                 <Title headingLevel="h2" size="xl">Review</Title>
                 <TextContent>
                     <Text component={ TextVariants.small }>
-                    Review the information and click Create image
+                    Review the information and click the Create button
                     to create the image using the following criteria.
                     </Text>
                     <Text component={ TextVariants.h3 }>Image output</Text>
