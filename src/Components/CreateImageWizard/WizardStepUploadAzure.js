@@ -23,11 +23,11 @@ class WizardStepUploadAzure extends Component {
                     </Text>
                     <Title headingLevel="h3">OAuth permissions</Title>
                     <Text>
-            In order to use Image Builder to push images to Azure, Image Builder must
-            be configured as an authorized application, and given the role of &quot;Contributor&quot; to at least one resource group.<br />
-            Image Builder must be authorized by an account owner.<br />
+            To authorize Image Builder to push images to Microsoft Azure, the account owner
+            must configure Image Builder as an authorized application and give it the role of
+            &quot;Contributor&quot; to at least one resource group.<br />
                         <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow">
-                            <small>Learn more</small></a>
+                            <small>Learn more about OAuth 2.0</small></a>
                     </Text>
 
                     <a href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=b94bb246-b02c-4985-9c22-d44e66f657f4
