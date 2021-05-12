@@ -4,6 +4,7 @@ import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
 import Upload from '../../../Components/ImagesTable/Upload';
+import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import '@testing-library/jest-dom';
 
 const store = {
@@ -22,6 +23,34 @@ const store = {
             '77fa8b03-7efb-4120-9a20-da66d68c4494',
         ],
         byId: {
+            'ca03f120-9840-4959-871e-94a5cb49d1f2': {
+                id: 'ca03f120-9840-4959-871e-94a5cb49d1f2',
+                created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+                request: {
+                    distribution: 'rhel-8',
+                    image_requests: [
+                        {
+                            architecture: 'x86_64',
+                            image_type: 'vhd',
+                            upload_request: {
+                                type: 'gcp',
+                                options: {}
+                            }
+                        }
+                    ],
+                },
+                image_status: {
+                    status: 'success',
+                    upload_status: {
+                        options: {
+                            image_name: 'composer-api-d446d8cb-7c16-4756-bf7d-706293785b05',
+                            project_id: 'red-hat-image-builder'
+                        },
+                        status: 'success',
+                        type: 'gcp'
+                    }
+                },
+            },
             // kept "running" for backward compatibility
             'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa': {
                 id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
@@ -171,34 +200,6 @@ const store = {
                     status: 'failure',
                 },
             },
-            'ca03f120-9840-4959-871e-94a5cb49d1f2': {
-                id: 'ca03f120-9840-4959-871e-94a5cb49d1f2',
-                created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
-                request: {
-                    distribution: 'rhel-8',
-                    image_requests: [
-                        {
-                            architecture: 'x86_64',
-                            image_type: 'vhd',
-                            upload_request: {
-                                type: 'gcp',
-                                options: {}
-                            }
-                        }
-                    ],
-                },
-                image_status: {
-                    status: 'success',
-                    upload_status: {
-                        options: {
-                            image_name: 'composer-api-d446d8cb-7c16-4756-bf7d-706293785b05',
-                            project_id: 'red-hat-image-builder'
-                        },
-                        status: 'success',
-                        type: 'gcp'
-                    }
-                },
-            },
             '551de6f6-1533-4b46-a69f-7924051f9bc6': {
                 id: '551de6f6-1533-4b46-a69f-7924051f9bc6',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
@@ -282,6 +283,10 @@ describe('Images Table', () => {
             // render the expected <ImageBuildStatus /> and compare the text content
             render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
             expect(row.cells[4]).toHaveTextContent(testElement.textContent);
+
+            // render the expected <ImageLink /> and compare the text content
+            render(<ImageLink imageStatus={ compose.image_status } />, { container: testElement });
+            expect(row.cells[5]).toHaveTextContent(testElement.textContent);
         }
     });
 });
