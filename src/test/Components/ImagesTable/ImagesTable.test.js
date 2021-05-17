@@ -3,6 +3,7 @@ import { screen, render } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
+import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Upload from '../../../Components/ImagesTable/Upload';
 import '@testing-library/jest-dom';
 
@@ -22,6 +23,34 @@ const store = {
             '77fa8b03-7efb-4120-9a20-da66d68c4494',
         ],
         byId: {
+            '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
+                id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
+                created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+                request: {
+                    distribution: 'rhel-8',
+                    image_requests: [
+                        {
+                            architecture: 'x86_64',
+                            image_type: 'ami',
+                            upload_request: {
+                                type: 'aws',
+                                options: {}
+                            }
+                        }
+                    ],
+                },
+                image_status: {
+                    status: 'success',
+                    upload_status: {
+                        options: {
+                            ami: 'ami-0217b81d9be50e44b',
+                            region: 'us-east-1'
+                        },
+                        status: 'success',
+                        type: 'aws'
+                    }
+                },
+            },
             // kept "running" for backward compatibility
             'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa': {
                 id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
@@ -121,34 +150,6 @@ const store = {
                 },
                 image_status: {
                     status: 'registering',
-                },
-            },
-            '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
-                id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-                created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
-                request: {
-                    distribution: 'rhel-8',
-                    image_requests: [
-                        {
-                            architecture: 'x86_64',
-                            image_type: 'ami',
-                            upload_request: {
-                                type: 'aws',
-                                options: {}
-                            }
-                        }
-                    ],
-                },
-                image_status: {
-                    status: 'success',
-                    upload_status: {
-                        options: {
-                            ami: 'ami-0217b81d9be50e44b',
-                            region: 'us-east-1'
-                        },
-                        status: 'success',
-                        type: 'aws'
-                    }
                 },
             },
             '61b0effa-c901-4ee5-86b9-2010b47f1b22': {
@@ -282,6 +283,10 @@ describe('Images Table', () => {
             // render the expected <ImageBuildStatus /> and compare the text content
             render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
             expect(row.cells[4]).toHaveTextContent(testElement.textContent);
+
+            // render the expected <ImageLink /> and compare the text content for an aws link
+            render(<ImageLink imageStatus={ compose.image_status } />, { container: testElement });
+            expect(row.cells[5]).toHaveTextContent(testElement.textContent);
         }
     });
 });
