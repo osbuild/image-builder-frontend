@@ -14,6 +14,7 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Upload from './Upload';
+import ImageLink from './ImageLink';
 class ImagesTable extends Component {
     constructor(props) {
         super(props);
@@ -95,6 +96,7 @@ class ImagesTable extends Component {
             'Release',
             'Target',
             'Status',
+            ''
         ];
 
         // the state.page is not an index so must be reduced by 1 get the starting index
@@ -110,6 +112,7 @@ class ImagesTable extends Component {
                     { title: <Release release={ compose.request.distribution } /> },
                     { title: <Upload uploadType={ compose.request.image_requests[0].upload_request.type } /> },
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
+                    { title: <ImageLink imageStatus={ compose.image_status } /> },
                 ]
             };
         });
