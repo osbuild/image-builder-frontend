@@ -122,7 +122,7 @@ class CreateImageWizard extends Component {
             customizations.subscription = {
                 'activation-key': this.props.subscription.activationKey,
                 insights: this.props.subscription.insights,
-                organization: this.props.subscription.organization,
+                organization: Number(this.props.subscription.organization),
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
             };
