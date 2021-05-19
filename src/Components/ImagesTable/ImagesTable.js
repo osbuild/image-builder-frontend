@@ -142,7 +142,9 @@ class ImagesTable extends Component {
                                 icon={ <ExternalLinkAltIcon /> }
                                 iconPosition="right"
                                 isInline
-                                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8-beta/">
+                                href="
+https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/uploading_a_customized_rhel_system_image_to_cloud_environments/index
+                                ">
                                     Documentation
                             </Button>
                         </EmptyStateSecondaryActions>
