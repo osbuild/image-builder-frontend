@@ -13,7 +13,7 @@ class WizardStepUploadAWS extends Component {
     render() {
         return (
             <Form>
-                <Title headingLevel="h2" size="xl">Target Environment - Upload to AWS</Title>
+                <Title headingLevel="h2" size="xl">Target Environment - Amazon Web Services</Title>
                 <p>
             Your image will be uploaded to a temporary account on Amazon Web Services. <br />
             The image will be shared with the account you provide below. <br />
