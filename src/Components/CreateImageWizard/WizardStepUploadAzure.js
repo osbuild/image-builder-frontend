@@ -17,7 +17,7 @@ class WizardStepUploadAzure extends Component {
         return (
             <>
                 <TextContent className="textcontent-azure">
-                    <Title headingLevel="h2">Target Environment - Upload to Azure</Title>
+                    <Title headingLevel="h2">Target Environment - Microsoft Azure</Title>
                     <Text>
             Image Builder will send an image to an authorized Azure account.
                     </Text>
