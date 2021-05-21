@@ -1,0 +1,115 @@
+version: '2.4'
+services:
+  composer:
+    image: local/osbuild-composer
+    build:
+      context: ../../osbuild-composer
+      dockerfile: ./distribution/Dockerfile-ubi
+    volumes:
+      - ${COMPOSER_CONFIG_DIR}/osbuild-composer.toml:/etc/osbuild-composer/osbuild-composer.toml
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem
+      - ${STATE_DIR}/x509/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem
+      - ${STATE_DIR}/x509/composer-key.pem:/etc/osbuild-composer/composer-key.pem
+    networks:
+      net:
+        ipv4_address: 172.31.0.10
+  worker:
+    image: local/osbuild-worker
+    build:
+      context: ../../osbuild-composer
+      dockerfile: ./distribution/Dockerfile-worker
+    # override the entrypoint to specify composer hostname and port
+    entrypoint: /usr/libexec/osbuild-composer/osbuild-worker composer:8700
+    volumes:
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem
+      - ${STATE_DIR}/x509/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem
+      - ${STATE_DIR}/x509/worker-key.pem:/etc/osbuild-composer/worker-key.pem
+    environment:
+      - CACHE_DIRECTORY=/var/cache/osbuild-composer
+    privileged: true
+    cap_add:
+      - MKNOD
+      - SYS_ADMIN
+      - NET_ADMIN
+    networks:
+      net:
+        ipv4_address: 172.31.0.20
+    depends_on:
+      - "composer"
+  postgres:
+    image: postgres:10.5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ../../image-builder/internal/db/migrations/1_create_table_images.up.sql:/docker-entrypoint-initdb.d/create_tables.sql
+    networks:
+      net:
+        ipv4_address: 172.31.0.30
+  backend:
+    image: local/image-builder
+    build:
+      context: ../../image-builder
+      dockerfile: ./distribution/Dockerfile-ubi
+    volumes:
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/image-builder/ca-crt.pem
+      - ${STATE_DIR}/x509/client-crt.pem:/etc/image-builder/client-crt.pem
+      - ${STATE_DIR}/x509/client-key.pem:/etc/image-builder/client-key.pem
+    environment:
+      - LISTEN_ADDRESS=backend:8086
+      - LOG_LEVEL=DEBUG
+      - ALLOWED_ORG_IDS=*
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=postgres
+      - PGUSER=postgres
+      - PGPASSWORD=postgres
+      - OSBUILD_URL=https://composer:9196
+      - DISTRIBUTIONS_DIR=/app/distributions
+      - OSBUILD_CERT_PATH=/etc/image-builder/client-crt.pem
+      - OSBUILD_KEY_PATH=/etc/image-builder/client-key.pem
+      - OSBUILD_CA_PATH=/etc/image-builder/ca-crt.pem
+    networks:
+      net:
+        ipv4_address: 172.31.0.40
+    depends_on:
+      - "composer"
+      - "postgres"
+  frontend:
+    image: local/image-builder-frontend
+    build:
+      context: ../../image-builder-frontend
+      dockerfile: ./distribution/Dockerfile
+    environment:
+      - HOST=frontend
+    networks:
+      net:
+        ipv4_address: 172.31.0.50
+  insightsproxy:
+    image: redhatinsights/insights-proxy:latest
+    security_opt:
+      - label=disable
+    environment:
+      - CUSTOM_CONF=true
+    volumes:
+      - ${SPANDX_CONFIG}:/config/spandx.config.js
+    extra_hosts:
+      - "prod.foo.redhat.com:127.0.0.1"
+      - "qa.foo.redhat.com:127.0.0.1"
+      - "ci.foo.redhat.com:127.0.0.1"
+      - "stage.foo.redhat.com:127.0.0.1"
+    networks:
+      net:
+        ipv4_address: 172.31.0.60
+    ports:
+      - 1337:1337
+    depends_on:
+     - "backend"
+     - "frontend"
+
+networks:
+  net:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.31.0.0/16
