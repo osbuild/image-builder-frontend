@@ -5,6 +5,7 @@ import { actions } from '../../store/actions';
 
 import { Form, FormGroup, TextList, TextListItem, Popover, Radio, TextContent, Text, TextInput, Title } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
+import './WizardStepUploadGoogle.scss';
 
 const accountTypePopover = (
     <Popover
@@ -50,93 +51,96 @@ class WizardStepUploadGoogle extends Component {
 
     render() {
         return (
-            <Form>
-                <Title headingLevel="h2" size="xl">Target Environment - Google Cloud Platform</Title>
-                <p>
-            Your image will be uploaded to an account on Google Cloud Platform. <br />
-            The image will be shared with the email you provide below. <br />
-            Within the next 14 days you will need to copy the shared image to your own account.
-            After 14 days it will be unavailable and will have to be regenerated.
-                </p>
-                <FormGroup isRequired label="Type" labelIcon={ accountTypePopover } fieldId="google-account-type">
-                    <Radio
-                        onChange={ () => this.props.setUploadGoogle({ accountType: 'googleAccount', shareWithAccounts: [{ user: null }]}) }
-                        isChecked={ this.props.uploadGoogle.accountType === 'googleAccount' }
-                        label="Google account"
-                        id="radio-google-account"
-                        value="googleAccount" />
-                    <Radio
-                        onChange={ () => this.props.setUploadGoogle({ accountType: 'serviceAccount', shareWithAccounts: [{ serviceAccount: null }]}) }
-                        isChecked={ this.props.uploadGoogle.accountType === 'serviceAccount' }
-                        label="Service account"
-                        id="radio-service-account"
-                        value="serviceAccount" />
-                    <Radio
-                        onChange={ () => this.props.setUploadGoogle({ accountType: 'googleGroup', shareWithAccounts: [{ group: null }]}) }
-                        isChecked={ this.props.uploadGoogle.accountType === 'googleGroup' }
-                        label="Google group"
-                        id="radio-google-group"
-                        value="googleGroup" />
-                    <Radio
-                        onChange={ () => this.props.setUploadGoogle({ accountType: 'domain', shareWithAccounts: [{ domain: null }]}) }
-                        isChecked={ this.props.uploadGoogle.accountType === 'domain' }
-                        label="Google Workspace Domain or Cloud Identity Domain"
-                        id="radio-domain"
-                        value="domain" />
-                </FormGroup>
-                {this.props.uploadGoogle.accountType === 'googleAccount' && (
-                    <FormGroup isRequired label="Email address" fieldId="user">
-                        <TextInput
-                            value={ this.props.uploadGoogle.shareWithAccounts[0] ?
-                                this.props.uploadGoogle.shareWithAccounts[0].user || '' :
-                                '' }
-                            type="text" aria-label="Google email address" id="input-google-user"
-                            data-testid="input-google-user" isRequired
-                            onChange={ value => this.props.setUploadGoogle(
-                                { accountType: 'googleAccount', shareWithAccounts: [{ user: value }]}
-                            ) } />
+            <>
+                <TextContent className="textcontent-google">
+                    <Title headingLevel="h2" size="xl">Target Environment - Google Cloud Platform</Title>
+                    <Text>
+                        Your image will be uploaded to Google Cloud Platform and shared with the email you provide below. <br />
+                        The image should be copied to your account within 14 days.
+                    </Text>
+                </TextContent>
+                <Form isWidthLimited>
+                    <FormGroup isRequired label="Type" labelIcon={ accountTypePopover } fieldId="google-account-type">
+                        <Radio
+                            onChange={ () => this.props.setUploadGoogle({ accountType: 'googleAccount', shareWithAccounts: [{ user: null }]}) }
+                            isChecked={ this.props.uploadGoogle.accountType === 'googleAccount' }
+                            label="Google account"
+                            id="radio-google-account"
+                            value="googleAccount" />
+                        <Radio
+                            onChange={ () =>
+                                this.props.setUploadGoogle({ accountType: 'serviceAccount', shareWithAccounts: [{ serviceAccount: null }]}) }
+                            isChecked={ this.props.uploadGoogle.accountType === 'serviceAccount' }
+                            label="Service account"
+                            id="radio-service-account"
+                            value="serviceAccount" />
+                        <Radio
+                            onChange={ () => this.props.setUploadGoogle({ accountType: 'googleGroup', shareWithAccounts: [{ group: null }]}) }
+                            isChecked={ this.props.uploadGoogle.accountType === 'googleGroup' }
+                            label="Google group"
+                            id="radio-google-group"
+                            value="googleGroup" />
+                        <Radio
+                            onChange={ () => this.props.setUploadGoogle({ accountType: 'domain', shareWithAccounts: [{ domain: null }]}) }
+                            isChecked={ this.props.uploadGoogle.accountType === 'domain' }
+                            label="Google Workspace Domain or Cloud Identity Domain"
+                            id="radio-domain"
+                            value="domain" />
                     </FormGroup>
-                )}
-                {this.props.uploadGoogle.accountType === 'serviceAccount' && (
-                    <FormGroup isRequired label="Email address" fieldId="service-account">
-                        <TextInput
-                            value={ this.props.uploadGoogle.shareWithAccounts[0] ?
-                                this.props.uploadGoogle.shareWithAccounts[0].serviceAccount || '' :
-                                '' }
-                            type="text" aria-label="Google email address" id="input-google-service-account"
-                            data-testid="input-google-service-account" isRequired
-                            onChange={ value => this.props.setUploadGoogle(
-                                { accountType: 'serviceAccount', shareWithAccounts: [{ serviceAccount: value }]}
-                            ) } />
-                    </FormGroup>
-                )}
-                {this.props.uploadGoogle.accountType === 'googleGroup' && (
-                    <FormGroup isRequired label="Email address" fieldId="group">
-                        <TextInput
-                            value={ this.props.uploadGoogle.shareWithAccounts[0] ?
-                                this.props.uploadGoogle.shareWithAccounts[0].group || '' :
-                                '' }
-                            type="text" aria-label="Google email address" id="input-google-group"
-                            data-testid="input-google-group" isRequired
-                            onChange={ value => this.props.setUploadGoogle(
-                                { accountType: 'googleGroup', shareWithAccounts: [{ group: value }]}
-                            ) } />
-                    </FormGroup>
-                )}
-                {this.props.uploadGoogle.accountType === 'domain' && (
-                    <FormGroup isRequired label="Domain" fieldId="domain">
-                        <TextInput
-                            value={ this.props.uploadGoogle.shareWithAccounts[0] ?
-                                this.props.uploadGoogle.shareWithAccounts[0].domain || '' :
-                                '' }
-                            type="text" aria-label="Google domain" id="input-google-domain"
-                            data-testid="input-google-domain" isRequired
-                            onChange={ value => this.props.setUploadGoogle(
-                                { accountType: 'domain', shareWithAccounts: [{ domain: value }]}
-                            ) } />
-                    </FormGroup>
-                )}
-            </Form>
+                    {this.props.uploadGoogle.accountType === 'googleAccount' && (
+                        <FormGroup isRequired label="Email address" fieldId="user">
+                            <TextInput
+                                value={ this.props.uploadGoogle.shareWithAccounts[0] ?
+                                    this.props.uploadGoogle.shareWithAccounts[0].user || '' :
+                                    '' }
+                                type="text" aria-label="Google email address" id="input-google-user"
+                                data-testid="input-google-user" isRequired
+                                onChange={ value => this.props.setUploadGoogle(
+                                    { accountType: 'googleAccount', shareWithAccounts: [{ user: value }]}
+                                ) } />
+                        </FormGroup>
+                    )}
+                    {this.props.uploadGoogle.accountType === 'serviceAccount' && (
+                        <FormGroup isRequired label="Email address" fieldId="service-account">
+                            <TextInput
+                                value={ this.props.uploadGoogle.shareWithAccounts[0] ?
+                                    this.props.uploadGoogle.shareWithAccounts[0].serviceAccount || '' :
+                                    '' }
+                                type="text" aria-label="Google email address" id="input-google-service-account"
+                                data-testid="input-google-service-account" isRequired
+                                onChange={ value => this.props.setUploadGoogle(
+                                    { accountType: 'serviceAccount', shareWithAccounts: [{ serviceAccount: value }]}
+                                ) } />
+                        </FormGroup>
+                    )}
+                    {this.props.uploadGoogle.accountType === 'googleGroup' && (
+                        <FormGroup isRequired label="Email address" fieldId="group">
+                            <TextInput
+                                value={ this.props.uploadGoogle.shareWithAccounts[0] ?
+                                    this.props.uploadGoogle.shareWithAccounts[0].group || '' :
+                                    '' }
+                                type="text" aria-label="Google email address" id="input-google-group"
+                                data-testid="input-google-group" isRequired
+                                onChange={ value => this.props.setUploadGoogle(
+                                    { accountType: 'googleGroup', shareWithAccounts: [{ group: value }]}
+                                ) } />
+                        </FormGroup>
+                    )}
+                    {this.props.uploadGoogle.accountType === 'domain' && (
+                        <FormGroup isRequired label="Domain" fieldId="domain">
+                            <TextInput
+                                value={ this.props.uploadGoogle.shareWithAccounts[0] ?
+                                    this.props.uploadGoogle.shareWithAccounts[0].domain || '' :
+                                    '' }
+                                type="text" aria-label="Google domain" id="input-google-domain"
+                                data-testid="input-google-domain" isRequired
+                                onChange={ value => this.props.setUploadGoogle(
+                                    { accountType: 'domain', shareWithAccounts: [{ domain: value }]}
+                                ) } />
+                        </FormGroup>
+                    )}
+                </Form>
+            </>
         );
     }
 };
