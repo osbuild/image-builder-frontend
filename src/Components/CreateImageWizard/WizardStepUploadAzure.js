@@ -47,9 +47,10 @@ class WizardStepUploadAzure extends Component {
                 </TextContent>
                 <Title headingLevel="h3">Destination</Title>
                 <Text>
-            Your image will be uploaded to the resource group in the subscription you specify.
+                    Your image will be uploaded to the resource group in the subscription you specify.
                 </Text>
-                <Form>
+                <br />
+                <Form isWidthLimited>
                     <FormGroup isRequired label="Tenant ID" fieldId="azure-tenant-id"
                         helperTextInvalid={ (this.props.errors['azure-tenant-id'] && this.props.errors['azure-tenant-id'].value) || '' }
                         validated={ (this.props.errors['azure-tenant-id'] && 'error') || 'default' }>
