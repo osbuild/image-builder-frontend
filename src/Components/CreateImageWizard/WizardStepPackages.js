@@ -6,6 +6,7 @@ import { Button, DualListSelector, Text, TextContent, Title } from '@patternfly/
 import { actions } from '../../store/actions';
 import api from '../../api.js';
 
+import './WizardStepPackages.scss';
 class WizardStepPackages extends Component {
     constructor(props) {
         super(props);
@@ -86,14 +87,16 @@ class WizardStepPackages extends Component {
             <>
                 <TextContent>
                     <Title headingLevel="h2" size="xl">Additional packages</Title>
-                    <Text>Optionally add additional packages to your <strong>{this.props.release.distro}</strong> image</Text>
+                    <Text>Add optional additional packages to your image by searching available packages.</Text>
                 </TextContent>
                 <DualListSelector
                     className="pf-u-mt-sm"
                     isSearchable
                     availableOptionsActions={ availableOptionsActions }
                     availableOptions={ this.state.packagesAvailableComponents }
+                    availableOptionsTitle={ 'Available packages' }
                     chosenOptions={ this.state.packagesFilteredComponents }
+                    chosenOptionsTitle={ 'Chosen packages' }
                     addSelected={ this.packageListChange }
                     removeSelected={ this.packageListChange }
                     addAll={ this.packageListChange }

@@ -289,7 +289,7 @@ describe('Step Registration', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Optionally add additional packages to your image');
+        screen.getByText('Add optional additional packages to your image by searching available packages.');
     });
 
     test('clicking Back loads Upload to AWS', () => {
@@ -426,7 +426,7 @@ describe('Step Review', () => {
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
-        screen.getByText('Optionally add additional packages to your image');
+        screen.getByText('Add optional additional packages to your image by searching available packages.');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -488,7 +488,7 @@ describe('Click through all steps', () => {
                 });
             });
 
-        screen.getByText('Optionally add additional packages to your image');
+        screen.getByText('Add optional additional packages to your image by searching available packages.');
         userEvent.type(screen.getByRole('searchbox', { name: /Available search input/ }), 'test');
         screen.getByTestId('search-pkgs-button').click();
         await expect(getPackages).toHaveBeenCalledTimes(1);
