@@ -373,7 +373,7 @@ describe('Step Packages', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Review the information and click the Create button to create the image using the following criteria.');
+        screen.getByText('Review the information and click the Create button to create your image using the following criteria.');
     });
 
     test('clicking Back loads Register', () => {
@@ -500,7 +500,7 @@ describe('Click through all steps', () => {
 
         // review
         await screen.
-            findByText('Review the information and click the Create button to create the image using the following criteria.');
+            findByText('Review the information and click the Create button to create your image using the following criteria.');
         const main = screen.getByRole('main', { name: 'Create image' });
         within(main).getByText('Amazon Web Services');
         within(main).getByText('Google Cloud Platform');
@@ -630,7 +630,7 @@ describe('Click through all steps', () => {
         reviewStep.click();
 
         await screen.
-            findByText('Review the information and click the Create button to create the image using the following criteria.');
+            findByText('Review the information and click the Create button to create your image using the following criteria.');
         const main = screen.getByRole('main', { name: 'Create image' });
         within(main).getByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
@@ -665,7 +665,7 @@ describe('Click through all steps', () => {
         reviewStep.click();
 
         await screen.
-            findByText('Review the information and click the Create button to create the image using the following criteria.');
+            findByText('Review the information and click the Create button to create your image using the following criteria.');
         const main = screen.getByRole('main', { name: 'Create image' });
         within(main).getByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
