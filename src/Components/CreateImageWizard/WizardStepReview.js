@@ -108,7 +108,7 @@ class WizardStepReview extends Component {
                 <TextContent>
                     <Text component={ TextVariants.small }>
                     Review the information and click the Create button
-                    to create the image using the following criteria.
+                    to create your image using the following criteria.
                     </Text>
                     <Text component={ TextVariants.h3 }>Image output</Text>
                     <TextList component={ TextListVariants.dl } data-testid='review-image-output'>
