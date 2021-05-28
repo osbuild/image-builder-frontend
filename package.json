@@ -9,7 +9,7 @@
     "@patternfly/react-table": "4.27.7",
     "@redhat-cloud-services/frontend-components": "3.2.1",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.2",
-    "@redhat-cloud-services/frontend-components-utilities": "3.1.2",
+    "@redhat-cloud-services/frontend-components-utilities": "3.2.2",
     "classnames": "2.3.1",
     "react": "16.14.0",
     "react-dom": "16.14.0",
