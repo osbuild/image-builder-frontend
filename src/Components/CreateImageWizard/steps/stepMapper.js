@@ -1,13 +1,13 @@
-export default (values, skipFirst, skipSecond) => {
-    if (!skipFirst && values?.['role-type']?.includes('a')) {
+export default ({ 'target-environment': targetEnv } = {}, skipFirst, skipSecond) => {
+    if (!skipFirst && targetEnv?.aws) {
         return 'aws-target-env';
     }
 
-    if (!skipSecond && values?.['role-type']?.includes('b')) {
+    if (!skipSecond && targetEnv?.azure) {
         return 'ms-azure-target-env';
     }
 
-    if (values?.['role-type']?.includes('c')) {
+    if (targetEnv?.google) {
         return 'google-cloud-target-env';
     }
 

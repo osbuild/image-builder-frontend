@@ -17,11 +17,12 @@ const CreateImage = () => {
                 {
                     component: componentTypes.WIZARD,
                     name: 'image-builder-wizard',
+                    className: 'image-builder',
                     isDynamic: true,
                     inModal: true,
                     showTitles: true,
                     title: 'Create image',
-                    crossroads: [ 'role-type' ],
+                    crossroads: [ 'target-environment' ],
                     description: <div>Create a RHEL image and push it to cloud providers. <Button
                         component="a"
                         target="_blank"

@@ -29,7 +29,7 @@ export default {
         {
             component: componentTypes.RADIO,
             label: <>Type <Popover
-                className="ins-c-image-builder__in-wizard"
+                position="right"
                 hasAutoWidth
                 maxWidth='35rem'
                 headerContent={ 'Valid account types' }

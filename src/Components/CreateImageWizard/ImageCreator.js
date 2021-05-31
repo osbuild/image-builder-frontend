@@ -4,17 +4,20 @@ import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-templa
 import { componentMapper } from '@data-driven-forms/pf4-component-mapper';
 import { Spinner } from '@patternfly/react-core';
 import Review from './formComponents/ReviewStep';
+import TargetEnvironment from './formComponents/TargetEnvironment';
 import PropTypes from 'prop-types';
 
 const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper }) => {
     return schema ? <FormRenderer
         schema={ schema }
+        className="image-builder"
         subscription={ { values: true } }
         FormTemplate={ (props) => <Pf4FormTemplate { ...props } showFormControls={ false } /> }
         onSubmit={ (formValues) => onSubmit(formValues) }
         componentMapper={ {
             ...componentMapper,
             review: Review,
+            output: TargetEnvironment,
             ...customComponentMapper
         } }
         onCancel={ onClose } /> : <Spinner />;
