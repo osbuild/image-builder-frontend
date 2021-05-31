@@ -5,6 +5,7 @@ import { componentMapper } from '@data-driven-forms/pf4-component-mapper';
 import { Spinner } from '@patternfly/react-core';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
+import Packages from './formComponents/Packages';
 import PropTypes from 'prop-types';
 
 const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper }) => {
@@ -18,6 +19,7 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper })
             ...componentMapper,
             review: Review,
             output: TargetEnvironment,
+            'package-selector': Packages,
             ...customComponentMapper
         } }
         onCancel={ onClose } /> : <Spinner />;

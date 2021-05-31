@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { FormGroup, Tile } from '@patternfly/react-core';
 import './TargetEnvironment.scss';
 
-const TargetEnvironment = () => {
+const TargetEnvironment = ({ label, isRequired }) => {
     const { change, getState } = useFormApi();
     const [ environemt, setEnvironment ] = useState({
         aws: false,
@@ -17,7 +18,7 @@ const TargetEnvironment = () => {
         }
     }, []);
 
-    return <FormGroup isRequired label="Select target environment" data-testid="target-select">
+    return <FormGroup isRequired={ isRequired } label={ label } data-testid="target-select">
         <div className="tiles">
             <Tile
                 className="tile pf-u-mr-sm"
@@ -75,6 +76,16 @@ const TargetEnvironment = () => {
                 isDisplayLarge />
         </div>
     </FormGroup>;
+};
+
+TargetEnvironment.propTypes = {
+    label: PropTypes.node,
+    isRequired: PropTypes.bool
+};
+
+TargetEnvironment.defaultProps = {
+    label: '',
+    isRequired: false
 };
 
 export default TargetEnvironment;
