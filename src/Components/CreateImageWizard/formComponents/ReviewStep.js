@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { TextContent, Text, TextVariants, TextList, TextListItem, TextListVariants, TextListItemVariants } from '@patternfly/react-core';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { releaseValues } from '../steps/imageOutput';
@@ -47,10 +46,6 @@ const ReviewStep = () => {
             </TextList>
         </TextContent>
     );
-};
-
-ReviewStep.propTypes = {
-    formFields: PropTypes.array,
 };
 
 export default ReviewStep;

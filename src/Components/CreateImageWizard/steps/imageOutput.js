@@ -9,7 +9,7 @@ export const releaseValues = {
 
 export default {
     title: 'Image output',
-    name: 'step-1',
+    name: 'image-output',
     nextStep: ({ values }) => nextStepMapper(values),
     fields: [
         {
@@ -30,10 +30,9 @@ export default {
             ],
         },
         {
-            component: componentTypes.TEXT_FIELD,
-            name: 'role-type',
-            type: 'text',
-            label: 'Role name',
+            component: 'output',
+            name: 'target-environment',
+            label: 'Select target environment',
             isRequired: true,
             validate: [
                 {
