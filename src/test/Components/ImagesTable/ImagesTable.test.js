@@ -183,7 +183,11 @@ const store = {
                             image_type: 'vhd',
                             upload_request: {
                                 type: 'gcp',
-                                options: {}
+                                options: {
+                                    share_with_accounts: [
+                                        'serviceAccount:test@email.com'
+                                    ]
+                                }
                             }
                         }
                     ],
