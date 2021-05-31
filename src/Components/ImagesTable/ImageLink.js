@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { Button } from '@patternfly/react-core';
+import { Button, TextContent, Text, TextVariants, Popover } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const ImageLink = (props) => {
@@ -40,6 +40,42 @@ const ImageLink = (props) => {
                     href={ url }>
                         View uploaded image
                 </Button>
+            );
+        } else if (uploadStatus.type === 'gcp') {
+            return (
+                <Popover
+                    aria-label="Popover with google cloud platform image details"
+                    maxWidth='30rem'
+                    headerContent={ 'GCP image details' }
+                    bodyContent={ <TextContent>
+                        <Text component={ TextVariants.p }>
+                            To use an Image Builder created Google Cloud Platform (GCP) image in your project,
+                            specify the project ID and image name in your templates and configurations.
+                        </Text>
+                        <Text>
+                            <strong>Project ID</strong>
+                            <br />
+                            {uploadStatus.options.project_id}
+                        </Text>
+                        <Text>
+                            <strong>Image Name</strong>
+                            <br />
+                            {uploadStatus.options.image_name}
+                        </Text>
+                        <Text>
+                            <strong>Shared with</strong>
+                            <br />
+                            {/* the account the image is shared with is stored in the form type:account so this extracts the account */}
+                            {props.uploadOptions.share_with_accounts[0].split(':')[1]}
+                        </Text>
+                    </TextContent> }>
+                    <Button
+                        component="a"
+                        target="_blank"
+                        variant="link">
+                            Image details
+                    </Button>
+                </Popover>
             );
         }
     }
