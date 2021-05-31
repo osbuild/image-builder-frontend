@@ -231,7 +231,11 @@ const store = {
                             image_type: 'vhd',
                             upload_request: {
                                 type: 'azure',
-                                options: {}
+                                options: {
+                                    tenant_id: 'test-tenant-id',
+                                    subscription_id: 'test-subscription-id',
+                                    resource_group: 'test-resource-group'
+                                }
                             }
                         }
                     ],
@@ -284,8 +288,11 @@ describe('Images Table', () => {
             render(<ImageBuildStatus status={ compose.image_status.status } />, { container: testElement });
             expect(row.cells[4]).toHaveTextContent(testElement.textContent);
 
-            // render the expected <ImageLink /> and compare the text content for an aws link
-            render(<ImageLink imageStatus={ compose.image_status } />, { container: testElement });
+            // render the expected <ImageLink /> and compare the text content for a link
+            render(
+                <ImageLink imageStatus={ compose.image_status } uploadOptions={ compose.request.image_requests[0].upload_request.options }  />,
+                { container: testElement }
+            );
             expect(row.cells[5]).toHaveTextContent(testElement.textContent);
         }
     });
