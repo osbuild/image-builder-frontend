@@ -1,3 +1,8 @@
 .pf-c-wizard__nav-list {
     padding-right: 0px;   
 }
+
+.ins-c-image-builder__in-wizard.pf-c-popover {
+    visibility: initial;
+    pointer-events: initial;
+}
