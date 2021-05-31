@@ -112,7 +112,9 @@ class ImagesTable extends Component {
                     { title: <Release release={ compose.request.distribution } /> },
                     { title: <Upload uploadType={ compose.request.image_requests[0].upload_request.type } /> },
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
-                    { title: <ImageLink imageStatus={ compose.image_status } /> },
+                    { title: <ImageLink
+                        imageStatus={ compose.image_status }
+                        uploadOptions={ compose.request.image_requests[0].upload_request.options } /> },
                 ]
             };
         });
