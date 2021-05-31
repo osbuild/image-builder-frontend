@@ -1,5 +1,6 @@
+import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
+import { Text } from '@patternfly/react-core';
 
 export default {
     title: 'Packages',
@@ -7,20 +8,14 @@ export default {
     nextStep: 'review',
     fields: [
         {
-            component: componentTypes.TEXT_FIELD,
-            name: 'packages-field',
-            type: 'text',
-            label: 'Role name',
-            isRequired: true,
-            validate: [
-                {
-                    type: validatorTypes.REQUIRED,
-                },
-                {
-                    type: validatorTypes.MAX_LENGTH,
-                    threshold: 150,
-                },
-            ],
+            component: componentTypes.PLAIN_TEXT,
+            name: 'google-cloud-text-component',
+            label: <Text>Add optional additional packages to your image by searching available packages.</Text>
+        },
+        {
+            component: 'package-selector',
+            name: 'selected-packages',
+            label: 'Available options'
         }
     ]
 };
