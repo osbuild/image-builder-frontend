@@ -40,8 +40,8 @@ const CreateImage = () => {
                         isInline
                         href="
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/uploading_a_customized_rhel_system_image_to_cloud_environments/index
-                    ">
-                        Documentation
+            ">
+                Documentation
                     </Button></div>,
                     // order in this array does not reflect order in wizard nav, this order is managed inside
                     // of each step by `nextStep` property!
