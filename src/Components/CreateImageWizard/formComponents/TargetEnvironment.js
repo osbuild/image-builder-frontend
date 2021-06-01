@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { FormGroup, Tile } from '@patternfly/react-core';
 import './TargetEnvironment.scss';
 
-const TargetEnvironment = ({ label, isRequired }) => {
-    const { change, getState } = useFormApi();
+const TargetEnvironment = ({ label, isRequired, ...props }) => {
+    const { getState, change } = useFormApi();
+    const { input } = useFieldApi({ label, isRequired, ...props });
     const [ environemt, setEnvironment ] = useState({
         aws: false,
         azure: false,
@@ -13,8 +15,8 @@ const TargetEnvironment = ({ label, isRequired }) => {
     });
 
     useEffect(() => {
-        if (getState()?.values?.['target-environment']) {
-            setEnvironment(getState().values['target-environment']);
+        if (getState()?.values?.[input.name]) {
+            setEnvironment(getState().values[input.name]);
         }
     }, []);
 
@@ -32,7 +34,7 @@ const TargetEnvironment = ({ label, isRequired }) => {
                         ...prevEnv,
                         aws: !prevEnv.aws
                     });
-                    change('target-environment', newEnv);
+                    change(input.name, newEnv);
                     return newEnv;
                 }) }
                 isSelected={ environemt.aws }
@@ -50,7 +52,8 @@ const TargetEnvironment = ({ label, isRequired }) => {
                         ...prevEnv,
                         azure: !prevEnv.azure
                     });
-                    change('target-environment', newEnv);
+                    input.value = newEnv;
+                    change(input.name, newEnv);
                     return newEnv;
                 }) }
                 isSelected={ environemt.azure }
@@ -68,7 +71,7 @@ const TargetEnvironment = ({ label, isRequired }) => {
                         ...prevEnv,
                         google: !prevEnv.google
                     });
-                    change('target-environment', newEnv);
+                    change(input.name, newEnv);
                     return newEnv;
                 }) }
                 isSelected={ environemt.google }

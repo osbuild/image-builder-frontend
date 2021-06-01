@@ -8,7 +8,7 @@ import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import PropTypes from 'prop-types';
 
-const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper }) => {
+const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch }) => {
     return schema ? <FormRenderer
         schema={ schema }
         className="image-builder"
@@ -19,7 +19,10 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper })
             ...componentMapper,
             review: Review,
             output: TargetEnvironment,
-            'package-selector': Packages,
+            'package-selector': {
+                component: Packages,
+                defaultArch
+            },
             ...customComponentMapper
         } }
         onCancel={ onClose } /> : <Spinner />;
@@ -33,7 +36,8 @@ CreateImageWizard.propTypes = {
         [PropTypes.string]: PropTypes.oneOfType([ PropTypes.node, PropTypes.shape({
             component: PropTypes.node
         }) ])
-    })
+    }),
+    defaultArch: PropTypes.string
 };
 
 export default CreateImageWizard;

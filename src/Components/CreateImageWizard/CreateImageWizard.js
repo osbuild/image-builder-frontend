@@ -12,6 +12,7 @@ const CreateImage = () => {
     return <ImageCreator
         onClose={ () => history.push('/landing') }
         onSubmit={ (values) => console.log(values) }
+        defaultArch="x86_64"
         schema={ {
             fields: [
                 {
