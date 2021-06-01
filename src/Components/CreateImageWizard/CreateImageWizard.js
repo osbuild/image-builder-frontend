@@ -1,15 +1,22 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ImageCreator from './ImageCreator';
 import { useHistory } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import { Button } from '@patternfly/react-core';
+import { Button, Spinner } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { review, awsTarget, registration, googleCloudTarger, msAzureTarget, packages, imageOutput } from './steps';
 import './CreateImageWizard.scss';
 
 const CreateImage = () => {
     const history = useHistory();
-    return <ImageCreator
+    const [ user, setUser ] = useState();
+    useEffect(() => {
+        (async () => {
+            const userData = await insights.chrome.auth.getUser();
+            setUser(() => userData);
+        })();
+    }, []);
+    return user ? <ImageCreator
         onClose={ () => history.push('/landing') }
         onSubmit={ (values) => console.log(values) }
         defaultArch="x86_64"
@@ -43,13 +50,13 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                         awsTarget,
                         msAzureTarget,
                         googleCloudTarger,
-                        registration,
+                        registration(user),
                         packages,
                         review,
                     ]
                 }
             ]
-        } } />;
+        } } /> : <Spinner />;
 };
 
 export default CreateImage;
