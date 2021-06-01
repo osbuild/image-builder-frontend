@@ -3,10 +3,11 @@ import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
 import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';
 import { componentMapper } from '@data-driven-forms/pf4-component-mapper';
 import { Spinner } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
-import PropTypes from 'prop-types';
+import RadioWithPopover from './formComponents/RadioWithPopover';
 
 const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch }) => {
     return schema ? <FormRenderer
@@ -23,6 +24,7 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, d
                 component: Packages,
                 defaultArch
             },
+            'radio-popover': RadioWithPopover,
             ...customComponentMapper
         } }
         onCancel={ onClose } /> : <Spinner />;
