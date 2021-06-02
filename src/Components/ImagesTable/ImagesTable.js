@@ -168,7 +168,7 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                                         onSetPage={ this.onSetPage }
                                         onPerPageSelect={ this.onPerPageSelect }
                                         widgetId="compose-pagination"
-                                        data-testId="images-pagination"
+                                        data-testid="images-pagination"
                                         isCompact />
                                 </ToolbarItem>
                             </ToolbarContent>
