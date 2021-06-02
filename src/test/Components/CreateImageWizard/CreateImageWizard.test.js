@@ -455,12 +455,12 @@ describe('Click through all steps', () => {
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         next.click();
 
+        userEvent.type(screen.getByTestId('input-google-user'), 'test@test.com');
+        next.click();
+
         userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
         userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
         userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
-        next.click();
-
-        userEvent.type(screen.getByTestId('input-google-user'), 'test@test.com');
         next.click();
 
         // registration
