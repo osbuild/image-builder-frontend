@@ -57,17 +57,6 @@ class WizardStepImageOutput extends Component {
                                 isDisplayLarge />
                             <Tile
                                 className="tile pf-u-mr-sm"
-                                data-testid="upload-azure"
-                                title="Microsoft Azure"
-                                icon={ <img
-                                    className='provider-icon'
-                                    src={ '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' } /> }
-                                onClick={ () => this.toggleUploadDestination('azure') }
-                                isSelected={ this.props.uploadDestinations.azure }
-                                isStacked
-                                isDisplayLarge />
-                            <Tile
-                                className="tile"
                                 data-testid="upload-google"
                                 title="Google Cloud Platform"
                                 icon={ <img
@@ -75,6 +64,17 @@ class WizardStepImageOutput extends Component {
                                     src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
                                 onClick={ () => this.toggleUploadDestination('google') }
                                 isSelected={ this.props.uploadDestinations.google }
+                                isStacked
+                                isDisplayLarge />
+                            <Tile
+                                className="tile"
+                                data-testid="upload-azure"
+                                title="Microsoft Azure"
+                                icon={ <img
+                                    className='provider-icon'
+                                    src={ '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' } /> }
+                                onClick={ () => this.toggleUploadDestination('azure') }
+                                isSelected={ this.props.uploadDestinations.azure }
                                 isStacked
                                 isDisplayLarge />
                         </div>

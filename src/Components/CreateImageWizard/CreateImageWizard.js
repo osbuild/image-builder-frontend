@@ -241,16 +241,16 @@ class CreateImageWizard extends Component {
                 errors={ this.state.uploadAWSErrors } />
         };
 
-        const StepUploadAzure = {
-            name: 'Microsoft Azure',
-            component: <WizardStepUploadAzure
-                errors={ this.state.uploadAzureErrors } />
-        };
-
         const StepUploadGoogle = {
             name: 'Google Cloud Platform',
             component: <WizardStepUploadGoogle
                 errors={ this.state.uploadGoogleErrors } />
+        };
+
+        const StepUploadAzure = {
+            name: 'Microsoft Azure',
+            component: <WizardStepUploadAzure
+                errors={ this.state.uploadAzureErrors } />
         };
 
         const uploadDestinationSteps = [];
@@ -258,12 +258,12 @@ class CreateImageWizard extends Component {
             uploadDestinationSteps.push(StepUploadAWS);
         }
 
-        if (this.props.uploadDestinations.azure) {
-            uploadDestinationSteps.push(StepUploadAzure);
-        }
-
         if (this.props.uploadDestinations.google) {
             uploadDestinationSteps.push(StepUploadGoogle);
+        }
+
+        if (this.props.uploadDestinations.azure) {
+            uploadDestinationSteps.push(StepUploadAzure);
         }
 
         const StepTargetEnv = {
