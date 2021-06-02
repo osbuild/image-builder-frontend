@@ -8,6 +8,7 @@ import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImage
 import api from '../../../api.js';
 
 let historySpy = undefined;
+let store = undefined;
 
 function verifyButtons() {
     // these buttons exist everywhere
@@ -437,7 +438,8 @@ describe('Step Review', () => {
 
 describe('Click through all steps', () => {
     beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+        const { _component, history, reduxStore } = renderWithReduxRouter(<CreateImageWizard />);
+        store = reduxStore;
         historySpy = jest.spyOn(history, 'push');
     });
 
@@ -505,10 +507,11 @@ describe('Click through all steps', () => {
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
+        let ids = [];
         const composeImage = jest
             .spyOn(api, 'composeImage')
             .mockImplementation(body => {
-
+                let id;
                 if (body.image_requests[0].upload_request.type === 'aws') {
                     expect(body).toEqual({
                         distribution: 'rhel-8',
@@ -533,6 +536,7 @@ describe('Click through all steps', () => {
                             },
                         },
                     });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
                 } else if (body.image_requests[0].upload_request.type === 'gcp') {
                     expect(body).toEqual({
                         distribution: 'rhel-8',
@@ -557,6 +561,7 @@ describe('Click through all steps', () => {
                             },
                         },
                     });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
                 } else if (body.image_requests[0].upload_request.type === 'azure') {
                     expect(body).toEqual({
                         distribution: 'rhel-8',
@@ -582,9 +587,12 @@ describe('Click through all steps', () => {
                                 'base-url': 'https://cdn.redhat.com/'
                             },
                         },
-                    });                  }
+                    });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
+                }
 
-                return Promise.resolve({ id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58' });
+                ids.unshift(id);
+                return Promise.resolve({ id });
             });
 
         const create = screen.getByRole('button', { name: /Create/ });
@@ -597,6 +605,7 @@ describe('Click through all steps', () => {
         // but jsdom will not render the new page so we can't assert on that
         await waitFor(() => expect(historySpy).toHaveBeenCalledTimes(1));
         await expect(historySpy).toHaveBeenCalledWith('/landing');
+        expect(store.getStore().getState().composes.allIds).toEqual(ids);
     });
 
     test('with missing values', async () => {
