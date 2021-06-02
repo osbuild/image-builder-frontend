@@ -13,9 +13,9 @@ export const composeFailed = (error) => ({
     payload: { error }
 });
 
-export const composeAdded = (compose) => ({
+export const composeAdded = (compose, insert) => ({
     type: types.COMPOSE_ADDED,
-    payload: { compose },
+    payload: { compose, insert },
 });
 
 export const composeStart = (composeRequest) => async dispatch => {
@@ -25,7 +25,7 @@ export const composeStart = (composeRequest) => async dispatch => {
         // add the compose id to the compose object to provide access to the id if iterating through
         // composes and add an image status of 'pending' alongside the compose request.
         const compose = Object.assign({}, response, { request: composeRequest },  { image_status: { status: 'pending' }});
-        dispatch(composeAdded(compose));
+        dispatch(composeAdded(compose, true));
     }).catch(err => {
         if (err.response.status === 500) {
             dispatch(composeFailed('Error: Something went wrong serverside'));
@@ -53,7 +53,7 @@ export const composesUpdatedCount = (count) => ({
 export const composesGet = (limit, offset) => async dispatch => {
     const request = await api.getComposes(limit, offset);
     request.data.map(compose => {
-        dispatch(composeAdded(compose));
+        dispatch(composeAdded(compose, false));
         dispatch(composeGetStatus(compose.id));
     });
     dispatch(composesUpdatedCount(request.meta.count));

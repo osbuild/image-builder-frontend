@@ -8,12 +8,14 @@ import { init, clearStore } from '../store';
 export const renderWithReduxRouter = (component, store = {}, route = '/') => {
     const history = createMemoryHistory({ initialEntries: [ route ]});
     clearStore();
+    let reduxStore = init(store);
     return {
         ...render(
-            <Provider store={ init(store).getStore() }>
+            <Provider store={ reduxStore.getStore() }>
                 <Router history={ history }>{component}</Router>
             </Provider>
         ),
-        history
+        history,
+        reduxStore
     };
 };
