@@ -18,7 +18,7 @@ class WizardStepReview extends Component {
 
     render() {
         const releaseLabels = {
-            'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.3',
+            'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8',
             'centos-8': 'CentOS Stream 8'
         };
 
