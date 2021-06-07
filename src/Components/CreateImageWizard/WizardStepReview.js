@@ -99,6 +99,16 @@ class WizardStepReview extends Component {
             </>);
         }
 
+        const registrationReview = (
+            <>
+                <Text component={ TextVariants.h3 }>Registration</Text>
+                <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
+                    <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
+                    { subscriptionReview }
+                </TextList>
+            </>
+        );
+
         return (
             <>
                 { (Object.keys(this.props.uploadAWSErrors).length > 0 ||
@@ -118,11 +128,7 @@ class WizardStepReview extends Component {
                     <Text component={ TextVariants.h3 }>Target environment</Text>
                     {this.props.uploadDestinations.aws && awsReview }
                     {this.props.uploadDestinations.google && googleReview }
-                    <Text component={ TextVariants.h3 }>Registration</Text>
-                    <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
-                        <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
-                        { subscriptionReview }
-                    </TextList>
+                    {this.props.release.distro === 'rhel-8' && registrationReview }
                 </TextContent>
             </>
         );
