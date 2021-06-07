@@ -271,13 +271,16 @@ class CreateImageWizard extends Component {
             steps: uploadDestinationSteps
         };
 
+        const StepImageRegistration = {
+            name: 'Registration',
+            component: <WizardStepRegistration
+                isValidSubscription={ this.state.isValidSubscription } />
+        };
+
         const steps = [
             StepImageOutput,
             ...(StepTargetEnv.steps.length > 0 ? [ StepTargetEnv ] : []),
-            {
-                name: 'Registration',
-                component: <WizardStepRegistration
-                    isValidSubscription={ this.state.isValidSubscription } /> },
+            ...(this.props.release.distro === 'rhel-8' ? [ StepImageRegistration ] : []),
             {
                 name: 'Packages',
                 component: <WizardStepPackages /> },
