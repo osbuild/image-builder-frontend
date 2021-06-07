@@ -113,7 +113,7 @@ class WizardStepReview extends Component {
                     <Text component={ TextVariants.h3 }>Image output</Text>
                     <TextList component={ TextListVariants.dl } data-testid='review-image-output'>
                         <TextListItem component={ TextListItemVariants.dt }>Release</TextListItem>
-                        <TextListItem component={ TextListItemVariants.dd }>{releaseLabels[this.props.release]}</TextListItem>
+                        <TextListItem component={ TextListItemVariants.dd }>{releaseLabels[this.props.release.distro]}</TextListItem>
                     </TextList>
                     <Text component={ TextVariants.h3 }>Target environment</Text>
                     {this.props.uploadDestinations.aws && awsReview }
@@ -131,6 +131,7 @@ class WizardStepReview extends Component {
 
 function mapStateToProps(state) {
     return {
+        release: state.pendingCompose.release,
         uploadDestinations: state.pendingCompose.uploadDestinations,
         uploadAWS: state.pendingCompose.uploadAWS,
         uploadAzure: state.pendingCompose.uploadAzure,
