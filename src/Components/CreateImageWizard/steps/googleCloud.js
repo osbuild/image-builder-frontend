@@ -3,6 +3,7 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelpIcon } from '@patternfly/react-icons';
 import { Title, Text, Popover, TextContent, TextList, TextListItem, Button } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 export const googleAccType = {
     googleAccount: 'Google account',
@@ -47,6 +48,10 @@ const PopoverInfo = ({ appendTo }) => <Popover
         <HelpIcon />
     </Button>
 </Popover>;
+
+PopoverInfo.propTypes = {
+    appendTo: PropTypes.any
+};
 
 export default {
     title: 'Google Cloud Platform',
