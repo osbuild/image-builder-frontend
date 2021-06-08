@@ -14,6 +14,7 @@ const RadioWithPopover = ({ Popover, ...props }) => {
 
 RadioWithPopover.propTypes = {
     Popover: PropTypes.elementType.isRequired,
+    label: PropTypes.node
 };
 
 export default RadioWithPopover;
