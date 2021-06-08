@@ -37,7 +37,7 @@ export default (user) => ({
         {
             component: componentTypes.TEXT_FIELD,
             name: 'subscription-activation',
-            type: 'text',
+            type: 'password',
             label: 'Activation key',
             condition: {
                 or: [
