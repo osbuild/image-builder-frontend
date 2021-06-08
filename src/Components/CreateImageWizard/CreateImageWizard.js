@@ -110,7 +110,7 @@ const CreateImage = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [ user, setUser ] = useState();
-    const [ isSaving, setIsSaving ] = useState();
+    const [ , setIsSaving ] = useState();
     useEffect(() => {
         (async () => {
             const userData = await insights.chrome.auth.getUser();
@@ -170,8 +170,8 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                     fields: [
                         imageOutput,
                         awsTarget,
-                        msAzureTarget,
                         googleCloudTarger,
+                        msAzureTarget,
                         registration(user),
                         packages,
                         review,

@@ -41,6 +41,24 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                 isStacked
                 isDisplayLarge />
             <Tile
+                className="tile"
+                data-testid="upload-google"
+                title="Google Cloud Platform"
+                icon={ <img
+                    className='provider-icon'
+                    src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
+                onClick={ () => setEnvironment((prevEnv) => {
+                    const newEnv = ({
+                        ...prevEnv,
+                        google: !prevEnv.google
+                    });
+                    change(input.name, newEnv);
+                    return newEnv;
+                }) }
+                isSelected={ environemt.google }
+                isStacked
+                isDisplayLarge />
+            <Tile
                 className="tile pf-u-mr-sm"
                 data-testid="upload-azure"
                 title="Microsoft Azure"
@@ -57,24 +75,6 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                     return newEnv;
                 }) }
                 isSelected={ environemt.azure }
-                isStacked
-                isDisplayLarge />
-            <Tile
-                className="tile"
-                data-testid="upload-google"
-                title="Google Cloud Platform"
-                icon={ <img
-                    className='provider-icon'
-                    src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
-                onClick={ () => setEnvironment((prevEnv) => {
-                    const newEnv = ({
-                        ...prevEnv,
-                        google: !prevEnv.google
-                    });
-                    change(input.name, newEnv);
-                    return newEnv;
-                }) }
-                isSelected={ environemt.google }
                 isStacked
                 isDisplayLarge />
         </div>

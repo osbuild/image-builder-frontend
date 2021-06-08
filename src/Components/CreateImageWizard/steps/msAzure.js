@@ -1,7 +1,6 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import nextStepMapper from './stepMapper';
 import { Title, Text, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
@@ -10,7 +9,7 @@ export default {
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Microsoft Azure</Title>,
     name: 'ms-azure-target-env',
     substepOf: 'Target environment',
-    nextStep: ({ values }) => nextStepMapper(values, true, true),
+    nextStep: 'registration',
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,

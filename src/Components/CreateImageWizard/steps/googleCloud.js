@@ -2,6 +2,7 @@ import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelpIcon } from '@patternfly/react-icons';
+import nextStepMapper from './stepMapper';
 import { Title, Text, Popover, TextContent, TextList, TextListItem, Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
@@ -58,7 +59,7 @@ export default {
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Google Cloud Platform</Title>,
     name: 'google-cloud-target-env',
     substepOf: 'Target environment',
-    nextStep: 'registration',
+    nextStep: ({ values }) => nextStepMapper(values, true, true),
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,
