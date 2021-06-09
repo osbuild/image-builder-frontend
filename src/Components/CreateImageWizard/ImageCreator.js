@@ -8,6 +8,7 @@ import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
+import Select from '@data-driven-forms/pf4-component-mapper/select';
 
 const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch }) => {
     return schema ? <FormRenderer

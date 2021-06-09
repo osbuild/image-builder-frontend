@@ -112,7 +112,7 @@ const CreateImage = () => {
     const [ user, setUser ] = useState();
     useEffect(() => {
         (async () => {
-            const userData = await insights.chrome.auth.getUser();
+            const userData = await insights?.chrome?.auth?.getUser() || {};
             setUser(() => userData);
         })();
     }, []);
