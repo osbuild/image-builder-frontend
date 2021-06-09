@@ -18,6 +18,7 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, d
         onSubmit={ (formValues) => onSubmit(formValues) }
         componentMapper={ {
             ...componentMapper,
+            // wizard: WrappedWizard,
             review: Review,
             output: TargetEnvironment,
             'package-selector': {

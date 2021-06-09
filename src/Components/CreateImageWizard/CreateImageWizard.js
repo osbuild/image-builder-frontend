@@ -110,7 +110,6 @@ const CreateImage = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [ user, setUser ] = useState();
-    const [ , setIsSaving ] = useState();
     useEffect(() => {
         (async () => {
             const userData = await insights.chrome.auth.getUser();
@@ -119,7 +118,8 @@ const CreateImage = () => {
     }, []);
     return user ? <ImageCreator
         onClose={ () => history.push('/landing') }
-        onSubmit={ (values) => {
+        onSubmit={ ({ values, setIsSaving }) => {
+            setIsSaving(() => true);
             const requests = onSave(values);
             Promise.all(requests.map(request => api.composeImage(request).then((response) => {
                 dispatch(composeAdded({
@@ -147,10 +147,10 @@ const CreateImage = () => {
                     className: 'image-builder',
                     isDynamic: true,
                     inModal: true,
-                    showTitles: true,
                     buttonLabels: {
                         submit: 'Create',
                     },
+                    showTitles: true,
                     title: 'Create image',
                     crossroads: [ 'target-environment' ],
                     description: <div>Create a RHEL image and push it to cloud providers. <Button
