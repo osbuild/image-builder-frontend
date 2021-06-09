@@ -9,7 +9,7 @@ export default {
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Microsoft Azure</Title>,
     name: 'ms-azure-target-env',
     substepOf: 'Target environment',
-    nextStep: 'registration',
+    nextStep: ({ values }) => values?.release === 'rhel-8' ? 'registration' : 'packages',
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,

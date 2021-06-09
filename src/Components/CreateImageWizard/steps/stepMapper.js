@@ -1,4 +1,4 @@
-export default ({ 'target-environment': targetEnv } = {}, skipFirst, skipSecond) => {
+export default ({ 'target-environment': targetEnv, release } = {}, skipFirst, skipSecond) => {
     if (!skipFirst && targetEnv?.aws) {
         return 'aws-target-env';
     }
@@ -11,5 +11,5 @@ export default ({ 'target-environment': targetEnv } = {}, skipFirst, skipSecond)
         return 'ms-azure-target-env';
     }
 
-    return 'registration';
+    return release === 'rhel-8' ? 'registration' : 'packages';
 };
