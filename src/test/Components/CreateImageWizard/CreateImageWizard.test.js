@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitFor, waitForElementToBeRemoved, within } from '@testing-library/react';
+import { screen, getByText, waitFor, waitForElementToBeRemoved, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
@@ -58,8 +58,12 @@ afterAll(() => {
 });
 
 describe('Create Image Wizard', () => {
-    beforeEach(() => {
-        renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
+        await act(async () => {
+            renderWithReduxRouter(<CreateImageWizard />);
+        });
     });
 
     test('renders component', () => {
@@ -76,8 +80,11 @@ describe('Create Image Wizard', () => {
 });
 
 describe('Step Image output', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
@@ -112,7 +119,7 @@ describe('Step Image output', () => {
         verifyCancelButton(cancel, historySpy);
     });
 
-    test('allows chosing a release', () => {
+    test.only('allows chosing a release', () => {
         const release = screen.getByTestId('release-select');
         expect(release).toBeEnabled();
 
@@ -128,8 +135,11 @@ describe('Step Image output', () => {
 });
 
 describe('Step Upload to AWS', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -172,8 +182,11 @@ describe('Step Upload to AWS', () => {
 });
 
 describe('Step Upload to Google', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -216,8 +229,11 @@ describe('Step Upload to Google', () => {
 });
 
 describe('Step Upload to Azure', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -270,8 +286,11 @@ describe('Step Upload to Azure', () => {
 });
 
 describe('Step Registration', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async() => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -353,8 +372,11 @@ describe('Step Registration', () => {
 });
 
 describe('Step Packages', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -401,8 +423,11 @@ describe('Step Packages', () => {
 });
 
 describe('Step Review', () => {
-    beforeEach(() => {
-        const { _component, history } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        await act(async () => {
+            history = renderWithReduxRouter(<CreateImageWizard />).history;
+        });
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
@@ -437,8 +462,14 @@ describe('Step Review', () => {
 });
 
 describe('Click through all steps', () => {
-    beforeEach(() => {
-        const { _component, history, reduxStore } = renderWithReduxRouter(<CreateImageWizard />);
+    beforeEach(async () => {
+        let history;
+        let reduxStore;
+        await act(async () => {
+            const rendered = renderWithReduxRouter(<CreateImageWizard />);
+            history = rendered.history;
+            reduxStore = rendered.reduxStore;
+        });
         store = reduxStore;
         historySpy = jest.spyOn(history, 'push');
     });
