@@ -152,7 +152,7 @@ const CreateImage = () => {
                     },
                     showTitles: true,
                     title: 'Create image',
-                    crossroads: [ 'target-environment' ],
+                    crossroads: [ 'target-environment', 'release' ],
                     description: <div>Create a RHEL image and push it to cloud providers. <Button
                         component="a"
                         target="_blank"
