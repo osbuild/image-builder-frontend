@@ -2,8 +2,14 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 
 export const registerValues = {
-    'subscribe-now-radio': 'Embed an activation key and register systems on first boot',
-    'register-later-radio-button': 'Register the system later'
+    'subscribe-now-radio': {
+        title: 'Embed an activation key and register systems on first boot',
+        testId: 'register-now-radio-button'
+    },
+    'register-later-radio-button': {
+        title: 'Register the system later',
+        testId: 'register-later-radio-button'
+    }
 };
 
 export default (user) => ({
@@ -16,15 +22,17 @@ export default (user) => ({
             label: 'Register the system',
             name: 'register-system',
             initialValue: 'register-later-radio-button',
-            options: Object.entries(registerValues).map(([ key, title ]) => ({
+            options: Object.entries(registerValues).map(([ key, { title, testId }]) => ({
                 label: title,
-                value: key
+                value: key,
+                'data-testid': testId,
             }))
         },
         {
             component: componentTypes.TEXT_FIELD,
             name: 'subscription-organization',
             type: 'text',
+            'data-testid': 'organization-id',
             label: 'Organization ID',
             initialValue: Number(user?.identity?.internal?.org_id),
             isDisabled: true,
@@ -37,6 +45,8 @@ export default (user) => ({
         {
             component: componentTypes.TEXT_FIELD,
             name: 'subscription-activation',
+            'data-testid': 'subscription-activation',
+            required: true,
             type: 'password',
             label: 'Activation key',
             condition: {

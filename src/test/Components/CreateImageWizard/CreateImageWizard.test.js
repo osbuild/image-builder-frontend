@@ -81,6 +81,8 @@ describe('Create Image Wizard', () => {
 
 describe('Step Image output', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -119,12 +121,12 @@ describe('Step Image output', () => {
         verifyCancelButton(cancel, historySpy);
     });
 
-    test.only('allows chosing a release', () => {
-        const release = screen.getByTestId('release-select');
-        expect(release).toBeEnabled();
+    // test('allows chosing a release', () => {
+    //     const release = screen.getByTestId('release-select');
+    //     expect(release).toBeEnabled();
 
-        userEvent.selectOptions(release, [ 'rhel-84' ]);
-    });
+    //     userEvent.selectOptions(release, [ 'rhel-8' ]);
+    // });
 
     test('target environment is required', () => {
         const destination = screen.getByTestId('target-select');
@@ -136,6 +138,8 @@ describe('Step Image output', () => {
 
 describe('Step Upload to AWS', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -146,15 +150,11 @@ describe('Step Upload to AWS', () => {
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Amazon Web Services');
-
-        // load from sidebar
-        anchor.click();
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('clicking Next loads Registration', () => {
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -165,7 +165,7 @@ describe('Step Upload to AWS', () => {
         const [ , back, ] = verifyButtons();
         back.click();
 
-        screen.getByTestId('release-select');
+        screen.getByTestId('upload-aws');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -177,12 +177,14 @@ describe('Step Upload to AWS', () => {
         const accessKeyId = screen.getByTestId('aws-account-id');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
-        expect(accessKeyId).toBeRequired();
+        // expect(accessKeyId).toBeRequired(); // DDf does not support required value
     });
 });
 
 describe('Step Upload to Google', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -193,15 +195,11 @@ describe('Step Upload to Google', () => {
         const awsTile = screen.getByTestId('upload-google');
         awsTile.click();
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Google Cloud Platform');
-
-        // load from sidebar
-        anchor.click();
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('clicking Next loads Registration', () => {
+        userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -212,7 +210,7 @@ describe('Step Upload to Google', () => {
         const [ , back, ] = verifyButtons();
         back.click();
 
-        screen.getByTestId('release-select');
+        screen.getByTestId('upload-google');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -221,15 +219,17 @@ describe('Step Upload to Google', () => {
     });
 
     test('the google account id field is shown and required', () => {
-        const accessKeyId = screen.getByTestId('input-google-user');
+        const accessKeyId = screen.getByTestId('input-google-email');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
-        expect(accessKeyId).toBeRequired();
+        // expect(accessKeyId).toBeRequired(); // DDf does not support required value
     });
 });
 
 describe('Step Upload to Azure', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -237,18 +237,16 @@ describe('Step Upload to Azure', () => {
         historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
-        const azureTile = screen.getByTestId('upload-azure');
-        azureTile.click();
-
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Microsoft Azure');
-
-        // load from sidebar
-        anchor.click();
+        const awsTile = screen.getByTestId('upload-azure');
+        awsTile.click();
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('clicking Next loads Registration', () => {
+        userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
+        userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
+        userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
+
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -259,7 +257,7 @@ describe('Step Upload to Azure', () => {
         const [ , back, ] = verifyButtons();
         back.click();
 
-        screen.getByTestId('release-select');
+        screen.getByTestId('upload-azure');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -271,22 +269,24 @@ describe('Step Upload to Azure', () => {
         const tenantId = screen.getByTestId('azure-tenant-id');
         expect(tenantId).toHaveValue('');
         expect(tenantId).toBeEnabled();
-        expect(tenantId).toBeRequired();
+        // expect(tenantId).toBeRequired(); // DDf does not support required value
 
         const subscription = screen.getByTestId('azure-subscription-id');
         expect(subscription).toHaveValue('');
         expect(subscription).toBeEnabled();
-        expect(subscription).toBeRequired();
+        // expect(subscription).toBeRequired(); // DDf does not support required value
 
         const resourceGroup = screen.getByTestId('azure-resource-group');
         expect(resourceGroup).toHaveValue('');
         expect(resourceGroup).toBeEnabled();
-        expect(resourceGroup).toBeRequired();
+        // expect(resourceGroup).toBeRequired(); // DDf does not support required value
     });
 });
 
 describe('Step Registration', () => {
     beforeEach(async() => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -297,12 +297,9 @@ describe('Step Registration', () => {
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Registration');
-
-        // load from sidebar
-        anchor.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('clicking Next loads Packages', () => {
@@ -338,11 +335,11 @@ describe('Step Registration', () => {
         const activationKey = screen.getByTestId('subscription-activation');
         expect(activationKey).toHaveValue('');
         expect(activationKey).toBeEnabled();
-        expect(activationKey).toBeRequired();
+        // expect(activationKey).toBeRequired(); DDF does not support required fields
 
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Review');
-        anchor.click();
+        userEvent.type(screen.getByTestId('subscription-activation'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
+        screen.getByRole('button', { name: /Next/ }).click();
         await screen.findByText('Register the system on first boot');
     });
 
@@ -373,6 +370,8 @@ describe('Step Registration', () => {
 
 describe('Step Packages', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -382,13 +381,19 @@ describe('Step Packages', () => {
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Packages');
+        // aws step
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        // load from sidebar
-        anchor.click();
+        // registration
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+        await screen.findByTestId('subscription-activation');
+        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('clicking Next loads Review', () => {
@@ -424,6 +429,8 @@ describe('Step Packages', () => {
 
 describe('Step Review', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -433,13 +440,22 @@ describe('Step Review', () => {
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Review');
+        // aws step
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        // load from sidebar
-        anchor.click();
+        // registration
+        screen
+            .getByLabelText('Embed an activation key and register systems on first boot')
+            .click();
+        await screen.findByTestId('subscription-activation');
+        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        //Skip packages
+        screen.getByRole('button', { name: /Next/ }).click();
     });
 
     test('has 3 buttons', () => {
@@ -463,6 +479,8 @@ describe('Step Review', () => {
 
 describe('Click through all steps', () => {
     beforeEach(async () => {
+        window.HTMLElement.prototype.scrollTo = function() {};
+
         let history;
         let reduxStore;
         await act(async () => {
@@ -478,23 +496,22 @@ describe('Click through all steps', () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select image output
-        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         screen.getByTestId('upload-aws').click();
         screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();
-        next.click();
 
-        // select upload target
+        screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-        next.click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        userEvent.type(screen.getByTestId('input-google-user'), 'test@test.com');
-        next.click();
+        userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
+        screen.getByRole('button', { name: /Next/ }).click();
 
         userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
         userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
         userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
-        next.click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
         screen
@@ -532,9 +549,8 @@ describe('Click through all steps', () => {
         // review
         await screen.
             findByText('Review the information and click the Create button to create your image using the following criteria.');
-        const main = screen.getByRole('main', { name: 'Create image' });
-        within(main).getByText('Amazon Web Services');
-        within(main).getByText('Google Cloud Platform');
+        await screen.findAllByText('Amazon Web Services');
+        await screen.findAllByText('Google Cloud Platform');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -622,7 +638,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
                 }
 
-                ids.unshift(id);
+                ids.push(id);
                 return Promise.resolve({ id });
             });
 
@@ -643,12 +659,17 @@ describe('Click through all steps', () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select release
-        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         screen.getByTestId('upload-aws').click();
         next.click();
 
         // leave AWS account id empty
-        next.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+        expect(screen.queryByText('Embed an activation key and register systems on first boot')).toBeNull();
+
+        // fill in AWS to proceed
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
         screen
@@ -656,34 +677,35 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.clear(screen.getByTestId('subscription-activation'));
-        const sidebar = screen.getByRole('navigation');
-        const reviewStep = getByText(sidebar, 'Review');
-        reviewStep.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        expect(screen.queryByText(
+            'Review the information and click the Create button to create your image using the following criteria.'
+        )).toBeNull();
+
+        // fill in the registration
+        await screen.findByTestId('subscription-activation');
+        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        screen.getByRole('button', { name: /Next/ }).click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
         await screen.
             findByText('Review the information and click the Create button to create your image using the following criteria.');
-        const main = screen.getByRole('main', { name: 'Create image' });
-        within(main).getByText('Amazon Web Services');
+        // review
+        await screen.findAllByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
-
-        const errorMessages = await screen.findAllByText('A value is required');
-        expect(errorMessages.length).toBe(1);
-
-        const uploadErrorMessage = await screen.findAllByText('A 12-digit number is required');
-        expect(uploadErrorMessage.length).toBe(1);
     });
 
     test('with invalid values', async () => {
-        const next = screen.getByRole('button', { name: /Next/ });
 
         // select release
-        userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-8' ]);
         // select upload target
         screen.getByTestId('upload-aws').click();
-        next.click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
-        userEvent.type(screen.getByTestId('aws-account-id'), 'invalid, isNaN');
-        next.click();
+        userEvent.type(screen.getByTestId('aws-account-id'), 'invalid, non');
+        screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
         screen
@@ -691,20 +713,21 @@ describe('Click through all steps', () => {
             .click();
         await screen.findByTestId('subscription-activation');
         userEvent.clear(screen.getByTestId('subscription-activation'));
-        const sidebar = screen.getByRole('navigation');
-        const reviewStep = getByText(sidebar, 'Review');
-        reviewStep.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        expect(screen.queryByText(
+            'Review the information and click the Create button to create your image using the following criteria.'
+        )).toBeNull();
+
+        // fill in the registration
+        await screen.findByTestId('subscription-activation');
+        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        screen.getByRole('button', { name: /Next/ }).click();
+        screen.getByRole('button', { name: /Next/ }).click();
 
         await screen.
             findByText('Review the information and click the Create button to create your image using the following criteria.');
-        const main = screen.getByRole('main', { name: 'Create image' });
-        within(main).getByText('Amazon Web Services');
+        await screen.findAllByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
-
-        const errorMessages = await screen.findAllByText('A value is required');
-        expect(errorMessages.length).toBe(1);
-
-        const uploadErrorMessage = await screen.findAllByText('A 12-digit number is required');
-        expect(uploadErrorMessage.length).toBe(1);
     });
 });

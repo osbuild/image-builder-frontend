@@ -4,8 +4,8 @@
   "private": false,
   "dependencies": {
     "@babel/runtime": "7.14.6",
-    "@data-driven-forms/pf4-component-mapper": "^3.6.4",
-    "@data-driven-forms/react-form-renderer": "^3.6.4",
+    "@data-driven-forms/pf4-component-mapper": "3.6.4",
+    "@data-driven-forms/react-form-renderer": "3.6.4",
     "@patternfly/patternfly": "4.115.2",
     "@patternfly/react-core": "4.135.0",
     "@patternfly/react-table": "4.29.0",
