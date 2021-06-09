@@ -3,7 +3,7 @@ import validatorTypes from '@data-driven-forms/react-form-renderer/validator-typ
 import nextStepMapper from './stepMapper';
 
 export const releaseValues = {
-    'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8.3',
+    'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8',
     'centos-8': 'CentOS Stream 8'
 };
 
