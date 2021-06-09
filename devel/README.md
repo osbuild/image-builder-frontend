@@ -46,7 +46,7 @@ OSBUILD_AWS_S3_BUCKET
 
 And then add to the list of environment variables for the backend container in the `docker-compose.yml` file.
 
-The config variables for the Image Builder backend can be found [here](https://github.com/osbuild/image-builder/blob/main/internal/config/config.go).
+The config variables for the Image Builder backend can be found [here](https://github.com/osbuild/image-builder/blob/100af34e53403ef58009ce3de071c5104f1742d6/internal/config/config.go#L5-L30).
 
 ## Run
 
