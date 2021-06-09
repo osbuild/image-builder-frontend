@@ -48,6 +48,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-tenant-id',
+            'data-testid': 'azure-tenant-id',
             type: 'text',
             label: 'Tenant ID',
             isRequired: true,
@@ -60,6 +61,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-subscription-id',
+            'data-testid': 'azure-subscription-id',
             type: 'text',
             label: 'Subscription ID',
             isRequired: true,
@@ -72,6 +74,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-resource-group',
+            'data-testid': 'azure-resource-group',
             type: 'text',
             label: 'Resource group',
             isRequired: true,

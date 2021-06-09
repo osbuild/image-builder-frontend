@@ -1,3 +1,4 @@
+/* eslint-disable react/display-name */
 import React from 'react';
 import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
 import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';
@@ -22,6 +23,7 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, d
             // wizard: WrappedWizard,
             review: Review,
             output: TargetEnvironment,
+            select: Select,
             'package-selector': {
                 component: Packages,
                 defaultArch

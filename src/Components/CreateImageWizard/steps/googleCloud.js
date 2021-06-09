@@ -89,6 +89,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'google-email',
+            'data-testid': 'input-google-email',
             type: 'text',
             label: 'Email address',
             condition: {
