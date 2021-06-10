@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelpIcon } from '@patternfly/react-icons';
