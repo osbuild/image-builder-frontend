@@ -11,10 +11,10 @@ import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
 
-const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch }) => {
+const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch, className, ...props }) => {
     return schema ? <FormRenderer
         schema={ schema }
-        className="image-builder"
+        className={ `image-builder${className ? ` ${className}` : ''}` }
         subscription={ { values: true } }
         FormTemplate={ (props) => <Pf4FormTemplate { ...props } showFormControls={ false } /> }
         onSubmit={ (formValues) => onSubmit(formValues) }
@@ -31,7 +31,8 @@ const CreateImageWizard = ({ schema, onSubmit, onClose, customComponentMapper, d
             'radio-popover': RadioWithPopover,
             ...customComponentMapper
         } }
-        onCancel={ onClose } /> : <Spinner />;
+        onCancel={ onClose }
+        { ...props } /> : <Spinner />;
 };
 
 CreateImageWizard.propTypes = {
@@ -43,7 +44,8 @@ CreateImageWizard.propTypes = {
             component: PropTypes.node
         }) ])
     }),
-    defaultArch: PropTypes.string
+    defaultArch: PropTypes.string,
+    className: PropTypes.string
 };
 
 export default CreateImageWizard;
