@@ -7,6 +7,7 @@ const { config: webpackConfig, plugins } = config({
     debug: true,
     port: 8002,
     useFileHash: false,
+    sassPrefix: '.image-builder, body',
     skipChrome2: true,
 });
 

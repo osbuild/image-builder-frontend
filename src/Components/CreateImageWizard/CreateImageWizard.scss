@@ -2,7 +2,7 @@
     padding-right: 0px;   
 }
 
-.ins-c-image--builder__popover .pf-c-popover {
+.pf-c-popover[data-popper-reference-hidden="true"] {
     font-weight: initial;
     visibility: initial;
     pointer-events: initial;
