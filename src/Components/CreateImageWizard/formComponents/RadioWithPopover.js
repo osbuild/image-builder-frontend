@@ -4,12 +4,9 @@ import PropTypes from 'prop-types';
 
 const RadioWithPopover = ({ Popover, ...props }) => {
     const ref = useRef();
-    return <>
-        <Radio { ...props } label={ <span ref={ ref } className="ins-c-image--builder__popover">{props.label}
-            <Popover appendTo={ ref.current } />
-        </span> } />
-
-    </>;
+    return <Radio { ...props } label={ <span ref={ ref } className="ins-c-image--builder__popover">{props.label}
+        <Popover appendTo={ ref?.current } />
+    </span> } />;
 };
 
 RadioWithPopover.propTypes = {

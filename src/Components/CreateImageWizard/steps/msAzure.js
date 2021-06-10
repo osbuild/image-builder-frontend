@@ -51,6 +51,7 @@ export default {
             'data-testid': 'azure-tenant-id',
             type: 'text',
             label: 'Tenant ID',
+            required: true,
             isRequired: true,
             validate: [
                 {
