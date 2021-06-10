@@ -55,6 +55,6 @@ docker-compose up
 ```
 
 Access the service through the GUI:
-[http://prod.foo.redhat.com:1337/beta/](http://prod.foo.redhat.com:1337/beta/), or
+[https://prod.foo.redhat.com:1337/beta/insights/image-builder](https://prod.foo.redhat.com:1337/beta/insights/image-builder), or
 directly through the API:
 [https://prod.foo.redhat.com:1337/docs/api/image-builder](https://prod.foo.redhat.com:1337/docs/api/image-builder).
