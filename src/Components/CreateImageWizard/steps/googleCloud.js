@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -13,42 +13,43 @@ export const googleAccType = {
     domain: 'Domain'
 };
 
-const PopoverInfo = ({ appendTo }) => <Popover
-    position="right"
-    appendTo={ appendTo }
-    // hasAutoWidth
-    maxWidth='35rem'
-    headerContent={ 'Valid account types' }
-    bodyContent={ <TextContent>
-        <Text>The following account types can have an image shared with them:</Text>
-        <TextList>
-            <TextListItem>
-                <strong>Google account:</strong> A Google account represents a developer, an administrator,
-            or any other person who interacts with Google Cloud. e.g., <em>`alice@gmail.com`</em>.
-            </TextListItem>
-            <TextListItem>
-                <strong>Service account:</strong> A service account is an account for an application instead
-            of an individual end user. e.g., <em>`myapp@appspot.gserviceaccount.com`</em>.
-            </TextListItem>
-            <TextListItem>
-                <strong>Google group:</strong> A Google group is a named collection of Google accounts and
-            and service accounts. e.g., <em>`admins@example.com`</em>.
-            </TextListItem>
-            <TextListItem>
-                <strong>Google workspace domain/Cloud identity domain:</strong> A Google workspace or cloud identity
-            domain represents a virtual group of all the Google accounts in an organization. These domains
-            represent your organization&apos;s internet domain name. e.g., <em>`mycompany.com`</em>.
-            </TextListItem>
-        </TextList>
-    </TextContent> }>
-    <Button
-        variant="plain"
-        aria-label="Account info"
-        aria-describedby="google-account-type"
-        className="pf-c-form__group-label-help">
-        <HelpIcon />
-    </Button>
-</Popover>;
+const PopoverInfo = ({ appendTo }) => {
+    return <Popover
+        appendTo={ appendTo }
+        hasAutoWidth
+        maxWidth='35rem'
+        headerContent={ 'Valid account types' }
+        bodyContent={ <TextContent>
+            <Text>The following account types can have an image shared with them:</Text>
+            <TextList>
+                <TextListItem>
+                    <strong>Google account:</strong> A Google account represents a developer, an administrator,
+    or any other person who interacts with Google Cloud. e.g., <em>`alice@gmail.com`</em>.
+                </TextListItem>
+                <TextListItem>
+                    <strong>Service account:</strong> A service account is an account for an application instead
+    of an individual end user. e.g., <em>`myapp@appspot.gserviceaccount.com`</em>.
+                </TextListItem>
+                <TextListItem>
+                    <strong>Google group:</strong> A Google group is a named collection of Google accounts and
+    and service accounts. e.g., <em>`admins@example.com`</em>.
+                </TextListItem>
+                <TextListItem>
+                    <strong>Google workspace domain/Cloud identity domain:</strong> A Google workspace or cloud identity
+    domain represents a virtual group of all the Google accounts in an organization. These domains
+    represent your organization&apos;s internet domain name. e.g., <em>`mycompany.com`</em>.
+                </TextListItem>
+            </TextList>
+        </TextContent> }>
+        <Button
+            variant="plain"
+            aria-label="Account info"
+            aria-describedby="google-account-type"
+            className="pf-c-form__group-label-help">
+            <HelpIcon />
+        </Button>
+    </Popover>;
+};
 
 PopoverInfo.propTypes = {
     appendTo: PropTypes.any
