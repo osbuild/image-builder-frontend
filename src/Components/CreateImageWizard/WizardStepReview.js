@@ -148,7 +148,7 @@ function mapStateToProps(state) {
 }
 
 WizardStepReview.propTypes = {
-    release: PropTypes.string,
+    release: PropTypes.object,
     uploadAWS: PropTypes.object,
     uploadGoogle: PropTypes.object,
     uploadDestinations: PropTypes.object,
