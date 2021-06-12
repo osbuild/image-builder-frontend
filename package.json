@@ -28,6 +28,9 @@
       "!src/**/stories/*",
       "!src/entry-dev.js"
     ],
+    "globals": {
+      "COMMITHASH": "dummy"
+    },
     "roots": [
       "<rootDir>/src/"
     ],
@@ -59,6 +62,7 @@
     "eslint-plugin-jest-dom": "3.2.4",
     "eslint-plugin-react": "7.18.3",
     "eslint-plugin-testing-library": "3.10.0",
+    "git-revision-webpack-plugin": "5.0.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.1.0",
     "npm-run-all": "4.1.5",

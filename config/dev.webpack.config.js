@@ -1,4 +1,6 @@
+const { DefinePlugin } = require('webpack');
 const { resolve } = require('path');
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const config = require('@redhat-cloud-services/frontend-components-config');
 const { config: webpackConfig, plugins } = config({
     rootFolder: resolve(__dirname, '../'),
@@ -18,6 +20,10 @@ plugins.push(
         },
     })
 );
+
+plugins.push(new DefinePlugin({
+    COMMITHASH: JSON.stringify((new GitRevisionPlugin()).commithash()),
+}));
 
 module.exports = {
     ...webpackConfig,
