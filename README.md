@@ -36,3 +36,22 @@ https://prod.foo.redhat.com:1337/apps/image-builder/landing.
 To develop both the frontend and the backend you can again use the proxy to run both the
 frontend and backend locally against the chrome at cloud.redhat.com. For instructions
 see [devel/README.md](devel/README.md).
+
+
+## Style Guidelines
+
+This project uses eslint's recommended styling guidelines. These rules can be found here:
+https://eslint.org/docs/rules/
+
+
+## Test Guidelines
+
+Testing is done using [React Testing Library](https://testing-library.com/docs/react-testing-library/intro). 
+All UI contributions must also include a new test or update an existing test in order to maintain code coverage.
+
+Tests can be run with
+```
+    npm run test
+```
+
+These tests will also be run in our Travis CI when a PR is opened.
