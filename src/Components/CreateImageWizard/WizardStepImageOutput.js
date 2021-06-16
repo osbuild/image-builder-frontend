@@ -28,7 +28,7 @@ class WizardStepImageOutput extends Component {
 
     render() {
         const releaseOptions = [
-            { value: 'rhel-8', label: 'Red Hat Enterprise Linux (RHEL) 8' },
+            { value: 'rhel-84', label: 'Red Hat Enterprise Linux (RHEL) 8' },
             { value: 'centos-8', label: 'CentOS Stream 8' },
         ];
 

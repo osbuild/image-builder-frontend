@@ -3,7 +3,7 @@ import types from '../types';
 const initialPendingComposeState = {
     release: {
         arch: 'x86_64',
-        distro: 'rhel-8',
+        distro: 'rhel-84',
     },
     uploadDestinations: {
         aws: false,

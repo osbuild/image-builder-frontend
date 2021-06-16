@@ -280,7 +280,7 @@ class CreateImageWizard extends Component {
         const steps = [
             StepImageOutput,
             ...(StepTargetEnv.steps.length > 0 ? [ StepTargetEnv ] : []),
-            ...(this.props.release.distro === 'rhel-8' ? [ StepImageRegistration ] : []),
+            ...(this.props.release.distro === 'rhel-84' ? [ StepImageRegistration ] : []),
             {
                 name: 'Packages',
                 component: <WizardStepPackages /> },

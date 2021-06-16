@@ -27,7 +27,7 @@ const store = {
                 id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -56,7 +56,7 @@ const store = {
                 id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -76,7 +76,7 @@ const store = {
                 id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -96,7 +96,7 @@ const store = {
                 id: '42ad0826-30b5-4f64-a24e-957df26fd564',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -116,7 +116,7 @@ const store = {
                 id: '955944a2-e149-4058-8ac1-35b514cb5a16',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -136,7 +136,7 @@ const store = {
                 id: 'f7a60094-b376-4b58-a102-5c8c82dfd18b',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -156,7 +156,7 @@ const store = {
                 id: '61b0effa-c901-4ee5-86b9-2010b47f1b22',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -176,7 +176,7 @@ const store = {
                 id: 'ca03f120-9840-4959-871e-94a5cb49d1f2',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -208,7 +208,7 @@ const store = {
                 id: '551de6f6-1533-4b46-a69f-7924051f9bc6',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
@@ -228,7 +228,7 @@ const store = {
                 id: '77fa8b03-7efb-4120-9a20-da66d68c4494',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
-                    distribution: 'rhel-8',
+                    distribution: 'rhel-84',
                     image_requests: [
                         {
                             architecture: 'x86_64',
