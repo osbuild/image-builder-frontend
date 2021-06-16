@@ -18,7 +18,7 @@ class WizardStepReview extends Component {
 
     render() {
         const releaseLabels = {
-            'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8',
+            'rhel-84': 'Red Hat Enterprise Linux (RHEL) 8',
             'centos-8': 'CentOS Stream 8'
         };
 
@@ -128,7 +128,7 @@ class WizardStepReview extends Component {
                     <Text component={ TextVariants.h3 }>Target environment</Text>
                     {this.props.uploadDestinations.aws && awsReview }
                     {this.props.uploadDestinations.google && googleReview }
-                    {this.props.release.distro === 'rhel-8' && registrationReview }
+                    {this.props.release.distro === 'rhel-84' && registrationReview }
                 </TextContent>
             </>
         );
