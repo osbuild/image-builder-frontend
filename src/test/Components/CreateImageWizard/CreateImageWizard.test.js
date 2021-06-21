@@ -558,10 +558,11 @@ describe('Click through all steps', () => {
         const composeImage = jest
             .spyOn(api, 'composeImage')
             .mockImplementation(body => {
+                console.log(body, 'huuuh!');
                 let id;
                 if (body.image_requests[0].upload_request.type === 'aws') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: 'rhel-8',
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'ami',
@@ -586,7 +587,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
                 } else if (body.image_requests[0].upload_request.type === 'gcp') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: 'rhel-8',
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'vhd',
@@ -611,7 +612,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
                 } else if (body.image_requests[0].upload_request.type === 'azure') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: 'rhel-8',
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'vhd',
