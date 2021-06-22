@@ -7,3 +7,7 @@
     visibility: initial;
     pointer-events: initial;
 }
+
+.pf-c-dual-list-selector__menu {
+    --pf-c-dual-list-selector__menu--MinHeight: 20rem;
+}
