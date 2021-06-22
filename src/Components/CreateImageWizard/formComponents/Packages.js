@@ -4,7 +4,6 @@ import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { DualListSelector, Button, TextContent } from '@patternfly/react-core';
 import api from '../../../api';
 import PropTypes from 'prop-types';
-import '../WizardStepPackages.scss';
 
 const mapPackagesToComponent = (packages) => packages.map((pack, key) => (
     <TextContent key={ `${pack.name}-${key}` }>
