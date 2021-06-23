@@ -9,7 +9,7 @@ export default {
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Amazon Web Service</Title>,
     name: 'aws-target-env',
     substepOf: 'Target environment',
-    nextStep: ({ values }) => nextStepMapper(values, true),
+    nextStep: ({ values }) => nextStepMapper(values, { skipAws: true }),
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,
