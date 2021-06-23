@@ -60,7 +60,7 @@ export default {
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Google Cloud Platform</Title>,
     name: 'google-cloud-target-env',
     substepOf: 'Target environment',
-    nextStep: ({ values }) => nextStepMapper(values, true, true),
+    nextStep: ({ values }) => nextStepMapper(values, { skipGoogle: true, skipAws: true }),
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,

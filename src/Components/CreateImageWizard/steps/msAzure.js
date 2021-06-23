@@ -25,16 +25,16 @@ export default {
             &quot;Contributor&quot; to at least one resource group.<br />
                 </Text>
                 <small>
-                  <Button
-                      component="a"
-                      target="_blank"
-                      variant="link"
-                      icon={ <ExternalLinkAltIcon /> }
-                      iconPosition="right"
-                      isInline
-                      href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow">
+                    <Button
+                        component="a"
+                        target="_blank"
+                        variant="link"
+                        icon={ <ExternalLinkAltIcon /> }
+                        iconPosition="right"
+                        isInline
+                        href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow">
                       Learn more about OAuth 2.0
-                  </Button>
+                    </Button>
                 </small>
                 <a href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=b94bb246-b02c-4985-9c22-d44e66f657f4
 &scope=openid&response_type=code&response_mode=form_post

@@ -106,7 +106,7 @@ const onSave = (values) => {
     return requests;
 };
 
-const CreateImage = () => {
+const CreateImageWizard = () => {
     const dispatch = useDispatch();
     const history = useHistory();
     const [ user, setUser ] = useState();
@@ -181,4 +181,4 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
         } } /> : <Spinner />;
 };
 
-export default CreateImage;
+export default CreateImageWizard;
