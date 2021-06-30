@@ -1,6 +1,6 @@
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import nextStepMapper from './stepMapper';
+import nextStepMapper from './imageOutputStepMapper';
 
 export const releaseValues = {
     'rhel-8': 'Red Hat Enterprise Linux (RHEL) 8',
