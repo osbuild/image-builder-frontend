@@ -2,7 +2,7 @@ import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelpIcon } from '@patternfly/react-icons';
-import nextStepMapper from './stepMapper';
+import nextStepMapper from './imageOutputStepMapper';
 import { Title, Text, Popover, TextContent, TextList, TextListItem, Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 

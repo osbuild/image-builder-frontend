@@ -3,13 +3,14 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Title, Text, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import nextStepMapper from './imageOutputStepMapper';
 
 export default {
     title: 'Microsoft Azure',
     customTitle: <Title headingLevel="h1" size="xl">Target Environment - Microsoft Azure</Title>,
     name: 'ms-azure-target-env',
     substepOf: 'Target environment',
-    nextStep: ({ values }) => values?.release === 'rhel-8' ? 'registration' : 'packages',
+    nextStep: ({ values }) => nextStepMapper(values, { skipAws: true, skipGoogle: true, skipAzure: true }),
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,

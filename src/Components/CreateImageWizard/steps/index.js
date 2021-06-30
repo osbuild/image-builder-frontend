@@ -5,4 +5,4 @@ export { default as packages } from './packages';
 export { default as registration } from './registration';
 export { default as review } from './review';
 export { default as imageOutput } from './imageOutput';
-export { default as nextStepMapper } from './stepMapper';
+export { default as nextStepMapper } from './imageOutputStepMapper';

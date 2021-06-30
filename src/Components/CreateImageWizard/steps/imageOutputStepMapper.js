@@ -1,4 +1,4 @@
-export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, skipGoogle, sipAzure } = {}) => {
+export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, skipGoogle, skipAzure } = {}) => {
     if (!skipAws && targetEnv?.aws) {
         return 'aws-target-env';
     }
@@ -7,7 +7,7 @@ export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, sk
         return 'google-cloud-target-env';
     }
 
-    if (!sipAzure && targetEnv?.azure) {
+    if (!skipAzure && targetEnv?.azure) {
         return 'ms-azure-target-env';
     }
 

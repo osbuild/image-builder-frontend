@@ -1,7 +1,7 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import nextStepMapper from './stepMapper';
+import nextStepMapper from './imageOutputStepMapper';
 import { Title } from '@patternfly/react-core';
 
 export default {
