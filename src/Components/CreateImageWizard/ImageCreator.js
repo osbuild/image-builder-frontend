@@ -1,4 +1,3 @@
-/* eslint-disable react/display-name */
 import React from 'react';
 import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
 import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';
@@ -20,7 +19,6 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaul
         onSubmit={ (formValues) => onSubmit(formValues) }
         componentMapper={ {
             ...componentMapper,
-            // wizard: WrappedWizard,
             review: Review,
             output: TargetEnvironment,
             select: Select,
