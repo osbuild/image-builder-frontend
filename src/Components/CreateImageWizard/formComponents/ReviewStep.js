@@ -9,7 +9,7 @@ const ReviewStep = () => {
     const { getState } = useFormApi();
     return (
         <TextContent>
-            <Text component={ TextVariants.small }>
+            <Text>
                     Review the information and click the Create button
                     to create your image using the following criteria.
             </Text>
