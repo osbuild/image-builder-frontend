@@ -35,7 +35,7 @@ const PopoverInfo = ({ appendTo }) => {
     and service accounts. e.g., <em>`admins@example.com`</em>.
                 </TextListItem>
                 <TextListItem>
-                    <strong>Google workspace domain/Cloud identity domain:</strong> A Google workspace or cloud identity
+                    <strong>Google Workspace domain/Cloud Identity domain:</strong> A Google workspace or cloud identity
     domain represents a virtual group of all the Google accounts in an organization. These domains
     represent your organization&apos;s internet domain name. e.g., <em>`mycompany.com`</em>.
                 </TextListItem>
@@ -77,7 +77,7 @@ export default {
             name: 'google-account-type',
             initialValue: 'googleAccount',
             options: Object.entries(googleAccType).map(([ value, label ]) => ({
-                label: value === 'domain' ? 'Google Workspace Domain or Cloud Identity Domain' : label,
+                label: value === 'domain' ? 'Google Workspace domain or Cloud Identity domain' : label,
                 value
             })),
             isRequired: true,
