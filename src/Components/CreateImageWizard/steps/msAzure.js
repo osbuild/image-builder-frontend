@@ -50,11 +50,10 @@ export default {
         },
         {
             component: componentTypes.TEXT_FIELD,
-            name: 'azure-tenant-id',
-            'data-testid': 'azure-tenant-id',
+            name: 'azure-subscription-id',
+            'data-testid': 'azure-subscription-id',
             type: 'text',
-            label: 'Tenant ID',
-            required: true,
+            label: 'Subscription ID',
             isRequired: true,
             validate: [
                 {
@@ -64,10 +63,11 @@ export default {
         },
         {
             component: componentTypes.TEXT_FIELD,
-            name: 'azure-subscription-id',
-            'data-testid': 'azure-subscription-id',
+            name: 'azure-tenant-id',
+            'data-testid': 'azure-tenant-id',
             type: 'text',
-            label: 'Subscription ID',
+            label: 'Tenant ID',
+            required: true,
             isRequired: true,
             validate: [
                 {
