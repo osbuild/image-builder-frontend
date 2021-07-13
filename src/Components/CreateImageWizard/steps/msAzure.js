@@ -7,7 +7,7 @@ import nextStepMapper from './imageOutputStepMapper';
 
 export default {
     title: 'Microsoft Azure',
-    customTitle: <Title headingLevel="h1" size="xl">Target Environment - Microsoft Azure</Title>,
+    customTitle: <Title headingLevel="h1" size="xl">Target environment - Microsoft Azure</Title>,
     name: 'ms-azure-target-env',
     substepOf: 'Target environment',
     nextStep: ({ values }) => nextStepMapper(values, { skipAws: true, skipGoogle: true, skipAzure: true }),

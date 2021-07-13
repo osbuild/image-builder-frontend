@@ -57,7 +57,7 @@ PopoverInfo.propTypes = {
 
 export default {
     title: 'Google Cloud Platform',
-    customTitle: <Title headingLevel="h1" size="xl">Target Environment - Google Cloud Platform</Title>,
+    customTitle: <Title headingLevel="h1" size="xl">Target environment - Google Cloud Platform</Title>,
     name: 'google-cloud-target-env',
     substepOf: 'Target environment',
     nextStep: ({ values }) => nextStepMapper(values, { skipGoogle: true, skipAws: true }),

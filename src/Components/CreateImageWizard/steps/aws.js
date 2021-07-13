@@ -6,7 +6,7 @@ import { Title } from '@patternfly/react-core';
 
 export default {
     title: 'Amazon Web Services',
-    customTitle: <Title headingLevel="h1" size="xl">Target Environment - Amazon Web Service</Title>,
+    customTitle: <Title headingLevel="h1" size="xl">Target environment - Amazon Web Service</Title>,
     name: 'aws-target-env',
     substepOf: 'Target environment',
     nextStep: ({ values }) => nextStepMapper(values, { skipAws: true }),
