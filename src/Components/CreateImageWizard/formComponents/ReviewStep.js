@@ -39,20 +39,22 @@ const ReviewStep = () => {
                     </TextListItem>
                 </TextList>
             </>}
-            <Text component={ TextVariants.h3 }>Registration</Text>
-            <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
-                <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
-                <TextListItem component={ TextListItemVariants.dd }>
-                    {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
-                        'Register the system on first boot' :
-                    registerValues?.[getState()?.values?.['register-system']?.title]
-                    }
-                </TextListItem>
-                <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
-                <TextListItem component={ TextListItemVariants.dd } type="password">
-                    {'*'.repeat(getState()?.values?.['subscription-activation']?.length)}
-                </TextListItem>
-            </TextList>
+            {getState()?.values?.['register-system'] === 'subscribe-now-radio' && <>
+                <Text component={ TextVariants.h3 }>Registration</Text>
+                <TextList component={ TextListVariants.dl } data-testid='review-image-registration'>
+                    <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dd }>
+                        {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
+                            'Register the system on first boot' :
+                        registerValues?.[getState()?.values?.['register-system']?.title]
+                        }
+                    </TextListItem>
+                    <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dd } type="password">
+                        {'*'.repeat(getState()?.values?.['subscription-activation']?.length)}
+                    </TextListItem>
+                </TextList>
+            </>}
         </TextContent>
     );
 };
