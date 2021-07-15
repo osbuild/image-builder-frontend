@@ -5,6 +5,7 @@ const config = require('@redhat-cloud-services/frontend-components-config');
 const { config: webpackConfig, plugins } = config({
     rootFolder: resolve(__dirname, '../'),
     skipChrome2: false,
+    modules: [ 'image_builder' ],
     sassPrefix: '.image-builder, body',
 });
 
