@@ -9,21 +9,19 @@ import pendingCompose from './reducers/pendingCompose';
 let registry;
 
 export function init (store = {}, ...middleware) {
-    if (registry) {
-        throw new Error('store already initialized');
+    if (!registry) {
+        registry = new ReducerRegistry(store, [
+            promiseMiddleware,
+            thunk,
+            ...middleware
+        ]);
+
+        registry.register({
+            composes,
+            pendingCompose,
+            notifications: notificationsReducer,
+        });
     }
-
-    registry = new ReducerRegistry(store, [
-        promiseMiddleware,
-        thunk,
-        ...middleware
-    ]);
-
-    registry.register({
-        composes,
-        pendingCompose,
-        notifications: notificationsReducer,
-    });
 
     return registry;
 }
