@@ -29,7 +29,8 @@ against the chrome and backend at cloud.redhat.com.
     ```
 
 The UI should be running on
-https://prod.foo.redhat.com:1337/apps/image-builder/landing.
+https://prod.foo.redhat.com:1337/beta/insights/image-builder/landing.
+Note that this requires you to have access to either production or stage (plus VPN and proxy config) of insights.
 
 ## Backend Development
 
