@@ -39,6 +39,17 @@ const ReviewStep = () => {
                     </TextListItem>
                 </TextList>
             </>}
+            {getState()?.values?.['azure-subscription-id'] && <>
+                <Text id="destination-header">Microsoft Azure</Text>
+                <TextList component={ TextListVariants.dl } data-testid='review-image-upload-azure'>
+                    <TextListItem component={ TextListItemVariants.dt }>Subscription ID</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-subscription-id']}</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dt }>Tenant ID</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-tenant-id']}</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dt }>Resource group</TextListItem>
+                    <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-resource-group']}</TextListItem>
+                </TextList>
+            </>}
             {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
              getState()?.values?.release.includes('rhel') && <>
                     <Text component={ TextVariants.h3 }>Registration</Text>
