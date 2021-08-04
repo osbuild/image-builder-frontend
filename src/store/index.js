@@ -13,7 +13,7 @@ export function init (store = {}, ...middleware) {
         registry = new ReducerRegistry(store, [
             promiseMiddleware,
             thunk,
-            ...middleware
+            ...middleware.filter(item => typeof item !== 'undefined'),
         ]);
 
         registry.register({
