@@ -7,6 +7,7 @@ const { config: webpackConfig, plugins } = config({
     skipChrome2: false,
     modules: [ 'image_builder' ],
     sassPrefix: '.image-builder, body',
+    ...(process.env.BETA && { deployment: 'beta/apps' }),
 });
 
 plugins.push(

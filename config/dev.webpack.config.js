@@ -8,7 +8,8 @@ const { config: webpackConfig, plugins } = config({
     port: 8002,
     useFileHash: false,
     modules: [ 'image_builder' ],
-    sassPrefix: '.image-builder, body'
+    sassPrefix: '.image-builder, body',
+    ...(process.env.BETA && { deployment: 'beta/apps' }),
 });
 
 plugins.push(
