@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextContent, Text, TextVariants, TextListItem, TextListVariants, TextListItemVariants, Gallery, GalleryItem } from '@patternfly/react-core';
+import { TextContent, Text, TextVariants, Gallery, GalleryItem } from '@patternfly/react-core';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { releaseValues } from '../steps/imageOutput';
 import { registerValues } from '../steps/registration';
@@ -14,94 +14,94 @@ const ReviewStep = () => {
                     to create your image using the following criteria.
             </Text>
             <Text component={ TextVariants.h3 }>Image output</Text>
-            <Gallery component={ TextListVariants.dl } data-testid='review-image-output'>
+            <Gallery data-testid='review-image-output'>
                 <GalleryItem>
-                    <TextListItem component={ TextListItemVariants.dt }>Release</TextListItem>
+                    <Text component={ TextVariants.h4 }>Release</Text>
                 </GalleryItem>
                 <GalleryItem>
-                    <TextListItem component={ TextListItemVariants.dd }>
+                    <Text>
                         {releaseValues?.[getState()?.values?.release]}
-                    </TextListItem>
+                    </Text>
                 </GalleryItem>
             </Gallery>
             <Text component={ TextVariants.h3 }>Target environment</Text>
             {getState()?.values?.['aws-account-id'] && <>
                 <Text id="destination-header">Amazon Web Services</Text>
-                <Gallery component={ TextListVariants.dl } data-testid='review-image-upload-aws'>
+                <Gallery data-testid='review-image-upload-aws'>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dt }>Account ID</TextListItem>
+                        <Text component={ TextVariants.h4 }>Account ID</Text>
                     </GalleryItem>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['aws-account-id']}</TextListItem>
+                        <Text>{getState()?.values?.['aws-account-id']}</Text>
                     </GalleryItem>
                 </Gallery>
             </>}
             {getState()?.values?.['google-account-type'] && <>
                 <Text id="destination-header">Google Cloud Platform</Text>
-                <Gallery component={ TextListVariants.dl } data-testid='review-image-upload-google'>
+                <Gallery data-testid='review-image-upload-google'>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dt }>
+                        <Text component={ TextVariants.h4 }>
                             {googleAccType?.[getState()?.values?.['google-account-type']]}
-                        </TextListItem>
+                        </Text>
                     </GalleryItem>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dd }>
+                        <Text>
                             {getState()?.values?.['google-email'] || getState()?.values?.['google-domain']}
-                        </TextListItem>
+                        </Text>
                     </GalleryItem>
                 </Gallery>
             </>}
             {getState()?.values?.['azure-subscription-id'] && <>
                 <Text id="destination-header">Microsoft Azure</Text>
-                <Gallery component={ TextListVariants.dl } data-testid='review-image-upload-azure'>
+                <Gallery data-testid='review-image-upload-azure'>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dt }>Subscription ID</TextListItem>
+                        <Text component={ TextVariants.h4 }>Subscription ID</Text>
                     </GalleryItem>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-subscription-id']}</TextListItem>
-                    </GalleryItem>
-                </Gallery>
-                <Gallery>
-                    <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dt }>Tenant ID</TextListItem>
-                    </GalleryItem>
-                    <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-tenant-id']}</TextListItem>
+                        <Text>{getState()?.values?.['azure-subscription-id']}</Text>
                     </GalleryItem>
                 </Gallery>
                 <Gallery>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dt }>Resource group</TextListItem>
+                        <Text component={ TextVariants.h4 }>Tenant ID</Text>
                     </GalleryItem>
                     <GalleryItem>
-                        <TextListItem component={ TextListItemVariants.dd }>{getState()?.values?.['azure-resource-group']}</TextListItem>
+                        <Text>{getState()?.values?.['azure-tenant-id']}</Text>
+                    </GalleryItem>
+                </Gallery>
+                <Gallery>
+                    <GalleryItem>
+                        <Text component={ TextVariants.h4 }>Resource group</Text>
+                    </GalleryItem>
+                    <GalleryItem>
+                        <Text>{getState()?.values?.['azure-resource-group']}</Text>
                     </GalleryItem>
                 </Gallery>
             </>}
             {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
              getState()?.values?.release.includes('rhel') && <>
                     <Text component={ TextVariants.h3 }>Registration</Text>
-                    <Gallery component={ TextListVariants.dl } data-testid='review-image-registration'>
+                    <Gallery data-testid='review-image-registration'>
                         <GalleryItem>
-                            <TextListItem component={ TextListItemVariants.dt }>Subscription</TextListItem>
+                            <Text component={ TextVariants.h4 }>Subscription</Text>
                         </GalleryItem>
                         <GalleryItem>
-                            <TextListItem component={ TextListItemVariants.dd }>
+                            <Text>
                                 {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
                                     'Register the system on first boot' :
                                 registerValues?.[getState()?.values?.['register-system']?.title]
                                 }
-                            </TextListItem>
+                            </Text>
                         </GalleryItem>
                     </Gallery>
                     <Gallery>
                         <GalleryItem>
-                            <TextListItem component={ TextListItemVariants.dt }>Activation key</TextListItem>
+                            <Text component={ TextVariants.h4 }>Activation key</Text>
                         </GalleryItem>
                         <GalleryItem>
-                            <TextListItem component={ TextListItemVariants.dd } type="password">
+                            <Text type="password">
                                 {'*'.repeat(getState()?.values?.['subscription-activation']?.length)}
-                            </TextListItem>
+                            </Text>
                         </GalleryItem>
                     </Gallery>
                 </>}
