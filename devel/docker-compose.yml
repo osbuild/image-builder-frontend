@@ -6,10 +6,10 @@ services:
       context: ../../osbuild-composer
       dockerfile: ./distribution/Dockerfile-ubi
     volumes:
-      - ${COMPOSER_CONFIG_DIR}/osbuild-composer.toml:/etc/osbuild-composer/osbuild-composer.toml
-      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem
-      - ${STATE_DIR}/x509/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem
-      - ${STATE_DIR}/x509/composer-key.pem:/etc/osbuild-composer/composer-key.pem
+      - ${COMPOSER_CONFIG_DIR}/osbuild-composer.toml:/etc/osbuild-composer/osbuild-composer.toml:z
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
+      - ${STATE_DIR}/x509/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem:z
+      - ${STATE_DIR}/x509/composer-key.pem:/etc/osbuild-composer/composer-key.pem:z
     networks:
       net:
         ipv4_address: 172.31.0.10
@@ -21,9 +21,9 @@ services:
     # override the entrypoint to specify composer hostname and port
     entrypoint: /usr/libexec/osbuild-composer/osbuild-worker composer:8700
     volumes:
-      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem
-      - ${STATE_DIR}/x509/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem
-      - ${STATE_DIR}/x509/worker-key.pem:/etc/osbuild-composer/worker-key.pem
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
+      - ${STATE_DIR}/x509/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem:z
+      - ${STATE_DIR}/x509/worker-key.pem:/etc/osbuild-composer/worker-key.pem:z
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
     privileged: true
@@ -43,7 +43,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ../../image-builder/internal/db/migrations/1_create_table_images.up.sql:/docker-entrypoint-initdb.d/create_tables.sql
+      - ../../image-builder/internal/db/migrations/1_create_table_images.up.sql:/docker-entrypoint-initdb.d/create_tables.sql:Z
     networks:
       net:
         ipv4_address: 172.31.0.30
@@ -58,9 +58,9 @@ services:
       timeout: 2s
       retries: 10
     volumes:
-      - ${STATE_DIR}/x509/ca-crt.pem:/etc/image-builder/ca-crt.pem
-      - ${STATE_DIR}/x509/client-crt.pem:/etc/image-builder/client-crt.pem
-      - ${STATE_DIR}/x509/client-key.pem:/etc/image-builder/client-key.pem
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/image-builder/ca-crt.pem:z
+      - ${STATE_DIR}/x509/client-crt.pem:/etc/image-builder/client-crt.pem:z
+      - ${STATE_DIR}/x509/client-key.pem:/etc/image-builder/client-key.pem:z
     environment:
       - LISTEN_ADDRESS=backend:8086
       - LOG_LEVEL=DEBUG
@@ -99,7 +99,7 @@ services:
     environment:
       - CUSTOM_CONF=true
     volumes:
-      - ${SPANDX_CONFIG}:/config/spandx.config.js
+      - ${SPANDX_CONFIG}:/config/spandx.config.js:Z
     extra_hosts:
       - "prod.foo.redhat.com:127.0.0.1"
       - "qa.foo.redhat.com:127.0.0.1"
