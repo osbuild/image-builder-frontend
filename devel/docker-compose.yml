@@ -32,6 +32,7 @@ services:
         ipv4_address: 172.31.0.20
     depends_on:
       - "composer"
+    restart: on-failure
   postgres:
     image: docker.io/postgres:10.5
     healthcheck:
