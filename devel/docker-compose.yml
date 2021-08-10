@@ -26,7 +26,6 @@ services:
       - ${STATE_DIR}/x509/worker-key.pem:/etc/osbuild-composer/worker-key.pem:z
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
-    privileged: true
     cap_add:
       - MKNOD
       - SYS_ADMIN
