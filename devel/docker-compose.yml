@@ -19,7 +19,7 @@ services:
       context: ../../osbuild-composer
       dockerfile: ./distribution/Dockerfile-worker
     # override the entrypoint to specify composer hostname and port
-    entrypoint: /usr/libexec/osbuild-composer/osbuild-worker composer:8700
+    entrypoint: [ "/usr/libexec/osbuild-composer/osbuild-worker", "composer:8700" ]
     volumes:
       - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${STATE_DIR}/x509/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem:z
