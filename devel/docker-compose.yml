@@ -27,6 +27,10 @@ services:
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
     privileged: true
+    cap_add:
+      - MKNOD
+      - SYS_ADMIN
+      - NET_ADMIN
     networks:
       net:
         ipv4_address: 172.31.0.20
