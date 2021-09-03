@@ -11,5 +11,5 @@ export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, sk
         return 'ms-azure-target-env';
     }
 
-    return release === 'rhel-8' ? 'registration' : 'packages';
+    return release === 'rhel-84' ? 'registration' : 'packages';
 };
