@@ -1,5 +1,9 @@
 language: node_js
 sudo: required
+branches:
+  only:
+  - main
+  - prod-beta
 notifications:
   email: false
 node_js:
