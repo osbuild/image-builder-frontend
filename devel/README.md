@@ -51,10 +51,12 @@ The config variables for the Image Builder backend can be found [here](https://g
 ## Run
 
 ```bash
-docker-compose up
+docker-compose up --build
 ```
 
 Access the service through the GUI:
 [https://prod.foo.redhat.com:1337/beta/insights/image-builder](https://prod.foo.redhat.com:1337/beta/insights/image-builder), or
 directly through the API:
 [https://prod.foo.redhat.com:1337/docs/api/image-builder](https://prod.foo.redhat.com:1337/docs/api/image-builder).
+
+Access the Grafana dashboard on [https://localhost:3000](https://localhost:3000). The default username is `admin` and the password is set to `foobar`.

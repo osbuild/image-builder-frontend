@@ -117,7 +117,30 @@ services:
     depends_on:
      - "backend"
      - "frontend"
-
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9000:9090"
+    volumes:
+      - ./config/prometheus:/config
+    restart: unless-stopped
+    networks:
+      net:
+        ipv4_address: 172.31.0.70
+    command:
+      - "--config.file=/config/prometheus.yml"
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./config/grafana:/etc/grafana/provisioning/
+    restart: unless-stopped
+    networks:
+      net:
+        ipv4_address: 172.31.0.80
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=foobar
 networks:
   net:
     ipam:
