@@ -144,7 +144,7 @@ const CreateImageWizard = () => {
                 {
                     component: componentTypes.WIZARD,
                     name: 'image-builder-wizard',
-                    className: 'image-builder',
+                    className: 'image_builder',
                     isDynamic: true,
                     inModal: true,
                     buttonLabels: {
