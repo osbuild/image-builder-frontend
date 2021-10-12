@@ -1,4 +1,4 @@
-FROM docker.io/node:12
+FROM docker.io/node:16
 
 WORKDIR /usr/src/app
 
@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8002
-CMD [ "npm", "start" ]
+CMD [ "npm", "run", "start:beta" ]
