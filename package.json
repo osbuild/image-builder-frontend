@@ -2,6 +2,10 @@
   "name": "image-builder",
   "version": "1.1.0",
   "private": false,
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=7.0.0"
+  },
   "dependencies": {
     "@babel/runtime": "7.15.4",
     "@data-driven-forms/pf4-component-mapper": "3.12.1",
@@ -48,13 +52,14 @@
     "@babel/preset-env": "7.8.7",
     "@babel/preset-flow": "7.8.3",
     "@babel/preset-react": "7.8.3",
-    "@redhat-cloud-services/frontend-components-config": "4.3.5",
+    "@redhat-cloud-services/frontend-components-config": "4.3.9",
     "@testing-library/jest-dom": "5.10.1",
     "@testing-library/react": "11.0.4",
     "@testing-library/user-event": "12.2.2",
     "babel-core": "7.0.0-bridge.0",
     "babel-eslint": "10.0.3",
     "babel-jest": "26.1.0",
+    "babel-loader": "^8.2.2",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-lodash": "3.3.4",
     "css-loader": "5.2.4",
@@ -71,12 +76,11 @@
     "prop-types": "15.7.2",
     "redux-mock-store": "1.5.4",
     "sass": "1.35.2",
+    "sass-loader": "^12.2.0",
     "stylelint": "13.1.0",
     "stylelint-config-recommended-scss": "4.2.0",
     "stylelint-scss": "3.14.2",
-    "webpack": "5.44.0",
-    "webpack-bundle-analyzer": "4.4.2",
-    "webpack-cli": "4.7.2"
+    "webpack-bundle-analyzer": "4.4.2"
   },
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
@@ -87,7 +91,10 @@
     "nightly": "npm run travis:verify",
     "prod": "NODE_ENV=production BETA=true webpack serve --config config/dev.webpack.config.js",
     "server:ctr": "node src/server/generateServerKey.js",
-    "start": "NODE_ENV=development BETA=true webpack serve --host 0.0.0.0 --config config/dev.webpack.config.js",
+    "start": "NODE_ENV=development webpack serve --config config/dev.webpack.config.js",
+    "start:beta": "NODE_ENV=development BETA=true webpack serve --config config/dev.webpack.config.js",
+    "start:proxy": "PROXY=true npm run start",
+    "start:proxy:beta": "BETA=true npm run start:proxy",
     "test": "jest --verbose",
     "test:single": "jest --verbose -w 1",
     "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
