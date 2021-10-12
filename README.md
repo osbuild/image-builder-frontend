@@ -3,7 +3,10 @@
 ## Frontend Development
 
 To develop the frontend you can use a proxy to run image-builder-frontend locally
-against the chrome and backend at cloud.redhat.com.
+against the chrome and backend at console.redhat.com.
+
+Working against the production environment is preferred, as any work can be released without
+worrying if a feature from stage has been released yet.
 
 ### Nodejs and npm version
 
@@ -13,9 +16,10 @@ Make sure you have npm@7 and node 15+ installed. If you need multiple versions o
 
 1. run `npm i`
 
-2. run `npm run start:proxy:beta`. This command uses a ci-beta env by default. Configure your environment by the `env` attribute in `dev.webpack.config.js`
+2. run `npm run start:proxy:beta`. This command uses a prod-beta env by default. Configure your
+   environment by the `env` attribute in `dev.webpack.config.js`.
 
-3. open browser at `https://ci.foo.redhat.com:1337/beta/insights/image-builder`
+3. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
 
 ### Insights proxy (deprecated)
 

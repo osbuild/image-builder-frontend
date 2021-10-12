@@ -8,8 +8,7 @@ const webpackProxy = {
     useProxy: true,
     proxyVerbose: true,
     debug: true,
-    // change to one of ['ci-', 'qa-', 'stage-', 'prod-'] based on required env
-    env: `ci-${process.env.BETA ? 'beta' : 'stable'}`,
+    env: `prod-${process.env.BETA ? 'beta' : 'stable'}`,
     appUrl: process.env.BETA ? '/beta/insights/image-builder' : '/insights/image-builder',
 };
 
