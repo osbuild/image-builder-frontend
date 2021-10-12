@@ -7,6 +7,13 @@ import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Upload from '../../../Components/ImagesTable/Upload';
 import '@testing-library/jest-dom';
 
+jest.mock('../../../store/actions/actions', () => {
+    return {
+        composesGet: () => ({ type: 'foo' }),
+        composeGetStatus: () => ({ type: 'bar' })
+    };
+});
+
 const store = {
     composes: {
         errors: null,

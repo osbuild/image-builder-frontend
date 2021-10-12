@@ -4,6 +4,13 @@ import { renderWithReduxRouter } from '../../testUtils';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
 import api from '../../../api.js';
 
+jest.mock('../../../store/actions/actions', () => {
+    return {
+        composesGet: () => ({ type: 'foo' }),
+        composeGetStatus: () => ({ type: 'bar' })
+    };
+});
+
 describe('Landing Page', () => {
     beforeEach(async () => {
         renderWithReduxRouter(<LandingPage />);
