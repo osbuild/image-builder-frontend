@@ -224,6 +224,16 @@ describe('Step Upload to Google', () => {
         expect(accessKeyId).toBeEnabled();
         // expect(accessKeyId).toBeRequired(); // DDf does not support required value
     });
+
+    test('the google email field must be a valid email', () => {
+        const [ next, , ] = verifyButtons();
+        userEvent.type(screen.getByTestId('input-google-email'), 'a');
+        expect(next).toHaveClass('pf-m-disabled');
+        expect(next).toBeDisabled();
+        userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
+        expect(next).not.toHaveClass('pf-m-disabled');
+        expect(next).toBeEnabled();
+    });
 });
 
 describe('Step Upload to Azure', () => {
