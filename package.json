@@ -62,7 +62,7 @@
     "babel-loader": "^8.2.2",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-lodash": "3.3.4",
-    "css-loader": "5.2.4",
+    "css-loader": "6.4.0",
     "eslint": "6.8.0",
     "eslint-config-prettier": "6.10.0",
     "eslint-loader": "3.0.3",
