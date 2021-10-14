@@ -8,6 +8,7 @@ import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
+import AzureAuthButton from './formComponents/AzureAuthButton';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
 
 const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch, className, ...props }) => {
@@ -27,6 +28,7 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaul
                 defaultArch
             },
             'radio-popover': RadioWithPopover,
+            'azure-auth-button': AzureAuthButton,
             ...customComponentMapper
         } }
         onCancel={ onClose }

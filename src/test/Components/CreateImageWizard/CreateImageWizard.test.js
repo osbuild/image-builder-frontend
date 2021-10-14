@@ -253,7 +253,8 @@ describe('Step Upload to Azure', () => {
     });
 
     test('clicking Next loads Registration', () => {
-        userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
+        // Randomly generated GUID
+        userEvent.type(screen.getByTestId('azure-tenant-id'), 'b8f86d22-4371-46ce-95e7-65c415f3b1e2');
         userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
         userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
 
@@ -518,7 +519,8 @@ describe('Click through all steps', () => {
         userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
         screen.getByRole('button', { name: /Next/ }).click();
 
-        userEvent.type(screen.getByTestId('azure-tenant-id'), 'testTenant');
+        // Randomly generated GUID
+        userEvent.type(screen.getByTestId('azure-tenant-id'), 'b8f86d22-4371-46ce-95e7-65c415f3b1e2');
         userEvent.type(screen.getByTestId('azure-subscription-id'), 'testSubscriptionId');
         userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
         screen.getByRole('button', { name: /Next/ }).click();
@@ -629,7 +631,7 @@ describe('Click through all steps', () => {
                             upload_request: {
                                 type: 'azure',
                                 options: {
-                                    tenant_id: 'testTenant',
+                                    tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
                                     subscription_id: 'testSubscriptionId',
                                     resource_group: 'testResourceGroup',
                                 }
