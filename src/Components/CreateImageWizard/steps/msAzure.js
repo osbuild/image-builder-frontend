@@ -17,12 +17,12 @@ export default {
             name: 'azure-text-component',
             label: <>
                 <Text>
-            Image Builder will send an image to an authorized Azure account.
+            Image Builder will upload an image to an authorized Azure account.
                 </Text>
-                <Title headingLevel="h3">OAuth permissions</Title>
+                <Title headingLevel="h3">Authorizing an Azure account</Title>
                 <Text>
             To authorize Image Builder to push images to Microsoft Azure, the account owner
-            must configure Image Builder as an authorized application and give it the role of
+            must configure Image Builder as an authorized application for a specific tenant ID and give it the role of
             &quot;Contributor&quot; to at least one resource group.<br />
                 </Text>
                 <small>
@@ -37,29 +37,11 @@ export default {
                       Learn more about OAuth 2.0
                     </Button>
                 </small>
-                <a href="https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=b94bb246-b02c-4985-9c22-d44e66f657f4
-&scope=openid&response_type=code&response_mode=form_post
-&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient" target="_blank" rel="noopener noreferrer">
-            Authorize Image Builder on Azure <ExternalLinkAltIcon />
-                </a>
-                <Title headingLevel="h3">Destination</Title>
+                <Title headingLevel="h2">Image Destination</Title>
                 <Text>
                     Your image will be uploaded to the resource group in the subscription you specify.
                 </Text>
             </>
-        },
-        {
-            component: componentTypes.TEXT_FIELD,
-            name: 'azure-subscription-id',
-            'data-testid': 'azure-subscription-id',
-            type: 'text',
-            label: 'Subscription ID',
-            isRequired: true,
-            validate: [
-                {
-                    type: validatorTypes.REQUIRED,
-                },
-            ],
         },
         {
             component: componentTypes.TEXT_FIELD,
@@ -68,6 +50,31 @@ export default {
             type: 'text',
             label: 'Tenant ID',
             required: true,
+            isRequired: true,
+            validate: [
+                {
+                    type: validatorTypes.REQUIRED,
+                },
+                {
+                    type: validatorTypes.PATTERN,
+                    pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
+                    message: 'Please enter a valid tenant GUID',
+                }
+            ],
+        },
+        {
+            component: 'azure-auth-button',
+            name: 'azure-auth-button',
+            'data-testid': 'azure-auth-button',
+            required: true,
+            isRequired: true,
+        },
+        {
+            component: componentTypes.TEXT_FIELD,
+            name: 'azure-subscription-id',
+            'data-testid': 'azure-subscription-id',
+            type: 'text',
+            label: 'Subscription ID',
             isRequired: true,
             validate: [
                 {

@@ -243,7 +243,7 @@ const store = {
                             upload_request: {
                                 type: 'azure',
                                 options: {
-                                    tenant_id: 'test-tenant-id',
+                                    tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
                                     subscription_id: 'test-subscription-id',
                                     resource_group: 'test-resource-group'
                                 }
