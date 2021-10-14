@@ -676,7 +676,7 @@ describe('Click through all steps', () => {
 
         // leave AWS account id empty
         screen.getByRole('button', { name: /Next/ }).click();
-        expect(screen.queryByText('Embed an activation key and register systems on first boot')).toBeNull();
+        expect(screen.queryByText('Embed an activation key and register systems on first boot')).not.toBeInTheDocument();
 
         // fill in AWS to proceed
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
@@ -692,7 +692,7 @@ describe('Click through all steps', () => {
 
         expect(screen.queryByText(
             'Review the information and click the Create button to create your image using the following criteria.'
-        )).toBeNull();
+        )).not.toBeInTheDocument();
 
         // fill in the registration
         await screen.findByTestId('subscription-activation');
@@ -728,7 +728,7 @@ describe('Click through all steps', () => {
 
         expect(screen.queryByText(
             'Review the information and click the Create button to create your image using the following criteria.'
-        )).toBeNull();
+        )).not.toBeInTheDocument();
 
         // fill in the registration
         await screen.findByTestId('subscription-activation');
