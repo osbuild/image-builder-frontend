@@ -17,7 +17,7 @@ const AzureAuthButton = () => {
                 isDisabled={ !guidRegex.test(tenantId) }
                 href={ 'https://login.microsoftonline.com/' + tenantId +
                 '/oauth2/v2.0/authorize?client_id=b94bb246-b02c-4985-9c22-d44e66f657f4&scope=openid&' +
-                'response_type=code&response_mode=form_post&redirect_uri=https%3A%2F%2Flogin.microsoftonline.com%2Fcommon%2Foauth2%2Fnativeclient' }>
+                'response_type=code&response_mode=query&redirect_uri=https://portal.azure.com' }>
                 Authorize Image Builder
             </Button>
         </FormGroup>);
