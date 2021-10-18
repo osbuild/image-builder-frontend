@@ -48,7 +48,7 @@ export default {
             name: 'azure-tenant-id',
             'data-testid': 'azure-tenant-id',
             type: 'text',
-            label: 'Tenant ID',
+            label: 'Tenant GUID',
             required: true,
             isRequired: true,
             validate: [
@@ -74,7 +74,7 @@ export default {
             name: 'azure-subscription-id',
             'data-testid': 'azure-subscription-id',
             type: 'text',
-            label: 'Subscription ID',
+            label: 'Subscription GUID',
             isRequired: true,
             validate: [
                 {
