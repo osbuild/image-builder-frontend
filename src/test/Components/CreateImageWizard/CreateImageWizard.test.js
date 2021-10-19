@@ -554,7 +554,7 @@ describe('Click through all steps', () => {
         userEvent.type(screen.getByRole('searchbox', { name: /Available search input/ }), 'test');
         screen.getByTestId('search-pkgs-button').click();
         await expect(getPackages).toHaveBeenCalledTimes(1);
-        screen.getByRole('button', { name: /testPkg test package summary/ }).click();
+        screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Add selected/ }).click();
         next.click();
 
