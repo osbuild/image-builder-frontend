@@ -11,7 +11,7 @@
     "@data-driven-forms/pf4-component-mapper": "3.12.2",
     "@data-driven-forms/react-form-renderer": "3.15.1",
     "@patternfly/patternfly": "4.144.5",
-    "@patternfly/react-core": "4.157.3",
+    "@patternfly/react-core": "4.162.3",
     "@patternfly/react-table": "4.30.3",
     "@redhat-cloud-services/frontend-components": "3.4.6",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.4",
