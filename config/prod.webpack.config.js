@@ -6,7 +6,7 @@ const { config: webpackConfig, plugins } = config({
     rootFolder: resolve(__dirname, '../'),
     skipChrome2: false,
     modules: [ 'image_builder' ],
-    sassPrefix: '.image-builder, image_builder',
+    sassPrefix: '.imageBuilder, .image_builder',
     ...(process.env.BETA && { deployment: 'beta/apps' }),
 });
 
