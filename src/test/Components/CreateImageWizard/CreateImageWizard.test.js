@@ -333,9 +333,8 @@ describe('Step Registration', () => {
     });
 
     test('should allow choosing activation keys', async () => {
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
 
         const organizationId = screen.getByLabelText('Organization ID');
         expect(organizationId).toHaveValue('5');
@@ -356,9 +355,8 @@ describe('Step Registration', () => {
 
     test('should hide input fields when clicking Register the system later', async () => {
         // first check the other radio button which causes extra widgets to be shown
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
 
         const p1 = waitForElementToBeRemoved(() => [
             screen.getByTestId('organization-id'),
@@ -369,6 +367,8 @@ describe('Step Registration', () => {
         screen
             .getByTestId('register-later-radio-button')
             .click();
+        const registerLaterRadio = screen.getByTestId('register-later-radio-button');
+        userEvent.click(registerLaterRadio);
 
         await p1;
 
@@ -399,10 +399,8 @@ describe('Step Packages', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
-        await screen.findByTestId('subscription-activation');
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
         screen.getByRole('button', { name: /Next/ }).click();
     });
@@ -458,10 +456,8 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
-        await screen.findByTestId('subscription-activation');
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
         screen.getByRole('button', { name: /Next/ }).click();
 
@@ -526,10 +522,8 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
-        await screen.findByTestId('subscription-activation');
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
         userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
         next.click();
 
@@ -685,12 +679,10 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
-        await screen.findByTestId('subscription-activation');
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
         userEvent.clear(screen.getByTestId('subscription-activation'));
-        screen.getByRole('button', { name: /Next/ }).click();
+        next.click();
 
         expect(screen.queryByText(
             'Review the information and click the Create button to create your image using the following criteria.'
@@ -721,10 +713,8 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        screen
-            .getByLabelText('Embed an activation key and register systems on first boot')
-            .click();
-        await screen.findByTestId('subscription-activation');
+        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        userEvent.click(registrationRadio);
         userEvent.clear(screen.getByTestId('subscription-activation'));
         screen.getByRole('button', { name: /Next/ }).click();
 
