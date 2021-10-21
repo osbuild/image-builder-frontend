@@ -136,6 +136,15 @@ const CreateImageWizard = () => {
                     }));
 
                     setIsSaving(false);
+                })
+                .catch((err) => {
+                    dispatch(addNotification({
+                        variant: 'danger',
+                        title: 'Your image could not be created',
+                        description: 'Status code ' + err.response.status + ': ' + err.response.statusText,
+                    }));
+
+                    setIsSaving(false);
                 });
         } }
         defaultArch="x86_64"
