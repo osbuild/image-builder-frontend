@@ -63,7 +63,7 @@ const Packages = ({ defaultArch, ...props }) => {
         chosenOptionsTitle="Chosen packages"
         addSelected={ packageListChange }
         removeSelected={ packageListChange }
-        addAll={ packageListChange }
+        addAll={ (available, chosen) => packageListChange([], chosen.concat(available)) }
         removeAll= { (newAvailablePackages) => packageListChange(
             newAvailablePackages,
             packagesSelected.filter((item) => !mapComponentToPackage(item)?.name?.includes(filterSelected))
