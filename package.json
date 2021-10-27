@@ -69,7 +69,7 @@
     "eslint-loader": "3.0.3",
     "eslint-plugin-jest-dom": "3.9.2",
     "eslint-plugin-react": "7.18.3",
-    "eslint-plugin-testing-library": "3.10.0",
+    "eslint-plugin-testing-library": "3.10.2",
     "git-revision-webpack-plugin": "5.0.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.1.0",
