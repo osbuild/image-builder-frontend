@@ -425,10 +425,7 @@ describe('Step Packages', () => {
     });
 
     test('should display search bar and button', () => {
-        const search = screen.getByRole('searchbox', { name: 'Available search input' });
-        search.click();
-
-        userEvent.type(search, 'test');
+        userEvent.type(screen.getByTestId('search-available-pkgs-input'), 'test');
 
         screen.getByRole('button', {
             name: 'Search button for available packages'
@@ -545,8 +542,8 @@ describe('Click through all steps', () => {
             });
 
         screen.getByText('Add optional additional packages to your image by searching available packages.');
-        userEvent.type(screen.getByRole('searchbox', { name: /Available search input/ }), 'test');
-        screen.getByTestId('search-pkgs-button').click();
+        userEvent.type(screen.getByTestId('search-available-pkgs-input'), 'test');
+        screen.getByTestId('search-available-pkgs-button').click();
         await expect(getPackages).toHaveBeenCalledTimes(1);
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Add selected/ }).click();
