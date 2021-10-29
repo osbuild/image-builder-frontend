@@ -1,1 +1,3 @@
 state
+
+config/grafana/dashboards/*.json
