@@ -8,3 +8,11 @@ providers:
     editable: true
     options:
       path: /etc/grafana/provisioning/dashboards
+  - name: 'grafana-dashboard-image-builder-composer-general'
+    orgId: 1
+    folder: ''
+    type: file
+    disableDeletion: false
+    editable: true
+    options:
+      path: /etc/grafana/provisioning/dashboards

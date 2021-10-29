@@ -13,6 +13,15 @@ git clone git@github.com:osbuild/image-builder.git
 git clone git@github.com:osbuild/image-builder-frontend.git
 ```
 
+The folder structure should look like:
+
+```
+.
+├── image-builder
+├── image-builder-frontend
+├── osbuild
+└── osbuild-composer
+```
 Secondly redirect a few domains to localhost. One for each environment
 of cloud.redhat.com that exists. You only need the ones you will be
 developing against. If you are outside the Red Hat VPN, only `prod` is
@@ -26,7 +35,8 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 ```
 
 Lastly run the setup tool from image-builder-frontend to generate TLS certs
-and potentially other runtime configuration.
+and extract the Grafana dashboards from the image-builder and osbuild-composer
+repos.
 
 ```bash
 cd image-builder-frontend/devel
