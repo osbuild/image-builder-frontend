@@ -6,3 +6,12 @@ scrape_configs:
     scrape_interval: 5s
     static_configs:
       - targets: ['backend:8086']
+  - job_name: 'composer'
+    scrape_interval: 5s
+    scheme: https
+    tls_config:
+      insecure_skip_verify: true
+      cert_file: /etc/image-builder/client-crt.pem
+      key_file: /etc/image-builder/client-key.pem
+    static_configs:
+      - targets: ['composer:8080']
