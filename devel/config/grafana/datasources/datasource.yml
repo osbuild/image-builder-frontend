@@ -3,7 +3,14 @@ datasources:
   - access: 'proxy'
     editable: true
     isDefault: true
-    name: 'crcs02ue1-prometheus'
+    name: 'crcp01ue1-prometheus'
+    orgId: 1
+    type: 'prometheus'
+    url: 'http://prometheus:9090'
+  - access: 'proxy'
+    editable: true
+    isDefault: false
+    name: 'app-sre-prod-04-prometheus'
     orgId: 1
     type: 'prometheus'
     url: 'http://prometheus:9090'

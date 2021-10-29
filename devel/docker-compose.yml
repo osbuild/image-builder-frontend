@@ -10,6 +10,8 @@ services:
       - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${STATE_DIR}/x509/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem:z
       - ${STATE_DIR}/x509/composer-key.pem:/etc/osbuild-composer/composer-key.pem:z
+    ports: 
+      - 8080:8700
     networks:
       net:
         ipv4_address: 172.31.0.10
@@ -19,7 +21,7 @@ services:
       context: ../../osbuild-composer
       dockerfile: ./distribution/Dockerfile-worker
     # override the entrypoint to specify composer hostname and port
-    entrypoint: [ "/usr/libexec/osbuild-composer/osbuild-worker", "https://composer:8700" ]
+    entrypoint: [ "/usr/libexec/osbuild-composer/osbuild-worker", "composer:8700" ]
     volumes:
       - ${STATE_DIR}/x509/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${STATE_DIR}/x509/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem:z
@@ -47,7 +49,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ../../image-builder/internal/db/migrations/1_create_table_images.up.sql:/docker-entrypoint-initdb.d/create_tables.sql:Z
+      - ../../image-builder/internal/db/migrations/:/docker-entrypoint-initdb.d/:Z
     networks:
       net:
         ipv4_address: 172.31.0.30
@@ -74,7 +76,7 @@ services:
       - PGDATABASE=postgres
       - PGUSER=postgres
       - PGPASSWORD=postgres
-      - OSBUILD_URL=https://composer:9196
+      - OSBUILD_URL=https://composer:8080
       - DISTRIBUTIONS_DIR=/app/distributions
       - OSBUILD_CERT_PATH=/etc/image-builder/client-crt.pem
       - OSBUILD_KEY_PATH=/etc/image-builder/client-key.pem
@@ -123,6 +125,9 @@ services:
       - "9000:9090"
     volumes:
       - ./config/prometheus:/config
+      - ${STATE_DIR}/x509/ca-crt.pem:/etc/image-builder/ca-crt.pem:z
+      - ${STATE_DIR}/x509/client-crt.pem:/etc/image-builder/client-crt.pem:z
+      - ${STATE_DIR}/x509/client-key.pem:/etc/image-builder/client-key.pem:z
     restart: unless-stopped
     networks:
       net:
