@@ -32,7 +32,7 @@ const PopoverInfo = ({ appendTo }) => {
                 </TextListItem>
                 <TextListItem>
                     <strong>Google group:</strong> A Google group is a named collection of Google accounts and
-    and service accounts. e.g., <em>`admins@example.com`</em>.
+    service accounts. e.g., <em>`admins@example.com`</em>.
                 </TextListItem>
                 <TextListItem>
                     <strong>Google Workspace domain/Cloud Identity domain:</strong> A Google workspace or cloud identity
