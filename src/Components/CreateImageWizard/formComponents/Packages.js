@@ -112,6 +112,7 @@ const Packages = ({ defaultArch, ...props }) => {
             <DualListSelectorPane
                 title="Available packages"
                 searchInput={ <SearchInput
+                    placeholder="Search for a package"
                     data-testid="search-available-pkgs-input"
                     value={ packagesSearchName.current }
                     onChange={ (val) => {
@@ -176,6 +177,7 @@ const Packages = ({ defaultArch, ...props }) => {
             <DualListSelectorPane
                 title="Chosen packages"
                 searchInput={ <SearchInput
+                    placeholder="Search for a package"
                     value={ filterChosen }
                     onChange={ (val) => setFilterChosen(val) } /> }
                 actions={ [
