@@ -1,4 +1,4 @@
-import React, { useState, useRef,  } from 'react';
+import React, { useState, useRef, useEffect, } from 'react';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import api from '../../../api';
@@ -29,6 +29,7 @@ const Packages = ({ defaultArch, ...props }) => {
     const [ packagesAvailable, setPackagesAvailable ] = useState([]);
     const [ packagesChosen, setPackagesChosen ] = useState([]);
     const [ filterChosen, setFilterChosen ] = useState('');
+    const [ focus, setFocus ] = useState('');
 
     // call api to list available packages
     const handlePackagesAvailableSearch = async () => {
@@ -53,6 +54,26 @@ const Packages = ({ defaultArch, ...props }) => {
         });
         setPackagesChosen(filteredPackagesChosen);
     };
+
+    const keydownHandler = (event) => {
+        if (event.key === 'Enter') {
+            if (focus === 'available') {
+                event.stopPropagation();
+                handlePackagesAvailableSearch();
+            } else if (focus === 'chosen') {
+                event.stopPropagation();
+                handlePackagesChosenSearch();
+            }
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('keydown', keydownHandler, false);
+
+        return () => {
+            document.removeEventListener('keydown', keydownHandler, false);
+        };
+    });
 
     // move selected packages
     const moveSelected = (fromAvailable) => {
@@ -114,6 +135,8 @@ const Packages = ({ defaultArch, ...props }) => {
                 searchInput={ <SearchInput
                     data-testid="search-available-pkgs-input"
                     value={ packagesSearchName.current }
+                    onFocus={ () => setFocus('available') }
+                    onBlur={ () => setFocus('') }
                     onChange={ (val) => {
                         packagesSearchName.current = val;
                     } } /> }
@@ -177,6 +200,8 @@ const Packages = ({ defaultArch, ...props }) => {
                 title="Chosen packages"
                 searchInput={ <SearchInput
                     value={ filterChosen }
+                    onFocus={ () => setFocus('chosen') }
+                    onBlur={ () => setFocus('') }
                     onChange={ (val) => setFilterChosen(val) } /> }
                 actions={ [
                     <Button
