@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Routes } from './Routes';
+import '@patternfly/patternfly/patternfly-addons.css';
 import './App.scss';
 import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
 
