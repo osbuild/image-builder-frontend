@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import api from '../../../api';
@@ -31,6 +31,45 @@ const Packages = ({ defaultArch, ...props }) => {
     const [ filterChosen, setFilterChosen ] = useState('');
     const [ focus, setFocus ] = useState('');
 
+    const searchResultsComparator = useCallback((searchTerm) => {
+        return (a, b) => {
+            // check exact match first
+            if (a.name === searchTerm) {
+                return -1;
+            }
+
+            if (b.name === searchTerm) {
+                return 1;
+            }
+
+            // check for packages that start with the search term
+            if (a.name.startsWith(searchTerm) && !b.name.startsWith(searchTerm)) {
+                return -1;
+            }
+
+            if (b.name.startsWith(searchTerm) && !a.name.startsWith(searchTerm)) {
+                return 1;
+            }
+
+            // if both (or neither) start with the search term
+            // sort alphabetically
+            if (a.name < b.name) {
+                return -1;
+            }
+
+            if (b.name < a.name) {
+                return 1;
+            }
+
+            return 0;
+        };
+    });
+
+    const sortPackages = useCallback((packageList) => {
+        const sortResults = packageList.sort(searchResultsComparator(packagesSearchName.current));
+        setPackagesAvailable(sortResults);
+    });
+
     // call api to list available packages
     const handlePackagesAvailableSearch = async () => {
         const { data } = await api.getPackages(
@@ -38,7 +77,7 @@ const Packages = ({ defaultArch, ...props }) => {
             getState()?.values?.architecture || defaultArch,
             packagesSearchName.current
         );
-        setPackagesAvailable(data);
+        sortPackages(data);
     };
 
     // filter displayed selected packages
@@ -91,11 +130,11 @@ const Packages = ({ defaultArch, ...props }) => {
         });
 
         if (fromAvailable) {
-            setPackagesAvailable(updatedSourcePackages);
+            sortPackages(updatedSourcePackages);
             setPackagesChosen([ ...destinationPackages ]);
         } else {
             setPackagesChosen(updatedSourcePackages);
-            setPackagesAvailable([ ...destinationPackages ]);
+            sortPackages([ ...destinationPackages ]);
         }
 
         // set the steps field to the current chosen packages list
@@ -106,9 +145,9 @@ const Packages = ({ defaultArch, ...props }) => {
     const moveAll = (fromAvailable) => {
         if (fromAvailable) {
             setPackagesChosen([ ...packagesAvailable.filter(pack => !pack.isHidden), ...packagesChosen ]);
-            setPackagesAvailable([ ...packagesAvailable.filter(pack => pack.isHidden) ]);
+            sortPackages([ ...packagesAvailable.filter(pack => pack.isHidden) ]);
         } else {
-            setPackagesAvailable([ ...packagesChosen.filter(pack => !pack.isHidden), ...packagesAvailable ]);
+            sortPackages([ ...packagesChosen.filter(pack => !pack.isHidden), ...packagesAvailable ]);
             setPackagesChosen([ ...packagesChosen.filter(pack => pack.isHidden) ]);
         }
 
@@ -124,7 +163,7 @@ const Packages = ({ defaultArch, ...props }) => {
         } else {
             const newAvailable = [ ...packagesAvailable ];
             newAvailable[index].selected = !packagesAvailable[index].selected;
-            setPackagesAvailable(newAvailable);
+            sortPackages(newAvailable);
         }
     };
 
@@ -150,7 +189,7 @@ const Packages = ({ defaultArch, ...props }) => {
                         Search
                     </Button>
                 ] }>
-                <DualListSelectorList>
+                <DualListSelectorList data-testid="available-pkgs-list">
                     {packagesAvailable.map((pack, index) => {
                         return !pack.isHidden ? (
                             <DualListSelectorListItem

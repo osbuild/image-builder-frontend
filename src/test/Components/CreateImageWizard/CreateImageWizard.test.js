@@ -28,6 +28,36 @@ function verifyCancelButton(cancel, history) {
     expect(history).toHaveBeenCalledWith('/landing');
 }
 
+// packages
+const mockPkgResult = {
+    meta: { count: 100 },
+    links: { first: '', last: '' },
+    data: [
+        {
+            name: 'testPkg',
+            summary: 'test package summary',
+            version: '1.0',
+        },
+        {
+            name: 'lib-test',
+            summary: 'lib-test package summary',
+            version: '1.0',
+        },
+        {
+            name: 'test',
+            summary: 'summary for test package',
+            version: '1.0',
+        }
+    ]
+};
+
+const searchForPackages = async (searchbox, searchTerm) => {
+    userEvent.type(searchbox, searchTerm);
+    await act(async() => {
+        screen.getByTestId('search-available-pkgs-button').click();
+    });
+};
+
 // mock the insights dependency
 beforeAll(() => {
     global.insights = {
@@ -431,6 +461,75 @@ describe('Step Packages', () => {
             name: 'Search button for available packages'
         });
     });
+
+    test('search results should be sorted with most relevant results first', async () => {
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForPackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        const availablePackages = screen.getByTestId('available-pkgs-list');
+        expect(availablePackages.children.length).toEqual(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        expect(firstItem).toHaveTextContent('testsummary for test package');
+        expect(secondItem).toHaveTextContent('testPkgtest package summary');
+        expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+    });
+
+    test('search results should be sorted after selecting them and then deselecting them', async () => {
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForPackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        screen.getByRole('option', { name: /testPkg test package summary/ }).click();
+        screen.getByRole('button', { name: /Add selected/ }).click();
+
+        screen.getByRole('option', { name: /testPkg test package summary/ }).click();
+        screen.getByRole('button', { name: /Remove selected/ }).click();
+
+        const availablePackages = screen.getByTestId('available-pkgs-list');
+        expect(availablePackages.children.length).toEqual(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        expect(firstItem).toHaveTextContent('testsummary for test package');
+        expect(secondItem).toHaveTextContent('testPkgtest package summary');
+        expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+    });
+
+    test('search results should be sorted after adding and then removing all packages', async () => {
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForPackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        screen.getByRole('button', { name: /Add all/ }).click();
+        screen.getByRole('button', { name: /Remove all/ }).click();
+
+        const availablePackages = screen.getByTestId('available-pkgs-list');
+        expect(availablePackages.children.length).toEqual(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        expect(firstItem).toHaveTextContent('testsummary for test package');
+        expect(secondItem).toHaveTextContent('testPkgtest package summary');
+        expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+    });
 });
 
 describe('Step Review', () => {
@@ -527,24 +626,11 @@ describe('Click through all steps', () => {
         // packages
         const getPackages = jest
             .spyOn(api, 'getPackages')
-            .mockImplementation(() => {
-                return Promise.resolve({
-                    meta: { count: 100 },
-                    links: { first: '', last: '' },
-                    data: [
-                        {
-                            name: 'testPkg',
-                            summary: 'test package summary',
-                            version: '1.0',
-                        }
-                    ],
-                });
-            });
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
 
         screen.getByText('Add optional additional packages to your image by searching available packages.');
-        userEvent.type(screen.getByTestId('search-available-pkgs-input'), 'test');
-        screen.getByTestId('search-available-pkgs-button').click();
-        await expect(getPackages).toHaveBeenCalledTimes(1);
+        await searchForPackages(screen.getByTestId('search-available-pkgs-input'), 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Add selected/ }).click();
         next.click();
@@ -561,7 +647,6 @@ describe('Click through all steps', () => {
         const composeImage = jest
             .spyOn(api, 'composeImage')
             .mockImplementation(body => {
-                console.log(body, 'huuuh!');
                 let id;
                 if (body.image_requests[0].upload_request.type === 'aws') {
                     expect(body).toEqual({
