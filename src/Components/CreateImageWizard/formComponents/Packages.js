@@ -190,7 +190,12 @@ const Packages = ({ defaultArch, ...props }) => {
                     </Button>
                 ] }>
                 <DualListSelectorList data-testid="available-pkgs-list">
-                    {packagesAvailable.map((pack, index) => {
+                    {packagesAvailable.length === 0 ? (
+                        <p className="pf-u-text-align-center pf-u-mt-md">
+                            Search above to add additional<br />
+                            packages to your image
+                        </p>
+                    ) : (packagesAvailable.map((pack, index) => {
                         return !pack.isHidden ? (
                             <DualListSelectorListItem
                                 key={ index }
@@ -202,7 +207,7 @@ const Packages = ({ defaultArch, ...props }) => {
                                 </TextContent>
                             </DualListSelectorListItem>
                         ) : null;
-                    })}
+                    }))}
                 </DualListSelectorList>
             </DualListSelectorPane>
             <DualListSelectorControlsWrapper
@@ -255,7 +260,11 @@ const Packages = ({ defaultArch, ...props }) => {
                 ] }
                 isChosen>
                 <DualListSelectorList>
-                    {packagesChosen.map((pack, index) => {
+                    {packagesChosen.length === 0 ? (
+                        <p className="pf-u-text-align-center pf-u-mt-md">
+                            No packages added
+                        </p>
+                    ) : (packagesChosen.map((pack, index) => {
                         return !pack.isHidden ? (
                             <DualListSelectorListItem
                                 key={ index }
@@ -267,7 +276,7 @@ const Packages = ({ defaultArch, ...props }) => {
                                 </TextContent>
                             </DualListSelectorListItem>
                         ) : null;
-                    })}
+                    }))}
                 </DualListSelectorList>
             </DualListSelectorPane>
         </DualListSelector>
