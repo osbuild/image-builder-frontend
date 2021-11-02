@@ -463,6 +463,11 @@ describe('Step Packages', () => {
         });
     });
 
+    test('should display default state', () => {
+        screen.getByText('Search above to add additionalpackages to your image');
+        screen.getByText('No packages added');
+    });
+
     test('search results should be sorted with most relevant results first', async () => {
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
