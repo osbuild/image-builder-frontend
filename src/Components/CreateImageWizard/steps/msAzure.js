@@ -17,7 +17,7 @@ export default {
             name: 'azure-text-component',
             label: <>
                 <Text>
-            Image Builder will upload an image to an authorized Azure account.
+                    Image Builder sends an image to an authorized Azure account.
                 </Text>
                 <Title headingLevel="h3">Authorizing an Azure account</Title>
                 <Text>
