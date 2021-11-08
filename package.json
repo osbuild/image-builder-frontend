@@ -81,7 +81,7 @@
     "stylelint": "13.13.1",
     "stylelint-config-recommended-scss": "4.3.0",
     "stylelint-scss": "3.21.0",
-    "webpack-bundle-analyzer": "4.4.2"
+    "webpack-bundle-analyzer": "4.5.0"
   },
   "scripts": {
     "build": "webpack --config config/prod.webpack.config.js",
