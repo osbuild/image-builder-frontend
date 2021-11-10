@@ -24,6 +24,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'aws-account-id',
+            className: 'pf-u-w-25',
             'data-testid': 'aws-account-id',
             type: 'text',
             label: 'AWS account ID',
