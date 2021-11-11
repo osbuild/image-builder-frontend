@@ -1,9 +1,10 @@
 import types from '../types';
+import { RHEL_8 } from '../../constants.js';
 
 const initialPendingComposeState = {
     release: {
         arch: 'x86_64',
-        distro: 'rhel-84',
+        distro: RHEL_8,
     },
     uploadDestinations: {
         aws: false,

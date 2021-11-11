@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import api from '../../../api.js';
+import { RHEL_8 } from '../../../constants.js';
 
 let historySpy = undefined;
 let store = undefined;
@@ -155,7 +156,7 @@ describe('Step Image output', () => {
     //     const release = screen.getByTestId('release-select');
     //     expect(release).toBeEnabled();
 
-    //     userEvent.selectOptions(release, [ 'rhel-84' ]);
+    //     userEvent.selectOptions(release, [ RHEL_8 ]);
     // });
 
     test('target environment is required', () => {
@@ -599,7 +600,7 @@ describe('Click through all steps', () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select image output
-        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ RHEL_8 ]);
         screen.getByTestId('upload-aws').click();
         screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();
@@ -650,7 +651,7 @@ describe('Click through all steps', () => {
                 let id;
                 if (body.image_requests[0].upload_request.type === 'aws') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: RHEL_8,
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'ami',
@@ -675,7 +676,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
                 } else if (body.image_requests[0].upload_request.type === 'gcp') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: RHEL_8,
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'vhd',
@@ -700,7 +701,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
                 } else if (body.image_requests[0].upload_request.type === 'azure') {
                     expect(body).toEqual({
-                        distribution: 'rhel-84',
+                        distribution: RHEL_8,
                         image_requests: [{
                             architecture: 'x86_64',
                             image_type: 'vhd',
@@ -748,7 +749,7 @@ describe('Click through all steps', () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select release
-        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ RHEL_8 ]);
         screen.getByTestId('upload-aws').click();
         next.click();
 
@@ -786,7 +787,7 @@ describe('Click through all steps', () => {
     test('with invalid values', async () => {
 
         // select release
-        // userEvent.selectOptions(screen.getByTestId('release-select'), [ 'rhel-84' ]);
+        // userEvent.selectOptions(screen.getByTestId('release-select'), [ RHEL_8 ]);
         // select upload target
         screen.getByTestId('upload-aws').click();
         screen.getByRole('button', { name: /Next/ }).click();

@@ -2,10 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Label } from '@patternfly/react-core';
+import { RHEL_8 } from '../../constants.js';
 
 const Release = (props) => {
     const releaseOptions = {
-        'rhel-84': 'RHEL 8',
+        [RHEL_8]: 'RHEL 8',
         'centos-8': 'CentOS Stream 8'
     };
     const release = releaseOptions[props.release] ? releaseOptions[props.release] : props.release;
