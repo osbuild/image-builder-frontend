@@ -79,7 +79,8 @@ const ReviewStep = () => {
                 </Gallery>
             </>}
             {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
-             getState()?.values?.release.includes('rhel') && <>
+             getState()?.values?.release.includes('rhel') &&
+                <>
                     <Text component={ TextVariants.h3 }>Registration</Text>
                     <Gallery data-testid='review-image-registration'>
                         <GalleryItem>
@@ -89,7 +90,7 @@ const ReviewStep = () => {
                             <Text>
                                 {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
                                     'Register the system on first boot' :
-                                registerValues?.[getState()?.values?.['register-system']?.title]
+                                    registerValues?.[getState()?.values?.['register-system']?.title]
                                 }
                             </Text>
                         </GalleryItem>
@@ -104,7 +105,8 @@ const ReviewStep = () => {
                             </Text>
                         </GalleryItem>
                     </Gallery>
-                </>}
+                </>
+            }
         </TextContent>
     );
 };
