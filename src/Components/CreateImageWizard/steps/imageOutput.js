@@ -1,9 +1,10 @@
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import nextStepMapper from './imageOutputStepMapper';
+import { RHEL_8 } from '../../../constants.js';
 
 export const releaseValues = {
-    'rhel-84': 'Red Hat Enterprise Linux (RHEL) 8',
+    [RHEL_8]: 'Red Hat Enterprise Linux (RHEL) 8',
     'centos-8': 'CentOS Stream 8'
 };
 
@@ -17,7 +18,7 @@ export default {
             label: 'Release',
             name: 'release',
             simpleValue: true,
-            initialValue: 'rhel-84',
+            initialValue: RHEL_8,
             options: Object.entries(releaseValues).map(([ key, title ]) => ({
                 label: title,
                 value: key

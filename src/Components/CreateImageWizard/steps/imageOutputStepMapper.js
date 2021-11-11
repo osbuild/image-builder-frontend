@@ -1,3 +1,5 @@
+import { RHEL_8 } from '../../../constants.js';
+
 export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, skipGoogle, skipAzure } = {}) => {
     if (!skipAws && targetEnv?.aws) {
         return 'aws-target-env';
@@ -11,5 +13,5 @@ export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, sk
         return 'ms-azure-target-env';
     }
 
-    return release === 'rhel-84' ? 'registration' : 'packages';
+    return release === RHEL_8 ? 'registration' : 'packages';
 };
