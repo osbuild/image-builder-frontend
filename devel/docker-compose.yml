@@ -7,6 +7,7 @@ services:
       dockerfile: ./distribution/Dockerfile-ubi
     volumes:
       - ${COMPOSER_CONFIG_DIR}/osbuild-composer.toml:/etc/osbuild-composer/osbuild-composer.toml:z
+      - ${COMPOSER_CONFIG_DIR}/acl.yml:/etc/osbuild-composer/acl.yml:z
       - ${CERT_DIR}/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${CERT_DIR}/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem:z
       - ${CERT_DIR}/composer-key.pem:/etc/osbuild-composer/composer-key.pem:z
@@ -24,8 +25,8 @@ services:
     entrypoint: [ "/usr/libexec/osbuild-composer/osbuild-worker", "composer:8700" ]
     volumes:
       - ${CERT_DIR}/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
-      - ${CERT_DIR}/worker-crt.pem:/etc/osbuild-composer/worker-crt.pem:z
-      - ${CERT_DIR}/worker-key.pem:/etc/osbuild-composer/worker-key.pem:z
+      - ${WORKER_CONFIG_DIR}/osbuild-worker.toml:/etc/osbuild-worker/osbuild-worker.toml:z
+      - ${WORKER_CONFIG_DIR}/token:/etc/osbuild-worker/token:z
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
     cap_add:
@@ -77,11 +78,11 @@ services:
       - PGDATABASE=postgres
       - PGUSER=postgres
       - PGPASSWORD=postgres
-      - OSBUILD_URL=https://composer:8080
+      - COMPOSER_URL=https://composer:8080
+      - COMPOSER_TOKEN_URL=http://fauxauth:8888/token
+      - COMPOSER_OFFLINE_TOKEN=${COMPOSER_OFFLINE_TOKEN}
+      - COMPOSER_CA_PATH=/etc/image-builder/ca-crt.pem
       - DISTRIBUTIONS_DIR=/app/distributions
-      - OSBUILD_CERT_PATH=/etc/image-builder/client-crt.pem
-      - OSBUILD_KEY_PATH=/etc/image-builder/client-key.pem
-      - OSBUILD_CA_PATH=/etc/image-builder/ca-crt.pem
       - QUOTA_FILE=/config/quotas.json
     networks:
       net:
@@ -148,6 +149,19 @@ services:
         ipv4_address: 172.31.0.80
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=foobar
+  fauxauth:
+    image: local/osbuild-fauxauth
+    build:
+      context: ../../osbuild-composer
+      dockerfile: ./distribution/Dockerfile-fauxauth
+    entrypoint: [ "/opt/fauxauth.py", "-a", "0.0.0.0", "-p", "8888" ]
+    volumes:
+      - ${CERT_DIR}/:/etc/osbuild-composer/:z
+    ports:
+      - "8888:8888"
+    networks:
+      net:
+        ipv4_address: 172.31.0.90
 networks:
   net:
     ipam:
