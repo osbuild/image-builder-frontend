@@ -3,7 +3,7 @@ name: Coverity Scan
 on:
   # https://docs.github.com/en/actions/learn-github-actions/events-that-trigger-workflows#scheduled-events
   schedule:
-    - cron: @daily
+    - cron: '0 5 * * *' # Daily at 05:00 UTC
 
 jobs:
   coverity_scan:
