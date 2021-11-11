@@ -1,0 +1,6 @@
+{
+  "default":{
+      "quota":200,
+      "slidingWindow":1209600000000000
+  }
+}

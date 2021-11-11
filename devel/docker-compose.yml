@@ -64,6 +64,7 @@ services:
       timeout: 2s
       retries: 10
     volumes:
+      - ./config/backend/quotas.json:/config/quotas.json:z
       - ${STATE_DIR}/x509/ca-crt.pem:/etc/image-builder/ca-crt.pem:z
       - ${STATE_DIR}/x509/client-crt.pem:/etc/image-builder/client-crt.pem:z
       - ${STATE_DIR}/x509/client-key.pem:/etc/image-builder/client-key.pem:z
@@ -81,6 +82,7 @@ services:
       - OSBUILD_CERT_PATH=/etc/image-builder/client-crt.pem
       - OSBUILD_KEY_PATH=/etc/image-builder/client-key.pem
       - OSBUILD_CA_PATH=/etc/image-builder/ca-crt.pem
+      - QUOTA_FILE=/config/quotas.json
     networks:
       net:
         ipv4_address: 172.31.0.40
