@@ -1,7 +1,16 @@
 [worker]
+request_job_timeout = "40s"
 allowed_domains = [ "localhost", "worker.osbuild.org" ]
+enable_mtls = false
+enable_jwt = true
+jwt_keys_url = "http://fauxauth:8888/certs"
+jwt_acl_file = "/etc/osbuild-composer/acl.yml"
 ca = "/etc/osbuild-composer/ca-crt.pem"
 
 [koji]
 allowed_domains = [ "client.osbuild.org" ]
+enable_mtls = false
+enable_jwt = true
+jwt_keys_url = "http://fauxauth:8888/certs"
+jwt_acl_file = "/etc/osbuild-composer/acl.yml"
 ca = "/etc/osbuild-composer/ca-crt.pem"

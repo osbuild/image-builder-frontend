@@ -1,0 +1,3 @@
+[authentication]
+oauth_url = "http://fauxauth:8888/token"
+offline_token = "/etc/osbuild-worker/token"
