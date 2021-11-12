@@ -29,6 +29,7 @@ services:
       - ${WORKER_CONFIG_DIR}/token:/etc/osbuild-worker/token:z
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
+    privileged: true
     cap_add:
       - MKNOD
       - SYS_ADMIN
