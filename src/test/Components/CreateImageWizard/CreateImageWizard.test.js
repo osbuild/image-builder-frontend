@@ -733,7 +733,7 @@ describe('Click through all steps', () => {
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
                 }
 
-                ids.push(id);
+                ids.unshift(id);
                 return Promise.resolve({ id });
             });
 
