@@ -126,7 +126,7 @@ const CreateImageWizard = () => {
                     ...response,
                     request,
                     image_status: { status: 'pending' }
-                }));
+                }, true));
             })))
                 .then(() => {
                     history.push('/landing');
