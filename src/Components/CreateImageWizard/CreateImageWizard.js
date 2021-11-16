@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ImageCreator from './ImageCreator';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { Button, Spinner } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -108,7 +108,7 @@ const onSave = (values) => {
 
 const CreateImageWizard = () => {
     const dispatch = useDispatch();
-    const history = useHistory();
+    const navigate = useNavigate();
     const [ user, setUser ] = useState();
     useEffect(() => {
         (async () => {
@@ -117,7 +117,7 @@ const CreateImageWizard = () => {
         })();
     }, []);
     return user ? <ImageCreator
-        onClose={ () => history.push('/landing') }
+        onClose={ () => navigate('/landing') }
         onSubmit={ ({ values, setIsSaving }) => {
             setIsSaving(() => true);
             const requests = onSave(values);
@@ -129,7 +129,7 @@ const CreateImageWizard = () => {
                 }, true));
             })))
                 .then(() => {
-                    history.push('/landing');
+                    navigate('/landing');
                     dispatch(addNotification({
                         variant: 'success',
                         title: 'Your image is being created',
