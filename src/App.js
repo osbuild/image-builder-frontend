@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Routes } from './Routes';
+import { Router } from './Router';
 import '@patternfly/patternfly/patternfly-addons.css';
 import './App.scss';
 
@@ -38,7 +38,7 @@ const App = (props) => {
     return (
         <React.Fragment>
             <NotificationsPortal />
-            { permission ? <Routes childProps={ props } /> : <PermissionDenied /> }
+            { permission ? <Router childProps={ props } /> : <PermissionDenied /> }
         </React.Fragment>
     );
 };
