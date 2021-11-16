@@ -7,8 +7,8 @@ const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard/Crea
 export const Router = () => {
     return (
         <Routes>
-            <Route exact path='/landing' component={ LandingPage } />
-            <Route exact path='/imagewizard' component={ CreateImageWizard } />
+            <Route path='/landing/*' element={ <LandingPage /> } />
+            <Route path='/imagewizard/*' element={ <CreateImageWizard /> } />
             <Redirect to='/landing' />
         </Routes>
     );
