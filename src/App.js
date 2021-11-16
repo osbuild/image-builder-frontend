@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Router } from './Router';
 import '@patternfly/patternfly/patternfly-addons.css';
 import './App.scss';
@@ -13,7 +13,7 @@ import PermissionDenied from './Components/LandingPage/PermissionDenied';
 
 const App = (props) => {
     const [ permission, setPermission ] = useState(false);
-    const history = useHistory();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const registry = getRegistry();
@@ -28,7 +28,7 @@ const App = (props) => {
         });
 
         const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
-            history.push(`/${event.navId}`)
+            navigate(`/${event.navId}`)
         );
         return () => {
             unregister();
