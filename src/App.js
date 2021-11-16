@@ -1,61 +1,46 @@
-import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Routes } from './Routes';
 import '@patternfly/patternfly/patternfly-addons.css';
 import './App.scss';
-import { NotificationsPortal } from '@redhat-cloud-services/frontend-components-notifications';
+
+import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
+import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
+import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import api from './api.js';
 import PermissionDenied from './Components/LandingPage/PermissionDenied';
 
-class App extends Component {
-    constructor() {
-        super();
+const App = (props) => {
+    const [ permission, setPermission ] = useState(false);
+    const history = useHistory();
 
-        this.state = {
-            permission: false,
-        };
-    }
-
-    componentDidMount () {
+    useEffect(() => {
+        const registry = getRegistry();
+        registry.register({ notifications: notificationsReducer });
         insights.chrome.init();
-        insights.chrome.identifyApp('image-builder').catch(() => {
-            /* We are not in the menu so this call is allowed to fail */
-        });
-        this.appNav = insights.chrome.on('APP_NAVIGATION', event => this.props.history.push(`/${event.navId}`));
-        insights.chrome.auth.getUser().then(data => {
-            this.setState({ identity: data.identity });
-            api.getVersion().then(() => {
-                this.setState({ permission: true });
-            }).catch(() => {
-                this.setState({ permission: false });
-            });
-        });
-    }
+        insights.chrome.identifyApp('image-builder');
 
-    componentWillUnmount () {
-        this.appNav();
-    }
+        api.getVersion().then(() => {
+            setPermission(true);
+        }).catch(() => {
+            setPermission(false);
+        });
 
-    render () {
-        return (
-            <React.Fragment>
-                <NotificationsPortal />
-                { this.state.permission ? <Routes childProps={ this.props } /> : <PermissionDenied /> }
-            </React.Fragment>
+        const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
+            history.push(`/${event.navId}`)
         );
-    }
-}
+        return () => {
+            unregister();
+        };
+    }, []);
 
-App.propTypes = {
-    history: PropTypes.object
+    return (
+        <React.Fragment>
+            <NotificationsPortal />
+            { permission ? <Routes childProps={ props } /> : <PermissionDenied /> }
+        </React.Fragment>
+    );
 };
 
-/**
- * withRouter: https://reacttraining.com/react-router/web/api/withRouter
- * connect: https://github.com/reactjs/react-redux/blob/master/docs/api.md
- *          https://reactjs.org/docs/higher-order-components.html
- */
-export default withRouter (connect()(App));
+export default App;

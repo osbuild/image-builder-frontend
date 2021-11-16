@@ -1,7 +1,6 @@
 /* global COMMITHASH */
 
 import React, { Component } from 'react';
-import { withRouter } from 'react-router-dom';
 
 import { PageHeader, PageHeaderTitle } from '@redhat-cloud-services/frontend-components';
 
@@ -68,4 +67,4 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
     }
 }
 
-export default withRouter(LandingPage);
+export default LandingPage;
