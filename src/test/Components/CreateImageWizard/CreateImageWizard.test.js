@@ -8,7 +8,7 @@ import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImage
 import api from '../../../api.js';
 import { RHEL_8 } from '../../../constants.js';
 
-let historySpy = undefined;
+let history = undefined;
 let store = undefined;
 
 function verifyButtons() {
@@ -23,10 +23,7 @@ function verifyButtons() {
 function verifyCancelButton(cancel, history) {
     cancel.click();
 
-    // this goes back to the landing page
-    // but jsdom will not render the new page so we can't assert on that
-    expect(history).toHaveBeenCalledTimes(1);
-    expect(history).toHaveBeenCalledWith('/landing');
+    expect(history.location.pathname).toBe('/landing');
 }
 
 // packages
@@ -80,7 +77,7 @@ beforeAll(() => {
 
 afterEach(() => {
     jest.clearAllMocks();
-    historySpy = undefined;
+    history = undefined;
 });
 
 // restore global mock
@@ -114,11 +111,9 @@ describe('Step Image output', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -149,7 +144,7 @@ describe('Step Image output', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     // test('allows chosing a release', () => {
@@ -171,11 +166,9 @@ describe('Step Upload to AWS', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -201,7 +194,7 @@ describe('Step Upload to AWS', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     test('the aws account id fieldis shown and required', () => {
@@ -216,11 +209,9 @@ describe('Step Upload to Google', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-google');
@@ -246,7 +237,7 @@ describe('Step Upload to Google', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     test('the google account id field is shown and required', () => {
@@ -271,11 +262,9 @@ describe('Step Upload to Azure', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-azure');
@@ -304,7 +293,7 @@ describe('Step Upload to Azure', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     test('the azure upload fields are shown and required', () => {
@@ -329,11 +318,9 @@ describe('Step Registration', () => {
     beforeEach(async() => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -360,7 +347,7 @@ describe('Step Registration', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     test('should allow choosing activation keys', async () => {
@@ -414,11 +401,9 @@ describe('Step Packages', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -452,7 +437,7 @@ describe('Step Packages', () => {
 
     test('clicking Cancel loads landing page', () => {
         const [ , , cancel ] = verifyButtons();
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 
     test('should display search bar and button', () => {
@@ -542,11 +527,9 @@ describe('Step Review', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         await act(async () => {
             history = renderWithReduxRouter(<CreateImageWizard />).history;
         });
-        historySpy = jest.spyOn(history, 'push');
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -582,7 +565,7 @@ describe('Step Review', () => {
 
     test('clicking Cancel loads landing page', () => {
         const cancel = screen.getByRole('button', { name: /Cancel/ });
-        verifyCancelButton(cancel, historySpy);
+        verifyCancelButton(cancel, history);
     });
 });
 
@@ -590,7 +573,6 @@ describe('Click through all steps', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let history;
         let reduxStore;
         await act(async () => {
             const rendered = renderWithReduxRouter(<CreateImageWizard />);
@@ -598,7 +580,6 @@ describe('Click through all steps', () => {
             reduxStore = rendered.reduxStore;
         });
         store = reduxStore;
-        historySpy = jest.spyOn(history, 'push');
     });
 
     test('with valid values', async () => {
@@ -744,9 +725,7 @@ describe('Click through all steps', () => {
         await expect(composeImage).toHaveBeenCalledTimes(3);
 
         // returns back to the landing page
-        // but jsdom will not render the new page so we can't assert on that
-        await waitFor(() => expect(historySpy).toHaveBeenCalledTimes(1));
-        await expect(historySpy).toHaveBeenCalledWith('/landing');
+        await waitFor(() => expect(history.location.pathname).toBe('/landing'));
         expect(store.getStore().getState().composes.allIds).toEqual(ids);
     });
 
