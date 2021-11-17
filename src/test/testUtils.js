@@ -12,7 +12,7 @@ export const renderWithReduxRouter = (component, store = {}, route = '/') => {
     return {
         ...render(
             <Provider store={ reduxStore.getStore() }>
-                <Router history={ history }>{component}</Router>
+                <Router location={ history.location } navigator={ history }>{component}</Router>
             </Provider>
         ),
         history,
