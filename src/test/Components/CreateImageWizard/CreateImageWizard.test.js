@@ -440,7 +440,7 @@ describe('Step Packages', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Review the information and click the Create button to create your image using the following criteria.');
+        screen.getByText('Review the information and click "Create image" to create the image using the following criteria.');
     });
 
     test('clicking Back loads Register', () => {
@@ -584,6 +584,23 @@ describe('Step Review', () => {
         const cancel = screen.getByRole('button', { name: /Cancel/ });
         verifyCancelButton(cancel, historySpy);
     });
+
+    test('has three tabs', async () => {
+        const buttonTarget = screen.getByTestId('tab-target');
+        const buttonRegistration = screen.getByTestId('tab-registration');
+        const buttonSystem = screen.getByTestId('tab-system');
+
+        userEvent.click(buttonTarget);
+        screen.getByRole('heading', {
+            name: 'Amazon Web Services'
+        });
+        userEvent.click(buttonRegistration);
+        screen.getByText('Register the system on first boot');
+        userEvent.click(buttonSystem);
+        screen.getByRole('heading', {
+            name: 'Packages'
+        });
+    });
 });
 
 describe('Click through all steps', () => {
@@ -643,7 +660,7 @@ describe('Click through all steps', () => {
 
         // review
         await screen.
-            findByText('Review the information and click the Create button to create your image using the following criteria.');
+            findByText('Review the information and click "Create image" to create the image using the following criteria.');
         await screen.findAllByText('Amazon Web Services');
         await screen.findAllByText('Google Cloud Platform');
         await screen.findByText('Register the system on first boot');
@@ -773,7 +790,7 @@ describe('Click through all steps', () => {
         next.click();
 
         expect(screen.queryByText(
-            'Review the information and click the Create button to create your image using the following criteria.'
+            'Review the information and click "Create image" to create the image using the following criteria.'
         )).not.toBeInTheDocument();
 
         // fill in the registration
@@ -783,7 +800,7 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         await screen.
-            findByText('Review the information and click the Create button to create your image using the following criteria.');
+            findByText('Review the information and click "Create image" to create the image using the following criteria.');
         // review
         await screen.findAllByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
@@ -807,7 +824,7 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         expect(screen.queryByText(
-            'Review the information and click the Create button to create your image using the following criteria.'
+            'Review the information and click "Create image" to create the image using the following criteria.'
         )).not.toBeInTheDocument();
 
         // fill in the registration
@@ -817,7 +834,7 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         await screen.
-            findByText('Review the information and click the Create button to create your image using the following criteria.');
+            findByText('Review the information and click "Create image" to create the image using the following criteria.');
         await screen.findAllByText('Amazon Web Services');
         await screen.findByText('Register the system on first boot');
     });
