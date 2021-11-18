@@ -157,7 +157,7 @@ const CreateImageWizard = () => {
                     isDynamic: true,
                     inModal: true,
                     buttonLabels: {
-                        submit: 'Create',
+                        submit: 'Create image',
                     },
                     showTitles: true,
                     title: 'Create image',
