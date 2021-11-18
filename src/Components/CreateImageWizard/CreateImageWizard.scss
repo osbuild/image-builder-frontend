@@ -11,3 +11,7 @@
 .pf-c-dual-list-selector__menu {
     --pf-c-dual-list-selector__menu--MinHeight: 18rem;
 }
+
+.pf-c-form {
+    --pf-c-form--GridGap: var(--pf-global--spacer--md);
+}
