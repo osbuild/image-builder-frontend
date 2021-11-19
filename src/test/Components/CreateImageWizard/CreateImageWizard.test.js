@@ -584,6 +584,23 @@ describe('Step Review', () => {
             name: 'Packages'
         });
     });
+
+    test('has three tabs', async () => {
+        const buttonTarget = screen.getByTestId('tab-target');
+        const buttonRegistration = screen.getByTestId('tab-registration');
+        const buttonSystem = screen.getByTestId('tab-system');
+
+        userEvent.click(buttonTarget);
+        screen.getByRole('heading', {
+            name: 'Amazon Web Services'
+        });
+        userEvent.click(buttonRegistration);
+        screen.getByText('Register the system on first boot');
+        userEvent.click(buttonSystem);
+        screen.getByRole('heading', {
+            name: 'Packages'
+        });
+    });
 });
 
 describe('Click through all steps', () => {
