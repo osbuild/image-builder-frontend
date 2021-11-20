@@ -31,6 +31,14 @@ const Packages = ({ defaultArch, ...props }) => {
     const [ filterChosen, setFilterChosen ] = useState('');
     const [ focus, setFocus ] = useState('');
 
+    // this effect only triggers on mount
+    useEffect(() => {
+        const selectedPackages = getState()?.values?.['selected-packages'];
+        if (selectedPackages) {
+            setPackagesChosen(selectedPackages);
+        }
+    }, []);
+
     const searchResultsComparator = useCallback((searchTerm) => {
         return (a, b) => {
             // check exact match first
