@@ -14,13 +14,14 @@ const CustomButtons = ({ buttonLabels: { cancel, submit, back }}) => {
                     variant="primary"
                     type="button"
                     isDisabled={ !formOptions.valid || formOptions.getState().validating || isSaving }
+                    isLoading={ isSaving }
                     onClick={ () => {
                         formOptions.onSubmit({
                             values: formOptions.getState().values,
                             setIsSaving
                         });
                     } }>
-                    {submit}
+                    { isSaving ? 'Creating image' : submit}
                 </Button>
                 <Button type="button" variant="secondary" onClick={ handlePrev } isDisabled={ isSaving }>
                     {back}
