@@ -23,7 +23,7 @@ const ImageBuildStatus = (props) => {
         pending: [
             {
                 icon: <PendingIcon />,
-                text: 'Image build, Upload, Cloud registration pending'
+                text: 'Image build is pending'
             }
         ],
         // Keep "running" for backward compatibility
