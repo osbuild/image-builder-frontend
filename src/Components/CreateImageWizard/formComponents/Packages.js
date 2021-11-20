@@ -107,10 +107,10 @@ const Packages = ({ defaultArch, ...props }) => {
     };
 
     useEffect(() => {
-        document.addEventListener('keydown', keydownHandler, false);
+        document.addEventListener('keydown', keydownHandler, true);
 
         return () => {
-            document.removeEventListener('keydown', keydownHandler, false);
+            document.removeEventListener('keydown', keydownHandler, true);
         };
     });
 
