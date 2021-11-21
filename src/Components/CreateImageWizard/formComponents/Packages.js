@@ -143,16 +143,19 @@ const Packages = ({ defaultArch, ...props }) => {
 
     // move all packages
     const moveAll = (fromAvailable) => {
+        let chosenPackages = [];
         if (fromAvailable) {
-            setPackagesChosen([ ...packagesAvailable.filter(pack => !pack.isHidden), ...packagesChosen ]);
+            chosenPackages = [ ...packagesAvailable.filter(pack => !pack.isHidden), ...packagesChosen ];
+            setPackagesChosen(chosenPackages);
             sortPackages([ ...packagesAvailable.filter(pack => pack.isHidden) ]);
         } else {
+            chosenPackages = [ ...packagesChosen.filter(pack => pack.isHidden) ];
             sortPackages([ ...packagesChosen.filter(pack => !pack.isHidden), ...packagesAvailable ]);
-            setPackagesChosen([ ...packagesChosen.filter(pack => pack.isHidden) ]);
+            setPackagesChosen(chosenPackages);
         }
 
         // set the steps field to the current chosen packages list
-        change(input.name, removePackagesDisplayFields(packagesChosen));
+        change(input.name, removePackagesDisplayFields(chosenPackages));
     };
 
     const onOptionSelect = (event, index, isChosen) => {
