@@ -127,8 +127,8 @@ const ReviewStep = () => {
                                 <TextListItem component={ TextListItemVariants.dt }>
                                     Activation key
                                 </TextListItem>
-                                <TextListItem component={ TextListItemVariants.dd }>
-                                    {'*'.repeat(getState()?.values?.['subscription-activation']?.length)}
+                                <TextListItem component={ TextListItemVariants.dd } data-testid='subscription-activation-review'>
+                                    {getState()?.values?.['subscription-activation']}
                                 </TextListItem>
                             </TextList>
                         </TextContent>
