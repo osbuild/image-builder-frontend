@@ -369,6 +369,7 @@ describe('Step Registration', () => {
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
         await screen.findByText('Register the system on first boot');
+        await screen.findAllByText('012345678901');
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
