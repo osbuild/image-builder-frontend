@@ -47,7 +47,7 @@ export default (user) => ({
             name: 'subscription-activation',
             'data-testid': 'subscription-activation',
             required: true,
-            type: 'password',
+            type: 'text',
             label: 'Activation key',
             condition: {
                 or: [
