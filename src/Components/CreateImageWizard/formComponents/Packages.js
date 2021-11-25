@@ -26,7 +26,7 @@ const Packages = ({ defaultArch, ...props }) => {
     const { change, getState } = useFormApi();
     const { input } = useFieldApi(props);
     const packagesSearchName = useRef();
-    const [ packagesAvailable, setPackagesAvailable ] = useState([]);
+    const [ packagesAvailable, setPackagesAvailable ] = useState();
     const [ packagesChosen, setPackagesChosen ] = useState([]);
     const [ filterChosen, setFilterChosen ] = useState('');
     const [ focus, setFocus ] = useState('');
@@ -74,7 +74,7 @@ const Packages = ({ defaultArch, ...props }) => {
     });
 
     const sortPackages = useCallback((packageList) => {
-        const sortResults = packageList.sort(searchResultsComparator(packagesSearchName.current));
+        const sortResults = packageList ? packageList.sort(searchResultsComparator(packagesSearchName.current)) : [];
         setPackagesAvailable(sortResults);
     });
 
@@ -201,10 +201,11 @@ const Packages = ({ defaultArch, ...props }) => {
                     </Button>
                 ] }>
                 <DualListSelectorList data-testid="available-pkgs-list">
-                    {packagesAvailable.length === 0 ? (
+                    {packagesAvailable === undefined || packagesAvailable.length === 0 ? (
                         <p className="pf-u-text-align-center pf-u-mt-md">
-                            Search above to add additional<br />
-                            packages to your image
+                            {!packagesAvailable
+                                ? <>Search above to add additional<br />packages to your image</>
+                                : 'No packages found'}
                         </p>
                     ) : (packagesAvailable.map((pack, index) => {
                         return !pack.isHidden ? (
@@ -224,14 +225,14 @@ const Packages = ({ defaultArch, ...props }) => {
             <DualListSelectorControlsWrapper
                 aria-label="Selector controls">
                 <DualListSelectorControl
-                    isDisabled={ !packagesAvailable.some(option => option.selected) }
+                    isDisabled={ !(packagesAvailable || []).some(option => option.selected) }
                     onClick={ () => moveSelected(true) }
                     aria-label="Add selected"
                     tooltipContent="Add selected">
                     <AngleRightIcon />
                 </DualListSelectorControl>
                 <DualListSelectorControl
-                    isDisabled={ packagesAvailable.length === 0 }
+                    isDisabled={ (packagesAvailable || []).length === 0 }
                     onClick={ () => moveAll(true) }
                     aria-label="Add all"
                     tooltipContent="Add all">
