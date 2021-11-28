@@ -141,7 +141,7 @@ const ReviewStep = () => {
                             <TextListItem component={ TextListItemVariants.dt }>
                                 Chosen
                             </TextListItem>
-                            <TextListItem component={ TextListItemVariants.dd }>
+                            <TextListItem component={ TextListItemVariants.dd } data-testid='chosen-packages-count'>
                                 {getState()?.values?.['selected-packages']?.length || 0}
                             </TextListItem>
                         </TextList>

@@ -139,14 +139,15 @@ const Packages = ({ defaultArch, ...props }) => {
 
         if (fromAvailable) {
             sortPackages(updatedSourcePackages);
-            setPackagesChosen([ ...destinationPackages ]);
+            setPackagesChosen(destinationPackages);
+            // set the steps field to the current chosen packages list
+            change(input.name, removePackagesDisplayFields(destinationPackages));
         } else {
             setPackagesChosen(updatedSourcePackages);
-            sortPackages([ ...destinationPackages ]);
+            sortPackages(packagesAvailable);
+            // set the steps field to the current chosen packages list
+            change(input.name, removePackagesDisplayFields(updatedSourcePackages));
         }
-
-        // set the steps field to the current chosen packages list
-        change(input.name, removePackagesDisplayFields(packagesChosen));
     };
 
     // move all packages
