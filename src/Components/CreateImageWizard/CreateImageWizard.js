@@ -162,7 +162,7 @@ const CreateImageWizard = () => {
                     showTitles: true,
                     title: 'Create image',
                     crossroads: [ 'target-environment', 'release' ],
-                    description: <div>Create a RHEL image and push it to cloud providers. <Button
+                    description: <>Create a RHEL image and push it to cloud providers. <Button
                         component="a"
                         target="_blank"
                         variant="link"
@@ -173,7 +173,7 @@ const CreateImageWizard = () => {
 https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/uploading_a_customized_rhel_system_image_to_cloud_environments/index
             ">
                 Documentation
-                    </Button></div>,
+                    </Button></>,
                     // order in this array does not reflect order in wizard nav, this order is managed inside
                     // of each step by `nextStep` property!
                     fields: [
