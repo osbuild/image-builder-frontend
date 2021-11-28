@@ -4,7 +4,6 @@ import thunk from 'redux-thunk';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import composes from './reducers/composes';
-import pendingCompose from './reducers/pendingCompose';
 
 let registry;
 
@@ -18,7 +17,6 @@ export function init (store = {}, ...middleware) {
 
         registry.register({
             composes,
-            pendingCompose,
             notifications: notificationsReducer,
         });
     }
