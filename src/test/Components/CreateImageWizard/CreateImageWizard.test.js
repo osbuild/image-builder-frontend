@@ -522,6 +522,42 @@ describe('Step Packages', () => {
         expect(secondItem).toHaveTextContent('testPkgtest package summary');
         expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
     });
+
+    test('removing a single package updates the state correctly', async () => {
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+        searchbox.click();
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForPackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+        screen.getByRole('button', { name: /Add all/ }).click();
+
+        // remove a single package
+        screen.getByRole('option', { name: /lib-test lib-test package summary/ }).click();
+        screen.getByRole('button', { name: /Remove selected/ }).click();
+
+        // review page
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        // await screen.findByTestId('chosen-packages-count');
+        let chosen = await screen.findByTestId('chosen-packages-count');
+        expect(chosen).toHaveTextContent('2');
+
+        // remove another package
+        screen.getByRole('button', { name: /Back/ }).click();
+        await screen.findByTestId('search-available-pkgs-input');
+        screen.getByRole('option', { name: /summary for test package/ }).click();
+        screen.getByRole('button', { name: /Remove selected/ }).click();
+
+        // review page
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        // await screen.findByTestId('chosen-packages-count');
+        chosen = await screen.findByTestId('chosen-packages-count');
+        expect(chosen).toHaveTextContent('1');
+    });
 });
 
 describe('Step Review', () => {
