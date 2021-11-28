@@ -9,7 +9,7 @@ export default {
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,
-            name: 'google-cloud-text-component',
+            name: 'packages-text-component',
             label: <Text>Add optional additional packages to your image by searching available packages.</Text>
         },
         {
