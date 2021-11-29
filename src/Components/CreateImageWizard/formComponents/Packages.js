@@ -29,6 +29,7 @@ const Packages = ({ defaultArch, ...props }) => {
     const [ packagesAvailable, setPackagesAvailable ] = useState([]);
     const [ packagesAvailableFound, setPackagesAvailableFound ] = useState(true);
     const [ packagesChosen, setPackagesChosen ] = useState([]);
+    const [ packagesChosenFound, setPackagesChosenFound ] = useState(true);
     const [ filterChosen, setFilterChosen ] = useState('');
     const [ focus, setFocus ] = useState('');
 
@@ -96,15 +97,18 @@ const Packages = ({ defaultArch, ...props }) => {
 
     // filter displayed selected packages
     const handlePackagesChosenSearch = () => {
+        let found = false;
         const filteredPackagesChosen = packagesChosen.map((pack) => {
             if (!pack.name.includes(filterChosen)) {
                 pack.isHidden = true;
             } else {
                 pack.isHidden = false;
+                found = true;
             }
 
             return pack;
         });
+        setPackagesChosenFound(found);
         setPackagesChosen(filteredPackagesChosen);
     };
 
@@ -247,7 +251,7 @@ const Packages = ({ defaultArch, ...props }) => {
                     <AngleDoubleRightIcon />
                 </DualListSelectorControl>
                 <DualListSelectorControl
-                    isDisabled={ packagesChosen.length === 0 }
+                    isDisabled={ !packagesChosen.length || !packagesChosenFound }
                     onClick={ () => moveAll(false) }
                     aria-label="Remove all"
                     tooltipContent="Remove all">
@@ -255,7 +259,7 @@ const Packages = ({ defaultArch, ...props }) => {
                 </DualListSelectorControl>
                 <DualListSelectorControl
                     onClick={ () => moveSelected(false) }
-                    isDisabled={ !packagesChosen.some(option => option.selected) }
+                    isDisabled={ !packagesChosen.some(option => option.selected) || !packagesChosenFound }
                     aria-label="Remove selected"
                     tooltipContent="Remove selected">
                     <AngleLeftIcon />
@@ -265,6 +269,7 @@ const Packages = ({ defaultArch, ...props }) => {
                 title="Chosen packages"
                 searchInput={ <SearchInput
                     placeholder="Search for a package"
+                    data-testid="search-chosen-pkgs-input"
                     value={ filterChosen }
                     onFocus={ () => setFocus('chosen') }
                     onBlur={ () => setFocus('') }
@@ -273,16 +278,20 @@ const Packages = ({ defaultArch, ...props }) => {
                     <Button
                         aria-label="Search button for selected packages"
                         key="selectedSearchButton"
-                        data-testid="search-selected-pkgs-button"
+                        data-testid="search-chosen-pkgs-button"
                         onClick={ handlePackagesChosenSearch }>
                         Search
                     </Button>
                 ] }
                 isChosen>
-                <DualListSelectorList>
-                    {packagesChosen.length === 0 ? (
+                <DualListSelectorList data-testid="chosen-pkgs-list">
+                    {!packagesChosen.length ? (
                         <p className="pf-u-text-align-center pf-u-mt-md">
                             No packages added
+                        </p>
+                    ) : !packagesChosenFound ? (
+                        <p className="pf-u-text-align-center pf-u-mt-md">
+                            No packages found
                         </p>
                     ) : (packagesChosen.map((pack, index) => {
                         return !pack.isHidden ? (
