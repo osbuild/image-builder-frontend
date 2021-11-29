@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, render } from '@testing-library/react';
+import { screen, render, within } from '@testing-library/react';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
@@ -279,11 +279,22 @@ describe('Images Table', () => {
 
         // check table
         const table = screen.getByTestId('images-table');
-        expect(table.rows).toHaveLength(11);
-        for (const row of table.rows) {
+        const { getAllByRole } = within(table);
+        const rows = getAllByRole('row');
+        // remove first row from list since it is just header labels
+        const header = rows.shift();
+        // test the header has correct labels
+        expect(header.cells[0]).toHaveTextContent('Image');
+        expect(header.cells[1]).toHaveTextContent('Created');
+        expect(header.cells[2]).toHaveTextContent('Release');
+        expect(header.cells[3]).toHaveTextContent('Target');
+        expect(header.cells[4]).toHaveTextContent('Status');
+        expect(header.cells[5]).toHaveTextContent('Instance');
+
+        // 10 rows for 10 images
+        expect(rows).toHaveLength(10);
+        for (const row of rows) {
             const col1 = row.cells[0].textContent;
-            if (col1 === 'Image') // skip header
-            {continue;}
 
             const compose = store.composes.byId[col1];
             expect(compose).toBeTruthy();
