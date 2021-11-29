@@ -125,7 +125,7 @@ const Packages = ({ defaultArch, ...props }) => {
     // move selected packages
     const moveSelected = (fromAvailable) => {
         const sourcePackages = fromAvailable ? packagesAvailable : packagesChosen;
-        const destinationPackages = fromAvailable ? packagesChosen : packagesAvailable;
+        const destinationPackages = fromAvailable ? packagesChosen : (packagesAvailable || []);
 
         const updatedSourcePackages = sourcePackages.filter((pack) => {
             if (pack.selected) {
