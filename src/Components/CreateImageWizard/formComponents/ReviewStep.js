@@ -35,7 +35,7 @@ const ReviewStep = () => {
             <Tabs isFilled activeKey={ activeTabKey } onSelect={ handleTabClick } className="pf-u-w-75">
                 <Tab eventKey={ 0 } title={ <TabTitleText>Target environment</TabTitleText> } data-testid='tab-target'>
                     <List isPlain iconSize="large">
-                        {getState()?.values?.['aws-account-id'] &&
+                        {getState()?.values?.['target-environment']?.aws &&
                             <ListItem icon={ <img className='provider-icon' src='/apps/frontend-assets/partners-icons/aws.svg' /> }>
                                 <TextContent>
                                     <Text component={ TextVariants.h3 }>
@@ -50,7 +50,7 @@ const ReviewStep = () => {
                                 </TextContent>
                             </ListItem>
                         }
-                        {getState()?.values?.['google-account-type'] &&
+                        {getState()?.values?.['target-environment']?.google &&
                             <ListItem
                                 className='pf-c-list__item pf-u-mt-md'
                                 icon={ <img className='provider-icon' src='/apps/frontend-assets/partners-icons/google-cloud-short.svg' /> }>
@@ -67,7 +67,7 @@ const ReviewStep = () => {
                                 </TextContent>
                             </ListItem>
                         }
-                        {getState()?.values?.['azure-subscription-id'] &&
+                        {getState()?.values?.['target-environment']?.azure &&
                             <ListItem
                                 className='pf-c-list__item pf-u-mt-md'
                                 icon={ <img className='provider-icon' src='/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' /> }>
