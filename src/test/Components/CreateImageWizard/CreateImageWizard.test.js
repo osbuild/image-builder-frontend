@@ -49,10 +49,28 @@ const mockPkgResult = {
     ]
 };
 
-const searchForPackages = async (searchbox, searchTerm) => {
+const mockPkgResultEmpty = {
+    meta: { count: 0 },
+    links: { first: '', last: '' },
+    data: null
+};
+
+const searchForAvailablePackages = async (searchbox, searchTerm) => {
     userEvent.type(searchbox, searchTerm);
     await act(async() => {
         screen.getByTestId('search-available-pkgs-button').click();
+    });
+};
+
+const searchForChosenPackages = async (searchbox, searchTerm) => {
+    if (!searchTerm) {
+        userEvent.clear(searchbox);
+    } else {
+        userEvent.type(searchbox, searchTerm);
+    }
+
+    await act(async() => {
+        screen.getByTestId('search-chosen-pkgs-button').click();
     });
 };
 
@@ -463,7 +481,7 @@ describe('Step Packages', () => {
             .spyOn(api, 'getPackages')
             .mockImplementation(() => Promise.resolve(mockPkgResult));
 
-        await searchForPackages(searchbox, 'test');
+        await searchForAvailablePackages(searchbox, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
 
         const availablePackages = screen.getByTestId('available-pkgs-list');
@@ -483,7 +501,7 @@ describe('Step Packages', () => {
             .spyOn(api, 'getPackages')
             .mockImplementation(() => Promise.resolve(mockPkgResult));
 
-        await searchForPackages(searchbox, 'test');
+        await searchForAvailablePackages(searchbox, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
 
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
@@ -509,7 +527,7 @@ describe('Step Packages', () => {
             .spyOn(api, 'getPackages')
             .mockImplementation(() => Promise.resolve(mockPkgResult));
 
-        await searchForPackages(searchbox, 'test');
+        await searchForAvailablePackages(searchbox, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
 
         screen.getByRole('button', { name: /Add all/ }).click();
@@ -530,7 +548,7 @@ describe('Step Packages', () => {
             .spyOn(api, 'getPackages')
             .mockImplementation(() => Promise.resolve(mockPkgResult));
 
-        await searchForPackages(searchbox, 'test');
+        await searchForAvailablePackages(searchbox, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
         screen.getByRole('button', { name: /Add all/ }).click();
 
@@ -557,6 +575,41 @@ describe('Step Packages', () => {
         // await screen.findByTestId('chosen-packages-count');
         chosen = await screen.findByTestId('chosen-packages-count');
         expect(chosen).toHaveTextContent('1');
+    });
+
+    test('should display empty available state on failed search', async () => {
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResultEmpty));
+
+        await searchForAvailablePackages(searchbox, 'asdf');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+        screen.getByText('No packages found');
+    });
+
+    test('should display empty chosen state on failed search', async () => {
+        const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+        const searchboxChosen = screen.getAllByRole('textbox')[1];
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        searchboxAvailable.click();
+        await searchForAvailablePackages(searchboxAvailable, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        screen.getByRole('button', { name: /Add all/ }).click();
+
+        searchboxChosen.click();
+        await searchForChosenPackages(searchboxChosen, 'asdf');
+        screen.getByText('No packages found');
+        // We need to clear this input in order to not have sideeffects on other tests
+        await searchForChosenPackages(searchboxChosen, '');
     });
 });
 
@@ -670,7 +723,7 @@ describe('Click through all steps', () => {
             .mockImplementation(() => Promise.resolve(mockPkgResult));
 
         screen.getByText('Add optional additional packages to your image by searching available packages.');
-        await searchForPackages(screen.getByTestId('search-available-pkgs-input'), 'test');
+        await searchForAvailablePackages(screen.getByTestId('search-available-pkgs-input'), 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Add selected/ }).click();
