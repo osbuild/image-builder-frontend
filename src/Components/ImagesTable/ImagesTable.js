@@ -96,7 +96,7 @@ class ImagesTable extends Component {
             'Release',
             'Target',
             'Status',
-            ''
+            'Instance'
         ];
 
         // the state.page is not an index so must be reduced by 1 get the starting index
