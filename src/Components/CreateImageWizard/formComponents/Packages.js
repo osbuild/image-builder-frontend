@@ -26,7 +26,8 @@ const Packages = ({ defaultArch, ...props }) => {
     const { change, getState } = useFormApi();
     const { input } = useFieldApi(props);
     const packagesSearchName = useRef();
-    const [ packagesAvailable, setPackagesAvailable ] = useState();
+    const [ packagesAvailable, setPackagesAvailable ] = useState([]);
+    const [ packagesAvailableFound, setPackagesAvailableFound ] = useState(true);
     const [ packagesChosen, setPackagesChosen ] = useState([]);
     const [ filterChosen, setFilterChosen ] = useState('');
     const [ focus, setFocus ] = useState('');
@@ -74,7 +75,7 @@ const Packages = ({ defaultArch, ...props }) => {
     });
 
     const sortPackages = useCallback((packageList) => {
-        const sortResults = packageList ? packageList.sort(searchResultsComparator(packagesSearchName.current)) : [];
+        const sortResults = packageList.sort(searchResultsComparator(packagesSearchName.current));
         setPackagesAvailable(sortResults);
     });
 
@@ -85,7 +86,12 @@ const Packages = ({ defaultArch, ...props }) => {
             getState()?.values?.architecture || defaultArch,
             packagesSearchName.current
         );
-        sortPackages(data);
+        if (data) {
+            setPackagesAvailableFound(true);
+            sortPackages(data);
+        } else {
+            setPackagesAvailableFound(false);
+        }
     };
 
     // filter displayed selected packages
@@ -202,11 +208,12 @@ const Packages = ({ defaultArch, ...props }) => {
                     </Button>
                 ] }>
                 <DualListSelectorList data-testid="available-pkgs-list">
-                    {packagesAvailable === undefined || packagesAvailable.length === 0 ? (
+                    {!packagesAvailable.length ? (
                         <p className="pf-u-text-align-center pf-u-mt-md">
-                            {!packagesAvailable
-                                ? <>Search above to add additional<br />packages to your image</>
-                                : 'No packages found'}
+                            {!packagesAvailableFound
+                                ? 'No packages found'
+                                : <>Search above to add additional<br />packages to your image</>
+                            }
                         </p>
                     ) : (packagesAvailable.map((pack, index) => {
                         return !pack.isHidden ? (
@@ -226,14 +233,14 @@ const Packages = ({ defaultArch, ...props }) => {
             <DualListSelectorControlsWrapper
                 aria-label="Selector controls">
                 <DualListSelectorControl
-                    isDisabled={ !(packagesAvailable || []).some(option => option.selected) }
+                    isDisabled={ !packagesAvailable.some(option => option.selected) }
                     onClick={ () => moveSelected(true) }
                     aria-label="Add selected"
                     tooltipContent="Add selected">
                     <AngleRightIcon />
                 </DualListSelectorControl>
                 <DualListSelectorControl
-                    isDisabled={ (packagesAvailable || []).length === 0 }
+                    isDisabled={ !packagesAvailable.length }
                     onClick={ () => moveAll(true) }
                     aria-label="Add all"
                     tooltipContent="Add all">
