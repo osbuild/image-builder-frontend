@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Router } from './Router';
 import '@patternfly/patternfly/patternfly-addons.css';
@@ -8,11 +8,7 @@ import { getRegistry } from '@redhat-cloud-services/frontend-components-utilitie
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import api from './api.js';
-import PermissionDenied from './Components/LandingPage/PermissionDenied';
-
 const App = (props) => {
-    const [ permission, setPermission ] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -20,13 +16,6 @@ const App = (props) => {
         registry.register({ notifications: notificationsReducer });
         insights.chrome.init();
         insights.chrome.identifyApp('image-builder');
-
-        api.getVersion().then(() => {
-            setPermission(true);
-        }).catch(() => {
-            setPermission(false);
-        });
-
         const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
             navigate(`/${event.navId}`)
         );
@@ -38,7 +27,7 @@ const App = (props) => {
     return (
         <React.Fragment>
             <NotificationsPortal />
-            { permission ? <Router childProps={ props } /> : <PermissionDenied /> }
+            <Router childProps={ props } />
         </React.Fragment>
     );
 };
