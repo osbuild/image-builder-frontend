@@ -80,6 +80,14 @@ const Packages = ({ defaultArch, ...props }) => {
         setPackagesAvailable(sortResults);
     });
 
+    // filter the packages by name
+    const filterPackagesAvailable = useCallback((packageList) => {
+        return packageList.filter((availablePackage) => {
+            // returns true if no packages in the available or chosen list have the same name
+            return !packagesChosen.some((chosenPackage) => availablePackage.name === chosenPackage.name);
+        });
+    });
+
     // call api to list available packages
     const handlePackagesAvailableSearch = async () => {
         const { data } = await api.getPackages(
@@ -88,8 +96,9 @@ const Packages = ({ defaultArch, ...props }) => {
             packagesSearchName.current
         );
         if (data) {
+            const packagesAvailableFiltered = filterPackagesAvailable(data);
+            sortPackages(packagesAvailableFiltered);
             setPackagesAvailableFound(true);
-            sortPackages(data);
         } else {
             setPackagesAvailableFound(false);
         }
