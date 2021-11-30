@@ -611,6 +611,34 @@ describe('Step Packages', () => {
         // We need to clear this input in order to not have sideeffects on other tests
         await searchForChosenPackages(searchboxChosen, '');
     });
+
+    test('should filter chosen packages from available list', async () => {
+        const searchboxAvailable = screen.getAllByRole('textbox')[0];
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        searchboxAvailable.click();
+        await searchForAvailablePackages(searchboxAvailable, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        const availablePackages = screen.getByTestId('available-pkgs-list');
+        expect(availablePackages.children.length).toEqual(3);
+
+        screen.getByRole('option', { name: /testPkg test package summary/ }).click();
+        screen.getByRole('button', { name: /Add selected/ }).click();
+
+        const chosenPackages = screen.getByTestId('chosen-pkgs-list');
+        expect(availablePackages.children.length).toEqual(2);
+        expect(chosenPackages.children.length).toEqual(1);
+
+        searchboxAvailable.click();
+        await searchForAvailablePackages(searchboxAvailable, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(2);
+        expect(availablePackages.children.length).toEqual(2);
+        expect(chosenPackages.children.length).toEqual(1);
+    });
 });
 
 describe('Step Review', () => {
