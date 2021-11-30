@@ -23,7 +23,7 @@ function verifyButtons() {
 function verifyCancelButton(cancel, history) {
     cancel.click();
 
-    expect(history.location.pathname).toBe('/landing');
+    expect(history.location.pathname).toBe('/');
 }
 
 // packages
@@ -860,7 +860,7 @@ describe('Click through all steps', () => {
         await expect(composeImage).toHaveBeenCalledTimes(3);
 
         // returns back to the landing page
-        await waitFor(() => expect(history.location.pathname).toBe('/landing'));
+        await waitFor(() => expect(history.location.pathname).toBe('/'));
         expect(store.getStore().getState().composes.allIds).toEqual(ids);
     });
 

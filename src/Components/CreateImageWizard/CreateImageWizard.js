@@ -117,7 +117,7 @@ const CreateImageWizard = () => {
         })();
     }, []);
     return user ? <ImageCreator
-        onClose={ () => navigate('/landing') }
+        onClose={ () => navigate('/') }
         onSubmit={ ({ values, setIsSaving }) => {
             setIsSaving(() => true);
             const requests = onSave(values);
@@ -129,7 +129,7 @@ const CreateImageWizard = () => {
                 }, true));
             })))
                 .then(() => {
-                    navigate('/landing');
+                    navigate('/');
                     dispatch(addNotification({
                         variant: 'success',
                         title: 'Your image is being created',
