@@ -18,6 +18,11 @@ export default (user) => ({
     nextStep: 'packages',
     fields: [
         {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'register-explanation',
+            label: 'Register your system with subscription manager (RHSM) and insights when the image first boots.'
+        },
+        {
             component: componentTypes.RADIO,
             label: 'Register the system',
             name: 'register-system',
