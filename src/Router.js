@@ -1,5 +1,5 @@
 import React, { lazy } from 'react';
-import { Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard/CreateImageWizard'));
@@ -7,9 +7,8 @@ const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard/Crea
 export const Router = () => {
     return (
         <Routes>
-            <Route path='/landing/*' element={ <LandingPage /> } />
             <Route path='/imagewizard/*' element={ <CreateImageWizard /> } />
-            <Route path='/' element={ <Navigate replace to='/landing' /> } />
+            <Route path='*' element={ <LandingPage /> } />
         </Routes>
     );
 };
