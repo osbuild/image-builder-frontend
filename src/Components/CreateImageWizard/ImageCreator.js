@@ -9,6 +9,7 @@ import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import AzureAuthButton from './formComponents/AzureAuthButton';
+import OrganizationID from './formComponents/OrganizationID';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
 
 const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch, className, ...props }) => {
@@ -29,6 +30,7 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaul
             },
             'radio-popover': RadioWithPopover,
             'azure-auth-button': AzureAuthButton,
+            'organization-id': OrganizationID,
             ...customComponentMapper
         } }
         onCancel={ onClose }

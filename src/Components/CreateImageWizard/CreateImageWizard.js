@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import ImageCreator from './ImageCreator';
 import { useNavigate } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import { Button, Spinner } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { review, awsTarget, registration, googleCloudTarger, msAzureTarget, packages, imageOutput } from './steps';
 import './CreateImageWizard.scss';
@@ -109,14 +109,7 @@ const onSave = (values) => {
 const CreateImageWizard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [ user, setUser ] = useState();
-    useEffect(() => {
-        (async () => {
-            const userData = await insights?.chrome?.auth?.getUser() || {};
-            setUser(() => userData);
-        })();
-    }, []);
-    return user ? <ImageCreator
+    return <ImageCreator
         onClose={ () => navigate('/') }
         onSubmit={ ({ values, setIsSaving }) => {
             setIsSaving(() => true);
@@ -181,13 +174,13 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                         awsTarget,
                         googleCloudTarger,
                         msAzureTarget,
-                        registration(user),
+                        registration,
                         packages,
                         review,
                     ]
                 }
             ]
-        } } /> : <Spinner />;
+        } } />;
 };
 
 export default CreateImageWizard;

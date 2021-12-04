@@ -336,9 +336,7 @@ describe('Step Registration', () => {
     beforeEach(async() => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -372,16 +370,17 @@ describe('Step Registration', () => {
         const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
         userEvent.click(registrationRadio);
 
-        const organizationId = screen.getByLabelText('Organization ID');
-        expect(organizationId).toHaveValue('5');
-        expect(organizationId).toBeDisabled();
-
-        // can't getByLabelText b/c the label contains an extra <span>
-        // with a `*` to denote required
-        const activationKey = screen.getByTestId('subscription-activation');
-        expect(activationKey).toHaveValue('');
-        expect(activationKey).toBeEnabled();
-        // expect(activationKey).toBeRequired(); DDF does not support required fields
+        await waitFor(() => {
+            const organizationId = screen.getByLabelText('Organization ID');
+            expect(organizationId).toHaveValue('5');
+            expect(organizationId).toBeDisabled();
+            // can't getByLabelText b/c the label contains an extra <span>
+            // with a `*` to denote required
+            const activationKey = screen.getByTestId('subscription-activation');
+            expect(activationKey).toHaveValue('');
+            expect(activationKey).toBeEnabled();
+            // expect(activationKey).toBeRequired(); DDF does not support required fields
+        });
 
         userEvent.type(screen.getByTestId('subscription-activation'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
@@ -401,9 +400,6 @@ describe('Step Registration', () => {
         ]);
 
         // then click the first radio button which should remove any input fields
-        screen
-            .getByTestId('register-later-radio-button')
-            .click();
         const registerLaterRadio = screen.getByTestId('register-later-radio-button');
         userEvent.click(registerLaterRadio);
 
@@ -412,7 +408,7 @@ describe('Step Registration', () => {
         const sidebar = screen.getByRole('navigation');
         const anchor = getByText(sidebar, 'Review');
         anchor.click();
-        await screen.findByText('Register the system later');
+        screen.getByText('Register the system later');
     });
 });
 
@@ -708,13 +704,9 @@ describe('Click through all steps', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        let reduxStore;
-        await act(async () => {
-            const rendered = renderWithReduxRouter(<CreateImageWizard />);
-            history = rendered.history;
-            reduxStore = rendered.reduxStore;
-        });
-        store = reduxStore;
+        const rendered = renderWithReduxRouter(<CreateImageWizard />);
+        history = rendered.history;
+        store = rendered.reduxStore;
     });
 
     test('with valid values', async () => {
