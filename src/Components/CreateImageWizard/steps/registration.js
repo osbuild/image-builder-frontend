@@ -12,7 +12,7 @@ export const registerValues = {
     }
 };
 
-export default (user) => ({
+export default {
     title: 'Registration',
     name: 'registration',
     nextStep: 'packages',
@@ -34,13 +34,9 @@ export default (user) => ({
             }))
         },
         {
-            component: componentTypes.TEXT_FIELD,
+            component: 'organization-id',
             name: 'subscription-organization',
-            type: 'text',
             'data-testid': 'organization-id',
-            label: 'Organization ID',
-            initialValue: Number(user?.identity?.internal?.org_id),
-            isDisabled: true,
             condition: {
                 or: [
                     { when: 'register-system', is: 'subscribe-now-radio' },
@@ -67,4 +63,4 @@ export default (user) => ({
             ],
         }
     ]
-});
+};
