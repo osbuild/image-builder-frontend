@@ -76,6 +76,9 @@ const searchForChosenPackages = async (searchbox, searchTerm) => {
 
 // mock the insights dependency
 beforeAll(() => {
+    // scrollTo is not defined in jsdom
+    window.HTMLElement.prototype.scrollTo = function() {};
+
     global.insights = {
         chrome: {
             auth: {
@@ -105,8 +108,6 @@ afterAll(() => {
 
 describe('Create Image Wizard', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         renderWithReduxRouter(<CreateImageWizard />);
     });
 
@@ -122,8 +123,6 @@ describe('Create Image Wizard', () => {
 
 describe('Step Image output', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         const imageOutputLink = screen.getByRole('button', { name: 'Image output' });
@@ -173,8 +172,6 @@ describe('Step Image output', () => {
 
 describe('Step Upload to AWS', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -214,8 +211,6 @@ describe('Step Upload to AWS', () => {
 
 describe('Step Upload to Google', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -265,8 +260,6 @@ describe('Step Upload to Google', () => {
 
 describe('Step Upload to Azure', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -319,8 +312,6 @@ describe('Step Upload to Azure', () => {
 
 describe('Step Registration', () => {
     beforeEach(async() => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -394,8 +385,6 @@ describe('Step Registration', () => {
 
 describe('Step Packages', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -629,8 +618,6 @@ describe('Step Packages', () => {
 
 describe('Step Review', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -687,8 +674,6 @@ describe('Step Review', () => {
 
 describe('Click through all steps', () => {
     beforeEach(async () => {
-        window.HTMLElement.prototype.scrollTo = function() {};
-
         const view = renderWithReduxRouter(<CreateImageWizard />);
         history = view.history;
         store = view.reduxStore;
