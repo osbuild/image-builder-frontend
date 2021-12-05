@@ -355,17 +355,13 @@ describe('Step Registration', () => {
         const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
         userEvent.click(registrationRadio);
 
-        await waitFor(() => {
-            const organizationId = screen.getByLabelText('Organization ID');
-            expect(organizationId).toHaveValue('5');
-            expect(organizationId).toBeDisabled();
-            // can't getByLabelText b/c the label contains an extra <span>
-            // with a `*` to denote required
-            const activationKey = screen.getByTestId('subscription-activation');
-            expect(activationKey).toHaveValue('');
-            expect(activationKey).toBeEnabled();
-            // expect(activationKey).toBeRequired(); DDF does not support required fields
-        });
+        const organizationId = await screen.findByLabelText('Organization ID');
+        expect(organizationId).toHaveValue('5');
+        expect(organizationId).toBeDisabled();
+
+        const activationKey = await screen.findByTestId('subscription-activation');
+        expect(activationKey).toHaveValue('');
+        expect(activationKey).toBeEnabled();
 
         userEvent.type(screen.getByTestId('subscription-activation'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
