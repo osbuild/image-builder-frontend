@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
-import { screen, getByText, waitFor, waitForElementToBeRemoved, within, act } from '@testing-library/react';
+import { screen, waitFor, waitForElementToBeRemoved, within, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
@@ -114,12 +114,9 @@ describe('Create Image Wizard', () => {
         // check heading
         screen.getByRole('heading', { name: /Create image/ });
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-
-        getByText(sidebar, 'Image output');
-        getByText(sidebar, 'Registration');
-        getByText(sidebar, 'Review');
+        screen.getByRole('button', { name: 'Image output' });
+        screen.getByRole('button', { name: 'Registration' });
+        screen.getByRole('button', { name: 'Review' });
     });
 });
 
@@ -129,16 +126,14 @@ describe('Step Image output', () => {
 
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
-        // left sidebar navigation
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Image output');
+        const imageOutputLink = screen.getByRole('button', { name: 'Image output' });
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
         awsTile.click();
 
         // load from sidebar
-        anchor.click();
+        imageOutputLink.click();
     });
 
     test('clicking Next loads Upload to AWS', () => {
@@ -395,9 +390,8 @@ describe('Step Registration', () => {
 
         await p1;
 
-        const sidebar = screen.getByRole('navigation');
-        const anchor = getByText(sidebar, 'Review');
-        anchor.click();
+        const reviewLink = screen.getByRole('button', { name: 'Review' });
+        reviewLink.click();
         screen.getByText('Register the system later');
     });
 });
