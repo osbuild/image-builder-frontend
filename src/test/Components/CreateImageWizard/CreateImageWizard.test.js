@@ -459,9 +459,10 @@ describe('Step Packages', () => {
         await searchForAvailablePackages(searchbox, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
 
-        const availablePackages = screen.getByTestId('available-pkgs-list');
-        expect(availablePackages.children.length).toEqual(3);
-        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackagesItems;
         expect(firstItem).toHaveTextContent('testsummary for test package');
         expect(secondItem).toHaveTextContent('testPkgtest package summary');
         expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
@@ -485,9 +486,10 @@ describe('Step Packages', () => {
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Remove selected/ }).click();
 
-        const availablePackages = screen.getByTestId('available-pkgs-list');
-        expect(availablePackages.children.length).toEqual(3);
-        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackagesItems;
         expect(firstItem).toHaveTextContent('testsummary for test package');
         expect(secondItem).toHaveTextContent('testPkgtest package summary');
         expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
@@ -508,9 +510,10 @@ describe('Step Packages', () => {
         screen.getByRole('button', { name: /Add all/ }).click();
         screen.getByRole('button', { name: /Remove all/ }).click();
 
-        const availablePackages = screen.getByTestId('available-pkgs-list');
-        expect(availablePackages.children.length).toEqual(3);
-        const [ firstItem, secondItem, thirdItem ] = availablePackages.children;
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+        const [ firstItem, secondItem, thirdItem ] = availablePackagesItems;
         expect(firstItem).toHaveTextContent('testsummary for test package');
         expect(secondItem).toHaveTextContent('testPkgtest package summary');
         expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
@@ -589,6 +592,8 @@ describe('Step Packages', () => {
 
     test('should filter chosen packages from available list', async () => {
         const searchboxAvailable = screen.getAllByRole('textbox')[0];
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
 
         const getPackages = jest
             .spyOn(api, 'getPackages')
@@ -598,21 +603,31 @@ describe('Step Packages', () => {
         await searchForAvailablePackages(searchboxAvailable, 'test');
         expect(getPackages).toHaveBeenCalledTimes(1);
 
-        const availablePackages = screen.getByTestId('available-pkgs-list');
-        expect(availablePackages.children.length).toEqual(3);
+        let availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
 
         screen.getByRole('option', { name: /testPkg test package summary/ }).click();
         screen.getByRole('button', { name: /Add selected/ }).click();
 
-        const chosenPackages = screen.getByTestId('chosen-pkgs-list');
-        expect(availablePackages.children.length).toEqual(2);
-        expect(chosenPackages.children.length).toEqual(1);
+        availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(2);
+
+        let chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+        // Knowing if it is in document isn't enough. We want a specific length of 1 so ignore rule.
+        // eslint-disable-next-line jest-dom/prefer-in-document
+        expect(chosenPackagesItems).toHaveLength(1);
 
         searchboxAvailable.click();
         await searchForAvailablePackages(searchboxAvailable, 'test');
         expect(getPackages).toHaveBeenCalledTimes(2);
-        expect(availablePackages.children.length).toEqual(2);
-        expect(chosenPackages.children.length).toEqual(1);
+
+        availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(2);
+        // Knowing if it is in document isn't enough. We want a specific length of 1 so ignore rule.
+        // eslint-disable-next-line jest-dom/prefer-in-document
+        expect(chosenPackagesItems).toHaveLength(1);
+        within(chosenPackagesList).getByRole('option', { name: /testPkg test package summary/ });
     });
 });
 
