@@ -107,9 +107,7 @@ describe('Create Image Wizard', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            renderWithReduxRouter(<CreateImageWizard />);
-        });
+        renderWithReduxRouter(<CreateImageWizard />);
     });
 
     test('renders component', () => {
@@ -129,9 +127,7 @@ describe('Step Image output', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // left sidebar navigation
         const sidebar = screen.getByRole('navigation');
@@ -184,9 +180,7 @@ describe('Step Upload to AWS', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -227,9 +221,7 @@ describe('Step Upload to Google', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-google');
@@ -280,9 +272,7 @@ describe('Step Upload to Azure', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-azure');
@@ -416,9 +406,7 @@ describe('Step Packages', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -429,10 +417,7 @@ describe('Step Packages', () => {
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
 
-        // registration
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
-        userEvent.click(registrationRadio);
-        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        // registration next
         screen.getByRole('button', { name: /Next/ }).click();
     });
 
@@ -641,9 +626,7 @@ describe('Step Review', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        await act(async () => {
-            history = renderWithReduxRouter(<CreateImageWizard />).history;
-        });
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-aws');
@@ -654,10 +637,7 @@ describe('Step Review', () => {
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
 
-        // registration
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
-        userEvent.click(registrationRadio);
-        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        // skip registration
         screen.getByRole('button', { name: /Next/ }).click();
 
         //Skip packages
@@ -692,7 +672,7 @@ describe('Step Review', () => {
             name: 'Amazon Web Services'
         });
         userEvent.click(buttonRegistration);
-        screen.getByText('Register the system on first boot');
+        screen.getByText('Register the system later');
         userEvent.click(buttonSystem);
         screen.getByRole('heading', {
             name: 'Packages'
