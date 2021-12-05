@@ -689,9 +689,9 @@ describe('Click through all steps', () => {
     beforeEach(async () => {
         window.HTMLElement.prototype.scrollTo = function() {};
 
-        const rendered = renderWithReduxRouter(<CreateImageWizard />);
-        history = rendered.history;
-        store = rendered.reduxStore;
+        const view = renderWithReduxRouter(<CreateImageWizard />);
+        history = view.history;
+        store = view.reduxStore;
     });
 
     test('with valid values', async () => {
