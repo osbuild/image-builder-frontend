@@ -268,11 +268,8 @@ const store = {
 };
 
 describe('Images Table', () => {
-    beforeEach(() => {
-        renderWithReduxRouter(<ImagesTable />, store);
-    });
-
     test('render ImagesTable', () => {
+        renderWithReduxRouter(<ImagesTable />, store);
         // make sure the empty-state message isn't present
         const emptyState = screen.queryByTestId('empty-state');
         expect(emptyState).not.toBeInTheDocument();
@@ -322,10 +319,8 @@ describe('Images Table', () => {
 });
 
 describe('Images Table Toolbar', () => {
-    beforeEach(() => {
-        renderWithReduxRouter(<ImagesTable />, store);
-    });
     test('render toolbar', () => {
+        renderWithReduxRouter(<ImagesTable />, store);
         // check create image button
         screen.getByTestId('create-image-action');
 

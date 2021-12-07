@@ -107,11 +107,8 @@ afterAll(() => {
 });
 
 describe('Create Image Wizard', () => {
-    beforeEach(async () => {
-        renderWithReduxRouter(<CreateImageWizard />);
-    });
-
     test('renders component', () => {
+        renderWithReduxRouter(<CreateImageWizard />);
         // check heading
         screen.getByRole('heading', { name: /Create image/ });
 
@@ -122,9 +119,8 @@ describe('Create Image Wizard', () => {
 });
 
 describe('Step Image output', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
-
         const imageOutputLink = screen.getByRole('button', { name: 'Image output' });
 
         // select aws as upload destination
@@ -133,9 +129,11 @@ describe('Step Image output', () => {
 
         // load from sidebar
         imageOutputLink.click();
-    });
+    };
 
     test('clicking Next loads Upload to AWS', () => {
+        setUp();
+
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -143,6 +141,8 @@ describe('Step Image output', () => {
     });
 
     test('Back button is disabled', () => {
+        setUp();
+
         const [ , back, ] = verifyButtons();
 
         // note: there is no `disabled` attribute and
@@ -151,6 +151,8 @@ describe('Step Image output', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
@@ -163,6 +165,8 @@ describe('Step Image output', () => {
     // });
 
     test('target environment is required', () => {
+        setUp();
+
         const destination = screen.getByTestId('target-select');
         const required = within(destination).getByText('*');
         expect(destination).toBeEnabled();
@@ -171,7 +175,7 @@ describe('Step Image output', () => {
 });
 
 describe('Step Upload to AWS', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -179,9 +183,11 @@ describe('Step Upload to AWS', () => {
         awsTile.click();
 
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('clicking Next loads Registration', () => {
+        setUp();
+
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         const [ next, , ] = verifyButtons();
         next.click();
@@ -190,6 +196,8 @@ describe('Step Upload to AWS', () => {
     });
 
     test('clicking Back loads Release', () => {
+        setUp();
+
         const [ , back, ] = verifyButtons();
         back.click();
 
@@ -197,11 +205,15 @@ describe('Step Upload to AWS', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('the aws account id fieldis shown and required', () => {
+        setUp();
+
         const accessKeyId = screen.getByTestId('aws-account-id');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
@@ -210,7 +222,7 @@ describe('Step Upload to AWS', () => {
 });
 
 describe('Step Upload to Google', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -218,9 +230,11 @@ describe('Step Upload to Google', () => {
         awsTile.click();
 
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('clicking Next loads Registration', () => {
+        setUp();
+
         userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
         const [ next, , ] = verifyButtons();
         next.click();
@@ -229,6 +243,8 @@ describe('Step Upload to Google', () => {
     });
 
     test('clicking Back loads Release', () => {
+        setUp();
+
         const [ , back, ] = verifyButtons();
         back.click();
 
@@ -236,11 +252,15 @@ describe('Step Upload to Google', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('the google account id field is shown and required', () => {
+        setUp();
+
         const accessKeyId = screen.getByTestId('input-google-email');
         expect(accessKeyId).toHaveValue('');
         expect(accessKeyId).toBeEnabled();
@@ -248,6 +268,8 @@ describe('Step Upload to Google', () => {
     });
 
     test('the google email field must be a valid email', () => {
+        setUp();
+
         const [ next, , ] = verifyButtons();
         userEvent.type(screen.getByTestId('input-google-email'), 'a');
         expect(next).toHaveClass('pf-m-disabled');
@@ -259,16 +281,17 @@ describe('Step Upload to Google', () => {
 });
 
 describe('Step Upload to Azure', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
         const awsTile = screen.getByTestId('upload-azure');
         awsTile.click();
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('clicking Next loads Registration', () => {
+        setUp();
         // Randomly generated GUID
         userEvent.type(screen.getByTestId('azure-tenant-id'), 'b8f86d22-4371-46ce-95e7-65c415f3b1e2');
         userEvent.type(screen.getByTestId('azure-subscription-id'), '60631143-a7dc-4d15-988b-ba83f3c99711');
@@ -281,6 +304,8 @@ describe('Step Upload to Azure', () => {
     });
 
     test('clicking Back loads Release', () => {
+        setUp();
+
         const [ , back, ] = verifyButtons();
         back.click();
 
@@ -288,11 +313,15 @@ describe('Step Upload to Azure', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('the azure upload fields are shown and required', () => {
+        setUp();
+
         const tenantId = screen.getByTestId('azure-tenant-id');
         expect(tenantId).toHaveValue('');
         expect(tenantId).toBeEnabled();
@@ -311,7 +340,7 @@ describe('Step Upload to Azure', () => {
 });
 
 describe('Step Registration', () => {
-    beforeEach(async() => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -321,9 +350,11 @@ describe('Step Registration', () => {
         screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('clicking Next loads Packages', () => {
+        setUp();
+
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -331,6 +362,8 @@ describe('Step Registration', () => {
     });
 
     test('clicking Back loads Upload to AWS', () => {
+        setUp();
+
         const [ , back, ] = verifyButtons();
         back.click();
 
@@ -338,11 +371,15 @@ describe('Step Registration', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('should allow choosing activation keys', async () => {
+        setUp();
+
         const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
         userEvent.click(registrationRadio);
 
@@ -362,6 +399,8 @@ describe('Step Registration', () => {
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
+        setUp();
+
         // first check the other radio button which causes extra widgets to be shown
         const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
         userEvent.click(registrationRadio);
@@ -384,7 +423,7 @@ describe('Step Registration', () => {
 });
 
 describe('Step Packages', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -398,9 +437,11 @@ describe('Step Packages', () => {
 
         // registration next
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('clicking Next loads Review', () => {
+        setUp();
+
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -408,6 +449,8 @@ describe('Step Packages', () => {
     });
 
     test('clicking Back loads Register', () => {
+        setUp();
+
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
@@ -415,11 +458,15 @@ describe('Step Packages', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('should display search bar and button', () => {
+        setUp();
+
         userEvent.type(screen.getByTestId('search-available-pkgs-input'), 'test');
 
         screen.getByRole('button', {
@@ -428,11 +475,15 @@ describe('Step Packages', () => {
     });
 
     test('should display default state', () => {
+        setUp();
+
         screen.getByText('Search above to add additionalpackages to your image');
         screen.getByText('No packages added');
     });
 
     test('search results should be sorted with most relevant results first', async () => {
+        setUp();
+
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
         searchbox.click();
@@ -454,6 +505,8 @@ describe('Step Packages', () => {
     });
 
     test('search results should be sorted after selecting them and then deselecting them', async () => {
+        setUp();
+
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
         searchbox.click();
@@ -481,6 +534,8 @@ describe('Step Packages', () => {
     });
 
     test('search results should be sorted after adding and then removing all packages', async () => {
+        setUp();
+
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
         searchbox.click();
@@ -505,6 +560,8 @@ describe('Step Packages', () => {
     });
 
     test('removing a single package updates the state correctly', async () => {
+        setUp();
+
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
         searchbox.click();
         const getPackages = jest
@@ -541,6 +598,8 @@ describe('Step Packages', () => {
     });
 
     test('should display empty available state on failed search', async () => {
+        setUp();
+
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
         searchbox.click();
@@ -555,6 +614,8 @@ describe('Step Packages', () => {
     });
 
     test('should display empty chosen state on failed search', async () => {
+        setUp();
+
         const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
         const searchboxChosen = screen.getAllByRole('textbox')[1];
 
@@ -576,6 +637,8 @@ describe('Step Packages', () => {
     });
 
     test('should filter chosen packages from available list', async () => {
+        setUp();
+
         const searchboxAvailable = screen.getAllByRole('textbox')[0];
         const availablePackagesList = screen.getByTestId('available-pkgs-list');
         const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
@@ -617,7 +680,7 @@ describe('Step Packages', () => {
 });
 
 describe('Step Review', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -634,15 +697,19 @@ describe('Step Review', () => {
 
         //Skip packages
         screen.getByRole('button', { name: /Next/ }).click();
-    });
+    };
 
     test('has 3 buttons', () => {
+        setUp();
+
         screen.getByRole('button', { name: /Create/ });
         screen.getByRole('button', { name: /Back/ });
         screen.getByRole('button', { name: /Cancel/ });
     });
 
     test('clicking Back loads Packages', () => {
+        setUp();
+
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
@@ -650,11 +717,15 @@ describe('Step Review', () => {
     });
 
     test('clicking Cancel loads landing page', () => {
+        setUp();
+
         const cancel = screen.getByRole('button', { name: /Cancel/ });
         verifyCancelButton(cancel, history);
     });
 
     test('has three tabs', async () => {
+        setUp();
+
         const buttonTarget = screen.getByTestId('tab-target');
         const buttonRegistration = screen.getByTestId('tab-registration');
         const buttonSystem = screen.getByTestId('tab-system');
@@ -673,13 +744,15 @@ describe('Step Review', () => {
 });
 
 describe('Click through all steps', () => {
-    beforeEach(async () => {
+    const setUp = () => {
         const view = renderWithReduxRouter(<CreateImageWizard />);
         history = view.history;
         store = view.reduxStore;
-    });
+    };
 
     test('with valid values', async () => {
+        setUp();
+
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select image output
@@ -827,6 +900,8 @@ describe('Click through all steps', () => {
     });
 
     test('with missing values', async () => {
+        setUp();
+
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select release
@@ -866,6 +941,7 @@ describe('Click through all steps', () => {
     });
 
     test('with invalid values', async () => {
+        setUp();
 
         // select release
         // userEvent.selectOptions(screen.getByTestId('release-select'), [ RHEL_8 ]);
