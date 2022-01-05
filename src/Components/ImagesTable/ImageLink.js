@@ -72,7 +72,8 @@ const ImageLink = (props) => {
                     <Button
                         component="a"
                         target="_blank"
-                        variant="link">
+                        variant="link"
+                        isInline>
                             Image details
                     </Button>
                 </Popover>
