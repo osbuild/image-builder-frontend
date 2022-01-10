@@ -98,6 +98,12 @@ export default {
                 {
                     type: validatorTypes.REQUIRED,
                 },
+                {
+                    type: validatorTypes.PATTERN,
+                    pattern: /^[-\w._()]+[-\w_()]$/,
+                    message: 'Resource group names only allow alphanumeric characters, ' +
+                        'periods, underscores, hyphens, and parenthesis and cannot end in a period',
+                },
             ],
         }
         // TODO check oauth2 thing too here?
