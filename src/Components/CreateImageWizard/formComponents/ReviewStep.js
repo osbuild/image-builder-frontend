@@ -96,6 +96,33 @@ const ReviewStep = () => {
                                 </TextContent>
                             </ListItem>
                         }
+                        {getState()?.values?.['target-environment']?.vsphere &&
+                            <ListItem>
+                                <TextContent>
+                                    <Text component={ TextVariants.h3 }>
+                                        VMWare
+                                    </Text>
+                                </TextContent>
+                            </ListItem>
+                        }
+                        {getState()?.values?.['target-environment']?.['guest-image'] &&
+                            <ListItem>
+                                <TextContent>
+                                    <Text component={ TextVariants.h3 }>
+                                        Virtualization - Guest image
+                                    </Text>
+                                </TextContent>
+                            </ListItem>
+                        }
+                        {getState()?.values?.['target-environment']?.['image-installer'] &&
+                            <ListItem>
+                                <TextContent>
+                                    <Text component={ TextVariants.h3 }>
+                                        Bare metal - Installer
+                                    </Text>
+                                </TextContent>
+                            </ListItem>
+                        }
                     </List>
                 </Tab>
                 <Tab eventKey={ 1 } title={ <TabTitleText>Registration</TabTitleText> } data-testid='tab-registration'>

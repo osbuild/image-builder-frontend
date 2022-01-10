@@ -103,6 +103,57 @@ const onSave = (values) => {
         requests.push(request);
     }
 
+    if (values['target-environment']?.vsphere) {
+        let request = {
+            distribution: values.release,
+            image_requests: [
+                {
+                    architecture: 'x86_64',
+                    image_type: 'vsphere',
+                    upload_request: {
+                        type: 'aws.s3',
+                        options: {}
+                    }
+                }],
+            customizations,
+        };
+        requests.push(request);
+    }
+
+    if (values['target-environment']?.['guest-image']) {
+        let request = {
+            distribution: values.release,
+            image_requests: [
+                {
+                    architecture: 'x86_64',
+                    image_type: 'guest-image',
+                    upload_request: {
+                        type: 'aws.s3',
+                        options: {}
+                    }
+                }],
+            customizations,
+        };
+        requests.push(request);
+    }
+
+    if (values['target-environment']?.['image-installer']) {
+        let request = {
+            distribution: values.release,
+            image_requests: [
+                {
+                    architecture: 'x86_64',
+                    image_type: 'image-installer',
+                    upload_request: {
+                        type: 'aws.s3',
+                        options: {}
+                    }
+                }],
+            customizations,
+        };
+        requests.push(request);
+    }
+
     return requests;
 };
 

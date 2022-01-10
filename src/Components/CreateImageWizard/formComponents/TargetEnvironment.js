@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import { FormGroup, Tile } from '@patternfly/react-core';
+import { Checkbox, FormGroup, Text, TextVariants, Tile } from '@patternfly/react-core';
 import './TargetEnvironment.scss';
 
 const TargetEnvironment = ({ label, isRequired, ...props }) => {
     const { getState, change } = useFormApi();
     const { input } = useFieldApi({ label, isRequired, ...props });
-    const [ environemt, setEnvironment ] = useState({
+    const [ environment, setEnvironment ] = useState({
         aws: false,
         azure: false,
         google: false,
+        vsphere: false,
+        'guest-image': false,
+        'image-installer': false,
     });
 
     useEffect(() => {
@@ -20,65 +23,86 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
         }
     }, []);
 
-    return <FormGroup isRequired={ isRequired } label={ label } data-testid="target-select">
-        <div className="tiles">
-            <Tile
-                className="tile pf-u-mr-sm"
-                data-testid="upload-aws"
-                title="Amazon Web Services"
-                icon={ <img
-                    className='provider-icon'
-                    src={ '/apps/frontend-assets/partners-icons/aws.svg' } /> }
-                onClick={ () => setEnvironment((prevEnv) => {
-                    const newEnv = ({
-                        ...prevEnv,
-                        aws: !prevEnv.aws
-                    });
-                    change(input.name, newEnv);
-                    return newEnv;
-                }) }
-                isSelected={ environemt.aws }
-                isStacked
-                isDisplayLarge />
-            <Tile
-                className="tile pf-u-mr-sm"
-                data-testid="upload-google"
-                title="Google Cloud Platform"
-                icon={ <img
-                    className='provider-icon'
-                    src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
-                onClick={ () => setEnvironment((prevEnv) => {
-                    const newEnv = ({
-                        ...prevEnv,
-                        google: !prevEnv.google
-                    });
-                    change(input.name, newEnv);
-                    return newEnv;
-                }) }
-                isSelected={ environemt.google }
-                isStacked
-                isDisplayLarge />
-            <Tile
-                className="tile pf-u-mr-sm"
-                data-testid="upload-azure"
-                title="Microsoft Azure"
-                icon={ <img
-                    className='provider-icon'
-                    src={ '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' } /> }
-                onClick={ () => setEnvironment((prevEnv) => {
-                    const newEnv = ({
-                        ...prevEnv,
-                        azure: !prevEnv.azure
-                    });
-                    input.value = newEnv;
-                    change(input.name, newEnv);
-                    return newEnv;
-                }) }
-                isSelected={ environemt.azure }
-                isStacked
-                isDisplayLarge />
-        </div>
-    </FormGroup>;
+    const handleSetEnvironment = (env) => setEnvironment((prevEnv) => {
+        const newEnv = ({
+            ...prevEnv,
+            [env]: !prevEnv[env]
+        });
+        change(input.name, newEnv);
+        return newEnv;
+    });
+
+    return (
+        <>
+            <FormGroup isRequired={ isRequired } label={ label } data-testid="target-select">
+                <FormGroup label={ <Text component={ TextVariants.small }>Public cloud</Text> } data-testid="target-public">
+                    <div className="tiles">
+                        <Tile
+                            className="tile pf-u-mr-sm"
+                            data-testid="upload-aws"
+                            title="Amazon Web Services"
+                            icon={ <img
+                                className='provider-icon'
+                                src={ '/apps/frontend-assets/partners-icons/aws.svg' } /> }
+                            onClick={ () => handleSetEnvironment('aws') }
+                            isSelected={ environment.aws }
+                            isStacked
+                            isDisplayLarge />
+                        <Tile
+                            className="tile pf-u-mr-sm"
+                            data-testid="upload-google"
+                            title="Google Cloud Platform"
+                            icon={ <img
+                                className='provider-icon'
+                                src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
+                            onClick={ () => handleSetEnvironment('google') }
+                            isSelected={ environment.google }
+                            isStacked
+                            isDisplayLarge />
+                        <Tile
+                            className="tile pf-u-mr-sm"
+                            data-testid="upload-azure"
+                            title="Microsoft Azure"
+                            icon={ <img
+                                className='provider-icon'
+                                src={ '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' } /> }
+                            onClick={ () => handleSetEnvironment('azure') }
+                            isSelected={ environment.azure }
+                            isStacked
+                            isDisplayLarge />
+                    </div>
+                </FormGroup>
+                <FormGroup label={ <Text component={ TextVariants.small }>Private cloud</Text> } data-testid="target-private">
+                    <Checkbox
+                        label="VMWare"
+                        isChecked={ environment.vsphere }
+                        onChange={ () => handleSetEnvironment('vsphere') }
+                        aria-label="VMWare checkbox"
+                        id="checkbox-vmware"
+                        name="VMWare"
+                        data-testid="checkbox-vmware" />
+                </FormGroup>
+                <FormGroup label={ <Text component={ TextVariants.small }>Other</Text> } data-testid="target-other">
+                    <Checkbox
+                        label="Virtualization - Guest image"
+                        isChecked={ environment['guest-image'] }
+                        onChange={ () => handleSetEnvironment('guest-image') }
+                        aria-label="Virtualization guest image checkbox"
+                        id="checkbox-guest-image"
+                        name="Virtualization guest image"
+                        data-testid="checkbox-guest-image" />
+                    <Checkbox
+                        label="Bare metal - Installer"
+                        isChecked={ environment['image-installer'] }
+                        onChange={ () => handleSetEnvironment('image-installer') }
+                        aria-label="Bare metal installer checkbox"
+                        id="checkbox-image-installer"
+                        name="Bare metal installer"
+                        data-testid="checkbox-image-installer" />
+                </FormGroup>
+            </FormGroup>
+        </>
+    );
 };
 
 TargetEnvironment.propTypes = {

@@ -33,7 +33,7 @@ export default {
         {
             component: 'output',
             name: 'target-environment',
-            label: 'Select target environment',
+            label: 'Select target environments',
             isRequired: true,
             validate: [
                 {
