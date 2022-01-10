@@ -760,6 +760,9 @@ describe('Click through all steps', () => {
         screen.getByTestId('upload-aws').click();
         screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();
+        screen.getByTestId('checkbox-vmware').click();
+        screen.getByTestId('checkbox-guest-image').click();
+        screen.getByTestId('checkbox-image-installer').click();
 
         screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
@@ -797,6 +800,9 @@ describe('Click through all steps', () => {
             findByText('Review the information and click "Create image" to create the image using the following criteria.');
         await screen.findAllByText('Amazon Web Services');
         await screen.findAllByText('Google Cloud Platform');
+        await screen.findByText('VMWare');
+        await screen.findByText('Virtualization - Guest image');
+        await screen.findByText('Bare metal - Installer');
         await screen.findByText('Register the system on first boot');
 
         // mock the backend API
@@ -882,6 +888,75 @@ describe('Click through all steps', () => {
                         },
                     });
                     id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
+                } else if (body.image_requests[0].image_type === 'vsphere') {
+                    expect(body).toEqual({
+                        distribution: RHEL_8,
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'vsphere',
+                            upload_request: {
+                                type: 'aws.s3',
+                                options: {}
+                            },
+                        }],
+                        customizations: {
+                            packages: [ 'testPkg' ],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f59';
+                } else if (body.image_requests[0].image_type === 'guest-image') {
+                    expect(body).toEqual({
+                        distribution: RHEL_8,
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'guest-image',
+                            upload_request: {
+                                type: 'aws.s3',
+                                options: {}
+                            },
+                        }],
+                        customizations: {
+                            packages: [ 'testPkg' ],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
+                } else if (body.image_requests[0].image_type === 'image-installer') {
+                    expect(body).toEqual({
+                        distribution: RHEL_8,
+                        image_requests: [{
+                            architecture: 'x86_64',
+                            image_type: 'image-installer',
+                            upload_request: {
+                                type: 'aws.s3',
+                                options: {}
+                            },
+                        }],
+                        customizations: {
+                            packages: [ 'testPkg' ],
+                            subscription: {
+                                'activation-key': '1234567890',
+                                insights: true,
+                                organization: 5,
+                                'server-url': 'subscription.rhsm.redhat.com',
+                                'base-url': 'https://cdn.redhat.com/'
+                            },
+                        },
+                    });
+                    id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b';
                 }
 
                 ids.unshift(id);
@@ -892,7 +967,7 @@ describe('Click through all steps', () => {
         create.click();
 
         // API request sent to backend
-        await expect(composeImage).toHaveBeenCalledTimes(3);
+        await expect(composeImage).toHaveBeenCalledTimes(6);
 
         // returns back to the landing page
         await waitFor(() => expect(history.location.pathname).toBe('/'));
