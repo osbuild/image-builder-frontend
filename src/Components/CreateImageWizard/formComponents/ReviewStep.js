@@ -125,42 +125,43 @@ const ReviewStep = () => {
                         }
                     </List>
                 </Tab>
-                <Tab eventKey={ 1 } title={ <TabTitleText>Registration</TabTitleText> } data-testid='tab-registration'>
-                    {getState()?.values?.['register-system'] === 'register-later-radio-button' &&
-                        <TextContent>
-                            <TextList component={ TextListVariants.dl }>
-                                <TextListItem component={ TextListItemVariants.dt }>
-                                    Subscription
-                                </TextListItem>
-                                <TextListItem component={ TextListItemVariants.dd }>
-                                    Register the system later
-                                </TextListItem>
-                            </TextList>
-                        </TextContent>
-                    }
-                    {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
-                    getState()?.values?.release.includes('rhel') &&
-                        <TextContent>
-                            <TextList component={ TextListVariants.dl }>
-                                <TextListItem component={ TextListItemVariants.dt }>
-                                    Subscription
-                                </TextListItem>
-                                <TextListItem component={ TextListItemVariants.dd }>
-                                    {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
-                                        'Register the system on first boot' :
-                                        registerValues?.[getState()?.values?.['register-system']?.title]
-                                    }
-                                </TextListItem>
-                                <TextListItem component={ TextListItemVariants.dt }>
-                                    Activation key
-                                </TextListItem>
-                                <TextListItem component={ TextListItemVariants.dd }>
-                                    {getState()?.values?.['subscription-activation']}
-                                </TextListItem>
-                            </TextList>
-                        </TextContent>
-                    }
-                </Tab>
+                {getState()?.values?.release.includes('rhel') &&
+                    <Tab eventKey={ 1 } title={ <TabTitleText>Registration</TabTitleText> } data-testid='tab-registration'>
+                        {getState()?.values?.['register-system'] === 'register-later-radio-button' &&
+                            <TextContent>
+                                <TextList component={ TextListVariants.dl }>
+                                    <TextListItem component={ TextListItemVariants.dt }>
+                                        Subscription
+                                    </TextListItem>
+                                    <TextListItem component={ TextListItemVariants.dd }>
+                                        Register the system later
+                                    </TextListItem>
+                                </TextList>
+                            </TextContent>
+                        }
+                        {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
+                            <TextContent>
+                                <TextList component={ TextListVariants.dl }>
+                                    <TextListItem component={ TextListItemVariants.dt }>
+                                        Subscription
+                                    </TextListItem>
+                                    <TextListItem component={ TextListItemVariants.dd }>
+                                        {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
+                                            'Register the system on first boot' :
+                                            registerValues?.[getState()?.values?.['register-system']?.title]
+                                        }
+                                    </TextListItem>
+                                    <TextListItem component={ TextListItemVariants.dt }>
+                                        Activation key
+                                    </TextListItem>
+                                    <TextListItem component={ TextListItemVariants.dd }>
+                                        {getState()?.values?.['subscription-activation']}
+                                    </TextListItem>
+                                </TextList>
+                            </TextContent>
+                        }
+                    </Tab>
+                }
                 <Tab eventKey={ 2 } title={ <TabTitleText>System configuration</TabTitleText> } data-testid='tab-system'>
                     <TextContent>
                         <Text component={ TextVariants.h3 }>Packages</Text>

@@ -750,7 +750,7 @@ describe('Step Review', () => {
         verifyCancelButton(cancel, history);
     });
 
-    test('has three tabs', async () => {
+    test('has three tabs for rhel', async () => {
         setUp();
 
         const buttonTarget = screen.getByTestId('tab-target');
@@ -763,6 +763,23 @@ describe('Step Review', () => {
         });
         userEvent.click(buttonRegistration);
         screen.getByText('Register the system later');
+        userEvent.click(buttonSystem);
+        screen.getByRole('heading', {
+            name: 'Packages'
+        });
+    });
+
+    test('has two tabs for centos', async () => {
+        setUpCentOS();
+
+        const buttonTarget = screen.getByTestId('tab-target');
+        const buttonSystem = screen.getByTestId('tab-system');
+        expect(screen.queryByTestId('tab-registration')).not.toBeInTheDocument();
+
+        userEvent.click(buttonTarget);
+        screen.getByRole('heading', {
+            name: 'Amazon Web Services'
+        });
         userEvent.click(buttonSystem);
         screen.getByRole('heading', {
             name: 'Packages'
