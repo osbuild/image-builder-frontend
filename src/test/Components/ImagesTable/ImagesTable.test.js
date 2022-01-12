@@ -262,7 +262,88 @@ const store = {
                         type: 'azure'
                     }
                 },
-            }
+            },
+            'b7193673-8dcc-4a5f-ac30-e9f4940d8346': {
+                created_at: '2022-01-11 13:33:33.767002 +0000 UTC',
+                id: 'b7193673-8dcc-4a5f-ac30-e9f4940d8346',
+                request: {
+                    distribution: RHEL_8,
+                    image_requests: [
+                        {
+                            architecture: 'x86_64',
+                            image_type: 'vsphere',
+                            upload_request: {
+                                options: {},
+                                type: 'aws.s3'
+                            }
+                        }
+                    ]
+                },
+                image_status: {
+                    status: 'success',
+                    upload_status: {
+                        options: {
+                            url: 'https://s3.amazonaws.com/b7193673-8dcc-4a5f-ac30-e9f4940d8346-disk.vmdk'
+                        },
+                        status: 'success',
+                        type: 'aws.s3'
+                    }
+                }
+            },
+            '4873fd0f-1851-4b9f-b4fe-4639fce90794': {
+                created_at: '2022-01-11 13:33:33.767002 +0000 UTC',
+                id: '4873fd0f-1851-4b9f-b4fe-4639fce90793',
+                request: {
+                    distribution: RHEL_8,
+                    image_requests: [
+                        {
+                            architecture: 'x86_64',
+                            image_type: 'image-installer',
+                            upload_request: {
+                                options: {},
+                                type: 'aws.s3'
+                            }
+                        }
+                    ]
+                },
+                image_status: {
+                    status: 'success',
+                    upload_status: {
+                        options: {
+                            url: 'https://s3.amazonaws.com/4873fd0f-1851-4b9f-b4fe-4639fce90794-installer.iso'
+                        },
+                        status: 'success',
+                        type: 'aws.s3'
+                    }
+                }
+            },
+            '7b7d0d51-7106-42ab-98f2-f89872a9d599': {
+                created_at: '2022-01-11 13:33:33.767002 +0000 UTC',
+                id: '7b7d0d51-7106-42ab-98f2-f89872a9d599',
+                request: {
+                    distribution: RHEL_8,
+                    image_requests: [
+                        {
+                            architecture: 'x86_64',
+                            image_type: 'guest-image',
+                            upload_request: {
+                                options: {},
+                                type: 'aws.s3'
+                            }
+                        }
+                    ]
+                },
+                image_status: {
+                    status: 'success',
+                    upload_status: {
+                        options: {
+                            url: 'https://s3.amazonaws.com/7b7d0d51-7106-42ab-98f2-f89872a9d599-disk.qcow2'
+                        },
+                        status: 'success',
+                        type: 'aws.s3'
+                    }
+                }
+            },
         }
     }
 };
@@ -301,7 +382,9 @@ describe('Images Table', () => {
 
             // render the expected <ImageBuildStatus /> and compare the text content
             let testElement = document.createElement('testElement');
-            render(<Upload uploadType={ compose.request.image_requests[0].upload_request.type } />, { container: testElement });
+            render(<Upload
+                imageType={ compose.request.image_requests[0].image_type }
+                uploadType={ compose.request.image_requests[0].upload_request.type } />, { container: testElement });
             expect(row.cells[3]).toHaveTextContent(testElement.textContent);
 
             // render the expected <ImageBuildStatus /> and compare the text content
