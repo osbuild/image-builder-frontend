@@ -4,7 +4,7 @@ import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
 import ImageLink from '../../../Components/ImagesTable/ImageLink';
-import Upload from '../../../Components/ImagesTable/Upload';
+import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
 
@@ -382,7 +382,7 @@ describe('Images Table', () => {
 
             // render the expected <ImageBuildStatus /> and compare the text content
             let testElement = document.createElement('testElement');
-            render(<Upload
+            render(<Target
                 imageType={ compose.request.image_requests[0].image_type }
                 uploadType={ compose.request.image_requests[0].upload_request.type } />, { container: testElement });
             expect(row.cells[3]).toHaveTextContent(testElement.textContent);

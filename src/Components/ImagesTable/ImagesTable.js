@@ -13,7 +13,7 @@ import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
-import Upload from './Upload';
+import Target from './Target';
 import ImageLink from './ImageLink';
 class ImagesTable extends Component {
     constructor(props) {
@@ -110,7 +110,9 @@ class ImagesTable extends Component {
                     id,
                     this.timestampToDisplayString(compose.created_at),
                     { title: <Release release={ compose.request.distribution } /> },
-                    { title: <Upload uploadType={ compose.request.image_requests[0].upload_request.type } /> },
+                    { title: <Target
+                        uploadType={ compose.request.image_requests[0].upload_request.type }
+                        imageType={ compose.request.image_requests[0].image_type } /> },
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
                     { title: <ImageLink
                         imageStatus={ compose.image_status }
