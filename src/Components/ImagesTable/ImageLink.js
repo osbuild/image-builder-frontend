@@ -2,9 +2,15 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import { Button, TextContent, Text, TextVariants, Popover } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { DownloadIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const ImageLink = (props) => {
+    const fileExtensions = {
+        vsphere: '.vmdk',
+        'guest-image': '.qcow2',
+        'image-installer': '.iso',
+    };
+
     const uploadStatus = props.imageStatus ? props.imageStatus.upload_status : undefined;
     if (uploadStatus) {
         if (uploadStatus.type === 'aws') {
@@ -78,6 +84,19 @@ const ImageLink = (props) => {
                     </Button>
                 </Popover>
             );
+        } else if (uploadStatus.type === 'aws.s3') {
+            return (
+                <Button
+                    component="a"
+                    target="_blank"
+                    variant="link"
+                    icon={ <DownloadIcon /> }
+                    iconPosition="right"
+                    isInline
+                    href={ uploadStatus.options.url }>
+                        Download {fileExtensions[props.imageType]}
+                </Button>
+            );
         }
     }
 
@@ -86,6 +105,7 @@ const ImageLink = (props) => {
 
 ImageLink.propTypes = {
     imageStatus: PropTypes.object,
+    imageType: PropTypes.string,
     uploadOptions: PropTypes.object,
 };
 

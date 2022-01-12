@@ -114,6 +114,7 @@ class ImagesTable extends Component {
                     { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
                     { title: <ImageLink
                         imageStatus={ compose.image_status }
+                        imageType={ compose.request.image_requests[0].image_type }
                         uploadOptions={ compose.request.image_requests[0].upload_request.options } /> },
                 ]
             };
