@@ -1,15 +1,27 @@
+import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
+import { Button, Popover, Text, TextContent, TextVariants } from '@patternfly/react-core';
+import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
-export const registerValues = {
-    'subscribe-now-radio': {
-        title: 'Embed an activation key and register systems on first boot',
-        testId: 'register-now-radio-button'
-    },
-    'register-later-radio-button': {
-        title: 'Register the system later',
-        testId: 'register-later-radio-button'
-    }
+const PopoverActivation = () => {
+    return <Popover
+        hasAutoWidth
+        maxWidth='35rem'
+        bodyContent={ <TextContent>
+            <Text>
+                Activation keys allow you to register a system with
+                appropriate subscriptions and system purpose attached.
+            </Text>
+        </TextContent> }>
+        <Button
+            variant="plain"
+            aria-label="Activation key popover"
+            aria-describedby="subscription-activation-key"
+            className="pf-c-form__group-label-help">
+            <HelpIcon />
+        </Button>
+    </Popover>;
 };
 
 export default {
@@ -18,41 +30,48 @@ export default {
     nextStep: 'packages',
     fields: [
         {
-            component: componentTypes.PLAIN_TEXT,
-            name: 'register-explanation',
-            label: 'Register your system with subscription manager (RHSM) and insights when the image first boots.'
-        },
-        {
             component: componentTypes.RADIO,
-            label: 'Register the system',
+            label: 'Register images with Red Hat',
             name: 'register-system',
-            initialValue: 'register-later-radio-button',
-            options: Object.entries(registerValues).map(([ key, { title, testId }]) => ({
-                label: title,
-                value: key,
-                'data-testid': testId,
-            }))
-        },
-        {
-            component: 'organization-id',
-            name: 'subscription-organization',
-            'data-testid': 'organization-id',
-            condition: {
-                or: [
-                    { when: 'register-system', is: 'subscribe-now-radio' },
-                ]
-            }
+            initialValue: 'register-now-insights',
+            options: [
+                {
+                    label: 'Register and connect image instances with Red Hat',
+                    description: 'Includes Subscriptions and Red Hat Insights',
+                    value: 'register-now-insights',
+                    'data-testid': 'radio-register-now-insights',
+                },
+                {
+                    label: 'Register image instances only',
+                    description: 'Includes Subscriptions only',
+                    value: 'register-now',
+                    className: 'pf-u-mt-sm',
+                    'data-testid': 'radio-register-now',
+                },
+                {
+                    label: 'Register later',
+                    value: 'register-later',
+                    className: 'pf-u-mt-sm',
+                    'data-testid': 'radio-register-later',
+                },
+            ]
         },
         {
             component: componentTypes.TEXT_FIELD,
-            name: 'subscription-activation',
-            'data-testid': 'subscription-activation',
+            name: 'subscription-activation-key',
+            'data-testid': 'subscription-activation-key',
             required: true,
             type: 'text',
-            label: 'Activation key',
+            label: (
+                <>
+                    Activation key to use for this image
+                    <PopoverActivation />
+                </>
+            ),
             condition: {
                 or: [
-                    { when: 'register-system', is: 'subscribe-now-radio' },
+                    { when: 'register-system', is: 'register-now-insights' },
+                    { when: 'register-system', is: 'register-now' },
                 ]
             },
             isRequired: true,
@@ -61,6 +80,52 @@ export default {
                     type: validatorTypes.REQUIRED,
                 },
             ],
+        },
+        {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'subscription-activation-description',
+            label: (
+                <>
+                    Create and manage activation keys in the&nbsp;
+                    <Button
+                        component="a"
+                        target="_blank"
+                        variant="link"
+                        icon={ <ExternalLinkAltIcon /> }
+                        iconPosition="right"
+                        isInline
+                        href="https://access.redhat.com/">
+                            Customer Portal
+                    </Button>
+                </>
+            ),
+            condition: {
+                or: [
+                    { when: 'register-system', is: 'register-now-insights' },
+                    { when: 'register-system', is: 'register-now' },
+                ]
+            },
+        },
+        {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'subscription-register-later',
+            label: (
+                <TextContent>
+                    <Text component={ TextVariants.h3 }>Register Later</Text>
+                    <Text>
+                        On initial boot, systems will need to be registered manually
+                        before having access to updates or Red Hat services.
+                    </Text>
+                    <Text>
+                        Registering now is recommended.
+                    </Text>
+                </TextContent>
+            ),
+            condition: {
+                or: [
+                    { when: 'register-system', is: 'register-later' },
+                ]
+            },
         }
     ]
 };

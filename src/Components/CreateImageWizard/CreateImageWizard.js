@@ -16,11 +16,19 @@ const onSave = (values) => {
         packages: values['selected-packages']?.map(p => p.name),
     };
 
-    if (values['subscription-activation']) {
+    if (values['register-system'] === 'register-now-insights') {
         customizations.subscription = {
-            'activation-key': values['subscription-activation'],
+            'activation-key': values['subscription-activation-key'],
             insights: true,
-            organization: Number(values['subscription-organization']),
+            organization: Number(values['subscription-organization-id']),
+            'server-url': 'subscription.rhsm.redhat.com',
+            'base-url': 'https://cdn.redhat.com/',
+        };
+    } else if (values['register-system'] === 'register-now') {
+        customizations.subscription = {
+            'activation-key': values['subscription-activation-key'],
+            insights: false,
+            organization: Number(values['subscription-organization-id']),
             'server-url': 'subscription.rhsm.redhat.com',
             'base-url': 'https://cdn.redhat.com/',
         };
