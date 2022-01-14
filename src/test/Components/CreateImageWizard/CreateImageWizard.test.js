@@ -192,7 +192,7 @@ describe('Step Upload to AWS', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Register images with Red Hat');
     });
 
     test('clicking Back loads Release', () => {
@@ -239,7 +239,7 @@ describe('Step Upload to Google', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Register images with Red Hat');
     });
 
     test('clicking Back loads Release', () => {
@@ -300,7 +300,7 @@ describe('Step Upload to Azure', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Register images with Red Hat');
     });
 
     test('clicking Back loads Release', () => {
@@ -355,6 +355,9 @@ describe('Step Registration', () => {
     test('clicking Next loads Packages', () => {
         setUp();
 
+        const registerLaterRadio = screen.getByLabelText('Register later');
+        userEvent.click(registerLaterRadio);
+
         const [ next, , ] = verifyButtons();
         next.click();
 
@@ -377,24 +380,36 @@ describe('Step Registration', () => {
         verifyCancelButton(cancel, history);
     });
 
-    test('should allow choosing activation keys', async () => {
+    test('should allow registering with insights', async () => {
         setUp();
 
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-
-        const organizationId = await screen.findByLabelText('Organization ID');
-        expect(organizationId).toHaveValue('5');
-        expect(organizationId).toBeDisabled();
-
-        const activationKey = await screen.findByTestId('subscription-activation');
+        const activationKey = await screen.findByTestId('subscription-activation-key');
         expect(activationKey).toHaveValue('');
         expect(activationKey).toBeEnabled();
+        userEvent.type(screen.getByTestId('subscription-activation-key'), '012345678901');
 
-        userEvent.type(screen.getByTestId('subscription-activation'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await screen.findByText('Register the system on first boot');
+        await screen.findByText('Register with Subscriptions and Red Hat Insights');
+        await screen.findAllByText('012345678901');
+    });
+
+    test('should allow registering without insights', async () => {
+        setUp();
+
+        const registrationRadio = screen.getByLabelText('Register image instances only');
+        userEvent.click(registrationRadio);
+
+        const activationKey = await screen.findByTestId('subscription-activation-key');
+        expect(activationKey).toHaveValue('');
+        expect(activationKey).toBeEnabled();
+        userEvent.type(screen.getByTestId('subscription-activation-key'), '012345678901');
+
+        screen.getByRole('button', { name: /Next/ }).click();
+        screen.getByRole('button', { name: /Next/ }).click();
+        await screen.findByText('Register with Subscriptions');
         await screen.findAllByText('012345678901');
     });
 
@@ -402,22 +417,22 @@ describe('Step Registration', () => {
         setUp();
 
         // first check the other radio button which causes extra widgets to be shown
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
 
         const p1 = waitForElementToBeRemoved(() => [
-            screen.getByTestId('organization-id'),
-            screen.getByTestId('subscription-activation'),
+            screen.getByTestId('subscription-activation-key'),
         ]);
 
-        // then click the first radio button which should remove any input fields
-        const registerLaterRadio = screen.getByTestId('register-later-radio-button');
+        // then click the later radio button which should remove any input fields
+        const registerLaterRadio = screen.getByLabelText('Register later');
         userEvent.click(registerLaterRadio);
 
         await p1;
 
-        const reviewLink = screen.getByRole('button', { name: 'Review' });
-        reviewLink.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+        screen.getByRole('button', { name: /Next/ }).click();
+
         screen.getByText('Register the system later');
     });
 });
@@ -435,7 +450,9 @@ describe('Step Packages', () => {
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
 
-        // registration next
+        // skip registration
+        const registerLaterRadio = screen.getByLabelText('Register later');
+        userEvent.click(registerLaterRadio);
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
@@ -454,7 +471,7 @@ describe('Step Packages', () => {
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
-        screen.getByText('Register the system');
+        screen.getByText('Register images with Red Hat');
     });
 
     test('clicking Cancel loads landing page', () => {
@@ -693,6 +710,8 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // skip registration
+        const registerLaterRadio = screen.getByLabelText('Register later');
+        userEvent.click(registerLaterRadio);
         screen.getByRole('button', { name: /Next/ }).click();
 
         //Skip packages
@@ -822,9 +841,9 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        userEvent.type(screen.getByTestId('subscription-activation-key'), '1234567890');
         next.click();
 
         // packages
@@ -1030,16 +1049,16 @@ describe('Click through all steps', () => {
 
         // leave AWS account id empty
         screen.getByRole('button', { name: /Next/ }).click();
-        expect(screen.queryByText('Embed an activation key and register systems on first boot')).not.toBeInTheDocument();
+        expect(screen.queryByText('Register and connect image instances with Red Hat')).not.toBeInTheDocument();
 
         // fill in AWS to proceed
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-        userEvent.clear(screen.getByTestId('subscription-activation'));
+        userEvent.clear(screen.getByTestId('subscription-activation-key'));
         next.click();
 
         expect(screen.queryByText(
@@ -1047,8 +1066,8 @@ describe('Click through all steps', () => {
         )).not.toBeInTheDocument();
 
         // fill in the registration
-        await screen.findByTestId('subscription-activation');
-        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        await screen.findByTestId('subscription-activation-key');
+        userEvent.type(screen.getByTestId('subscription-activation-key'), '1234567890');
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
 
@@ -1056,7 +1075,7 @@ describe('Click through all steps', () => {
             findByText('Review the information and click "Create image" to create the image using the following criteria.');
         // review
         await screen.findAllByText('Amazon Web Services');
-        await screen.findByText('Register the system on first boot');
+        await screen.findByText('Register with Subscriptions and Red Hat Insights');
     });
 
     test('with invalid values', async () => {
@@ -1072,9 +1091,9 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
-        const registrationRadio = screen.getByLabelText('Embed an activation key and register systems on first boot');
+        const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-        userEvent.clear(screen.getByTestId('subscription-activation'));
+        userEvent.clear(screen.getByTestId('subscription-activation-key'));
         screen.getByRole('button', { name: /Next/ }).click();
 
         expect(screen.queryByText(
@@ -1082,14 +1101,14 @@ describe('Click through all steps', () => {
         )).not.toBeInTheDocument();
 
         // fill in the registration
-        await screen.findByTestId('subscription-activation');
-        userEvent.type(screen.getByTestId('subscription-activation'), '1234567890');
+        await screen.findByTestId('subscription-activation-key');
+        userEvent.type(screen.getByTestId('subscription-activation-key'), '1234567890');
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
 
         await screen.
             findByText('Review the information and click "Create image" to create the image using the following criteria.');
         await screen.findAllByText('Amazon Web Services');
-        await screen.findByText('Register the system on first boot');
+        await screen.findByText('Register with Subscriptions and Red Hat Insights');
     });
 });
