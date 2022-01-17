@@ -699,6 +699,33 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
+    // eslint-disable-next-line no-unused-vars
+    const setUpCentOS = () => {
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
+
+        // This is the best way to open the menu since ddf doesn't support data-testid for the select
+        const releaseMenu = screen.getByRole('button', {
+            name: /open menu/i
+        });
+        userEvent.click(releaseMenu);
+        const centos = screen.getByRole('option', {
+            name: 'CentOS Stream 8'
+        });
+        userEvent.click(centos);
+
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        // aws step
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        //Skip packages
+        screen.getByRole('button', { name: /Next/ }).click();
+    };
+
     test('has 3 buttons', () => {
         setUp();
 
