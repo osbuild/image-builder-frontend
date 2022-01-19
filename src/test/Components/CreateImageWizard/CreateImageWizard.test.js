@@ -392,8 +392,10 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await screen.findByText('Register with Subscriptions and Red Hat Insights');
-        await screen.findAllByText('012345678901');
+        await waitFor(() => {
+            screen.getByText('Register with Subscriptions and Red Hat Insights');
+            screen.getAllByText('012345678901');
+        });
     });
 
     test('should allow registering without insights', async () => {
@@ -409,8 +411,10 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await screen.findByText('Register with Subscriptions');
-        await screen.findAllByText('012345678901');
+        await waitFor(() => {
+            screen.getByText('Register with Subscriptions');
+            screen.getAllByText('012345678901');
+        });
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
@@ -432,7 +436,6 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-
         screen.getByText('Register the system later');
     });
 });
@@ -866,8 +869,12 @@ describe('Click through all steps', () => {
         await screen.findByText('VMWare');
         await screen.findByText('Virtualization - Guest image');
         await screen.findByText('Bare metal - Installer');
-        await screen.findByText('Register the system on first boot');
+        await screen.findByText('Register with Subscriptions and Red Hat Insights');
 
+        await waitFor(() => {
+            const id = screen.getByTestId('organization-id');
+            within(id).getByText(5);
+        });
         // mock the backend API
         let ids = [];
         const composeImage = jest
