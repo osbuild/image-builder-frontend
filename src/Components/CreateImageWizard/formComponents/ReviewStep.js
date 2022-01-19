@@ -1,18 +1,30 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     DescriptionList, DescriptionListTerm, DescriptionListGroup, DescriptionListDescription,
     List, ListItem,
+    Spinner,
     Tabs, Tab, TabTitleText,
     Text, TextContent, TextVariants, TextList, TextListVariants, TextListItem, TextListItemVariants
 } from '@patternfly/react-core';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { releaseValues } from '../steps/imageOutput';
-import { registerValues } from '../steps/registration';
 import { googleAccType } from '../steps/googleCloud';
 
 const ReviewStep = () => {
     const [ activeTabKey, setActiveTabKey ] = useState(0);
-    const { getState } = useFormApi();
+    const [ orgId, setOrgId ] = useState();
+    const { change, getState } = useFormApi();
+
+    useEffect(() => {
+        if (getState()?.values?.['register-system'] !== 'register-later') {
+            (async () => {
+                const userData = await insights?.chrome?.auth?.getUser();
+                const id = userData?.identity?.internal?.org_id;
+                setOrgId(id);
+                change('subscription-organization-id', id);
+            })();
+        }
+    });
 
     const handleTabClick = (event, tabIndex) => {
         setActiveTabKey(tabIndex);
@@ -127,7 +139,7 @@ const ReviewStep = () => {
                 </Tab>
                 {getState()?.values?.release.includes('rhel') &&
                     <Tab eventKey={ 1 } title={ <TabTitleText>Registration</TabTitleText> } data-testid='tab-registration'>
-                        {getState()?.values?.['register-system'] === 'register-later-radio-button' &&
+                        {getState()?.values?.['register-system'] === 'register-later' &&
                             <TextContent>
                                 <TextList component={ TextListVariants.dl }>
                                     <TextListItem component={ TextListItemVariants.dt }>
@@ -139,24 +151,39 @@ const ReviewStep = () => {
                                 </TextList>
                             </TextContent>
                         }
-                        {getState()?.values?.['register-system'] === 'subscribe-now-radio' &&
+                        {(getState()?.values?.['register-system'] === 'register-now' ||
+                            getState()?.values?.['register-system'] === 'register-now-insights') &&
                             <TextContent>
                                 <TextList component={ TextListVariants.dl }>
                                     <TextListItem component={ TextListItemVariants.dt }>
                                         Subscription
                                     </TextListItem>
                                     <TextListItem component={ TextListItemVariants.dd }>
-                                        {getState()?.values?.['register-system'] === 'subscribe-now-radio' ?
-                                            'Register the system on first boot' :
-                                            registerValues?.[getState()?.values?.['register-system']?.title]
+                                        {getState()?.values?.['register-system'] === 'register-now-insights' &&
+                                            'Register with Subscriptions and Red Hat Insights'
+                                        }
+                                        {getState()?.values?.['register-system'] === 'register-now' &&
+                                            'Register with Subscriptions'
                                         }
                                     </TextListItem>
                                     <TextListItem component={ TextListItemVariants.dt }>
                                         Activation key
                                     </TextListItem>
                                     <TextListItem component={ TextListItemVariants.dd }>
-                                        {getState()?.values?.['subscription-activation']}
+                                        {getState()?.values?.['subscription-activation-key']}
                                     </TextListItem>
+                                    <TextListItem component={ TextListItemVariants.dt }>
+                                        Organization ID
+                                    </TextListItem>
+                                    {orgId !== undefined ? (
+                                        <TextListItem component={ TextListItemVariants.dd } data-testid='organization-id'>
+                                            {orgId}
+                                        </TextListItem>
+                                    ) : (
+                                        <TextListItem component={ TextListItemVariants.dd }>
+                                            <Spinner />
+                                        </TextListItem>
+                                    )}
                                 </TextList>
                             </TextContent>
                         }
