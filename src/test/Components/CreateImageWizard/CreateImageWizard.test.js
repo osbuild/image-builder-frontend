@@ -79,6 +79,12 @@ beforeAll(() => {
     // scrollTo is not defined in jsdom
     window.HTMLElement.prototype.scrollTo = function() {};
 
+    // mock the activation key api call
+    const mockActivationKeys = [{ name: 'name0' }, { name: 'name1' }];
+    jest
+        .spyOn(api, 'getActivationKeys')
+        .mockImplementation(() => Promise.resolve(mockActivationKeys));
+
     global.insights = {
         chrome: {
             auth: {
@@ -185,12 +191,16 @@ describe('Step Upload to AWS', () => {
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
-    test('clicking Next loads Registration', () => {
+    test('clicking Next loads Registration', async () => {
         setUp();
 
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         const [ next, , ] = verifyButtons();
         next.click();
+
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
 
         screen.getByText('Register images with Red Hat');
     });
@@ -232,12 +242,16 @@ describe('Step Upload to Google', () => {
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
-    test('clicking Next loads Registration', () => {
+    test('clicking Next loads Registration', async () => {
         setUp();
 
         userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
         const [ next, , ] = verifyButtons();
         next.click();
+
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
 
         screen.getByText('Register images with Red Hat');
     });
@@ -290,7 +304,7 @@ describe('Step Upload to Azure', () => {
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
-    test('clicking Next loads Registration', () => {
+    test('clicking Next loads Registration', async () => {
         setUp();
         // Randomly generated GUID
         userEvent.type(screen.getByTestId('azure-tenant-id'), 'b8f86d22-4371-46ce-95e7-65c415f3b1e2');
@@ -299,6 +313,10 @@ describe('Step Upload to Azure', () => {
 
         const [ next, , ] = verifyButtons();
         next.click();
+
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
 
         screen.getByText('Register images with Red Hat');
     });
@@ -340,7 +358,7 @@ describe('Step Upload to Azure', () => {
 });
 
 describe('Step Registration', () => {
-    const setUp = () => {
+    const setUp = async () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -349,11 +367,16 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+
         screen.getByRole('button', { name: /Next/ }).click();
+
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
     };
 
-    test('clicking Next loads Packages', () => {
-        setUp();
+    test('clicking Next loads Packages', async () => {
+        await setUp();
 
         const registerLaterRadio = screen.getByLabelText('Register later');
         userEvent.click(registerLaterRadio);
@@ -364,8 +387,8 @@ describe('Step Registration', () => {
         screen.getByText('Add optional additional packages to your image by searching available packages.');
     });
 
-    test('clicking Back loads Upload to AWS', () => {
-        setUp();
+    test('clicking Back loads Upload to AWS', async () => {
+        await setUp();
 
         const [ , back, ] = verifyButtons();
         back.click();
@@ -373,53 +396,60 @@ describe('Step Registration', () => {
         screen.getByText('AWS account ID');
     });
 
-    test('clicking Cancel loads landing page', () => {
-        setUp();
+    test('clicking Cancel loads landing page', async () => {
+        await setUp();
 
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
     test('should allow registering with insights', async () => {
-        setUp();
+        await setUp();
 
         const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-        const activationKey = await screen.findByTestId('subscription-activation-key');
-        expect(activationKey).toHaveValue('');
-        expect(activationKey).toBeEnabled();
-        userEvent.type(screen.getByTestId('subscription-activation-key'), '012345678901');
+
+        const activationKeyDropdown = await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+        userEvent.click(activationKeyDropdown);
+        const activationKey = await screen.findByRole('option', {
+            name: 'name0'
+        });
+        userEvent.click(activationKey);
+        screen.getByDisplayValue('name0');
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await waitFor(() => {
-            screen.getByText('Register with Subscriptions and Red Hat Insights');
-            screen.getAllByText('012345678901');
-        });
+        await screen.findByText('Register with Subscriptions and Red Hat Insights');
+        screen.getAllByText('0');
     });
 
     test('should allow registering without insights', async () => {
-        setUp();
+        await setUp();
 
         const registrationRadio = screen.getByLabelText('Register image instances only');
         userEvent.click(registrationRadio);
 
-        const activationKey = await screen.findByTestId('subscription-activation-key');
-        expect(activationKey).toHaveValue('');
-        expect(activationKey).toBeEnabled();
-        userEvent.type(screen.getByTestId('subscription-activation-key'), '012345678901');
+        const activationKeyDropdown = await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+        userEvent.click(activationKeyDropdown);
+        const activationKey = await screen.findByRole('option', {
+            name: 'name0'
+        });
+        userEvent.click(activationKey);
+        screen.getByDisplayValue('name0');
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await waitFor(() => {
-            screen.getByText('Register with Subscriptions');
-            screen.getAllByText('012345678901');
-        });
+
+        await screen.findByText('Register with Subscriptions');
+        screen.getAllByText('0');
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
-        setUp();
-
+        await setUp();
         // first check the other radio button which causes extra widgets to be shown
         const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
@@ -441,7 +471,7 @@ describe('Step Registration', () => {
 });
 
 describe('Step Packages', () => {
-    const setUp = () => {
+    const setUp = async () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -454,13 +484,17 @@ describe('Step Packages', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // skip registration
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+
         const registerLaterRadio = screen.getByLabelText('Register later');
         userEvent.click(registerLaterRadio);
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
-    test('clicking Next loads Review', () => {
-        setUp();
+    test('clicking Next loads Review', async () => {
+        await setUp();
 
         const [ next, , ] = verifyButtons();
         next.click();
@@ -468,8 +502,8 @@ describe('Step Packages', () => {
         screen.getByText('Review the information and click "Create image" to create the image using the following criteria.');
     });
 
-    test('clicking Back loads Register', () => {
-        setUp();
+    test('clicking Back loads Register', async () => {
+        await setUp();
 
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
@@ -477,15 +511,15 @@ describe('Step Packages', () => {
         screen.getByText('Register images with Red Hat');
     });
 
-    test('clicking Cancel loads landing page', () => {
-        setUp();
+    test('clicking Cancel loads landing page', async () => {
+        await setUp();
 
         const [ , , cancel ] = verifyButtons();
         verifyCancelButton(cancel, history);
     });
 
-    test('should display search bar and button', () => {
-        setUp();
+    test('should display search bar and button', async () => {
+        await setUp();
 
         userEvent.type(screen.getByTestId('search-available-pkgs-input'), 'test');
 
@@ -494,15 +528,15 @@ describe('Step Packages', () => {
         });
     });
 
-    test('should display default state', () => {
-        setUp();
+    test('should display default state', async () => {
+        await setUp();
 
         screen.getByText('Search above to add additionalpackages to your image');
         screen.getByText('No packages added');
     });
 
     test('search results should be sorted with most relevant results first', async () => {
-        setUp();
+        await setUp();
 
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
@@ -525,7 +559,7 @@ describe('Step Packages', () => {
     });
 
     test('search results should be sorted after selecting them and then deselecting them', async () => {
-        setUp();
+        await setUp();
 
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
@@ -554,7 +588,7 @@ describe('Step Packages', () => {
     });
 
     test('search results should be sorted after adding and then removing all packages', async () => {
-        setUp();
+        await setUp();
 
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
@@ -580,7 +614,7 @@ describe('Step Packages', () => {
     });
 
     test('removing a single package updates the state correctly', async () => {
-        setUp();
+        await setUp();
 
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
         searchbox.click();
@@ -618,7 +652,7 @@ describe('Step Packages', () => {
     });
 
     test('should display empty available state on failed search', async () => {
-        setUp();
+        await setUp();
 
         const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
@@ -634,7 +668,7 @@ describe('Step Packages', () => {
     });
 
     test('should display empty chosen state on failed search', async () => {
-        setUp();
+        await setUp();
 
         const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
         const searchboxChosen = screen.getAllByRole('textbox')[1];
@@ -657,7 +691,7 @@ describe('Step Packages', () => {
     });
 
     test('should filter chosen packages from available list', async () => {
-        setUp();
+        await setUp();
 
         const searchboxAvailable = screen.getAllByRole('textbox')[0];
         const availablePackagesList = screen.getByTestId('available-pkgs-list');
@@ -700,7 +734,7 @@ describe('Step Packages', () => {
 });
 
 describe('Step Review', () => {
-    const setUp = () => {
+    const setUp = async () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
 
         // select aws as upload destination
@@ -711,6 +745,10 @@ describe('Step Review', () => {
         // aws step
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
+
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
 
         // skip registration
         const registerLaterRadio = screen.getByLabelText('Register later');
@@ -748,16 +786,16 @@ describe('Step Review', () => {
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
-    test('has 3 buttons', () => {
-        setUp();
+    test('has 3 buttons', async () => {
+        await setUp();
 
         screen.getByRole('button', { name: /Create/ });
         screen.getByRole('button', { name: /Back/ });
         screen.getByRole('button', { name: /Cancel/ });
     });
 
-    test('clicking Back loads Packages', () => {
-        setUp();
+    test('clicking Back loads Packages', async () => {
+        await setUp();
 
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
@@ -765,15 +803,15 @@ describe('Step Review', () => {
         screen.getByText('Add optional additional packages to your image by searching available packages.');
     });
 
-    test('clicking Cancel loads landing page', () => {
-        setUp();
+    test('clicking Cancel loads landing page', async () => {
+        await setUp();
 
         const cancel = screen.getByRole('button', { name: /Cancel/ });
         verifyCancelButton(cancel, history);
     });
 
     test('has three tabs for rhel', async () => {
-        setUp();
+        await setUp();
 
         const buttonTarget = screen.getByTestId('tab-target');
         const buttonRegistration = screen.getByTestId('tab-registration');
@@ -791,7 +829,7 @@ describe('Step Review', () => {
         });
     });
 
-    test('has two tabs for centos', async () => {
+    test('has two tabs for centos', () => {
         setUpCentOS();
 
         const buttonTarget = screen.getByTestId('tab-target');
@@ -810,14 +848,14 @@ describe('Step Review', () => {
 });
 
 describe('Click through all steps', () => {
-    const setUp = () => {
+    const setUp = async () => {
         const view = renderWithReduxRouter(<CreateImageWizard />);
         history = view.history;
         store = view.reduxStore;
     };
 
     test('with valid values', async () => {
-        setUp();
+        await setUp();
 
         const next = screen.getByRole('button', { name: /Next/ });
 
@@ -844,9 +882,24 @@ describe('Click through all steps', () => {
         screen.getByRole('button', { name: /Next/ }).click();
 
         // registration
+        const mockActivationKeys = [{ id: '0', name: 'name0' }, { id: 1, name: 'name1' }];
+        jest
+            .spyOn(api, 'getActivationKeys')
+            .mockImplementation(() => Promise.resolve(mockActivationKeys));
+
         const registrationRadio = screen.getByLabelText('Register and connect image instances with Red Hat');
         userEvent.click(registrationRadio);
-        userEvent.type(screen.getByTestId('subscription-activation-key'), '1234567890');
+
+        const activationKeyDropdown = await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+        userEvent.click(activationKeyDropdown);
+        const activationKey = await screen.findByRole('option', {
+            name: 'name0'
+        });
+        userEvent.click(activationKey);
+        screen.getByDisplayValue('name0');
+
         next.click();
 
         // packages
@@ -897,7 +950,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',
@@ -922,7 +975,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',
@@ -949,7 +1002,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',
@@ -972,7 +1025,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',
@@ -995,7 +1048,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',
@@ -1018,7 +1071,7 @@ describe('Click through all steps', () => {
                         customizations: {
                             packages: [ 'testPkg' ],
                             subscription: {
-                                'activation-key': '1234567890',
+                                'activation-key': 'name0',
                                 insights: true,
                                 organization: 5,
                                 'server-url': 'subscription.rhsm.redhat.com',

@@ -57,11 +57,9 @@ export default {
             ]
         },
         {
-            component: componentTypes.TEXT_FIELD,
+            component: 'activation-keys',
             name: 'subscription-activation-key',
-            'data-testid': 'subscription-activation-key',
             required: true,
-            type: 'text',
             label: (
                 <>
                     Activation key to use for this image
