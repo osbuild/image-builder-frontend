@@ -1,6 +1,7 @@
 import axios from 'axios';
 import {
     IMAGE_BUILDER_API,
+    RHSM_API,
 } from './constants';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' }};
@@ -44,10 +45,17 @@ async function getVersion() {
     return request.data;
 }
 
+async function getActivationKeys() {
+    const path = '/activation_keys';
+    const request = await axios.get(RHSM_API.concat(path));
+    return request.data.body;
+}
+
 export default {
     composeImage,
     getComposes,
     getComposeStatus,
     getPackages,
     getVersion,
+    getActivationKeys,
 };
