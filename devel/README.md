@@ -4,7 +4,7 @@ Development Tools for Image Builder
 
 ## Setup
 
-To start local development, first clone the image bulider stack:
+To start local development, first clone the image builder stack:
 
 ```bash
 git clone git@github.com:osbuild/osbuild.git
