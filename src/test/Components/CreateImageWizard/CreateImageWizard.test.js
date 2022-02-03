@@ -826,9 +826,9 @@ describe('Click through all steps', () => {
         screen.getByTestId('upload-aws').click();
         screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();
-        screen.getByTestId('checkbox-vmware').click();
+        // screen.getByTestId('checkbox-vmware').click();
         screen.getByTestId('checkbox-guest-image').click();
-        screen.getByTestId('checkbox-image-installer').click();
+        // screen.getByTestId('checkbox-image-installer').click();
 
         screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
@@ -866,9 +866,9 @@ describe('Click through all steps', () => {
             findByText('Review the information and click "Create image" to create the image using the following criteria.');
         await screen.findAllByText('Amazon Web Services');
         await screen.findAllByText('Google Cloud Platform');
-        await screen.findByText('VMWare');
+        // await screen.findByText('VMWare');
         await screen.findByText('Virtualization - Guest image');
-        await screen.findByText('Bare metal - Installer');
+        // await screen.findByText('Bare metal - Installer');
         await screen.findByText('Register with Subscriptions and Red Hat Insights');
 
         await waitFor(() => {
@@ -1037,7 +1037,7 @@ describe('Click through all steps', () => {
         create.click();
 
         // API request sent to backend
-        await expect(composeImage).toHaveBeenCalledTimes(6);
+        await expect(composeImage).toHaveBeenCalledTimes(4);
 
         // returns back to the landing page
         await waitFor(() => expect(history.location.pathname).toBe('/'));
