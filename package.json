@@ -13,7 +13,7 @@
     "@patternfly/patternfly": "4.171.1",
     "@patternfly/react-core": "4.192.15",
     "@patternfly/react-table": "4.61.15",
-    "@redhat-cloud-services/frontend-components": "3.6.1",
+    "@redhat-cloud-services/frontend-components": "3.7.0",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.8",
     "classnames": "2.3.1",
