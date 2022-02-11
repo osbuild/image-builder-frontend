@@ -16,7 +16,8 @@ const ReviewStep = () => {
     const { change, getState } = useFormApi();
 
     useEffect(() => {
-        if (getState()?.values?.['register-system'] !== 'register-later') {
+        const registerSystem = getState()?.values?.['register-system'];
+        if (registerSystem === 'register-now' || registerSystem === 'register-now-insights') {
             (async () => {
                 const userData = await insights?.chrome?.auth?.getUser();
                 const id = userData?.identity?.internal?.org_id;
