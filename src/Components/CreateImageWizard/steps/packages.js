@@ -5,6 +5,7 @@ import { Text } from '@patternfly/react-core';
 export default {
     title: 'Packages',
     name: 'packages',
+    substepOf: 'System Configuration',
     nextStep: 'review',
     fields: [
         {
