@@ -1,18 +1,61 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import {
+    Button,
     DescriptionList, DescriptionListTerm, DescriptionListGroup, DescriptionListDescription,
     List, ListItem,
+    Popover,
     Spinner,
     Tabs, Tab, TabTitleText,
-    Text, TextContent, TextVariants, TextList, TextListVariants, TextListItem, TextListItemVariants
+    Text, TextContent, TextVariants, TextList, TextListVariants, TextListItem, TextListItemVariants,
 } from '@patternfly/react-core';
+import {
+    TableComposable,
+    Thead,
+    Tbody,
+    Tr,
+    Th,
+    Td,
+} from '@patternfly/react-table';
+import { HelpIcon } from '@patternfly/react-icons';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { releaseValues } from '../steps/imageOutput';
 import { googleAccType } from '../steps/googleCloud';
+import { UNIT_GIB, UNIT_MIB } from '../../../constants';
+
+const FSReviewTable = ({ ...props }) => {
+    return (
+        <TableComposable
+            aria-label="File system configuration table"
+            variant="compact">
+            <Thead>
+                <Tr>
+                    <Th>Mount point</Th>
+                    <Th>Type</Th>
+                    <Th>Minimum size</Th>
+                </Tr>
+            </Thead>
+            <Tbody data-testid="file-system-configuration-tbody-review">
+                {props.fsc.map((r, ri) =>
+                    <Tr key={ ri }>
+                        <Td className="pf-m-width-60">{ r.mountpoint }</Td>
+                        <Td className="pf-m-width-10">xfs</Td>
+                        <Td className="pf-m-width-30">{ r.size } { r.unit === UNIT_GIB ? 'GiB' : r.unit === UNIT_MIB ? 'MiB' : 'KiB' }</Td>
+                    </Tr>
+                )}
+            </Tbody>
+        </TableComposable>
+    );
+};
+
+FSReviewTable.propTypes = {
+    fsc: PropTypes.arrayOf(PropTypes.object).isRequired,
+};
 
 const ReviewStep = () => {
     const [ activeTabKey, setActiveTabKey ] = useState(0);
     const [ orgId, setOrgId ] = useState();
+    const [ minSize, setMinSize ] = useState();
     const { change, getState } = useFormApi();
 
     useEffect(() => {
@@ -24,6 +67,21 @@ const ReviewStep = () => {
                 setOrgId(id);
                 change('subscription-organization-id', id);
             })();
+        }
+
+        if (getState()?.values?.['file-system-config-toggle'] === 'manual' &&
+            getState()?.values?.['file-system-configuration']) {
+            let size = 0;
+            for (const fsc of getState()?.values?.['file-system-configuration']) {
+                size += (fsc.size * fsc.unit);
+            }
+
+            size = (size / UNIT_GIB).toFixed(1);
+            if (size < 1) {
+                setMinSize(`Less than 1 GiB`);
+            } else {
+                setMinSize(`${size} GiB`);
+            }
         }
     });
 
@@ -192,6 +250,60 @@ const ReviewStep = () => {
                 }
                 <Tab eventKey={ 2 } title={ <TabTitleText>System configuration</TabTitleText> } data-testid='tab-system'>
                     <TextContent>
+                        <Text component={ TextVariants.h3 }>File system configuration</Text>
+                        <TextList component={ TextListVariants.dl }>
+                            <TextListItem component={ TextListItemVariants.dt }>
+                                Partitioning
+                            </TextListItem>
+                            <TextListItem component={ TextListItemVariants.dd } data-testid='partitioning-auto-manual'>
+                                {getState()?.values?.['file-system-config-toggle'] === 'manual' ? 'Manual' : 'Automatic'}
+                                {getState()?.values?.['file-system-config-toggle'] === 'manual' &&
+                                 <>
+                                     {' '}
+                                     <Popover
+                                         position="bottom"
+                                         headerContent="Partitions"
+                                         hasAutoWidth
+                                         minWidth="30rem"
+                                         bodyContent={ <FSReviewTable fsc={ getState().values['file-system-configuration'] } /> }>
+                                         <Button
+                                             data-testid='file-system-configuration-popover'
+                                             variant="link"
+                                             aria-label="File system configuration info"
+                                             aria-describedby="file-system-configuration-info">
+                                             View partitions
+                                         </Button>
+                                     </Popover>
+                                 </>
+                                }
+                            </TextListItem>
+                            {getState()?.values?.['file-system-config-toggle'] === 'manual' &&
+                             <>
+                                 <TextListItem component={ TextListItemVariants.dt }>
+                                     Image size (minimum)
+                                     <Popover
+                                         hasAutoWidth
+                                         bodyContent={ <TextContent>
+                                             <Text>
+                                                     Image Builder may extend this size based on requirements,
+                                                     selected packages, and configurations.
+                                             </Text>
+                                         </TextContent> }>
+                                         <Button
+                                             variant="plain"
+                                             aria-label="File system configuration info"
+                                             aria-describedby="file-system-configuration-info"
+                                             className="pf-c-form__group-label-help">
+                                             <HelpIcon />
+                                         </Button>
+                                     </Popover>
+                                 </TextListItem>
+                                 <TextListItem component={ TextListItemVariants.dd }>
+                                     { minSize }
+                                 </TextListItem>
+                             </>
+                            }
+                        </TextList>
                         <Text component={ TextVariants.h3 }>Packages</Text>
                         <TextList component={ TextListVariants.dl }>
                             <TextListItem component={ TextListItemVariants.dt }>

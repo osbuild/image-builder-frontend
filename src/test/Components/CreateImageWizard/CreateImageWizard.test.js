@@ -413,7 +413,7 @@ describe('Step Registration', () => {
         });
     };
 
-    test('clicking Next loads Packages', async () => {
+    test('clicking Next loads file system configuration', async () => {
         await setUp();
 
         const registerLaterRadio = screen.getByLabelText('Register later');
@@ -422,7 +422,7 @@ describe('Step Registration', () => {
         const [ next, , ] = verifyButtons();
         next.click();
 
-        screen.getByText('Add optional additional packages to your image by searching available packages.');
+        screen.getByTestId('fsc-paritioning-toggle');
     });
 
     test('clicking Back loads Upload to AWS', async () => {
@@ -459,8 +459,11 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-        await screen.findByText('Register with Subscriptions and Red Hat Insights');
-        screen.getAllByText('0');
+        screen.getByRole('button', { name: /Next/ }).click();
+        await waitFor(() => {
+            screen.getByText('Register with Subscriptions and Red Hat Insights');
+            screen.getAllByText('012345678901');
+        });
     });
 
     test('should allow registering without insights', async () => {
@@ -481,9 +484,11 @@ describe('Step Registration', () => {
 
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
-
-        await screen.findByText('Register with Subscriptions');
-        screen.getAllByText('0');
+        screen.getByRole('button', { name: /Next/ }).click();
+        await waitFor(() => {
+            screen.getByText('Register with Subscriptions');
+            screen.getAllByText('012345678901');
+        });
     });
 
     test('should hide input fields when clicking Register the system later', async () => {
@@ -502,6 +507,7 @@ describe('Step Registration', () => {
 
         await p1;
 
+        screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByRole('button', { name: /Next/ }).click();
         screen.getByText('Register the system later');
@@ -528,6 +534,9 @@ describe('Step Packages', () => {
         const registerLaterRadio = screen.getByLabelText('Register later');
         userEvent.click(registerLaterRadio);
         screen.getByRole('button', { name: /Next/ }).click();
+
+        // skip fsc
+        screen.getByRole('button', { name: /Next/ }).click();
     };
 
     test('clicking Next loads Review', async () => {
@@ -539,13 +548,13 @@ describe('Step Packages', () => {
         screen.getByText('Review the information and click "Create image" to create the image using the following criteria.');
     });
 
-    test('clicking Back loads Register', async () => {
+    test('clicking Back loads file system configuration', async () => {
         await setUp();
 
         const back = screen.getByRole('button', { name: /Back/ });
         back.click();
 
-        screen.getByText('Register images with Red Hat');
+        screen.getByTestId('fsc-paritioning-toggle');
     });
 
     test('clicking Cancel loads landing page', async () => {
@@ -860,7 +869,10 @@ describe('Step Review', () => {
         userEvent.click(registerLaterRadio);
         screen.getByRole('button', { name: /Next/ }).click();
 
-        //Skip packages
+        // skip fsc
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        // skip packages
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
@@ -887,7 +899,10 @@ describe('Step Review', () => {
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
 
-        //Skip packages
+        // skip fsc
+        screen.getByRole('button', { name: /Next/ }).click();
+
+        // skip packages
         screen.getByRole('button', { name: /Next/ }).click();
     };
 
@@ -932,6 +947,9 @@ describe('Step Review', () => {
         screen.getByRole('heading', {
             name: 'Packages'
         });
+        screen.getByRole('heading', {
+            name: 'File system configuration'
+        });
     });
 
     test('has two tabs for centos', () => {
@@ -948,6 +966,9 @@ describe('Step Review', () => {
         userEvent.click(buttonSystem);
         screen.getByRole('heading', {
             name: 'Packages'
+        });
+        screen.getByRole('heading', {
+            name: 'File system configuration'
         });
     });
 });
@@ -1007,6 +1028,27 @@ describe('Click through all steps', () => {
 
         next.click();
 
+        // fsc
+        const toggle = await screen.findByTestId('file-system-config-toggle-manual');
+        within(toggle).getByRole('button').click();
+        const ap = await screen.findByTestId('file-system-add-partition');
+        ap.click();
+        ap.click();
+        const tbody = screen.getByTestId('file-system-configuration-tbody');
+        const rows = within(tbody).getAllByRole('row');
+        expect(rows).toHaveLength(3);
+        // set mountpoint of final row to /var/tmp
+        within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
+        within(rows[2]).getByRole('option', { name: '/var' }).click();
+        await waitForElementToBeRemoved(() => screen.queryAllByRole('heading', { name: 'Danger alert: Duplicate mount point.' }));
+        userEvent.type(within(rows[2]).getByRole('textbox', { name: 'Mount point suffix text input' }), '/tmp');
+
+        // set size of the final row to 100 MiB
+        userEvent.type(within(rows[2]).getByRole('textbox', { name: 'Size text input' }), '{backspace}100');
+        within(rows[2]).getAllByRole('button', { name: 'Options menu' })[1].click();
+        within(rows[2]).getByRole('option', { name: 'MiB' }).click();
+        next.click();
+
         // packages
         const getPackages = jest
             .spyOn(api, 'getPackages')
@@ -1028,6 +1070,10 @@ describe('Click through all steps', () => {
         await screen.findByText('Virtualization - Guest image');
         // await screen.findByText('Bare metal - Installer');
         await screen.findByText('Register with Subscriptions and Red Hat Insights');
+
+        screen.getByTestId('file-system-configuration-popover').click();
+        const revtbody = await screen.findByTestId('file-system-configuration-tbody-review');
+        expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
         await waitFor(() => {
             const id = screen.getByTestId('organization-id');
@@ -1053,6 +1099,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',
@@ -1078,6 +1138,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',
@@ -1105,6 +1179,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',
@@ -1128,6 +1216,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',
@@ -1151,6 +1253,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',
@@ -1174,6 +1290,20 @@ describe('Click through all steps', () => {
                             },
                         }],
                         customizations: {
+                            filesystem: [
+                                {
+                                    mountpoint: '/',
+                                    min_size: 10737418240,
+                                },
+                                {
+                                    mountpoint: '/home',
+                                    min_size: 1073741824,
+                                },
+                                {
+                                    mountpoint: '/var/tmp',
+                                    min_size: 104857600,
+                                },
+                            ],
                             packages: [ 'testPkg' ],
                             subscription: {
                                 'activation-key': 'name0',

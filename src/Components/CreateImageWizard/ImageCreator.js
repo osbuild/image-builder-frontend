@@ -12,14 +12,17 @@ import AzureAuthButton from './formComponents/AzureAuthButton';
 import AzureAuthExpandable from './formComponents/AzureAuthExpandable';
 import ActivationKeys from './formComponents/ActivationKeys';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
+import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
+import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 
-const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaultArch, className, ...props }) => {
+const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, customValidatorMapper, defaultArch, className, ...props }) => {
     return schema ? <FormRenderer
         schema={ schema }
         className={ `image-builder${className ? ` ${className}` : ''}` }
         subscription={ { values: true } }
         FormTemplate={ (props) => <Pf4FormTemplate { ...props } showFormControls={ false } /> }
         onSubmit={ (formValues) => onSubmit(formValues) }
+        validatorMapper={ { ...customValidatorMapper } }
         componentMapper={ {
             ...componentMapper,
             review: Review,
@@ -33,7 +36,9 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaul
             'azure-auth-expandable': AzureAuthExpandable,
             'azure-auth-button': AzureAuthButton,
             'activation-keys': ActivationKeys,
-            ...customComponentMapper
+            'file-system-config-toggle': FileSystemConfigToggle,
+            'file-system-configuration': FileSystemConfiguration,
+            ...customComponentMapper,
         } }
         onCancel={ onClose }
         { ...props } /> : <Spinner />;
@@ -47,6 +52,9 @@ ImageCreator.propTypes = {
         [PropTypes.string]: PropTypes.oneOfType([ PropTypes.node, PropTypes.shape({
             component: PropTypes.node
         }) ])
+    }),
+    customValidatorMapper: PropTypes.shape({
+        [PropTypes.string]: PropTypes.func
     }),
     defaultArch: PropTypes.string,
     className: PropTypes.string

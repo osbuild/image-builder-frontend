@@ -27,7 +27,7 @@ const PopoverActivation = () => {
 export default {
     title: 'Registration',
     name: 'registration',
-    nextStep: 'packages',
+    nextStep: 'File system configuration',
     fields: [
         {
             component: componentTypes.RADIO,
