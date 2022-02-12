@@ -4,12 +4,26 @@ import { useNavigate } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { review, awsTarget, registration, googleCloudTarger, msAzureTarget, packages, imageOutput } from './steps';
 import './CreateImageWizard.scss';
 import { useDispatch } from 'react-redux';
 import api from '../../api';
 import { composeAdded } from '../../store/actions/actions';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+
+import {
+    review,
+    awsTarget,
+    registration,
+    googleCloudTarger,
+    msAzureTarget,
+    packages,
+    imageOutput,
+    fileSystemConfiguration,
+} from './steps';
+
+import {
+    fileSystemConfigurationValidator,
+} from './validators';
 
 const onSave = (values) => {
     let customizations = {
@@ -32,6 +46,16 @@ const onSave = (values) => {
             'server-url': 'subscription.rhsm.redhat.com',
             'base-url': 'https://cdn.redhat.com/',
         };
+    }
+
+    if (values['file-system-config-toggle'] === 'manual') {
+        customizations.filesystem = [];
+        for (let fsc of values['file-system-configuration']) {
+            customizations.filesystem.push({
+                mountpoint: fsc.mountpoint,
+                min_size: fsc.size * fsc.unit,
+            });
+        }
     }
 
     let requests = [];
@@ -200,6 +224,7 @@ const CreateImageWizard = () => {
                 });
         } }
         defaultArch="x86_64"
+        customValidatorMapper={ { fileSystemConfigurationValidator, } }
         schema={ {
             fields: [
                 {
@@ -235,6 +260,7 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                         msAzureTarget,
                         registration,
                         packages,
+                        fileSystemConfiguration,
                         review,
                     ]
                 }
