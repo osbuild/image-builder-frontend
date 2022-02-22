@@ -49,6 +49,28 @@ const mockPkgResult = {
     ]
 };
 
+const mockPkgResultAlpha = {
+    meta: { count: 3 },
+    links: { first: '', last: '' },
+    data: [
+        {
+            name: 'lib-test',
+            summary: 'lib-test package summary',
+            version: '1.0',
+        },
+        {
+            name: 'Z-test',
+            summary: 'Z-test package summary',
+            version: '1.0',
+        },
+        {
+            name: 'test',
+            summary: 'summary for test package',
+            version: '1.0',
+        }
+    ]
+};
+
 const mockPkgResultPartial = {
     meta: { count: 132 },
     links: { first: '', last: '' },
@@ -767,6 +789,30 @@ describe('Step Packages', () => {
         const availablePackagesList = screen.getByTestId('available-pkgs-list');
         const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
         expect(availablePackagesItems).toHaveLength(132);
+    });
+
+    test('search results should be sorted alphabetically', async () => {
+        await setUp();
+
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResultAlpha));
+
+        await searchForAvailablePackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+
+        const [ firstItem, secondItem, thirdItem ] = availablePackagesItems;
+        expect(firstItem).toHaveTextContent('testsummary for test package');
+        expect(secondItem).toHaveTextContent('lib-testlib-test package summary');
+        expect(thirdItem).toHaveTextContent('Z-testZ-test package summary');
     });
 });
 
