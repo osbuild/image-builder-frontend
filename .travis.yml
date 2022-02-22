@@ -9,7 +9,7 @@ notifications:
 node_js:
   - '16'
 install:
-  - npm install
+  - npm ci
 script:
   - npm run travis:verify
   - npx codecov
