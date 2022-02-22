@@ -88,15 +88,26 @@ const Packages = ({ defaultArch, ...props }) => {
         });
     });
 
-    // call api to list available packages
-    const handlePackagesAvailableSearch = async () => {
-        const { data } = await api.getPackages(
+    const getAllPackages = async () => {
+        const args = [
             getState()?.values?.release,
             getState()?.values?.architecture || defaultArch,
             packagesSearchName.current
-        );
-        if (data) {
-            const packagesAvailableFiltered = filterPackagesAvailable(data);
+        ];
+        let { data, meta } = await api.getPackages(...args);
+        if (data?.length === meta.count) {
+            return data;
+        } else if (data) {
+            ({ data } = await api.getPackages(...args, meta.count));
+            return data;
+        }
+    };
+
+    // call api to list available packages
+    const handlePackagesAvailableSearch = async () => {
+        const packageList = await getAllPackages();
+        if (packageList) {
+            const packagesAvailableFiltered = filterPackagesAvailable(packageList);
             sortPackages(packagesAvailableFiltered);
             setPackagesAvailableFound(true);
         } else {
