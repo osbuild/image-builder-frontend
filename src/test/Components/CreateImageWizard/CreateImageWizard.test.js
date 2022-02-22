@@ -28,7 +28,7 @@ function verifyCancelButton(cancel, history) {
 
 // packages
 const mockPkgResult = {
-    meta: { count: 100 },
+    meta: { count: 3 },
     links: { first: '', last: '' },
     data: [
         {
@@ -47,6 +47,22 @@ const mockPkgResult = {
             version: '1.0',
         }
     ]
+};
+
+const mockPkgResultPartial = {
+    meta: { count: 132 },
+    links: { first: '', last: '' },
+    data: new Array(100).fill().map((_, i) => {
+        return { name: 'testPkg-' + i, summary: 'test package summary', version: '1.0' };
+    })
+};
+
+const mockPkgResultAll = {
+    meta: { count: 132 },
+    links: { first: '', last: '' },
+    data: new Array(132).fill().map((_, i) => {
+        return { name: 'testPkg-' + i, summary: 'test package summary', version: '1.0' };
+    })
 };
 
 const mockPkgResultEmpty = {
@@ -730,6 +746,27 @@ describe('Step Packages', () => {
         // eslint-disable-next-line jest-dom/prefer-in-document
         expect(chosenPackagesItems).toHaveLength(1);
         within(chosenPackagesList).getByRole('option', { name: /testPkg test package summary/ });
+    });
+
+    test('should get all packages, regardless of api default limit', async () => {
+        await setUp();
+
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation((distribution, architecture, search, limit) => {
+                return limit ? Promise.resolve(mockPkgResultAll) : Promise.resolve(mockPkgResultPartial);
+            });
+
+        await searchForAvailablePackages(searchbox, 'testPkg');
+        expect(getPackages).toHaveBeenCalledTimes(2);
+
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(132);
     });
 });
 

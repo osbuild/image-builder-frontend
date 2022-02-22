@@ -28,12 +28,13 @@ async function getComposeStatus(id) {
     return request.data;
 }
 
-async function getPackages(distribution, architecture, search) {
+async function getPackages(distribution, architecture, search, limit) {
     const params = new URLSearchParams({
         distribution,
         architecture,
         search,
     });
+    limit && params.append('limit', limit);
     let path = '/packages?' + params.toString();
     const request = await axios.get(IMAGE_BUILDER_API.concat(path));
     return request.data;
