@@ -43,31 +43,34 @@ const Packages = ({ defaultArch, ...props }) => {
 
     const searchResultsComparator = useCallback((searchTerm) => {
         return (a, b) => {
+            a = a.name.toLowerCase();
+            b = b.name.toLowerCase();
+
             // check exact match first
-            if (a.name === searchTerm) {
+            if (a === searchTerm) {
                 return -1;
             }
 
-            if (b.name === searchTerm) {
+            if (b === searchTerm) {
                 return 1;
             }
 
             // check for packages that start with the search term
-            if (a.name.startsWith(searchTerm) && !b.name.startsWith(searchTerm)) {
+            if (a.startsWith(searchTerm) && !b.startsWith(searchTerm)) {
                 return -1;
             }
 
-            if (b.name.startsWith(searchTerm) && !a.name.startsWith(searchTerm)) {
+            if (b.startsWith(searchTerm) && !a.startsWith(searchTerm)) {
                 return 1;
             }
 
             // if both (or neither) start with the search term
             // sort alphabetically
-            if (a.name < b.name) {
+            if (a < b) {
                 return -1;
             }
 
-            if (b.name < a.name) {
+            if (b < a) {
                 return 1;
             }
 
