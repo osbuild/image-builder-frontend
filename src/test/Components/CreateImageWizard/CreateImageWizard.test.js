@@ -705,6 +705,29 @@ describe('Step Packages', () => {
         screen.getByText('No packages found');
     });
 
+    test('should display empty available state on failed search after a successful search', async () => {
+        await setUp();
+
+        const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+        searchbox.click();
+
+        let getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForAvailablePackages(searchbox, 'test');
+
+        getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResultEmpty));
+
+        await searchForAvailablePackages(searchbox, 'asdf');
+
+        expect(getPackages).toHaveBeenCalledTimes(2);
+        screen.getByText('No packages found');
+    });
+
     test('should display empty chosen state on failed search', async () => {
         await setUp();
 

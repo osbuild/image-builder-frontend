@@ -114,6 +114,7 @@ const Packages = ({ defaultArch, ...props }) => {
             sortPackages(packagesAvailableFiltered);
             setPackagesAvailableFound(true);
         } else {
+            setPackagesAvailable([]);
             setPackagesAvailableFound(false);
         }
     };
