@@ -39,7 +39,7 @@ export default {
             className: 'pf-u-w-50',
             'data-testid': 'azure-tenant-id',
             type: 'text',
-            label: 'Tenant GUID',
+            label: 'Tenant ID',
             required: true,
             isRequired: true,
             validate: [
@@ -49,7 +49,7 @@ export default {
                 {
                     type: validatorTypes.PATTERN,
                     pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-                    message: 'Please enter a valid tenant GUID',
+                    message: 'Please enter a valid tenant ID',
                 }
             ],
         },
@@ -66,7 +66,7 @@ export default {
             className: 'pf-u-w-50',
             'data-testid': 'azure-subscription-id',
             type: 'text',
-            label: 'Subscription GUID',
+            label: 'Subscription ID',
             isRequired: true,
             validate: [
                 {
@@ -75,7 +75,7 @@ export default {
                 {
                     type: validatorTypes.PATTERN,
                     pattern: /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
-                    message: 'Please enter a valid subscription GUID',
+                    message: 'Please enter a valid subscription ID',
                 },
             ],
         },
