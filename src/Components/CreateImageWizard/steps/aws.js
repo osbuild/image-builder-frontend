@@ -15,10 +15,8 @@ export default {
             component: componentTypes.PLAIN_TEXT,
             name: 'plain-text-component',
             label: <p>
-            Your image will be uploaded to a temporary account on Amazon Web Services. <br />
-            The image will be shared with the account you provide below. <br />
-            Within the next 14 days you will need to copy the shared image to your own account.
-            After 14 days it will be unavailable and will have to be regenerated.
+                Your image will be uploaded to AWS and shared with the account you provide below. <br />
+                The image should be copied to your account within 14 days.
             </p>
         },
         {
