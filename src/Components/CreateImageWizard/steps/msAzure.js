@@ -1,8 +1,7 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { Title, Text, Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Title, Text } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
 
 export default {
@@ -14,34 +13,25 @@ export default {
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,
-            name: 'azure-text-component',
+            name: 'azure-description',
+            label: <Text>
+                Image Builder sends an image to an authorized Azure account.
+            </Text>
+        },
+        {
+            component: 'azure-auth-expandable',
+            name: 'azure-auth-expandable'
+        },
+        {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'azure-destination',
             label: <>
-                <Text>
-                    Image Builder sends an image to an authorized Azure account.
-                </Text>
-                <Title headingLevel="h3">Authorizing an Azure account</Title>
-                <Text>
-            To authorize Image Builder to push images to Microsoft Azure, the account owner
-            must configure Image Builder as an authorized application for a specific tenant ID and give it the role of
-            &quot;Contributor&quot; to at least one resource group.<br />
-                </Text>
-                <small>
-                    <Button
-                        component="a"
-                        target="_blank"
-                        variant="link"
-                        icon={ <ExternalLinkAltIcon /> }
-                        iconPosition="right"
-                        isInline
-                        href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow">
-                      Learn more about OAuth 2.0
-                    </Button>
-                </small>
                 <Title headingLevel="h2">Image Destination</Title>
                 <Text>
-                    Your image will be uploaded to the resource group in the subscription you specify.
+                        Your image will be uploaded to the resource group in the subscription you specify.
                 </Text>
             </>
+
         },
         {
             component: componentTypes.TEXT_FIELD,
