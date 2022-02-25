@@ -46,6 +46,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-tenant-id',
+            className: 'pf-u-w-50',
             'data-testid': 'azure-tenant-id',
             type: 'text',
             label: 'Tenant GUID',
@@ -72,6 +73,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-subscription-id',
+            className: 'pf-u-w-50',
             'data-testid': 'azure-subscription-id',
             type: 'text',
             label: 'Subscription GUID',
@@ -90,6 +92,7 @@ export default {
         {
             component: componentTypes.TEXT_FIELD,
             name: 'azure-resource-group',
+            className: 'pf-u-w-50',
             'data-testid': 'azure-resource-group',
             type: 'text',
             label: 'Resource group',
