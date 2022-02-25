@@ -10,7 +10,7 @@
     "@babel/runtime": "7.17.2",
     "@data-driven-forms/pf4-component-mapper": "3.16.8",
     "@data-driven-forms/react-form-renderer": "3.16.8",
-    "@patternfly/patternfly": "4.171.1",
+    "@patternfly/patternfly": "4.179.1",
     "@patternfly/react-core": "4.192.15",
     "@patternfly/react-table": "4.67.5",
     "@redhat-cloud-services/frontend-components": "3.7.0",
