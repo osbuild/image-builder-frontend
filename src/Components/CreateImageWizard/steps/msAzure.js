@@ -26,7 +26,7 @@ export default {
             component: componentTypes.PLAIN_TEXT,
             name: 'azure-destination',
             label: <>
-                <Title headingLevel="h2">Image Destination</Title>
+                <Title headingLevel="h2">Destination</Title>
                 <Text>
                         Your image will be uploaded to the resource group in the subscription you specify.
                 </Text>
