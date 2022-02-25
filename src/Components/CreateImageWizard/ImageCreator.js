@@ -9,6 +9,7 @@ import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import AzureAuthButton from './formComponents/AzureAuthButton';
+import AzureAuthExpandable from './formComponents/AzureAuthExpandable';
 import ActivationKeys from './formComponents/ActivationKeys';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
 
@@ -29,6 +30,7 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, defaul
                 defaultArch
             },
             'radio-popover': RadioWithPopover,
+            'azure-auth-expandable': AzureAuthExpandable,
             'azure-auth-button': AzureAuthButton,
             'activation-keys': ActivationKeys,
             ...customComponentMapper

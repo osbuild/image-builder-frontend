@@ -520,7 +520,6 @@ describe('Step Packages', () => {
         // aws step
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
         screen.getByRole('button', { name: /Next/ }).click();
-
         // skip registration
         await screen.findByRole('textbox', {
             name: 'Select activation key'
