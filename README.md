@@ -14,7 +14,7 @@ Make sure you have npm@7 and node 15+ installed. If you need multiple versions o
 
 ### Webpack proxy
 
-1. run `npm i`
+1. run `npm ci`
 
 2. run `npm run start:proxy:beta`. This command uses a prod-beta env by default. Configure your
    environment by the `env` attribute in `dev.webpack.config.js`.
