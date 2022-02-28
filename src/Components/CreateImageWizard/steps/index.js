@@ -7,3 +7,4 @@ export { default as review } from './review';
 export { default as imageOutput } from './imageOutput';
 export { default as nextStepMapper } from './imageOutputStepMapper';
 export { default as fileSystemConfiguration } from './fileSystemConfiguration';
+export { default as details } from './details';

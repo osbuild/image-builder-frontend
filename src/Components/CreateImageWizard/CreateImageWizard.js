@@ -19,6 +19,7 @@ import {
     packages,
     imageOutput,
     fileSystemConfiguration,
+    details
 } from './steps';
 
 import {
@@ -62,6 +63,7 @@ const onSave = (values) => {
     if (values['target-environment']?.aws) {
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -97,6 +99,7 @@ const onSave = (values) => {
 
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -117,6 +120,7 @@ const onSave = (values) => {
     if (values['target-environment']?.azure) {
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -138,6 +142,7 @@ const onSave = (values) => {
     if (values['target-environment']?.vsphere) {
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -155,6 +160,7 @@ const onSave = (values) => {
     if (values['target-environment']?.['guest-image']) {
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -172,6 +178,7 @@ const onSave = (values) => {
     if (values['target-environment']?.['image-installer']) {
         let request = {
             distribution: values.release,
+            image_name: values?.['image-name'],
             image_requests: [
                 {
                     architecture: 'x86_64',
@@ -254,6 +261,7 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                     // order in this array does not reflect order in wizard nav, this order is managed inside
                     // of each step by `nextStep` property!
                     fields: [
+                        details,
                         imageOutput,
                         awsTarget,
                         googleCloudTarger,
