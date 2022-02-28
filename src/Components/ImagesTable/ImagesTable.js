@@ -91,7 +91,7 @@ class ImagesTable extends Component {
         let { composes } = this.props;
 
         const columns = [
-            'Image',
+            'Image name',
             'Created',
             'Release',
             'Target',
@@ -107,7 +107,7 @@ class ImagesTable extends Component {
             const compose = composes.byId[id];
             return {
                 cells: [
-                    id,
+                    compose.request.image_name || id,
                     this.timestampToDisplayString(compose.created_at),
                     { title: <Release release={ compose.request.distribution } /> },
                     { title: <Target

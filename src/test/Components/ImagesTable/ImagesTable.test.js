@@ -33,6 +33,7 @@ const store = {
         byId: {
             '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
                 id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
+                image_name: 'testImageName',
                 created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
                 request: {
                     distribution: RHEL_8,
@@ -362,7 +363,7 @@ describe('Images Table', () => {
         // remove first row from list since it is just header labels
         const header = rows.shift();
         // test the header has correct labels
-        expect(header.cells[0]).toHaveTextContent('Image');
+        expect(header.cells[0]).toHaveTextContent('Image name');
         expect(header.cells[1]).toHaveTextContent('Created');
         expect(header.cells[2]).toHaveTextContent('Release');
         expect(header.cells[3]).toHaveTextContent('Target');
@@ -374,7 +375,9 @@ describe('Images Table', () => {
         for (const row of rows) {
             const col1 = row.cells[0].textContent;
 
-            const compose = store.composes.byId[col1];
+            const composes = Object.values(store.composes.byId);
+            // find compose with either the user defined image name or the uuid
+            const compose = composes.find(compose => compose?.image_name === col1 || compose.id === col1);
             expect(compose).toBeTruthy();
 
             // date should match the month day and year of the timestamp.
