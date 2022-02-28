@@ -19,6 +19,7 @@ const PopoverInfo = ({ appendTo }) => {
         hasAutoWidth
         maxWidth='35rem'
         headerContent={ 'Valid account types' }
+        flipBehavior={ [ 'right', 'bottom', 'top', 'left' ] }
         bodyContent={ <TextContent>
             <Text>The following account types can have an image shared with them:</Text>
             <TextList>
