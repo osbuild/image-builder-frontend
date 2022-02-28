@@ -21,6 +21,15 @@ Make sure you have npm@7 and node 15+ installed. If you need multiple versions o
 
 3. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
 
+### Webpack proxy (staging) -- *Runs with image-builder's stage deployment*
+
+1. run `npm ci`
+
+2. run `npm run stage`. This command uses a stage-beta env by default. Configure your
+   environment by the `env` attribute in `dev.webpack.config.js`.
+
+3. open browser at `https://stage.foo.redhat.com:1337/beta/insights/image-builder`
+
 ### Insights proxy (deprecated)
 
 1. Clone the insights proxy: https://github.com/RedHatInsights/insights-proxy
