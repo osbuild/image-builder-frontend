@@ -51,12 +51,12 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                                     Contribute on GitHub
                             </Button>
                         </TextContent> }>
-                        <button
-                            type="button"
+                        <Button
+                            variant="plain"
                             aria-label="About image builder"
-                            className="pf-c-form__group-label-help">
+                            className="pf-c-form__group-label-help" >
                             <HelpIcon />
-                        </button>
+                        </Button>
                     </Popover>
                 </PageHeader>
                 <section className="pf-l-page__main-section pf-c-page__main-section">
