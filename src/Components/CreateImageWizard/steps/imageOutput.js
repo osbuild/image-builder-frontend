@@ -5,7 +5,8 @@ import { RHEL_8 } from '../../../constants.js';
 
 export const releaseValues = {
     [RHEL_8]: 'Red Hat Enterprise Linux (RHEL) 8',
-    'centos-8': 'CentOS Stream 8'
+    'centos-8': 'CentOS Stream 8',
+    'centos-9': 'CentOS Stream 9',
 };
 
 export default {
