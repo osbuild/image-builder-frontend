@@ -72,7 +72,7 @@ const ReviewStep = () => {
         if (getState()?.values?.['file-system-config-toggle'] === 'manual' &&
             getState()?.values?.['file-system-configuration']) {
             let size = 0;
-            for (const fsc of getState()?.values?.['file-system-configuration']) {
+            for (const fsc of getState().values['file-system-configuration']) {
                 size += (fsc.size * fsc.unit);
             }
 
