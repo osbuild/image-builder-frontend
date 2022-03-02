@@ -27,6 +27,7 @@ export default {
             type: 'text',
             label: 'AWS account ID',
             isRequired: true,
+            autoFocus: true,
             validate: [
                 {
                     type: validatorTypes.REQUIRED,
