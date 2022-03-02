@@ -54,7 +54,7 @@ https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/up
                         <Button
                             variant="plain"
                             aria-label="About image builder"
-                            className="pf-c-form__group-label-help" >
+                            className="pf-u-pl-sm">
                             <HelpIcon />
                         </Button>
                     </Popover>
