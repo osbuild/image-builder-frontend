@@ -1,7 +1,10 @@
+import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import nextStepMapper from './imageOutputStepMapper';
 import { RHEL_8 } from '../../../constants.js';
+import { Text } from '@patternfly/react-core';
+import DocumentationButton from '../../sharedComponents/DocumentationButton';
 
 export const releaseValues = {
     [RHEL_8]: 'Red Hat Enterprise Linux (RHEL) 8',
@@ -14,6 +17,11 @@ export default {
     name: 'image-output',
     nextStep: ({ values }) => nextStepMapper(values),
     fields: [
+        {
+            component: componentTypes.PLAIN_TEXT,
+            name: 'image-output-plain-text',
+            label: <Text>Image builder allows you to create a custom image and push it to target environments.<br /><DocumentationButton /></Text>
+        },
         {
             component: componentTypes.SELECT,
             label: 'Release',
