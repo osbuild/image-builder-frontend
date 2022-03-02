@@ -9,7 +9,7 @@
   "dependencies": {
     "@babel/runtime": "7.17.2",
     "@data-driven-forms/pf4-component-mapper": "3.16.8",
-    "@data-driven-forms/react-form-renderer": "3.16.8",
+    "@data-driven-forms/react-form-renderer": "3.16.9",
     "@patternfly/patternfly": "4.179.1",
     "@patternfly/react-core": "4.198.5",
     "@patternfly/react-table": "4.67.5",
