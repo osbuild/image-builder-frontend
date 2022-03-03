@@ -1103,6 +1103,7 @@ describe('Click through all steps', () => {
         await screen.findByText('Virtualization - Guest image');
         // await screen.findByText('Bare metal - Installer');
         await screen.findByText('Register with Subscriptions and Red Hat Insights');
+        await screen.findByText('MyImageName');
 
         screen.getByTestId('file-system-configuration-popover').click();
         const revtbody = await screen.findByTestId('file-system-configuration-tbody-review');

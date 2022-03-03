@@ -97,10 +97,14 @@ const ReviewStep = () => {
             </Text>
             <DescriptionList isCompact isHorizontal>
                 <DescriptionListGroup>
-                    <DescriptionListTerm>Image name</DescriptionListTerm>
-                    <DescriptionListDescription>
-                        {getState()?.values?.['image-name']}
-                    </DescriptionListDescription>
+                    {getState()?.values?.['image-name'] &&
+                        <>
+                            <DescriptionListTerm>Image name</DescriptionListTerm>
+                            <DescriptionListDescription>
+                                {getState()?.values?.['image-name']}
+                            </DescriptionListDescription>
+                        </>
+                    }
                     <DescriptionListTerm>Release</DescriptionListTerm>
                     <DescriptionListDescription>
                         {releaseValues?.[getState()?.values?.release]}
