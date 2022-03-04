@@ -4,13 +4,13 @@ import { connect } from 'react-redux';
 import { actions } from '../../store/actions';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody } from '@patternfly/react-table';
-import { Button,
-    EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
+import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
     Pagination,
     Toolbar, ToolbarContent, ToolbarItem,
     Title } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon } from '@patternfly/react-icons';
 
+import DocumentationButton from '../sharedComponents/DocumentationButton';
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Target from './Target';
@@ -140,18 +140,7 @@ class ImagesTable extends Component {
                         Create image
                         </Link>
                         <EmptyStateSecondaryActions>
-                            <Button
-                                component="a"
-                                target="_blank"
-                                variant="link"
-                                icon={ <ExternalLinkAltIcon /> }
-                                iconPosition="right"
-                                isInline
-                                href="
-https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/uploading_a_customized_rhel_system_image_to_cloud_environments/index
-                                ">
-                                    Documentation
-                            </Button>
+                            <DocumentationButton />
                         </EmptyStateSecondaryActions>
                     </EmptyState>
                 ) || (
