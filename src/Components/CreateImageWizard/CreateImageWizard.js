@@ -1,6 +1,6 @@
 import React from 'react';
 import ImageCreator from './ImageCreator';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import './CreateImageWizard.scss';
@@ -198,6 +198,7 @@ const onSave = (values) => {
 const CreateImageWizard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
     return <ImageCreator
         onClose={ () => navigate('/') }
         onSubmit={ ({ values, setIsSaving }) => {
@@ -261,7 +262,8 @@ const CreateImageWizard = () => {
                     ]
                 }
             ]
-        } } />;
+        } }
+        initialValues={ {} } />;
 };
 
 export default CreateImageWizard;
