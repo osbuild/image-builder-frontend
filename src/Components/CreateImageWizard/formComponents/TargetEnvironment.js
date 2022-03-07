@@ -11,7 +11,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     const [ environment, setEnvironment ] = useState({
         aws: false,
         azure: false,
-        google: false,
+        gcp: false,
         vsphere: false,
         'guest-image': false,
         'image-installer': false,
@@ -55,8 +55,8 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                             icon={ <img
                                 className='provider-icon'
                                 src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
-                            onClick={ () => handleSetEnvironment('google') }
-                            isSelected={ environment.google }
+                            onClick={ () => handleSetEnvironment('gcp') }
+                            isSelected={ environment.gcp }
                             isStacked
                             isDisplayLarge />
                         <Tile

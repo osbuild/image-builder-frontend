@@ -79,7 +79,7 @@ const onSave = (values) => {
         requests.push(request);
     }
 
-    if (values['target-environment']?.google) {
+    if (values['target-environment']?.gcp) {
         let share = '';
         switch (values['google-account-type']) {
             case 'googleAccount':
