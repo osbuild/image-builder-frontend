@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
     Pagination,
@@ -22,6 +22,8 @@ const ImagesTable = () => {
 
     const composes = useSelector((state) => state.composes);
     const dispatch = useDispatch();
+
+    const navigate = useNavigate();
 
     const pollComposeStatuses = () => {
         Object.entries(composes.byId).map(([ id, compose ]) => {
@@ -87,7 +89,8 @@ const ImagesTable = () => {
         'Release',
         'Target',
         'Status',
-        'Instance'
+        'Instance',
+        ''
     ];
 
     // the state.page is not an index so must be reduced by 1 get the starting index
@@ -97,6 +100,7 @@ const ImagesTable = () => {
     const rows = composes.allIds.slice(itemsStartInclusive, itemsEndExlcusive).map(id => {
         const compose = composes.byId[id];
         return {
+            compose,
             cells: [
                 compose.request.image_name || id,
                 timestampToDisplayString(compose.created_at),
@@ -108,10 +112,17 @@ const ImagesTable = () => {
                 { title: <ImageLink
                     imageStatus={ compose.image_status }
                     imageType={ compose.request.image_requests[0].image_type }
-                    uploadOptions={ compose.request.image_requests[0].upload_request.options } /> },
+                    uploadOptions={ compose.request.image_requests[0].upload_request.options } /> }
             ]
         };
     });
+
+    const actions = [
+        {
+            title: 'Recreate image',
+            onClick: (_event, _rowId, rowData) => navigate('/imagewizard', { state: { composeRequest: rowData.compose.request }})
+        }
+    ];
 
     return (
         <React.Fragment>
@@ -160,6 +171,7 @@ const ImagesTable = () => {
                         aria-label="Images"
                         rows={ rows }
                         cells={ columns }
+                        actions={ actions }
                         data-testid="images-table">
                         <TableHeader />
                         <TableBody />
