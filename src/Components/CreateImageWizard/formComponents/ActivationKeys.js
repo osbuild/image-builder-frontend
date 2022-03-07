@@ -5,11 +5,11 @@ import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import api from '../../../api';
 
 const ActivationKeys = ({ label, isRequired }) => {
-    const { change } = useFormApi();
+    const { change, getState } = useFormApi();
     const [ activationKeys, setActivationKeys ] = useState([]);
     const [ isOpen, setIsOpen ] = useState(false);
     const [ isLoading, setIsLoading ] = useState(false);
-    const [ activationKeySelected, selectActivationKey ] = useState();
+    const [ activationKeySelected, selectActivationKey ] = useState(getState()?.values?.['subscription-activation-key']);
 
     useEffect(() => {
         setIsLoading(true);
