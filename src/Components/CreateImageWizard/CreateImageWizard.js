@@ -6,6 +6,7 @@ import DocumentationButton from '../sharedComponents/DocumentationButton';
 import './CreateImageWizard.scss';
 import { useDispatch } from 'react-redux';
 import api from '../../api';
+import { UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
 import { composeAdded } from '../../store/actions/actions';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
@@ -195,10 +196,169 @@ const onSave = (values) => {
     return requests;
 };
 
+const parseSizeUnit = (bytesize) => {
+    let size;
+    let unit;
+
+    if (bytesize % UNIT_GIB === 0) {
+        size = bytesize / UNIT_GIB;
+        unit = UNIT_GIB;
+    } else if (bytesize % UNIT_MIB === 0) {
+        size = bytesize / UNIT_MIB;
+        unit = UNIT_MIB;
+    } else if (bytesize % UNIT_KIB === 0) {
+        size = bytesize / UNIT_KIB;
+        unit = UNIT_KIB;
+    }
+
+    return [ size, unit ];
+};
+
+const getPackageDescription = async (release, arch, packageName) => {
+    const args = [
+        release,
+        arch,
+        packageName
+    ];
+    let { data, meta } = await api.getPackages(...args);
+    let summary;
+
+    // the package should be found in the 0 index
+    // if not then fetch all package matches and search for the package
+    if (data[0]?.name === packageName) {
+        summary = data[0]?.summary;
+    } else {
+        if (data?.length !== meta.count) {
+            ({ data } = await api.getPackages(...args, meta.count));
+        }
+
+        const pack = data.find(pack => packageName === pack.name);
+        summary = pack?.summary;
+    }
+
+    // if no matching package is found return an empty string for description
+    return summary || '';
+} ;
+
+// map the compose request object to the expected form state
+const requestToState = (composeRequest) => {
+    if (composeRequest) {
+        const imageRequest = composeRequest.image_requests[0];
+        const uploadRequest = imageRequest.upload_request;
+        let formState = {};
+
+        formState['image-name'] = composeRequest.image_name;
+
+        formState.release = composeRequest?.distribution;
+        // set defaults for target environment first
+        formState['target-environment'] = {
+            aws: false,
+            azure: false,
+            gcp: false,
+            'guest-image': false,
+        };
+        // then select the one from the request
+        // if the image type is to a cloud provider we use the upload_request.type
+        // or if the image is intended for download we use the image_type
+        let targetEnvironment;
+        if (uploadRequest.type === 'aws.s3') {
+            targetEnvironment = imageRequest.image_type;
+        } else {
+            targetEnvironment = uploadRequest.type;
+        }
+
+        formState['target-environment'][targetEnvironment] = true;
+
+        if (targetEnvironment === 'aws') {
+            formState['aws-account-id'] = uploadRequest?.options?.share_with_accounts[0];
+        } else if (targetEnvironment === 'azure') {
+            formState['azure-tenant-id'] = uploadRequest?.options?.tenant_id;
+            formState['azure-subscription-id'] = uploadRequest?.options?.subscription_id;
+            formState['azure-resource-group'] = uploadRequest?.options?.resource_group;
+        } else if (targetEnvironment === 'gcp') {
+            // parse google account info
+            // roughly in the format `accountType:accountEmail`
+            const accountInfo = uploadRequest?.options?.share_with_accounts[0];
+            const [ accountTypePrefix, account ] = accountInfo.split(':');
+
+            switch (accountTypePrefix) {
+                case 'user':
+                    formState['google-account-type'] = 'googleAccount';
+                    formState['google-email'] = account;
+                    break;
+                case 'serviceAccount':
+                    formState['google-account-type'] = 'serviceAccount';
+                    formState['google-email'] = account;
+                    break;
+                case 'group':
+                    formState['google-account-type'] = 'googleGroup';
+                    formState['google-email'] = account;
+                    break;
+                case 'domain':
+                    formState['google-account-type'] = 'domain';
+                    formState['google-domain'] = account;
+                    break;
+            }
+        }
+
+        // customizations
+        // packages
+        let packs = [];
+        composeRequest?.customizations?.packages?.forEach(async (packName) => {
+            const packageDescription = await getPackageDescription(composeRequest?.distribution, imageRequest?.architecture, packName);
+            const pack = ({
+                name: packName,
+                summary: packageDescription
+            });
+            packs.push(pack);
+        });
+        formState['selected-packages'] = packs;
+
+        // filesystem
+        const fs = composeRequest?.customizations?.filesystem;
+        if (fs) {
+            formState['file-system-config-toggle'] = 'manual';
+            let fileSystemConfiguration = [];
+            for (let fsc of fs) {
+                const [ size, unit ] = parseSizeUnit(fsc.min_size);
+                fileSystemConfiguration.push({
+                    mountpoint: fsc.mountpoint,
+                    size,
+                    unit
+                });
+            }
+
+            formState['file-system-configuration'] = fileSystemConfiguration;
+        }
+
+        // subscription
+        const subscription = composeRequest?.customizations?.subscription;
+        if (subscription) {
+            if (subscription.insights) {
+                formState['register-system'] = 'register-now-insights';
+            } else {
+                formState['register-system'] = 'register-now';
+            }
+
+            formState['subscription-activation-key'] = subscription['activation-key'];
+            formState['subscription-organization-id'] = subscription.organization;
+        } else {
+            formState['register-system'] = 'register-later';
+        }
+
+        return formState;
+    } else {
+        return;
+    }
+};
+
 const CreateImageWizard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
+
+    const initialState = requestToState(location?.state?.composeRequest);
+
     return <ImageCreator
         onClose={ () => navigate('/') }
         onSubmit={ ({ values, setIsSaving }) => {
@@ -263,7 +423,7 @@ const CreateImageWizard = () => {
                 }
             ]
         } }
-        initialValues={ {} } />;
+        initialValues={ initialState } />;
 };
 
 export default CreateImageWizard;
