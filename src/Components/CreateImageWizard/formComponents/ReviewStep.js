@@ -129,7 +129,7 @@ const ReviewStep = () => {
                                 </TextContent>
                             </ListItem>
                         }
-                        {getState()?.values?.['target-environment']?.google &&
+                        {getState()?.values?.['target-environment']?.gcp &&
                             <ListItem
                                 className='pf-c-list__item pf-u-mt-md'
                                 icon={ <img className='provider-icon' src='/apps/frontend-assets/partners-icons/google-cloud-short.svg' /> }>

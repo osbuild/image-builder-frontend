@@ -5,7 +5,7 @@ export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, sk
         return 'aws-target-env';
     }
 
-    if (!skipGoogle && targetEnv?.google) {
+    if (!skipGoogle && targetEnv?.gcp) {
         return 'google-cloud-target-env';
     }
 
