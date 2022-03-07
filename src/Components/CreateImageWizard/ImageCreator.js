@@ -17,6 +17,7 @@ import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 
 const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, customValidatorMapper, defaultArch, className, ...props }) => {
     return schema ? <FormRenderer
+        initialValues={ props.initialValues }
         schema={ schema }
         className={ `image-builder${className ? ` ${className}` : ''}` }
         subscription={ { values: true } }
@@ -57,7 +58,8 @@ ImageCreator.propTypes = {
         [PropTypes.string]: PropTypes.func
     }),
     defaultArch: PropTypes.string,
-    className: PropTypes.string
+    className: PropTypes.string,
+    initialValues: PropTypes.object
 };
 
 export default ImageCreator;
