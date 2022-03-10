@@ -32,6 +32,12 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
         return newEnv;
     });
 
+    const handleKeyDown = (e, env) => {
+        if (e.key === ' ') {
+            handleSetEnvironment(env);
+        }
+    };
+
     return (
         <>
             <FormGroup isRequired={ isRequired } label={ label } data-testid="target-select">
@@ -45,6 +51,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                                 className='provider-icon'
                                 src={ '/apps/frontend-assets/partners-icons/aws.svg' } /> }
                             onClick={ () => handleSetEnvironment('aws') }
+                            onKeyDown = { (e) => handleKeyDown(e, 'aws') }
                             isSelected={ environment.aws }
                             isStacked
                             isDisplayLarge />
@@ -57,6 +64,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                                 src={ '/apps/frontend-assets/partners-icons/google-cloud-short.svg' } /> }
                             onClick={ () => handleSetEnvironment('gcp') }
                             isSelected={ environment.gcp }
+                            onKeyDown = { (e) => handleKeyDown(e, 'gcp') }
                             isStacked
                             isDisplayLarge />
                         <Tile
@@ -67,6 +75,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                                 className='provider-icon'
                                 src={ '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg' } /> }
                             onClick={ () => handleSetEnvironment('azure') }
+                            onKeyDown = { (e) => handleKeyDown(e, 'azure') }
                             isSelected={ environment.azure }
                             isStacked
                             isDisplayLarge />
