@@ -22,6 +22,7 @@ export default {
             name: 'image-name',
             type: 'text',
             label: 'Image name',
+            autoFocus: true,
             validate: [
                 {
                     type: validatorTypes.PATTERN,

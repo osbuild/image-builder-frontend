@@ -1399,3 +1399,92 @@ describe('Click through all steps', () => {
         expect(store.getStore().getState().composes.allIds).toEqual(ids);
     });
 });
+
+describe('Keyboard accessibility', () => {
+    const setUp = async () => {
+        const view = renderWithReduxRouter(<CreateImageWizard />, {}, '/imagewizard');
+        history = view.history;
+    };
+
+    const clickNext = () => {
+        const next = screen.getByRole('button', { name: /Next/ });
+        next.click();
+    };
+
+    const selectAllEnvironments = () => {
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+        const googleTile = screen.getByTestId('upload-google');
+        googleTile.click();
+        const azureTile = screen.getByTestId('upload-azure');
+        azureTile.click();
+        const virtualizationCheckbox = screen.getByRole('checkbox', {
+            name: /virtualization guest image checkbox/i
+        });
+        virtualizationCheckbox.click();
+    };
+
+    const fillAzureInputs = () => {
+        userEvent.type(screen.getByTestId('azure-tenant-id'), 'b8f86d22-4371-46ce-95e7-65c415f3b1e2');
+        userEvent.type(screen.getByTestId('azure-subscription-id'), '60631143-a7dc-4d15-988b-ba83f3c99711');
+        userEvent.type(screen.getByTestId('azure-resource-group'), 'testResourceGroup');
+    };
+
+    test('autofocus on each step first input element', async () => {
+        setUp();
+
+        // Details
+        const detailsInput = screen.getByRole('textbox', { name: /image name/i });
+        expect(detailsInput).toHaveFocus();
+        clickNext();
+
+        // Image output
+        selectAllEnvironments();
+        clickNext();
+
+        // Target environment aws
+        const awsInput = screen.getByRole('textbox', { name: /aws account id/i });
+        expect(awsInput).toHaveFocus();
+        userEvent.type(awsInput, '012345678901');
+        clickNext();
+
+        // Target environment google
+        const googleAccountRadio = screen.getByRole('radio', {  name: /google account/i });
+        expect(googleAccountRadio).toHaveFocus();
+        userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
+        clickNext();
+
+        // Target environment azure
+        const tenantIDInput = screen.getByTestId('azure-tenant-id');
+        expect(tenantIDInput).toHaveFocus();
+        fillAzureInputs();
+        clickNext();
+
+        // Registration
+        const registerRadio = screen.getByRole('radio', {
+            name: /register and connect image instances with red hat/i
+        });
+        expect(registerRadio).toHaveFocus();
+        clickNext();
+
+        // File system configuration
+        clickNext();
+
+        // Packages
+        let availablePackagesInput;
+        // eslint-disable-next-line testing-library/no-unnecessary-act
+        await act(async() => {
+            const view = screen.getByTestId('search-available-pkgs-input');
+
+            availablePackagesInput = within(view).getByRole('textbox', {
+                name: /search input/i
+            });
+        });
+        expect(availablePackagesInput).toHaveFocus();
+        clickNext();
+
+        // Review
+        const targetEnvironmentTab = screen.getByTestId('tab-target');
+        expect(targetEnvironmentTab).toHaveFocus();
+    });
+});

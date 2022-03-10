@@ -77,14 +77,15 @@ export default {
         {
             component: 'radio-popover',
             label: 'Type',
+            isRequired: true,
             Popover: PopoverInfo,
             name: 'google-account-type',
             initialValue: 'googleAccount',
             options: Object.entries(googleAccType).map(([ value, label ]) => ({
                 label: value === 'domain' ? 'Google Workspace domain or Cloud Identity domain' : label,
-                value
+                value,
+                autoFocus: value === 'googleAccount' ? true : false
             })),
-            isRequired: true,
             validate: [
                 {
                     type: validatorTypes.REQUIRED,
