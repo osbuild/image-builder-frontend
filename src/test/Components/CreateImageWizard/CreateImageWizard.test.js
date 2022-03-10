@@ -1499,4 +1499,21 @@ describe('Keyboard accessibility', () => {
         userEvent.keyboard('{enter}');
         screen.getByText('Image name');
     });
+
+    test('target environment tiles are keyboard selectable', async () => {
+        const testTile = (tile) => {
+            tile.focus();
+            userEvent.keyboard('{space}');
+            expect(tile).toHaveClass('pf-m-selected');
+            userEvent.keyboard('{space}');
+            expect(tile).not.toHaveClass('pf-m-selected');
+        };
+
+        setUp();
+        clickNext();
+
+        testTile(screen.getByTestId('upload-aws'));
+        testTile(screen.getByTestId('upload-google'));
+        testTile(screen.getByTestId('upload-azure'));
+    });
 });
