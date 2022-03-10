@@ -26,6 +26,12 @@ import {
     fileSystemConfigurationValidator,
 } from './validators';
 
+const handleKeyDown = (e, handleClose) => {
+    if (e.key === 'Escape') {
+        handleClose();
+    }
+};
+
 const onSave = (values) => {
     let customizations = {
         packages: values['selected-packages']?.map(p => p.name),
@@ -393,8 +399,10 @@ const CreateImageWizard = () => {
     const initialState = requestToState(composeRequest);
     const stepHistory = formStepHistory(composeRequest);
 
+    const handleClose = () => navigate('/');
+
     return <ImageCreator
-        onClose={ () => navigate('/') }
+        onClose={ handleClose }
         onSubmit={ ({ values, setIsSaving }) => {
             setIsSaving(() => true);
             const requests = onSave(values);
@@ -434,6 +442,7 @@ const CreateImageWizard = () => {
                     className: 'image_builder',
                     isDynamic: true,
                     inModal: true,
+                    onKeyDown: (e) => { handleKeyDown(e, handleClose); },
                     buttonLabels: {
                         submit: 'Create image',
                     },
