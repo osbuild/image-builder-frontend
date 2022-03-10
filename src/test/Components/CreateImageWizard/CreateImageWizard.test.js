@@ -1487,4 +1487,16 @@ describe('Keyboard accessibility', () => {
         const targetEnvironmentTab = screen.getByTestId('tab-target');
         expect(targetEnvironmentTab).toHaveFocus();
     });
+
+    test('pressing Esc closes the wizard', async () => {
+        setUp();
+        userEvent.keyboard('{esc}');
+        expect(history.location.pathname).toBe('/');
+    });
+
+    test('pressing Enter does not advance the wizard', async () => {
+        setUp();
+        userEvent.keyboard('{enter}');
+        screen.getByText('Image name');
+    });
 });
