@@ -112,7 +112,7 @@ const ReviewStep = () => {
                 </DescriptionListGroup>
             </DescriptionList>
             <Tabs isFilled activeKey={ activeTabKey } onSelect={ handleTabClick } className="pf-u-w-75">
-                <Tab eventKey={ 0 } title={ <TabTitleText>Target environment</TabTitleText> } data-testid='tab-target'>
+                <Tab eventKey={ 0 } title={ <TabTitleText>Target environment</TabTitleText> } data-testid='tab-target' autoFocus>
                     <List isPlain iconSize="large">
                         {getState()?.values?.['target-environment']?.aws &&
                             <ListItem icon={ <img className='provider-icon' src='/apps/frontend-assets/partners-icons/aws.svg' /> }>

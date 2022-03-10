@@ -213,6 +213,12 @@ const Packages = ({ defaultArch, ...props }) => {
         }
     };
 
+    const firstInputElement = useRef(null);
+
+    useEffect(() => {
+        firstInputElement.current?.focus();
+    }, []);
+
     return (
         <DualListSelector>
             <DualListSelectorPane
@@ -221,6 +227,7 @@ const Packages = ({ defaultArch, ...props }) => {
                     placeholder="Search for a package"
                     data-testid="search-available-pkgs-input"
                     value={ packagesSearchName.current }
+                    ref={ firstInputElement }
                     onFocus={ () => setFocus('available') }
                     onBlur={ () => setFocus('') }
                     onChange={ (val) => {

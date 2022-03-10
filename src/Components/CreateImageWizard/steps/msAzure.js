@@ -45,6 +45,7 @@ export default {
             label: 'Tenant ID',
             required: true,
             isRequired: true,
+            autoFocus: true,
             validate: [
                 {
                     type: validatorTypes.REQUIRED,

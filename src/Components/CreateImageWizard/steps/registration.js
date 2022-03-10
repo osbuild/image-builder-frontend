@@ -43,6 +43,7 @@ export default {
                     description: 'Includes Subscriptions and Red Hat Insights',
                     value: 'register-now-insights',
                     'data-testid': 'radio-register-now-insights',
+                    autoFocus: true,
                 },
                 {
                     label: 'Register image instances only',
