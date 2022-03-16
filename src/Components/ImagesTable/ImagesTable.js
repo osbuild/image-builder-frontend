@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { actions } from '../../store/actions';
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { Table, TableHeader, TableBody } from '@patternfly/react-table';
 import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
@@ -10,69 +9,64 @@ import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptySta
     Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 
+import { composesGet, composeGetStatus } from '../../store/actions/actions';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Target from './Target';
 import ImageLink from './ImageLink';
-class ImagesTable extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            page: 1,
-            perPage: 10,
-        };
-        this.pollComposeStatuses = this.pollComposeStatuses.bind(this);
-        this.onSetPage = this.onSetPage.bind(this);
-        this.onPerPageSelect = this.onPerPageSelect.bind(this);
-        this.timestampToDisplayString = this.timestampToDisplayString.bind(this);
-    }
 
-    componentDidMount() {
-        this.props.composesGet(this.state.perPage, 0);
-        this.interval = setInterval(() => this.pollComposeStatuses(), 8000);
-    }
+const ImagesTable = () => {
+    const [ page, setPage ] = useState(1);
+    const [ perPage, setPerPage ] = useState(10);
 
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
+    const composes = useSelector((state) => state.composes);
+    const dispatch = useDispatch();
 
-    pollComposeStatuses() {
-        let { composes } = this.props;
+    const pollComposeStatuses = () => {
         Object.entries(composes.byId).map(([ id, compose ]) => {
             /* Skip composes that have been complete */
             if (compose.image_status.status === 'success' || compose.image_status.status === 'failure') {
                 return;
             }
 
-            this.props.composeGetStatus(id);
+            dispatch(composeGetStatus(id));
         });
-    }
+    };
 
-    onSetPage(_, page) {
+    useEffect(() => {
+        dispatch(composesGet(perPage, 0));
+        const intervalId = setInterval(() => pollComposeStatuses(), 8000);
+
+        // clean up interval on unmount
+        return () => clearInterval(intervalId);
+    }, []);
+
+    const onSetPage = (_, page) => {
         // if the next page's composes haven't been fetched from api yet
         // then fetch them with proper page index and offset
-        if (this.props.composes.count > this.props.composes.allIds.length) {
+        if (composes.count > composes.allIds.length) {
             const pageIndex = page - 1;
-            const offset = pageIndex * this.state.perPage;
-            this.props.composesGet(this.state.perPage, offset);
+            const offset = pageIndex * perPage;
+            dispatch(composesGet(perPage, offset));
         }
 
-        this.setState({ page });
-    }
+        setPage(page);
+    };
 
-    onPerPageSelect(_, perPage) {
+    const onPerPageSelect = (_, perPage) => {
         // if the new per page quantity is greater than the number of already fetched composes fetch more composes
         // if all composes haven't already been fetched
-        if (this.props.composes.count > this.props.composes.allIds.length && perPage > this.props.composes.allIds.length) {
-            this.props.composesGet(perPage, 0);
+        if (composes.count > composes.allIds.length && perPage > composes.allIds.length) {
+            dispatch(composesGet(perPage, 0));
         }
 
         // page should be reset to the first page when the page size is changed.
-        this.setState({ perPage, page: 1 });
-    }
+        setPerPage(perPage);
+        setPage(1);
+    };
 
-    timestampToDisplayString(ts) {
+    const timestampToDisplayString = (ts) => {
         // timestamp has format 2021-04-27 12:31:12.794809 +0000 UTC
         // must be converted to ms timestamp and then reformatted to Apr 27, 2021
         if (!ts) {
@@ -85,113 +79,96 @@ class ImagesTable extends Component {
         const options = { month: 'short', day: 'numeric', year: 'numeric' };
         const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
         return tsDisplay;
-    }
-
-    render() {
-        let { composes } = this.props;
-
-        const columns = [
-            'Image name',
-            'Created',
-            'Release',
-            'Target',
-            'Status',
-            'Instance'
-        ];
-
-        // the state.page is not an index so must be reduced by 1 get the starting index
-        const itemsStartInclusive = (this.state.page - 1) * this.state.perPage;
-        const itemsEndExlcusive = itemsStartInclusive + this.state.perPage;
-        // only display the current pages section of composes. slice is inclusive, exclusive.
-        const rows = composes.allIds.slice(itemsStartInclusive, itemsEndExlcusive).map(id => {
-            const compose = composes.byId[id];
-            return {
-                cells: [
-                    compose.request.image_name || id,
-                    this.timestampToDisplayString(compose.created_at),
-                    { title: <Release release={ compose.request.distribution } /> },
-                    { title: <Target
-                        uploadType={ compose.request.image_requests[0].upload_request.type }
-                        imageType={ compose.request.image_requests[0].image_type } /> },
-                    { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
-                    { title: <ImageLink
-                        imageStatus={ compose.image_status }
-                        imageType={ compose.request.image_requests[0].image_type }
-                        uploadOptions={ compose.request.image_requests[0].upload_request.options } /> },
-                ]
-            };
-        });
-
-        return (
-            <React.Fragment>
-                { composes.allIds.length === 0 && (
-                    <EmptyState variant={ EmptyStateVariant.large } data-testid="empty-state">
-                        <EmptyStateIcon icon={ PlusCircleIcon } />
-                        <Title headingLevel="h4" size="lg">
-                            Create an image
-                        </Title>
-                        <EmptyStateBody>
-                            Create OS images for deployment in Amazon Web Services,
-                            Microsoft Azure and Google Cloud Platform. Images can
-                            include a custom package set and an activation key to
-                            automate the registration process.
-                        </EmptyStateBody>
-                        <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
-                        Create image
-                        </Link>
-                        <EmptyStateSecondaryActions>
-                            <DocumentationButton />
-                        </EmptyStateSecondaryActions>
-                    </EmptyState>
-                ) || (
-                    <React.Fragment>
-                        <Toolbar>
-                            <ToolbarContent>
-                                <ToolbarItem>
-                                    <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
-                                        Create image
-                                    </Link>
-                                </ToolbarItem>
-                                <ToolbarItem variant="pagination" align={ { default: 'alignRight' } }>
-                                    <Pagination
-                                        itemCount={ this.props.composes.count }
-                                        perPage={ this.state.perPage }
-                                        page={ this.state.page }
-                                        onSetPage={ this.onSetPage }
-                                        onPerPageSelect={ this.onPerPageSelect }
-                                        widgetId="compose-pagination"
-                                        data-testid="images-pagination"
-                                        isCompact />
-                                </ToolbarItem>
-                            </ToolbarContent>
-                        </Toolbar>
-                        <Table
-                            aria-label="Images"
-                            rows={ rows }
-                            cells={ columns }
-                            data-testid="images-table">
-                            <TableHeader />
-                            <TableBody />
-                        </Table>
-                    </React.Fragment>
-                )}
-            </React.Fragment>
-        );
-    }
-}
-
-function mapStateToProps(state) {
-    return {
-        composes: state.composes,
     };
-}
 
-function mapDispatchToProps(dispatch) {
-    return {
-        composesGet: (limit, offset) => dispatch(actions.composesGet(limit, offset)),
-        composeGetStatus: (id) => dispatch(actions.composeGetStatus(id)),
-    };
-}
+    const columns = [
+        'Image name',
+        'Created',
+        'Release',
+        'Target',
+        'Status',
+        'Instance'
+    ];
+
+    // the state.page is not an index so must be reduced by 1 get the starting index
+    const itemsStartInclusive = (page - 1) * perPage;
+    const itemsEndExlcusive = itemsStartInclusive + perPage;
+    // only display the current pages section of composes. slice is inclusive, exclusive.
+    const rows = composes.allIds.slice(itemsStartInclusive, itemsEndExlcusive).map(id => {
+        const compose = composes.byId[id];
+        return {
+            cells: [
+                compose.request.image_name || id,
+                timestampToDisplayString(compose.created_at),
+                { title: <Release release={ compose.request.distribution } /> },
+                { title: <Target
+                    uploadType={ compose.request.image_requests[0].upload_request.type }
+                    imageType={ compose.request.image_requests[0].image_type } /> },
+                { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
+                { title: <ImageLink
+                    imageStatus={ compose.image_status }
+                    imageType={ compose.request.image_requests[0].image_type }
+                    uploadOptions={ compose.request.image_requests[0].upload_request.options } /> },
+            ]
+        };
+    });
+
+    return (
+        <React.Fragment>
+            { composes.allIds.length === 0 && (
+                <EmptyState variant={ EmptyStateVariant.large } data-testid="empty-state">
+                    <EmptyStateIcon icon={ PlusCircleIcon } />
+                    <Title headingLevel="h4" size="lg">
+                        Create an image
+                    </Title>
+                    <EmptyStateBody>
+                        Create OS images for deployment in Amazon Web Services,
+                        Microsoft Azure and Google Cloud Platform. Images can
+                        include a custom package set and an activation key to
+                        automate the registration process.
+                    </EmptyStateBody>
+                    <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
+                    Create image
+                    </Link>
+                    <EmptyStateSecondaryActions>
+                        <DocumentationButton />
+                    </EmptyStateSecondaryActions>
+                </EmptyState>
+            ) || (
+                <React.Fragment>
+                    <Toolbar>
+                        <ToolbarContent>
+                            <ToolbarItem>
+                                <Link to="/imagewizard" className="pf-c-button pf-m-primary" data-testid="create-image-action">
+                                    Create image
+                                </Link>
+                            </ToolbarItem>
+                            <ToolbarItem variant="pagination" align={ { default: 'alignRight' } }>
+                                <Pagination
+                                    itemCount={ composes.count }
+                                    perPage={ perPage }
+                                    page={ page }
+                                    onSetPage={ onSetPage }
+                                    onPerPageSelect={ onPerPageSelect }
+                                    widgetId="compose-pagination"
+                                    data-testid="images-pagination"
+                                    isCompact />
+                            </ToolbarItem>
+                        </ToolbarContent>
+                    </Toolbar>
+                    <Table
+                        aria-label="Images"
+                        rows={ rows }
+                        cells={ columns }
+                        data-testid="images-table">
+                        <TableHeader />
+                        <TableBody />
+                    </Table>
+                </React.Fragment>
+            )}
+        </React.Fragment>
+    );
+};
 
 ImagesTable.propTypes = {
     composes: PropTypes.object,
@@ -199,4 +176,4 @@ ImagesTable.propTypes = {
     composeGetStatus: PropTypes.func,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(ImagesTable);
+export default ImagesTable;
