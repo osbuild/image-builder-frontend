@@ -6,7 +6,7 @@ import DocumentationButton from '../sharedComponents/DocumentationButton';
 import './CreateImageWizard.scss';
 import { useDispatch } from 'react-redux';
 import api from '../../api';
-import { UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
+import { RHEL_8, UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
 import { composeAdded } from '../../store/actions/actions';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
@@ -352,12 +352,46 @@ const requestToState = (composeRequest) => {
     }
 };
 
+const formStepHistory = (composeRequest) => {
+    if (composeRequest) {
+        const imageRequest = composeRequest.image_requests[0];
+        const uploadRequest = imageRequest.upload_request;
+        let steps = [
+            'details',
+            'image-output'
+        ];
+
+        if (uploadRequest.type === 'aws') {
+            steps.push('aws-target-env');
+        } else if (uploadRequest.type === 'azure') {
+            steps.push('azure-target-env');
+        } else if (uploadRequest.type === 'gcp') {
+            steps.push('google-cloud-target-env');
+        }
+
+        if (composeRequest?.distribution === RHEL_8) {
+            steps.push('registration');
+        }
+
+        steps = steps.concat([
+            'File system configuration',
+            'packages',
+        ]);
+
+        return steps;
+    } else {
+        return [];
+    }
+};
+
 const CreateImageWizard = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const location = useLocation();
 
-    const initialState = requestToState(location?.state?.composeRequest);
+    const composeRequest = location?.state?.composeRequest;
+    const initialState = requestToState(composeRequest);
+    const stepHistory = formStepHistory(composeRequest);
 
     return <ImageCreator
         onClose={ () => navigate('/') }
@@ -419,7 +453,13 @@ const CreateImageWizard = () => {
                         packages,
                         fileSystemConfiguration,
                         review,
-                    ]
+                    ],
+                    initialState: {
+                        activeStep: location?.state?.initialStep || 'details', // name of the active step
+                        activeStepIndex: stepHistory.length, // active index
+                        maxStepIndex: stepHistory.length, // max achieved index
+                        prevSteps: stepHistory, // array with names of previously visited steps
+                    }
                 }
             ]
         } }

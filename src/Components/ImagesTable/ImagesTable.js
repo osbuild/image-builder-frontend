@@ -120,7 +120,10 @@ const ImagesTable = () => {
     const actions = [
         {
             title: 'Recreate image',
-            onClick: (_event, _rowId, rowData) => navigate('/imagewizard', { state: { composeRequest: rowData.compose.request }})
+            onClick: (_event, _rowId, rowData) => navigate(
+                '/imagewizard',
+                { state: { composeRequest: rowData.compose.request, initialStep: 'review' }}
+            )
         }
     ];
 
