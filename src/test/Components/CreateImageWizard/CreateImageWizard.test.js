@@ -998,6 +998,33 @@ describe('Step Review', () => {
             name: 'File system configuration'
         });
     });
+
+    test('can pass location to recreate on review step', () => {
+        const initialLocation = {
+            state: {
+                composeRequest: {
+                    distribution: RHEL_8,
+                    image_name: 'MyImageName',
+                    image_requests: [{
+                        architecture: 'x86_64',
+                        image_type: 'guest-image',
+                        upload_request: {
+                            type: 'aws.s3',
+                            options: {}
+                        },
+                    }],
+                    customizations: {}
+                },
+                initialStep: 'review'
+            }
+        };
+        history = renderWithReduxRouter(<CreateImageWizard />, {}, initialLocation).history;
+        screen.getByText('Review the information and click "Create image" to create the image using the following criteria.');
+        screen.getByText('Virtualization - Guest image');
+        screen.getByText('Register the system later');
+        screen.getByText('MyImageName');
+
+    });
 });
 
 describe('Click through all steps', () => {

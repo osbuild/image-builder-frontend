@@ -7,6 +7,7 @@ import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
+import userEvent from '@testing-library/user-event';
 
 jest.mock('../../../store/actions/actions', () => {
     return {
@@ -401,6 +402,31 @@ describe('Images Table', () => {
             );
             expect(row.cells[5]).toHaveTextContent(testElement.textContent);
         }
+    });
+
+    test('check recreate action', () => {
+        const { history } = renderWithReduxRouter(<ImagesTable />, store);
+
+        // get rows
+        const table = screen.getByTestId('images-table');
+        const { getAllByRole } = within(table);
+        const rows = getAllByRole('row');
+
+        // first row is header so look at index 1
+        const imageId = rows[1].cells[0].textContent;
+
+        const actionsButton =  within(rows[1]).getByRole('button', {
+            name: 'Actions'
+        });
+        userEvent.click(actionsButton);
+        const recreateButton = screen.getByRole('button', {
+            name: 'Recreate image'
+        });
+        userEvent.click(recreateButton);
+
+        expect(history.location.pathname).toBe('/imagewizard');
+        expect(history.location.state.composeRequest).toStrictEqual(store.composes.byId[imageId].request);
+        expect(history.location.state.initialStep).toBe('review');
     });
 });
 
