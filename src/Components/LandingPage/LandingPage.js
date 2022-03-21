@@ -16,6 +16,10 @@ class LandingPage extends Component {
         super(props);
     }
 
+    async componentDidMount() {
+        document.title = 'Image Builder - Red Hat Insights';
+    }
+
     render() {
         return (
             <React.Fragment>
