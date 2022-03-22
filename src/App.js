@@ -14,7 +14,7 @@ const App = (props) => {
     useEffect(() => {
         const registry = getRegistry();
         registry.register({ notifications: notificationsReducer });
-        document.title = 'Image Builder | Red Hat Insights';
+        document.title = 'Image Builder - Red Hat Insights';
         insights.chrome.init();
         insights.chrome.identifyApp('image-builder');
         const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
