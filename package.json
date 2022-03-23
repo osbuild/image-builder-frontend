@@ -12,7 +12,7 @@
     "@data-driven-forms/react-form-renderer": "3.16.9",
     "@patternfly/patternfly": "4.179.1",
     "@patternfly/react-core": "4.198.5",
-    "@patternfly/react-table": "4.67.5",
+    "@patternfly/react-table": "4.67.19",
     "@redhat-cloud-services/frontend-components": "3.7.3",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.5",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.8",
