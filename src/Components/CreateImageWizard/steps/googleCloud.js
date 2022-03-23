@@ -5,6 +5,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 import nextStepMapper from './imageOutputStepMapper';
 import { Title, Text, Popover, TextContent, TextList, TextListItem, Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
+import StepTemplate from './stepTemplate';
 
 export const googleAccType = {
     googleAccount: 'Google account',
@@ -57,6 +58,8 @@ PopoverInfo.propTypes = {
 };
 
 export default {
+    StepTemplate,
+    id: 'wizard-target-gcp',
     title: 'Google Cloud Platform',
     customTitle: <Title headingLevel="h1" size="xl">Target environment - Google Cloud Platform</Title>,
     name: 'google-cloud-target-env',

@@ -3,8 +3,11 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import nextStepMapper from './imageOutputStepMapper';
 import { Title } from '@patternfly/react-core';
+import StepTemplate from './stepTemplate';
 
 export default {
+    StepTemplate,
+    id: 'wizard-target-aws',
     title: 'Amazon Web Services',
     customTitle: <Title headingLevel="h1" size="xl">Target environment - Amazon Web Service</Title>,
     name: 'aws-target-env',

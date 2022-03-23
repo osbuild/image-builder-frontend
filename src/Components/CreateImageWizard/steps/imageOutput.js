@@ -5,6 +5,7 @@ import nextStepMapper from './imageOutputStepMapper';
 import { RHEL_8 } from '../../../constants.js';
 import { Text } from '@patternfly/react-core';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
+import StepTemplate from './stepTemplate';
 
 export const releaseValues = {
     [RHEL_8]: 'Red Hat Enterprise Linux (RHEL) 8',
@@ -13,6 +14,8 @@ export const releaseValues = {
 };
 
 export default {
+    StepTemplate,
+    id: 'wizard-imageoutput',
     title: 'Image output',
     name: 'image-output',
     nextStep: ({ values }) => nextStepMapper(values),

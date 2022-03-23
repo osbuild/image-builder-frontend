@@ -1,8 +1,11 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
+import StepTemplate from './stepTemplate';
 
 export default {
+    StepTemplate,
+    id: 'wizard-details',
     name: 'details',
     title: 'Details',
     nextStep: 'image-output',
