@@ -3,6 +3,7 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Button, Popover, Text, TextContent, TextVariants } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import StepTemplate from './stepTemplate';
 
 const PopoverActivation = () => {
     return <Popover
@@ -25,6 +26,8 @@ const PopoverActivation = () => {
 };
 
 export default {
+    StepTemplate,
+    id: 'wizard-registration',
     title: 'Registration',
     name: 'registration',
     nextStep: 'File system configuration',

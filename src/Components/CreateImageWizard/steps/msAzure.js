@@ -3,8 +3,11 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Title, Text } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
+import StepTemplate from './stepTemplate';
 
 export default {
+    StepTemplate,
+    id: 'wizard-target-msazure',
     title: 'Microsoft Azure',
     customTitle: <Title headingLevel="h1" size="xl">Target environment - Microsoft Azure</Title>,
     name: 'ms-azure-target-env',

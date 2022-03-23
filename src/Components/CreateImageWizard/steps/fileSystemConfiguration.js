@@ -3,7 +3,11 @@ import componentTypes from '@data-driven-forms/react-form-renderer/component-typ
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Text } from '@patternfly/react-core';
 
+import StepTemplate from './stepTemplate';
+
 export default {
+    StepTemplate,
+    id: 'wizard-systemconfiguration-filesystem',
     title: 'File system configuration',
     name: 'File system configuration',
     substepOf: 'System Configuration',
