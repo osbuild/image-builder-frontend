@@ -50,6 +50,9 @@ export default {
             validate: [
                 {
                     type: validatorTypes.REQUIRED
+                },
+                {
+                    type: 'targetEnvironmentValidator'
                 }
             ],
         }

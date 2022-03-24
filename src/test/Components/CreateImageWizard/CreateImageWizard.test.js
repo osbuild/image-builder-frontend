@@ -221,6 +221,26 @@ describe('Step Image output', () => {
         expect(destination).toBeEnabled();
         expect(destination).toContainElement(required);
     });
+
+    test('selecting and deselecting a tile disables the next button', () => {
+        setUp();
+
+        const [ next, , ] = verifyButtons();
+
+        const awsTile = screen.getByTestId('upload-aws');
+        // this has already been clicked once in the setup function
+        awsTile.click(); // deselect
+
+        const googleTile = screen.getByTestId('upload-google');
+        googleTile.click(); // select
+        googleTile.click(); // deselect
+
+        const azureTile = screen.getByTestId('upload-azure');
+        azureTile.click(); // select
+        azureTile.click(); // deselect
+
+        expect(next).toBeDisabled();
+    });
 });
 
 describe('Step Upload to AWS', () => {

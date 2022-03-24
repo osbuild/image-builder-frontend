@@ -24,6 +24,7 @@ import {
 
 import {
     fileSystemConfigurationValidator,
+    targetEnvironmentValidator,
 } from './validators';
 
 const handleKeyDown = (e, handleClose) => {
@@ -433,7 +434,7 @@ const CreateImageWizard = () => {
                 });
         } }
         defaultArch="x86_64"
-        customValidatorMapper={ { fileSystemConfigurationValidator, } }
+        customValidatorMapper={ { fileSystemConfigurationValidator, targetEnvironmentValidator } }
         schema={ {
             fields: [
                 {
