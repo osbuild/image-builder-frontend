@@ -22,7 +22,7 @@ const PopoverInfo = ({ appendTo }) => {
         flipBehavior={ [ 'right', 'bottom', 'top', 'left' ] }
         bodyContent={ <TextContent>
             <Text>The following account types can have an image shared with them:</Text>
-            <TextList>
+            <TextList className='pf-u-ml-0'>
                 <TextListItem>
                     <strong>Google account:</strong> A Google account represents a developer, an administrator,
     or any other person who interacts with Google Cloud. e.g., <em>`alice@gmail.com`</em>.
