@@ -235,6 +235,8 @@ describe('Step Upload to AWS', () => {
         awsTile.click();
 
         next.click();
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Target environment - Amazon Web Service');
     };
 
     test('clicking Next loads Registration', async () => {
@@ -289,6 +291,8 @@ describe('Step Upload to Google', () => {
         awsTile.click();
 
         next.click();
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Target environment - Google Cloud Platform');
     };
 
     test('clicking Next loads Registration', async () => {
@@ -354,6 +358,8 @@ describe('Step Upload to Azure', () => {
         const awsTile = screen.getByTestId('upload-azure');
         awsTile.click();
         next.click();
+
+        expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Target environment - Microsoft Azure');
     };
 
     test('clicking Next loads Registration', async () => {
