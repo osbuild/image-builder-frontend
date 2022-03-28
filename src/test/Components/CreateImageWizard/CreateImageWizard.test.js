@@ -96,7 +96,7 @@ const mockPkgResultEmpty = {
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
     userEvent.type(searchbox, searchTerm);
     await act(async() => {
-        screen.getByTestId('search-available-pkgs-button').click();
+        screen.getByRole('button', {  name: /search button for available packages/i }).click();
     });
 };
 
@@ -106,10 +106,6 @@ const searchForChosenPackages = async (searchbox, searchTerm) => {
     } else {
         userEvent.type(searchbox, searchTerm);
     }
-
-    await act(async() => {
-        screen.getByTestId('search-chosen-pkgs-button').click();
-    });
 };
 
 // mock the insights dependency
@@ -786,8 +782,9 @@ describe('Step Packages', () => {
         screen.getByRole('button', { name: /Add all/ }).click();
 
         searchboxChosen.click();
-        await searchForChosenPackages(searchboxChosen, 'asdf');
-        screen.getByText('No packages found');
+        userEvent.type(searchboxChosen, 'asdf');
+
+        expect(screen.getAllByText('No packages found').length === 2);
         // We need to clear this input in order to not have sideeffects on other tests
         await searchForChosenPackages(searchboxChosen, '');
     });
@@ -877,6 +874,65 @@ describe('Step Packages', () => {
         expect(firstItem).toHaveTextContent('testsummary for test package');
         expect(secondItem).toHaveTextContent('lib-testlib-test package summary');
         expect(thirdItem).toHaveTextContent('Z-testZ-test package summary');
+    });
+
+    test('available packages can be reset', async () => {
+        await setUp();
+
+        const searchbox = screen.getAllByRole('textbox')[0];
+
+        searchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForAvailablePackages(searchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+
+        screen.getByRole('button', { name: /clear available packages search/i }).click();
+
+        screen.getByText('Search above to add additionalpackages to your image');
+    });
+
+    test('chosen packages can be reset after filtering', async () => {
+        await setUp();
+
+        const availableSearchbox = screen.getAllByRole('textbox')[0];
+
+        availableSearchbox.click();
+
+        const getPackages = jest
+            .spyOn(api, 'getPackages')
+            .mockImplementation(() => Promise.resolve(mockPkgResult));
+
+        await searchForAvailablePackages(availableSearchbox, 'test');
+        expect(getPackages).toHaveBeenCalledTimes(1);
+
+        const availablePackagesList = screen.getByTestId('available-pkgs-list');
+        const availablePackagesItems = within(availablePackagesList).getAllByRole('option');
+        expect(availablePackagesItems).toHaveLength(3);
+
+        screen.getByRole('button', { name: /Add all/ }).click();
+
+        const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
+        let chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+        expect(chosenPackagesItems).toHaveLength(3);
+
+        const chosenSearchbox = screen.getAllByRole('textbox')[1];
+        chosenSearchbox.click();
+        await searchForChosenPackages(chosenSearchbox, 'Pkg');
+        chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+        // eslint-disable-next-line jest-dom/prefer-in-document
+        expect(chosenPackagesItems).toHaveLength(1);
+
+        screen.getByRole('button', { name: /clear chosen packages search/i }).click();
+        chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+        expect(chosenPackagesItems).toHaveLength(3);
     });
 });
 
