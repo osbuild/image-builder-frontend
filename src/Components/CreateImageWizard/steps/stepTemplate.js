@@ -2,12 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Title } from '@patternfly/react-core';
 
-const StepTemplate = ({ id, formFields, formRef, title, showTitle, showTitles }) => (
+const StepTemplate = ({ id, formFields, formRef, title, customTitle, showTitle, showTitles }) => (
     <div id={ id } ref={ formRef } className="pf-c-form">
         {((showTitles && showTitle !== false) || showTitle) &&
-         (<Title headingLevel="h1" size="xl">
-             {title}
-         </Title>)}
+         (customTitle ? (
+             customTitle
+         ) : (
+             <Title headingLevel="h1" size="xl">
+                 {title}
+             </Title>
+         ))}
         {formFields}
     </div>
 );
@@ -15,6 +19,7 @@ const StepTemplate = ({ id, formFields, formRef, title, showTitle, showTitles })
 StepTemplate.propTypes = {
     id: PropTypes.string,
     title: PropTypes.node,
+    customTitle: PropTypes.node,
     formFields: PropTypes.array.isRequired,
     formOptions: PropTypes.shape({
         renderForm: PropTypes.func.isRequired,
