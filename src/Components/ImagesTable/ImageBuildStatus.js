@@ -57,7 +57,7 @@ const ImageBuildStatus = (props) => {
             {messages[props.status] &&
                 messages[props.status].map((message, key) => (
                     <Flex key={ key } className="pf-u-align-items-baseline pf-m-nowrap">
-                        <div>{message.icon}</div>
+                        <div className="pf-u-mr-sm">{message.icon}</div>
                         <small>{message.text}</small>
                     </Flex>
                 ))
