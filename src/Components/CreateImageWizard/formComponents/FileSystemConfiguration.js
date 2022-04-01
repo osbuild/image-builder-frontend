@@ -175,12 +175,6 @@ const FileSystemConfiguration = ({ ...props }) => {
     const onDrop = evt => {
         if (isValidDrop(evt)) {
             setItemOrder(tempItemOrder);
-        } else {
-            evt.currentTarget.classList.remove(styles.modifiers.ghostRow);
-            evt.currentTarget.setAttribute('aria-pressed', 'false');
-            setDraggedItemId(null);
-            setDraggingToItemIndex(null);
-            setIsDragging(false);
         }
     };
 
