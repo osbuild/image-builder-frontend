@@ -13,7 +13,7 @@ import path from 'path';
 
 const MountPoint = ({ ...props }) => {
     // check '/' last!
-    const validPrefixes = [ '/home', '/opt', '/srv', '/usr/local', '/var', '/boot', '/' ];
+    const validPrefixes = [ '/home', '/opt', '/srv', '/usr', '/usr/local', '/var', '/app', '/data', '/' ];
     const [ isOpen, setIsOpen ] = useState(false);
     const [ prefix, setPrefix ] = useState('/');
     const [ suffix, setSuffix ] = useState('');
@@ -66,12 +66,14 @@ const MountPoint = ({ ...props }) => {
                 })
                 }
             </Select>
-            <TextInput
-                className="pf-u-w-50"
-                type="text"
-                value={ suffix }
-                aria-label="Mount point suffix text input"
-                onChange={ v => setSuffix(v) } />
+            { prefix !== '/' &&
+              <TextInput
+                  className="pf-u-w-50"
+                  type="text"
+                  value={ suffix }
+                  aria-label="Mount point suffix text input"
+                  onChange={ v => setSuffix(v) } />
+            }
         </>
     );
 };
