@@ -141,7 +141,7 @@ const FileSystemConfiguration = ({ ...props }) => {
         evt.preventDefault();
 
         const curListItem = evt.target.closest('tr');
-        if (!curListItem || !bodyref.current.contains(curListItem) || curListItem.id === draggedItemId) {
+        if (!curListItem || !bodyref.current.contains(curListItem)) {
             return null;
         }
 
