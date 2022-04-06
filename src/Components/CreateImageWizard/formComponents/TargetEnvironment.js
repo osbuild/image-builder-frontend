@@ -81,8 +81,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                             isDisplayLarge />
                     </div>
                 </FormGroup>
-                { /* Disabled until default user or user customization is present */
-                    /* <FormGroup label={ <Text component={ TextVariants.small }>Private cloud</Text> } data-testid="target-private">
+                <FormGroup label={ <Text component={ TextVariants.small }>Private cloud</Text> } data-testid="target-private">
                     <Checkbox
                         label="VMWare"
                         isChecked={ environment.vsphere }
@@ -91,7 +90,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                         id="checkbox-vmware"
                         name="VMWare"
                         data-testid="checkbox-vmware" />
-                </FormGroup> */ }
+                </FormGroup>
                 <FormGroup label={ <Text component={ TextVariants.small }>Other</Text> } data-testid="target-other">
                     <Checkbox
                         label="Virtualization - Guest image"
@@ -101,15 +100,14 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                         id="checkbox-guest-image"
                         name="Virtualization guest image"
                         data-testid="checkbox-guest-image" />
-                    { /* Disabled until default user or user customization is present */
-                        /* <Checkbox
+                    <Checkbox
                         label="Bare metal - Installer"
                         isChecked={ environment['image-installer'] }
                         onChange={ () => handleSetEnvironment('image-installer') }
                         aria-label="Bare metal installer checkbox"
                         id="checkbox-image-installer"
                         name="Bare metal installer"
-                        data-testid="checkbox-image-installer" /> */ }
+                        data-testid="checkbox-image-installer" />
                 </FormGroup>
             </FormGroup>
         </>
