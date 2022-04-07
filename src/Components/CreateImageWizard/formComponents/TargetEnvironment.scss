@@ -1,3 +1,7 @@
+.pf-c-form__group-label {
+    --pf-c-form__group-label--PaddingBottom: var(--pf-global--spacer--xs);
+}
+
 .tiles {
     display: flex;
 }
