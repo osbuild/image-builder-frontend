@@ -2,13 +2,13 @@ import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { Table, TableHeader, TableBody } from '@patternfly/react-table';
+import { TableComposable, Thead, Tr, Th, Tbody, Td, ActionsColumn, ExpandableRowContent } from '@patternfly/react-table';
 import { EmptyState, EmptyStateVariant, EmptyStateIcon, EmptyStateBody, EmptyStateSecondaryActions,
     Pagination,
     Toolbar, ToolbarContent, ToolbarItem,
     Title } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
-
+import './ImagesTable.scss';
 import { composesGet, composeGetStatus } from '../../store/actions/actions';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import ImageBuildStatus from './ImageBuildStatus';
@@ -19,6 +19,16 @@ import ImageLink from './ImageLink';
 const ImagesTable = () => {
     const [ page, setPage ] = useState(1);
     const [ perPage, setPerPage ] = useState(10);
+
+    const [ expandedComposeIds, setExpandedComposeIds ] = useState([]);
+    const isExpanded = compose => expandedComposeIds.includes(compose.id);
+
+    const handleToggle = (compose, isExpanding) => {
+        if (isExpanding) {
+            setExpandedComposeIds([ ...expandedComposeIds, compose.id ]);
+        } else {
+            setExpandedComposeIds(expandedComposeIds.filter(id => id !== compose.id));
+        }};
 
     const composes = useSelector((state) => state.composes);
     const dispatch = useDispatch();
@@ -83,49 +93,19 @@ const ImagesTable = () => {
         return tsDisplay;
     };
 
-    const columns = [
-        'Image name',
-        'Created',
-        'Release',
-        'Target',
-        'Status',
-        'Instance',
-        ''
+    const actions = (compose) => [
+        {
+            title: 'Recreate image',
+            onClick: () => navigate(
+                '/imagewizard',
+                { state: { composeRequest: compose.request, initialStep: 'review' }}
+            )
+        }
     ];
 
     // the state.page is not an index so must be reduced by 1 get the starting index
     const itemsStartInclusive = (page - 1) * perPage;
-    const itemsEndExlcusive = itemsStartInclusive + perPage;
-    // only display the current pages section of composes. slice is inclusive, exclusive.
-    const rows = composes.allIds.slice(itemsStartInclusive, itemsEndExlcusive).map(id => {
-        const compose = composes.byId[id];
-        return {
-            compose,
-            cells: [
-                compose.request.image_name || id,
-                timestampToDisplayString(compose.created_at),
-                { title: <Release release={ compose.request.distribution } /> },
-                { title: <Target
-                    uploadType={ compose.request.image_requests[0].upload_request.type }
-                    imageType={ compose.request.image_requests[0].image_type } /> },
-                { title: <ImageBuildStatus status={ compose.image_status ? compose.image_status.status : '' } /> },
-                { title: <ImageLink
-                    imageStatus={ compose.image_status }
-                    imageType={ compose.request.image_requests[0].image_type }
-                    uploadOptions={ compose.request.image_requests[0].upload_request.options } /> }
-            ]
-        };
-    });
-
-    const actions = [
-        {
-            title: 'Recreate image',
-            onClick: (_event, _rowId, rowData) => navigate(
-                '/imagewizard',
-                { state: { composeRequest: rowData.compose.request, initialStep: 'review' }}
-            )
-        }
-    ];
+    const itemsEndExclusive = itemsStartInclusive + perPage;
 
     return (
         <React.Fragment>
@@ -170,15 +150,52 @@ const ImagesTable = () => {
                             </ToolbarItem>
                         </ToolbarContent>
                     </Toolbar>
-                    <Table
-                        aria-label="Images"
-                        rows={ rows }
-                        cells={ columns }
-                        actions={ actions }
-                        data-testid="images-table">
-                        <TableHeader />
-                        <TableBody />
-                    </Table>
+                    <TableComposable variant="compact" data-testid="images-table">
+                        <Thead>
+                            <Tr>
+                                <Th />
+                                <Th>Image name</Th>
+                                <Th>Created</Th>
+                                <Th>Release</Th>
+                                <Th>Target</Th>
+                                <Th>Status</Th>
+                                <Th>Instance</Th>
+                                <Th />
+                            </Tr>
+                        </Thead>
+                        { composes.allIds.slice(itemsStartInclusive, itemsEndExclusive).map((id, rowIndex) => {
+                            const compose = composes.byId[id];
+                            return (
+                                <Tbody key={ id } isExpanded={ isExpanded(compose) }>
+                                    <Tr>
+                                        <Td expand={ { rowIndex, isExpanded: isExpanded(compose),
+                                            onToggle: () => handleToggle(compose, !isExpanded(compose)) } } />
+                                        <Td dataLabel="Image name">{compose.request.image_name || id}</Td>
+                                        <Td dataLabel="Created">{timestampToDisplayString(compose.created_at)}</Td>
+                                        <Td dataLabel="Release"><Release release={ compose.request.distribution } /></Td>
+                                        <Td dataLabel="Target"><Target
+                                            uploadType={ compose.request.image_requests[0].upload_request.type }
+                                            imageType={ compose.request.image_requests[0].image_type } /></Td>
+                                        <Td dataLabel="Status"><ImageBuildStatus
+                                            status={ compose.image_status ? compose.image_status.status : '' } /></Td>
+                                        <Td dataLabel="Instance"><ImageLink
+                                            imageStatus={ compose.image_status }
+                                            imageType={ compose.request.image_requests[0].image_type }
+                                            uploadOptions={ compose.request.image_requests[0].upload_request.options } /></Td>
+                                        <Td><ActionsColumn items={ actions(compose) } /></Td>
+                                    </Tr>
+                                    <Tr isExpanded={ isExpanded(compose) }>
+                                        <Td colSpan={ 8 }>
+                                            <ExpandableRowContent>
+                                                <strong>UUID</strong>
+                                                <div>{ id }</div>
+                                            </ExpandableRowContent>
+                                        </Td>
+                                    </Tr>
+                                </Tbody>
+                            );
+                        }) }
+                    </TableComposable>
                 </React.Fragment>
             )}
         </React.Fragment>
