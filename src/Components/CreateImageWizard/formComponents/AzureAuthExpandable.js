@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Button, ExpandableSection, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import './AzureAuthExpandable.scss';
 
 const AzureAuthExpandable = () => {
     const [ expanded, setExpanded ] = useState(true);
