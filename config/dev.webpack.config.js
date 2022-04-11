@@ -7,7 +7,6 @@ const webpackProxy = {
     deployment: process.env.BETA ? 'beta/apps' : 'apps',
     useProxy: true,
     proxyVerbose: true,
-    debug: true,
     env: `${process.env.STAGE ? 'stage' : 'prod'}-${process.env.BETA ? 'beta' : 'stable'}`,
     appUrl: process.env.BETA ? '/beta/insights/image-builder' : '/insights/image-builder',
 };
