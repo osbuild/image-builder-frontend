@@ -1491,6 +1491,10 @@ describe('Keyboard accessibility', () => {
             name: /register and connect image instances with red hat/i
         });
         expect(registerRadio).toHaveFocus();
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+
         clickNext();
 
         // File system configuration
@@ -1512,6 +1516,7 @@ describe('Keyboard accessibility', () => {
         // Review
         const targetEnvironmentTab = screen.getByTestId('tab-target');
         expect(targetEnvironmentTab).toHaveFocus();
+        await screen.findByTestId('organization-id');
     });
 
     test('pressing Esc closes the wizard', async () => {
