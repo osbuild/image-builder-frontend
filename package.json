@@ -84,23 +84,15 @@
     "webpack-bundle-analyzer": "4.5.0"
   },
   "scripts": {
-    "build": "webpack --config config/prod.webpack.config.js",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
-    "nightly": "npm run travis:verify",
-    "prod": "NODE_ENV=production BETA=true webpack serve --config config/dev.webpack.config.js",
-    "server:ctr": "node src/server/generateServerKey.js",
-    "stage": "STAGE=true npm run start:proxy:beta",
-    "start": "NODE_ENV=development webpack serve --config config/dev.webpack.config.js",
-    "start:beta": "NODE_ENV=development BETA=true webpack serve --config config/dev.webpack.config.js",
-    "start:proxy": "PROXY=true npm run start",
-    "start:proxy:beta": "BETA=true npm run start:proxy",
+    "prod-beta": "BETA=true PROXY=true webpack serve --config config/dev.webpack.config.js",
+    "stage-beta": "STAGE=true npm run prod-beta",
     "test": "jest --verbose",
     "test:single": "jest --verbose -w 1",
-    "travis:build": "NODE_ENV=production webpack --config config/prod.webpack.config.js",
-    "travis:verify": "npm-run-all travis:build lint test",
+    "build": "webpack --config config/prod.webpack.config.js",
     "verify": "npm-run-all build lint test"
   },
   "insights": {
