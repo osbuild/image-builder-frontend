@@ -11,7 +11,9 @@ node_js:
 install:
   - npm ci
 script:
-  - npm run travis:verify
+  - NODE_ENV=production npm run build
+  - npm run lint
+  - npm run test
   - npx codecov
 after_success:
   - curl -sSL https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/bootstrap.sh | bash -s
