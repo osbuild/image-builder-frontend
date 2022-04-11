@@ -48,7 +48,7 @@ const SizeUnit = ({ ...props }) => {
                 type="text"
                 value={ size }
                 aria-label="Size text input"
-                onChange={ v => setSize(isNaN(parseInt(v)) ? '' : parseInt(v)) } />
+                onChange={ v => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v)) } />
             <Select
                 className="pf-u-w-50"
                 isOpen={ isOpen }
