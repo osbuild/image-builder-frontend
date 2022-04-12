@@ -54,7 +54,7 @@
     "@babel/plugin-transform-runtime": "7.17.0",
     "@babel/preset-env": "7.16.11",
     "@babel/preset-react": "7.16.7",
-    "@redhat-cloud-services/frontend-components-config": "4.6.6",
+    "@redhat-cloud-services/frontend-components-config": "4.6.7",
     "@testing-library/dom": "8.13.0",
     "@testing-library/jest-dom": "5.16.3",
     "@testing-library/react": "12.1.4",
