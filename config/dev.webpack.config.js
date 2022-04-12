@@ -4,7 +4,6 @@ const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const config = require('@redhat-cloud-services/frontend-components-config');
 
 const webpackProxy = {
-    deployment: process.env.BETA ? 'beta/apps' : 'apps',
     useProxy: true,
     proxyVerbose: true,
     env: `${process.env.STAGE ? 'stage' : 'prod'}-${process.env.BETA ? 'beta' : 'stable'}`,
@@ -17,7 +16,7 @@ const { config: webpackConfig, plugins } = config({
     modules: [ 'image_builder' ],
     useFileHash: false,
     sassPrefix: '.imageBuilder, .image_builder',
-    ...(process.env.BETA && { deployment: 'beta/apps' }),
+    deployment: process.env.BETA ? 'beta/apps' : 'apps',
     ...(process.env.PROXY ? webpackProxy : {})
 });
 
