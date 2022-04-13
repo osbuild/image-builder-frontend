@@ -9,7 +9,7 @@ export default {
     title: 'Packages',
     name: 'packages',
     substepOf: 'System Configuration',
-    nextStep: 'review',
+    nextStep: 'image-name',
     fields: [
         {
             component: componentTypes.PLAIN_TEXT,

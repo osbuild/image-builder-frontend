@@ -19,7 +19,7 @@ import {
     packages,
     imageOutput,
     fileSystemConfiguration,
-    details
+    imageName
 } from './steps';
 
 import {
@@ -364,7 +364,6 @@ const formStepHistory = (composeRequest) => {
         const imageRequest = composeRequest.image_requests[0];
         const uploadRequest = imageRequest.upload_request;
         let steps = [
-            'details',
             'image-output'
         ];
 
@@ -383,6 +382,7 @@ const formStepHistory = (composeRequest) => {
         steps = steps.concat([
             'File system configuration',
             'packages',
+            'image-name'
         ]);
 
         return steps;
@@ -454,7 +454,6 @@ const CreateImageWizard = () => {
                     // order in this array does not reflect order in wizard nav, this order is managed inside
                     // of each step by `nextStep` property!
                     fields: [
-                        details,
                         imageOutput,
                         awsTarget,
                         googleCloudTarger,
@@ -462,10 +461,11 @@ const CreateImageWizard = () => {
                         registration,
                         packages,
                         fileSystemConfiguration,
+                        imageName,
                         review,
                     ],
                     initialState: {
-                        activeStep: location?.state?.initialStep || 'details', // name of the active step
+                        activeStep: location?.state?.initialStep || 'image-output', // name of the active step
                         activeStepIndex: stepHistory.length, // active index
                         maxStepIndex: stepHistory.length, // max achieved index
                         prevSteps: stepHistory, // array with names of previously visited steps
