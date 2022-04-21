@@ -1536,6 +1536,9 @@ describe('Keyboard accessibility', () => {
         await screen.findByRole('textbox', {
             name: 'Select activation key'
         });
+        // skip registration
+        const registerLaterRadio = screen.getByLabelText('Register later');
+        userEvent.click(registerLaterRadio);
 
         clickNext();
 
@@ -1563,7 +1566,6 @@ describe('Keyboard accessibility', () => {
         // Review
         const targetEnvironmentTab = screen.getByTestId('tab-target');
         expect(targetEnvironmentTab).toHaveFocus();
-        await screen.findByTestId('organization-id');
     });
 
     test('pressing Esc closes the wizard', async () => {
