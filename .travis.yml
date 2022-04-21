@@ -3,7 +3,9 @@ sudo: required
 branches:
   only:
   - main
+  - stage-stable
   - prod-beta
+  - prod-stable
 notifications:
   email: false
 node_js:
