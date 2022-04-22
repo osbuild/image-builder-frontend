@@ -80,8 +80,9 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - COMPOSER_URL=https://composer:8080
-      - COMPOSER_TOKEN_URL=http://fauxauth:8888/token
+      - COMPOSER_TOKEN_URL=http://fauxauth:8888/token?refresh_token=42
       - COMPOSER_OFFLINE_TOKEN=${COMPOSER_OFFLINE_TOKEN}
+      - COMPOSER_CLIENT_ID=${COMPOSER_CLIENT_ID}
       - COMPOSER_CA_PATH=/etc/image-builder/ca-crt.pem
       - DISTRIBUTIONS_DIR=/app/distributions
       - QUOTA_FILE=/config/quotas.json
