@@ -1140,12 +1140,12 @@ describe('Click through all steps', () => {
         });
         userEvent.click(releaseOption);
 
-        screen.getByTestId('upload-aws').click();
-        screen.getByTestId('upload-azure').click();
-        screen.getByTestId('upload-google').click();
-        screen.getByTestId('checkbox-vmware').click();
-        screen.getByTestId('checkbox-guest-image').click();
-        screen.getByTestId('checkbox-image-installer').click();
+        userEvent.click(screen.getByTestId('upload-aws'));
+        userEvent.click(screen.getByTestId('upload-azure'));
+        userEvent.click(screen.getByTestId('upload-google'));
+        userEvent.click(screen.getByTestId('checkbox-vmware'));
+        userEvent.click(screen.getByTestId('checkbox-guest-image'));
+        userEvent.click(screen.getByTestId('checkbox-image-installer'));
 
         screen.getByRole('button', { name: /Next/ }).click();
         userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
