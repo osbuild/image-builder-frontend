@@ -131,7 +131,10 @@ beforeAll(() => {
                         }
                     };
                 }
-            }
+            },
+            isBeta: () => {
+                return true;
+            },
         }
     };
 });
@@ -223,6 +226,24 @@ describe('Step Image output', () => {
         azureTile.click(); // deselect
 
         expect(next).toBeDisabled();
+    });
+
+    test('non-rhel releases on beta', async () => {
+        setUp();
+
+        const releaseMenu = screen.getByRole('button', {
+            name: /options menu/i
+        });
+        userEvent.click(releaseMenu);
+
+        await screen.findByRole('option', {
+            name: 'Red Hat Enterprise Linux (RHEL) 8'
+        });
+
+        screen.getByRole('option', {
+            name: 'CentOS Stream 8'
+        });
+        userEvent.click(releaseMenu);
     });
 });
 
@@ -974,9 +995,8 @@ describe('Step Review', () => {
 
         const [ next, ,  ] = verifyButtons();
 
-        // This is the best way to open the menu since ddf doesn't support data-testid for the select
         const releaseMenu = screen.getByRole('button', {
-            name: /open menu/i
+            name: /options menu/i
         });
         userEvent.click(releaseMenu);
         const centos = screen.getByRole('option', {
@@ -1111,7 +1131,15 @@ describe('Click through all steps', () => {
         const next = screen.getByRole('button', { name: /Next/ });
 
         // select image output
-        // userEvent.selectOptions(screen.getByTestId('release-select'), [ RHEL_8 ]);
+        const releaseMenu = screen.getByRole('button', {
+            name: /options menu/i
+        });
+        userEvent.click(releaseMenu);
+        const releaseOption = screen.getByRole('option', {
+            name: 'Red Hat Enterprise Linux (RHEL) 8'
+        });
+        userEvent.click(releaseOption);
+
         screen.getByTestId('upload-aws').click();
         screen.getByTestId('upload-azure').click();
         screen.getByTestId('upload-google').click();

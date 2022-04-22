@@ -7,12 +7,6 @@ import { Text } from '@patternfly/react-core';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import StepTemplate from './stepTemplate';
 
-export const releaseValues = {
-    [RHEL_8]: 'Red Hat Enterprise Linux (RHEL) 8',
-    'centos-8': 'CentOS Stream 8',
-    'centos-9': 'CentOS Stream 9',
-};
-
 export default {
     StepTemplate,
     id: 'wizard-imageoutput',
@@ -26,15 +20,10 @@ export default {
             label: <Text>Image builder allows you to create a custom image and push it to target environments.<br /><DocumentationButton /></Text>
         },
         {
-            component: componentTypes.SELECT,
+            component: 'image-output-release-select',
             label: 'Release',
             name: 'release',
-            simpleValue: true,
             initialValue: RHEL_8,
-            options: Object.entries(releaseValues).map(([ key, title ]) => ({
-                label: title,
-                value: key
-            })),
             isRequired: true,
             validate: [
                 {
