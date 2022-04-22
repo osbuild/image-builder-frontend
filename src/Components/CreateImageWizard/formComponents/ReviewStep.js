@@ -19,9 +19,8 @@ import {
 } from '@patternfly/react-table';
 import { HelpIcon } from '@patternfly/react-icons';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import { releaseValues } from '../steps/imageOutput';
 import { googleAccType } from '../steps/googleCloud';
-import { UNIT_GIB, UNIT_MIB } from '../../../constants';
+import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
 
 const FSReviewTable = ({ ...props }) => {
     return (
@@ -107,7 +106,7 @@ const ReviewStep = () => {
                     }
                     <DescriptionListTerm>Release</DescriptionListTerm>
                     <DescriptionListDescription>
-                        {releaseValues?.[getState()?.values?.release]}
+                        {RELEASES[getState()?.values?.release]}
                     </DescriptionListDescription>
                 </DescriptionListGroup>
             </DescriptionList>

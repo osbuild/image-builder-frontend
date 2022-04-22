@@ -14,6 +14,7 @@ import ActivationKeys from './formComponents/ActivationKeys';
 import Select from '@data-driven-forms/pf4-component-mapper/select';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
+import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 
 const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, customValidatorMapper, defaultArch, className, ...props }) => {
     return schema ? <FormRenderer
@@ -39,6 +40,7 @@ const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, custom
             'activation-keys': ActivationKeys,
             'file-system-config-toggle': FileSystemConfigToggle,
             'file-system-configuration': FileSystemConfiguration,
+            'image-output-release-select': ImageOutputReleaseSelect,
             ...customComponentMapper,
         } }
         onCancel={ onClose }
