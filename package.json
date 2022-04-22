@@ -89,6 +89,7 @@
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
     "prod-beta": "BETA=true PROXY=true webpack serve --config config/dev.webpack.config.js",
+    "prod-stable": "PROXY=true webpack serve --config config/dev.webpack.config.js",
     "stage-beta": "STAGE=true npm run prod-beta",
     "test": "jest --verbose",
     "test:single": "jest --verbose -w 1",
