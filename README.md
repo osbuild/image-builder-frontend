@@ -16,19 +16,31 @@ Make sure you have npm@7 and node 15+ installed. If you need multiple versions o
 
 1. run `npm ci`
 
-2. run `npm run start:proxy:beta`. This command uses a prod-beta env by default. Configure your
+2. run `npm run prod-beta`. This command uses a prod-beta env by default. Configure your
    environment by the `env` attribute in `dev.webpack.config.js`.
 
-3. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
+3. Secondly redirect a few `prod.foo.redhat.com` to localhost, if this has not been done already.
+
+```bash
+echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
+```
+
+4. open browser at `https://prod.foo.redhat.com:1337/beta/insights/image-builder`
 
 ### Webpack proxy (staging) -- *Runs with image-builder's stage deployment*
 
 1. run `npm ci`
 
-2. run `npm run stage`. This command uses a stage-beta env by default. Configure your
+2. run `npm run stage-beta`. This command uses a stage-beta env by default. Configure your
    environment by the `env` attribute in `dev.webpack.config.js`.
 
-3. open browser at `https://stage.foo.redhat.com:1337/beta/insights/image-builder`
+3. Secondly redirect a few `stage.foo.redhat.com` to localhost, if this has not been done already.
+
+```bash
+echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
+```
+
+4. open browser at `https://stage.foo.redhat.com:1337/beta/insights/image-builder`
 
 ### Insights proxy (deprecated)
 
