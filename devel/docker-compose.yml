@@ -125,6 +125,7 @@ services:
      - "backend"
      - "frontend"
   prometheus:
+    profiles: ["metrics"]
     image: prom/prometheus:latest
     ports:
       - "9000:9090"
@@ -140,6 +141,7 @@ services:
     command:
       - "--config.file=/config/prometheus.yml"
   grafana:
+    profiles: ["metrics"]
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
