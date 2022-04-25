@@ -110,7 +110,7 @@ const onSave = (values) => {
             image_requests: [
                 {
                     architecture: 'x86_64',
-                    image_type: 'vhd',
+                    image_type: 'gcp',
                     upload_request: {
                         type: 'gcp',
                         options: {
