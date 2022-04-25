@@ -1292,7 +1292,7 @@ describe('Click through all steps', () => {
                         image_name: 'MyImageName',
                         image_requests: [{
                             architecture: 'x86_64',
-                            image_type: 'vhd',
+                            image_type: 'gcp',
                             upload_request: {
                                 type: 'gcp',
                                 options: {
