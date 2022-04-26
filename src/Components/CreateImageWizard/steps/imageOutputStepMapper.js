@@ -1,4 +1,4 @@
-import { RHEL_8 } from '../../../constants.js';
+import { RHEL_8, RHEL_8_BETA, RHEL_9_BETA } from '../../../constants.js';
 
 export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, skipGoogle, skipAzure } = {}) => {
     if (!skipAws && targetEnv?.aws) {
@@ -13,5 +13,12 @@ export default ({ 'target-environment': targetEnv, release } = {}, { skipAws, sk
         return 'ms-azure-target-env';
     }
 
-    return release === RHEL_8 ? 'registration' : 'File system configuration';
+    switch (release) {
+        case RHEL_8:
+        case RHEL_8_BETA:
+        case RHEL_9_BETA:
+            return 'registration';
+        default:
+            return 'File system configuration';
+    }
 };
