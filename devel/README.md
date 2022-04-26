@@ -69,4 +69,11 @@ Access the service through the GUI:
 directly through the API:
 [https://prod.foo.redhat.com:1337/docs/api/image-builder](https://prod.foo.redhat.com:1337/docs/api/image-builder).
 
+The metrics containers are only launched when explicitly required. The command for this is below:
+
+```bash
+docker-compose --profile metrics up
+```
+
 Access the Grafana dashboard on [https://localhost:3000](https://localhost:3000). The default username is `admin` and the password is set to `foobar`.
+The prometheus instance can be accessed on [https://localhost:9000](https://localhost:9000)

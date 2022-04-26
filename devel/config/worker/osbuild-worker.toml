@@ -1,3 +1,4 @@
 [authentication]
-oauth_url = "http://fauxauth:8888/token"
-offline_token = "/etc/osbuild-worker/token"
+oauth_url = "http://fauxauth:8888/token?refresh_token=42"
+client_secret = "/etc/osbuild-worker/secret"
+client_id = "rhsm-api"

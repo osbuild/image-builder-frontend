@@ -9,4 +9,4 @@ RUN npm install
 COPY . .
 
 EXPOSE 8002
-CMD [ "npm", "run", "start:beta" ]
+CMD [ "npm", "run", "prod-beta" ]

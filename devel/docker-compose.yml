@@ -26,7 +26,7 @@ services:
     volumes:
       - ${CERT_DIR}/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${WORKER_CONFIG_DIR}/osbuild-worker.toml:/etc/osbuild-worker/osbuild-worker.toml:z
-      - ${WORKER_CONFIG_DIR}/token:/etc/osbuild-worker/token:z
+      - ${WORKER_CONFIG_DIR}/secret:/etc/osbuild-worker/secret:z
     environment:
       - CACHE_DIRECTORY=/var/cache/osbuild-composer
     privileged: true
@@ -80,8 +80,9 @@ services:
       - PGUSER=postgres
       - PGPASSWORD=postgres
       - COMPOSER_URL=https://composer:8080
-      - COMPOSER_TOKEN_URL=http://fauxauth:8888/token
-      - COMPOSER_OFFLINE_TOKEN=${COMPOSER_OFFLINE_TOKEN}
+      - COMPOSER_TOKEN_URL=http://fauxauth:8888/token?refresh_token=42
+      - COMPOSER_CLIENT_SECRET=${COMPOSER_CLIENT_SECRET}
+      - COMPOSER_CLIENT_ID=${COMPOSER_CLIENT_ID}
       - COMPOSER_CA_PATH=/etc/image-builder/ca-crt.pem
       - DISTRIBUTIONS_DIR=/app/distributions
       - QUOTA_FILE=/config/quotas.json
@@ -124,6 +125,7 @@ services:
      - "backend"
      - "frontend"
   prometheus:
+    profiles: ["metrics"]
     image: prom/prometheus:latest
     ports:
       - "9000:9090"
@@ -139,6 +141,7 @@ services:
     command:
       - "--config.file=/config/prometheus.yml"
   grafana:
+    profiles: ["metrics"]
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
