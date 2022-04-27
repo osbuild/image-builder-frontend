@@ -60,8 +60,6 @@ jobs:
     if: ${{ github.event_name == 'push' || success() }}
     timeout-minutes: 5
     runs-on: ubuntu-latest
-    env:
-      GITHUB_TOKEN: ${{ secrets.SCHUTZBOT_GH_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -72,10 +70,10 @@ jobs:
       - name: Release to production
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production' }}
         run: |
-          git push origin ${{ github.event.inputs.source }}:refs/heads/prod-beta
-          git push origin ${{ github.event.inputs.source }}:refs/heads/prod-stable
+          git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.source }}:refs/heads/prod-beta
+          git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.source }}:refs/heads/prod-stable
 
       - name: Sync main to stage-stable
         if: ${{ github.event_name == 'push' || github.event.inputs.target == 'stage-stable' }}
         run: |
-          git push origin origin/main:refs/heads/stage-stable
+          git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git origin/main:refs/heads/stage-stable
