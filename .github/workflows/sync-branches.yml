@@ -60,6 +60,8 @@ jobs:
     if: ${{ github.event_name == 'push' || success() }}
     timeout-minutes: 5
     runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.SCHUTZBOT_GH_TOKEN }}
     steps:
       - name: Checkout
         uses: actions/checkout@v3
