@@ -180,6 +180,12 @@ const store = {
                 },
                 image_status: {
                     status: 'failure',
+                    error: {
+                        reason: 'A dependency error occured',
+                        details: {
+                            reason: 'Error in depsolve job'
+                        }
+                    }
                 },
             },
             'ca03f120-9840-4959-871e-94a5cb49d1f2': {
@@ -443,6 +449,22 @@ describe('Images Table', () => {
         expect(screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]).toBeVisible();
         userEvent.click(toggleButton);
         expect(screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]).not.toBeVisible();
+    });
+
+    test('check error details', () => {
+        renderWithReduxRouter(<ImagesTable />, store);
+
+        const table = screen.getByTestId('images-table');
+        const { getAllByRole } = within(table);
+        const rows = getAllByRole('row');
+
+        const errorToggle = within(rows[7]).getByRole('button', { name: /details/i });
+
+        expect(screen.getAllByText(/61b0effa-c901-4ee5-86b9-2010b47f1b22/i)[1]).not.toBeVisible();
+        userEvent.click(errorToggle);
+
+        expect(screen.getAllByText(/61b0effa-c901-4ee5-86b9-2010b47f1b22/i)[1]).toBeVisible();
+        expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
     });
 });
 

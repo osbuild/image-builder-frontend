@@ -15,6 +15,7 @@ import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Target from './Target';
 import ImageLink from './ImageLink';
+import ErrorDetails from './ImageBuildErrorDetails';
 
 const ImagesTable = () => {
     const [ page, setPage ] = useState(1);
@@ -189,6 +190,7 @@ const ImagesTable = () => {
                                             <ExpandableRowContent>
                                                 <strong>UUID</strong>
                                                 <div>{ id }</div>
+                                                <ErrorDetails status={ compose.image_status } />
                                             </ExpandableRowContent>
                                         </Td>
                                     </Tr>
