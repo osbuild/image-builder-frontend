@@ -957,6 +957,55 @@ describe('Step Packages', () => {
     });
 });
 
+describe('Step Details', () => {
+    const setUp = async () => {
+        history = renderWithReduxRouter(<CreateImageWizard />).history;
+        const [ next, ,  ] = verifyButtons();
+
+        // select aws as upload destination
+        const awsTile = screen.getByTestId('upload-aws');
+        awsTile.click();
+        next.click();
+
+        // aws step
+        userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+        next.click();
+        // skip registration
+        await screen.findByRole('textbox', {
+            name: 'Select activation key'
+        });
+
+        const registerLaterRadio = screen.getByLabelText('Register later');
+        userEvent.click(registerLaterRadio);
+        next.click();
+
+        // skip fsc
+        next.click();
+        // skip packages
+        next.click();
+    };
+
+    test('image name invalid for more than 100 chars', async () => {
+        await setUp();
+
+        const [ next, , ] = verifyButtons();
+
+        // Enter image name
+        const nameInput = screen.getByRole('textbox', {
+            name: 'Image name'
+        });
+        // 101 character name
+        const invalidName = 'a'.repeat(101);
+        userEvent.type(nameInput, invalidName);
+        expect(next).toHaveClass('pf-m-disabled');
+        expect(next).toBeDisabled();
+        userEvent.clear(nameInput);
+        userEvent.type(nameInput, 'validName');
+        expect(next).not.toHaveClass('pf-m-disabled');
+        expect(next).toBeEnabled();
+    });
+});
+
 describe('Step Review', () => {
     const setUp = async () => {
         history = renderWithReduxRouter(<CreateImageWizard />).history;
