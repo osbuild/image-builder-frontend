@@ -1,5 +1,6 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
+import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import StepTemplate from './stepTemplate';
 
 export default {
@@ -20,6 +21,12 @@ export default {
             type: 'text',
             label: 'Image name',
             autoFocus: true,
+            validate: [
+                {
+                    type: validatorTypes.MAX_LENGTH,
+                    threshold: 100
+                }
+            ],
         }
     ]
 };
