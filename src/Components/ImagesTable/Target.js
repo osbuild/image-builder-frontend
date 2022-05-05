@@ -28,7 +28,7 @@ const Target = ({ composeId }) => {
     target = targetOptions[compose.uploadType];
   }
 
-  return <>{target}</>;
+  return <>{target ? target : compose.imageType}</>;
 };
 
 Target.propTypes = {
