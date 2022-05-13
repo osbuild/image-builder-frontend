@@ -21,7 +21,7 @@ on:
 
 jobs:
   check:
-    name: Check source and target validity
+    name: Validate source and target refs
     timeout-minutes: 1
     runs-on: ubuntu-latest
     if: ${{ github.event_name == 'workflow_dispatch' }}
