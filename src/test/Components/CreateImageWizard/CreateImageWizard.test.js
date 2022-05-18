@@ -192,13 +192,6 @@ describe('Step Image output', () => {
         verifyCancelButton(cancel, history);
     });
 
-    // test('allows chosing a release', () => {
-    //     const release = screen.getByTestId('release-select');
-    //     expect(release).toBeEnabled();
-
-    //     userEvent.selectOptions(release, [ RHEL_8 ]);
-    // });
-
     test('target environment is required', () => {
         setUp();
 
