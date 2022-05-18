@@ -6,7 +6,8 @@ import DocumentationButton from '../sharedComponents/DocumentationButton';
 import './CreateImageWizard.scss';
 import { useDispatch } from 'react-redux';
 import api from '../../api';
-import { RHEL_8, UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
+import { UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
+import isRhel from '../../Utilities/isRhel';
 import { composeAdded } from '../../store/actions/actions';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
@@ -375,7 +376,7 @@ const formStepHistory = (composeRequest) => {
             steps.push('google-cloud-target-env');
         }
 
-        if (composeRequest?.distribution === RHEL_8) {
+        if (isRhel(composeRequest?.distribution)) {
             steps.push('registration');
         }
 

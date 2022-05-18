@@ -4,6 +4,7 @@ import { FormGroup, Select, SelectOption, SelectVariant } from '@patternfly/reac
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { RELEASES } from '../../../constants';
+import isRhel from '../../../Utilities/isRhel';
 
 const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
     const { change, getState } = useFormApi();
@@ -32,11 +33,11 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
                     Object.entries(RELEASES)
                         .filter(([ key ]) => {
                             // Only show non-RHEL distros in beta
-                            if (!(insights.chrome.isBeta() || key.includes('rhel'))) {
-                                return false;
+                            if (insights.chrome.isBeta()) {
+                                return true;
                             }
 
-                            return true;
+                            return isRhel(key);
                         })
                         .map(([ key, release ], index) => {
                             return <SelectOption key={ index } value={ key }>

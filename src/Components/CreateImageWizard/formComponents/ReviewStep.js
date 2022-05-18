@@ -21,6 +21,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { googleAccType } from '../steps/googleCloud';
 import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
+import isRhel from '../../../Utilities/isRhel';
 
 const FSReviewTable = ({ ...props }) => {
     return (
@@ -203,7 +204,7 @@ const ReviewStep = () => {
                         }
                     </List>
                 </Tab>
-                {getState()?.values?.release.includes('rhel') &&
+                {isRhel(getState()?.values?.release) &&
                     <Tab eventKey={ 1 } title={ <TabTitleText>Registration</TabTitleText> } data-testid='tab-registration'>
                         {getState()?.values?.['register-system'] === 'register-later' &&
                             <TextContent>
