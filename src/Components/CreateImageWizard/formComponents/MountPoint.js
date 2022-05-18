@@ -13,7 +13,7 @@ import path from 'path';
 
 const MountPoint = ({ ...props }) => {
     // check '/' last!
-    const validPrefixes = [ '/home', '/opt', '/srv', '/usr', '/usr/local', '/var', '/app', '/data', '/' ];
+    const validPrefixes = [ '/app', '/data', '/home', '/opt', '/srv', '/tmp', '/usr', '/usr/local', '/var', '/' ];
     const [ isOpen, setIsOpen ] = useState(false);
     const [ prefix, setPrefix ] = useState('/');
     const [ suffix, setSuffix ] = useState('');
