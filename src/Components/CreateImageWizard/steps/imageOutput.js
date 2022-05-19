@@ -2,7 +2,7 @@ import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import nextStepMapper from './imageOutputStepMapper';
-import { RHEL_8 } from '../../../constants.js';
+import { RHEL_9 } from '../../../constants.js';
 import { Text } from '@patternfly/react-core';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import StepTemplate from './stepTemplate';
@@ -23,7 +23,7 @@ export default {
             component: 'image-output-release-select',
             label: 'Release',
             name: 'release',
-            initialValue: RHEL_8,
+            initialValue: RHEL_9,
             isRequired: true,
             validate: [
                 {
