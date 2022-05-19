@@ -192,13 +192,6 @@ describe('Step Image output', () => {
         verifyCancelButton(cancel, history);
     });
 
-    // test('allows chosing a release', () => {
-    //     const release = screen.getByTestId('release-select');
-    //     expect(release).toBeEnabled();
-
-    //     userEvent.selectOptions(release, [ RHEL_8 ]);
-    // });
-
     test('target environment is required', () => {
         setUp();
 
@@ -228,7 +221,7 @@ describe('Step Image output', () => {
         expect(next).toBeDisabled();
     });
 
-    test('non-rhel releases on beta', async () => {
+    test('expected releases are present on beta', async () => {
         setUp();
 
         const releaseMenu = screen.getByRole('button', {
@@ -239,10 +232,16 @@ describe('Step Image output', () => {
         await screen.findByRole('option', {
             name: 'Red Hat Enterprise Linux (RHEL) 8'
         });
-
-        screen.getByRole('option', {
+        await screen.findByRole('option', {
+            name: 'Red Hat Enterprise Linux (RHEL) 9'
+        });
+        await screen.findByRole('option', {
             name: 'CentOS Stream 8'
         });
+        await screen.findByRole('option', {
+            name: 'CentOS Stream 9'
+        });
+
         userEvent.click(releaseMenu);
     });
 });
