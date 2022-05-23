@@ -44,16 +44,16 @@ const onSave = (values) => {
       'activation-key': values['subscription-activation-key'],
       insights: true,
       organization: Number(values['subscription-organization-id']),
-      'server-url': 'subscription.rhsm.redhat.com',
-      'base-url': 'https://cdn.redhat.com/',
+      'server-url': values['subscription-server-url'],
+      'base-url': values['subscription-base-url'],
     };
   } else if (values['register-system'] === 'register-now') {
     customizations.subscription = {
       'activation-key': values['subscription-activation-key'],
       insights: false,
       organization: Number(values['subscription-organization-id']),
-      'server-url': 'subscription.rhsm.redhat.com',
-      'base-url': 'https://cdn.redhat.com/',
+      'server-url': values['subscription-server-url'],
+      'base-url': values['subscription-base-url'],
     };
   }
 
@@ -359,6 +359,15 @@ const requestToState = (composeRequest) => {
 
       formState['subscription-activation-key'] = subscription['activation-key'];
       formState['subscription-organization-id'] = subscription.organization;
+
+      if (insights.chrome.isProd()) {
+        formState['subscription-server-url'] = 'subscription.rhsm.redhat.com';
+        formState['subscription-base-url'] = 'https://cdn.redhat.com/';
+      } else {
+        formState['subscription-server-url'] =
+          'subscription.rhsm.stage.redhat.com';
+        formState['subscription-base-url'] = 'https://cdn.stage.redhat.com/';
+      }
     } else {
       formState['register-system'] = 'register-later';
     }

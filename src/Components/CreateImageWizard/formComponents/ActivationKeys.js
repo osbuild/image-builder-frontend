@@ -28,6 +28,14 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
       setActivationKeys(keys);
       setIsLoading(false);
     });
+
+    if (insights.chrome.isProd()) {
+      change('subscription-server-url', 'subscription.rhsm.redhat.com');
+      change('subscription-base-url', 'https://cdn.redhat.com/');
+    } else {
+      change('subscription-server-url', 'subscription.rhsm.stage.redhat.com');
+      change('subscription-base-url', 'https://cdn.stage.redhat.com/');
+    }
   }, []);
 
   const setActivationKey = (_, selection) => {
