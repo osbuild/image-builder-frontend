@@ -151,6 +151,9 @@ beforeAll(() => {
       isBeta: () => {
         return true;
       },
+      isProd: () => {
+        return true;
+      },
     },
   };
 });
