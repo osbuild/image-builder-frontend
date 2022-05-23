@@ -16,52 +16,71 @@ import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 
-const ImageCreator = ({ schema, onSubmit, onClose, customComponentMapper, customValidatorMapper, defaultArch, className, ...props }) => {
-    return schema ? <FormRenderer
-        initialValues={ props.initialValues }
-        schema={ schema }
-        className={ `image-builder${className ? ` ${className}` : ''}` }
-        subscription={ { values: true } }
-        FormTemplate={ (props) => <Pf4FormTemplate { ...props } showFormControls={ false } /> }
-        onSubmit={ (formValues) => onSubmit(formValues) }
-        validatorMapper={ { ...customValidatorMapper } }
-        componentMapper={ {
-            ...componentMapper,
-            review: Review,
-            output: TargetEnvironment,
-            select: Select,
-            'package-selector': {
-                component: Packages,
-                defaultArch
-            },
-            'radio-popover': RadioWithPopover,
-            'azure-auth-expandable': AzureAuthExpandable,
-            'azure-auth-button': AzureAuthButton,
-            'activation-keys': ActivationKeys,
-            'file-system-config-toggle': FileSystemConfigToggle,
-            'file-system-configuration': FileSystemConfiguration,
-            'image-output-release-select': ImageOutputReleaseSelect,
-            ...customComponentMapper,
-        } }
-        onCancel={ onClose }
-        { ...props } /> : <Spinner />;
+const ImageCreator = ({
+  schema,
+  onSubmit,
+  onClose,
+  customComponentMapper,
+  customValidatorMapper,
+  defaultArch,
+  className,
+  ...props
+}) => {
+  return schema ? (
+    <FormRenderer
+      initialValues={props.initialValues}
+      schema={schema}
+      className={`image-builder${className ? ` ${className}` : ''}`}
+      subscription={{ values: true }}
+      FormTemplate={(props) => (
+        <Pf4FormTemplate {...props} showFormControls={false} />
+      )}
+      onSubmit={(formValues) => onSubmit(formValues)}
+      validatorMapper={{ ...customValidatorMapper }}
+      componentMapper={{
+        ...componentMapper,
+        review: Review,
+        output: TargetEnvironment,
+        select: Select,
+        'package-selector': {
+          component: Packages,
+          defaultArch,
+        },
+        'radio-popover': RadioWithPopover,
+        'azure-auth-expandable': AzureAuthExpandable,
+        'azure-auth-button': AzureAuthButton,
+        'activation-keys': ActivationKeys,
+        'file-system-config-toggle': FileSystemConfigToggle,
+        'file-system-configuration': FileSystemConfiguration,
+        'image-output-release-select': ImageOutputReleaseSelect,
+        ...customComponentMapper,
+      }}
+      onCancel={onClose}
+      {...props}
+    />
+  ) : (
+    <Spinner />
+  );
 };
 
 ImageCreator.propTypes = {
-    schema: PropTypes.object,
-    onSubmit: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
-    customComponentMapper: PropTypes.shape({
-        [PropTypes.string]: PropTypes.oneOfType([ PropTypes.node, PropTypes.shape({
-            component: PropTypes.node
-        }) ])
-    }),
-    customValidatorMapper: PropTypes.shape({
-        [PropTypes.string]: PropTypes.func
-    }),
-    defaultArch: PropTypes.string,
-    className: PropTypes.string,
-    initialValues: PropTypes.object
+  schema: PropTypes.object,
+  onSubmit: PropTypes.func.isRequired,
+  onClose: PropTypes.func.isRequired,
+  customComponentMapper: PropTypes.shape({
+    [PropTypes.string]: PropTypes.oneOfType([
+      PropTypes.node,
+      PropTypes.shape({
+        component: PropTypes.node,
+      }),
+    ]),
+  }),
+  customValidatorMapper: PropTypes.shape({
+    [PropTypes.string]: PropTypes.func,
+  }),
+  defaultArch: PropTypes.string,
+  className: PropTypes.string,
+  initialValues: PropTypes.object,
 };
 
 export default ImageCreator;

@@ -6,40 +6,47 @@ import { Title } from '@patternfly/react-core';
 import StepTemplate from './stepTemplate';
 
 export default {
-    StepTemplate,
-    id: 'wizard-target-aws',
-    title: 'Amazon Web Services',
-    customTitle: <Title headingLevel="h1" size="xl">Target environment - Amazon Web Service</Title>,
-    name: 'aws-target-env',
-    substepOf: 'Target environment',
-    nextStep: ({ values }) => nextStepMapper(values, { skipAws: true }),
-    fields: [
+  StepTemplate,
+  id: 'wizard-target-aws',
+  title: 'Amazon Web Services',
+  customTitle: (
+    <Title headingLevel="h1" size="xl">
+      Target environment - Amazon Web Service
+    </Title>
+  ),
+  name: 'aws-target-env',
+  substepOf: 'Target environment',
+  nextStep: ({ values }) => nextStepMapper(values, { skipAws: true }),
+  fields: [
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'plain-text-component',
+      label: (
+        <p>
+          Your image will be uploaded to AWS and shared with the account you
+          provide below. <br />
+          The image should be copied to your account within 14 days.
+        </p>
+      ),
+    },
+    {
+      component: componentTypes.TEXT_FIELD,
+      name: 'aws-account-id',
+      className: 'pf-u-w-25',
+      'data-testid': 'aws-account-id',
+      type: 'text',
+      label: 'AWS account ID',
+      isRequired: true,
+      autoFocus: true,
+      validate: [
         {
-            component: componentTypes.PLAIN_TEXT,
-            name: 'plain-text-component',
-            label: <p>
-                Your image will be uploaded to AWS and shared with the account you provide below. <br />
-                The image should be copied to your account within 14 days.
-            </p>
+          type: validatorTypes.REQUIRED,
         },
         {
-            component: componentTypes.TEXT_FIELD,
-            name: 'aws-account-id',
-            className: 'pf-u-w-25',
-            'data-testid': 'aws-account-id',
-            type: 'text',
-            label: 'AWS account ID',
-            isRequired: true,
-            autoFocus: true,
-            validate: [
-                {
-                    type: validatorTypes.REQUIRED,
-                },
-                {
-                    type: validatorTypes.EXACT_LENGTH,
-                    threshold: 12
-                }
-            ],
-        }
-    ]
+          type: validatorTypes.EXACT_LENGTH,
+          threshold: 12,
+        },
+      ],
+    },
+  ],
 };
