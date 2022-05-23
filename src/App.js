@@ -8,28 +8,28 @@ import NotificationsPortal from '@redhat-cloud-services/frontend-components-noti
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 const App = (props) => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const registry = getRegistry();
-        registry.register({ notifications: notificationsReducer });
-        document.title = 'Image Builder | Red Hat Insights';
-        insights.chrome.init();
-        insights.chrome.identifyApp('image-builder');
-        const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
-            navigate(`/${event.navId}`)
-        );
-        return () => {
-            unregister();
-        };
-    }, []);
-
-    return (
-        <React.Fragment>
-            <NotificationsPortal />
-            <Router childProps={ props } />
-        </React.Fragment>
+  useEffect(() => {
+    const registry = getRegistry();
+    registry.register({ notifications: notificationsReducer });
+    document.title = 'Image Builder | Red Hat Insights';
+    insights.chrome.init();
+    insights.chrome.identifyApp('image-builder');
+    const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
+      navigate(`/${event.navId}`)
     );
+    return () => {
+      unregister();
+    };
+  }, []);
+
+  return (
+    <React.Fragment>
+      <NotificationsPortal />
+      <Router childProps={props} />
+    </React.Fragment>
+  );
 };
 
 export default App;

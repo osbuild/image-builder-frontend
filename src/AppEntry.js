@@ -7,11 +7,16 @@ import { getBaseName } from '@redhat-cloud-services/frontend-components-utilitie
 import logger from 'redux-logger';
 
 const ImageBuilder = () => (
-    <Provider store={ init({}, ...[ process.env.NODE_ENV !== 'production' ? logger : undefined ]).getStore() }>
-        <Router basename={ getBaseName(window.location.pathname) }>
-            <App />
-        </Router>
-    </Provider>
+  <Provider
+    store={init(
+      {},
+      ...[process.env.NODE_ENV !== 'production' ? logger : undefined]
+    ).getStore()}
+  >
+    <Router basename={getBaseName(window.location.pathname)}>
+      <App />
+    </Router>
+  </Provider>
 );
 
 export default ImageBuilder;
