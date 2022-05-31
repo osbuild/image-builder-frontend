@@ -1,0 +1,78 @@
+@Library("github.com/RedHatInsights/insights-pipeline-lib@v3")
+import groovy.json.JsonSlurper
+
+node {
+  stage ("deploy") {
+
+    checkout scm
+    withCredentials(bindings: [sshUserPrivateKey(credentialsId: "cloud-netstorage",
+                      keyFileVariable: "privateKeyFile",
+                      passphraseVariable: "",
+                      usernameVariable: "")]) {
+
+      String APP_NAME = "image-builder"
+      String BRANCH = env.BRANCH_NAME.replaceAll("origin/", "")
+
+      if (BRANCH == "prod-stable") {
+        PREFIX = ""
+      } else if (BRANCH == "prod-beta") {
+        PREFIX = "beta/"
+      } else if (BRANCH == "qa-stable" || BRANCH == "stage-stable") {
+        PREFIX = "stage/"
+      } else if (BRANCH == "qa-beta" || BRANCH == "stage-beta") {
+        PREFIX = "stage/beta/"
+      } else {
+        error "Bug: invalid branch name, we only support (prod/qa/stage)-(beta/stable) and we got ${BRANCH}"
+      }
+
+      // Write build info into app.info.json
+      // We have the src info there already
+      def app_info = readJSON file: "./app.info.json"
+      app_info.build_branch = BRANCH
+      app_info.build_hash = sh(returnStdout: true, script: 'git rev-parse HEAD').trim()
+      app_info.build_id = env.BUILD_ID
+      writeJSON file: "./app.info.json", json: app_info
+
+      // Send Slack Notification
+      String SLACK_TEXT = "${APP_NAME}/${BRANCH} [STATUS] - Deploy build ${app_info.build_id} started for GIT COMMIT ${app_info.build_hash}."
+      slackSend message: SLACK_TEXT, color: 'black', channel: '#insights-bots'
+
+      AKAMAI_BASE_PATH = "822386"
+      AKAMAI_APP_PATH = "/${AKAMAI_BASE_PATH}/${PREFIX}apps/${APP_NAME}"
+
+      configFileProvider([configFile(fileId: "9f0c91bc-4feb-4076-9f3e-13da94ff3cef", variable: "AKAMAI_HOST_KEY")]) {
+        sh """
+           eval `ssh-agent`
+           ssh-add \"$privateKeyFile\"
+           cp $AKAMAI_HOST_KEY ~/.ssh/known_hosts
+           chmod 600 ~/.ssh/known_hosts ~/.ssh/config
+           n=0
+           until [ \$n -ge 10 ]
+           do
+              rsync -arv -e \"ssh -2\" --delete-after * sshacs@cloud-unprotected.upload.akamai.com:${AKAMAI_APP_PATH} && break
+              n=\$[\$n+1]
+              sleep 10
+           done
+         """
+      }
+      
+      //Clear the cache for the app being deployed
+      openShiftUtils.withJnlpNode(
+        image: "quay.io/redhatqe/origin-jenkins-agent-akamai:4.9",
+        namespace: "insights-dev-jenkins"
+      ) {
+        //install python dependencies
+        sh "wget https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/akamai_cache_buster/bustCache.py"
+        sh "wget https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master/src/akamai_cache_buster/requirements.txt"
+        sh "pip install -r requirements.txt"
+        withCredentials([file(credentialsId: "jenkins-eccu-cache-purge", variable: 'EDGERC')]) {
+          //path to .edgerc file is now set to $EDGERC"
+          //Bust the current cache
+          sh "python3 bustCache.py $EDGERC ${APP_NAME} ${BRANCH}"
+          // Trigger IQE pipelines
+          curl -X POST -H 'Content-type: application/json' --data '{"text":"Trigger IQE pipelines"}' https://smee.io/IQDT9yRXsWlqbxpg
+        }
+      }
+    }
+  }
+}
