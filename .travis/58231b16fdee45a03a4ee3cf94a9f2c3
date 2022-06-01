@@ -69,9 +69,9 @@ node {
           //path to .edgerc file is now set to $EDGERC"
           //Bust the current cache
           sh "python3 bustCache.py $EDGERC ${APP_NAME} ${BRANCH}"
-          // Trigger IQE pipelines
-          sh "curl -X POST -H 'Content-type: application/json' --data '{"text":"Trigger IQE pipelines"}' https://smee.io/IQDT9yRXsWlqbxpg"
         }
+        // Trigger IQE pipelines
+        sh ("curl -X POST -H \\'Content-type: application/json\\' --data \\'{\\"text\\":\\"Trigger IQE pipelines\\"}\\' https://smee.io/IQDT9yRXsWlqbxpg")
       }
     }
   }
