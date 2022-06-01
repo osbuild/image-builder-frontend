@@ -70,7 +70,7 @@ node {
           //Bust the current cache
           sh "python3 bustCache.py $EDGERC ${APP_NAME} ${BRANCH}"
           // Trigger IQE pipelines
-          curl -X POST -H 'Content-type: application/json' --data '{"text":"Trigger IQE pipelines"}' https://smee.io/IQDT9yRXsWlqbxpg
+          sh "curl -X POST -H 'Content-type: application/json' --data '{"text":"Trigger IQE pipelines"}' https://smee.io/IQDT9yRXsWlqbxpg"
         }
       }
     }
