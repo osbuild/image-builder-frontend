@@ -242,7 +242,7 @@ describe('Step Image output', () => {
     expect(next).toBeDisabled();
   });
 
-  test('expected releases are present on beta', async () => {
+  test('expect only RHEL releases before expansion', async () => {
     setUp();
 
     const releaseMenu = screen.getByRole('button', {
@@ -256,11 +256,70 @@ describe('Step Image output', () => {
     await screen.findByRole('option', {
       name: 'Red Hat Enterprise Linux (RHEL) 9',
     });
+    await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+
+    userEvent.click(releaseMenu);
+  });
+
+  test('expect all releases after expansion', async () => {
+    setUp();
+
+    const releaseMenu = screen.getByRole('button', {
+      name: /options menu/i,
+    });
+    userEvent.click(releaseMenu);
+
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    userEvent.click(showOptionsButton);
+
+    await screen.findByRole('option', {
+      name: 'Red Hat Enterprise Linux (RHEL) 8',
+    });
+    await screen.findByRole('option', {
+      name: 'Red Hat Enterprise Linux (RHEL) 9',
+    });
     await screen.findByRole('option', {
       name: 'CentOS Stream 8',
     });
     await screen.findByRole('option', {
       name: 'CentOS Stream 9',
+    });
+
+    expect(showOptionsButton).not.toBeInTheDocument();
+
+    userEvent.click(releaseMenu);
+  });
+
+  test('clear button resets to initial state (unexpanded)', async () => {
+    setUp();
+
+    const releaseMenu = screen.getByRole('button', {
+      name: /options menu/i,
+    });
+    userEvent.click(releaseMenu);
+
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    userEvent.click(showOptionsButton);
+
+    const clearAllButton = screen.getByRole('button', {
+      name: /clear all/i,
+    });
+    userEvent.click(clearAllButton);
+
+    await screen.findByRole('option', {
+      name: 'Red Hat Enterprise Linux (RHEL) 8',
+    });
+    await screen.findByRole('option', {
+      name: 'Red Hat Enterprise Linux (RHEL) 9',
+    });
+    await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
     });
 
     userEvent.click(releaseMenu);
@@ -1125,6 +1184,12 @@ describe('Step Review', () => {
       name: /options menu/i,
     });
     userEvent.click(releaseMenu);
+
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    userEvent.click(showOptionsButton);
+
     const centos = screen.getByRole('option', {
       name: 'CentOS Stream 8',
     });

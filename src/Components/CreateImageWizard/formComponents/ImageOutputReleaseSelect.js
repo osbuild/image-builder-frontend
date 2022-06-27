@@ -15,6 +15,7 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
   const { change, getState } = useFormApi();
   const { input } = useFieldApi(props);
   const [isOpen, setIsOpen] = useState(false);
+  const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
 
   const setRelease = (_, selection) => {
     change(input.name, selection);
@@ -23,6 +24,11 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
 
   const handleClear = () => {
     change(input.name, null);
+    setShowDevelopmentOptions(false);
+  };
+
+  const handleExpand = () => {
+    setShowDevelopmentOptions(true);
   };
 
   return (
@@ -34,11 +40,18 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
         onClear={handleClear}
         selections={RELEASES[getState()?.values?.[input.name]]}
         isOpen={isOpen}
+        {...(insights.chrome.isBeta() &&
+          !showDevelopmentOptions && {
+            loadingVariant: {
+              text: 'Show options for further development of RHEL',
+              onClick: handleExpand,
+            },
+          })}
       >
         {Object.entries(RELEASES)
           .filter(([key]) => {
-            // Only show non-RHEL distros in beta
-            if (insights.chrome.isBeta()) {
+            // Only show non-RHEL distros if expanded
+            if (showDevelopmentOptions) {
               return true;
             }
 
