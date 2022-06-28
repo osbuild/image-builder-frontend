@@ -15,6 +15,7 @@ import Select from '@data-driven-forms/pf4-component-mapper/select';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
+import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
 
 const ImageCreator = ({
   schema,
@@ -53,6 +54,7 @@ const ImageCreator = ({
         'file-system-config-toggle': FileSystemConfigToggle,
         'file-system-configuration': FileSystemConfiguration,
         'image-output-release-select': ImageOutputReleaseSelect,
+        'centos-acknowledgement': CentOSAcknowledgement,
         ...customComponentMapper,
       }}
       onCancel={onClose}

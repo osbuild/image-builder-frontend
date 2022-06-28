@@ -324,6 +324,29 @@ describe('Step Image output', () => {
 
     userEvent.click(releaseMenu);
   });
+
+  test('CentOS acknowledgement appears', async () => {
+    setUp();
+
+    const releaseMenu = screen.getByRole('button', {
+      name: /options menu/i,
+    });
+    userEvent.click(releaseMenu);
+
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    userEvent.click(showOptionsButton);
+
+    const centOSButton = screen.getByRole('option', {
+      name: 'CentOS Stream 9',
+    });
+    userEvent.click(centOSButton);
+
+    await screen.findByText(
+      'CentOS Stream builds may only be used for the development of RHEL-Next.'
+    );
+  });
 });
 
 describe('Step Upload to AWS', () => {

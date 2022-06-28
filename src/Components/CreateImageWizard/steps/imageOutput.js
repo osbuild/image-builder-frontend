@@ -39,6 +39,14 @@ export default {
       ],
     },
     {
+      component: 'centos-acknowledgement',
+      name: 'centos-acknowledgement',
+      condition: {
+        when: 'release',
+        pattern: /centos-*/,
+      },
+    },
+    {
       component: 'output',
       name: 'target-environment',
       label: 'Select target environments',
