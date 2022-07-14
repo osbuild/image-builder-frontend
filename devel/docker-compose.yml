@@ -5,6 +5,13 @@ services:
     build:
       context: ../../osbuild-composer
       dockerfile: ./distribution/Dockerfile-ubi
+    entrypoint:
+      [
+        "python3",
+        "/opt/entrypoint.py",
+        "--remote-worker-api",
+        "--composer-api"
+      ]
     volumes:
       - ${COMPOSER_CONFIG_DIR}/osbuild-composer.toml:/etc/osbuild-composer/osbuild-composer.toml:z
       - ${COMPOSER_CONFIG_DIR}/acl.yml:/etc/osbuild-composer/acl.yml:z
