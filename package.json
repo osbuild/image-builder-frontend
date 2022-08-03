@@ -59,7 +59,7 @@
     "@testing-library/dom": "8.13.0",
     "@testing-library/jest-dom": "5.16.3",
     "@testing-library/react": "12.1.5",
-    "@testing-library/user-event": "13.5.0",
+    "@testing-library/user-event": "14.4.1",
     "babel-jest": "28.1.2",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-transform-imports": "2.0.0",
