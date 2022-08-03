@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import argparse, sys, yaml
 
 TEMPLATE_DIR="../../image-builder/templates/dashboards/grafana-dashboard-insights-image-builder-general.configmap.yml"
