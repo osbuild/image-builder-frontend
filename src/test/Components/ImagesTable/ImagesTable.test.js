@@ -448,6 +448,41 @@ describe('Images Table', () => {
     expect(history.location.state.initialStep).toBe('review');
   });
 
+  test('check download compose request action', () => {
+    renderWithReduxRouter(<ImagesTable />, store);
+
+    // get rows
+    const table = screen.getByTestId('images-table');
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    // first row is header so look at index 1
+    const imageId = rows[1].cells[1].textContent;
+    const expectedRequest = store.composes.byId[imageId].request;
+
+    const actionsButton = within(rows[1]).getByRole('button', {
+      name: 'Actions',
+    });
+    userEvent.click(actionsButton);
+
+    const downloadButton = screen.getByRole('button', {
+      name: 'Download compose request (.json)',
+    });
+
+    // No actual clicking because downloading is hard to test.
+    // Instead, we just check href and download properties of the <a> element.
+    const downloadLink = within(downloadButton).getByRole('link');
+    expect(downloadLink.download).toBe('request.json');
+
+    const hrefParts = downloadLink.href.split(',');
+    expect(hrefParts.length).toBe(2);
+    const [header, encodedRequest] = hrefParts;
+    expect(header).toBe('data:text/plain;charset=utf-8');
+    expect(encodedRequest).toBe(
+      encodeURIComponent(JSON.stringify(expectedRequest))
+    );
+  });
+
   test('check expandable row toggle', () => {
     renderWithReduxRouter(<ImagesTable />, store);
 
