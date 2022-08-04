@@ -128,6 +128,18 @@ const ImagesTable = () => {
           state: { composeRequest: compose.request, initialStep: 'review' },
         }),
     },
+    {
+      title: (
+        <a
+          href={`data:text/plain;charset=utf-8,${encodeURIComponent(
+            JSON.stringify(compose.request)
+          )}`}
+          download="request.json"
+        >
+          Download compose request (.json)
+        </a>
+      ),
+    },
   ];
 
   // the state.page is not an index so must be reduced by 1 get the starting index
