@@ -39,24 +39,24 @@ const PopoverInfo = ({ appendTo }) => {
             <TextListItem>
               <strong>Google account:</strong> A Google account represents a
               developer, an administrator, or any other person who interacts
-              with Google Cloud. e.g., <em>`alice@gmail.com`</em>.
+              with Google Cloud. For example: <em>`alice@gmail.com`</em>.
             </TextListItem>
             <TextListItem>
               <strong>Service account:</strong> A service account is an account
-              for an application instead of an individual end user. e.g.,{' '}
+              for an application instead of an individual end user. For example:{' '}
               <em>`myapp@appspot.gserviceaccount.com`</em>.
             </TextListItem>
             <TextListItem>
               <strong>Google group:</strong> A Google group is a named
-              collection of Google accounts and service accounts. e.g.,{' '}
+              collection of Google accounts and service accounts. For example:{' '}
               <em>`admins@example.com`</em>.
             </TextListItem>
             <TextListItem>
-              <strong>Google Workspace domain/Cloud Identity domain:</strong> A
-              Google workspace or cloud identity domain represents a virtual
+              <strong>Google Workspace domain or Cloud Identity domain:</strong>{' '}
+              A Google workspace or cloud identity domain represents a virtual
               group of all the Google accounts in an organization. These domains
-              represent your organization&apos;s internet domain name. e.g.,{' '}
-              <em>`mycompany.com`</em>.
+              represent your organization&apos;s internet domain name. For
+              example: <em>`mycompany.com`</em>.
             </TextListItem>
           </TextList>
         </TextContent>
