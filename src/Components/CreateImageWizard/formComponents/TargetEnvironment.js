@@ -115,7 +115,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           data-testid="target-private"
         >
           <Checkbox
-            label="VMWare"
+            label="VMWare (.vmdk)"
             isChecked={environment.vsphere}
             onChange={() => handleSetEnvironment('vsphere')}
             aria-label="VMWare checkbox"
@@ -129,7 +129,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           data-testid="target-other"
         >
           <Checkbox
-            label="Virtualization - Guest image"
+            label="Virtualization - Guest image (.qcow2)"
             isChecked={environment['guest-image']}
             onChange={() => handleSetEnvironment('guest-image')}
             aria-label="Virtualization guest image checkbox"
@@ -138,7 +138,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             data-testid="checkbox-guest-image"
           />
           <Checkbox
-            label="Bare metal - Installer"
+            label="Bare metal - Installer (.iso)"
             isChecked={environment['image-installer']}
             onChange={() => handleSetEnvironment('image-installer')}
             aria-label="Bare metal installer checkbox"
