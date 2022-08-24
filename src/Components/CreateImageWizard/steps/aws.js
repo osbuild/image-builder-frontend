@@ -25,7 +25,8 @@ export default {
         <p>
           Your image will be uploaded to AWS and shared with the account you
           provide below. <br />
-          The image should be copied to your account within 14 days.
+          The shared image will expire within 14 days. To keep the image longer,
+          copy it to your AWS account.
         </p>
       ),
     },
