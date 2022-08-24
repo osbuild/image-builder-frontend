@@ -98,8 +98,9 @@ export default {
       label: (
         <Text>
           Your image will be uploaded to Google Cloud Platform and shared with
-          the email you provide below. <br />
-          The image should be copied to your account within 14 days.
+          the account you provide below. <br />
+          The shared image will expire within 14 days. To keep the image longer,
+          copy it to your Google Cloud Platform account.
         </Text>
       ),
     },
