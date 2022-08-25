@@ -8,7 +8,7 @@ export default {
   id: 'wizard-systemconfiguration-packages',
   title: 'Packages',
   name: 'packages',
-  substepOf: 'System Configuration',
+  substepOf: 'System configuration',
   nextStep: 'image-name',
   fields: [
     {

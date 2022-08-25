@@ -10,7 +10,7 @@ export default {
   id: 'wizard-systemconfiguration-filesystem',
   title: 'File system configuration',
   name: 'File system configuration',
-  substepOf: 'System Configuration',
+  substepOf: 'System configuration',
   nextStep: 'packages',
   fields: [
     {
