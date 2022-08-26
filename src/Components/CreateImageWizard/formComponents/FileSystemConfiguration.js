@@ -25,6 +25,7 @@ import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { v4 as uuidv4 } from 'uuid';
 
+import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import MountPoint from './MountPoint';
 import SizeUnit from './SizeUnit';
 import { UNIT_GIB } from '../../../constants';
@@ -70,6 +71,9 @@ const FileSystemConfiguration = ({ ...props }) => {
     setRows(newRows);
     setItemOrder(newOrder);
   }, []);
+
+  const showErrors = () =>
+    getState()?.values?.['file-system-config-show-errors'];
 
   useEffect(() => {
     change(
@@ -238,143 +242,154 @@ const FileSystemConfiguration = ({ ...props }) => {
   };
 
   return (
-    <>
-      <TextContent>
-        <Text component={TextVariants.h3}>Configure partitions</Text>
-      </TextContent>
-      {rows.length > 1 &&
-        getState()?.errors?.['file-system-configuration']?.duplicates && (
-          <Alert
-            variant="danger"
-            isInline
-            title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
-          />
-        )}
-      {rows.length >= 1 &&
-        getState()?.errors?.['file-system-configuration']?.root === false && (
-          <Alert
-            variant="danger"
-            isInline
-            title="No root partition configured."
-          />
-        )}
-      <TextContent>
-        <Text>
-          Partitions have been generated and given default values based on best
-          practices from Red Hat, and your selections in previous steps of the
-          wizard.
-        </Text>
-      </TextContent>
-      <TableComposable
-        aria-label="File system table"
-        className={isDragging && styles.modifiers.dragOver}
-        variant="compact"
-      >
-        <Thead>
-          <Tr>
-            <Th />
-            <Th>Mount point</Th>
-            <Th>Type</Th>
-            <Th>
-              Minimum size
-              <Popover
-                hasAutoWidth
-                bodyContent={
-                  <TextContent>
-                    <Text>
-                      Image Builder may extend this size based on requirements,
-                      selected packages, and configurations.
-                    </Text>
-                  </TextContent>
-                }
-              >
-                <Button
-                  variant="plain"
-                  aria-label="File system configuration info"
-                  aria-describedby="file-system-configuration-info"
-                  className="pf-c-form__group-label-help"
-                >
-                  <HelpIcon />
-                </Button>
-              </Popover>
-            </Th>
-            <Th />
-          </Tr>
-        </Thead>
-        <Tbody
-          ref={bodyref}
-          onDragOver={onDragOver}
-          onDrop={onDragOver}
-          onDragLeave={onDragLeave}
-          data-testid="file-system-configuration-tbody"
-        >
-          {rows.map((row, rowIndex) => (
-            <Tr
-              key={rowIndex}
-              id={row.id}
-              draggable
-              onDrop={onDrop}
-              onDragEnd={onDragEnd}
-              onDragStart={onDragStart}
-            >
-              <Td
-                draggableRow={{
-                  id: `draggable-row-${row.id}`,
-                }}
+    <FormSpy>
+      {() => (
+        <>
+          <TextContent>
+            <Text component={TextVariants.h3}>Configure partitions</Text>
+          </TextContent>
+          {rows.length > 1 &&
+            getState()?.errors?.['file-system-configuration']?.duplicates
+              ?.length !== 0 &&
+            showErrors() && (
+              <Alert
+                variant="danger"
+                isInline
+                title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
+                data-testid="fsc-warning"
               />
-              <Td className="pf-m-width-30">
-                <MountPoint
-                  key={row.id + '-mountpoint'}
-                  mountpoint={row.mountpoint}
-                  onChange={(mp) => setMountpoint(row.id, mp)}
-                />
-                {getState().errors['file-system-configuration']?.duplicates &&
-                  getState().errors[
-                    'file-system-configuration'
-                  ]?.duplicates.indexOf(row.mountpoint) !== -1 && (
-                    <Alert
-                      variant="danger"
-                      isInline
-                      isPlain
-                      title="Duplicate mount point."
+            )}
+          {rows.length >= 1 &&
+            getState()?.errors?.['file-system-configuration']?.root === false &&
+            showErrors() && (
+              <Alert
+                variant="danger"
+                isInline
+                title="No root partition configured."
+              />
+            )}
+          <TextContent>
+            <Text>
+              Partitions have been generated and given default values based on
+              best practices from Red Hat, and your selections in previous steps
+              of the wizard.
+            </Text>
+          </TextContent>
+          <TableComposable
+            aria-label="File system table"
+            className={isDragging && styles.modifiers.dragOver}
+            variant="compact"
+          >
+            <Thead>
+              <Tr>
+                <Th />
+                <Th>Mount point</Th>
+                <Th>Type</Th>
+                <Th>
+                  Minimum size
+                  <Popover
+                    hasAutoWidth
+                    bodyContent={
+                      <TextContent>
+                        <Text>
+                          Image Builder may extend this size based on
+                          requirements, selected packages, and configurations.
+                        </Text>
+                      </TextContent>
+                    }
+                  >
+                    <Button
+                      variant="plain"
+                      aria-label="File system configuration info"
+                      aria-describedby="file-system-configuration-info"
+                      className="pf-c-form__group-label-help"
+                    >
+                      <HelpIcon />
+                    </Button>
+                  </Popover>
+                </Th>
+                <Th />
+              </Tr>
+            </Thead>
+            <Tbody
+              ref={bodyref}
+              onDragOver={onDragOver}
+              onDrop={onDragOver}
+              onDragLeave={onDragLeave}
+              data-testid="file-system-configuration-tbody"
+            >
+              {rows.map((row, rowIndex) => (
+                <Tr
+                  key={rowIndex}
+                  id={row.id}
+                  draggable
+                  onDrop={onDrop}
+                  onDragEnd={onDragEnd}
+                  onDragStart={onDragStart}
+                >
+                  <Td
+                    draggableRow={{
+                      id: `draggable-row-${row.id}`,
+                    }}
+                  />
+                  <Td className="pf-m-width-30">
+                    <MountPoint
+                      key={row.id + '-mountpoint'}
+                      mountpoint={row.mountpoint}
+                      onChange={(mp) => setMountpoint(row.id, mp)}
                     />
-                  )}
-              </Td>
-              <Td className="pf-m-width-20">
-                {/* always xfs */}
-                {row.fstype}
-              </Td>
-              <Td className="pf-m-width-30">
-                <SizeUnit
-                  key={row.id + '-sizeunit'}
-                  size={row.size}
-                  unit={row.unit}
-                  onChange={(s, u) => setSize(row.id, s, u)}
-                />
-              </Td>
-              <Td className="pf-m-width-10">
-                <Button
-                  variant="link"
-                  icon={<MinusCircleIcon />}
-                  onClick={() => removeRow(row.id)}
-                />
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </TableComposable>
-      <TextContent>
-        <Button
-          data-testid="file-system-add-partition"
-          className="pf-u-text-align-left"
-          variant="link"
-          icon={<PlusCircleIcon />}
-          onClick={addRow}
-        >
-          Add partition
-        </Button>
-      </TextContent>
-    </>
+                    {getState().errors['file-system-configuration']?.duplicates
+                      .length !== 0 &&
+                      getState().errors[
+                        'file-system-configuration'
+                      ]?.duplicates.indexOf(row.mountpoint) !== -1 &&
+                      showErrors() && (
+                        <Alert
+                          variant="danger"
+                          isInline
+                          isPlain
+                          title="Duplicate mount point."
+                        />
+                      )}
+                  </Td>
+                  <Td className="pf-m-width-20">
+                    {/* always xfs */}
+                    {row.fstype}
+                  </Td>
+                  <Td className="pf-m-width-30">
+                    <SizeUnit
+                      key={row.id + '-sizeunit'}
+                      size={row.size}
+                      unit={row.unit}
+                      onChange={(s, u) => setSize(row.id, s, u)}
+                    />
+                  </Td>
+                  <Td className="pf-m-width-10">
+                    <Button
+                      variant="link"
+                      icon={<MinusCircleIcon />}
+                      onClick={() => removeRow(row.id)}
+                      data-testid="remove-mount-point"
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </TableComposable>
+          <TextContent>
+            <Button
+              data-testid="file-system-add-partition"
+              className="pf-u-text-align-left"
+              variant="link"
+              icon={<PlusCircleIcon />}
+              onClick={addRow}
+            >
+              Add partition
+            </Button>
+          </TextContent>
+        </>
+      )}
+    </FormSpy>
   );
 };
 
