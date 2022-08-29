@@ -1,7 +1,8 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { Title, Text } from '@patternfly/react-core';
+import { Title, Text, Button, TextContent } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 
@@ -27,26 +28,31 @@ export default {
       component: componentTypes.PLAIN_TEXT,
       name: 'azure-description',
       label: (
-        <Text>
-          Image Builder sends an image to an authorized Azure account.
-        </Text>
-      ),
-    },
-    {
-      component: 'azure-auth-expandable',
-      name: 'azure-auth-expandable',
-    },
-    {
-      component: componentTypes.PLAIN_TEXT,
-      name: 'azure-destination',
-      label: (
-        <>
-          <Title headingLevel="h2">Destination</Title>
+        <TextContent>
           <Text>
-            Your image will be uploaded to the resource group in the
-            subscription you specify.
+            Upon build, Image Builder sends the image to the selected authorized
+            Azure account. The image will be uploaded to the resource group in
+            the subscription you specify.
           </Text>
-        </>
+          <Text>
+            To authorize Image Builder to push images to Microsoft Azure, the
+            account owner must configure Image Builder as an authorized
+            application for a specific tenant ID and give it the role of
+            &quot;Contributor&quot; to at least one resource group.
+            <br />
+            <Button
+              component="a"
+              target="_blank"
+              variant="link"
+              icon={<ExternalLinkAltIcon />}
+              iconPosition="right"
+              isInline
+              href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow"
+            >
+              Learn more about OAuth 2.0
+            </Button>
+          </Text>
+        </TextContent>
       ),
     },
     {
@@ -55,7 +61,7 @@ export default {
       className: 'pf-u-w-50',
       'data-testid': 'azure-tenant-id',
       type: 'text',
-      label: 'Tenant ID',
+      label: 'Azure Tenant GUID',
       required: true,
       isRequired: true,
       autoFocus: true,
