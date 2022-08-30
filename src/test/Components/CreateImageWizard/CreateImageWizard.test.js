@@ -1343,7 +1343,7 @@ describe('Click through all steps', () => {
   const setUp = async () => {
     const view = renderWithReduxRouter(<CreateImageWizard />);
     history = view.history;
-    store = view.reduxStore;
+    store = view.store;
   };
 
   test('with valid values', async () => {
@@ -1767,7 +1767,7 @@ describe('Click through all steps', () => {
 
     // returns back to the landing page
     await waitFor(() => expect(history.location.pathname).toBe('/'));
-    expect(store.getStore().getState().composes.allIds).toEqual(ids);
+    expect(store.getState().composes.allIds).toEqual(ids);
     // set test timeout of 10 seconds
   }, 10000);
 });
