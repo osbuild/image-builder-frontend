@@ -1,0 +1,33 @@
+# inspired by rhinstaller/anaconda
+
+name: Trigger GitLab CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-gitlab:
+    runs-on: ubuntu-latest
+    env:
+      IMAGEBUILDER_BOT_GITLAB_SSH_KEY: ${{ secrets.IMAGEBUILDER_BOT_GITLAB_SSH_KEY }}
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt install -y jq
+
+      - name: Clone repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Push to gitlab
+        run: |
+          mkdir -p ~/.ssh
+          echo "${IMAGEBUILDER_BOT_GITLAB_SSH_KEY}" > ~/.ssh/id_rsa
+          chmod 400 ~/.ssh/id_rsa
+          touch ~/.ssh/known_hosts
+          ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
+          git remote add ci git@gitlab.com:redhat/services/products/image-builder/ci/image-builder-frontend.git
+          git push -f ci

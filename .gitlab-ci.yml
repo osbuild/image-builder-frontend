@@ -1,0 +1,34 @@
+stages:
+  - init
+  - test
+  - finish
+
+.terraform:
+  after_script:
+    - schutzbot/update_github_status.sh update
+  tags:
+    - terraform
+
+init:
+  stage: init
+  tags:
+    - shell
+  script:
+    - schutzbot/update_github_status.sh start
+
+SonarQube:
+  stage: test
+  extends: .terraform
+  script:
+    - schutzbot/sonarqube.sh
+  variables:
+    RUNNER: aws/centos-stream-8-x86_64
+    INTERNAL_NETWORK: "true"
+    GIT_DEPTH: 0
+
+finish:
+  stage: finish
+  tags:
+    - shell
+  script:
+    - schutzbot/update_github_status.sh finish
