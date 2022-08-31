@@ -19,12 +19,12 @@ import {
   fileSystemConfigurationValidator,
   targetEnvironmentValidator,
 } from './validators';
+import { composeAdded } from '../../store/composesSlice';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
 import isRhel from '../../Utilities/isRhel';
-import { composeAdded } from '../../store/actions/actions';
 
 const handleKeyDown = (e, handleClose) => {
   if (e.key === 'Escape') {
@@ -427,14 +427,14 @@ const CreateImageWizard = () => {
           requests.map((request) =>
             api.composeImage(request).then((response) => {
               dispatch(
-                composeAdded(
-                  {
+                composeAdded({
+                  compose: {
                     ...response,
                     request,
                     image_status: { status: 'pending' },
                   },
-                  true
-                )
+                  insert: true,
+                })
               );
             })
           )
