@@ -6,8 +6,8 @@ import api from '../../../api.js';
 
 jest.mock('../../../store/actions/actions', () => {
   return {
-    composesGet: () => ({ type: 'foo' }),
-    composeGetStatus: () => ({ type: 'bar' }),
+    fetchComposes: () => ({ type: 'foo' }),
+    fetchComposeStatus: () => ({ type: 'bar' }),
   };
 });
 

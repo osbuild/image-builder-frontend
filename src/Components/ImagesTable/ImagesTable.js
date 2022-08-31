@@ -33,7 +33,7 @@ import Target from './Target';
 import ImageLink from './ImageLink';
 import ErrorDetails from './ImageBuildErrorDetails';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
-import { composeGetStatus, composesGet } from '../../store/actions/actions';
+import { fetchComposes, fetchComposeStatus } from '../../store/actions/actions';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -67,13 +67,13 @@ const ImagesTable = () => {
         return;
       }
 
-      dispatch(composeGetStatus(id));
+      dispatch(fetchComposeStatus(id));
     });
   };
 
   /* Get all composes once on mount */
   useEffect(() => {
-    dispatch(composesGet(perPage, 0));
+    dispatch(fetchComposes(perPage, 0));
   }, []);
 
   /* Reset the polling each time the composes in the store are updated */
@@ -89,7 +89,7 @@ const ImagesTable = () => {
     if (composes.count > composes.allIds.length) {
       const pageIndex = page - 1;
       const offset = pageIndex * perPage;
-      dispatch(composesGet(perPage, offset));
+      dispatch(fetchComposes(perPage, offset));
     }
 
     setPage(page);
@@ -102,7 +102,7 @@ const ImagesTable = () => {
       composes.count > composes.allIds.length &&
       perPage > composes.allIds.length
     ) {
-      dispatch(composesGet(perPage, 0));
+      dispatch(fetchComposes(perPage, 0));
     }
 
     // page should be reset to the first page when the page size is changed.

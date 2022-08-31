@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import composes from './reducers/composes';
+import composesSlice from './composesSlice';
 
 export const reducer = {
-  composes: composes,
+  composes: composesSlice,
   notifications: notificationsReducer,
 };
 
