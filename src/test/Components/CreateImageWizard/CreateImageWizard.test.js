@@ -344,7 +344,7 @@ describe('Step Image output', () => {
     userEvent.click(centOSButton);
 
     await screen.findByText(
-      'CentOS Stream builds may only be used for the development of RHEL-Next.'
+      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
     );
   });
 });
