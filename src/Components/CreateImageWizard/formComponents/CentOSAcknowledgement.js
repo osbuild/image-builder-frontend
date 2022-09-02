@@ -26,16 +26,15 @@ const CentOSAcknowledgement = () => {
       isInline
       title={
         <>
-          CentOS Stream builds may only be used for the development of
-          RHEL-Next.
+          CentOS Stream builds are intended for the development of future
+          versions of RHEL and are not supported for production workloads or
+          other use cases.
         </>
       }
     >
       <p>
-        For other applications, use a RHEL distribution.
-        <br />
-        For those without subscriptions, join the Red Hat Developer program and
-        get cost-free RHEL: <DeveloperProgramButton />
+        Join the <DeveloperProgramButton /> to learn about paid and no-cost RHEL
+        subscription options.
       </p>
     </Alert>
   );
