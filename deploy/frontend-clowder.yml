@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: image-builder-frontend
+objects:
+  - apiVersion: cloud.redhat.com/v1alpha1
+    kind: Frontend
+    metadata:
+      name: image-builder
+    spec:
+      envName: ${ENV_NAME}
+      title: Image-builder
+      deploymentRepo: https://github.com/RedHatInsights/image-builder-frontend
+      API:
+        versions:
+          - v1
+      frontend:
+        paths:
+          - /apps/image-builder
+      image: ${IMAGE}:${IMAGE_TAG}
+      navItems:
+        - appId: "image_builder"
+          title: "Image builder"
+          href: "/insights/image-builder"
+          product: "Red Hat Insights"
+      module:
+        manifestLocation: "/apps/image-builder/fed-mods.json"
+        moduleID: image_builder
+        modules:
+          - id: "image-builder"
+            module: "./RootApp"
+            routes:
+              - pathname: /insights/image-builder
+
+parameters:
+  - name: ENV_NAME
+    required: true
+  - name: IMAGE_TAG
+    required: true
+  - name: IMAGE
+    value: quay.io/cloudservices/image-builder-frontend
