@@ -1,5 +1,5 @@
-const { DefinePlugin } = require('webpack');
 const { resolve } = require('path');
+const { DefinePlugin } = require('webpack');
 const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const config = require('@redhat-cloud-services/frontend-components-config');
 

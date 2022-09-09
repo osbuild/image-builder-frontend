@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 import { Flex } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
-  PendingIcon,
   ExclamationCircleIcon,
   InProgressIcon,
+  PendingIcon,
 } from '@patternfly/react-icons';
 
 import './ImageBuildStatus.scss';

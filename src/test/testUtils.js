@@ -4,7 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { reducer, middleware } from '../store';
+import { middleware, reducer } from '../store';
 
 export const renderWithReduxRouter = (
   component,

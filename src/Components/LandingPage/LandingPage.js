@@ -8,7 +8,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 
-import { Button, Popover, TextContent, Text } from '@patternfly/react-core';
+import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
 import { GithubIcon, HelpIcon } from '@patternfly/react-icons';
 
 import ImagesTable from '../ImagesTable/ImagesTable';

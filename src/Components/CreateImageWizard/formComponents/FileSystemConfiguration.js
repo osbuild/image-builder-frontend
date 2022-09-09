@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   HelpIcon,
   MinusCircleIcon,
@@ -14,20 +14,20 @@ import {
 } from '@patternfly/react-core';
 import {
   TableComposable,
-  Thead,
   Tbody,
-  Tr,
-  Th,
   Td,
+  Th,
+  Thead,
+  Tr,
 } from '@patternfly/react-table';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { v4 as uuidv4 } from 'uuid';
 
-import { UNIT_GIB } from '../../../constants';
 import MountPoint from './MountPoint';
 import SizeUnit from './SizeUnit';
+import { UNIT_GIB } from '../../../constants';
 
 let initialRow = {
   id: uuidv4(),

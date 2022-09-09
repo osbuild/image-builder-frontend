@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import {
   Button,
-  TextContent,
-  Text,
-  TextVariants,
   Popover,
+  Text,
+  TextContent,
+  TextVariants,
 } from '@patternfly/react-core';
 import { DownloadIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
