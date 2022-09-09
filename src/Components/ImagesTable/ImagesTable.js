@@ -1,39 +1,39 @@
 import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  TableComposable,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
   ActionsColumn,
   ExpandableRowContent,
+  TableComposable,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
 } from '@patternfly/react-table';
 import {
   EmptyState,
-  EmptyStateVariant,
-  EmptyStateIcon,
   EmptyStateBody,
+  EmptyStateIcon,
   EmptyStateSecondaryActions,
+  EmptyStateVariant,
   Pagination,
   PaginationVariant,
+  Title,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  Title,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import './ImagesTable.scss';
-import { composesGet, composeGetStatus } from '../../store/actions/actions';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
 import ImageBuildStatus from './ImageBuildStatus';
 import Release from './Release';
 import Target from './Target';
 import ImageLink from './ImageLink';
 import ErrorDetails from './ImageBuildErrorDetails';
+import DocumentationButton from '../sharedComponents/DocumentationButton';
+import { composeGetStatus, composesGet } from '../../store/actions/actions';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);

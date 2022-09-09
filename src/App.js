@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Router } from './Router';
 import '@patternfly/patternfly/patternfly-addons.css';
 
 import { getRegistry } from '@redhat-cloud-services/frontend-components-utilities/Registry';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { Router } from './Router';
 
 const App = (props) => {
   const navigate = useNavigate();

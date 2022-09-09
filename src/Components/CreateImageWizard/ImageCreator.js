@@ -4,13 +4,13 @@ import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-templa
 import { componentMapper } from '@data-driven-forms/pf4-component-mapper';
 import { Spinner } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
+import Select from '@data-driven-forms/pf4-component-mapper/select';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import AzureAuthButton from './formComponents/AzureAuthButton';
 import ActivationKeys from './formComponents/ActivationKeys';
-import Select from '@data-driven-forms/pf4-component-mapper/select';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';

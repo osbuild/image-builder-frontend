@@ -1,24 +1,24 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import api from '../../../api';
 import PropTypes from 'prop-types';
 import {
   DualListSelector,
-  DualListSelectorPane,
+  DualListSelectorControl,
+  DualListSelectorControlsWrapper,
   DualListSelectorList,
   DualListSelectorListItem,
-  DualListSelectorControlsWrapper,
-  DualListSelectorControl,
+  DualListSelectorPane,
   SearchInput,
   TextContent,
 } from '@patternfly/react-core';
 import {
   AngleDoubleLeftIcon,
-  AngleLeftIcon,
   AngleDoubleRightIcon,
+  AngleLeftIcon,
   AngleRightIcon,
 } from '@patternfly/react-icons';
+import api from '../../../api';
 
 // the fields isHidden and isSelected should not be included in the package list sent for image creation
 const removePackagesDisplayFields = (packages) =>
