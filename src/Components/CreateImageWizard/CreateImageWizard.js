@@ -1,32 +1,30 @@
 import React from 'react';
-import ImageCreator from './ImageCreator';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
-import './CreateImageWizard.scss';
-import { useDispatch } from 'react-redux';
-import api from '../../api';
-import { UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../constants';
-import isRhel from '../../Utilities/isRhel';
-import { composeAdded } from '../../store/actions/actions';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-
+import { useDispatch } from 'react-redux';
+import ImageCreator from './ImageCreator';
 import {
-  review,
   awsTarget,
-  registration,
+  fileSystemConfiguration,
   googleCloudTarger,
+  imageName,
+  imageOutput,
   msAzureTarget,
   packages,
-  imageOutput,
-  fileSystemConfiguration,
-  imageName,
+  registration,
+  review,
 } from './steps';
-
 import {
   fileSystemConfigurationValidator,
   targetEnvironmentValidator,
 } from './validators';
+import DocumentationButton from '../sharedComponents/DocumentationButton';
+import './CreateImageWizard.scss';
+import api from '../../api';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
+import isRhel from '../../Utilities/isRhel';
+import { composeAdded } from '../../store/actions/actions';
 
 const handleKeyDown = (e, handleClose) => {
   if (e.key === 'Escape') {

@@ -1,5 +1,6 @@
 import React from 'react';
-import { screen, render, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
@@ -7,7 +8,6 @@ import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
-import userEvent from '@testing-library/user-event';
 
 jest.mock('../../../store/actions/actions', () => {
   return {

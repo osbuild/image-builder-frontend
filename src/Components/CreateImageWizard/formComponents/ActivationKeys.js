@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
   FormGroup,
-  Spinner,
   Select,
   SelectOption,
   SelectVariant,
+  Spinner,
 } from '@patternfly/react-core';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';

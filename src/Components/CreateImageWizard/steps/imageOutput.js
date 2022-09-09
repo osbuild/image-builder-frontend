@@ -1,11 +1,11 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import nextStepMapper from './imageOutputStepMapper';
-import { RHEL_9 } from '../../../constants.js';
 import { Text } from '@patternfly/react-core';
-import DocumentationButton from '../../sharedComponents/DocumentationButton';
+import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+import { RHEL_9 } from '../../../constants.js';
+import DocumentationButton from '../../sharedComponents/DocumentationButton';
 
 export default {
   StepTemplate,

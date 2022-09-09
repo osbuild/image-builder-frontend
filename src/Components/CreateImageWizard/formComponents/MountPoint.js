@@ -1,3 +1,4 @@
+import path from 'path';
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -6,7 +7,6 @@ import {
   SelectVariant,
   TextInput,
 } from '@patternfly/react-core';
-import path from 'path';
 
 const MountPoint = ({ ...props }) => {
   // check '/' last!

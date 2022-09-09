@@ -7,7 +7,7 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
-import { UNIT_KIB, UNIT_MIB, UNIT_GIB } from '../../../constants';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
 
 const SizeUnit = ({ ...props }) => {
   const [isOpen, setIsOpen] = useState(false);
