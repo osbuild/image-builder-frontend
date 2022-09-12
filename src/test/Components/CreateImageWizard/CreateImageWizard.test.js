@@ -17,13 +17,19 @@ import { RHEL_8 } from '../../../constants.js';
 let history = undefined;
 let store = undefined;
 
-function verifyButtons() {
-  // these buttons exist everywhere
-  const next = screen.getByRole('button', { name: /Next/ });
+function getBackButton() {
   const back = screen.getByRole('button', { name: /Back/ });
-  const cancel = screen.getByRole('button', { name: /Cancel/ });
+  return back;
+}
 
-  return [next, back, cancel];
+function getNextButton() {
+  const next = screen.getByRole('button', { name: /Next/ });
+  return next;
+}
+
+function getCancelButton() {
+  const cancel = screen.getByRole('button', { name: /Cancel/ });
+  return cancel;
 }
 
 function verifyCancelButton(cancel, history) {
@@ -200,8 +206,7 @@ describe('Step Image output', () => {
   test('clicking Next loads Upload to AWS', () => {
     setUp();
 
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     screen.getByText('AWS account ID');
   });
@@ -209,7 +214,7 @@ describe('Step Image output', () => {
   test('clicking Cancel loads landing page', () => {
     setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -225,8 +230,6 @@ describe('Step Image output', () => {
   test('selecting and deselecting a tile disables the next button', () => {
     setUp();
 
-    const [next, ,] = verifyButtons();
-
     const awsTile = screen.getByTestId('upload-aws');
     // this has already been clicked once in the setup function
     awsTile.click(); // deselect
@@ -239,7 +242,7 @@ describe('Step Image output', () => {
     azureTile.click(); // select
     azureTile.click(); // deselect
 
-    expect(next).toBeDisabled();
+    expect(getNextButton()).toBeDisabled();
   });
 
   test('expect only RHEL releases before expansion', async () => {
@@ -352,13 +355,12 @@ describe('Step Image output', () => {
 describe('Step Upload to AWS', () => {
   const setUp = () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
 
-    next.click();
+    getNextButton().click();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Target environment - Amazon Web Service'
@@ -369,8 +371,7 @@ describe('Step Upload to AWS', () => {
     setUp();
 
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -382,8 +383,7 @@ describe('Step Upload to AWS', () => {
   test('clicking Back loads Release', () => {
     setUp();
 
-    const [, back] = verifyButtons();
-    back.click();
+    getBackButton().click();
 
     screen.getByTestId('upload-aws');
   });
@@ -391,7 +391,7 @@ describe('Step Upload to AWS', () => {
   test('clicking Cancel loads landing page', () => {
     setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -408,13 +408,12 @@ describe('Step Upload to AWS', () => {
 describe('Step Upload to Google', () => {
   const setUp = () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-google');
     awsTile.click();
 
-    next.click();
+    getNextButton().click();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Target environment - Google Cloud Platform'
@@ -425,8 +424,7 @@ describe('Step Upload to Google', () => {
     setUp();
 
     userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -438,8 +436,7 @@ describe('Step Upload to Google', () => {
   test('clicking Back loads Release', () => {
     setUp();
 
-    const [, back] = verifyButtons();
-    back.click();
+    getBackButton().click();
 
     screen.getByTestId('upload-google');
   });
@@ -447,7 +444,7 @@ describe('Step Upload to Google', () => {
   test('clicking Cancel loads landing page', () => {
     setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -463,25 +460,23 @@ describe('Step Upload to Google', () => {
   test('the google email field must be a valid email', () => {
     setUp();
 
-    const [next, ,] = verifyButtons();
     userEvent.type(screen.getByTestId('input-google-email'), 'a');
-    expect(next).toHaveClass('pf-m-disabled');
-    expect(next).toBeDisabled();
+    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(getNextButton()).toBeDisabled();
     userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    expect(next).not.toHaveClass('pf-m-disabled');
-    expect(next).toBeEnabled();
+    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(getNextButton()).toBeEnabled();
   });
 });
 
 describe('Step Upload to Azure', () => {
   const setUp = () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-azure');
     awsTile.click();
-    next.click();
+    getNextButton().click();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Target environment - Microsoft Azure'
@@ -504,8 +499,7 @@ describe('Step Upload to Azure', () => {
       'testResourceGroup'
     );
 
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -517,8 +511,7 @@ describe('Step Upload to Azure', () => {
   test('clicking Back loads Release', () => {
     setUp();
 
-    const [, back] = verifyButtons();
-    back.click();
+    getBackButton().click();
 
     screen.getByTestId('upload-azure');
   });
@@ -526,7 +519,7 @@ describe('Step Upload to Azure', () => {
   test('clicking Cancel loads landing page', () => {
     setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -553,16 +546,15 @@ describe('Step Upload to Azure', () => {
 describe('Step Registration', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
 
-    next.click();
+    getNextButton().click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
 
-    next.click();
+    getNextButton().click();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -575,8 +567,7 @@ describe('Step Registration', () => {
     const registerLaterRadio = screen.getByLabelText('Register later');
     userEvent.click(registerLaterRadio);
 
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     screen.getByTestId('fsc-paritioning-toggle');
   });
@@ -584,8 +575,7 @@ describe('Step Registration', () => {
   test('clicking Back loads Upload to AWS', async () => {
     await setUp();
 
-    const [, back] = verifyButtons();
-    back.click();
+    getBackButton().click();
 
     screen.getByText('AWS account ID');
   });
@@ -593,7 +583,7 @@ describe('Step Registration', () => {
   test('clicking Cancel loads landing page', async () => {
     await setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -682,16 +672,15 @@ describe('Step Registration', () => {
 describe('Step Packages', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    next.click();
+    getNextButton().click();
 
     // aws step
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-    next.click();
+    getNextButton().click();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -699,17 +688,16 @@ describe('Step Packages', () => {
 
     const registerLaterRadio = screen.getByLabelText('Register later');
     userEvent.click(registerLaterRadio);
-    next.click();
+    getNextButton().click();
 
     // skip fsc
-    next.click();
+    getNextButton().click();
   };
 
   test('clicking Next loads Image name', async () => {
     await setUp();
 
-    const [next, ,] = verifyButtons();
-    next.click();
+    getNextButton().click();
 
     screen.getByRole('heading', {
       name: 'Name image',
@@ -728,7 +716,7 @@ describe('Step Packages', () => {
   test('clicking Cancel loads landing page', async () => {
     await setUp();
 
-    const [, , cancel] = verifyButtons();
+    const cancel = getCancelButton();
     verifyCancelButton(cancel, history);
   });
 
@@ -1119,16 +1107,15 @@ describe('Step Packages', () => {
 describe('Step Details', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    next.click();
+    getNextButton().click();
 
     // aws step
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-    next.click();
+    getNextButton().click();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -1136,18 +1123,16 @@ describe('Step Details', () => {
 
     const registerLaterRadio = screen.getByLabelText('Register later');
     userEvent.click(registerLaterRadio);
-    next.click();
+    getNextButton().click();
 
     // skip fsc
-    next.click();
+    getNextButton().click();
     // skip packages
-    next.click();
+    getNextButton().click();
   };
 
   test('image name invalid for more than 100 chars', async () => {
     await setUp();
-
-    const [next, ,] = verifyButtons();
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
@@ -1156,28 +1141,27 @@ describe('Step Details', () => {
     // 101 character name
     const invalidName = 'a'.repeat(101);
     userEvent.type(nameInput, invalidName);
-    expect(next).toHaveClass('pf-m-disabled');
-    expect(next).toBeDisabled();
+    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(getNextButton()).toBeDisabled();
     userEvent.clear(nameInput);
     userEvent.type(nameInput, 'validName');
-    expect(next).not.toHaveClass('pf-m-disabled');
-    expect(next).toBeEnabled();
+    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(getNextButton()).toBeEnabled();
   });
 });
 
 describe('Step Review', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-    const [next, ,] = verifyButtons();
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    next.click();
+    getNextButton().click();
 
     // aws step
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-    next.click();
+    getNextButton().click();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -1186,22 +1170,20 @@ describe('Step Review', () => {
     // skip registration
     const registerLaterRadio = screen.getByLabelText('Register later');
     userEvent.click(registerLaterRadio);
-    next.click();
+    getNextButton().click();
 
     // skip fsc
-    next.click();
+    getNextButton().click();
 
     // skip packages
-    next.click();
+    getNextButton().click();
     // skip name
-    next.click();
+    getNextButton().click();
   };
 
   // eslint-disable-next-line no-unused-vars
   const setUpCentOS = () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
-
-    const [next, ,] = verifyButtons();
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -1221,19 +1203,19 @@ describe('Step Review', () => {
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    next.click();
+    getNextButton().click();
 
     // aws step
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
-    next.click();
+    getNextButton().click();
 
     // skip fsc
-    next.click();
+    getNextButton().click();
 
     // skip packages
-    next.click();
+    getNextButton().click();
     // skip name
-    next.click();
+    getNextButton().click();
   };
 
   test('has 3 buttons', async () => {
@@ -1349,8 +1331,6 @@ describe('Click through all steps', () => {
   test('with valid values', async () => {
     await setUp();
 
-    const next = screen.getByRole('button', { name: /Next/ });
-
     // select image output
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -1414,7 +1394,7 @@ describe('Click through all steps', () => {
     userEvent.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    next.click();
+    getNextButton().click();
 
     // fsc
     const toggle = await screen.findByTestId(
@@ -1427,6 +1407,7 @@ describe('Click through all steps', () => {
     const tbody = screen.getByTestId('file-system-configuration-tbody');
     const rows = within(tbody).getAllByRole('row');
     expect(rows).toHaveLength(3);
+    getNextButton().click();
     // set mountpoint of final row to /var/tmp
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
     within(rows[2]).getByRole('option', { name: '/var' }).click();
@@ -1449,7 +1430,7 @@ describe('Click through all steps', () => {
     );
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[1].click();
     within(rows[2]).getByRole('option', { name: 'MiB' }).click();
-    next.click();
+    getNextButton().click();
 
     // packages
     const getPackages = jest
@@ -1468,14 +1449,14 @@ describe('Click through all steps', () => {
       .getByRole('option', { name: /testPkg test package summary/ })
       .click();
     screen.getByRole('button', { name: /Add selected/ }).click();
-    next.click();
+    getNextButton().click();
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
       name: 'Image name',
     });
     userEvent.type(nameInput, 'MyImageName');
-    next.click();
+    getNextButton().click();
 
     // review
     await screen.findByText(
