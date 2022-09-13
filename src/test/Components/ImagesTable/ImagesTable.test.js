@@ -537,6 +537,7 @@ describe('Images Table Toolbar', () => {
     screen.getByTestId('create-image-action');
 
     // check pagination renders
-    screen.getByTestId('images-pagination');
+    screen.getByTestId('images-pagination-top');
+    screen.getByTestId('images-pagination-bottom');
   });
 });

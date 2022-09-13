@@ -19,6 +19,7 @@ import {
   EmptyStateBody,
   EmptyStateSecondaryActions,
   Pagination,
+  PaginationVariant,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
@@ -193,8 +194,8 @@ const ImagesTable = () => {
                   page={page}
                   onSetPage={onSetPage}
                   onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination"
-                  data-testid="images-pagination"
+                  widgetId="compose-pagination-top"
+                  data-testid="images-pagination-top"
                   isCompact
                 />
               </ToolbarItem>
@@ -286,6 +287,26 @@ const ImagesTable = () => {
                 );
               })}
           </TableComposable>
+          <Toolbar>
+            <ToolbarContent>
+              <ToolbarItem
+                variant="pagination"
+                align={{ default: 'alignRight' }}
+              >
+                <Pagination
+                  variant={PaginationVariant.bottom}
+                  itemCount={composes.count}
+                  perPage={perPage}
+                  page={page}
+                  onSetPage={onSetPage}
+                  onPerPageSelect={onPerPageSelect}
+                  widgetId="compose-pagination-bottom"
+                  data-testid="images-pagination-bottom"
+                  isCompact
+                />
+              </ToolbarItem>
+            </ToolbarContent>
+          </Toolbar>
         </React.Fragment>
       )}
     </React.Fragment>
