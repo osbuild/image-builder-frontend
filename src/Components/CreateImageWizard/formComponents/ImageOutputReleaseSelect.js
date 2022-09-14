@@ -40,13 +40,12 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
         onClear={handleClear}
         selections={RELEASES[getState()?.values?.[input.name]]}
         isOpen={isOpen}
-        {...(insights.chrome.isBeta() &&
-          !showDevelopmentOptions && {
-            loadingVariant: {
-              text: 'Show options for further development of RHEL',
-              onClick: handleExpand,
-            },
-          })}
+        {...(!showDevelopmentOptions && {
+          loadingVariant: {
+            text: 'Show options for further development of RHEL',
+            onClick: handleExpand,
+          },
+        })}
       >
         {Object.entries(RELEASES)
           .filter(([key]) => {
