@@ -669,6 +669,73 @@ describe('Step Registration', () => {
   });
 });
 
+describe('Step File system configuration', () => {
+  const setUp = async () => {
+    history = renderWithReduxRouter(<CreateImageWizard />).history;
+
+    // select aws as upload destination
+    const awsTile = screen.getByTestId('upload-aws');
+    awsTile.click();
+    getNextButton().click();
+
+    // aws step
+    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+    getNextButton().click();
+    // skip registration
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+
+    const registerLaterRadio = screen.getByLabelText('Register later');
+    userEvent.click(registerLaterRadio);
+    getNextButton().click();
+  };
+
+  test('Error validation occurs upon clicking next button', async () => {
+    await setUp();
+
+    const nextButton = getNextButton();
+
+    const manuallyConfigurePartitions = screen.getByText(
+      /manually configure partitions/i
+    );
+    manuallyConfigurePartitions.click();
+
+    const addPartition = await screen.findByTestId('file-system-add-partition');
+
+    // Create duplicate partitions
+    addPartition.click();
+    addPartition.click();
+
+    expect(nextButton).toBeEnabled();
+
+    // Clicking next causes errors to appear
+    nextButton.click();
+
+    const mountPointWarning = screen.getByRole('heading', {
+      name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
+      hidden: true,
+    });
+
+    const mountPointAlerts = screen.getAllByRole('heading', {
+      name: /danger alert: duplicate mount point\./i,
+    });
+
+    const tbody = screen.getByTestId('file-system-configuration-tbody');
+    const rows = within(tbody).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+
+    // Change mountpoint of final row to /var, resolving errors
+    within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
+    within(rows[2]).getByRole('option', { name: '/var' }).click();
+
+    await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
+    await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
+    await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
+    await waitFor(() => expect(nextButton).toBeEnabled());
+  });
+});
+
 describe('Step Packages', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
