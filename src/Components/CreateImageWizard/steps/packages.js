@@ -6,7 +6,7 @@ import StepTemplate from './stepTemplate';
 export default {
   StepTemplate,
   id: 'wizard-systemconfiguration-packages',
-  title: 'Packages',
+  title: 'Additional packages',
   name: 'packages',
   substepOf: 'System configuration',
   nextStep: 'image-name',
@@ -16,8 +16,11 @@ export default {
       name: 'packages-text-component',
       label: (
         <Text>
-          Add optional additional packages to your image by searching available
-          packages.
+          Images built with Image Builder include all required packages.
+          <br />
+          You can add additional packages to your image by searching
+          &quot;Available packages&quot; and adding them to the &quot;Chosen
+          packages&quot; list.
         </Text>
       ),
     },
