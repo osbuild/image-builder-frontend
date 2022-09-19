@@ -175,7 +175,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('heading', { name: /Create image/ });
 
     screen.getByRole('button', { name: 'Image output' });
-    screen.getByRole('button', { name: 'Packages' });
+    screen.getByRole('button', { name: 'Additional packages' });
     screen.getByRole('button', { name: 'Name image' });
     screen.getByRole('button', { name: 'Review' });
   });
@@ -1457,7 +1457,7 @@ describe('Click through all steps', () => {
       .mockImplementation(() => Promise.resolve(mockPkgResult));
 
     screen.getByText(
-      'Add optional additional packages to your image by searching available packages.'
+      /Images built with Image Builder include all required packages/i
     );
     await searchForAvailablePackages(
       screen.getByTestId('search-available-pkgs-input'),
