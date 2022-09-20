@@ -291,7 +291,7 @@ const ImagesTable = () => {
                 );
               })}
           </TableComposable>
-          <Toolbar>
+          <Toolbar className="pf-u-mb-xl">
             <ToolbarContent>
               <ToolbarItem
                 variant="pagination"
