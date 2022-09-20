@@ -61,8 +61,8 @@ const ImagesTable = () => {
     Object.entries(composes.byId).map(([id, compose]) => {
       /* Skip composes that have been complete */
       if (
-        compose.image_status.status === 'success' ||
-        compose.image_status.status === 'failure'
+        compose.image_status?.status === 'success' ||
+        compose.image_status?.status === 'failure'
       ) {
         return;
       }
@@ -71,13 +71,17 @@ const ImagesTable = () => {
     });
   };
 
+  /* Get all composes once on mount */
   useEffect(() => {
     dispatch(composesGet(perPage, 0));
-    const intervalId = setInterval(() => pollComposeStatuses(), 8000);
+  }, []);
 
+  /* Reset the polling each time the composes in the store are updated */
+  useEffect(() => {
+    const intervalId = setInterval(() => pollComposeStatuses(), 8000);
     // clean up interval on unmount
     return () => clearInterval(intervalId);
-  }, []);
+  });
 
   const onSetPage = (_, page) => {
     // if the next page's composes haven't been fetched from api yet
