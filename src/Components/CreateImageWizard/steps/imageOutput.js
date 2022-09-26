@@ -44,6 +44,8 @@ export default {
       condition: {
         when: 'release',
         pattern: /centos-*/,
+        then: { set: { 'register-system': null } },
+        else: { visible: false },
       },
     },
     {
