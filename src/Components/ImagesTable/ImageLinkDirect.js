@@ -9,7 +9,7 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
-import { DownloadIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { resolveRelPath } from '../../Utilities/path';
 
 const ImageLinkDirect = ({ uploadStatus, ...props }) => {
@@ -106,12 +106,10 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
           component="a"
           target="_blank"
           variant="link"
-          icon={<DownloadIcon />}
-          iconPosition="right"
           isInline
           href={uploadStatus.options.url}
         >
-          Download {fileExtensions[props.imageType]}
+          Download ({fileExtensions[props.imageType]})
         </Button>
       );
     } else {
