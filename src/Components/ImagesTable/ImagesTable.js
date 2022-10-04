@@ -126,6 +126,50 @@ const ImagesTable = () => {
     return tsDisplay;
   };
 
+  const convertStringToDate = (createdAtAsString) => {
+    if (isNaN(Date.parse(createdAtAsString))) {
+      // converts property created_at of the image object from string to UTC
+      const [dateValues, timeValues] = createdAtAsString.split(' ');
+      const datetimeString = `${dateValues}T${timeValues}Z`;
+      return Date.parse(datetimeString);
+    } else {
+      return Date.parse(createdAtAsString);
+    }
+  };
+
+  const setComposeStatus = (compose) => {
+    if (!compose.image_status) {
+      return '';
+    } else if (
+      compose.request.image_requests[0].upload_request.type !== 'aws.s3' ||
+      compose.image_status.status !== 'success'
+    ) {
+      return compose.image_status.status;
+    } else if (
+      hoursToExpiration(compose.created_at) >= s3ExpirationTimeInHours
+    ) {
+      return 'expired';
+    } else {
+      return 'expiring';
+    }
+  };
+
+  const hoursToExpiration = (imageCreatedAt) => {
+    if (imageCreatedAt) {
+      const currentTime = Date.now();
+      // miliseconds in hour - needed for calculating the difference
+      // between current date and the date of the image creation
+      const msInHour = 1000 * 60 * 60;
+      const timeUntilExpiration = Math.floor(
+        (currentTime - convertStringToDate(imageCreatedAt)) / msInHour
+      );
+      return timeUntilExpiration;
+    } else {
+      // when creating a new image, the compose.created_at can be undefined when first queued
+      return 0;
+    }
+  };
+
   const actions = (compose) => [
     {
       title: 'Recreate image',
@@ -151,6 +195,8 @@ const ImagesTable = () => {
   // the state.page is not an index so must be reduced by 1 get the starting index
   const itemsStartInclusive = (page - 1) * perPage;
   const itemsEndExclusive = itemsStartInclusive + perPage;
+
+  const s3ExpirationTimeInHours = 6;
 
   return (
     <React.Fragment>
@@ -256,10 +302,10 @@ const ImagesTable = () => {
                       </Td>
                       <Td dataLabel="Status">
                         <ImageBuildStatus
-                          status={
-                            compose.image_status
-                              ? compose.image_status.status
-                              : ''
+                          status={setComposeStatus(compose)}
+                          remainingHours={
+                            s3ExpirationTimeInHours -
+                            hoursToExpiration(compose.created_at)
                           }
                         />
                       </Td>
@@ -275,6 +321,13 @@ const ImagesTable = () => {
                             compose.request.image_requests[0].upload_request
                               .options
                           }
+                          isExpired={
+                            hoursToExpiration(compose.created_at) >=
+                            s3ExpirationTimeInHours
+                              ? true
+                              : false
+                          }
+                          recreateImage={compose.request}
                         />
                       </Td>
                       <Td>

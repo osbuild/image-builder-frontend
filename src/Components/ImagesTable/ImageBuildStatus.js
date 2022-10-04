@@ -5,7 +5,9 @@ import { Flex } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
+  ExclamationTriangleIcon,
   InProgressIcon,
+  OffIcon,
   PendingIcon,
 } from '@patternfly/react-icons';
 
@@ -56,6 +58,20 @@ const ImageBuildStatus = (props) => {
         text: 'Cloud registration in progress',
       },
     ],
+    expiring: [
+      {
+        icon: <ExclamationTriangleIcon className="expiring" />,
+        text: `Expires in ${props.remainingHours} ${
+          props.remainingHours > 1 ? 'hours' : 'hour'
+        }`,
+      },
+    ],
+    expired: [
+      {
+        icon: <OffIcon />,
+        text: 'Expired',
+      },
+    ],
   };
   return (
     <React.Fragment>
@@ -72,6 +88,7 @@ const ImageBuildStatus = (props) => {
 
 ImageBuildStatus.propTypes = {
   status: PropTypes.string,
+  remainingHours: PropTypes.number,
 };
 
 export default ImageBuildStatus;

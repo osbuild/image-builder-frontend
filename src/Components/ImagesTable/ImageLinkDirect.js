@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 import {
   Button,
@@ -9,8 +10,10 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { DownloadIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { resolveRelPath } from '../../Utilities/path';
 
 const ImageLinkDirect = (props) => {
+  const navigate = useNavigate();
   const fileExtensions = {
     vsphere: '.vmdk',
     'guest-image': '.qcow2',
@@ -101,19 +104,40 @@ const ImageLinkDirect = (props) => {
         </Popover>
       );
     } else if (uploadStatus.type === 'aws.s3') {
-      return (
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          icon={<DownloadIcon />}
-          iconPosition="right"
-          isInline
-          href={uploadStatus.options.url}
-        >
-          Download {fileExtensions[props.imageType]}
-        </Button>
-      );
+      if (!props.isExpired) {
+        return (
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<DownloadIcon />}
+            iconPosition="right"
+            isInline
+            href={uploadStatus.options.url}
+          >
+            Download {fileExtensions[props.imageType]}
+          </Button>
+        );
+      } else {
+        return (
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            onClick={() =>
+              navigate(resolveRelPath('/imagewizard'), {
+                state: {
+                  composeRequest: props.recreateImage,
+                  initialStep: 'review',
+                },
+              })
+            }
+            isInline
+          >
+            Recreate image
+          </Button>
+        );
+      }
     }
   }
 
@@ -123,6 +147,8 @@ const ImageLinkDirect = (props) => {
 ImageLinkDirect.propTypes = {
   imageStatus: PropTypes.object,
   imageType: PropTypes.string,
+  isExpired: PropTypes.bool,
+  recreateImage: PropTypes.object,
   uploadOptions: PropTypes.object,
 };
 

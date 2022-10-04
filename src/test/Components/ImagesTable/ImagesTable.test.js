@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { BrowserRouter } from 'react-router-dom';
 import api from '../../../api.js';
 import { renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
@@ -9,6 +10,9 @@ import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
+
+const currentDate = new Date();
+let currentDateInString = currentDate.toString();
 
 const mockComposes = {
   meta: {
@@ -207,7 +211,7 @@ const mockComposes = {
       },
     },
     {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: currentDateInString,
       id: '7b7d0d51-7106-42ab-98f2-f89872a9d599',
       request: {
         distribution: RHEL_8,
@@ -389,27 +393,43 @@ describe('Images Table', () => {
       expect(row.cells[4]).toHaveTextContent(testElement.textContent);
 
       // render the expected <ImageBuildStatus /> and compare the text content
-      render(
-        <ImageBuildStatus
-          status={mockStatus[compose.id].image_status.status}
-        />,
-        {
-          container: testElement,
-        }
-      );
-      expect(row.cells[5]).toHaveTextContent(testElement.textContent);
+      if (
+        compose.created_at === '2021-04-27 12:31:12.794809 +0000 UTC' &&
+        compose.request.image_requests[0].upload_request.type === 'aws.s3'
+      ) {
+        expect(row.cells[5]).toHaveTextContent('Expired');
+      } else {
+        render(
+          <ImageBuildStatus
+            status={mockStatus[compose.id].image_status.status}
+          />,
+          {
+            container: testElement,
+          }
+        );
+        expect(row.cells[5]).toHaveTextContent(testElement.textContent);
+      }
 
       // render the expected <ImageLink /> and compare the text content for a link
-      render(
-        <ImageLink
-          imageStatus={mockStatus[compose.id].image_status}
-          uploadOptions={
-            compose.request.image_requests[0].upload_request.options
-          }
-        />,
-        { container: testElement }
-      );
-      expect(row.cells[6]).toHaveTextContent(testElement.textContent);
+      if (
+        compose.created_at === '2021-04-27 12:31:12.794809 +0000 UTC' &&
+        compose.request.image_requests[0].upload_request.type === 'aws.s3'
+      ) {
+        expect(row.cells[6]).toHaveTextContent('Recreate image');
+      } else {
+        render(
+          <BrowserRouter>
+            <ImageLink
+              imageStatus={mockStatus[compose.id].image_status}
+              uploadOptions={
+                compose.request.image_requests[0].upload_request.options
+              }
+            />
+          </BrowserRouter>,
+          { container: testElement }
+        );
+        expect(row.cells[6]).toHaveTextContent(testElement.textContent);
+      }
     }
   });
 
