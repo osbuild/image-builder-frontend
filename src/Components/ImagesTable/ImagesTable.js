@@ -265,6 +265,8 @@ const ImagesTable = () => {
                       </Td>
                       <Td dataLabel="Instance">
                         <ImageLink
+                          imageId={id}
+                          imageName={compose.request.image_name || id}
                           imageStatus={compose.image_status}
                           imageType={
                             compose.request.image_requests[0].image_type
