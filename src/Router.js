@@ -1,6 +1,8 @@
 import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
+import { resolveRelPath } from './Utilities/path';
+
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
   import('./Components/CreateImageWizard/CreateImageWizard')
@@ -9,8 +11,11 @@ const CreateImageWizard = lazy(() =>
 export const Router = () => {
   return (
     <Routes>
-      <Route path="/imagewizard/*" element={<CreateImageWizard />} />
-      <Route path="*" element={<LandingPage />} />
+      <Route
+        path={resolveRelPath('imagewizard/*')}
+        element={<CreateImageWizard />}
+      />
+      <Route path={resolveRelPath('*')} element={<LandingPage />} />
     </Routes>
   );
 };

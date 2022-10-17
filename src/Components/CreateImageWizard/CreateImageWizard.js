@@ -25,6 +25,7 @@ import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
 import isRhel from '../../Utilities/isRhel';
+import { resolveRelPath } from '../../Utilities/path';
 
 const handleKeyDown = (e, handleClose) => {
   if (e.key === 'Escape') {
@@ -415,7 +416,7 @@ const CreateImageWizard = () => {
   const initialState = requestToState(composeRequest);
   const stepHistory = formStepHistory(composeRequest);
 
-  const handleClose = () => navigate('/');
+  const handleClose = () => navigate(resolveRelPath(''));
 
   return (
     <ImageCreator
@@ -440,7 +441,7 @@ const CreateImageWizard = () => {
           )
         )
           .then(() => {
-            navigate('/');
+            navigate(resolveRelPath(''));
             dispatch(
               addNotification({
                 variant: 'success',
