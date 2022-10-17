@@ -34,6 +34,7 @@ import ImageLink from './ImageLink';
 import ErrorDetails from './ImageBuildErrorDetails';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import { fetchComposes, fetchComposeStatus } from '../../store/actions/actions';
+import { resolveRelPath } from '../../Utilities/path';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -129,7 +130,7 @@ const ImagesTable = () => {
     {
       title: 'Recreate image',
       onClick: () =>
-        navigate('/imagewizard', {
+        navigate(resolveRelPath('imagewizard'), {
           state: { composeRequest: compose.request, initialStep: 'review' },
         }),
     },
@@ -165,7 +166,7 @@ const ImagesTable = () => {
             set and an activation key to automate the registration process.
           </EmptyStateBody>
           <Link
-            to="/imagewizard"
+            to={resolveRelPath('imagewizard')}
             className="pf-c-button pf-m-primary"
             data-testid="create-image-action"
           >
@@ -181,7 +182,7 @@ const ImagesTable = () => {
             <ToolbarContent>
               <ToolbarItem>
                 <Link
-                  to="/imagewizard"
+                  to={resolveRelPath('imagewizard')}
                   className="pf-c-button pf-m-primary"
                   data-testid="create-image-action"
                 >

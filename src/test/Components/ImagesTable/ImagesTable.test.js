@@ -433,7 +433,9 @@ describe('Images Table', () => {
     });
     userEvent.click(recreateButton);
 
-    expect(history.location.pathname).toBe('/imagewizard');
+    expect(history.location.pathname).toBe(
+      '/insights/image-builder/imagewizard'
+    );
     expect(history.location.state.composeRequest).toStrictEqual(
       mockComposes.data.find((c) => c.id === imageId).request
     );

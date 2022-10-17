@@ -35,7 +35,7 @@ function getCancelButton() {
 function verifyCancelButton(cancel, history) {
   cancel.click();
 
-  expect(history.location.pathname).toBe('/');
+  expect(history.location.pathname).toBe('/insights/image-builder/');
 }
 
 // packages
@@ -1814,7 +1814,9 @@ describe('Click through all steps', () => {
     await expect(composeImage).toHaveBeenCalledTimes(6);
 
     // returns back to the landing page
-    await waitFor(() => expect(history.location.pathname).toBe('/'));
+    await waitFor(() =>
+      expect(history.location.pathname).toBe('/insights/image-builder/')
+    );
     expect(store.getState().composes.allIds).toEqual(ids);
     // set test timeout of 10 seconds
   }, 10000);
@@ -1936,7 +1938,7 @@ describe('Keyboard accessibility', () => {
     const awsTile = screen.getByTestId('upload-aws');
     userEvent.click(awsTile);
     userEvent.keyboard('{esc}');
-    expect(history.location.pathname).toBe('/');
+    expect(history.location.pathname).toBe('/insights/image-builder/');
   });
 
   test('pressing Enter does not advance the wizard', async () => {

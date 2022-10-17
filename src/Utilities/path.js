@@ -9,7 +9,11 @@ function getBaseName(pathname) {
     release = `/beta/`;
   }
 
-  return `${release}${pathName[0]}/${pathName[1] || ''}`;
+  return `${release}`;
 }
 
-export default getBaseName;
+function resolveRelPath(path) {
+  return `/insights/image-builder/${path}`;
+}
+
+export { getBaseName, resolveRelPath };
