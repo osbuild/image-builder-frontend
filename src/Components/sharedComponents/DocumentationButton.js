@@ -4,7 +4,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const DocumentationButton = () => {
   const documentationURL =
-    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/uploading_a_customized_rhel_system_image_to_cloud_environments/index';
+    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html/composing_a_customized_rhel_system_image/index';
 
   return (
     <Button
