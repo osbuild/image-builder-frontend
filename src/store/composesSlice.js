@@ -1,4 +1,6 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSelector, createSlice } from '@reduxjs/toolkit';
+
+import { selectCloneById } from './clonesSlice';
 
 const initialState = {
   count: 0,
@@ -21,6 +23,12 @@ const composesSlice = createSlice({
         }
       }
       state.byId[action.payload.compose.id] = action.payload.compose;
+
+      // initialize empty clones array
+      if (!state.byId[action.payload.compose.id].clones) {
+        state.byId[action.payload.compose.id].clones = [];
+      }
+
       state.error = null;
     },
     composesUpdatedCount: (state, action) => {
@@ -30,7 +38,80 @@ const composesSlice = createSlice({
       state.byId[action.payload.id].image_status = action.payload.status;
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase('clones/cloneAdded', (state, action) => {
+      state.byId[action.payload.parent].clones.push(action.payload.clone.id);
+    });
+  },
 });
+
+export const selectComposeById = (state, composeId) => {
+  const compose = state.composes.byId[composeId];
+
+  if (compose !== undefined) {
+    return {
+      created_at: compose.created_at,
+      id: compose.id,
+      imageName: compose.image_name || compose.id,
+      region: compose.image_status?.upload_status?.options?.region,
+      ami: compose.image_status?.upload_status?.options?.ami,
+      share_with_accounts:
+        compose.request.image_requests[0].upload_request?.options
+          .share_with_accounts,
+      status: compose.image_status?.status,
+      clones: [...compose.clones],
+      imageType: compose.request.image_requests[0].image_type,
+      uploadType: compose.request.image_requests[0].upload_request.type,
+      uploadOptions: compose.request.image_requests[0].upload_request.options,
+      uploadStatus: compose.image_status?.upload_status,
+      request: compose.request,
+      isClone: false,
+    };
+  } else {
+    return null;
+  }
+};
+
+export const selectClonesById = (state, composeId) => {
+  const compose = state.composes.byId[composeId];
+
+  if (compose.clones.length !== 0) {
+    const clones = compose.clones.map((cloneId) => {
+      const clone = state.clones.byId[cloneId];
+      return {
+        created_at: clone.created_at,
+        id: clone.id,
+        region: clone.request.region,
+        ami: clone.image_status?.upload_status?.options?.ami,
+        share_with_accounts: clone.request.share_with_accounts,
+        status: clone.image_status?.status,
+      };
+    });
+    return clones;
+  }
+
+  return [];
+};
+
+export const selectImageById = (state, imageId) => {
+  const image = state.composes.allIds.includes(imageId)
+    ? selectComposeById(state, imageId)
+    : selectCloneById(state, imageId);
+
+  return image;
+};
+
+export const selectImagesById = createSelector(
+  [selectComposeById, selectClonesById],
+  (compose, clones) => [compose, ...clones]
+);
+
+export const selectImageStatusesById = createSelector(
+  [selectImagesById],
+  (images) => {
+    return images.map((image) => image.status);
+  }
+);
 
 export const { composeAdded, composesUpdatedCount, composeUpdatedStatus } =
   composesSlice.actions;
