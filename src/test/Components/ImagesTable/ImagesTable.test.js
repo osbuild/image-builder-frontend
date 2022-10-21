@@ -337,6 +337,8 @@ const mockStatus = {
   },
 };
 
+const mockClones = {};
+
 jest
   .spyOn(api, 'getComposes')
   .mockImplementation(() => Promise.resolve(mockComposes));
@@ -344,6 +346,10 @@ jest
 jest.spyOn(api, 'getComposeStatus').mockImplementation((id) => {
   return Promise.resolve(mockStatus[id]);
 });
+
+jest
+  .spyOn(api, 'getClones')
+  .mockImplementation(() => Promise.resolve(mockClones));
 
 describe('Images Table', () => {
   test('render ImagesTable', async () => {

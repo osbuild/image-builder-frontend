@@ -1,3 +1,4 @@
+import { cloneAdded, cloneUpdatedStatus } from '../clonesSlice';
 import {
   composeAdded,
   composesUpdatedCount,
@@ -16,12 +17,40 @@ export const fetchComposeStatus = (id) => async (dispatch) => {
 };
 
 export const fetchComposes = (limit, offset) => async (dispatch) => {
-  const request = await api.getComposes(limit, offset);
-  request.data.map((compose) => {
+  const composeRequest = await api.getComposes(limit, offset);
+
+  composeRequest.data.map((compose) => {
     dispatch(composeAdded({ compose, insert: false }));
     dispatch(fetchComposeStatus(compose.id));
   });
-  dispatch(composesUpdatedCount({ count: request.meta.count }));
+  dispatch(composesUpdatedCount({ count: composeRequest.meta.count }));
+
+  composeRequest.data.forEach((compose) => {
+    dispatch(fetchClones(compose.id, 100, 0));
+  });
 };
 
-export default { fetchComposes, fetchComposeStatus };
+export const fetchCloneStatus = (id) => async (dispatch) => {
+  const request = await api.getCloneStatus(id);
+  dispatch(
+    cloneUpdatedStatus({
+      id,
+      status: request,
+    })
+  );
+};
+
+export const fetchClones = (id, limit, offset) => async (dispatch) => {
+  const request = await api.getClones(id, limit, offset);
+  request.data?.forEach((clone) => {
+    dispatch(cloneAdded({ clone, parent: id }));
+    dispatch(fetchCloneStatus(clone.id));
+  });
+};
+
+export default {
+  fetchClones,
+  fetchCloneStatus,
+  fetchComposes,
+  fetchComposeStatus,
+};
