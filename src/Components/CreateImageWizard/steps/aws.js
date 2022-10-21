@@ -1,9 +1,10 @@
 import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { Title } from '@patternfly/react-core';
+import { HelperText, HelperTextItem, Title } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+import { DEFAULT_AWS_REGION } from '../../../constants';
 
 export default {
   StepTemplate,
@@ -24,9 +25,18 @@ export default {
       label: (
         <p>
           Your image will be uploaded to AWS and shared with the account you
-          provide below. <br />
-          The shared image will expire within 14 days. To keep the image longer,
-          copy it to your AWS account.
+          provide below.
+        </p>
+      ),
+    },
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'plain-text-component',
+      label: (
+        <p>
+          <b>The shared image will expire within 14 days.</b> To permanently
+          access the image, copy the image, which will be shared to your account
+          by Red Hat, to your own AWS account.
         </p>
       ),
     },
@@ -48,6 +58,29 @@ export default {
           threshold: 12,
         },
       ],
+    },
+    {
+      component: componentTypes.TEXT_FIELD,
+      name: 'aws-default-region',
+      className: 'pf-u-w-25',
+      'data-testid': 'aws-default-region',
+      type: 'text',
+      label: 'Default Region',
+      value: DEFAULT_AWS_REGION,
+      isReadOnly: true,
+      isRequired: true,
+      helperText: (
+        <HelperText>
+          <HelperTextItem
+            component="div"
+            variant="indeterminate"
+            className="pf-u-w-25"
+          >
+            Images are built in the default region but can be copied to other
+            regions later.
+          </HelperTextItem>
+        </HelperText>
+      ),
     },
   ],
 };

@@ -117,7 +117,7 @@ const ReviewStep = () => {
         Review the information and click &quot;Create image&quot; to create the
         image using the following criteria.
       </Text>
-      <DescriptionList isCompact isHorizontal>
+      <DescriptionList isCompact>
         <DescriptionListGroup>
           {getState()?.values?.['image-name'] && (
             <>
@@ -166,6 +166,12 @@ const ReviewStep = () => {
                     </TextListItem>
                     <TextListItem component={TextListItemVariants.dd}>
                       {getState()?.values?.['aws-account-id']}
+                    </TextListItem>
+                    <TextListItem component={TextListItemVariants.dt}>
+                      Default Region
+                    </TextListItem>
+                    <TextListItem component={TextListItemVariants.dd}>
+                      us-east-1
                     </TextListItem>
                   </TextList>
                 </TextContent>
