@@ -4,10 +4,20 @@ import { Button } from '@patternfly/react-core';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import ImageLinkDirect from './ImageLinkDirect';
 
-const ImageLink = (props) => {
+const ImageLink = ({
+  imageId,
+  imageName,
+  imageType,
+  imageStatus,
+  ...props
+}) => {
   const scalprum = useScalprum();
   const hasProvisionig = scalprum.initialized && scalprum.config?.provisioning;
-  if (hasProvisionig && props.imageType === 'ami') {
+  const uploadStatus = imageStatus?.upload_status;
+
+  if (!uploadStatus) return null;
+
+  if (hasProvisionig && imageType === 'ami') {
     const [wizardOpen, openWizard] = React.useState(false);
     const [{ default: ProvisioningWizard }, error] = useLoadModule(
       {
@@ -30,7 +40,7 @@ const ImageLink = (props) => {
             <ProvisioningWizard
               isOpen
               onClose={() => openWizard(false)}
-              image={{ name: props.imageName, id: props.imageId }}
+              image={{ name: imageName, id: imageId }}
             />
           )}
         </Suspense>
@@ -38,7 +48,13 @@ const ImageLink = (props) => {
     }
   }
 
-  return <ImageLinkDirect {...props} />;
+  return (
+    <ImageLinkDirect
+      imageType={imageType}
+      uploadStatus={uploadStatus}
+      {...props}
+    />
+  );
 };
 
 ImageLink.propTypes = {
@@ -47,6 +63,8 @@ ImageLink.propTypes = {
   imageStatus: PropTypes.object,
   imageType: PropTypes.string,
   uploadOptions: PropTypes.object,
+  isExpired: PropTypes.bool,
+  recreateImage: PropTypes.object,
 };
 
 export default ImageLink;
