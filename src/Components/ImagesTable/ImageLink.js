@@ -1,70 +1,98 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button } from '@patternfly/react-core';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import { useSelector } from 'react-redux';
 import ImageLinkDirect from './ImageLinkDirect';
+import { selectImageById } from '../../store/composesSlice';
+import { selectComposeById } from '../../store/composesSlice';
 
-const ImageLink = ({
-  imageId,
-  imageName,
-  imageType,
-  imageStatus,
-  ...props
-}) => {
-  const scalprum = useScalprum();
-  const hasProvisionig = scalprum.initialized && scalprum.config?.provisioning;
-  const uploadStatus = imageStatus?.upload_status;
+const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
+  let image = useSelector((state) => selectImageById(state, imageId));
+  const parent = image.isClone
+    ? useSelector((state) => selectComposeById(state, image.parent))
+    : null;
 
-  if (!uploadStatus) return null;
+  const [wizardOpen, openWizard] = useState(false);
+  const [{ default: ProvisioningWizard }, error] = useLoadModule(
+    {
+      appName: 'provisioning', // optional
+      scope: 'provisioning',
+      module: './ProvisioningWizard',
+      // processor: (val) => val, // optional
+    },
+    {},
+    {}
+  );
 
-  if (hasProvisionig && imageType === 'ami') {
-    const [wizardOpen, openWizard] = React.useState(false);
-    const [{ default: ProvisioningWizard }, error] = useLoadModule(
-      {
-        appName: 'provisioning', // optional
-        scope: 'provisioning',
-        module: './ProvisioningWizard',
-        // processor: (val) => val, // optional
-      },
-      {},
-      {}
+  if (!error) {
+    image = image.isClone ? parent : image;
+    return (
+      <Suspense fallback="loading">
+        <Button variant="link" isInline onClick={() => openWizard(true)}>
+          Launch
+        </Button>
+        {wizardOpen && (
+          <ProvisioningWizard
+            isOpen
+            onClose={() => openWizard(false)}
+            image={{
+              name: image.imageName,
+              id: image.id,
+            }}
+          />
+        )}
+      </Suspense>
     );
-
-    if (!error) {
-      return (
-        <Suspense fallback="loading">
-          <Button variant="link" isInline onClick={() => openWizard(true)}>
-            Launch
-          </Button>
-          {wizardOpen && (
-            <ProvisioningWizard
-              isOpen
-              onClose={() => openWizard(false)}
-              image={{ name: imageName, id: imageId }}
-            />
-          )}
-        </Suspense>
-      );
-    }
   }
 
   return (
     <ImageLinkDirect
-      imageType={imageType}
-      uploadStatus={uploadStatus}
-      {...props}
+      imageId={image.id}
+      isExpired={isExpired}
+      isInClonesTable={isInClonesTable}
     />
   );
 };
 
+const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
+  const image = useSelector((state) => selectImageById(state, imageId));
+  const uploadStatus = image.uploadStatus;
+
+  const scalprum = useScalprum();
+  const hasProvisioning = scalprum.initialized && scalprum.config?.provisioning;
+
+  if (!uploadStatus) return null;
+
+  if (hasProvisioning && image.imageType === 'ami') {
+    return (
+      <ProvisioningLink
+        imageId={image.id}
+        isExpired={isExpired}
+        isInClonesTable={isInClonesTable}
+      />
+    );
+  }
+
+  return (
+    <ImageLinkDirect
+      imageId={image.id}
+      isExpired={isExpired}
+      isInClonesTable={isInClonesTable}
+    />
+  );
+};
+
+ProvisioningLink.propTypes = {
+  imageId: PropTypes.string,
+  isExpired: PropTypes.bool,
+  isInClonesTable: PropTypes.bool,
+};
+
 ImageLink.propTypes = {
   imageId: PropTypes.string.isRequired,
-  imageName: PropTypes.string.isRequired,
-  imageStatus: PropTypes.object,
-  imageType: PropTypes.string,
-  uploadOptions: PropTypes.object,
   isExpired: PropTypes.bool,
-  recreateImage: PropTypes.object,
+  isInClonesTable: PropTypes.bool,
 };
 
 export default ImageLink;

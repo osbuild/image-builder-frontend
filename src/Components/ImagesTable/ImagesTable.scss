@@ -1,11 +1,4 @@
-@media only screen and (min-width: 768px) {
-    .pf-c-table__expandable-row td:first-child {
-        // Align with expand/collapse button by duplicating its padding
-        padding-left: calc(var(--pf-c-table--cell--first-last-child--PaddingLeft) + var(--pf-global--spacer--md));
-    }
-}
-.pf-m-expanded tr:first-child {
-    // Remove border between a compose and its expanded detail
+.pf-m-expanded .no-bottom-border {
     border-bottom-style: none;
 }
 

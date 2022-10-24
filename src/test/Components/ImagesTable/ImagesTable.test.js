@@ -46,10 +46,12 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'vhd',
             upload_request: {
-              type: 'aws',
-              options: {},
+              type: 'gcp',
+              options: {
+                share_with_accounts: ['serviceAccount:test@email.com'],
+              },
             },
           },
         ],
@@ -247,7 +249,13 @@ const mockStatus = {
   // kept "running" for backward compatibility
   'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa': {
     image_status: {
-      status: 'running',
+      status: 'failure',
+      error: {
+        reason: 'A dependency error occured',
+        details: {
+          reason: 'Error in depsolve job',
+        },
+      },
     },
   },
   'edbae1c2-62bc-42c1-ae0c-3110ab718f58': {
@@ -537,17 +545,17 @@ describe('Images Table', () => {
     const { getAllByRole } = within(table);
     const rows = getAllByRole('row');
 
-    const errorToggle = within(rows[7]).getByRole('button', {
+    const errorToggle = within(rows[2]).getByRole('button', {
       name: /details/i,
     });
 
     expect(
-      screen.getAllByText(/61b0effa-c901-4ee5-86b9-2010b47f1b22/i)[1]
+      screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
     userEvent.click(errorToggle);
 
     expect(
-      screen.getAllByText(/61b0effa-c901-4ee5-86b9-2010b47f1b22/i)[1]
+      screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).toBeVisible();
     expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
   });

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 import {
   Button,
@@ -10,10 +11,16 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { RegionsPopover } from './RegionsPopover';
+import { selectImageById } from '../../store/composesSlice';
 import { resolveRelPath } from '../../Utilities/path';
 
-const ImageLinkDirect = ({ uploadStatus, ...props }) => {
+const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
   const navigate = useNavigate();
+
+  const image = useSelector((state) => selectImageById(state, imageId));
+  const uploadStatus = image.uploadStatus;
+
   const fileExtensions = {
     vsphere: '.vmdk',
     'guest-image': '.qcow2',
@@ -26,27 +33,29 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
       uploadStatus.options.region +
       '#LaunchInstanceWizard:ami=' +
       uploadStatus.options.ami;
-    return (
-      <Button
-        component="a"
-        target="_blank"
-        variant="link"
-        icon={<ExternalLinkAltIcon />}
-        iconPosition="right"
-        isInline
-        href={url}
-      >
-        Launch instance
-      </Button>
-    );
+    if (isInClonesTable) {
+      return (
+        <Button
+          component="a"
+          target="_blank"
+          variant="link"
+          isInline
+          href={url}
+        >
+          Launch
+        </Button>
+      );
+    } else {
+      return <RegionsPopover composeId={image.id} />;
+    }
   } else if (uploadStatus.type === 'azure') {
     const url =
       'https://portal.azure.com/#@' +
-      props.uploadOptions.tenant_id +
+      image.uploadOptions.tenant_id +
       '/resource/subscriptions/' +
-      props.uploadOptions.subscription_id +
+      image.uploadOptions.subscription_id +
       '/resourceGroups/' +
-      props.uploadOptions.resource_group +
+      image.uploadOptions.resource_group +
       '/providers/Microsoft.Compute/images/' +
       uploadStatus.options.image_name;
     return (
@@ -89,7 +98,7 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
               <strong>Shared with</strong>
               <br />
               {/* the account the image is shared with is stored in the form type:account so this extracts the account */}
-              {props.uploadOptions.share_with_accounts[0].split(':')[1]}
+              {image.uploadOptions.share_with_accounts[0].split(':')[1]}
             </Text>
           </TextContent>
         }
@@ -100,7 +109,7 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
       </Popover>
     );
   } else if (uploadStatus.type === 'aws.s3') {
-    if (!props.isExpired) {
+    if (!isExpired) {
       return (
         <Button
           component="a"
@@ -109,7 +118,7 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
           isInline
           href={uploadStatus.options.url}
         >
-          Download ({fileExtensions[props.imageType]})
+          Download ({fileExtensions[image.imageType]})
         </Button>
       );
     } else {
@@ -121,7 +130,7 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
           onClick={() =>
             navigate(resolveRelPath('imagewizard'), {
               state: {
-                composeRequest: props.recreateImage,
+                composeRequest: image.request,
                 initialStep: 'review',
               },
             })
@@ -138,11 +147,9 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
 };
 
 ImageLinkDirect.propTypes = {
-  uploadStatus: PropTypes.object,
-  imageType: PropTypes.string,
+  imageId: PropTypes.string,
   isExpired: PropTypes.bool,
-  recreateImage: PropTypes.object,
-  uploadOptions: PropTypes.object,
+  isInClonesTable: PropTypes.bool,
 };
 
 export default ImageLinkDirect;

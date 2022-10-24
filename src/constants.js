@@ -43,3 +43,5 @@ export const AWS_REGIONS = [
   { description: 'Middle East (UAE)', value: 'me-central-1' },
   { description: 'South America (S\u00e3o Paolo)', value: 'sa-east-1' },
 ];
+
+export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 6;

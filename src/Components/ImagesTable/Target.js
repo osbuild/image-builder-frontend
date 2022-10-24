@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { selectComposeById } from '../../store/composesSlice';
 
-const Target = (props) => {
+const Target = ({ composeId }) => {
+  const compose = useSelector((state) => selectComposeById(state, composeId));
+
   const targetOptions = {
     aws: 'Amazon Web Services',
     azure: 'Microsoft Azure',
@@ -12,18 +16,21 @@ const Target = (props) => {
   };
 
   let target;
-  if (props.uploadType === 'aws.s3') {
-    target = targetOptions[props.imageType];
+  if (compose.uploadType === 'aws.s3') {
+    target = targetOptions[compose.imageType];
+  } else if (compose.uploadType === 'aws') {
+    target =
+      targetOptions[compose.uploadType] +
+      ` (${compose.clones.length !== 0 ? compose.clones.length + 1 : 1})`;
   } else {
-    target = targetOptions[props.uploadType];
+    target = targetOptions[compose.uploadType];
   }
 
   return <>{target}</>;
 };
 
 Target.propTypes = {
-  uploadType: PropTypes.string,
-  imageType: PropTypes.string,
+  composeId: PropTypes.string,
 };
 
 export default Target;

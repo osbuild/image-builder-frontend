@@ -27,14 +27,20 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import './ImagesTable.scss';
-import ImageBuildStatus from './ImageBuildStatus';
+import { ImageBuildStatus } from './ImageBuildStatus';
 import Release from './Release';
 import Target from './Target';
 import ImageLink from './ImageLink';
 import ErrorDetails from './ImageBuildErrorDetails';
+import ClonesTable from './ClonesTable';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 import { fetchComposes, fetchComposeStatus } from '../../store/actions/actions';
 import { resolveRelPath } from '../../Utilities/path';
+import {
+  hoursToExpiration,
+  timestampToDisplayString,
+} from '../../Utilities/time';
+import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -111,65 +117,6 @@ const ImagesTable = () => {
     setPage(1);
   };
 
-  const timestampToDisplayString = (ts) => {
-    // timestamp has format 2021-04-27 12:31:12.794809 +0000 UTC
-    // must be converted to ms timestamp and then reformatted to Apr 27, 2021
-    if (!ts) {
-      return '';
-    }
-
-    // get YYYY-MM-DD format
-    const date = ts.slice(0, 10);
-    const ms = Date.parse(date);
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
-    return tsDisplay;
-  };
-
-  const convertStringToDate = (createdAtAsString) => {
-    if (isNaN(Date.parse(createdAtAsString))) {
-      // converts property created_at of the image object from string to UTC
-      const [dateValues, timeValues] = createdAtAsString.split(' ');
-      const datetimeString = `${dateValues}T${timeValues}Z`;
-      return Date.parse(datetimeString);
-    } else {
-      return Date.parse(createdAtAsString);
-    }
-  };
-
-  const setComposeStatus = (compose) => {
-    if (!compose.image_status) {
-      return '';
-    } else if (
-      compose.request.image_requests[0].upload_request.type !== 'aws.s3' ||
-      compose.image_status.status !== 'success'
-    ) {
-      return compose.image_status.status;
-    } else if (
-      hoursToExpiration(compose.created_at) >= s3ExpirationTimeInHours
-    ) {
-      return 'expired';
-    } else {
-      return 'expiring';
-    }
-  };
-
-  const hoursToExpiration = (imageCreatedAt) => {
-    if (imageCreatedAt) {
-      const currentTime = Date.now();
-      // miliseconds in hour - needed for calculating the difference
-      // between current date and the date of the image creation
-      const msInHour = 1000 * 60 * 60;
-      const timeUntilExpiration = Math.floor(
-        (currentTime - convertStringToDate(imageCreatedAt)) / msInHour
-      );
-      return timeUntilExpiration;
-    } else {
-      // when creating a new image, the compose.created_at can be undefined when first queued
-      return 0;
-    }
-  };
-
   const actions = (compose) => [
     {
       title: 'Recreate image',
@@ -196,8 +143,6 @@ const ImagesTable = () => {
   // the state.page is not an index so must be reduced by 1 get the starting index
   const itemsStartInclusive = (page - 1) * perPage;
   const itemsEndExclusive = itemsStartInclusive + perPage;
-
-  const s3ExpirationTimeInHours = 6;
 
   return (
     <React.Fragment>
@@ -258,7 +203,7 @@ const ImagesTable = () => {
               <Tr>
                 <Th />
                 <Th>Image name</Th>
-                <Th>Created</Th>
+                <Th>Created/Updated</Th>
                 <Th>Release</Th>
                 <Th>Target</Th>
                 <Th>Status</Th>
@@ -272,7 +217,7 @@ const ImagesTable = () => {
                 const compose = composes.byId[id];
                 return (
                   <Tbody key={id} isExpanded={isExpanded(compose)}>
-                    <Tr>
+                    <Tr className="no-bottom-border">
                       <Td
                         expand={{
                           rowIndex,
@@ -291,44 +236,20 @@ const ImagesTable = () => {
                         <Release release={compose.request.distribution} />
                       </Td>
                       <Td dataLabel="Target">
-                        <Target
-                          uploadType={
-                            compose.request.image_requests[0].upload_request
-                              .type
-                          }
-                          imageType={
-                            compose.request.image_requests[0].image_type
-                          }
-                        />
+                        <Target composeId={id} />
                       </Td>
                       <Td dataLabel="Status">
-                        <ImageBuildStatus
-                          status={setComposeStatus(compose)}
-                          remainingHours={
-                            s3ExpirationTimeInHours -
-                            hoursToExpiration(compose.created_at)
-                          }
-                        />
+                        <ImageBuildStatus imageId={id} />
                       </Td>
                       <Td dataLabel="Instance">
                         <ImageLink
                           imageId={id}
-                          imageName={compose.request.image_name || id}
-                          imageStatus={compose.image_status}
-                          imageType={
-                            compose.request.image_requests[0].image_type
-                          }
-                          uploadOptions={
-                            compose.request.image_requests[0].upload_request
-                              .options
-                          }
                           isExpired={
                             hoursToExpiration(compose.created_at) >=
-                            s3ExpirationTimeInHours
+                            AWS_S3_EXPIRATION_TIME_IN_HOURS
                               ? true
                               : false
                           }
-                          recreateImage={compose.request}
                         />
                       </Td>
                       <Td>
@@ -337,11 +258,16 @@ const ImagesTable = () => {
                     </Tr>
                     <Tr isExpanded={isExpanded(compose)}>
                       <Td colSpan={8}>
-                        <ExpandableRowContent>
-                          <strong>UUID</strong>
-                          <div>{id}</div>
-                          <ErrorDetails status={compose.image_status} />
-                        </ExpandableRowContent>
+                        {compose.request.image_requests[0].upload_request
+                          .type === 'aws' ? (
+                          <ClonesTable composeId={compose.id} />
+                        ) : (
+                          <ExpandableRowContent>
+                            <strong>UUID</strong>
+                            <div>{id}</div>
+                            <ErrorDetails status={compose.image_status} />
+                          </ExpandableRowContent>
+                        )}
                       </Td>
                     </Tr>
                   </Tbody>
