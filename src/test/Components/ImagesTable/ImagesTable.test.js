@@ -584,7 +584,7 @@ describe('Images Table', () => {
     const [header, encodedRequest] = hrefParts;
     expect(header).toBe('data:text/plain;charset=utf-8');
     expect(encodedRequest).toBe(
-      encodeURIComponent(JSON.stringify(expectedRequest))
+      encodeURIComponent(JSON.stringify(expectedRequest, null, '  '))
     );
   });
 
