@@ -298,6 +298,30 @@ const ReviewStep = () => {
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dt}>
                     Activation key
+                    <Popover
+                      bodyContent={
+                        <TextContent>
+                          <Text>
+                            Activation keys enable you to register a system with
+                            appropriate subscriptions, system purpose, and
+                            repositories attached.
+                            <br />
+                            <br />
+                            If using an activation key with command line
+                            registration, you must provide your
+                            organization&apos;s ID.
+                          </Text>
+                        </TextContent>
+                      }
+                    >
+                      <Button
+                        variant="plain"
+                        aria-label="About activation key"
+                        className="pf-u-pl-sm"
+                      >
+                        <HelpIcon />
+                      </Button>
+                    </Popover>
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dd}>
                     {getState()?.values?.['subscription-activation-key']}
