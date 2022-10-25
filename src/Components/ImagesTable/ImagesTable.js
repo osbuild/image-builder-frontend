@@ -130,7 +130,7 @@ const ImagesTable = () => {
         <a
           className="ib-subdued-link"
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            JSON.stringify(compose.request)
+            JSON.stringify(compose.request, null, '  ')
           )}`}
           download={`request-${compose.id}.json`}
         >
