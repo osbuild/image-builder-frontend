@@ -140,6 +140,17 @@ const ImagesTable = () => {
     },
   ];
 
+  const awsActions = (compose) => [
+    {
+      title: 'Share to new region',
+      onClick: () =>
+        navigate(resolveRelPath(`share`), {
+          state: { composeId: compose.id },
+        }),
+    },
+    ...actions(compose),
+  ];
+
   // the state.page is not an index so must be reduced by 1 get the starting index
   const itemsStartInclusive = (page - 1) * perPage;
   const itemsEndExclusive = itemsStartInclusive + perPage;
@@ -253,7 +264,12 @@ const ImagesTable = () => {
                         />
                       </Td>
                       <Td>
-                        <ActionsColumn items={actions(compose)} />
+                        {compose.request.image_requests[0].upload_request
+                          .type === 'aws' ? (
+                          <ActionsColumn items={awsActions(compose)} />
+                        ) : (
+                          <ActionsColumn items={actions(compose)} />
+                        )}
                       </Td>
                     </Tr>
                     <Tr isExpanded={isExpanded(compose)}>

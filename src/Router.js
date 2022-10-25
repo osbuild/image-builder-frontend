@@ -1,5 +1,6 @@
 import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 
 import { resolveRelPath } from './Utilities/path';
 
@@ -16,6 +17,7 @@ export const Router = () => {
         element={<CreateImageWizard />}
       />
       <Route path={resolveRelPath('*')} element={<LandingPage />} />
+      <Route path={resolveRelPath('share/*')} element={<ShareImageModal />} />
     </Routes>
   );
 };
