@@ -8,3 +8,13 @@
     // Remove border between a compose and its expanded detail
     border-bottom-style: none;
 }
+
+.ib-subdued-link {
+    color: inherit;
+    text-decoration: none;
+
+    &:hover {
+        color: inherit;
+        text-decoration: none;
+    }
+}

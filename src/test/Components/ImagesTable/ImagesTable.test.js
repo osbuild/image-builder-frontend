@@ -487,7 +487,9 @@ describe('Images Table', () => {
     // No actual clicking because downloading is hard to test.
     // Instead, we just check href and download properties of the <a> element.
     const downloadLink = within(downloadButton).getByRole('link');
-    expect(downloadLink.download).toBe('request.json');
+    expect(downloadLink.download).toBe(
+      'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json'
+    );
 
     const hrefParts = downloadLink.href.split(',');
     expect(hrefParts.length).toBe(2);
