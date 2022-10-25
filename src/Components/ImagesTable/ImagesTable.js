@@ -181,10 +181,11 @@ const ImagesTable = () => {
     {
       title: (
         <a
+          className="ib-subdued-link"
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
             JSON.stringify(compose.request)
           )}`}
-          download="request.json"
+          download={`request-${compose.id}.json`}
         >
           Download compose request (.json)
         </a>
