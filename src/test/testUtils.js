@@ -25,3 +25,15 @@ export const renderWithReduxRouter = (
     store,
   };
 };
+
+export const renderWithProvider = (
+  component,
+  container,
+  preloadedState = {}
+) => {
+  const store = configureStore({ reducer, middleware, preloadedState });
+
+  return render(<Provider store={store}>{component}</Provider>, {
+    container: container,
+  });
+};

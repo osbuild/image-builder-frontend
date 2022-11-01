@@ -1,14 +1,15 @@
 import React from 'react';
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import api from '../../../api.js';
-import { renderWithReduxRouter } from '../../testUtils';
+import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
 import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
-import ImageBuildStatus from '../../../Components/ImagesTable/ImageBuildStatus';
+import { ImageBuildStatus } from '../../../Components/ImagesTable/ImageBuildStatus';
 import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
+import { timestampToDisplayString } from '../../../Utilities/time.js';
 import { RHEL_8 } from '../../../constants.js';
 
 const currentDate = new Date();
@@ -31,7 +32,9 @@ const mockComposes = {
             image_type: 'ami',
             upload_request: {
               type: 'aws',
-              options: {},
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
             },
           },
         ],
@@ -345,7 +348,81 @@ const mockStatus = {
   },
 };
 
-const mockClones = {};
+const mockNoClones = {
+  data: null,
+};
+
+const mockClones = {
+  data: [
+    {
+      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      id: 'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
+      request: {
+        region: 'us-west-1',
+        share_with_accounts: ['123123123123'],
+      },
+    },
+    {
+      created_at: '2021-04-28 12:31:12.794809 +0000 UTC',
+      id: '48fce414-0cc0-4a16-8645-e3f0edec3212',
+      request: {
+        region: 'us-west-1',
+        share_with_accounts: ['123123123123'],
+      },
+    },
+    {
+      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      id: '0169538e-515c-477e-b934-f12783939313',
+      request: {
+        region: 'us-west-2',
+        share_with_accounts: ['123123123123'],
+      },
+    },
+    {
+      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      id: '4a851db1-919f-43ca-a7ef-dd209877a77e',
+      request: {
+        region: 'eu-central-1',
+        share_with_accounts: ['000000000000'],
+      },
+    },
+  ],
+};
+
+const mockCloneStatus = {
+  'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d': {
+    options: {
+      ami: 'ami-0e778053cd490ad21',
+      region: 'us-west-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
+  '48fce414-0cc0-4a16-8645-e3f0edec3212': {
+    options: {
+      ami: 'ami-9f0asd1tlk2142124',
+      region: 'us-west-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
+  '0169538e-515c-477e-b934-f12783939313': {
+    options: {
+      ami: 'ami-9fdskj12fdsak1211',
+      region: 'us-west-2',
+    },
+    status: 'failure',
+    type: 'aws',
+  },
+  '4a851db1-919f-43ca-a7ef-dd209877a77e': {
+    options: {
+      ami: 'ami-9fdskj12fdsak1211',
+      region: 'eu-central-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
+};
 
 jest
   .spyOn(api, 'getComposes')
@@ -355,18 +432,27 @@ jest.spyOn(api, 'getComposeStatus').mockImplementation((id) => {
   return Promise.resolve(mockStatus[id]);
 });
 
-jest
-  .spyOn(api, 'getClones')
-  .mockImplementation(() => Promise.resolve(mockClones));
+jest.spyOn(api, 'getClones').mockImplementation((id) => {
+  return id === '1579d95b-8f1d-4982-8c53-8c2afa4ab04c'
+    ? Promise.resolve(mockClones)
+    : Promise.resolve(mockNoClones);
+});
+
+jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
+  return Promise.resolve(mockCloneStatus[id]);
+});
 
 describe('Images Table', () => {
   test('render ImagesTable', async () => {
-    renderWithReduxRouter(<ImagesTable />, {});
+    const view = renderWithReduxRouter(<ImagesTable />, {});
+
     const table = await screen.findByTestId('images-table');
 
     // make sure the empty-state message isn't present
     const emptyState = screen.queryByTestId('empty-state');
     expect(emptyState).not.toBeInTheDocument();
+
+    const state = view.store.getState();
 
     // check table
     const { getAllByRole } = within(table);
@@ -397,13 +483,8 @@ describe('Images Table', () => {
 
       // render the expected <ImageBuildStatus /> and compare the text content
       let testElement = document.createElement('testElement');
-      render(
-        <Target
-          imageType={compose.request.image_requests[0].image_type}
-          uploadType={compose.request.image_requests[0].upload_request.type}
-        />,
-        { container: testElement }
-      );
+      // render(<Target composeId={compose.id} />, { container: testElement });
+      renderWithProvider(<Target composeId={compose.id} />, testElement, state);
       expect(row.cells[4]).toHaveTextContent(testElement.textContent);
 
       // render the expected <ImageBuildStatus /> and compare the text content
@@ -413,13 +494,10 @@ describe('Images Table', () => {
       ) {
         expect(row.cells[5]).toHaveTextContent('Expired');
       } else {
-        render(
-          <ImageBuildStatus
-            status={mockStatus[compose.id].image_status.status}
-          />,
-          {
-            container: testElement,
-          }
+        renderWithProvider(
+          <ImageBuildStatus imageId={compose.id} />,
+          testElement,
+          state
         );
         expect(row.cells[5]).toHaveTextContent(testElement.textContent);
       }
@@ -431,16 +509,12 @@ describe('Images Table', () => {
       ) {
         expect(row.cells[6]).toHaveTextContent('Recreate image');
       } else {
-        render(
+        renderWithProvider(
           <BrowserRouter>
-            <ImageLink
-              imageStatus={mockStatus[compose.id].image_status}
-              uploadOptions={
-                compose.request.image_requests[0].upload_request.options
-              }
-            />
+            <ImageLink imageId={compose.id} isInClonesTable={false} />
           </BrowserRouter>,
-          { container: testElement }
+          testElement,
+          state
         );
         expect(row.cells[6]).toHaveTextContent(testElement.textContent);
       }
@@ -572,5 +646,105 @@ describe('Images Table Toolbar', () => {
     // check pagination renders
     screen.getByTestId('images-pagination-top');
     screen.getByTestId('images-pagination-bottom');
+  });
+});
+
+describe('Clones table', () => {
+  test('renders clones table', async () => {
+    const view = renderWithReduxRouter(<ImagesTable />);
+
+    const table = await screen.findByTestId('images-table');
+
+    // make sure the empty-state message isn't present
+    const emptyState = screen.queryByTestId('empty-state');
+    expect(emptyState).not.toBeInTheDocument();
+
+    const state = view.store.getState();
+
+    // get rows
+    let { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    // first row is header so look at index 1
+    const detailsButton = within(rows[1]).getByRole('button', {
+      name: /details/i,
+    });
+    detailsButton.click();
+
+    // Multiple clones tables exist (one per AWS image), get the first one (which has clones)
+    const clonesTable = await screen.findAllByTestId('clones-table');
+    const cloneRows = within(clonesTable[0]).getAllByRole('row');
+
+    // remove first row from list since it is just header labels
+    const header = cloneRows.shift();
+    // test the header has correct labels
+    expect(header.cells[0]).toHaveTextContent('UUID');
+    expect(header.cells[1]).toHaveTextContent('Created');
+    expect(header.cells[2]).toHaveTextContent('Account');
+    expect(header.cells[3]).toHaveTextContent('Region');
+    expect(header.cells[4]).toHaveTextContent('Status');
+    expect(header.cells[5]).toHaveTextContent('Instance');
+
+    expect(cloneRows).toHaveLength(5);
+
+    // prepend parent data
+    const clonesTableData = {
+      uuid: [
+        '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
+        ...mockClones.data.map((clone) => clone.id),
+      ],
+      created: [
+        '2021-04-27 12:31:12.794809 +0000 UTC',
+        ...mockClones.data.map((clone) => clone.created_at),
+      ],
+      account: [
+        '123123123123',
+        ...mockClones.data.map((clone) => clone.request.share_with_accounts[0]),
+      ],
+      region: [
+        'us-east-1',
+        ...mockClones.data.map(
+          (clone) => mockCloneStatus[clone.id].options.region
+        ),
+      ],
+    };
+
+    for (let [index, row] of cloneRows.entries()) {
+      // render UUIDs in correct order
+      expect(row.cells[0]).toHaveTextContent(clonesTableData.uuid[index]);
+
+      // date should match the month day and year of the timestamp.
+      const formattedDate = timestampToDisplayString(
+        clonesTableData.created[index]
+      );
+      expect(row.cells[1]).toHaveTextContent(formattedDate);
+
+      // account cell
+      expect(row.cells[2]).toHaveTextContent(clonesTableData.account[index]);
+
+      // region cell
+      expect(row.cells[3]).toHaveTextContent(clonesTableData.region[index]);
+
+      let testElement = document.createElement('testElement');
+      const imageId = clonesTableData.uuid[index];
+
+      // status cell
+      renderWithProvider(
+        <ImageBuildStatus imageId={imageId} />,
+        testElement,
+        state
+      );
+      expect(row.cells[4]).toHaveTextContent(testElement.textContent);
+
+      // instance cell
+      renderWithProvider(
+        <BrowserRouter>
+          <ImageLink imageId={imageId} isInClonesTable={true} />
+        </BrowserRouter>,
+        testElement,
+        state
+      );
+      expect(row.cells[5]).toHaveTextContent(testElement.textContent);
+    }
   });
 });
