@@ -1,7 +1,7 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { Button } from '@patternfly/react-core';
-import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import { Button, Spinner } from '@patternfly/react-core';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ImageLinkDirect from './ImageLinkDirect';
 
 const ImageLink = ({
@@ -11,41 +11,27 @@ const ImageLink = ({
   imageStatus,
   ...props
 }) => {
-  const scalprum = useScalprum();
-  const hasProvisionig = scalprum.initialized && scalprum.config?.provisioning;
+  const [wizardOpen, openWizard] = React.useState(false);
   const uploadStatus = imageStatus?.upload_status;
 
   if (!uploadStatus) return null;
 
-  if (hasProvisionig && imageType === 'ami') {
-    const [wizardOpen, openWizard] = React.useState(false);
-    const [{ default: ProvisioningWizard }, error] = useLoadModule(
-      {
-        appName: 'provisioning', // optional
-        scope: 'provisioning',
-        module: './ProvisioningWizard',
-        // processor: (val) => val, // optional
-      },
-      {},
-      {}
+  if (imageType === 'ami') {
+    return (
+      <>
+        <Button variant="link" isInline onClick={() => openWizard(true)}>
+          Launch
+        </Button>
+        <AsyncComponent
+          isOpen={wizardOpen}
+          onClose={() => openWizard(false)}
+          image={{ name: imageName, id: imageId }}
+          appName="provisioning"
+          module="./ProvisioningWizard"
+          fallback={<Spinner size="sm" isSVG />}
+        />
+      </>
     );
-
-    if (!error) {
-      return (
-        <Suspense fallback="loading">
-          <Button variant="link" isInline onClick={() => openWizard(true)}>
-            Launch
-          </Button>
-          {wizardOpen && (
-            <ProvisioningWizard
-              isOpen
-              onClose={() => openWizard(false)}
-              image={{ name: imageName, id: imageId }}
-            />
-          )}
-        </Suspense>
-      );
-    }
   }
 
   return (
