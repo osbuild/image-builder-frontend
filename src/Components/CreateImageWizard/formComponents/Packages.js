@@ -108,17 +108,24 @@ const Packages = ({ defaultArch, ...props }) => {
   };
 
   const getAllPackages = async () => {
-    const args = [
-      getState()?.values?.release,
-      getState()?.values?.architecture || defaultArch,
-      packagesSearchName,
-    ];
-    let { data, meta } = await api.getPackages(...args);
-    if (data?.length === meta.count) {
-      return data;
-    } else if (data) {
-      ({ data } = await api.getPackages(...args, meta.count));
-      return data;
+    // if the env is stage beta then use content-sources api
+    // else use image-builder api
+    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+      const args = [getState()?.values?.release, packagesSearchName];
+      return await api.getPackagesContentSources(...args);
+    } else {
+      const args = [
+        getState()?.values?.release,
+        getState()?.values?.architecture || defaultArch,
+        packagesSearchName,
+      ];
+      let { data, meta } = await api.getPackages(...args);
+      if (data?.length === meta.count) {
+        return data;
+      } else if (data) {
+        ({ data } = await api.getPackages(...args, meta.count));
+        return data;
+      }
     }
   };
 
