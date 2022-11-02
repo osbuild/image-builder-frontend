@@ -1326,7 +1326,7 @@ describe('Step Review', () => {
     screen.getByText('Register the system later');
     userEvent.click(buttonSystem);
     screen.getByRole('heading', {
-      name: 'Packages',
+      name: 'Additional packages',
     });
     screen.getByRole('heading', {
       name: 'File system configuration',
@@ -1346,7 +1346,7 @@ describe('Step Review', () => {
     });
     userEvent.click(buttonSystem);
     screen.getByRole('heading', {
-      name: 'Packages',
+      name: 'Additional packages',
     });
     screen.getByRole('heading', {
       name: 'File system configuration',
@@ -1543,10 +1543,6 @@ describe('Click through all steps', () => {
     );
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
-    await waitFor(() => {
-      const id = screen.getByTestId('organization-id');
-      within(id).getByText(5);
-    });
     // mock the backend API
     let ids = [];
     const composeImage = jest
