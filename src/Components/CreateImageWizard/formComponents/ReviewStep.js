@@ -9,7 +9,6 @@ import {
   List,
   ListItem,
   Popover,
-  Spinner,
   Tab,
   Tabs,
   TabTitleText,
@@ -44,15 +43,15 @@ const FSReviewTable = ({ ...props }) => {
       <Thead>
         <Tr>
           <Th>Mount point</Th>
-          <Th>Type</Th>
+          <Th>File system type</Th>
           <Th>Minimum size</Th>
         </Tr>
       </Thead>
       <Tbody data-testid="file-system-configuration-tbody-review">
         {props.fsc.map((r, ri) => (
           <Tr key={ri}>
-            <Td className="pf-m-width-60">{r.mountpoint}</Td>
-            <Td className="pf-m-width-10">xfs</Td>
+            <Td className="pf-m-width-30">{r.mountpoint}</Td>
+            <Td className="pf-m-width-30">xfs</Td>
             <Td className="pf-m-width-30">
               {r.size}{' '}
               {r.unit === UNIT_GIB
@@ -74,7 +73,6 @@ FSReviewTable.propTypes = {
 
 const ReviewStep = () => {
   const [activeTabKey, setActiveTabKey] = useState(0);
-  const [orgId, setOrgId] = useState();
   const [minSize, setMinSize] = useState();
   const { change, getState } = useFormApi();
 
@@ -87,7 +85,6 @@ const ReviewStep = () => {
       (async () => {
         const userData = await insights?.chrome?.auth?.getUser();
         const id = userData?.identity?.internal?.org_id;
-        setOrgId(id);
         change('subscription-organization-id', id);
       })();
     }
@@ -161,7 +158,10 @@ const ReviewStep = () => {
                 <TextContent>
                   <Text component={TextVariants.h3}>Amazon Web Services</Text>
                   <TextList component={TextListVariants.dl}>
-                    <TextListItem component={TextListItemVariants.dt}>
+                    <TextListItem
+                      component={TextListItemVariants.dt}
+                      className="pf-u-min-width"
+                    >
                       Account ID
                     </TextListItem>
                     <TextListItem component={TextListItemVariants.dd}>
@@ -273,7 +273,7 @@ const ReviewStep = () => {
               <TextContent>
                 <TextList component={TextListVariants.dl}>
                   <TextListItem component={TextListItemVariants.dt}>
-                    Subscription
+                    Registration type
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dd}>
                     Register the system later
@@ -287,7 +287,7 @@ const ReviewStep = () => {
               <TextContent>
                 <TextList component={TextListVariants.dl}>
                   <TextListItem component={TextListItemVariants.dt}>
-                    Subscription
+                    Registration type
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dd}>
                     {getState()?.values?.['register-system'] ===
@@ -317,7 +317,7 @@ const ReviewStep = () => {
                       <Button
                         variant="plain"
                         aria-label="About activation key"
-                        className="pf-u-pl-sm"
+                        className="pf-c-form__group-label-help"
                       >
                         <HelpIcon />
                       </Button>
@@ -326,21 +326,6 @@ const ReviewStep = () => {
                   <TextListItem component={TextListItemVariants.dd}>
                     {getState()?.values?.['subscription-activation-key']}
                   </TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>
-                    Organization ID
-                  </TextListItem>
-                  {orgId !== undefined ? (
-                    <TextListItem
-                      component={TextListItemVariants.dd}
-                      data-testid="organization-id"
-                    >
-                      {orgId}
-                    </TextListItem>
-                  ) : (
-                    <TextListItem component={TextListItemVariants.dd}>
-                      <Spinner />
-                    </TextListItem>
-                  )}
                 </TextList>
               </TextContent>
             )}
@@ -384,6 +369,7 @@ const ReviewStep = () => {
                         variant="link"
                         aria-label="File system configuration info"
                         aria-describedby="file-system-configuration-info"
+                        className="pf-u-pt-0 pf-u-pb-0"
                       >
                         View partitions
                       </Button>
@@ -423,7 +409,7 @@ const ReviewStep = () => {
                 </>
               )}
             </TextList>
-            <Text component={TextVariants.h3}>Packages</Text>
+            <Text component={TextVariants.h3}>Additional packages</Text>
             <TextList component={TextListVariants.dl}>
               <TextListItem component={TextListItemVariants.dt}>
                 Chosen
