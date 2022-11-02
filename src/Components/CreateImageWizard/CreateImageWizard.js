@@ -228,23 +228,31 @@ const parseSizeUnit = (bytesize) => {
 };
 
 const getPackageDescription = async (release, arch, packageName) => {
-  const args = [release, arch, packageName];
-  let { data, meta } = await api.getPackages(...args);
-  let summary;
+  let pack;
+  // if the env is stage beta then use content-sources api
+  // else use image-builder api
+  if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+    const args = [release, packageName];
+    const data = await api.getPackagesContentSources(...args);
 
-  // the package should be found in the 0 index
-  // if not then fetch all package matches and search for the package
-  if (data[0]?.name === packageName) {
-    summary = data[0]?.summary;
+    pack = data.find((pack) => packageName === pack.name);
   } else {
-    if (data?.length !== meta.count) {
-      ({ data } = await api.getPackages(...args, meta.count));
+    const args = [release, arch, packageName];
+    let { data, meta } = await api.getPackages(...args);
+
+    // the package should be found in the 0 index
+    // if not then fetch all package matches and search for the package
+    if (data[0]?.name === packageName) {
+      pack = data[0];
+    } else {
+      if (data?.length !== meta.count) {
+        ({ data } = await api.getPackages(...args, meta.count));
+      }
+
+      pack = data.find((pack) => packageName === pack.name);
     }
-
-    const pack = data.find((pack) => packageName === pack.name);
-    summary = pack?.summary;
   }
-
+  const summary = pack?.summary;
   // if no matching package is found return an empty string for description
   return summary || '';
 };

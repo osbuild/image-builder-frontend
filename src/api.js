@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { IMAGE_BUILDER_API, RHSM_API } from './constants';
+import { CONTENT_SOURCES, IMAGE_BUILDER_API, RHSM_API } from './constants';
+import { repos } from './repos';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
@@ -41,6 +42,28 @@ async function getPackages(distribution, architecture, search, limit) {
   return request.data;
 }
 
+async function getPackagesContentSources(distribution, search) {
+  // content-sources expects an array of urls but we store the whole repo object
+  // so map the urls into an array to send to the content-sources api
+  const repoUrls = repos[distribution].map((repo) => repo.url);
+  const body = {
+    urls: repoUrls,
+    search,
+  };
+  const path = '/rpms/names';
+  const request = await axios.post(
+    CONTENT_SOURCES.concat(path),
+    body,
+    postHeaders
+  );
+  // map `package_name` key to just `name` since that's what we use across the UI
+  const packages = request.data.map(({ package_name: name, ...rest }) => ({
+    name,
+    ...rest,
+  }));
+  return packages;
+}
+
 async function getVersion() {
   let path = '/version';
   const request = await axios.get(IMAGE_BUILDER_API.concat(path));
@@ -58,6 +81,7 @@ export default {
   getComposes,
   getComposeStatus,
   getPackages,
+  getPackagesContentSources,
   getVersion,
   getActivationKeys,
 };
