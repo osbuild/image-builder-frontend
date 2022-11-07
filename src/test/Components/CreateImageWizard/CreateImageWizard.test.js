@@ -363,7 +363,7 @@ describe('Step Upload to AWS', () => {
     getNextButton().click();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Amazon Web Service'
+      'Target environment - Amazon Web Services'
     );
   };
 

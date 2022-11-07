@@ -11,7 +11,7 @@ export default {
   title: 'Amazon Web Services',
   customTitle: (
     <Title headingLevel="h1" size="xl">
-      Target environment - Amazon Web Service
+      Target environment - Amazon Web Services
     </Title>
   ),
   name: 'aws-target-env',
