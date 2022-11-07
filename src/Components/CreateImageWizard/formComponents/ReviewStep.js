@@ -9,6 +9,7 @@ import {
   List,
   ListItem,
   Popover,
+  Spinner,
   Tab,
   Tabs,
   TabTitleText,
@@ -30,6 +31,7 @@ import {
 } from '@patternfly/react-table';
 import { HelpIcon } from '@patternfly/react-icons';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import ActivationKeyInformation from './ActivationKeyInformation';
 import { googleAccType } from '../steps/googleCloud';
 import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
 import isRhel from '../../../Utilities/isRhel';
@@ -315,7 +317,17 @@ const ReviewStep = () => {
                             <br />
                             If using an activation key with command line
                             registration, you must provide your
-                            organization&apos;s ID.
+                            organization&apos;s ID. Your organization&apos;s ID
+                            is{' '}
+                            {getState()?.values?.[
+                              'subscription-organization-id'
+                            ] !== undefined ? (
+                              getState()?.values?.[
+                                'subscription-organization-id'
+                              ]
+                            ) : (
+                              <Spinner size="md" />
+                            )}
                           </Text>
                         </TextContent>
                       }
@@ -323,14 +335,15 @@ const ReviewStep = () => {
                       <Button
                         variant="plain"
                         aria-label="About activation key"
-                        className="pf-c-form__group-label-help"
+                        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                        isSmall
                       >
                         <HelpIcon />
                       </Button>
                     </Popover>
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dd}>
-                    {getState()?.values?.['subscription-activation-key']}
+                    <ActivationKeyInformation />
                   </TextListItem>
                 </TextList>
               </TextContent>
