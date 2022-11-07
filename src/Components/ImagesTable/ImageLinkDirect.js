@@ -119,7 +119,7 @@ const ImageLinkDirect = ({ uploadStatus, ...props }) => {
           target="_blank"
           variant="link"
           onClick={() =>
-            navigate(resolveRelPath('/imagewizard'), {
+            navigate(resolveRelPath('imagewizard'), {
               state: {
                 composeRequest: props.recreateImage,
                 initialStep: 'review',
