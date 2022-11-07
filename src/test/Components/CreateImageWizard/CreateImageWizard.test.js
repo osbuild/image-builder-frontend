@@ -141,6 +141,11 @@ beforeAll(() => {
     .spyOn(api, 'getActivationKeys')
     .mockImplementation(() => Promise.resolve(mockActivationKeys));
 
+  const mockActivationKey = { body: [{ name: 'name0' }, { name: 'name1' }] };
+  jest.spyOn(api, 'getActivationKey').mockImplementation((name) => {
+    return Promise.resolve(mockActivationKey[name]);
+  });
+
   global.insights = {
     chrome: {
       auth: {
@@ -1445,6 +1450,49 @@ describe('Click through all steps', () => {
     jest
       .spyOn(api, 'getActivationKeys')
       .mockImplementation(() => Promise.resolve(mockActivationKeys));
+    const mockActivationKey = {
+      name0: {
+        additionalRepositories: [
+          {
+            repositoryLabel: 'repository0',
+          },
+          {
+            repositoryLabel: 'repository1',
+          },
+          {
+            repositoryLabel: 'repository2',
+          },
+        ],
+        id: '0',
+        name: 'name0',
+        releaseVersion: '',
+        role: '',
+        serviceLevel: 'Self-Support',
+        usage: 'Production',
+      },
+      name1: {
+        additionalRepositories: [
+          {
+            repositoryLabel: 'repository3',
+          },
+          {
+            repositoryLabel: 'repository4',
+          },
+          {
+            repositoryLabel: 'repository5',
+          },
+        ],
+        id: '1',
+        name: 'name1',
+        releaseVersion: '',
+        role: '',
+        serviceLevel: 'Premium',
+        usage: 'Production',
+      },
+    };
+    jest.spyOn(api, 'getActivationKey').mockImplementation((name) => {
+      return Promise.resolve(mockActivationKey[name]);
+    });
 
     const registrationRadio = screen.getByLabelText(
       'Register and connect image instances with Red Hat'
@@ -1536,6 +1584,17 @@ describe('Click through all steps', () => {
     await screen.findByText('Bare metal - Installer');
     await screen.findByText('Register with Subscriptions and Red Hat Insights');
     await screen.findByText('MyImageName');
+
+    screen.getByTestId('tab-registration').click();
+    await screen.findByText('name0');
+    await screen.findByText('Self-Support');
+    await screen.findByText('Production');
+
+    screen.getByTestId('repositories-popover-button').click();
+    const repotbody = await screen.findByTestId(
+      'additional-repositories-table'
+    );
+    expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
     screen.getByTestId('file-system-configuration-popover').click();
     const revtbody = await screen.findByTestId(

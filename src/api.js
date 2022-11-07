@@ -76,6 +76,12 @@ async function getActivationKeys() {
   return request.data.body;
 }
 
+async function getActivationKey(name) {
+  const path = `/activation_keys/${name}`;
+  const request = await axios.get(RHSM_API.concat(path));
+  return request.data.body;
+}
+
 // get clones of a compose
 async function getClones(id, limit, offset) {
   const params = new URLSearchParams({
@@ -114,4 +120,5 @@ export default {
   getPackagesContentSources,
   getVersion,
   getActivationKeys,
+  getActivationKey,
 };
