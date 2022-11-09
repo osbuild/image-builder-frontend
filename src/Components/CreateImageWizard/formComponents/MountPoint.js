@@ -12,6 +12,7 @@ const MountPoint = ({ ...props }) => {
   // check '/' last!
   const validPrefixes = [
     '/app',
+    '/boot',
     '/data',
     '/home',
     '/opt',
