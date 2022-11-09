@@ -222,7 +222,7 @@ RegionsSelect.propTypes = {
   handleClose: PropTypes.func,
   handleToggle: PropTypes.func,
   isOpen: PropTypes.bool,
-  setIsOpen: PropTypes.bool,
+  setIsOpen: PropTypes.func,
 };
 
 export default RegionsSelect;

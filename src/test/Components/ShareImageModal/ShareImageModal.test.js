@@ -1,6 +1,6 @@
 import React from 'react';
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithReduxRouter } from '../../testUtils';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
@@ -162,7 +162,7 @@ let history;
 let store;
 
 describe('Create Share To Regions Modal', () => {
-  test('validation', () => {
+  test('validation', async () => {
     renderWithReduxRouter(<ShareImageModal />, mockState, mockLocation);
 
     const shareButton = screen.getByRole('button', { name: /share/i });
@@ -174,7 +174,8 @@ describe('Create Share To Regions Modal', () => {
     expect(invalidAlert).not.toBeInTheDocument();
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    userEvent.click(selectToggle);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => userEvent.click(selectToggle));
 
     const usEast2 = screen.getByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
@@ -219,11 +220,13 @@ describe('Create Share To Regions Modal', () => {
     );
   });
 
-  test('select options disabled correctly based on status and region', () => {
+  test('select options disabled correctly based on status and region', async () => {
     renderWithReduxRouter(<ShareImageModal />, mockState, mockLocation);
+    history = view.history;
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    userEvent.click(selectToggle);
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => userEvent.click(selectToggle));
 
     // parent region disabled
     const usEast1 = screen.getByRole('option', {
@@ -248,6 +251,10 @@ describe('Create Share To Regions Modal', () => {
       name: /eu-central-1 europe \(frankfurt\)/i,
     });
     expect(euCentral1).not.toHaveClass('pf-m-disabled');
+
+    // close the select again to avoid state update
+    // eslint-disable-next-line testing-library/no-unnecessary-act
+    await act(async () => userEvent.click(selectToggle));
   });
 
   test('cloning an image results in successful store updates', async () => {
@@ -273,7 +280,7 @@ describe('Create Share To Regions Modal', () => {
 
     const shareButton = screen.getByRole('button', { name: /share/i });
     expect(shareButton).toBeEnabled();
-    shareButton.click();
+    await act(async () => shareButton.click());
 
     expect(cloneImage).toHaveBeenCalledTimes(1);
 
