@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 import { CONTENT_SOURCES, IMAGE_BUILDER_API, RHSM_API } from './constants';
-import { repos } from './repos';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
@@ -43,10 +42,17 @@ async function getPackages(distribution, architecture, search, limit) {
   return request.data;
 }
 
-async function getPackagesContentSources(distribution, search) {
+async function getRepositories(limit) {
+  const params = new URLSearchParams();
+  limit && params.append('limit', limit);
+  const path = '/repositories/' + params.toString();
+  const request = await axios.get(CONTENT_SOURCES.concat(path));
+  return request.data;
+}
+
+async function getPackagesContentSources(repoUrls, search) {
   // content-sources expects an array of urls but we store the whole repo object
   // so map the urls into an array to send to the content-sources api
-  const repoUrls = repos[distribution].map((repo) => repo.url);
   const body = {
     urls: repoUrls,
     search,
@@ -119,6 +125,7 @@ export default {
   getComposeStatus,
   getPackages,
   getPackagesContentSources,
+  getRepositories,
   getVersion,
   getActivationKeys,
   getActivationKey,

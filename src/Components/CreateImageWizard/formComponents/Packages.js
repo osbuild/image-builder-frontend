@@ -1,6 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   DualListSelector,
@@ -21,32 +26,78 @@ import {
 import PropTypes from 'prop-types';
 
 import api from '../../../api';
+import { repos } from '../../../repos';
 
-// the fields isHidden and isSelected should not be included in the package list sent for image creation
-const removePackagesDisplayFields = (packages) =>
-  packages.map((pack) => ({
-    name: pack.name,
-    summary: pack.summary,
-  }));
+export const RedHatPackages = ({ defaultArch }) => {
+  const { getState } = useFormApi();
 
-const Packages = ({ defaultArch, ...props }) => {
+  const getAllPackages = async (packagesSearchName) => {
+    // if the env is stage beta then use content-sources api
+    // else use image-builder api
+    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+      const distribution = getState()?.values?.release;
+      const repoUrls = repos[distribution].map((repo) => repo.url);
+      return await api.getPackagesContentSources(repoUrls, packagesSearchName);
+    } else {
+      const args = [
+        getState()?.values?.release,
+        getState()?.values?.architecture || defaultArch,
+        packagesSearchName,
+      ];
+      let { data, meta } = await api.getPackages(...args);
+      if (data?.length === meta.count) {
+        return data;
+      } else if (data) {
+        ({ data } = await api.getPackages(...args, meta.count));
+        return data;
+      }
+    }
+  };
+
+  return <Packages getAllPackages={getAllPackages} />;
+};
+
+export const ContentSourcesPackages = () => {
+  const { getState } = useFormApi();
+
+  const getAllPackages = async (packagesSearchName) => {
+    const repos = getState()?.values?.['third-party-repositories'];
+    const repoUrls = repos?.map((repo) => repo.baseurl);
+    return await api.getPackagesContentSources(repoUrls, packagesSearchName);
+  };
+
+  return <Packages getAllPackages={getAllPackages} />;
+};
+
+const Packages = ({ getAllPackages }) => {
   const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
   const [packagesSearchName, setPackagesSearchName] = useState(undefined);
-  const [filterAvailable, setFilterAvailable] = useState(undefined);
-  const [filterChosen, setFilterChosen] = useState(undefined);
-  const [packagesAvailable, setPackagesAvailable] = useState([]);
-  const [packagesAvailableFound, setPackagesAvailableFound] = useState(true);
-  const [packagesChosen, setPackagesChosen] = useState([]);
-  const [packagesChosenFound, setPackagesChosenFound] = useState(true);
+  const [filterChosen, setFilterChosen] = useState('');
+  const [chosenPackages, setChosenPackages] = useState({});
   const [focus, setFocus] = useState('');
+  const selectedPackages = getState()?.values?.['selected-packages'];
+  const [availablePackages, setAvailablePackages] = useState(undefined);
+  const [selectedAvailablePackages, setSelectedAvailablePackages] = useState(
+    new Set()
+  );
+  const [selectedChosenPackages, setSelectedChosenPackages] = useState(
+    new Set()
+  );
+  const firstInputElement = useRef(null);
 
   // this effect only triggers on mount
   useEffect(() => {
-    const selectedPackages = getState()?.values?.['selected-packages'];
     if (selectedPackages) {
-      setPackagesChosen(selectedPackages);
+      const newChosenPackages = {};
+      for (const pkg of selectedPackages) {
+        newChosenPackages[pkg.name] = pkg;
+      }
+      setChosenPackages(newChosenPackages);
     }
+  }, []);
+
+  useEffect(() => {
+    firstInputElement.current?.focus();
   }, []);
 
   const searchResultsComparator = useCallback((searchTerm) => {
@@ -86,92 +137,44 @@ const Packages = ({ defaultArch, ...props }) => {
     };
   });
 
-  const setPackagesAvailableSorted = (
-    packageList,
-    filter = filterAvailable
-  ) => {
-    const sortResults = packageList.sort(searchResultsComparator(filter));
-    setPackagesAvailable(sortResults);
-  };
-
-  const setPackagesChosenSorted = (packageList) => {
-    const sortResults = packageList.sort(searchResultsComparator(filterChosen));
-    setPackagesChosen(sortResults);
-  };
-
-  // filter the packages by name
-  const filterPackagesAvailable = (packageList) => {
-    return packageList.filter((availablePackage) => {
-      // returns true if no packages in the available or chosen list have the same name
-      return !packagesChosen.some(
-        (chosenPackage) => availablePackage.name === chosenPackage.name
-      );
-    });
-  };
-
-  const getAllPackages = async () => {
-    // if the env is stage beta then use content-sources api
-    // else use image-builder api
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
-      const args = [getState()?.values?.release, packagesSearchName];
-      return await api.getPackagesContentSources(...args);
-    } else {
-      const args = [
-        getState()?.values?.release,
-        getState()?.values?.architecture || defaultArch,
-        packagesSearchName,
-      ];
-      let { data, meta } = await api.getPackages(...args);
-      if (data?.length === meta.count) {
-        return data;
-      } else if (data) {
-        ({ data } = await api.getPackages(...args, meta.count));
-        return data;
-      }
+  const availablePackagesDisplayList = useMemo(() => {
+    if (availablePackages === undefined) {
+      return [];
     }
-  };
+    const availablePackagesList = Object.values(availablePackages).sort(
+      searchResultsComparator(packagesSearchName)
+    );
+    return availablePackagesList;
+  }, [availablePackages]);
+
+  const chosenPackagesDisplayList = useMemo(() => {
+    const chosenPackagesList = Object.values(chosenPackages)
+      .filter((pkg) => (pkg.name.includes(filterChosen) ? true : false))
+      .sort(searchResultsComparator(filterChosen));
+    return chosenPackagesList;
+  }, [chosenPackages, filterChosen]);
 
   // call api to list available packages
-  const handlePackagesAvailableSearch = async () => {
-    setFilterAvailable(packagesSearchName);
-
-    const packageList = await getAllPackages();
+  const handleAvailablePackagesSearch = async () => {
+    const packageList = await getAllPackages(packagesSearchName);
+    // If no packages are found, Image Builder returns null, while
+    // Content Sources returns an empty array [].
     if (packageList) {
-      const packagesAvailableFiltered = filterPackagesAvailable(packageList);
-      setPackagesAvailableSorted(packagesAvailableFiltered, packagesSearchName);
-      setPackagesAvailableFound(
-        packagesAvailableFiltered.length ? true : false
-      );
-    } else {
-      setPackagesAvailable([]);
-      setPackagesAvailableFound(false);
-    }
-  };
-
-  // filter displayed selected packages
-  const handlePackagesChosenSearch = (val) => {
-    let found = false;
-    const filteredPackagesChosen = packagesChosen.map((pack) => {
-      if (!pack.name.includes(val)) {
-        pack.isHidden = true;
-      } else {
-        pack.isHidden = false;
-        found = true;
+      const newAvailablePackages = {};
+      for (const pkg of packageList) {
+        newAvailablePackages[pkg.name] = pkg;
       }
-
-      return pack;
-    });
-
-    setFilterChosen(val);
-    setPackagesChosenFound(found);
-    setPackagesChosenSorted(filteredPackagesChosen);
+      setAvailablePackages(newAvailablePackages);
+    } else {
+      setAvailablePackages([]);
+    }
   };
 
   const keydownHandler = (event) => {
     if (event.key === 'Enter') {
       if (focus === 'available') {
         event.stopPropagation();
-        handlePackagesAvailableSearch();
+        handleAvailablePackagesSearch();
       }
     }
   };
@@ -184,145 +187,64 @@ const Packages = ({ defaultArch, ...props }) => {
     };
   });
 
-  const areFound = (filter, packageList) => {
-    if (filter === undefined) {
-      return true;
-    } else if (packageList.some((pack) => pack.name.includes(filter))) {
-      return true;
-    } else {
-      return false;
-    }
-  };
-
-  const isHidden = (filter, pack) =>
-    filter && !pack.name.includes(filter) ? true : false;
-
-  const updateState = (updatedPackagesAvailable, updatedPackagesChosen) => {
-    setPackagesChosenSorted(updatedPackagesChosen);
-    setPackagesAvailableSorted(updatedPackagesAvailable);
-    setPackagesAvailableFound(
-      areFound(filterAvailable, updatedPackagesAvailable)
-    );
-    setPackagesChosenFound(areFound(filterChosen, updatedPackagesChosen));
-    // set the steps field to the current chosen packages list
-    change(input.name, removePackagesDisplayFields(updatedPackagesChosen));
+  const updateState = (newChosenPackages) => {
+    setSelectedAvailablePackages(new Set());
+    setSelectedChosenPackages(new Set());
+    setChosenPackages(newChosenPackages);
+    change('selected-packages', Object.values(newChosenPackages));
   };
 
   const moveSelectedToChosen = () => {
-    const newPackagesChosen = [];
-
-    const updatedPackagesAvailable = packagesAvailable.filter((pack) => {
-      if (pack.selected) {
-        pack.selected = false;
-        pack.isHidden = isHidden(filterChosen, pack);
-        newPackagesChosen.push(pack);
-        return false;
-      }
-
-      return true;
-    });
-
-    const updatedPackagesChosen = [...newPackagesChosen, ...packagesChosen];
-
-    updateState(updatedPackagesAvailable, updatedPackagesChosen);
-  };
-
-  const moveSelectedToAvailable = () => {
-    const newPackagesAvailable = [];
-
-    const updatedPackagesChosen = packagesChosen.filter((pack) => {
-      if (pack.selected) {
-        pack.selected = false;
-        pack.isHidden = false;
-        pack.name.includes(filterAvailable)
-          ? newPackagesAvailable.push(pack)
-          : null;
-        return false;
-      }
-
-      return true;
-    });
-
-    const updatedPackagesAvailable = [
-      ...newPackagesAvailable,
-      ...packagesAvailable,
-    ];
-
-    updateState(updatedPackagesAvailable, updatedPackagesChosen);
+    const newChosenPackages = { ...chosenPackages };
+    for (const pkgName of selectedAvailablePackages) {
+      newChosenPackages[pkgName] = { ...availablePackages[pkgName] };
+    }
+    updateState(newChosenPackages);
   };
 
   const moveAllToChosen = () => {
-    const newPackagesChosen = packagesAvailable.map((pack) => {
-      return {
-        ...pack,
-        selected: false,
-        isHidden: isHidden(filterChosen, pack),
-      };
-    });
-
-    const updatedPackagesAvailable = [];
-    const updatedPackagesChosen = [...newPackagesChosen, ...packagesChosen];
-
-    updateState(updatedPackagesAvailable, updatedPackagesChosen);
+    const newChosenPackages = { ...chosenPackages, ...availablePackages };
+    updateState(newChosenPackages);
   };
 
-  const moveAllToAvailable = () => {
-    const updatedPackagesChosen = packagesChosen.filter(
-      (pack) => pack.isHidden
-    );
-
-    const newPackagesAvailable =
-      filterAvailable === undefined
-        ? []
-        : packagesChosen
-            .filter(
-              (pack) => !pack.isHidden && pack.name.includes(filterAvailable)
-            )
-            .map((pack) => {
-              return { ...pack, selected: false };
-            });
-
-    const updatedPackagesAvailable = [
-      ...newPackagesAvailable,
-      ...packagesAvailable,
-    ];
-
-    updateState(updatedPackagesAvailable, updatedPackagesChosen);
-  };
-
-  const onOptionSelect = (event, index, isChosen) => {
-    if (isChosen) {
-      const newChosen = [...packagesChosen];
-      newChosen[index].selected = !packagesChosen[index].selected;
-      setPackagesChosenSorted(newChosen);
-    } else {
-      const newAvailable = [...packagesAvailable];
-      newAvailable[index].selected = !packagesAvailable[index].selected;
-      setPackagesAvailableSorted(newAvailable);
+  const removeSelectedFromChosen = () => {
+    const newChosenPackages = {};
+    for (const pkgName in chosenPackages) {
+      if (!selectedChosenPackages.has(pkgName)) {
+        newChosenPackages[pkgName] = { ...chosenPackages[pkgName] };
+      }
     }
+    updateState(newChosenPackages);
   };
 
-  const firstInputElement = useRef(null);
+  const removeAllFromChosen = () => {
+    const newChosenPackages = {};
+    updateState(newChosenPackages);
+  };
 
-  useEffect(() => {
-    firstInputElement.current?.focus();
-  }, []);
+  const handleSelectAvailable = (event, pkgName) => {
+    const newSelected = new Set(selectedAvailablePackages);
+    newSelected.has(pkgName)
+      ? newSelected.delete(pkgName)
+      : newSelected.add(pkgName);
+    setSelectedAvailablePackages(newSelected);
+  };
+
+  const handleSelectChosen = (event, pkgName) => {
+    const newSelected = new Set(selectedChosenPackages);
+    newSelected.has(pkgName)
+      ? newSelected.delete(pkgName)
+      : newSelected.add(pkgName);
+    setSelectedChosenPackages(newSelected);
+  };
 
   const handleClearAvailableSearch = () => {
-    setPackagesSearchName(undefined);
-    setFilterAvailable(undefined);
-    setPackagesAvailable([]);
-    setPackagesAvailableFound(true);
+    setPackagesSearchName('');
+    setAvailablePackages(undefined);
   };
 
   const handleClearChosenSearch = () => {
-    setFilterChosen(undefined);
-    setPackagesChosenSorted(
-      packagesChosen.map((pack) => {
-        return { ...pack, isHidden: false };
-      })
-    );
-    setPackagesChosenFound(true);
+    setFilterChosen('');
   };
 
   return (
@@ -339,48 +261,48 @@ const Packages = ({ defaultArch, ...props }) => {
             onBlur={() => setFocus('')}
             onChange={(val) => setPackagesSearchName(val)}
             submitSearchButtonLabel="Search button for available packages"
-            onSearch={handlePackagesAvailableSearch}
+            onSearch={handleAvailablePackagesSearch}
             resetButtonLabel="Clear available packages search"
             onClear={handleClearAvailableSearch}
           />
         }
       >
         <DualListSelectorList data-testid="available-pkgs-list">
-          {!packagesAvailable.length ? (
+          {availablePackages === undefined ? (
             <p className="pf-u-text-align-center pf-u-mt-md">
-              {!packagesAvailableFound ? (
-                'No packages found'
-              ) : (
-                <>
-                  Search above to add additional
-                  <br />
-                  packages to your image
-                </>
-              )}
+              Search above to add additional
+              <br />
+              packages to your image
+            </p>
+          ) : availablePackagesDisplayList.length === 0 ? (
+            <p className="pf-u-text-align-center pf-u-mt-md">
+              No packages found
             </p>
           ) : (
-            packagesAvailable.map((pack, index) => {
-              return !pack.isHidden ? (
+            availablePackagesDisplayList.map((pkg) => {
+              return (
                 <DualListSelectorListItem
-                  key={index}
-                  isSelected={pack.selected}
-                  onOptionSelect={(e) => onOptionSelect(e, index, false)}
+                  data-testid={`available-pkgs-${pkg.name}`}
+                  key={pkg.name}
+                  isDisabled={chosenPackages[pkg.name] ? true : false}
+                  isSelected={selectedAvailablePackages.has(pkg.name)}
+                  onOptionSelect={(e) => handleSelectAvailable(e, pkg.name)}
                 >
-                  <TextContent key={`${pack.name}-${index}`}>
+                  <TextContent key={`${pkg.name}`}>
                     <span className="pf-c-dual-list-selector__item-text">
-                      {pack.name}
+                      {pkg.name}
                     </span>
-                    <small>{pack.summary}</small>
+                    <small>{pkg.summary}</small>
                   </TextContent>
                 </DualListSelectorListItem>
-              ) : null;
+              );
             })
           )}
         </DualListSelectorList>
       </DualListSelectorPane>
       <DualListSelectorControlsWrapper aria-label="Selector controls">
         <DualListSelectorControl
-          isDisabled={!packagesAvailable.some((option) => option.selected)}
+          isDisabled={selectedAvailablePackages.size === 0}
           onClick={() => moveSelectedToChosen()}
           aria-label="Add selected"
           tooltipContent="Add selected"
@@ -388,7 +310,7 @@ const Packages = ({ defaultArch, ...props }) => {
           <AngleRightIcon />
         </DualListSelectorControl>
         <DualListSelectorControl
-          isDisabled={!packagesAvailable.length}
+          isDisabled={availablePackagesDisplayList.length === 0}
           onClick={() => moveAllToChosen()}
           aria-label="Add all"
           tooltipContent="Add all"
@@ -396,19 +318,16 @@ const Packages = ({ defaultArch, ...props }) => {
           <AngleDoubleRightIcon />
         </DualListSelectorControl>
         <DualListSelectorControl
-          isDisabled={!packagesChosen.length || !packagesChosenFound}
-          onClick={() => moveAllToAvailable()}
+          isDisabled={Object.values(chosenPackages).length === 0}
+          onClick={() => removeAllFromChosen()}
           aria-label="Remove all"
           tooltipContent="Remove all"
         >
           <AngleDoubleLeftIcon />
         </DualListSelectorControl>
         <DualListSelectorControl
-          onClick={() => moveSelectedToAvailable()}
-          isDisabled={
-            !packagesChosen.some((option) => option.selected) ||
-            !packagesChosenFound
-          }
+          onClick={() => removeSelectedFromChosen()}
+          isDisabled={selectedChosenPackages.size === 0}
           aria-label="Remove selected"
           tooltipContent="Remove selected"
         >
@@ -424,7 +343,7 @@ const Packages = ({ defaultArch, ...props }) => {
             value={filterChosen}
             onFocus={() => setFocus('chosen')}
             onBlur={() => setFocus('')}
-            onChange={(val) => handlePackagesChosenSearch(val)}
+            onChange={(val) => setFilterChosen(val)}
             resetButtonLabel="Clear chosen packages search"
             onClear={handleClearChosenSearch}
           />
@@ -432,30 +351,31 @@ const Packages = ({ defaultArch, ...props }) => {
         isChosen
       >
         <DualListSelectorList data-testid="chosen-pkgs-list">
-          {!packagesChosen.length ? (
+          {Object.values(chosenPackages).length === 0 ? (
             <p className="pf-u-text-align-center pf-u-mt-md">
               No packages added
             </p>
-          ) : !packagesChosenFound ? (
+          ) : chosenPackagesDisplayList.length === 0 ? (
             <p className="pf-u-text-align-center pf-u-mt-md">
               No packages found
             </p>
           ) : (
-            packagesChosen.map((pack, index) => {
-              return !pack.isHidden ? (
+            chosenPackagesDisplayList.map((pkg) => {
+              return (
                 <DualListSelectorListItem
-                  key={index}
-                  isSelected={pack.selected}
-                  onOptionSelect={(e) => onOptionSelect(e, index, true)}
+                  data-testid={`selected-pkgs-${pkg.name}`}
+                  key={pkg.name}
+                  isSelected={selectedChosenPackages.has(pkg.name)}
+                  onOptionSelect={(e) => handleSelectChosen(e, pkg.name)}
                 >
-                  <TextContent key={`${pack.name}-${index}`}>
+                  <TextContent key={`${pkg.name}`}>
                     <span className="pf-c-dual-list-selector__item-text">
-                      {pack.name}
+                      {pkg.name}
                     </span>
-                    <small>{pack.summary}</small>
+                    <small>{pkg.summary}</small>
                   </TextContent>
                 </DualListSelectorListItem>
-              ) : null;
+              );
             })
           )}
         </DualListSelectorList>
@@ -464,8 +384,10 @@ const Packages = ({ defaultArch, ...props }) => {
   );
 };
 
-Packages.propTypes = {
+RedHatPackages.propTypes = {
   defaultArch: PropTypes.string,
 };
 
-export default Packages;
+Packages.propTypes = {
+  getAllPackages: PropTypes.func,
+};

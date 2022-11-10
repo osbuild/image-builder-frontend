@@ -14,7 +14,6 @@ export default {
   title: 'File system configuration',
   name: 'File system configuration',
   buttons: FileSystemConfigButtons,
-  substepOf: 'System configuration',
   nextStep: 'packages',
   fields: [
     {

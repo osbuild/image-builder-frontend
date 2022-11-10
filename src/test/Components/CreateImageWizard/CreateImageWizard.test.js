@@ -188,7 +188,10 @@ describe('Create Image Wizard', () => {
     screen.getByRole('heading', { name: /Create image/ });
 
     screen.getByRole('button', { name: 'Image output' });
-    screen.getByRole('button', { name: 'Additional packages' });
+    screen.getByRole('button', { name: 'Registration' });
+    screen.getByRole('button', { name: 'File system configuration' });
+    screen.getByRole('button', { name: 'Content' });
+    screen.getByRole('button', { name: 'Additional Red Hat packages' });
     screen.getByRole('button', { name: 'Name image' });
     screen.getByRole('button', { name: 'Review' });
   });
@@ -850,14 +853,10 @@ describe('Step Packages', () => {
     await searchForAvailablePackages(searchbox, 'test');
     expect(getPackages).toHaveBeenCalledTimes(1);
 
-    screen
-      .getByRole('option', { name: /testPkg test package summary/ })
-      .click();
+    screen.getByTestId('available-pkgs-testPkg').click();
     screen.getByRole('button', { name: /Add selected/ }).click();
 
-    screen
-      .getByRole('option', { name: /testPkg test package summary/ })
-      .click();
+    screen.getByTestId('selected-pkgs-testPkg').click();
     screen.getByRole('button', { name: /Remove selected/ }).click();
 
     const availablePackagesList = screen.getByTestId('available-pkgs-list');
@@ -913,9 +912,7 @@ describe('Step Packages', () => {
     screen.getByRole('button', { name: /Add all/ }).click();
 
     // remove a single package
-    screen
-      .getByRole('option', { name: /lib-test lib-test package summary/ })
-      .click();
+    screen.getByTestId('selected-pkgs-lib-test').click();
     screen.getByRole('button', { name: /Remove selected/ }).click();
 
     // skip name page
@@ -1005,58 +1002,6 @@ describe('Step Packages', () => {
     expect(screen.getAllByText('No packages found').length === 2);
     // We need to clear this input in order to not have sideeffects on other tests
     await searchForChosenPackages(searchboxChosen, '');
-  });
-
-  test('should filter chosen packages from available list', async () => {
-    await setUp();
-
-    const searchboxAvailable = screen.getAllByRole('textbox')[0];
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
-
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
-    searchboxAvailable.click();
-    await searchForAvailablePackages(searchboxAvailable, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
-
-    let availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-
-    screen
-      .getByRole('option', { name: /testPkg test package summary/ })
-      .click();
-    screen.getByRole('button', { name: /Add selected/ }).click();
-
-    availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(2);
-
-    let chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-    // Knowing if it is in document isn't enough. We want a specific length of 1 so ignore rule.
-    // eslint-disable-next-line jest-dom/prefer-in-document
-    expect(chosenPackagesItems).toHaveLength(1);
-
-    searchboxAvailable.click();
-    await searchForAvailablePackages(searchboxAvailable, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(2);
-
-    availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-    expect(availablePackagesItems).toHaveLength(2);
-    // Knowing if it is in document isn't enough. We want a specific length of 1 so ignore rule.
-    // eslint-disable-next-line jest-dom/prefer-in-document
-    expect(chosenPackagesItems).toHaveLength(1);
-    within(chosenPackagesList).getByRole('option', {
-      name: /testPkg test package summary/,
-    });
   });
 
   test('should get all packages, regardless of api default limit', async () => {

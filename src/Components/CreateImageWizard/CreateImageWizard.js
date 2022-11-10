@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -14,7 +14,9 @@ import {
   imageOutput,
   msAzureTarget,
   packages,
+  packagesContentSources,
   registration,
+  repositories,
   review,
 } from './steps';
 import {
@@ -25,7 +27,9 @@ import {
 import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
+import { getDistroRepoUrls } from '../../repos';
 import { composeAdded } from '../../store/composesSlice';
+import { fetchRepositories } from '../../store/repositoriesSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
@@ -40,6 +44,12 @@ const onSave = (values) => {
   let customizations = {
     packages: values['selected-packages']?.map((p) => p.name),
   };
+
+  if (values['third-party-repositories']?.length > 0) {
+    customizations['payload_repositories'] = [
+      ...values['third-party-repositories'],
+    ];
+  }
 
   if (values['register-system'] === 'register-now-insights') {
     customizations.subscription = {
@@ -230,14 +240,12 @@ const parseSizeUnit = (bytesize) => {
   return [size, unit];
 };
 
-const getPackageDescription = async (release, arch, packageName) => {
+const getPackageDescription = async (release, arch, repoUrls, packageName) => {
   let pack;
   // if the env is stage beta then use content-sources api
   // else use image-builder api
   if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
-    const args = [release, packageName];
-    const data = await api.getPackagesContentSources(...args);
-
+    const data = await api.getPackagesContentSources(repoUrls, packageName);
     pack = data.find((pack) => packageName === pack.name);
   } else {
     const args = [release, arch, packageName];
@@ -327,10 +335,21 @@ const requestToState = (composeRequest) => {
     // customizations
     // packages
     let packs = [];
+
+    const distro = composeRequest?.distribution;
+    const distroRepoUrls = getDistroRepoUrls(distro);
+    const payloadRepositories =
+      composeRequest?.customizations?.payload_repositories?.map(
+        (repo) => repo.baseurl
+      );
+    const repoUrls = [...distroRepoUrls];
+    payloadRepositories ? repoUrls.push(...payloadRepositories) : null;
+
     composeRequest?.customizations?.packages?.forEach(async (packName) => {
       const packageDescription = await getPackageDescription(
-        composeRequest?.distribution,
+        distro,
         imageRequest?.architecture,
+        repoUrls,
         packName
       );
       const pack = {
@@ -340,6 +359,16 @@ const requestToState = (composeRequest) => {
       packs.push(pack);
     });
     formState['selected-packages'] = packs;
+
+    // repositories
+    // 'payload-repositories' is treated as read-only and is used to populate
+    // the table in the repositories table
+    formState['payload-repositories'] =
+      composeRequest?.customizations?.payload_repositories;
+    // 'third-party-repositories' is mutable and is used to generate the request
+    // sent to image-builder
+    formState['third-party-repositories'] =
+      composeRequest?.customizations?.payload_repositories;
 
     // filesystem
     const fs = composeRequest?.customizations?.filesystem;
@@ -392,7 +421,8 @@ const formStepHistory = (composeRequest) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
-    let steps = ['image-output'];
+    // the order of steps must match the order of the steps in the Wizard
+    const steps = ['image-output'];
 
     if (uploadRequest.type === 'aws') {
       steps.push('aws-target-env');
@@ -406,11 +436,19 @@ const formStepHistory = (composeRequest) => {
       steps.push('registration');
     }
 
-    steps = steps.concat([
-      'File system configuration',
-      'packages',
-      'image-name',
-    ]);
+    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+      steps.push('File system configuration', 'packages', 'repositories');
+
+      const thirdPartyRepositories =
+        composeRequest.customizations?.payload_repositories;
+      if (thirdPartyRepositories) {
+        steps.push('packages-content-sources');
+      }
+    } else {
+      steps.push('File system configuration', 'packages');
+    }
+
+    steps.push('image-name');
 
     return steps;
   } else {
@@ -428,6 +466,12 @@ const CreateImageWizard = () => {
   const stepHistory = formStepHistory(composeRequest);
 
   const handleClose = () => navigate(resolveRelPath(''));
+
+  useEffect(() => {
+    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+      dispatch(fetchRepositories());
+    }
+  }, []);
 
   return (
     <ImageCreator
@@ -499,7 +543,11 @@ const CreateImageWizard = () => {
             },
             showTitles: true,
             title: 'Create image',
-            crossroads: ['target-environment', 'release'],
+            crossroads: [
+              'target-environment',
+              'release',
+              'third-party-repositories',
+            ],
             description: (
               <>
                 Image builder allows you to create a custom image and push it to
@@ -515,6 +563,8 @@ const CreateImageWizard = () => {
               msAzureTarget,
               registration,
               packages,
+              packagesContentSources,
+              repositories,
               fileSystemConfiguration,
               imageName,
               review,
