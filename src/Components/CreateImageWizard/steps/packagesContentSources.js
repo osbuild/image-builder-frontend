@@ -5,22 +5,13 @@ import { Text } from '@patternfly/react-core';
 
 import StepTemplate from './stepTemplate';
 
-import CustomButtons from '../formComponents/CustomButtons';
-
 export default {
   StepTemplate,
-  id: 'wizard-systemconfiguration-packages',
-  title: 'Additional Red Hat packages',
-  name: 'packages',
+  id: 'wizard-systemconfiguration-content-sources-packages',
+  title: 'Additional 3rd Party Packages',
+  name: 'packages-content-sources',
   substepOf: 'Content',
-  nextStep: () => {
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
-      return 'repositories';
-    } else {
-      return 'image-name';
-    }
-  },
-  buttons: CustomButtons,
+  nextStep: 'image-name',
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,
@@ -32,12 +23,15 @@ export default {
           You can add additional packages to your image by searching
           &quot;Available packages&quot; and adding them to the &quot;Chosen
           packages&quot; list.
+          <br />
+          The available packages will return results from all repositories
+          chosen on the previous page.
         </Text>
       ),
     },
     {
-      component: 'package-selector',
-      name: 'selected-packages',
+      component: 'package-selector-content-sources',
+      name: 'selected-packages-content-sources',
       label: 'Available options',
     },
   ],

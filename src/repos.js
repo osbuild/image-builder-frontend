@@ -1,5 +1,8 @@
 import { RHEL_8, RHEL_9 } from './constants';
 
+export const getDistroRepoUrls = (distro) =>
+  repos[distro].map((repo) => repo.url);
+
 export const repos = {
   [RHEL_8]: [
     {

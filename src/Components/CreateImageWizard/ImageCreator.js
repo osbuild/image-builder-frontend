@@ -13,9 +13,13 @@ import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
 import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
-import Packages from './formComponents/Packages';
+import {
+  ContentSourcesPackages,
+  RedHatPackages,
+} from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import RegistrationKeyInformation from './formComponents/RegistrationKeyInformation';
+import Repositories from './formComponents/Repositories';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 
@@ -46,8 +50,11 @@ const ImageCreator = ({
         output: TargetEnvironment,
         select: Select,
         'package-selector': {
-          component: Packages,
+          component: RedHatPackages,
           defaultArch,
+        },
+        'package-selector-content-sources': {
+          component: ContentSourcesPackages,
         },
         'radio-popover': RadioWithPopover,
         'azure-auth-button': AzureAuthButton,
@@ -57,6 +64,7 @@ const ImageCreator = ({
         'file-system-configuration': FileSystemConfiguration,
         'image-output-release-select': ImageOutputReleaseSelect,
         'centos-acknowledgement': CentOSAcknowledgement,
+        'repositories-table': Repositories,
         ...customComponentMapper,
       }}
       onCancel={onClose}
