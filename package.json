@@ -82,7 +82,7 @@
     "sass-loader": "13.0.2",
     "stylelint": "14.14.1",
     "stylelint-config-recommended-scss": "6.0.0",
-    "webpack-bundle-analyzer": "4.5.0"
+    "webpack-bundle-analyzer": "4.7.0"
   },
   "scripts": {
     "lint": "npm-run-all lint:*",
