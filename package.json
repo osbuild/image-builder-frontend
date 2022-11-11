@@ -12,7 +12,7 @@
     "@patternfly/patternfly": "4.210.2",
     "@patternfly/react-core": "4.198.19",
     "@patternfly/react-table": "4.71.16",
-    "@redhat-cloud-services/frontend-components": "3.9.2",
+    "@redhat-cloud-services/frontend-components": "3.9.24",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.11",
     "@redhat-cloud-services/frontend-components-utilities": "3.2.16",
     "@reduxjs/toolkit": "^1.8.5",
