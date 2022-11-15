@@ -5,12 +5,12 @@ export const repos = {
     {
       name: 'baseos',
       distribution_arch: 'x86_64',
-      url: 'https://cdn.redhat.com/content/dist/rhel8/8.6/x86_64/baseos/os',
+      url: 'https://cdn.redhat.com/content/dist/rhel8/8.7/x86_64/baseos/os',
     },
     {
       distribution_arch: 'x86_64',
       name: 'appstream',
-      url: 'https://cdn.redhat.com/content/dist/rhel8/8.6/x86_64/appstream/os',
+      url: 'https://cdn.redhat.com/content/dist/rhel8/8.7/x86_64/appstream/os',
     },
     {
       distribution_arch: 'x86_64',
@@ -27,12 +27,12 @@ export const repos = {
     {
       name: 'baseos',
       distribution_arch: 'x86_64',
-      url: 'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/baseos/os',
+      url: 'https://cdn.redhat.com/content/dist/rhel9/9.1/x86_64/baseos/os',
     },
     {
       distribution_arch: 'x86_64',
       name: 'appstream',
-      url: 'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/appstream/os',
+      url: 'https://cdn.redhat.com/content/dist/rhel9/9.1/x86_64/appstream/os',
     },
     {
       distribution_arch: 'x86_64',
