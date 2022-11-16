@@ -39,6 +39,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
             image={{
               name: image.imageName,
               id: image.id,
+              architecture: image.architecture,
             }}
           />
         )}

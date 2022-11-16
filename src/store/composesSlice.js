@@ -65,6 +65,7 @@ export const selectComposeById = (state, composeId) => {
       uploadOptions: compose.request.image_requests[0].upload_request.options,
       uploadStatus: compose.image_status?.upload_status,
       request: compose.request,
+      architecture: compose.request.image_requests[0].architecture,
       isClone: false,
     };
   } else {
