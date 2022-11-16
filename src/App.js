@@ -5,6 +5,7 @@ import '@patternfly/patternfly/patternfly-addons.css';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 
 import { Router } from './Router';
+import { resolveRelPath } from './Utilities/path';
 
 const App = (props) => {
   const navigate = useNavigate();
@@ -14,8 +15,8 @@ const App = (props) => {
     document.title = 'Image Builder | Red Hat Insights';
     insights.chrome.init();
     insights.chrome.identifyApp('image-builder');
-    const unregister = insights.chrome.on('APP_NAVIGATION', (event) =>
-      navigate(`/${event.navId}`)
+    const unregister = insights.chrome.on('APP_NAVIGATION', () =>
+      navigate(resolveRelPath(''))
     );
     return () => {
       unregister();
