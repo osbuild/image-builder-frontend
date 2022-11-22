@@ -12,6 +12,8 @@ const webpackProxy = {
   appUrl: process.env.BETA
     ? '/beta/insights/image-builder'
     : '/insights/image-builder',
+  routesPath:
+    process.env.DEV_ROUTES_PATH && resolve(process.env.DEV_ROUTES_PATH),
 };
 
 const { config: webpackConfig, plugins } = config({

@@ -71,6 +71,19 @@ The UI should be running on
 https://prod.foo.redhat.com:1337/beta/insights/image-builder/landing.
 Note that this requires you to have access to either production or stage (plus VPN and proxy config) of insights.
 
+### Develop with provisioning-frontend
+
+The provisioning-wizard is a separate frontend [app](https://github.com/RHEnVision/provisioning-frontend) which is consumed for launching images in image-builder. In some cases, developers would like to develop and integrate both apps at once.
+
+run `npm run dev:hms`
+this script will
+    -  git clone `provisioning-frontend` and `cloud-services-config` to parent directory (if needed)
+    -  copy files and install npm modules
+    -  add local routes to webpack-proxy 
+    -  run `provisioning-frontend` as federated module
+    -  run http server to serve the cloud-config locally
+    -  run image builder in stage-beta
+ 
 ## Backend Development
 
 To develop both the frontend and the backend you can again use the proxy to run both the
