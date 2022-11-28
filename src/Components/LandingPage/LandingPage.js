@@ -9,6 +9,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import { Outlet } from 'react-router-dom';
 
 import ImagesTable from '../ImagesTable/ImagesTable';
 import './LandingPage.scss';
@@ -63,6 +64,7 @@ class LandingPage extends Component {
         <section className="pf-l-page__main-section pf-c-page__main-section">
           <ImagesTable />
         </section>
+        <Outlet />
       </React.Fragment>
     );
   }
