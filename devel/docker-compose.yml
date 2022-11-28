@@ -18,8 +18,9 @@ services:
       - ${CERT_DIR}/ca-crt.pem:/etc/osbuild-composer/ca-crt.pem:z
       - ${CERT_DIR}/composer-crt.pem:/etc/osbuild-composer/composer-crt.pem:z
       - ${CERT_DIR}/composer-key.pem:/etc/osbuild-composer/composer-key.pem:z
-    ports: 
-      - 8080:8700
+    ports:
+      - 8080:8080
+      - 8700:8700
     networks:
       net:
         ipv4_address: 172.31.0.10
@@ -58,7 +59,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
     volumes:
-      - ../../image-builder/internal/db/migrations/:/docker-entrypoint-initdb.d/:Z
+      - ../../image-builder/internal/db/migrations-tern/:/docker-entrypoint-initdb.d/:Z
     networks:
       net:
         ipv4_address: 172.31.0.30
