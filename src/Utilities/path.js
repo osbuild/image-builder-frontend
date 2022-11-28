@@ -12,8 +12,8 @@ function getBaseName(pathname) {
   return `${release}`;
 }
 
-function resolveRelPath(path) {
-  return `/insights/image-builder/${path}`;
+function resolveRelPath(path = '') {
+  return `/insights/image-builder${path.length > 0 ? `/${path}` : ''}`;
 }
 
 export { getBaseName, resolveRelPath };
