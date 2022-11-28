@@ -205,7 +205,7 @@ describe('Create Share To Regions Modal', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder/')
+      expect(history.location.pathname).toBe('/insights/image-builder')
     );
   });
 
@@ -218,7 +218,7 @@ describe('Create Share To Regions Modal', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder/')
+      expect(history.location.pathname).toBe('/insights/image-builder')
     );
   });
 
@@ -288,7 +288,7 @@ describe('Create Share To Regions Modal', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder/')
+      expect(history.location.pathname).toBe('/insights/image-builder')
     );
 
     // Clone has been added to its parent's list of clones
