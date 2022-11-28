@@ -3,7 +3,6 @@ import React, { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-import { resolveRelPath } from './Utilities/path';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
@@ -13,12 +12,10 @@ const CreateImageWizard = lazy(() =>
 export const Router = () => {
   return (
     <Routes>
-      <Route
-        path={resolveRelPath('imagewizard/*')}
-        element={<CreateImageWizard />}
-      />
-      <Route path={resolveRelPath('*')} element={<LandingPage />} />
-      <Route path={resolveRelPath('share/*')} element={<ShareImageModal />} />
+      <Route path="*" element={<LandingPage />}>
+        <Route path="imagewizard/*" element={<CreateImageWizard />} />
+        <Route path="share/*" element={<ShareImageModal />} />
+      </Route>
     </Routes>
   );
 };
