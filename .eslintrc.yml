@@ -7,16 +7,22 @@ globals:
 plugins: 
   - import
 rules:
-  sort-imports:
-  - error
-  - ignoreCase: true
-    ignoreDeclarationSort: true
   import/order:
   - error
   - groups:
-      - builtin
-      - external
-      - internal
-      - sibling
-      - parent
-      - index
+    - builtin
+    - external
+    - internal
+    - sibling
+    - parent
+    - index
+    alphabetize:
+      order: asc
+      caseInsensitive: true
+    newlines-between: always
+    pathGroups: # ensures the import of React is always on top
+    - pattern: react
+      group: builtin
+      position: before
+    pathGroupsExcludedImportTypes:
+    - react
