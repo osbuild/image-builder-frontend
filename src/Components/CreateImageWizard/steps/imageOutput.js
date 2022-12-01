@@ -6,6 +6,7 @@ import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 import { RHEL_9 } from '../../../constants.js';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
@@ -13,6 +14,7 @@ export default {
   title: 'Image output',
   name: 'image-output',
   nextStep: ({ values }) => nextStepMapper(values),
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,

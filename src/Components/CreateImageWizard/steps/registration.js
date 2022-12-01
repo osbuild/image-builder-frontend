@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import StepTemplate from './stepTemplate';
+import CustomButtons from '../formComponents/CustomButtons';
 
 const PopoverActivation = () => {
   return (
@@ -43,6 +44,7 @@ export default {
   title: 'Registration',
   name: 'registration',
   nextStep: 'File system configuration',
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.RADIO,

@@ -2,6 +2,7 @@ import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { Text } from '@patternfly/react-core';
 import StepTemplate from './stepTemplate';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
@@ -10,6 +11,7 @@ export default {
   name: 'packages',
   substepOf: 'System configuration',
   nextStep: 'image-name',
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,

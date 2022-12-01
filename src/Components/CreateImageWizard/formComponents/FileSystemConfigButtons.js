@@ -4,8 +4,9 @@ import { Button } from '@patternfly/react-core';
 import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import PropTypes from 'prop-types';
 
-const FileSystemConfigButtons = ({ nextStep }) => {
-  const { handleNext, handlePrev, formOptions } = useContext(WizardContext);
+// FileSystemconfigButtons are defined separately to display errors inside of the button footer
+const FileSystemConfigButtons = ({ handleNext, handlePrev, nextStep }) => {
+  const { currentStep, formOptions } = useContext(WizardContext);
   const { change, getState } = useFormApi();
   const [hasErrors, setHasErrors] = useState(
     getState()?.errors?.['file-system-configuration'] ? true : false
@@ -24,7 +25,7 @@ const FileSystemConfigButtons = ({ nextStep }) => {
 
   const handleClick = () => {
     if (!hasErrors) {
-      return handleNext(nextStep);
+      handleNext(nextStep);
     }
 
     setNextHasBeenClicked(true);
@@ -34,17 +35,29 @@ const FileSystemConfigButtons = ({ nextStep }) => {
   return (
     <>
       <Button
+        id={`${currentStep.id}-next-button`}
         variant="primary"
+        type="button"
         isDisabled={hasErrors && nextHasBeenClicked}
         onClick={handleClick}
       >
         Next
       </Button>
-      <Button variant="secondary" onClick={handlePrev}>
+      <Button
+        id={`${currentStep.id}-previous-button`}
+        variant="secondary"
+        type="button"
+        onClick={handlePrev}
+      >
         Back
       </Button>
       <div className="pf-c-wizard__footer-cancel">
-        <Button type="button" variant="link" onClick={formOptions.onCancel}>
+        <Button
+          id={`${currentStep.id}-cancel-button`}
+          type="button"
+          variant="link"
+          onClick={formOptions.onCancel}
+        >
           Cancel
         </Button>
       </div>
@@ -53,6 +66,8 @@ const FileSystemConfigButtons = ({ nextStep }) => {
 };
 
 FileSystemConfigButtons.propTypes = {
+  handleNext: PropTypes.func,
+  handlePrev: PropTypes.func,
   nextStep: PropTypes.string,
 };
 

@@ -1,5 +1,5 @@
 import StepTemplate from './stepTemplate';
-import CustomButtons from '../formComponents/CustomSubmitButtons';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
