@@ -26,10 +26,15 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   );
 
   if (!error) {
-    image = image.isClone ? parent : image;
+    const provisionedImage = image.isClone ? parent : image;
     return (
       <Suspense fallback="loading">
-        <Button variant="link" isInline onClick={() => openWizard(true)}>
+        <Button
+          isDisabled={image.status !== 'success'}
+          variant="link"
+          isInline
+          onClick={() => openWizard(true)}
+        >
           Launch
         </Button>
         {wizardOpen && (
@@ -37,9 +42,9 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
             isOpen
             onClose={() => openWizard(false)}
             image={{
-              name: image.imageName,
-              id: image.id,
-              architecture: image.architecture,
+              name: provisionedImage.imageName,
+              id: provisionedImage.id,
+              architecture: provisionedImage.architecture,
             }}
           />
         )}
