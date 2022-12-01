@@ -5,6 +5,7 @@ import { Button, Text, TextContent, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
@@ -23,6 +24,7 @@ export default {
       skipGoogle: true,
       skipAzure: true,
     }),
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,

@@ -2,6 +2,7 @@ import React from 'react';
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import StepTemplate from './stepTemplate';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
@@ -9,6 +10,7 @@ export default {
   name: 'image-name',
   title: 'Name image',
   nextStep: 'review',
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,

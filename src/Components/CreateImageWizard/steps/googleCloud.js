@@ -14,6 +14,7 @@ import {
 import PropTypes from 'prop-types';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export const googleAccType = {
   googleAccount: 'Google account',
@@ -91,6 +92,7 @@ export default {
   substepOf: 'Target environment',
   nextStep: ({ values }) =>
     nextStepMapper(values, { skipGoogle: true, skipAws: true }),
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,

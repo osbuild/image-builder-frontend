@@ -5,6 +5,7 @@ import { HelperText, HelperTextItem, Title } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 import { DEFAULT_AWS_REGION } from '../../../constants';
+import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
   StepTemplate,
@@ -18,6 +19,7 @@ export default {
   name: 'aws-target-env',
   substepOf: 'Target environment',
   nextStep: ({ values }) => nextStepMapper(values, { skipAws: true }),
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,
