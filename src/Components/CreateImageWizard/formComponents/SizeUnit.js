@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
 import {
   Select,
   SelectOption,
   SelectVariant,
   TextInput,
 } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
 

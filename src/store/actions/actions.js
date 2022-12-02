@@ -1,10 +1,10 @@
+import api from '../../api';
 import { cloneAdded, cloneUpdatedStatus } from '../clonesSlice';
 import {
   composeAdded,
   composesUpdatedCount,
   composeUpdatedStatus,
 } from '../composesSlice';
-import api from '../../api';
 
 export const fetchComposeStatus = (id) => async (dispatch) => {
   const request = await api.getComposeStatus(id);

@@ -1,6 +1,7 @@
+import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
-import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
+
 import clonesSlice from './clonesSlice';
 import composesSlice from './composesSlice';
 

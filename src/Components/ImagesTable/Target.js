@@ -1,6 +1,8 @@
 import React from 'react';
+
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+
 import { selectComposeById } from '../../store/composesSlice';
 
 const Target = ({ composeId }) => {

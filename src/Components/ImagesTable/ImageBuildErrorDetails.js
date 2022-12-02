@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Alert } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 const useGetErrorReason = (err) => {
   if (!err?.reason) {

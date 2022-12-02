@@ -1,8 +1,10 @@
 import React from 'react';
+
 import { screen } from '@testing-library/react';
-import { renderWithReduxRouter } from '../../testUtils';
-import LandingPage from '../../../Components/LandingPage/LandingPage';
+
 import api from '../../../api.js';
+import LandingPage from '../../../Components/LandingPage/LandingPage';
+import { renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('../../../store/actions/actions', () => {
   return {

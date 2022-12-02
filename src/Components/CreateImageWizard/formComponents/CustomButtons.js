@@ -1,7 +1,8 @@
 import React, { useContext, useState } from 'react';
-import { Button } from '@patternfly/react-core';
+
 import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
+import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 const CustomButtons = ({

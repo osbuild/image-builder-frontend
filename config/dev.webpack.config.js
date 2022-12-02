@@ -1,7 +1,8 @@
 const { resolve } = require('path');
-const { DefinePlugin } = require('webpack');
-const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
+
 const config = require('@redhat-cloud-services/frontend-components-config');
+const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
 const webpackProxy = {
   useProxy: true,

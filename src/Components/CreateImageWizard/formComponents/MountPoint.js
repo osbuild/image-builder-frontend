@@ -1,12 +1,14 @@
-import path from 'path';
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
+import path from 'path';
+
 import {
   Select,
   SelectOption,
   SelectVariant,
   TextInput,
 } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 const MountPoint = ({ ...props }) => {
   // check '/' last!

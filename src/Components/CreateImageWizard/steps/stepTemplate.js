@@ -1,6 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import { Title } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 const StepTemplate = ({
   id,

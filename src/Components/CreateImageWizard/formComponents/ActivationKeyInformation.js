@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+
+import { useFormApi } from '@data-driven-forms/react-form-renderer';
 import {
   Text,
   TextContent,
@@ -8,7 +10,6 @@ import {
   TextListVariants,
   TextVariants,
 } from '@patternfly/react-core';
-import { useFormApi } from '@data-driven-forms/react-form-renderer';
 import { Button, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import {
@@ -19,6 +20,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+
 import api from '../../../api';
 
 const ActivationKeyInformation = () => {

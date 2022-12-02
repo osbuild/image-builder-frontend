@@ -1,9 +1,12 @@
 import React, { Suspense, useState } from 'react';
-import PropTypes from 'prop-types';
+
 import { Button } from '@patternfly/react-core';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+
 import ImageLinkDirect from './ImageLinkDirect';
+
 import { selectImageById } from '../../store/composesSlice';
 import { selectComposeById } from '../../store/composesSlice';
 

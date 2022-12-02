@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import { Flex } from '@patternfly/react-core';
 import {
@@ -10,15 +9,16 @@ import {
   OffIcon,
   PendingIcon,
 } from '@patternfly/react-icons';
-
+import PropTypes from 'prop-types';
 import './ImageBuildStatus.scss';
 import { useSelector } from 'react-redux';
+
+import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import {
   selectImageById,
   selectImageStatusesById,
 } from '../../store/composesSlice';
 import { hoursToExpiration } from '../../Utilities/time';
-import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 
 export const ImageBuildStatus = ({ imageId }) => {
   const image = useSelector((state) => selectImageById(state, imageId));

@@ -1,10 +1,13 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Button, Text, TextContent, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+
 import CustomButtons from '../formComponents/CustomButtons';
 
 export default {

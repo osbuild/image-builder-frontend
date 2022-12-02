@@ -1,9 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  HelpIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-} from '@patternfly/react-icons';
+
+import { FormSpy } from '@data-driven-forms/react-form-renderer';
+import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Alert,
   Button,
@@ -13,6 +12,12 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import {
+  HelpIcon,
+  MinusCircleIcon,
+  PlusCircleIcon,
+} from '@patternfly/react-icons';
+import styles from '@patternfly/react-styles/css/components/Table/table';
+import {
   TableComposable,
   Tbody,
   Td,
@@ -20,14 +25,11 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import styles from '@patternfly/react-styles/css/components/Table/table';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import { v4 as uuidv4 } from 'uuid';
 
-import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import MountPoint from './MountPoint';
 import SizeUnit from './SizeUnit';
+
 import { UNIT_GIB } from '../../../constants';
 
 let initialRow = {

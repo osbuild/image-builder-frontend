@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 
 import React from 'react';
+
 import {
   act,
   screen,
@@ -9,10 +10,11 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithReduxRouter } from '../../testUtils';
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
+
 import api from '../../../api.js';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import { RHEL_8 } from '../../../constants.js';
+import { renderWithReduxRouter } from '../../testUtils';
 
 let history = undefined;
 let store = undefined;

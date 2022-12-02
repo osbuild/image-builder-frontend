@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Button,
   DescriptionList,
@@ -21,6 +22,7 @@ import {
   TextListVariants,
   TextVariants,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import {
   TableComposable,
   Tbody,
@@ -29,12 +31,13 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { HelpIcon } from '@patternfly/react-icons';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import PropTypes from 'prop-types';
+
 import ActivationKeyInformation from './ActivationKeyInformation';
-import { googleAccType } from '../steps/googleCloud';
+
 import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
 import isRhel from '../../../Utilities/isRhel';
+import { googleAccType } from '../steps/googleCloud';
 
 const FSReviewTable = ({ ...props }) => {
   return (
