@@ -151,7 +151,7 @@ export default {
         },
         {
           type: validatorTypes.PATTERN,
-          pattern: '[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$',
+          pattern: '^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$',
           message: 'Please enter a valid email address',
         },
       ],
