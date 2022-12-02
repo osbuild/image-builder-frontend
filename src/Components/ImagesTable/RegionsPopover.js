@@ -1,8 +1,10 @@
 import React, { useMemo } from 'react';
-import PropTypes from 'prop-types';
+
 import { Button, Popover } from '@patternfly/react-core';
-import { useSelector } from 'react-redux';
 import { createSelector } from '@reduxjs/toolkit';
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
 
 export const selectRegions = createSelector(

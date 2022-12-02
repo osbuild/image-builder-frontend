@@ -1,8 +1,11 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Text } from '@patternfly/react-core';
+
 import StepTemplate from './stepTemplate';
+
 import FileSystemConfigButtons from '../formComponents/FileSystemConfigButtons';
 
 export default {

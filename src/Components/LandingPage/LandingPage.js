@@ -2,14 +2,13 @@
 
 import React, { Component } from 'react';
 
+import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
+import { GithubIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
-
-import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
-import { GithubIcon, HelpIcon } from '@patternfly/react-icons';
 
 import ImagesTable from '../ImagesTable/ImagesTable';
 import './LandingPage.scss';

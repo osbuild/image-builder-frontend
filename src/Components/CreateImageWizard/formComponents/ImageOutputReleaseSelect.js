@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
+import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   FormGroup,
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import PropTypes from 'prop-types';
+
 import { RELEASES } from '../../../constants';
 import isRhel from '../../../Utilities/isRhel';
 

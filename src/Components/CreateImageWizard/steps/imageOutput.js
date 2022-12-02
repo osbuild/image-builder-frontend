@@ -1,9 +1,12 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { Text } from '@patternfly/react-core';
+
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+
 import { RHEL_9 } from '../../../constants.js';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import CustomButtons from '../formComponents/CustomButtons';

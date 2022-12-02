@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
+
+import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { useStore } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import '@patternfly/patternfly/patternfly-addons.css';
-import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 
 import { Router } from './Router';
 import { resolveRelPath } from './Utilities/path';

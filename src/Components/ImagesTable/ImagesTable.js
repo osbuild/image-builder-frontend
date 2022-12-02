@@ -1,17 +1,5 @@
-import PropTypes from 'prop-types';
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
-import {
-  ActionsColumn,
-  ExpandableRowContent,
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+
 import {
   EmptyState,
   EmptyStateBody,
@@ -26,21 +14,36 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
+import {
+  ActionsColumn,
+  ExpandableRowContent,
+  TableComposable,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@patternfly/react-table';
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+
 import './ImagesTable.scss';
+import ClonesTable from './ClonesTable';
+import ErrorDetails from './ImageBuildErrorDetails';
 import { ImageBuildStatus } from './ImageBuildStatus';
+import ImageLink from './ImageLink';
 import Release from './Release';
 import Target from './Target';
-import ImageLink from './ImageLink';
-import ErrorDetails from './ImageBuildErrorDetails';
-import ClonesTable from './ClonesTable';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
+
+import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import { fetchComposes, fetchComposeStatus } from '../../store/actions/actions';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   hoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
-import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
+import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);

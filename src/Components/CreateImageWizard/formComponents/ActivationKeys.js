@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+
+import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   FormGroup,
   Select,
@@ -7,8 +9,8 @@ import {
   SelectVariant,
   Spinner,
 } from '@patternfly/react-core';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import PropTypes from 'prop-types';
+
 import api from '../../../api';
 
 const ActivationKeys = ({ label, isRequired, ...props }) => {

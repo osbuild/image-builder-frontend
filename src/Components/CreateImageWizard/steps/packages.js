@@ -1,7 +1,10 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { Text } from '@patternfly/react-core';
+
 import StepTemplate from './stepTemplate';
+
 import CustomButtons from '../formComponents/CustomButtons';
 
 export default {

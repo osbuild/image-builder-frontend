@@ -1,20 +1,22 @@
 import React from 'react';
-import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
-import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';
+
 import { componentMapper } from '@data-driven-forms/pf4-component-mapper';
+import Pf4FormTemplate from '@data-driven-forms/pf4-component-mapper/form-template';
+import Select from '@data-driven-forms/pf4-component-mapper/select';
+import FormRenderer from '@data-driven-forms/react-form-renderer/form-renderer';
 import { Spinner } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
-import Select from '@data-driven-forms/pf4-component-mapper/select';
-import Review from './formComponents/ReviewStep';
-import TargetEnvironment from './formComponents/TargetEnvironment';
+
+import ActivationKeys from './formComponents/ActivationKeys';
+import AzureAuthButton from './formComponents/AzureAuthButton';
+import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
+import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
+import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
+import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
-import AzureAuthButton from './formComponents/AzureAuthButton';
-import ActivationKeys from './formComponents/ActivationKeys';
-import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
-import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
-import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
-import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
+import Review from './formComponents/ReviewStep';
+import TargetEnvironment from './formComponents/TargetEnvironment';
 
 const ImageCreator = ({
   schema,

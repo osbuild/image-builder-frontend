@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Checkbox,
   FormGroup,
@@ -9,6 +9,7 @@ import {
   TextVariants,
   Tile,
 } from '@patternfly/react-core';
+import PropTypes from 'prop-types';
 
 const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const { getState, change } = useFormApi();

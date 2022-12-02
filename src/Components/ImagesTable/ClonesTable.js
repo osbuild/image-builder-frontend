@@ -1,5 +1,5 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+
 import {
   TableComposable,
   Tbody,
@@ -8,9 +8,12 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
+
 import { ImageBuildStatus } from './ImageBuildStatus';
 import ImageLink from './ImageLink';
+
 import {
   selectClonesById,
   selectComposeById,

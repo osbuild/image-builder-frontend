@@ -1,7 +1,8 @@
 import React, { lazy } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 
+import { Route, Routes } from 'react-router-dom';
+
+import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { resolveRelPath } from './Utilities/path';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));

@@ -1,7 +1,7 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { HelpIcon } from '@patternfly/react-icons';
 import {
   Button,
   Popover,
@@ -11,9 +11,12 @@ import {
   TextListItem,
   Title,
 } from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
+
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+
 import CustomButtons from '../formComponents/CustomButtons';
 
 export const googleAccType = {

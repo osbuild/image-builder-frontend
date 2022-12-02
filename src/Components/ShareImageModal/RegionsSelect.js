@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+
 import {
   ActionGroup,
   Button,
@@ -12,13 +11,16 @@ import {
   SelectVariant,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, HelpIcon } from '@patternfly/react-icons';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { createSelector } from '@reduxjs/toolkit';
+import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { createSelector } from '@reduxjs/toolkit';
-import { AWS_REGIONS } from '../../constants';
-import { selectClonesById, selectComposeById } from '../../store/composesSlice';
+
 import api from '../../api';
+import { AWS_REGIONS } from '../../constants';
 import { cloneAdded } from '../../store/clonesSlice';
+import { selectClonesById, selectComposeById } from '../../store/composesSlice';
 import { resolveRelPath } from '../../Utilities/path';
 
 export const selectRegionsToDisable = createSelector(

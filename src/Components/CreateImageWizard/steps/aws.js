@@ -1,9 +1,12 @@
 import React from 'react';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
 import { HelperText, HelperTextItem, Title } from '@patternfly/react-core';
+
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
+
 import { DEFAULT_AWS_REGION } from '../../../constants';
 import CustomButtons from '../formComponents/CustomButtons';
 

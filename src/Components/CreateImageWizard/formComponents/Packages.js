@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import PropTypes from 'prop-types';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   DualListSelector,
   DualListSelectorControl,
@@ -18,6 +18,8 @@ import {
   AngleLeftIcon,
   AngleRightIcon,
 } from '@patternfly/react-icons';
+import PropTypes from 'prop-types';
+
 import api from '../../../api';
 
 // the fields isHidden and isSelected should not be included in the package list sent for image creation

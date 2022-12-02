@@ -1,16 +1,18 @@
 import React from 'react';
+
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
+
 import api from '../../../api.js';
-import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
-import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import { ImageBuildStatus } from '../../../Components/ImagesTable/ImageBuildStatus';
 import ImageLink from '../../../Components/ImagesTable/ImageLink';
+import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
-import { timestampToDisplayString } from '../../../Utilities/time.js';
 import { RHEL_8 } from '../../../constants.js';
+import { timestampToDisplayString } from '../../../Utilities/time.js';
+import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
 
 const currentDate = new Date();
 let currentDateInString = currentDate.toString();

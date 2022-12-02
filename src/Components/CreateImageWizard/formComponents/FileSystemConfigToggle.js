@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { ToggleGroup, ToggleGroupItem } from '@patternfly/react-core';
 
 const FileSystemConfigToggle = ({ ...props }) => {
   const { change, getState } = useFormApi();

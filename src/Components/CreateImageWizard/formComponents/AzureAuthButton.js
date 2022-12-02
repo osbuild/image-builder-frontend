@@ -1,6 +1,7 @@
 import React from 'react';
-import { Button, FormGroup } from '@patternfly/react-core';
+
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { Button, FormGroup } from '@patternfly/react-core';
 
 const AzureAuthButton = () => {
   const { getState } = useFormApi();

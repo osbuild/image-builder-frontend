@@ -1,5 +1,5 @@
-import composesSlice from '../../store/composesSlice';
 import { RHEL_8 } from '../../constants.js';
+import composesSlice from '../../store/composesSlice';
 
 const compose = {
   id: '77e4c693-0497-4b85-936d-b2a3ad69571b',

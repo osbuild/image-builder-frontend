@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+
 import { Modal } from '@patternfly/react-core';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import RegionsSelect from './RegionsSelect';
+
 import { resolveRelPath } from '../../Utilities/path';
 
 const ShareToRegionsModal = () => {

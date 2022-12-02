@@ -1,11 +1,13 @@
 import React from 'react';
+
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithReduxRouter } from '../../testUtils';
-import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
+
 import api from '../../../api.js';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { RHEL_8 } from '../../../constants.js';
+import { renderWithReduxRouter } from '../../testUtils';
 
 const mockComposes = {
   count: 1,

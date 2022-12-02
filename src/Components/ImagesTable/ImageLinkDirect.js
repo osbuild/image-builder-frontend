@@ -1,7 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 import {
   Button,
@@ -11,7 +8,12 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+
 import { RegionsPopover } from './RegionsPopover';
+
 import { selectImageById } from '../../store/composesSlice';
 import { resolveRelPath } from '../../Utilities/path';
 

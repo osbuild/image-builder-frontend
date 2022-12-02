@@ -1,8 +1,10 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import ImageCreator from './ImageCreator';
 import {
   awsTarget,
@@ -19,13 +21,14 @@ import {
   fileSystemConfigurationValidator,
   targetEnvironmentValidator,
 } from './validators';
-import { composeAdded } from '../../store/composesSlice';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
+
 import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
+import { composeAdded } from '../../store/composesSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
+import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 const handleKeyDown = (e, handleClose) => {
   if (e.key === 'Escape') {
