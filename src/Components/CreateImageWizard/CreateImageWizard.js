@@ -77,7 +77,7 @@ const onSave = (values) => {
       image_requests: [
         {
           architecture: 'x86_64',
-          image_type: 'ami',
+          image_type: 'aws',
           upload_request: {
             type: 'aws',
             options: {
@@ -136,7 +136,7 @@ const onSave = (values) => {
       image_requests: [
         {
           architecture: 'x86_64',
-          image_type: 'vhd',
+          image_type: 'azure',
           upload_request: {
             type: 'azure',
             options: {

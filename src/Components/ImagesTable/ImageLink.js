@@ -68,7 +68,10 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
 
   if (!uploadStatus) return null;
 
-  if (hasProvisioning && image.imageType === 'ami') {
+  if (
+    hasProvisioning &&
+    (image.imageType === 'aws' || image.imageType === 'ami')
+  ) {
     return (
       <ProvisioningLink
         imageId={image.id}

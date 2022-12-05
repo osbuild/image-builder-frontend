@@ -95,7 +95,10 @@ export const ImageBuildStatus = ({ imageId }) => {
   };
 
   let status;
-  if (image.imageType === 'aws') {
+  if (
+    !image.isClone &&
+    (image.imageType === 'aws' || image.imageType === 'ami')
+  ) {
     const imageStatuses = useSelector((state) =>
       selectImageStatusesById(state, image.id)
     );
