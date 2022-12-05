@@ -41,7 +41,7 @@ export const selectCloneById = (state, cloneId) => {
       status: clone.image_status?.status,
       uploadStatus: clone.image_status?.upload_status,
       parent: clone.parent,
-      imageType: 'ami',
+      imageType: 'aws',
       isClone: true,
     };
   } else {

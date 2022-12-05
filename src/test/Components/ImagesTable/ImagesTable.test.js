@@ -31,7 +31,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {
@@ -51,7 +51,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'vhd',
+            image_type: 'gcp',
             upload_request: {
               type: 'gcp',
               options: {
@@ -70,7 +70,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {},
@@ -87,7 +87,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {},
@@ -104,7 +104,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {},
@@ -121,7 +121,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {},
@@ -138,7 +138,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'ami',
+            image_type: 'aws',
             upload_request: {
               type: 'aws',
               options: {},
@@ -155,7 +155,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'vhd',
+            image_type: 'gcp',
             upload_request: {
               type: 'gcp',
               options: {
@@ -174,7 +174,7 @@ const mockComposes = {
         image_requests: [
           {
             architecture: 'x86_64',
-            image_type: 'vhd',
+            image_type: 'azure',
             upload_request: {
               type: 'azure',
               options: {},
