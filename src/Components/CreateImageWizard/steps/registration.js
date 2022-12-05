@@ -23,8 +23,12 @@ const PopoverActivation = () => {
       bodyContent={
         <TextContent>
           <Text>
-            Activation keys allow you to register a system with appropriate
-            subscriptions and system purpose attached.
+            Activation keys enable you to register a system with appropriate
+            subscriptions, system purpose, and repositories attached.
+            <br />
+            <br />
+            If using an activation key with command line registration, you must
+            provide your organization&apos;s ID.
           </Text>
         </TextContent>
       }
@@ -142,6 +146,12 @@ export default {
       condition: {
         or: [{ when: 'register-system', is: 'register-later' }],
       },
+    },
+    {
+      component: 'activation-key-information',
+      name: 'subscription-activation-key-information',
+      label: 'Selected activation key',
+      valueReference: 'subscription-activation-key',
     },
   ],
 };

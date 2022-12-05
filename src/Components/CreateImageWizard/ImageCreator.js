@@ -15,6 +15,7 @@ import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 import Packages from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
+import RegistrationKeyInformation from './formComponents/RegistrationKeyInformation';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
 
@@ -51,6 +52,7 @@ const ImageCreator = ({
         'radio-popover': RadioWithPopover,
         'azure-auth-button': AzureAuthButton,
         'activation-keys': ActivationKeys,
+        'activation-key-information': RegistrationKeyInformation,
         'file-system-config-toggle': FileSystemConfigToggle,
         'file-system-configuration': FileSystemConfiguration,
         'image-output-release-select': ImageOutputReleaseSelect,
