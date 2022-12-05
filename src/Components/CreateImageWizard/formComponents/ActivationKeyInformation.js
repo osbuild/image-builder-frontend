@@ -66,7 +66,7 @@ const ActivationKeyInformation = () => {
             {usage || 'Not defined'}
           </TextListItem>
           <TextListItem component={TextListItemVariants.dt}>
-            Additional <br /> repositories:
+            Additional repositories:
             <Popover
               bodyContent={
                 <TextContent>
