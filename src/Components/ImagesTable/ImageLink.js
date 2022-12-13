@@ -64,7 +64,10 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const uploadStatus = image.uploadStatus;
 
   const scalprum = useScalprum();
-  const hasProvisioning = scalprum.initialized && scalprum.config?.provisioning;
+  const hasProvisioning =
+    scalprum.initialized &&
+    scalprum.config?.provisioning &&
+    insights?.chrome.isBeta();
 
   if (!uploadStatus) return null;
 
