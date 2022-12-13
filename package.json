@@ -91,6 +91,7 @@
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
     "prod-beta": "BETA=true PROXY=true webpack serve --config config/dev.webpack.config.js",
     "prod-stable": "PROXY=true webpack serve --config config/dev.webpack.config.js",
+    "stage-stable": "STAGE=true npm run prod-stable",
     "stage-beta": "STAGE=true npm run prod-beta",
     "test": "TZ=UTC jest --verbose --no-cache",
     "test:single": "jest --verbose -w 1",
