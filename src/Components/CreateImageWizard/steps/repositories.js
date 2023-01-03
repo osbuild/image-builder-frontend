@@ -9,7 +9,7 @@ import StepTemplate from './stepTemplate';
 export default {
   StepTemplate,
   id: 'wizard-repositories',
-  title: '3rd party repositories',
+  title: 'Custom repositories',
   name: 'repositories',
   substepOf: 'Content',
   nextStep: ({ values }) => nextStepMapper(values),
@@ -19,18 +19,18 @@ export default {
       name: 'packages-text-component',
       label: (
         <Text>
-          Select third party repositories from which to search and add packages
-          to this image.
+          Select custom repositories from which to search and add packages to
+          this image.
           <br />
-          Third party repositories can be managed using the Repositories app on
-          Red Hat Insights.
+          Custom repositories can be managed using the Repositories app on Red
+          Hat Insights.
         </Text>
       ),
     },
     {
       component: 'repositories-table',
-      name: 'third-party-repositories',
-      label: 'Third party repositories',
+      name: 'custom-repositories',
+      label: 'Custom repositories',
     },
   ],
 };

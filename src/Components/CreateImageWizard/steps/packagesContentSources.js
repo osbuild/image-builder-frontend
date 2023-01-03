@@ -8,7 +8,7 @@ import StepTemplate from './stepTemplate';
 export default {
   StepTemplate,
   id: 'wizard-systemconfiguration-content-sources-packages',
-  title: 'Additional 3rd Party Packages',
+  title: 'Additional custom packages',
   name: 'packages-content-sources',
   substepOf: 'Content',
   nextStep: 'image-name',

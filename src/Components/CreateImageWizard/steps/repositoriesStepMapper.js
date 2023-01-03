@@ -1,7 +1,5 @@
-export default ({
-  'third-party-repositories': thirdPartyRepositories,
-} = {}) => {
-  if (thirdPartyRepositories?.length > 0) {
+export default ({ 'custom-repositories': customRepositories } = {}) => {
+  if (customRepositories?.length > 0) {
     return 'packages-content-sources';
   }
 
