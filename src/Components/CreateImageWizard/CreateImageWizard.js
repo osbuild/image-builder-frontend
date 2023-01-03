@@ -359,9 +359,15 @@ const requestToState = (composeRequest) => {
     formState['selected-packages'] = packs;
 
     // repositories
-    // 'payload-repositories' is treated as read-only and is used to populate
-    // the table in the repositories table
-    formState['payload-repositories'] =
+    // 'original-payload-repositories' is treated as read-only and is used to populate
+    // the table in the repositories step
+    // This is necessary because there may be repositories present in the request's
+    // json blob that are not managed using the content sources API. In that case,
+    // they are still displayed in the table of repositories but without any information
+    // from the content sources API (in other words, only the URL of the repository is
+    // displayed). This information needs to persist throughout the lifetime of the
+    // Wizard as it is needed every time the repositories step is visited.
+    formState['original-payload-repositories'] =
       composeRequest?.customizations?.payload_repositories;
     // 'custom-repositories' is mutable and is used to generate the request
     // sent to image-builder

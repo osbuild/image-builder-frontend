@@ -135,7 +135,8 @@ const Repositories = (props) => {
 
     // Repositories in the form state can be present when 'Recreate image' is used
     // to open the wizard that are not necessarily in content sources.
-    const formStateReposList = getState()?.values?.['payload-repositories'];
+    const formStateReposList =
+      getState()?.values?.['original-payload-repositories'];
 
     const mergeRepositories = (contentSourcesRepos, formStateReposList) => {
       const formStateRepos = {};
