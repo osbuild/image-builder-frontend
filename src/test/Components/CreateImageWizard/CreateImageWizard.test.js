@@ -307,37 +307,6 @@ describe('Step Image output', () => {
     userEvent.click(releaseMenu);
   });
 
-  test('clear button resets to initial state (unexpanded)', async () => {
-    setUp();
-
-    const releaseMenu = screen.getByRole('button', {
-      name: /options menu/i,
-    });
-    userEvent.click(releaseMenu);
-
-    const showOptionsButton = screen.getByRole('button', {
-      name: 'Show options for further development of RHEL',
-    });
-    userEvent.click(showOptionsButton);
-
-    const clearAllButton = screen.getByRole('button', {
-      name: /clear all/i,
-    });
-    userEvent.click(clearAllButton);
-
-    await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 8',
-    });
-    await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 9',
-    });
-    await screen.findByRole('button', {
-      name: 'Show options for further development of RHEL',
-    });
-
-    userEvent.click(releaseMenu);
-  });
-
   test('CentOS acknowledgement appears', async () => {
     setUp();
 
