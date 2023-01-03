@@ -1,6 +1,7 @@
 import React, { Suspense, useState } from 'react';
 
 import { Button } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
@@ -62,12 +63,13 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
 const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
   const uploadStatus = image.uploadStatus;
+  const { initiated: chromeInitiated, isBeta, getEnvironment } = useChrome();
 
   const scalprum = useScalprum();
   const hasProvisioning =
-    scalprum.initialized &&
+    chromeInitiated &&
     scalprum.config?.provisioning &&
-    insights?.chrome.isBeta();
+    (isBeta() || getEnvironment() === 'qa');
 
   if (!uploadStatus) return null;
 
