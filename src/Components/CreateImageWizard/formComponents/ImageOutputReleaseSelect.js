@@ -24,11 +24,6 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
     setIsOpen(false);
   };
 
-  const handleClear = () => {
-    change(input.name, null);
-    setShowDevelopmentOptions(false);
-  };
-
   const handleExpand = () => {
     setShowDevelopmentOptions(true);
   };
@@ -39,7 +34,6 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
         variant={SelectVariant.single}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={setRelease}
-        onClear={handleClear}
         selections={RELEASES[getState()?.values?.[input.name]]}
         isOpen={isOpen}
         {...(!showDevelopmentOptions && {
