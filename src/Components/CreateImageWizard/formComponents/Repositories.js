@@ -166,10 +166,8 @@ const Repositories = (props) => {
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(
-    getState()?.values?.['third-party-repositories']
-      ? getState().values['third-party-repositories'].map(
-          (repo) => repo.baseurl
-        )
+    getState()?.values?.['custom-repositories']
+      ? getState().values['custom-repositories'].map((repo) => repo.baseurl)
       : []
   );
 
@@ -264,12 +262,12 @@ const Repositories = (props) => {
         <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
           <EmptyStateIcon icon={RepositoryIcon} />
           <Title headingLevel="h4" size="lg">
-            No Third Party Repositories
+            No Custom Repositories
           </Title>
           <EmptyStateBody>
-            Third party repositories managed via the Red Hat Insights
-            Repositories app will be available here to select and use to search
-            for additional packages.
+            Custom repositories managed via the Red Hat Insights Repositories
+            app will be available here to select and use to search for
+            additional packages.
           </EmptyStateBody>
           <Button
             variant="primary"

@@ -584,7 +584,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('button', { name: 'File system configuration' });
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
-    screen.getByRole('button', { name: '3rd party repositories' });
+    screen.getByRole('button', { name: 'Custom repositories' });
     screen.getByRole('button', { name: 'Name image' });
     screen.getByRole('button', { name: 'Review' });
   });
@@ -715,7 +715,7 @@ describe('Step Packages', () => {
     // remove a single package
     screen.getByTestId('selected-pkgs-lib-test').click();
     screen.getByRole('button', { name: /Remove selected/ }).click();
-    // skip 3rd party repositories page
+    // skip Custom repositories page
     screen.getByRole('button', { name: /Next/ }).click();
 
     // skip name page
@@ -868,7 +868,7 @@ describe('Step Packages', () => {
   });
 });
 
-describe('Step 3rd party repositories', () => {
+describe('Step Custom repositories', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
 
@@ -1172,12 +1172,12 @@ describe('Click through all steps', () => {
     screen.getByRole('button', { name: /Add selected/ }).click();
     getNextButton().click();
 
-    // 3rd party repositories
+    // Custom repositories
     userEvent.click(screen.getByRole('checkbox', { name: /select row 0/i }));
     userEvent.click(screen.getByRole('checkbox', { name: /select row 1/i }));
     getNextButton().click();
 
-    // 3rd party packages
+    // Custom packages
     getNextButton().click();
 
     // Enter image name

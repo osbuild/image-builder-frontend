@@ -61,7 +61,7 @@ export const ContentSourcesPackages = () => {
   const { getState } = useFormApi();
 
   const getAllPackages = async (packagesSearchName) => {
-    const repos = getState()?.values?.['third-party-repositories'];
+    const repos = getState()?.values?.['custom-repositories'];
     const repoUrls = repos?.map((repo) => repo.baseurl);
     return await api.getPackagesContentSources(repoUrls, packagesSearchName);
   };

@@ -45,10 +45,8 @@ const onSave = (values) => {
     packages: values['selected-packages']?.map((p) => p.name),
   };
 
-  if (values['third-party-repositories']?.length > 0) {
-    customizations['payload_repositories'] = [
-      ...values['third-party-repositories'],
-    ];
+  if (values['custom-repositories']?.length > 0) {
+    customizations['payload_repositories'] = [...values['custom-repositories']];
   }
 
   if (values['register-system'] === 'register-now-insights') {
@@ -365,9 +363,9 @@ const requestToState = (composeRequest) => {
     // the table in the repositories table
     formState['payload-repositories'] =
       composeRequest?.customizations?.payload_repositories;
-    // 'third-party-repositories' is mutable and is used to generate the request
+    // 'custom-repositories' is mutable and is used to generate the request
     // sent to image-builder
-    formState['third-party-repositories'] =
+    formState['custom-repositories'] =
       composeRequest?.customizations?.payload_repositories;
 
     // filesystem
@@ -439,9 +437,9 @@ const formStepHistory = (composeRequest) => {
     if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
       steps.push('File system configuration', 'packages', 'repositories');
 
-      const thirdPartyRepositories =
+      const customRepositories =
         composeRequest.customizations?.payload_repositories;
-      if (thirdPartyRepositories) {
+      if (customRepositories) {
         steps.push('packages-content-sources');
       }
     } else {
@@ -546,7 +544,7 @@ const CreateImageWizard = () => {
             crossroads: [
               'target-environment',
               'release',
-              'third-party-repositories',
+              'custom-repositories',
             ],
             description: (
               <>
