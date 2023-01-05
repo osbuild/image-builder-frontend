@@ -497,7 +497,7 @@ describe('Images Table', () => {
         expect(row.cells[5]).toHaveTextContent('Expired');
       } else {
         renderWithProvider(
-          <ImageBuildStatus imageId={compose.id} />,
+          <ImageBuildStatus imageId={compose.id} isImagesTableRow={true} />,
           testElement,
           state
         );
