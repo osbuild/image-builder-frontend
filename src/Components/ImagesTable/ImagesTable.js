@@ -253,7 +253,10 @@ const ImagesTable = () => {
                         <Target composeId={id} />
                       </Td>
                       <Td dataLabel="Status">
-                        <ImageBuildStatus imageId={id} />
+                        <ImageBuildStatus
+                          imageId={id}
+                          isImagesTableRow={true}
+                        />
                       </Td>
                       <Td dataLabel="Instance">
                         <ImageLink

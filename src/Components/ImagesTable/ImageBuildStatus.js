@@ -20,7 +20,7 @@ import {
 } from '../../store/composesSlice';
 import { hoursToExpiration } from '../../Utilities/time';
 
-export const ImageBuildStatus = ({ imageId }) => {
+export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
   const remainingHours =
@@ -96,9 +96,15 @@ export const ImageBuildStatus = ({ imageId }) => {
 
   let status;
   if (
-    !image.isClone &&
+    isImagesTableRow &&
     (image.imageType === 'aws' || image.imageType === 'ami')
   ) {
+    // The ImageBuildStatus component is used by both the images table and the clones table.
+    // For 'aws' and 'ami' image rows in the images table, the highest priority status for
+    // *all* images (the parent image and its clones) should be displayed as the status.
+    // For instance, the parent and several of its clones may have a success status. But if a single
+    // clone has a failure status, then the status displayed in the images table row should be
+    // failure.
     const imageStatuses = useSelector((state) =>
       selectImageStatusesById(state, image.id)
     );
@@ -139,4 +145,5 @@ export const ImageBuildStatus = ({ imageId }) => {
 
 ImageBuildStatus.propTypes = {
   imageId: PropTypes.string,
+  isImagesTableRow: PropTypes.bool,
 };
