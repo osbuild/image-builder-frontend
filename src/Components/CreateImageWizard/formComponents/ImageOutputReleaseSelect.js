@@ -31,6 +31,7 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
   return (
     <FormGroup isRequired={isRequired} label={label}>
       <Select
+        ouiaId="release_select"
         variant={SelectVariant.single}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={setRelease}
