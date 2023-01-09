@@ -905,7 +905,7 @@ describe('Step Custom repositories', () => {
 
     // Display all repositories on one page
     screen.getByRole('button', { name: /items per page/i }).click();
-    screen.getByRole('button', { name: /100 per page/i }).click();
+    screen.getByRole('menuitem', { name: /100 per page/i }).click();
 
     // gnome-shell-extensions should not be present
     const table = await screen.findByTestId('repositories-table');
@@ -1161,10 +1161,9 @@ describe('Click through all steps', () => {
     screen.getByText(
       /Images built with Image Builder include all required packages/i
     );
-    await searchForAvailablePackages(
-      screen.getByTestId('search-available-pkgs-input'),
-      'test'
-    );
+
+    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+    await searchForAvailablePackages(searchbox, 'test');
     expect(getPackages).toHaveBeenCalledTimes(1);
     screen
       .getByRole('option', { name: /testPkg test package summary/ })

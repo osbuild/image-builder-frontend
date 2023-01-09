@@ -1471,10 +1471,9 @@ describe('Click through all steps', () => {
     screen.getByText(
       /Images built with Image Builder include all required packages/i
     );
-    await searchForAvailablePackages(
-      screen.getByTestId('search-available-pkgs-input'),
-      'test'
-    );
+
+    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+    await searchForAvailablePackages(searchbox, 'test');
     expect(getPackages).toHaveBeenCalledTimes(1);
     screen
       .getByRole('option', { name: /testPkg test package summary/ })
