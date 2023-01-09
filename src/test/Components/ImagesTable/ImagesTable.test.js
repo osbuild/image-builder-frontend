@@ -538,7 +538,7 @@ describe('Images Table', () => {
       name: 'Actions',
     });
     userEvent.click(actionsButton);
-    const recreateButton = screen.getByRole('button', {
+    const recreateButton = screen.getByRole('menuitem', {
       name: 'Recreate image',
     });
     userEvent.click(recreateButton);
@@ -570,7 +570,7 @@ describe('Images Table', () => {
     });
     userEvent.click(actionsButton);
 
-    const downloadButton = screen.getByRole('button', {
+    const downloadButton = screen.getByRole('menuitem', {
       name: 'Download compose request (.json)',
     });
 
