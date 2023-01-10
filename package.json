@@ -79,7 +79,7 @@
     "postcss-scss": "4.0.3",
     "prop-types": "15.8.1",
     "redux-mock-store": "1.5.4",
-    "sass": "1.49.9",
+    "sass": "1.57.1",
     "sass-loader": "13.0.2",
     "stylelint": "14.14.1",
     "stylelint-config-recommended-scss": "6.0.0",
