@@ -1118,10 +1118,7 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // fsc
-    const toggle = await screen.findByTestId(
-      'file-system-config-toggle-manual'
-    );
-    within(toggle).getByRole('button').click();
+    (await screen.findByTestId('file-system-config-radio-manual')).click();
     const ap = await screen.findByTestId('file-system-add-partition');
     ap.click();
     ap.click();

@@ -2,7 +2,14 @@ import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { Text } from '@patternfly/react-core';
+import {
+  Button,
+  Label,
+  Text,
+  TextContent,
+  TextVariants,
+} from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import StepTemplate from './stepTemplate';
 
@@ -21,21 +28,41 @@ export default {
       name: 'file-system-configuration-text-component',
       label: (
         <>
-          <Text>
-            Red Hat recommends using automatic partitioning for most
-            installations.
-          </Text>
-          <Text>
-            Alternatively, you may manually configure the file system of your
-            image by adding, removing, and editing partitions.
-          </Text>
+          <Text>Define the partitioning of the image</Text>
         </>
       ),
     },
     {
-      component: 'file-system-config-toggle',
-      name: 'file-system-config-toggle',
-      label: 'File system configurations toggle',
+      component: componentTypes.RADIO,
+      name: 'file-system-config-radio',
+      initialValue: 'automatic',
+      options: [
+        {
+          label: (
+            <>
+              <Text>
+                <Label isCompact color="blue">
+                  Recommended
+                </Label>{' '}
+                Use automatic partitioning
+              </Text>
+            </>
+          ),
+          description:
+            'Automatically partition your image to what is best, depending on the target environment(s)',
+          value: 'automatic',
+          'data-testid': 'file-system-config-radio-automatic',
+          autoFocus: true,
+        },
+        {
+          label: 'Manually configure partitions',
+          description:
+            'Manually configure the file system of your image by adding, removing, and editing partitions',
+          value: 'manual',
+          'data-testid': 'file-system-config-radio-manual',
+          className: 'pf-u-mt-sm',
+        },
+      ],
     },
     {
       component: 'file-system-configuration',
@@ -46,8 +73,45 @@ export default {
         { type: validatorTypes.REQUIRED },
       ],
       condition: {
-        when: 'file-system-config-toggle',
+        when: 'file-system-config-radio',
         is: 'manual',
+      },
+    },
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'automatic-partitioning-info',
+      label: (
+        <TextContent>
+          <Text component={TextVariants.h3}>Automatic partitioning</Text>
+          <Text>
+            Red Hat will automatically partition your image to what is best,
+            depending on the target environment(s).
+          </Text>
+          <Text>
+            The target environment sometimes dictates the partitioning scheme or
+            parts of it, and sometimes the target environment is unknown (e.g.,
+            for the .qcow2 generic cloud image).
+          </Text>
+          <Text>
+            Using automatic partitioning will apply the most current supported
+            configuration.
+            <br></br>
+            <Button
+              component="a"
+              target="_blank"
+              variant="link"
+              icon={<ExternalLinkAltIcon />}
+              iconPosition="right"
+              href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_a_standard_rhel_8_installation/partitioning-reference_installing-rhel#recommended-partitioning-scheme_partitioning-reference"
+              className="pf-u-pl-0"
+            >
+              Learn more
+            </Button>
+          </Text>
+        </TextContent>
+      ),
+      condition: {
+        or: [{ when: 'file-system-config-radio', is: 'automatic' }],
       },
     },
   ],

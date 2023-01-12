@@ -548,7 +548,7 @@ describe('Step Registration', () => {
 
     getNextButton().click();
 
-    screen.getByTestId('fsc-paritioning-toggle');
+    screen.getByRole('heading', { name: /file system configuration/i });
   });
 
   test('clicking Back loads Upload to AWS', async () => {
@@ -756,7 +756,7 @@ describe('Step Packages', () => {
     const back = screen.getByRole('button', { name: /Back/ });
     back.click();
 
-    screen.getByTestId('fsc-paritioning-toggle');
+    screen.getByRole('heading', { name: /file system configuration/i });
   });
 
   test('clicking Cancel loads landing page', async () => {
@@ -1428,10 +1428,10 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // fsc
-    const toggle = await screen.findByTestId(
-      'file-system-config-toggle-manual'
-    );
-    within(toggle).getByRole('button').click();
+    screen.getByRole('heading', {
+      name: /file system configuration/i,
+    });
+    screen.getByTestId('file-system-config-radio-manual').click();
     const ap = await screen.findByTestId('file-system-add-partition');
     ap.click();
     ap.click();

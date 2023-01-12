@@ -10,7 +10,6 @@ import PropTypes from 'prop-types';
 import ActivationKeys from './formComponents/ActivationKeys';
 import AzureAuthButton from './formComponents/AzureAuthButton';
 import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
-import FileSystemConfigToggle from './formComponents/FileSystemConfigToggle';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 import {
@@ -60,7 +59,6 @@ const ImageCreator = ({
         'azure-auth-button': AzureAuthButton,
         'activation-keys': ActivationKeys,
         'activation-key-information': RegistrationKeyInformation,
-        'file-system-config-toggle': FileSystemConfigToggle,
         'file-system-configuration': FileSystemConfiguration,
         'image-output-release-select': ImageOutputReleaseSelect,
         'centos-acknowledgement': CentOSAcknowledgement,
