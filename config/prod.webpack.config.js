@@ -17,6 +17,8 @@ plugins.push(
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry.js'),
       },
+      shared: [{ 'react-router-dom': { singleton: true } }],
+      exclude: ['react-router-dom'],
     }
   )
 );
