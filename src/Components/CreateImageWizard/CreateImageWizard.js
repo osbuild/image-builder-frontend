@@ -67,7 +67,7 @@ const onSave = (values) => {
     };
   }
 
-  if (values['file-system-config-toggle'] === 'manual') {
+  if (values['file-system-config-radio'] === 'manual') {
     customizations.filesystem = [];
     for (let fsc of values['file-system-configuration']) {
       customizations.filesystem.push({
@@ -377,7 +377,7 @@ const requestToState = (composeRequest) => {
     // filesystem
     const fs = composeRequest?.customizations?.filesystem;
     if (fs) {
-      formState['file-system-config-toggle'] = 'manual';
+      formState['file-system-config-radio'] = 'manual';
       let fileSystemConfiguration = [];
       for (let fsc of fs) {
         const [size, unit] = parseSizeUnit(fsc.min_size);

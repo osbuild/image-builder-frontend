@@ -95,7 +95,7 @@ const ReviewStep = () => {
     }
 
     if (
-      getState()?.values?.['file-system-config-toggle'] === 'manual' &&
+      getState()?.values?.['file-system-config-radio'] === 'manual' &&
       getState()?.values?.['file-system-configuration']
     ) {
       let size = 0;
@@ -368,10 +368,10 @@ const ReviewStep = () => {
                 component={TextListItemVariants.dd}
                 data-testid="partitioning-auto-manual"
               >
-                {getState()?.values?.['file-system-config-toggle'] === 'manual'
+                {getState()?.values?.['file-system-config-radio'] === 'manual'
                   ? 'Manual'
                   : 'Automatic'}
-                {getState()?.values?.['file-system-config-toggle'] ===
+                {getState()?.values?.['file-system-config-radio'] ===
                   'manual' && (
                   <>
                     {' '}
@@ -399,7 +399,7 @@ const ReviewStep = () => {
                   </>
                 )}
               </TextListItem>
-              {getState()?.values?.['file-system-config-toggle'] ===
+              {getState()?.values?.['file-system-config-radio'] ===
                 'manual' && (
                 <>
                   <TextListItem component={TextListItemVariants.dt}>

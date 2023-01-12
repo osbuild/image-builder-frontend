@@ -16,6 +16,7 @@ import {
   MinusCircleIcon,
   PlusCircleIcon,
 } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
   TableComposable,
@@ -272,9 +273,25 @@ const FileSystemConfiguration = ({ ...props }) => {
             )}
           <TextContent>
             <Text>
-              Partitions have been generated and given default values based on
-              best practices from Red Hat, and your selections in previous steps
-              of the wizard.
+              Create partitions for your image by defining mount points and
+              minimum sizes. Image builder creates partitions with a logical
+              volume (LVM) device type.
+            </Text>
+            <Text>
+              The order of partitions may change when the image is installed in
+              order to conform to best practices and ensure functionality.
+              <br></br>
+              <Button
+                component="a"
+                target="_blank"
+                variant="link"
+                icon={<ExternalLinkAltIcon />}
+                iconPosition="right"
+                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/sect-partitioning-naming-schemes-and-mount-points"
+                className="pf-u-pl-0"
+              >
+                Partition naming schemes and mount points
+              </Button>
             </Text>
           </TextContent>
           <TableComposable
