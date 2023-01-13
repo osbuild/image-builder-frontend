@@ -28,6 +28,29 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
     setShowDevelopmentOptions(true);
   };
 
+  const setSelectOptions = () => {
+    var options = [];
+    const filteredRhel = new Map(
+      [...RELEASES].filter(([key]) => {
+        // Only show non-RHEL distros if expanded
+        if (showDevelopmentOptions) {
+          return true;
+        }
+        return isRhel(key);
+      })
+    );
+
+    filteredRhel.forEach((value, key) => {
+      options.push(
+        <SelectOption key={value} value={key}>
+          {RELEASES.get(key)}
+        </SelectOption>
+      );
+    });
+
+    return options;
+  };
+
   return (
     <FormGroup isRequired={isRequired} label={label}>
       <Select
@@ -35,7 +58,7 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
         variant={SelectVariant.single}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={setRelease}
-        selections={RELEASES[getState()?.values?.[input.name]]}
+        selections={RELEASES.get(getState()?.values?.[input.name])}
         isOpen={isOpen}
         {...(!showDevelopmentOptions && {
           loadingVariant: {
@@ -44,22 +67,7 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
           },
         })}
       >
-        {Object.entries(RELEASES)
-          .filter(([key]) => {
-            // Only show non-RHEL distros if expanded
-            if (showDevelopmentOptions) {
-              return true;
-            }
-
-            return isRhel(key);
-          })
-          .map(([key, release], index) => {
-            return (
-              <SelectOption key={index} value={key}>
-                {release}
-              </SelectOption>
-            );
-          })}
+        {setSelectOptions()}
       </Select>
     </FormGroup>
   );
