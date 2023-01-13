@@ -134,7 +134,7 @@ const ReviewStep = () => {
           )}
           <DescriptionListTerm>Release</DescriptionListTerm>
           <DescriptionListDescription>
-            {RELEASES[getState()?.values?.release]}
+            {RELEASES.get(getState()?.values?.release)}
           </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
