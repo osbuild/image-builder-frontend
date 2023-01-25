@@ -14,7 +14,7 @@ export default {
   name: 'packages',
   substepOf: 'Content',
   nextStep: () => {
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+    if (insights.chrome.isBeta()) {
       return 'repositories';
     } else {
       return 'image-name';

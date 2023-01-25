@@ -242,7 +242,7 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
   let pack;
   // if the env is stage beta then use content-sources api
   // else use image-builder api
-  if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+  if (insights.chrome.isBeta()) {
     const data = await api.getPackagesContentSources(repoUrls, packageName);
     pack = data.find((pack) => packageName === pack.name);
   } else {
@@ -440,7 +440,7 @@ const formStepHistory = (composeRequest) => {
       steps.push('registration');
     }
 
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+    if (insights.chrome.isBeta()) {
       steps.push('File system configuration', 'packages', 'repositories');
 
       const customRepositories =
@@ -472,7 +472,7 @@ const CreateImageWizard = () => {
   const handleClose = () => navigate(resolveRelPath(''));
 
   useEffect(() => {
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+    if (insights.chrome.isBeta()) {
       dispatch(fetchRepositories());
     }
   }, []);

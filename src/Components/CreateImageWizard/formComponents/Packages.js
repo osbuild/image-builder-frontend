@@ -34,7 +34,7 @@ export const RedHatPackages = ({ defaultArch }) => {
   const getAllPackages = async (packagesSearchName) => {
     // if the env is stage beta then use content-sources api
     // else use image-builder api
-    if (!insights.chrome.isProd() && insights.chrome.isBeta()) {
+    if (insights.chrome.isBeta()) {
       const distribution = getState()?.values?.release;
       const repoUrls = repos[distribution].map((repo) => repo.url);
       return await api.getPackagesContentSources(repoUrls, packagesSearchName);
