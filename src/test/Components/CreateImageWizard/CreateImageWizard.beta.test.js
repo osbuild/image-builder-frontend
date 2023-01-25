@@ -557,7 +557,7 @@ beforeAll(() => {
         return true;
       },
       isProd: () => {
-        return false;
+        return true;
       },
     },
   };
@@ -1248,8 +1248,8 @@ describe('Click through all steps', () => {
         'activation-key': 'name0',
         insights: true,
         organization: 5,
-        'server-url': 'subscription.rhsm.stage.redhat.com',
-        'base-url': 'https://cdn.stage.redhat.com/',
+        'server-url': 'subscription.rhsm.redhat.com',
+        'base-url': 'https://cdn.redhat.com/',
       },
     };
 

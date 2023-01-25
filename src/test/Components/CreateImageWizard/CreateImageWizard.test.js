@@ -162,7 +162,7 @@ beforeAll(() => {
         },
       },
       isBeta: () => {
-        return true;
+        return false;
       },
       isProd: () => {
         return true;
