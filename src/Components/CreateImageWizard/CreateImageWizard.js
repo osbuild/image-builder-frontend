@@ -28,7 +28,7 @@ import {
 import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
-import { getDistroRepoUrls } from '../../repos';
+import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import { fetchRepositories } from '../../store/repositoriesSlice';
 import isRhel from '../../Utilities/isRhel';
@@ -241,6 +241,14 @@ const parseSizeUnit = (bytesize) => {
   return [size, unit];
 };
 
+const getDistributionRepoUrls = (distributionInformation) => {
+  const filteredArchx86_64 = distributionInformation.find((info) => {
+    return info.arch === 'x86_64';
+  });
+  const mapped = filteredArchx86_64.repositories.map((repo) => repo.baseurl);
+  return mapped;
+};
+
 const getPackageDescription = async (release, arch, repoUrls, packageName) => {
   let pack;
   // if the env is stage beta then use content-sources api
@@ -348,30 +356,36 @@ const requestToState = (composeRequest) => {
     // customizations
     // packages
     const packs = [];
+    let distroRepoUrls = [];
 
     const distro = composeRequest?.distribution;
-    const distroRepoUrls = getDistroRepoUrls(distro);
-    const payloadRepositories =
-      composeRequest?.customizations?.payload_repositories?.map(
-        (repo) => repo.baseurl
-      );
-    const repoUrls = [...distroRepoUrls];
-    payloadRepositories ? repoUrls.push(...payloadRepositories) : null;
 
-    composeRequest?.customizations?.packages?.forEach(async (packName) => {
-      const packageDescription = await getPackageDescription(
-        distro,
-        imageRequest?.architecture,
-        repoUrls,
-        packName
-      );
-      const pack = {
-        name: packName,
-        summary: packageDescription,
-      };
-      packs.push(pack);
-    });
-    formState['selected-packages'] = packs;
+    const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
+      useGetArchitecturesByDistributionQuery(distro);
+
+    if (isSuccessDistroInfo) {
+      distroRepoUrls = getDistributionRepoUrls(distributionInformation);
+      const payloadRepositories =
+        composeRequest?.customizations?.payload_repositories?.map(
+          (repo) => repo.baseurl
+        );
+      const repoUrls = [...distroRepoUrls];
+      payloadRepositories ? repoUrls.push(...payloadRepositories) : null;
+      composeRequest?.customizations?.packages?.forEach(async (packName) => {
+        const packageDescription = await getPackageDescription(
+          distro,
+          imageRequest?.architecture,
+          repoUrls,
+          packName
+        );
+        const pack = {
+          name: packName,
+          summary: packageDescription,
+        };
+        packs.push(pack);
+      });
+      formState['selected-packages'] = packs;
+    }
 
     // repositories
     // 'original-payload-repositories' is treated as read-only and is used to populate

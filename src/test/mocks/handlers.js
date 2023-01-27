@@ -44,4 +44,154 @@ export const handlers = [
       }
     }
   ),
+  rest.post(
+    baseURL.concat('/api/content-sources/v1/rpms/names'),
+    async (req, res, ctx) => {
+      const { search } = await req.json();
+      if (search === 'test') {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              name: 'testPkg',
+              summary: 'test package summary',
+              version: '1.0',
+            },
+            {
+              name: 'lib-test',
+              summary: 'lib-test package summary',
+              version: '1.0',
+            },
+            {
+              name: 'test',
+              summary: 'summary for test package',
+              version: '1.0',
+            },
+          ])
+        );
+      } else if (search === 'asdf') {
+        return res(ctx.status(200), ctx.json([]));
+      }
+    }
+  ),
+  rest.get(
+    baseURL.concat('/api/image-builder/v1/packages'),
+    (req, res, ctx) => {
+      const search = req.url.searchParams.get('search');
+      if (search === 'test') {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            data: [
+              {
+                name: 'testPkg',
+                summary: 'test package summary',
+                version: '1.0',
+              },
+              {
+                name: 'lib-test',
+                summary: 'lib-test package summary',
+                version: '1.0',
+              },
+              {
+                name: 'test',
+                summary: 'summary for test package',
+                version: '1.0',
+              },
+            ],
+            meta: {
+              count: 3,
+            },
+          })
+        );
+      } else if (search === 'asdf') {
+        return res(ctx.status(200), ctx.json({ data: [], meta: 0 }));
+      }
+    }
+  ),
+  rest.get(
+    baseURL.concat('/api/image-builder/v1/architectures/:distro'),
+    (req, res, ctx) => {
+      const { distro } = req.params;
+      if (distro === 'rhel-91') {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              arch: 'x86_64',
+              repositories: [
+                {
+                  baseurl:
+                    'https://cdn.redhat.com/content/dist/rhel9/9.1/x86_64/baseos/os',
+                  rhsm: true,
+                },
+              ],
+            },
+            {
+              arch: 'aarch64',
+              repositories: [
+                {
+                  baseurl:
+                    'https://cdn.redhat.com/content/dist/rhel9/9.1/aarch64/baseos/os',
+                  rhsm: true,
+                },
+              ],
+            },
+          ])
+        );
+      } else if (distro === 'rhel-87') {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              arch: 'x86_64',
+              repositories: [
+                {
+                  baseurl:
+                    'https://cdn.redhat.com/content/dist/rhel8/8.7/x86_64/baseos/os',
+                  rhsm: true,
+                },
+              ],
+            },
+            {
+              arch: 'aarch64',
+              repositories: [
+                {
+                  baseurl:
+                    'https://cdn.redhat.com/content/dist/rhel8/8.7/aarch64/baseos/os',
+                  rhsm: true,
+                },
+              ],
+            },
+          ])
+        );
+      } else if (distro === 'centos-8') {
+        return res(
+          ctx.status(200),
+          ctx.json([
+            {
+              arch: 'x86_64',
+              repositories: [
+                {
+                  baseurl:
+                    'http://mirror.centos.org/centos/8-stream/BaseOS/x86_64/os/',
+                  rhsm: false,
+                },
+              ],
+            },
+            {
+              arch: 'aarch64',
+              repositories: [
+                {
+                  baseurl:
+                    'http://mirror.centos.org/centos/8-stream/BaseOS/aarch64/os/',
+                  rhsm: false,
+                },
+              ],
+            },
+          ])
+        );
+      }
+    }
+  ),
 ];

@@ -26,17 +26,24 @@ import {
 import PropTypes from 'prop-types';
 
 import api from '../../../api';
-import { repos } from '../../../repos';
+import { useGetArchitecturesByDistributionQuery } from '../../../store/apiSlice';
 
 export const RedHatPackages = ({ defaultArch }) => {
   const { getState } = useFormApi();
+  const distribution = getState()?.values?.release;
+  const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
+    useGetArchitecturesByDistributionQuery(distribution);
 
   const getAllPackages = async (packagesSearchName) => {
     // if the env is stage beta then use content-sources api
     // else use image-builder api
     if (insights.chrome.isBeta()) {
-      const distribution = getState()?.values?.release;
-      const repoUrls = repos[distribution].map((repo) => repo.url);
+      const filteredArchx86_64 = distributionInformation.find(
+        (info) => info.arch === 'x86_64'
+      );
+      const repoUrls = filteredArchx86_64.repositories.map(
+        (repo) => repo.baseurl
+      );
       return await api.getPackagesContentSources(repoUrls, packagesSearchName);
     } else {
       const args = [
@@ -56,7 +63,9 @@ export const RedHatPackages = ({ defaultArch }) => {
     }
   };
 
-  return <Packages getAllPackages={getAllPackages} />;
+  return (
+    <Packages getAllPackages={getAllPackages} isSuccess={isSuccessDistroInfo} />
+  );
 };
 
 export const ContentSourcesPackages = () => {
@@ -71,7 +80,7 @@ export const ContentSourcesPackages = () => {
   return <Packages getAllPackages={getAllPackages} />;
 };
 
-const Packages = ({ getAllPackages }) => {
+const Packages = ({ getAllPackages, isSuccess }) => {
   const { change, getState } = useFormApi();
   const [packagesSearchName, setPackagesSearchName] = useState(undefined);
   const [filterChosen, setFilterChosen] = useState('');
@@ -99,8 +108,10 @@ const Packages = ({ getAllPackages }) => {
   }, []);
 
   useEffect(() => {
-    firstInputElement.current?.focus();
-  }, []);
+    if (isSuccess) {
+      firstInputElement.current?.focus();
+    }
+  }, [isSuccess]);
 
   const searchResultsComparator = useCallback((searchTerm) => {
     return (a, b) => {
@@ -266,6 +277,7 @@ const Packages = ({ getAllPackages }) => {
             onSearch={handleAvailablePackagesSearch}
             resetButtonLabel="Clear available packages search"
             onClear={handleClearAvailableSearch}
+            isDisabled={!isSuccess}
           />
         }
       >
@@ -392,4 +404,5 @@ RedHatPackages.propTypes = {
 
 Packages.propTypes = {
   getAllPackages: PropTypes.func,
+  isSuccess: PropTypes.bool,
 };
