@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { PROVISIONING_SOURCES_ENDPOINT } from '../constants';
+import { IMAGE_BUILDER_API, PROVISIONING_SOURCES_ENDPOINT } from '../constants';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -41,7 +41,15 @@ export const apiSlice = createApi({
         return awsSources;
       },
     }),
+    getArchitecturesByDistribution: builder.query({
+      query: (distribution) =>
+        `${IMAGE_BUILDER_API}/architectures/${distribution}`,
+    }),
   }),
 });
 
-export const { useGetAWSSourcesQuery, usePrefetch } = apiSlice;
+export const {
+  useGetAWSSourcesQuery,
+  useGetArchitecturesByDistributionQuery,
+  usePrefetch,
+} = apiSlice;

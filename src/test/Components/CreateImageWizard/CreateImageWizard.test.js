@@ -40,29 +40,6 @@ function verifyCancelButton(cancel, history) {
   expect(history.location.pathname).toBe('/insights/image-builder');
 }
 
-// packages
-const mockPkgResult = {
-  meta: { count: 3 },
-  links: { first: '', last: '' },
-  data: [
-    {
-      name: 'testPkg',
-      summary: 'test package summary',
-      version: '1.0',
-    },
-    {
-      name: 'lib-test',
-      summary: 'lib-test package summary',
-      version: '1.0',
-    },
-    {
-      name: 'test',
-      summary: 'summary for test package',
-      version: '1.0',
-    },
-  ],
-};
-
 const mockPkgResultAlpha = {
   meta: { count: 3 },
   links: { first: '', last: '' },
@@ -107,12 +84,6 @@ const mockPkgResultAll = {
       version: '1.0',
     };
   }),
-};
-
-const mockPkgResultEmpty = {
-  meta: { count: 0 },
-  links: { first: '', last: '' },
-  data: null,
 };
 
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
@@ -788,14 +759,11 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     const availablePackagesList = screen.getByTestId('available-pkgs-list');
     const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -813,14 +781,11 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     screen.getByTestId('available-pkgs-testPkg').click();
     screen.getByRole('button', { name: /Add selected/ }).click();
@@ -844,14 +809,11 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     screen.getByRole('button', { name: /Add all/ }).click();
     screen.getByRole('button', { name: /Remove all/ }).click();
@@ -871,13 +833,12 @@ describe('Step Packages', () => {
     await setUp();
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
 
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
     screen.getByRole('button', { name: /Add all/ }).click();
 
     // remove a single package
@@ -915,14 +876,11 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResultEmpty));
-
     await searchForAvailablePackages(searchbox, 'asdf');
-    expect(getPackages).toHaveBeenCalledTimes(1);
     screen.getByText('No packages found');
   });
 
@@ -931,21 +889,18 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
-
-    let getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
 
     await searchForAvailablePackages(searchbox, 'test');
 
-    getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResultEmpty));
+    screen
+      .getByRole('button', { name: /clear available packages search/i })
+      .click();
 
     await searchForAvailablePackages(searchbox, 'asdf');
 
-    expect(getPackages).toHaveBeenCalledTimes(2);
     screen.getByText('No packages found');
   });
 
@@ -955,13 +910,10 @@ describe('Step Packages', () => {
     const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
     const searchboxChosen = screen.getAllByRole('textbox')[1];
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
+    expect(searchboxAvailable).toBeDisabled();
+    await waitFor(() => expect(searchboxAvailable).toBeEnabled());
     searchboxAvailable.click();
     await searchForAvailablePackages(searchboxAvailable, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     screen.getByRole('button', { name: /Add all/ }).click();
 
@@ -978,6 +930,8 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
     const getPackages = jest
@@ -1003,6 +957,8 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
     const getPackages = jest
@@ -1029,14 +985,11 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0];
 
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     const availablePackagesList = screen.getByTestId('available-pkgs-list');
     const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -1056,14 +1009,11 @@ describe('Step Packages', () => {
 
     const availableSearchbox = screen.getAllByRole('textbox')[0];
 
+    expect(availableSearchbox).toBeDisabled();
+    await waitFor(() => expect(availableSearchbox).toBeEnabled());
     availableSearchbox.click();
 
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     await searchForAvailablePackages(availableSearchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
 
     const availablePackagesList = screen.getByTestId('available-pkgs-list');
     const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -1079,8 +1029,10 @@ describe('Step Packages', () => {
 
     const chosenSearchbox = screen.getAllByRole('textbox')[1];
     chosenSearchbox.click();
-    await searchForChosenPackages(chosenSearchbox, 'Pkg');
-    chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
+    await searchForChosenPackages(chosenSearchbox, 'lib');
+    chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
+      'option'
+    );
     // eslint-disable-next-line jest-dom/prefer-in-document
     expect(chosenPackagesItems).toHaveLength(1);
 
@@ -1463,20 +1415,18 @@ describe('Click through all steps', () => {
     within(rows[2]).getByRole('option', { name: 'MiB' }).click();
     getNextButton().click();
 
-    // packages
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResult));
-
     screen.getByText(
       /Images built with Image Builder include all required packages/i
     );
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
+
     await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
     screen
-      .getByRole('option', { name: /testPkg test package summary/ })
+      .getByRole('option', { name: /test summary for test package/ })
       .click();
     screen.getByRole('button', { name: /Add selected/ }).click();
     getNextButton().click();
@@ -1554,7 +1504,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1596,7 +1546,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1640,7 +1590,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1680,7 +1630,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1720,7 +1670,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1760,7 +1710,7 @@ describe('Click through all steps', () => {
                   min_size: 104857600,
                 },
               ],
-              packages: ['testPkg'],
+              packages: ['test'],
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
@@ -1889,6 +1839,8 @@ describe('Keyboard accessibility', () => {
         name: /search input/i,
       });
     });
+    expect(availablePackagesInput).toBeDisabled();
+    await waitFor(() => expect(availablePackagesInput).toBeEnabled());
     expect(availablePackagesInput).toHaveFocus();
     clickNext();
 
