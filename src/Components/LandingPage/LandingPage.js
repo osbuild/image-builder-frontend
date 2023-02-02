@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
-import { GithubIcon, HelpIcon } from '@patternfly/react-icons';
+import { HelpIcon, CodeIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   PageHeader,
@@ -34,21 +34,6 @@ class LandingPage extends Component {
                   images and push them to cloud environments.
                 </Text>
                 <DocumentationButton />
-                <br />
-                <Button
-                  component="a"
-                  target="_blank"
-                  variant="link"
-                  icon={<GithubIcon />}
-                  iconPosition="right"
-                  isInline
-                  href={
-                    'https://github.com/RedHatInsights/image-builder-frontend/tree/' +
-                    COMMITHASH
-                  }
-                >
-                  Contribute on GitHub
-                </Button>
               </TextContent>
             }
           >
@@ -58,6 +43,40 @@ class LandingPage extends Component {
               className="pf-u-pl-sm"
             >
               <HelpIcon />
+            </Button>
+          </Popover>
+          <Popover
+            headerContent={'About open source'}
+            bodyContent={
+              <TextContent>
+                <Text>
+                  This service is open source, so all of its
+                  code is inspectable. Explore
+                  repositories to view and contribute to
+                  the source code.
+                </Text>
+                <Button
+                  component="a"
+                  target="_blank"
+                  variant="link"
+                  icon={<ExternalLinkAltIcon />}
+                  iconPosition="right"
+                  isInline
+                  href={
+                    'https://www.osbuild.org/guides/image-builder-service/architecture.html'
+                  }
+                >
+                  Repositories
+                </Button>
+              </TextContent>
+            }
+          >
+            <Button
+              variant="plain"
+              aria-label="About Open Services"
+              className="pf-u-pl-sm"
+            >
+              <CodeIcon />
             </Button>
           </Popover>
         </PageHeader>
