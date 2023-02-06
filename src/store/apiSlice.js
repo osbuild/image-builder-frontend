@@ -1,11 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { PROVISIONING_SOURCES_ENDPOINT } from '../constants';
+
 export const apiSlice = createApi({
   reducerPath: 'api',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
+  baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     getSources: builder.query({
-      query: () => '/provisioning/v1/sources',
+      query: () => PROVISIONING_SOURCES_ENDPOINT,
     }),
   }),
 });
