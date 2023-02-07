@@ -9,13 +9,9 @@ import { useSelector } from 'react-redux';
 import ImageLinkDirect from './ImageLinkDirect';
 
 import { selectImageById } from '../../store/composesSlice';
-import { selectComposeById } from '../../store/composesSlice';
 
 const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
-  let image = useSelector((state) => selectImageById(state, imageId));
-  const parent = image.isClone
-    ? useSelector((state) => selectComposeById(state, image.parent))
-    : null;
+  const image = useSelector((state) => selectImageById(state, imageId));
 
   const [wizardOpen, openWizard] = useState(false);
   const [{ default: ProvisioningWizard }, error] = useLoadModule(
@@ -30,7 +26,6 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   );
 
   if (!error) {
-    image = image.isClone ? parent : image;
     return (
       <Suspense fallback="loading">
         <Button variant="link" isInline onClick={() => openWizard(true)}>
@@ -81,6 +76,9 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
     hasProvisioning &&
     (image.imageType === 'aws' || image.imageType === 'ami')
   ) {
+    if (isInClonesTable) {
+      return null;
+    }
     return (
       <ProvisioningLink
         imageId={image.id}
