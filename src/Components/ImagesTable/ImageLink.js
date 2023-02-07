@@ -70,7 +70,7 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
     scalprum.config?.provisioning &&
     (isBeta() || getEnvironment() === 'qa');
 
-  if (!uploadStatus) return null;
+  if (!uploadStatus || image.status !== 'success') return null;
 
   if (
     hasProvisioning &&
