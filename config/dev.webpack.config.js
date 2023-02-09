@@ -18,9 +18,8 @@ const webpackProxy = {
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
   debug: true,
-  modules: ['image_builder'],
   useFileHash: false,
-  sassPrefix: '.imageBuilder, .image_builder',
+  sassPrefix: '.imageBuilder',
   deployment: process.env.BETA ? 'beta/apps' : 'apps',
   ...(process.env.PROXY ? webpackProxy : {}),
 });
@@ -30,7 +29,6 @@ plugins.push(
     {
       root: resolve(__dirname, '../'),
       useFileHash: false,
-      moduleName: 'image_builder',
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry.js'),
       },
