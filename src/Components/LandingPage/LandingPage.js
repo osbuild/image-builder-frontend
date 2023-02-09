@@ -2,7 +2,7 @@
 
 import React, { Component } from 'react';
 
-import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
+import { Alert, AlertActionCloseButton, Button, Popover, Text, TextContent } from '@patternfly/react-core';
 import { HelpIcon, CodeIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -80,6 +80,7 @@ class LandingPage extends Component {
             </Button>
           </Popover>
         </PageHeader>
+        <Alert id="open-source-alert" variant="default" customIcon={<CodeIcon />} isInline title="Click on the open source badge to explore and contribute to the source of this service." actionClose={<AlertActionCloseButton onClose={() => document.getElementById("open-source-alert").style.display="none"} />} />
         <section className="pf-l-page__main-section pf-c-page__main-section">
           <ImagesTable />
         </section>
