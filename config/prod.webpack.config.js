@@ -5,15 +5,13 @@ const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
 const { DefinePlugin } = require('webpack');
 const { config: webpackConfig, plugins } = config({
   rootFolder: resolve(__dirname, '../'),
-  modules: ['image_builder'],
-  sassPrefix: '.imageBuilder, .image_builder',
+  sassPrefix: '.imageBuilder',
 });
 
 plugins.push(
   require('@redhat-cloud-services/frontend-components-config/federated-modules')(
     {
       root: resolve(__dirname, '../'),
-      moduleName: 'image_builder',
       exposes: {
         './RootApp': resolve(__dirname, '../src/AppEntry.js'),
       },

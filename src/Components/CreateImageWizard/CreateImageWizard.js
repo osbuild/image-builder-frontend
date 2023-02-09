@@ -536,7 +536,7 @@ const CreateImageWizard = () => {
           {
             component: componentTypes.WIZARD,
             name: 'image-builder-wizard',
-            className: 'image_builder',
+            className: 'imageBuilder',
             isDynamic: true,
             inModal: true,
             onKeyDown: (e) => {
