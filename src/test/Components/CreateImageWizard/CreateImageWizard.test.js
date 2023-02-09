@@ -1518,7 +1518,7 @@ describe('Click through all steps', () => {
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
     // mock the backend API
-    let ids = [];
+    const ids = [];
     const composeImage = jest
       .spyOn(api, 'composeImage')
       .mockImplementation((body) => {

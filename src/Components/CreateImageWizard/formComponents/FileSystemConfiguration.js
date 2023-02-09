@@ -33,7 +33,7 @@ import SizeUnit from './SizeUnit';
 
 import { UNIT_GIB } from '../../../constants';
 
-let initialRow = {
+const initialRow = {
   id: uuidv4(),
   mountpoint: '/',
   fstype: 'xfs',
@@ -112,12 +112,12 @@ const FileSystemConfiguration = ({ ...props }) => {
   };
 
   const removeRow = (id) => {
-    let removeIndex = rows.map((e) => e.id).indexOf(id);
-    let newRows = [...rows];
+    const removeIndex = rows.map((e) => e.id).indexOf(id);
+    const newRows = [...rows];
     newRows.splice(removeIndex, 1);
 
-    let removeOrderIndex = itemOrder.indexOf(id);
-    let newOrder = [...itemOrder];
+    const removeOrderIndex = itemOrder.indexOf(id);
+    const newOrder = [...itemOrder];
     newOrder.splice(removeOrderIndex, 1);
 
     setRows(newRows);
@@ -216,10 +216,10 @@ const FileSystemConfiguration = ({ ...props }) => {
   };
 
   const setMountpoint = (id, mp) => {
-    let newRows = [...rows];
+    const newRows = [...rows];
     for (let i = 0; i < newRows.length; i++) {
       if (newRows[i].id === id) {
-        let newRow = { ...newRows[i] };
+        const newRow = { ...newRows[i] };
         newRow.mountpoint = mp;
         newRows.splice(i, 1, newRow);
         break;
@@ -230,10 +230,10 @@ const FileSystemConfiguration = ({ ...props }) => {
   };
 
   const setSize = (id, s, u) => {
-    let newRows = [...rows];
+    const newRows = [...rows];
     for (let i = 0; i < newRows.length; i++) {
       if (newRows[i].id === id) {
-        let newRow = { ...newRows[i] };
+        const newRow = { ...newRows[i] };
         newRow.size = s;
         newRow.unit = u;
         newRows.splice(i, 1, newRow);

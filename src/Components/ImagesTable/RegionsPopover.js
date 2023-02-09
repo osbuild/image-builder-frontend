@@ -16,7 +16,7 @@ export const selectRegions = createSelector(
         compose.share_with_accounts[0] === image.share_with_accounts[0]
     );
 
-    let regions = {};
+    const regions = {};
     filteredImages.forEach((image) => {
       if (image.region && image.status === 'success') {
         if (regions[image.region]) {
@@ -58,7 +58,7 @@ export const RegionsPopover = ({ composeId }) => {
   const regions = useSelector((state) => selectRegions(state, composeId));
 
   const listItems = useMemo(() => {
-    let listItems = [];
+    const listItems = [];
     for (const [key, value] of Object.entries(regions).sort()) {
       listItems.push(
         <li key={key}>

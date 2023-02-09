@@ -10,7 +10,9 @@ const initialState = {
 };
 
 export const fetchRepositories = () => async (dispatch) => {
-  let { data, meta } = await api.getRepositories();
+  const response = await api.getRepositories();
+  let { data } = response;
+  const { meta } = response;
   if (data.length < meta.count) {
     ({ data } = await api.getRepositories(meta.count));
   }

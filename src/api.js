@@ -5,7 +5,7 @@ import { CONTENT_SOURCES, IMAGE_BUILDER_API, RHSM_API } from './constants';
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
 async function composeImage(body) {
-  let path = '/compose';
+  const path = '/compose';
   const request = await axios.post(
     IMAGE_BUILDER_API.concat(path),
     body,
@@ -19,13 +19,13 @@ async function getComposes(limit, offset) {
     limit,
     offset,
   });
-  let path = '/composes?' + params.toString();
+  const path = '/composes?' + params.toString();
   const request = await axios.get(IMAGE_BUILDER_API.concat(path));
   return request.data;
 }
 
 async function getComposeStatus(id) {
-  let path = '/composes/' + id;
+  const path = '/composes/' + id;
   const request = await axios.get(IMAGE_BUILDER_API.concat(path));
   return request.data;
 }
@@ -37,7 +37,7 @@ async function getPackages(distribution, architecture, search, limit) {
     search,
   });
   limit && params.append('limit', limit);
-  let path = '/packages?' + params.toString();
+  const path = '/packages?' + params.toString();
   const request = await axios.get(IMAGE_BUILDER_API.concat(path));
   return request.data;
 }
@@ -72,7 +72,7 @@ async function getPackagesContentSources(repoUrls, search) {
 }
 
 async function getVersion() {
-  let path = '/version';
+  const path = '/version';
   const request = await axios.get(IMAGE_BUILDER_API.concat(path));
   return request.data;
 }

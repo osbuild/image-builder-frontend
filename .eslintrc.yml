@@ -26,3 +26,6 @@ rules:
       position: before
     pathGroupsExcludedImportTypes:
     - react
+  prefer-const:
+  - error
+  - destructuring: any

@@ -725,7 +725,7 @@ describe('Step Packages', () => {
     screen.getByRole('button', { name: /Next/ }).click();
 
     // await screen.findByTestId('chosen-packages-count');
-    let chosen = await screen.findByTestId('chosen-packages-count');
+    const chosen = await screen.findByTestId('chosen-packages-count');
     expect(chosen).toHaveTextContent('2');
   });
 
@@ -1213,7 +1213,7 @@ describe('Click through all steps', () => {
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
     // mock the backend API
-    let ids = [];
+    const ids = [];
     const customizations = {
       payload_repositories: [
         {

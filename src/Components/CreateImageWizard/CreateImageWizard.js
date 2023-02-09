@@ -41,7 +41,7 @@ const handleKeyDown = (e, handleClose) => {
 };
 
 const onSave = (values) => {
-  let customizations = {
+  const customizations = {
     packages: values['selected-packages']?.map((p) => p.name),
   };
 
@@ -69,7 +69,7 @@ const onSave = (values) => {
 
   if (values['file-system-config-radio'] === 'manual') {
     customizations.filesystem = [];
-    for (let fsc of values['file-system-configuration']) {
+    for (const fsc of values['file-system-configuration']) {
       customizations.filesystem.push({
         mountpoint: fsc.mountpoint,
         min_size: fsc.size * fsc.unit,
@@ -77,9 +77,9 @@ const onSave = (values) => {
     }
   }
 
-  let requests = [];
+  const requests = [];
   if (values['target-environment']?.aws) {
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -116,7 +116,7 @@ const onSave = (values) => {
         break;
     }
 
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -138,7 +138,7 @@ const onSave = (values) => {
   }
 
   if (values['target-environment']?.azure) {
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -161,7 +161,7 @@ const onSave = (values) => {
   }
 
   if (values['target-environment']?.vsphere) {
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -180,7 +180,7 @@ const onSave = (values) => {
   }
 
   if (values['target-environment']?.['guest-image']) {
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -199,7 +199,7 @@ const onSave = (values) => {
   }
 
   if (values['target-environment']?.['image-installer']) {
-    let request = {
+    const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
       image_requests: [
@@ -247,8 +247,9 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
     pack = data.find((pack) => packageName === pack.name);
   } else {
     const args = [release, arch, packageName];
-    let { data, meta } = await api.getPackages(...args);
-
+    const response = await api.getPackages(...args);
+    let { data } = response;
+    const { meta } = response;
     // the package should be found in the 0 index
     // if not then fetch all package matches and search for the package
     if (data[0]?.name === packageName) {
@@ -271,7 +272,7 @@ const requestToState = (composeRequest) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
-    let formState = {};
+    const formState = {};
 
     formState['image-name'] = composeRequest.image_name;
 
@@ -332,7 +333,7 @@ const requestToState = (composeRequest) => {
 
     // customizations
     // packages
-    let packs = [];
+    const packs = [];
 
     const distro = composeRequest?.distribution;
     const distroRepoUrls = getDistroRepoUrls(distro);
@@ -378,8 +379,8 @@ const requestToState = (composeRequest) => {
     const fs = composeRequest?.customizations?.filesystem;
     if (fs) {
       formState['file-system-config-radio'] = 'manual';
-      let fileSystemConfiguration = [];
-      for (let fsc of fs) {
+      const fileSystemConfiguration = [];
+      for (const fsc of fs) {
         const [size, unit] = parseSizeUnit(fsc.min_size);
         fileSystemConfiguration.push({
           mountpoint: fsc.mountpoint,
