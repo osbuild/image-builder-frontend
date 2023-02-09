@@ -19,13 +19,13 @@ objects:
           - /apps/image-builder
       image: ${IMAGE}:${IMAGE_TAG}
       navItems:
-        - appId: "image_builder"
+        - appId: "imageBuilder"
           title: "Image builder"
           href: "/insights/image-builder"
           product: "Red Hat Insights"
       module:
         manifestLocation: "/apps/image-builder/fed-mods.json"
-        moduleID: image_builder
+        moduleID: imageBuilder
         modules:
           - id: "image-builder"
             module: "./RootApp"
