@@ -7,7 +7,7 @@ const TargetEnvironmentValidator = () => (targets) => {
   // be set to true. This reduces the value to
   // a single boolean which is a flag for whether
   // at least one target has been selected or not
-  let valid = Object.values(targets).reduce(
+  const valid = Object.values(targets).reduce(
     (prev, curr) => curr || prev,
     false
   );

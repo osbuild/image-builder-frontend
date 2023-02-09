@@ -44,7 +44,9 @@ export const RedHatPackages = ({ defaultArch }) => {
         getState()?.values?.architecture || defaultArch,
         packagesSearchName,
       ];
-      let { data, meta } = await api.getPackages(...args);
+      const response = await api.getPackages(...args);
+      let { data } = response;
+      const { meta } = response;
       if (data?.length === meta.count) {
         return data;
       } else if (data) {

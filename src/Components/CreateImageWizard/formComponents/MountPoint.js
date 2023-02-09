@@ -31,7 +31,7 @@ const MountPoint = ({ ...props }) => {
 
   // split
   useEffect(() => {
-    for (let p of validPrefixes) {
+    for (const p of validPrefixes) {
       if (props.mountpoint.startsWith(p)) {
         setPrefix(p);
         setSuffix(props.mountpoint.substring(p.length));

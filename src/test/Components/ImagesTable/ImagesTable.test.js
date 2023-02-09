@@ -15,7 +15,7 @@ import { timestampToDisplayString } from '../../../Utilities/time.js';
 import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
 
 const currentDate = new Date();
-let currentDateInString = currentDate.toString();
+const currentDateInString = currentDate.toString();
 
 const mockComposes = {
   meta: {
@@ -484,7 +484,7 @@ describe('Images Table', () => {
       expect(row.cells[2]).toHaveTextContent('Apr 27, 2021');
 
       // render the expected <ImageBuildStatus /> and compare the text content
-      let testElement = document.createElement('testElement');
+      const testElement = document.createElement('testElement');
       // render(<Target composeId={compose.id} />, { container: testElement });
       renderWithProvider(<Target composeId={compose.id} />, testElement, state);
       expect(row.cells[4]).toHaveTextContent(testElement.textContent);
@@ -664,7 +664,7 @@ describe('Clones table', () => {
     const state = view.store.getState();
 
     // get rows
-    let { getAllByRole } = within(table);
+    const { getAllByRole } = within(table);
     const rows = getAllByRole('row');
 
     // first row is header so look at index 1
@@ -711,7 +711,7 @@ describe('Clones table', () => {
       ],
     };
 
-    for (let [index, row] of cloneRows.entries()) {
+    for (const [index, row] of cloneRows.entries()) {
       // render UUIDs in correct order
       expect(row.cells[0]).toHaveTextContent(clonesTableData.uuid[index]);
 
@@ -727,7 +727,7 @@ describe('Clones table', () => {
       // region cell
       expect(row.cells[3]).toHaveTextContent(clonesTableData.region[index]);
 
-      let testElement = document.createElement('testElement');
+      const testElement = document.createElement('testElement');
       const imageId = clonesTableData.uuid[index];
 
       // status cell

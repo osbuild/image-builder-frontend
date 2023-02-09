@@ -26,7 +26,7 @@ import { resolveRelPath } from '../../Utilities/path';
 export const selectRegionsToDisable = createSelector(
   [selectComposeById, selectClonesById],
   (compose, clones) => {
-    let regions = new Set();
+    const regions = new Set();
     regions.add(compose.region);
     clones.map((clone) => {
       clone.region &&
