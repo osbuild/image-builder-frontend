@@ -1,5 +1,3 @@
-/* global COMMITHASH */
-
 import React, { Component } from 'react';
 
 import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
