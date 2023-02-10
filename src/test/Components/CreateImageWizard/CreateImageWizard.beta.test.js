@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-
 import React from 'react';
 
 import {
@@ -10,10 +9,16 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { rest } from 'msw';
 
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
-import { RHEL_8 } from '../../../constants.js';
+import {
+  RHEL_8,
+  RHEL_9,
+  PROVISIONING_SOURCES_ENDPOINT,
+} from '../../../constants.js';
+import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
 let history = undefined;
@@ -590,6 +595,149 @@ describe('Create Image Wizard', () => {
   });
 });
 
+describe('Step Upload to AWS', () => {
+  const setUp = () => {
+    const view = renderWithReduxRouter(<CreateImageWizard />);
+    history = view.history;
+    store = view.store;
+
+    // select aws as upload destination
+    const awsTile = screen.getByTestId('upload-aws');
+    awsTile.click();
+
+    getNextButton().click();
+
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Target environment - Amazon Web Services'
+    );
+  };
+
+  test('component renders error state correctly', async () => {
+    setUp();
+    server.use(
+      rest.get(
+        'http://localhost'.concat(PROVISIONING_SOURCES_ENDPOINT),
+        (req, res, ctx) => res(ctx.status(500))
+      )
+    );
+
+    await screen.findByText(
+      /sources cannot be reached, try again later or enter an aws account id manually\./i
+    );
+    //
+  });
+
+  test('validation works', async () => {
+    setUp();
+
+    expect(getNextButton()).toHaveClass('pf-m-disabled');
+
+    screen
+      .getByRole('radio', { name: /manually enter an account id\./i })
+      .click();
+
+    expect(getNextButton()).toHaveClass('pf-m-disabled');
+
+    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+
+    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+
+    screen
+      .getByRole('radio', { name: /use an account configured from sources\./i })
+      .click();
+
+    expect(getNextButton()).toHaveClass('pf-m-disabled');
+
+    const sourceDropdown = screen.getByRole('textbox', {
+      name: /select source/i,
+    });
+    // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
+    await waitFor(() => expect(sourceDropdown).toBeEnabled());
+    sourceDropdown.click();
+
+    const source = await screen.findByRole('option', {
+      name: /my_source 123456789012/i,
+    });
+    source.click();
+
+    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+  });
+
+  test('compose request share_with_sources field is correct', async () => {
+    setUp();
+
+    const sourceDropdown = screen.getByRole('textbox', {
+      name: /select source/i,
+    });
+    // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
+    await waitFor(() => expect(sourceDropdown).toBeEnabled());
+    sourceDropdown.click();
+
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    source.click();
+
+    getNextButton().click();
+
+    // registration
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+
+    const registerLaterRadio = screen.getByLabelText('Register later');
+    userEvent.click(registerLaterRadio);
+
+    // click through to review step
+    getNextButton().click();
+    getNextButton().click();
+    getNextButton().click();
+    getNextButton().click();
+    getNextButton().click();
+
+    const composeImage = jest
+      .spyOn(api, 'composeImage')
+      .mockImplementation((body) => {
+        expect(body).toEqual({
+          distribution: RHEL_9,
+          image_name: undefined,
+          customizations: {
+            packages: undefined,
+          },
+          image_requests: [
+            {
+              architecture: 'x86_64',
+              image_type: 'aws',
+              upload_request: {
+                type: 'aws',
+                options: {
+                  share_with_sources: ['123'],
+                },
+              },
+            },
+          ],
+        });
+        const id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
+        return Promise.resolve({ id });
+      });
+
+    const create = screen.getByRole('button', { name: /Create/ });
+    create.click();
+
+    // API request sent to backend
+    expect(composeImage).toHaveBeenCalledTimes(1);
+
+    // returns back to the landing page
+    await waitFor(() =>
+      expect(history.location.pathname).toBe('/insights/image-builder')
+    );
+    expect(store.getState().composes.allIds).toEqual([
+      'edbae1c2-62bc-42c1-ae0c-3110ab718f5a',
+    ]);
+    // set test timeout of 10 seconds
+  }, 10000);
+});
+
 describe('Step Packages', () => {
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
@@ -601,7 +749,7 @@ describe('Step Packages', () => {
 
     // aws step
     screen
-      .getByRole('radio', { name: /enter aws account id manually/i })
+      .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
@@ -882,7 +1030,7 @@ describe('Step Custom repositories', () => {
 
     // aws step
     screen
-      .getByRole('radio', { name: /enter aws account id manually/i })
+      .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
@@ -1034,7 +1182,7 @@ describe('Click through all steps', () => {
 
     screen.getByRole('button', { name: /Next/ }).click();
     screen
-      .getByRole('radio', { name: /enter aws account id manually/i })
+      .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     screen.getByRole('button', { name: /Next/ }).click();
