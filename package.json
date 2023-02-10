@@ -35,9 +35,6 @@
       "!src/entry-dev.js"
     ],
     "testEnvironment": "jsdom",
-    "globals": {
-      "COMMITHASH": "dummy"
-    },
     "roots": [
       "<rootDir>/src/"
     ],

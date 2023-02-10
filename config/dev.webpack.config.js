@@ -1,8 +1,6 @@
 const { resolve } = require('path');
 
 const config = require('@redhat-cloud-services/frontend-components-config');
-const { GitRevisionPlugin } = require('git-revision-webpack-plugin');
-const { DefinePlugin } = require('webpack');
 
 const webpackProxy = {
   useProxy: true,
@@ -36,12 +34,6 @@ plugins.push(
       exclude: ['react-router-dom'],
     }
   )
-);
-
-plugins.push(
-  new DefinePlugin({
-    COMMITHASH: JSON.stringify(new GitRevisionPlugin().commithash()),
-  })
 );
 
 module.exports = {
