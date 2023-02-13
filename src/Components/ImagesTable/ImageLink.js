@@ -10,6 +10,15 @@ import ImageLinkDirect from './ImageLinkDirect';
 
 import { selectImageById } from '../../store/composesSlice';
 
+const getImageProvider = ({ imageType }) => {
+  switch (imageType) {
+    case 'aws' || 'ami':
+      return 'aws';
+    default:
+      'aws';
+  }
+};
+
 const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
@@ -25,6 +34,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
     {}
   );
 
+  const provider = getImageProvider(image);
   if (!error) {
     return (
       <Suspense fallback="loading">
@@ -39,6 +49,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
               name: image.imageName,
               id: image.id,
               architecture: image.architecture,
+              provider: provider,
             }}
           />
         )}
