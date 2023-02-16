@@ -3,6 +3,7 @@ import React, { Suspense, useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
@@ -14,6 +15,8 @@ const getImageProvider = ({ imageType }) => {
   switch (imageType) {
     case 'aws' || 'ami':
       return 'aws';
+    case 'gcp':
+      return 'gcp';
     default:
       'aws';
   }
@@ -21,7 +24,6 @@ const getImageProvider = ({ imageType }) => {
 
 const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
-
   const [wizardOpen, openWizard] = useState(false);
   const [{ default: ProvisioningWizard }, error] = useLoadModule(
     {
@@ -68,6 +70,8 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
 
 const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
+  const isGCPEnabled = useFlag('provisioning.gcp');
+
   const uploadStatus = image.uploadStatus;
   const {
     initialized: chromeInitialized,
@@ -85,7 +89,9 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
 
   if (
     hasProvisioning &&
-    (image.imageType === 'aws' || image.imageType === 'ami')
+    ((isGCPEnabled && image.imageType === 'gcp') ||
+      image.imageType === 'aws' ||
+      image.imageType === 'ami')
   ) {
     if (isInClonesTable) {
       return null;
