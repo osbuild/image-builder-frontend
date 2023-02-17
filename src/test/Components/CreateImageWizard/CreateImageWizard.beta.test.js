@@ -564,7 +564,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('heading', { name: /Create image/ });
 
     screen.getByRole('button', { name: 'Image output' });
-    screen.getByRole('button', { name: 'Registration' });
+    screen.getByRole('button', { name: 'Register' });
     screen.getByRole('button', { name: 'File system configuration' });
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
@@ -737,7 +737,7 @@ describe('Step Packages', () => {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
     getNextButton().click();
 
@@ -1216,11 +1216,6 @@ describe('Click through all steps', () => {
       return Promise.resolve(mockActivationKey[name]);
     });
 
-    const registrationRadio = screen.getByLabelText(
-      'Register and connect image instances with Red Hat'
-    );
-    userEvent.click(registrationRadio);
-
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
@@ -1306,7 +1301,10 @@ describe('Click through all steps', () => {
     await screen.findByText('VMWare');
     await screen.findByText('Virtualization - Guest image');
     await screen.findByText('Bare metal - Installer');
-    await screen.findByText('Register with Subscriptions and Red Hat Insights');
+    const review = screen.getByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Use remote host configuration (RHC) utility'
+    );
     await screen.findByText('MyImageName');
 
     screen.getByTestId('tab-registration').click();
@@ -1361,6 +1359,7 @@ describe('Click through all steps', () => {
       subscription: {
         'activation-key': 'name0',
         insights: true,
+        rhc: true,
         organization: 5,
         'server-url': 'subscription.rhsm.redhat.com',
         'base-url': 'https://cdn.redhat.com/',
