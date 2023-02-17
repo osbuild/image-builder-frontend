@@ -50,7 +50,16 @@ const onSave = (values) => {
     customizations['payload_repositories'] = [...values['custom-repositories']];
   }
 
-  if (values['register-system'] === 'register-now-insights') {
+  if (values['register-system'] === 'register-now-rhc') {
+    customizations.subscription = {
+      'activation-key': values['subscription-activation-key'],
+      insights: true,
+      rhc: true,
+      organization: Number(values['subscription-organization-id']),
+      'server-url': values['subscription-server-url'],
+      'base-url': values['subscription-base-url'],
+    };
+  } else if (values['register-system'] === 'register-now-insights') {
     customizations.subscription = {
       'activation-key': values['subscription-activation-key'],
       insights: true,
@@ -423,7 +432,9 @@ const requestToState = (composeRequest) => {
     // subscription
     const subscription = composeRequest?.customizations?.subscription;
     if (subscription) {
-      if (subscription.insights) {
+      if (subscription.rhc) {
+        formState['register-system'] = 'register-now-rhc';
+      } else if (subscription.insights) {
         formState['register-system'] = 'register-now-insights';
       } else {
         formState['register-system'] = 'register-now';

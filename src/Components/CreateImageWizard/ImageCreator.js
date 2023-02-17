@@ -20,6 +20,7 @@ import {
   RedHatPackages,
 } from './formComponents/Packages';
 import RadioWithPopover from './formComponents/RadioWithPopover';
+import Registration from './formComponents/Registration';
 import RegistrationKeyInformation from './formComponents/RegistrationKeyInformation';
 import Repositories from './formComponents/Repositories';
 import Review from './formComponents/ReviewStep';
@@ -69,6 +70,7 @@ const ImageCreator = ({
         'aws-sources-select': AWSSourcesSelect,
         'gallery-layout': GalleryLayout,
         'field-listener': FieldListenerWrapper,
+        registration: Registration,
         ...customComponentMapper,
       }}
       onCancel={onClose}

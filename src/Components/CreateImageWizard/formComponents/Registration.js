@@ -1,0 +1,278 @@
+import React, { useEffect, useState } from 'react';
+
+import { FormSpy } from '@data-driven-forms/react-form-renderer';
+import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import {
+  Button,
+  Checkbox,
+  FormGroup,
+  Popover,
+  Radio,
+  Text,
+  TextContent,
+} from '@patternfly/react-core';
+import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import PropTypes from 'prop-types';
+
+const RHSMPopover = () => {
+  return (
+    <Popover
+      headerContent="About Red Hat Subscription Management"
+      position="right"
+      minWidth="25rem"
+      bodyContent={
+        <TextContent>
+          <Text>
+            Registered systems are entitled to support services, as well as
+            errata, patches, and upgrades.
+          </Text>
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href="https://access.redhat.com/products/red-hat-subscription-management"
+          >
+            Read more
+          </Button>
+        </TextContent>
+      }
+    >
+      <Button
+        variant="plain"
+        className="pf-c-form__group-label-help"
+        aria-label="About Remote Host Configuration (RHC)"
+        isInline
+      >
+        <HelpIcon />
+      </Button>
+    </Popover>
+  );
+};
+
+const InsightsPopover = () => {
+  return (
+    <Popover
+      headerContent="About Red Hat Insights"
+      position="right"
+      minWidth="25rem"
+      bodyContent={
+        <TextContent>
+          <Text>
+            Insights client is a tool which provides actionable intelligence
+            about your Red Hat Enterprise Linux environments, helping to
+            identify and address operational and vulnerability risks before an
+            issue results in downtime.
+          </Text>
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href="https://access.redhat.com/products/red-hat-insights"
+          >
+            Read more
+          </Button>
+        </TextContent>
+      }
+    >
+      <Button
+        variant="plain"
+        className="pf-c-form__group-label-help"
+        aria-label="About Remote Host Configuration (RHC)"
+        isInline
+      >
+        <HelpIcon />
+      </Button>
+    </Popover>
+  );
+};
+
+const RHCPopover = () => {
+  return (
+    <Popover
+      headerContent="About Remote Host Configuration (RHC)"
+      position="right"
+      minWidth="25rem"
+      bodyContent={
+        <TextContent>
+          <Text>
+            RHC is a tool that allows RHEL hosts to connect to the Insights
+            services. It is required for the Insights Remediations service.
+          </Text>
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href="https://access.redhat.com/articles/rhc"
+          >
+            Read more
+          </Button>
+        </TextContent>
+      }
+    >
+      <Button
+        variant="plain"
+        className="pf-c-form__group-label-help"
+        aria-label="About Remote Host Configuration (RHC)"
+        isInline
+      >
+        <HelpIcon />
+      </Button>
+    </Popover>
+  );
+};
+
+const Registration = ({ label, ...props }) => {
+  const { change, getState } = useFormApi();
+  const { input } = useFieldApi(props);
+  const [showOptions, setShowOptions] = useState(false);
+  const [insights, setInsights] = useState(true);
+  const [rhc, setRhc] = useState(true);
+  const registerSystem = getState()?.values?.['register-system'];
+
+  useEffect(() => {
+    if (registerSystem === 'register-now-insights') {
+      setShowOptions(true);
+      setInsights(true);
+      setRhc(false);
+    }
+
+    if (registerSystem === 'register-now') {
+      setShowOptions(true);
+      setInsights(false);
+      setRhc(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (insights && rhc) {
+      change(input.name, 'register-now-rhc');
+    } else if (insights && !rhc) {
+      change(input.name, 'register-now-insights');
+    } else if (!insights && !rhc) {
+      change(input.name, 'register-now');
+    }
+  }, [insights, rhc]);
+
+  return (
+    <FormSpy>
+      {() => (
+        <FormGroup label={label}>
+          <Radio
+            autoFocus
+            label={
+              (!showOptions &&
+                'Automatically register and enable advanced capabilities') || (
+                <>
+                  Monitor & manage subscriptions and access to Red Hat content
+                  <RHSMPopover />
+                </>
+              )
+            }
+            data-testid="registration-radio-now"
+            name="register-system"
+            id="register-system-now"
+            checked={registerSystem.startsWith('register-now')}
+            onChange={() => {
+              // If rhc (or insights) was disabled previously, enable them again
+              if (!rhc) {
+                setInsights(true);
+                setRhc(true);
+              } else {
+                // useEffect[insights, rhc] won't be triggered if both insights and rhc were enabled
+                change(input.name, 'register-now-rhc');
+              }
+            }}
+            description={
+              !showOptions && (
+                <Button
+                  component="a"
+                  data-testid="registration-additional-options"
+                  variant="link"
+                  isDisabled={!registerSystem.startsWith('register-now')}
+                  isInline
+                  onClick={() => setShowOptions(!showOptions)}
+                >
+                  Show additional connection options
+                </Button>
+              )
+            }
+            body={
+              showOptions && (
+                <Checkbox
+                  className="pf-u-ml-lg"
+                  label={
+                    <>
+                      Enable predictive analytics and management capabilities
+                      <InsightsPopover />
+                    </>
+                  }
+                  data-testid="registration-checkbox-insights"
+                  isChecked={insights}
+                  onChange={(checked) => {
+                    setInsights(checked);
+                    // Uncheck rhc if insights is being unchecked
+                    if (!checked) {
+                      setRhc(!insights);
+                    }
+                  }}
+                  id="register-system-now-insights"
+                  name="register-system-insights"
+                  body={
+                    <Checkbox
+                      label={
+                        <>
+                          Enable remote remediations and system management with
+                          automation
+                          <RHCPopover />
+                        </>
+                      }
+                      data-testid="registration-checkbox-rhc"
+                      isChecked={rhc}
+                      onChange={(checked) => {
+                        setRhc(checked);
+                        // Enable insights if not already enabled
+                        if (!insights) {
+                          setInsights(true);
+                        }
+                      }}
+                      id="register-system-now-rhc"
+                      name="register-system-rhc"
+                    />
+                  }
+                />
+              )
+            }
+          />
+          <Radio
+            name="register-system"
+            className="pf-u-mt-md"
+            data-testid="registration-radio-later"
+            id="register-system-later"
+            label="Register later"
+            checked={registerSystem === 'register-later'}
+            onChange={() => {
+              setShowOptions(false);
+              change(input.name, 'register-later');
+            }}
+          />
+        </FormGroup>
+      )}
+    </FormSpy>
+  );
+};
+
+Registration.propTypes = {
+  label: PropTypes.node,
+};
+
+export default Registration;

@@ -159,7 +159,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('heading', { name: /Create image/ });
 
     screen.getByRole('button', { name: 'Image output' });
-    screen.getByRole('button', { name: 'Registration' });
+    screen.getByRole('button', { name: 'Register' });
     screen.getByRole('button', { name: 'File system configuration' });
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
@@ -327,7 +327,7 @@ describe('Step Upload to AWS', () => {
       name: 'Select activation key',
     });
 
-    screen.getByText('Register images with Red Hat');
+    screen.getByText('Automatically register and enable advanced capabilities');
   });
 
   test('clicking Back loads Release', () => {
@@ -380,7 +380,7 @@ describe('Step Upload to Google', () => {
       name: 'Select activation key',
     });
 
-    screen.getByText('Register images with Red Hat');
+    screen.getByText('Automatically register and enable advanced capabilities');
   });
 
   test('clicking Back loads Release', () => {
@@ -455,7 +455,7 @@ describe('Step Upload to Azure', () => {
       name: 'Select activation key',
     });
 
-    screen.getByText('Register images with Red Hat');
+    screen.getByText('Automatically register and enable advanced capabilities');
   });
 
   test('clicking Back loads Release', () => {
@@ -514,7 +514,7 @@ describe('Step Registration', () => {
   test('clicking Next loads file system configuration', async () => {
     await setUp();
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
 
     getNextButton().click();
@@ -537,13 +537,8 @@ describe('Step Registration', () => {
     verifyCancelButton(cancel, history);
   });
 
-  test('should allow registering with insights', async () => {
+  test('should allow registering with rhc', async () => {
     await setUp();
-
-    const registrationRadio = screen.getByLabelText(
-      'Register and connect image instances with Red Hat'
-    );
-    userEvent.click(registrationRadio);
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -559,19 +554,29 @@ describe('Step Registration', () => {
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
-    await waitFor(() => {
-      screen.getByText('Register with Subscriptions and Red Hat Insights');
-      screen.getAllByText('012345678901');
-    });
+    const review = screen.getByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    expect(review).toHaveTextContent('Connect to Red Hat Insights');
+    expect(review).toHaveTextContent(
+      'Use remote host configuration (RHC) utility'
+    );
+    screen.getAllByText('012345678901');
   });
 
-  test('should allow registering without insights', async () => {
+  test('should allow registering without rhc', async () => {
     await setUp();
 
-    const registrationRadio = screen.getByLabelText(
-      'Register image instances only'
-    );
-    userEvent.click(registrationRadio);
+    userEvent.click(screen.getByTestId('registration-additional-options'));
+    userEvent.click(screen.getByTestId('registration-checkbox-rhc'));
+
+    // going back and forward when rhc isn't selected should keep additional options shown
+    screen.getByRole('button', { name: /Back/ }).click();
+    await screen.findByTestId('aws-account-id');
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByTestId('registration-checkbox-insights');
+    screen.getByTestId('registration-checkbox-rhc');
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -587,27 +592,64 @@ describe('Step Registration', () => {
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
-    await waitFor(() => {
-      screen.getByText('Register with Subscriptions');
-      screen.getAllByText('012345678901');
+    const review = screen.getByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    expect(review).toHaveTextContent('Connect to Red Hat Insights');
+    screen.getAllByText('012345678901');
+    expect(review).not.toHaveTextContent(
+      'Use remote host configuration (RHC) utility'
+    );
+  });
+
+  test('should allow registering without insights or rhc', async () => {
+    await setUp();
+
+    userEvent.click(screen.getByTestId('registration-additional-options'));
+    userEvent.click(screen.getByTestId('registration-checkbox-insights'));
+
+    // going back and forward when neither rhc or insights is selected should keep additional options shown
+    screen.getByRole('button', { name: /Back/ }).click();
+    await screen.findByTestId('aws-account-id');
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByTestId('registration-checkbox-insights');
+    screen.getByTestId('registration-checkbox-rhc');
+
+    const activationKeyDropdown = await screen.findByRole('textbox', {
+      name: 'Select activation key',
     });
+    userEvent.click(activationKeyDropdown);
+    const activationKey = await screen.findByRole('option', {
+      name: 'name0',
+    });
+    userEvent.click(activationKey);
+    screen.getByDisplayValue('name0');
+
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByRole('button', { name: /Next/ }).click();
+    screen.getByTestId('tab-registration').click();
+    const review = screen.getByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    screen.getAllByText('012345678901');
+    expect(review).not.toHaveTextContent('Connect to Red Hat Insights');
+    expect(review).not.toHaveTextContent(
+      'Use remote host configuration (RHC) utility'
+    );
   });
 
   test('should hide input fields when clicking Register the system later', async () => {
     await setUp();
-    // first check the other radio button which causes extra widgets to be shown
-    const registrationRadio = screen.getByLabelText(
-      'Register and connect image instances with Red Hat'
-    );
-    userEvent.click(registrationRadio);
-
     const p1 = waitForElementToBeRemoved(() => [
       screen.getByTestId('subscription-activation-key'),
     ]);
 
-    // then click the later radio button which should remove any input fields
-    const registerLaterRadio = screen.getByLabelText('Register later');
-    userEvent.click(registerLaterRadio);
+    // click the later radio button which should remove any input fields
+    screen.getByTestId('registration-radio-later').click();
 
     await p1;
 
@@ -616,6 +658,17 @@ describe('Step Registration', () => {
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByText('Register the system later');
+  });
+
+  test('registering with rhc implies registering with insights', async () => {
+    await setUp();
+    userEvent.click(screen.getByTestId('registration-additional-options'));
+
+    userEvent.click(screen.getByTestId('registration-checkbox-insights'));
+    expect(screen.getByTestId('registration-checkbox-rhc')).not.toBeChecked();
+
+    userEvent.click(screen.getByTestId('registration-checkbox-rhc'));
+    expect(screen.getByTestId('registration-checkbox-insights')).toBeChecked();
   });
 });
 
@@ -636,7 +689,7 @@ describe('Step File system configuration', () => {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
     getNextButton().click();
   };
@@ -703,7 +756,7 @@ describe('Step Packages', () => {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
     getNextButton().click();
 
@@ -1061,7 +1114,7 @@ describe('Step Details', () => {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
     getNextButton().click();
 
@@ -1108,7 +1161,7 @@ describe('Step Review', () => {
     });
 
     // skip registration
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
     getNextButton().click();
 
@@ -1362,9 +1415,7 @@ describe('Click through all steps', () => {
       return Promise.resolve(mockActivationKey[name]);
     });
 
-    const registrationRadio = screen.getByLabelText(
-      'Register and connect image instances with Red Hat'
-    );
+    const registrationRadio = screen.getByTestId('registration-radio-now');
     userEvent.click(registrationRadio);
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
@@ -1447,14 +1498,16 @@ describe('Click through all steps', () => {
     await screen.findByText('VMWare');
     await screen.findByText('Virtualization - Guest image');
     await screen.findByText('Bare metal - Installer');
-    await screen.findByText('Register with Subscriptions and Red Hat Insights');
     await screen.findByText('MyImageName');
 
     screen.getByTestId('tab-registration').click();
     await screen.findByText('name0');
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
-
+    const review = screen.getByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Use remote host configuration (RHC) utility'
+    );
     screen.getByTestId('repositories-popover-button').click();
     const repotbody = await screen.findByTestId(
       'additional-repositories-table'
@@ -1508,6 +1561,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1550,6 +1604,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1594,6 +1649,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1634,6 +1690,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1674,6 +1731,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1714,6 +1772,7 @@ describe('Click through all steps', () => {
               subscription: {
                 'activation-key': 'name0',
                 insights: true,
+                rhc: true,
                 organization: 5,
                 'server-url': 'subscription.rhsm.redhat.com',
                 'base-url': 'https://cdn.redhat.com/',
@@ -1813,15 +1872,13 @@ describe('Keyboard accessibility', () => {
     clickNext();
 
     // Registration
-    const registerRadio = screen.getByRole('radio', {
-      name: /register and connect image instances with red hat/i,
-    });
+    const registerRadio = screen.getByTestId('registration-radio-now');
     expect(registerRadio).toHaveFocus();
     await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
     // skip registration
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = screen.getByTestId('registration-radio-later');
     userEvent.click(registerLaterRadio);
 
     clickNext();

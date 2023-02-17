@@ -87,10 +87,7 @@ const ReviewStep = () => {
 
   useEffect(() => {
     const registerSystem = getState()?.values?.['register-system'];
-    if (
-      registerSystem === 'register-now' ||
-      registerSystem === 'register-now-insights'
-    ) {
+    if (registerSystem?.startsWith('register-now')) {
       (async () => {
         const userData = await insights?.chrome?.auth?.getUser();
         const id = userData?.identity?.internal?.org_id;
@@ -324,20 +321,44 @@ const ReviewStep = () => {
                 </TextList>
               </TextContent>
             )}
-            {(getState()?.values?.['register-system'] === 'register-now' ||
-              getState()?.values?.['register-system'] ===
-                'register-now-insights') && (
+            {getState()?.values?.['register-system']?.startsWith(
+              'register-now'
+            ) && (
               <TextContent>
                 <TextList component={TextListVariants.dl}>
                   <TextListItem component={TextListItemVariants.dt}>
                     Registration type
                   </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    {getState()?.values?.['register-system'] ===
-                      'register-now-insights' &&
-                      'Register with Subscriptions and Red Hat Insights'}
-                    {getState()?.values?.['register-system'] ===
-                      'register-now' && 'Register with Subscriptions'}
+                  <TextListItem
+                    component={TextListItemVariants.dd}
+                    data-testid="review-registration"
+                  >
+                    <TextList isPlain>
+                      {getState()?.values?.['register-system']?.startsWith(
+                        'register-now'
+                      ) && (
+                        <TextListItem>
+                          Register with Red Hat Subscription Manager (RHSM)
+                          <br />
+                        </TextListItem>
+                      )}
+                      {(getState()?.values?.['register-system'] ===
+                        'register-now-insights' ||
+                        getState()?.values?.['register-system'] ===
+                          'register-now-rhc') && (
+                        <TextListItem>
+                          Connect to Red Hat Insights
+                          <br />
+                        </TextListItem>
+                      )}
+                      {getState()?.values?.['register-system'] ===
+                        'register-now-rhc' && (
+                        <TextListItem>
+                          Use remote host configuration (RHC) utility
+                          <br />
+                        </TextListItem>
+                      )}
+                    </TextList>
                   </TextListItem>
                   <TextListItem component={TextListItemVariants.dt}>
                     Activation key

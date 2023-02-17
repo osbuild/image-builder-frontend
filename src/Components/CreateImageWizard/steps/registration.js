@@ -8,6 +8,7 @@ import {
   Text,
   TextContent,
   TextVariants,
+  Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
@@ -48,38 +49,27 @@ const PopoverActivation = () => {
 export default {
   StepTemplate,
   id: 'wizard-registration',
-  title: 'Registration',
+  title: 'Register',
+  customTitle: (
+    <Title headingLevel="h1" size="xl">
+      Register systems using this image
+    </Title>
+  ),
   name: 'registration',
   nextStep: 'File system configuration',
   buttons: CustomButtons,
   fields: [
     {
-      component: componentTypes.RADIO,
-      label: 'Register images with Red Hat',
+      component: componentTypes.PLAIN_TEXT,
+      name: 'registration-general-description',
+      label:
+        'Automatically Register your systems with Red Hat to enhance security and track your spending.',
+    },
+    {
       name: 'register-system',
-      initialValue: 'register-now-insights',
-      options: [
-        {
-          label: 'Register and connect image instances with Red Hat',
-          description: 'Includes Subscriptions and Red Hat Insights',
-          value: 'register-now-insights',
-          'data-testid': 'radio-register-now-insights',
-          autoFocus: true,
-        },
-        {
-          label: 'Register image instances only',
-          description: 'Includes Subscriptions only',
-          value: 'register-now',
-          className: 'pf-u-mt-sm',
-          'data-testid': 'radio-register-now',
-        },
-        {
-          label: 'Register later',
-          value: 'register-later',
-          className: 'pf-u-mt-sm',
-          'data-testid': 'radio-register-later',
-        },
-      ],
+      component: 'registration',
+      label: 'Registration method',
+      initialValue: 'register-now-rhc',
     },
     {
       component: 'activation-keys',
@@ -93,6 +83,7 @@ export default {
       ),
       condition: {
         or: [
+          { when: 'register-system', is: 'register-now-rhc' },
           { when: 'register-system', is: 'register-now-insights' },
           { when: 'register-system', is: 'register-now' },
         ],
@@ -122,6 +113,7 @@ export default {
       ),
       condition: {
         or: [
+          { when: 'register-system', is: 'register-now-rhc' },
           { when: 'register-system', is: 'register-now-insights' },
           { when: 'register-system', is: 'register-now' },
         ],
@@ -149,6 +141,13 @@ export default {
       name: 'subscription-activation-key-information',
       label: 'Selected activation key',
       valueReference: 'subscription-activation-key',
+      condition: {
+        or: [
+          { when: 'register-system', is: 'register-now-rhc' },
+          { when: 'register-system', is: 'register-now-insights' },
+          { when: 'register-system', is: 'register-now' },
+        ],
+      },
     },
   ],
 };
