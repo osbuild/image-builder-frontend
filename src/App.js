@@ -16,6 +16,7 @@ const App = (props) => {
     document.title = 'Image Builder | Red Hat Insights';
     insights.chrome.init();
     insights.chrome.identifyApp('image-builder');
+    insights.chrome.hideGlobalFilter();
     const unregister = insights.chrome.on('APP_NAVIGATION', () =>
       navigate(resolveRelPath(''))
     );
