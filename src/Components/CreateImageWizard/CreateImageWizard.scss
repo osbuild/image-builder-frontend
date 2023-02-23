@@ -8,8 +8,9 @@
     pointer-events: initial;
 }
 
-.pf-c-dual-list-selector__menu {
-    --pf-c-dual-list-selector__menu--MinHeight: 20.5rem
+.pf-c-dual-list-selector {
+    --pf-c-dual-list-selector__menu--MinHeight: 18.5rem;
+    --pf-c-dual-list-selector__menu--MaxHeight: 18.5rem;
 }
 
 .pf-c-form {
