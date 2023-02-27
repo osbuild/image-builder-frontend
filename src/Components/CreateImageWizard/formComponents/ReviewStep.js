@@ -36,6 +36,7 @@ import PropTypes from 'prop-types';
 import ActivationKeyInformation from './ActivationKeyInformation';
 
 import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
+import { useGetAWSSourcesQuery } from '../../../store/apiSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { googleAccType } from '../steps/googleCloud';
 
@@ -80,6 +81,9 @@ const ReviewStep = () => {
   const [activeTabKey, setActiveTabKey] = useState(0);
   const [minSize, setMinSize] = useState();
   const { change, getState } = useFormApi();
+
+  const { data: awsSources, isSuccess: isSuccessAWSSources } =
+    useGetAWSSourcesQuery();
 
   useEffect(() => {
     const registerSystem = getState()?.values?.['register-system'];
@@ -167,10 +171,38 @@ const ReviewStep = () => {
                       component={TextListItemVariants.dt}
                       className="pf-u-min-width"
                     >
+                      {getState()?.values?.['aws-target-type'] ===
+                      'aws-target-type-source'
+                        ? 'Source'
+                        : null}
+                    </TextListItem>
+                    <TextListItem component={TextListItemVariants.dd}>
+                      {isSuccessAWSSources &&
+                      getState()?.values?.['aws-target-type'] ===
+                        'aws-target-type-source'
+                        ? awsSources.find(
+                            (source) =>
+                              source.id ===
+                              getState()?.values?.['aws-sources-select']
+                          )?.name
+                        : null}
+                    </TextListItem>
+                    <TextListItem
+                      component={TextListItemVariants.dt}
+                      className="pf-u-min-width"
+                    >
                       Account ID
                     </TextListItem>
                     <TextListItem component={TextListItemVariants.dd}>
-                      {getState()?.values?.['aws-account-id']}
+                      {isSuccessAWSSources &&
+                      getState()?.values?.['aws-target-type'] ===
+                        'aws-target-type-source'
+                        ? awsSources.find(
+                            (source) =>
+                              source.id ===
+                              getState()?.values?.['aws-sources-select']
+                          )?.account_id
+                        : getState()?.values?.['aws-account-id']}
                     </TextListItem>
                     <TextListItem component={TextListItemVariants.dt}>
                       Default Region

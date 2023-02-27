@@ -2,13 +2,35 @@ import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
-import { HelperText, HelperTextItem, Title } from '@patternfly/react-core';
+import {
+  Button,
+  HelperText,
+  HelperTextItem,
+  Title,
+} from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 
 import { DEFAULT_AWS_REGION } from '../../../constants';
 import CustomButtons from '../formComponents/CustomButtons';
+
+const SourcesButton = () => {
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      icon={<ExternalLinkAltIcon />}
+      iconPosition="right"
+      isInline
+      href={'settings/sources'}
+    >
+      Create and manage sources here
+    </Button>
+  );
+};
 
 export default {
   StepTemplate,
@@ -46,6 +68,54 @@ export default {
       ),
     },
     {
+      component: componentTypes.RADIO,
+      label: 'Share method:',
+      name: 'aws-target-type',
+      initialValue: 'aws-target-type-source',
+      autoFocus: true,
+      options: [
+        {
+          label: 'Use an account configured from Sources.',
+          description:
+            'Use a configured source to launch environments directly from the console.',
+          value: 'aws-target-type-source',
+          'data-testid': 'aws-radio-source',
+          autoFocus: true,
+        },
+        {
+          label: 'Manually enter an account ID.',
+          value: 'aws-target-type-account-id',
+          'data-testid': 'aws-radio-account-id',
+          className: 'pf-u-mt-sm',
+        },
+      ],
+    },
+    {
+      component: 'aws-sources-select',
+      name: 'aws-sources-select',
+      className: 'pf-u-max-width',
+      label: 'Source Name',
+      isRequired: true,
+      validate: [
+        {
+          type: validatorTypes.REQUIRED,
+        },
+      ],
+      condition: {
+        when: 'aws-target-type',
+        is: 'aws-target-type-source',
+      },
+    },
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'aws-sources-select-description',
+      label: <SourcesButton />,
+      condition: {
+        when: 'aws-target-type',
+        is: 'aws-target-type-source',
+      },
+    },
+    {
       component: componentTypes.TEXT_FIELD,
       name: 'aws-account-id',
       className: 'pf-u-w-25',
@@ -53,7 +123,6 @@ export default {
       type: 'text',
       label: 'AWS account ID',
       isRequired: true,
-      autoFocus: true,
       validate: [
         {
           type: validatorTypes.REQUIRED,
@@ -63,29 +132,61 @@ export default {
           threshold: 12,
         },
       ],
+      condition: {
+        when: 'aws-target-type',
+        is: 'aws-target-type-account-id',
+      },
     },
     {
-      component: componentTypes.TEXT_FIELD,
-      name: 'aws-default-region',
-      className: 'pf-u-w-25',
-      'data-testid': 'aws-default-region',
-      type: 'text',
-      label: 'Default Region',
-      value: DEFAULT_AWS_REGION,
-      isReadOnly: true,
-      isRequired: true,
-      helperText: (
-        <HelperText>
-          <HelperTextItem
-            component="div"
-            variant="indeterminate"
-            className="pf-u-w-25"
-          >
-            Images are built in the default region but can be copied to other
-            regions later.
-          </HelperTextItem>
-        </HelperText>
-      ),
+      name: 'gallery-layout',
+      component: 'gallery-layout',
+      minWidths: { default: '12.5rem' },
+      maxWidths: { default: '12.5rem' },
+      fields: [
+        {
+          component: componentTypes.TEXT_FIELD,
+          name: 'aws-default-region',
+          value: DEFAULT_AWS_REGION,
+          'data-testid': 'aws-default-region',
+          type: 'text',
+          label: 'Default Region',
+          isReadOnly: true,
+          isRequired: true,
+          helperText: (
+            <HelperText>
+              <HelperTextItem component="div" variant="indeterminate">
+                Images are built in the default region but can be copied to
+                other regions later.
+              </HelperTextItem>
+            </HelperText>
+          ),
+        },
+        {
+          component: componentTypes.TEXT_FIELD,
+          name: 'aws-associated-account-id',
+          'data-testid': 'aws-associated-account-id',
+          type: 'text',
+          label: 'Associated Account ID',
+          isReadOnly: true,
+          isRequired: true,
+          helperText: (
+            <HelperText>
+              <HelperTextItem component="div" variant="indeterminate">
+                This is the account associated with the source.
+              </HelperTextItem>
+            </HelperText>
+          ),
+          condition: {
+            when: 'aws-target-type',
+            is: 'aws-target-type-source',
+          },
+        },
+        {
+          component: 'field-listener',
+          name: 'aws-associated-account-id-listener',
+          hideField: true,
+        },
+      ],
     },
   ],
 };

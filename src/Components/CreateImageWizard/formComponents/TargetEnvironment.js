@@ -11,6 +11,8 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
+import { usePrefetch } from '../../../store/apiSlice';
+
 const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const { getState, change } = useFormApi();
   const { input } = useFieldApi({ label, isRequired, ...props });
@@ -22,12 +24,19 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     'guest-image': false,
     'image-installer': false,
   });
+  const prefetchAWSSources = usePrefetch('getAWSSources');
 
   useEffect(() => {
     if (getState()?.values?.[input.name]) {
       setEnvironment(getState().values[input.name]);
     }
   }, []);
+
+  useEffect(() => {
+    if (environment['aws'] === true) {
+      prefetchAWSSources();
+    }
+  }, [environment]);
 
   const handleSetEnvironment = (env) =>
     setEnvironment((prevEnv) => {
