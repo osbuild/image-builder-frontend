@@ -8,9 +8,12 @@ import { Spinner } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 import ActivationKeys from './formComponents/ActivationKeys';
+import { AWSSourcesSelect } from './formComponents/AWSSourcesSelect';
 import AzureAuthButton from './formComponents/AzureAuthButton';
 import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
+import FieldListenerWrapper from './formComponents/FieldListener';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
+import GalleryLayout from './formComponents/GalleryLayout';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
 import {
   ContentSourcesPackages,
@@ -63,6 +66,9 @@ const ImageCreator = ({
         'image-output-release-select': ImageOutputReleaseSelect,
         'centos-acknowledgement': CentOSAcknowledgement,
         'repositories-table': Repositories,
+        'aws-sources-select': AWSSourcesSelect,
+        'gallery-layout': GalleryLayout,
+        'field-listener': FieldListenerWrapper,
         ...customComponentMapper,
       }}
       onCancel={onClose}

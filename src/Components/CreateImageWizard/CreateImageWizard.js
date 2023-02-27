@@ -79,6 +79,10 @@ const onSave = (values) => {
 
   const requests = [];
   if (values['target-environment']?.aws) {
+    const options =
+      values['aws-target-type'] === 'aws-target-type-source'
+        ? { share_with_sources: [values['aws-sources-select']] }
+        : { share_with_accounts: [values['aws-account-id']] };
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
@@ -88,9 +92,7 @@ const onSave = (values) => {
           image_type: 'aws',
           upload_request: {
             type: 'aws',
-            options: {
-              share_with_accounts: [values['aws-account-id']],
-            },
+            options: options,
           },
         },
       ],
@@ -297,8 +299,19 @@ const requestToState = (composeRequest) => {
     formState['target-environment'][targetEnvironment] = true;
 
     if (targetEnvironment === 'aws') {
-      formState['aws-account-id'] =
-        uploadRequest?.options?.share_with_accounts[0];
+      const shareWithSource = uploadRequest?.options?.share_with_sources?.[0];
+      const shareWithAccount = uploadRequest?.options?.share_with_accounts?.[0];
+      formState['aws-sources-select'] = shareWithSource;
+      formState['aws-account-id'] = shareWithAccount;
+      if (shareWithAccount && !shareWithSource) {
+        formState['aws-target-type'] = 'aws-target-type-account-id';
+      } else {
+        // if both shareWithAccount & shareWithSource are present, set radio
+        // to sources - this is essentially an arbitrary decision
+        // additionally, note that the source is not validated against the actual
+        // sources
+        formState['aws-target-type'] = 'aws-target-type-source';
+      }
     } else if (targetEnvironment === 'azure') {
       formState['azure-tenant-id'] = uploadRequest?.options?.tenant_id;
       formState['azure-subscription-id'] =
