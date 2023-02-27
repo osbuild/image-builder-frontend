@@ -84,7 +84,7 @@
     "sass": "1.57.1",
     "sass-loader": "13.0.2",
     "stylelint": "14.16.1",
-    "stylelint-config-recommended-scss": "6.0.0",
+    "stylelint-config-recommended-scss": "7.0.0",
     "uuid": "9.0.0",
     "webpack-bundle-analyzer": "4.7.0",
     "whatwg-fetch": "^3.6.2"
