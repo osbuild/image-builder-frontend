@@ -600,6 +600,9 @@ describe('Step Packages', () => {
     getNextButton().click();
 
     // aws step
+    screen
+      .getByRole('radio', { name: /enter aws account id manually/i })
+      .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
@@ -878,6 +881,9 @@ describe('Step Custom repositories', () => {
     getNextButton().click();
 
     // aws step
+    screen
+      .getByRole('radio', { name: /enter aws account id manually/i })
+      .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
@@ -1027,6 +1033,9 @@ describe('Click through all steps', () => {
     userEvent.click(screen.getByTestId('checkbox-image-installer'));
 
     screen.getByRole('button', { name: /Next/ }).click();
+    screen
+      .getByRole('radio', { name: /enter aws account id manually/i })
+      .click();
     userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
     screen.getByRole('button', { name: /Next/ }).click();
 
