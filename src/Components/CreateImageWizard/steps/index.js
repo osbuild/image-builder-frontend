@@ -1,4 +1,5 @@
-export { default as awsTarget } from './aws';
+export { default as awsTargetStable } from './aws';
+export { default as awsTargetBeta } from './aws.beta';
 export { default as googleCloudTarger } from './googleCloud';
 export { default as msAzureTarget } from './msAzure';
 export { default as packages } from './packages';
