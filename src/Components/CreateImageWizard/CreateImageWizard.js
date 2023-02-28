@@ -7,7 +7,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import ImageCreator from './ImageCreator';
 import {
-  awsTarget,
+  awsTargetStable,
+  awsTargetBeta,
   fileSystemConfiguration,
   googleCloudTarger,
   imageName,
@@ -475,6 +476,8 @@ const formStepHistory = (composeRequest) => {
 };
 
 const CreateImageWizard = () => {
+  const awsTarget = insights.chrome.isBeta() ? awsTargetBeta : awsTargetStable;
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
