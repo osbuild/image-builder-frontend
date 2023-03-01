@@ -637,7 +637,7 @@ describe('Step Registration', () => {
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
     screen.getByRole('button', { name: /Next/ }).click();
-    screen.getByTestId('tab-registration').click();
+    screen.getByTestId('registration-expandable').click();
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -1248,46 +1248,50 @@ describe('Step Review', () => {
     verifyCancelButton(cancel, history);
   });
 
-  test('has three tabs for rhel', async () => {
+  test('has Registration expandable section for rhel', async () => {
     await setUp();
 
-    const buttonTarget = screen.getByTestId('tab-target');
-    const buttonRegistration = screen.getByTestId('tab-registration');
-    const buttonSystem = screen.getByTestId('tab-system');
+    const targetExpandable = screen.getByTestId(
+      'target-environments-expandable'
+    );
+    const registrationExpandable = screen.getByTestId(
+      'registration-expandable'
+    );
+    const contentExpandable = screen.getByTestId('content-expandable');
+    const fscExpandable = screen.getByTestId(
+      'file-system-configuration-expandable'
+    );
 
-    await user.click(buttonTarget);
-    screen.getByRole('heading', {
-      name: 'Amazon Web Services',
-    });
-    await user.click(buttonRegistration);
+    await user.click(targetExpandable);
+    screen.getByText('AWS');
+    await user.click(registrationExpandable);
     screen.getByText('Register the system later');
-    await user.click(buttonSystem);
-    screen.getByRole('heading', {
-      name: 'Additional packages',
-    });
-    screen.getByRole('heading', {
-      name: 'File system configuration',
-    });
+    await user.click(contentExpandable);
+    screen.getByText('Additional Red Hatand 3rd party packages');
+    await user.click(fscExpandable);
+    screen.getByText('Configuration type');
   });
 
-  test('has two tabs for centos', async () => {
+  test('has no Registration expandable for centos', async () => {
     await setUpCentOS();
 
-    const buttonTarget = await screen.findByTestId('tab-target');
-    const buttonSystem = await screen.findByTestId('tab-system');
-    expect(screen.queryByTestId('tab-registration')).not.toBeInTheDocument();
+    const targetExpandable = await screen.findByTestId(
+      'target-environments-expandable'
+    );
+    const contentExpandable = await screen.findByTestId('content-expandable');
+    const fscExpandable = await screen.findByTestId(
+      'file-system-configuration-expandable'
+    );
+    expect(
+      screen.queryByTestId('registration-expandable')
+    ).not.toBeInTheDocument();
 
-    await user.click(buttonTarget);
-    screen.getByRole('heading', {
-      name: 'Amazon Web Services',
-    });
-    await user.click(buttonSystem);
-    screen.getByRole('heading', {
-      name: 'Additional packages',
-    });
-    screen.getByRole('heading', {
-      name: 'File system configuration',
-    });
+    await user.click(targetExpandable);
+    screen.getByText('AWS');
+    await user.click(contentExpandable);
+    screen.getByText('Additional Red Hatand 3rd party packages');
+    await user.click(fscExpandable);
+    screen.getByText('Configuration type');
   });
 
   test('can pass location to recreate on review step', () => {
@@ -1316,10 +1320,7 @@ describe('Step Review', () => {
       {},
       initialLocation
     ).history;
-    screen.getByText(
-      'Review the information and click "Create image" to create the image using the following criteria.'
-    );
-    screen.getByText('Virtualization - Guest image');
+    screen.getByText('Virtualization - Guest image (.qcow2)');
     screen.getByText('Register the system later');
     screen.getByText('MyImageName');
   });
@@ -1502,17 +1503,26 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // review
-    await screen.findByText(
-      'Review the information and click "Create image" to create the image using the following criteria.'
+    const targetEnvironmentsExpandable = await screen.findByTestId(
+      'target-environments-expandable'
     );
-    await screen.findAllByText('Amazon Web Services');
-    await screen.findAllByText('Google Cloud Platform');
-    await screen.findByText('VMWare');
-    await screen.findByText('Virtualization - Guest image');
-    await screen.findByText('Bare metal - Installer');
+    targetEnvironmentsExpandable.click();
+    await screen.findAllByText('AWS');
+    await screen.findAllByText('GCP');
+    await screen.findByText('VMWare (.vmdk)');
+    await screen.findByText('Virtualization - Guest image (.qcow2)');
+    await screen.findByText('Bare metal - Installer (.iso)');
+
+    const imageDetailsExpandable = await screen.findByTestId(
+      'image-details-expandable'
+    );
+    imageDetailsExpandable.click();
     await screen.findByText('MyImageName');
 
-    screen.getByTestId('tab-registration').click();
+    const registrationExpandable = await screen.findByTestId(
+      'registration-expandable'
+    );
+    registrationExpandable.click();
     await screen.findByText('name0');
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
@@ -1921,10 +1931,6 @@ describe('Keyboard accessibility', () => {
     const nameInput = screen.getByRole('textbox', { name: /image name/i });
     expect(nameInput).toHaveFocus();
     clickNext();
-
-    // Review
-    const targetEnvironmentTab = screen.getByTestId('tab-target');
-    expect(targetEnvironmentTab).toHaveFocus();
   });
 
   test('pressing Esc closes the wizard', async () => {
