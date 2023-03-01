@@ -58,6 +58,9 @@ export const selectComposeById = (state, composeId) => {
       share_with_accounts:
         compose.request.image_requests[0].upload_request?.options
           .share_with_accounts,
+      share_with_sources:
+        compose.request.image_requests[0].upload_request?.options
+          .share_with_sources,
       status: compose.image_status?.status,
       clones: [...compose.clones],
       imageType: compose.request.image_requests[0].image_type,
@@ -85,6 +88,7 @@ export const selectClonesById = (state, composeId) => {
         region: clone.request.region,
         ami: clone.image_status?.upload_status?.options?.ami,
         share_with_accounts: clone.request.share_with_accounts,
+        share_with_sources: clone.request.share_with_sources,
         status: clone.image_status?.status,
       };
     });
