@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Button, Popover, Text, TextContent } from '@patternfly/react-core';
 import {
   HelpIcon,
-  CodeIcon,
+  CodeBranchIcon,
   ExternalLinkAltIcon,
 } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
@@ -77,7 +77,7 @@ class LandingPage extends Component {
               aria-label="About Open Services"
               className="pf-u-pl-sm header-button"
             >
-              <CodeIcon />
+              <CodeBranchIcon />
             </Button>
           </Popover>
         </PageHeader>
