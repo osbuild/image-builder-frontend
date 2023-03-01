@@ -38,6 +38,7 @@ export const selectCloneById = (state, cloneId) => {
       region: clone.request.region,
       ami: clone.image_status?.upload_status?.options?.ami,
       share_with_accounts: clone.request.share_with_accounts,
+      share_with_sources: clone.request.share_with_sources,
       status: clone.image_status?.status,
       uploadStatus: clone.image_status?.upload_status,
       parent: clone.parent,

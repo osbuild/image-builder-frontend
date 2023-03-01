@@ -30,7 +30,8 @@ export const selectRegionsToDisable = createSelector(
     regions.add(compose.region);
     clones.map((clone) => {
       clone.region &&
-        clone.share_with_accounts[0] === compose.share_with_accounts[0] &&
+        clone.share_with_accounts?.[0] === compose.share_with_accounts?.[0] &&
+        clone.share_with_sources?.[0] === compose.share_with_sources?.[0] &&
         clone.status !== 'failure' &&
         regions.add(clone.region);
     });
@@ -92,10 +93,13 @@ const RegionsSelect = ({
 
   const generateRequests = () => {
     const requests = selected.map((region) => {
-      return {
-        region: region,
-        share_with_accounts: [compose.share_with_accounts[0]],
-      };
+      const request = { region: region };
+      if (compose.share_with_sources?.[0]) {
+        request.share_with_sources = [compose.share_with_sources[0]];
+      } else {
+        request.share_with_accounts = [compose.share_with_accounts[0]];
+      }
+      return request;
     });
     return requests;
   };
