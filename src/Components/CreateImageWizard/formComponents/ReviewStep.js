@@ -2,88 +2,35 @@ import React, { useEffect, useState } from 'react';
 
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
-  Button,
-  DescriptionList,
-  DescriptionListDescription,
-  DescriptionListGroup,
-  DescriptionListTerm,
-  List,
-  ListItem,
-  Popover,
-  Spinner,
-  Tab,
-  Tabs,
-  TabTitleText,
+  ExpandableSection,
   Text,
   TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
   TextVariants,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+
 import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
-import PropTypes from 'prop-types';
+  ContentList,
+  FSCList,
+  ImageDetailsList,
+  ImageOutputList,
+  RegisterLaterList,
+  RegisterNowList,
+  TargetEnvAWSList,
+  TargetEnvAzureList,
+  TargetEnvGCPList,
+  TargetEnvOtherList,
+} from './ReviewStepTextLists';
 
-import ActivationKeyInformation from './ActivationKeyInformation';
-
-import { RELEASES, UNIT_GIB, UNIT_MIB } from '../../../constants';
-import { useGetAWSSourcesQuery } from '../../../store/apiSlice';
 import isRhel from '../../../Utilities/isRhel';
-import { googleAccType } from '../steps/googleCloud';
-
-const FSReviewTable = ({ ...props }) => {
-  return (
-    <TableComposable
-      aria-label="File system configuration table"
-      variant="compact"
-    >
-      <Thead>
-        <Tr>
-          <Th>Mount point</Th>
-          <Th>File system type</Th>
-          <Th>Minimum size</Th>
-        </Tr>
-      </Thead>
-      <Tbody data-testid="file-system-configuration-tbody-review">
-        {props.fsc.map((r, ri) => (
-          <Tr key={ri}>
-            <Td className="pf-m-width-30">{r.mountpoint}</Td>
-            <Td className="pf-m-width-30">xfs</Td>
-            <Td className="pf-m-width-30">
-              {r.size}{' '}
-              {r.unit === UNIT_GIB
-                ? 'GiB'
-                : r.unit === UNIT_MIB
-                ? 'MiB'
-                : 'KiB'}
-            </Td>
-          </Tr>
-        ))}
-      </Tbody>
-    </TableComposable>
-  );
-};
-
-FSReviewTable.propTypes = {
-  fsc: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
 
 const ReviewStep = () => {
-  const [activeTabKey, setActiveTabKey] = useState(0);
-  const [minSize, setMinSize] = useState();
+  const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
+  const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(false);
+  const [isExpandedFSC, setIsExpandedFSC] = useState(false);
+  const [isExpandedContent, setIsExpandedContent] = useState(false);
+  const [isExpandedRegistration, setIsExpandedRegistration] = useState(false);
+  const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(false);
   const { change, getState } = useFormApi();
-
-  const { data: awsSources, isSuccess: isSuccessAWSSources } =
-    useGetAWSSourcesQuery();
 
   useEffect(() => {
     const registerSystem = getState()?.values?.['register-system'];
@@ -94,411 +41,115 @@ const ReviewStep = () => {
         change('subscription-organization-id', id);
       })();
     }
-
-    if (
-      getState()?.values?.['file-system-config-radio'] === 'manual' &&
-      getState()?.values?.['file-system-configuration']
-    ) {
-      let size = 0;
-      for (const fsc of getState().values['file-system-configuration']) {
-        size += fsc.size * fsc.unit;
-      }
-
-      size = (size / UNIT_GIB).toFixed(1);
-      if (size < 1) {
-        setMinSize(`Less than 1 GiB`);
-      } else {
-        setMinSize(`${size} GiB`);
-      }
-    }
   });
 
-  const handleTabClick = (event, tabIndex) => {
-    setActiveTabKey(tabIndex);
-  };
+  const onToggleImageOutput = (isExpandedImageOutput) =>
+    setIsExpandedImageOutput(isExpandedImageOutput);
+  const onToggleTargetEnvs = (isExpandedTargetEnvs) =>
+    setIsExpandedTargetEnvs(isExpandedTargetEnvs);
+  const onToggleFSC = (isExpandedFSC) => setIsExpandedFSC(isExpandedFSC);
+  const onToggleContent = (isExpandedContent) =>
+    setIsExpandedContent(isExpandedContent);
+  const onToggleRegistration = (isExpandedRegistration) =>
+    setIsExpandedRegistration(isExpandedRegistration);
+  const onToggleImageDetail = (isExpandedImageDetail) =>
+    setIsExpandedImageDetail(isExpandedImageDetail);
 
   return (
     <>
-      <Text>
-        Review the information and click &quot;Create image&quot; to create the
-        image using the following criteria.
-      </Text>
-      <DescriptionList isCompact>
-        <DescriptionListGroup>
-          {getState()?.values?.['image-name'] && (
-            <>
-              <DescriptionListTerm>Image name</DescriptionListTerm>
-              <DescriptionListDescription>
-                {getState()?.values?.['image-name']}
-              </DescriptionListDescription>
-            </>
-          )}
-          <DescriptionListTerm>Release</DescriptionListTerm>
-          <DescriptionListDescription>
-            {RELEASES.get(getState()?.values?.release)}
-          </DescriptionListDescription>
-        </DescriptionListGroup>
-      </DescriptionList>
-      <Tabs
-        isFilled
-        activeKey={activeTabKey}
-        onSelect={handleTabClick}
-        className="pf-u-w-75"
+      <ExpandableSection
+        toggleContent={'Image output'}
+        onToggle={onToggleImageOutput}
+        isExpanded={isExpandedImageOutput}
+        isIndented
+        data-testid="image-output-expandable"
       >
-        <Tab
-          eventKey={0}
-          title={<TabTitleText>Target environment</TabTitleText>}
-          data-testid="tab-target"
-          autoFocus
-        >
-          <List isPlain iconSize="large">
-            {getState()?.values?.['target-environment']?.aws && (
-              <ListItem
-                icon={
-                  <img
-                    className="provider-icon"
-                    src="/apps/frontend-assets/partners-icons/aws.svg"
-                  />
-                }
-              >
-                <TextContent>
-                  <Text component={TextVariants.h3}>Amazon Web Services</Text>
-                  <TextList component={TextListVariants.dl}>
-                    <TextListItem
-                      component={TextListItemVariants.dt}
-                      className="pf-u-min-width"
-                    >
-                      {getState()?.values?.['aws-target-type'] ===
-                      'aws-target-type-source'
-                        ? 'Source'
-                        : null}
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {isSuccessAWSSources &&
-                      getState()?.values?.['aws-target-type'] ===
-                        'aws-target-type-source'
-                        ? awsSources.find(
-                            (source) =>
-                              source.id ===
-                              getState()?.values?.['aws-sources-select']
-                          )?.name
-                        : null}
-                    </TextListItem>
-                    <TextListItem
-                      component={TextListItemVariants.dt}
-                      className="pf-u-min-width"
-                    >
-                      Account ID
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {isSuccessAWSSources &&
-                      getState()?.values?.['aws-target-type'] ===
-                        'aws-target-type-source'
-                        ? awsSources.find(
-                            (source) =>
-                              source.id ===
-                              getState()?.values?.['aws-sources-select']
-                          )?.account_id
-                        : getState()?.values?.['aws-account-id']}
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dt}>
-                      Default Region
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      us-east-1
-                    </TextListItem>
-                  </TextList>
-                </TextContent>
-              </ListItem>
-            )}
-            {getState()?.values?.['target-environment']?.gcp && (
-              <ListItem
-                className="pf-c-list__item pf-u-mt-md"
-                icon={
-                  <img
-                    className="provider-icon"
-                    src="/apps/frontend-assets/partners-icons/google-cloud-short.svg"
-                  />
-                }
-              >
-                <TextContent>
-                  <Text component={TextVariants.h3}>Google Cloud Platform</Text>
-                  <TextList component={TextListVariants.dl}>
-                    <TextListItem component={TextListItemVariants.dt}>
-                      {
-                        googleAccType?.[
-                          getState()?.values?.['google-account-type']
-                        ]
-                      }
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {getState()?.values?.['google-email'] ||
-                        getState()?.values?.['google-domain']}
-                    </TextListItem>
-                  </TextList>
-                </TextContent>
-              </ListItem>
-            )}
-            {getState()?.values?.['target-environment']?.azure && (
-              <ListItem
-                className="pf-c-list__item pf-u-mt-md"
-                icon={
-                  <img
-                    className="provider-icon"
-                    src="/apps/frontend-assets/partners-icons/microsoft-azure-short.svg"
-                  />
-                }
-              >
-                <TextContent>
-                  <Text component={TextVariants.h3}>Microsoft Azure</Text>
-                  <TextList component={TextListVariants.dl}>
-                    <TextListItem component={TextListItemVariants.dt}>
-                      Subscription ID
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {getState()?.values?.['azure-subscription-id']}
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dt}>
-                      Tenant ID
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {getState()?.values?.['azure-tenant-id']}
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dt}>
-                      Resource group
-                    </TextListItem>
-                    <TextListItem component={TextListItemVariants.dd}>
-                      {getState()?.values?.['azure-resource-group']}
-                    </TextListItem>
-                  </TextList>
-                </TextContent>
-              </ListItem>
-            )}
-            {getState()?.values?.['target-environment']?.vsphere && (
-              <ListItem>
-                <TextContent>
-                  <Text component={TextVariants.h3}>VMWare</Text>
-                </TextContent>
-              </ListItem>
-            )}
-            {getState()?.values?.['target-environment']?.['guest-image'] && (
-              <ListItem>
-                <TextContent>
-                  <Text component={TextVariants.h3}>
-                    Virtualization - Guest image
-                  </Text>
-                </TextContent>
-              </ListItem>
-            )}
-            {getState()?.values?.['target-environment']?.[
-              'image-installer'
-            ] && (
-              <ListItem>
-                <TextContent>
-                  <Text component={TextVariants.h3}>
-                    Bare metal - Installer
-                  </Text>
-                </TextContent>
-              </ListItem>
-            )}
-          </List>
-        </Tab>
-        {isRhel(getState()?.values?.release) && (
-          <Tab
-            eventKey={1}
-            title={<TabTitleText>Registration</TabTitleText>}
-            data-testid="tab-registration"
-          >
-            {getState()?.values?.['register-system'] === 'register-later' && (
-              <TextContent>
-                <TextList component={TextListVariants.dl}>
-                  <TextListItem component={TextListItemVariants.dt}>
-                    Registration type
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    Register the system later
-                  </TextListItem>
-                </TextList>
-              </TextContent>
-            )}
-            {getState()?.values?.['register-system']?.startsWith(
-              'register-now'
-            ) && (
-              <TextContent>
-                <TextList component={TextListVariants.dl}>
-                  <TextListItem component={TextListItemVariants.dt}>
-                    Registration type
-                  </TextListItem>
-                  <TextListItem
-                    component={TextListItemVariants.dd}
-                    data-testid="review-registration"
-                  >
-                    <TextList isPlain>
-                      {getState()?.values?.['register-system']?.startsWith(
-                        'register-now'
-                      ) && (
-                        <TextListItem>
-                          Register with Red Hat Subscription Manager (RHSM)
-                          <br />
-                        </TextListItem>
-                      )}
-                      {(getState()?.values?.['register-system'] ===
-                        'register-now-insights' ||
-                        getState()?.values?.['register-system'] ===
-                          'register-now-rhc') && (
-                        <TextListItem>
-                          Connect to Red Hat Insights
-                          <br />
-                        </TextListItem>
-                      )}
-                      {getState()?.values?.['register-system'] ===
-                        'register-now-rhc' && (
-                        <TextListItem>
-                          Use remote host configuration (RHC) utility
-                          <br />
-                        </TextListItem>
-                      )}
-                    </TextList>
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dt}>
-                    Activation key
-                    <Popover
-                      bodyContent={
-                        <TextContent>
-                          <Text>
-                            Activation keys enable you to register a system with
-                            appropriate subscriptions, system purpose, and
-                            repositories attached.
-                            <br />
-                            <br />
-                            If using an activation key with command line
-                            registration, you must provide your
-                            organization&apos;s ID. Your organization&apos;s ID
-                            is{' '}
-                            {getState()?.values?.[
-                              'subscription-organization-id'
-                            ] !== undefined ? (
-                              getState()?.values?.[
-                                'subscription-organization-id'
-                              ]
-                            ) : (
-                              <Spinner size="md" />
-                            )}
-                          </Text>
-                        </TextContent>
-                      }
-                    >
-                      <Button
-                        variant="plain"
-                        aria-label="About activation key"
-                        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                        isSmall
-                      >
-                        <HelpIcon />
-                      </Button>
-                    </Popover>
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    <ActivationKeyInformation />
-                  </TextListItem>
-                </TextList>
-              </TextContent>
-            )}
-          </Tab>
+        <ImageOutputList />
+      </ExpandableSection>
+      <ExpandableSection
+        toggleContent={'Target environments'}
+        onToggle={onToggleTargetEnvs}
+        isExpanded={isExpandedTargetEnvs}
+        isIndented
+        data-testid="target-environments-expandable"
+      >
+        {getState()?.values?.['target-environment']?.aws && (
+          <TargetEnvAWSList />
         )}
-        <Tab
-          eventKey={2}
-          title={<TabTitleText>System configuration</TabTitleText>}
-          data-testid="tab-system"
-        >
+        {getState()?.values?.['target-environment']?.gcp && (
+          <TargetEnvGCPList />
+        )}
+        {getState()?.values?.['target-environment']?.azure && (
+          <TargetEnvAzureList />
+        )}
+        {getState()?.values?.['target-environment']?.vsphere && (
           <TextContent>
-            <Text component={TextVariants.h3}>File system configuration</Text>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem component={TextListItemVariants.dt}>
-                Partitioning
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dd}
-                data-testid="partitioning-auto-manual"
-              >
-                {getState()?.values?.['file-system-config-radio'] === 'manual'
-                  ? 'Manual'
-                  : 'Automatic'}
-                {getState()?.values?.['file-system-config-radio'] ===
-                  'manual' && (
-                  <>
-                    {' '}
-                    <Popover
-                      position="bottom"
-                      headerContent="Partitions"
-                      hasAutoWidth
-                      minWidth="30rem"
-                      bodyContent={
-                        <FSReviewTable
-                          fsc={getState().values['file-system-configuration']}
-                        />
-                      }
-                    >
-                      <Button
-                        data-testid="file-system-configuration-popover"
-                        variant="link"
-                        aria-label="File system configuration info"
-                        aria-describedby="file-system-configuration-info"
-                        className="pf-u-pt-0 pf-u-pb-0"
-                      >
-                        View partitions
-                      </Button>
-                    </Popover>
-                  </>
-                )}
-              </TextListItem>
-              {getState()?.values?.['file-system-config-radio'] ===
-                'manual' && (
-                <>
-                  <TextListItem component={TextListItemVariants.dt}>
-                    Image size (minimum)
-                    <Popover
-                      hasAutoWidth
-                      bodyContent={
-                        <TextContent>
-                          <Text>
-                            Image Builder may extend this size based on
-                            requirements, selected packages, and configurations.
-                          </Text>
-                        </TextContent>
-                      }
-                    >
-                      <Button
-                        variant="plain"
-                        aria-label="File system configuration info"
-                        aria-describedby="file-system-configuration-info"
-                        className="pf-c-form__group-label-help"
-                      >
-                        <HelpIcon />
-                      </Button>
-                    </Popover>
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    {minSize}
-                  </TextListItem>
-                </>
-              )}
-            </TextList>
-            <Text component={TextVariants.h3}>Additional packages</Text>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem component={TextListItemVariants.dt}>
-                Chosen
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dd}
-                data-testid="chosen-packages-count"
-              >
-                {getState()?.values?.['selected-packages']?.length || 0}
-              </TextListItem>
-            </TextList>
+            <Text component={TextVariants.h3}>VMWare (.vmdk)</Text>
+            <TargetEnvOtherList />
           </TextContent>
-        </Tab>
-      </Tabs>
+        )}
+        {getState()?.values?.['target-environment']?.['guest-image'] && (
+          <TextContent>
+            <Text component={TextVariants.h3}>
+              Virtualization - Guest image (.qcow2)
+            </Text>
+            <TargetEnvOtherList />
+          </TextContent>
+        )}
+        {getState()?.values?.['target-environment']?.['image-installer'] && (
+          <TextContent>
+            <Text component={TextVariants.h3}>
+              Bare metal - Installer (.iso)
+            </Text>
+            <TargetEnvOtherList />
+          </TextContent>
+        )}
+      </ExpandableSection>
+      <ExpandableSection
+        toggleContent={'File system configuration'}
+        onToggle={onToggleFSC}
+        isExpanded={isExpandedFSC}
+        isIndented
+        data-testid="file-system-configuration-expandable"
+      >
+        <FSCList />
+      </ExpandableSection>
+      <ExpandableSection
+        toggleContent={'Content'}
+        onToggle={onToggleContent}
+        isExpanded={isExpandedContent}
+        isIndented
+        data-testid="content-expandable"
+      >
+        <ContentList />
+      </ExpandableSection>
+      {isRhel(getState()?.values?.release) && (
+        <ExpandableSection
+          toggleContent={'Registration'}
+          onToggle={onToggleRegistration}
+          isExpanded={isExpandedRegistration}
+          isIndented
+          data-testid="registration-expandable"
+        >
+          {getState()?.values?.['register-system'] === 'register-later' && (
+            <RegisterLaterList />
+          )}
+          {getState()?.values?.['register-system']?.startsWith(
+            'register-now'
+          ) && <RegisterNowList />}
+        </ExpandableSection>
+      )}
+      {getState()?.values?.['image-name'] && (
+        <ExpandableSection
+          toggleContent={'Image details'}
+          onToggle={onToggleImageDetail}
+          isExpanded={isExpandedImageDetail}
+          isIndented
+          data-testid="image-details-expandable"
+        >
+          <ImageDetailsList />
+        </ExpandableSection>
+      )}
     </>
   );
 };

@@ -1300,21 +1300,31 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // review
-    await screen.findByText(
-      'Review the information and click "Create image" to create the image using the following criteria.'
+    const targetEnvironmentsExpandable = await screen.findByTestId(
+      'target-environments-expandable'
     );
-    await screen.findAllByText('Amazon Web Services');
-    await screen.findAllByText('Google Cloud Platform');
-    await screen.findByText('VMWare');
-    await screen.findByText('Virtualization - Guest image');
-    await screen.findByText('Bare metal - Installer');
+    targetEnvironmentsExpandable.click();
+    await screen.findAllByText('AWS');
+    await screen.findAllByText('GCP');
+    await screen.findByText('VMWare (.vmdk)');
+    await screen.findByText('Virtualization - Guest image (.qcow2)');
+    await screen.findByText('Bare metal - Installer (.iso)');
+
+    const registrationExpandable = await screen.findByTestId(
+      'registration-expandable'
+    );
+    registrationExpandable.click();
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Use remote host configuration (RHC) utility'
     );
+
+    const imageDetailsExpandable = await screen.findByTestId(
+      'image-details-expandable'
+    );
+    imageDetailsExpandable.click();
     await screen.findByText('MyImageName');
 
-    screen.getByTestId('tab-registration').click();
     await screen.findByText('name0');
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
