@@ -108,20 +108,17 @@ export default {
       component: componentTypes.PLAIN_TEXT,
       name: 'subscription-activation-description',
       label: (
-        <>
-          Create and manage activation keys in the&nbsp;
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href="https://access.redhat.com/"
-          >
-            Customer Portal
-          </Button>
-        </>
+        <Button
+          component="a"
+          target="_blank"
+          variant="link"
+          icon={<ExternalLinkAltIcon />}
+          iconPosition="right"
+          isInline
+          href="https://access.redhat.com/management/activation_keys"
+        >
+          Create and manage activation keys here
+        </Button>
       ),
       condition: {
         or: [
