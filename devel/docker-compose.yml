@@ -28,7 +28,7 @@ services:
     image: local/osbuild-worker
     build:
       context: ../../osbuild-composer
-      dockerfile: ./distribution/Dockerfile-worker
+      dockerfile: ./distribution/Dockerfile-worker-devel
     # override the entrypoint to specify composer hostname and port
     entrypoint: [ "/usr/libexec/osbuild-composer/osbuild-worker", "composer:8700" ]
     volumes:

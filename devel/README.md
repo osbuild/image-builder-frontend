@@ -7,8 +7,9 @@ Development Tools for Image Builder
 To start local development, first clone the image builder stack:
 
 ```bash
-git clone git@github.com:osbuild/osbuild.git
 git clone git@github.com:osbuild/osbuild-composer.git
+mkdir osbuild-composer/osbuild
+git clone git@github.com:osbuild/osbuild.git osbuild-composer/osbuild
 git clone git@github.com:osbuild/image-builder.git
 git clone git@github.com:osbuild/image-builder-frontend.git
 ```
@@ -19,8 +20,8 @@ The folder structure should look like:
 .
 ├── image-builder
 ├── image-builder-frontend
-├── osbuild
 └── osbuild-composer
+    └── osbuild
 ```
 Secondly redirect a few domains to localhost. One for each environment
 of cloud.redhat.com that exists. You only need the ones you will be
