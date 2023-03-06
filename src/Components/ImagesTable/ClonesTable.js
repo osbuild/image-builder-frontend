@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux';
 import { ImageBuildStatus } from './ImageBuildStatus';
 import ImageLink from './ImageLink';
 
+import { useGetAWSSourcesQuery } from '../../store/apiSlice';
 import {
   selectClonesById,
   selectComposeById,
@@ -23,6 +24,21 @@ import { timestampToDisplayString } from '../../Utilities/time';
 
 const Row = ({ imageId }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
+  const { data: awsSources, isSuccess } = useGetAWSSourcesQuery();
+
+  const getAccount = (image) => {
+    if (image.share_with_sources?.[0]) {
+      if (isSuccess) {
+        const accountId = awsSources.find(
+          (source) => source.id === image.share_with_sources[0]
+        ).account_id;
+        return accountId;
+      }
+      return null;
+    }
+    return image.share_with_accounts?.[0];
+  };
+
   return (
     <Tbody>
       <Tr>
@@ -30,7 +46,7 @@ const Row = ({ imageId }) => {
         <Td dataLabel="Created">
           {timestampToDisplayString(image.created_at)}
         </Td>
-        <Td dataLabel="Account">{image.share_with_accounts?.[0]}</Td>
+        <Td dataLabel="Account">{getAccount(image)}</Td>
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
           <ImageBuildStatus imageId={image.id} />
