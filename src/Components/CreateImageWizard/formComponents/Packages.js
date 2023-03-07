@@ -1,5 +1,6 @@
 import React, {
   useCallback,
+  useContext,
   useEffect,
   useMemo,
   useRef,
@@ -7,6 +8,7 @@ import React, {
 } from 'react';
 
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import {
   DualListSelector,
   DualListSelectorControl,
@@ -81,6 +83,7 @@ export const ContentSourcesPackages = () => {
 };
 
 const Packages = ({ getAllPackages, isSuccess }) => {
+  const { currentStep } = useContext(WizardContext);
   const { change, getState } = useFormApi();
   const [packagesSearchName, setPackagesSearchName] = useState(undefined);
   const [filterChosen, setFilterChosen] = useState('');
@@ -277,7 +280,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
             onSearch={handleAvailablePackagesSearch}
             resetButtonLabel="Clear available packages search"
             onClear={handleClearAvailableSearch}
-            isDisabled={!isSuccess}
+            isDisabled={currentStep.name === 'packages' ? !isSuccess : false}
           />
         }
       >
