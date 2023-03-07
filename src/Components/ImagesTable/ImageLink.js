@@ -35,7 +35,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   );
 
   const provider = getImageProvider(image);
-  if (!error) {
+  if (!error && image.share_with_sources) {
     return (
       <Suspense fallback="loading">
         <Button variant="link" isInline onClick={() => openWizard(true)}>
@@ -50,6 +50,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
               id: image.id,
               architecture: image.architecture,
               provider: provider,
+              sourceId: image.share_with_sources[0],
             }}
           />
         )}
