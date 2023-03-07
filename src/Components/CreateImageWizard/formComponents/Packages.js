@@ -275,7 +275,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
             ref={firstInputElement}
             onFocus={() => setFocus('available')}
             onBlur={() => setFocus('')}
-            onChange={(val) => setPackagesSearchName(val)}
+            onChange={(_, val) => setPackagesSearchName(val)}
             submitSearchButtonLabel="Search button for available packages"
             onSearch={handleAvailablePackagesSearch}
             resetButtonLabel="Clear available packages search"
@@ -360,7 +360,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
             value={filterChosen}
             onFocus={() => setFocus('chosen')}
             onBlur={() => setFocus('')}
-            onChange={(val) => setFilterChosen(val)}
+            onChange={(_, val) => setFilterChosen(val)}
             resetButtonLabel="Clear chosen packages search"
             onClear={handleClearChosenSearch}
           />

@@ -184,7 +184,7 @@ const Repositories = (props) => {
   };
 
   // filter displayed selected packages
-  const handleFilterRepositories = (value) => {
+  const handleFilterRepositories = (_, value) => {
     setPage(1);
     setFilterValue(value);
   };
