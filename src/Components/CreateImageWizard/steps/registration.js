@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import validatorTypes from '@data-driven-forms/react-form-renderer/validator-types';
@@ -17,6 +17,15 @@ import StepTemplate from './stepTemplate';
 import CustomButtons from '../formComponents/CustomButtons';
 
 const PopoverActivation = () => {
+  const [orgId, setOrgId] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      const userData = await insights?.chrome?.auth?.getUser();
+      const id = userData?.identity?.internal?.org_id;
+      setOrgId(id);
+    })();
+  });
   return (
     <Popover
       hasAutoWidth
@@ -26,10 +35,12 @@ const PopoverActivation = () => {
           <Text>
             Activation keys enable you to register a system with appropriate
             subscriptions, system purpose, and repositories attached.
-            <br />
-            <br />
+          </Text>
+          <Text>
             If using an activation key with command line registration, you must
             provide your organization&apos;s ID.
+            {orgId && <br />}
+            {orgId && "Your organization's ID is " + orgId}
           </Text>
         </TextContent>
       }
