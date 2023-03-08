@@ -31,7 +31,7 @@ const Row = ({ imageId }) => {
       if (isSuccess) {
         const accountId = awsSources.find(
           (source) => source.id === image.share_with_sources[0]
-        ).account_id;
+        )?.account_id;
         return accountId;
       }
       return null;
