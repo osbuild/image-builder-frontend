@@ -65,6 +65,7 @@ export const AWSSourcesSelect = ({
         className={className}
       >
         <Select
+          ouiaId="source_select"
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
           onSelect={handleSelect}
