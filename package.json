@@ -57,7 +57,7 @@
     "@babel/preset-react": "7.18.6",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "1.2.6",
     "@redhat-cloud-services/frontend-components-config": "4.7.0",
-    "@testing-library/dom": "8.18.1",
+    "@testing-library/dom": "9.0.1",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "13.5.0",
