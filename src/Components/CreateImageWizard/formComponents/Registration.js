@@ -136,33 +136,17 @@ const Registration = ({ label, ...props }) => {
   const { change, getState } = useFormApi();
   const { input } = useFieldApi(props);
   const [showOptions, setShowOptions] = useState(false);
-  const [insights, setInsights] = useState(true);
-  const [rhc, setRhc] = useState(true);
   const registerSystem = getState()?.values?.['register-system'];
 
   useEffect(() => {
     if (registerSystem === 'register-now-insights') {
       setShowOptions(true);
-      setInsights(true);
-      setRhc(false);
     }
 
     if (registerSystem === 'register-now') {
       setShowOptions(true);
-      setInsights(false);
-      setRhc(false);
     }
   }, []);
-
-  useEffect(() => {
-    if (insights && rhc) {
-      change(input.name, 'register-now-rhc');
-    } else if (insights && !rhc) {
-      change(input.name, 'register-now-insights');
-    } else if (!insights && !rhc) {
-      change(input.name, 'register-now');
-    }
-  }, [insights, rhc]);
 
   return (
     <FormSpy>
@@ -184,14 +168,7 @@ const Registration = ({ label, ...props }) => {
             id="register-system-now"
             checked={registerSystem.startsWith('register-now')}
             onChange={() => {
-              // If rhc (or insights) was disabled previously, enable them again
-              if (!rhc) {
-                setInsights(true);
-                setRhc(true);
-              } else {
-                // useEffect[insights, rhc] won't be triggered if both insights and rhc were enabled
-                change(input.name, 'register-now-rhc');
-              }
+              change(input.name, 'register-now-rhc');
             }}
             description={
               !showOptions && (
@@ -218,12 +195,15 @@ const Registration = ({ label, ...props }) => {
                     </>
                   }
                   data-testid="registration-checkbox-insights"
-                  isChecked={insights}
+                  isChecked={
+                    registerSystem === 'register-now-insights' ||
+                    registerSystem === 'register-now-rhc'
+                  }
                   onChange={(checked) => {
-                    setInsights(checked);
-                    // Uncheck rhc if insights is being unchecked
-                    if (!checked) {
-                      setRhc(!insights);
+                    if (checked) {
+                      change(input.name, 'register-now-insights');
+                    } else {
+                      change(input.name, 'register-now');
                     }
                   }}
                   id="register-system-now-insights"
@@ -238,12 +218,12 @@ const Registration = ({ label, ...props }) => {
                         </>
                       }
                       data-testid="registration-checkbox-rhc"
-                      isChecked={rhc}
+                      isChecked={registerSystem === 'register-now-rhc'}
                       onChange={(checked) => {
-                        setRhc(checked);
-                        // Enable insights if not already enabled
-                        if (!insights) {
-                          setInsights(true);
+                        if (checked) {
+                          change(input.name, 'register-now-rhc');
+                        } else {
+                          change(input.name, 'register-now-insights');
                         }
                       }}
                       id="register-system-now-rhc"
