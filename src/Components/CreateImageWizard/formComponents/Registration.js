@@ -20,12 +20,12 @@ const RHSMPopover = () => {
     <Popover
       headerContent="About Red Hat Subscription Management"
       position="right"
-      minWidth="25rem"
+      minWidth="30rem"
       bodyContent={
         <TextContent>
           <Text>
-            Registered systems are entitled to support services, as well as
-            errata, patches, and upgrades.
+            Registered systems are entitled to support services, errata,
+            patches, and upgrades.
           </Text>
           <Button
             component="a"
@@ -36,7 +36,7 @@ const RHSMPopover = () => {
             isInline
             href="https://access.redhat.com/products/red-hat-subscription-management"
           >
-            Read more
+            Learn more about Red Hat Subscription Management
           </Button>
         </TextContent>
       }
@@ -58,14 +58,14 @@ const InsightsPopover = () => {
     <Popover
       headerContent="About Red Hat Insights"
       position="right"
-      minWidth="25rem"
+      minWidth="30rem"
       bodyContent={
         <TextContent>
           <Text>
-            Insights client is a tool which provides actionable intelligence
-            about your Red Hat Enterprise Linux environments, helping to
-            identify and address operational and vulnerability risks before an
-            issue results in downtime.
+            Red Hat Insights client provides actionable intelligence about your
+            Red Hat Enterprise Linux environments, helping to identify and
+            address operational and vulnerability risks before an issue results
+            in downtime.
           </Text>
           <Button
             component="a"
@@ -76,7 +76,7 @@ const InsightsPopover = () => {
             isInline
             href="https://access.redhat.com/products/red-hat-insights"
           >
-            Read more
+            Learn more about Red Hat Insights
           </Button>
         </TextContent>
       }
@@ -98,12 +98,13 @@ const RHCPopover = () => {
     <Popover
       headerContent="About Remote Host Configuration (RHC)"
       position="right"
-      minWidth="25rem"
+      minWidth="30rem"
       bodyContent={
         <TextContent>
           <Text>
-            RHC is a tool that allows RHEL hosts to connect to the Insights
-            services. It is required for the Insights Remediations service.
+            RHC allows Red Hat Enterprise Linux hosts to connect to Red Hat
+            Insights. RHC is required to use the Red Hat Insights Remediations
+            service.
           </Text>
           <Button
             component="a"
@@ -114,7 +115,7 @@ const RHCPopover = () => {
             isInline
             href="https://access.redhat.com/articles/rhc"
           >
-            Read more
+            Learn more about Remote Host Configuration
           </Button>
         </TextContent>
       }
