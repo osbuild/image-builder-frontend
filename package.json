@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@data-driven-forms/pf4-component-mapper": "3.16.10",
-    "@data-driven-forms/react-form-renderer": "3.20.0",
+    "@data-driven-forms/react-form-renderer": "3.20.2",
     "@patternfly/patternfly": "4.224.2",
     "@patternfly/react-core": "4.276.6",
     "@patternfly/react-table": "4.112.6",
