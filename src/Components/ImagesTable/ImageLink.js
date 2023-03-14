@@ -3,6 +3,7 @@ import React, { Suspense, useState } from 'react';
 import { Button } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
@@ -14,8 +15,10 @@ const getImageProvider = ({ imageType }) => {
   switch (imageType) {
     case 'aws' || 'ami':
       return 'aws';
+    case 'azure':
+      return 'azure';
     default:
-      'aws';
+      return 'aws';
   }
 };
 
@@ -35,9 +38,9 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   );
 
   const provider = getImageProvider(image);
-  if (!error && image.share_with_sources) {
+  if (!error) {
     return (
-      <Suspense fallback="loading">
+      <Suspense fallback="loading...">
         <Button variant="link" isInline onClick={() => openWizard(true)}>
           Launch
         </Button>
@@ -50,7 +53,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
               id: image.id,
               architecture: image.architecture,
               provider: provider,
-              sourceId: image.share_with_sources[0],
+              sourceId: image.share_with_sources?.[0],
             }}
           />
         )}
@@ -75,6 +78,7 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
     isBeta,
     getEnvironment,
   } = useChrome();
+  const azureFeatureFlag = useFlag('provisioning.azure');
 
   const scalprum = useScalprum();
   const hasProvisioning =
@@ -84,13 +88,22 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
 
   if (!uploadStatus || image.status !== 'success') return null;
 
-  if (
-    hasProvisioning &&
-    (image.imageType === 'aws' || image.imageType === 'ami')
-  ) {
+  const provisioningLinkEnabled = (image) => {
+    switch (getImageProvider(image)) {
+      case 'aws':
+        return !!image.share_with_sources;
+      case 'azure':
+        return !!azureFeatureFlag;
+      default:
+        return false;
+    }
+  };
+
+  if (hasProvisioning && provisioningLinkEnabled(image)) {
     if (isInClonesTable) {
       return null;
     }
+
     return (
       <ProvisioningLink
         imageId={image.id}
