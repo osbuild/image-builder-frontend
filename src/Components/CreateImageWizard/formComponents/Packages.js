@@ -29,6 +29,7 @@ import PropTypes from 'prop-types';
 
 import api from '../../../api';
 import { useGetArchitecturesByDistributionQuery } from '../../../store/apiSlice';
+import isBeta from '../../../Utilities/isBeta';
 
 export const RedHatPackages = ({ defaultArch }) => {
   const { getState } = useFormApi();
@@ -39,7 +40,7 @@ export const RedHatPackages = ({ defaultArch }) => {
   const getAllPackages = async (packagesSearchName) => {
     // if the env is stage beta then use content-sources api
     // else use image-builder api
-    if (insights.chrome.isBeta()) {
+    if (isBeta()) {
       const filteredArchx86_64 = distributionInformation.find(
         (info) => info.arch === 'x86_64'
       );

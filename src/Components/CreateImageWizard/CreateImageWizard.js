@@ -31,6 +31,7 @@ import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import { fetchRepositories } from '../../store/repositoriesSlice';
+import isBeta from '../../Utilities/isBeta';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
@@ -262,7 +263,7 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
   let pack;
   // if the env is stage beta then use content-sources api
   // else use image-builder api
-  if (insights.chrome.isBeta()) {
+  if (isBeta()) {
     const data = await api.getPackagesContentSources(repoUrls, packageName);
     pack = data.find((pack) => packageName === pack.name);
   } else {
@@ -480,7 +481,7 @@ const formStepHistory = (composeRequest) => {
       steps.push('registration');
     }
 
-    if (insights.chrome.isBeta()) {
+    if (isBeta()) {
       steps.push('File system configuration', 'packages', 'repositories');
 
       const customRepositories =
@@ -501,7 +502,7 @@ const formStepHistory = (composeRequest) => {
 };
 
 const CreateImageWizard = () => {
-  const awsTarget = insights.chrome.isBeta() ? awsTargetBeta : awsTargetStable;
+  const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -514,7 +515,7 @@ const CreateImageWizard = () => {
   const handleClose = () => navigate(resolveRelPath(''));
 
   useEffect(() => {
-    if (insights.chrome.isBeta()) {
+    if (isBeta()) {
       dispatch(fetchRepositories());
     }
   }, []);
