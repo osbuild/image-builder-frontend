@@ -140,6 +140,9 @@ beforeAll(() => {
       isProd: () => {
         return true;
       },
+      getEnvironment: () => {
+        return 'prod';
+      },
     },
   };
 });
