@@ -89,7 +89,7 @@
     "stylelint": "14.16.1",
     "stylelint-config-recommended-scss": "7.0.0",
     "uuid": "9.0.0",
-    "webpack-bundle-analyzer": "4.7.0",
+    "webpack-bundle-analyzer": "4.8.0",
     "whatwg-fetch": "^3.6.2"
   },
   "scripts": {
