@@ -59,3 +59,22 @@ ul.pf-m-plain {
     padding-left: 0;
     margin-left: 0;
 }
+
+/*
+These z-index values prevent a bug where dropdowns that are appended to their
+parent (in order to allow them to "pop out" of the modal and prevent scrolling
+inside the modal's inner window) appear 'underneath' the wizard footer. This is
+a known bug in Patternfly 4. When it is fixed (likely in PF5), these z-index
+values can be removed.
+*/
+
+.pf-c-wizard__header,
+.pf-c-wizard__main {
+    z-index: auto !important;
+}
+
+.pf-c-wizard__toggle,
+.pf-c-wizard__nav,
+.pf-c-wizard__footer {
+    z-index: 1 !important;
+}
