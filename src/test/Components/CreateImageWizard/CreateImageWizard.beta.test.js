@@ -492,7 +492,8 @@ const mockRepositoryResponseAll = {
 };
 
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
-  userEvent.type(searchbox, searchTerm);
+  const user = userEvent.setup();
+  await user.type(searchbox, searchTerm);
   await act(async () => {
     screen
       .getByRole('button', { name: /search button for available packages/i })
@@ -501,10 +502,11 @@ const searchForAvailablePackages = async (searchbox, searchTerm) => {
 };
 
 const searchForChosenPackages = async (searchbox, searchTerm) => {
+  const user = userEvent.setup();
   if (!searchTerm) {
-    userEvent.clear(searchbox);
+    await user.clear(searchbox);
   } else {
-    userEvent.type(searchbox, searchTerm);
+    await user.type(searchbox, searchTerm);
   }
 };
 
@@ -575,6 +577,7 @@ describe('Create Image Wizard', () => {
 });
 
 describe('Step Upload to AWS', () => {
+  const user = userEvent.setup();
   const setUp = () => {
     const view = renderWithReduxRouter(<CreateImageWizard />);
     history = view.history;
@@ -611,13 +614,13 @@ describe('Step Upload to AWS', () => {
 
     expect(getNextButton()).toHaveClass('pf-m-disabled');
 
-    screen
-      .getByRole('radio', { name: /manually enter an account id\./i })
-      .click();
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
 
     expect(getNextButton()).toHaveClass('pf-m-disabled');
 
-    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
 
     expect(getNextButton()).not.toHaveClass('pf-m-disabled');
 
@@ -665,7 +668,7 @@ describe('Step Upload to AWS', () => {
     });
 
     const registerLaterRadio = screen.getByLabelText('Register later');
-    userEvent.click(registerLaterRadio);
+    await user.click(registerLaterRadio);
 
     // click through to review step
     getNextButton().click();
@@ -718,6 +721,7 @@ describe('Step Upload to AWS', () => {
 });
 
 describe('Step Packages', () => {
+  const user = userEvent.setup();
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
 
@@ -730,7 +734,7 @@ describe('Step Packages', () => {
     screen
       .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
-    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
     await screen.findByRole('textbox', {
@@ -738,7 +742,7 @@ describe('Step Packages', () => {
     });
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
-    userEvent.click(registerLaterRadio);
+    await user.click(registerLaterRadio);
     getNextButton().click();
 
     // skip fsc
@@ -879,7 +883,7 @@ describe('Step Packages', () => {
     screen.getByRole('button', { name: /Add all/ }).click();
 
     searchboxChosen.click();
-    userEvent.type(searchboxChosen, 'asdf');
+    await user.type(searchboxChosen, 'asdf');
 
     expect(screen.getAllByText('No packages found').length === 2);
     // We need to clear this input in order to not have sideeffects on other tests
@@ -979,6 +983,7 @@ describe('Step Packages', () => {
 });
 
 describe('Step Custom repositories', () => {
+  const user = userEvent.setup();
   const setUp = async () => {
     history = renderWithReduxRouter(<CreateImageWizard />).history;
 
@@ -991,7 +996,7 @@ describe('Step Custom repositories', () => {
     screen
       .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
-    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
     await screen.findByRole('textbox', {
@@ -999,7 +1004,7 @@ describe('Step Custom repositories', () => {
     });
 
     const registerLaterRadio = screen.getByLabelText('Register later');
-    userEvent.click(registerLaterRadio);
+    await user.click(registerLaterRadio);
     getNextButton().click();
 
     // skip fsc
@@ -1048,7 +1053,7 @@ describe('Step Custom repositories', () => {
     let firstRepoCheckbox = getFirstRepoCheckbox();
 
     expect(firstRepoCheckbox.checked).toEqual(false);
-    userEvent.click(firstRepoCheckbox);
+    await user.click(firstRepoCheckbox);
     expect(firstRepoCheckbox.checked).toEqual(true);
 
     getNextButton().click();
@@ -1081,7 +1086,7 @@ describe('Step Custom repositories', () => {
       .mockImplementation(() => Promise.resolve(mockRepositoryResults));
     await setUp();
 
-    userEvent.type(
+    await user.type(
       screen.getByRole('textbox', { name: /search repositories/i }),
       '2'
     );
@@ -1109,6 +1114,8 @@ describe('Step Custom repositories', () => {
 });
 
 describe('Click through all steps', () => {
+  const user = userEvent.setup();
+
   jest
     .spyOn(api, 'getRepositories')
     .mockImplementation(() => Promise.resolve(mockRepositoryResults));
@@ -1126,39 +1133,39 @@ describe('Click through all steps', () => {
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
     });
-    userEvent.click(releaseMenu);
+    await user.click(releaseMenu);
     const releaseOption = screen.getByRole('option', {
       name: 'Red Hat Enterprise Linux (RHEL) 8',
     });
-    userEvent.click(releaseOption);
+    await user.click(releaseOption);
 
-    userEvent.click(screen.getByTestId('upload-aws'));
-    userEvent.click(screen.getByTestId('upload-azure'));
-    userEvent.click(screen.getByTestId('upload-google'));
-    userEvent.click(screen.getByTestId('checkbox-vmware'));
-    userEvent.click(screen.getByTestId('checkbox-guest-image'));
-    userEvent.click(screen.getByTestId('checkbox-image-installer'));
+    await user.click(screen.getByTestId('upload-aws'));
+    await user.click(screen.getByTestId('upload-azure'));
+    await user.click(screen.getByTestId('upload-google'));
+    await user.click(screen.getByTestId('checkbox-vmware'));
+    await user.click(screen.getByTestId('checkbox-guest-image'));
+    await user.click(screen.getByTestId('checkbox-image-installer'));
 
     screen.getByRole('button', { name: /Next/ }).click();
     screen
       .getByRole('radio', { name: /manually enter an account id\./i })
       .click();
-    userEvent.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     screen.getByRole('button', { name: /Next/ }).click();
 
-    userEvent.type(screen.getByTestId('input-google-email'), 'test@test.com');
+    await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
     screen.getByRole('button', { name: /Next/ }).click();
 
     // Randomly generated GUID
-    userEvent.type(
+    await user.type(
       screen.getByTestId('azure-tenant-id'),
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
     );
-    userEvent.type(
+    await user.type(
       screen.getByTestId('azure-subscription-id'),
       '60631143-a7dc-4d15-988b-ba83f3c99711'
     );
-    userEvent.type(
+    await user.type(
       screen.getByTestId('azure-resource-group'),
       'testResourceGroup'
     );
@@ -1219,11 +1226,11 @@ describe('Click through all steps', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    userEvent.click(activationKeyDropdown);
+    await user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    userEvent.click(activationKey);
+    await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
     getNextButton().click();
@@ -1245,7 +1252,7 @@ describe('Click through all steps', () => {
         name: 'Danger alert: Duplicate mount point.',
       })
     );
-    userEvent.type(
+    await user.type(
       within(rows[2]).getByRole('textbox', {
         name: 'Mount point suffix text input',
       }),
@@ -1253,7 +1260,7 @@ describe('Click through all steps', () => {
     );
 
     // set size of the final row to 100 MiB
-    userEvent.type(
+    await user.type(
       within(rows[2]).getByRole('textbox', { name: 'Size text input' }),
       '{backspace}100'
     );
@@ -1278,8 +1285,8 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // Custom repositories
-    userEvent.click(screen.getByRole('checkbox', { name: /select row 0/i }));
-    userEvent.click(screen.getByRole('checkbox', { name: /select row 1/i }));
+    await user.click(screen.getByRole('checkbox', { name: /select row 0/i }));
+    await user.click(screen.getByRole('checkbox', { name: /select row 1/i }));
     getNextButton().click();
 
     // Custom packages
@@ -1289,7 +1296,7 @@ describe('Click through all steps', () => {
     const nameInput = screen.getByRole('textbox', {
       name: 'Image name',
     });
-    userEvent.type(nameInput, 'MyImageName');
+    await user.type(nameInput, 'MyImageName');
     getNextButton().click();
 
     // review
