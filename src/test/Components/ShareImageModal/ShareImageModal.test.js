@@ -164,6 +164,7 @@ let history;
 let store;
 
 describe('Create Share To Regions Modal', () => {
+  const user = userEvent.setup();
   test('validation', async () => {
     renderWithReduxRouter(<ShareImageModal />, mockState, mockLocation);
 
@@ -177,13 +178,13 @@ describe('Create Share To Regions Modal', () => {
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(async () => userEvent.click(selectToggle));
+    await act(async () => user.click(selectToggle));
 
     const usEast2 = screen.getByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    userEvent.click(usEast2);
+    await user.click(usEast2);
     expect(shareButton).toBeEnabled();
 
     const clearAllButton = screen.getByRole('button', { name: /clear all/i });
@@ -265,13 +266,13 @@ describe('Create Share To Regions Modal', () => {
     store = view.store;
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    userEvent.click(selectToggle);
+    await user.click(selectToggle);
 
     const usEast2 = screen.getByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    userEvent.click(usEast2);
+    await user.click(usEast2);
 
     const mockResponse = {
       id: '123e4567-e89b-12d3-a456-426655440000',

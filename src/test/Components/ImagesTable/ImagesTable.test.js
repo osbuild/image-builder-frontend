@@ -445,6 +445,7 @@ jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
 });
 
 describe('Images Table', () => {
+  const user = userEvent.setup();
   test('render ImagesTable', async () => {
     const view = renderWithReduxRouter(<ImagesTable />, {});
 
@@ -537,11 +538,11 @@ describe('Images Table', () => {
     const actionsButton = within(rows[1]).getByRole('button', {
       name: 'Actions',
     });
-    userEvent.click(actionsButton);
+    await user.click(actionsButton);
     const recreateButton = screen.getByRole('menuitem', {
       name: 'Recreate image',
     });
-    userEvent.click(recreateButton);
+    await user.click(recreateButton);
 
     expect(history.location.pathname).toBe(
       '/insights/image-builder/imagewizard'
@@ -568,7 +569,7 @@ describe('Images Table', () => {
     const actionsButton = within(rows[1]).getByRole('button', {
       name: 'Actions',
     });
-    userEvent.click(actionsButton);
+    await user.click(actionsButton);
 
     const downloadButton = screen.getByRole('menuitem', {
       name: 'Download compose request (.json)',
@@ -604,11 +605,11 @@ describe('Images Table', () => {
     expect(
       screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
     ).not.toBeVisible();
-    userEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(
       screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
     ).toBeVisible();
-    userEvent.click(toggleButton);
+    await user.click(toggleButton);
     expect(
       screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
     ).not.toBeVisible();
@@ -628,7 +629,7 @@ describe('Images Table', () => {
     expect(
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
-    userEvent.click(errorToggle);
+    await user.click(errorToggle);
 
     expect(
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
