@@ -13,7 +13,7 @@
     "@patternfly/react-core": "4.276.6",
     "@patternfly/react-table": "4.112.39",
     "@redhat-cloud-services/frontend-components": "3.9.32",
-    "@redhat-cloud-services/frontend-components-notifications": "3.2.12",
+    "@redhat-cloud-services/frontend-components-notifications": "3.2.13",
     "@redhat-cloud-services/frontend-components-utilities": "3.3.13",
     "@reduxjs/toolkit": "^1.9.3",
     "@scalprum/react-core": "^0.4.1",
