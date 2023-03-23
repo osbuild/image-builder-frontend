@@ -16,7 +16,7 @@
     "@redhat-cloud-services/frontend-components-notifications": "3.2.13",
     "@redhat-cloud-services/frontend-components-utilities": "3.3.13",
     "@reduxjs/toolkit": "^1.9.3",
-    "@scalprum/react-core": "^0.4.1",
+    "@scalprum/react-core": "^0.5.1",
     "@unleash/proxy-client-react": "^3.5.2",
     "classnames": "2.3.2",
     "lodash": "4.17.21",
@@ -43,7 +43,7 @@
       "\\.(css|scss)$": "identity-obj-proxy"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(@openshift|lodash-es|uuid)/)"
+      "node_modules/(?!(@scalprum|@openshift|lodash-es|uuid)/)"
     ],
     "setupFiles": [
       "jest-canvas-mock"
