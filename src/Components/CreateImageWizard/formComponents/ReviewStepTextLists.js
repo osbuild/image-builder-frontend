@@ -24,7 +24,10 @@ import {
 } from './ReviewStepTables';
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
-import { useGetAWSSourcesQuery } from '../../../store/apiSlice';
+import {
+  useGetAWSSourcesQuery,
+  useGetAzureSourcesQuery,
+} from '../../../store/apiSlice';
 import { googleAccType } from '../steps/googleCloud';
 
 const ExpirationWarning = () => {
@@ -158,6 +161,8 @@ export const TargetEnvGCPList = () => {
 
 export const TargetEnvAzureList = () => {
   const { getState } = useFormApi();
+  const { data: azureSources, isSuccess: isSuccessAzureSources } =
+    useGetAzureSourcesQuery();
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>
@@ -173,18 +178,38 @@ export const TargetEnvAzureList = () => {
           <br />
           <ExpirationWarning />
         </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Azure Tenant ID
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {getState()?.values?.['azure-tenant-id']}
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Subscription ID
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {getState()?.values?.['azure-subscription-id']}
-        </TextListItem>
+        {getState()?.values?.['azure-type'] === 'azure-type-source' &&
+          isSuccessAzureSources && (
+            <>
+              <TextListItem component={TextListItemVariants.dt}>
+                Azure Source
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {
+                  azureSources.find(
+                    (source) =>
+                      source.id === getState()?.values?.['azure-sources-select']
+                  )?.name
+                }
+              </TextListItem>
+            </>
+          )}
+        {getState()?.values?.['azure-type'] === 'azure-type-manual' && (
+          <>
+            <TextListItem component={TextListItemVariants.dt}>
+              Azure Tenant ID
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {getState()?.values?.['azure-tenant-id']}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              Subscription ID
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {getState()?.values?.['azure-subscription-id']}
+            </TextListItem>
+          </>
+        )}
         <TextListItem component={TextListItemVariants.dt}>
           Resource group
         </TextListItem>

@@ -13,7 +13,8 @@ import {
   googleCloudTarger,
   imageName,
   imageOutput,
-  msAzureTarget,
+  msAzureTargetStable,
+  msAzureTargetBeta,
   packages,
   packagesContentSources,
   registration,
@@ -103,7 +104,7 @@ const onSave = (values) => {
           image_type: 'aws',
           upload_request: {
             type: 'aws',
-            options: options,
+            options,
           },
         },
       ],
@@ -151,6 +152,13 @@ const onSave = (values) => {
   }
 
   if (values['target-environment']?.azure) {
+    const upload_options =
+      values['azure-type'] === 'azure-type-source'
+        ? { source_id: values['azure-sources-select'] }
+        : {
+            tenant_id: values['azure-tenant-id'],
+            subscription_id: values['azure-subscription-id'],
+          };
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
@@ -161,8 +169,7 @@ const onSave = (values) => {
           upload_request: {
             type: 'azure',
             options: {
-              tenant_id: values['azure-tenant-id'],
-              subscription_id: values['azure-subscription-id'],
+              ...upload_options,
               resource_group: values['azure-resource-group'],
             },
           },
@@ -332,9 +339,15 @@ const requestToState = (composeRequest) => {
         formState['aws-target-type'] = 'aws-target-type-source';
       }
     } else if (targetEnvironment === 'azure') {
-      formState['azure-tenant-id'] = uploadRequest?.options?.tenant_id;
-      formState['azure-subscription-id'] =
-        uploadRequest?.options?.subscription_id;
+      if (uploadRequest?.options?.source_id) {
+        formState['azure-type'] = 'azure-type-source';
+        formState['azure-sources-select'] = uploadRequest?.options?.source_id;
+      } else {
+        formState['azure-type'] = 'azure-type-manual';
+        formState['azure-tenant-id'] = uploadRequest?.options?.tenant_id;
+        formState['azure-subscription-id'] =
+          uploadRequest?.options?.subscription_id;
+      }
       formState['azure-resource-group'] =
         uploadRequest?.options?.resource_group;
     } else if (targetEnvironment === 'gcp') {
@@ -502,12 +515,12 @@ const formStepHistory = (composeRequest) => {
 };
 
 const CreateImageWizard = () => {
-  const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
 
+  const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
+  const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
   const composeRequest = location?.state?.composeRequest;
   const initialState = requestToState(composeRequest);
   const stepHistory = formStepHistory(composeRequest);

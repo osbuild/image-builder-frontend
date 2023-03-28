@@ -10,6 +10,8 @@ import PropTypes from 'prop-types';
 import ActivationKeys from './formComponents/ActivationKeys';
 import { AWSSourcesSelect } from './formComponents/AWSSourcesSelect';
 import AzureAuthButton from './formComponents/AzureAuthButton';
+import AzureResourceGroups from './formComponents/AzureResourceGroups';
+import AzureSourcesSelect from './formComponents/AzureSourcesSelect';
 import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
 import FieldListenerWrapper from './formComponents/FieldListener';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
@@ -68,6 +70,8 @@ const ImageCreator = ({
         'centos-acknowledgement': CentOSAcknowledgement,
         'repositories-table': Repositories,
         'aws-sources-select': AWSSourcesSelect,
+        'azure-sources-select': AzureSourcesSelect,
+        'azure-resource-groups': AzureResourceGroups,
         'gallery-layout': GalleryLayout,
         'field-listener': FieldListenerWrapper,
         registration: Registration,
