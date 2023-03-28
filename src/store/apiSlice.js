@@ -41,6 +41,14 @@ export const apiSlice = createApi({
         return awsSources;
       },
     }),
+    getAzureSources: builder.query({
+      query: () => `${PROVISIONING_SOURCES_ENDPOINT}?provider=azure`,
+    }),
+    getAzureSourceDetail: builder.query({
+      query: (sourceId) =>
+        `${PROVISIONING_SOURCES_ENDPOINT}/${sourceId}/upload_info`,
+      transformResponse: (response) => response.azure,
+    }),
     getArchitecturesByDistribution: builder.query({
       query: (distribution) =>
         `${IMAGE_BUILDER_API}/architectures/${distribution}`,
@@ -51,5 +59,7 @@ export const apiSlice = createApi({
 export const {
   useGetAWSSourcesQuery,
   useGetArchitecturesByDistributionQuery,
+  useGetAzureSourcesQuery,
+  useGetAzureSourceDetailQuery,
   usePrefetch,
 } = apiSlice;
