@@ -102,10 +102,10 @@ export default {
               variant="link"
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
-              href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/performing_a_standard_rhel_8_installation/partitioning-reference_installing-rhel#recommended-partitioning-scheme_partitioning-reference"
+              href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service/customizing-file-systems-during-the-image-creation"
               className="pf-u-pl-0"
             >
-              Learn more
+              Customizing file systems during the image creation
             </Button>
           </Text>
         </TextContent>

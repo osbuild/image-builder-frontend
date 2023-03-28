@@ -287,10 +287,10 @@ const FileSystemConfiguration = ({ ...props }) => {
                 variant="link"
                 icon={<ExternalLinkAltIcon />}
                 iconPosition="right"
-                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/installation_guide/sect-partitioning-naming-schemes-and-mount-points"
+                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service/customizing-file-systems-during-the-image-creation"
                 className="pf-u-pl-0"
               >
-                Partition naming schemes and mount points
+                Read more about manual configuration here
               </Button>
             </Text>
           </TextContent>
