@@ -31,7 +31,7 @@ source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 
 # reserve ephemeral namespace
 export DEPLOY_FRONTENDS="true"
-export EXTRA_DEPLOY_ARGS="rhsm-api-proxy --set-template-ref rhsm-api-proxy=master"
+export EXTRA_DEPLOY_ARGS="provisioning sources content-sources rhsm-api-proxy --set-template-ref rhsm-api-proxy=master --set-template-ref content-sources-backend=master"
 export APP_NAME="image-builder-crc"
 
 source "$CICD_ROOT"/deploy_ephemeral_env.sh
