@@ -58,6 +58,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
       data-testid="subscription-activation-key"
     >
       <Select
+        ouiaId="activation_key_select"
         variant={SelectVariant.typeahead}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={setActivationKey}
