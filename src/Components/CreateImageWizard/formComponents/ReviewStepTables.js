@@ -10,7 +10,6 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import PropTypes from 'prop-types';
 
 import { UNIT_GIB, UNIT_MIB } from '../../../constants';
 
@@ -104,16 +103,4 @@ export const RepositoriesTable = () => {
       </PanelMain>
     </Panel>
   );
-};
-
-FSReviewTable.propTypes = {
-  fsc: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-PackagesTable.propTypes = {
-  packages: PropTypes.arrayOf(PropTypes.object).isRequired,
-};
-
-RepositoriesTable.propTypes = {
-  repositories: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
