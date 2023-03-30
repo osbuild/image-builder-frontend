@@ -4,8 +4,6 @@ const config = require('@redhat-cloud-services/frontend-components-config');
 
 const webpackProxy = {
   useProxy: true,
-  useAgent: process.env.STAGE ? true : false,
-  bounceProd: process.env.STAGE ? false : true,
   proxyVerbose: true,
   env: `${process.env.STAGE ? 'stage' : 'prod'}-${
     process.env.BETA ? 'beta' : 'stable'
