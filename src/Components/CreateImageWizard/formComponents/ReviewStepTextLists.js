@@ -14,7 +14,6 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
-import PropTypes from 'prop-types';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import {
@@ -534,17 +533,4 @@ export const ImageDetailsList = () => {
       <br />
     </TextContent>
   );
-};
-
-TargetEnvAWSList.propTypes = {
-  awsSources: PropTypes.arrayOf(PropTypes.object),
-  isSuccessAWSSources: PropTypes.bool,
-};
-
-TargetEnvGCPList.propTypes = {
-  googleAccType: PropTypes.object,
-};
-
-FSCList.propTypes = {
-  minSize: PropTypes.string,
 };
