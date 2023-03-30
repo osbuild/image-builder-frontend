@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
+  Alert,
   FormGroup,
   Select,
   SelectOption,
@@ -11,26 +12,25 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import api from '../../../api';
+import { useGetActivationKeysQuery } from '../../../store/apiSlice';
 
 const ActivationKeys = ({ label, isRequired, ...props }) => {
   const { change, getState } = useFormApi();
   const { input } = useFieldApi(props);
-  const [activationKeys, setActivationKeys] = useState([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [activationKeySelected, selectActivationKey] = useState(
     getState()?.values?.['subscription-activation-key']
   );
 
-  useEffect(() => {
-    setIsLoading(true);
-    const data = api.getActivationKeys();
-    data.then((keys) => {
-      setActivationKeys(keys);
-      setIsLoading(false);
-    });
+  const {
+    data: activationKeys,
+    isFetching: isFetchingActivationKeys,
+    isSuccess: isSuccessActivationKeys,
+    isError: isErrorActivationKeys,
+    refetch,
+  } = useGetActivationKeysQuery();
 
+  useEffect(() => {
     if (insights.chrome.isProd()) {
       change('subscription-server-url', 'subscription.rhsm.redhat.com');
       change('subscription-base-url', 'https://cdn.redhat.com/');
@@ -51,36 +51,57 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     change(input.name, undefined);
   };
 
+  const handleToggle = () => {
+    if (!isOpen) {
+      refetch();
+    }
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <FormGroup
-      isRequired={isRequired}
-      label={label}
-      data-testid="subscription-activation-key"
-    >
-      <Select
-        ouiaId="activation_key_select"
-        variant={SelectVariant.typeahead}
-        onToggle={() => setIsOpen(!isOpen)}
-        onSelect={setActivationKey}
-        onClear={handleClear}
-        selections={activationKeySelected}
-        isOpen={isOpen}
-        placeholderText="Select activation key"
-        typeAheadAriaLabel="Select activation key"
+    <>
+      <FormGroup
+        isRequired={isRequired}
+        label={label}
+        data-testid="subscription-activation-key"
       >
-        {isLoading && (
-          <SelectOption
-            isNoResultsOption={true}
-            data-testid="activation-keys-loading"
-          >
-            <Spinner isSVG size="lg" />
-          </SelectOption>
-        )}
-        {activationKeys.map((key, index) => (
-          <SelectOption key={index} value={key.name} />
-        ))}
-      </Select>
-    </FormGroup>
+        <Select
+          ouiaId="activation_key_select"
+          variant={SelectVariant.typeahead}
+          onToggle={handleToggle}
+          onSelect={setActivationKey}
+          onClear={handleClear}
+          selections={activationKeySelected}
+          isOpen={isOpen}
+          placeholderText="Select activation key"
+          typeAheadAriaLabel="Select activation key"
+          isDisabled={!isSuccessActivationKeys}
+        >
+          {isSuccessActivationKeys &&
+            activationKeys.body.map((key, index) => (
+              <SelectOption key={index} value={key.name} />
+            ))}
+          {isFetchingActivationKeys && (
+            <SelectOption
+              isNoResultsOption={true}
+              data-testid="activation-keys-loading"
+            >
+              <Spinner isSVG size="md" />
+            </SelectOption>
+          )}
+        </Select>
+      </FormGroup>
+      {isErrorActivationKeys && (
+        <Alert
+          title="Activation keys unavailable"
+          variant="danger"
+          isPlain
+          isInline
+        >
+          Activation keys cannot be reached, try again later.
+        </Alert>
+      )}
+    </>
   );
 };
 

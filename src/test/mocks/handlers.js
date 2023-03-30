@@ -1,6 +1,6 @@
 import { rest } from 'msw';
 
-import { PROVISIONING_SOURCES_ENDPOINT } from '../../constants';
+import { PROVISIONING_SOURCES_ENDPOINT, RHSM_API } from '../../constants';
 
 const baseURL = 'http://localhost';
 
@@ -241,6 +241,80 @@ export const handlers = [
               ],
             },
           ])
+        );
+      }
+    }
+  ),
+  rest.get(baseURL.concat(`${RHSM_API}/activation_keys`), (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        body: [
+          {
+            id: 0,
+            name: 'name0',
+          },
+          {
+            id: 1,
+            name: 'name1',
+          },
+        ],
+      })
+    );
+  }),
+  rest.get(
+    baseURL.concat(`${RHSM_API}/activation_keys/:key`),
+    (req, res, ctx) => {
+      const { key } = req.params;
+      if (key === 'name0') {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            body: {
+              additionalRepositories: [
+                {
+                  repositoryLabel: 'repository0',
+                },
+                {
+                  repositoryLabel: 'repository1',
+                },
+                {
+                  repositoryLabel: 'repository2',
+                },
+              ],
+              id: '0',
+              name: 'name0',
+              releaseVersion: '',
+              role: '',
+              serviceLevel: 'Self-Support',
+              usage: 'Production',
+            },
+          })
+        );
+      } else if (key === 'name1') {
+        return res(
+          ctx.status(200),
+          ctx.json({
+            body: {
+              additionalRepositories: [
+                {
+                  repositoryLabel: 'repository3',
+                },
+                {
+                  repositoryLabel: 'repository4',
+                },
+                {
+                  repositoryLabel: 'repository5',
+                },
+              ],
+              id: '1',
+              name: 'name1',
+              releaseVersion: '',
+              role: '',
+              serviceLevel: 'Premium',
+              usage: 'Production',
+            },
+          })
         );
       }
     }
