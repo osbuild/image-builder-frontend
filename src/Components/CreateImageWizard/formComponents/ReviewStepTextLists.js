@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { useFormApi } from '@data-driven-forms/react-form-renderer';
 import {
+  Alert,
   Button,
   Popover,
   Spinner,
@@ -27,6 +28,7 @@ import {
   useGetAWSSourcesQuery,
   useGetAzureSourcesQuery,
 } from '../../../store/apiSlice';
+import { useGetActivationKeyInformationQuery } from '../../../store/apiSlice';
 import { googleAccType } from '../steps/googleCloud';
 
 const ExpirationWarning = () => {
@@ -429,85 +431,103 @@ export const RegisterLaterList = () => {
 
 export const RegisterNowList = () => {
   const { getState } = useFormApi();
+  const activationKey = getState()?.values?.['subscription-activation-key'];
+  const { isError } = useGetActivationKeyInformationQuery(activationKey, {
+    skip: !activationKey,
+  });
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Registration type
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
-          data-testid="review-registration"
-        >
-          <TextList isPlain>
-            {getState()?.values?.['register-system']?.startsWith(
-              'register-now'
-            ) && (
-              <TextListItem>
-                Register with Red Hat Subscription Manager (RHSM)
-                <br />
-              </TextListItem>
-            )}
-            {(getState()?.values?.['register-system'] ===
-              'register-now-insights' ||
-              getState()?.values?.['register-system'] ===
-                'register-now-rhc') && (
-              <TextListItem>
-                Connect to Red Hat Insights
-                <br />
-              </TextListItem>
-            )}
-            {getState()?.values?.['register-system'] === 'register-now-rhc' && (
-              <TextListItem>
-                Use remote host configuration (RHC) utility
-                <br />
-              </TextListItem>
-            )}
-          </TextList>
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Activation key
-          <Popover
-            bodyContent={
-              <TextContent>
-                <Text>
-                  Activation keys enable you to register a system with
-                  appropriate subscriptions, system purpose, and repositories
-                  attached.
-                  <br />
-                  <br />
-                  If using an activation key with command line registration, you
-                  must provide your organization&apos;s ID. Your
-                  organization&apos;s ID is{' '}
-                  {getState()?.values?.['subscription-organization-id'] !==
-                  undefined ? (
-                    getState()?.values?.['subscription-organization-id']
-                  ) : (
-                    <Spinner size="md" />
-                  )}
-                </Text>
-              </TextContent>
-            }
+    <>
+      <TextContent>
+        <TextList component={TextListVariants.dl}>
+          <TextListItem
+            component={TextListItemVariants.dt}
+            className="pf-u-min-width"
           >
-            <Button
-              variant="plain"
-              aria-label="About activation key"
-              className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-              isSmall
+            Registration type
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dd}
+            data-testid="review-registration"
+          >
+            <TextList isPlain>
+              {getState()?.values?.['register-system']?.startsWith(
+                'register-now'
+              ) && (
+                <TextListItem>
+                  Register with Red Hat Subscription Manager (RHSM)
+                  <br />
+                </TextListItem>
+              )}
+              {(getState()?.values?.['register-system'] ===
+                'register-now-insights' ||
+                getState()?.values?.['register-system'] ===
+                  'register-now-rhc') && (
+                <TextListItem>
+                  Connect to Red Hat Insights
+                  <br />
+                </TextListItem>
+              )}
+              {getState()?.values?.['register-system'] ===
+                'register-now-rhc' && (
+                <TextListItem>
+                  Use remote host configuration (RHC) utility
+                  <br />
+                </TextListItem>
+              )}
+            </TextList>
+          </TextListItem>
+          <TextListItem component={TextListItemVariants.dt}>
+            Activation key
+            <Popover
+              bodyContent={
+                <TextContent>
+                  <Text>
+                    Activation keys enable you to register a system with
+                    appropriate subscriptions, system purpose, and repositories
+                    attached.
+                    <br />
+                    <br />
+                    If using an activation key with command line registration,
+                    you must provide your organization&apos;s ID. Your
+                    organization&apos;s ID is{' '}
+                    {getState()?.values?.['subscription-organization-id'] !==
+                    undefined ? (
+                      getState()?.values?.['subscription-organization-id']
+                    ) : (
+                      <Spinner size="md" />
+                    )}
+                  </Text>
+                </TextContent>
+              }
             >
-              <HelpIcon />
-            </Button>
-          </Popover>
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          <ActivationKeyInformation />
-        </TextListItem>
-      </TextList>
-      <br />
-    </TextContent>
+              <Button
+                variant="plain"
+                aria-label="About activation key"
+                className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                isSmall
+              >
+                <HelpIcon />
+              </Button>
+            </Popover>
+          </TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>
+            <ActivationKeyInformation />
+          </TextListItem>
+        </TextList>
+        <br />
+      </TextContent>
+      {isError && (
+        <Alert
+          title="Information about the activation key unavailable"
+          variant="danger"
+          isPlain
+          isInline
+        >
+          Information about the activation key cannot be loaded. Please check
+          the key was not removed and try again later.
+        </Alert>
+      )}
+    </>
   );
 };
 

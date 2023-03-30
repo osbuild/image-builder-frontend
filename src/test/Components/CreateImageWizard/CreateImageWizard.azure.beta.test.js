@@ -32,17 +32,6 @@ describe('Step Upload to Azure', () => {
     // scrollTo is not defined in jsdom
     window.HTMLElement.prototype.scrollTo = function () {};
 
-    // mock the activation key api call
-    const mockActivationKeys = [{ name: 'name0' }, { name: 'name1' }];
-    jest
-      .spyOn(api, 'getActivationKeys')
-      .mockImplementation(() => Promise.resolve(mockActivationKeys));
-
-    const mockActivationKey = { body: [{ name: 'name0' }, { name: 'name1' }] };
-    jest.spyOn(api, 'getActivationKey').mockImplementation((name) => {
-      return Promise.resolve(mockActivationKey[name]);
-    });
-
     jest
       .spyOn(api, 'getRepositories')
       .mockImplementation(() => Promise.resolve(mockRepositoryResults));

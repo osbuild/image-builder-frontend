@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { CONTENT_SOURCES, IMAGE_BUILDER_API, RHSM_API } from './constants';
+import { CONTENT_SOURCES, IMAGE_BUILDER_API } from './constants';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
@@ -77,18 +77,6 @@ async function getVersion() {
   return request.data;
 }
 
-async function getActivationKeys() {
-  const path = '/activation_keys';
-  const request = await axios.get(RHSM_API.concat(path));
-  return request.data.body;
-}
-
-async function getActivationKey(name) {
-  const path = `/activation_keys/${name}`;
-  const request = await axios.get(RHSM_API.concat(path));
-  return request.data.body;
-}
-
 // get clones of a compose
 async function getClones(id, limit, offset) {
   const params = new URLSearchParams({
@@ -127,6 +115,4 @@ export default {
   getPackagesContentSources,
   getRepositories,
   getVersion,
-  getActivationKeys,
-  getActivationKey,
 };

@@ -110,17 +110,6 @@ beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
 
-  // mock the activation key api call
-  const mockActivationKeys = [{ name: 'name0' }, { name: 'name1' }];
-  jest
-    .spyOn(api, 'getActivationKeys')
-    .mockImplementation(() => Promise.resolve(mockActivationKeys));
-
-  const mockActivationKey = { body: [{ name: 'name0' }, { name: 'name1' }] };
-  jest.spyOn(api, 'getActivationKey').mockImplementation((name) => {
-    return Promise.resolve(mockActivationKey[name]);
-  });
-
   global.insights = {
     chrome: {
       auth: {
@@ -1380,57 +1369,6 @@ describe('Click through all steps', () => {
     screen.getByRole('button', { name: /Next/ }).click();
 
     // registration
-    const mockActivationKeys = [
-      { id: '0', name: 'name0' },
-      { id: 1, name: 'name1' },
-    ];
-    jest
-      .spyOn(api, 'getActivationKeys')
-      .mockImplementation(() => Promise.resolve(mockActivationKeys));
-    const mockActivationKey = {
-      name0: {
-        additionalRepositories: [
-          {
-            repositoryLabel: 'repository0',
-          },
-          {
-            repositoryLabel: 'repository1',
-          },
-          {
-            repositoryLabel: 'repository2',
-          },
-        ],
-        id: '0',
-        name: 'name0',
-        releaseVersion: '',
-        role: '',
-        serviceLevel: 'Self-Support',
-        usage: 'Production',
-      },
-      name1: {
-        additionalRepositories: [
-          {
-            repositoryLabel: 'repository3',
-          },
-          {
-            repositoryLabel: 'repository4',
-          },
-          {
-            repositoryLabel: 'repository5',
-          },
-        ],
-        id: '1',
-        name: 'name1',
-        releaseVersion: '',
-        role: '',
-        serviceLevel: 'Premium',
-        usage: 'Production',
-      },
-    };
-    jest.spyOn(api, 'getActivationKey').mockImplementation((name) => {
-      return Promise.resolve(mockActivationKey[name]);
-    });
-
     const registrationRadio = screen.getByTestId('registration-radio-now');
     await user.click(registrationRadio);
 

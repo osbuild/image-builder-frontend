@@ -1,6 +1,10 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { IMAGE_BUILDER_API, PROVISIONING_SOURCES_ENDPOINT } from '../constants';
+import {
+  IMAGE_BUILDER_API,
+  PROVISIONING_SOURCES_ENDPOINT,
+  RHSM_API,
+} from '../constants';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -53,6 +57,12 @@ export const apiSlice = createApi({
       query: (distribution) =>
         `${IMAGE_BUILDER_API}/architectures/${distribution}`,
     }),
+    getActivationKeys: builder.query({
+      query: () => `${RHSM_API}/activation_keys`,
+    }),
+    getActivationKeyInformation: builder.query({
+      query: (activationKey) => `${RHSM_API}/activation_keys/${activationKey}`,
+    }),
   }),
 });
 
@@ -61,5 +71,7 @@ export const {
   useGetArchitecturesByDistributionQuery,
   useGetAzureSourcesQuery,
   useGetAzureSourceDetailQuery,
+  useGetActivationKeysQuery,
+  useGetActivationKeyInformationQuery,
   usePrefetch,
 } = apiSlice;
