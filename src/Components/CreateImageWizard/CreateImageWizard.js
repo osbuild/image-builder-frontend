@@ -554,15 +554,16 @@ const CreateImageWizard = () => {
             setIsSaving(false);
           })
           .catch((err) => {
+            let msg = err.response.statusText;
+            if (err.response.data?.errors[0]?.detail) {
+              msg = err.response.data?.errors[0]?.detail;
+            }
+
             dispatch(
               addNotification({
                 variant: 'danger',
                 title: 'Your image could not be created',
-                description:
-                  'Status code ' +
-                  err.response.status +
-                  ': ' +
-                  err.response.statusText,
+                description: 'Status code ' + err.response.status + ': ' + msg,
               })
             );
 
