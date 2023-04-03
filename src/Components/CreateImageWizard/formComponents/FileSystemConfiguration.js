@@ -389,6 +389,7 @@ const FileSystemConfiguration = ({ ...props }) => {
                       icon={<MinusCircleIcon />}
                       onClick={() => removeRow(row.id)}
                       data-testid="remove-mount-point"
+                      isDisabled={row.mountpoint === '/' ? true : false}
                     />
                   </Td>
                 </Tr>

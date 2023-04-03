@@ -11,7 +11,6 @@ import {
 import PropTypes from 'prop-types';
 
 const MountPoint = ({ ...props }) => {
-  // check '/' last!
   const validPrefixes = [
     '/app',
     '/boot',
@@ -23,7 +22,6 @@ const MountPoint = ({ ...props }) => {
     '/usr',
     '/usr/local',
     '/var',
-    '/',
   ];
   const [isOpen, setIsOpen] = useState(false);
   const [prefix, setPrefix] = useState('/');
@@ -72,6 +70,7 @@ const MountPoint = ({ ...props }) => {
         onSelect={onSelect}
         selections={prefix}
         variant={SelectVariant.single}
+        isDisabled={prefix === '/' ? true : false}
       >
         {validPrefixes.map((pfx, index) => {
           return <SelectOption key={index} value={pfx} />;
