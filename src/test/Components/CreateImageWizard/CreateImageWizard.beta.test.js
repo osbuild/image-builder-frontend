@@ -486,7 +486,7 @@ describe('Step Packages', () => {
 
     await searchForAvailablePackages(searchbox, 'asdf');
 
-    await screen.findByText('No packages found');
+    await screen.findByText('No results found');
   });
 
   test('should display empty chosen state on failed search', async () => {

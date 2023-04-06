@@ -10,6 +10,8 @@ import React, {
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import {
+  Alert,
+  Divider,
   DualListSelector,
   DualListSelectorControl,
   DualListSelectorControlsWrapper,
@@ -30,6 +32,31 @@ import PropTypes from 'prop-types';
 import api from '../../../api';
 import { useGetArchitecturesByDistributionQuery } from '../../../store/apiSlice';
 import isBeta from '../../../Utilities/isBeta';
+
+const ExactMatch = ({
+  pkgList,
+  search,
+  chosenPackages,
+  selectedAvailablePackages,
+  handleSelectAvailableFunc,
+}) => {
+  const match = pkgList.find((pkg) => pkg.name === search);
+  return (
+    <DualListSelectorListItem
+      data-testid={`exact-match-${match.name}`}
+      isDisabled={chosenPackages[match.name] ? true : false}
+      isSelected={selectedAvailablePackages.has(match.name)}
+      onOptionSelect={(e) => handleSelectAvailableFunc(e, match.name)}
+    >
+      <TextContent key={`${match.name}`}>
+        <small className="pf-u-mb-sm">Exact match</small>
+        <span className="pf-c-dual-list-selector__item-text">{match.name}</span>
+        <small>{match.summary}</small>
+        <Divider />
+      </TextContent>
+    </DualListSelectorListItem>
+  );
+};
 
 export const RedHatPackages = ({ defaultArch }) => {
   const { getState } = useFormApi();
@@ -269,20 +296,36 @@ const Packages = ({ getAllPackages, isSuccess }) => {
       <DualListSelectorPane
         title="Available packages"
         searchInput={
-          <SearchInput
-            placeholder="Search for a package"
-            data-testid="search-available-pkgs-input"
-            value={packagesSearchName}
-            ref={firstInputElement}
-            onFocus={() => setFocus('available')}
-            onBlur={() => setFocus('')}
-            onChange={(_, val) => setPackagesSearchName(val)}
-            submitSearchButtonLabel="Search button for available packages"
-            onSearch={handleAvailablePackagesSearch}
-            resetButtonLabel="Clear available packages search"
-            onClear={handleClearAvailableSearch}
-            isDisabled={currentStep.name === 'packages' ? !isSuccess : false}
-          />
+          <>
+            <SearchInput
+              placeholder="Search for a package"
+              data-testid="search-available-pkgs-input"
+              value={packagesSearchName}
+              ref={firstInputElement}
+              onFocus={() => setFocus('available')}
+              onBlur={() => setFocus('')}
+              onChange={(_, val) => setPackagesSearchName(val)}
+              submitSearchButtonLabel="Search button for available packages"
+              onSearch={handleAvailablePackagesSearch}
+              resetButtonLabel="Clear available packages search"
+              onClear={handleClearAvailableSearch}
+              isDisabled={currentStep.name === 'packages' ? !isSuccess : false}
+            />
+            {availablePackagesDisplayList.length >= 100 && (
+              <Alert
+                title="Over 100 results found. Refine your search."
+                variant="warning"
+                isPlain
+                isInline
+              />
+            )}
+          </>
+        }
+        status={
+          selectedAvailablePackages.size > 0
+            ? `${selectedAvailablePackages.size}
+          of ${availablePackagesDisplayList.length} items`
+            : `${availablePackagesDisplayList.length} items`
         }
       >
         <DualListSelectorList data-testid="available-pkgs-list">
@@ -293,9 +336,38 @@ const Packages = ({ getAllPackages, isSuccess }) => {
               packages to your image
             </p>
           ) : availablePackagesDisplayList.length === 0 ? (
-            <p className="pf-u-text-align-center pf-u-mt-md">
-              No packages found
-            </p>
+            <>
+              <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
+                No results found
+              </p>
+              <br />
+              <p className="pf-u-text-align-center pf-u-mt-md">
+                Adjust your search and try again
+              </p>
+            </>
+          ) : availablePackagesDisplayList.length >= 100 ? (
+            <>
+              {availablePackagesDisplayList.some(
+                (pkg) => pkg.name === packagesSearchName
+              ) && (
+                <ExactMatch
+                  pkgList={availablePackagesDisplayList}
+                  search={packagesSearchName}
+                  chosenPackages={chosenPackages}
+                  selectedAvailablePackages={selectedAvailablePackages}
+                  handleSelectAvailableFunc={handleSelectAvailable}
+                />
+              )}
+              <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
+                Too many results to display
+              </p>
+              <br />
+              <p className="pf-u-text-align-center pf-u-mt-md">
+                Please make the search more specific
+                <br />
+                and try again
+              </p>
+            </>
           ) : (
             availablePackagesDisplayList.map((pkg) => {
               return (
@@ -366,6 +438,12 @@ const Packages = ({ getAllPackages, isSuccess }) => {
             onClear={handleClearChosenSearch}
           />
         }
+        status={
+          selectedChosenPackages.size > 0
+            ? `${selectedChosenPackages.size}
+          of ${chosenPackagesDisplayList.length} items`
+            : `${chosenPackagesDisplayList.length} items`
+        }
         isChosen
       >
         <DualListSelectorList data-testid="chosen-pkgs-list">
@@ -400,6 +478,14 @@ const Packages = ({ getAllPackages, isSuccess }) => {
       </DualListSelectorPane>
     </DualListSelector>
   );
+};
+
+ExactMatch.propTypes = {
+  pkgList: PropTypes.arrayOf(PropTypes.object),
+  search: PropTypes.string,
+  chosenPackages: PropTypes.object,
+  selectedAvailablePackages: PropTypes.arrayOf(PropTypes.string),
+  handleSelectAvailableFunc: PropTypes.func,
 };
 
 RedHatPackages.propTypes = {
