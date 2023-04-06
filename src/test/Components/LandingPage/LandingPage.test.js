@@ -13,6 +13,22 @@ jest.mock('../../../store/actions/actions', () => {
   };
 });
 
+beforeAll(() => {
+  global.insights = {
+    chrome: {
+      isBeta: () => {
+        return false;
+      },
+      isProd: () => {
+        return true;
+      },
+      getEnvironment: () => {
+        return 'prod';
+      },
+    },
+  };
+});
+
 describe('Landing Page', () => {
   test('renders page heading', async () => {
     renderWithReduxRouter(<LandingPage />);
