@@ -97,7 +97,7 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const provisioningLinkEnabled = (image) => {
     switch (getImageProvider(image)) {
       case 'aws':
-        return !!image.share_with_sources;
+        return true;
       case 'azure':
         return !!azureFeatureFlag;
       default:
