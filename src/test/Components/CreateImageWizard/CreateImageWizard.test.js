@@ -935,7 +935,7 @@ describe('Step Packages', () => {
     searchbox.click();
 
     await searchForAvailablePackages(searchbox, 'asdf');
-    screen.getByText('No packages found');
+    screen.getByText('No results found');
   });
 
   test('should display empty available state on failed search after a successful search', async () => {
@@ -955,7 +955,7 @@ describe('Step Packages', () => {
 
     await searchForAvailablePackages(searchbox, 'asdf');
 
-    screen.getByText('No packages found');
+    screen.getByText('No results found');
   });
 
   test('should display empty chosen state on failed search', async () => {
@@ -979,7 +979,7 @@ describe('Step Packages', () => {
     await searchForChosenPackages(searchboxChosen, '');
   });
 
-  test('should get all packages, regardless of api default limit', async () => {
+  test('should display warning when over hundred results were found', async () => {
     await setUp();
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
@@ -999,11 +999,38 @@ describe('Step Packages', () => {
     await searchForAvailablePackages(searchbox, 'testPkg');
     expect(getPackages).toHaveBeenCalledTimes(2);
 
+    screen.getByText('Over 100 results found. Refine your search.');
+    screen.getByText('Too many results to display');
+  });
+
+  test('should display an exact match if found regardless of too many results', async () => {
+    await setUp();
+
+    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
+    expect(searchbox).toBeDisabled();
+    await waitFor(() => expect(searchbox).toBeEnabled());
+    searchbox.click();
+
+    const getPackages = jest
+      .spyOn(api, 'getPackages')
+      .mockImplementation((distribution, architecture, search, limit) => {
+        return limit
+          ? Promise.resolve(mockPkgResultAll)
+          : Promise.resolve(mockPkgResultPartial);
+      });
+
+    await searchForAvailablePackages(searchbox, 'testPkg-128');
+    expect(getPackages).toHaveBeenCalledTimes(2);
+
     const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
+    const availablePackagesItems = within(availablePackagesList).getByRole(
       'option'
     );
-    expect(availablePackagesItems).toHaveLength(132);
+    expect(availablePackagesItems).toBeInTheDocument();
+    screen.getByText('Exact match');
+    screen.getByText('testPkg-128');
+    screen.getByText('Too many results to display');
   });
 
   test('search results should be sorted alphabetically', async () => {
