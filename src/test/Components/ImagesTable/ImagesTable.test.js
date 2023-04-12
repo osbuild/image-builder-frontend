@@ -426,6 +426,22 @@ const mockCloneStatus = {
   },
 };
 
+beforeAll(() => {
+  global.insights = {
+    chrome: {
+      isBeta: () => {
+        return false;
+      },
+      isProd: () => {
+        return true;
+      },
+      getEnvironment: () => {
+        return 'prod';
+      },
+    },
+  };
+});
+
 jest
   .spyOn(api, 'getComposes')
   .mockImplementation(() => Promise.resolve(mockComposes));
