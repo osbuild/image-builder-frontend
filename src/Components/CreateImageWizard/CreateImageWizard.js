@@ -472,7 +472,7 @@ const formStepHistory = (composeRequest) => {
     if (uploadRequest.type === 'aws') {
       steps.push('aws-target-env');
     } else if (uploadRequest.type === 'azure') {
-      steps.push('azure-target-env');
+      steps.push('ms-azure-target-env');
     } else if (uploadRequest.type === 'gcp') {
       steps.push('google-cloud-target-env');
     }
