@@ -10,6 +10,14 @@ import { mockRepositoryResults } from '../../fixtures/repositories';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => true,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
+
 describe('Step Upload to Azure', () => {
   const getNextButton = () => {
     const next = screen.getByRole('button', { name: /Next/ });
@@ -46,15 +54,6 @@ describe('Step Upload to Azure', () => {
               },
             };
           },
-        },
-        isBeta: () => {
-          return true;
-        },
-        isProd: () => {
-          return true;
-        },
-        getEnvironment: () => {
-          return 'prod';
         },
       },
     };

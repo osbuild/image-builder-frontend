@@ -6,21 +6,13 @@ import api from '../../../api.js';
 import { RHEL_8 } from '../../../constants.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
-beforeAll(() => {
-  global.insights = {
-    chrome: {
-      isBeta: () => {
-        return false;
-      },
-      isProd: () => {
-        return true;
-      },
-      getEnvironment: () => {
-        return 'prod';
-      },
-    },
-  };
-});
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => false,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
 
 const mockComposes = {
   count: 1,

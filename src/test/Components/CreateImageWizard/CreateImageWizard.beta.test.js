@@ -30,6 +30,14 @@ const mockComposes = {
   data: [],
 };
 
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => true,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
+
 // Mocking getComposes is necessary because in many tests we call navigate()
 // to navigate to the images table (via useNavigate hook), which will in turn
 // result in a call to getComposes. If it is not mocked, tests fail due to MSW
@@ -169,14 +177,8 @@ beforeAll(() => {
           };
         },
       },
-      isBeta: () => {
-        return true;
-      },
       isProd: () => {
         return true;
-      },
-      getEnvironment: () => {
-        return 'prod';
       },
     },
   };

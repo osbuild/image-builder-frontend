@@ -1,7 +1,7 @@
 import React, { Suspense, useState, useMemo } from 'react';
 
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import { useFlag } from '@unleash/proxy-client-react';
 import PropTypes from 'prop-types';
@@ -11,6 +11,7 @@ import ImageLinkDirect from './ImageLinkDirect';
 
 import { MODAL_ANCHOR } from '../../constants';
 import { selectImageById } from '../../store/composesSlice';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 const getImageProvider = ({ imageType }) => {
   switch (imageType) {
@@ -91,18 +92,13 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
 const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
   const uploadStatus = image.uploadStatus;
-  const {
-    initialized: chromeInitialized,
-    isBeta,
-    getEnvironment,
-  } = useChrome();
+  const { initialized: chromeInitialized } = useChrome();
+  const { isBeta } = useGetEnvironment();
   const azureFeatureFlag = useFlag('provisioning.azure');
 
   const scalprum = useScalprum();
   const hasProvisioning =
-    chromeInitialized &&
-    scalprum.config?.provisioning &&
-    (isBeta() || getEnvironment() === 'qa');
+    chromeInitialized && scalprum.config?.provisioning && isBeta();
 
   if (!uploadStatus || image.status !== 'success') return null;
 
