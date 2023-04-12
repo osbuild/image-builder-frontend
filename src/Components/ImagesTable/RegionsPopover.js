@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
-import isBeta from '../../Utilities/isBeta';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import BetaLabel from '../sharedComponents/BetaLabel';
 
 export const selectRegions = createSelector(
@@ -57,6 +57,7 @@ const ImageLinkRegion = ({ region, ami }) => {
 };
 
 export const RegionsPopover = ({ composeId }) => {
+  const { isBeta } = useGetEnvironment();
   const regions = useSelector((state) => selectRegions(state, composeId));
 
   const listItems = useMemo(() => {

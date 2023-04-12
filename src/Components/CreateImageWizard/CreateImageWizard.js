@@ -32,9 +32,9 @@ import { UNIT_GIB, UNIT_KIB, UNIT_MIB, MODAL_ANCHOR } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import { fetchRepositories } from '../../store/repositoriesSlice';
-import isBeta from '../../Utilities/isBeta';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 const handleKeyDown = (e, handleClose) => {
@@ -266,11 +266,17 @@ const getDistributionRepoUrls = (distributionInformation) => {
   return mapped;
 };
 
-const getPackageDescription = async (release, arch, repoUrls, packageName) => {
+const getPackageDescription = async (
+  release,
+  arch,
+  repoUrls,
+  packageName,
+  isBeta
+) => {
   let pack;
   // if the env is stage beta then use content-sources api
   // else use image-builder api
-  if (isBeta()) {
+  if (isBeta) {
     const data = await api.getPackagesContentSources(repoUrls, packageName);
     pack = data.find((pack) => packageName === pack.name);
   } else {
@@ -296,7 +302,7 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
 };
 
 // map the compose request object to the expected form state
-const requestToState = (composeRequest, distroInfo) => {
+const requestToState = (composeRequest, distroInfo, isBeta) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -396,7 +402,8 @@ const requestToState = (composeRequest, distroInfo) => {
           distro,
           imageRequest?.architecture,
           repoUrls,
-          packName
+          packName,
+          isBeta
         );
         const pack = {
           name: packName,
@@ -472,7 +479,7 @@ const requestToState = (composeRequest, distroInfo) => {
   }
 };
 
-const formStepHistory = (composeRequest) => {
+const formStepHistory = (composeRequest, isBeta) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -491,7 +498,7 @@ const formStepHistory = (composeRequest) => {
       steps.push('registration');
     }
 
-    if (isBeta()) {
+    if (isBeta) {
       steps.push('File system configuration', 'packages', 'repositories');
 
       const customRepositories =
@@ -537,10 +544,16 @@ const CreateImageWizard = () => {
   // This will occur if 'Recreate image' is clicked
   const initialStep = compose?.request ? 'review' : undefined;
 
+  const { isBeta } = useGetEnvironment();
+
   const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
   const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
-  const initialState = requestToState(composeRequest, distroInfo);
-  const stepHistory = formStepHistory(composeRequest);
+  let initialState = requestToState(composeRequest, distroInfo, isBeta());
+  const stepHistory = formStepHistory(composeRequest, isBeta());
+
+  initialState
+    ? (initialState.isBeta = isBeta())
+    : (initialState = { isBeta: isBeta() });
 
   const handleClose = () => navigate(resolveRelPath(''));
 

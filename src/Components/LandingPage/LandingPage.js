@@ -28,7 +28,7 @@ import azureQuickStart from './azurequickstart.json';
 import contentQuickStart from './contentquickstart.json';
 import './LandingPage.scss';
 
-import isBeta from '../../Utilities/isBeta';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 
@@ -37,6 +37,7 @@ export const LandingPage = () => {
   const [showHint, setShowHint] = useState(true);
 
   const { quickStarts } = useChrome();
+  const { isBeta } = useGetEnvironment();
   const activateQuickstart = (qs) => quickStarts.toggle(qs.metadata.name);
 
   useEffect(() => {

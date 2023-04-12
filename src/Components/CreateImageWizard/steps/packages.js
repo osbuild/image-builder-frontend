@@ -5,7 +5,6 @@ import { Text } from '@patternfly/react-core';
 
 import StepTemplate from './stepTemplate';
 
-import isBeta from '../../../Utilities/isBeta';
 import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
@@ -14,8 +13,8 @@ export default {
   title: 'Additional Red Hat packages',
   name: 'packages',
   substepOf: 'Content',
-  nextStep: () => {
-    if (isBeta()) {
+  nextStep: ({ values }) => {
+    if (values.isBeta) {
       return 'repositories';
     } else {
       return 'image-name';

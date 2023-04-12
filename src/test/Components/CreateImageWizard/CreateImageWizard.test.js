@@ -31,6 +31,14 @@ jest
   .spyOn(api, 'getComposes')
   .mockImplementation(() => Promise.resolve(mockComposes));
 
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => false,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
+
 function getBackButton() {
   const back = screen.getByRole('button', { name: /Back/ });
   return back;

@@ -425,21 +425,13 @@ const mockCloneStatus = {
   },
 };
 
-beforeAll(() => {
-  global.insights = {
-    chrome: {
-      isBeta: () => {
-        return false;
-      },
-      isProd: () => {
-        return true;
-      },
-      getEnvironment: () => {
-        return 'prod';
-      },
-    },
-  };
-});
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => false,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
 
 jest
   .spyOn(api, 'getComposes')
