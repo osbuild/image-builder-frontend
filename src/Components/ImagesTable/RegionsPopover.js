@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 
-import { Button, Popover } from '@patternfly/react-core';
+import { Button, Divider, Popover } from '@patternfly/react-core';
 import { createSelector } from '@reduxjs/toolkit';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
+import isBeta from '../../Utilities/isBeta';
+import BetaLabel from '../sharedComponents/BetaLabel';
 
 export const selectRegions = createSelector(
   [selectComposeById, selectImagesById],
@@ -71,9 +73,30 @@ export const RegionsPopover = ({ composeId }) => {
 
   return (
     <Popover
+      /* popovers aren't rendered inside of the main page section, make sure our prefixed css still
+       * applies */
+      className="imageBuilder"
       aria-label="Launch instance"
       headerContent={<div>Launch instance</div>}
-      bodyContent={<ul>{listItems}</ul>}
+      bodyContent={
+        <>
+          <ul>{listItems}</ul>
+          {!isBeta() && (
+            <>
+              <Divider className="pf-u-mt-sm pf-u-mb-sm" />
+              <Button
+                isInline
+                component="a"
+                variant="link"
+                href="/beta/insights/image-builder/landing"
+              >
+                <BetaLabel />
+                Launch from here
+              </Button>
+            </>
+          )}
+        </>
+      }
     >
       <Button variant="link" isInline>
         Launch
