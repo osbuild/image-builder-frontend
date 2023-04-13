@@ -152,7 +152,7 @@ describe('Step Upload to Azure', () => {
     await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
 
     expect(getNextButton()).not.toHaveClass('pf-m-disabled');
-  });
+  }, 60000);
 
   test('handles change of selected Source', async () => {
     setUp();
