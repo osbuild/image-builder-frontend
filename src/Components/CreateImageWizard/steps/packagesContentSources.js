@@ -5,6 +5,8 @@ import { Text } from '@patternfly/react-core';
 
 import StepTemplate from './stepTemplate';
 
+import CustomButtons from '../formComponents/CustomButtons';
+
 export default {
   StepTemplate,
   id: 'wizard-systemconfiguration-content-sources-packages',
@@ -12,6 +14,7 @@ export default {
   name: 'packages-content-sources',
   substepOf: 'Content',
   nextStep: 'image-name',
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,
