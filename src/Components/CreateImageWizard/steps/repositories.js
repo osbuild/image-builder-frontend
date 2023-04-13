@@ -6,6 +6,8 @@ import { Text } from '@patternfly/react-core';
 import nextStepMapper from './repositoriesStepMapper';
 import StepTemplate from './stepTemplate';
 
+import CustomButtons from '../formComponents/CustomButtons';
+
 export default {
   StepTemplate,
   id: 'wizard-repositories',
@@ -13,6 +15,7 @@ export default {
   name: 'repositories',
   substepOf: 'Content',
   nextStep: ({ values }) => nextStepMapper(values),
+  buttons: CustomButtons,
   fields: [
     {
       component: componentTypes.PLAIN_TEXT,
