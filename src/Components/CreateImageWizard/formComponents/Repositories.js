@@ -109,6 +109,7 @@ const convertSchemaToImageBuilder = (repo) => {
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = repo.gpg_key;
     imageBuilderRepo.check_gpg = true;
+    imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
   }
 
   return imageBuilderRepo;
@@ -122,6 +123,7 @@ const convertSchemaToContentSources = (repo) => {
   };
   if (repo.gpgkey) {
     contentSourcesRepo.gpg_key = repo.gpgkey;
+    contentSourcesRepo.metadata_verification = repo.check_repo_gpg;
   }
 
   return contentSourcesRepo;
