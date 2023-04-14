@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Alert,
   AlertActionCloseButton,
   Button,
+  ExpandableSection,
   Popover,
   Text,
   TextContent,
 } from '@patternfly/react-core';
 import {
+  ArrowRightIcon,
   HelpIcon,
   CodeBranchIcon,
   ExternalLinkAltIcon,
@@ -18,15 +20,33 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { Outlet } from 'react-router-dom';
+
+import awsQuickStart from './awsquickstart.json';
+import azureQuickStart from './azurequickstart.json';
+import contentQuickStart from './contentquickstart.json';
+import './LandingPage.scss';
 
 import isBeta from '../../Utilities/isBeta';
 import ImagesTable from '../ImagesTable/ImagesTable';
-import './LandingPage.scss';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 export const LandingPage = () => {
   const [showBetaAlert, setShowBetaAlert] = useState(true);
+  const [showHint, setShowHint] = useState(true);
+
+  const { quickStarts } = useChrome();
+  const activateQuickstart = (qs) => quickStarts.toggle(qs.metadata.name);
+
+  useEffect(() => {
+    if (!quickStarts) return;
+    quickStarts.set('hmsPreview', [
+      awsQuickStart,
+      azureQuickStart,
+      contentQuickStart,
+    ]);
+  }, []);
 
   return (
     <React.Fragment>
@@ -115,6 +135,58 @@ export const LandingPage = () => {
               content.
             </p>
           </Alert>
+        )}
+        {isBeta() && (
+          <ExpandableSection
+            className="pf-m-light pf-u-mb-xl expand-section"
+            toggleText="Help get started with beta features"
+            onToggle={setShowHint}
+            isExpanded={showHint}
+            displaySize="large"
+          >
+            <p>
+              For help getting started, access the quick starts for our beta
+              features.
+            </p>
+            <p>
+              <p>
+                <Button
+                  icon={<ArrowRightIcon />}
+                  iconPosition="right"
+                  variant="link"
+                  isInline
+                  component="a"
+                  onClick={() => activateQuickstart(awsQuickStart)}
+                >
+                  Launch an AWS Image
+                </Button>
+              </p>
+              <p>
+                <Button
+                  icon={<ArrowRightIcon />}
+                  iconPosition="right"
+                  variant="link"
+                  isInline
+                  component="a"
+                  onClick={() => activateQuickstart(azureQuickStart)}
+                >
+                  Launch an Azure Image
+                </Button>
+              </p>
+              <p>
+                <Button
+                  icon={<ArrowRightIcon />}
+                  iconPosition="right"
+                  variant="link"
+                  isInline
+                  component="a"
+                  onClick={() => activateQuickstart(contentQuickStart)}
+                >
+                  Build an Image with Custom Content
+                </Button>
+              </p>
+            </p>
+          </ExpandableSection>
         )}
         <ImagesTable />
       </section>
