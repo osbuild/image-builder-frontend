@@ -1,0 +1,47 @@
+{
+   "metadata": {
+      "name": "insights-custom-repos",
+      "instructional": true
+   },
+   "spec": {
+      "displayName": "Build an image with custom content",
+      "durationMinutes": 10,
+      "type": {
+         "text": "Quick start",
+         "color": "green"
+      },
+      "icon": "data:image/svg+xml;base64,PCEtLSBHZW5lcmF0ZWQgYnkgSWNvTW9vbi5pbyAtLT4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KPHRpdGxlPjwvdGl0bGU+CjxnIGlkPSJpY29tb29uLWlnbm9yZSI+CjwvZz4KPHBhdGggZD0iTTQ0OCA2NHY0MTZoLTMzNmMtMjYuNTEzIDAtNDgtMjEuNDktNDgtNDhzMjEuNDg3LTQ4IDQ4LTQ4aDMwNHYtMzg0aC0zMjBjLTM1LjE5OSAwLTY0IDI4LjgtNjQgNjR2Mzg0YzAgMzUuMiAyOC44MDEgNjQgNjQgNjRoMzg0di00NDhoLTMyeiI+PC9wYXRoPgo8cGF0aCBkPSJNMTEyLjAyOCA0MTZ2MGMtMC4wMDkgMC4wMDEtMC4wMTkgMC0wLjAyOCAwLTguODM2IDAtMTYgNy4xNjMtMTYgMTZzNy4xNjQgMTYgMTYgMTZjMC4wMDkgMCAwLjAxOS0wLjAwMSAwLjAyOC0wLjAwMXYwLjAwMWgzMDMuOTQ1di0zMmgtMzAzLjk0NXoiPjwvcGF0aD4KPC9zdmc+Cg==",
+      "description": "Learn how to add a custom repository and create an image with custom content.",
+      "introduction": "Welcome to the quick start for custom repositories.\n\nIn this quick start, you will add a custom repository to the Red Hat Hybrid Cloud Console and create an image with custom content.",
+      "tasks": [
+         {
+            "title": "Add a custom repository",
+            "description": "\n<h4 id=\"ib-add-custom\"><b>Add a Custom Repository:</b></h4>\n\n1. Click the Settings <i class=\"fas fa-cog\"></i> icon in the top right corner.\n\n1. In Settings, click **Repositories** in the left menu.\n\n1. Navigate to the **Popular repositories** tab.\n\n1. Locate \u201cEPEL8 Everything x86_64\u201d and click **Add**.\n\n1. Navigate to the **Your repositories** tab. You should now see the added repository.\n\nThe added repository is ready to use in Image Builder.\n<br>\n<br>\n\n<h4 id=\"ib-add-addl-custom-repo\"><b>(Optional) Add Additional Custom Repositories:</b></h4>\n\n1. Click the **Add repositories** button.\n\n1. Add the name and URL for the repository. For example:\n\n    - **Name:** NVIDIA Drivers\n    \n    - **URL:** https://developer.download.nvidia.com/compute/cuda/repos/rhel8/x86_64/\n    \n    - **Architecture:** X86_64\n\n    - **OS Version:** el8\n\nNote: Architecture and OS version will be suggested based on the URL link\n\nThe repository will be retrospected and confirmed. After confirmation, the status will change to \u201cvalid,\u201d and the repository will be ready to use in Image Builder.          \n\n<br>",
+            "review": {
+               "instructions": "- Did you complete the task successfully?",
+               "failedTaskHelp": "This task isn't verified yet. Try the task again."
+            },
+            "summary": {
+               "success": "Shows a success message in the task header",
+               "failed": "Shows a failed message in the task header"
+            }
+         },
+         {
+            "title": "Build an image with custom repositories",
+            "description": "\n<h4 id=\"ib-custom-repo-new-image\"><b>Build an image with custom reposities:</b></h4>\n\n1. Access **Hybrid Cloud Console > Red Hat Enterprise Linux > Red Hat Insights.**\n\n1. Navigate to **Images**. \n\n1. Click the **\u201cCreate Image\u201d** button.\n\n1. On the \u201cImage Output\u201d step:\n    - **Release:** Select Red Hat Enterprise Linux (RHEL) 8 \n\n    - **Target Environments:** Select the desired image output.\n\n    - Click **Next.**\n          \n1. On the \u201cTarget Environment\u201d Steps:\n    \n    - Enter additional information based on the target environment selected.\n        \n        - **AWS:** Choose one of the sharing methods:\n            \n            - Use the \u201cUse an account configured from [Sources] (https://console.redhat.com/beta/settings/sources)\u201d option and choose the recently created or edited AWS source.\n            \n            - Manually enter an account ID & provide the account ID where you plan to share this image.\n        \n        - **Google Cloud:** \n            \n            - Provide a Google account, service account, Google group, or workspace domain to where you plan to share this image.\n            <br>\n            <br>\n\n        - **Azure:**\n            \n            - Provide the Azure Tenant GUID, Subscription ID, and Resource Group to where you plan to share this image.\n            \n            - Image Builder must be authorized for a specific tenant ID. The \u201cAuthorize Image Builder\u201d button will do this for the user.\n       \n        - Other environments require no additional data.\n     \n     - Click **Next.**\n          \n1. On the \u201cRegister\u201d step:\n\n    - **Registration method:** Select the registration level with Red Hat\n    \n    - **Activation key:** Select and use an activation key available to the account.\n    \n    - Click **Next.**\n\n1. On the \u201cFile system Configuration\u201d step:\n    \n    - Use automatic partitioning\n    \n    - Click **Next.**  \n\n1. On the \u201cContent - Additional Red Hat Packages\u201d step:\n    \n    - Search and add the following packages:\n        \n        - Podman\n        \n        - Rhc\n        \n        - Rhc-worker-playbook\n        \n        - Ansible-core\n    \n    - Click **Next.**\n\n1. On the \u201cContent - Custom Repositories\u201d step:\n\n    - Locate \u201cEPEL8 Everything x86_64\u201d and **link** it to the image.\n                    \n    - Click **Next.**\n\n1. On the \u201cContent - Additional Custom Packages\u201d Step:\n   \n    - Search and add the \"OpenVPN\" package from the linked custom repositories.\n       \n    - Click **Next.**\n\n1. On the \u201cName Image\u201d Step:\n    \n    - **Name:** Enter a name for the image\n    \n    - Click **Next.**\n\n1. Review the configuration and click **Create Image.**\n<br>\n<br>\n\nNote: Building the image can take some time.\n<br>",
+            "review": {
+               "instructions": "- Did you complete the task successfully?",
+               "failedTaskHelp": "This task isn't verified yet. Try the task again."
+            },
+            "summary": {
+               "success": "Shows a success message in the task header",
+               "failed": "Shows a failed message in the task header"
+            }
+         }
+      ],
+      "conclusion": "\n<h4><b>Thank you for taking the time to explore this feature!</b></h4> \n\nWe would love to learn more about your experience creating an Image with Custom Content.\n\n\n<br>\n**<a id=\"qs-ib-custom-content-contact\" href=\"\">Let Red Hat to contact you <i class=\"fas fa-arrow-right\"></i> </a>**\n<br>\n<br>\n<br>\n\nIf you need additional assistance:\n  \n  - Open a [support case](https://access.redhat.com/support)",
+      "nextQuickStart": [
+         "mas-alert-note-prereq"
+      ]
+   }
+}

@@ -1,0 +1,51 @@
+{
+   "metadata": {
+      "name": "insights-launch-azure",
+      "instructional": true
+   },
+   "spec": {
+      "displayName": "Launch an Microsoft Azure image",
+      "durationMinutes": 10,
+      "type": {
+         "text": "Quick start",
+         "color": "green"
+      },
+      "icon": "data:image/svg+xml;base64,PCEtLSBHZW5lcmF0ZWQgYnkgSWNvTW9vbi5pbyAtLT4KPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj4KPHRpdGxlPjwvdGl0bGU+CjxnIGlkPSJpY29tb29uLWlnbm9yZSI+CjwvZz4KPHBhdGggZD0iTTQ0OCA2NHY0MTZoLTMzNmMtMjYuNTEzIDAtNDgtMjEuNDktNDgtNDhzMjEuNDg3LTQ4IDQ4LTQ4aDMwNHYtMzg0aC0zMjBjLTM1LjE5OSAwLTY0IDI4LjgtNjQgNjR2Mzg0YzAgMzUuMiAyOC44MDEgNjQgNjQgNjRoMzg0di00NDhoLTMyeiI+PC9wYXRoPgo8cGF0aCBkPSJNMTEyLjAyOCA0MTZ2MGMtMC4wMDkgMC4wMDEtMC4wMTkgMC0wLjAyOCAwLTguODM2IDAtMTYgNy4xNjMtMTYgMTZzNy4xNjQgMTYgMTYgMTZjMC4wMDkgMCAwLjAxOS0wLjAwMSAwLjAyOC0wLjAwMXYwLjAwMWgzMDMuOTQ1di0zMmgtMzAzLjk0NXoiPjwvcGF0aD4KPC9zdmc+Cg==",
+      "description": "Learn how to add an Microsoft Azure source and launch an image.",
+      "introduction": "Welcome to the quick start for launching an Micorsoft Azure image.\n\nIn this quick start, you learn how to add or edit Azure sources, create an image, and launch it all on the Red Hat Hybrid Cloud Console.",
+      "tasks": [
+         {
+            "title": "Add or Edit an Azure source",
+            "description": "\nA source must be configured to connect your Azure account to Hybrid Cloud Console to launch an image. Create a new source or [edit an existing one] (#edit-azure-source).\n<br>\n<br>\n\n<h4 id=\"add-azure-source\"><b>Add an Azure source:</B></h4> \n\n1. Click the Settings <i class=\"fas fa-cog\"></i> icon in the top right corner.\n\n1. In Settings, click **Sources** in the left menu.\n\n1. Click **Add source**.\n\n1. On the \u201cSelect source type\u201d step:\n\n      - **Cloud provider:** Select Microsoft Azure.\n\n      - Click **Next.**\n\n1. On the \u201cName source\u201d step:\n      \n      - **Name:** Enter a name for your source\n      \n      - Click **Next**.\n\n1. On the \u201cSelect applications\u201d step:\n\n    - Toggle \u201cLaunch images\u201d to **on**.\n    \n    - Click **Next**.\n\n1. On the \u201cCredentials\u201d step:\n\n    - **Subscription ID:** Enter your Subscription ID\n    \n    - Click **Next**.\n\n1. Review and click **Add** to save the Source.\n\nIt will take a few moments to apply the configuration.    \n<br>\n\n<h4 id=\"edit-azure-source\"><b>Edit an existing Azure source:</B></h4>\n\n1. Click the Settings icon in the top right corner.\n\n1. In Settings, click **Sources** in the left menu.\n\n1. Locate your existing Azure source in the cloud sources table\n\n1. Click **the existing source\u2019s name** to go to its details.\n\n1. Locate the \u201cApplications\u201d card.\n\n1. Toggle \u201cLaunch images\u201d to **on**.\n\nIt will take a few moments to apply the configuration.\n<br>\n<br>",
+            "review": {
+               "instructions": "- Did you complete the task successfully?",
+               "failedTaskHelp": "This task isn't verified yet. Try the task again."
+            },
+            "summary": {
+               "success": "Shows a success message in the task header",
+               "failed": "Shows a failed message in the task header"
+            }
+         },
+         {
+            "title": "Use Image Builder to build an Azure image",
+            "description": "Let's use the updated source to create a new Azure image or [recreate an existing one] (#ib-azure-recreate-image).\n<br>\n<br> \n\n<h4 id=\"ib-azure-new-image\"><b>Build a new Azure image:</B></h4>\n\n1. Navigate to **Images** in the left menu.\n\n1. On the Images page, click **Create Image**.\n\n1. On the \u201cImage Output\u201d step:\n\n    - **Release:** Select Red Hat Enterprise Linux (RHEL) 8  \n\n    - **Target Environments:** Select Microsoft Azure.\n\n    - Click **Next.**\n          \n1. On the \"Target Environment - Microsoft Azure\" step:\n    \n    - Go to the Azure account from which you want to launch images.\n    \n    - Locate and copy your Azure Tenant GUID, Subscription ID, and Resource group.\n    \n    - Paste the content into the respective fields.\n    \n    - Click **Authorize Image Builder.**\n    \n    - Click **Next.**\n          \n1. On the \u201cRegister\u201d step:\n\n    - **Registration method:** Select \u201cRegister and connect image instances with Red Hat.\u201d\n    \n    - **Activation key:** Select an activation key available to the account.\n    \n    - Click **Next.**\n\n1. On the \u201cFile system Configuration\u201d step:\n    \n    - Use automatic partitioning\n    \n    - Click **Next.**  \n\n1. On the \u201cContent - Additional Red Hat Packages\u201d step:\n    \n    - Search and add the following packages:\n        \n        - Podman\n        \n        - Rhc\n        \n        - Rhc-worker-playbook\n        \n        - Ansible-core\n    \n    - Click **Next.**\n\n1. On the \u201cContent - Custom Repositories\u201d step:\n\n    - Custom repositories are not required to launch\n                    \n    - Click **Next.**\n\n1. (Optional) On the \"Content - Additional custom packages\" step\n   \n    - Custom repository packages are not required to launch. This step is available if you linked a custom repository in the previous step.\n       \n    - Click **Next.**\n\n1. On the \u201cName Image\u201d Step:\n    \n    - **Name:** Enter a name for the image\n    \n    - Click **Next.**\n\n1. Review the configuration and click **Create Image.**\n\nNote: Building the image can take some time.\n<br>\n<br>\n\n<h4 id=\"ib-azure-recreate-image\"><b>Recreate an existing Azure image:</B></h4>\n\n1. Navigate to **Images** in the left menu.\n\n1. Locate your existing Azure image in the Images table.\n\n1. Click the \u201cMore actions\u201d ellipsis <i class=\"fas fa-ellipsis-v\"></i> icon at the end of the row. \n\n1. Click **Recreate Image.**\n\n1. A \"Create image\" wizard opens on the \"Review\" step with previous configuration added to the image.\n\n1. Click on the **Target environment - Microsoft Azure** step.\n\n1. On the \"Target Environment - Microsoft Azure\" step:\n\n    - Check in how many days the image will expire.\n\n    - Choose from a different Source Name account, from the drop down menu.\n\n1. Return to the **Review** step.\n\n1. Click **Create Image.**\n\nNote: Building the image can take some time.\n<br>\n<br>",
+            "review": {
+               "instructions": "- Did you complete the task successfully?",
+               "failedTaskHelp": "This task isn't verified yet. Try the task again."
+            },
+            "summary": {
+               "success": "Shows a success message in the task header",
+               "failed": "Shows a failed message in the task header"
+            }
+         },
+         {
+            "title": "Launch an instance in the Azure environment.",
+            "description": "Now let\u2019s use our new Azure image to launch an environment from the console.\n<br>\n<br>\n\n<h4 id=\"ib-Azure-launch\"><b>Launch an instance in the Azure environment:</B></h4>\n\n1. Navigate to **Images** in the left menu.\n\n1. Locate an image created with an Azure source.\n\n    - The image type is displayed in the \u201cTarget\u201d column.\n\n    - Note: The source must be configured to launch instances. See Add or Edit an Azure Source.\n\n1. From the \u201cInstance\u201d column, click **Launch.**\n\n1. In the \"Accounts and Customizations | Azure\" step:\n\n    - **Select account:** Select your Azure account from the dropdown menu\n\n    - **Select region:** Use the default region, \u201ceastus.\u201d\n\n    - **Select instance type:** Select \u201cStandard_B1ms\u201d\n\n    - **Count:** Leave the number of instances you want to instantiate at 1. \n\n    - Click **Next.**\n\n1. In the \"SSH keys authentication\" step:\n\n    - Enter your own public SSH key for authentication.\n\n    - Click **Next.**\n\n1. Review the details and click **Launch.** \n\n1. Wait for the system to launch the new instances.\n\n1. After the Launch wizard shows the \"System(s) launched successfully\" message:\n    \n    - You can either click the Host URL link under ID or save the Host Instance ID link for later reference.\n    \n    - After you click the link from the Host card, the AWS console screen displays the Instance summary for the launched image.\n\n    - You can find the public IP address that you can use to access the running instance.\n\n    - You can also copy the SSH command to access your instance via SSH in the CLI.\n\nAll launched systems will register with Red Hat and appear in the [Inventory] (https://console.redhat.com/beta/insights/inventory).\n\nA system's visibility in the console is based on the registration level selection during image creation. We have selected  \u201cRegister and connect image instances with Red Hat.\u201d \n\nNote that the newly launched instances will take several minutes to show in the inventory.\n<br>"
+         }
+      ],
+      "conclusion": "\n<h4><b>Thank you for taking the time to explore this feature!</b></h4> \n\nWe would love to learn more about your experience launching Azure images on the console. \n\n\n<br>\n**<a id=\"qs-ib-azure-launch-contact\" href=\"\">Let Red Hat to contact you <i class=\"fas fa-arrow-right\"></i> </a>**\n<br>\n<br>\n<br>\n\nIf you need additional assistance:\n  \n  - [Open a support case](https://access.redhat.com/support)",
+      "nextQuickStart": [
+         "mas-alert-note-prereq"
+      ]
+   }
+}
