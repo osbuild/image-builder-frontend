@@ -123,10 +123,9 @@ const ImagesTable = () => {
   const actions = (compose) => [
     {
       title: 'Recreate image',
-      onClick: () =>
-        navigate(resolveRelPath('imagewizard'), {
-          state: { composeRequest: compose.request, initialStep: 'review' },
-        }),
+      onClick: () => {
+        navigate(resolveRelPath(`imagewizard/${compose.id}`));
+      },
     },
     {
       title: (
@@ -146,10 +145,7 @@ const ImagesTable = () => {
   const awsActions = (compose) => [
     {
       title: 'Share to new region',
-      onClick: () =>
-        navigate(resolveRelPath(`share`), {
-          state: { composeId: compose.id },
-        }),
+      onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
     },
     ...actions(compose),
   ];

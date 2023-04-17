@@ -1,5 +1,4 @@
 import '@testing-library/jest-dom';
-import React from 'react';
 
 import {
   act,
@@ -12,7 +11,6 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
 import api from '../../../api.js';
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import {
   RHEL_8,
   RHEL_9,
@@ -22,8 +20,23 @@ import { mockRepositoryResults } from '../../fixtures/repositories';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
-let history = undefined;
+let router = undefined;
 let store = undefined;
+
+const mockComposes = {
+  meta: {
+    count: 0,
+  },
+  data: [],
+};
+
+// Mocking getComposes is necessary because in many tests we call navigate()
+// to navigate to the images table (via useNavigate hook), which will in turn
+// result in a call to getComposes. If it is not mocked, tests fail due to MSW
+// being unable to resolve that endpoint.
+jest
+  .spyOn(api, 'getComposes')
+  .mockImplementation(() => Promise.resolve(mockComposes));
 
 function getBackButton() {
   const back = screen.getByRole('button', { name: /Back/ });
@@ -171,7 +184,7 @@ beforeAll(() => {
 
 afterEach(() => {
   jest.clearAllMocks();
-  history = undefined;
+  router = undefined;
 });
 
 // restore global mock
@@ -181,7 +194,7 @@ afterAll(() => {
 
 describe('Create Image Wizard', () => {
   test('renders component', () => {
-    renderWithReduxRouter(<CreateImageWizard />);
+    renderWithReduxRouter('imagewizard', {});
     // check heading
     screen.getByRole('heading', { name: /Create image/ });
 
@@ -199,9 +212,7 @@ describe('Create Image Wizard', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    const view = renderWithReduxRouter(<CreateImageWizard />);
-    history = view.history;
-    store = view.store;
+    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -331,7 +342,7 @@ describe('Step Upload to AWS', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder')
+      expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
     expect(store.getState().composes.allIds).toEqual([
       'edbae1c2-62bc-42c1-ae0c-3110ab718f5a',
@@ -343,7 +354,7 @@ describe('Step Upload to AWS', () => {
 describe('Step Packages', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -605,7 +616,7 @@ describe('Step Packages', () => {
 describe('Step Custom repositories', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -741,9 +752,7 @@ describe('Click through all steps', () => {
     .mockImplementation(() => Promise.resolve(mockRepositoryResults));
 
   const setUp = async () => {
-    const view = renderWithReduxRouter(<CreateImageWizard />);
-    history = view.history;
-    store = view.store;
+    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
   };
 
   test('with valid values', async () => {
@@ -1082,7 +1091,7 @@ describe('Click through all steps', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder')
+      expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
     expect(store.getState().composes.allIds).toEqual(ids);
     // set test timeout of 10 seconds

@@ -7,7 +7,6 @@ import { BrowserRouter } from 'react-router-dom';
 import api from '../../../api.js';
 import { ImageBuildStatus } from '../../../Components/ImagesTable/ImageBuildStatus';
 import ImageLink from '../../../Components/ImagesTable/ImageLink';
-import ImagesTable from '../../../Components/ImagesTable/ImagesTable';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
@@ -463,7 +462,7 @@ jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
 describe('Images Table', () => {
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
-    const view = renderWithReduxRouter(<ImagesTable />, {});
+    const view = renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
 
@@ -541,7 +540,7 @@ describe('Images Table', () => {
   });
 
   test('check recreate action', async () => {
-    const { history } = renderWithReduxRouter(<ImagesTable />, {});
+    const { router } = renderWithReduxRouter('', {});
 
     // get rows
     const table = await screen.findByTestId('images-table');
@@ -560,17 +559,13 @@ describe('Images Table', () => {
     });
     await user.click(recreateButton);
 
-    expect(history.location.pathname).toBe(
-      '/insights/image-builder/imagewizard'
+    expect(router.state.location.pathname).toBe(
+      `/insights/image-builder/imagewizard/${imageId}`
     );
-    expect(history.location.state.composeRequest).toStrictEqual(
-      mockComposes.data.find((c) => c.id === imageId).request
-    );
-    expect(history.location.state.initialStep).toBe('review');
   });
 
   test('check download compose request action', async () => {
-    renderWithReduxRouter(<ImagesTable />, {});
+    renderWithReduxRouter('', {});
 
     // get rows
     const table = await screen.findByTestId('images-table');
@@ -608,7 +603,7 @@ describe('Images Table', () => {
   });
 
   test('check expandable row toggle', async () => {
-    renderWithReduxRouter(<ImagesTable />, {});
+    renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
     const { getAllByRole } = within(table);
@@ -632,7 +627,7 @@ describe('Images Table', () => {
   });
 
   test('check error details', async () => {
-    renderWithReduxRouter(<ImagesTable />, {});
+    renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
     const { getAllByRole } = within(table);
@@ -656,7 +651,7 @@ describe('Images Table', () => {
 
 describe('Images Table Toolbar', () => {
   test('render toolbar', async () => {
-    renderWithReduxRouter(<ImagesTable />, {});
+    renderWithReduxRouter('', {});
     await screen.findByTestId('images-table');
 
     // check create image button
@@ -670,7 +665,7 @@ describe('Images Table Toolbar', () => {
 
 describe('Clones table', () => {
   test('renders clones table', async () => {
-    const view = renderWithReduxRouter(<ImagesTable />);
+    const view = renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import { Modal } from '@patternfly/react-core';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import RegionsSelect from './RegionsSelect';
 
@@ -9,11 +9,10 @@ import { resolveRelPath } from '../../Utilities/path';
 
 const ShareToRegionsModal = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   const handleClose = () => navigate(resolveRelPath(''));
   const [isOpen, setIsOpen] = useState(false);
 
-  const composeId = location?.state?.composeId;
+  const { composeId } = useParams();
 
   const handleToggle = (isOpen) => setIsOpen(isOpen);
 

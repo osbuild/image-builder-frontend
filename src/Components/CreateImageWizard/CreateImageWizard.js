@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import { useDispatch } from 'react-redux';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch, useStore } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageCreator from './ImageCreator';
 import {
@@ -296,7 +296,7 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
 };
 
 // map the compose request object to the expected form state
-const requestToState = (composeRequest) => {
+const requestToState = (composeRequest, distroInfo) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -383,11 +383,8 @@ const requestToState = (composeRequest) => {
 
     const distro = composeRequest?.distribution;
 
-    const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
-      useGetArchitecturesByDistributionQuery(distro);
-
-    if (isSuccessDistroInfo) {
-      distroRepoUrls = getDistributionRepoUrls(distributionInformation);
+    if (distroInfo) {
+      distroRepoUrls = getDistributionRepoUrls(distroInfo);
       const payloadRepositories =
         composeRequest?.customizations?.payload_repositories?.map(
           (repo) => repo.baseurl
@@ -517,12 +514,32 @@ const formStepHistory = (composeRequest) => {
 const CreateImageWizard = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  // composeId is an optional param that is used for Recreate image
+  const { composeId } = useParams();
+
+  // This is a bit awkward, but will be replaced with an RTKQ hook very soon
+  // We use useStore() instead of useSelector() because we do not want changes to
+  // the store to cause re-renders, as the composeId (if present) will never change
+  const { getState } = useStore();
+  const compose = getState().composes?.byId?.[composeId];
+  const composeRequest = compose?.request;
+
+  // TODO: This causes an annoying re-render when using Recreate image
+  const { data: distroInfo } = useGetArchitecturesByDistributionQuery(
+    composeRequest?.distribution,
+    {
+      // distroInfo is only needed when recreating an image, skip otherwise
+      skip: composeId ? false : true,
+    }
+  );
+
+  // Assume that if a request is available that we should start on review step
+  // This will occur if 'Recreate image' is clicked
+  const initialStep = compose?.request ? 'review' : undefined;
 
   const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
   const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
-  const composeRequest = location?.state?.composeRequest;
-  const initialState = requestToState(composeRequest);
+  const initialState = requestToState(composeRequest, distroInfo);
   const stepHistory = formStepHistory(composeRequest);
 
   const handleClose = () => navigate(resolveRelPath(''));
@@ -631,7 +648,7 @@ const CreateImageWizard = () => {
               review,
             ],
             initialState: {
-              activeStep: location?.state?.initialStep || 'image-output', // name of the active step
+              activeStep: initialStep || 'image-output', // name of the active step
               activeStepIndex: stepHistory.length, // active index
               maxStepIndex: stepHistory.length, // max achieved index
               prevSteps: stepHistory, // array with names of previously visited steps
