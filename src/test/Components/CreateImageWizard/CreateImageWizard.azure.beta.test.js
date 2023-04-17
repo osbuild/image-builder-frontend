@@ -1,12 +1,10 @@
 import '@testing-library/jest-dom';
-import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
 import api from '../../../api.js';
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import { PROVISIONING_SOURCES_ENDPOINT } from '../../../constants.js';
 import { mockRepositoryResults } from '../../fixtures/repositories';
 import { server } from '../../mocks/server.js';
@@ -73,7 +71,7 @@ describe('Step Upload to Azure', () => {
 
   const user = userEvent.setup();
   const setUp = async () => {
-    renderWithReduxRouter(<CreateImageWizard />);
+    renderWithReduxRouter('imagewizard', {});
     // select aws as upload destination
     const azureTile = screen.getByTestId('upload-azure');
     azureTile.click();

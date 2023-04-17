@@ -13,8 +13,8 @@ export const Router = () => {
   return (
     <Routes>
       <Route path="*" element={<LandingPage />}>
-        <Route path="imagewizard/*" element={<CreateImageWizard />} />
-        <Route path="share/*" element={<ShareImageModal />} />
+        <Route path="imagewizard/:composeId?" element={<CreateImageWizard />} />
+        <Route path="share/:composeId" element={<ShareImageModal />} />
       </Route>
     </Routes>
   );

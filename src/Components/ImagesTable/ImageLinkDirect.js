@@ -129,14 +129,7 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
           component="a"
           target="_blank"
           variant="link"
-          onClick={() =>
-            navigate(resolveRelPath('imagewizard'), {
-              state: {
-                composeRequest: image.request,
-                initialStep: 'review',
-              },
-            })
-          }
+          onClick={() => navigate(resolveRelPath(`imagewizard/${imageId}`))}
           isInline
         >
           Recreate image

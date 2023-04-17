@@ -1,7 +1,5 @@
 import '@testing-library/jest-dom';
 
-import React from 'react';
-
 import {
   act,
   screen,
@@ -12,12 +10,26 @@ import {
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import { RHEL_8 } from '../../../constants.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
-let history = undefined;
 let store = undefined;
+let router = undefined;
+
+const mockComposes = {
+  meta: {
+    count: 0,
+  },
+  data: [],
+};
+
+// Mocking getComposes is necessary because in many tests we call navigate()
+// to navigate to the images table (via useNavigate hook), which will in turn
+// result in a call to getComposes. If it is not mocked, tests fail due to MSW
+// being unable to resolve that endpoint.
+jest
+  .spyOn(api, 'getComposes')
+  .mockImplementation(() => Promise.resolve(mockComposes));
 
 function getBackButton() {
   const back = screen.getByRole('button', { name: /Back/ });
@@ -34,10 +46,9 @@ function getCancelButton() {
   return cancel;
 }
 
-function verifyCancelButton(cancel, history) {
+function verifyCancelButton(cancel, router) {
   cancel.click();
-
-  expect(history.location.pathname).toBe('/insights/image-builder');
+  expect(router.state.location.pathname).toBe('/insights/image-builder');
 }
 
 const mockPkgResultAlpha = {
@@ -138,7 +149,7 @@ beforeAll(() => {
 
 afterEach(() => {
   jest.clearAllMocks();
-  history = undefined;
+  router = undefined;
 });
 
 // restore global mock
@@ -148,7 +159,7 @@ afterAll(() => {
 
 describe('Create Image Wizard', () => {
   test('renders component', () => {
-    renderWithReduxRouter(<CreateImageWizard />);
+    renderWithReduxRouter('imagewizard', {});
     // check heading
     screen.getByRole('heading', { name: /Create image/ });
 
@@ -165,7 +176,7 @@ describe('Create Image Wizard', () => {
 describe('Step Image output', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     const imageOutputLink = screen.getByRole('button', {
       name: 'Image output',
@@ -191,7 +202,7 @@ describe('Step Image output', () => {
     setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('target environment is required', () => {
@@ -300,7 +311,7 @@ describe('Step Image output', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -338,7 +349,7 @@ describe('Step Upload to AWS', () => {
     setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('the aws account id fieldis shown and required', () => {
@@ -354,7 +365,7 @@ describe('Step Upload to AWS', () => {
 describe('Step Upload to Google', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-google');
@@ -392,7 +403,7 @@ describe('Step Upload to Google', () => {
     setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('the google account id field is shown and required', () => {
@@ -419,7 +430,7 @@ describe('Step Upload to Google', () => {
 describe('Step Upload to Azure', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-azure');
@@ -468,7 +479,7 @@ describe('Step Upload to Azure', () => {
     setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('the azure upload fields are shown and required', () => {
@@ -494,7 +505,7 @@ describe('Step Upload to Azure', () => {
 describe('Step Registration', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -533,7 +544,7 @@ describe('Step Registration', () => {
     await setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('should allow registering with rhc', async () => {
@@ -674,7 +685,7 @@ describe('Step Registration', () => {
 describe('Step File system configuration', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -742,7 +753,7 @@ describe('Step File system configuration', () => {
 describe('Step Packages', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -788,7 +799,7 @@ describe('Step Packages', () => {
     await setUp();
 
     const cancel = getCancelButton();
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('should display search bar and button', async () => {
@@ -1128,7 +1139,7 @@ describe('Step Packages', () => {
 describe('Step Details', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -1175,7 +1186,7 @@ describe('Step Details', () => {
 describe('Step Review', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -1206,7 +1217,7 @@ describe('Step Review', () => {
 
   // eslint-disable-next-line no-unused-vars
   const setUpCentOS = async () => {
-    history = renderWithReduxRouter(<CreateImageWizard />).history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -1264,7 +1275,7 @@ describe('Step Review', () => {
     await setUp();
 
     const cancel = screen.getByRole('button', { name: /Cancel/ });
-    verifyCancelButton(cancel, history);
+    verifyCancelButton(cancel, router);
   });
 
   test('has Registration expandable section for rhel', async () => {
@@ -1312,45 +1323,12 @@ describe('Step Review', () => {
     await user.click(fscExpandable);
     screen.getByText('Configuration type');
   });
-
-  test('can pass location to recreate on review step', () => {
-    const initialLocation = {
-      state: {
-        composeRequest: {
-          distribution: RHEL_8,
-          image_name: 'MyImageName',
-          image_requests: [
-            {
-              architecture: 'x86_64',
-              image_type: 'guest-image',
-              upload_request: {
-                type: 'aws.s3',
-                options: {},
-              },
-            },
-          ],
-          customizations: {},
-        },
-        initialStep: 'review',
-      },
-    };
-    history = renderWithReduxRouter(
-      <CreateImageWizard />,
-      {},
-      initialLocation
-    ).history;
-    screen.getByText('Virtualization - Guest image (.qcow2)');
-    screen.getByText('Register the system later');
-    screen.getByText('MyImageName');
-  });
 });
 
 describe('Click through all steps', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    const view = renderWithReduxRouter(<CreateImageWizard />);
-    history = view.history;
-    store = view.store;
+    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
   };
 
   test('with valid values', async () => {
@@ -1784,7 +1762,7 @@ describe('Click through all steps', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(history.location.pathname).toBe('/insights/image-builder')
+      expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
     expect(store.getState().composes.allIds).toEqual(ids);
     // set test timeout of 10 seconds
@@ -1794,12 +1772,7 @@ describe('Click through all steps', () => {
 describe('Keyboard accessibility', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    const view = renderWithReduxRouter(
-      <CreateImageWizard />,
-      {},
-      '/imagewizard'
-    );
-    history = view.history;
+    ({ router } = renderWithReduxRouter('imagewizard', {}));
   };
 
   const clickNext = () => {
@@ -1907,7 +1880,7 @@ describe('Keyboard accessibility', () => {
     const awsTile = screen.getByTestId('upload-aws');
     await user.click(awsTile);
     await user.keyboard('{escape}');
-    expect(history.location.pathname).toBe('/insights/image-builder');
+    expect(router.state.location.pathname).toBe('/insights/image-builder');
   });
 
   test('pressing Enter does not advance the wizard', async () => {
