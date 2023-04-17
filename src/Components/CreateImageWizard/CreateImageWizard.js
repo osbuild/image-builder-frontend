@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -544,6 +544,11 @@ const CreateImageWizard = () => {
 
   const handleClose = () => navigate(resolveRelPath(''));
 
+  const appendTo = useMemo(
+    () => document.querySelector('.pf-c-page.chr-c-page'),
+    []
+  );
+
   useEffect(() => {
     if (isBeta()) {
       dispatch(fetchRepositories());
@@ -610,6 +615,9 @@ const CreateImageWizard = () => {
           {
             component: componentTypes.WIZARD,
             name: 'image-builder-wizard',
+            ModalProps: {
+              appendTo,
+            },
             className: 'imageBuilder',
             isDynamic: true,
             inModal: true,
