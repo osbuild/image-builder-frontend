@@ -49,7 +49,7 @@ const Row = ({ imageId }) => {
         <Td dataLabel="Account">{getAccount(image)}</Td>
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
-          <ImageBuildStatus imageId={image.id} />
+          <ImageBuildStatus imageId={image.id} imageRegion={image.region} />
         </Td>
         <Td dataLabel="Instance">
           <ImageLink imageId={image.id} isInClonesTable={true} />

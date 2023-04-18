@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Alert } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { CopyIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 
 const useGetErrorReason = (err) => {
@@ -24,9 +25,14 @@ const ErrorDetails = ({ status }) => {
 
   return (
     <div className="pf-u-mt-sm">
-      <strong>Status</strong>
-      <Alert variant="danger" title="Image build failed" isInline isPlain />
-      <p className="pf-u-danger-color-200 pf-u-w-33-on-md">{reason}</p>
+      <p>{reason}</p>
+      <Button
+        variant="link"
+        onClick={() => navigator.clipboard.writeText(reason)}
+        className="pf-u-pl-0 pf-u-mt-md"
+      >
+        Copy error text to clipboard <CopyIcon />
+      </Button>
     </div>
   );
 };

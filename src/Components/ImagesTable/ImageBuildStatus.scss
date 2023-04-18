@@ -10,3 +10,10 @@
 .expiring {
   color: var(--pf-global--warning-color--100);
 }
+
+.failure-button {
+  color: var(--pf-global--Color--100);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: grey;
+}

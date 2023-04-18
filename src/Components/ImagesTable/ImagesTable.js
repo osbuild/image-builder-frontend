@@ -30,7 +30,6 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
 import ClonesTable from './ClonesTable';
-import ErrorDetails from './ImageBuildErrorDetails';
 import { ImageBuildStatus } from './ImageBuildStatus';
 import ImageLink from './ImageLink';
 import Release from './Release';
@@ -252,6 +251,7 @@ const ImagesTable = () => {
                         <ImageBuildStatus
                           imageId={id}
                           isImagesTableRow={true}
+                          imageStatus={compose.image_status}
                         />
                       </Td>
                       <Td dataLabel="Instance">
@@ -283,7 +283,6 @@ const ImagesTable = () => {
                           <ExpandableRowContent>
                             <strong>UUID</strong>
                             <div>{id}</div>
-                            <ErrorDetails status={compose.image_status} />
                           </ExpandableRowContent>
                         )}
                       </Td>

@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { Flex } from '@patternfly/react-core';
+import {
+  Alert,
+  Button,
+  Flex,
+  Panel,
+  PanelMain,
+  Popover,
+} from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -13,6 +20,8 @@ import PropTypes from 'prop-types';
 import './ImageBuildStatus.scss';
 import { useSelector } from 'react-redux';
 
+import ErrorDetails from './ImageBuildErrorDetails';
+
 import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import {
   selectImageById,
@@ -20,11 +29,29 @@ import {
 } from '../../store/composesSlice';
 import { hoursToExpiration } from '../../Utilities/time';
 
-export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
+export const ImageBuildStatus = ({
+  imageId,
+  isImagesTableRow,
+  imageStatus,
+  imageRegion,
+}) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
   const remainingHours =
     AWS_S3_EXPIRATION_TIME_IN_HOURS - hoursToExpiration(image.created_at);
+
+  const cloneErrorMessage = () => {
+    let region = '';
+    hasFailedClone.includes(image.id)
+      ? (region = 'one or more regions')
+      : (region = imageRegion);
+    return {
+      error: {
+        reason: `Failed to share image to ${region}.`,
+      },
+      status: 'failure',
+    };
+  };
 
   // Messages appear in order of priority
   const messages = {
@@ -94,6 +121,7 @@ export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
     ],
   };
 
+  const hasFailedClone = [];
   let status;
   if (
     isImagesTableRow &&
@@ -108,6 +136,9 @@ export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
     const imageStatuses = useSelector((state) =>
       selectImageStatusesById(state, image.id)
     );
+    if (imageStatuses.includes('failure')) {
+      hasFailedClone.push(image.id);
+    }
     const filteredImageStatuses = imageStatuses.filter(
       (imageStatus) => imageStatus !== undefined
     );
@@ -136,7 +167,39 @@ export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
         messages[status].map((message, key) => (
           <Flex key={key} className="pf-u-align-items-baseline pf-m-nowrap">
             <div className="pf-u-mr-sm">{message.icon}</div>
-            {message.text}
+            {status === 'failure' ? (
+              <Popover
+                position="bottom"
+                minWidth="30rem"
+                bodyContent={
+                  <>
+                    <Alert
+                      variant="danger"
+                      title="Image build failed"
+                      isInline
+                      isPlain
+                    />
+                    <Panel isScrollable>
+                      <PanelMain maxHeight="25rem">
+                        <ErrorDetails
+                          status={
+                            !imageStatus || hasFailedClone.includes(image.id)
+                              ? cloneErrorMessage()
+                              : imageStatus
+                          }
+                        />
+                      </PanelMain>
+                    </Panel>
+                  </>
+                }
+              >
+                <Button variant="link" className="pf-u-p-0 pf-u-font-size-sm">
+                  <div className="failure-button">{message.text}</div>
+                </Button>
+              </Popover>
+            ) : (
+              message.text
+            )}
           </Flex>
         ))}
     </React.Fragment>
@@ -146,4 +209,6 @@ export const ImageBuildStatus = ({ imageId, isImagesTableRow }) => {
 ImageBuildStatus.propTypes = {
   imageId: PropTypes.string,
   isImagesTableRow: PropTypes.bool,
+  imageStatus: PropTypes.object,
+  imageRegion: PropTypes.string,
 };
