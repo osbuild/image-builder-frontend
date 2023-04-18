@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useMemo } from 'react';
 
 import { Button } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
@@ -38,6 +38,11 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
     {}
   );
 
+  const appendTo = useMemo(
+    () => document.querySelector('.pf-c-page.chr-c-page'),
+    []
+  );
+
   const provider = getImageProvider(image);
   if (!error) {
     return (
@@ -62,6 +67,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
               // https://github.com/RHEnVision/provisioning-frontend/pull/238
               sourceId: image.share_with_sources?.[0],
             }}
+            appendTo={appendTo}
           />
         )}
       </Suspense>
