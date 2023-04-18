@@ -156,7 +156,7 @@ const ActivationKeyInformation = () => {
           </TextList>
         </TextContent>
       )}
-      {currentStep.name === 'registration' && (
+      {isErrorActivationKeyInfo && currentStep.name === 'registration' && (
         <>
           <br />
           <Alert
