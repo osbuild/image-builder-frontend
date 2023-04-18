@@ -633,18 +633,13 @@ describe('Images Table', () => {
     const { getAllByRole } = within(table);
     const rows = getAllByRole('row');
 
-    const errorToggle = within(rows[2]).getByRole('button', {
-      name: /details/i,
-    });
+    const errorPopover = within(rows[2]).getByText(/image build failed/i);
 
     expect(
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
-    await user.click(errorToggle);
+    await user.click(errorPopover);
 
-    expect(
-      screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
-    ).toBeVisible();
     expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
   });
 });
