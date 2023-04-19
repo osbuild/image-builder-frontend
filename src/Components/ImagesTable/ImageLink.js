@@ -18,6 +18,7 @@ const getImageProvider = ({ imageType }) => {
     case 'azure':
       return 'azure';
     default:
+      //TODO check with Provisioning: what if imageType is not 'aws', 'ami', or 'azure'?
       return 'aws';
   }
 };
@@ -95,8 +96,8 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   if (!uploadStatus || image.status !== 'success') return null;
 
   const provisioningLinkEnabled = (image) => {
-    switch (getImageProvider(image)) {
-      case 'aws':
+    switch (image.imageType) {
+      case 'aws' || 'ami':
         return true;
       case 'azure':
         return !!azureFeatureFlag;
