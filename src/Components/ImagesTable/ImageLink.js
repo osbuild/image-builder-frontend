@@ -1,6 +1,6 @@
 import React, { Suspense, useState, useMemo } from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -51,24 +51,30 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
           Launch
         </Button>
         {wizardOpen && (
-          <ProvisioningWizard
+          <Modal
             isOpen
-            onClose={() => openWizard(false)}
-            image={{
-              name: image.imageName,
-              id: image.id,
-              architecture: image.architecture,
-              provider: provider,
-              sourceIDs: image.share_with_sources,
-              accountIDs: image.share_with_accounts,
-              uploadOptions: image.uploadOptions,
-              uploadStatus: image.uploadStatus,
-              // For backward compatibility only, remove once Provisioning ready (deploys):
-              // https://github.com/RHEnVision/provisioning-frontend/pull/238
-              sourceId: image.share_with_sources?.[0],
-            }}
+            modalVariant={ModalVariant.large}
+            hasNoBodyWrapper
             appendTo={appendTo}
-          />
+            showClose={false}
+          >
+            <ProvisioningWizard
+              onClose={() => openWizard(false)}
+              image={{
+                name: image.imageName,
+                id: image.id,
+                architecture: image.architecture,
+                provider: provider,
+                sourceIDs: image.share_with_sources,
+                accountIDs: image.share_with_accounts,
+                uploadOptions: image.uploadOptions,
+                uploadStatus: image.uploadStatus,
+                // For backward compatibility only, remove once Provisioning ready (deploys):
+                // https://github.com/RHEnVision/provisioning-frontend/pull/238
+                sourceId: image.share_with_sources?.[0],
+              }}
+            />
+          </Modal>
         )}
       </Suspense>
     );
