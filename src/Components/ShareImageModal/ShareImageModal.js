@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Modal } from '@patternfly/react-core';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import RegionsSelect from './RegionsSelect';
 
+import { MODAL_ANCHOR } from '../../constants';
 import { resolveRelPath } from '../../Utilities/path';
 
 const ShareToRegionsModal = () => {
@@ -24,6 +25,8 @@ const ShareToRegionsModal = () => {
     }
   };
 
+  const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
+
   return (
     <Modal
       isOpen={true}
@@ -34,6 +37,7 @@ const ShareToRegionsModal = () => {
       description="Configure new regions for this image that will run on your AWS. All the
         regions will launch with the same configuration."
       onEscapePress={handleEscapePress}
+      appendTo={appendTo}
     >
       <RegionsSelect
         composeId={composeId}

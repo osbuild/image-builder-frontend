@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 
 import ImageLinkDirect from './ImageLinkDirect';
 
+import { MODAL_ANCHOR } from '../../constants';
 import { selectImageById } from '../../store/composesSlice';
 
 const getImageProvider = ({ imageType }) => {
@@ -38,10 +39,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
     {}
   );
 
-  const appendTo = useMemo(
-    () => document.querySelector('.pf-c-page.chr-c-page'),
-    []
-  );
+  const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
 
   const provider = getImageProvider(image);
   if (!error) {
