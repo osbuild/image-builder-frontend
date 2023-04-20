@@ -46,3 +46,6 @@ export const AWS_REGIONS = [
 ];
 
 export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 6;
+
+// Anchor element for all modals that we display so that they play nice with top-most components like Quickstarts
+export const MODAL_ANCHOR = '.pf-c-page.chr-c-page';

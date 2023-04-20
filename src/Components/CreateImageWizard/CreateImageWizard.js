@@ -28,7 +28,7 @@ import {
 
 import './CreateImageWizard.scss';
 import api from '../../api';
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB, MODAL_ANCHOR } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import { fetchRepositories } from '../../store/repositoriesSlice';
@@ -544,10 +544,7 @@ const CreateImageWizard = () => {
 
   const handleClose = () => navigate(resolveRelPath(''));
 
-  const appendTo = useMemo(
-    () => document.querySelector('.pf-c-page.chr-c-page'),
-    []
-  );
+  const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
 
   useEffect(() => {
     if (isBeta()) {
