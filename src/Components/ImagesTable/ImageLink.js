@@ -55,6 +55,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
             hasNoBodyWrapper
             appendTo={appendTo}
             showClose={false}
+            variant={'large'}
           >
             <ProvisioningWizard
               onClose={() => openWizard(false)}
