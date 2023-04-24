@@ -6,10 +6,10 @@ const webpackProxy = {
   useProxy: true,
   proxyVerbose: true,
   env: `${process.env.STAGE ? 'stage' : 'prod'}-${
-    process.env.BETA ? 'beta' : 'stable'
+    process.env.PREVIEW ? 'preview' : 'stable'
   }`,
-  appUrl: process.env.BETA
-    ? '/beta/insights/image-builder'
+  appUrl: process.env.PREVIEW
+    ? '/preview/insights/image-builder'
     : '/insights/image-builder',
 };
 
@@ -18,7 +18,7 @@ const { config: webpackConfig, plugins } = config({
   debug: true,
   useFileHash: false,
   sassPrefix: '.imageBuilder',
-  deployment: process.env.BETA ? 'beta/apps' : 'apps',
+  deployment: process.env.PREVIEW ? 'preview/apps' : 'apps',
   ...(process.env.PROXY ? webpackProxy : {}),
 });
 
