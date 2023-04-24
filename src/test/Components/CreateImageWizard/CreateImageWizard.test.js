@@ -134,7 +134,7 @@ beforeAll(() => {
           };
         },
       },
-      isBeta: () => {
+      isPreview: () => {
         return false;
       },
       isProd: () => {

@@ -35,7 +35,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectValidRepositories } from '../../../store/repositoriesSlice';
-import isBeta from '../../../Utilities/isBeta';
+import isPreview from '../../../Utilities/isPreview';
 
 const BulkSelect = ({
   selected,
@@ -276,7 +276,7 @@ const Repositories = (props) => {
           <Button
             variant="primary"
             component="a"
-            href={isBeta() ? '/beta/settings/content' : '/settings/content'}
+            href={isPreview() ? '/beta/settings/content' : '/settings/content'}
           >
             Repositories
           </Button>

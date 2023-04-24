@@ -11,6 +11,7 @@ import ImageLinkDirect from './ImageLinkDirect';
 
 import { MODAL_ANCHOR } from '../../constants';
 import { selectImageById } from '../../store/composesSlice';
+import isPreview from '../../Utilities/isPreview';
 
 const getImageProvider = ({ imageType }) => {
   switch (imageType) {
@@ -93,8 +94,6 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const uploadStatus = image.uploadStatus;
   const {
     initialized: chromeInitialized,
-    isBeta,
-    getEnvironment,
   } = useChrome();
   const azureFeatureFlag = useFlag('provisioning.azure');
 
@@ -102,7 +101,7 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const hasProvisioning =
     chromeInitialized &&
     scalprum.config?.provisioning &&
-    (isBeta() || getEnvironment() === 'qa');
+    isPreview();
 
   if (!uploadStatus || image.status !== 'success') return null;
 

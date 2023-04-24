@@ -5,7 +5,7 @@ import { Text } from '@patternfly/react-core';
 
 import StepTemplate from './stepTemplate';
 
-import isBeta from '../../../Utilities/isBeta';
+import isPreview from '../../../Utilities/isPreview';
 import CustomButtons from '../formComponents/CustomButtons';
 
 export default {
@@ -15,7 +15,7 @@ export default {
   name: 'packages',
   substepOf: 'Content',
   nextStep: () => {
-    if (isBeta()) {
+    if (isPreview()) {
       return 'repositories';
     } else {
       return 'image-name';

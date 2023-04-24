@@ -47,7 +47,7 @@ describe('Step Upload to Azure', () => {
             };
           },
         },
-        isBeta: () => {
+        isPreview: () => {
           return true;
         },
         isProd: () => {

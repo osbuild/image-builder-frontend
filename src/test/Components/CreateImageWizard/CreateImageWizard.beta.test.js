@@ -169,7 +169,7 @@ beforeAll(() => {
           };
         },
       },
-      isBeta: () => {
+      isPreview: () => {
         return true;
       },
       isProd: () => {

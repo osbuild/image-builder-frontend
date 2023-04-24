@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
-import isBeta from '../../Utilities/isBeta';
+import isPreview from '../../Utilities/isPreview';
 import BetaLabel from '../sharedComponents/BetaLabel';
 
 export const selectRegions = createSelector(
@@ -81,7 +81,7 @@ export const RegionsPopover = ({ composeId }) => {
       bodyContent={
         <>
           <ul>{listItems}</ul>
-          {!isBeta() && (
+          {!isPreview() && (
             <>
               <Divider className="pf-u-mt-sm pf-u-mb-sm" />
               <Button

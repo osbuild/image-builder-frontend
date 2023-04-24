@@ -32,7 +32,7 @@ import { UNIT_GIB, UNIT_KIB, UNIT_MIB, MODAL_ANCHOR } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import { fetchRepositories } from '../../store/repositoriesSlice';
-import isBeta from '../../Utilities/isBeta';
+import isPreview from '../../Utilities/isPreview';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
@@ -270,7 +270,7 @@ const getPackageDescription = async (release, arch, repoUrls, packageName) => {
   let pack;
   // if the env is stage beta then use content-sources api
   // else use image-builder api
-  if (isBeta()) {
+  if (isPreview()) {
     const data = await api.getPackagesContentSources(repoUrls, packageName);
     pack = data.find((pack) => packageName === pack.name);
   } else {
@@ -491,7 +491,7 @@ const formStepHistory = (composeRequest) => {
       steps.push('registration');
     }
 
-    if (isBeta()) {
+    if (isPreview()) {
       steps.push('File system configuration', 'packages', 'repositories');
 
       const customRepositories =
@@ -537,8 +537,8 @@ const CreateImageWizard = () => {
   // This will occur if 'Recreate image' is clicked
   const initialStep = compose?.request ? 'review' : undefined;
 
-  const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
-  const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
+  const awsTarget = isPreview() ? awsTargetBeta : awsTargetStable;
+  const msAzureTarget = isPreview() ? msAzureTargetBeta : msAzureTargetStable;
   const initialState = requestToState(composeRequest, distroInfo);
   const stepHistory = formStepHistory(composeRequest);
 
@@ -547,7 +547,7 @@ const CreateImageWizard = () => {
   const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
 
   useEffect(() => {
-    if (isBeta()) {
+    if (isPreview()) {
       dispatch(fetchRepositories());
     }
   }, []);

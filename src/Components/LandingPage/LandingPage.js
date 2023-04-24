@@ -28,7 +28,7 @@ import azureQuickStart from './azurequickstart.json';
 import contentQuickStart from './contentquickstart.json';
 import './LandingPage.scss';
 
-import isBeta from '../../Utilities/isBeta';
+import isPreview from '../../Utilities/isPreview';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 
@@ -106,7 +106,7 @@ export const LandingPage = () => {
         </Popover>
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isBeta() && showBetaAlert && (
+        {!isPreview() && showBetaAlert && (
           <Alert
             className="pf-u-mb-xl"
             isInline
@@ -136,7 +136,7 @@ export const LandingPage = () => {
             </p>
           </Alert>
         )}
-        {isBeta() && (
+        {isPreview() && (
           <ExpandableSection
             className="pf-m-light pf-u-mb-xl expand-section"
             toggleText="Help get started with beta features"

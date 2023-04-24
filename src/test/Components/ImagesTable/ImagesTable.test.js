@@ -428,7 +428,7 @@ const mockCloneStatus = {
 beforeAll(() => {
   global.insights = {
     chrome: {
-      isBeta: () => {
+      isPreview: () => {
         return false;
       },
       isProd: () => {
