@@ -2,7 +2,7 @@
 set -ex
 
 if [ "${TRAVIS_BRANCH}" = "main" ]; then
-    .travis/release.sh "stage-beta"
+    .travis/release.sh "stage-preview"
 fi
 
 if [ "${TRAVIS_BRANCH}" = "stage-stable" ]; then
@@ -13,8 +13,8 @@ if [ "${TRAVIS_BRANCH}" = "stage-stable" ]; then
     .travis/release.sh "stage-stable"
 fi
 
-if [ "${TRAVIS_BRANCH}" = "prod-beta" ]; then
-    .travis/release.sh "prod-beta"
+if [ "${TRAVIS_BRANCH}" = "prod-preview" ]; then
+    .travis/release.sh "prod-preview"
 fi
 
 if [ "${TRAVIS_BRANCH}" = "prod-stable" ]; then

@@ -70,7 +70,7 @@ jobs:
       - name: Release to production
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production' }}
         run: |
-          git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.source }}:refs/heads/prod-beta
+          git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.source }}:refs/heads/prod-preview
           git push https://${{ secrets.SCHUTZBOT_GH_TOKEN }}@github.com/${{ github.repository }}.git ${{ github.event.inputs.source }}:refs/heads/prod-stable
 
       - name: Sync main to stage-stable

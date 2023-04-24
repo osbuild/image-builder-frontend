@@ -15,14 +15,14 @@ node {
 
       if (BRANCH == "prod-stable") {
         PREFIX = ""
-      } else if (BRANCH == "prod-beta") {
-        PREFIX = "beta/"
+      } else if (BRANCH == "prod-preview") {
+        PREFIX = "preview/"
       } else if (BRANCH == "qa-stable" || BRANCH == "stage-stable") {
         PREFIX = "stage/"
-      } else if (BRANCH == "qa-beta" || BRANCH == "stage-beta") {
-        PREFIX = "stage/beta/"
+      } else if (BRANCH == "qa-preview" || BRANCH == "stage-preview") {
+        PREFIX = "stage/preview/"
       } else {
-        error "Bug: invalid branch name, we only support (prod/qa/stage)-(beta/stable) and we got ${BRANCH}"
+        error "Bug: invalid branch name, we only support (prod/qa/stage)-(preview/stable) and we got ${BRANCH}"
       }
 
       // Write build info into app.info.json
