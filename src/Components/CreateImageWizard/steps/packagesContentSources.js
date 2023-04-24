@@ -21,12 +21,6 @@ export default {
       name: 'packages-text-component',
       label: (
         <Text>
-          Images built with Image Builder include all required packages.
-          <br />
-          You can add additional packages to your image by searching
-          &quot;Available packages&quot; and adding them to the &quot;Chosen
-          packages&quot; list.
-          <br />
           The available packages will return results from all repositories
           chosen on the previous page.
         </Text>

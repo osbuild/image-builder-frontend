@@ -29,10 +29,6 @@ export default {
       label: (
         <Text>
           Images built with Image Builder include all required packages.
-          <br />
-          You can add additional packages to your image by searching
-          &quot;Available packages&quot; and adding them to the &quot;Chosen
-          packages&quot; list.
         </Text>
       ),
     },
