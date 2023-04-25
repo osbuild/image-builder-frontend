@@ -29,8 +29,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
-import ClonesTable from './ClonesTable';
 import { ImageBuildStatus } from './ImageBuildStatus';
+import ImageDetails from './ImageDetails';
 import ImageLink from './ImageLink';
 import Release from './Release';
 import Target from './Target';
@@ -277,15 +277,9 @@ const ImagesTable = () => {
                     </Tr>
                     <Tr isExpanded={isExpanded(compose)}>
                       <Td colSpan={8}>
-                        {compose.request.image_requests[0].upload_request
-                          .type === 'aws' ? (
-                          <ClonesTable composeId={compose.id} />
-                        ) : (
-                          <ExpandableRowContent>
-                            <strong>UUID</strong>
-                            <div>{id}</div>
-                          </ExpandableRowContent>
-                        )}
+                        <ExpandableRowContent>
+                          <ImageDetails id={id} />
+                        </ExpandableRowContent>
                       </Td>
                     </Tr>
                   </Tbody>
