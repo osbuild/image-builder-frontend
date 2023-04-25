@@ -8,9 +8,11 @@ const webpackProxy = {
   env: `${process.env.STAGE ? 'stage' : 'prod'}-${
     process.env.BETA ? 'beta' : 'stable'
   }`,
-  appUrl: process.env.BETA
-    ? '/beta/insights/image-builder'
-    : '/insights/image-builder',
+  appUrl: [
+    '/insights/image-builder',
+    '/beta/insights/image-builder',
+    '/preview/insights/image-builder',
+  ],
 };
 
 const { config: webpackConfig, plugins } = config({
