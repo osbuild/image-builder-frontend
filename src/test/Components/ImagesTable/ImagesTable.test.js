@@ -198,17 +198,11 @@ describe('Images Table', () => {
       name: /details/i,
     });
 
-    expect(
-      screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
-    ).not.toBeVisible();
+    expect(screen.getByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
     await user.click(toggleButton);
-    expect(
-      screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
-    ).toBeVisible();
+    expect(screen.getByText(/ami-0e778053cd490ad21/i)).toBeVisible();
     await user.click(toggleButton);
-    expect(
-      screen.getAllByText(/1579d95b-8f1d-4982-8c53-8c2afa4ab04c/i)[1]
-    ).not.toBeVisible();
+    expect(screen.getByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
   });
 
   test('check error details', async () => {
@@ -245,15 +239,13 @@ describe('Images Table Toolbar', () => {
 
 describe('Clones table', () => {
   test('renders clones table', async () => {
-    const view = renderWithReduxRouter('', {});
+    renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
 
     // make sure the empty-state message isn't present
     const emptyState = screen.queryByTestId('empty-state');
     expect(emptyState).not.toBeInTheDocument();
-
-    const state = view.store.getState();
 
     // get rows
     const { getAllByRole } = within(table);
@@ -272,29 +264,24 @@ describe('Clones table', () => {
     // remove first row from list since it is just header labels
     const header = cloneRows.shift();
     // test the header has correct labels
-    expect(header.cells[0]).toHaveTextContent('UUID');
-    expect(header.cells[1]).toHaveTextContent('Account');
-    expect(header.cells[2]).toHaveTextContent('Region');
-    expect(header.cells[3]).toHaveTextContent('Status');
+    expect(header.cells[0]).toHaveTextContent('AMI');
+    expect(header.cells[1]).toHaveTextContent('Region');
+    expect(header.cells[2]).toHaveTextContent('Status');
 
-    expect(cloneRows).toHaveLength(5);
+    // shift by a parent compose as the row has a different format
+    cloneRows.shift();
+
+    expect(cloneRows).toHaveLength(4);
 
     // prepend parent data
     const clonesTableData = {
-      uuid: [
-        '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-        ...mockClones.data.map((clone) => clone.id),
+      ami: [
+        ...mockClones.data.map(
+          (clone) => mockCloneStatus[clone.id].options.ami
+        ),
       ],
-      created: [
-        '2021-04-27 12:31:12.794809 +0000 UTC',
-        ...mockClones.data.map((clone) => clone.created_at),
-      ],
-      account: [
-        '123123123123',
-        ...mockClones.data.map((clone) => clone.request.share_with_accounts[0]),
-      ],
+      created: [...mockClones.data.map((clone) => clone.created_at)],
       region: [
-        'us-east-1',
         ...mockClones.data.map(
           (clone) => mockCloneStatus[clone.id].options.region
         ),
@@ -302,25 +289,28 @@ describe('Clones table', () => {
     };
 
     for (const [index, row] of cloneRows.entries()) {
-      // render UUIDs in correct order
-      expect(row.cells[0]).toHaveTextContent(clonesTableData.uuid[index]);
-
-      // account cell
-      expect(row.cells[1]).toHaveTextContent(clonesTableData.account[index]);
+      // render AMIs in correct order
+      switch (index) {
+        case (0, 1, 3):
+          expect(row.cells[0]).toHaveTextContent(clonesTableData.ami[index]);
+          break;
+        case 2:
+          expect(row.cells[0]).toHaveTextContent('');
+          break;
+      }
 
       // region cell
-      expect(row.cells[2]).toHaveTextContent(clonesTableData.region[index]);
-
-      const testElement = document.createElement('testElement');
-      const imageId = clonesTableData.uuid[index];
+      expect(row.cells[1]).toHaveTextContent(clonesTableData.region[index]);
 
       // status cell
-      renderWithProvider(
-        <ImageBuildStatus imageId={imageId} />,
-        testElement,
-        state
-      );
-      expect(row.cells[3]).toHaveTextContent(testElement.textContent);
+      switch (index) {
+        case (0, 1, 3):
+          expect(row.cells[2]).toHaveTextContent('Ready');
+          break;
+        case 2:
+          expect(row.cells[2]).toHaveTextContent('Image build failed');
+          break;
+      }
     }
   });
 });
