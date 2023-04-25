@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { ClipboardCopy } from '@patternfly/react-core';
 import {
   TableComposable,
   Tbody,
@@ -13,7 +14,6 @@ import { useSelector } from 'react-redux';
 
 import { ImageBuildStatus } from './ImageBuildStatus';
 
-import { useGetAWSSourcesQuery } from '../../store/apiSlice';
 import {
   selectClonesById,
   selectComposeById,
@@ -22,26 +22,21 @@ import {
 
 const Row = ({ imageId }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
-  const { data: awsSources, isSuccess } = useGetAWSSourcesQuery();
-
-  const getAccount = (image) => {
-    if (image.share_with_sources?.[0]) {
-      if (isSuccess) {
-        const accountId = awsSources.find(
-          (source) => source.id === image.share_with_sources[0]
-        )?.account_id;
-        return accountId;
-      }
-      return null;
-    }
-    return image.share_with_accounts?.[0];
-  };
 
   return (
     <Tbody>
-      <Tr>
-        <Td dataLabel="UUID">{image.id}</Td>
-        <Td dataLabel="Account">{getAccount(image)}</Td>
+      <Tr className="no-bottom-border">
+        <Td dataLabel="AMI">
+          {image.status === 'success' && (
+            <ClipboardCopy
+              hoverTip="Copy"
+              clickTip="Copied"
+              variant="inline-compact"
+            >
+              {image.ami}
+            </ClipboardCopy>
+          )}
+        </Td>
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
           <ImageBuildStatus imageId={image.id} imageRegion={image.region} />
@@ -60,13 +55,12 @@ const ClonesTable = ({ composeId }) => {
   return (
     <TableComposable
       variant="compact"
-      className="pf-u-mb-md"
+      className="pf-u-mb-md pf-u-mt-md"
       data-testid="clones-table"
     >
       <Thead>
         <Tr className="no-bottom-border">
-          <Th className="pf-m-width-40">UUID</Th>
-          <Th className="pf-m-width-20">Account</Th>
+          <Th className="pf-m-width-60">AMI</Th>
           <Th className="pf-m-width-20">Region</Th>
           <Th className="pf-m-width-20">Status</Th>
         </Tr>
