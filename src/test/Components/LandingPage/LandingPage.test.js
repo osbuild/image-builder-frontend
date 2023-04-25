@@ -13,7 +13,7 @@ jest.mock('../../../store/actions/actions', () => {
 beforeAll(() => {
   global.insights = {
     chrome: {
-      isBeta: () => {
+      isPreview: () => {
         return false;
       },
       isProd: () => {

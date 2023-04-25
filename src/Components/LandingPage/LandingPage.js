@@ -33,7 +33,7 @@ import ImagesTable from '../ImagesTable/ImagesTable';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 export const LandingPage = () => {
-  const [showBetaAlert, setShowBetaAlert] = useState(true);
+  const [showPreviewAlert, setShowPreviewAlert] = useState(true);
   const [showHint, setShowHint] = useState(true);
 
   const { quickStarts } = useChrome();
@@ -106,23 +106,23 @@ export const LandingPage = () => {
         </Popover>
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isPreview() && showBetaAlert && (
+        {!isPreview() && showPreviewAlert && (
           <Alert
             className="pf-u-mb-xl"
             isInline
             variant="default"
-            title="Try new features in our Beta environment."
+            title="Try new features in our Preview environment."
             actionClose={
-              <AlertActionCloseButton onClose={() => setShowBetaAlert(false)} />
+              <AlertActionCloseButton onClose={() => setShowPreviewAlert(false)} />
             }
             actionLinks={
               <Button
                 isInline
                 component="a"
                 variant="link"
-                href="/beta/insights/image-builder/landing"
+                href="/preview/insights/image-builder/landing"
               >
-                Enter beta environment
+                Enter preview environment
               </Button>
             }
           >
@@ -139,13 +139,13 @@ export const LandingPage = () => {
         {isPreview() && (
           <ExpandableSection
             className="pf-m-light pf-u-mb-xl expand-section"
-            toggleText="Help get started with beta features"
+            toggleText="Help get started with preview features"
             onToggle={setShowHint}
             isExpanded={showHint}
             displaySize="large"
           >
             <p>
-              For help getting started, access the quick starts for our beta
+              For help getting started, access the quick starts for our preview
               features.
             </p>
             <p>

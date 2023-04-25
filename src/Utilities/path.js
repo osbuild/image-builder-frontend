@@ -4,9 +4,9 @@ function getBaseName(pathname) {
 
   pathName.shift();
 
-  if (pathName[0] === 'beta') {
+  if (pathName[0] === 'preview') {
     pathName.shift();
-    release = `/beta/`;
+    release = `/preview/`;
   }
 
   return `${release}`;

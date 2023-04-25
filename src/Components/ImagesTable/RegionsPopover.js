@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
 import isPreview from '../../Utilities/isPreview';
-import BetaLabel from '../sharedComponents/BetaLabel';
+import PreviewLabel from '../sharedComponents/PreviewLabel';
 
 export const selectRegions = createSelector(
   [selectComposeById, selectImagesById],
@@ -88,9 +88,9 @@ export const RegionsPopover = ({ composeId }) => {
                 isInline
                 component="a"
                 variant="link"
-                href="/beta/insights/image-builder/landing"
+                href="/preview/insights/image-builder/landing"
               >
-                <BetaLabel />
+                <PreviewLabel />
                 Launch from here
               </Button>
             </>

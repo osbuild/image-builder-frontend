@@ -276,7 +276,7 @@ const Repositories = (props) => {
           <Button
             variant="primary"
             component="a"
-            href={isPreview() ? '/beta/settings/content' : '/settings/content'}
+            href={isPreview() ? '/preview/settings/content' : '/settings/content'}
           >
             Repositories
           </Button>
