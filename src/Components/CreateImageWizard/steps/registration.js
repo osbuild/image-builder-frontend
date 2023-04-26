@@ -11,6 +11,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 import StepTemplate from './stepTemplate';
 
@@ -18,10 +19,11 @@ import CustomButtons from '../formComponents/CustomButtons';
 
 const PopoverActivation = () => {
   const [orgId, setOrgId] = useState(null);
+  const { auth } = useChrome();
 
   useEffect(() => {
     (async () => {
-      const userData = await insights?.chrome?.auth?.getUser();
+      const userData = await auth?.getUser();
       const id = userData?.identity?.internal?.org_id;
       setOrgId(id);
     })();

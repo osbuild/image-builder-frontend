@@ -12,6 +12,17 @@ import { renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
+    auth: {
+      getUser: () => {
+        return {
+          identity: {
+            internal: {
+              org_id: 5,
+            },
+          },
+        };
+      },
+    },
     isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
@@ -41,31 +52,10 @@ describe('Step Upload to Azure', () => {
     jest
       .spyOn(api, 'getRepositories')
       .mockImplementation(() => Promise.resolve(mockRepositoryResults));
-
-    global.insights = {
-      chrome: {
-        auth: {
-          getUser: () => {
-            return {
-              identity: {
-                internal: {
-                  org_id: 5,
-                },
-              },
-            };
-          },
-        },
-      },
-    };
   });
 
   afterEach(() => {
     jest.clearAllMocks();
-  });
-
-  // restore global mock
-  afterAll(() => {
-    global.insights = undefined;
   });
 
   const user = userEvent.setup();

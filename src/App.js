@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { useStore } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
