@@ -18,16 +18,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-beforeAll(() => {
-  global.insights = {
-    chrome: {
-      isProd: () => {
-        return true;
-      },
-    },
-  };
-});
-
 describe('Landing Page', () => {
   test('renders page heading', async () => {
     renderWithReduxRouter('', {});

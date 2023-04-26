@@ -302,7 +302,7 @@ const getPackageDescription = async (
 };
 
 // map the compose request object to the expected form state
-const requestToState = (composeRequest, distroInfo, isBeta) => {
+const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -461,7 +461,7 @@ const requestToState = (composeRequest, distroInfo, isBeta) => {
       formState['subscription-activation-key'] = subscription['activation-key'];
       formState['subscription-organization-id'] = subscription.organization;
 
-      if (insights.chrome.isProd()) {
+      if (isProd) {
         formState['subscription-server-url'] = 'subscription.rhsm.redhat.com';
         formState['subscription-base-url'] = 'https://cdn.redhat.com/';
       } else {
@@ -544,11 +544,16 @@ const CreateImageWizard = () => {
   // This will occur if 'Recreate image' is clicked
   const initialStep = compose?.request ? 'review' : undefined;
 
-  const { isBeta } = useGetEnvironment();
+  const { isBeta, isProd } = useGetEnvironment();
 
   const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
   const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
-  let initialState = requestToState(composeRequest, distroInfo, isBeta());
+  let initialState = requestToState(
+    composeRequest,
+    distroInfo,
+    isBeta(),
+    isProd()
+  );
   const stepHistory = formStepHistory(composeRequest, isBeta());
 
   initialState

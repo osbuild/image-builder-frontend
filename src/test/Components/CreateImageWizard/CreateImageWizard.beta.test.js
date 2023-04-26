@@ -32,6 +32,17 @@ const mockComposes = {
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
+    auth: {
+      getUser: () => {
+        return {
+          identity: {
+            internal: {
+              org_id: 5,
+            },
+          },
+        };
+      },
+    },
     isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
@@ -159,39 +170,14 @@ const searchForChosenPackages = async (searchbox, searchTerm) => {
   }
 };
 
-// mock the insights dependency
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
-
-  global.insights = {
-    chrome: {
-      auth: {
-        getUser: () => {
-          return {
-            identity: {
-              internal: {
-                org_id: 5,
-              },
-            },
-          };
-        },
-      },
-      isProd: () => {
-        return true;
-      },
-    },
-  };
 });
 
 afterEach(() => {
   jest.clearAllMocks();
   router = undefined;
-});
-
-// restore global mock
-afterAll(() => {
-  global.insights = undefined;
 });
 
 describe('Create Image Wizard', () => {

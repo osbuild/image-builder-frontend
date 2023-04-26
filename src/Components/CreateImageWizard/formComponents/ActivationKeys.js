@@ -13,8 +13,10 @@ import {
 import PropTypes from 'prop-types';
 
 import { useGetActivationKeysQuery } from '../../../store/apiSlice';
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
 const ActivationKeys = ({ label, isRequired, ...props }) => {
+  const { isProd } = useGetEnvironment();
   const { change, getState } = useFormApi();
   const { input } = useFieldApi(props);
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +33,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
   } = useGetActivationKeysQuery();
 
   useEffect(() => {
-    if (insights.chrome.isProd()) {
+    if (isProd()) {
       change('subscription-server-url', 'subscription.rhsm.redhat.com');
       change('subscription-base-url', 'https://cdn.redhat.com/');
     } else {

@@ -7,6 +7,7 @@ import {
   TextContent,
   TextVariants,
 } from '@patternfly/react-core';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 import {
   ContentList,
@@ -24,6 +25,7 @@ import {
 import isRhel from '../../../Utilities/isRhel';
 
 const ReviewStep = () => {
+  const { auth } = useChrome();
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(false);
   const [isExpandedFSC, setIsExpandedFSC] = useState(false);
@@ -36,7 +38,7 @@ const ReviewStep = () => {
     const registerSystem = getState()?.values?.['register-system'];
     if (registerSystem?.startsWith('register-now')) {
       (async () => {
-        const userData = await insights?.chrome?.auth?.getUser();
+        const userData = await auth?.getUser();
         const id = userData?.identity?.internal?.org_id;
         change('subscription-organization-id', id);
       })();
