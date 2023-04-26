@@ -50,6 +50,7 @@ const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
     >
       <FormSpy subscription={{ values: true }} onChange={onFormChange} />
       <Select
+        ouiaId="resource_group_select"
         variant={SelectVariant.typeahead}
         className={className}
         onToggle={() => setIsOpen(!isOpen)}
