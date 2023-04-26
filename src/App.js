@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { useStore } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -12,14 +13,12 @@ const App = (props) => {
   const navigate = useNavigate();
   const store = useStore();
 
+  const { hideGlobalFilter, on, updateDocumentTitle } = useChrome();
+
   useEffect(() => {
-    document.title = 'Image Builder | Red Hat Insights';
-    insights.chrome.init();
-    insights.chrome.identifyApp('image-builder');
-    insights.chrome.hideGlobalFilter();
-    const unregister = insights.chrome.on('APP_NAVIGATION', () =>
-      navigate(resolveRelPath(''))
-    );
+    updateDocumentTitle('Image Builder | Red Hat Insights');
+    hideGlobalFilter();
+    const unregister = on('APP_NAVIGATION', () => navigate(resolveRelPath('')));
     return () => {
       unregister();
     };
