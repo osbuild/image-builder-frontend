@@ -99,14 +99,30 @@ const BulkSelect = ({
   );
 };
 
-// Utility function to convert from Content Sources to Image Builder API schema
-const convertSchemaToImageBuilder = (repo) => {
+// Utility function to convert from Content Sources to Image Builder payload repo API schema
+const convertSchemaToIBPayloadRepo = (repo) => {
   const imageBuilderRepo = {
     baseurl: repo.url,
     rhsm: false,
   };
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = repo.gpg_key;
+    imageBuilderRepo.check_gpg = true;
+    imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
+  }
+
+  return imageBuilderRepo;
+};
+
+// Utility function to convert from Content Sources to Image Builder custom repo API schema
+const convertSchemaToIBCustomRepo = (repo) => {
+  const imageBuilderRepo = {
+    id: repo.uuid,
+    name: repo.name,
+    baseurl: [repo.url],
+  };
+  if (repo.gpg_key) {
+    imageBuilderRepo.gpgkey = [repo.gpg_key];
     imageBuilderRepo.check_gpg = true;
     imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
   }
@@ -162,7 +178,7 @@ const Repositories = (props) => {
     return repositories;
   };
 
-  const { getState } = useFormApi();
+  const { getState, change } = useFormApi();
   const { input } = useFieldApi(props);
   const [repositories] = useState(initializeRepositories());
   const [filterValue, setFilterValue] = useState('');
@@ -213,10 +229,15 @@ const Repositories = (props) => {
     }
 
     const payloadRepositories = selectedRepos.map((repo) =>
-      convertSchemaToImageBuilder(repo)
+      convertSchemaToIBPayloadRepo(repo)
+    );
+
+    const customRepositories = selectedRepos.map((repo) =>
+      convertSchemaToIBCustomRepo(repo)
     );
 
     input.onChange(payloadRepositories);
+    change('custom-repositories', customRepositories);
   };
 
   const updateSelected = (selectedRepos) => {

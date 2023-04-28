@@ -54,6 +54,10 @@ const onSave = (values) => {
     ];
   }
 
+  if (values['custom-repositories']?.length > 0) {
+    customizations['custom_repositories'] = [...values['custom-repositories']];
+  }
+
   if (values['register-system'] === 'register-now-rhc') {
     customizations.subscription = {
       'activation-key': values['subscription-activation-key'],
@@ -431,6 +435,10 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
     // sent to image-builder
     formState['payload-repositories'] =
       composeRequest?.customizations?.payload_repositories;
+
+    // these will be overwritten by the repositories step if revisited, and generated from the payload repositories added there
+    formState['custom-repositories'] =
+      composeRequest?.customizations?.custom_repositories;
 
     // filesystem
     const fs = composeRequest?.customizations?.filesystem;
