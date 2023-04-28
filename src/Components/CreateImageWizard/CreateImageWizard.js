@@ -48,8 +48,10 @@ const onSave = (values) => {
     packages: values['selected-packages']?.map((p) => p.name),
   };
 
-  if (values['custom-repositories']?.length > 0) {
-    customizations['payload_repositories'] = [...values['custom-repositories']];
+  if (values['payload-repositories']?.length > 0) {
+    customizations['payload_repositories'] = [
+      ...values['payload-repositories'],
+    ];
   }
 
   if (values['register-system'] === 'register-now-rhc') {
@@ -425,9 +427,9 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
     // Wizard as it is needed every time the repositories step is visited.
     formState['original-payload-repositories'] =
       composeRequest?.customizations?.payload_repositories;
-    // 'custom-repositories' is mutable and is used to generate the request
+    // 'payload-repositories' is mutable and is used to generate the request
     // sent to image-builder
-    formState['custom-repositories'] =
+    formState['payload-repositories'] =
       composeRequest?.customizations?.payload_repositories;
 
     // filesystem
@@ -647,7 +649,7 @@ const CreateImageWizard = () => {
             crossroads: [
               'target-environment',
               'release',
-              'custom-repositories',
+              'payload-repositories',
             ],
             description: (
               <>

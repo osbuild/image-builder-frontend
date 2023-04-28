@@ -169,8 +169,8 @@ const Repositories = (props) => {
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(
-    getState()?.values?.['custom-repositories']
-      ? getState().values['custom-repositories'].map((repo) => repo.baseurl)
+    getState()?.values?.['payload-repositories']
+      ? getState().values['payload-repositories'].map((repo) => repo.baseurl)
       : []
   );
 

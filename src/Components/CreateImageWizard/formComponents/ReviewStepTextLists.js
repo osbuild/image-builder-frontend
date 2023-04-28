@@ -384,7 +384,7 @@ export const ContentList = () => {
           component={TextListItemVariants.dd}
           data-testid="custom-repositories-count"
         >
-          {getState()?.values?.['custom-repositories']?.length > 0 ? (
+          {getState()?.values?.['payload-repositories']?.length > 0 ? (
             <Popover
               position="bottom"
               headerContent="Custom repositories"
@@ -397,7 +397,7 @@ export const ContentList = () => {
                 aria-label="About custom repositories"
                 className="pf-u-p-0"
               >
-                {getState()?.values?.['custom-repositories']?.length || 0}
+                {getState()?.values?.['payload-repositories']?.length || 0}
               </Button>
             </Popover>
           ) : (
