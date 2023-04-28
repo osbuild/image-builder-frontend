@@ -79,7 +79,7 @@ export const PackagesTable = () => {
 
 export const RepositoriesTable = () => {
   const { getState } = useFormApi();
-  const repositories = getState()?.values?.['custom-repositories'];
+  const repositories = getState()?.values?.['payload-repositories'];
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">

@@ -32,7 +32,7 @@ export default {
     },
     {
       component: 'repositories-table',
-      name: 'custom-repositories',
+      name: 'payload-repositories',
       label: 'Custom repositories',
     },
   ],
