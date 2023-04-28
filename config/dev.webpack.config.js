@@ -1,4 +1,5 @@
 const { resolve } = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
 
 const config = require('@redhat-cloud-services/frontend-components-config');
 
@@ -37,6 +38,15 @@ plugins.push(
     }
   )
 );
+
+plugins.push(
+  new CopyPlugin({
+    patterns: [
+      {from: 'src/mockServiceWorker.js', to: 'mockServiceWorker.js'},
+    ],
+  })
+);
+
 
 module.exports = {
   ...webpackConfig,

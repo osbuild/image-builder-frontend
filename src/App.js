@@ -25,6 +25,13 @@ const App = (props) => {
     };
   }, []);
 
+  const { worker } = require('./test/mocks/browser');
+  worker.start({
+    serviceWorker: {
+      url: 'insights/image-builder/mockServiceWorker.js'
+    },
+  });
+
   return (
     <React.Fragment>
       <NotificationsPortal store={store} />
