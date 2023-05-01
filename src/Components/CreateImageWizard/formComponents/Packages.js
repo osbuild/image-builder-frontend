@@ -399,7 +399,12 @@ const Packages = ({ getAllPackages, isSuccess }) => {
           <AngleRightIcon />
         </DualListSelectorControl>
         <DualListSelectorControl
-          isDisabled={availablePackagesDisplayList.length === 0}
+          isDisabled={
+            availablePackagesDisplayList.length === 0 ||
+            // also disable the "Add all" button if there are too many matches
+            // (even if there's an exact match)
+            availablePackagesDisplayList.length >= 100
+          }
           onClick={() => moveAllToChosen()}
           aria-label="Add all"
           tooltipContent="Add all"
