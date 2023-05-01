@@ -145,47 +145,48 @@ export const LandingPage = () => {
             isExpanded={showHint}
             displaySize="large"
           >
-            <p>
+            <p className="pf-u-pb-sm">
               For help getting started, access the quick starts for our beta
               features.
             </p>
-            <p>
-              <p>
-                <Button
-                  icon={<ArrowRightIcon />}
-                  iconPosition="right"
-                  variant="link"
-                  isInline
-                  component="a"
-                  onClick={() => activateQuickstart(awsQuickStart)}
-                >
-                  Launch an AWS Image
-                </Button>
-              </p>
-              <p>
-                <Button
-                  icon={<ArrowRightIcon />}
-                  iconPosition="right"
-                  variant="link"
-                  isInline
-                  component="a"
-                  onClick={() => activateQuickstart(azureQuickStart)}
-                >
-                  Launch an Azure Image
-                </Button>
-              </p>
-              <p>
-                <Button
-                  icon={<ArrowRightIcon />}
-                  iconPosition="right"
-                  variant="link"
-                  isInline
-                  component="a"
-                  onClick={() => activateQuickstart(contentQuickStart)}
-                >
-                  Build an Image with Custom Content
-                </Button>
-              </p>
+            <p className="pf-u-pt-sm">
+              <Button
+                icon={<ArrowRightIcon />}
+                iconPosition="right"
+                variant="link"
+                isInline
+                component="a"
+                onClick={() => activateQuickstart(awsQuickStart)}
+                className="pf-u-font-weight-bold"
+              >
+                Launch an AWS Image
+              </Button>
+            </p>
+            <p className="pf-u-pt-sm">
+              <Button
+                icon={<ArrowRightIcon />}
+                iconPosition="right"
+                variant="link"
+                isInline
+                component="a"
+                onClick={() => activateQuickstart(azureQuickStart)}
+                className="pf-u-font-weight-bold"
+              >
+                Launch an Azure Image
+              </Button>
+            </p>
+            <p className="pf-u-pt-sm">
+              <Button
+                icon={<ArrowRightIcon />}
+                iconPosition="right"
+                variant="link"
+                isInline
+                component="a"
+                onClick={() => activateQuickstart(contentQuickStart)}
+                className="pf-u-font-weight-bold"
+              >
+                Build an Image with Custom Content
+              </Button>
             </p>
           </ExpandableSection>
         )}
