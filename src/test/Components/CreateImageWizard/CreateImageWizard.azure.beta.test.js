@@ -4,9 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import api from '../../../api.js';
 import { PROVISIONING_SOURCES_ENDPOINT } from '../../../constants.js';
-import { mockRepositoryResults } from '../../fixtures/repositories';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
@@ -48,10 +46,6 @@ describe('Step Upload to Azure', () => {
   beforeAll(() => {
     // scrollTo is not defined in jsdom
     window.HTMLElement.prototype.scrollTo = function () {};
-
-    jest
-      .spyOn(api, 'getRepositories')
-      .mockImplementation(() => Promise.resolve(mockRepositoryResults));
   });
 
   afterEach(() => {

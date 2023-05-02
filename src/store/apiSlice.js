@@ -1,6 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import {
+  CONTENT_SOURCES,
   IMAGE_BUILDER_API,
   PROVISIONING_SOURCES_ENDPOINT,
   RHSM_API,
@@ -63,6 +64,24 @@ export const apiSlice = createApi({
     getActivationKeyInformation: builder.query({
       query: (activationKey) => `${RHSM_API}/activation_keys/${activationKey}`,
     }),
+    getRepositories: builder.query({
+      async queryFn(args, _queryApi, _extraOptions, fetchWithBQ) {
+        const { available_for_arch, available_for_version } = args;
+        const limit = 100;
+
+        let repositories = await fetchWithBQ(
+          `${CONTENT_SOURCES}/repositories/?available_for_arch=${available_for_arch}&available_for_version=${available_for_version}&limit=${limit}`
+        );
+
+        if (repositories.meta.count > limit) {
+          repositories = await fetchWithBQ(
+            `${CONTENT_SOURCES}/repositories/?available_for_arch=${available_for_arch}&available_for_version=${available_for_version}&limit=${repositories.meta.count}`
+          );
+        }
+
+        return repositories;
+      },
+    }),
   }),
 });
 
@@ -73,5 +92,6 @@ export const {
   useGetAzureSourceDetailQuery,
   useGetActivationKeysQuery,
   useGetActivationKeyInformationQuery,
+  useGetRepositoriesQuery,
   usePrefetch,
 } = apiSlice;

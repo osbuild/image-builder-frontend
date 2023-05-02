@@ -1,6 +1,11 @@
 import { rest } from 'msw';
 
-import { PROVISIONING_SOURCES_ENDPOINT, RHSM_API } from '../../constants';
+import {
+  CONTENT_SOURCES,
+  PROVISIONING_SOURCES_ENDPOINT,
+  RHSM_API,
+} from '../../constants';
+import { mockRepositoryResults } from '../fixtures/repositories';
 
 const baseURL = 'http://localhost';
 
@@ -317,6 +322,18 @@ export const handlers = [
           })
         );
       }
+    }
+  ),
+  rest.get(
+    baseURL.concat(`${CONTENT_SOURCES}/repositories/`),
+    (req, res, ctx) => {
+      const available_for_arch = req.url.searchParams.get('available_for_arch');
+      const available_for_version = req.url.searchParams.get(
+        'available_for_version'
+      );
+      const limit = req.url.searchParams.get('limit');
+      const args = { available_for_arch, available_for_version, limit };
+      return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
     }
   ),
 ];

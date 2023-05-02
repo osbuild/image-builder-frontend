@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -31,7 +31,6 @@ import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB, MODAL_ANCHOR } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
-import { fetchRepositories } from '../../store/repositoriesSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
@@ -573,12 +572,6 @@ const CreateImageWizard = () => {
   const handleClose = () => navigate(resolveRelPath(''));
 
   const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
-
-  useEffect(() => {
-    if (isBeta()) {
-      dispatch(fetchRepositories());
-    }
-  }, []);
 
   return (
     <ImageCreator

@@ -5,6 +5,7 @@ import {
   useFormApi,
 } from '@data-driven-forms/react-form-renderer';
 import {
+  Alert,
   Button,
   Dropdown,
   DropdownItem,
@@ -16,6 +17,7 @@ import {
   EmptyStateVariant,
   Pagination,
   SearchInput,
+  Spinner,
   Title,
   Toolbar,
   ToolbarContent,
@@ -32,9 +34,10 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
 
-import { selectValidRepositories } from '../../../store/repositoriesSlice';
+import { CENTOS_8, CENTOS_9, RHEL_8, RHEL_9 } from '../../../constants';
+import { useGetRepositoriesQuery } from '../../../store/apiSlice';
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
 const BulkSelect = ({
   selected,
@@ -144,11 +147,30 @@ const convertSchemaToContentSources = (repo) => {
   return contentSourcesRepo;
 };
 
+const releaseToVersion = (release) => {
+  switch (release) {
+    case RHEL_9:
+      return '9';
+    case RHEL_8:
+      return '8';
+    case CENTOS_9:
+      return '9';
+    case CENTOS_8:
+      return '8';
+    default:
+      return '';
+  }
+};
+
 const Repositories = (props) => {
-  const initializeRepositories = () => {
-    // Repositories obtained from Content Sources API are in Redux store
-    const contentSourcesRepos = useSelector((state) =>
-      selectValidRepositories(state)
+  const initializeRepositories = (contentSourcesReposList) => {
+    // Convert list of repositories into an object where key is repo URL
+    const contentSourcesRepos = contentSourcesReposList.reduce(
+      (accumulator, currentValue) => {
+        accumulator[currentValue.url] = currentValue;
+        return accumulator;
+      },
+      {}
     );
 
     // Repositories in the form state can be present when 'Recreate image' is used
@@ -180,7 +202,6 @@ const Repositories = (props) => {
 
   const { getState, change } = useFormApi();
   const { input } = useFieldApi(props);
-  const [repositories] = useState(initializeRepositories());
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -189,6 +210,18 @@ const Repositories = (props) => {
       ? getState().values['payload-repositories'].map((repo) => repo.baseurl)
       : []
   );
+
+  const release = getState().values?.release;
+  const version = releaseToVersion(release);
+
+  const { data, isError, isLoading, isSuccess } = useGetRepositoriesQuery({
+    available_for_arch: 'x86_64',
+    available_for_version: version,
+  });
+
+  const repositories = useMemo(() => {
+    return data ? initializeRepositories(data.data) : {};
+  }, [data]);
 
   const isRepoSelected = (repoURL) => selected.includes(repoURL);
 
@@ -215,7 +248,7 @@ const Repositories = (props) => {
       .map((repo) => repo.url);
 
     return filteredRepoURLs;
-  }, [filterValue]);
+  }, [filterValue, repositories]);
 
   const handleClearFilter = () => {
     setFilterValue('');
@@ -281,131 +314,158 @@ const Repositories = (props) => {
   };
 
   return (
-    <>
-      {Object.values(repositories).length === 0 ? (
-        <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
-          <EmptyStateIcon icon={RepositoryIcon} />
-          <Title headingLevel="h4" size="lg">
-            No Custom Repositories
-          </Title>
-          <EmptyStateBody>
-            Custom repositories managed via the Red Hat Insights Repositories
-            app will be available here to select and use to search for
-            additional packages.
-          </EmptyStateBody>
-          <Button
-            variant="primary"
-            component="a"
-            href={
-              getState()?.values?.isBeta
-                ? '/beta/settings/content'
-                : '/settings/content'
-            }
-          >
-            Repositories
-          </Button>
-        </EmptyState>
-      ) : (
-        <>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem variant="bulk-select">
-                <BulkSelect
-                  selected={selected}
-                  count={Object.values(repositories).length}
-                  filteredCount={filteredRepositoryURLs.length}
-                  perPage={perPage}
-                  handleSelectAll={handleSelectAll}
-                  handleSelectPage={handleSelectPage}
-                  handleDeselectAll={handleDeselectAll}
-                />
-              </ToolbarItem>
-              <ToolbarItem variant="search-filter">
-                <SearchInput
-                  aria-label="Search repositories"
-                  onChange={handleFilterRepositories}
-                  value={filterValue}
-                  onClear={handleClearFilter}
-                />
-              </ToolbarItem>
-              <ToolbarItem variant="pagination">
-                <Pagination
-                  itemCount={filteredRepositoryURLs.length}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={handleSetPage}
-                  widgetId="compact-example"
-                  onPerPageSelect={handlePerPageSelect}
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-          <TableComposable variant="compact" data-testid="repositories-table">
-            <Thead>
-              <Tr>
-                <Th />
-                <Th width={50}>Name</Th>
-                <Th>Architecture</Th>
-                <Th>Versions</Th>
-                <Th>Packages</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {filteredRepositoryURLs
-                .slice()
-                .sort((a, b) => {
-                  if (repositories[a].name < repositories[b].name) {
-                    return -1;
-                  } else if (repositories[b].name < repositories[a].name) {
-                    return 1;
-                  } else {
-                    return 0;
-                  }
-                })
-                .slice(computeStart(), computeEnd())
-                .map((repoURL, rowIndex) => {
-                  const repo = repositories[repoURL];
-                  return (
-                    <Tr key={repo.url}>
-                      <Td
-                        select={{
-                          isSelected: isRepoSelected(repo.url),
-                          rowIndex: rowIndex,
-                          onSelect: (event, isSelecting) =>
-                            handleSelect(repo.url, rowIndex, isSelecting),
-                        }}
-                      />
-                      <Td dataLabel={'Name'}>
-                        {repo.name}
-                        <br />
-                        <Button
-                          component="a"
-                          target="_blank"
-                          variant="link"
-                          icon={<ExternalLinkAltIcon />}
-                          iconPosition="right"
-                          isInline
-                          href={repo.url}
-                        >
-                          {repo.url}
-                        </Button>
-                      </Td>
-                      <Td dataLabel={'Architecture'}>
-                        {repo.distribution_arch}
-                      </Td>
-                      <Td dataLabel={'Version'}>
-                        {repo.distribution_versions}
-                      </Td>
-                      <Td dataLabel={'Packages'}>{repo.package_count}</Td>
-                    </Tr>
-                  );
-                })}
-            </Tbody>
-          </TableComposable>
-        </>
-      )}
-    </>
+    (isError && <Error />) ||
+    (isLoading && <Loading />) ||
+    (isSuccess && (
+      <>
+        {Object.values(repositories).length === 0 ? (
+          <Empty />
+        ) : (
+          <>
+            <Toolbar>
+              <ToolbarContent>
+                <ToolbarItem variant="bulk-select">
+                  <BulkSelect
+                    selected={selected}
+                    count={Object.values(repositories).length}
+                    filteredCount={filteredRepositoryURLs.length}
+                    perPage={perPage}
+                    handleSelectAll={handleSelectAll}
+                    handleSelectPage={handleSelectPage}
+                    handleDeselectAll={handleDeselectAll}
+                  />
+                </ToolbarItem>
+                <ToolbarItem variant="search-filter">
+                  <SearchInput
+                    aria-label="Search repositories"
+                    onChange={handleFilterRepositories}
+                    value={filterValue}
+                    onClear={handleClearFilter}
+                  />
+                </ToolbarItem>
+                <ToolbarItem variant="pagination">
+                  <Pagination
+                    itemCount={filteredRepositoryURLs.length}
+                    perPage={perPage}
+                    page={page}
+                    onSetPage={handleSetPage}
+                    widgetId="compact-example"
+                    onPerPageSelect={handlePerPageSelect}
+                    isCompact
+                  />
+                </ToolbarItem>
+              </ToolbarContent>
+            </Toolbar>
+            <TableComposable variant="compact" data-testid="repositories-table">
+              <Thead>
+                <Tr>
+                  <Th />
+                  <Th width={50}>Name</Th>
+                  <Th>Architecture</Th>
+                  <Th>Versions</Th>
+                  <Th>Packages</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {filteredRepositoryURLs
+                  .slice()
+                  .sort((a, b) => {
+                    if (repositories[a].name < repositories[b].name) {
+                      return -1;
+                    } else if (repositories[b].name < repositories[a].name) {
+                      return 1;
+                    } else {
+                      return 0;
+                    }
+                  })
+                  .slice(computeStart(), computeEnd())
+                  .map((repoURL, rowIndex) => {
+                    const repo = repositories[repoURL];
+                    return (
+                      <Tr key={repo.url}>
+                        <Td
+                          select={{
+                            isSelected: isRepoSelected(repo.url),
+                            rowIndex: rowIndex,
+                            onSelect: (event, isSelecting) =>
+                              handleSelect(repo.url, rowIndex, isSelecting),
+                          }}
+                        />
+                        <Td dataLabel={'Name'}>
+                          {repo.name}
+                          <br />
+                          <Button
+                            component="a"
+                            target="_blank"
+                            variant="link"
+                            icon={<ExternalLinkAltIcon />}
+                            iconPosition="right"
+                            isInline
+                            href={repo.url}
+                          >
+                            {repo.url}
+                          </Button>
+                        </Td>
+                        <Td dataLabel={'Architecture'}>
+                          {repo.distribution_arch}
+                        </Td>
+                        <Td dataLabel={'Version'}>
+                          {repo.distribution_versions}
+                        </Td>
+                        <Td dataLabel={'Packages'}>{repo.package_count}</Td>
+                      </Tr>
+                    );
+                  })}
+              </Tbody>
+            </TableComposable>
+          </>
+        )}
+      </>
+    ))
+  );
+};
+
+const Error = () => {
+  return (
+    <Alert title="Repositories unavailable" variant="danger" isPlain isInline>
+      Repositories cannot be reached, try again later.
+    </Alert>
+  );
+};
+
+const Loading = () => {
+  return (
+    <EmptyState>
+      <EmptyStateIcon variant="container" component={Spinner} />
+      <Title size="lg" headingLevel="h4">
+        Loading
+      </Title>
+    </EmptyState>
+  );
+};
+
+const Empty = () => {
+  const { isBeta } = useGetEnvironment();
+  return (
+    <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
+      <EmptyStateIcon icon={RepositoryIcon} />
+      <Title headingLevel="h4" size="lg">
+        No Custom Repositories
+      </Title>
+      <EmptyStateBody>
+        Custom repositories managed via the Red Hat Insights Repositories app
+        will be available here to select and use to search for additional
+        packages.
+      </EmptyStateBody>
+      <Button
+        variant="primary"
+        component="a"
+        target="_blank"
+        href={isBeta() ? '/beta/settings/content' : '/settings/content'}
+      >
+        Repositories
+      </Button>
+    </EmptyState>
   );
 };
 
