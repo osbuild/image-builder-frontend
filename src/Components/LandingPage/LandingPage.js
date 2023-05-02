@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import {
   Alert,
@@ -23,9 +23,6 @@ import {
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { Outlet } from 'react-router-dom';
 
-import awsQuickStart from './awsquickstart.json';
-import azureQuickStart from './azurequickstart.json';
-import contentQuickStart from './contentquickstart.json';
 import './LandingPage.scss';
 
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
@@ -38,16 +35,7 @@ export const LandingPage = () => {
 
   const { quickStarts } = useChrome();
   const { isBeta } = useGetEnvironment();
-  const activateQuickstart = (qs) => quickStarts.toggle(qs.metadata.name);
-
-  useEffect(() => {
-    if (!quickStarts) return;
-    quickStarts.set('hmsPreview', [
-      awsQuickStart,
-      azureQuickStart,
-      contentQuickStart,
-    ]);
-  }, []);
+  const activateQuickstart = (qs) => () => quickStarts.activateQuickstart(qs);
 
   return (
     <React.Fragment>
@@ -112,7 +100,7 @@ export const LandingPage = () => {
             className="pf-u-mb-xl"
             isInline
             variant="default"
-            title="Try new features in our Beta environment."
+            title="Try new features in our Preview environment."
             actionClose={
               <AlertActionCloseButton onClose={() => setShowBetaAlert(false)} />
             }
@@ -121,9 +109,9 @@ export const LandingPage = () => {
                 isInline
                 component="a"
                 variant="link"
-                href="/beta/insights/image-builder/landing"
+                href="/preview/insights/image-builder/landing"
               >
-                Enter beta environment
+                Enter Preview environment
               </Button>
             }
           >
@@ -140,13 +128,13 @@ export const LandingPage = () => {
         {isBeta() && (
           <ExpandableSection
             className="pf-m-light pf-u-mb-xl expand-section"
-            toggleText="Help get started with beta features"
+            toggleText="Help get started with Preview features"
             onToggle={setShowHint}
             isExpanded={showHint}
             displaySize="large"
           >
             <p className="pf-u-pb-sm">
-              For help getting started, access the quick starts for our beta
+              For help getting started, access the quick starts for our Preview
               features.
             </p>
             <p className="pf-u-pt-sm">
@@ -156,7 +144,7 @@ export const LandingPage = () => {
                 variant="link"
                 isInline
                 component="a"
-                onClick={() => activateQuickstart(awsQuickStart)}
+                onClick={activateQuickstart('insights-launch-aws')}
                 className="pf-u-font-weight-bold"
               >
                 Launch an AWS Image
@@ -169,7 +157,7 @@ export const LandingPage = () => {
                 variant="link"
                 isInline
                 component="a"
-                onClick={() => activateQuickstart(azureQuickStart)}
+                onClick={activateQuickstart('insights-launch-azure')}
                 className="pf-u-font-weight-bold"
               >
                 Launch an Azure Image
@@ -182,7 +170,7 @@ export const LandingPage = () => {
                 variant="link"
                 isInline
                 component="a"
-                onClick={() => activateQuickstart(contentQuickStart)}
+                onClick={activateQuickstart('insights-custom-repos')}
                 className="pf-u-font-weight-bold"
               >
                 Build an Image with Custom Content
