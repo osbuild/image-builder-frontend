@@ -16,7 +16,6 @@ import {
   RHEL_9,
   PROVISIONING_SOURCES_ENDPOINT,
 } from '../../../constants.js';
-import { mockRepositoryResults } from '../../fixtures/repositories';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
@@ -84,72 +83,6 @@ const mockPkgResultAlphaContentSources = [
     version: '1.0',
   },
 ];
-
-const mockRepositoryResponsePartial = {
-  data: new Array(100).fill().map((_, i) => {
-    return {
-      uuid: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
-      name: '2lmdtj',
-      url:
-        'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/' +
-        i,
-      distribution_versions: ['any'],
-      distribution_arch: 'any',
-      account_id: '6416440',
-      org_id: '13476545',
-      last_introspection_time: '2022-11-23 00:00:12.714873 +0000 UTC',
-      last_success_introspection_time: '2022-11-23 00:00:12.714873 +0000 UTC',
-      last_update_introspection_time: '2022-11-18 08:00:10.119093 +0000 UTC',
-      last_introspection_error: '',
-      package_count: 21,
-      status: 'Valid',
-      gpg_key: '',
-      metadata_verification: false,
-    };
-  }),
-  meta: {
-    limit: 100,
-    offset: 0,
-    count: 132,
-  },
-  links: {
-    first: '/api/content-sources/v1/repositories/?limit=100&offset=0',
-    last: '/api/content-sources/v1/repositories/?limit=100&offset=0',
-  },
-};
-
-const mockRepositoryResponseAll = {
-  data: new Array(132).fill().map((_, i) => {
-    return {
-      uuid: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
-      name: '2lmdtj',
-      url:
-        'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/' +
-        i,
-      distribution_versions: ['any'],
-      distribution_arch: 'any',
-      account_id: '6416440',
-      org_id: '13476545',
-      last_introspection_time: '2022-11-23 00:00:12.714873 +0000 UTC',
-      last_success_introspection_time: '2022-11-23 00:00:12.714873 +0000 UTC',
-      last_update_introspection_time: '2022-11-18 08:00:10.119093 +0000 UTC',
-      last_introspection_error: '',
-      package_count: 21,
-      status: 'Valid',
-      gpg_key: '',
-      metadata_verification: false,
-    };
-  }),
-  meta: {
-    limit: 132,
-    offset: 0,
-    count: 132,
-  },
-  links: {
-    first: '/api/content-sources/v1/repositories/?limit=132&offset=0',
-    last: '/api/content-sources/v1/repositories/?limit=132&offset=0',
-  },
-};
 
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
@@ -633,43 +566,14 @@ describe('Step Custom repositories', () => {
     getNextButton().click();
   };
 
-  test('show only valid (successful) repositories', async () => {
-    jest
-      .spyOn(api, 'getRepositories')
-      .mockImplementation(() => Promise.resolve(mockRepositoryResults));
-
-    await setUp();
-
-    // Display all repositories on one page
-    screen.getByRole('button', { name: /items per page/i }).click();
-    screen.getByRole('menuitem', { name: /100 per page/i }).click();
-
-    // gnome-shell-extensions should not be present
-    const table = await screen.findByTestId('repositories-table');
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
-
-    // remove first row from list since it is just header labels
-    rows.shift();
-
-    // mockRepositoryResults has 21 repositories, gnome-shell-extensions status is
-    // 'Invalid' and it should not appear in table
-    expect(rows).toHaveLength(20);
-    expect(table).not.toHaveTextContent('gnome-shell-extensions');
-  });
-
-  test('selected packages stored in and retrieved from form state', async () => {
-    jest
-      .spyOn(api, 'getRepositories')
-      .mockImplementation(() => Promise.resolve(mockRepositoryResults));
-
+  test('selected repositories stored in and retrieved from form state', async () => {
     await setUp();
 
     const getFirstRepoCheckbox = () =>
-      screen.getByRole('checkbox', {
+      screen.findByRole('checkbox', {
         name: /select row 0/i,
       });
-    let firstRepoCheckbox = getFirstRepoCheckbox();
+    let firstRepoCheckbox = await getFirstRepoCheckbox();
 
     expect(firstRepoCheckbox.checked).toEqual(false);
     await user.click(firstRepoCheckbox);
@@ -678,39 +582,29 @@ describe('Step Custom repositories', () => {
     getNextButton().click();
     getBackButton().click();
 
-    firstRepoCheckbox = getFirstRepoCheckbox();
+    firstRepoCheckbox = await getFirstRepoCheckbox();
     expect(firstRepoCheckbox.checked).toEqual(true);
   });
 
-  test('all repositories are fetched when number of repositories is greater than API limit', async () => {
-    jest.spyOn(api, 'getRepositories').mockImplementation((limit) => {
-      return limit
-        ? Promise.resolve(mockRepositoryResponseAll)
-        : Promise.resolve(mockRepositoryResponsePartial);
-    });
-
+  test('correct number of repositories is fetched', async () => {
     await setUp();
-    screen
-      .getByRole('button', {
-        name: /select/i,
-      })
-      .click();
 
-    screen.getByText(/select all \(132 items\)/i);
+    const selectButton = await screen.findByRole('button', {
+      name: /select/i,
+    });
+    await user.click(selectButton);
+
+    screen.getByText(/select all \(1011 items\)/i);
   });
 
   test('filter works', async () => {
-    jest
-      .spyOn(api, 'getRepositories')
-      .mockImplementation(() => Promise.resolve(mockRepositoryResults));
     await setUp();
 
     await user.type(
-      screen.getByRole('textbox', { name: /search repositories/i }),
-      '2'
+      await screen.findByRole('textbox', { name: /search repositories/i }),
+      '2zmya'
     );
 
-    // gnome-shell-extensions is invalid and should not be present
     const table = await screen.findByTestId('repositories-table');
     const { getAllByRole } = within(table);
     const getRows = () => getAllByRole('row');
@@ -719,7 +613,7 @@ describe('Step Custom repositories', () => {
     // remove first row from list since it is just header labels
     rows.shift();
 
-    expect(rows).toHaveLength(4);
+    expect(rows).toHaveLength(1);
 
     // clear filter
     screen.getByRole('button', { name: /reset/i }).click();
@@ -734,10 +628,6 @@ describe('Step Custom repositories', () => {
 
 describe('Click through all steps', () => {
   const user = userEvent.setup();
-
-  jest
-    .spyOn(api, 'getRepositories')
-    .mockImplementation(() => Promise.resolve(mockRepositoryResults));
 
   const setUp = async () => {
     ({ router, store } = renderWithReduxRouter('imagewizard', {}));
@@ -852,8 +742,12 @@ describe('Click through all steps', () => {
     getNextButton().click();
 
     // Custom repositories
-    await user.click(screen.getByRole('checkbox', { name: /select row 0/i }));
-    await user.click(screen.getByRole('checkbox', { name: /select row 1/i }));
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 0/i })
+    );
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 1/i })
+    );
     getNextButton().click();
 
     // Custom packages
@@ -924,7 +818,7 @@ describe('Click through all steps', () => {
         },
         {
           baseurl: [
-            'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
+            'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
           ],
           id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
           name: '2lmdtj',
@@ -941,7 +835,7 @@ describe('Click through all steps', () => {
         },
         {
           baseurl:
-            'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
+            'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
           rhsm: false,
         },
       ],
@@ -1091,7 +985,7 @@ describe('Click through all steps', () => {
       });
 
     const create = screen.getByRole('button', { name: /Create/ });
-    create.click();
+    await user.click(create);
 
     // API request sent to backend
     expect(composeImage).toHaveBeenCalledTimes(6);

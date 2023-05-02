@@ -4,6 +4,8 @@ export const CONTENT_SOURCES = '/api/content-sources/v1';
 export const PROVISIONING_SOURCES_ENDPOINT = '/api/provisioning/v1/sources';
 export const RHEL_8 = 'rhel-87';
 export const RHEL_9 = 'rhel-91';
+export const CENTOS_8 = 'centos-8';
+export const CENTOS_9 = 'centos-9';
 
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
@@ -12,8 +14,8 @@ export const UNIT_GIB = 1024 ** 3;
 export const RELEASES = new Map([
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
-  ['centos-9', 'CentOS Stream 9'],
-  ['centos-8', 'CentOS Stream 8'],
+  [CENTOS_9, 'CentOS Stream 9'],
+  [CENTOS_8, 'CentOS Stream 8'],
 ]);
 
 export const DEFAULT_AWS_REGION = 'us-east-1';

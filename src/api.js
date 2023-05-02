@@ -42,14 +42,6 @@ async function getPackages(distribution, architecture, search, limit) {
   return request.data;
 }
 
-async function getRepositories(limit) {
-  const params = new URLSearchParams();
-  limit && params.append('limit', limit);
-  const path = '/repositories/' + params.toString();
-  const request = await axios.get(CONTENT_SOURCES.concat(path));
-  return request.data;
-}
-
 async function getPackagesContentSources(repoUrls, search) {
   // content-sources expects an array of urls but we store the whole repo object
   // so map the urls into an array to send to the content-sources api
@@ -113,6 +105,5 @@ export default {
   getComposeStatus,
   getPackages,
   getPackagesContentSources,
-  getRepositories,
   getVersion,
 };
