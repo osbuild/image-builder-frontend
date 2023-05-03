@@ -16,6 +16,8 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Pagination,
+  Panel,
+  PanelMain,
   SearchInput,
   Spinner,
   Title,
@@ -47,6 +49,7 @@ const BulkSelect = ({
   handleSelectAll,
   handleSelectPage,
   handleDeselectAll,
+  isDisabled,
 }) => {
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
 
@@ -80,6 +83,7 @@ const BulkSelect = ({
       toggle={
         <DropdownToggle
           id="stacked-example-toggle"
+          isDisabled={isDisabled}
           splitButtonItems={[
             <DropdownToggleCheckbox
               id="example-checkbox-1"
@@ -214,10 +218,17 @@ const Repositories = (props) => {
   const release = getState().values?.release;
   const version = releaseToVersion(release);
 
-  const { data, isError, isLoading, isSuccess } = useGetRepositoriesQuery({
-    available_for_arch: 'x86_64',
-    available_for_version: version,
-  });
+  const { data, isError, isFetching, isLoading, isSuccess, refetch } =
+    useGetRepositoriesQuery(
+      {
+        available_for_arch: 'x86_64',
+        available_for_version: version,
+      },
+      // The cached repos may be incorrect, for now refetch on mount to ensure that
+      // they are accurate when this step loads. Future PR will implement prefetching
+      // and this can be removed.
+      { refetchOnMountOrArgChange: true }
+    );
 
   const repositories = useMemo(() => {
     return data ? initializeRepositories(data.data) : {};
@@ -319,7 +330,7 @@ const Repositories = (props) => {
     (isSuccess && (
       <>
         {Object.values(repositories).length === 0 ? (
-          <Empty />
+          <Empty refetch={refetch} isFetching={isFetching} />
         ) : (
           <>
             <Toolbar>
@@ -333,6 +344,7 @@ const Repositories = (props) => {
                     handleSelectAll={handleSelectAll}
                     handleSelectPage={handleSelectPage}
                     handleDeselectAll={handleDeselectAll}
+                    isDisabled={isFetching}
                   />
                 </ToolbarItem>
                 <ToolbarItem variant="search-filter">
@@ -342,6 +354,16 @@ const Repositories = (props) => {
                     value={filterValue}
                     onClear={handleClearFilter}
                   />
+                </ToolbarItem>
+                <ToolbarItem>
+                  <Button
+                    variant="primary"
+                    isInline
+                    onClick={() => refetch()}
+                    isLoading={isFetching}
+                  >
+                    {isFetching ? 'Refreshing' : 'Refresh'}
+                  </Button>
                 </ToolbarItem>
                 <ToolbarItem variant="pagination">
                   <Pagination
@@ -356,68 +378,78 @@ const Repositories = (props) => {
                 </ToolbarItem>
               </ToolbarContent>
             </Toolbar>
-            <TableComposable variant="compact" data-testid="repositories-table">
-              <Thead>
-                <Tr>
-                  <Th />
-                  <Th width={50}>Name</Th>
-                  <Th>Architecture</Th>
-                  <Th>Versions</Th>
-                  <Th>Packages</Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {filteredRepositoryURLs
-                  .slice()
-                  .sort((a, b) => {
-                    if (repositories[a].name < repositories[b].name) {
-                      return -1;
-                    } else if (repositories[b].name < repositories[a].name) {
-                      return 1;
-                    } else {
-                      return 0;
-                    }
-                  })
-                  .slice(computeStart(), computeEnd())
-                  .map((repoURL, rowIndex) => {
-                    const repo = repositories[repoURL];
-                    return (
-                      <Tr key={repo.url}>
-                        <Td
-                          select={{
-                            isSelected: isRepoSelected(repo.url),
-                            rowIndex: rowIndex,
-                            onSelect: (event, isSelecting) =>
-                              handleSelect(repo.url, rowIndex, isSelecting),
-                          }}
-                        />
-                        <Td dataLabel={'Name'}>
-                          {repo.name}
-                          <br />
-                          <Button
-                            component="a"
-                            target="_blank"
-                            variant="link"
-                            icon={<ExternalLinkAltIcon />}
-                            iconPosition="right"
-                            isInline
-                            href={repo.url}
-                          >
-                            {repo.url}
-                          </Button>
-                        </Td>
-                        <Td dataLabel={'Architecture'}>
-                          {repo.distribution_arch}
-                        </Td>
-                        <Td dataLabel={'Version'}>
-                          {repo.distribution_versions}
-                        </Td>
-                        <Td dataLabel={'Packages'}>{repo.package_count}</Td>
-                      </Tr>
-                    );
-                  })}
-              </Tbody>
-            </TableComposable>
+            <Panel isScrollable>
+              <PanelMain>
+                <TableComposable
+                  variant="compact"
+                  data-testid="repositories-table"
+                >
+                  <Thead>
+                    <Tr>
+                      <Th />
+                      <Th width={50}>Name</Th>
+                      <Th>Architecture</Th>
+                      <Th>Versions</Th>
+                      <Th>Packages</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {filteredRepositoryURLs
+                      .slice()
+                      .sort((a, b) => {
+                        if (repositories[a].name < repositories[b].name) {
+                          return -1;
+                        } else if (
+                          repositories[b].name < repositories[a].name
+                        ) {
+                          return 1;
+                        } else {
+                          return 0;
+                        }
+                      })
+                      .slice(computeStart(), computeEnd())
+                      .map((repoURL, rowIndex) => {
+                        const repo = repositories[repoURL];
+                        return (
+                          <Tr key={repo.url}>
+                            <Td
+                              select={{
+                                isSelected: isRepoSelected(repo.url),
+                                rowIndex: rowIndex,
+                                onSelect: (event, isSelecting) =>
+                                  handleSelect(repo.url, rowIndex, isSelecting),
+                                disable: isFetching,
+                              }}
+                            />
+                            <Td dataLabel={'Name'}>
+                              {repo.name}
+                              <br />
+                              <Button
+                                component="a"
+                                target="_blank"
+                                variant="link"
+                                icon={<ExternalLinkAltIcon />}
+                                iconPosition="right"
+                                isInline
+                                href={repo.url}
+                              >
+                                {repo.url}
+                              </Button>
+                            </Td>
+                            <Td dataLabel={'Architecture'}>
+                              {repo.distribution_arch}
+                            </Td>
+                            <Td dataLabel={'Version'}>
+                              {repo.distribution_versions}
+                            </Td>
+                            <Td dataLabel={'Packages'}>{repo.package_count}</Td>
+                          </Tr>
+                        );
+                      })}
+                  </Tbody>
+                </TableComposable>
+              </PanelMain>
+            </Panel>
           </>
         )}
       </>
@@ -444,7 +476,7 @@ const Loading = () => {
   );
 };
 
-const Empty = () => {
+const Empty = ({ isFetching, refetch }) => {
   const { isBeta } = useGetEnvironment();
   return (
     <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
@@ -461,9 +493,18 @@ const Empty = () => {
         variant="primary"
         component="a"
         target="_blank"
-        href={isBeta() ? '/beta/settings/content' : '/settings/content'}
+        href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+        className="pf-u-mr-sm"
       >
         Repositories
+      </Button>
+      <Button
+        variant="primary"
+        isInline
+        onClick={() => refetch()}
+        isLoading={isFetching}
+      >
+        {isFetching ? 'Refreshing' : 'Refresh'}
       </Button>
     </EmptyState>
   );
@@ -477,6 +518,12 @@ BulkSelect.propTypes = {
   handleSelectAll: PropTypes.func,
   handleSelectPage: PropTypes.func,
   handleDeselectAll: PropTypes.func,
+  isDisabled: PropTypes.bool,
+};
+
+Empty.propTypes = {
+  isFetching: PropTypes.bool,
+  refetch: PropTypes.func,
 };
 
 export default Repositories;
