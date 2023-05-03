@@ -1,12 +1,31 @@
 import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import { Text } from '@patternfly/react-core';
+import { Button, Text } from '@patternfly/react-core';
+import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import nextStepMapper from './repositoriesStepMapper';
 import StepTemplate from './stepTemplate';
 
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import CustomButtons from '../formComponents/CustomButtons';
+
+const VisitButton = () => {
+  const { isBeta } = useGetEnvironment();
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      iconPosition="right"
+      isInline
+      icon={<ExternalLinkAltIcon />}
+      href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+    >
+      Create and manage repositories here
+    </Button>
+  );
+};
 
 export default {
   StepTemplate,
@@ -25,8 +44,7 @@ export default {
           Select custom repositories from which to search and add packages to
           this image.
           <br />
-          Custom repositories can be managed using the Repositories app on Red
-          Hat Insights.
+          <VisitButton />
         </Text>
       ),
     },
