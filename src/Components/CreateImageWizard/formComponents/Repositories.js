@@ -37,8 +37,8 @@ import {
 } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 
-import { CENTOS_8, CENTOS_9, RHEL_8, RHEL_9 } from '../../../constants';
 import { useGetRepositoriesQuery } from '../../../store/apiSlice';
+import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
 const BulkSelect = ({
@@ -149,21 +149,6 @@ const convertSchemaToContentSources = (repo) => {
   }
 
   return contentSourcesRepo;
-};
-
-const releaseToVersion = (release) => {
-  switch (release) {
-    case RHEL_9:
-      return '9';
-    case RHEL_8:
-      return '8';
-    case CENTOS_9:
-      return '9';
-    case CENTOS_8:
-      return '8';
-    default:
-      return '';
-  }
 };
 
 const Repositories = (props) => {
