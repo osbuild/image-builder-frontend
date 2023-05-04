@@ -1,9 +1,12 @@
 import React, { useContext, useState } from 'react';
 
-import { FormSpy } from '@data-driven-forms/react-form-renderer';
+import { FormSpy, useFormApi } from '@data-driven-forms/react-form-renderer';
 import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
+
+import { usePrefetch } from '../../../store/apiSlice';
+import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
 const CustomButtons = ({
   buttonLabels: { cancel, next, submit, back },
@@ -11,8 +14,11 @@ const CustomButtons = ({
   handlePrev,
   nextStep,
 }) => {
+  const { getState } = useFormApi();
   const [isSaving, setIsSaving] = useState(false);
   const { currentStep, formOptions } = useContext(WizardContext);
+  const prefetchActivationKeys = usePrefetch('getActivationKeys');
+  const prefetchRepositories = usePrefetch('getRepositories');
 
   const onNextOrSubmit = () => {
     if (currentStep.id === 'wizard-review') {
@@ -26,6 +32,20 @@ const CustomButtons = ({
       } else {
         handleNext(nextStep);
       }
+    }
+  };
+
+  const onMouseEnter = () => {
+    if (currentStep.id === 'wizard-imageoutput') {
+      prefetchActivationKeys();
+    }
+    if (currentStep.id === 'wizard-systemconfiguration-packages') {
+      const release = getState().values?.release;
+      const version = releaseToVersion(release);
+      prefetchRepositories({
+        available_for_arch: 'x86_64',
+        available_for_version: version,
+      });
     }
   };
 
@@ -44,6 +64,7 @@ const CustomButtons = ({
             }
             isLoading={currentStep.id === 'wizard-review' ? isSaving : null}
             onClick={onNextOrSubmit}
+            onMouseEnter={onMouseEnter}
           >
             {currentStep.id === 'wizard-review'
               ? isSaving

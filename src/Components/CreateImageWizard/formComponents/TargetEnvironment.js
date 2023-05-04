@@ -25,18 +25,13 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     'image-installer': false,
   });
   const prefetchAWSSources = usePrefetch('getAWSSources');
+  const prefetchAzureSources = usePrefetch('getAzureSources');
 
   useEffect(() => {
     if (getState()?.values?.[input.name]) {
       setEnvironment(getState().values[input.name]);
     }
   }, []);
-
-  useEffect(() => {
-    if (environment['aws'] === true) {
-      prefetchAWSSources();
-    }
-  }, [environment]);
 
   const handleSetEnvironment = (env) =>
     setEnvironment((prevEnv) => {
@@ -78,6 +73,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               }
               onClick={() => handleSetEnvironment('aws')}
               onKeyDown={(e) => handleKeyDown(e, 'aws')}
+              onMouseEnter={() => prefetchAWSSources()}
               isSelected={environment.aws}
               isStacked
               isDisplayLarge
@@ -114,6 +110,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               }
               onClick={() => handleSetEnvironment('azure')}
               onKeyDown={(e) => handleKeyDown(e, 'azure')}
+              onMouseEnter={() => prefetchAzureSources()}
               isSelected={environment.azure}
               isStacked
               isDisplayLarge
