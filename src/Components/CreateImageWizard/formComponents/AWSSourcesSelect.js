@@ -78,8 +78,6 @@ export const AWSSourcesSelect = ({
           isOpen={isOpen}
           placeholderText="Select source"
           typeAheadAriaLabel="Select source"
-          menuAppendTo="parent"
-          maxHeight="25rem"
           isDisabled={!isSuccess}
         >
           {isSuccess &&
