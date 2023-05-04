@@ -164,7 +164,13 @@ describe('Step Upload to AWS', () => {
   test('validation works', async () => {
     setUp();
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    // jsdom seems to render the next button differently than the browser. The
+    // next button is enabled briefly during the test. This does not occur in
+    // the browser. Using findByRole instead of getByRole to get the next
+    // button allows us to capture its 'final' state.
+    expect(await screen.findByRole('button', { name: /Next/ })).toHaveClass(
+      'pf-m-disabled'
+    );
 
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
@@ -283,9 +289,9 @@ describe('Step Packages', () => {
     getNextButton().click();
 
     // aws step
-    screen
-      .getByRole('radio', { name: /manually enter an account id\./i })
-      .click();
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
@@ -545,9 +551,9 @@ describe('Step Custom repositories', () => {
     getNextButton().click();
 
     // aws step
-    screen
-      .getByRole('radio', { name: /manually enter an account id\./i })
-      .click();
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     getNextButton().click();
     // skip registration
@@ -654,9 +660,9 @@ describe('Click through all steps', () => {
     await user.click(screen.getByTestId('checkbox-image-installer'));
 
     screen.getByRole('button', { name: /Next/ }).click();
-    screen
-      .getByRole('radio', { name: /manually enter an account id\./i })
-      .click();
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     screen.getByRole('button', { name: /Next/ }).click();
 
