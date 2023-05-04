@@ -43,7 +43,8 @@ export const selectRegionsToDisable = createSelector(
 const prepareRegions = (regionsToDisable) => {
   const regions = AWS_REGIONS.map((region) => ({
     ...region,
-    disabled: regionsToDisable.has(region.value),
+    disabled:
+      regionsToDisable.has(region.value) || region?.disableRegion === true,
   }));
 
   return regions;

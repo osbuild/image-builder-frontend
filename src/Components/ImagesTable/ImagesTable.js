@@ -145,6 +145,7 @@ const ImagesTable = () => {
     {
       title: 'Share to new region',
       onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
+      isDisabled: compose?.image_status?.status === 'success' ? false : true,
     },
     ...actions(compose),
   ];
