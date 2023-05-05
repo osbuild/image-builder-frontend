@@ -12,7 +12,6 @@ import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { ImageBuildStatus } from './ImageBuildStatus';
-import ImageLink from './ImageLink';
 
 import { useGetAWSSourcesQuery } from '../../store/apiSlice';
 import {
@@ -51,9 +50,6 @@ const Row = ({ imageId }) => {
         <Td dataLabel="Status">
           <ImageBuildStatus imageId={image.id} imageRegion={image.region} />
         </Td>
-        <Td dataLabel="Instance">
-          <ImageLink imageId={image.id} isInClonesTable={true} />
-        </Td>
       </Tr>
     </Tbody>
   );
@@ -78,7 +74,6 @@ const ClonesTable = ({ composeId }) => {
           <Th>Account</Th>
           <Th>Region</Th>
           <Th>Status</Th>
-          <Th>Instance</Th>
         </Tr>
       </Thead>
       <Row imageId={parentCompose.id} imageType={'compose'} />

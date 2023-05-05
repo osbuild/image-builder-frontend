@@ -684,7 +684,6 @@ describe('Clones table', () => {
     expect(header.cells[2]).toHaveTextContent('Account');
     expect(header.cells[3]).toHaveTextContent('Region');
     expect(header.cells[4]).toHaveTextContent('Status');
-    expect(header.cells[5]).toHaveTextContent('Instance');
 
     expect(cloneRows).toHaveLength(5);
 
@@ -736,16 +735,6 @@ describe('Clones table', () => {
         state
       );
       expect(row.cells[4]).toHaveTextContent(testElement.textContent);
-
-      // instance cell
-      renderWithProvider(
-        <BrowserRouter>
-          <ImageLink imageId={imageId} isInClonesTable={true} />
-        </BrowserRouter>,
-        testElement,
-        state
-      );
-      expect(row.cells[5]).toHaveTextContent(testElement.textContent);
     }
   });
 });
