@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
   Button,
+  Divider,
   Popover,
   Text,
   TextContent,
@@ -16,6 +17,7 @@ import { RegionsPopover } from './RegionsPopover';
 
 import { selectImageById } from '../../store/composesSlice';
 import { resolveRelPath } from '../../Utilities/path';
+import BetaLabel from '../sharedComponents/BetaLabel';
 
 const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
   const navigate = useNavigate();
@@ -51,6 +53,7 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
       return <RegionsPopover composeId={image.id} />;
     }
   } else if (uploadStatus.type === 'azure') {
+    const createdInPreview = image?.uploadOptions?.source_id;
     const url =
       'https://portal.azure.com/#@' +
       image.uploadOptions.tenant_id +
@@ -60,7 +63,38 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
       image.uploadOptions.resource_group +
       '/providers/Microsoft.Compute/images/' +
       uploadStatus.options.image_name;
-    return (
+    return createdInPreview ? (
+      <Popover
+        /* popovers aren't rendered inside of the main page section, make sure our prefixed css still
+         * applies */
+        className="imageBuilder"
+        aria-label="Launch instance"
+        headerContent={<div>Launch instance</div>}
+        bodyContent={
+          <>
+            <>
+              <p>
+                This image was created using features only available in Preview.
+              </p>
+              <Divider className="pf-u-mt-sm pf-u-mb-sm" />
+              <Button
+                isInline
+                component="a"
+                variant="link"
+                href="/preview/insights/image-builder/landing"
+              >
+                <BetaLabel />
+                Launch from Preview
+              </Button>
+            </>
+          </>
+        }
+      >
+        <Button variant="link" isInline>
+          Launch
+        </Button>
+      </Popover>
+    ) : (
       <Button
         component="a"
         target="_blank"
