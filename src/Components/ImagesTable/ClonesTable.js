@@ -19,7 +19,6 @@ import {
   selectComposeById,
   selectImageById,
 } from '../../store/composesSlice';
-import { timestampToDisplayString } from '../../Utilities/time';
 
 const Row = ({ imageId }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
@@ -42,9 +41,6 @@ const Row = ({ imageId }) => {
     <Tbody>
       <Tr>
         <Td dataLabel="UUID">{image.id}</Td>
-        <Td dataLabel="Created">
-          {timestampToDisplayString(image.created_at)}
-        </Td>
         <Td dataLabel="Account">{getAccount(image)}</Td>
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
@@ -69,11 +65,10 @@ const ClonesTable = ({ composeId }) => {
     >
       <Thead>
         <Tr className="no-bottom-border">
-          <Th>UUID</Th>
-          <Th>Created</Th>
-          <Th>Account</Th>
-          <Th>Region</Th>
-          <Th>Status</Th>
+          <Th className="pf-m-width-40">UUID</Th>
+          <Th className="pf-m-width-20">Account</Th>
+          <Th className="pf-m-width-20">Region</Th>
+          <Th className="pf-m-width-20">Status</Th>
         </Tr>
       </Thead>
       <Row imageId={parentCompose.id} imageType={'compose'} />
