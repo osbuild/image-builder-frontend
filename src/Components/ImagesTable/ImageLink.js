@@ -15,7 +15,9 @@ import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 const getImageProvider = ({ imageType }) => {
   switch (imageType) {
-    case 'aws' || 'ami':
+    case 'aws':
+      return 'aws';
+    case 'ami':
       return 'aws';
     case 'azure':
       return 'azure';
