@@ -72,6 +72,9 @@ export const RegionsPopover = ({ composeId }) => {
     return listItems;
   }, [regions]);
 
+  const compose = useSelector((state) => selectComposeById(state, composeId));
+  const createdInPreview = compose?.share_with_sources?.[0] ? true : false;
+
   return (
     <Popover
       /* popovers aren't rendered inside of the main page section, make sure our prefixed css still
@@ -84,6 +87,12 @@ export const RegionsPopover = ({ composeId }) => {
           <ul>{listItems}</ul>
           {!isBeta() && (
             <>
+              {createdInPreview && (
+                <p>
+                  This image was created using features only available in
+                  Preview.
+                </p>
+              )}
               <Divider className="pf-u-mt-sm pf-u-mb-sm" />
               <Button
                 isInline
@@ -92,7 +101,7 @@ export const RegionsPopover = ({ composeId }) => {
                 href="/preview/insights/image-builder/landing"
               >
                 <BetaLabel />
-                Launch from here
+                Launch from Preview
               </Button>
             </>
           )}
