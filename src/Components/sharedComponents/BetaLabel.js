@@ -7,7 +7,7 @@ import './BetaLabel.scss';
 const BetaLabel = () => {
   return (
     <Label className="beta-label">
-      <b>Beta</b>
+      <b>Preview</b>
     </Label>
   );
 };

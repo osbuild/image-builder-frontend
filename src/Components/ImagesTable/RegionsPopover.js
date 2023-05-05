@@ -89,7 +89,7 @@ export const RegionsPopover = ({ composeId }) => {
                 isInline
                 component="a"
                 variant="link"
-                href="/beta/insights/image-builder/landing"
+                href="/preview/insights/image-builder/landing"
               >
                 <BetaLabel />
                 Launch from here
