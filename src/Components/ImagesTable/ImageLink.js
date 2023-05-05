@@ -106,7 +106,8 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
 
   const provisioningLinkEnabled = (image) => {
     switch (image.imageType) {
-      case 'aws' || 'ami':
+      case 'aws':
+      case 'ami':
         return true;
       case 'azure':
         return !!azureFeatureFlag;
