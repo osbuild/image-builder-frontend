@@ -10,7 +10,6 @@ import ImageLink from '../../../Components/ImagesTable/ImageLink';
 import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import { RHEL_8 } from '../../../constants.js';
-import { timestampToDisplayString } from '../../../Utilities/time.js';
 import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
 
 const currentDate = new Date();
@@ -680,10 +679,9 @@ describe('Clones table', () => {
     const header = cloneRows.shift();
     // test the header has correct labels
     expect(header.cells[0]).toHaveTextContent('UUID');
-    expect(header.cells[1]).toHaveTextContent('Created');
-    expect(header.cells[2]).toHaveTextContent('Account');
-    expect(header.cells[3]).toHaveTextContent('Region');
-    expect(header.cells[4]).toHaveTextContent('Status');
+    expect(header.cells[1]).toHaveTextContent('Account');
+    expect(header.cells[2]).toHaveTextContent('Region');
+    expect(header.cells[3]).toHaveTextContent('Status');
 
     expect(cloneRows).toHaveLength(5);
 
@@ -713,17 +711,11 @@ describe('Clones table', () => {
       // render UUIDs in correct order
       expect(row.cells[0]).toHaveTextContent(clonesTableData.uuid[index]);
 
-      // date should match the month day and year of the timestamp.
-      const formattedDate = timestampToDisplayString(
-        clonesTableData.created[index]
-      );
-      expect(row.cells[1]).toHaveTextContent(formattedDate);
-
       // account cell
-      expect(row.cells[2]).toHaveTextContent(clonesTableData.account[index]);
+      expect(row.cells[1]).toHaveTextContent(clonesTableData.account[index]);
 
       // region cell
-      expect(row.cells[3]).toHaveTextContent(clonesTableData.region[index]);
+      expect(row.cells[2]).toHaveTextContent(clonesTableData.region[index]);
 
       const testElement = document.createElement('testElement');
       const imageId = clonesTableData.uuid[index];
@@ -734,7 +726,7 @@ describe('Clones table', () => {
         testElement,
         state
       );
-      expect(row.cells[4]).toHaveTextContent(testElement.textContent);
+      expect(row.cells[3]).toHaveTextContent(testElement.textContent);
     }
   });
 });
