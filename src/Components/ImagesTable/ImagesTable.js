@@ -30,7 +30,7 @@ import {
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { Link, useNavigate, useHistory, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 
 import './ImagesTable.scss';
@@ -225,11 +225,12 @@ const ImagesTable = () => {
             <AsyncComponent
               appName="edge"
               module="./Images"
-              historyProp={useHistory}
+              // historyProp={useHistory}
+              navigateProp={useNavigate}
               locationProp={useLocation}
             /> 
           </Tab>
-          
+
           <Tab eventKey={1} title={<TabTitleText>Image Builder</TabTitleText>}>
             <TableComposable variant="compact" data-testid="images-table">
               <Thead>
