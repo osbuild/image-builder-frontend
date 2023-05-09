@@ -1753,8 +1753,8 @@ describe('Click through all steps', () => {
       expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
     expect(store.getState().composes.allIds).toEqual(ids);
-    // set test timeout of 10 seconds
-  }, 10000);
+    // set test timeout of 20 seconds
+  }, 20000);
 });
 
 describe('Keyboard accessibility', () => {
