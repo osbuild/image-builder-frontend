@@ -3,7 +3,7 @@ export const RHSM_API = '/api/rhsm/v2';
 export const CONTENT_SOURCES = '/api/content-sources/v1';
 export const PROVISIONING_SOURCES_ENDPOINT = '/api/provisioning/v1/sources';
 export const RHEL_8 = 'rhel-87';
-export const RHEL_9 = 'rhel-91';
+export const RHEL_9 = 'rhel-92';
 export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
 

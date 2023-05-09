@@ -169,7 +169,7 @@ export const handlers = [
     baseURL.concat('/api/image-builder/v1/architectures/:distro'),
     (req, res, ctx) => {
       const { distro } = req.params;
-      if (distro === 'rhel-91') {
+      if (distro === 'rhel-92') {
         return res(
           ctx.status(200),
           ctx.json([
@@ -178,7 +178,7 @@ export const handlers = [
               repositories: [
                 {
                   baseurl:
-                    'https://cdn.redhat.com/content/dist/rhel9/9.1/x86_64/baseos/os',
+                    'https://cdn.redhat.com/content/dist/rhel9/9.2/x86_64/baseos/os',
                   rhsm: true,
                 },
               ],
@@ -188,7 +188,7 @@ export const handlers = [
               repositories: [
                 {
                   baseurl:
-                    'https://cdn.redhat.com/content/dist/rhel9/9.1/aarch64/baseos/os',
+                    'https://cdn.redhat.com/content/dist/rhel9/9.2/aarch64/baseos/os',
                   rhsm: true,
                 },
               ],
