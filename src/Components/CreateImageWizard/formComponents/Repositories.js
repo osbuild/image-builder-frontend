@@ -111,6 +111,7 @@ const convertSchemaToIBPayloadRepo = (repo) => {
   const imageBuilderRepo = {
     baseurl: repo.url,
     rhsm: false,
+    check_gpg: false,
   };
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = repo.gpg_key;
@@ -127,6 +128,7 @@ const convertSchemaToIBCustomRepo = (repo) => {
     id: repo.uuid,
     name: repo.name,
     baseurl: [repo.url],
+    check_gpg: false,
   };
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = [repo.gpg_key];

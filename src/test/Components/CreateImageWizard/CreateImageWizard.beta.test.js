@@ -826,6 +826,7 @@ describe('Click through all steps', () => {
           baseurl: [
             'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
           ],
+          check_gpg: false,
           id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
           name: '2lmdtj',
         },
@@ -843,6 +844,7 @@ describe('Click through all steps', () => {
           baseurl:
             'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
           rhsm: false,
+          check_gpg: false,
         },
       ],
       filesystem: [
