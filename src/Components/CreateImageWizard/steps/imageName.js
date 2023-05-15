@@ -32,8 +32,10 @@ export default {
       autoFocus: true,
       validate: [
         {
-          type: validatorTypes.MAX_LENGTH,
-          threshold: 100,
+          type: validatorTypes.PATTERN,
+          pattern: /^[a-z][-a-z0-9]{1,61}[a-z0-9]$/,
+          message:
+            'The image name can be 3-63 characters long. It can contain lowercase letters, digits and hyphens, has to start with a letter and cannot end with a hyphen.',
         },
       ],
     },
