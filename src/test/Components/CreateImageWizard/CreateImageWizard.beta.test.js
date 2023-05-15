@@ -740,7 +740,7 @@ describe('Click through all steps', () => {
     const nameInput = screen.getByRole('textbox', {
       name: 'Image name',
     });
-    await user.type(nameInput, 'MyImageName');
+    await user.type(nameInput, 'my-image-name');
     getNextButton().click();
 
     // review
@@ -767,7 +767,7 @@ describe('Click through all steps', () => {
       'image-details-expandable'
     );
     imageDetailsExpandable.click();
-    await screen.findByText('MyImageName');
+    await screen.findByText('my-image-name');
 
     await screen.findByText('name0');
     await screen.findByText('Self-Support');
@@ -793,7 +793,7 @@ describe('Click through all steps', () => {
         if (body.image_requests[0].upload_request.type === 'aws') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -812,7 +812,7 @@ describe('Click through all steps', () => {
         } else if (body.image_requests[0].upload_request.type === 'gcp') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -831,7 +831,7 @@ describe('Click through all steps', () => {
         } else if (body.image_requests[0].upload_request.type === 'azure') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -852,7 +852,7 @@ describe('Click through all steps', () => {
         } else if (body.image_requests[0].image_type === 'vsphere-ova') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -869,7 +869,7 @@ describe('Click through all steps', () => {
         } else if (body.image_requests[0].image_type === 'guest-image') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -886,7 +886,7 @@ describe('Click through all steps', () => {
         } else if (body.image_requests[0].image_type === 'image-installer') {
           expect(body).toEqual({
             distribution: RHEL_8,
-            image_name: 'MyImageName',
+            image_name: 'my-image-name',
             image_requests: [
               {
                 architecture: 'x86_64',
