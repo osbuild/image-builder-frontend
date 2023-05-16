@@ -1,12 +1,12 @@
-FROM docker.io/node:16
+FROM node:18
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install
+WORKDIR /app
 
 COPY . .
 
+RUN npm ci
+
 EXPOSE 8002
-CMD [ "npm", "run", "prod-beta" ]
+EXPOSE 1337
+
+CMD [ "npm", "run", "devel" ]

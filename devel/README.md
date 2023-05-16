@@ -22,6 +22,7 @@ The folder structure should look like:
 ├── osbuild
 └── osbuild-composer
 ```
+
 Secondly redirect a few domains to localhost. One for each environment
 of cloud.redhat.com that exists. You only need the ones you will be
 developing against. If you are outside the Red Hat VPN, only `prod` is
@@ -60,19 +61,30 @@ The config variables for the Image Builder backend can be found [here](https://g
 
 ## Run
 
+To build the containers run the following command:
+
 ```bash
-docker-compose up --build
+docker compose build # (or docker-compose build)
 ```
 
+To run the containers:
+
+```bash
+docker compose up # (or docker-compose up)
+```
+
+Note: As per the [docker compose cli](https://docs.docker.com/compose/reference/) docs, the new syntax for running docker compose changed from
+`docker-compose` to `docker compose`
+
 Access the service through the GUI:
-[https://prod.foo.redhat.com:1337/beta/insights/image-builder](https://prod.foo.redhat.com:1337/beta/insights/image-builder), or
+[https://stage.foo.redhat.com:1337/beta/insights/image-builder](https://stage.foo.redhat.com:1337/beta/insights/image-builder), or
 directly through the API:
-[https://prod.foo.redhat.com:1337/docs/api/image-builder](https://prod.foo.redhat.com:1337/docs/api/image-builder).
+[https://stage.foo.redhat.com:1337/docs/api/image-builder](https://stage.foo.redhat.com:1337/docs/api/image-builder).
 
 The metrics containers are only launched when explicitly required. The command for this is below:
 
 ```bash
-docker-compose --profile metrics up
+docker compose --profile metrics up
 ```
 
 Access the Grafana dashboard on [https://localhost:3000](https://localhost:3000). The default username is `admin` and the password is set to `foobar`.
