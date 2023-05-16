@@ -111,6 +111,7 @@
     "lint:js": "eslint config src",
     "lint:js:fix": "eslint config src --fix",
     "lint:sass": "stylelint 'src/**/*.scss' --config .stylelintrc.json",
+    "devel": "webpack serve --config config/devel.webpack.config.js",
     "prod-beta": "BETA=true PROXY=true webpack serve --config config/dev.webpack.config.js",
     "prod-stable": "PROXY=true webpack serve --config config/dev.webpack.config.js",
     "stage-stable": "STAGE=true npm run prod-stable",
