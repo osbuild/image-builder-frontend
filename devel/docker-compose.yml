@@ -1,4 +1,4 @@
-version: '2.4'
+version: '3.9'
 services:
   composer:
     image: local/osbuild-composer
@@ -42,12 +42,12 @@ services:
       - MKNOD
       - SYS_ADMIN
       - NET_ADMIN
-    networks:
-      net:
-        ipv4_address: 172.31.0.20
     depends_on:
       - "composer"
     restart: on-failure
+    networks:
+      net:
+        ipv4_address: 172.31.0.20
   postgres:
     image: docker.io/postgres:10.5
     healthcheck:
@@ -68,6 +68,8 @@ services:
     build:
       context: ../../image-builder
       dockerfile: ./distribution/Dockerfile-ubi
+    ports:
+      - "8086:8086"
     healthcheck:
       test: [ "CMD", "curl", "localhost:8086/status" ]
       interval: 2s
@@ -94,15 +96,17 @@ services:
       - COMPOSER_CA_PATH=/etc/image-builder/ca-crt.pem
       - DISTRIBUTIONS_DIR=/app/distributions
       - QUOTA_FILE=/config/quotas.json
-    networks:
-      net:
-        ipv4_address: 172.31.0.40
     depends_on:
       - "composer"
       - "postgres"
     restart: on-failure
+    networks:
+      net:
+        ipv4_address: 172.31.0.40
   frontend:
     image: local/image-builder-frontend
+    ports:
+      - "1337:1337"
     build:
       context: ../../image-builder-frontend
       dockerfile: ./distribution/Dockerfile
@@ -111,27 +115,6 @@ services:
     networks:
       net:
         ipv4_address: 172.31.0.50
-  insightsproxy:
-    image: redhatinsights/insights-proxy:latest
-    security_opt:
-      - label=disable
-    environment:
-      - CUSTOM_CONF=true
-    volumes:
-      - ${SPANDX_CONFIG}:/config/spandx.config.js:Z
-    extra_hosts:
-      - "prod.foo.redhat.com:127.0.0.1"
-      - "qa.foo.redhat.com:127.0.0.1"
-      - "ci.foo.redhat.com:127.0.0.1"
-      - "stage.foo.redhat.com:127.0.0.1"
-    networks:
-      net:
-        ipv4_address: 172.31.0.60
-    ports:
-      - 1337:1337
-    depends_on:
-     - "backend"
-     - "frontend"
   prometheus:
     profiles: ["metrics"]
     image: prom/prometheus:latest
@@ -143,11 +126,11 @@ services:
       - ${CERT_DIR}/client-crt.pem:/etc/image-builder/client-crt.pem:z
       - ${CERT_DIR}/client-key.pem:/etc/image-builder/client-key.pem:z
     restart: unless-stopped
-    networks:
-      net:
-        ipv4_address: 172.31.0.70
     command:
       - "--config.file=/config/prometheus.yml"
+    networks:
+      net:
+        ipv4_address: 172.31.0.60
   grafana:
     profiles: ["metrics"]
     image: grafana/grafana:latest
@@ -156,11 +139,11 @@ services:
     volumes:
       - ./config/grafana:/etc/grafana/provisioning/
     restart: unless-stopped
-    networks:
-      net:
-        ipv4_address: 172.31.0.80
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=foobar
+    networks:
+      net:
+        ipv4_address: 172.31.0.70
   fauxauth:
     image: local/osbuild-fauxauth
     build:
@@ -173,7 +156,7 @@ services:
       - "8888:8888"
     networks:
       net:
-        ipv4_address: 172.31.0.90
+        ipv4_address: 172.31.0.80
 networks:
   net:
     ipam:
