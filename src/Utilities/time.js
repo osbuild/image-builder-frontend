@@ -6,8 +6,7 @@ export const timestampToDisplayString = (ts) => {
   }
 
   // get YYYY-MM-DD format
-  const date = ts.slice(0, 10);
-  const ms = Date.parse(date);
+  const ms = Date.parse(ts);
   const options = { month: 'short', day: 'numeric', year: 'numeric' };
   const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
   return tsDisplay;
