@@ -305,6 +305,26 @@ const ImagesTable = () => {
                     );
                   })}
               </TableComposable>
+              <Toolbar className="pf-u-mb-xl">
+                <ToolbarContent>
+                  <ToolbarItem
+                    variant="pagination"
+                    align={{ default: 'alignRight' }}
+                  >
+                    <Pagination
+                      variant={PaginationVariant.bottom}
+                      itemCount={composes.count}
+                      perPage={perPage}
+                      page={page}
+                      onSetPage={onSetPage}
+                      onPerPageSelect={onPerPageSelect}
+                      widgetId="compose-pagination-bottom"
+                      data-testid="images-pagination-bottom"
+                      isCompact
+                    />
+                  </ToolbarItem>
+                </ToolbarContent>
+              </Toolbar>
             </Tab>
             <Tab
               eventKey={1}
@@ -318,26 +338,6 @@ const ImagesTable = () => {
               />
             </Tab>
           </Tabs>
-          <Toolbar className="pf-u-mb-xl">
-            <ToolbarContent>
-              <ToolbarItem
-                variant="pagination"
-                align={{ default: 'alignRight' }}
-              >
-                <Pagination
-                  variant={PaginationVariant.bottom}
-                  itemCount={composes.count}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination-bottom"
-                  data-testid="images-pagination-bottom"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
         </React.Fragment>
       )}
     </React.Fragment>
