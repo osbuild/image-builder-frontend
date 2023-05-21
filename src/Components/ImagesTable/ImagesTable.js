@@ -26,6 +26,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
+import { useFlag } from '@unleash/proxy-client-react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -51,6 +52,7 @@ const ImagesTable = () => {
   const [perPage, setPerPage] = useState(10);
   const [activeTabKey, setActiveTabkey] = useState(0);
   const handleTabClick = (_event, tabIndex) => setActiveTabkey(tabIndex);
+  const edgeParityFlag = useFlag('edgeParity.image-list');
 
   const [expandedComposeIds, setExpandedComposeIds] = useState([]);
   const isExpanded = (compose) => expandedComposeIds.includes(compose.id);
@@ -306,17 +308,19 @@ const ImagesTable = () => {
                   })}
               </TableComposable>
             </Tab>
-            <Tab
-              eventKey={1}
-              title={<TabTitleText>Immutable - (OSTree)</TabTitleText>}
-            >
-              <AsyncComponent
-                appName="edge"
-                module="./Images"
-                navigateProp={useNavigate}
-                locationProp={useLocation}
-              />
-            </Tab>
+            {edgeParityFlag ? (
+              <Tab
+                eventKey={1}
+                title={<TabTitleText>Immutable - (OSTree)</TabTitleText>}
+              >
+                <AsyncComponent
+                  appName="edge"
+                  module="./Images"
+                  navigateProp={useNavigate}
+                  locationProp={useLocation}
+                />
+              </Tab>
+            ) : null}
           </Tabs>
           <Toolbar className="pf-u-mb-xl">
             <ToolbarContent>
