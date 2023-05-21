@@ -6,6 +6,9 @@ import {
   Button,
   ExpandableSection,
   Popover,
+  Tabs,
+  Tab,
+  TabTitleText,
   Text,
   TextContent,
 } from '@patternfly/react-core';
@@ -20,8 +23,9 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
 
@@ -36,6 +40,8 @@ export const LandingPage = () => {
   const { quickStarts } = useChrome();
   const { isBeta } = useGetEnvironment();
   const activateQuickstart = (qs) => () => quickStarts.activateQuickstart(qs);
+  const [activeTabKey, setActiveTabkey] = useState(0);
+  const handleTabClick = (_event, tabIndex) => setActiveTabkey(tabIndex);
 
   return (
     <React.Fragment>
@@ -94,92 +100,116 @@ export const LandingPage = () => {
           </Button>
         </Popover>
       </PageHeader>
-      <section className="pf-l-page__main-section pf-c-page__main-section">
-        {!isBeta() && showBetaAlert && (
-          <Alert
-            className="pf-u-mb-xl"
-            isInline
-            variant="default"
-            title="Try new features in our Preview environment."
-            actionClose={
-              <AlertActionCloseButton onClose={() => setShowBetaAlert(false)} />
-            }
-            actionLinks={
-              <Button
+      <Tabs
+        className="pf-u-ml-md"
+        activeKey={activeTabKey}
+        onSelect={handleTabClick}
+      >
+        <Tab
+          eventKey={0}
+          title={<TabTitleText>Traditional (RPM - DNF )</TabTitleText>}
+        >
+          <section className="pf-l-page__main-section pf-c-page__main-section">
+            {!isBeta() && showBetaAlert && (
+              <Alert
+                className="pf-u-mb-xl"
                 isInline
-                component="a"
-                variant="link"
-                href="/preview/insights/image-builder/landing"
+                variant="default"
+                title="Try new features in our Preview environment."
+                actionClose={
+                  <AlertActionCloseButton
+                    onClose={() => setShowBetaAlert(false)}
+                  />
+                }
+                actionLinks={
+                  <Button
+                    isInline
+                    component="a"
+                    variant="link"
+                    href="/preview/insights/image-builder/landing"
+                  >
+                    Enter Preview environment
+                  </Button>
+                }
               >
-                Enter Preview environment
-              </Button>
-            }
-          >
-            <p>
-              Launch Amazon Web Services or Microsoft Azure hosts to the cloud
-              from the console.
-            </p>
-            <p>
-              Link custom repositories and build any supported image with custom
-              content.
-            </p>
-          </Alert>
-        )}
-        {isBeta() && (
-          <ExpandableSection
-            className="pf-m-light pf-u-mb-xl expand-section"
-            toggleText="Help get started with Preview features"
-            onToggle={setShowHint}
-            isExpanded={showHint}
-            displaySize="large"
-          >
-            <p className="pf-u-pb-sm">
-              For help getting started, access the quick starts for our Preview
-              features.
-            </p>
-            <p className="pf-u-pt-sm">
-              <Button
-                icon={<ArrowRightIcon />}
-                iconPosition="right"
-                variant="link"
-                isInline
-                component="a"
-                onClick={activateQuickstart('insights-launch-aws')}
-                className="pf-u-font-weight-bold"
+                <p>
+                  Launch Amazon Web Services or Microsoft Azure hosts to the
+                  cloud from the console.
+                </p>
+                <p>
+                  Link custom repositories and build any supported image with
+                  custom content.
+                </p>
+              </Alert>
+            )}
+            {isBeta() && (
+              <ExpandableSection
+                className="pf-m-light pf-u-mb-xl expand-section"
+                toggleText="Help get started with Preview features"
+                onToggle={setShowHint}
+                isExpanded={showHint}
+                displaySize="large"
               >
-                Launch an AWS Image
-              </Button>
-            </p>
-            <p className="pf-u-pt-sm">
-              <Button
-                icon={<ArrowRightIcon />}
-                iconPosition="right"
-                variant="link"
-                isInline
-                component="a"
-                onClick={activateQuickstart('insights-launch-azure')}
-                className="pf-u-font-weight-bold"
-              >
-                Launch an Azure Image
-              </Button>
-            </p>
-            <p className="pf-u-pt-sm">
-              <Button
-                icon={<ArrowRightIcon />}
-                iconPosition="right"
-                variant="link"
-                isInline
-                component="a"
-                onClick={activateQuickstart('insights-custom-repos')}
-                className="pf-u-font-weight-bold"
-              >
-                Build an Image with Custom Content
-              </Button>
-            </p>
-          </ExpandableSection>
-        )}
-        <ImagesTable />
-      </section>
+                <p className="pf-u-pb-sm">
+                  For help getting started, access the quick starts for our
+                  Preview features.
+                </p>
+                <p className="pf-u-pt-sm">
+                  <Button
+                    icon={<ArrowRightIcon />}
+                    iconPosition="right"
+                    variant="link"
+                    isInline
+                    component="a"
+                    onClick={activateQuickstart('insights-launch-aws')}
+                    className="pf-u-font-weight-bold"
+                  >
+                    Launch an AWS Image
+                  </Button>
+                </p>
+                <p className="pf-u-pt-sm">
+                  <Button
+                    icon={<ArrowRightIcon />}
+                    iconPosition="right"
+                    variant="link"
+                    isInline
+                    component="a"
+                    onClick={activateQuickstart('insights-launch-azure')}
+                    className="pf-u-font-weight-bold"
+                  >
+                    Launch an Azure Image
+                  </Button>
+                </p>
+                <p className="pf-u-pt-sm">
+                  <Button
+                    icon={<ArrowRightIcon />}
+                    iconPosition="right"
+                    variant="link"
+                    isInline
+                    component="a"
+                    onClick={activateQuickstart('insights-custom-repos')}
+                    className="pf-u-font-weight-bold"
+                  >
+                    Build an Image with Custom Content
+                  </Button>
+                </p>
+              </ExpandableSection>
+            )}
+            <ImagesTable />
+          </section>
+        </Tab>
+        <Tab
+          eventKey={1}
+          title={<TabTitleText>Immutable - (OSTree)</TabTitleText>}
+        >
+          <AsyncComponent
+            appName="edge"
+            module="./Images"
+            navigateProp={useNavigate}
+            locationProp={useLocation}
+          />
+        </Tab>
+      </Tabs>
       <Outlet />
     </React.Fragment>
   );

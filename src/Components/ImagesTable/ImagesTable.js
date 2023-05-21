@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
-
-import { Tabs, Tab, TabTitleText }from '@patternfly/react-core';
 import {
   EmptyState,
   EmptyStateBody,
@@ -29,9 +26,7 @@ import {
 } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-
+import { Link, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
 import ClonesTable from './ClonesTable';
@@ -53,8 +48,6 @@ const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
-  const [activeTabKey, setActiveTabkey] = useState(0);
-  const handleTabClick = (_event, tabIndex) => setActiveTabkey(tabIndex);
   const [expandedComposeIds, setExpandedComposeIds] = useState([]);
   const isExpanded = (compose) => expandedComposeIds.includes(compose.id);
 
@@ -215,111 +208,90 @@ const ImagesTable = () => {
               </ToolbarItem>
             </ToolbarContent>
           </Toolbar>
-          <Tabs
-                className="pf-u-ml-md"
-                activeKey={activeTabKey}
-                onSelect={handleTabClick}
-            >
-               
-          <Tab eventKey={0} title={<TabTitleText>EDGE</TabTitleText>}>
-            <AsyncComponent
-              appName="edge"
-              module="./Images"
-              // historyProp={useHistory}
-              navigateProp={useNavigate}
-              locationProp={useLocation}
-            /> 
-          </Tab>
-
-          <Tab eventKey={1} title={<TabTitleText>Image Builder</TabTitleText>}>
-            <TableComposable variant="compact" data-testid="images-table">
-              <Thead>
-                <Tr>
-                  <Th />
-                  <Th>Image name</Th>
-                  <Th>Created/Updated</Th>
-                  <Th>Release</Th>
-                  <Th>Target</Th>
-                  <Th>Status</Th>
-                  <Th>Instance</Th>
-                  <Th />
-                </Tr>
-              </Thead>
-              {composes.allIds
-                .slice(itemsStartInclusive, itemsEndExclusive)
-                .map((id, rowIndex) => {
-                  const compose = composes.byId[id];
-                  return (
-                    <Tbody key={id} isExpanded={isExpanded(compose)}>
-                      <Tr className="no-bottom-border">
-                        <Td
-                          expand={{
-                            rowIndex,
-                            isExpanded: isExpanded(compose),
-                            onToggle: () =>
-                              handleToggle(compose, !isExpanded(compose)),
-                          }}
+          <TableComposable variant="compact" data-testid="images-table">
+            <Thead>
+              <Tr>
+                <Th />
+                <Th>Image name</Th>
+                <Th>Created/Updated</Th>
+                <Th>Release</Th>
+                <Th>Target</Th>
+                <Th>Status</Th>
+                <Th>Instance</Th>
+                <Th />
+              </Tr>
+            </Thead>
+            {composes.allIds
+              .slice(itemsStartInclusive, itemsEndExclusive)
+              .map((id, rowIndex) => {
+                const compose = composes.byId[id];
+                return (
+                  <Tbody key={id} isExpanded={isExpanded(compose)}>
+                    <Tr className="no-bottom-border">
+                      <Td
+                        expand={{
+                          rowIndex,
+                          isExpanded: isExpanded(compose),
+                          onToggle: () =>
+                            handleToggle(compose, !isExpanded(compose)),
+                        }}
+                      />
+                      <Td dataLabel="Image name">
+                        {compose.request.image_name || id}
+                      </Td>
+                      <Td dataLabel="Created">
+                        {timestampToDisplayString(compose.created_at)}
+                      </Td>
+                      <Td dataLabel="Release">
+                        <Release release={compose.request.distribution} />
+                      </Td>
+                      <Td dataLabel="Target">
+                        <Target composeId={id} />
+                      </Td>
+                      <Td dataLabel="Status">
+                        <ImageBuildStatus
+                          imageId={id}
+                          isImagesTableRow={true}
+                          imageStatus={compose.image_status}
                         />
-                        <Td dataLabel="Image name">
-                          {compose.request.image_name || id}
-                        </Td>
-                        <Td dataLabel="Created">
-                          {timestampToDisplayString(compose.created_at)}
-                        </Td>
-                        <Td dataLabel="Release">
-                          <Release release={compose.request.distribution} />
-                        </Td>
-                        <Td dataLabel="Target">
-                          <Target composeId={id} />
-                        </Td>
-                        <Td dataLabel="Status">
-                          <ImageBuildStatus
-                            imageId={id}
-                            isImagesTableRow={true}
-                            imageStatus={compose.image_status}
-                          />
-                        </Td>
-                        <Td dataLabel="Instance">
-                          <ImageLink
-                            imageId={id}
-                            isExpired={
-                              hoursToExpiration(compose.created_at) >=
-                              AWS_S3_EXPIRATION_TIME_IN_HOURS
-                                ? true
-                                : false
-                            }
-                          />
-                        </Td>
-                        <Td>
-                          {compose.request.image_requests[0].upload_request
-                            .type === 'aws' ? (
-                            <ActionsColumn items={awsActions(compose)} />
-                          ) : (
-                            <ActionsColumn items={actions(compose)} />
-                          )}
-                        </Td>
-                      </Tr>
-                      <Tr isExpanded={isExpanded(compose)}>
-                        <Td colSpan={8}>
-                          {compose.request.image_requests[0].upload_request
-                            .type === 'aws' ? (
-                            <ClonesTable composeId={compose.id} />
-                          ) : (
-                            <ExpandableRowContent>
-                              <strong>UUID</strong>
-                              <div>{id}</div>
-                            </ExpandableRowContent>
-                          )}
-                        </Td>
-                      </Tr>
-                    </Tbody>
-                  );
-                })}
-            </TableComposable>
-          </Tab> 
-                
-                           
-          </Tabs>
+                      </Td>
+                      <Td dataLabel="Instance">
+                        <ImageLink
+                          imageId={id}
+                          isExpired={
+                            hoursToExpiration(compose.created_at) >=
+                            AWS_S3_EXPIRATION_TIME_IN_HOURS
+                              ? true
+                              : false
+                          }
+                        />
+                      </Td>
+                      <Td>
+                        {compose.request.image_requests[0].upload_request
+                          .type === 'aws' ? (
+                          <ActionsColumn items={awsActions(compose)} />
+                        ) : (
+                          <ActionsColumn items={actions(compose)} />
+                        )}
+                      </Td>
+                    </Tr>
+                    <Tr isExpanded={isExpanded(compose)}>
+                      <Td colSpan={8}>
+                        {compose.request.image_requests[0].upload_request
+                          .type === 'aws' ? (
+                          <ClonesTable composeId={compose.id} />
+                        ) : (
+                          <ExpandableRowContent>
+                            <strong>UUID</strong>
+                            <div>{id}</div>
+                          </ExpandableRowContent>
+                        )}
+                      </Td>
+                    </Tr>
+                  </Tbody>
+                );
+              })}
+          </TableComposable>
           <Toolbar className="pf-u-mb-xl">
             <ToolbarContent>
               <ToolbarItem
