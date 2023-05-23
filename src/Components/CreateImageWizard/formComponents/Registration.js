@@ -166,7 +166,7 @@ const Registration = ({ label, ...props }) => {
             data-testid="registration-radio-now"
             name="register-system"
             id="register-system-now"
-            checked={registerSystem.startsWith('register-now')}
+            isChecked={registerSystem.startsWith('register-now')}
             onChange={() => {
               change(input.name, 'register-now-rhc');
             }}
@@ -240,7 +240,7 @@ const Registration = ({ label, ...props }) => {
             data-testid="registration-radio-later"
             id="register-system-later"
             label="Register later"
-            checked={registerSystem === 'register-later'}
+            isChecked={registerSystem === 'register-later'}
             onChange={() => {
               setShowOptions(false);
               change(input.name, 'register-later');
