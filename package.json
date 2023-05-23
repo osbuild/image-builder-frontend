@@ -49,7 +49,7 @@
       "jest-canvas-mock"
     ],
     "setupFilesAfterEnv": [
-      "./jest.setup.js"
+      "./src/test/jest.setup.js"
     ]
   },
   "devDependencies": {
