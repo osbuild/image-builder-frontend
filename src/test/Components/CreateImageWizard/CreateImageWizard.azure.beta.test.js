@@ -6,7 +6,11 @@ import { rest } from 'msw';
 
 import { PROVISIONING_API } from '../../../constants.js';
 import { server } from '../../mocks/server.js';
-import { renderWithReduxRouter } from '../../testUtils';
+import {
+  clickNext,
+  getNextButton,
+  renderWithReduxRouter,
+} from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -28,13 +32,8 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 }));
 
 describe('Step Upload to Azure', () => {
-  const getNextButton = () => {
-    const next = screen.getByRole('button', { name: /Next/ });
-    return next;
-  };
-
   const getSourceDropdown = async () => {
-    const sourceDropdown = screen.getByRole('textbox', {
+    const sourceDropdown = await screen.findByRole('textbox', {
       name: /select source/i,
     });
     // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
@@ -59,7 +58,7 @@ describe('Step Upload to Azure', () => {
     const azureTile = screen.getByTestId('upload-azure');
     azureTile.click();
 
-    getNextButton().click();
+    await clickNext();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Target environment - Microsoft Azure'
@@ -67,15 +66,15 @@ describe('Step Upload to Azure', () => {
   };
 
   test('azure step basics works', async () => {
-    setUp();
+    await setUp();
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(screen.getByTestId('azure-radio-source')).toBeChecked();
 
     await user.click(screen.getByTestId('azure-radio-manual'));
     expect(screen.getByTestId('azure-radio-manual')).toBeChecked();
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
     await user.type(
       screen.getByTestId('azure-tenant-id-manual'),
@@ -90,11 +89,11 @@ describe('Step Upload to Azure', () => {
       'testGroup'
     );
 
-    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
 
     screen.getByTestId('azure-radio-source').click();
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
     const sourceDropdown = await getSourceDropdown();
 
@@ -121,7 +120,7 @@ describe('Step Upload to Azure', () => {
     expect(groups).toHaveLength(2);
     await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
 
-    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
   }, 10000);
 
   test('handles change of selected Source', async () => {

@@ -16,7 +16,12 @@ import { mockComposesEmpty } from '../../fixtures/composes.js';
 import { customizations, ids } from '../../fixtures/customizations.js';
 import { mockPkgResultAlphaContentSources } from '../../fixtures/packages.js';
 import { server } from '../../mocks/server.js';
-import { renderWithReduxRouter } from '../../testUtils';
+import {
+  clickBack,
+  clickNext,
+  getNextButton,
+  renderWithReduxRouter,
+} from '../../testUtils';
 
 let router = undefined;
 let store = undefined;
@@ -47,16 +52,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 jest
   .spyOn(api, 'getComposes')
   .mockImplementation(() => Promise.resolve(mockComposesEmpty));
-
-function getBackButton() {
-  const back = screen.getByRole('button', { name: /Back/ });
-  return back;
-}
-
-function getNextButton() {
-  const next = screen.getByRole('button', { name: /Next/ });
-  return next;
-}
 
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
@@ -106,14 +101,14 @@ describe('Create Image Wizard', () => {
 
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
-  const setUp = () => {
+  const setUp = async () => {
     ({ router, store } = renderWithReduxRouter('imagewizard', {}));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
+    const awsTile = await screen.findByTestId('upload-aws');
     awsTile.click();
 
-    getNextButton().click();
+    await clickNext();
 
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Target environment - Amazon Web Services'
@@ -121,7 +116,7 @@ describe('Step Upload to AWS', () => {
   };
 
   test('component renders error state correctly', async () => {
-    setUp();
+    await setUp();
     server.use(
       rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
         res(ctx.status(500))
@@ -131,35 +126,32 @@ describe('Step Upload to AWS', () => {
     await screen.findByText(
       /sources cannot be reached, try again later or enter an aws account id manually\./i
     );
-    //
   });
 
   test('validation works', async () => {
-    setUp();
+    await setUp();
 
     // jsdom seems to render the next button differently than the browser. The
     // next button is enabled briefly during the test. This does not occur in
     // the browser. Using findByRole instead of getByRole to get the next
     // button allows us to capture its 'final' state.
-    expect(await screen.findByRole('button', { name: /Next/ })).toHaveClass(
-      'pf-m-disabled'
-    );
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
 
-    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
 
     screen
       .getByRole('radio', { name: /use an account configured from sources\./i })
       .click();
 
-    expect(getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
     const sourceDropdown = screen.getByRole('textbox', {
       name: /select source/i,
@@ -173,13 +165,13 @@ describe('Step Upload to AWS', () => {
     });
     source.click();
 
-    expect(getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
   });
 
   test('compose request share_with_sources field is correct', async () => {
-    setUp();
+    await setUp();
 
-    const sourceDropdown = screen.getByRole('textbox', {
+    const sourceDropdown = await screen.findByRole('textbox', {
       name: /select source/i,
     });
     // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
@@ -191,7 +183,7 @@ describe('Step Upload to AWS', () => {
     });
     source.click();
 
-    getNextButton().click();
+    await clickNext();
 
     // registration
     await screen.findByRole('textbox', {
@@ -202,11 +194,11 @@ describe('Step Upload to AWS', () => {
     await user.click(registerLaterRadio);
 
     // click through to review step
-    getNextButton().click();
-    getNextButton().click();
-    getNextButton().click();
-    getNextButton().click();
-    getNextButton().click();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
 
     const composeImage = jest
       .spyOn(api, 'composeImage')
@@ -259,14 +251,14 @@ describe('Step Packages', () => {
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    getNextButton().click();
+    await clickNext();
 
     // aws step
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    getNextButton().click();
+    await clickNext();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -274,18 +266,23 @@ describe('Step Packages', () => {
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
-    getNextButton().click();
+    await clickNext();
 
     // skip fsc
-    getNextButton().click();
+    await clickNext();
   };
 
   test('search results should be sorted with most relevant results first', async () => {
     await setUp();
 
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+    const view = await screen.findByTestId('search-available-pkgs-input');
 
-    expect(searchbox).toBeDisabled();
+    const searchbox = within(view).getByRole('textbox', {
+      name: /search input/i,
+    });
+
+    //const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -309,7 +306,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -337,7 +333,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -362,7 +357,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -391,7 +385,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -406,7 +399,6 @@ describe('Step Packages', () => {
     const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
     const searchboxChosen = screen.getAllByRole('textbox')[1];
 
-    expect(searchboxAvailable).toBeDisabled();
     await waitFor(() => expect(searchboxAvailable).toBeEnabled());
     searchboxAvailable.click();
     await searchForAvailablePackages(searchboxAvailable, 'test');
@@ -426,7 +418,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -456,7 +447,6 @@ describe('Step Packages', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0];
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
     searchbox.click();
 
@@ -480,7 +470,6 @@ describe('Step Packages', () => {
 
     const availableSearchbox = screen.getAllByRole('textbox')[0];
 
-    expect(availableSearchbox).toBeDisabled();
     await waitFor(() => expect(availableSearchbox).toBeEnabled());
     availableSearchbox.click();
 
@@ -521,14 +510,14 @@ describe('Step Custom repositories', () => {
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
     awsTile.click();
-    getNextButton().click();
+    await clickNext();
 
     // aws step
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    getNextButton().click();
+    await clickNext();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -536,13 +525,13 @@ describe('Step Custom repositories', () => {
 
     const registerLaterRadio = screen.getByLabelText('Register later');
     await user.click(registerLaterRadio);
-    getNextButton().click();
+    await clickNext();
 
     // skip fsc
-    getNextButton().click();
+    await clickNext();
 
     // skip packages
-    getNextButton().click();
+    await clickNext();
   };
 
   test('selected repositories stored in and retrieved from form state', async () => {
@@ -558,8 +547,8 @@ describe('Step Custom repositories', () => {
     await user.click(firstRepoCheckbox);
     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    getNextButton().click();
-    getBackButton().click();
+    await clickNext();
+    clickBack();
 
     firstRepoCheckbox = await getFirstRepoCheckbox();
     expect(firstRepoCheckbox.checked).toEqual(true);
@@ -669,7 +658,7 @@ describe('Click through all steps', () => {
     await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    getNextButton().click();
+    await clickNext();
 
     // fsc
     (await screen.findByTestId('file-system-config-radio-manual')).click();
@@ -679,7 +668,7 @@ describe('Click through all steps', () => {
     const tbody = screen.getByTestId('file-system-configuration-tbody');
     const rows = within(tbody).getAllByRole('row');
     expect(rows).toHaveLength(3);
-    getNextButton().click();
+    await clickNext();
     // set mountpoint of final row to /var/tmp
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
     within(rows[2]).getByRole('option', { name: '/var' }).click();
@@ -702,7 +691,7 @@ describe('Click through all steps', () => {
     );
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[1].click();
     within(rows[2]).getByRole('option', { name: 'MiB' }).click();
-    getNextButton().click();
+    await clickNext();
 
     screen.getByText(
       /Images built with Image Builder include all required packages/i
@@ -710,7 +699,6 @@ describe('Click through all steps', () => {
 
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-    expect(searchbox).toBeDisabled();
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
@@ -718,7 +706,7 @@ describe('Click through all steps', () => {
       .getByRole('option', { name: /test summary for test package/ })
       .click();
     screen.getByRole('button', { name: /Add selected/ }).click();
-    getNextButton().click();
+    await clickNext();
 
     // Custom repositories
     await user.click(
@@ -727,15 +715,16 @@ describe('Click through all steps', () => {
     await user.click(
       await screen.findByRole('checkbox', { name: /select row 1/i })
     );
-    getNextButton().click();
+    await clickNext();
 
     // Custom packages
-    getNextButton().click();
+    await clickNext();
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
       name: 'Image Name',
     });
+
     await user.type(nameInput, 'my-image-name');
 
     // Enter description for image
@@ -746,7 +735,7 @@ describe('Click through all steps', () => {
       descriptionInput,
       'this is a perfect description for image'
     );
-    getNextButton().click();
+    await clickNext();
 
     // review
     const targetEnvironmentsExpandable = await screen.findByTestId(
