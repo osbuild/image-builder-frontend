@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { configureStore } from '@reduxjs/toolkit';
-import { render } from '@testing-library/react';
+import { screen, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
@@ -52,4 +53,29 @@ export const renderWithProvider = (
   return render(<Provider store={store}>{component}</Provider>, {
     container: container,
   });
+};
+
+export const clickBack = async () => {
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('button', { name: /Back/ }));
+};
+
+export const clickNext = async () => {
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('button', { name: /Next/ }));
+};
+
+export const clickCancel = async () => {
+  const user = userEvent.setup();
+  await user.click(screen.getByRole('button', { name: /Cancel/ }));
+};
+
+export const getNextButton = async () => {
+  const next = await screen.findByRole('button', { name: /Next/ });
+  return next;
+};
+
+export const verifyCancelButton = async (router) => {
+  await clickCancel();
+  expect(router.state.location.pathname).toBe('/insights/image-builder');
 };
