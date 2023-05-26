@@ -11,17 +11,16 @@ import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
 import { RHEL_8 } from '../../../constants.js';
+import { mockComposesEmpty } from '../../fixtures/composes.js';
+import {
+  mockPkgResultAlpha,
+  mockPkgResultAll,
+  mockPkgResultPartial,
+} from '../../fixtures/packages.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
 let store = undefined;
 let router = undefined;
-
-const mockComposes = {
-  meta: {
-    count: 0,
-  },
-  data: [],
-};
 
 // Mocking getComposes is necessary because in many tests we call navigate()
 // to navigate to the images table (via useNavigate hook), which will in turn
@@ -29,7 +28,7 @@ const mockComposes = {
 // being unable to resolve that endpoint.
 jest
   .spyOn(api, 'getComposes')
-  .mockImplementation(() => Promise.resolve(mockComposes));
+  .mockImplementation(() => Promise.resolve(mockComposesEmpty));
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -69,52 +68,6 @@ function verifyCancelButton(cancel, router) {
   cancel.click();
   expect(router.state.location.pathname).toBe('/insights/image-builder');
 }
-
-const mockPkgResultAlpha = {
-  meta: { count: 3 },
-  links: { first: '', last: '' },
-  data: [
-    {
-      name: 'lib-test',
-      summary: 'lib-test package summary',
-      version: '1.0',
-    },
-    {
-      name: 'Z-test',
-      summary: 'Z-test package summary',
-      version: '1.0',
-    },
-    {
-      name: 'test',
-      summary: 'summary for test package',
-      version: '1.0',
-    },
-  ],
-};
-
-const mockPkgResultPartial = {
-  meta: { count: 132 },
-  links: { first: '', last: '' },
-  data: new Array(100).fill().map((_, i) => {
-    return {
-      name: 'testPkg-' + i,
-      summary: 'test package summary',
-      version: '1.0',
-    };
-  }),
-};
-
-const mockPkgResultAll = {
-  meta: { count: 132 },
-  links: { first: '', last: '' },
-  data: new Array(132).fill().map((_, i) => {
-    return {
-      name: 'testPkg-' + i,
-      summary: 'test package summary',
-      version: '1.0',
-    };
-  }),
-};
 
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
