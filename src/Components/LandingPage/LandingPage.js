@@ -200,7 +200,7 @@ export const LandingPage = () => {
           >
             <Tab
               eventKey={0}
-              title={<TabTitleText>Traditional (RPM - DNF )</TabTitleText>}
+              title={<TabTitleText>Traditional (RPM - DNF)</TabTitleText>}
             >
               {imageBuilderTab}
             </Tab>
