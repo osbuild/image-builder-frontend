@@ -68,6 +68,7 @@
     "babel-jest": "29.5.0",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-transform-imports": "2.0.0",
+    "copy-webpack-plugin": "^11.0.0",
     "css-loader": "6.7.3",
     "eslint": "8.41.0",
     "eslint-plugin-import": "2.27.5",
@@ -102,6 +103,7 @@
     "prod-stable": "PROXY=true webpack serve --config config/dev.webpack.config.js",
     "stage-stable": "STAGE=true npm run prod-stable",
     "stage-beta": "STAGE=true npm run prod-beta",
+    "stage-beta:msw": "MSW=TRUE npm run stage-beta",
     "test": "TZ=UTC jest --verbose --no-cache",
     "test:single": "jest --verbose -w 1",
     "build": "webpack --config config/prod.webpack.config.js",
@@ -109,5 +111,8 @@
   },
   "insights": {
     "appname": "image-builder"
+  },
+  "msw": {
+    "workerDirectory": "src"
   }
 }
