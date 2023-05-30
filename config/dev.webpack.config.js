@@ -15,6 +15,26 @@ const webpackProxy = {
     '/beta/insights/image-builder',
     '/preview/insights/image-builder',
   ],
+  routes: {
+    ...(process.env.CONFIG_PORT && {
+      [`${process.env.BETA ? '/beta' : ''}/config`]: {
+        host: `http://localhost:${process.env.CONFIG_PORT}`,
+      },
+    }),
+    ...(process.env.LOCAL_API && {
+      ...(process.env.LOCAL_API.split(',') || []).reduce((acc, curr) => {
+        const [appName, appConfig] = (curr || '').split(':');
+        const [appPort = 8003, protocol = 'http'] = appConfig.split('~');
+        return {
+          ...acc,
+          [`/apps/${appName}`]: { host: `${protocol}://localhost:${appPort}` },
+          [`/beta/apps/${appName}`]: {
+            host: `${protocol}://localhost:${appPort}`,
+          },
+        };
+      }, {}),
+    }),
+  },
 };
 
 const { config: webpackConfig, plugins } = config({
@@ -55,7 +75,7 @@ if (process.env.MSW) {
   will become its default scope. Setting the Service-Worker-Allowed header to
   '/' allows the worker's scope to be expanded to the root route '/'.
 
-  The default webpackConfig for stage does not contain any headers. 
+  The default webpackConfig for stage does not contain any headers.
 
   Caution: The default webpackConfig for prod *does* contain headers, so this
   code will need to be modified if using MSW in prod-beta or prod-stable so that
