@@ -18,6 +18,11 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => jest.fn(),
+  useFlag: jest.fn((flag) => (flag === 'edgeParity.image-list' ? false : true)),
+}));
+
 describe('Landing Page', () => {
   test('renders page heading', async () => {
     renderWithReduxRouter('', {});
