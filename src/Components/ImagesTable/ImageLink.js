@@ -21,6 +21,8 @@ const getImageProvider = ({ imageType }) => {
       return 'aws';
     case 'azure':
       return 'azure';
+    case 'gcp':
+      return 'gcp';
     default:
       //TODO check with Provisioning: what if imageType is not 'aws', 'ami', or 'azure'?
       return 'aws';
@@ -97,7 +99,7 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const { initialized: chromeInitialized } = useChrome();
   const { isBeta } = useGetEnvironment();
   const azureFeatureFlag = useFlag('provisioning.azure');
-
+  const gcpFeatureFlag = useFlag('provisioning.gcp');
   const scalprum = useScalprum();
   const hasProvisioning =
     chromeInitialized && scalprum.config?.provisioning && isBeta();
@@ -111,6 +113,8 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
         return true;
       case 'azure':
         return !!azureFeatureFlag;
+      case 'gcp':
+        return !!gcpFeatureFlag;
       default:
         return false;
     }
