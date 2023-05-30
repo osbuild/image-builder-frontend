@@ -22,14 +22,14 @@ export const mockArchitecturesByDistro = (distro) => {
         ],
       },
     ];
-  } else if (distro === 'rhel-87') {
+  } else if (distro === 'rhel-88') {
     return [
       {
         arch: 'x86_64',
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel8/8.7/x86_64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel8/8.8/x86_64/baseos/os',
             rhsm: true,
           },
         ],
@@ -39,7 +39,7 @@ export const mockArchitecturesByDistro = (distro) => {
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel8/8.7/aarch64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel8/8.8/aarch64/baseos/os',
             rhsm: true,
           },
         ],
