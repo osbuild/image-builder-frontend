@@ -40,14 +40,14 @@ export const LandingPage = () => {
   return (
     <React.Fragment>
       <PageHeader>
-        <PageHeaderTitle className="title" title="Image Builder" />
+        <PageHeaderTitle className="title" title="Images" />
         <Popover
-          headerContent={'About Image Builder'}
+          headerContent={'About Images'}
           bodyContent={
             <TextContent>
               <Text>
-                Image Builder is a service that allows you to create RHEL images
-                and push them to cloud environments.
+                Images is a service that allows you to create RHEL images and
+                push them to cloud environments.
               </Text>
               <DocumentationButton />
             </TextContent>
