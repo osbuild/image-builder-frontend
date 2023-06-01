@@ -9,14 +9,10 @@ import {
   Text,
   TextContent,
 } from '@patternfly/react-core';
-import {
-  ArrowRightIcon,
-  HelpIcon,
-  CodeBranchIcon,
-  ExternalLinkAltIcon,
-} from '@patternfly/react-icons';
+import { ArrowRightIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
+  OpenSourceBadge,
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
@@ -61,38 +57,7 @@ export const LandingPage = () => {
             <HelpIcon />
           </Button>
         </Popover>
-        <Popover
-          headerContent={'About open source'}
-          bodyContent={
-            <TextContent>
-              <Text>
-                This service is open source, so all of its code is inspectable.
-                Explore repositories to view and contribute to the source code.
-              </Text>
-              <Button
-                component="a"
-                target="_blank"
-                variant="link"
-                icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
-                isInline
-                href={
-                  'https://www.osbuild.org/guides/image-builder-service/architecture.html'
-                }
-              >
-                Repositories
-              </Button>
-            </TextContent>
-          }
-        >
-          <Button
-            variant="plain"
-            aria-label="About Open Services"
-            className="pf-u-pl-sm header-button"
-          >
-            <CodeBranchIcon />
-          </Button>
-        </Popover>
+        <OpenSourceBadge repositoriesURL="https://www.osbuild.org/guides/image-builder-service/architecture.html" />
       </PageHeader>
       <section className="pf-l-page__main-section pf-c-page__main-section">
         {!isBeta() && showBetaAlert && (
