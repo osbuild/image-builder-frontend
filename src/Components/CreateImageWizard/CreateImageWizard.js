@@ -263,49 +263,6 @@ const parseSizeUnit = (bytesize) => {
   return [size, unit];
 };
 
-const getDistributionRepoUrls = (distributionInformation) => {
-  const filteredArchx86_64 = distributionInformation.find((info) => {
-    return info.arch === 'x86_64';
-  });
-  const mapped = filteredArchx86_64.repositories.map((repo) => repo.baseurl);
-  return mapped;
-};
-
-const getPackageDescription = async (
-  release,
-  arch,
-  repoUrls,
-  packageName,
-  isBeta
-) => {
-  let pack;
-  // if the env is stage beta then use content-sources api
-  // else use image-builder api
-  if (isBeta) {
-    const data = await api.getPackagesContentSources(repoUrls, packageName);
-    pack = data.find((pack) => packageName === pack.name);
-  } else {
-    const args = [release, arch, packageName];
-    const response = await api.getPackages(...args);
-    let { data } = response;
-    const { meta } = response;
-    // the package should be found in the 0 index
-    // if not then fetch all package matches and search for the package
-    if (data[0]?.name === packageName) {
-      pack = data[0];
-    } else {
-      if (data?.length !== meta.count) {
-        ({ data } = await api.getPackages(...args, meta.count));
-      }
-
-      pack = data.find((pack) => packageName === pack.name);
-    }
-  }
-  const summary = pack?.summary;
-  // if no matching package is found return an empty string for description
-  return summary || '';
-};
-
 // map the compose request object to the expected form state
 const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
   if (composeRequest) {
@@ -389,35 +346,13 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
 
     // customizations
     // packages
-    const packs = [];
-    let distroRepoUrls = [];
-
-    const distro = composeRequest?.distribution;
-
-    if (distroInfo) {
-      distroRepoUrls = getDistributionRepoUrls(distroInfo);
-      const payloadRepositories =
-        composeRequest?.customizations?.payload_repositories?.map(
-          (repo) => repo.baseurl
-        );
-      const repoUrls = [...distroRepoUrls];
-      payloadRepositories ? repoUrls.push(...payloadRepositories) : null;
-      composeRequest?.customizations?.packages?.forEach(async (packName) => {
-        const packageDescription = await getPackageDescription(
-          distro,
-          imageRequest?.architecture,
-          repoUrls,
-          packName,
-          isBeta
-        );
-        const pack = {
-          name: packName,
-          summary: packageDescription,
-        };
-        packs.push(pack);
-      });
-      formState['selected-packages'] = packs;
-    }
+    const packages = composeRequest?.customizations?.packages?.map((name) => {
+      return {
+        name: name,
+        summary: undefined,
+      };
+    });
+    formState['selected-packages'] = packages;
 
     // repositories
     // 'original-payload-repositories' is treated as read-only and is used to populate
