@@ -36,7 +36,7 @@ jest.spyOn(api, 'getComposeStatus').mockImplementation((id) => {
 
 jest.spyOn(api, 'getClones').mockImplementation((id) => {
   return id === '1579d95b-8f1d-4982-8c53-8c2afa4ab04c'
-    ? Promise.resolve(mockClones)
+    ? Promise.resolve(mockClones(id))
     : Promise.resolve(mockNoClones);
 });
 
@@ -280,22 +280,22 @@ describe('Clones table', () => {
     expect(cloneRows).toHaveLength(5);
 
     // prepend parent data
+    const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
     const clonesTableData = {
-      uuid: [
-        '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-        ...mockClones.data.map((clone) => clone.id),
-      ],
+      uuid: [composeId, ...mockClones(composeId).data.map((clone) => clone.id)],
       created: [
         '2021-04-27 12:31:12.794809 +0000 UTC',
-        ...mockClones.data.map((clone) => clone.created_at),
+        ...mockClones(composeId).data.map((clone) => clone.created_at),
       ],
       account: [
         '123123123123',
-        ...mockClones.data.map((clone) => clone.request.share_with_accounts[0]),
+        ...mockClones(composeId).data.map(
+          (clone) => clone.request.share_with_accounts[0]
+        ),
       ],
       region: [
         'us-east-1',
-        ...mockClones.data.map(
+        ...mockClones(composeId).data.map(
           (clone) => mockCloneStatus[clone.id].options.region
         ),
       ],

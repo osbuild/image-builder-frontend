@@ -12,6 +12,12 @@ import {
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
 import {
+  mockClones,
+  mockCloneStatus,
+  mockComposes,
+  mockStatus,
+} from '../fixtures/composes';
+import {
   mockPackagesResults,
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
@@ -76,5 +82,23 @@ export const handlers = [
     const limit = req.url.searchParams.get('limit');
     const args = { available_for_arch, available_for_version, limit };
     return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
+  }),
+  rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockComposes));
+  }),
+  rest.get(`${IMAGE_BUILDER_API}/composes/:composeId`, (req, res, ctx) => {
+    const { composeId } = req.params;
+    return res(ctx.status(200), ctx.json(mockStatus[composeId]));
+  }),
+  rest.get(
+    `${IMAGE_BUILDER_API}/composes/:composeId/clones`,
+    (req, res, ctx) => {
+      const { composeId } = req.params;
+      return res(ctx.status(200), ctx.json(mockClones(composeId)));
+    }
+  ),
+  rest.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, (req, res, ctx) => {
+    const { cloneId } = req.params;
+    return res(ctx.status(200), ctx.json(mockCloneStatus[cloneId]));
   }),
 ];
