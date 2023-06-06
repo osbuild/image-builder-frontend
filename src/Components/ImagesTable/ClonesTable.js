@@ -12,7 +12,7 @@ import {
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
-import { ImageBuildStatus } from './ImageBuildStatus';
+import { CloneStatus, ComposeStatus } from './ImageBuildStatus';
 
 import {
   selectClonesById,
@@ -20,7 +20,7 @@ import {
   selectImageById,
 } from '../../store/composesSlice';
 
-const Row = ({ imageId }) => {
+const Row = ({ imageId, isClone }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
   return (
@@ -39,7 +39,11 @@ const Row = ({ imageId }) => {
         </Td>
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
-          <ImageBuildStatus imageId={image.id} imageRegion={image.region} />
+          {isClone ? (
+            <CloneStatus cloneId={image.id} />
+          ) : (
+            <ComposeStatus composeId={image.id} />
+          )}
         </Td>
       </Tr>
     </Tbody>
@@ -61,9 +65,9 @@ const ClonesTable = ({ composeId }) => {
           <Th className="pf-m-width-20">Status</Th>
         </Tr>
       </Thead>
-      <Row imageId={parentCompose.id} imageType={'compose'} />
+      <Row imageId={parentCompose.id} isClone={false} />
       {clones.map((clone) => (
-        <Row imageId={clone.id} key={clone.id} />
+        <Row imageId={clone.id} key={clone.id} isClone={true} />
       ))}
     </TableComposable>
   );
