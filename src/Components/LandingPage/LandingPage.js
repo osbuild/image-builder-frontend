@@ -191,7 +191,7 @@ export const LandingPage = () => {
             </Button>
           </Popover>
         </PageHeader>
-        {!edgeParityFlag ? (
+        {edgeParityFlag ? (
           <Tabs
             className="pf-u-ml-md"
             activeKey={activeTabKey}
