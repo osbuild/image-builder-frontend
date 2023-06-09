@@ -96,7 +96,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
 const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
   const uploadStatus = image.uploadStatus;
-  const { initialized: chromeInitialized } = useChrome();
+  const { initialized: chromeInitialized, getEnvironment } = useChrome();
   const { isBeta } = useGetEnvironment();
   const azureFeatureFlag = useFlag('provisioning.azure');
   const gcpFeatureFlag = useFlag('provisioning.gcp');
@@ -112,8 +112,14 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
       case 'ami':
         return true;
       case 'azure':
+        if (getEnvironment() === 'qa') {
+          return true;
+        }
         return !!azureFeatureFlag;
       case 'gcp':
+        if (getEnvironment() === 'qa') {
+          return true;
+        }
         return !!gcpFeatureFlag;
       default:
         return false;
