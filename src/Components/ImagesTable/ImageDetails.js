@@ -222,6 +222,8 @@ const AzureIdentifiers = ({ id }) => {
               >
                 {compose.image_status.upload_status.options.image_name}
               </ClipboardCopy>
+            ) : compose?.image_status?.status === 'failure' ? (
+              <p></p>
             ) : (
               <Spinner isSVG size="md" />
             )}
