@@ -2,11 +2,12 @@ import React from 'react';
 
 import {
   Button,
+  ClipboardCopy,
+  ClipboardCopyVariant,
   Divider,
   Popover,
   Text,
   TextContent,
-  TextVariants,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
@@ -18,6 +19,14 @@ import { RegionsPopover } from './RegionsPopover';
 import { selectImageById } from '../../store/composesSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import BetaLabel from '../sharedComponents/BetaLabel';
+
+const launchInstanceCommand = (uploadStatus) => {
+  return `gcloud compute instances create ${uploadStatus.options.image_name}-instance --image-project ${uploadStatus.options.project_id} --image ${uploadStatus.options.image_name}`;
+};
+
+const saveCopyCommand = (uploadStatus) => {
+  return `gcloud compute images create ${uploadStatus.options.image_name}-copy --source-image-project ${uploadStatus.options.project_id} --source-image ${uploadStatus.options.image_name}`;
+};
 
 const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
   const navigate = useNavigate();
@@ -110,37 +119,44 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
   } else if (uploadStatus.type === 'gcp') {
     return (
       <Popover
-        aria-label="Popover with google cloud platform image details"
+        aria-label="Popover with google cloud platform image commands"
         maxWidth="30rem"
-        headerContent={'GCP image details'}
+        headerContent={'Image commands'}
         bodyContent={
           <TextContent>
-            <Text component={TextVariants.p}>
-              To use an Image Builder created Google Cloud Platform (GCP) image
-              in your project, specify the project ID and image name in your
-              templates and configurations.
-            </Text>
+            <br />
             <Text>
-              <strong>Project ID</strong>
-              <br />
-              {uploadStatus.options.project_id}
+              <strong>Launch an instance</strong>
             </Text>
+            <ClipboardCopy
+              hoverTip="Copy"
+              clickTip="Copied"
+              ouiaId="gcp-launch-instance"
+              variant={ClipboardCopyVariant.expansion}
+              isReadOnly
+              isExpanded
+            >
+              {launchInstanceCommand(uploadStatus)}
+            </ClipboardCopy>
+            <br />
             <Text>
-              <strong>Image Name</strong>
-              <br />
-              {uploadStatus.options.image_name}
+              <strong>Save a copy</strong>
             </Text>
-            <Text>
-              <strong>Shared with</strong>
-              <br />
-              {/* the account the image is shared with is stored in the form type:account so this extracts the account */}
-              {image.uploadOptions.share_with_accounts[0].split(':')[1]}
-            </Text>
+            <ClipboardCopy
+              hoverTip="Copy"
+              clickTip="Copied"
+              ouiaId="gcp-save-copy"
+              variant={ClipboardCopyVariant.expansion}
+              isReadOnly
+              isExpanded
+            >
+              {saveCopyCommand(uploadStatus)}
+            </ClipboardCopy>
           </TextContent>
         }
       >
         <Button component="a" target="_blank" variant="link" isInline>
-          Image details
+          Image commands
         </Button>
       </Popover>
     );
