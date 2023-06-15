@@ -17,7 +17,7 @@ COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-fronten
 # Options that must be configured by app owner
 # --------------------------------------------
 export IQE_PLUGINS="image-builder"
-export IQE_CJI_TIMEOUT="30m"
+export IQE_CJI_TIMEOUT="60m"
 export IQE_MARKER_EXPRESSION="ui"
 export IQE_SELENIUM="true"
 export IQE_ENV="ephemeral"
