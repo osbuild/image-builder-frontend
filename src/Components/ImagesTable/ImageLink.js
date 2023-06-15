@@ -47,7 +47,7 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
 
   const provider = getImageProvider(image);
-  if (!error) {
+  if (!error && provider !== 'gcp') {
     return (
       <Suspense fallback="loading...">
         <Button variant="link" isInline onClick={() => openWizard(true)}>
