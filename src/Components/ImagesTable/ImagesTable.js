@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
+import { Tabs, Tab, TabTitleText } from '@patternfly/react-core';
 import {
   EmptyState,
   EmptyStateBody,
@@ -24,9 +25,12 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
+import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
+import { useFlag } from '@unleash/proxy-client-react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 import './ImagesTable.scss';
 import { ImageBuildStatus } from './ImageBuildStatus';
@@ -37,17 +41,19 @@ import Target from './Target';
 
 import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import { fetchComposes, fetchComposeStatus } from '../../store/actions/actions';
+import { getNotificationProp } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   hoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
 import DocumentationButton from '../sharedComponents/DocumentationButton';
-
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
+  const [activeTabKey, setActiveTabkey] = useState(0);
+  const handleTabClick = (_event, tabIndex) => setActiveTabkey(tabIndex);
   const [expandedComposeIds, setExpandedComposeIds] = useState([]);
   const isExpanded = (compose) => expandedComposeIds.includes(compose.id);
 
@@ -154,161 +160,201 @@ const ImagesTable = () => {
   const itemsStartInclusive = (page - 1) * perPage;
   const itemsEndExclusive = itemsStartInclusive + perPage;
 
-  return (
-    <React.Fragment>
-      {(composes.allIds.length === 0 && (
-        <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
-          <EmptyStateIcon icon={PlusCircleIcon} />
-          <Title headingLevel="h4" size="lg">
-            Create an image
-          </Title>
-          <EmptyStateBody>
-            Create OS images for deployment in Amazon Web Services, Microsoft
-            Azure and Google Cloud Platform. Images can include a custom package
-            set and an activation key to automate the registration process.
-          </EmptyStateBody>
-          <Link
-            to={resolveRelPath('imagewizard')}
-            className="pf-c-button pf-m-primary"
-            data-testid="create-image-action"
-          >
-            Create image
-          </Link>
-          <EmptyStateSecondaryActions>
-            <DocumentationButton />
-          </EmptyStateSecondaryActions>
-        </EmptyState>
-      )) || (
-        <React.Fragment>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem>
-                <Link
-                  to={resolveRelPath('imagewizard')}
-                  className="pf-c-button pf-m-primary"
-                  data-testid="create-image-action"
-                >
-                  Create image
-                </Link>
-              </ToolbarItem>
-              <ToolbarItem
-                variant="pagination"
-                align={{ default: 'alignRight' }}
-              >
-                <Pagination
-                  itemCount={composes.count}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination-top"
-                  data-testid="images-pagination-top"
-                  isCompact
+  const notificationProp = getNotificationProp(dispatch);
+  const edgeParityFlag = useFlag('edgeParity.image-list');
+  const traditionalImageList = (
+    <TableComposable variant="compact" data-testid="images-table">
+      <Thead>
+        <Tr>
+          <Th />
+          <Th>Image name</Th>
+          <Th>Created/Updated</Th>
+          <Th>Release</Th>
+          <Th>Target</Th>
+          <Th>Status</Th>
+          <Th>Instance</Th>
+          <Th />
+        </Tr>
+      </Thead>
+      {composes.allIds
+        .slice(itemsStartInclusive, itemsEndExclusive)
+        .map((id, rowIndex) => {
+          const compose = composes.byId[id];
+          return (
+            <Tbody key={id} isExpanded={isExpanded(compose)}>
+              <Tr className="no-bottom-border">
+                <Td
+                  expand={{
+                    rowIndex,
+                    isExpanded: isExpanded(compose),
+                    onToggle: () => handleToggle(compose, !isExpanded(compose)),
+                  }}
                 />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-          <TableComposable variant="compact" data-testid="images-table">
-            <Thead>
-              <Tr>
-                <Th />
-                <Th>Image name</Th>
-                <Th>Created/Updated</Th>
-                <Th>Release</Th>
-                <Th>Target</Th>
-                <Th>Status</Th>
-                <Th>Instance</Th>
-                <Th />
+                <Td dataLabel="Image name">
+                  {compose.request.image_name || id}
+                </Td>
+                <Td dataLabel="Created">
+                  {timestampToDisplayString(compose.created_at)}
+                </Td>
+                <Td dataLabel="Release">
+                  <Release release={compose.request.distribution} />
+                </Td>
+                <Td dataLabel="Target">
+                  <Target composeId={id} />
+                </Td>
+                <Td dataLabel="Status">
+                  <ImageBuildStatus
+                    imageId={id}
+                    isImagesTableRow={true}
+                    imageStatus={compose.image_status}
+                  />
+                </Td>
+                <Td dataLabel="Instance">
+                  <ImageLink
+                    imageId={id}
+                    isExpired={
+                      hoursToExpiration(compose.created_at) >=
+                      AWS_S3_EXPIRATION_TIME_IN_HOURS
+                        ? true
+                        : false
+                    }
+                  />
+                </Td>
+                <Td>
+                  {compose.request.image_requests[0].upload_request.type ===
+                  'aws' ? (
+                    <ActionsColumn items={awsActions(compose)} />
+                  ) : (
+                    <ActionsColumn items={actions(compose)} />
+                  )}
+                </Td>
               </Tr>
-            </Thead>
-            {composes.allIds
-              .slice(itemsStartInclusive, itemsEndExclusive)
-              .map((id, rowIndex) => {
-                const compose = composes.byId[id];
-                return (
-                  <Tbody key={id} isExpanded={isExpanded(compose)}>
-                    <Tr className="no-bottom-border">
-                      <Td
-                        expand={{
-                          rowIndex,
-                          isExpanded: isExpanded(compose),
-                          onToggle: () =>
-                            handleToggle(compose, !isExpanded(compose)),
-                        }}
-                      />
-                      <Td dataLabel="Image name">
-                        {compose.request.image_name || id}
-                      </Td>
-                      <Td dataLabel="Created">
-                        {timestampToDisplayString(compose.created_at)}
-                      </Td>
-                      <Td dataLabel="Release">
-                        <Release release={compose.request.distribution} />
-                      </Td>
-                      <Td dataLabel="Target">
-                        <Target composeId={id} />
-                      </Td>
-                      <Td dataLabel="Status">
-                        <ImageBuildStatus
-                          imageId={id}
-                          isImagesTableRow={true}
-                          imageStatus={compose.image_status}
-                        />
-                      </Td>
-                      <Td dataLabel="Instance">
-                        <ImageLink
-                          imageId={id}
-                          isExpired={
-                            hoursToExpiration(compose.created_at) >=
-                            AWS_S3_EXPIRATION_TIME_IN_HOURS
-                              ? true
-                              : false
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        {compose.request.image_requests[0].upload_request
-                          .type === 'aws' ? (
-                          <ActionsColumn items={awsActions(compose)} />
-                        ) : (
-                          <ActionsColumn items={actions(compose)} />
-                        )}
-                      </Td>
-                    </Tr>
-                    <Tr isExpanded={isExpanded(compose)}>
-                      <Td colSpan={8}>
-                        <ExpandableRowContent>
-                          <ImageDetails id={id} />
-                        </ExpandableRowContent>
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                );
-              })}
-          </TableComposable>
-          <Toolbar className="pf-u-mb-xl">
-            <ToolbarContent>
-              <ToolbarItem
-                variant="pagination"
-                align={{ default: 'alignRight' }}
+              <Tr isExpanded={isExpanded(compose)}>
+                <Td colSpan={8}>
+                  <ExpandableRowContent>
+                    <ImageDetails id={id} />
+                  </ExpandableRowContent>
+                </Td>
+              </Tr>
+            </Tbody>
+          );
+        })}
+    </TableComposable>
+  );
+  return (
+    <Suspense fallback="loading...">
+      <React.Fragment>
+        {(composes.allIds.length === 0 && (
+          <EmptyState
+            variant={EmptyStateVariant.large}
+            data-testid="empty-state"
+          >
+            <EmptyStateIcon icon={PlusCircleIcon} />
+            <Title headingLevel="h4" size="lg">
+              Create an image
+            </Title>
+            <EmptyStateBody>
+              Create OS images for deployment in Amazon Web Services, Microsoft
+              Azure and Google Cloud Platform. Images can include a custom
+              package set and an activation key to automate the registration
+              process.
+            </EmptyStateBody>
+            <Link
+              to={resolveRelPath('imagewizard')}
+              className="pf-c-button pf-m-primary"
+              data-testid="create-image-action"
+            >
+              Create image
+            </Link>
+            <EmptyStateSecondaryActions>
+              <DocumentationButton />
+            </EmptyStateSecondaryActions>
+          </EmptyState>
+        )) || (
+          <React.Fragment>
+            <Toolbar>
+              <ToolbarContent>
+                <ToolbarItem>
+                  <Link
+                    to={resolveRelPath('imagewizard')}
+                    className="pf-c-button pf-m-primary"
+                    data-testid="create-image-action"
+                  >
+                    Create image
+                  </Link>
+                </ToolbarItem>
+                <ToolbarItem
+                  variant="pagination"
+                  align={{ default: 'alignRight' }}
+                >
+                  <Pagination
+                    itemCount={composes.count}
+                    perPage={perPage}
+                    page={page}
+                    onSetPage={onSetPage}
+                    onPerPageSelect={onPerPageSelect}
+                    widgetId="compose-pagination-top"
+                    data-testid="images-pagination-top"
+                    isCompact
+                  />
+                </ToolbarItem>
+              </ToolbarContent>
+            </Toolbar>
+            {edgeParityFlag ? (
+              <Tabs
+                className="pf-u-ml-md"
+                activeKey={activeTabKey}
+                onSelect={handleTabClick}
               >
-                <Pagination
-                  variant={PaginationVariant.bottom}
-                  itemCount={composes.count}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination-bottom"
-                  data-testid="images-pagination-bottom"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </React.Fragment>
-      )}
-    </React.Fragment>
+                <Tab
+                  eventKey={0}
+                  title={<TabTitleText>Traditional (RPM - DNF)</TabTitleText>}
+                >
+                  {traditionalImageList}
+                </Tab>
+                <Tab
+                  eventKey={1}
+                  title={<TabTitleText>Immutable - (OSTree)</TabTitleText>}
+                >
+                  <AsyncComponent
+                    appName="edge"
+                    module="./Images"
+                    ErrorComponent={<ErrorState />}
+                    // historyProp={useHistory}
+                    navigateProp={useNavigate}
+                    locationProp={useLocation}
+                    notificationProp={notificationProp}
+                  />
+                </Tab>
+              </Tabs>
+            ) : (
+              traditionalImageList
+            )}
+
+            <Toolbar className="pf-u-mb-xl">
+              <ToolbarContent>
+                <ToolbarItem
+                  variant="pagination"
+                  align={{ default: 'alignRight' }}
+                >
+                  <Pagination
+                    variant={PaginationVariant.bottom}
+                    itemCount={composes.count}
+                    perPage={perPage}
+                    page={page}
+                    onSetPage={onSetPage}
+                    onPerPageSelect={onPerPageSelect}
+                    widgetId="compose-pagination-bottom"
+                    data-testid="images-pagination-bottom"
+                    isCompact
+                  />
+                </ToolbarItem>
+              </ToolbarContent>
+            </Toolbar>
+          </React.Fragment>
+        )}
+      </React.Fragment>
+    </Suspense>
   );
 };
 
