@@ -135,7 +135,7 @@ export default {
       name: 'google-email',
       'data-testid': 'input-google-email',
       type: 'text',
-      label: 'Email address',
+      label: 'Principal (e.g. e-mail address)',
       condition: {
         or: [
           { when: 'google-account-type', is: 'googleAccount' },
