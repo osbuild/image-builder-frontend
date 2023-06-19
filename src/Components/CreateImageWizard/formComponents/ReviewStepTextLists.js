@@ -153,7 +153,7 @@ export const TargetEnvGCPList = () => {
           {googleAccType?.[getState()?.values?.['google-account-type']] ===
           'Domain'
             ? 'Domain'
-            : 'Email address'}
+            : 'Principal'}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {getState()?.values?.['google-email'] ||
