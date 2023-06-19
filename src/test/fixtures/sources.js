@@ -1,9 +1,3 @@
-export const mockAccountIdentity = {
-  aws: {
-    account_id: '123456789012',
-  },
-};
-
 export const mockSourcesByProvider = (provider) => {
   if (provider === 'aws') {
     return [
@@ -49,6 +43,13 @@ export const mockUploadInfo = (sourceId) => {
         tenant_id: '73d5694c-7a28-417e-9fca-55840084f508',
         subscription_id: 'a66682d2-ce3e-46f7-a127-1d106c34e10c',
         resource_groups: ['theirGroup2'],
+      },
+    };
+  } else if (sourceId === '123') {
+    return {
+      provider: 'aws',
+      aws: {
+        account_id: '123456789012',
       },
     };
   }

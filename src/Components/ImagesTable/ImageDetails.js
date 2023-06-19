@@ -17,10 +17,7 @@ import { useSelector } from 'react-redux';
 
 import ClonesTable from './ClonesTable';
 
-import {
-  useGetAWSSourcesQuery,
-  useGetAzureSourcesQuery,
-} from '../../store/apiSlice';
+import { useGetSourcesQuery } from '../../store/apiSlice';
 
 const sourceNotFoundPopover = () => {
   return (
@@ -62,7 +59,7 @@ const sourceNotFoundPopover = () => {
 };
 
 const getAzureSourceName = (id) => {
-  const { data: sources, isSuccess } = useGetAzureSourcesQuery();
+  const { data: sources, isSuccess } = useGetSourcesQuery('azure');
 
   if (isSuccess) {
     const sourcename = sources.find((source) => source.id === id);
@@ -77,7 +74,7 @@ const getAzureSourceName = (id) => {
 };
 
 const getAWSSourceName = (id) => {
-  const { data: sources, isSuccess } = useGetAWSSourcesQuery();
+  const { data: sources, isSuccess } = useGetSourcesQuery('aws');
 
   if (isSuccess) {
     const sourcename = sources.find((source) => source.id === id);

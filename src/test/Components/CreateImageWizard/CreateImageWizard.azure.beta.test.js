@@ -161,9 +161,8 @@ describe('Step Upload to Azure', () => {
   test('component renders error state correctly', async () => {
     setUp();
     server.use(
-      rest.get(
-        'http://localhost'.concat(PROVISIONING_SOURCES_ENDPOINT),
-        (req, res, ctx) => res(ctx.status(500))
+      rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) =>
+        res(ctx.status(500))
       )
     );
 

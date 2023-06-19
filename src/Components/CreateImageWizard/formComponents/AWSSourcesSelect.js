@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { Alert } from '@patternfly/react-core';
@@ -12,7 +13,10 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { useGetAWSSourcesQuery } from '../../../store/apiSlice';
+import {
+  useGetSourceDetailQuery,
+  useGetSourcesQuery,
+} from '../../../store/apiSlice';
 
 export const AWSSourcesSelect = ({
   label,
@@ -33,7 +37,31 @@ export const AWSSourcesSelect = ({
     isSuccess,
     isError,
     refetch,
-  } = useGetAWSSourcesQuery();
+  } = useGetSourcesQuery('aws');
+
+  const {
+    data: sourceDetails,
+    isFetching: isFetchingDetails,
+    isSuccess: isSuccessDetails,
+    isError: isErrorDetails,
+  } = useGetSourceDetailQuery(selectedSourceId, {
+    skip: !selectedSourceId,
+  });
+
+  useEffect(() => {
+    if (isFetchingDetails || !isSuccessDetails) return;
+    change('aws-associated-account-id', sourceDetails?.aws?.account_id);
+  }, [isFetchingDetails, isSuccessDetails]);
+
+  const onFormChange = ({ values }) => {
+    if (
+      values['aws-target-type'] !== 'aws-target-type-source' ||
+      values[input.name] === undefined
+    ) {
+      change(input.name, undefined);
+      change('aws-associated-account-id', undefined);
+    }
+  };
 
   const handleSelect = (_, sourceName) => {
     const sourceId = sources.find((source) => source.name === sourceName).id;
@@ -58,6 +86,7 @@ export const AWSSourcesSelect = ({
 
   return (
     <>
+      <FormSpy subscription={{ values: true }} onChange={onFormChange} />
       <FormGroup
         isRequired={isRequired}
         label={label}
@@ -82,11 +111,7 @@ export const AWSSourcesSelect = ({
         >
           {isSuccess &&
             sources.map((source) => (
-              <SelectOption
-                key={source.id}
-                value={source.name}
-                description={source.account_id}
-              />
+              <SelectOption key={source.id} value={source.name} />
             ))}
           {isFetching && (
             <SelectOption isNoResultsOption={true}>
@@ -105,6 +130,18 @@ export const AWSSourcesSelect = ({
           >
             Sources cannot be reached, try again later or enter an AWS account
             ID manually.
+          </Alert>
+        )}
+        {!isError && isErrorDetails && (
+          <Alert
+            variant={'danger'}
+            isPlain
+            isInline
+            title={'AWS details unavailable'}
+          >
+            The AWS account ID for the selected source could not be resolved.
+            There might be a problem with the source. Verify that the source is
+            valid in Sources or select a different source.
           </Alert>
         )}
       </>

@@ -17,6 +17,7 @@ import {
 import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
+import { AWSAccountId } from './AWSAccountId';
 import {
   FSReviewTable,
   PackagesTable,
@@ -24,11 +25,9 @@ import {
 } from './ReviewStepTables';
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
-import {
-  useGetAWSSourcesQuery,
-  useGetAzureSourcesQuery,
-} from '../../../store/apiSlice';
+import { useGetSourcesQuery } from '../../../store/apiSlice';
 import { useGetActivationKeyInformationQuery } from '../../../store/apiSlice';
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import { googleAccType } from '../steps/googleCloud';
 
 const ExpirationWarning = () => {
@@ -64,8 +63,8 @@ export const ImageOutputList = () => {
 };
 
 export const TargetEnvAWSList = () => {
-  const { data: awsSources, isSuccess: isSuccessAWSSources } =
-    useGetAWSSourcesQuery();
+  const { data: awsSources, isSuccess } = useGetSourcesQuery();
+  const { isBeta } = useGetEnvironment();
 
   const { getState } = useFormApi();
   return (
@@ -87,13 +86,19 @@ export const TargetEnvAWSList = () => {
           Shared to account
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {isSuccessAWSSources &&
-          getState()?.values?.['aws-target-type'] === 'aws-target-type-source'
-            ? awsSources.find(
-                (source) =>
-                  source.id === getState()?.values?.['aws-sources-select']
-              )?.account_id
-            : getState()?.values?.['aws-account-id']}
+          {!isBeta() && getState()?.values?.['aws-account-id']}
+          {isBeta() &&
+            getState()?.values?.['aws-target-type'] ===
+              'aws-target-type-source' &&
+            isSuccess && (
+              <AWSAccountId
+                sourceId={getState()?.values?.['aws-sources-select']}
+              />
+            )}
+          {isBeta() &&
+            getState()?.values?.['aws-target-type'] ===
+              'aws-target-type-account-id' &&
+            getState()?.values?.['aws-account-id']}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           {getState()?.values?.['aws-target-type'] === 'aws-target-type-source'
@@ -101,7 +106,7 @@ export const TargetEnvAWSList = () => {
             : null}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {isSuccessAWSSources &&
+          {isSuccess &&
           getState()?.values?.['aws-target-type'] === 'aws-target-type-source'
             ? awsSources.find(
                 (source) =>
@@ -163,7 +168,7 @@ export const TargetEnvGCPList = () => {
 export const TargetEnvAzureList = () => {
   const { getState } = useFormApi();
   const { data: azureSources, isSuccess: isSuccessAzureSources } =
-    useGetAzureSourcesQuery();
+    useGetSourcesQuery('azure');
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>

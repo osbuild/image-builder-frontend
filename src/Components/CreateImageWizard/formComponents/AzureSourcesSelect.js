@@ -14,8 +14,8 @@ import {
 import PropTypes from 'prop-types';
 
 import {
-  useGetAzureSourcesQuery,
-  useGetAzureSourceDetailQuery,
+  useGetSourcesQuery,
+  useGetSourceDetailQuery,
 } from '../../../store/apiSlice';
 
 const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
@@ -30,21 +30,21 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
     isSuccess,
     isError,
     refetch,
-  } = useGetAzureSourcesQuery();
+  } = useGetSourcesQuery('azure');
 
   const {
     data: sourceDetails,
     isFetching: isFetchingDetails,
     isSuccess: isSuccessDetails,
     isError: isErrorDetails,
-  } = useGetAzureSourceDetailQuery(selectedSourceId, {
+  } = useGetSourceDetailQuery(selectedSourceId, {
     skip: !selectedSourceId,
   });
 
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
-    change('azure-tenant-id', sourceDetails.tenant_id);
-    change('azure-subscription-id', sourceDetails.subscription_id);
+    change('azure-tenant-id', sourceDetails?.azure?.tenant_id);
+    change('azure-subscription-id', sourceDetails?.azure?.subscription_id);
   }, [isFetchingDetails, isSuccessDetails]);
 
   const onFormChange = ({ values }) => {
