@@ -3,8 +3,8 @@ module.exports = {
     presets: [
     // Polyfills
         '@babel/env',
-        // Allow JSX syntax
         '@babel/react',
+        '@babel/typescript',
     ],
     plugins: [
     // Put _extends helpers in their own file
