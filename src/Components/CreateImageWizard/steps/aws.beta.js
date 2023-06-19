@@ -181,11 +181,6 @@ export default {
             is: 'aws-target-type-source',
           },
         },
-        {
-          component: 'field-listener',
-          name: 'aws-associated-account-id-listener',
-          hideField: true,
-        },
       ],
     },
   ],

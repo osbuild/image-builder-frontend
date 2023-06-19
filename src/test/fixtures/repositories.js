@@ -1,15 +1,20 @@
-export const mockRepositoryResults = (args) => {
-  const data = generateData(args);
-  const meta = generateMeta(args.limit, data.length);
-  const links = generateLinks(args.limit);
-  return {
+export const mockRepositoryResults = (request) => {
+  const repos = filterRepos(request);
+  const limit = request.limit ? request.limit : 100;
+  const data = repos.slice(request.offset, limit);
+  const meta = generateMeta(request.limit, request.offset, repos.length);
+  const links = generateLinks(request.limit);
+  const response = {
     data: data,
     meta: meta,
     links: links,
   };
+  return response;
 };
 
-const generateData = (args) => {
+const numFillerRepos = 1000;
+
+const filterRepos = (args) => {
   let repos = testingRepos;
 
   args.available_for_arch &&
@@ -27,13 +32,13 @@ const generateData = (args) => {
       );
     }));
 
-  repos = repos.slice(0, args.limit);
-
   // Filler repos will always appear in response as they have distribution_versions
   // and distribution_arch of 'any'. High count is useful for testing pagination.
-  const fillerRepos = generateFillerRepos(1000);
+  const fillerRepos = generateFillerRepos(numFillerRepos);
 
-  return [...repos, ...fillerRepos];
+  repos = [...repos, ...fillerRepos];
+
+  return repos;
 };
 
 const testingRepos = [
@@ -398,18 +403,18 @@ const testingRepos = [
   },
 ];
 
-const generateMeta = (limit, count) => {
+const generateMeta = (limit, offset, count) => {
   return {
     limit: limit,
-    offset: 0,
+    offset: offset,
     count: count,
   };
 };
 
-const generateLinks = (limit) => {
+const generateLinks = (limit, offset) => {
   return {
-    first: `/api/content-sources/v1/repositories/?limit=${limit}&offset=0`,
-    last: `/api/content-sources/v1/repositories/?limit=${limit}&offset=0`,
+    first: `/api/content-sources/v1/repositories/?limit=${limit}&offset=${offset}`,
+    last: `/api/content-sources/v1/repositories/?limit=${limit}&offset=${offset}`,
   };
 };
 

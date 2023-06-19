@@ -22,33 +22,18 @@ import {
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
 import { mockRepositoryResults } from '../fixtures/repositories';
-import {
-  mockAccountIdentity,
-  mockSourcesByProvider,
-  mockUploadInfo,
-} from '../fixtures/sources';
+import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
 export const handlers = [
-  rest.get(`${PROVISIONING_SOURCES_ENDPOINT}`, (req, res, ctx) => {
+  rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) => {
     const provider = req.url.searchParams.get('provider');
     return res(ctx.status(200), ctx.json(mockSourcesByProvider(provider)));
   }),
   rest.get(
-    `${PROVISIONING_SOURCES_ENDPOINT}/:accountId/account_identity`,
-    (req, res, ctx) => {
-      const { accountId } = req.params;
-      if (accountId === '123') {
-        return res(ctx.status(200), ctx.json(mockAccountIdentity));
-      } else {
-        return res(ctx.status(404));
-      }
-    }
-  ),
-  rest.get(
-    `${PROVISIONING_SOURCES_ENDPOINT}/:sourceId/upload_info`,
+    `${PROVISIONING_SOURCES_ENDPOINT}/sources/:sourceId/upload_info`,
     (req, res, ctx) => {
       const { sourceId } = req.params;
-      if (sourceId === '666' || sourceId === '667') {
+      if (sourceId === '666' || sourceId === '667' || sourceId === '123') {
         return res(ctx.status(200), ctx.json(mockUploadInfo(sourceId)));
       } else {
         return res(ctx.status(404));
@@ -80,7 +65,8 @@ export const handlers = [
       'available_for_version'
     );
     const limit = req.url.searchParams.get('limit');
-    const args = { available_for_arch, available_for_version, limit };
+    const offset = req.url.searchParams.get('offset');
+    const args = { available_for_arch, available_for_version, limit, offset };
     return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
   }),
   rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {

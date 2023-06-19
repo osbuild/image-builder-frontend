@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { useGetAzureSourceDetailQuery } from '../../../store/apiSlice';
+import { useGetSourceDetailQuery } from '../../../store/apiSlice';
 
 const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
   const { change, getState } = useFormApi();
@@ -25,13 +25,14 @@ const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
     setSourceId(values['azure-sources-select']);
   };
 
-  const { data: sourceDetails, isFetching } = useGetAzureSourceDetailQuery(
+  const { data: sourceDetails, isFetching } = useGetSourceDetailQuery(
     sourceId,
     {
       skip: !sourceId,
     }
   );
-  const resourceGroups = (sourceId && sourceDetails?.resource_groups) || [];
+  const resourceGroups =
+    (sourceId && sourceDetails?.azure?.resource_groups) || [];
 
   const setResourceGroup = (_, selection) => {
     setIsOpen(false);

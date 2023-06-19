@@ -205,21 +205,48 @@ const Repositories = (props) => {
   const release = getState().values?.release;
   const version = releaseToVersion(release);
 
+  const firstRequest = useGetRepositoriesQuery(
+    {
+      available_for_arch: 'x86_64',
+      available_for_version: version,
+      limit: 100,
+      offset: 0,
+    },
+    // The cached repos may be incorrect, for now refetch on mount to ensure that
+    // they are accurate when this step loads. Future PR will implement prefetching
+    // and this can be removed.
+    { refetchOnMountOrArgChange: true }
+  );
+
+  const skip =
+    firstRequest?.data?.meta?.count === undefined ||
+    firstRequest?.data?.meta?.count <= 100;
+
+  // Fetch *all* repositories if there are more than 100 so that typeahead filter works
+  const followupRequest = useGetRepositoriesQuery(
+    {
+      available_for_arch: 'x86_64',
+      available_for_version: version,
+      limit: firstRequest?.data?.meta?.count,
+      offset: 0,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+      skip: skip,
+    }
+  );
+
   const { data, isError, isFetching, isLoading, isSuccess, refetch } =
-    useGetRepositoriesQuery(
-      {
-        available_for_arch: 'x86_64',
-        available_for_version: version,
-      },
-      // The cached repos may be incorrect, for now refetch on mount to ensure that
-      // they are accurate when this step loads. Future PR will implement prefetching
-      // and this can be removed.
-      { refetchOnMountOrArgChange: true }
-    );
+    useMemo(() => {
+      if (firstRequest?.data?.meta?.count > 100) {
+        return { ...followupRequest };
+      }
+      return { ...firstRequest };
+    }, [firstRequest, followupRequest]);
 
   const repositories = useMemo(() => {
     return data ? initializeRepositories(data.data) : {};
-  }, [data]);
+  }, [firstRequest.data, followupRequest.data]);
 
   const isRepoSelected = (repoURL) => selected.includes(repoURL);
 

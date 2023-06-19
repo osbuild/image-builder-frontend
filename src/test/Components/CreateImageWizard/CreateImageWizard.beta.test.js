@@ -127,9 +127,8 @@ describe('Step Upload to AWS', () => {
   test('component renders error state correctly', async () => {
     setUp();
     server.use(
-      rest.get(
-        'http://localhost'.concat(PROVISIONING_SOURCES_ENDPOINT),
-        (req, res, ctx) => res(ctx.status(500))
+      rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) =>
+        res(ctx.status(500))
       )
     );
 
@@ -174,7 +173,7 @@ describe('Step Upload to AWS', () => {
     sourceDropdown.click();
 
     const source = await screen.findByRole('option', {
-      name: /my_source 123456789012/i,
+      name: /my_source/i,
     });
     source.click();
 

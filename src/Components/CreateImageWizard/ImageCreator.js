@@ -13,7 +13,6 @@ import AzureAuthButton from './formComponents/AzureAuthButton';
 import AzureResourceGroups from './formComponents/AzureResourceGroups';
 import AzureSourcesSelect from './formComponents/AzureSourcesSelect';
 import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
-import FieldListenerWrapper from './formComponents/FieldListener';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import GalleryLayout from './formComponents/GalleryLayout';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
@@ -73,7 +72,6 @@ const ImageCreator = ({
         'azure-sources-select': AzureSourcesSelect,
         'azure-resource-groups': AzureResourceGroups,
         'gallery-layout': GalleryLayout,
-        'field-listener': FieldListenerWrapper,
         registration: Registration,
         ...customComponentMapper,
       }}
