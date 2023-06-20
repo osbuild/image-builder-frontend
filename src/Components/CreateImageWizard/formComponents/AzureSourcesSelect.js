@@ -50,7 +50,7 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
   const onFormChange = ({ values }) => {
     if (
       values['azure-type'] !== 'azure-type-source' ||
-      values[input.name] == undefined
+      values[input.name] === undefined
     ) {
       change(input.name, undefined);
       change('azure-tenant-id', undefined);
