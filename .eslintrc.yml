@@ -30,3 +30,4 @@ rules:
   - error
   - destructuring: any
   no-console: 2
+  eqeqeq: error
