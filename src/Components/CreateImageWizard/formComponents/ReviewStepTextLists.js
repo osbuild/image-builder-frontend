@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import { useFormApi } from '@data-driven-forms/react-form-renderer';
 import {
@@ -15,6 +15,7 @@ import {
   TextVariants,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
+import PropTypes from 'prop-types';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import { AWSAccountId } from './AWSAccountId';
@@ -249,26 +250,9 @@ export const TargetEnvOtherList = () => {
 
 export const FSCList = () => {
   const { getState } = useFormApi();
-  const [minSize, setMinSize] = useState();
-
-  useEffect(() => {
-    if (
-      getState()?.values?.['file-system-config-radio'] === 'manual' &&
-      getState()?.values?.['file-system-configuration']
-    ) {
-      let size = 0;
-      for (const fsc of getState().values['file-system-configuration']) {
-        size += fsc.size * fsc.unit;
-      }
-
-      size = (size / UNIT_GIB).toFixed(1);
-      if (size < 1) {
-        setMinSize(`Less than 1 GiB`);
-      } else {
-        setMinSize(`${size} GiB`);
-      }
-    }
-  });
+  const isManual =
+    getState()?.values?.['file-system-config-radio'] === 'manual';
+  const partitions = getState()?.values?.['file-system-configuration'];
 
   return (
     <TextContent>
@@ -283,10 +267,8 @@ export const FSCList = () => {
           component={TextListItemVariants.dd}
           data-testid="partitioning-auto-manual"
         >
-          {getState()?.values?.['file-system-config-radio'] === 'manual'
-            ? 'Manual'
-            : 'Automatic'}
-          {getState()?.values?.['file-system-config-radio'] === 'manual' && (
+          {isManual ? 'Manual' : 'Automatic'}
+          {isManual && (
             <>
               {' '}
               <Popover
@@ -309,7 +291,7 @@ export const FSCList = () => {
             </>
           )}
         </TextListItem>
-        {getState()?.values?.['file-system-config-radio'] === 'manual' && (
+        {isManual && (
           <>
             <TextListItem component={TextListItemVariants.dt}>
               Image size (minimum)
@@ -334,15 +316,39 @@ export const FSCList = () => {
                 </Button>
               </Popover>
             </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {minSize}
-            </TextListItem>
+            <MinSize isManual={isManual} partitions={partitions} />
           </>
         )}
       </TextList>
       <br />
     </TextContent>
   );
+};
+
+export const MinSize = ({ isManual, partitions }) => {
+  let minSize = '';
+  if (isManual && partitions) {
+    let size = 0;
+    for (const partition of partitions) {
+      size += partition.size * partition.unit;
+    }
+
+    size = (size / UNIT_GIB).toFixed(1);
+    if (size < 1) {
+      minSize = `Less than 1 GiB`;
+    } else {
+      minSize = `${size} GiB`;
+    }
+  }
+
+  return (
+    <TextListItem component={TextListItemVariants.dd}> {minSize} </TextListItem>
+  );
+};
+
+MinSize.propTypes = {
+  isManual: PropTypes.bool,
+  partitions: PropTypes.arrayOf(PropTypes.object),
 };
 
 export const ContentList = () => {
