@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import {
   EmptyState,
@@ -141,6 +141,7 @@ const ImagesTable = () => {
     },
   ];
 
+  // TODO call status hook in here
   const awsActions = (compose) => [
     {
       title: 'Share to new region',
@@ -225,6 +226,13 @@ const ImagesTable = () => {
               .slice(itemsStartInclusive, itemsEndExclusive)
               .map((id, rowIndex) => {
                 const compose = composes.byId[id];
+                // TODO move this context into its own file
+                const RowContext = createContext({
+                  aws: { cloneStatuses: new Set },
+                });
+                // TODO this is violating the rules of hooks, we should make a new
+                  // component and put this at the top level
+                const rowContext = useContext(RowContext);
                 return (
                   <Tbody key={id} isExpanded={isExpanded(compose)}>
                     <Tr className="no-bottom-border">
