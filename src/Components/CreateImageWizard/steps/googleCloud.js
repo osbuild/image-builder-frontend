@@ -101,17 +101,25 @@ export default {
       component: componentTypes.PLAIN_TEXT,
       name: 'google-cloud-text-component',
       label: (
-        <Text>
-          Your image will be uploaded to Google Cloud Platform and shared with
-          the account you provide below. <br />
-          The shared image will expire within 14 days. To keep the image longer,
-          copy it to your Google Cloud Platform account.
-        </Text>
+        <p>
+          Your image will be uploaded to GCP and shared with the account you
+          provide below.
+        </p>
+      ),
+    },
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'google-cloud-text-component',
+      label: (
+        <p>
+          <b>The shared image will expire within 14 days.</b> To permanently
+          access the image, copy it to your Google Cloud Platform account.
+        </p>
       ),
     },
     {
       component: 'radio-popover',
-      label: 'Type',
+      label: 'Account type',
       isRequired: true,
       Popover: PopoverInfo,
       name: 'google-account-type',
