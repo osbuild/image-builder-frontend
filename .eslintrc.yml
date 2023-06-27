@@ -6,6 +6,7 @@ globals:
   mount: 'readonly'
 plugins: 
   - import
+  - react-hooks
 rules:
   import/order:
   - error
@@ -31,3 +32,5 @@ rules:
   - destructuring: any
   no-console: 2
   eqeqeq: error
+  react-hooks/rules-of-hooks: error
+  react-hooks/exhaustive-deps: warn
