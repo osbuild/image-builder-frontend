@@ -21,10 +21,12 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag } from '@unleash/proxy-client-react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
 
+import { manageEdgeImagesUrlName } from '../../Utilities/edge';
+import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
@@ -37,8 +39,24 @@ export const LandingPage = () => {
   const { quickStarts } = useChrome();
   const { isBeta } = useGetEnvironment();
   const activateQuickstart = (qs) => () => quickStarts.activateQuickstart(qs);
-  const [activeTabKey, setActiveTabkey] = useState(0);
-  const handleTabClick = (_event, tabIndex) => setActiveTabkey(tabIndex);
+
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
+  const tabsPath = [
+    resolveRelPath(''),
+    resolveRelPath(manageEdgeImagesUrlName),
+  ];
+  const initialActiveTabKey =
+    tabsPath.indexOf(pathname) >= 0 ? tabsPath.indexOf(pathname) : 0;
+  const [activeTabKey, setActiveTabKey] = useState(initialActiveTabKey);
+  const handleTabClick = (_event, tabIndex) => {
+    const tabPath = tabsPath[tabIndex];
+    if (tabPath !== undefined) {
+      navigate(tabPath);
+    }
+    setActiveTabKey(tabIndex);
+  };
+
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const traditionalImageList = (
     <section className="pf-l-page__main-section pf-c-page__main-section">
