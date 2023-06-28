@@ -21,6 +21,7 @@ export IQE_CJI_TIMEOUT="60m"
 export IQE_MARKER_EXPRESSION="ui"
 export IQE_SELENIUM="true"
 export IQE_ENV="ephemeral"
+export IQE_IMAGE_TAG="image-builder"
 
 # bootstrap bonfire and it's config
 CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
@@ -31,8 +32,10 @@ source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 
 # reserve ephemeral namespace
 export DEPLOY_FRONTENDS="true"
-export EXTRA_DEPLOY_ARGS="provisioning sources content-sources rhsm-api-proxy --set-template-ref rhsm-api-proxy=master --set-template-ref content-sources-backend=master"
+export EXTRA_DEPLOY_ARGS="provisioning sources content-sources rhsm-api-proxy --set-template-ref rhsm-api-proxy=master"
 export APP_NAME="image-builder-crc"
+export DEPLOY_TIMEOUT="1200"
+export REF_ENV="insights-stage"
 
 source "$CICD_ROOT"/deploy_ephemeral_env.sh
 
