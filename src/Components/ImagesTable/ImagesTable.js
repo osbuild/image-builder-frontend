@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   EmptyState,
@@ -226,13 +226,7 @@ const ImagesTable = () => {
               .slice(itemsStartInclusive, itemsEndExclusive)
               .map((id, rowIndex) => {
                 const compose = composes.byId[id];
-                // TODO move this context into its own file
-                const RowContext = createContext({
-                  aws: { cloneStatuses: new Set },
-                });
-                // TODO this is violating the rules of hooks, we should make a new
-                  // component and put this at the top level
-                const rowContext = useContext(RowContext);
+                const cloneStatuses = {};
                 return (
                   <Tbody key={id} isExpanded={isExpanded(compose)}>
                     <Tr className="no-bottom-border">
@@ -257,7 +251,10 @@ const ImagesTable = () => {
                         <Target composeId={id} />
                       </Td>
                       <Td dataLabel="Status">
-                        <ImageBuildStatus compose={compose} />
+                        <ImageBuildStatus
+                          compose={compose}
+                          cloneStatuses={cloneStatuses}
+                        />
                       </Td>
                       <Td dataLabel="Instance">
                         <ImageLink
@@ -282,7 +279,7 @@ const ImagesTable = () => {
                     <Tr isExpanded={isExpanded(compose)}>
                       <Td colSpan={8}>
                         <ExpandableRowContent>
-                          <ImageDetails id={id} />
+                          <ImageDetails id={id} cloneStatuses={cloneStatuses} />
                         </ExpandableRowContent>
                       </Td>
                     </Tr>

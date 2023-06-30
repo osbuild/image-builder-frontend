@@ -20,7 +20,7 @@ import {
   selectImageById,
 } from '../../store/composesSlice';
 
-const Row = ({ imageId, isClone }) => {
+const Row = ({ imageId, isClone, cloneStatuses }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
   return (
@@ -40,9 +40,9 @@ const Row = ({ imageId, isClone }) => {
         <Td dataLabel="Region">{image.region}</Td>
         <Td dataLabel="Status">
           {isClone ? (
-            <CloneStatus cloneId={image.id} />
+            <CloneStatus cloneId={image.id} cloneStatuses={cloneStatuses} />
           ) : (
-            <ComposeStatus composeId={image.id} />
+            <ComposeStatus composeId={image.id} cloneStatuses={cloneStatuses} />
           )}
         </Td>
       </Tr>
@@ -50,7 +50,7 @@ const Row = ({ imageId, isClone }) => {
   );
 };
 
-const ClonesTable = ({ composeId }) => {
+const ClonesTable = ({ composeId, cloneStatuses }) => {
   const parentCompose = useSelector((state) =>
     selectComposeById(state, composeId)
   );
@@ -65,9 +65,18 @@ const ClonesTable = ({ composeId }) => {
           <Th className="pf-m-width-20">Status</Th>
         </Tr>
       </Thead>
-      <Row imageId={parentCompose.id} isClone={false} />
+      <Row
+        imageId={parentCompose.id}
+        isClone={false}
+        cloneStatuses={cloneStatuses}
+      />
       {clones.map((clone) => (
-        <Row imageId={clone.id} key={clone.id} isClone={true} />
+        <Row
+          imageId={clone.id}
+          key={clone.id}
+          isClone={true}
+          cloneStatuses={cloneStatuses}
+        />
       ))}
     </TableComposable>
   );

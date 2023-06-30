@@ -23,12 +23,12 @@ import ErrorDetails from './ImageBuildErrorDetails';
 
 import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import {
-  apiSlice,
   useGetClonesQuery,
   useGetCloneStatusQuery,
   useGetComposeStatusQuery,
 } from '../../store/apiSlice';
 import { hoursToExpiration } from '../../Utilities/time';
+import {ImageStatus} from '../../../types';
 
 // TODO use this
 // const cloneErrorMessage = () => {
@@ -44,53 +44,22 @@ import { hoursToExpiration } from '../../Utilities/time';
 //   };
 // };
 
-// Custom hook to get the statuses of all clones of a compose
-// TODO clean this up and get it working with skip
-export const useGetClonesStatuses = (argclones) => {
-  console.log('in useGetClonesStatuses, argclones: ', argclones);
-  const dispatch = useDispatch();
-
-  // This is how it is now working instead of skip
-  // TODO add skip or do this?
-  const clones = argclones ? argclones : [];
-  console.log('clones: ', clones);
-
-  // why is this in a useEffect hook?
-  useEffect(() => {
-    const statuses = clones.map((clone) => {
-      return dispatch(apiSlice.endpoints.getCloneStatus.initiate(clone.id));
-    });
-
-    // why do we need to unsubscribe?
-    return () => {
-      statuses.forEach((status) => {
-        status.unsubscribe();
-      });
-    };
-  }, [clones]);
-
-  // what does this do?
-  return useSelector((state) => {
-    return clones.map((clone) => {
-      return apiSlice.endpoints.getCloneStatus.select(clone.id)(state);
-    });
-  });
-};
-
-export const CloneStatus = ({ cloneId }) => {
+export const CloneStatus = ({ cloneId, cloneStatuses }) => {
   const { data: status, isSuccess } = useGetCloneStatusQuery(cloneId);
 
   useGetCloneStatusQuery(cloneId, {
     pollingInterval:
       status?.status === 'success' || status?.status === 'failure'
-        ? false
+        ? undefined
         : 8000,
   });
+
+  cloneStatuses.push(status?.status);
 
   return isSuccess ? <Status status={status.status} /> : null;
 };
 
-export const ComposeStatus = ({ composeId }) => {
+export const ComposeStatus = ({ composeId, cloneStatuses }) => {
   const { data: composeStatus, isSuccess } =
     useGetComposeStatusQuery(composeId);
 
@@ -98,52 +67,21 @@ export const ComposeStatus = ({ composeId }) => {
 
   useGetComposeStatusQuery(composeId, {
     pollingInterval:
-      status === 'success' || status === 'failure' ? false : 8000,
+      status === 'success' || status === 'failure' ? undefined : 8000,
   });
+
+  cloneStatuses.push(status?.status);
 
   return isSuccess ? <Status status={status} /> : null;
 };
 
-// TODO: this is still doing the 'flip' thing where it shows the wrong status for a second
-const useGetParentStatus = (compose) => {
-  const store = useStore();
-
-  const { data: composeStatus } = useGetComposeStatusQuery(compose.id);
-  const { data: clones, isSuccess } = useGetClonesQuery(compose.id);
-  const cloneStatuses = useGetClonesStatuses(clones);
-  console.log('cloneStatuses: ', cloneStatuses);
-
-  const statuses = new Set();
-  statuses.add(composeStatus?.status);
-  for (const cloneStatus of cloneStatuses) {
-    statuses.add(cloneStatus.data?.status);
-  }
-
-  if (statuses.has('failure')) {
-    return 'failure';
-  } else if (statuses.has('building')) {
-    return 'building';
-  } else if (statuses.has('uploading')) {
-    return 'uploading';
-  } else if (statuses.has('registering')) {
-    return 'registering';
-  } else if (statuses.has('running')) {
-    return 'running';
-  } else if (statuses.has('pending')) {
-    return 'pending';
-  } else if (statuses.has('success')) {
-    return 'success';
-  } else {
-    return '';
-  }
-};
-
 type ImageBuildStatusProps = {
   // TODO bad bad bad!!!
-  compose: any 
+  compose: any,
+  cloneStatuses: []
 }
 
-export const ImageBuildStatus = ({ compose }: ImageBuildStatusProps) => {
+export const ImageBuildStatus = ({ compose, cloneStatuses }: ImageBuildStatusProps) => {
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery(
     compose.id
   );
@@ -152,25 +90,64 @@ export const ImageBuildStatus = ({ compose }: ImageBuildStatusProps) => {
 
   let status = composeStatus?.image_status.status;
 
-  if (type === 'aws.s3' && status === 'success') {
-    // Cloud API currently reports expired images status as 'success'
-    status =
-      hoursToExpiration(compose.createdAt) >= AWS_S3_EXPIRATION_TIME_IN_HOURS
-        ? 'expired'
-        : 'expiring';
-  }
+  // if (type === 'aws.s3' && status === 'success') {
+  //   // Cloud API currently reports expired images status as 'success'
+  //   status =
+  //     hoursToExpiration(compose.createdAt) >= AWS_S3_EXPIRATION_TIME_IN_HOURS
+  //       ? 'expired'
+  //       : 'expiring';
+  // }
 
-  // TODO tomorrow...
-  // cannot call a hook inside a conditional
-  // probably need to factor these out into their own components
-  console.log('type: ', type);
-  if (type === 'aws') {
-    console.log('parent stuff');
-    status = useGetParentStatus(compose);
-  }
-
-  return isSuccess ? <Status status={status} image={compose} /> : null;
+  if (!isSuccess) {
+    return null;
+  } else if (type === 'aws.s3' && status === 'success') {
+    return null;
+  } else if (type === 'aws') {
+    // return <AWSStatus composeStatus={status} cloneStatuses={cloneStatuses}/>
+    return null;
+  }   
+  return <Status status={status} image={compose} />;
 };
+
+type AWSStatusProps = {
+  composeId: string,
+  cloneStatuses: { string: ImageStatus } 
+}
+
+const AWSStatus = ({composeId, cloneStatuses}: AWSStatusProps) => {
+  const { data: composeStatus, isSuccess: isSuccessComposeStatus } = useGetComposeStatusQuery(composeId);
+  const { data: clones, isSuccess: isSuccessClones } = useGetClonesQuery(composeId);
+
+  const statuses = Object.values(cloneStatuses);
+
+  // Ensure all clone statuses have been loaded before rendering to prevent
+  if (!isSuccessComposeStatus || !isSuccessClones || statuses.length !== clones.meta.count) {
+    return null;
+  }
+  
+  // Clones are only allowed for successful parent composes
+  if (composeStatus?.image_status.status !== 'success' || clones.meta.count === 0) {
+    return <p>{composeStatus?.image_status.status}</p>;
+  }
+
+  if (statuses.includes('failure')) {
+    return <Status status='failure />;
+  } else if (statuses.includes('building')) {
+    return <p>building</p>;
+  } else if (statuses.includes('uploading')) {
+    return <p>uploading</p>;
+  } else if (statuses.includes('registering')) {
+    return <p>registering</p>;
+  } else if (statuses.includes('running')) {
+    return <p>running</p>;
+  } else if (statuses.includes('pending')) {
+    return <p>pending</p>;
+  } else if (statuses.includes('success')) {
+    return <p>success</p>;
+  } else {
+    return null;
+  }
+}
 
 const Status = ({ status, image }) => {
   const remainingHours =

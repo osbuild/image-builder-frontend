@@ -152,8 +152,8 @@ const AWSDetails = ({ id }) => {
   );
 };
 
-const AWSIdentifiers = ({ id }) => {
-  return <ClonesTable composeId={id} />;
+const AWSIdentifiers = ({ id, cloneStatuses }) => {
+  return <ClonesTable composeId={id} cloneStatuses={cloneStatuses} />;
 };
 
 const AzureDetails = ({ id }) => {
@@ -302,7 +302,7 @@ const GCPIdentifiers = ({ id }) => {
   );
 };
 
-const ImageDetails = ({ id }) => {
+const ImageDetails = ({ id, cloneStatuses }) => {
   const composes = useSelector((state) => state.composes);
   const compose = composes.byId[id];
 
@@ -363,7 +363,7 @@ const ImageDetails = ({ id }) => {
       )}
       {(compose.request.image_requests[0].image_type === 'aws' ||
         compose?.image_status?.upload_status?.type === 'aws') && (
-        <AWSIdentifiers id={id} />
+        <AWSIdentifiers id={id} cloneStatuses={cloneStatuses} />
       )}
       {(compose.request.image_requests[0].image_type === 'azure' ||
         compose?.image_status?.upload_status?.type === 'azure') && (
