@@ -5,7 +5,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 const DocumentationButton = () => {
   const documentationURL =
-    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service/index';
+    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
 
   return (
     <Button
