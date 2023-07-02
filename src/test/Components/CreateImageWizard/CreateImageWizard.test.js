@@ -109,7 +109,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('button', { name: 'File system configuration' });
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
-    screen.getByRole('button', { name: 'Name image' });
+    screen.getByRole('button', { name: 'Details' });
     screen.getByRole('button', { name: 'Review' });
   });
 });
@@ -723,7 +723,7 @@ describe('Step Packages', () => {
     getNextButton().click();
 
     screen.getByRole('heading', {
-      name: 'Name image',
+      name: 'Details',
     });
   });
 
@@ -1110,7 +1110,7 @@ describe('Step Details', () => {
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
-      name: 'Image name',
+      name: 'Image Name',
     });
     // 101 character name
     const invalidName = 'a'.repeat(64);
@@ -1208,7 +1208,7 @@ describe('Step Review', () => {
     back.click();
 
     screen.getByRole('heading', {
-      name: 'Name image',
+      name: 'Details',
     });
   });
 
@@ -1384,7 +1384,7 @@ describe('Click through all steps', () => {
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
-      name: 'Image name',
+      name: 'Image Name',
     });
     await user.type(nameInput, 'my-image-name');
     getNextButton().click();

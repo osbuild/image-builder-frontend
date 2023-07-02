@@ -103,7 +103,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
     screen.getByRole('button', { name: 'Custom repositories' });
-    screen.getByRole('button', { name: 'Name image' });
+    screen.getByRole('button', { name: 'Details' });
     screen.getByRole('button', { name: 'Review' });
   });
 });
@@ -738,7 +738,7 @@ describe('Click through all steps', () => {
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
-      name: 'Image name',
+      name: 'Image Name',
     });
     await user.type(nameInput, 'my-image-name');
     getNextButton().click();
