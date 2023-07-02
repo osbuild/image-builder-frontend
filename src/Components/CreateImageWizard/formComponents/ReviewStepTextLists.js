@@ -553,7 +553,7 @@ export const ImageDetailsList = () => {
               component={TextListItemVariants.dt}
               className="pf-u-min-width"
             >
-              Name
+              Image name
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
               {getState()?.values?.['image-name']}

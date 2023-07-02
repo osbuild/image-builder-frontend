@@ -11,7 +11,7 @@ export default {
   StepTemplate,
   id: 'wizard-details',
   name: 'image-name',
-  title: 'Name image',
+  title: 'Details',
   nextStep: 'review',
   buttons: CustomButtons,
   fields: [
@@ -20,7 +20,8 @@ export default {
       name: 'plain-text-component',
       label: (
         <p>
-          Optionally enter a name for your image. All images will have a UUID.
+          Optionally enter a name to identify your image later quickly. If you
+          do not provide one, the UUID will be used as the name.
         </p>
       ),
     },
@@ -28,7 +29,10 @@ export default {
       component: componentTypes.TEXT_FIELD,
       name: 'image-name',
       type: 'text',
-      label: 'Image name',
+      label: 'Image Name',
+      placeholder: 'Image Name',
+      helperText:
+        'The image name can be 3-63 characters long. It can contain lowercase letters, digits and hyphens, has to start with a letter and cannot end with a hyphen.',
       autoFocus: true,
       validate: [
         {
