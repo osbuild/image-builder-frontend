@@ -12,7 +12,8 @@ const Target = ({ composeId }) => {
     aws: 'Amazon Web Services',
     azure: 'Microsoft Azure',
     gcp: 'Google Cloud Platform',
-    vsphere: 'VMWare',
+    vsphere: 'VMWare vSphere',
+    'vsphere-ova': 'VMWare vSphere',
     'guest-image': 'Virtualization - Guest image',
     'image-installer': 'Bare metal - Installer',
   };

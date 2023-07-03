@@ -36,6 +36,7 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
 
   const fileExtensions = {
     vsphere: '.vmdk',
+    'vsphere-ova': '.ova',
     'guest-image': '.qcow2',
     'image-installer': '.iso',
   };
