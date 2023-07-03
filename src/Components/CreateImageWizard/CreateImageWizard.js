@@ -204,6 +204,25 @@ const onSave = (values) => {
     requests.push(request);
   }
 
+  if (values['target-environment']?.['vsphere-ova']) {
+    const request = {
+      distribution: values.release,
+      image_name: values?.['image-name'],
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'vsphere-ova',
+          upload_request: {
+            type: 'aws.s3',
+            options: {},
+          },
+        },
+      ],
+      customizations,
+    };
+    requests.push(request);
+  }
+
   if (values['target-environment']?.['guest-image']) {
     const request = {
       distribution: values.release,

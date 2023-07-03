@@ -86,7 +86,13 @@ const ReviewStep = () => {
         )}
         {getState()?.values?.['target-environment']?.vsphere && (
           <TextContent>
-            <Text component={TextVariants.h3}>VMWare (.vmdk)</Text>
+            <Text component={TextVariants.h3}>VMWare vSphere (.vmdk)</Text>
+            <TargetEnvOtherList />
+          </TextContent>
+        )}
+        {getState()?.values?.['target-environment']?.['vsphere-ova'] && (
+          <TextContent>
+            <Text component={TextVariants.h3}>VMWare vSphere (.ova)</Text>
             <TargetEnvOtherList />
           </TextContent>
         )}

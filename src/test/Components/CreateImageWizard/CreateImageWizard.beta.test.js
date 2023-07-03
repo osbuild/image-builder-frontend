@@ -750,7 +750,7 @@ describe('Click through all steps', () => {
     targetEnvironmentsExpandable.click();
     await screen.findAllByText('AWS');
     await screen.findAllByText('GCP');
-    await screen.findByText('VMWare (.vmdk)');
+    await screen.findByText('VMWare vSphere (.ova)');
     await screen.findByText('Virtualization - Guest image (.qcow2)');
     await screen.findByText('Bare metal - Installer (.iso)');
 
@@ -849,14 +849,14 @@ describe('Click through all steps', () => {
             customizations: customizations,
           });
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
-        } else if (body.image_requests[0].image_type === 'vsphere') {
+        } else if (body.image_requests[0].image_type === 'vsphere-ova') {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'MyImageName',
             image_requests: [
               {
                 architecture: 'x86_64',
-                image_type: 'vsphere',
+                image_type: 'vsphere-ova',
                 upload_request: {
                   type: 'aws.s3',
                   options: {},
