@@ -1,12 +1,27 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-import { ActivationKeys, Architectures, ClonesResponse, ComposeStatus, ComposesResponse, RepositoryCollectionResponse, SourceResponse, SourceUploadInfoResponse, UploadStatus, } from '../../types';
+import {
+  ActivationKeys,
+  Architectures,
+  ClonesResponse,
+  ComposeStatus,
+  ComposesResponse,
+  RepositoryCollectionResponse,
+  SourceResponse,
+  SourceUploadInfoResponse,
+  UploadStatus,
+} from '../../types';
 
-type GetRepositoriesArgs = { available_for_arch: string, available_for_version: string, limit: number, offset: number }
+type GetRepositoriesArgs = {
+  available_for_arch: string;
+  available_for_version: string;
+  limit: number;
+  offset: number;
+};
 
 enum Provider {
   'azure',
-  'aws'
+  'aws',
 }
 
 import {
@@ -21,11 +36,12 @@ export const apiSlice = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: '' }),
   endpoints: (builder) => ({
     getSources: builder.query<SourceResponse[], Provider>({
-      query: (provider) => `${PROVISIONING_SOURCES_ENDPOINT}/sources?provider=${provider}`,
+      query: (provider) =>
+        `${PROVISIONING_SOURCES_ENDPOINT}/sources?provider=${provider}`,
     }),
     getSourceDetail: builder.query<SourceUploadInfoResponse, string>({
       query: (sourceId) =>
-        `${PROVISIONING_SOURCES_ENDPOINT}/sources/${sourceId}/upload_info`
+        `${PROVISIONING_SOURCES_ENDPOINT}/sources/${sourceId}/upload_info`,
     }),
     getArchitecturesByDistribution: builder.query<Architectures, string>({
       query: (distribution) =>
@@ -37,8 +53,12 @@ export const apiSlice = createApi({
     getActivationKeyInformation: builder.query<ActivationKeys, string>({
       query: (name) => `${RHSM_API}/activation_keys/${name}`,
     }),
-    getRepositories: builder.query<RepositoryCollectionResponse, GetRepositoriesArgs>({
-      query: ({available_for_arch, available_for_version, limit, offset}) => `${CONTENT_SOURCES}/repositories/?available_for_arch=${available_for_arch}&available_for_version=${available_for_version}&limit=${limit}&offset=${offset}`,
+    getRepositories: builder.query<
+      RepositoryCollectionResponse,
+      GetRepositoriesArgs
+    >({
+      query: ({ available_for_arch, available_for_version, limit, offset }) =>
+        `${CONTENT_SOURCES}/repositories/?available_for_arch=${available_for_arch}&available_for_version=${available_for_version}&limit=${limit}&offset=${offset}`,
     }),
     getClones: builder.query<ClonesResponse, string>({
       query: (composeId) => `${IMAGE_BUILDER_API}/composes/${composeId}/clones`,
@@ -62,6 +82,7 @@ export const {
   useGetRepositoriesQuery,
   useGetClonesQuery,
   useGetCloneStatusQuery,
+  useGetComposesQuery,
   useGetComposeStatusQuery,
   useGetSourcesQuery,
   useGetSourceDetailQuery,
