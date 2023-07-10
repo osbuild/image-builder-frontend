@@ -49,6 +49,11 @@ jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
   return Promise.resolve(mockCloneStatus[id]);
 });
 
+beforeAll(() => {
+  // scrollTo is not defined in jsdom
+  window.HTMLElement.prototype.scrollTo = function () {};
+});
+
 describe('Images Table', () => {
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
