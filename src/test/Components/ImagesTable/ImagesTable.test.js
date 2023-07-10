@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen, within } from '@testing-library/react';
+import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -222,7 +222,10 @@ describe('Images Table', () => {
     expect(
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
-    await user.click(errorPopover);
+
+    await act(async () => {
+      await user.click(errorPopover);
+    });
 
     expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
   });
