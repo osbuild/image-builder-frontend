@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -28,7 +28,7 @@ import {
 
 import './CreateImageWizard.scss';
 import api from '../../api';
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB, MODAL_ANCHOR } from '../../constants';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
 import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
 import isRhel from '../../Utilities/isRhel';
@@ -525,8 +525,6 @@ const CreateImageWizard = () => {
 
   const handleClose = () => navigate(resolveRelPath(''));
 
-  const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
-
   // In case the `created_at` date is undefined when creating an image
   // a temporary value with current date is added
   const currentDate = new Date();
@@ -592,9 +590,6 @@ const CreateImageWizard = () => {
           {
             component: componentTypes.WIZARD,
             name: 'image-builder-wizard',
-            ModalProps: {
-              appendTo,
-            },
             className: 'imageBuilder',
             isDynamic: true,
             inModal: true,
