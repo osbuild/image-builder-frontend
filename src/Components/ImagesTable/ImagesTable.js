@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Button,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -8,12 +9,13 @@ import {
   EmptyStateVariant,
   Pagination,
   PaginationVariant,
+  Text,
   Title,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   ActionsColumn,
   ExpandableRowContent,
@@ -42,7 +44,6 @@ import {
   hoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -160,12 +161,40 @@ const ImagesTable = () => {
         <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
           <EmptyStateIcon icon={PlusCircleIcon} />
           <Title headingLevel="h4" size="lg">
-            Create an image
+            Create an RPM-DNF image
           </Title>
           <EmptyStateBody>
-            Create OS images for deployment in Amazon Web Services, Microsoft
-            Azure and Google Cloud Platform. Images can include a custom package
-            set and an activation key to automate the registration process.
+            <Text>
+              Image builder is a tool for creating deployment-ready customized
+              system images: installation disks, virtual machines, cloud
+              vendor-specific images, and others. By using image builder, you
+              can create these images faster than manual procedures because it
+              eliminates the specific configurations required for each output
+              type.
+            </Text>
+            <br />
+            <Text>
+              With RPM-DNF, you can manage the system software by using the DNF
+              package manager and updated RPM packages. This is a simple and
+              adaptive method of managing and modifying the system over its
+              lifecycle.
+            </Text>
+            <br />
+            <Text>
+              <Button
+                component="a"
+                target="_blank"
+                variant="link"
+                icon={<ExternalLinkAltIcon />}
+                iconPosition="right"
+                isInline
+                href={
+                  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index'
+                }
+              >
+                Learn more about managing images with DNF
+              </Button>
+            </Text>
           </EmptyStateBody>
           <Link
             to={resolveRelPath('imagewizard')}
@@ -175,7 +204,20 @@ const ImagesTable = () => {
             Create image
           </Link>
           <EmptyStateSecondaryActions>
-            <DocumentationButton />
+            <Button
+              component="a"
+              target="_blank"
+              variant="link"
+              icon={<ExternalLinkAltIcon />}
+              iconPosition="right"
+              isInline
+              href={
+                'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
+              }
+              className="pf-u-pt-md"
+            >
+              Image builder for RPM-DNF documentation
+            </Button>
           </EmptyStateSecondaryActions>
         </EmptyState>
       )) || (
