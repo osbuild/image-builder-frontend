@@ -13,7 +13,11 @@ import {
   Text,
   TextContent,
 } from '@patternfly/react-core';
-import { ArrowRightIcon, HelpIcon } from '@patternfly/react-icons';
+import {
+  ArrowRightIcon,
+  ExternalLinkAltIcon,
+  HelpIcon,
+} from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   OpenSourceBadge,
@@ -31,7 +35,6 @@ import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
 
 export const LandingPage = () => {
   const [showBetaAlert, setShowBetaAlert] = useState(true);
@@ -155,14 +158,48 @@ export const LandingPage = () => {
       <PageHeader>
         <PageHeaderTitle className="title" title="Image Builder" />
         <Popover
-          headerContent={'About Image Builder'}
+          minWidth="35rem"
+          headerContent={'About image builder'}
           bodyContent={
             <TextContent>
               <Text>
-                Image Builder is a service that allows you to create RHEL images
-                and push them to cloud environments.
+                Image builder is a tool for creating deployment-ready customized
+                system images: installation disks, virtual machines, cloud
+                vendor-specific images, and others. By using image builder, you
+                can make these images faster than manual procedures because it
+                eliminates the specific configurations required for each output
+                type.
               </Text>
-              <DocumentationButton />
+              <Text>
+                <Button
+                  component="a"
+                  target="_blank"
+                  variant="link"
+                  icon={<ExternalLinkAltIcon />}
+                  iconPosition="right"
+                  isInline
+                  href={
+                    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
+                  }
+                >
+                  Image builder for RPM-DNF documentation
+                </Button>
+              </Text>
+              <Text>
+                <Button
+                  component="a"
+                  target="_blank"
+                  variant="link"
+                  icon={<ExternalLinkAltIcon />}
+                  iconPosition="right"
+                  isInline
+                  href={
+                    'https://access.redhat.com/documentation/en-us/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index'
+                  }
+                >
+                  Image builder for OSTree documentation
+                </Button>
+              </Text>
             </TextContent>
           }
         >
@@ -184,7 +221,48 @@ export const LandingPage = () => {
         >
           <Tab
             eventKey={0}
-            title={<TabTitleText>Conventional (RPM - DNF)</TabTitleText>}
+            title={
+              <TabTitleText>
+                Conventional (RPM-DNF){' '}
+                <Popover
+                  minWidth="35rem"
+                  headerContent={'Conventional (RPM-DNF)'}
+                  bodyContent={
+                    <TextContent>
+                      <Text>
+                        With RPM-DNF, you can manage the system software by
+                        using the DNF package manager and updated RPM packages.
+                        This is a simple and adaptive method of managing and
+                        modifying the system over its lifecycle.
+                      </Text>
+                      <Text>
+                        <Button
+                          component="a"
+                          target="_blank"
+                          variant="link"
+                          icon={<ExternalLinkAltIcon />}
+                          iconPosition="right"
+                          isInline
+                          href={
+                            'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index'
+                          }
+                        >
+                          Learn more about managing images with DNF
+                        </Button>
+                      </Text>
+                    </TextContent>
+                  }
+                >
+                  <Button
+                    variant="plain"
+                    aria-label="About image builder"
+                    className="pf-u-pl-sm header-button"
+                  >
+                    <HelpIcon />
+                  </Button>
+                </Popover>
+              </TabTitleText>
+            }
           >
             {traditionalImageList}
           </Tab>
@@ -195,7 +273,45 @@ export const LandingPage = () => {
                 <Label isCompact color="blue">
                   New
                 </Label>{' '}
-                Immutable (OSTree)
+                Immutable (OSTree){' '}
+                <Popover
+                  minWidth="35rem"
+                  headerContent={'Immutable (OSTree)'}
+                  bodyContent={
+                    <TextContent>
+                      <Text>
+                        With OSTree, you can manage the system software by
+                        referencing a central image repository. OSTree images
+                        contain a complete operating system ready to be remotely
+                        installed at scale. You can track updates to images
+                        through commits and enable secure updates that only
+                        address changes and keep the operating system unchanged.
+                        The updates are quick, and the rollbacks are easy.
+                      </Text>
+                      <Text>
+                        <Button
+                          component="a"
+                          target="_blank"
+                          variant="link"
+                          icon={<ExternalLinkAltIcon />}
+                          iconPosition="right"
+                          isInline
+                          href={'https://ostreedev.github.io/ostree/'}
+                        >
+                          Learn more about OSTree
+                        </Button>
+                      </Text>
+                    </TextContent>
+                  }
+                >
+                  <Button
+                    variant="plain"
+                    aria-label="About image builder"
+                    className="pf-u-pl-sm header-button"
+                  >
+                    <HelpIcon />
+                  </Button>
+                </Popover>
               </TabTitleText>
             }
           >
