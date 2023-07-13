@@ -5,6 +5,7 @@ import {
   AlertActionCloseButton,
   Button,
   ExpandableSection,
+  Label,
   Popover,
   Tabs,
   Tab,
@@ -186,7 +187,14 @@ export const LandingPage = () => {
           </Tab>
           <Tab
             eventKey={1}
-            title={<TabTitleText>Immutable (OSTree)</TabTitleText>}
+            title={
+              <TabTitleText>
+                <Label isCompact color="blue">
+                  New
+                </Label>{' '}
+                Immutable (OSTree)
+              </TabTitleText>
+            }
           >
             <EdgeImagesTable />
           </Tab>
