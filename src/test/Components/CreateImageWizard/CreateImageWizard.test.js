@@ -11,7 +11,7 @@ import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
 import { RHEL_8 } from '../../../constants.js';
-import { mockComposesEmpty } from '../../fixtures/composes.js';
+import { mockComposesEmpty } from '../../fixtures/composes';
 import {
   mockPkgResultAlpha,
   mockPkgResultAll,

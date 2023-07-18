@@ -15,7 +15,7 @@ import {
   mockClones,
   mockCloneStatus,
   mockNoClones,
-} from '../../fixtures/composes.js';
+} from '../../fixtures/composes';
 import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -36,7 +36,7 @@ jest
   .mockImplementation(() => Promise.resolve(mockComposes));
 
 jest.spyOn(api, 'getComposeStatus').mockImplementation((id) => {
-  return Promise.resolve(mockStatus[id]);
+  return Promise.resolve(mockStatus(id));
 });
 
 jest.spyOn(api, 'getClones').mockImplementation((id) => {
@@ -46,7 +46,7 @@ jest.spyOn(api, 'getClones').mockImplementation((id) => {
 });
 
 jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
-  return Promise.resolve(mockCloneStatus[id]);
+  return Promise.resolve(mockCloneStatus(id));
 });
 
 beforeAll(() => {
@@ -291,13 +291,13 @@ describe('Clones table', () => {
     const clonesTableData = {
       ami: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.ami
+          (clone) => mockCloneStatus(clone.id).options.ami
         ),
       ],
       created: [...mockClones(composeId).data.map((clone) => clone.created_at)],
       region: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.region
+          (clone) => mockCloneStatus(clone.id).options.region
         ),
       ],
     };
