@@ -74,7 +74,7 @@ export const handlers = [
   }),
   rest.get(`${IMAGE_BUILDER_API}/composes/:composeId`, (req, res, ctx) => {
     const { composeId } = req.params;
-    return res(ctx.status(200), ctx.json(mockStatus[composeId]));
+    return res(ctx.status(200), ctx.json(mockStatus(composeId)));
   }),
   rest.get(
     `${IMAGE_BUILDER_API}/composes/:composeId/clones`,
@@ -85,6 +85,6 @@ export const handlers = [
   ),
   rest.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, (req, res, ctx) => {
     const { cloneId } = req.params;
-    return res(ctx.status(200), ctx.json(mockCloneStatus[cloneId]));
+    return res(ctx.status(200), ctx.json(mockCloneStatus(cloneId)));
   }),
 ];

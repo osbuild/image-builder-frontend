@@ -12,8 +12,8 @@ import { rest } from 'msw';
 
 import api from '../../../api.js';
 import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
-import { mockComposesEmpty } from '../../fixtures/composes.js';
-import { customizations, ids } from '../../fixtures/customizations.js';
+import { mockComposesEmpty } from '../../fixtures/composes';
+import { customizations, ids } from '../../fixtures/customizations';
 import { mockPkgResultAlphaContentSources } from '../../fixtures/packages';
 import { server } from '../../mocks/server.js';
 import {

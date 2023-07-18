@@ -3,7 +3,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
-import { mockState } from '../../fixtures/composes.js';
+import { mockState } from '../../fixtures/composes';
 import { renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
