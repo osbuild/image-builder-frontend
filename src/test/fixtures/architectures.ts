@@ -1,8 +1,25 @@
-export const mockArchitecturesByDistro = (distro) => {
-  if (distro === 'rhel-92') {
-    return [
+import { Architectures, Distributions } from '../../store/imageBuilderApi';
+
+export const mockArchitecturesByDistro = (
+  distro: Distributions
+): Architectures => {
+  const mockDistros: { [key: string]: Architectures } = {
+    'rhel-92': [
       {
         arch: 'x86_64',
+        image_types: [
+          'aws',
+          'gcp',
+          'azure',
+          'rhel-edge-commit',
+          'rhel-edge-installer',
+          'edge-commit',
+          'edge-installer',
+          'guest-image',
+          'image-installer',
+          'vsphere',
+          'vsphere-ova',
+        ],
         repositories: [
           {
             baseurl:
@@ -13,6 +30,7 @@ export const mockArchitecturesByDistro = (distro) => {
       },
       {
         arch: 'aarch64',
+        image_types: ['aws', 'guest-image', 'image-installer'],
         repositories: [
           {
             baseurl:
@@ -21,11 +39,23 @@ export const mockArchitecturesByDistro = (distro) => {
           },
         ],
       },
-    ];
-  } else if (distro === 'rhel-88') {
-    return [
+    ],
+    'rhel-88': [
       {
         arch: 'x86_64',
+        image_types: [
+          'aws',
+          'gcp',
+          'azure',
+          'rhel-edge-commit',
+          'rhel-edge-installer',
+          'edge-commit',
+          'edge-installer',
+          'guest-image',
+          'image-installer',
+          'vsphere',
+          'vsphere-ova',
+        ],
         repositories: [
           {
             baseurl:
@@ -36,6 +66,7 @@ export const mockArchitecturesByDistro = (distro) => {
       },
       {
         arch: 'aarch64',
+        image_types: ['aws', 'guest-image', 'image-installer'],
         repositories: [
           {
             baseurl:
@@ -44,11 +75,21 @@ export const mockArchitecturesByDistro = (distro) => {
           },
         ],
       },
-    ];
-  } else if (distro === 'centos-8') {
-    return [
+    ],
+    'centos-8': [
       {
         arch: 'x86_64',
+        image_types: [
+          'aws',
+          'gcp',
+          'azure',
+          'ami',
+          'vhd',
+          'guest-image',
+          'image-installer',
+          'vsphere',
+          'vsphere-ova',
+        ],
         repositories: [
           {
             baseurl:
@@ -59,6 +100,7 @@ export const mockArchitecturesByDistro = (distro) => {
       },
       {
         arch: 'aarch64',
+        image_types: ['aws', 'guest-image', 'image-installer'],
         repositories: [
           {
             baseurl:
@@ -67,6 +109,7 @@ export const mockArchitecturesByDistro = (distro) => {
           },
         ],
       },
-    ];
-  }
+    ],
+  };
+  return mockDistros[distro];
 };
