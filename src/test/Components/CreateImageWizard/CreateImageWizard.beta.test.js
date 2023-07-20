@@ -17,7 +17,7 @@ import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImage
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
-import { customizations, ids } from '../../fixtures/customizations';
+import { customizations } from '../../fixtures/customizations';
 import { mockPkgResultAlphaContentSources } from '../../fixtures/packages';
 import { server } from '../../mocks/server.js';
 import {
@@ -881,6 +881,7 @@ describe('Click through all steps', () => {
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
     // mock the backend API
+    const ids = [];
     const composeImage = jest
       .spyOn(api, 'composeImage')
       .mockImplementation((body) => {

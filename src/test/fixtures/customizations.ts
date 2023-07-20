@@ -1,6 +1,6 @@
-export const ids = [];
+import { Customizations } from '../../store/imageBuilderApi';
 
-export const customizations = {
+export const customizations: Customizations = {
   custom_repositories: [
     {
       baseurl: ['http://yum.theforeman.org/releases/3.4/el8/x86_64/'],
