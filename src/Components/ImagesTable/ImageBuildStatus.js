@@ -42,9 +42,7 @@ export const ImageBuildStatus = ({
 
   const cloneErrorMessage = () => {
     let region = '';
-    hasFailedClone.includes(image.id)
-      ? (region = 'one or more regions')
-      : (region = imageRegion);
+    hasFailedClone ? (region = 'one or more regions') : (region = imageRegion);
     return {
       error: {
         reason: `Failed to share image to ${region}.`,
@@ -121,7 +119,7 @@ export const ImageBuildStatus = ({
     ],
   };
 
-  const hasFailedClone = [];
+  let hasFailedClone;
   let status;
   if (
     isImagesTableRow &&
@@ -136,8 +134,12 @@ export const ImageBuildStatus = ({
     const imageStatuses = useSelector((state) =>
       selectImageStatusesById(state, image.id)
     );
-    if (imageStatuses.includes('failure')) {
-      hasFailedClone.push(image.id);
+    if (!imageStatuses.includes('success')) {
+      hasFailedClone = false;
+    } else if (!imageStatuses.includes('failure')) {
+      hasFailedClone = false;
+    } else {
+      hasFailedClone = true;
     }
     const filteredImageStatuses = imageStatuses.filter(
       (imageStatus) => imageStatus !== undefined
@@ -183,7 +185,7 @@ export const ImageBuildStatus = ({
                       <PanelMain maxHeight="25rem">
                         <ErrorDetails
                           status={
-                            !imageStatus || hasFailedClone.includes(image.id)
+                            !imageStatus || hasFailedClone
                               ? cloneErrorMessage()
                               : imageStatus
                           }
