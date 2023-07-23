@@ -53,6 +53,7 @@ export const selectComposeById = (state, composeId) => {
       created_at: compose.created_at,
       id: compose.id,
       imageName: compose.image_name || compose.id,
+      imageDescription: compose.image_description || '',
       region: compose.image_status?.upload_status?.options?.region,
       ami: compose.image_status?.upload_status?.options?.ami,
       share_with_accounts:
