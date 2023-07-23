@@ -103,6 +103,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -138,6 +139,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -167,6 +169,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -189,6 +192,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -208,6 +212,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -227,6 +232,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -246,6 +252,7 @@ const onSave = (values) => {
     const request = {
       distribution: values.release,
       image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
       image_requests: [
         {
           architecture: 'x86_64',
@@ -290,6 +297,7 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
     const formState = {};
 
     formState['image-name'] = composeRequest.image_name;
+    formState['image-description'] = composeRequest.image_description;
 
     formState.release = composeRequest?.distribution;
     // set defaults for target environment first
@@ -472,7 +480,6 @@ const formStepHistory = (composeRequest, isBeta) => {
     } else {
       steps.push('File system configuration', 'packages');
     }
-
     steps.push('details');
 
     return steps;

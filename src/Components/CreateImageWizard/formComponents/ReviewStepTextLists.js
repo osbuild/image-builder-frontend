@@ -544,10 +544,13 @@ export const RegisterNowList = () => {
 
 export const ImageDetailsList = () => {
   const { getState } = useFormApi();
+  const imageName = getState()?.values?.['image-name'];
+  const imageDescription = getState()?.values?.['image-description'];
+
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>
-        {getState()?.values?.['image-name'] && (
+        {imageName && (
           <>
             <TextListItem
               component={TextListItemVariants.dt}
@@ -556,7 +559,20 @@ export const ImageDetailsList = () => {
               Image name
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
-              {getState()?.values?.['image-name']}
+              {imageName}
+            </TextListItem>
+          </>
+        )}
+        {imageDescription && (
+          <>
+            <TextListItem
+              component={TextListItemVariants.dt}
+              className="pf-u-min-width"
+            >
+              Description
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {imageDescription}
             </TextListItem>
           </>
         )}

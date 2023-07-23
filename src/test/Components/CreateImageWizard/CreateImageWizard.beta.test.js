@@ -741,6 +741,15 @@ describe('Click through all steps', () => {
       name: 'Image Name',
     });
     await user.type(nameInput, 'my-image-name');
+
+    // Enter description for image
+    const descriptionInput = screen.getByRole('textbox', {
+      name: /Description/,
+    });
+    await user.type(
+      descriptionInput,
+      'this is a perfect description for image'
+    );
     getNextButton().click();
 
     // review
@@ -768,6 +777,7 @@ describe('Click through all steps', () => {
     );
     imageDetailsExpandable.click();
     await screen.findByText('my-image-name');
+    await screen.findByText('this is a perfect description for image');
 
     await screen.findByText('name0');
     await screen.findByText('Self-Support');
@@ -794,6 +804,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -813,6 +824,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -832,6 +844,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -853,6 +866,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -870,6 +884,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
@@ -887,6 +902,7 @@ describe('Click through all steps', () => {
           expect(body).toEqual({
             distribution: RHEL_8,
             image_name: 'my-image-name',
+            image_description: 'this is a perfect description for image',
             image_requests: [
               {
                 architecture: 'x86_64',
