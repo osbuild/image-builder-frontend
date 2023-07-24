@@ -16,7 +16,7 @@ import {
   mockPkgResultAlpha,
   mockPkgResultAll,
   mockPkgResultPartial,
-} from '../../fixtures/packages.js';
+} from '../../fixtures/packages';
 import {
   clickBack,
   clickNext,

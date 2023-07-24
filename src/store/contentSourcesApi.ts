@@ -22,6 +22,20 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    listRepositoriesRpms: build.query<
+      ListRepositoriesRpmsApiResponse,
+      ListRepositoriesRpmsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/repositories/${queryArg.uuid}/rpms`,
+        params: {
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+          search: queryArg.search,
+          sort_by: queryArg.sortBy,
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -51,6 +65,20 @@ export type ListRepositoriesApiArg = {
   sortBy?: string;
   /** Comma separated list of statuses to optionally filter on */
   status?: string;
+};
+export type ListRepositoriesRpmsApiResponse =
+  /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
+export type ListRepositoriesRpmsApiArg = {
+  /** Identifier of the Repository */
+  uuid: string;
+  /** Limit the number of items returned */
+  limit?: number;
+  /** Offset into the list of results to return in the response */
+  offset?: number;
+  /** Search term for name. */
+  search?: string;
+  /** Sets the sort order of the results. */
+  sortBy?: string;
 };
 export type ApiRepositoryResponse = {
   account_id?: string;
@@ -95,4 +123,20 @@ export type ErrorsHandlerError = {
 export type ErrorsErrorResponse = {
   errors?: ErrorsHandlerError[];
 };
-export const { useListRepositoriesQuery } = injectedRtkApi;
+export type ApiRepositoryRpm = {
+  arch?: string;
+  checksum?: string;
+  epoch?: number;
+  name?: string;
+  release?: string;
+  summary?: string;
+  uuid?: string;
+  version?: string;
+};
+export type ApiRepositoryRpmCollectionResponse = {
+  data?: ApiRepositoryRpm[];
+  links?: ApiLinks;
+  meta?: ApiResponseMetadata;
+};
+export const { useListRepositoriesQuery, useListRepositoriesRpmsQuery } =
+  injectedRtkApi;
