@@ -7,7 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/imageBuilderApi.ts',
   exportName: 'imageBuilderApi',
   hooks: true,
-  filterEndpoints: ['getComposes', 'getComposeStatus', 'getComposeClones', 'getCloneStatus', 'getArchitectures'],
+  filterEndpoints: ['getComposes', 'getComposeStatus', 'getComposeClones', 'getCloneStatus', 'getArchitectures', 'getPackages'],
 }
 
 export default config

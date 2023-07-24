@@ -34,6 +34,18 @@ const injectedRtkApi = api.injectEndpoints({
         params: { limit: queryArg.limit, offset: queryArg.offset },
       }),
     }),
+    getPackages: build.query<GetPackagesApiResponse, GetPackagesApiArg>({
+      query: (queryArg) => ({
+        url: `/packages`,
+        params: {
+          distribution: queryArg.distribution,
+          architecture: queryArg.architecture,
+          search: queryArg.search,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -72,6 +84,20 @@ export type GetComposeClonesApiArg = {
   /** max amount of clones, default 100 */
   limit?: number;
   /** clones page offset, default 0 */
+  offset?: number;
+};
+export type GetPackagesApiResponse =
+  /** status 200 a list of packages */ PackagesResponse;
+export type GetPackagesApiArg = {
+  /** distribution to look up packages for */
+  distribution: Distributions;
+  /** architecture to look up packages for */
+  architecture: "x86_64" | "aarch64";
+  /** packages to look for */
+  search: string;
+  /** max amount of packages, default 100 */
+  limit?: number;
+  /** packages page offset, default 0 */
   offset?: number;
 };
 export type Repository = {
@@ -281,10 +307,25 @@ export type ClonesResponse = {
     count: number;
   };
 };
+export type Package = {
+  name: string;
+  summary: string;
+};
+export type PackagesResponse = {
+  data: Package[];
+  links: {
+    first: string;
+    last: string;
+  };
+  meta: {
+    count: number;
+  };
+};
 export const {
   useGetArchitecturesQuery,
   useGetCloneStatusQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
   useGetComposeClonesQuery,
+  useGetPackagesQuery,
 } = injectedRtkApi;
