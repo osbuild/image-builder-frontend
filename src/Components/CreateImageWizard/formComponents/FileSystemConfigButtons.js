@@ -5,7 +5,7 @@ import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context
 import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { usePrefetch } from '../../../store/apiSlice';
+import { imageBuilderApi } from '../../../store/imageBuilderApi';
 
 // FileSystemconfigButtons are defined separately to display errors inside of the button footer
 const FileSystemConfigButtons = ({ handleNext, handlePrev, nextStep }) => {
@@ -15,7 +15,7 @@ const FileSystemConfigButtons = ({ handleNext, handlePrev, nextStep }) => {
     getState()?.errors?.['file-system-configuration'] ? true : false
   );
   const [nextHasBeenClicked, setNextHasBeenClicked] = useState(false);
-  const prefetchArchitectures = usePrefetch('getArchitecturesByDistribution');
+  const prefetchArchitectures = imageBuilderApi.usePrefetch('getArchitectures');
 
   useEffect(() => {
     const errors = getState()?.errors?.['file-system-configuration'];
@@ -38,7 +38,7 @@ const FileSystemConfigButtons = ({ handleNext, handlePrev, nextStep }) => {
 
   const handleMouseEnter = () => {
     const distribution = getState()?.values?.release;
-    prefetchArchitectures(distribution);
+    prefetchArchitectures({ distribution });
   };
 
   return (
