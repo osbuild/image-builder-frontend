@@ -112,6 +112,7 @@
     "test": "TZ=UTC jest --verbose --no-cache",
     "test:single": "jest --verbose -w 1",
     "build": "webpack --config config/prod.webpack.config.js",
+    "api": "npx @rtk-query/codegen-openapi ./api/config/image-builder.ts", 
     "verify": "npm-run-all build lint test"
   },
   "insights": {

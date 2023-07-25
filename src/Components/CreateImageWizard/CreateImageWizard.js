@@ -29,8 +29,8 @@ import {
 import './CreateImageWizard.scss';
 import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
-import { useGetArchitecturesByDistributionQuery } from '../../store/apiSlice';
 import { composeAdded } from '../../store/composesSlice';
+import { useGetArchitecturesQuery } from '../../store/imageBuilderApi';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
@@ -502,8 +502,8 @@ const CreateImageWizard = () => {
   const composeRequest = compose?.request;
 
   // TODO: This causes an annoying re-render when using Recreate image
-  const { data: distroInfo } = useGetArchitecturesByDistributionQuery(
-    composeRequest?.distribution,
+  const { data: distroInfo } = useGetArchitecturesQuery(
+    { distribution: composeRequest?.distribution },
     {
       // distroInfo is only needed when recreating an image, skip otherwise
       skip: composeId ? false : true,

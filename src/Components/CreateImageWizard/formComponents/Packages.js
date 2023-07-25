@@ -30,7 +30,7 @@ import {
 import PropTypes from 'prop-types';
 
 import api from '../../../api';
-import { useGetArchitecturesByDistributionQuery } from '../../../store/apiSlice';
+import { useGetArchitecturesQuery } from '../../../store/imageBuilderApi';
 
 const ExactMatch = ({
   pkgList,
@@ -61,7 +61,7 @@ export const RedHatPackages = ({ defaultArch }) => {
   const { getState } = useFormApi();
   const distribution = getState()?.values?.release;
   const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
-    useGetArchitecturesByDistributionQuery(distribution);
+    useGetArchitecturesQuery({ distribution });
 
   const getAllPackages = async (packagesSearchName) => {
     // if the env is stage beta then use content-sources api
