@@ -95,7 +95,7 @@
     "typescript": "5.1.6",
     "uuid": "9.0.0",
     "webpack-bundle-analyzer": "4.9.0",
-    "whatwg-fetch": "^3.6.2"
+    "whatwg-fetch": "^3.6.17"
   },
   "scripts": {
     "lint": "npm-run-all lint:*",
