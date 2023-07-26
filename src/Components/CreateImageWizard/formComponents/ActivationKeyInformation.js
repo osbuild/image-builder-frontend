@@ -24,7 +24,7 @@ import {
   Tr,
 } from '@patternfly/react-table';
 
-import { useGetActivationKeyInformationQuery } from '../../../store/apiSlice';
+import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 
 const ActivationKeyInformation = () => {
   const { getState } = useFormApi();
@@ -37,9 +37,12 @@ const ActivationKeyInformation = () => {
     isFetching: isFetchingActivationKeyInfo,
     isSuccess: isSuccessActivationKeyInfo,
     isError: isErrorActivationKeyInfo,
-  } = useGetActivationKeyInformationQuery(activationKey, {
-    skip: !activationKey,
-  });
+  } = useShowActivationKeyQuery(
+    { name: activationKey },
+    {
+      skip: !activationKey,
+    }
+  );
 
   return (
     <>

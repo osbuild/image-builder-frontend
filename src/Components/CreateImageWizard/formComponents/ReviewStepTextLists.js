@@ -27,7 +27,7 @@ import {
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
 import { useGetSourcesQuery } from '../../../store/apiSlice';
-import { useGetActivationKeyInformationQuery } from '../../../store/apiSlice';
+import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import { googleAccType } from '../steps/googleCloud';
 
@@ -443,9 +443,12 @@ export const RegisterLaterList = () => {
 export const RegisterNowList = () => {
   const { getState } = useFormApi();
   const activationKey = getState()?.values?.['subscription-activation-key'];
-  const { isError } = useGetActivationKeyInformationQuery(activationKey, {
-    skip: !activationKey,
-  });
+  const { isError } = useShowActivationKeyQuery(
+    { name: activationKey },
+    {
+      skip: !activationKey,
+    }
+  );
   return (
     <>
       <TextContent>
