@@ -17,7 +17,7 @@ export default {
     if (values.isBeta) {
       return 'repositories';
     } else {
-      return 'image-name';
+      return 'details';
     }
   },
   buttons: CustomButtons,

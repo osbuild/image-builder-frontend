@@ -10,7 +10,7 @@ import CustomButtons from '../formComponents/CustomButtons';
 export default {
   StepTemplate,
   id: 'wizard-details',
-  name: 'image-name',
+  name: 'details',
   title: 'Details',
   nextStep: 'review',
   buttons: CustomButtons,

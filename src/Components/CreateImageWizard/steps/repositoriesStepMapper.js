@@ -3,5 +3,5 @@ export default ({ 'payload-repositories': customRepositories } = {}) => {
     return 'packages-content-sources';
   }
 
-  return 'image-name';
+  return 'details';
 };

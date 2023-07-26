@@ -473,7 +473,7 @@ const formStepHistory = (composeRequest, isBeta) => {
       steps.push('File system configuration', 'packages');
     }
 
-    steps.push('image-name');
+    steps.push('details');
 
     return steps;
   } else {
