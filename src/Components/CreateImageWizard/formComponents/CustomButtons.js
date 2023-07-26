@@ -6,6 +6,7 @@ import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 import { usePrefetch } from '../../../store/apiSlice';
+import { rhsmApi } from '../../../store/rhsmApi';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
 const CustomButtons = ({
@@ -17,7 +18,7 @@ const CustomButtons = ({
   const { getState } = useFormApi();
   const [isSaving, setIsSaving] = useState(false);
   const { currentStep, formOptions } = useContext(WizardContext);
-  const prefetchActivationKeys = usePrefetch('getActivationKeys');
+  const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
   const prefetchRepositories = usePrefetch('getRepositories');
 
   const onNextOrSubmit = () => {

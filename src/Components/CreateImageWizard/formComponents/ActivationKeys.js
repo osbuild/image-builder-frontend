@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { useGetActivationKeysQuery } from '../../../store/apiSlice';
+import { useListActivationKeysQuery } from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
 const ActivationKeys = ({ label, isRequired, ...props }) => {
@@ -30,7 +30,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     isSuccess: isSuccessActivationKeys,
     isError: isErrorActivationKeys,
     refetch,
-  } = useGetActivationKeysQuery();
+  } = useListActivationKeysQuery();
 
   useEffect(() => {
     if (isProd()) {
