@@ -13,7 +13,7 @@ export default {
   title: 'Additional custom packages',
   name: 'packages-content-sources',
   substepOf: 'Content',
-  nextStep: 'image-name',
+  nextStep: 'details',
   buttons: CustomButtons,
   fields: [
     {
