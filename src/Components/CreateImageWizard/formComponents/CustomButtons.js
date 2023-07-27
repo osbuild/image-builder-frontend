@@ -5,7 +5,7 @@ import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context
 import { Button } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { usePrefetch } from '../../../store/apiSlice';
+import { contentSourcesApi } from '../../../store/contentSourcesApi';
 import { rhsmApi } from '../../../store/rhsmApi';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
@@ -19,7 +19,8 @@ const CustomButtons = ({
   const [isSaving, setIsSaving] = useState(false);
   const { currentStep, formOptions } = useContext(WizardContext);
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
-  const prefetchRepositories = usePrefetch('getRepositories');
+  const prefetchRepositories =
+    contentSourcesApi.usePrefetch('listRepositories');
 
   const onNextOrSubmit = () => {
     if (currentStep.id === 'wizard-review') {
@@ -44,8 +45,8 @@ const CustomButtons = ({
       const release = getState().values?.release;
       const version = releaseToVersion(release);
       prefetchRepositories({
-        available_for_arch: 'x86_64',
-        available_for_version: version,
+        availableForArch: 'x86_64',
+        availableForVersion: version,
       });
     }
   };

@@ -1,6 +1,6 @@
 export const IMAGE_BUILDER_API = '/api/image-builder/v1';
 export const RHSM_API = '/api/rhsm/v2';
-export const CONTENT_SOURCES = '/api/content-sources/v1';
+export const CONTENT_SOURCES_API = '/api/content-sources/v1';
 export const PROVISIONING_SOURCES_ENDPOINT = '/api/provisioning/v1';
 export const RHEL_8 = 'rhel-88';
 export const RHEL_9 = 'rhel-92';
