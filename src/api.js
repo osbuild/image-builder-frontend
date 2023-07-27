@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { CONTENT_SOURCES, IMAGE_BUILDER_API } from './constants';
+import { CONTENT_SOURCES_API, IMAGE_BUILDER_API } from './constants';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
@@ -51,7 +51,7 @@ async function getPackagesContentSources(repoUrls, search) {
   };
   const path = '/rpms/names';
   const request = await axios.post(
-    CONTENT_SOURCES.concat(path),
+    CONTENT_SOURCES_API.concat(path),
     body,
     postHeaders
   );

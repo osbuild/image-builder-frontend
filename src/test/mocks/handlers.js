@@ -1,7 +1,7 @@
 import { rest } from 'msw';
 
 import {
-  CONTENT_SOURCES,
+  CONTENT_SOURCES_API,
   IMAGE_BUILDER_API,
   PROVISIONING_SOURCES_ENDPOINT,
   RHSM_API,
@@ -40,7 +40,7 @@ export const handlers = [
       }
     }
   ),
-  rest.post(`${CONTENT_SOURCES}/rpms/names`, async (req, res, ctx) => {
+  rest.post(`${CONTENT_SOURCES_API}/rpms/names`, async (req, res, ctx) => {
     const { search } = await req.json();
     return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
   }),
@@ -59,7 +59,7 @@ export const handlers = [
     const { key } = req.params;
     return res(ctx.status(200), ctx.json(mockActivationKeyInformation(key)));
   }),
-  rest.get(`${CONTENT_SOURCES}/repositories/`, (req, res, ctx) => {
+  rest.get(`${CONTENT_SOURCES_API}/repositories/`, (req, res, ctx) => {
     const available_for_arch = req.url.searchParams.get('available_for_arch');
     const available_for_version = req.url.searchParams.get(
       'available_for_version'

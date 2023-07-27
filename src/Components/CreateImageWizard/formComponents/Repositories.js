@@ -37,7 +37,7 @@ import {
 } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 
-import { useGetRepositoriesQuery } from '../../../store/apiSlice';
+import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
@@ -205,10 +205,10 @@ const Repositories = (props) => {
   const release = getState().values?.release;
   const version = releaseToVersion(release);
 
-  const firstRequest = useGetRepositoriesQuery(
+  const firstRequest = useListRepositoriesQuery(
     {
-      available_for_arch: 'x86_64',
-      available_for_version: version,
+      availableForArch: 'x86_64',
+      availableForVersion: version,
       limit: 100,
       offset: 0,
     },
@@ -223,10 +223,10 @@ const Repositories = (props) => {
     firstRequest?.data?.meta?.count <= 100;
 
   // Fetch *all* repositories if there are more than 100 so that typeahead filter works
-  const followupRequest = useGetRepositoriesQuery(
+  const followupRequest = useListRepositoriesQuery(
     {
-      available_for_arch: 'x86_64',
-      available_for_version: version,
+      availableForArch: 'x86_64',
+      availableForVersion: version,
       limit: firstRequest?.data?.meta?.count,
       offset: 0,
     },
