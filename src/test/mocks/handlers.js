@@ -3,7 +3,7 @@ import { rest } from 'msw';
 import {
   CONTENT_SOURCES_API,
   IMAGE_BUILDER_API,
-  PROVISIONING_SOURCES_ENDPOINT,
+  PROVISIONING_API,
   RHSM_API,
 } from '../../constants';
 import {
@@ -25,12 +25,12 @@ import { mockRepositoryResults } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
 export const handlers = [
-  rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) => {
+  rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) => {
     const provider = req.url.searchParams.get('provider');
     return res(ctx.status(200), ctx.json(mockSourcesByProvider(provider)));
   }),
   rest.get(
-    `${PROVISIONING_SOURCES_ENDPOINT}/sources/:sourceId/upload_info`,
+    `${PROVISIONING_API}/sources/:sourceId/upload_info`,
     (req, res, ctx) => {
       const { sourceId } = req.params;
       if (sourceId === '666' || sourceId === '667' || sourceId === '123') {

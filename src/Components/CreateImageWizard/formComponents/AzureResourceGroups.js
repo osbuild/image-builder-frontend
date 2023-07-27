@@ -12,7 +12,7 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
-import { useGetSourceDetailQuery } from '../../../store/apiSlice';
+import { useGetSourceUploadInfoQuery } from '../../../store/provisioningApi';
 
 const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
   const { change, getState } = useFormApi();
@@ -25,8 +25,8 @@ const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
     setSourceId(values['azure-sources-select']);
   };
 
-  const { data: sourceDetails, isFetching } = useGetSourceDetailQuery(
-    sourceId,
+  const { data: sourceDetails, isFetching } = useGetSourceUploadInfoQuery(
+    { id: sourceId },
     {
       skip: !sourceId,
     }

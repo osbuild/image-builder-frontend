@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import { PROVISIONING_SOURCES_ENDPOINT } from '../../../constants.js';
+import { PROVISIONING_API } from '../../../constants.js';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
@@ -161,7 +161,7 @@ describe('Step Upload to Azure', () => {
   test('component renders error state correctly', async () => {
     setUp();
     server.use(
-      rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) =>
+      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
         res(ctx.status(500))
       )
     );
