@@ -90,17 +90,17 @@ see [devel/README.md](devel/README.md).
 ## File Structure
 
 ### Quick Reference
-| Directory | Description |
-| --------- | ----------- |
-| [`/config`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/config) | webpack configuration |
-| [`/devel`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/devel) | tools for local development |
-| [`/src`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src) | source code |
-| [`/src/Components`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/Components) | source code split by individual components |
-| [`/src/test`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test) | test utilities |
-| [`/src/test/mocks`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test/mocks) | mock handlers and server config for MSW |
-| [`/src/store`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/store) | Redux store |
-| [`/src/api.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/src/api.js) | API calls |
-| [`/src/store/apiSlice.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/src/store/apiSlice.js) | RTK Query calls |
+| Directory                                                                                                            | Description                                |
+| ---------                                                                                                            | -----------                                |
+| [`/api`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/api)                                     | API schema and config files                |
+| [`/config`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/config)                               | webpack configuration                      |
+| [`/devel`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/devel)                                 | tools for local development                |
+| [`/src`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src)                                     | source code                                |
+| [`/src/Components`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/Components)               | source code split by individual components |
+| [`/src/test`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test)                           | test utilities                             |
+| [`/src/test/mocks`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test/mocks)               | mock handlers and server config for MSW    |
+| [`/src/store`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/store)                         | Redux store                                |
+| [`/src/api.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/src/api.js)                       | API calls                                  |
 
 ## Style Guidelines
 
@@ -139,3 +139,17 @@ npm run test
 ```
 
 These tests will also be run in our Travis CI when a PR is opened.
+
+## API endpoints 
+
+API slice definitions are generated using the [@rtk-query/codegen-openapi](https://redux-toolkit.js.org/rtk-query/usage/code-generation) package.
+
+OpenAPI schema for the endpoints are stored in `/api/schema`. Their
+corresponding configuration files are stored in `/api/config`. Each endpoint
+has a corresponding empty API slice and generated API slice which are stored in
+`/src/store`.
+
+To generate or update API slice definitions, run:
+```bash
+npm run api
+```
