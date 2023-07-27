@@ -18,7 +18,7 @@ import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
-import { AWSAccountId } from './AWSAccountId';
+import { AwsAccountId } from './AwsAccountId';
 import {
   FSReviewTable,
   PackagesTable,
@@ -26,7 +26,7 @@ import {
 } from './ReviewStepTables';
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
-import { useGetSourcesQuery } from '../../../store/apiSlice';
+import { useGetSourceListQuery } from '../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import { googleAccType } from '../steps/googleCloud';
@@ -64,7 +64,9 @@ export const ImageOutputList = () => {
 };
 
 export const TargetEnvAWSList = () => {
-  const { data: awsSources, isSuccess } = useGetSourcesQuery();
+  const { data: awsSources, isSuccess } = useGetSourceListQuery({
+    provider: 'aws',
+  });
   const { isBeta } = useGetEnvironment();
 
   const { getState } = useFormApi();
@@ -92,7 +94,7 @@ export const TargetEnvAWSList = () => {
             getState()?.values?.['aws-target-type'] ===
               'aws-target-type-source' &&
             isSuccess && (
-              <AWSAccountId
+              <AwsAccountId
                 sourceId={getState()?.values?.['aws-sources-select']}
               />
             )}
@@ -169,7 +171,7 @@ export const TargetEnvGCPList = () => {
 export const TargetEnvAzureList = () => {
   const { getState } = useFormApi();
   const { data: azureSources, isSuccess: isSuccessAzureSources } =
-    useGetSourcesQuery('azure');
+    useGetSourceListQuery({ provider: 'azure' });
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>

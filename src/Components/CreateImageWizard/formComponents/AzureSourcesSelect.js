@@ -14,9 +14,9 @@ import {
 import PropTypes from 'prop-types';
 
 import {
-  useGetSourcesQuery,
-  useGetSourceDetailQuery,
-} from '../../../store/apiSlice';
+  useGetSourceListQuery,
+  useGetSourceUploadInfoQuery,
+} from '../../../store/provisioningApi';
 
 const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
   const { change } = useFormApi();
@@ -30,16 +30,19 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
     isSuccess,
     isError,
     refetch,
-  } = useGetSourcesQuery('azure');
+  } = useGetSourceListQuery({ provider: 'azure' });
 
   const {
     data: sourceDetails,
     isFetching: isFetchingDetails,
     isSuccess: isSuccessDetails,
     isError: isErrorDetails,
-  } = useGetSourceDetailQuery(selectedSourceId, {
-    skip: !selectedSourceId,
-  });
+  } = useGetSourceUploadInfoQuery(
+    { id: selectedSourceId },
+    {
+      skip: !selectedSourceId,
+    }
+  );
 
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;

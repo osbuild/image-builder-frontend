@@ -15,7 +15,7 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 
-import { usePrefetch } from '../../../store/apiSlice';
+import { provisioningApi } from '../../../store/provisioningApi';
 
 const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const { getState, change } = useFormApi();
@@ -29,7 +29,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     'guest-image': false,
     'image-installer': false,
   });
-  const prefetchSources = usePrefetch('getSources');
+  const prefetchSources = provisioningApi.usePrefetch('getSourceList');
 
   useEffect(() => {
     if (getState()?.values?.[input.name]) {
@@ -76,7 +76,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             }
             onClick={() => handleSetEnvironment('aws', !environment.aws)}
             onKeyDown={(e) => handleKeyDown(e, 'aws', !environment.aws)}
-            onMouseEnter={() => prefetchSources('aws')}
+            onMouseEnter={() => prefetchSources({ provider: 'aws' })}
             isSelected={environment.aws}
             isStacked
             isDisplayLarge
@@ -96,6 +96,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             onClick={() => handleSetEnvironment('gcp', !environment.gcp)}
             isSelected={environment.gcp}
             onKeyDown={(e) => handleKeyDown(e, 'gcp', !environment.gcp)}
+            onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
             isStacked
             isDisplayLarge
           />
@@ -113,7 +114,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             }
             onClick={() => handleSetEnvironment('azure', !environment.azure)}
             onKeyDown={(e) => handleKeyDown(e, 'azure', !environment.azure)}
-            onMouseEnter={() => prefetchSources('azure')}
+            onMouseEnter={() => prefetchSources({ provider: 'azure' })}
             isSelected={environment.azure}
             isStacked
             isDisplayLarge

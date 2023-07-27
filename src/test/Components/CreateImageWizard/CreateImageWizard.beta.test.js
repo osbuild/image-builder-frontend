@@ -11,11 +11,7 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
 import api from '../../../api.js';
-import {
-  RHEL_8,
-  RHEL_9,
-  PROVISIONING_SOURCES_ENDPOINT,
-} from '../../../constants.js';
+import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes.js';
 import { customizations, ids } from '../../fixtures/customizations.js';
 import { mockPkgResultAlphaContentSources } from '../../fixtures/packages.js';
@@ -127,7 +123,7 @@ describe('Step Upload to AWS', () => {
   test('component renders error state correctly', async () => {
     setUp();
     server.use(
-      rest.get(`${PROVISIONING_SOURCES_ENDPOINT}/sources`, (req, res, ctx) =>
+      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
         res(ctx.status(500))
       )
     );

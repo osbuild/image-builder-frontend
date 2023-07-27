@@ -14,9 +14,9 @@ import {
 import PropTypes from 'prop-types';
 
 import {
-  useGetSourceDetailQuery,
-  useGetSourcesQuery,
-} from '../../../store/apiSlice';
+  useGetSourceListQuery,
+  useGetSourceUploadInfoQuery,
+} from '../../../store/provisioningApi';
 
 export const AWSSourcesSelect = ({
   label,
@@ -37,16 +37,19 @@ export const AWSSourcesSelect = ({
     isSuccess,
     isError,
     refetch,
-  } = useGetSourcesQuery('aws');
+  } = useGetSourceListQuery({ provider: 'aws' });
 
   const {
     data: sourceDetails,
     isFetching: isFetchingDetails,
     isSuccess: isSuccessDetails,
     isError: isErrorDetails,
-  } = useGetSourceDetailQuery(selectedSourceId, {
-    skip: !selectedSourceId,
-  });
+  } = useGetSourceUploadInfoQuery(
+    { id: selectedSourceId },
+    {
+      skip: !selectedSourceId,
+    }
+  );
 
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
