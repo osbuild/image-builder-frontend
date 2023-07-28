@@ -1,7 +1,7 @@
 import type { ConfigFile } from '@rtk-query/codegen-openapi'
 
 const config: ConfigFile = {
-  schemaFile: '../schema/image-builder.json',
+  schemaFile: '../schema/imageBuilder.json',
   apiFile: '../../src/store/emptyImageBuilderApi.ts',
   apiImport: 'emptyImageBuilderApi',
   outputFile: '../../src/store/imageBuilderApi.ts',
