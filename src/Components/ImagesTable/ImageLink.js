@@ -56,11 +56,11 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
         {wizardOpen && (
           <Modal
             isOpen
-            modalVariant={ModalVariant.large}
             hasNoBodyWrapper
             appendTo={appendTo}
             showClose={false}
-            variant={'large'}
+            variant={ModalVariant.large}
+            aria-label="Open launch wizard"
           >
             <ProvisioningWizard
               onClose={() => openWizard(false)}
