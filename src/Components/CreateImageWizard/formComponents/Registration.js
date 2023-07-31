@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
@@ -135,18 +135,11 @@ const RHCPopover = () => {
 const Registration = ({ label, ...props }) => {
   const { change, getState } = useFormApi();
   const { input } = useFieldApi(props);
-  const [showOptions, setShowOptions] = useState(false);
   const registerSystem = getState()?.values?.['register-system'];
-
-  useEffect(() => {
-    if (registerSystem === 'register-now-insights') {
-      setShowOptions(true);
-    }
-
-    if (registerSystem === 'register-now') {
-      setShowOptions(true);
-    }
-  }, []);
+  const [showOptions, setShowOptions] = useState(
+    registerSystem === 'register-now-insights' ||
+      registerSystem === 'register-now'
+  );
 
   return (
     <FormSpy>
