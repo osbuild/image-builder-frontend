@@ -1,0 +1,5 @@
+# Ignore programatically generated API slices
+imageBuilderApi.ts
+contentSourcesApi.ts
+rhsmApi.ts
+provisioningApi.ts
