@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
@@ -32,7 +32,10 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     refetch,
   } = useListActivationKeysQuery();
 
-  useEffect(() => {
+  if (
+    getState()?.values?.['subscription-server-url'] === undefined ||
+    getState()?.values?.['subscription-base-url'] === undefined
+  ) {
     if (isProd()) {
       change('subscription-server-url', 'subscription.rhsm.redhat.com');
       change('subscription-base-url', 'https://cdn.redhat.com/');
@@ -40,7 +43,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
       change('subscription-server-url', 'subscription.rhsm.stage.redhat.com');
       change('subscription-base-url', 'https://cdn.stage.redhat.com/');
     }
-  }, []);
+  }
 
   const setActivationKey = (_, selection) => {
     selectActivationKey(selection);
