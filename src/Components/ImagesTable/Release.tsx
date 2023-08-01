@@ -1,6 +1,4 @@
-import React from 'react';
-
-import {Distributions} from '../../store/imageBuilderApi';
+import { Distributions } from '../../store/imageBuilderApi';
 
 type ReleaseProps = {
   release: Distributions;

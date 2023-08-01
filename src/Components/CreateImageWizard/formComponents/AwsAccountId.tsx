@@ -1,10 +1,10 @@
 import React from 'react';
 
-import {useGetSourceUploadInfoQuery} from "../../../store/provisioningApi";
+import { useGetSourceUploadInfoQuery } from '../../../store/provisioningApi';
 
 type AwsAccountIdProps = {
-  sourceId: number
-}
+  sourceId: number;
+};
 
 export const AwsAccountId = ({ sourceId }: AwsAccountIdProps) => {
   const { data } = useGetSourceUploadInfoQuery({ id: sourceId });

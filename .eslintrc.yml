@@ -31,3 +31,7 @@ rules:
   - destructuring: any
   no-console: 2
   eqeqeq: error
+overrides:
+  - files: "**/*.ts?(x)"
+    parser: "@typescript-eslint/parser"
+    extends: ".eslintrc-typescript.yml"

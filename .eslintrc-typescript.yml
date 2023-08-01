@@ -1,0 +1,36 @@
+extends:
+  - "@redhat-cloud-services/eslint-config-redhat-cloud-services"
+  - "plugin:@typescript-eslint/recommended"
+
+plugins:
+  - import
+  - "@typescript-eslint"
+
+rules:
+  import/order:
+    - error
+    - groups:
+      - builtin
+      - external
+      - internal
+      - sibling
+      - parent
+      - index
+      alphabetize:
+        order: asc
+        caseInsensitive: true
+      newlines-between: always
+      pathGroups: # ensures the import of React is always on top
+        - pattern: react
+          group: builtin
+          position: before
+      pathGroupsExcludedImportTypes:
+        - react
+  prefer-const:
+    - error
+    - destructuring: any
+  no-console: 2
+  eqeqeq: error
+  "@typescript-eslint/no-unused-vars": "error"
+  "@typescript-eslint/explicit-module-boundary-types": "off"
+
