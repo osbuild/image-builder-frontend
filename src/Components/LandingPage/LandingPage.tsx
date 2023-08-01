@@ -42,7 +42,7 @@ export const LandingPage = () => {
   const [activeTabKey, setActiveTabKey] = useState(initialActiveTabKey);
   useEffect(() => {
     setActiveTabKey(initialActiveTabKey);
-  }, [pathname]);
+  }, [initialActiveTabKey]);
   const handleTabClick = (_event: React.MouseEvent, tabIndex: number) => {
     const tabPath = tabsPath[tabIndex];
     if (tabPath !== undefined) {
@@ -60,7 +60,8 @@ export const LandingPage = () => {
     </section>
   );
   return (
-    <React.Fragment>
+    <>
+      {/*@ts-ignore*/}
       <PageHeader>
         <PageHeaderTitle className="title" title="Image Builder" />
         <Popover
@@ -212,7 +213,7 @@ export const LandingPage = () => {
         traditionalImageList
       )}
       <Outlet />
-    </React.Fragment>
+    </>
   );
 };
 

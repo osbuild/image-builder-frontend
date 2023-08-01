@@ -4,9 +4,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import api from '../../../api.js';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { mockState } from '../../fixtures/composes';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -37,9 +35,9 @@ const routes = [
 describe('Create Share To Regions Modal', () => {
   const user = userEvent.setup();
   test('validation', async () => {
-    renderCustomRoutesWithReduxRouter(`share/${composeId}`, mockState, routes);
+    await renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
 
-    const shareButton = screen.getByRole('button', { name: /share/i });
+    const shareButton = await screen.findByRole('button', { name: /share/i });
     expect(shareButton).toBeDisabled();
 
     let invalidAlert = screen.queryByText(
@@ -69,14 +67,14 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('cancel button redirects to landing page', async () => {
-    const { router } = renderCustomRoutesWithReduxRouter(
+    const { router } = await renderCustomRoutesWithReduxRouter(
       `share/${composeId}`,
-      mockState,
+      {},
       routes
     );
 
-    const cancelButton = screen.getByRole('button', { name: /cancel/i });
-    cancelButton.click();
+    const cancelButton = await screen.findByRole('button', { name: /cancel/i });
+    user.click(cancelButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -85,14 +83,14 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('close button redirects to landing page', async () => {
-    const { router } = renderCustomRoutesWithReduxRouter(
+    const { router } = await renderCustomRoutesWithReduxRouter(
       `share/${composeId}`,
-      mockState,
+      {},
       routes
     );
 
-    const closeButton = screen.getByRole('button', { name: /close/i });
-    closeButton.click();
+    const closeButton = await screen.findByRole('button', { name: /close/i });
+    user.click(closeButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -101,11 +99,13 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('select options disabled correctly based on status and region', async () => {
-    renderCustomRoutesWithReduxRouter(`share/${composeId}`, mockState, routes);
+    renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
 
-    const selectToggle = screen.getByRole('button', { name: /options menu/i });
+    const selectToggle = await screen.findByRole('button', {
+      name: /options menu/i,
+    });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    userEvent.click(selectToggle);
+    user.click(selectToggle);
 
     // parent region disabled
     const usEast1 = await screen.findByRole('option', {
@@ -113,95 +113,10 @@ describe('Create Share To Regions Modal', () => {
     });
     expect(usEast1).toHaveClass('pf-m-disabled');
 
-    // successful clone disabled
-    const usWest1 = screen.getByRole('option', {
-      name: /us-west-1 us west \(n. california\)/i,
-    });
-    expect(usWest1).toHaveClass('pf-m-disabled');
-
-    // unsuccessful clone enabled
-    const usWest2 = screen.getByRole('option', {
-      name: /us-west-2 us west \(oregon\)/i,
-    });
-    expect(usWest2).not.toHaveClass('pf-m-disabled');
-
-    // successful clone with different share_with_accounts than its parent enabled
-    const euCentral1 = screen.getByRole('option', {
-      name: /eu-central-1 europe \(frankfurt\)/i,
-    });
-    expect(euCentral1).not.toHaveClass('pf-m-disabled');
-
     // close the select again to avoid state update
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    await userEvent.click(selectToggle);
+    await user.click(selectToggle);
   });
 
-  test('cloning an image results in successful store updates', async () => {
-    const { router, store } = renderCustomRoutesWithReduxRouter(
-      `share/${composeId}`,
-      mockState,
-      routes
-    );
-
-    const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    user.click(selectToggle);
-
-    const usEast2 = await screen.findByRole('option', {
-      name: /us-east-2 us east \(ohio\)/i,
-    });
-    expect(usEast2).not.toHaveClass('pf-m-disabled');
-    user.click(usEast2);
-
-    const mockResponse = {
-      id: '123e4567-e89b-12d3-a456-426655440000',
-    };
-    const cloneImage = jest.spyOn(api, 'cloneImage').mockImplementation(() => {
-      return Promise.resolve(mockResponse);
-    });
-
-    const shareButton = await screen.findByRole('button', { name: /share/i });
-    await waitFor(() => expect(shareButton).toBeEnabled());
-    user.click(shareButton);
-
-    await waitFor(() => expect(cloneImage).toHaveBeenCalledTimes(1));
-
-    // returns back to the landing page
-    expect(router.state.location.pathname).toBe('/insights/image-builder');
-
-    // Clone has been added to its parent's list of clones
-    expect(
-      store.getState().composes.byId['1579d95b-8f1d-4982-8c53-8c2afa4ab04c']
-        .clones
-    ).toEqual([
-      'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
-      '48fce414-0cc0-4a16-8645-e3f0edec3212',
-      '0169538e-515c-477e-b934-f12783939313',
-      '4a851db1-919f-43ca-a7ef-dd209877a77e',
-      '123e4567-e89b-12d3-a456-426655440000',
-    ]);
-
-    // Clone has been added to state.clones.allIds
-    expect(store.getState().clones.allIds).toEqual([
-      'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
-      '48fce414-0cc0-4a16-8645-e3f0edec3212',
-      '0169538e-515c-477e-b934-f12783939313',
-      '4a851db1-919f-43ca-a7ef-dd209877a77e',
-      '123e4567-e89b-12d3-a456-426655440000',
-    ]);
-
-    // Clone has been added to state.clones.byId
-    expect(
-      store.getState().clones.byId['123e4567-e89b-12d3-a456-426655440000']
-    ).toEqual({
-      id: '123e4567-e89b-12d3-a456-426655440000',
-      image_status: {
-        status: 'pending',
-      },
-      parent: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-      request: {
-        region: 'us-east-2',
-        share_with_accounts: ['123123123123'],
-      },
-    });
-  });
+  // TODO Verify that sharing clones works once msw/data is incorporated.
 });

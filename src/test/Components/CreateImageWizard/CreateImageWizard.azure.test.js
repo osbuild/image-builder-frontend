@@ -75,7 +75,11 @@ const getSourceDropdown = async () => {
 describe('Step Upload to Azure', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
     // select Azure as upload destination
     await user.click(await screen.findByTestId('upload-azure'));
 

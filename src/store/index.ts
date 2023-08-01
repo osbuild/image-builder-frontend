@@ -6,7 +6,7 @@ import clonesSlice from './clonesSlice';
 import composesSlice from './composesSlice';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
-import { imageBuilderApi } from './imageBuilderApi';
+import { imageBuilderApi } from './enhancedImageBuilderApi';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
 
@@ -21,13 +21,13 @@ export const reducer = {
   notifications: notificationsReducer,
 };
 
-export const middleware = (getDefaultMiddleware) =>
-  getDefaultMiddleware()
-    .concat(promiseMiddleware)
-    .concat(contentSourcesApi.middleware)
-    .concat(edgeApi.middleware)
-    .concat(imageBuilderApi.middleware)
-    .concat(rhsmApi.middleware)
-    .concat(provisioningApi.middleware);
+export const middleware = (getDefaultMiddleware: Function) =>
+  getDefaultMiddleware().concat(
+    promiseMiddleware,
+    contentSourcesApi.middleware,
+    imageBuilderApi.middleware,
+    rhsmApi.middleware,
+    provisioningApi.middleware
+  );
 
 export const store = configureStore({ reducer, middleware });
