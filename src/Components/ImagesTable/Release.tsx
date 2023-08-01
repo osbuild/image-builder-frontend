@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Distributions } from '../../store/imageBuilderApi';
 
 type ReleaseProps = {
@@ -27,7 +29,7 @@ const Release = ({ release }: ReleaseProps) => {
     'fedora-39': 'Fedora 39',
   };
 
-  return releaseDisplayValue[release];
+  return <p>{releaseDisplayValue[release]}</p>;
 };
 
 export default Release;

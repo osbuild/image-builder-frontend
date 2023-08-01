@@ -8,11 +8,6 @@ import userEvent from '@testing-library/user-event';
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { store } from '../../../store/index.js';
-import {
-  mockComposesEmpty,
-  mockStateRecreateImage,
-} from '../../fixtures/composes';
 import {
   mockPkgResultAlpha,
   mockPkgResultAlphaContentSources,
@@ -63,14 +58,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-// Mocking getComposes is necessary because in many tests we call navigate()
-// to navigate to the images table (via useNavigate hook), which will in turn
-// result in a call to getComposes. If it is not mocked, tests fail due to MSW
-// being unable to resolve that endpoint.
-jest
-  .spyOn(api, 'getComposes')
-  .mockImplementation(() => Promise.resolve(mockComposesEmpty));
-
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);
@@ -117,7 +104,7 @@ describe('Step Packages', () => {
     const setUp = async () => {
       mockContentSourcesEnabled = false;
 
-      ({ router } = renderCustomRoutesWithReduxRouter(
+      ({ router } = await renderCustomRoutesWithReduxRouter(
         'imagewizard',
         {},
         routes
@@ -877,35 +864,21 @@ describe('Step Custom repositories', () => {
 describe('On Recreate', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    jest.mock('../../../store/index.js');
-
-    const state = mockStateRecreateImage;
-
-    store.getState = () => state;
-
     ({ router } = renderWithReduxRouter(
-      'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346',
-      state
+      'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346'
     ));
   };
 
   const setUpUnavailableRepo = async () => {
-    jest.mock('../../../store/index.js');
-
-    const state = mockStateRecreateImage;
-
-    store.getState = () => state;
-
     ({ router } = renderWithReduxRouter(
-      'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346',
-      state
+      'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346'
     ));
   };
 
   test('with valid repositories', async () => {
     await setUp();
 
-    screen.getByRole('heading', { name: /review/i });
+    await screen.findByRole('heading', { name: /review/i });
     expect(
       screen.queryByText('Previously added custom repository unavailable')
     ).not.toBeInTheDocument();
@@ -943,7 +916,7 @@ describe('On Recreate', () => {
   test('with repositories that are no longer available', async () => {
     await setUpUnavailableRepo();
 
-    screen.getByRole('heading', { name: /review/i });
+    await screen.findByRole('heading', { name: /review/i });
     await screen.findByText('Previously added custom repository unavailable');
 
     const createImageButton = await screen.findByRole('button', {

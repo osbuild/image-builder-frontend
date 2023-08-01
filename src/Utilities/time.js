@@ -23,7 +23,7 @@ export const convertStringToDate = (createdAtAsString) => {
   }
 };
 
-export const hoursToExpiration = (imageCreatedAt) => {
+export const computeHoursToExpiration = (imageCreatedAt) => {
   if (imageCreatedAt) {
     const currentTime = Date.now();
     // miliseconds in hour - needed for calculating the difference

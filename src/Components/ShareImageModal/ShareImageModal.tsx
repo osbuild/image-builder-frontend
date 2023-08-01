@@ -15,7 +15,7 @@ const ShareToRegionsModal = () => {
 
   const { composeId } = useParams();
 
-  const handleToggle = (isOpen) => setIsOpen(isOpen);
+  const handleToggle = (isOpen: boolean) => setIsOpen(isOpen);
 
   const handleEscapePress = () => {
     if (isOpen) {
@@ -25,7 +25,15 @@ const ShareToRegionsModal = () => {
     }
   };
 
-  const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
+  const appendTo = useMemo(() => {
+    const modalAnchor = document.querySelector(MODAL_ANCHOR);
+    return modalAnchor === null ? undefined : (modalAnchor as HTMLElement);
+  }, []);
+
+  if (!composeId) {
+    handleClose();
+    return undefined;
+  }
 
   return (
     <Modal

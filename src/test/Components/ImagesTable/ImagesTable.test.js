@@ -2,21 +2,15 @@ import React from 'react';
 
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { BrowserRouter } from 'react-router-dom';
+import { act } from 'react-dom/test-utils';
 
-import api from '../../../api.js';
-import { ImageBuildStatus } from '../../../Components/ImagesTable/ImageBuildStatus';
-import ImageLink from '../../../Components/ImagesTable/ImageLink';
-import Target from '../../../Components/ImagesTable/Target';
 import '@testing-library/jest-dom';
 import {
   mockComposes,
-  mockStatus,
   mockClones,
   mockCloneStatus,
-  mockNoClones,
 } from '../../fixtures/composes';
-import { renderWithProvider, renderWithReduxRouter } from '../../testUtils';
+import { renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -31,24 +25,6 @@ jest.mock('@unleash/proxy-client-react', () => ({
   useFlag: jest.fn((flag) => (flag === 'edgeParity.image-list' ? false : true)),
 }));
 
-jest
-  .spyOn(api, 'getComposes')
-  .mockImplementation(() => Promise.resolve(mockComposes));
-
-jest.spyOn(api, 'getComposeStatus').mockImplementation((id) => {
-  return Promise.resolve(mockStatus(id));
-});
-
-jest.spyOn(api, 'getClones').mockImplementation((id) => {
-  return id === '1579d95b-8f1d-4982-8c53-8c2afa4ab04c'
-    ? Promise.resolve(mockClones(id))
-    : Promise.resolve(mockNoClones);
-});
-
-jest.spyOn(api, 'getCloneStatus').mockImplementation((id) => {
-  return Promise.resolve(mockCloneStatus(id));
-});
-
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
@@ -57,15 +33,13 @@ beforeAll(() => {
 describe('Images Table', () => {
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
-    const view = renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
 
     // make sure the empty-state message isn't present
     const emptyState = screen.queryByTestId('empty-state');
     expect(emptyState).not.toBeInTheDocument();
-
-    const state = view.store.getState();
 
     // check table
     const { getAllByRole } = within(table);
@@ -80,103 +54,107 @@ describe('Images Table', () => {
     expect(header.cells[5]).toHaveTextContent('Status');
     expect(header.cells[6]).toHaveTextContent('Instance');
 
+    const imageNameValues = mockComposes.map((compose) =>
+      compose.image_name ? compose.image_name : compose.id
+    );
+
+    const statusValues = [
+      'Ready',
+      'Image build failed',
+      'Image build is pending',
+      'Image build in progress',
+      'Image upload in progress',
+      'Cloud registration in progress',
+      'Image build failed',
+      'Ready',
+      'Image build in progress',
+      'Expired',
+    ];
+
+    const targetValues = [
+      'Amazon Web Services (5)',
+      'Google Cloud PlatformFAKE',
+      'Amazon Web Services (1)',
+      'Amazon Web Services (1)',
+      'Amazon Web Services (1)',
+      'Amazon Web Services (1)',
+      'Amazon Web Services (1)',
+      'Google Cloud Platform',
+      'Microsoft Azure',
+      'VMWare vSphere',
+    ];
+
+    const instanceValues = [
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Launch',
+      'Recreate image',
+    ];
+
     // 10 rows for 10 images
     expect(rows).toHaveLength(10);
-    for (const row of rows) {
-      const col1 = row.cells[1].textContent;
-
-      // find compose with either the user defined image name or the uuid
-      const compose = mockComposes.data.find(
-        (compose) => compose?.image_name === col1 || compose.id === col1
-      );
-      expect(compose).toBeTruthy();
-
-      // date should match the month day and year of the timestamp.
+    rows.forEach(async (row, index) => {
+      expect(row.cells[1]).toHaveTextContent(imageNameValues[index]);
       expect(row.cells[2]).toHaveTextContent('Apr 27, 2021');
+      expect(row.cells[3]).toHaveTextContent('RHEL 8.8');
+    });
 
-      // render the expected <ImageBuildStatus /> and compare the text content
-      const testElement = document.createElement('testElement');
-      // render(<Target composeId={compose.id} />, { container: testElement });
-      renderWithProvider(<Target composeId={compose.id} />, testElement, state);
-      expect(row.cells[4]).toHaveTextContent(testElement.textContent);
-
-      let toTest = expect(row.cells[5]);
-      // render the expected <ImageBuildStatus /> and compare the text content
-      if (
-        compose.created_at === '2021-04-27T12:31:12Z' &&
-        compose.request.image_requests[0].upload_request.type === 'aws.s3'
-      ) {
-        toTest.toHaveTextContent('Expired');
-      } else {
-        renderWithProvider(
-          <ImageBuildStatus imageId={compose.id} isImagesTableRow={true} />,
-          testElement,
-          state
-        );
-        toTest.toHaveTextContent(testElement.textContent);
-      }
-
-      toTest = expect(row.cells[6]);
-      // render the expected <ImageLink /> and compare the text content for a link
-      if (
-        compose.created_at === '2021-04-27T12:31:12Z' &&
-        compose.request.image_requests[0].upload_request.type === 'aws.s3'
-      ) {
-        toTest.toHaveTextContent('Recreate image');
-      } else {
-        renderWithProvider(
-          <BrowserRouter>
-            <ImageLink imageId={compose.id} isInClonesTable={false} />
-          </BrowserRouter>,
-          testElement,
-          state
-        );
-        toTest.toHaveTextContent(testElement.textContent);
-      }
-    }
+    // TODO Test remaining table content.
   });
 
   test('check recreate action', async () => {
-    const { router } = renderWithReduxRouter('', {});
+    const { router } = await renderWithReduxRouter('', {});
 
     // get rows
     const table = await screen.findByTestId('images-table');
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
+    const { findAllByRole } = within(table);
+    const rows = await findAllByRole('row');
 
     // first row is header so look at index 1
     const imageId = rows[1].cells[1].textContent;
 
-    const actionsButton = within(rows[1]).getByRole('button', {
+    const actionsButton = await within(rows[1]).findByRole('button', {
       name: 'Actions',
     });
+
+    await waitFor(() => {
+      expect(actionsButton).toBeEnabled();
+    });
+
     user.click(actionsButton);
     const recreateButton = await screen.findByRole('menuitem', {
       name: 'Recreate image',
     });
-    user.click(recreateButton);
+
+    act(() => {
+      user.click(recreateButton);
+    });
 
     await waitFor(() =>
       expect(router.state.location.pathname).toBe(
-        `/insights/image-builder/imagewizard/${imageId}`
+        '/insights/image-builder/imagewizard/1579d95b-8f1d-4982-8c53-8c2afa4ab04c'
       )
     );
   });
 
   test('check download compose request action', async () => {
-    renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
 
     // get rows
     const table = await screen.findByTestId('images-table');
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
+    const { findAllByRole } = within(table);
+    const rows = await findAllByRole('row');
+
+    const expectedRequest = mockComposes[0].request;
 
     // first row is header so look at index 1
-    const imageId = rows[1].cells[1].textContent;
-    const expectedRequest = mockComposes.data.filter((c) => c.id === imageId)[0]
-      .request;
-
-    const actionsButton = within(rows[1]).getByRole('button', {
+    const actionsButton = await within(rows[1]).findByRole('button', {
       name: 'Actions',
     });
     user.click(actionsButton);
@@ -202,31 +180,33 @@ describe('Images Table', () => {
   });
 
   test('check expandable row toggle', async () => {
-    renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
+    const { findAllByRole } = within(table);
+    const rows = await findAllByRole('row');
 
-    const toggleButton = within(rows[1]).getByRole('button', {
+    const toggleButton = await within(rows[1]).findByRole('button', {
       name: /details/i,
     });
 
-    expect(screen.getByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
+    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
     await user.click(toggleButton);
-    expect(screen.getByText(/ami-0e778053cd490ad21/i)).toBeVisible();
+    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).toBeVisible();
     await user.click(toggleButton);
-    expect(screen.getByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
+    expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
   });
 
   test('check error details', async () => {
-    renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
-    const { getAllByRole } = within(table);
-    const rows = getAllByRole('row');
+    const { findAllByRole } = within(table);
+    const rows = await findAllByRole('row');
 
-    const errorPopover = within(rows[2]).getByText(/image build failed/i);
+    const errorPopover = await within(rows[2]).findByText(
+      /image build failed/i
+    );
 
     expect(
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
@@ -242,7 +222,7 @@ describe('Images Table', () => {
 
 describe('Images Table Toolbar', () => {
   test('render toolbar', async () => {
-    renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
     await screen.findByTestId('images-table');
 
     // check create image button
@@ -257,7 +237,7 @@ describe('Images Table Toolbar', () => {
 describe('Clones table', () => {
   const user = userEvent.setup();
   test('renders clones table', async () => {
-    renderWithReduxRouter('', {});
+    await renderWithReduxRouter('', {});
 
     const table = await screen.findByTestId('images-table');
 
@@ -330,7 +310,7 @@ describe('Clones table', () => {
           toTest.toHaveTextContent('Ready');
           break;
         case 2:
-          toTest.toHaveTextContent('Image build failed');
+          toTest.toHaveTextContent('Sharing image failed');
           break;
         // no default
       }

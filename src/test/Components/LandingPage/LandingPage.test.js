@@ -1,6 +1,10 @@
 import { screen } from '@testing-library/react';
+import { rest } from 'msw';
 
 import api from '../../../api.js';
+import { IMAGE_BUILDER_API } from '../../../constants.js';
+import { mockComposesEmpty } from '../../fixtures/composes';
+import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
 jest.mock('../../../store/actions/actions', () => {
@@ -34,11 +38,17 @@ describe('Landing Page', () => {
   });
 
   test('renders EmptyState child component', async () => {
+    server.use(
+      rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(mockComposesEmpty));
+      })
+    );
+
     renderWithReduxRouter('', {});
 
     // check action loads
-    screen.getByTestId('create-image-action');
+    await screen.findByTestId('create-image-action');
     // check table loads
-    screen.getByTestId('empty-state');
+    await screen.findByTestId('empty-state');
   });
 });

@@ -9,45 +9,52 @@ import {
   Select,
   SelectOption,
   SelectVariant,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, HelpIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import { createSelector } from '@reduxjs/toolkit';
-import PropTypes from 'prop-types';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
-import api from '../../api';
 import { AWS_REGIONS } from '../../constants';
-import { cloneAdded } from '../../store/clonesSlice';
-import { selectClonesById, selectComposeById } from '../../store/composesSlice';
+import {
+  ComposeStatus,
+  useCloneComposeMutation,
+  useGetComposeStatusQuery,
+} from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 
-export const selectRegionsToDisable = createSelector(
-  [selectComposeById, selectClonesById],
-  (compose, clones) => {
-    const regions = new Set();
-    regions.add(compose.region);
-    clones.map((clone) => {
-      clone.region &&
-        clone.share_with_accounts?.[0] === compose.share_with_accounts?.[0] &&
-        clone.share_with_sources?.[0] === compose.share_with_sources?.[0] &&
-        clone.status !== 'failure' &&
-        regions.add(clone.region);
-    });
+const generateRequests = (
+  composeId: string,
+  composeStatus: ComposeStatus,
+  regions: string[]
+) => {
+  return regions.map((region) => {
+    const options =
+      composeStatus.request.image_requests[0].upload_request.options;
+    return {
+      composeId: composeId,
+      cloneRequest: {
+        region: region,
+        share_with_sources:
+          'share_with_sources' in options
+            ? options.share_with_sources
+            : undefined,
+        share_with_accounts:
+          'share_with_accounts' in options
+            ? options.share_with_accounts
+            : undefined,
+      },
+    };
+  });
+};
 
-    return regions;
-  }
-);
-
-const prepareRegions = (regionsToDisable) => {
-  const regions = AWS_REGIONS.map((region) => ({
-    ...region,
-    disabled:
-      regionsToDisable.has(region.value) || region?.disableRegion === true,
-  }));
-
-  return regions;
+type RegionsSelectPropTypes = {
+  composeId: string;
+  handleClose: any;
+  handleToggle: any;
+  isOpen: boolean;
+  setIsOpen: any;
 };
 
 const RegionsSelect = ({
@@ -56,25 +63,34 @@ const RegionsSelect = ({
   handleToggle,
   isOpen,
   setIsOpen,
-}) => {
+}: RegionsSelectPropTypes) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
-  const [selected, setSelected] = useState([]);
+  const [selected, setSelected] = useState<string[]>([]);
   const titleId = 'Clone this image';
-  const [validated, setValidated] = useState('default');
+  const [validated, setValidated] = useState<ValidatedOptions>(
+    ValidatedOptions.default
+  );
   const [helperTextInvalid] = useState(
     'Select at least one region to share to.'
   );
+  const [cloneCompose] = useCloneComposeMutation();
 
-  const compose = useSelector((state) => selectComposeById(state, composeId));
+  const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
+    composeId,
+  });
 
-  const regionsToDisable = useSelector((state) =>
-    selectRegionsToDisable(state, composeId)
-  );
-  const [options] = useState(prepareRegions(regionsToDisable));
+  if (!isSuccess) {
+    return undefined;
+  }
 
-  const handleSelect = (event, selection) => {
+  const options = AWS_REGIONS;
+
+  const handleSelect = (
+    event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
+    selection: string
+  ): void => {
     let nextSelected;
     if (selected.includes(selection)) {
       nextSelected = selected.filter((region) => region !== selection);
@@ -83,48 +99,27 @@ const RegionsSelect = ({
       nextSelected = [...selected, selection];
       setSelected(nextSelected);
     }
-    nextSelected.length === 0 ? setValidated('error') : setValidated('default');
+    nextSelected.length === 0
+      ? setValidated(ValidatedOptions.error)
+      : setValidated(ValidatedOptions.default);
   };
 
   const handleClear = () => {
     setSelected([]);
     setIsOpen(false);
-    setValidated('error');
+    setValidated(ValidatedOptions.error);
   };
 
-  const generateRequests = () => {
-    const requests = selected.map((region) => {
-      const request = { region: region };
-      if (compose.share_with_sources?.[0]) {
-        request.share_with_sources = [compose.share_with_sources[0]];
-      } else {
-        request.share_with_accounts = [compose.share_with_accounts[0]];
-      }
-      return request;
-    });
-    return requests;
-  };
-
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSaving(true);
-    const requests = generateRequests();
-    Promise.all(
-      requests.map((request) =>
-        api.cloneImage(composeId, request).then((response) => {
-          dispatch(
-            cloneAdded({
-              clone: {
-                ...response,
-                request,
-                image_status: { status: 'pending' },
-              },
-              parent: composeId,
-            })
-          );
-        })
-      )
-    )
+    const requests = generateRequests(composeId, composeStatus, selected);
+    // https://redux-toolkit.js.org/rtk-query/usage/mutations#frequently-used-mutation-hook-return-values
+    // If you want to immediately access the result of a mutation, you need to chain `.unwrap()`
+    // if you actually want the payload or to catch the error.
+    // We do this so we can dispatch the appropriate notification (success or failure).
+    await Promise.all(requests.map((request) => cloneCompose(request).unwrap()))
       .then(() => {
+        setIsSaving(false);
         navigate(resolveRelPath(''));
         dispatch(
           addNotification({
@@ -132,16 +127,15 @@ const RegionsSelect = ({
             title: 'Your image is being shared',
           })
         );
-
-        setIsSaving(false);
       })
       .catch((err) => {
         navigate(resolveRelPath(''));
+        // TODO The error should be typed.
         dispatch(
           addNotification({
             variant: 'danger',
-            title: 'Your image could not be created',
-            description: `Status code ${err.response.status}: ${err.response.statusText}`,
+            title: 'Your image could not be shared',
+            description: `Status code ${err.status}: ${err.data.errors[0].detail}`,
           })
         );
       });
@@ -198,7 +192,7 @@ const RegionsSelect = ({
         >
           {options.map((option, index) => (
             <SelectOption
-              isDisabled={option.disabled}
+              isDisabled={option.disableRegion}
               key={index}
               value={option.value}
               {...(option.description && { description: option.description })}
@@ -222,14 +216,6 @@ const RegionsSelect = ({
       </ActionGroup>
     </Form>
   );
-};
-
-RegionsSelect.propTypes = {
-  composeId: PropTypes.string,
-  handleClose: PropTypes.func,
-  handleToggle: PropTypes.func,
-  isOpen: PropTypes.bool,
-  setIsOpen: PropTypes.func,
 };
 
 export default RegionsSelect;

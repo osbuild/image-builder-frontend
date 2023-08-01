@@ -26,10 +26,12 @@ import {
 } from './validators';
 
 import './CreateImageWizard.scss';
-import api from '../../api';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
-import { composeAdded } from '../../store/composesSlice';
-import { useGetArchitecturesQuery } from '../../store/imageBuilderApi';
+import {
+  useComposeImageMutation,
+  useGetArchitecturesQuery,
+  useGetComposeStatusQuery,
+} from '../../store/imageBuilderApi';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
@@ -510,17 +512,19 @@ const formStepHistory = (composeRequest, contentSourcesEnabled) => {
 };
 
 const CreateImageWizard = () => {
+  const [composeImage] = useComposeImageMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
   // composeId is an optional param that is used for Recreate image
   const { composeId } = useParams();
 
-  // This is a bit awkward, but will be replaced with an RTKQ hook very soon
-  // We use useStore() instead of useSelector() because we do not want changes to
-  // the store to cause re-renders, as the composeId (if present) will never change
-  const { getState } = useStore();
-  const compose = getState().composes?.byId?.[composeId];
-  const composeRequest = compose?.request;
+  const { data } = useGetComposeStatusQuery(
+    { composeId: composeId },
+    {
+      skip: composeId ? false : true,
+    }
+  );
+  const composeRequest = composeId ? data?.request : undefined;
   const contentSourcesEnabled = useFlag('image-builder.enable-content-sources');
 
   // TODO: This causes an annoying re-render when using Recreate image
@@ -534,7 +538,7 @@ const CreateImageWizard = () => {
 
   // Assume that if a request is available that we should start on review step
   // This will occur if 'Recreate image' is clicked
-  const initialStep = compose?.request ? 'review' : undefined;
+  const initialStep = composeRequest ? 'review' : undefined;
 
   const { isBeta, isProd } = useGetEnvironment();
 
@@ -566,27 +570,19 @@ const CreateImageWizard = () => {
     <ImageCreator
       onClose={handleClose}
       onSubmit={({ values, setIsSaving }) => {
-        setIsSaving(() => true);
+        setIsSaving(true);
         const requests = onSave(values);
+        navigate(resolveRelPath(''));
+        // https://redux-toolkit.js.org/rtk-query/usage/mutations#frequently-used-mutation-hook-return-values
+        // If you want to immediately access the result of a mutation, you need to chain `.unwrap()`
+        // if you actually want the payload or to catch the error.
+        // We do this so we can dispatch the appropriate notification (success or failure).
         Promise.all(
-          requests.map((request) =>
-            api.composeImage(request).then((response) => {
-              dispatch(
-                composeAdded({
-                  compose: {
-                    ...response,
-                    request,
-                    created_at: currentDate.toISOString(),
-                    image_status: { status: 'pending' },
-                  },
-                  insert: true,
-                })
-              );
-            })
+          requests.map((composeRequest) =>
+            composeImage({ composeRequest }).unwrap()
           )
         )
           .then(() => {
-            navigate(resolveRelPath(''));
             dispatch(
               addNotification({
                 variant: 'success',
@@ -607,8 +603,6 @@ const CreateImageWizard = () => {
                 description: 'Status code ' + err.response.status + ': ' + msg,
               })
             );
-
-            setIsSaving(false);
           });
       }}
       defaultArch="x86_64"
