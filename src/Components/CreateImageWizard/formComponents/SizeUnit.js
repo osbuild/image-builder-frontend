@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Select,
@@ -15,27 +15,32 @@ const SizeUnit = ({ ...props }) => {
   const [unit, setUnit] = useState(props.unit || UNIT_GIB);
   const [size, setSize] = useState(props.size || 1);
 
-  useEffect(() => {
-    props.onChange(size, unit);
-  }, [unit, size]);
-
   const onToggle = (isOpen) => {
     setIsOpen(isOpen);
+  };
+
+  const updateState = (size, unit) => {
+    // update state
+    setSize(size);
+    setUnit(unit);
+    // propagate state values to the onChange callback. Use the shadowing
+    // variables and not the state values as the state values aren't already
+    // updated thus not immediately reflecting what was put in them.
+    props.onChange(size, unit);
   };
 
   const onSelect = (event, selection) => {
     switch (selection) {
       case 'KiB':
-        setUnit(UNIT_KIB);
+        updateState(size, UNIT_KIB);
         break;
       case 'MiB':
-        setUnit(UNIT_MIB);
+        updateState(size, UNIT_MIB);
         break;
       case 'GiB':
-        setUnit(UNIT_GIB);
+        updateState(size, UNIT_GIB);
         break;
     }
-
     setIsOpen(false);
   };
 
@@ -46,7 +51,9 @@ const SizeUnit = ({ ...props }) => {
         type="text"
         value={size}
         aria-label="Size text input"
-        onChange={(v) => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))}
+        onChange={(v) =>
+          updateState(isNaN(parseInt(v)) ? 0 : parseInt(v), unit)
+        }
       />
       <Select
         className="pf-u-w-50"
