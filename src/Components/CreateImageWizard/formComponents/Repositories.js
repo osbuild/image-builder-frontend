@@ -37,6 +37,8 @@ import {
 } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 
+import RepositoriesStatus from './RepositoriesStatus';
+
 import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
@@ -401,10 +403,11 @@ const Repositories = (props) => {
                   <Thead>
                     <Tr>
                       <Th />
-                      <Th width={50}>Name</Th>
+                      <Th width={45}>Name</Th>
                       <Th>Architecture</Th>
                       <Th>Versions</Th>
                       <Th>Packages</Th>
+                      <Th>Status</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
@@ -432,7 +435,7 @@ const Repositories = (props) => {
                                 rowIndex: rowIndex,
                                 onSelect: (event, isSelecting) =>
                                   handleSelect(repo.url, rowIndex, isSelecting),
-                                disable: isFetching,
+                                disable: isFetching || repo.status !== 'Valid',
                               }}
                             />
                             <Td dataLabel={'Name'}>
@@ -457,6 +460,12 @@ const Repositories = (props) => {
                               {repo.distribution_versions}
                             </Td>
                             <Td dataLabel={'Packages'}>{repo.package_count}</Td>
+                            <Td dataLabel={'Status'}>
+                              <RepositoriesStatus
+                                repoStatus={repo.status}
+                                repoUrl={repo.url}
+                              />
+                            </Td>
                           </Tr>
                         );
                       })}

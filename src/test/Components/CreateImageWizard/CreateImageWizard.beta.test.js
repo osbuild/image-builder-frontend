@@ -562,7 +562,7 @@ describe('Step Custom repositories', () => {
     });
     await user.click(selectButton);
 
-    screen.getByText(/select all \(1011 items\)/i);
+    screen.getByText(/select all \(1015 items\)/i);
   });
 
   test('filter works', async () => {
