@@ -73,7 +73,8 @@
     "babel-plugin-transform-imports": "2.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "6.8.1",
-    "eslint": "8.46.0",
+    "eslint": "^8.46.0",
+    "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-import": "2.27.5",
     "eslint-plugin-jest-dom": "5.0.1",
     "eslint-plugin-react": "7.33.0",
@@ -112,7 +113,7 @@
     "test": "TZ=UTC jest --verbose --no-cache",
     "test:single": "jest --verbose -w 1",
     "build": "webpack --config config/prod.webpack.config.js",
-    "api": "bash api.sh", 
+    "api": "bash api.sh",
     "verify": "npm-run-all build lint test"
   },
   "insights": {
