@@ -12,6 +12,7 @@ import {
   TabTitleText,
   Text,
   TextContent,
+  TabAction,
 } from '@patternfly/react-core';
 import {
   ArrowRightIcon,
@@ -26,6 +27,7 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag } from '@unleash/proxy-client-react';
+import PropTypes from 'prop-types';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
@@ -221,13 +223,12 @@ export const LandingPage = () => {
         >
           <Tab
             eventKey={0}
-            title={
-              <TabTitleText>
-                Conventional (RPM-DNF){' '}
-                <Popover
-                  minWidth="35rem"
-                  headerContent={'Conventional (RPM-DNF)'}
-                  bodyContent={
+            title={<TabTitleText> Conventional (RPM-DNF){''} </TabTitleText>}
+            actions={
+              <HelpPopover
+                header={'Conventional (RPM-DNF)'}
+                body={
+                  <div>
                     <TextContent>
                       <Text>
                         With RPM-DNF, you can manage the system software by
@@ -251,17 +252,9 @@ export const LandingPage = () => {
                         </Button>
                       </Text>
                     </TextContent>
-                  }
-                >
-                  <Button
-                    variant="plain"
-                    aria-label="About image builder"
-                    className="pf-u-pl-sm header-button"
-                  >
-                    <HelpIcon />
-                  </Button>
-                </Popover>
-              </TabTitleText>
+                  </div>
+                }
+              />
             }
           >
             {traditionalImageList}
@@ -274,45 +267,38 @@ export const LandingPage = () => {
                   New
                 </Label>{' '}
                 Immutable (OSTree){' '}
-                <Popover
-                  minWidth="35rem"
-                  headerContent={'Immutable (OSTree)'}
-                  bodyContent={
-                    <TextContent>
-                      <Text>
-                        With OSTree, you can manage the system software by
-                        referencing a central image repository. OSTree images
-                        contain a complete operating system ready to be remotely
-                        installed at scale. You can track updates to images
-                        through commits and enable secure updates that only
-                        address changes and keep the operating system unchanged.
-                        The updates are quick, and the rollbacks are easy.
-                      </Text>
-                      <Text>
-                        <Button
-                          component="a"
-                          target="_blank"
-                          variant="link"
-                          icon={<ExternalLinkAltIcon />}
-                          iconPosition="right"
-                          isInline
-                          href={'https://ostreedev.github.io/ostree/'}
-                        >
-                          Learn more about OSTree
-                        </Button>
-                      </Text>
-                    </TextContent>
-                  }
-                >
-                  <Button
-                    variant="plain"
-                    aria-label="About image builder"
-                    className="pf-u-pl-sm header-button"
-                  >
-                    <HelpIcon />
-                  </Button>
-                </Popover>
               </TabTitleText>
+            }
+            actions={
+              <HelpPopover
+                header={'Immutable (OSTree)'}
+                body={
+                  <TextContent>
+                    <Text>
+                      With OSTree, you can manage the system software by
+                      referencing a central image repository. OSTree images
+                      contain a complete operating system ready to be remotely
+                      installed at scale. You can track updates to images
+                      through commits and enable secure updates that only
+                      address changes and keep the operating system unchanged.
+                      The updates are quick, and the rollbacks are easy.
+                    </Text>
+                    <Text>
+                      <Button
+                        component="a"
+                        target="_blank"
+                        variant="link"
+                        icon={<ExternalLinkAltIcon />}
+                        iconPosition="right"
+                        isInline
+                        href={'https://ostreedev.github.io/ostree/'}
+                      >
+                        Learn more about OSTree
+                      </Button>
+                    </Text>
+                  </TextContent>
+                }
+              />
             }
           >
             <EdgeImagesTable />
@@ -325,4 +311,27 @@ export const LandingPage = () => {
     </React.Fragment>
   );
 };
+
+const HelpPopover = ({ header, body }) => {
+  const ref = React.createRef();
+  return (
+    <>
+      <TabAction ref={ref}>
+        <HelpIcon />
+      </TabAction>
+      <Popover
+        minWidth="35rem"
+        headerContent={header}
+        bodyContent={body}
+        reference={ref}
+      />
+    </>
+  );
+};
+
+HelpPopover.propTypes = {
+  header: PropTypes.string,
+  body: PropTypes.element,
+};
+
 export default LandingPage;
