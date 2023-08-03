@@ -27,7 +27,6 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag } from '@unleash/proxy-client-react';
-import PropTypes from 'prop-types';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
@@ -44,7 +43,8 @@ export const LandingPage = () => {
 
   const { quickStarts } = useChrome();
   const { isBeta } = useGetEnvironment();
-  const activateQuickstart = (qs) => () => quickStarts.activateQuickstart(qs);
+  const activateQuickstart = (qs: string) => () =>
+    quickStarts.activateQuickstart(qs);
 
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ export const LandingPage = () => {
   useEffect(() => {
     setActiveTabKey(initialActiveTabKey);
   }, [pathname]);
-  const handleTabClick = (_event, tabIndex) => {
+  const handleTabClick = (_event: React.MouseEvent, tabIndex: number) => {
     const tabPath = tabsPath[tabIndex];
     if (tabPath !== undefined) {
       navigate(tabPath);
@@ -312,8 +312,13 @@ export const LandingPage = () => {
   );
 };
 
-const HelpPopover = ({ header, body }) => {
-  const ref = React.createRef();
+type HelpPopoverPropTypes = {
+  header: string;
+  body: React.ReactNode;
+};
+
+const HelpPopover = ({ header, body }: HelpPopoverPropTypes) => {
+  const ref = React.createRef<HTMLElement>();
   return (
     <>
       <TabAction ref={ref}>
@@ -327,11 +332,6 @@ const HelpPopover = ({ header, body }) => {
       />
     </>
   );
-};
-
-HelpPopover.propTypes = {
-  header: PropTypes.string,
-  body: PropTypes.element,
 };
 
 export default LandingPage;
