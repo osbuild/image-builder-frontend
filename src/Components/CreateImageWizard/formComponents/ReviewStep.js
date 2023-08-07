@@ -147,15 +147,18 @@ const ReviewStep = () => {
           ) && <RegisterNowList />}
         </ExpandableSection>
       )}
-      <ExpandableSection
-        toggleContent={'Image details'}
-        onToggle={onToggleImageDetail}
-        isExpanded={isExpandedImageDetail}
-        isIndented
-        data-testid="image-details-expandable"
-      >
-        <ImageDetailsList />
-      </ExpandableSection>
+      {(getState()?.values?.['image-name'] ||
+        getState()?.values?.['image-description']) && (
+        <ExpandableSection
+          toggleContent={'Image details'}
+          onToggle={onToggleImageDetail}
+          isExpanded={isExpandedImageDetail}
+          isIndented
+          data-testid="image-details-expandable"
+        >
+          <ImageDetailsList />
+        </ExpandableSection>
+      )}
     </>
   );
 };
