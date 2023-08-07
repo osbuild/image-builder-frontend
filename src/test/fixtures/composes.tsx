@@ -24,7 +24,7 @@ const currentDateInString = currentDate.toISOString();
 
 export const mockComposes: ComposesResponse = {
   meta: {
-    count: 12,
+    count: 13,
   },
   links: {
     first: '',
@@ -201,6 +201,23 @@ export const mockComposes: ComposesResponse = {
           {
             architecture: 'x86_64',
             image_type: 'vsphere',
+            upload_request: {
+              options: {},
+              type: 'aws.s3',
+            },
+          },
+        ],
+      },
+    },
+    {
+      created_at: '2021-04-27T12:31:12Z',
+      id: 'hyk93673-8dcc-4a61-ac30-e9f4940d8346',
+      request: {
+        distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'vsphere-ova',
             upload_request: {
               options: {},
               type: 'aws.s3',
@@ -464,6 +481,31 @@ export const mockStatus = (composeId: string): ComposeStatus => {
           {
             architecture: 'x86_64',
             image_type: 'vsphere',
+            upload_request: {
+              options: {},
+              type: 'aws.s3',
+            },
+          },
+        ],
+      },
+    },
+    'hyk93673-8dcc-4a61-ac30-e9f4940d8346': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://s3.amazonaws.com/hyk93673-8dcc-4a61-ac30-e9f4940d8346-disk.vmdk',
+          },
+          status: 'success',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'vsphere-ova',
             upload_request: {
               options: {},
               type: 'aws.s3',
