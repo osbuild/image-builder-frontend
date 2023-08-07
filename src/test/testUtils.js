@@ -12,6 +12,26 @@ import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import { middleware, reducer } from '../store';
 import { resolveRelPath } from '../Utilities/path';
 
+export const renderCustomRoutesWithReduxRouter = (
+  route = '/',
+  preloadedState = {},
+  routes
+) => {
+  const store = configureStore({ reducer, middleware, preloadedState });
+
+  const router = createMemoryRouter(routes, {
+    initialEntries: [resolveRelPath(route)],
+  });
+
+  render(
+    <Provider store={store}>
+      <RouterProvider router={router} />
+    </Provider>
+  );
+
+  return { router, store };
+};
+
 export const renderWithReduxRouter = (route = '/', preloadedState = {}) => {
   const store = configureStore({ reducer, middleware, preloadedState });
 
