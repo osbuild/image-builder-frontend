@@ -80,7 +80,7 @@ export const selectComposeById = (state, composeId) => {
 export const selectClonesById = (state, composeId) => {
   const compose = state.composes.byId[composeId];
 
-  if (compose.clones.length !== 0) {
+  if (compose && compose.clones.length !== 0) {
     const clones = compose.clones.map((cloneId) => {
       const clone = state.clones.byId[cloneId];
       return {
@@ -115,7 +115,7 @@ export const selectImagesById = createSelector(
 export const selectImageStatusesById = createSelector(
   [selectImagesById],
   (images) => {
-    return images.map((image) => image.status);
+    return images.map((image) => (image !== null ? image.status : null));
   }
 );
 

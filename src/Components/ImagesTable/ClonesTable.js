@@ -23,6 +23,10 @@ import {
 const Row = ({ imageId }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
 
+  if (!image) {
+    return null;
+  }
+
   return (
     <Tbody>
       <Tr className="no-bottom-border">
