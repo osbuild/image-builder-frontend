@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import UseFormApiConfig from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Alert,
@@ -10,15 +11,22 @@ import {
   SelectVariant,
   Spinner,
 } from '@patternfly/react-core';
-import PropTypes from 'prop-types';
 
-import { useListActivationKeysQuery } from '../../../store/rhsmApi';
+import {
+  ListActivationKeysApiResponse as LAKT,
+  ActivationKeys as AKT,
+  useListActivationKeysQuery,
+} from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
-const ActivationKeys = ({ label, isRequired, ...props }) => {
+const ActivationKeys = ({
+  label,
+  isRequired,
+  option,
+}: ActivationKeysPropTypes) => {
   const { isProd } = useGetEnvironment();
   const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
+  const { input } = useFieldApi(option);
   const [isOpen, setIsOpen] = useState(false);
   const [activationKeySelected, selectActivationKey] = useState(
     getState()?.values?.['subscription-activation-key']
@@ -45,14 +53,14 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     }
   }
 
-  const setActivationKey = (_, selection) => {
+  const setActivationKey = (_unused: React.MouseEvent, selection: string) => {
     selectActivationKey(selection);
     setIsOpen(false);
     change(input.name, selection);
   };
 
   const handleClear = () => {
-    selectActivationKey();
+    selectActivationKey(null);
     change(input.name, undefined);
   };
 
@@ -82,18 +90,11 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
           typeAheadAriaLabel="Select activation key"
           isDisabled={!isSuccessActivationKeys}
         >
-          {isSuccessActivationKeys &&
-            activationKeys.body.map((key, index) => (
-              <SelectOption key={index} value={key.name} />
-            ))}
-          {isFetchingActivationKeys && (
-            <SelectOption
-              isNoResultsOption={true}
-              data-testid="activation-keys-loading"
-            >
-              <Spinner isSVG size="md" />
-            </SelectOption>
-          )}
+          <ActivationKeysSelectOptions
+            isFetching={isFetchingActivationKeys}
+            hasData={isSuccessActivationKeys}
+            activationKeys={activationKeys}
+          />
         </Select>
       </FormGroup>
       {isErrorActivationKeys && (
@@ -110,9 +111,48 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
   );
 };
 
-ActivationKeys.propTypes = {
-  label: PropTypes.node,
-  isRequired: PropTypes.bool,
+const ActivationKeysSelectOptions = ({
+  isFetching,
+  hasData,
+  activationKeys,
+}: ActivationKeysSelectOptionsTypes) => {
+  if (isFetching) {
+    return (
+      <>
+        <SelectOption
+          isNoResultsOption={true}
+          data-testid="activation-keys-loading"
+        >
+          <Spinner isSVG size="md" />
+        </SelectOption>
+      </>
+    );
+  }
+  if (!hasData) {
+    return <></>;
+  }
+  if (!activationKeys.body) {
+    return <></>;
+  }
+  return (
+    <>
+      {activationKeys.body.map((key, index) => (
+        <SelectOption key={index} value={key.name} />
+      ))}
+    </>
+  );
+};
+
+type ActivationKeysSelectOptionsTypes = {
+  isFetching: boolean;
+  hasData: boolean;
+  activationKeys: LAKT;
+};
+
+type ActivationKeysPropTypes = {
+  label: React.ReactNode;
+  isRequired: boolean;
+  option: typeof UseFormApiConfig;
 };
 
 ActivationKeys.defaultProps = {
