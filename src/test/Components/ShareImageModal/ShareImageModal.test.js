@@ -1,10 +1,13 @@
+import React from 'react';
+
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { mockState } from '../../fixtures/composes';
-import { renderWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -16,10 +19,25 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
 
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/share/:composeId',
+    element: <ShareImageModal />,
+  },
+];
+
 describe('Create Share To Regions Modal', () => {
   const user = userEvent.setup();
   test('validation', async () => {
-    renderWithReduxRouter(`share/${composeId}`, mockState);
+    renderCustomRoutesWithReduxRouter(`share/${composeId}`, mockState, routes);
 
     const shareButton = screen.getByRole('button', { name: /share/i });
     expect(shareButton).toBeDisabled();
@@ -51,7 +69,11 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('cancel button redirects to landing page', async () => {
-    const { router } = renderWithReduxRouter(`share/${composeId}`, mockState);
+    const { router } = renderCustomRoutesWithReduxRouter(
+      `share/${composeId}`,
+      mockState,
+      routes
+    );
 
     const cancelButton = screen.getByRole('button', { name: /cancel/i });
     cancelButton.click();
@@ -63,7 +85,11 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('close button redirects to landing page', async () => {
-    const { router } = renderWithReduxRouter(`share/${composeId}`, mockState);
+    const { router } = renderCustomRoutesWithReduxRouter(
+      `share/${composeId}`,
+      mockState,
+      routes
+    );
 
     const closeButton = screen.getByRole('button', { name: /close/i });
     closeButton.click();
@@ -75,7 +101,7 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('select options disabled correctly based on status and region', async () => {
-    renderWithReduxRouter(`share/${composeId}`, mockState);
+    renderCustomRoutesWithReduxRouter(`share/${composeId}`, mockState, routes);
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
@@ -111,9 +137,10 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('cloning an image results in successful store updates', async () => {
-    const { router, store } = renderWithReduxRouter(
+    const { router, store } = renderCustomRoutesWithReduxRouter(
       `share/${composeId}`,
-      mockState
+      mockState,
+      routes
     );
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
