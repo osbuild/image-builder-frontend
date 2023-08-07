@@ -144,13 +144,13 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    await user.click(selectToggle);
+    await act(async () => user.click(selectToggle));
 
     const usEast2 = screen.getByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    await user.click(usEast2);
+    await act(async () => user.click(usEast2));
 
     const mockResponse = {
       id: '123e4567-e89b-12d3-a456-426655440000',
