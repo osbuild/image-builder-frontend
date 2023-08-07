@@ -1,5 +1,5 @@
 export const timestampToDisplayString = (ts) => {
-  // timestamp has format 2021-04-27 12:31:12.794809 +0000 UTC
+  // timestamp has format 2021-04-27T12:31:12Z
   // must be converted to ms timestamp and then reformatted to Apr 27, 2021
   if (!ts) {
     return '';

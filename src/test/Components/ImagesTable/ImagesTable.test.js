@@ -102,7 +102,7 @@ describe('Images Table', () => {
 
       // render the expected <ImageBuildStatus /> and compare the text content
       if (
-        compose.created_at === '2021-04-27 12:31:12.794809 +0000 UTC' &&
+        compose.created_at === '2021-04-27T12:31:12Z' &&
         compose.request.image_requests[0].upload_request.type === 'aws.s3'
       ) {
         expect(row.cells[5]).toHaveTextContent('Expired');
@@ -117,7 +117,7 @@ describe('Images Table', () => {
 
       // render the expected <ImageLink /> and compare the text content for a link
       if (
-        compose.created_at === '2021-04-27 12:31:12.794809 +0000 UTC' &&
+        compose.created_at === '2021-04-27T12:31:12Z' &&
         compose.request.image_requests[0].upload_request.type === 'aws.s3'
       ) {
         expect(row.cells[6]).toHaveTextContent('Recreate image');

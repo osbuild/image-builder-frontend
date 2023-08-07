@@ -34,7 +34,7 @@ export const mockComposes: ComposesResponse = {
     {
       id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
       image_name: 'testImageName',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -54,7 +54,7 @@ export const mockComposes: ComposesResponse = {
     // kept "running" for backward compatibility
     {
       id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -73,7 +73,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -90,7 +90,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: '42ad0826-30b5-4f64-a24e-957df26fd564',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -107,7 +107,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: '955944a2-e149-4058-8ac1-35b514cb5a16',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -124,7 +124,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: 'f7a60094-b376-4b58-a102-5c8c82dfd18b',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -141,7 +141,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: '61b0effa-c901-4ee5-86b9-2010b47f1b22',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -158,7 +158,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: 'ca03f120-9840-4959-871e-94a5cb49d1f2',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -177,7 +177,7 @@ export const mockComposes: ComposesResponse = {
     },
     {
       id: '551de6f6-1533-4b46-a69f-7924051f9bc6',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -193,7 +193,7 @@ export const mockComposes: ComposesResponse = {
       },
     },
     {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       id: 'b7193673-8dcc-4a5f-ac30-e9f4940d8346',
       request: {
         distribution: RHEL_8,
@@ -210,7 +210,7 @@ export const mockComposes: ComposesResponse = {
       },
     },
     {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       id: '4873fd0f-1851-4b9f-b4fe-4639fce90794',
       request: {
         distribution: RHEL_8,
@@ -542,7 +542,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
     return {
       data: [
         {
-          created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+          created_at: '2021-04-27T12:31:12Z',
           id: 'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
           request: {
             region: 'us-west-1',
@@ -550,7 +550,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
-          created_at: '2021-04-28 12:31:12.794809 +0000 UTC',
+          created_at: '2021-04-28T12:31:12Z',
           id: '48fce414-0cc0-4a16-8645-e3f0edec3212',
           request: {
             region: 'us-west-1',
@@ -558,7 +558,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
-          created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+          created_at: '2021-04-27T12:31:12Z',
           id: '0169538e-515c-477e-b934-f12783939313',
           request: {
             region: 'us-west-2',
@@ -566,7 +566,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
-          created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+          created_at: '2021-04-27T12:31:12Z',
           id: '4a851db1-919f-43ca-a7ef-dd209877a77e',
           request: {
             region: 'eu-central-1',
@@ -642,7 +642,7 @@ export const mockComposesShareImageModal = {
     '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
       id: '1579d95b-8f1d-4982-8c53-8c2afa4abc',
       image_name: 'testImageName',
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
         image_requests: [
@@ -689,7 +689,7 @@ export const mockClonesShareImageModal = {
   ],
   byId: {
     'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d': {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       id: 'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
       request: {
         region: 'us-west-1',
@@ -710,7 +710,7 @@ export const mockClonesShareImageModal = {
     },
     // Duplicate us-west-1 clone with different ami created one day later
     '48fce414-0cc0-4a16-8645-e3f0edec3212': {
-      created_at: '2021-04-28 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-28T12:31:12Z',
       id: '48fce414-0cc0-4a16-8645-e3f0edec3212',
       request: {
         region: 'us-west-1',
@@ -730,7 +730,7 @@ export const mockClonesShareImageModal = {
       },
     },
     '0169538e-515c-477e-b934-f12783939313': {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       id: '0169538e-515c-477e-b934-f12783939313',
       request: {
         region: 'us-west-2',
@@ -750,7 +750,7 @@ export const mockClonesShareImageModal = {
       },
     },
     '4a851db1-919f-43ca-a7ef-dd209877a77e': {
-      created_at: '2021-04-27 12:31:12.794809 +0000 UTC',
+      created_at: '2021-04-27T12:31:12Z',
       id: '4a851db1-919f-43ca-a7ef-dd209877a77e',
       request: {
         region: 'eu-central-1',
