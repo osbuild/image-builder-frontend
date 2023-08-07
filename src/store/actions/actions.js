@@ -8,6 +8,7 @@ import {
 
 export const fetchComposeStatus = (id) => async (dispatch) => {
   const request = await api.getComposeStatus(id);
+  if (!request) return;
   dispatch(
     composeUpdatedStatus({
       id,
@@ -18,6 +19,7 @@ export const fetchComposeStatus = (id) => async (dispatch) => {
 
 export const fetchComposes = (limit, offset) => async (dispatch) => {
   const composeRequest = await api.getComposes(limit, offset);
+  if (!composeRequest) return;
 
   composeRequest.data.map((compose) => {
     dispatch(composeAdded({ compose, insert: false }));
@@ -32,6 +34,7 @@ export const fetchComposes = (limit, offset) => async (dispatch) => {
 
 export const fetchCloneStatus = (id) => async (dispatch) => {
   const request = await api.getCloneStatus(id);
+  if (!request) return;
   dispatch(
     cloneUpdatedStatus({
       id,
@@ -42,6 +45,7 @@ export const fetchCloneStatus = (id) => async (dispatch) => {
 
 export const fetchClones = (id, limit, offset) => async (dispatch) => {
   const request = await api.getClones(id, limit, offset);
+  if (!request) return;
   request.data?.forEach((clone) => {
     dispatch(cloneAdded({ clone, parent: id }));
     dispatch(fetchCloneStatus(clone.id));

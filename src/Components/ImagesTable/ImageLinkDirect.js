@@ -32,6 +32,9 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
   const navigate = useNavigate();
 
   const image = useSelector((state) => selectImageById(state, imageId));
+  if (!image) {
+    return null;
+  }
   const uploadStatus = image.uploadStatus;
 
   const fileExtensions = {
