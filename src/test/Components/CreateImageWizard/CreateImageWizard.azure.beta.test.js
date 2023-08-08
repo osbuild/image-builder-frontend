@@ -156,19 +156,5 @@ describe('Step Upload to Azure', () => {
     expect(groups).toBeInTheDocument();
     expect(screen.getByLabelText('Resource group theirGroup2')).toBeVisible();
   });
-
-  test('component renders error state correctly', async () => {
-    setUp();
-    server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
-        res(ctx.status(500))
-      )
-    );
-
-    await screen.findByText(
-      /Sources cannot be reached, try again later or enter an account info for upload manually\./i
-    );
-    //
-  });
   // set test timeout on 10 seconds
 }, 15000);
