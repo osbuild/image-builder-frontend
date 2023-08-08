@@ -1,3 +1,5 @@
+import React from 'react';
+
 import '@testing-library/jest-dom';
 
 import {
@@ -11,6 +13,8 @@ import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
 import api from '../../../api.js';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { customizations, ids } from '../../fixtures/customizations';
@@ -20,11 +24,26 @@ import {
   clickBack,
   clickNext,
   getNextButton,
-  renderWithReduxRouter,
+  renderCustomRoutesWithReduxRouter,
 } from '../../testUtils';
 
-let router = undefined;
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share/:composeId',
+    element: <ShareImageModal />,
+  },
+];
+
 let store = undefined;
+let router = undefined;
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -79,12 +98,11 @@ beforeAll(() => {
 
 afterEach(() => {
   jest.clearAllMocks();
-  router = undefined;
 });
 
 describe('Create Image Wizard', () => {
   test('renders component', () => {
-    renderWithReduxRouter('imagewizard', {});
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
     screen.getByRole('heading', { name: /Create image/ });
 
@@ -102,7 +120,11 @@ describe('Create Image Wizard', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
+    ({ router, store } = renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
 
     // select aws as upload destination
     const awsTile = await screen.findByTestId('upload-aws');
@@ -120,7 +142,7 @@ describe('Step Upload to AWS', () => {
   test('component renders error state correctly', async () => {
     await setUp();
     server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
+      rest.get(`${PROVISIONING_API}/sources`, (_req, res, ctx) =>
         res(ctx.status(500))
       )
     );
@@ -260,7 +282,7 @@ describe('Step Upload to AWS', () => {
 describe('Step Packages', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -529,7 +551,7 @@ describe('Step Packages', () => {
 describe('Step Custom repositories', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -630,7 +652,11 @@ describe('Click through all steps', () => {
   const user = userEvent.setup();
 
   const setUp = async () => {
-    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
+    ({ router, store } = renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
   };
 
   test('with valid values', async () => {
@@ -752,7 +778,9 @@ describe('Click through all steps', () => {
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
-    const bot = screen .getByRole('option', { name: /test summary for test package/ })
+    const bot = screen.getByRole('option', {
+      name: /test summary for test package/,
+    });
     await act(async () => {
       bot.click();
     });
