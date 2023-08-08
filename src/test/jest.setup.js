@@ -1,5 +1,50 @@
 import 'whatwg-fetch';
+import failOnConsole from 'jest-fail-on-console';
+
 import { server } from './mocks/server';
+
+// or with options:
+failOnConsole({
+  shouldFailOnWarn: false,
+  silenceMessage: (errorMessage) => {
+    if (
+      // Upgrading @patternfly/react-core caused propTypes error in Pf4FormTemplate
+      // https://github.com/data-driven-forms/react-forms/issues/1352
+      errorMessage.includes(
+        'Failed prop type: Invalid prop `FormWrapper` supplied to `FormTemplate`, expected one of type [function].'
+      )
+    ) {
+      // eslint-disable-next-line no-console
+      console.log(
+        'Suppressed error',
+        'Failed prop type: Invalid prop `FormWrapper` supplied to `FormTemplate`, expected one of type [function]',
+        'see [https://github.com/data-driven-forms/react-forms/issues/1352]'
+      );
+      return true;
+    }
+    // TODO [2023-08] CreateImageWizard warnings to be fixed later.
+    if (
+      errorMessage.includes('CreateImageWizard') &&
+      (errorMessage.includes(
+        'Cannot update a component (`ReactFinalForm`) while rendering a different component (`TargetEnvironment`)'
+      ) ||
+        errorMessage.includes(
+          'Cannot update a component (`TextField`) while rendering a different component (`TextField`). To locate the bad setState() call inside `TextField`'
+        ) ||
+        errorMessage.includes(
+          'Cannot update a component (`TextField`) while rendering a different component (`FormSpy`)'
+        ) ||
+        errorMessage.includes(
+          "Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application."
+        ))
+    ) {
+      // eslint-disable-next-line no-console
+      console.warn(errorMessage);
+      return true;
+    }
+    return false;
+  },
+});
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => jest.fn(),
@@ -9,55 +54,3 @@ jest.mock('@unleash/proxy-client-react', () => ({
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-// Upgrading @patternfly/react-core caused propTypes error in Pf4FormTemplate
-// https://github.com/data-driven-forms/react-forms/issues/1352
-const filter1 = (args) => {
-  if (
-    args[2] ===
-    'Invalid prop `FormWrapper` supplied to `FormTemplate`, expected one of type [function].'
-  ) {
-    return [true, args[2]];
-  }
-  return [false, null];
-};
-
-class FilteredConsole {
-  constructor(console) {
-    this.console = console;
-    this.filters = [filter1];
-  }
-
-  logSuppressedError(err) {
-    this.console.info('Suppressed error: ', err);
-  }
-
-  filter(...args) {
-    for (const fn of this.filters) {
-      const [f, msg] = fn(args);
-      if (f) {
-        this.logSuppressedError(msg);
-        return true;
-      }
-    }
-    return false;
-  }
-
-  log(...args) {
-    this.console.log(...args);
-  }
-
-  info(...args) {
-    this.console.info(...args);
-  }
-
-  warn(...args) {
-    if (!this.filter(...args)) this.console.warn(...args);
-  }
-
-  error(...args) {
-    if (!this.filter(...args)) this.console.error(...args);
-  }
-}
-
-window.console = new FilteredConsole(window.console);
