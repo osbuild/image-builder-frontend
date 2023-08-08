@@ -26,7 +26,7 @@ import {
 
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 
-const ActivationKeyInformation = () => {
+const ActivationKeyInformation = (): JSX.Element => {
   const { getState } = useFormApi();
   const { currentStep } = useContext(WizardContext);
 
@@ -101,7 +101,8 @@ const ActivationKeyInformation = () => {
               component={TextListItemVariants.dd}
               className="pf-u-display-flex pf-u-align-items-flex-end"
             >
-              {activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
+              {activationKeyInfo.body?.additionalRepositories &&
+              activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
                 <Popover
                   bodyContent={
                     <TextContent>
