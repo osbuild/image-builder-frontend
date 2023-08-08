@@ -1,21 +1,28 @@
-export const mockActivationKeysResults = () => {
+import {
+  ListActivationKeysApiResponse,
+  ShowActivationKeyApiResponse,
+} from '../../store/rhsmApi';
+
+export const mockActivationKeysResults = (): ListActivationKeysApiResponse => {
   return {
     body: [
       {
-        id: 0,
+        id: '0',
         name: 'name0',
       },
       {
-        id: 1,
+        id: '1',
         name: 'name1',
       },
     ],
   };
 };
 
-export const mockActivationKeyInformation = (key) => {
-  if (key === 'name0') {
-    return {
+export const mockActivationKeyInformation = (
+  key: string
+): ShowActivationKeyApiResponse => {
+  const mockKeys: { [key: string]: ShowActivationKeyApiResponse } = {
+    name0: {
       body: {
         additionalRepositories: [
           {
@@ -35,9 +42,8 @@ export const mockActivationKeyInformation = (key) => {
         serviceLevel: 'Self-Support',
         usage: 'Production',
       },
-    };
-  } else if (key === 'name1') {
-    return {
+    },
+    name1: {
       body: {
         additionalRepositories: [
           {
@@ -57,6 +63,7 @@ export const mockActivationKeyInformation = (key) => {
         serviceLevel: 'Premium',
         usage: 'Production',
       },
-    };
-  }
+    },
+  };
+  return mockKeys[key];
 };
