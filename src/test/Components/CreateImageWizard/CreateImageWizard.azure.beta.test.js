@@ -1,17 +1,31 @@
+import React from 'react';
 import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
 
-import { PROVISIONING_API } from '../../../constants.js';
-import { server } from '../../mocks/server.js';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import {
   clickNext,
   getNextButton,
-  renderWithReduxRouter,
+  renderCustomRoutesWithReduxRouter,
 } from '../../testUtils';
 
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share/:composeId',
+    element: <ShareImageModal />,
+  },
+];
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
@@ -53,7 +67,7 @@ describe('Step Upload to Azure', () => {
 
   const user = userEvent.setup();
   const setUp = async () => {
-    renderWithReduxRouter('imagewizard', {});
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // select aws as upload destination
     const azureTile = screen.getByTestId('upload-azure');
     azureTile.click();
