@@ -488,7 +488,7 @@ ExactMatch.propTypes = {
   pkgList: PropTypes.arrayOf(PropTypes.object),
   search: PropTypes.string,
   chosenPackages: PropTypes.object,
-  selectedAvailablePackages: PropTypes.arrayOf(PropTypes.string),
+  selectedAvailablePackages: PropTypes.object,
   handleSelectAvailableFunc: PropTypes.func,
 };
 
