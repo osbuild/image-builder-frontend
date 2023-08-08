@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
+import { extractProvisioningList } from '../../../store/helpers';
 import {
   useGetSourceListQuery,
   useGetSourceUploadInfoQuery,
@@ -25,12 +26,13 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
   const selectedSourceId = input.value;
 
   const {
-    data: sources,
+    data: rawSources,
     isFetching,
     isSuccess,
     isError,
     refetch,
   } = useGetSourceListQuery({ provider: 'azure' });
+  const sources = extractProvisioningList(rawSources);
 
   const {
     data: sourceDetails,
