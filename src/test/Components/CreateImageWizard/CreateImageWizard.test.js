@@ -1,3 +1,5 @@
+import React from 'react';
+
 import '@testing-library/jest-dom';
 
 import {
@@ -10,6 +12,8 @@ import {
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { RHEL_8 } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import {
@@ -21,9 +25,24 @@ import {
   clickBack,
   clickNext,
   getNextButton,
-  renderWithReduxRouter,
+  renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
+
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share/:composeId',
+    element: <ShareImageModal />,
+  },
+];
 
 let store = undefined;
 let router = undefined;
@@ -86,7 +105,7 @@ afterEach(() => {
 
 describe('Create Image Wizard', () => {
   test('renders component', () => {
-    renderWithReduxRouter('imagewizard', {});
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
     screen.getByRole('heading', { name: /Create image/ });
 
@@ -103,7 +122,7 @@ describe('Create Image Wizard', () => {
 describe('Step Image output', () => {
   const user = userEvent.setup();
   const setUp = () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     const imageOutputLink = screen.getByRole('button', {
       name: 'Image output',
@@ -238,7 +257,7 @@ describe('Step Image output', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -298,7 +317,7 @@ describe('Step Upload to AWS', () => {
 describe('Step Upload to Google', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-google');
@@ -314,10 +333,7 @@ describe('Step Upload to Google', () => {
   test('clicking Next loads Registration', async () => {
     await setUp();
 
-    await user.type(
-        screen.getByTestId('input-google-email'),
-        'test@test.com'
-      );
+    await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
     await act(async () => {
       await clickNext();
     });
@@ -367,7 +383,7 @@ describe('Step Upload to Google', () => {
 describe('Step Upload to Azure', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-azure');
@@ -444,7 +460,7 @@ describe('Step Upload to Azure', () => {
 describe('Step Registration', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -717,7 +733,7 @@ describe('Step Registration', () => {
 describe('Step File system configuration', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -791,7 +807,7 @@ describe('Step File system configuration', () => {
 describe('Step Packages', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -1239,7 +1255,7 @@ describe('Step Packages', () => {
 describe('Step Details', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -1311,7 +1327,7 @@ describe('Step Details', () => {
 describe('Step Review', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -1347,7 +1363,7 @@ describe('Step Review', () => {
 
   // eslint-disable-next-line no-unused-vars
   const setUpCentOS = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -1460,7 +1476,11 @@ describe('Step Review', () => {
 describe('Click through all steps', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router, store } = renderWithReduxRouter('imagewizard', {}));
+    ({ router, store } = renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
   };
 
   test('with valid values', async () => {
@@ -1945,7 +1965,7 @@ describe('Click through all steps', () => {
 describe('Keyboard accessibility', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter('imagewizard', {}));
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
     await clickNext();
   };
 
