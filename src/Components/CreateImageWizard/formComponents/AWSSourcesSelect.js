@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
+import { extractProvisioningList } from '../../../store/helpers';
 import {
   useGetSourceListQuery,
   useGetSourceUploadInfoQuery,
@@ -32,12 +33,13 @@ export const AWSSourcesSelect = ({
   );
 
   const {
-    data: sources,
+    data: rawSources,
     isFetching,
     isSuccess,
     isError,
     refetch,
   } = useGetSourceListQuery({ provider: 'aws' });
+  const sources = extractProvisioningList(rawSources);
 
   const {
     data: sourceDetails,

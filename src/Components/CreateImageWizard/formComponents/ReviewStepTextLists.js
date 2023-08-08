@@ -26,6 +26,7 @@ import {
 } from './ReviewStepTables';
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
+import { extractProvisioningList } from '../../../store/helpers';
 import { useGetSourceListQuery } from '../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
@@ -64,9 +65,10 @@ export const ImageOutputList = () => {
 };
 
 export const TargetEnvAWSList = () => {
-  const { data: awsSources, isSuccess } = useGetSourceListQuery({
+  const { data: rawAWSSources, isSuccess } = useGetSourceListQuery({
     provider: 'aws',
   });
+  const awsSources = extractProvisioningList(rawAWSSources);
   const { isBeta } = useGetEnvironment();
 
   const { getState } = useFormApi();
@@ -170,8 +172,9 @@ export const TargetEnvGCPList = () => {
 
 export const TargetEnvAzureList = () => {
   const { getState } = useFormApi();
-  const { data: azureSources, isSuccess: isSuccessAzureSources } =
+  const { data: rawAzureSources, isSuccess: isSuccessAzureSources } =
     useGetSourceListQuery({ provider: 'azure' });
+  const azureSources = extractProvisioningList(rawAzureSources);
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>
