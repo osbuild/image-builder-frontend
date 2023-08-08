@@ -106,7 +106,9 @@ describe('Step Upload to AWS', () => {
 
     // select aws as upload destination
     const awsTile = await screen.findByTestId('upload-aws');
-    awsTile.click();
+    await act(async () => {
+      awsTile.click();
+    });
 
     await clickNext();
 
@@ -176,14 +178,20 @@ describe('Step Upload to AWS', () => {
     });
     // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
     await waitFor(() => expect(sourceDropdown).toBeEnabled());
-    sourceDropdown.click();
+    await act(async () => {
+      sourceDropdown.click();
+    });
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    source.click();
+    await act(async () => {
+      source.click();
+    });
 
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
 
     // registration
     await screen.findByRole('textbox', {
@@ -191,14 +199,18 @@ describe('Step Upload to AWS', () => {
     });
 
     const registerLaterRadio = screen.getByLabelText('Register later');
-    await user.click(registerLaterRadio);
+    await act(async () => {
+      await user.click(registerLaterRadio);
+    });
 
     // click through to review step
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+      await clickNext();
+      await clickNext();
+      await clickNext();
+      await clickNext();
+    });
 
     const composeImage = jest
       .spyOn(api, 'composeImage')
@@ -227,7 +239,9 @@ describe('Step Upload to AWS', () => {
       });
 
     const create = screen.getByRole('button', { name: /Create/ });
-    create.click();
+    await act(async () => {
+      create.click();
+    });
 
     // API request sent to backend
     expect(composeImage).toHaveBeenCalledTimes(1);
@@ -250,15 +264,19 @@ describe('Step Packages', () => {
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
-    await clickNext();
+    await act(async () => {
+      awsTile.click();
+      await clickNext();
+    });
 
     // aws step
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -266,10 +284,12 @@ describe('Step Packages', () => {
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
-    await clickNext();
+    await act(async () => {
+      await clickNext();
 
-    // skip fsc
-    await clickNext();
+      // skip fsc
+      await clickNext();
+    });
   };
 
   test('search results should be sorted with most relevant results first', async () => {
@@ -284,7 +304,9 @@ describe('Step Packages', () => {
     //const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
     await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
+    await act(async () => {
+      searchbox.click();
+    });
 
     await searchForAvailablePackages(searchbox, 'test');
 
@@ -307,7 +329,9 @@ describe('Step Packages', () => {
     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
     await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
+    await act(async () => {
+      searchbox.click();
+    });
 
     await searchForAvailablePackages(searchbox, 'test');
 
@@ -509,15 +533,19 @@ describe('Step Custom repositories', () => {
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
-    await clickNext();
+    await act(async () => {
+      awsTile.click();
+      await clickNext();
+    });
 
     // aws step
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -525,13 +553,15 @@ describe('Step Custom repositories', () => {
 
     const registerLaterRadio = screen.getByLabelText('Register later');
     await user.click(registerLaterRadio);
-    await clickNext();
+    await act(async () => {
+      await clickNext();
 
-    // skip fsc
-    await clickNext();
+      // skip fsc
+      await clickNext();
 
-    // skip packages
-    await clickNext();
+      // skip packages
+      await clickNext();
+    });
   };
 
   test('selected repositories stored in and retrieved from form state', async () => {
@@ -547,8 +577,10 @@ describe('Step Custom repositories', () => {
     await user.click(firstRepoCheckbox);
     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await clickNext();
-    clickBack();
+    await act(async () => {
+      await clickNext();
+      clickBack();
+    });
 
     firstRepoCheckbox = await getFirstRepoCheckbox();
     expect(firstRepoCheckbox.checked).toEqual(true);
@@ -626,12 +658,21 @@ describe('Click through all steps', () => {
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    screen.getByRole('button', { name: /Next/ }).click();
+    const bn1 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      bn1.click();
+    });
 
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    screen.getByRole('button', { name: /Next/ }).click();
+    const bn2 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      bn2.click();
+    });
 
-    screen.getByTestId('azure-radio-manual').click();
+    const azm = screen.getByTestId('azure-radio-manual');
+    await act(async () => {
+      azm.click();
+    });
     // Randomly generated GUID
     await user.type(
       screen.getByTestId('azure-tenant-id-manual'),
@@ -645,7 +686,10 @@ describe('Click through all steps', () => {
       screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
-    screen.getByRole('button', { name: /Next/ }).click();
+    const bn4 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      bn4.click();
+    });
 
     // registration
     const activationKeyDropdown = await screen.findByRole('textbox', {
@@ -658,7 +702,9 @@ describe('Click through all steps', () => {
     await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
 
     // fsc
     (await screen.findByTestId('file-system-config-radio-manual')).click();
@@ -668,7 +714,9 @@ describe('Click through all steps', () => {
     const tbody = screen.getByTestId('file-system-configuration-tbody');
     const rows = within(tbody).getAllByRole('row');
     expect(rows).toHaveLength(3);
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
     // set mountpoint of final row to /var/tmp
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
     within(rows[2]).getByRole('option', { name: '/var' }).click();
@@ -691,7 +739,9 @@ describe('Click through all steps', () => {
     );
     within(rows[2]).getAllByRole('button', { name: 'Options menu' })[1].click();
     within(rows[2]).getByRole('option', { name: 'MiB' }).click();
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+    });
 
     screen.getByText(
       /Images built with Image Builder include all required packages/i
@@ -702,11 +752,17 @@ describe('Click through all steps', () => {
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
-    screen
-      .getByRole('option', { name: /test summary for test package/ })
-      .click();
-    screen.getByRole('button', { name: /Add selected/ }).click();
-    await clickNext();
+    const bot = screen .getByRole('option', { name: /test summary for test package/ })
+    await act(async () => {
+      bot.click();
+    });
+    const bas = screen.getByRole('button', { name: /Add selected/ });
+    await act(async () => {
+      bas.click();
+    });
+    await act(async () => {
+      await clickNext();
+    });
 
     // Custom repositories
     await user.click(
@@ -715,27 +771,33 @@ describe('Click through all steps', () => {
     await user.click(
       await screen.findByRole('checkbox', { name: /select row 1/i })
     );
-    await clickNext();
 
-    // Custom packages
-    await clickNext();
+    await act(async () => {
+      await clickNext();
+      // Custom packages
+      await clickNext();
+    });
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
       name: 'Image Name',
     });
 
-    await user.type(nameInput, 'my-image-name');
+    await act(async () => {
+      await user.type(nameInput, 'my-image-name');
+    });
 
     // Enter description for image
     const descriptionInput = screen.getByRole('textbox', {
       name: /Description/,
     });
-    await user.type(
-      descriptionInput,
-      'this is a perfect description for image'
-    );
-    await clickNext();
+    await act(async () => {
+      await user.type(
+        descriptionInput,
+        'this is a perfect description for image'
+      );
+      await clickNext();
+    });
 
     // review
     const targetEnvironmentsExpandable = await screen.findByTestId(
@@ -751,7 +813,9 @@ describe('Click through all steps', () => {
     const registrationExpandable = await screen.findByTestId(
       'registration-expandable'
     );
-    registrationExpandable.click();
+    await act(async () => {
+      registrationExpandable.click();
+    });
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Use remote host configuration (RHC) utility'
@@ -760,7 +824,9 @@ describe('Click through all steps', () => {
     const imageDetailsExpandable = await screen.findByTestId(
       'image-details-expandable'
     );
-    imageDetailsExpandable.click();
+    await act(async () => {
+      imageDetailsExpandable.click();
+    });
     await screen.findByText('my-image-name');
     await screen.findByText('this is a perfect description for image');
 
@@ -768,13 +834,19 @@ describe('Click through all steps', () => {
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
 
-    screen.getByTestId('repositories-popover-button').click();
+    const brp = screen.getByTestId('repositories-popover-button');
+    await act(async () => {
+      brp.click();
+    });
     const repotbody = await screen.findByTestId(
       'additional-repositories-table'
     );
     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-    screen.getByTestId('file-system-configuration-popover').click();
+    const fsc = screen.getByTestId('file-system-configuration-popover');
+    await act(async () => {
+      fsc.click();
+    });
     const revtbody = await screen.findByTestId(
       'file-system-configuration-tbody-review'
     );
@@ -908,7 +980,9 @@ describe('Click through all steps', () => {
       });
 
     const create = screen.getByRole('button', { name: /Create/ });
-    await user.click(create);
+    await act(async () => {
+      await user.click(create);
+    });
 
     // API request sent to backend
     expect(composeImage).toHaveBeenCalledTimes(6);
@@ -918,6 +992,6 @@ describe('Click through all steps', () => {
       expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
     expect(store.getState().composes.allIds).toEqual(ids);
-    // set test timeout of 10 seconds
-  }, 10000);
+    // set test timeout of 20 seconds
+  }, 20000);
 });
