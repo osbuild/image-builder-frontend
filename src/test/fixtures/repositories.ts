@@ -1,9 +1,23 @@
-export const mockRepositoryResults = (request) => {
+import {
+  ApiLinks,
+  ApiRepositoryResponse,
+  ApiResponseMetadata,
+  ListRepositoriesApiArg,
+} from '../../store/contentSourcesApi';
+
+type repoArgs = {
+  available_for_arch: ListRepositoriesApiArg['availableForArch'];
+  available_for_version: ListRepositoriesApiArg['availableForVersion'];
+  limit: ListRepositoriesApiArg['limit'];
+  offset: ListRepositoriesApiArg['offset'];
+};
+
+export const mockRepositoryResults = (request: repoArgs) => {
   const repos = filterRepos(request);
   const limit = request.limit ? request.limit : 100;
   const data = repos.slice(request.offset, limit);
   const meta = generateMeta(request.limit, request.offset, repos.length);
-  const links = generateLinks(request.limit);
+  const links = generateLinks(request.limit, request.offset);
   const response = {
     data: data,
     meta: meta,
@@ -14,7 +28,7 @@ export const mockRepositoryResults = (request) => {
 
 const numFillerRepos = 1000;
 
-const filterRepos = (args) => {
+const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
   let repos = testingRepos;
 
   args.available_for_arch &&
@@ -27,8 +41,8 @@ const filterRepos = (args) => {
   args.available_for_version &&
     (repos = repos.filter((repo) => {
       return (
-        repo.distribution_versions.includes(args.available_for_version) ||
-        repo.distribution_versions.includes('any')
+        repo.distribution_versions?.includes(args.available_for_version!) ||
+        repo.distribution_versions?.includes('any')
       );
     }));
 
@@ -41,7 +55,7 @@ const filterRepos = (args) => {
   return repos;
 };
 
-const testingRepos = [
+const testingRepos: ApiRepositoryResponse[] = [
   {
     uuid: 'dbad4dfc-1547-45f8-b5af-1d7fec0476c6',
     name: '13lk3',
@@ -475,7 +489,11 @@ const testingRepos = [
   },
 ];
 
-const generateMeta = (limit, offset, count) => {
+const generateMeta = (
+  limit: ApiResponseMetadata['limit'],
+  offset: ApiResponseMetadata['offset'],
+  count: ApiResponseMetadata['count']
+): ApiResponseMetadata => {
   return {
     limit: limit,
     offset: offset,
@@ -483,15 +501,18 @@ const generateMeta = (limit, offset, count) => {
   };
 };
 
-const generateLinks = (limit, offset) => {
+const generateLinks = (
+  limit: ApiResponseMetadata['limit'],
+  offset: ApiResponseMetadata['offset']
+): ApiLinks => {
   return {
     first: `/api/content-sources/v1/repositories/?limit=${limit}&offset=${offset}`,
     last: `/api/content-sources/v1/repositories/?limit=${limit}&offset=${offset}`,
   };
 };
 
-const generateFillerRepos = (num) => {
-  const repos = new Array(num).fill().map((_, i) => {
+const generateFillerRepos = (num: number): ApiRepositoryResponse[] => {
+  const repos = new Array(num).fill(undefined).map((_, i) => {
     return {
       uuid: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
       name: `z-filler repo ${i}`,
