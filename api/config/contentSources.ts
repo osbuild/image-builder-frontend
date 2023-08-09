@@ -1,4 +1,4 @@
-import type { ConfigFile } from '@rtk-query/codegen-openapi'
+import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile: '../schema/contentSources.json',
@@ -8,6 +8,6 @@ const config: ConfigFile = {
   exportName: 'contentSourcesApi',
   hooks: true,
   filterEndpoints: ['listRepositories', 'listRepositoriesRpms'],
-}
+};
 
-export default config
+export default config;
