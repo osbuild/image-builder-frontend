@@ -1,4 +1,4 @@
-import type { ConfigFile } from '@rtk-query/codegen-openapi'
+import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile: '../schema/provisioning.json',
@@ -8,6 +8,6 @@ const config: ConfigFile = {
   exportName: 'provisioningApi',
   hooks: true,
   filterEndpoints: ['getSourceList', 'getSourceUploadInfo'],
-}
+};
 
-export default config
+export default config;
