@@ -1,10 +1,14 @@
-extends: "@redhat-cloud-services/eslint-config-redhat-cloud-services"
+extends: [
+    "@redhat-cloud-services/eslint-config-redhat-cloud-services",
+    "react-app",
+    "react-app/jest"
+  ]
 globals:
   insights: 'readonly'
   shallow: readonly
   render: 'readonly'
   mount: 'readonly'
-plugins: 
+plugins:
   - import
 rules:
   import/order:
