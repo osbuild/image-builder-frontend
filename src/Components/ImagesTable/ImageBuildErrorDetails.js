@@ -17,11 +17,11 @@ const useGetErrorReason = (err) => {
 };
 
 const ErrorDetails = ({ status }) => {
+  const reason = useGetErrorReason(status.error);
+
   if (!status || status.status !== 'failure') {
     return <></>;
   }
-
-  const reason = useGetErrorReason(status.error);
 
   return (
     <div className="pf-u-mt-sm">
