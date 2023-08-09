@@ -567,8 +567,6 @@ const CreateImageWizard = () => {
                 title: 'Your image is being created',
               })
             );
-
-            setIsSaving(false);
           })
           .catch((err) => {
             let msg = err.response.statusText;
