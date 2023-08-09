@@ -1106,7 +1106,7 @@ describe('Step Packages', () => {
     searchboxChosen.click();
     await user.type(searchboxChosen, 'asdf');
 
-    expect(screen.getAllByText('No packages found').length === 2);
+    expect(screen.getByText('No packages found')).toBeInTheDocument();
     // We need to clear this input in order to not have sideeffects on other tests
     await searchForChosenPackages(searchboxChosen, '');
   });
