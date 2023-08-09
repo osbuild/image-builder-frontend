@@ -22,13 +22,15 @@ export const selectRegions = createSelector(
     filteredImages.forEach((image) => {
       if (image.region && image.status === 'success') {
         if (regions[image.region]) {
-          new Date(image.created_at) <
-          new Date(regions[image.region].created_at)
-            ? null
-            : (regions[image.region] = {
-                ami: image.ami,
-                created_at: image.created_at,
-              });
+          if (
+            new Date(image.created_at) >
+            new Date(regions[image.region].created_at)
+          ) {
+            regions[image.region] = {
+              ami: image.ami,
+              created_at: image.created_at,
+            };
+          }
         } else {
           regions[image.region] = {
             ami: image.ami,
