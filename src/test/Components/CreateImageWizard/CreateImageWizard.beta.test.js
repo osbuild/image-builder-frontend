@@ -886,8 +886,9 @@ describe('Click through all steps', () => {
       .spyOn(api, 'composeImage')
       .mockImplementation((body) => {
         let id;
+        let expectedbody = {};
         if (body.image_requests[0].upload_request.type === 'aws') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -904,10 +905,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
         } else if (body.image_requests[0].upload_request.type === 'gcp') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -924,10 +925,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
         } else if (body.image_requests[0].upload_request.type === 'azure') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -946,10 +947,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
         } else if (body.image_requests[0].image_type === 'vsphere-ova') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -964,10 +965,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f59';
         } else if (body.image_requests[0].image_type === 'guest-image') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -982,10 +983,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
         } else if (body.image_requests[0].image_type === 'image-installer') {
-          expect(body).toEqual({
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -1000,9 +1001,10 @@ describe('Click through all steps', () => {
               },
             ],
             customizations: customizations,
-          });
+          };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b';
         }
+        expect(body).toEqual(expectedbody);
 
         ids.unshift(id);
         return Promise.resolve({ id });
