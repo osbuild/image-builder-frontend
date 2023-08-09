@@ -121,6 +121,9 @@ export const ImageBuildStatus = ({
 
   let hasFailedClone;
   let status;
+  const imageStatuses = useSelector((state) =>
+    selectImageStatusesById(state, image.id)
+  );
   if (
     isImagesTableRow &&
     (image.imageType === 'aws' || image.imageType === 'ami')
@@ -131,9 +134,6 @@ export const ImageBuildStatus = ({
     // For instance, the parent and several of its clones may have a success status. But if a single
     // clone has a failure status, then the status displayed in the images table row should be
     // failure.
-    const imageStatuses = useSelector((state) =>
-      selectImageStatusesById(state, image.id)
-    );
     if (!imageStatuses.includes('success')) {
       hasFailedClone = false;
     } else if (!imageStatuses.includes('failure')) {
