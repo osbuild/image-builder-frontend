@@ -100,27 +100,29 @@ describe('Images Table', () => {
       renderWithProvider(<Target composeId={compose.id} />, testElement, state);
       expect(row.cells[4]).toHaveTextContent(testElement.textContent);
 
+      let toTest = expect(row.cells[5]);
       // render the expected <ImageBuildStatus /> and compare the text content
       if (
         compose.created_at === '2021-04-27T12:31:12Z' &&
         compose.request.image_requests[0].upload_request.type === 'aws.s3'
       ) {
-        expect(row.cells[5]).toHaveTextContent('Expired');
+        toTest.toHaveTextContent('Expired');
       } else {
         renderWithProvider(
           <ImageBuildStatus imageId={compose.id} isImagesTableRow={true} />,
           testElement,
           state
         );
-        expect(row.cells[5]).toHaveTextContent(testElement.textContent);
+        toTest.toHaveTextContent(testElement.textContent);
       }
 
+      toTest = expect(row.cells[6]);
       // render the expected <ImageLink /> and compare the text content for a link
       if (
         compose.created_at === '2021-04-27T12:31:12Z' &&
         compose.request.image_requests[0].upload_request.type === 'aws.s3'
       ) {
-        expect(row.cells[6]).toHaveTextContent('Recreate image');
+        toTest.toHaveTextContent('Recreate image');
       } else {
         renderWithProvider(
           <BrowserRouter>
@@ -129,7 +131,7 @@ describe('Images Table', () => {
           testElement,
           state
         );
-        expect(row.cells[6]).toHaveTextContent(testElement.textContent);
+        toTest.toHaveTextContent(testElement.textContent);
       }
     }
   });
@@ -304,25 +306,27 @@ describe('Clones table', () => {
 
     for (const [index, row] of cloneRows.entries()) {
       // render AMIs in correct order
+      let toTest = expect(row.cells[0]);
       switch (index) {
         case (0, 1, 3):
-          expect(row.cells[0]).toHaveTextContent(clonesTableData.ami[index]);
+          toTest.toHaveTextContent(clonesTableData.ami[index]);
           break;
         case 2:
-          expect(row.cells[0]).toHaveTextContent('');
+          toTest.toHaveTextContent('');
           break;
       }
 
       // region cell
       expect(row.cells[1]).toHaveTextContent(clonesTableData.region[index]);
 
+      toTest = expect(row.cells[2]);
       // status cell
       switch (index) {
         case (0, 1, 3):
-          expect(row.cells[2]).toHaveTextContent('Ready');
+          toTest.toHaveTextContent('Ready');
           break;
         case 2:
-          expect(row.cells[2]).toHaveTextContent('Image build failed');
+          toTest.toHaveTextContent('Image build failed');
           break;
       }
     }
