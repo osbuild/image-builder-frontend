@@ -18,7 +18,7 @@ const injectedRtkApi = api.injectEndpoints({
 });
 export { injectedRtkApi as provisioningApi };
 export type GetSourceListApiResponse =
-  /** status 200 Returned on success. */ V1SourceResponse[];
+  /** status 200 Returned on success. */ V1ListSourceResponse;
 export type GetSourceListApiArg = {
   provider?: "aws" | "azure" | "gcp";
 };
@@ -28,11 +28,13 @@ export type GetSourceUploadInfoApiArg = {
   /** Source ID from Sources Database */
   id: number;
 };
-export type V1SourceResponse = {
-  id?: string;
-  name?: string;
-  source_type_id?: string;
-  uid?: string;
+export type V1ListSourceResponse = {
+  data?: {
+    id?: string;
+    name?: string;
+    source_type_id?: string;
+    uid?: string;
+  }[];
 };
 export type V1ResponseError = {
   build_time?: string;

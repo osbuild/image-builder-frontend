@@ -111,7 +111,7 @@
         "value": {
           "amount": 1,
           "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
-          "launch_template_name": "",
+          "launch_template_id": "",
           "machine_type": "e2-micro",
           "name_pattern": "my-instance",
           "poweroff": false,
@@ -134,7 +134,7 @@
               "instance_id": "3003942005876582747"
             }
           ],
-          "launch_template_name": "template-1",
+          "launch_template_id": "4883371230199373111",
           "machine_type": "e2-micro",
           "name_pattern": "my-instance",
           "poweroff": false,
@@ -150,7 +150,7 @@
           "gcp_operation_name": "operation-1686646674436-5fdff07e43209-66146b7e-f3f65ec5",
           "image_id": "08a48fed-de87-40ab-a571-f64e30bd0aa8",
           "instances": [],
-          "launch_template_name": "template-1",
+          "launch_template_id": "4883371230199373111",
           "machine_type": "e2-micro",
           "name_pattern": "my-instance",
           "poweroff": false,
@@ -179,56 +179,58 @@
         }
       },
       "v1.GenericReservationResponsePayloadListExample": {
-        "value": [
-          {
-            "created_at": "2013-05-13T19:20:15Z",
-            "error": "",
-            "finished_at": null,
-            "id": 1310,
-            "provider": 1,
-            "status": "Started Ensure public key",
-            "step": 1,
-            "step_titles": [
-              "Ensure public key",
-              "Launch instance(s)",
-              "Fetch instance(s) description"
-            ],
-            "steps": 3,
-            "success": null
-          },
-          {
-            "created_at": "2013-05-13T19:20:15Z",
-            "error": "",
-            "finished_at": "2013-05-13T19:20:25Z",
-            "id": 1305,
-            "provider": 1,
-            "status": "Finished Fetch instance(s) description",
-            "step": 3,
-            "step_titles": [
-              "Ensure public key",
-              "Launch instance(s)",
-              "Fetch instance(s) description"
-            ],
-            "steps": 3,
-            "success": true
-          },
-          {
-            "created_at": "2013-05-13T19:20:15Z",
-            "error": "cannot launch ec2 instance: VPCIdNotSpecified: No default VPC for this user. GroupName is only supported for EC2-Classic and default VPC",
-            "finished_at": "2013-05-13T19:20:25Z",
-            "id": 1313,
-            "provider": 1,
-            "status": "Finished Launch instance(s)",
-            "step": 2,
-            "step_titles": [
-              "Ensure public key",
-              "Launch instance(s)",
-              "Fetch instance(s) description"
-            ],
-            "steps": 3,
-            "success": false
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "created_at": "2013-05-13T19:20:15Z",
+              "error": "",
+              "finished_at": null,
+              "id": 1310,
+              "provider": 1,
+              "status": "Started Ensure public key",
+              "step": 1,
+              "step_titles": [
+                "Ensure public key",
+                "Launch instance(s)",
+                "Fetch instance(s) description"
+              ],
+              "steps": 3,
+              "success": null
+            },
+            {
+              "created_at": "2013-05-13T19:20:15Z",
+              "error": "",
+              "finished_at": "2013-05-13T19:20:25Z",
+              "id": 1305,
+              "provider": 1,
+              "status": "Finished Fetch instance(s) description",
+              "step": 3,
+              "step_titles": [
+                "Ensure public key",
+                "Launch instance(s)",
+                "Fetch instance(s) description"
+              ],
+              "steps": 3,
+              "success": true
+            },
+            {
+              "created_at": "2013-05-13T19:20:15Z",
+              "error": "cannot launch ec2 instance: VPCIdNotSpecified: No default VPC for this user. GroupName is only supported for EC2-Classic and default VPC",
+              "finished_at": "2013-05-13T19:20:25Z",
+              "id": 1313,
+              "provider": 1,
+              "status": "Finished Launch instance(s)",
+              "step": 2,
+              "step_titles": [
+                "Ensure public key",
+                "Launch instance(s)",
+                "Fetch instance(s) description"
+              ],
+              "steps": 3,
+              "success": false
+            }
+          ]
+        }
       },
       "v1.GenericReservationResponsePayloadPendingExample": {
         "value": {
@@ -267,55 +269,63 @@
         }
       },
       "v1.InstanceTypesAWSResponse": {
-        "value": [
-          {
-            "arch": "x86_64",
-            "cores": 16,
-            "memory_mib": 65536,
-            "name": "c5a.8xlarge",
-            "storage_gb": 0,
-            "supported": true,
-            "vcpus": 32
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "arch": "x86_64",
+              "cores": 16,
+              "memory_mib": 65536,
+              "name": "c5a.8xlarge",
+              "storage_gb": 0,
+              "supported": true,
+              "vcpus": 32
+            }
+          ]
+        }
       },
       "v1.InstanceTypesAzureResponse": {
-        "value": [
-          {
-            "arch": "x86_64",
-            "azure": {
-              "gen_v1": true,
-              "gen_v2": true
-            },
-            "cores": 64,
-            "memory_mib": 2000000,
-            "name": "Standard_M128s",
-            "storage_gb": 4096,
-            "supported": true,
-            "vcpus": 128
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "arch": "x86_64",
+              "azure": {
+                "gen_v1": true,
+                "gen_v2": true
+              },
+              "cores": 64,
+              "memory_mib": 2000000,
+              "name": "Standard_M128s",
+              "storage_gb": 4096,
+              "supported": true,
+              "vcpus": 128
+            }
+          ]
+        }
       },
       "v1.InstanceTypesGCPResponse": {
-        "value": [
-          {
-            "arch": "x86_64",
-            "cores": 0,
-            "memory_mib": 15623,
-            "name": "e2-highcpu-16",
-            "storage_gb": 0,
-            "supported": true,
-            "vcpus": 16
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "arch": "x86_64",
+              "cores": 0,
+              "memory_mib": 15623,
+              "name": "e2-highcpu-16",
+              "storage_gb": 0,
+              "supported": true,
+              "vcpus": 16
+            }
+          ]
+        }
       },
       "v1.LaunchTemplateListResponse": {
-        "value": [
-          {
-            "id": "lt-9843797432897342",
-            "name": "XXL large backend API"
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "id": "lt-9843797432897342",
+              "name": "XXL large backend API"
+            }
+          ]
+        }
       },
       "v1.NoopReservationResponsePayloadExample": {
         "value": {
@@ -323,16 +333,18 @@
         }
       },
       "v1.PubkeyListResponseExample": {
-        "value": [
-          {
-            "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
-            "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
-            "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
-            "id": 1,
-            "name": "My key",
-            "type": "ssh-ed25519"
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
+              "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
+              "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
+              "id": 1,
+              "name": "My key",
+              "type": "ssh-ed25519"
+            }
+          ]
+        }
       },
       "v1.PubkeyRequestExample": {
         "value": {
@@ -351,20 +363,22 @@
         }
       },
       "v1.SourceListResponseExample": {
-        "value": [
-          {
-            "id": "654321",
-            "name": "My AWS account",
-            "source_type_id": "",
-            "uid": ""
-          },
-          {
-            "id": "543621",
-            "name": "My other AWS account",
-            "source_type_id": "",
-            "uid": ""
-          }
-        ]
+        "value": {
+          "data": [
+            {
+              "id": "654321",
+              "name": "My AWS account",
+              "source_type_id": "",
+              "uid": ""
+            },
+            {
+              "id": "543621",
+              "name": "My other AWS account",
+              "source_type_id": "",
+              "uid": ""
+            }
+          ]
+        }
       },
       "v1.SourceUploadInfoAWSResponse": {
         "value": {
@@ -676,7 +690,7 @@
           "image_id": {
             "type": "string"
           },
-          "launch_template_name": {
+          "launch_template_id": {
             "type": "string"
           },
           "machine_type": {
@@ -735,7 +749,7 @@
             },
             "type": "array"
           },
-          "launch_template_name": {
+          "launch_template_id": {
             "type": "string"
           },
           "machine_type": {
@@ -764,7 +778,7 @@
         },
         "type": "object"
       },
-      "v1.GenericReservationResponsePayload": {
+      "v1.GenericReservationResponse": {
         "properties": {
           "created_at": {
             "format": "date-time",
@@ -857,6 +871,184 @@
           },
           "name": {
             "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ListGenericReservationResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "created_at": {
+                  "format": "date-time",
+                  "type": "string"
+                },
+                "error": {
+                  "type": "string"
+                },
+                "finished_at": {
+                  "format": "date-time",
+                  "nullable": true,
+                  "type": "string"
+                },
+                "id": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "provider": {
+                  "type": "integer"
+                },
+                "status": {
+                  "type": "string"
+                },
+                "step": {
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "step_titles": {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                "steps": {
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "success": {
+                  "nullable": true,
+                  "type": "boolean"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ListInstaceTypeResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "architecture": {
+                  "type": "string"
+                },
+                "azure": {
+                  "properties": {
+                    "gen_v1": {
+                      "type": "boolean"
+                    },
+                    "gen_v2": {
+                      "type": "boolean"
+                    }
+                  },
+                  "type": "object"
+                },
+                "cores": {
+                  "format": "int32",
+                  "type": "integer"
+                },
+                "memory_mib": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "storage_gb": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "supported": {
+                  "type": "boolean"
+                },
+                "vcpus": {
+                  "format": "int32",
+                  "type": "integer"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ListLaunchTemplateResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ListPubkeyResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "body": {
+                  "type": "string"
+                },
+                "fingerprint": {
+                  "type": "string"
+                },
+                "fingerprint_legacy": {
+                  "type": "string"
+                },
+                "id": {
+                  "format": "int64",
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "type": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "v1.ListSourceResponse": {
+        "properties": {
+          "data": {
+            "items": {
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "source_type_id": {
+                  "type": "string"
+                },
+                "uid": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
           }
         },
         "type": "object"
@@ -994,7 +1186,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.2.0"
+    "version": "1.4.0"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1076,10 +1268,7 @@
                   }
                 },
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.InstanceTypeResponse"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListInstaceTypeResponse"
                 }
               }
             },
@@ -1111,10 +1300,7 @@
                   }
                 },
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.PubkeyResponse"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListPubkeyResponse"
                 }
               }
             },
@@ -1260,10 +1446,7 @@
                   }
                 },
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.GenericReservationResponsePayload"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListGenericReservationResponse"
                 }
               }
             },
@@ -1587,7 +1770,7 @@
                   }
                 },
                 "schema": {
-                  "$ref": "#/components/schemas/v1.GenericReservationResponsePayload"
+                  "$ref": "#/components/schemas/v1.GenericReservationResponse"
                 }
               }
             },
@@ -1633,10 +1816,7 @@
                   }
                 },
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.SourceResponse"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListSourceResponse"
                 }
               }
             },
@@ -1722,10 +1902,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.InstanceTypeResponse"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListInstaceTypeResponse"
                 }
               }
             },
@@ -1778,10 +1955,7 @@
                   }
                 },
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/v1.LaunchTemplatesResponse"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/v1.ListLaunchTemplateResponse"
                 }
               }
             },
