@@ -43,6 +43,7 @@ const SizeUnit = ({ ...props }) => {
   return (
     <>
       <TextInput
+        ouiaId="size"
         className="pf-u-w-50"
         type="text"
         value={size}
@@ -50,6 +51,7 @@ const SizeUnit = ({ ...props }) => {
         onChange={(v) => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))}
       />
       <Select
+        ouiaId="unit"
         className="pf-u-w-50"
         isOpen={isOpen}
         onToggle={onToggle}
