@@ -64,6 +64,7 @@ const MountPoint = ({ ...props }) => {
   return (
     <>
       <Select
+        ouiaId="mount-point"
         className="pf-u-w-50"
         isOpen={isOpen}
         onToggle={onToggle}
@@ -78,6 +79,7 @@ const MountPoint = ({ ...props }) => {
       </Select>
       {prefix !== '/' && !prefix.startsWith('/boot') && (
         <TextInput
+          ouiaId="mount-suffix"
           className="pf-u-w-50"
           type="text"
           value={suffix}

@@ -398,6 +398,7 @@ const FileSystemConfiguration = ({ ...props }) => {
           </TableComposable>
           <TextContent>
             <Button
+              ouiaId="add-partition"
               data-testid="file-system-add-partition"
               className="pf-u-text-align-left"
               variant="link"
