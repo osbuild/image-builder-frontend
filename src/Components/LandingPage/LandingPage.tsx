@@ -90,8 +90,8 @@ export const LandingPage = () => {
           }
         >
           <p>
-            Launch Amazon Web Services or Microsoft Azure hosts to the cloud
-            from the console.
+            Launch Amazon Web Services, Microsoft Azure or Google Cloud hosts to
+            the cloud from the console.
           </p>
           <p>
             Link custom repositories and build any supported image with custom
@@ -135,6 +135,19 @@ export const LandingPage = () => {
               className="pf-u-font-weight-bold"
             >
               Launch an Azure Image
+            </Button>
+          </p>
+          <p className="pf-u-pt-sm">
+            <Button
+              icon={<ArrowRightIcon />}
+              iconPosition="right"
+              variant="link"
+              isInline
+              component="a"
+              onClick={activateQuickstart('insights-launch-gcp')}
+              className="pf-u-font-weight-bold"
+            >
+              Launch a GCP Image
             </Button>
           </p>
           <p className="pf-u-pt-sm">
