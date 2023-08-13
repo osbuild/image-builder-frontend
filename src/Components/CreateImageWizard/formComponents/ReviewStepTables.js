@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useFormApi } from '@data-driven-forms/react-form-renderer';
-import { Panel, PanelMain } from '@patternfly/react-core';
+import { Alert, Panel, PanelMain, Spinner } from '@patternfly/react-core';
 import {
   TableComposable,
   Tbody,
@@ -10,8 +10,31 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import PropTypes from 'prop-types';
 
 import { UNIT_GIB, UNIT_MIB } from '../../../constants';
+import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
+
+const RepoName = ({ repoUrl }) => {
+  const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery({
+    url: repoUrl,
+  });
+
+  return (
+    <>
+      {isSuccess && <p>{data.data?.[0].name}</p>}
+      {isFetching && <Spinner isSVG size="md" />}
+      {isError && (
+        <Alert
+          variant="danger"
+          isInline
+          isPlain
+          title="Error loading repository name"
+        />
+      )}
+    </>
+  );
+};
 
 export const FSReviewTable = () => {
   const { getState } = useFormApi();
@@ -95,7 +118,9 @@ export const RepositoriesTable = () => {
           <Tbody data-testid="repositories-tbody-review">
             {repositories.map((repo, repoIndex) => (
               <Tr key={repoIndex}>
-                <Td className="pf-m-width-60">{repo.baseurl}</Td>
+                <Td className="pf-m-width-60">
+                  <RepoName repoUrl={repo.baseurl} />
+                </Td>
               </Tr>
             ))}
           </Tbody>
@@ -103,4 +128,8 @@ export const RepositoriesTable = () => {
       </PanelMain>
     </Panel>
   );
+};
+
+RepoName.propTypes = {
+  repoUrl: PropTypes.string,
 };
