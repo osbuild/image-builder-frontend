@@ -112,6 +112,7 @@ const BulkSelect = ({
 const convertSchemaToIBPayloadRepo = (repo) => {
   const imageBuilderRepo = {
     baseurl: repo.url,
+    name: repo.name,
     rhsm: false,
     check_gpg: false,
   };
@@ -145,6 +146,7 @@ const convertSchemaToIBCustomRepo = (repo) => {
 const convertSchemaToContentSources = (repo) => {
   const contentSourcesRepo = {
     url: repo.baseurl,
+    name: repo.name,
     rhsm: false,
   };
   if (repo.gpgkey) {
@@ -176,7 +178,7 @@ const Repositories = (props) => {
 
       for (const repo of formStateReposList) {
         formStateRepos[repo.baseurl] = convertSchemaToContentSources(repo);
-        formStateRepos[repo.baseurl].name = '';
+        formStateRepos[repo.name] = repo.name;
       }
 
       // In case of duplicate repo urls, the repo from Content Sources overwrites the
@@ -200,7 +202,10 @@ const Repositories = (props) => {
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState(
     getState()?.values?.['payload-repositories']
-      ? getState().values['payload-repositories'].map((repo) => repo.baseurl)
+      ? getState().values['payload-repositories'].map((repo) => ({
+          baseurl: repo.baseurl,
+          name: repo.name,
+        }))
       : []
   );
 
@@ -269,8 +274,10 @@ const Repositories = (props) => {
 
   const filteredRepositoryURLs = useMemo(() => {
     const filteredRepoURLs = Object.values(repositories)
-      .filter((repo) =>
-        repo.name.toLowerCase().includes(filterValue.toLowerCase())
+      .filter(
+        (repo) =>
+          repo.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+          repo.url.toLowerCase().includes(filterValue.toLowerCase())
       )
       .map((repo) => repo.url);
 
@@ -464,6 +471,7 @@ const Repositories = (props) => {
                               <RepositoriesStatus
                                 repoStatus={repo.status}
                                 repoUrl={repo.url}
+                                repoName={repo.name}
                               />
                             </Td>
                           </Tr>

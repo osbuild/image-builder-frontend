@@ -102,6 +102,7 @@ export type GetPackagesApiArg = {
 };
 export type Repository = {
   baseurl?: string;
+  name?: string;
   check_gpg?: boolean;
   check_repo_gpg?: boolean;
   gpgkey?: string;

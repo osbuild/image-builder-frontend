@@ -93,11 +93,18 @@ export const RepositoriesTable = () => {
             </Tr>
           </Thead>
           <Tbody data-testid="repositories-tbody-review">
-            {repositories.map((repo, repoIndex) => (
-              <Tr key={repoIndex}>
-                <Td className="pf-m-width-60">{repo.baseurl}</Td>
-              </Tr>
-            ))}
+            {repositories.map((repo, repoIndex) => {
+              // eslint-disable-next-line no-console
+              console.log('repo:', repo); // Log the repo object
+              // eslint-disable-next-line no-console
+              console.log('repo.name:', repo.name); // Log the repo name
+
+              return (
+                <Tr key={repoIndex}>
+                  <Td className="pf-m-width-60">{repo.name}</Td>
+                </Tr>
+              );
+            })}
           </Tbody>
         </TableComposable>
       </PanelMain>

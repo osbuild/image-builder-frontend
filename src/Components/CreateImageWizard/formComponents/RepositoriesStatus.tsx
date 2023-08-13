@@ -13,9 +13,14 @@ import { ApiRepositoryResponse } from '../../../store/contentSourcesApi';
 type RepositoryStatusProps = {
   repoStatus: ApiRepositoryResponse['status'];
   repoUrl: ApiRepositoryResponse['url'];
+  Name: ApiRepositoryResponse['name'];
 };
 
-const RepositoriesStatus = ({ repoStatus, repoUrl }: RepositoryStatusProps) => {
+const RepositoriesStatus = ({
+  repoStatus,
+  repoUrl,
+  Name,
+}: RepositoryStatusProps) => {
   if (repoStatus === 'Valid') {
     return (
       <>
@@ -31,7 +36,7 @@ const RepositoriesStatus = ({ repoStatus, repoUrl }: RepositoryStatusProps) => {
           bodyContent={
             <>
               <Alert variant="danger" title="Invalid" isInline isPlain />
-              Cannot fetch {repoUrl}
+              Cannot fetch {Name}
             </>
           }
         >
