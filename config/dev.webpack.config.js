@@ -24,12 +24,13 @@ const webpackProxy = {
     ...(process.env.LOCAL_API && {
       ...(process.env.LOCAL_API.split(',') || []).reduce((acc, curr) => {
         const [appName, appConfig] = (curr || '').split(':');
-        const [appPort = 8003, protocol = 'http'] = appConfig.split('~');
+        const [appPort = 8003, protocol = 'http', host = 'localhost'] =
+          appConfig.split('~');
         return {
           ...acc,
-          [`/apps/${appName}`]: { host: `${protocol}://localhost:${appPort}` },
+          [`/apps/${appName}`]: { host: `${protocol}://${host}:${appPort}` },
           [`/beta/apps/${appName}`]: {
-            host: `${protocol}://localhost:${appPort}`,
+            host: `${protocol}://${host}:${appPort}`,
           },
         };
       }, {}),
