@@ -10,20 +10,17 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
 
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
+import { RHEL_8 } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { customizations } from '../../fixtures/customizations';
 import { mockPkgResultAlphaContentSources } from '../../fixtures/packages';
-import { server } from '../../mocks/server.js';
 import {
   clickBack,
   clickNext,
-  getNextButton,
   renderCustomRoutesWithReduxRouter,
 } from '../../testUtils';
 
@@ -115,168 +112,6 @@ describe('Create Image Wizard', () => {
     screen.getByRole('button', { name: 'Details' });
     screen.getByRole('button', { name: 'Review' });
   });
-});
-
-describe('Step Upload to AWS', () => {
-  const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router, store } = renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-
-    // select aws as upload destination
-    const awsTile = await screen.findByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-    });
-
-    await clickNext();
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Amazon Web Services'
-    );
-  };
-
-  test('component renders error state correctly', async () => {
-    await setUp();
-    server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (_req, res, ctx) =>
-        res(ctx.status(500))
-      )
-    );
-
-    await screen.findByText(
-      /sources cannot be reached, try again later or enter an aws account id manually\./i
-    );
-  });
-
-  test('validation works', async () => {
-    await setUp();
-
-    // jsdom seems to render the next button differently than the browser. The
-    // next button is enabled briefly during the test. This does not occur in
-    // the browser. Using findByRole instead of getByRole to get the next
-    // button allows us to capture its 'final' state.
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-
-    await user.click(
-      screen.getByRole('radio', { name: /manually enter an account id\./i })
-    );
-
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-
-    screen
-      .getByRole('radio', { name: /use an account configured from sources\./i })
-      .click();
-
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-
-    const sourceDropdown = screen.getByRole('textbox', {
-      name: /select source/i,
-    });
-    // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
-    await waitFor(() => expect(sourceDropdown).toBeEnabled());
-    sourceDropdown.click();
-
-    const source = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    source.click();
-
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-  });
-
-  test('compose request share_with_sources field is correct', async () => {
-    await setUp();
-
-    const sourceDropdown = await screen.findByRole('textbox', {
-      name: /select source/i,
-    });
-    // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
-    await waitFor(() => expect(sourceDropdown).toBeEnabled());
-    await act(async () => {
-      sourceDropdown.click();
-    });
-
-    const source = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    await act(async () => {
-      source.click();
-    });
-
-    await act(async () => {
-      await clickNext();
-    });
-
-    // registration
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-
-    const registerLaterRadio = screen.getByLabelText('Register later');
-    await act(async () => {
-      await user.click(registerLaterRadio);
-    });
-
-    // click through to review step
-    await act(async () => {
-      await clickNext();
-      await clickNext();
-      await clickNext();
-      await clickNext();
-      await clickNext();
-    });
-
-    const composeImage = jest
-      .spyOn(api, 'composeImage')
-      .mockImplementation((body) => {
-        expect(body).toEqual({
-          distribution: RHEL_9,
-          image_name: undefined,
-          customizations: {
-            packages: undefined,
-          },
-          image_requests: [
-            {
-              architecture: 'x86_64',
-              image_type: 'aws',
-              upload_request: {
-                type: 'aws',
-                options: {
-                  share_with_sources: ['123'],
-                },
-              },
-            },
-          ],
-        });
-        const id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
-        return Promise.resolve({ id });
-      });
-
-    const create = screen.getByRole('button', { name: /Create/ });
-    await act(async () => {
-      create.click();
-    });
-
-    // API request sent to backend
-    expect(composeImage).toHaveBeenCalledTimes(1);
-
-    // returns back to the landing page
-    await waitFor(() =>
-      expect(router.state.location.pathname).toBe('/insights/image-builder')
-    );
-    expect(store.getState().composes.allIds).toEqual([
-      'edbae1c2-62bc-42c1-ae0c-3110ab718f5a',
-    ]);
-    // set test timeout of 10 seconds
-  }, 10000);
 });
 
 describe('Step Packages', () => {

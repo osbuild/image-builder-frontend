@@ -11,7 +11,6 @@ import ImageLinkDirect from './ImageLinkDirect';
 
 import { MODAL_ANCHOR } from '../../constants';
 import { selectImageById } from '../../store/composesSlice';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 const getImageProvider = ({ imageType }) => {
   switch (imageType) {
@@ -97,12 +96,10 @@ const ImageLink = ({ imageId, isExpired, isInClonesTable }) => {
   const image = useSelector((state) => selectImageById(state, imageId));
   const uploadStatus = image.uploadStatus;
   const { initialized: chromeInitialized, getEnvironment } = useChrome();
-  const { isBeta } = useGetEnvironment();
   const azureFeatureFlag = useFlag('provisioning.azure');
   const gcpFeatureFlag = useFlag('provisioning.gcp');
   const scalprum = useScalprum();
-  const hasProvisioning =
-    chromeInitialized && scalprum.config?.provisioning && isBeta();
+  const hasProvisioning = chromeInitialized && scalprum.config?.provisioning;
 
   if (!uploadStatus || image.status !== 'success') return null;
 

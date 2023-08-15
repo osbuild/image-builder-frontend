@@ -38,7 +38,7 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
         };
       },
     },
-    isBeta: () => true,
+    isBeta: () => false,
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),

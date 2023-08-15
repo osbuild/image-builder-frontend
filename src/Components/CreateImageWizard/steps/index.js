@@ -1,8 +1,6 @@
-export { default as awsTargetStable } from './aws';
-export { default as awsTargetBeta } from './aws.beta';
-export { default as googleCloudTarger } from './googleCloud';
-export { default as msAzureTargetStable } from './msAzure';
-export { default as msAzureTargetBeta } from './msAzure.beta';
+export { default as awsTarget } from './aws';
+export { default as googleCloudTarget } from './googleCloud';
+export { default as msAzureTarget } from './msAzure';
 export { default as packages } from './packages';
 export { default as packagesContentSources } from './packagesContentSources';
 export { default as registration } from './registration';
