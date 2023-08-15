@@ -10,17 +10,19 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { rest } from 'msw';
 
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { RHEL_8 } from '../../../constants.js';
+import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import {
   mockPkgResultAlpha,
   mockPkgResultAll,
   mockPkgResultPartial,
 } from '../../fixtures/packages';
+import { server } from '../../mocks/server.js';
 import {
   clickBack,
   clickNext,
@@ -93,6 +95,23 @@ const searchForChosenPackages = async (searchbox, searchTerm) => {
   }
 };
 
+const switchToAWSManual = () => {
+  const manualRadio = screen.getByRole('radio', {
+    name: /manually enter an account id\./i,
+  });
+  manualRadio.click();
+  return manualRadio;
+};
+
+const getSourceDropdown = async () => {
+  const sourceDropdown = screen.getByRole('textbox', {
+    name: /select source/i,
+  });
+  await waitFor(() => expect(sourceDropdown).toBeEnabled());
+
+  return sourceDropdown;
+};
+
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
@@ -141,6 +160,7 @@ describe('Step Image output', () => {
 
     await clickNext();
 
+    switchToAWSManual();
     screen.getByText('AWS account ID');
   });
 
@@ -257,7 +277,11 @@ describe('Step Image output', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+    ({ router, store } = renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
 
     // select aws as upload destination
     const awsTile = screen.getByTestId('upload-aws');
@@ -271,8 +295,9 @@ describe('Step Upload to AWS', () => {
   };
 
   test('clicking Next loads Registration', async () => {
-    setUp();
+    await setUp();
 
+    switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'
@@ -304,14 +329,136 @@ describe('Step Upload to AWS', () => {
     await verifyCancelButton(router);
   });
 
-  test('the aws account id fieldis shown and required', async () => {
+  test('component renders error state correctly', async () => {
+    await setUp();
+    server.use(
+      rest.get(`${PROVISIONING_API}/sources`, (_req, res, ctx) =>
+        res(ctx.status(500))
+      )
+    );
+
+    await screen.findByText(
+      /sources cannot be reached, try again later or enter an aws account id manually\./i
+    );
+  });
+
+  test('validation works', async () => {
     await setUp();
 
-    const accessKeyId = screen.getByTestId('aws-account-id');
-    expect(accessKeyId).toHaveValue('');
-    expect(accessKeyId).toBeEnabled();
-    // expect(accessKeyId).toBeRequired(); // DDf does not support required value
+    // jsdom seems to render the next button differently than the browser. The
+    // next button is enabled briefly during the test. This does not occur in
+    // the browser. Using findByRole instead of getByRole to get the next
+    // button allows us to capture its 'final' state.
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
+
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+
+    const awsAccId = screen.getByTestId('aws-account-id');
+    expect(awsAccId).toHaveValue('');
+    expect(awsAccId).toBeEnabled();
+    await user.type(awsAccId, '012345678901');
+
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+
+    screen
+      .getByRole('radio', { name: /use an account configured from sources\./i })
+      .click();
+
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+
+    const sourceDropdown = await getSourceDropdown();
+    sourceDropdown.click();
+
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    source.click();
+
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
   });
+
+  test('compose request share_with_sources field is correct', async () => {
+    await setUp();
+
+    const sourceDropdown = await getSourceDropdown();
+    sourceDropdown.click();
+
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await act(async () => {
+      source.click();
+    });
+
+    await act(async () => {
+      await clickNext();
+    });
+
+    // registration
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+
+    const registerLaterRadio = screen.getByLabelText('Register later');
+    await act(async () => {
+      await user.click(registerLaterRadio);
+    });
+
+    // click through to review step
+    await act(async () => {
+      await clickNext();
+      await clickNext();
+      await clickNext();
+      await clickNext();
+    });
+
+    const composeImage = jest
+      .spyOn(api, 'composeImage')
+      .mockImplementation((body) => {
+        expect(body).toEqual({
+          distribution: RHEL_9,
+          image_name: undefined,
+          customizations: {
+            packages: undefined,
+          },
+          image_requests: [
+            {
+              architecture: 'x86_64',
+              image_type: 'aws',
+              upload_request: {
+                type: 'aws',
+                options: {
+                  share_with_sources: ['123'],
+                },
+              },
+            },
+          ],
+        });
+        const id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
+        return Promise.resolve({ id });
+      });
+
+    const create = screen.getByRole('button', { name: /Create/ });
+    await act(async () => {
+      create.click();
+    });
+
+    // API request sent to backend
+    expect(composeImage).toHaveBeenCalledTimes(1);
+
+    // returns back to the landing page
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe('/insights/image-builder')
+    );
+    expect(store.getState().composes.allIds).toEqual([
+      'edbae1c2-62bc-42c1-ae0c-3110ab718f5a',
+    ]);
+    // set test timeout of 10 seconds
+  }, 10000);
 });
 
 describe('Step Upload to Google', () => {
@@ -380,83 +527,6 @@ describe('Step Upload to Google', () => {
   });
 });
 
-describe('Step Upload to Azure', () => {
-  const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
-
-    // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-azure');
-    await awsTile.click();
-    await clickNext();
-
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Microsoft Azure'
-    );
-  };
-
-  test('clicking Next loads Registration', async () => {
-    await setUp();
-    // Randomly generated GUID
-    await user.type(
-      screen.getByTestId('azure-tenant-id'),
-      'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
-    );
-    await user.type(
-      screen.getByTestId('azure-subscription-id'),
-      '60631143-a7dc-4d15-988b-ba83f3c99711'
-    );
-    await user.type(
-      screen.getByTestId('azure-resource-group'),
-      'testResourceGroup'
-    );
-    await act(async () => {
-      await clickNext();
-    });
-
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-
-    await screen.findByText(
-      'Automatically register and enable advanced capabilities'
-    );
-  });
-
-  test('clicking Back loads Release', async () => {
-    await setUp();
-
-    await clickBack();
-
-    screen.getByTestId('upload-azure');
-  });
-
-  test('clicking Cancel loads landing page', async () => {
-    await setUp();
-
-    await verifyCancelButton(router);
-  });
-
-  test('the azure upload fields are shown and required', async () => {
-    await setUp();
-
-    const tenantId = screen.getByTestId('azure-tenant-id');
-    expect(tenantId).toHaveValue('');
-    expect(tenantId).toBeEnabled();
-    // expect(tenantId).toBeRequired(); // DDf does not support required value
-
-    const subscription = screen.getByTestId('azure-subscription-id');
-    expect(subscription).toHaveValue('');
-    expect(subscription).toBeEnabled();
-    // expect(subscription).toBeRequired(); // DDf does not support required value
-
-    const resourceGroup = screen.getByTestId('azure-resource-group');
-    expect(resourceGroup).toHaveValue('');
-    expect(resourceGroup).toBeEnabled();
-    // expect(resourceGroup).toBeRequired(); // DDf does not support required value
-  });
-});
-
 describe('Step Registration', () => {
   const user = userEvent.setup();
   const setUp = async () => {
@@ -469,6 +539,9 @@ describe('Step Registration', () => {
     await act(async () => {
       await clickNext();
     });
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await act(async () => {
       await clickNext();
@@ -497,6 +570,9 @@ describe('Step Registration', () => {
 
     await clickBack();
 
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     screen.getByText('AWS account ID');
   });
 
@@ -745,6 +821,7 @@ describe('Step File system configuration', () => {
     });
 
     // aws step
+    switchToAWSManual();
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await act(async () => {
       await clickNext();
@@ -817,6 +894,7 @@ describe('Step Packages', () => {
     });
 
     // aws step
+    switchToAWSManual();
     const aai = screen.getByTestId('aws-account-id');
     await act(async () => {
       await user.type(aai, '012345678901');
@@ -1265,6 +1343,7 @@ describe('Step Details', () => {
     });
 
     // aws step
+    switchToAWSManual();
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await act(async () => {
       await clickNext();
@@ -1337,6 +1416,7 @@ describe('Step Review', () => {
     });
 
     // aws step
+    switchToAWSManual();
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await act(async () => {
       await clickNext();
@@ -1388,6 +1468,7 @@ describe('Step Review', () => {
     });
 
     // aws step
+    switchToAWSManual();
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await act(async () => {
       await clickNext();
@@ -1507,6 +1588,9 @@ describe('Click through all steps', () => {
     await act(async () => {
       bn.click();
     });
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     const bn1 = screen.getByRole('button', { name: /Next/ });
     await act(async () => {
@@ -1519,17 +1603,18 @@ describe('Click through all steps', () => {
       bn2.click();
     });
 
+    await user.click(screen.getByTestId('azure-radio-manual'));
     // Randomly generated GUID
     await user.type(
-      screen.getByTestId('azure-tenant-id'),
+      screen.getByTestId('azure-tenant-id-manual'),
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
     );
     await user.type(
-      screen.getByTestId('azure-subscription-id'),
+      screen.getByTestId('azure-subscription-id-manual'),
       '60631143-a7dc-4d15-988b-ba83f3c99711'
     );
     await user.type(
-      screen.getByTestId('azure-resource-group'),
+      screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
     const bn3 = screen.getByRole('button', { name: /Next/ });
@@ -1994,9 +2079,14 @@ describe('Keyboard accessibility', () => {
     });
 
     // Target environment aws
-    const awsInput = screen.getByRole('textbox', { name: /aws account id/i });
-    expect(awsInput).toHaveFocus();
-    await user.type(awsInput, '012345678901');
+    expect(screen.getByTestId('aws-radio-source')).toHaveFocus();
+    const awsSourceDropdown = await getSourceDropdown();
+    awsSourceDropdown.click();
+    const awsSource = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    awsSource.click();
+
     await act(async () => {
       await clickNext();
     });
@@ -2012,20 +2102,19 @@ describe('Keyboard accessibility', () => {
     });
 
     // Target environment azure
-    const tenantIDInput = screen.getByTestId('azure-tenant-id');
-    expect(tenantIDInput).toHaveFocus();
-    await user.type(
-      screen.getByTestId('azure-tenant-id'),
-      'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
-    );
-    await user.type(
-      screen.getByTestId('azure-subscription-id'),
-      '60631143-a7dc-4d15-988b-ba83f3c99711'
-    );
-    await user.type(
-      screen.getByTestId('azure-resource-group'),
-      'testResourceGroup'
-    );
+    expect(screen.getByTestId('azure-radio-source')).toHaveFocus();
+    const azureSourceDropdown = await getSourceDropdown();
+    azureSourceDropdown.click();
+    const azureSource = await screen.findByRole('option', {
+      name: /azureSource1/i,
+    });
+    azureSource.click();
+
+    const resourceGroupDropdown = await screen.findByRole('textbox', {
+      name: /select resource group/i,
+    });
+    await user.click(resourceGroupDropdown);
+    await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
     await act(async () => {
       await clickNext();
     });

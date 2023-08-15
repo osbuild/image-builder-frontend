@@ -1,15 +1,17 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import {
+  clickBack,
   clickNext,
   getNextButton,
   renderCustomRoutesWithReduxRouter,
+  verifyCancelButton,
 } from '../../testUtils';
 
 const routes = [
@@ -39,11 +41,13 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
         };
       },
     },
-    isBeta: () => true,
+    isBeta: () => false,
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
 }));
+
+let router = undefined;
 
 describe('Step Upload to Azure', () => {
   const getSourceDropdown = async () => {
@@ -63,12 +67,13 @@ describe('Step Upload to Azure', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    router = undefined;
   });
 
   const user = userEvent.setup();
   const setUp = async () => {
-    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    // select aws as upload destination
+    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+    // select Azure as upload destination
     const azureTile = screen.getByTestId('upload-azure');
     azureTile.click();
 
@@ -78,6 +83,50 @@ describe('Step Upload to Azure', () => {
       'Target environment - Microsoft Azure'
     );
   };
+
+  test('clicking Next loads Registration', async () => {
+    await setUp();
+
+    await user.click(screen.getByTestId('azure-radio-manual'));
+    // Randomly generated GUID
+    await user.type(
+      screen.getByTestId('azure-tenant-id-manual'),
+      'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
+    );
+    await user.type(
+      screen.getByTestId('azure-subscription-id-manual'),
+      '60631143-a7dc-4d15-988b-ba83f3c99711'
+    );
+    await user.type(
+      screen.getByTestId('azure-resource-group-manual'),
+      'testResourceGroup'
+    );
+    await act(async () => {
+      await clickNext();
+    });
+
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+
+    await screen.findByText(
+      'Automatically register and enable advanced capabilities'
+    );
+  });
+
+  test('clicking Back loads Release', async () => {
+    await setUp();
+
+    await clickBack();
+
+    screen.getByTestId('upload-azure');
+  });
+
+  test('clicking Cancel loads landing page', async () => {
+    await setUp();
+
+    await verifyCancelButton(router);
+  });
 
   test('azure step basics works', async () => {
     await setUp();
@@ -90,18 +139,18 @@ describe('Step Upload to Azure', () => {
 
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
 
-    await user.type(
-      screen.getByTestId('azure-tenant-id-manual'),
-      'c983c2cd-94d7-44e1-9c6e-9cfa3a40995f'
-    );
-    await user.type(
-      screen.getByTestId('azure-subscription-id-manual'),
-      'f8f200aa-6234-4bfb-86c2-163d33dffc0c'
-    );
-    await user.type(
-      screen.getByTestId('azure-resource-group-manual'),
-      'testGroup'
-    );
+    const tenantId = screen.getByTestId('azure-tenant-id-manual');
+    expect(tenantId).toHaveValue('');
+    expect(tenantId).toBeEnabled();
+    await user.type(tenantId, 'c983c2cd-94d7-44e1-9c6e-9cfa3a40995f');
+    const subscription = screen.getByTestId('azure-subscription-id-manual');
+    expect(subscription).toHaveValue('');
+    expect(subscription).toBeEnabled();
+    await user.type(subscription, 'f8f200aa-6234-4bfb-86c2-163d33dffc0c');
+    const resourceGroup = screen.getByTestId('azure-resource-group-manual');
+    expect(resourceGroup).toHaveValue('');
+    expect(resourceGroup).toBeEnabled();
+    await user.type(resourceGroup, 'testGroup');
 
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
 

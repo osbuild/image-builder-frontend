@@ -7,14 +7,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageCreator from './ImageCreator';
 import {
-  awsTargetStable,
-  awsTargetBeta,
+  awsTarget,
   fileSystemConfiguration,
-  googleCloudTarger,
+  googleCloudTarget,
   imageName,
   imageOutput,
-  msAzureTargetStable,
-  msAzureTargetBeta,
+  msAzureTarget,
   packages,
   packagesContentSources,
   registration,
@@ -516,8 +514,6 @@ const CreateImageWizard = () => {
 
   const { isBeta, isProd } = useGetEnvironment();
 
-  const awsTarget = isBeta() ? awsTargetBeta : awsTargetStable;
-  const msAzureTarget = isBeta() ? msAzureTargetBeta : msAzureTargetStable;
   let initialState = requestToState(
     composeRequest,
     distroInfo,
@@ -622,7 +618,7 @@ const CreateImageWizard = () => {
             fields: [
               imageOutput,
               awsTarget,
-              googleCloudTarger,
+              googleCloudTarget,
               msAzureTarget,
               registration,
               packages,

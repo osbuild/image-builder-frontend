@@ -10,6 +10,22 @@ import StepTemplate from './stepTemplate';
 
 import CustomButtons from '../formComponents/CustomButtons';
 
+const SourcesButton = () => {
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      icon={<ExternalLinkAltIcon />}
+      iconPosition="right"
+      isInline
+      href={'settings/sources'}
+    >
+      Create and manage sources here
+    </Button>
+  );
+};
+
 export default {
   StepTemplate,
   id: 'wizard-target-msazure',
@@ -43,7 +59,8 @@ export default {
             To authorize Image Builder to push images to Microsoft Azure, the
             account owner must configure Image Builder as an authorized
             application for a specific tenant ID and give it the role of
-            &quot;Contributor&quot; to at least one resource group.
+            &quot;Contributor&quot; for the resource group you want to upload
+            to. This applies even when defining target by Source selection.
             <br />
             <Button
               component="a"
@@ -61,13 +78,94 @@ export default {
       ),
     },
     {
+      component: componentTypes.RADIO,
+      label: 'Share method:',
+      name: 'azure-type',
+      initialValue: 'azure-type-source',
+      autoFocus: true,
+      options: [
+        {
+          label: 'Use an account configured from Sources.',
+          description:
+            'Use a configured source to launch environments directly from the console.',
+          value: 'azure-type-source',
+          'data-testid': 'azure-radio-source',
+          autoFocus: true,
+        },
+        {
+          label: 'Manually enter the account information.',
+          value: 'azure-type-manual',
+          'data-testid': 'azure-radio-manual',
+          className: 'pf-u-mt-sm',
+        },
+      ],
+    },
+    {
+      component: 'azure-sources-select',
+      name: 'azure-sources-select',
+      className: 'pf-u-max-width',
+      label: 'Source Name',
+      isRequired: true,
+      validate: [
+        {
+          type: validatorTypes.REQUIRED,
+        },
+      ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-source',
+      },
+    },
+    {
+      component: componentTypes.PLAIN_TEXT,
+      name: 'azure-sources-select-description',
+      label: <SourcesButton />,
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-source',
+      },
+    },
+    {
+      name: 'gallery-layout',
+      component: 'gallery-layout',
+      minWidths: { default: '12.5rem' },
+      maxWidths: { default: '12.5rem' },
+      fields: [
+        {
+          component: componentTypes.TEXT_FIELD,
+          name: 'azure-tenant-id',
+          'data-testid': 'azure-tenant-id-source',
+          type: 'text',
+          label: 'Azure Tenant GUID',
+          isRequired: true,
+          isReadOnly: true,
+        },
+        {
+          component: componentTypes.TEXT_FIELD,
+          name: 'azure-subscription-id',
+          'data-testid': 'azure-subscription-id-source',
+          type: 'text',
+          label: 'Subscription ID',
+          isRequired: true,
+          isReadOnly: true,
+          condition: {
+            when: 'azure-type',
+            is: 'azure-type-source',
+          },
+        },
+      ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-source',
+      },
+    },
+    {
       component: componentTypes.TEXT_FIELD,
       name: 'azure-tenant-id',
       className: 'pf-u-w-50',
-      'data-testid': 'azure-tenant-id',
+      'data-testid': 'azure-tenant-id-manual',
       type: 'text',
       label: 'Azure Tenant GUID',
-      required: true,
       isRequired: true,
       autoFocus: true,
       validate: [
@@ -81,6 +179,10 @@ export default {
           message: 'Please enter a valid tenant ID',
         },
       ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-manual',
+      },
     },
     {
       component: 'azure-auth-button',
@@ -93,7 +195,7 @@ export default {
       component: componentTypes.TEXT_FIELD,
       name: 'azure-subscription-id',
       className: 'pf-u-w-50',
-      'data-testid': 'azure-subscription-id',
+      'data-testid': 'azure-subscription-id-manual',
       type: 'text',
       label: 'Subscription ID',
       isRequired: true,
@@ -108,12 +210,33 @@ export default {
           message: 'Please enter a valid subscription ID',
         },
       ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-manual',
+      },
+    },
+    {
+      component: 'azure-resource-groups',
+      name: 'azure-resource-group',
+      className: 'pf-u-max-width',
+      'data-testid': 'azure-resource-group-select',
+      label: 'Resource group',
+      isRequired: true,
+      validate: [
+        {
+          type: validatorTypes.REQUIRED,
+        },
+      ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-source',
+      },
     },
     {
       component: componentTypes.TEXT_FIELD,
       name: 'azure-resource-group',
       className: 'pf-u-w-50',
-      'data-testid': 'azure-resource-group',
+      'data-testid': 'azure-resource-group-manual',
       type: 'text',
       label: 'Resource group',
       isRequired: true,
@@ -129,6 +252,10 @@ export default {
             'periods, underscores, hyphens, and parenthesis and cannot end in a period',
         },
       ],
+      condition: {
+        when: 'azure-type',
+        is: 'azure-type-manual',
+      },
     },
     // TODO check oauth2 thing too here?
   ],
