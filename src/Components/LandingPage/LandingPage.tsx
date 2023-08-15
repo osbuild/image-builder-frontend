@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Alert,
-  AlertActionCloseButton,
   Button,
   ExpandableSection,
   Label,
@@ -33,16 +31,13 @@ import './LandingPage.scss';
 
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
 
 export const LandingPage = () => {
-  const [showBetaAlert, setShowBetaAlert] = useState(true);
   const [showHint, setShowHint] = useState(true);
 
   const { quickStarts } = useChrome();
-  const { isBeta } = useGetEnvironment();
   const activateQuickstart = (qs: string) => () =>
     quickStarts.activateQuickstart(qs);
 
@@ -69,102 +64,71 @@ export const LandingPage = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const traditionalImageList = (
     <section className="pf-l-page__main-section pf-c-page__main-section">
-      {!isBeta() && showBetaAlert && (
-        <Alert
-          className="pf-u-mb-xl"
-          isInline
-          variant="default"
-          title="Try new features in our Preview environment."
-          actionClose={
-            <AlertActionCloseButton onClose={() => setShowBetaAlert(false)} />
-          }
-          actionLinks={
-            <Button
-              isInline
-              component="a"
-              variant="link"
-              href="/preview/insights/image-builder/landing"
-            >
-              Enter Preview environment
-            </Button>
-          }
-        >
-          <p>
-            Launch Amazon Web Services, Microsoft Azure or Google Cloud hosts to
-            the cloud from the console.
-          </p>
-          <p>
-            Link custom repositories and build any supported image with custom
-            content.
-          </p>
-        </Alert>
-      )}
-      {isBeta() && (
-        <ExpandableSection
-          className="pf-m-light pf-u-mb-xl expand-section"
-          toggleText="Help get started with Preview features"
-          onToggle={setShowHint}
-          isExpanded={showHint}
-          displaySize="large"
-        >
-          <p className="pf-u-pb-sm">
-            For help getting started, access the quick starts for our Preview
-            features.
-          </p>
-          <p className="pf-u-pt-sm">
-            <Button
-              icon={<ArrowRightIcon />}
-              iconPosition="right"
-              variant="link"
-              isInline
-              component="a"
-              onClick={activateQuickstart('insights-launch-aws')}
-              className="pf-u-font-weight-bold"
-            >
-              Launch an AWS Image
-            </Button>
-          </p>
-          <p className="pf-u-pt-sm">
-            <Button
-              icon={<ArrowRightIcon />}
-              iconPosition="right"
-              variant="link"
-              isInline
-              component="a"
-              onClick={activateQuickstart('insights-launch-azure')}
-              className="pf-u-font-weight-bold"
-            >
-              Launch an Azure Image
-            </Button>
-          </p>
-          <p className="pf-u-pt-sm">
-            <Button
-              icon={<ArrowRightIcon />}
-              iconPosition="right"
-              variant="link"
-              isInline
-              component="a"
-              onClick={activateQuickstart('insights-launch-gcp')}
-              className="pf-u-font-weight-bold"
-            >
-              Launch a GCP Image
-            </Button>
-          </p>
-          <p className="pf-u-pt-sm">
-            <Button
-              icon={<ArrowRightIcon />}
-              iconPosition="right"
-              variant="link"
-              isInline
-              component="a"
-              onClick={activateQuickstart('insights-custom-repos')}
-              className="pf-u-font-weight-bold"
-            >
-              Build an Image with Custom Content
-            </Button>
-          </p>
-        </ExpandableSection>
-      )}
+      <ExpandableSection
+        className="pf-m-light pf-u-mb-xl expand-section"
+        toggleText="Help get started with new features"
+        onToggle={setShowHint}
+        isExpanded={showHint}
+        displaySize="large"
+      >
+        <p className="pf-u-pb-sm">
+          For help getting started, access the quick starts for our new
+          features.
+        </p>
+        <p className="pf-u-pt-sm">
+          <Button
+            icon={<ArrowRightIcon />}
+            iconPosition="right"
+            variant="link"
+            isInline
+            component="a"
+            onClick={activateQuickstart('insights-launch-aws')}
+            className="pf-u-font-weight-bold"
+          >
+            Launch an AWS Image
+          </Button>
+        </p>
+        <p className="pf-u-pt-sm">
+          <Button
+            icon={<ArrowRightIcon />}
+            iconPosition="right"
+            variant="link"
+            isInline
+            component="a"
+            onClick={activateQuickstart('insights-launch-azure')}
+            className="pf-u-font-weight-bold"
+          >
+            Launch an Azure Image
+          </Button>
+        </p>
+        <p className="pf-u-pt-sm">
+          <Button
+            icon={<ArrowRightIcon />}
+            iconPosition="right"
+            variant="link"
+            isInline
+            component="a"
+            onClick={activateQuickstart('insights-launch-gcp')}
+            className="pf-u-font-weight-bold"
+          >
+            Launch a GCP Image
+          </Button>
+        </p>
+        <p className="pf-u-pt-sm">
+          <Button
+            icon={<ArrowRightIcon />}
+            iconPosition="right"
+            variant="link"
+            isInline
+            component="a"
+            onClick={activateQuickstart('insights-custom-repos')}
+            className="pf-u-font-weight-bold"
+          >
+            Build an Image with Custom Content
+          </Button>
+        </p>
+      </ExpandableSection>
+
       <ImagesTable />
     </section>
   );
