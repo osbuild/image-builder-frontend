@@ -12,27 +12,27 @@ plugins:
   - import
 rules:
   import/order:
-  - error
-  - groups:
-    - builtin
-    - external
-    - internal
-    - sibling
-    - parent
-    - index
-    alphabetize:
-      order: asc
-      caseInsensitive: true
-    newlines-between: always
-    pathGroups: # ensures the import of React is always on top
-    - pattern: react
-      group: builtin
-      position: before
-    pathGroupsExcludedImportTypes:
-    - react
+    - error
+    - groups:
+      - builtin
+      - external
+      - internal
+      - sibling
+      - parent
+      - index
+      alphabetize:
+        order: asc
+        caseInsensitive: true
+      newlines-between: always
+      pathGroups: # ensures the import of React is always on top
+      - pattern: react
+        group: builtin
+        position: before
+      pathGroupsExcludedImportTypes:
+      - react
   prefer-const:
-  - error
-  - destructuring: any
+    - error
+    - destructuring: any
   no-console: 2
   eqeqeq: error
 overrides:
