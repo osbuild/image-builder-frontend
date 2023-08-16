@@ -119,7 +119,7 @@ export default {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           isInline
-          href="https://access.redhat.com/management/activation_keys"
+          href="https://console.redhat.com/insights/connector/activation-keys"
         >
           Create and manage activation keys here
         </Button>
