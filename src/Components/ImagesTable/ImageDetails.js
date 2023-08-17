@@ -20,7 +20,7 @@ import ClonesTable from './ClonesTable';
 import { extractProvisioningList } from '../../store/helpers';
 import { useGetSourceListQuery } from '../../store/provisioningApi';
 
-const sourceNotFoundPopover = () => {
+const SourceNotFoundPopover = () => {
   return (
     <Popover
       position="bottom"
@@ -59,7 +59,7 @@ const sourceNotFoundPopover = () => {
   );
 };
 
-const getAzureSourceName = (id) => {
+const AzureSourceName = ({ id }) => {
   const { data: rawSources, isSuccess } = useGetSourceListQuery({
     provider: 'azure',
   });
@@ -68,16 +68,16 @@ const getAzureSourceName = (id) => {
   if (isSuccess) {
     const sourcename = sources.find((source) => source.id === id);
     if (sourcename) {
-      return sourcename.name;
+      return <p>{sourcename.name}</p>;
     } else {
-      return sourceNotFoundPopover();
+      return <SourceNotFoundPopover />;
     }
   } else {
     return <Spinner isSVG size="md" />;
   }
 };
 
-const getAWSSourceName = (id) => {
+const AwsSourceName = ({ id }) => {
   const { data: rawSources, isSuccess } = useGetSourceListQuery({
     provider: 'aws',
   });
@@ -86,9 +86,9 @@ const getAWSSourceName = (id) => {
   if (isSuccess) {
     const sourcename = sources.find((source) => source.id === id);
     if (sourcename) {
-      return sourcename.name;
+      return <p>{sourcename.name}</p>;
     } else {
-      return sourceNotFoundPopover();
+      return <SourceNotFoundPopover />;
     }
   } else {
     return <Spinner isSVG size="md" />;
@@ -124,10 +124,12 @@ const AWSDetails = ({ id }) => {
         <DescriptionListGroup>
           <DescriptionListTerm>Source</DescriptionListTerm>
           <DescriptionListDescription>
-            {getAWSSourceName(
-              compose.request.image_requests[0].upload_request.options
-                .share_with_sources?.[0]
-            )}
+            <AwsSourceName
+              id={
+                compose.request.image_requests[0].upload_request.options
+                  .share_with_sources?.[0]
+              }
+            />
           </DescriptionListDescription>
         </DescriptionListGroup>
       )}
@@ -187,10 +189,12 @@ const AzureDetails = ({ id }) => {
           <DescriptionListGroup>
             <DescriptionListTerm>Source</DescriptionListTerm>
             <DescriptionListDescription>
-              {getAzureSourceName(
-                compose.request.image_requests[0].upload_request.options
-                  .source_id
-              )}
+              <AzureSourceName
+                id={
+                  compose.request.image_requests[0].upload_request.options
+                    .source_id
+                }
+              />
             </DescriptionListDescription>
           </DescriptionListGroup>
         )}
@@ -411,6 +415,14 @@ GCPIdentifiers.propTypes = {
 };
 
 ImageDetails.propTypes = {
+  id: PropTypes.string,
+};
+
+AwsSourceName.propTypes = {
+  id: PropTypes.string,
+};
+
+AzureSourceName.propTypes = {
   id: PropTypes.string,
 };
 
