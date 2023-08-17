@@ -76,7 +76,7 @@ const MountPoint = ({ ...props }) => {
           return <SelectOption key={index} value={pfx} />;
         })}
       </Select>
-      {prefix !== '/' && (
+      {prefix !== '/' && !prefix.startsWith('/boot') && (
         <TextInput
           className="pf-u-w-50"
           type="text"
