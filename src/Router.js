@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
 
 import { useFlag } from '@unleash/proxy-client-react';
 import { Route, Routes } from 'react-router-dom';
@@ -16,8 +16,22 @@ export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
   return (
     <Routes>
-      <Route path="*" element={<LandingPage />}>
-        <Route path="imagewizard/:composeId?" element={<CreateImageWizard />} />
+      <Route
+        path="*"
+        element={
+          <Suspense>
+            <LandingPage />
+          </Suspense>
+        }
+      >
+        <Route
+          path="imagewizard/:composeId?"
+          element={
+            <Suspense>
+              <CreateImageWizard />
+            </Suspense>
+          }
+        />
         <Route path="share/:composeId" element={<ShareImageModal />} />
       </Route>
 
