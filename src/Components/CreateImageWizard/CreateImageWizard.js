@@ -641,7 +641,7 @@ const CreateImageWizard = () => {
             name: 'image-builder-wizard',
             className: 'imageBuilder',
             isDynamic: true,
-            inModal: true,
+            inModal: false,
             onKeyDown: (e) => {
               handleKeyDown(e, handleClose);
             },
@@ -649,7 +649,7 @@ const CreateImageWizard = () => {
               submit: 'Create image',
             },
             showTitles: true,
-            title: 'Create image',
+            title: 'Image Builder',
             crossroads: [
               'target-environment',
               'release',

@@ -24,17 +24,17 @@ export const Router = () => {
           </Suspense>
         }
       >
-        <Route
-          path="imagewizard/:composeId?"
-          element={
-            <Suspense>
-              <CreateImageWizard />
-            </Suspense>
-          }
-        />
         <Route path="share/:composeId" element={<ShareImageModal />} />
       </Route>
 
+      <Route
+        path="imagewizard/:composeId?"
+        element={
+          <Suspense>
+            <CreateImageWizard />
+          </Suspense>
+        }
+      />
       {edgeParityFlag && (
         <Route
           path={`/${manageEdgeImagesUrlName}/:imageId`}

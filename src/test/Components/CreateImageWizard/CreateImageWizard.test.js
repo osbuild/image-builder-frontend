@@ -118,7 +118,7 @@ describe('Create Image Wizard', () => {
   test('renders component', () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
-    screen.getByRole('heading', { name: /Create image/ });
+    screen.getByRole('heading', { name: /Image Builder/ });
 
     screen.getByRole('button', { name: 'Image output' });
     screen.getByRole('button', { name: 'Register' });
