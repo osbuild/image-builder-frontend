@@ -38,6 +38,7 @@ import {
 import PropTypes from 'prop-types';
 
 import RepositoriesStatus from './RepositoriesStatus';
+import RepositoryUnavailable from './RepositoryUnavailable';
 
 import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
@@ -396,6 +397,7 @@ const Repositories = (props) => {
             </Toolbar>
             <Panel isScrollable>
               <PanelMain>
+                <RepositoryUnavailable />
                 <TableComposable
                   variant="compact"
                   data-testid="repositories-table"
@@ -404,9 +406,9 @@ const Repositories = (props) => {
                     <Tr>
                       <Th />
                       <Th width={45}>Name</Th>
-                      <Th>Architecture</Th>
-                      <Th>Versions</Th>
-                      <Th>Packages</Th>
+                      <Th width={15}>Architecture</Th>
+                      <Th>Version</Th>
+                      <Th width={10}>Packages</Th>
                       <Th>Status</Th>
                     </Tr>
                   </Thead>
@@ -427,6 +429,7 @@ const Repositories = (props) => {
                       .slice(computeStart(), computeEnd())
                       .map((repoURL, rowIndex) => {
                         const repo = repositories[repoURL];
+                        const repoExists = repo.name ? true : false;
                         return (
                           <Tr key={repo.url}>
                             <Td
@@ -439,7 +442,9 @@ const Repositories = (props) => {
                               }}
                             />
                             <Td dataLabel={'Name'}>
-                              {repo.name}
+                              {repoExists
+                                ? repo.name
+                                : 'Repository with the following url is no longer available:'}
                               <br />
                               <Button
                                 component="a"
@@ -454,16 +459,24 @@ const Repositories = (props) => {
                               </Button>
                             </Td>
                             <Td dataLabel={'Architecture'}>
-                              {repo.distribution_arch}
+                              {repoExists ? repo.distribution_arch : '-'}
                             </Td>
                             <Td dataLabel={'Version'}>
-                              {repo.distribution_versions}
+                              {repoExists ? repo.distribution_versions : '-'}
                             </Td>
-                            <Td dataLabel={'Packages'}>{repo.package_count}</Td>
+                            <Td dataLabel={'Packages'}>
+                              {repoExists ? repo.package_count : '-'}
+                            </Td>
                             <Td dataLabel={'Status'}>
                               <RepositoriesStatus
-                                repoStatus={repo.status}
+                                repoStatus={
+                                  repoExists ? repo.status : 'Unavailable'
+                                }
                                 repoUrl={repo.url}
+                                repoIntrospections={
+                                  repo.last_introspection_time
+                                }
+                                repoFailCount={repo.failed_introspections_count}
                               />
                             </Td>
                           </Tr>
@@ -508,9 +521,8 @@ const Empty = ({ isFetching, refetch }) => {
         No Custom Repositories
       </Title>
       <EmptyStateBody>
-        Custom repositories managed via the Red Hat Insights Repositories app
-        will be available here to select and use to search for additional
-        packages.
+        Repositories can be added in the &quot;Repositories&quot; area of the
+        console. Once added, refresh this page to see them.
       </EmptyStateBody>
       <Button
         variant="primary"
@@ -519,10 +531,10 @@ const Empty = ({ isFetching, refetch }) => {
         href={isBeta() ? '/preview/settings/content' : '/settings/content'}
         className="pf-u-mr-sm"
       >
-        Repositories
+        Go to repositories
       </Button>
       <Button
-        variant="primary"
+        variant="secondary"
         isInline
         onClick={() => refetch()}
         isLoading={isFetching}

@@ -8,7 +8,11 @@ import userEvent from '@testing-library/user-event';
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { mockComposesEmpty } from '../../fixtures/composes';
+import { store } from '../../../store/index.js';
+import {
+  mockComposesEmpty,
+  mockStateRecreateImage,
+} from '../../fixtures/composes';
 import {
   mockPkgResultAlpha,
   mockPkgResultAlphaContentSources,
@@ -19,6 +23,7 @@ import {
   clickBack,
   clickNext,
   renderCustomRoutesWithReduxRouter,
+  renderWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
 
@@ -866,5 +871,106 @@ describe('Step Custom repositories', () => {
     rows.shift();
 
     await waitFor(() => expect(rows).toHaveLength(10));
+  });
+});
+
+describe('On Recreate', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    jest.mock('../../../store/index.js');
+
+    const state = mockStateRecreateImage;
+
+    store.getState = () => state;
+
+    ({ router } = renderWithReduxRouter(
+      'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346',
+      state
+    ));
+  };
+
+  const setUpUnavailableRepo = async () => {
+    jest.mock('../../../store/index.js');
+
+    const state = mockStateRecreateImage;
+
+    store.getState = () => state;
+
+    ({ router } = renderWithReduxRouter(
+      'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346',
+      state
+    ));
+  };
+
+  test('with valid repositories', async () => {
+    await setUp();
+
+    screen.getByRole('heading', { name: /review/i });
+    expect(
+      screen.queryByText('Previously added custom repository unavailable')
+    ).not.toBeInTheDocument();
+
+    const createImageButton = await screen.findByRole('button', {
+      name: /create image/i,
+    });
+    await waitFor(() => expect(createImageButton).toBeEnabled());
+
+    await user.click(
+      await screen.findByRole('button', { name: /custom repositories/i })
+    );
+
+    await screen.findByRole('heading', { name: /custom repositories/i });
+    expect(
+      screen.queryByText('Previously added custom repository unavailable')
+    ).not.toBeInTheDocument();
+
+    const table = await screen.findByTestId('repositories-table');
+
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    const availableRepo = rows[1].cells[1];
+    expect(availableRepo).toHaveTextContent(
+      '13lk3http://yum.theforeman.org/releases/3.4/el8/x86_64/'
+    );
+
+    const availableRepoCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 0/i,
+    });
+    expect(availableRepoCheckbox).toBeEnabled();
+  });
+
+  test('with repositories that are no longer available', async () => {
+    await setUpUnavailableRepo();
+
+    screen.getByRole('heading', { name: /review/i });
+    await screen.findByText('Previously added custom repository unavailable');
+
+    const createImageButton = await screen.findByRole('button', {
+      name: /create image/i,
+    });
+    expect(createImageButton).toBeDisabled();
+
+    await user.click(
+      await screen.findByRole('button', { name: /custom repositories/i })
+    );
+
+    await screen.findByRole('heading', { name: /custom repositories/i });
+    await screen.findByText('Previously added custom repository unavailable');
+
+    const table = await screen.findByTestId('repositories-table');
+
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    const unavailableRepo = rows[1].cells[1];
+    expect(unavailableRepo).toHaveTextContent(
+      'Repository with the following url is no longer available:http://unreachable.link.to.repo.org/x86_64/'
+    );
+
+    const unavailableRepoCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 0/i,
+    });
+    expect(unavailableRepoCheckbox).toBeDisabled();
   });
 });

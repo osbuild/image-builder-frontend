@@ -41,8 +41,8 @@ const repositoriesStep = {
       name: 'packages-text-component',
       label: (
         <Text>
-          Select custom repositories from which to search and add packages to
-          this image.
+          Select from linked custom repositories from which to search and add
+          packages to this image.
           <br />
           <VisitButton />
         </Text>

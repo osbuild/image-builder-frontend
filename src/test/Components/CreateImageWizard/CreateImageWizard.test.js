@@ -88,12 +88,12 @@ const searchForAvailablePackages = async (searchbox, searchTerm) => {
   );
 };
 
-const switchToAWSManual = () => {
+const switchToAWSManual = async () => {
   const user = userEvent.setup();
   const manualRadio = screen.getByRole('radio', {
     name: /manually enter an account id\./i,
   });
-  user.click(manualRadio);
+  await user.click(manualRadio);
   return manualRadio;
 };
 
@@ -152,7 +152,7 @@ describe('Step Image output', () => {
 
     await clickNext();
 
-    switchToAWSManual();
+    await switchToAWSManual();
     await screen.findByText('AWS account ID');
   });
 
@@ -289,7 +289,7 @@ describe('Step Upload to AWS', () => {
   test('clicking Next loads Registration', async () => {
     await setUp();
 
-    switchToAWSManual();
+    await switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'
@@ -700,7 +700,7 @@ describe('Step File system configuration', () => {
     await clickNext();
 
     // aws step
-    switchToAWSManual();
+    await switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'
@@ -775,7 +775,7 @@ describe('Step Details', () => {
     await clickNext();
 
     // aws step
-    switchToAWSManual();
+    await switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'
@@ -844,7 +844,7 @@ describe('Step Review', () => {
     await clickNext();
 
     // aws step
-    switchToAWSManual();
+    await switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'
@@ -894,7 +894,7 @@ describe('Step Review', () => {
     await clickNext();
 
     // aws step
-    switchToAWSManual();
+    await switchToAWSManual();
     await user.type(
       await screen.findByTestId('aws-account-id'),
       '012345678901'

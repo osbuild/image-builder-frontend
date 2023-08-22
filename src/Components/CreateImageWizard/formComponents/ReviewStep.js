@@ -9,6 +9,7 @@ import {
 } from '@patternfly/react-core';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
+import RepositoryUnavailable from './RepositoryUnavailable';
 import {
   ContentList,
   FSCList,
@@ -59,6 +60,7 @@ const ReviewStep = () => {
 
   return (
     <>
+      <RepositoryUnavailable />
       <ExpandableSection
         toggleContent={'Image output'}
         onToggle={onToggleImageOutput}

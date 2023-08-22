@@ -7,6 +7,7 @@ import PropTypes from 'prop-types';
 
 import { contentSourcesApi } from '../../../store/contentSourcesApi';
 import { rhsmApi } from '../../../store/rhsmApi';
+import { useCheckRepositoriesAvailability } from '../../../Utilities/checkRepositoriesAvailability';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
 const CustomButtons = ({
@@ -21,6 +22,7 @@ const CustomButtons = ({
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
   const prefetchRepositories =
     contentSourcesApi.usePrefetch('listRepositories');
+  const hasUnavailableRepo = useCheckRepositoriesAvailability();
 
   const onNextOrSubmit = () => {
     if (currentStep.id === 'wizard-review') {
@@ -62,7 +64,8 @@ const CustomButtons = ({
             isDisabled={
               !formOptions.valid ||
               formOptions.getState().validating ||
-              isSaving
+              isSaving ||
+              hasUnavailableRepo
             }
             isLoading={currentStep.id === 'wizard-review' ? isSaving : null}
             onClick={onNextOrSubmit}
