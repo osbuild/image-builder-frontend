@@ -59,3 +59,20 @@ ul.pf-m-plain {
     padding-left: 0;
     margin-left: 0;
 }
+
+// [2023-09] Wizard height should not be limited see
+// https://github.com/data-driven-forms/react-forms/issues/1402
+// TODO remove me after DDF is not used anymore
+.pf-c-wizard__main {
+    overflow-x: unset;
+    overflow-y: unset;
+}
+// TODO remove me after DDF is not used anymore
+.pf-c-wizard__footer {
+    z-index: unset;
+}
+// [2023-10] Wizard closing cross shouldn't get displayed
+// TODO remove me after DDF is not used anymore
+.pf-c-wizard__header .pf-c-button.pf-m-plain {
+    display: none;
+}
