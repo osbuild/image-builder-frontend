@@ -20,18 +20,32 @@ const RepoName = ({ repoUrl }) => {
     url: repoUrl,
   });
 
+  const errorLoading = () => {
+    return (
+      <Alert
+        variant="danger"
+        isInline
+        isPlain
+        title="Error loading repository name"
+      />
+    );
+  };
+
   return (
     <>
-      {isSuccess && <p>{data.data?.[0].name}</p>}
+      {/*
+        this might be a tad bit hacky
+        "isSuccess" indicates only that the query fetched successfuly, but it
+        doesn't differentiate between a scenario when the repository was found
+        in the response and when it was not
+        for this reason I've split the "isSuccess" into two paths:
+        - query finished and the repo was found -> render the name of the repo
+        - query finished, but the repo was not found -> render an error
+      */}
+      {isSuccess && data.data?.[0]?.name && <p>{data.data?.[0].name}</p>}
+      {isSuccess && !data.data?.[0]?.name && errorLoading()}
       {isFetching && <Spinner isSVG size="md" />}
-      {isError && (
-        <Alert
-          variant="danger"
-          isInline
-          isPlain
-          title="Error loading repository name"
-        />
-      )}
+      {isError && errorLoading()}
     </>
   );
 };
