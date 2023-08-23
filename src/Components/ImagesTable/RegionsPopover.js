@@ -1,13 +1,11 @@
 import React, { useMemo } from 'react';
 
-import { Button, Divider, Popover } from '@patternfly/react-core';
+import { Button, Popover } from '@patternfly/react-core';
 import { createSelector } from '@reduxjs/toolkit';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 
 import { selectComposeById, selectImagesById } from '../../store/composesSlice';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
-import BetaLabel from '../sharedComponents/BetaLabel';
 
 export const selectRegions = createSelector(
   [selectComposeById, selectImagesById],
@@ -59,7 +57,6 @@ const ImageLinkRegion = ({ region, ami }) => {
 };
 
 export const RegionsPopover = ({ composeId }) => {
-  const { isBeta } = useGetEnvironment();
   const regions = useSelector((state) => selectRegions(state, composeId));
 
   const listItems = useMemo(() => {
@@ -74,9 +71,6 @@ export const RegionsPopover = ({ composeId }) => {
     return listItems;
   }, [regions]);
 
-  const compose = useSelector((state) => selectComposeById(state, composeId));
-  const createdInPreview = compose?.share_with_sources?.[0] ? true : false;
-
   return (
     <Popover
       /* popovers aren't rendered inside of the main page section, make sure our prefixed css still
@@ -87,26 +81,6 @@ export const RegionsPopover = ({ composeId }) => {
       bodyContent={
         <>
           <ul>{listItems}</ul>
-          {!isBeta() && (
-            <>
-              {createdInPreview && (
-                <p>
-                  This image was created using features only available in
-                  Preview.
-                </p>
-              )}
-              <Divider className="pf-u-mt-sm pf-u-mb-sm" />
-              <Button
-                isInline
-                component="a"
-                variant="link"
-                href="/preview/insights/image-builder/landing"
-              >
-                <BetaLabel />
-                Launch from Preview
-              </Button>
-            </>
-          )}
         </>
       }
     >
