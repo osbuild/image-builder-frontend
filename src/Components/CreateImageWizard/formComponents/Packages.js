@@ -66,7 +66,7 @@ export const RedHatPackages = ({ defaultArch }) => {
   const getAllPackages = async (packagesSearchName) => {
     // if the env is stage beta then use content-sources api
     // else use image-builder api
-    if (getState()?.values?.isBeta) {
+    if (getState()?.values?.contentSourcesEnabled) {
       const filteredArchx86_64 = distributionInformation.find(
         (info) => info.arch === 'x86_64'
       );

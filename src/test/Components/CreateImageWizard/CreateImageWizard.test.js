@@ -17,11 +17,7 @@ import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImage
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { RHEL_8, RHEL_9, PROVISIONING_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
-import {
-  mockPkgResultAlpha,
-  mockPkgResultAll,
-  mockPkgResultPartial,
-} from '../../fixtures/packages';
+import { customizations } from '../../fixtures/customizations';
 import { server } from '../../mocks/server.js';
 import {
   clickBack,
@@ -93,15 +89,6 @@ const searchForAvailablePackages = async (searchbox, searchTerm) => {
   });
 };
 
-const searchForChosenPackages = async (searchbox, searchTerm) => {
-  const user = userEvent.setup();
-  if (!searchTerm) {
-    await user.clear(searchbox);
-  } else {
-    await user.type(searchbox, searchTerm);
-  }
-};
-
 const switchToAWSManual = () => {
   const manualRadio = screen.getByRole('radio', {
     name: /manually enter an account id\./i,
@@ -140,6 +127,7 @@ describe('Create Image Wizard', () => {
     screen.getByRole('button', { name: 'File system configuration' });
     screen.getByRole('button', { name: 'Content' });
     screen.getByRole('button', { name: 'Additional Red Hat packages' });
+    screen.getByRole('button', { name: 'Custom repositories' });
     screen.getByRole('button', { name: 'Details' });
     screen.getByRole('button', { name: 'Review' });
   });
@@ -905,470 +893,6 @@ describe('Step File system configuration', () => {
   });
 });
 
-describe('Step Packages', () => {
-  const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
-
-    // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-      await clickNext();
-    });
-
-    // aws step
-    switchToAWSManual();
-    const aai = screen.getByTestId('aws-account-id');
-    await act(async () => {
-      await user.type(aai, '012345678901');
-      await clickNext();
-    });
-    // skip registration
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-
-    const registerLaterRadio = screen.getByTestId('registration-radio-later');
-    await act(async () => {
-      await user.click(registerLaterRadio);
-      await clickNext();
-      // skip fsc
-      await clickNext();
-    });
-  };
-
-  test('clicking Next loads Image name', async () => {
-    await setUp();
-
-    await act(async () => {
-      await clickNext();
-      await clickNext();
-    });
-
-    screen.getByRole('heading', {
-      name: 'Details',
-    });
-  });
-
-  test('clicking Back loads file system configuration', async () => {
-    await setUp();
-
-    await act(async () => {
-      await clickBack();
-    });
-
-    screen.getByRole('heading', { name: /file system configuration/i });
-  });
-
-  test('clicking Cancel loads landing page', async () => {
-    await setUp();
-
-    await verifyCancelButton(router);
-  });
-
-  test('should display search bar and button', async () => {
-    await setUp();
-
-    const sapi = screen.getByTestId('search-available-pkgs-input');
-    await act(async () => {
-      await user.type(sapi, 'test');
-    });
-
-    screen.getByRole('button', {
-      name: 'Search button for available packages',
-    });
-  });
-
-  test('should display default state', async () => {
-    await setUp();
-
-    screen.getByText('Search above to add additionalpackages to your image');
-    screen.getByText('No packages added');
-  });
-
-  test('search results should be sorted with most relevant results first', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'test');
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-    const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-    expect(firstItem).toHaveTextContent('testsummary for test package');
-    expect(secondItem).toHaveTextContent('testPkgtest package summary');
-    expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
-  });
-
-  test('search results should be sorted after selecting them and then deselecting them', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'test');
-
-    const apt = screen.getByTestId('available-pkgs-testPkg');
-    await act(async () => {
-      apt.click();
-    });
-    const bas = screen.getByRole('button', { name: /Add selected/ });
-    await act(async () => {
-      bas.click();
-    });
-
-    const spt = screen.getByTestId('selected-pkgs-testPkg');
-    await act(async () => {
-      spt.click();
-    });
-    const brs = screen.getByRole('button', { name: /Remove selected/ });
-    await act(async () => {
-      brs.click();
-    });
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-    const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-    expect(firstItem).toHaveTextContent('testsummary for test package');
-    expect(secondItem).toHaveTextContent('testPkgtest package summary');
-    expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
-  });
-
-  test('search results should be sorted after adding and then removing all packages', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'test');
-
-    const baa = screen.getByRole('button', { name: /Add all/ });
-    await act(async () => {
-      baa.click();
-    });
-    const bra = screen.getByRole('button', { name: /Remove all/ });
-    await act(async () => {
-      bra.click();
-    });
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-    const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-    expect(firstItem).toHaveTextContent('testsummary for test package');
-    expect(secondItem).toHaveTextContent('testPkgtest package summary');
-    expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
-  });
-
-  test('removing a single package updates the state correctly', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'test');
-    const baa = screen.getByRole('button', { name: /Add all/ });
-    await act(async () => {
-      baa.click();
-    });
-
-    // remove a single package
-    const splt = screen.getByTestId('selected-pkgs-lib-test');
-    await act(async () => {
-      splt.click();
-    });
-    const brs = screen.getByRole('button', { name: /Remove selected/ });
-    await act(async () => {
-      brs.click();
-    });
-
-    // skip repositories
-    const bnRep = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bnRep.click();
-    });
-
-    // skip name page
-    const bn1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn1.click();
-    });
-
-    // review page
-    const bn2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn2.click();
-    });
-
-    // await screen.findByTestId('chosen-packages-count');
-    let chosen = await screen.findByTestId('chosen-packages-count');
-    expect(chosen).toHaveTextContent('2');
-
-    // remove another package
-    const bb1 = screen.getByRole('button', { name: /Back/ });
-    await act(async () => {
-      bb1.click();
-    });
-    const bb2 = screen.getByRole('button', { name: /Back/ });
-    await act(async () => {
-      bb2.click();
-    });
-    const bb3 = screen.getByRole('button', { name: /Back/ });
-    await act(async () => {
-      bb3.click();
-    });
-    await screen.findByTestId('search-available-pkgs-input');
-    const op = screen.getByRole('option', { name: /summary for test package/ });
-    await act(async () => {
-      op.click();
-    });
-    const brs2 = screen.getByRole('button', { name: /Remove selected/ });
-    await act(async () => {
-      brs2.click();
-    });
-
-    // review page
-    const n1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n1.click();
-    });
-    const n2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n2.click();
-    });
-    const n3 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n3.click();
-    });
-
-    // await screen.findByTestId('chosen-packages-count');
-    chosen = await screen.findByTestId('chosen-packages-count');
-    expect(chosen).toHaveTextContent('1');
-  });
-
-  test('should display empty available state on failed search', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'asdf');
-    screen.getByText('No results found');
-  });
-
-  test('should display empty available state on failed search after a successful search', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    await act(async () => {
-      searchbox.click();
-    });
-
-    await searchForAvailablePackages(searchbox, 'test');
-
-    screen
-      .getByRole('button', { name: /clear available packages search/i })
-      .click();
-
-    await searchForAvailablePackages(searchbox, 'asdf');
-
-    screen.getByText('No results found');
-  });
-
-  test('should display empty chosen state on failed search', async () => {
-    await setUp();
-
-    const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-    const searchboxChosen = screen.getAllByRole('textbox')[1];
-
-    await waitFor(() => expect(searchboxAvailable).toBeEnabled());
-    searchboxAvailable.click();
-    await searchForAvailablePackages(searchboxAvailable, 'test');
-
-    screen.getByRole('button', { name: /Add all/ }).click();
-
-    searchboxChosen.click();
-    await user.type(searchboxChosen, 'asdf');
-
-    expect(screen.getByText('No packages found')).toBeInTheDocument();
-    // We need to clear this input in order to not have sideeffects on other tests
-    await searchForChosenPackages(searchboxChosen, '');
-  });
-
-  test('should display warning when over hundred results were found', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
-
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation((distribution, architecture, search, limit) => {
-        return limit
-          ? Promise.resolve(mockPkgResultAll)
-          : Promise.resolve(mockPkgResultPartial);
-      });
-
-    await searchForAvailablePackages(searchbox, 'testPkg');
-    expect(getPackages).toHaveBeenCalledTimes(2);
-
-    screen.getByText('Over 100 results found. Refine your search.');
-    screen.getByText('Too many results to display');
-  });
-
-  test('should display an exact match if found regardless of too many results', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
-
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation((distribution, architecture, search, limit) => {
-        return limit
-          ? Promise.resolve(mockPkgResultAll)
-          : Promise.resolve(mockPkgResultPartial);
-      });
-
-    await searchForAvailablePackages(searchbox, 'testPkg-128');
-    expect(getPackages).toHaveBeenCalledTimes(2);
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toBeInTheDocument();
-    screen.getByText('Exact match');
-    screen.getByText('testPkg-128');
-    screen.getByText('Too many results to display');
-  });
-
-  test('search results should be sorted alphabetically', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
-
-    const getPackages = jest
-      .spyOn(api, 'getPackages')
-      .mockImplementation(() => Promise.resolve(mockPkgResultAlpha));
-
-    await searchForAvailablePackages(searchbox, 'test');
-    expect(getPackages).toHaveBeenCalledTimes(1);
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-
-    const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-    expect(firstItem).toHaveTextContent('testsummary for test package');
-    expect(secondItem).toHaveTextContent('lib-testlib-test package summary');
-    expect(thirdItem).toHaveTextContent('Z-testZ-test package summary');
-  });
-
-  test('available packages can be reset', async () => {
-    await setUp();
-
-    const searchbox = screen.getAllByRole('textbox')[0];
-
-    await waitFor(() => expect(searchbox).toBeEnabled());
-    searchbox.click();
-
-    await searchForAvailablePackages(searchbox, 'test');
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-
-    screen
-      .getByRole('button', { name: /clear available packages search/i })
-      .click();
-
-    screen.getByText('Search above to add additionalpackages to your image');
-  });
-
-  test('chosen packages can be reset after filtering', async () => {
-    await setUp();
-
-    const availableSearchbox = screen.getAllByRole('textbox')[0];
-
-    await waitFor(() => expect(availableSearchbox).toBeEnabled());
-    availableSearchbox.click();
-
-    await searchForAvailablePackages(availableSearchbox, 'test');
-
-    const availablePackagesList = screen.getByTestId('available-pkgs-list');
-    const availablePackagesItems = within(availablePackagesList).getAllByRole(
-      'option'
-    );
-    expect(availablePackagesItems).toHaveLength(3);
-
-    screen.getByRole('button', { name: /Add all/ }).click();
-
-    const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
-    let chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-    expect(chosenPackagesItems).toHaveLength(3);
-
-    const chosenSearchbox = screen.getAllByRole('textbox')[1];
-    chosenSearchbox.click();
-    await searchForChosenPackages(chosenSearchbox, 'lib');
-    chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
-      'option'
-    );
-    // eslint-disable-next-line jest-dom/prefer-in-document
-    expect(chosenPackagesItems).toHaveLength(1);
-
-    screen
-      .getByRole('button', { name: /clear chosen packages search/i })
-      .click();
-    chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-    expect(chosenPackagesItems).toHaveLength(3);
-  });
-});
-
 describe('Step Details', () => {
   const user = userEvent.setup();
   const setUp = async () => {
@@ -1629,10 +1153,7 @@ describe('Click through all steps', () => {
     await user.click(screen.getByTestId('checkbox-guest-image'));
     await user.click(screen.getByTestId('checkbox-image-installer'));
 
-    const bn = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn.click();
-    });
+    screen.getByRole('button', { name: /Next/ }).click();
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
@@ -1648,7 +1169,10 @@ describe('Click through all steps', () => {
       bn2.click();
     });
 
-    await user.click(screen.getByTestId('azure-radio-manual'));
+    const azm = screen.getByTestId('azure-radio-manual');
+    await act(async () => {
+      azm.click();
+    });
     // Randomly generated GUID
     await user.type(
       screen.getByTestId('azure-tenant-id-manual'),
@@ -1662,15 +1186,12 @@ describe('Click through all steps', () => {
       screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
-    const bn3 = screen.getByRole('button', { name: /Next/ });
+    const bn4 = screen.getByRole('button', { name: /Next/ });
     await act(async () => {
-      bn3.click();
+      bn4.click();
     });
 
     // registration
-    const registrationRadio = screen.getByTestId('registration-radio-now');
-    await user.click(registrationRadio);
-
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
@@ -1686,10 +1207,7 @@ describe('Click through all steps', () => {
     });
 
     // fsc
-    screen.getByRole('heading', {
-      name: /file system configuration/i,
-    });
-    screen.getByTestId('file-system-config-radio-manual').click();
+    (await screen.findByTestId('file-system-config-radio-manual')).click();
     const ap = await screen.findByTestId('file-system-add-partition');
     ap.click();
     ap.click();
@@ -1734,16 +1252,31 @@ describe('Click through all steps', () => {
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
-    screen
-      .getByRole('option', { name: /test summary for test package/ })
-      .click();
-    screen.getByRole('button', { name: /Add selected/ }).click();
+    const bot = screen.getByRole('option', {
+      name: /test summary for test package/,
+    });
+    await act(async () => {
+      bot.click();
+    });
+    const bas = screen.getByRole('button', { name: /Add selected/ });
+    await act(async () => {
+      bas.click();
+    });
     await act(async () => {
       await clickNext();
     });
 
-    // TODO: should select a repo here
+    // Custom repositories
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 0/i })
+    );
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 1/i })
+    );
+
     await act(async () => {
+      await clickNext();
+      // Custom packages
       await clickNext();
     });
 
@@ -1752,18 +1285,19 @@ describe('Click through all steps', () => {
       name: 'Image Name',
     });
 
-    await user.type(nameInput, 'my-image-name');
+    await act(async () => {
+      await user.type(nameInput, 'my-image-name');
+    });
 
     // Enter description for image
     const descriptionInput = screen.getByRole('textbox', {
-      name: /description/i,
+      name: /Description/,
     });
-
-    await user.type(
-      descriptionInput,
-      'this is a perfect description for image'
-    );
     await act(async () => {
+      await user.type(
+        descriptionInput,
+        'this is a perfect description for image'
+      );
       await clickNext();
     });
 
@@ -1778,31 +1312,43 @@ describe('Click through all steps', () => {
     await screen.findByText('Virtualization - Guest image (.qcow2)');
     await screen.findByText('Bare metal - Installer (.iso)');
 
-    const imageDetailsExpandable = await screen.findByTestId(
-      'image-details-expandable'
-    );
-    imageDetailsExpandable.click();
-    await screen.findByText('my-image-name');
-    await screen.findByText('this is a perfect description for image');
-
     const registrationExpandable = await screen.findByTestId(
       'registration-expandable'
     );
-    registrationExpandable.click();
-    await screen.findByText('name0');
-    await screen.findByText('Self-Support');
-    await screen.findByText('Production');
+    await act(async () => {
+      registrationExpandable.click();
+    });
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Use remote host configuration (RHC) utility'
     );
-    screen.getByTestId('repositories-popover-button').click();
+
+    const imageDetailsExpandable = await screen.findByTestId(
+      'image-details-expandable'
+    );
+    await act(async () => {
+      imageDetailsExpandable.click();
+    });
+    await screen.findByText('my-image-name');
+    await screen.findByText('this is a perfect description for image');
+
+    await screen.findByText('name0');
+    await screen.findByText('Self-Support');
+    await screen.findByText('Production');
+
+    const brp = screen.getByTestId('repositories-popover-button');
+    await act(async () => {
+      brp.click();
+    });
     const repotbody = await screen.findByTestId(
       'additional-repositories-table'
     );
     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-    screen.getByTestId('file-system-configuration-popover').click();
+    const fsc = screen.getByTestId('file-system-configuration-popover');
+    await act(async () => {
+      fsc.click();
+    });
     const revtbody = await screen.findByTestId(
       'file-system-configuration-tbody-review'
     );
@@ -1814,9 +1360,9 @@ describe('Click through all steps', () => {
       .spyOn(api, 'composeImage')
       .mockImplementation((body) => {
         let id;
-        let excpectedBody = {};
+        let expectedbody = {};
         if (body.image_requests[0].upload_request.type === 'aws') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -1832,35 +1378,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
         } else if (body.image_requests[0].upload_request.type === 'gcp') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -1876,35 +1398,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
         } else if (body.image_requests[0].upload_request.type === 'azure') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -1922,35 +1420,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
         } else if (body.image_requests[0].image_type === 'vsphere-ova') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -1964,35 +1438,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f59';
         } else if (body.image_requests[0].image_type === 'guest-image') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -2006,35 +1456,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
         } else if (body.image_requests[0].image_type === 'image-installer') {
-          excpectedBody = {
+          expectedbody = {
             distribution: RHEL_8,
             image_name: 'my-image-name',
             image_description: 'this is a perfect description for image',
@@ -2048,35 +1474,11 @@ describe('Click through all steps', () => {
                 },
               },
             ],
-            customizations: {
-              filesystem: [
-                {
-                  mountpoint: '/',
-                  min_size: 10737418240,
-                },
-                {
-                  mountpoint: '/home',
-                  min_size: 1073741824,
-                },
-                {
-                  mountpoint: '/var/tmp',
-                  min_size: 104857600,
-                },
-              ],
-              packages: ['test'],
-              subscription: {
-                'activation-key': 'name0',
-                insights: true,
-                rhc: true,
-                organization: 5,
-                'server-url': 'subscription.rhsm.redhat.com',
-                'base-url': 'https://cdn.redhat.com/',
-              },
-            },
+            customizations: customizations,
           };
           id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b';
         }
-        expect(body).toEqual(excpectedBody);
+        expect(body).toEqual(expectedbody);
 
         ids.unshift(id);
         return Promise.resolve({ id });
@@ -2084,7 +1486,7 @@ describe('Click through all steps', () => {
 
     const create = screen.getByRole('button', { name: /Create/ });
     await act(async () => {
-      create.click();
+      await user.click(create);
     });
 
     // API request sent to backend
