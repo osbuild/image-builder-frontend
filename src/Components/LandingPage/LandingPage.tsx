@@ -71,10 +71,6 @@ export const LandingPage = () => {
         isExpanded={showHint}
         displaySize="large"
       >
-        <p className="pf-u-pb-sm">
-          For help getting started, access the quick starts for our new
-          features.
-        </p>
         <p className="pf-u-pt-sm">
           <Button
             icon={<ArrowRightIcon />}
