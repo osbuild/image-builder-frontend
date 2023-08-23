@@ -32,7 +32,7 @@ const SourcesButton = () => {
   );
 };
 
-export default {
+const awsStep = {
   StepTemplate,
   id: 'wizard-target-aws',
   title: 'Amazon Web Services',
@@ -185,3 +185,5 @@ export default {
     },
   ],
 };
+
+export default awsStep;

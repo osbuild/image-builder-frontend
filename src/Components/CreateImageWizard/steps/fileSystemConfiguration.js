@@ -15,7 +15,7 @@ import StepTemplate from './stepTemplate';
 
 import FileSystemConfigButtons from '../formComponents/FileSystemConfigButtons';
 
-export default {
+const fileSystemConfigurationStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-filesystem',
   title: 'File system configuration',
@@ -116,3 +116,5 @@ export default {
     },
   ],
 };
+
+export default fileSystemConfigurationStep;

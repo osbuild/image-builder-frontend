@@ -15,7 +15,7 @@ const CharacterCount = () => {
   return <h1>{description?.length || 0}/250</h1>;
 };
 
-export default {
+const imageNameStep = {
   StepTemplate,
   id: 'wizard-details',
   name: 'details',
@@ -71,3 +71,5 @@ export default {
     },
   ],
 };
+
+export default imageNameStep;

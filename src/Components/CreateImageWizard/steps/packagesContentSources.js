@@ -7,7 +7,7 @@ import StepTemplate from './stepTemplate';
 
 import CustomButtons from '../formComponents/CustomButtons';
 
-export default {
+const packagesContentSourcesStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-content-sources-packages',
   title: 'Additional custom packages',
@@ -33,3 +33,5 @@ export default {
     },
   ],
 };
+
+export default packagesContentSourcesStep;
