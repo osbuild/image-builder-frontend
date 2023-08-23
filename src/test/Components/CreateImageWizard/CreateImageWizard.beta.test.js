@@ -69,6 +69,13 @@ jest
   .spyOn(api, 'getComposes')
   .mockImplementation(() => Promise.resolve(mockComposesEmpty));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => jest.fn(),
+  useFlag: jest.fn((flag) =>
+    flag === 'image-builder.enable-content-sources' ? true : false
+  ),
+}));
+
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);

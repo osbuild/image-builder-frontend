@@ -14,7 +14,7 @@ const packagesStep = {
   name: 'packages',
   substepOf: 'Content',
   nextStep: ({ values }) => {
-    if (values.isBeta) {
+    if (values.contentSourcesEnabled) {
       return 'repositories';
     } else {
       return 'details';

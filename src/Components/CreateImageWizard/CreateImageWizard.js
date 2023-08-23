@@ -2,6 +2,7 @@ import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { useFlag } from '@unleash/proxy-client-react';
 import { useDispatch, useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -450,7 +451,7 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
   }
 };
 
-const formStepHistory = (composeRequest, isBeta) => {
+const formStepHistory = (composeRequest, contentSourcesEnabled) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -469,7 +470,7 @@ const formStepHistory = (composeRequest, isBeta) => {
       steps.push('registration');
     }
 
-    if (isBeta) {
+    if (contentSourcesEnabled) {
       steps.push('File system configuration', 'packages', 'repositories');
 
       const customRepositories =
@@ -500,6 +501,7 @@ const CreateImageWizard = () => {
   const { getState } = useStore();
   const compose = getState().composes?.byId?.[composeId];
   const composeRequest = compose?.request;
+  const contentSourcesEnabled = useFlag('image-builder.enable-content-sources');
 
   // TODO: This causes an annoying re-render when using Recreate image
   const { data: distroInfo } = useGetArchitecturesQuery(
@@ -522,11 +524,17 @@ const CreateImageWizard = () => {
     isBeta(),
     isProd()
   );
-  const stepHistory = formStepHistory(composeRequest, isBeta());
+  const stepHistory = formStepHistory(composeRequest, contentSourcesEnabled);
 
-  initialState
-    ? (initialState.isBeta = isBeta())
-    : (initialState = { isBeta: isBeta() });
+  if (initialState) {
+    initialState.isBeta = isBeta();
+    initialState.contentSourcesEnabled = contentSourcesEnabled;
+  } else {
+    initialState = {
+      isBeta: isBeta(),
+      contentSourcesEnabled,
+    };
+  }
 
   const handleClose = () => navigate(resolveRelPath(''));
 
