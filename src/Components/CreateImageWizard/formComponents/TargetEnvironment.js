@@ -72,6 +72,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               <img
                 className="provider-icon"
                 src={'/apps/frontend-assets/partners-icons/aws.svg'}
+                alt="Amazon Web Services logo"
               />
             }
             onClick={() => handleSetEnvironment('aws', !environment.aws)}
@@ -91,6 +92,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                 src={
                   '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
                 }
+                alt="Google Cloud Platform logo"
               />
             }
             onClick={() => handleSetEnvironment('gcp', !environment.gcp)}
@@ -110,6 +112,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                 src={
                   '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
                 }
+                alt="Microsoft Azure logo"
               />
             }
             onClick={() => handleSetEnvironment('azure', !environment.azure)}
