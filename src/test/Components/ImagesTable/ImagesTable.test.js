@@ -314,6 +314,7 @@ describe('Clones table', () => {
         case 2:
           toTest.toHaveTextContent('');
           break;
+        // no default
       }
 
       // region cell
@@ -328,6 +329,7 @@ describe('Clones table', () => {
         case 2:
           toTest.toHaveTextContent('Image build failed');
           break;
+        // no default
       }
     }
   });
