@@ -76,6 +76,13 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => jest.fn(),
+  useFlag: jest.fn((flag) =>
+    flag === 'image-builder.enable-content-sources' ? true : false
+  ),
+}));
+
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);
@@ -414,6 +421,7 @@ describe('Step Upload to AWS', () => {
       await clickNext();
       await clickNext();
       await clickNext();
+      await clickNext();
     });
 
     const composeImage = jest
@@ -615,6 +623,10 @@ describe('Step Registration', () => {
     await act(async () => {
       n4.click();
     });
+    const n5 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      n5.click();
+    });
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -677,6 +689,10 @@ describe('Step Registration', () => {
     await act(async () => {
       n4.click();
     });
+    const n5 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      n5.click();
+    });
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -737,6 +753,10 @@ describe('Step Registration', () => {
     await act(async () => {
       n4.click();
     });
+    const n5 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      n5.click();
+    });
     const exp1 = screen.getByTestId('registration-expandable');
     await act(async () => {
       exp1.click();
@@ -781,6 +801,10 @@ describe('Step Registration', () => {
     const n4 = screen.getByRole('button', { name: /Next/ });
     await act(async () => {
       n4.click();
+    });
+    const n5 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      n5.click();
     });
     screen.getByText('Register the system later');
   });
@@ -918,6 +942,7 @@ describe('Step Packages', () => {
     await setUp();
 
     await act(async () => {
+      await clickNext();
       await clickNext();
     });
 
@@ -1084,6 +1109,12 @@ describe('Step Packages', () => {
       brs.click();
     });
 
+    // skip repositories
+    const bnRep = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      bnRep.click();
+    });
+
     // skip name page
     const bn1 = screen.getByRole('button', { name: /Next/ });
     await act(async () => {
@@ -1109,6 +1140,10 @@ describe('Step Packages', () => {
     await act(async () => {
       bb2.click();
     });
+    const bb3 = screen.getByRole('button', { name: /Back/ });
+    await act(async () => {
+      bb3.click();
+    });
     await screen.findByTestId('search-available-pkgs-input');
     const op = screen.getByRole('option', { name: /summary for test package/ });
     await act(async () => {
@@ -1127,6 +1162,10 @@ describe('Step Packages', () => {
     const n2 = screen.getByRole('button', { name: /Next/ });
     await act(async () => {
       n2.click();
+    });
+    const n3 = screen.getByRole('button', { name: /Next/ });
+    await act(async () => {
+      n3.click();
     });
 
     // await screen.findByTestId('chosen-packages-count');
@@ -1362,6 +1401,8 @@ describe('Step Details', () => {
       await clickNext();
       // skip packages
       await clickNext();
+      // skip repositories
+      await clickNext();
     });
   };
 
@@ -1436,6 +1477,8 @@ describe('Step Review', () => {
 
       // skip packages
       await clickNext();
+      // skip repositories
+      await clickNext();
       // skip name
       await clickNext();
     });
@@ -1477,6 +1520,8 @@ describe('Step Review', () => {
       await clickNext();
 
       // skip packages
+      await clickNext();
+      // skip repositories
       await clickNext();
       // skip name
       await clickNext();
@@ -1693,6 +1738,11 @@ describe('Click through all steps', () => {
       .getByRole('option', { name: /test summary for test package/ })
       .click();
     screen.getByRole('button', { name: /Add selected/ }).click();
+    await act(async () => {
+      await clickNext();
+    });
+
+    // TODO: should select a repo here
     await act(async () => {
       await clickNext();
     });
@@ -2153,6 +2203,9 @@ describe('Keyboard accessibility', () => {
     });
     await waitFor(() => expect(availablePackagesInput).toBeEnabled());
     expect(availablePackagesInput).toHaveFocus();
+    await clickNext();
+
+    // TODO: what should have focus on Custom Repos step?
     await clickNext();
 
     // Name
