@@ -26,7 +26,7 @@ const SourcesButton = () => {
   );
 };
 
-export default {
+const msAzureStep = {
   StepTemplate,
   id: 'wizard-target-msazure',
   title: 'Microsoft Azure',
@@ -260,3 +260,5 @@ export default {
     // TODO check oauth2 thing too here?
   ],
 };
+
+export default msAzureStep;

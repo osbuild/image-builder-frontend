@@ -11,7 +11,7 @@ import { RHEL_9 } from '../../../constants.js';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import CustomButtons from '../formComponents/CustomButtons';
 
-export default {
+const imageOutputStep = {
   StepTemplate,
   id: 'wizard-imageoutput',
   title: 'Image output',
@@ -69,3 +69,5 @@ export default {
     },
   ],
 };
+
+export default imageOutputStep;

@@ -27,7 +27,7 @@ const VisitButton = () => {
   );
 };
 
-export default {
+const repositoriesStep = {
   StepTemplate,
   id: 'wizard-repositories',
   title: 'Custom repositories',
@@ -55,3 +55,5 @@ export default {
     },
   ],
 };
+
+export default repositoriesStep;

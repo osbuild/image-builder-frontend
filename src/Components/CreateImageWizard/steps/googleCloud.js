@@ -82,7 +82,7 @@ PopoverInfo.propTypes = {
   appendTo: PropTypes.any,
 };
 
-export default {
+const googleCloudStep = {
   StepTemplate,
   id: 'wizard-target-gcp',
   title: 'Google Cloud Platform',
@@ -182,3 +182,5 @@ export default {
     },
   ],
 };
+
+export default googleCloudStep;

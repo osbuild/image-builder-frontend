@@ -2,7 +2,7 @@ import StepTemplate from './stepTemplate';
 
 import CustomButtons from '../formComponents/CustomButtons';
 
-export default {
+const reviewStep = {
   StepTemplate,
   id: 'wizard-review',
   name: 'review',
@@ -15,3 +15,5 @@ export default {
     },
   ],
 };
+
+export default reviewStep;

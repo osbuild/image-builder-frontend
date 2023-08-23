@@ -7,7 +7,7 @@ import StepTemplate from './stepTemplate';
 
 import CustomButtons from '../formComponents/CustomButtons';
 
-export default {
+const packagesStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-packages',
   title: 'Additional Red Hat packages',
@@ -38,3 +38,5 @@ export default {
     },
   ],
 };
+
+export default packagesStep;

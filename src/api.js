@@ -96,7 +96,7 @@ async function cloneImage(composeId, body) {
   return request.data;
 }
 
-export default {
+const apiCalls = {
   cloneImage,
   composeImage,
   getClones,
@@ -107,3 +107,5 @@ export default {
   getPackagesContentSources,
   getVersion,
 };
+
+export default apiCalls;

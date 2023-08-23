@@ -59,7 +59,7 @@ const PopoverActivation = () => {
   );
 };
 
-export default {
+const registrationStep = {
   StepTemplate,
   id: 'wizard-registration',
   title: 'Register',
@@ -179,3 +179,5 @@ export default {
     },
   ],
 };
+
+export default registrationStep;

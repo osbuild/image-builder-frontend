@@ -52,9 +52,11 @@ export const fetchClones = (id, limit, offset) => async (dispatch) => {
   });
 };
 
-export default {
+const actions = {
   fetchClones,
   fetchCloneStatus,
   fetchComposes,
   fetchComposeStatus,
 };
+
+export default actions;

@@ -1,6 +1,6 @@
 import isRhel from '../../../Utilities/isRhel.js';
 
-export default (
+const imageOutputStepMapper = (
   { 'target-environment': targetEnv, release } = {},
   { skipAws, skipGoogle, skipAzure } = {}
 ) => {
@@ -18,3 +18,5 @@ export default (
 
   return isRhel(release) ? 'registration' : 'File system configuration';
 };
+
+export default imageOutputStepMapper;
