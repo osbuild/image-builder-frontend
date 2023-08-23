@@ -34,6 +34,7 @@ const SizeUnit = ({ ...props }) => {
       case 'GiB':
         setUnit(UNIT_GIB);
         break;
+      // no default
     }
 
     setIsOpen(false);

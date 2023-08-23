@@ -132,6 +132,7 @@ const onSave = (values) => {
       case 'domain':
         share = `domain:${values['google-domain']}`;
         break;
+      // no default
     }
 
     const request = {
@@ -366,6 +367,7 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
           formState['google-account-type'] = 'domain';
           formState['google-domain'] = account;
           break;
+        // no default
       }
     }
 
