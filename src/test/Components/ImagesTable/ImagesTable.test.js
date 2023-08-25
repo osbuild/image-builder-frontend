@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { act, screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -150,14 +150,16 @@ describe('Images Table', () => {
     const actionsButton = within(rows[1]).getByRole('button', {
       name: 'Actions',
     });
-    await user.click(actionsButton);
-    const recreateButton = screen.getByRole('menuitem', {
+    user.click(actionsButton);
+    const recreateButton = await screen.findByRole('menuitem', {
       name: 'Recreate image',
     });
-    await user.click(recreateButton);
+    user.click(recreateButton);
 
-    expect(router.state.location.pathname).toBe(
-      `/insights/image-builder/imagewizard/${imageId}`
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe(
+        `/insights/image-builder/imagewizard/${imageId}`
+      )
     );
   });
 
@@ -177,9 +179,9 @@ describe('Images Table', () => {
     const actionsButton = within(rows[1]).getByRole('button', {
       name: 'Actions',
     });
-    await user.click(actionsButton);
+    user.click(actionsButton);
 
-    const downloadButton = screen.getByRole('menuitem', {
+    const downloadButton = await screen.findByRole('menuitem', {
       name: 'Download compose request (.json)',
     });
 
@@ -230,11 +232,11 @@ describe('Images Table', () => {
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
 
-    await act(async () => {
-      await user.click(errorPopover);
-    });
+    user.click(errorPopover);
 
-    expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+    );
   });
 });
 
@@ -253,6 +255,7 @@ describe('Images Table Toolbar', () => {
 });
 
 describe('Clones table', () => {
+  const user = userEvent.setup();
   test('renders clones table', async () => {
     renderWithReduxRouter('', {});
 
@@ -270,7 +273,7 @@ describe('Clones table', () => {
     const detailsButton = within(rows[1]).getByRole('button', {
       name: /details/i,
     });
-    detailsButton.click();
+    await user.click(detailsButton);
 
     // Multiple clones tables exist (one per AWS image), get the first one (which has clones)
     const clonesTable = await screen.findAllByTestId('clones-table');
