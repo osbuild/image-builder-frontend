@@ -69,7 +69,7 @@
     "@testing-library/react": "12.1.5",
     "@testing-library/user-event": "14.4.3",
     "@types/jest": "^29.5.3",
-    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
     "@typescript-eslint/parser": "^6.2.1",
     "babel-jest": "29.6.2",
     "babel-plugin-dual-import": "1.2.1",
