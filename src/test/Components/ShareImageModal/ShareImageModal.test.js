@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '@testing-library/jest-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
@@ -49,18 +49,18 @@ describe('Create Share To Regions Modal', () => {
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(async () => user.click(selectToggle));
+    user.click(selectToggle);
 
-    const usEast2 = screen.getByRole('option', {
+    const usEast2 = await screen.findByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    await user.click(usEast2);
-    expect(shareButton).toBeEnabled();
+    user.click(usEast2);
+    await waitFor(() => expect(shareButton).toBeEnabled());
 
     const clearAllButton = screen.getByRole('button', { name: /clear all/i });
-    clearAllButton.click();
-    expect(shareButton).toBeDisabled();
+    user.click(clearAllButton);
+    await waitFor(() => expect(shareButton).toBeDisabled());
 
     invalidAlert = screen.getByText(
       /select at least one region to share to\./i
@@ -105,10 +105,10 @@ describe('Create Share To Regions Modal', () => {
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(async () => userEvent.click(selectToggle));
+    userEvent.click(selectToggle);
 
     // parent region disabled
-    const usEast1 = screen.getByRole('option', {
+    const usEast1 = await screen.findByRole('option', {
       name: /us-east-1 us east \(n. virginia\)/i,
     });
     expect(usEast1).toHaveClass('pf-m-disabled');
@@ -133,7 +133,7 @@ describe('Create Share To Regions Modal', () => {
 
     // close the select again to avoid state update
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(async () => userEvent.click(selectToggle));
+    await userEvent.click(selectToggle);
   });
 
   test('cloning an image results in successful store updates', async () => {
@@ -144,13 +144,13 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
-    await act(async () => user.click(selectToggle));
+    user.click(selectToggle);
 
-    const usEast2 = screen.getByRole('option', {
+    const usEast2 = await screen.findByRole('option', {
       name: /us-east-2 us east \(ohio\)/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    await act(async () => user.click(usEast2));
+    user.click(usEast2);
 
     const mockResponse = {
       id: '123e4567-e89b-12d3-a456-426655440000',
@@ -159,16 +159,14 @@ describe('Create Share To Regions Modal', () => {
       return Promise.resolve(mockResponse);
     });
 
-    const shareButton = screen.getByRole('button', { name: /share/i });
-    expect(shareButton).toBeEnabled();
-    await act(async () => shareButton.click());
+    const shareButton = await screen.findByRole('button', { name: /share/i });
+    await waitFor(() => expect(shareButton).toBeEnabled());
+    user.click(shareButton);
 
-    expect(cloneImage).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(cloneImage).toHaveBeenCalledTimes(1));
 
     // returns back to the landing page
-    await waitFor(() =>
-      expect(router.state.location.pathname).toBe('/insights/image-builder')
-    );
+    expect(router.state.location.pathname).toBe('/insights/image-builder');
 
     // Clone has been added to its parent's list of clones
     expect(
