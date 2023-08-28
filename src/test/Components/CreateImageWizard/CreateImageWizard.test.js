@@ -114,6 +114,7 @@ beforeAll(() => {
 afterEach(() => {
   jest.clearAllMocks();
   router = undefined;
+  server.resetHandlers();
 });
 
 describe('Create Image Wizard', () => {
@@ -319,13 +320,12 @@ describe('Step Upload to AWS', () => {
   });
 
   test('component renders error state correctly', async () => {
-    await setUp();
     server.use(
       rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
         res(ctx.status(500))
       )
     );
-
+    await setUp();
     await screen.findByText(
       /sources cannot be reached, try again later or enter an aws account id manually\./i
     );

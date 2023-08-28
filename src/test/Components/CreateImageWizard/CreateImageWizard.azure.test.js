@@ -3,9 +3,12 @@ import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { rest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
+import { PROVISIONING_API } from '../../../constants';
+import { server } from '../../mocks/server';
 import {
   clickBack,
   clickNext,
@@ -49,6 +52,17 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 let router = undefined;
 
+beforeAll(() => {
+  // scrollTo is not defined in jsdom
+  window.HTMLElement.prototype.scrollTo = function () {};
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+  router = undefined;
+  server.resetHandlers();
+});
+
 describe('Step Upload to Azure', () => {
   const getSourceDropdown = async () => {
     const sourceDropdown = await screen.findByRole('textbox', {
@@ -59,16 +73,6 @@ describe('Step Upload to Azure', () => {
 
     return sourceDropdown;
   };
-
-  beforeAll(() => {
-    // scrollTo is not defined in jsdom
-    window.HTMLElement.prototype.scrollTo = function () {};
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-    router = undefined;
-  });
 
   const user = userEvent.setup();
   const setUp = async () => {
@@ -222,5 +226,21 @@ describe('Step Upload to Azure', () => {
     expect(groups).toBeInTheDocument();
     expect(screen.getByLabelText('Resource group theirGroup2')).toBeVisible();
   });
-  // set test timeout on 10 seconds
+
+  test('component renders error state correctly', async () => {
+    server.use(
+      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
+        res(ctx.status(500))
+      )
+    );
+
+    setUp();
+
+    await screen.findByText(
+      /Sources cannot be reached, try again later or enter an account info for upload manually\./i
+    );
+    //
+  });
+
+  // set test timeout to 15 seconds
 }, 15000);
