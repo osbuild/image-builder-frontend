@@ -2,7 +2,7 @@ import React from 'react';
 
 import '@testing-library/jest-dom';
 
-import { act, screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import api from '../../../api.js';
@@ -69,11 +69,11 @@ jest
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);
-  await act(async () => {
-    screen
-      .getByRole('button', { name: /search button for available packages/i })
-      .click();
-  });
+  user.click(
+    await screen.findByRole('button', {
+      name: /search button for available packages/i,
+    })
+  );
 };
 
 const searchForChosenPackages = async (searchbox, searchTerm) => {
@@ -119,44 +119,37 @@ describe('Step Packages', () => {
       ));
 
       // select aws as upload destination
-      const awsTile = screen.getByTestId('upload-aws');
-      await act(async () => {
-        awsTile.click();
-        await clickNext();
-      });
+      await user.click(await screen.findByTestId('upload-aws'));
+      await clickNext();
 
       // aws step
-      const manualRadio = screen.getByRole('radio', {
-        name: /manually enter an account id\./i,
-      });
-      manualRadio.click();
-      const aai = screen.getByTestId('aws-account-id');
-      await act(async () => {
-        await user.type(aai, '012345678901');
-        await clickNext();
-      });
+      user.click(
+        screen.getByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
+      );
+      await user.type(
+        await screen.findByTestId('aws-account-id'),
+        '012345678901'
+      );
+      await clickNext();
       // skip registration
       await screen.findByRole('textbox', {
         name: 'Select activation key',
       });
 
-      const registerLaterRadio = screen.getByTestId('registration-radio-later');
-      await act(async () => {
-        await user.click(registerLaterRadio);
-        await clickNext();
-        // skip fsc
-        await clickNext();
-      });
+      user.click(await screen.findByTestId('registration-radio-later'));
+      await clickNext();
+      // skip fsc
+      await clickNext();
     };
 
     test('clicking Next loads Image name', async () => {
       await setUp();
 
-      await act(async () => {
-        await clickNext();
-      });
+      await clickNext();
 
-      screen.getByRole('heading', {
+      await screen.findByRole('heading', {
         name: 'Details',
       });
     });
@@ -164,9 +157,7 @@ describe('Step Packages', () => {
     test('clicking Back loads file system configuration', async () => {
       await setUp();
 
-      await act(async () => {
-        await clickBack();
-      });
+      await clickBack();
 
       screen.getByRole('heading', { name: /file system configuration/i });
     });
@@ -180,12 +171,12 @@ describe('Step Packages', () => {
     test('should display search bar and button', async () => {
       await setUp();
 
-      const sapi = screen.getByTestId('search-available-pkgs-input');
-      await act(async () => {
-        await user.type(sapi, 'test');
-      });
+      await user.type(
+        await screen.findByTestId('search-available-pkgs-input'),
+        'test'
+      );
 
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: 'Search button for available packages',
       });
     });
@@ -203,16 +194,14 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      await user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
       expect(firstItem).toHaveTextContent('testsummary for test package');
@@ -226,29 +215,15 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      const apt = screen.getByTestId('available-pkgs-testPkg');
-      await act(async () => {
-        apt.click();
-      });
-      const bas = screen.getByRole('button', { name: /Add selected/ });
-      await act(async () => {
-        bas.click();
-      });
+      await user.click(await screen.findByTestId('available-pkgs-testPkg'));
+      await user.click(screen.getByRole('button', { name: /Add selected/ }));
 
-      const spt = screen.getByTestId('selected-pkgs-testPkg');
-      await act(async () => {
-        spt.click();
-      });
-      const brs = screen.getByRole('button', { name: /Remove selected/ });
-      await act(async () => {
-        brs.click();
-      });
+      user.click(screen.getByTestId('selected-pkgs-testPkg'));
+      user.click(screen.getByRole('button', { name: /Remove selected/ }));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -267,20 +242,12 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      const baa = screen.getByRole('button', { name: /Add all/ });
-      await act(async () => {
-        baa.click();
-      });
-      const bra = screen.getByRole('button', { name: /Remove all/ });
-      await act(async () => {
-        bra.click();
-      });
+      user.click(screen.getByRole('button', { name: /Add all/ }));
+      await user.click(screen.getByRole('button', { name: /Remove all/ }));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -299,72 +266,39 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
-      const baa = screen.getByRole('button', { name: /Add all/ });
-      await act(async () => {
-        baa.click();
-      });
+      user.click(screen.getByRole('button', { name: /Add all/ }));
 
       // remove a single package
-      const splt = screen.getByTestId('selected-pkgs-lib-test');
-      await act(async () => {
-        splt.click();
-      });
-      const brs = screen.getByRole('button', { name: /Remove selected/ });
-      await act(async () => {
-        brs.click();
-      });
+      await user.click(await screen.findByTestId('selected-pkgs-lib-test'));
+      user.click(screen.getByRole('button', { name: /Remove selected/ }));
 
       // skip name page
-      const bn1 = screen.getByRole('button', { name: /Next/ });
-      await act(async () => {
-        bn1.click();
-      });
+      clickNext();
 
       // review page
-      const bn2 = screen.getByRole('button', { name: /Next/ });
-      await act(async () => {
-        bn2.click();
-      });
+      clickNext();
 
       // await screen.findByTestId('chosen-packages-count');
       let chosen = await screen.findByTestId('chosen-packages-count');
       expect(chosen).toHaveTextContent('2');
 
       // remove another package
-      const bb1 = screen.getByRole('button', { name: /Back/ });
-      await act(async () => {
-        bb1.click();
-      });
-      const bb2 = screen.getByRole('button', { name: /Back/ });
-      await act(async () => {
-        bb2.click();
-      });
+      clickBack();
+      clickBack();
       await screen.findByTestId('search-available-pkgs-input');
-      const op = screen.getByRole('option', {
-        name: /summary for test package/,
-      });
-      await act(async () => {
-        op.click();
-      });
-      const brs2 = screen.getByRole('button', { name: /Remove selected/ });
-      await act(async () => {
-        brs2.click();
-      });
+      user.click(
+        screen.getByRole('option', {
+          name: /summary for test package/,
+        })
+      );
+      user.click(screen.getByRole('button', { name: /Remove selected/ }));
 
       // review page
-      const n1 = screen.getByRole('button', { name: /Next/ });
-      await act(async () => {
-        n1.click();
-      });
-      const n2 = screen.getByRole('button', { name: /Next/ });
-      await act(async () => {
-        n2.click();
-      });
+      clickNext();
+      clickNext();
 
       // await screen.findByTestId('chosen-packages-count');
       chosen = await screen.findByTestId('chosen-packages-count');
@@ -377,12 +311,10 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'asdf');
-      screen.getByText('No results found');
+      await screen.findByText('No results found');
     });
 
     test('should display empty available state on failed search after a successful search', async () => {
@@ -391,19 +323,19 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      screen
-        .getByRole('button', { name: /clear available packages search/i })
-        .click();
+      user.click(
+        await screen.findByRole('button', {
+          name: /clear available packages search/i,
+        })
+      );
 
       await searchForAvailablePackages(searchbox, 'asdf');
 
-      screen.getByText('No results found');
+      await screen.findByText('No results found');
     });
 
     test('should display empty chosen state on failed search', async () => {
@@ -413,12 +345,12 @@ describe('Step Packages', () => {
       const searchboxChosen = screen.getAllByRole('textbox')[1];
 
       await waitFor(() => expect(searchboxAvailable).toBeEnabled());
-      searchboxAvailable.click();
+      user.click(searchboxAvailable);
       await searchForAvailablePackages(searchboxAvailable, 'test');
 
-      screen.getByRole('button', { name: /Add all/ }).click();
+      user.click(await screen.findByRole('button', { name: /Add all/ }));
 
-      searchboxChosen.click();
+      user.click(searchboxChosen);
       await user.type(searchboxChosen, 'asdf');
 
       expect(screen.getByText('No packages found')).toBeInTheDocument();
@@ -432,7 +364,7 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       const getPackages = jest
         .spyOn(api, 'getPackages')
@@ -443,7 +375,7 @@ describe('Step Packages', () => {
         });
 
       await searchForAvailablePackages(searchbox, 'testPkg');
-      expect(getPackages).toHaveBeenCalledTimes(2);
+      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
 
       screen.getByText('Over 100 results found. Refine your search.');
       screen.getByText('Too many results to display');
@@ -455,7 +387,7 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       const getPackages = jest
         .spyOn(api, 'getPackages')
@@ -466,7 +398,7 @@ describe('Step Packages', () => {
         });
 
       await searchForAvailablePackages(searchbox, 'testPkg-128');
-      expect(getPackages).toHaveBeenCalledTimes(2);
+      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getByRole(
@@ -484,14 +416,14 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       const getPackages = jest
         .spyOn(api, 'getPackages')
         .mockImplementation(() => Promise.resolve(mockPkgResultAlpha));
 
       await searchForAvailablePackages(searchbox, 'test');
-      expect(getPackages).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(1));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -511,21 +443,25 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0];
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
 
-      screen
-        .getByRole('button', { name: /clear available packages search/i })
-        .click();
+      user.click(
+        await screen.findByRole('button', {
+          name: /clear available packages search/i,
+        })
+      );
 
-      screen.getByText('Search above to add additionalpackages to your image');
+      await screen.findByText(
+        'Search above to add additionalpackages to your image'
+      );
     });
 
     test('chosen packages can be reset after filtering', async () => {
@@ -534,25 +470,26 @@ describe('Step Packages', () => {
       const availableSearchbox = screen.getAllByRole('textbox')[0];
 
       await waitFor(() => expect(availableSearchbox).toBeEnabled());
-      availableSearchbox.click();
+      user.click(availableSearchbox);
 
       await searchForAvailablePackages(availableSearchbox, 'test');
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
-      expect(availablePackagesItems).toHaveLength(3);
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
+      await waitFor(() => expect(availablePackagesItems).toHaveLength(3));
 
-      screen.getByRole('button', { name: /Add all/ }).click();
+      user.click(await screen.findByRole('button', { name: /Add all/ }));
 
       const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
-      let chosenPackagesItems =
-        within(chosenPackagesList).getAllByRole('option');
-      expect(chosenPackagesItems).toHaveLength(3);
+      let chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
+        'option'
+      );
+      await waitFor(() => expect(chosenPackagesItems).toHaveLength(3));
 
       const chosenSearchbox = screen.getAllByRole('textbox')[1];
-      chosenSearchbox.click();
+      await user.click(chosenSearchbox);
       await searchForChosenPackages(chosenSearchbox, 'lib');
       chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
         'option'
@@ -560,11 +497,15 @@ describe('Step Packages', () => {
       // eslint-disable-next-line jest-dom/prefer-in-document
       expect(chosenPackagesItems).toHaveLength(1);
 
-      screen
-        .getByRole('button', { name: /clear chosen packages search/i })
-        .click();
-      chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-      expect(chosenPackagesItems).toHaveLength(3);
+      await user.click(
+        await screen.findByRole('button', {
+          name: /clear chosen packages search/i,
+        })
+      );
+      chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
+        'option'
+      );
+      await waitFor(() => expect(chosenPackagesItems).toHaveLength(3));
     });
   });
 
@@ -578,20 +519,15 @@ describe('Step Packages', () => {
       ));
 
       // select aws as upload destination
-      const awsTile = screen.getByTestId('upload-aws');
-      await act(async () => {
-        awsTile.click();
-        await clickNext();
-      });
+      user.click(screen.getByTestId('upload-aws'));
+      await clickNext();
 
       // aws step
       await user.click(
         screen.getByRole('radio', { name: /manually enter an account id\./i })
       );
       await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-      await act(async () => {
-        await clickNext();
-      });
+      await clickNext();
       // skip registration
       await screen.findByRole('textbox', {
         name: 'Select activation key',
@@ -599,12 +535,9 @@ describe('Step Packages', () => {
 
       const registerLaterRadio = screen.getByTestId('registration-radio-later');
       await user.click(registerLaterRadio);
-      await act(async () => {
-        await clickNext();
-
-        // skip fsc
-        await clickNext();
-      });
+      await clickNext();
+      // skip fsc
+      await clickNext();
     };
 
     test('search results should be sorted with most relevant results first', async () => {
@@ -619,9 +552,7 @@ describe('Step Packages', () => {
       //const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
@@ -644,17 +575,15 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      await act(async () => {
-        searchbox.click();
-      });
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      screen.getByTestId('available-pkgs-testPkg').click();
-      screen.getByRole('button', { name: /Add selected/ }).click();
+      user.click(await screen.findByTestId('available-pkgs-testPkg'));
+      user.click(screen.getByRole('button', { name: /Add selected/ }));
 
-      screen.getByTestId('selected-pkgs-testPkg').click();
-      screen.getByRole('button', { name: /Remove selected/ }).click();
+      user.click(await screen.findByTestId('selected-pkgs-testPkg'));
+      user.click(screen.getByRole('button', { name: /Remove selected/ }));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -673,17 +602,17 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      screen.getByRole('button', { name: /Add all/ }).click();
-      screen.getByRole('button', { name: /Remove all/ }).click();
+      user.click(screen.getByRole('button', { name: /Add all/ }));
+      user.click(screen.getByRole('button', { name: /Remove all/ }));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
       expect(firstItem).toHaveTextContent('testsummary for test package');
@@ -697,22 +626,22 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
-      screen.getByRole('button', { name: /Add all/ }).click();
+      user.click(screen.getByRole('button', { name: /Add all/ }));
 
       // remove a single package
-      screen.getByTestId('selected-pkgs-lib-test').click();
-      screen.getByRole('button', { name: /Remove selected/ }).click();
+      user.click(await screen.findByTestId('selected-pkgs-lib-test'));
+      user.click(screen.getByRole('button', { name: /Remove selected/ }));
       // skip Custom repositories page
-      screen.getByRole('button', { name: /Next/ }).click();
+      clickNext();
 
       // skip name page
-      screen.getByRole('button', { name: /Next/ }).click();
+      clickNext();
 
       // review page
-      screen.getByRole('button', { name: /Next/ }).click();
+      clickNext();
 
       // await screen.findByTestId('chosen-packages-count');
       const chosen = await screen.findByTestId('chosen-packages-count');
@@ -725,7 +654,7 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'asdf');
 
@@ -739,12 +668,12 @@ describe('Step Packages', () => {
       const searchboxChosen = screen.getAllByRole('textbox')[1];
 
       await waitFor(() => expect(searchboxAvailable).toBeEnabled());
-      searchboxAvailable.click();
+      user.click(searchboxAvailable);
       await searchForAvailablePackages(searchboxAvailable, 'test');
 
-      screen.getByRole('button', { name: /Add all/ }).click();
+      user.click(screen.getByRole('button', { name: /Add all/ }));
 
-      searchboxChosen.click();
+      user.click(searchboxChosen);
       await user.type(searchboxChosen, 'asdf');
 
       expect(screen.getByText('No packages found')).toBeInTheDocument();
@@ -758,7 +687,7 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       const getPackages = jest
         .spyOn(api, 'getPackagesContentSources')
@@ -767,7 +696,7 @@ describe('Step Packages', () => {
         );
 
       await searchForAvailablePackages(searchbox, 'test');
-      expect(getPackages).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(1));
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
@@ -787,21 +716,23 @@ describe('Step Packages', () => {
       const searchbox = screen.getAllByRole('textbox')[0];
 
       await waitFor(() => expect(searchbox).toBeEnabled());
-      searchbox.click();
+      user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
 
-      screen
-        .getByRole('button', { name: /clear available packages search/i })
-        .click();
+      user.click(
+        screen.getByRole('button', { name: /clear available packages search/i })
+      );
 
-      screen.getByText('Search above to add additionalpackages to your image');
+      await screen.findByText(
+        'Search above to add additionalpackages to your image'
+      );
     });
 
     test('chosen packages can be reset after filtering', async () => {
@@ -810,35 +741,40 @@ describe('Step Packages', () => {
       const availableSearchbox = screen.getAllByRole('textbox')[0];
 
       await waitFor(() => expect(availableSearchbox).toBeEnabled());
-      availableSearchbox.click();
+      user.click(availableSearchbox);
 
       await searchForAvailablePackages(availableSearchbox, 'test');
 
       const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
 
-      screen.getByRole('button', { name: /Add all/ }).click();
+      user.click(screen.getByRole('button', { name: /Add all/ }));
 
       const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
-      let chosenPackagesItems =
-        within(chosenPackagesList).getAllByRole('option');
+      let chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
+        'option'
+      );
       expect(chosenPackagesItems).toHaveLength(3);
 
       const chosenSearchbox = screen.getAllByRole('textbox')[1];
-      chosenSearchbox.click();
+      user.click(chosenSearchbox);
       await searchForChosenPackages(chosenSearchbox, 'lib');
       chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
       // eslint-disable-next-line jest-dom/prefer-in-document
       expect(chosenPackagesItems).toHaveLength(1);
 
-      screen
-        .getByRole('button', { name: /clear chosen packages search/i })
-        .click();
-      chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-      expect(chosenPackagesItems).toHaveLength(3);
+      await user.click(
+        await screen.findByRole('button', {
+          name: /clear chosen packages search/i,
+        })
+      );
+      chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
+        'option'
+      );
+      await waitFor(() => expect(chosenPackagesItems).toHaveLength(3));
     });
   });
 });
@@ -849,43 +785,34 @@ describe('Step Custom repositories', () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-      await clickNext();
-    });
+    user.click(await screen.findByTestId('upload-aws'));
+    await clickNext();
 
     // aws step
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-    });
+
+    await clickNext();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
-    await user.click(registerLaterRadio);
-    await act(async () => {
-      await clickNext();
-
-      // skip fsc
-      await clickNext();
-
-      // skip packages
-      await clickNext();
-    });
+    user.click(screen.getByLabelText('Register later'));
+    await clickNext();
+    // skip fsc
+    await clickNext();
+    // skip packages
+    await clickNext();
   };
 
   test('selected repositories stored in and retrieved from form state', async () => {
     await setUp();
 
-    const getFirstRepoCheckbox = () =>
-      screen.findByRole('checkbox', {
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
         name: /select row 0/i,
       });
     let firstRepoCheckbox = await getFirstRepoCheckbox();
@@ -894,10 +821,8 @@ describe('Step Custom repositories', () => {
     await user.click(firstRepoCheckbox);
     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await act(async () => {
-      await clickNext();
-      clickBack();
-    });
+    await clickNext();
+    clickBack();
 
     firstRepoCheckbox = await getFirstRepoCheckbox();
     expect(firstRepoCheckbox.checked).toEqual(true);
@@ -906,10 +831,11 @@ describe('Step Custom repositories', () => {
   test('correct number of repositories is fetched', async () => {
     await setUp();
 
-    const selectButton = await screen.findByRole('button', {
-      name: /select/i,
-    });
-    await user.click(selectButton);
+    await user.click(
+      await screen.findByRole('button', {
+        name: /select/i,
+      })
+    );
 
     screen.getByText(/select all \(1015 items\)/i);
   });
@@ -933,12 +859,12 @@ describe('Step Custom repositories', () => {
     expect(rows).toHaveLength(1);
 
     // clear filter
-    screen.getByRole('button', { name: /reset/i }).click();
+    await user.click(await screen.findByRole('button', { name: /reset/i }));
 
     rows = getRows();
     // remove first row from list since it is just header labels
     rows.shift();
 
-    expect(rows).toHaveLength(10);
+    await waitFor(() => expect(rows).toHaveLength(10));
   });
 });

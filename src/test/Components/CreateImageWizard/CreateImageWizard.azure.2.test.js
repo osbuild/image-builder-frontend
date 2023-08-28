@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
@@ -54,11 +55,12 @@ describe('Step Upload to Azure', () => {
     jest.clearAllMocks();
   });
 
+  const user = userEvent.setup();
+
   const setUp = async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    // select aws as upload destination
-    const azureTile = screen.getByTestId('upload-azure');
-    azureTile.click();
+    // select Azure as upload destination
+    await user.click(screen.getByTestId('upload-azure'));
 
     await clickNext();
 
