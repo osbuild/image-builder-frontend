@@ -77,17 +77,17 @@ export const renderWithProvider = (
 
 export const clickBack = async () => {
   const user = userEvent.setup();
-  await user.click(screen.getByRole('button', { name: /Back/ }));
+  await user.click(await screen.findByRole('button', { name: /Back/ }));
 };
 
 export const clickNext = async () => {
   const user = userEvent.setup();
-  await user.click(screen.getByRole('button', { name: /Next/ }));
+  await user.click(await screen.findByRole('button', { name: /Next/ }));
 };
 
 export const clickCancel = async () => {
   const user = userEvent.setup();
-  await user.click(screen.getByRole('button', { name: /Cancel/ }));
+  await user.click(await screen.findByRole('button', { name: /Cancel/ }));
 };
 
 export const getNextButton = async () => {
