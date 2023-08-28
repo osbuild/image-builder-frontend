@@ -16,6 +16,7 @@ const Target = ({ composeId }) => {
     'vsphere-ova': 'VMWare vSphere',
     'guest-image': 'Virtualization - Guest image',
     'image-installer': 'Bare metal - Installer',
+    wsl: 'Windows Subsystem for Linux',
   };
 
   let target;
