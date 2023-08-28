@@ -1,7 +1,9 @@
 import React from 'react';
 
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import ImageBuilder from './AppEntry';
 
-ReactDOM.render(<ImageBuilder />, document.getElementById('root'));
+const root = createRoot(document.getElementById('root'));
+
+root.render(<ImageBuilder />);
