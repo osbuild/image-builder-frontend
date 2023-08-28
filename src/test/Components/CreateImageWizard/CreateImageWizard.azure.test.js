@@ -1,7 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
@@ -74,8 +74,7 @@ describe('Step Upload to Azure', () => {
   const setUp = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
     // select Azure as upload destination
-    const azureTile = screen.getByTestId('upload-azure');
-    azureTile.click();
+    user.click(await screen.findByTestId('upload-azure'));
 
     await clickNext();
 
@@ -87,7 +86,7 @@ describe('Step Upload to Azure', () => {
   test('clicking Next loads Registration', async () => {
     await setUp();
 
-    await user.click(screen.getByTestId('azure-radio-manual'));
+    await user.click(await screen.findByTestId('azure-radio-manual'));
     // Randomly generated GUID
     await user.type(
       screen.getByTestId('azure-tenant-id-manual'),
@@ -101,9 +100,7 @@ describe('Step Upload to Azure', () => {
       screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
-    await act(async () => {
-      await clickNext();
-    });
+    clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -130,14 +127,15 @@ describe('Step Upload to Azure', () => {
 
   test('azure step basics works', async () => {
     await setUp();
+    const nextButton = await getNextButton();
 
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
     expect(screen.getByTestId('azure-radio-source')).toBeChecked();
 
     await user.click(screen.getByTestId('azure-radio-manual'));
     expect(screen.getByTestId('azure-radio-manual')).toBeChecked();
 
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
 
     const tenantId = screen.getByTestId('azure-tenant-id-manual');
     expect(tenantId).toHaveValue('');
@@ -152,11 +150,11 @@ describe('Step Upload to Azure', () => {
     expect(resourceGroup).toBeEnabled();
     await user.type(resourceGroup, 'testGroup');
 
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    screen.getByTestId('azure-radio-source').click();
+    user.click(screen.getByTestId('azure-radio-source'));
 
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
     const sourceDropdown = await getSourceDropdown();
 
@@ -164,26 +162,28 @@ describe('Step Upload to Azure', () => {
     expect(screen.getByTestId('azure-tenant-id-source')).toHaveValue('');
     expect(screen.getByTestId('azure-subscription-id-source')).toHaveValue('');
 
-    sourceDropdown.click();
+    user.click(sourceDropdown);
 
-    const source = await screen.findByRole('option', {
-      name: /azureSource1/i,
-    });
-    source.click();
+    user.click(
+      await screen.findByRole('option', {
+        name: /azureSource1/i,
+      })
+    );
     // wait for fetching the upload info
     await waitFor(() =>
       expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
     );
 
-    const resourceGroupDropdown = screen.getByRole('textbox', {
-      name: /select resource group/i,
-    });
-    await user.click(resourceGroupDropdown);
+    await user.click(
+      screen.getByRole('textbox', {
+        name: /select resource group/i,
+      })
+    );
     const groups = screen.getAllByLabelText(/^Resource group/);
     expect(groups).toHaveLength(2);
     await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
 
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(nextButton).not.toHaveClass('pf-m-disabled');
   }, 10000);
 
   test('handles change of selected Source', async () => {
@@ -191,30 +191,33 @@ describe('Step Upload to Azure', () => {
 
     const sourceDropdown = await getSourceDropdown();
 
-    sourceDropdown.click();
-    const source = await screen.findByRole('option', {
-      name: /azureSource1/i,
-    });
-    source.click();
+    user.click(sourceDropdown);
+    user.click(
+      await screen.findByRole('option', {
+        name: /azureSource1/i,
+      })
+    );
     await waitFor(() =>
       expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
     );
 
-    sourceDropdown.click();
-    const source2 = await screen.findByRole('option', {
-      name: /azureSource2/i,
-    });
-    source2.click();
+    user.click(sourceDropdown);
+    user.click(
+      await screen.findByRole('option', {
+        name: /azureSource2/i,
+      })
+    );
     await waitFor(() =>
       expect(screen.getByTestId('azure-tenant-id-source')).toHaveValue(
         '73d5694c-7a28-417e-9fca-55840084f508'
       )
     );
 
-    const resourceGroupDropdown = screen.getByRole('textbox', {
-      name: /select resource group/i,
-    });
-    await user.click(resourceGroupDropdown);
+    await user.click(
+      screen.getByRole('textbox', {
+        name: /select resource group/i,
+      })
+    );
     const groups = screen.getByLabelText(/^Resource group/);
     expect(groups).toBeInTheDocument();
     expect(screen.getByLabelText('Resource group theirGroup2')).toBeVisible();

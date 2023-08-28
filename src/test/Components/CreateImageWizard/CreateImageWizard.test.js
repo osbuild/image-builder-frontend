@@ -3,7 +3,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import {
-  act,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -37,7 +36,7 @@ const routes = [
     element: <CreateImageWizard />,
   },
   {
-    path: 'insights/image-builder/share/:composeId',
+    path: 'insights/image-builder/share /:composeId',
     element: <ShareImageModal />,
   },
 ];
@@ -82,18 +81,19 @@ jest.mock('@unleash/proxy-client-react', () => ({
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);
-  await act(async () => {
-    screen
-      .getByRole('button', { name: /search button for available packages/i })
-      .click();
-  });
+  user.click(
+    await screen.findByRole('button', {
+      name: /search button for available packages/i,
+    })
+  );
 };
 
 const switchToAWSManual = () => {
+  const user = userEvent.setup();
   const manualRadio = screen.getByRole('radio', {
     name: /manually enter an account id\./i,
   });
-  manualRadio.click();
+  user.click(manualRadio);
   return manualRadio;
 };
 
@@ -138,16 +138,15 @@ describe('Step Image output', () => {
   const setUp = () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
-    const imageOutputLink = screen.getByRole('button', {
-      name: 'Image output',
-    });
-
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
+    user.click(screen.getByTestId('upload-aws'));
 
     // load from sidebar
-    imageOutputLink.click();
+    user.click(
+      screen.getByRole('button', {
+        name: 'Image output',
+      })
+    );
   };
 
   test('clicking Next loads Upload to AWS', async () => {
@@ -156,7 +155,7 @@ describe('Step Image output', () => {
     await clickNext();
 
     switchToAWSManual();
-    screen.getByText('AWS account ID');
+    await screen.findByText('AWS account ID');
   });
 
   test('clicking Cancel loads landing page', async () => {
@@ -180,15 +179,15 @@ describe('Step Image output', () => {
 
     const awsTile = screen.getByTestId('upload-aws');
     // this has already been clicked once in the setup function
-    awsTile.click(); // deselect
+    user.click(awsTile); // deselect
 
     const googleTile = screen.getByTestId('upload-google');
-    googleTile.click(); // select
-    googleTile.click(); // deselect
+    user.click(googleTile); // select
+    user.click(googleTile); // deselect
 
     const azureTile = screen.getByTestId('upload-azure');
-    azureTile.click(); // select
-    azureTile.click(); // deselect
+    user.click(azureTile); // select
+    user.click(azureTile); // deselect
 
     expect(await getNextButton()).toBeDisabled();
   });
@@ -279,8 +278,7 @@ describe('Step Upload to AWS', () => {
     ));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
+    user.click(screen.getByTestId('upload-aws'));
 
     await clickNext();
 
@@ -297,9 +295,7 @@ describe('Step Upload to AWS', () => {
       await screen.findByTestId('aws-account-id'),
       '012345678901'
     );
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -311,9 +307,7 @@ describe('Step Upload to AWS', () => {
   test('clicking Back loads Release', async () => {
     await setUp();
 
-    await act(async () => {
-      await clickBack();
-    });
+    await clickBack();
 
     screen.getByTestId('upload-aws');
   });
@@ -327,7 +321,7 @@ describe('Step Upload to AWS', () => {
   test('component renders error state correctly', async () => {
     await setUp();
     server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (_req, res, ctx) =>
+      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
         res(ctx.status(500))
       )
     );
@@ -339,59 +333,58 @@ describe('Step Upload to AWS', () => {
 
   test('validation works', async () => {
     await setUp();
+    const nextButton = await getNextButton();
 
     // jsdom seems to render the next button differently than the browser. The
     // next button is enabled briefly during the test. This does not occur in
     // the browser. Using findByRole instead of getByRole to get the next
     // button allows us to capture its 'final' state.
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
 
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
 
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
 
     const awsAccId = screen.getByTestId('aws-account-id');
     expect(awsAccId).toHaveValue('');
     expect(awsAccId).toBeEnabled();
     await user.type(awsAccId, '012345678901');
 
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    screen
-      .getByRole('radio', { name: /use an account configured from sources\./i })
-      .click();
+    user.click(
+      screen.getByRole('radio', {
+        name: /use an account configured from sources\./i,
+      })
+    );
 
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
     const sourceDropdown = await getSourceDropdown();
-    sourceDropdown.click();
+    user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    source.click();
+    user.click(source);
 
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
   });
 
   test('compose request share_with_sources field is correct', async () => {
     await setUp();
 
     const sourceDropdown = await getSourceDropdown();
-    sourceDropdown.click();
+    user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    await act(async () => {
-      source.click();
-    });
+    user.click(source);
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // registration
     await screen.findByRole('textbox', {
@@ -399,18 +392,14 @@ describe('Step Upload to AWS', () => {
     });
 
     const registerLaterRadio = screen.getByLabelText('Register later');
-    await act(async () => {
-      await user.click(registerLaterRadio);
-    });
+    await user.click(registerLaterRadio);
 
     // click through to review step
-    await act(async () => {
-      await clickNext();
-      await clickNext();
-      await clickNext();
-      await clickNext();
-      await clickNext();
-    });
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
 
     const composeImage = jest
       .spyOn(api, 'composeImage')
@@ -438,13 +427,10 @@ describe('Step Upload to AWS', () => {
         return Promise.resolve({ id });
       });
 
-    const create = screen.getByRole('button', { name: /Create/ });
-    await act(async () => {
-      create.click();
-    });
+    user.click(screen.getByRole('button', { name: /Create/ }));
 
     // API request sent to backend
-    expect(composeImage).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(composeImage).toHaveBeenCalledTimes(1));
 
     // returns back to the landing page
     await waitFor(() =>
@@ -462,9 +448,8 @@ describe('Step Upload to Google', () => {
   const setUp = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
-    // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-google');
-    awsTile.click();
+    // select gcp as upload destination
+    user.click(screen.getByTestId('upload-google'));
 
     await clickNext();
 
@@ -477,9 +462,7 @@ describe('Step Upload to Google', () => {
     await setUp();
 
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -529,19 +512,14 @@ describe('Step Registration', () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
+    user.click(screen.getByTestId('upload-aws'));
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -554,9 +532,7 @@ describe('Step Registration', () => {
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     screen.getByRole('heading', { name: /file system configuration/i });
   });
@@ -584,37 +560,18 @@ describe('Step Registration', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await act(async () => {
-      await user.click(activationKeyDropdown);
-    });
+    await user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await act(async () => {
-      await user.click(activationKey);
-    });
+    await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    const n1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n1.click();
-    });
-    const n2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n2.click();
-    });
-    const n3 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n3.click();
-    });
-    const n4 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n4.click();
-    });
-    const n5 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n5.click();
-    });
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -629,58 +586,31 @@ describe('Step Registration', () => {
   test('should allow registering without rhc', async () => {
     await setUp();
 
-    await act(async () => {
-      await user.click(screen.getByTestId('registration-additional-options'));
-      await user.click(screen.getByTestId('registration-checkbox-rhc'));
-    });
+    await user.click(screen.getByTestId('registration-additional-options'));
+    await user.click(screen.getByTestId('registration-checkbox-rhc'));
 
     // going back and forward when rhc isn't selected should keep additional options shown
-    const back1 = screen.getByRole('button', { name: /Back/ });
-    await act(async () => {
-      back1.click();
-    });
+    await clickBack();
     await screen.findByTestId('aws-account-id');
-    const next1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      next1.click();
-    });
+    await clickNext();
     screen.getByTestId('registration-checkbox-insights');
     screen.getByTestId('registration-checkbox-rhc');
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await act(async () => {
-      await user.click(activationKeyDropdown);
-    });
+    await user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await act(async () => {
-      await user.click(activationKey);
-    });
+    await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    const n1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n1.click();
-    });
-    const n2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n2.click();
-    });
-    const n3 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n3.click();
-    });
-    const n4 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n4.click();
-    });
-    const n5 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n5.click();
-    });
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -699,56 +629,27 @@ describe('Step Registration', () => {
     await user.click(screen.getByTestId('registration-checkbox-insights'));
 
     // going back and forward when neither rhc or insights is selected should keep additional options shown
-    const b1 = screen.getByRole('button', { name: /Back/ });
-    await act(async () => {
-      b1.click();
-    });
+    await clickBack();
     await screen.findByTestId('aws-account-id');
-    const next1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      next1.click();
-    });
+    await clickNext();
     screen.getByTestId('registration-checkbox-insights');
     screen.getByTestId('registration-checkbox-rhc');
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await act(async () => {
-      await user.click(activationKeyDropdown);
-    });
+    await user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await act(async () => {
-      await user.click(activationKey);
-    });
+    await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    const n1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n1.click();
-    });
-    const n2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n2.click();
-    });
-    const n3 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n3.click();
-    });
-    const n4 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n4.click();
-    });
-    const n5 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n5.click();
-    });
-    const exp1 = screen.getByTestId('registration-expandable');
-    await act(async () => {
-      exp1.click();
-    });
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -762,58 +663,31 @@ describe('Step Registration', () => {
 
   test('should hide input fields when clicking Register the system later', async () => {
     await setUp();
-    const p1 = waitForElementToBeRemoved(() => [
+    const removeKeyInformation = waitForElementToBeRemoved(() => [
       screen.getByTestId('subscription-activation-key'),
     ]);
 
     // click the later radio button which should remove any input fields
-    const rrl = screen.getByTestId('registration-radio-later');
-    await act(async () => {
-      rrl.click();
-    });
+    user.click(screen.getByTestId('registration-radio-later'));
 
-    await p1;
+    await removeKeyInformation;
 
-    const n1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n1.click();
-    });
-    const n2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n2.click();
-    });
-    const n3 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n3.click();
-    });
-    const n4 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n4.click();
-    });
-    const n5 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      n5.click();
-    });
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
     screen.getByText('Register the system later');
   });
 
   test('registering with rhc implies registering with insights', async () => {
     await setUp();
-    const rro = screen.getByTestId('registration-additional-options');
-    await act(async () => {
-      await user.click(rro);
-    });
+    await user.click(screen.getByTestId('registration-additional-options'));
 
-    const rci = screen.getByTestId('registration-checkbox-insights');
-    await act(async () => {
-      await user.click(rci);
-    });
+    await user.click(screen.getByTestId('registration-checkbox-insights'));
     expect(screen.getByTestId('registration-checkbox-rhc')).not.toBeChecked();
 
-    const rch = screen.getByTestId('registration-checkbox-rhc');
-    await act(async () => {
-      await user.click(rch);
-    });
+    await user.click(screen.getByTestId('registration-checkbox-rhc'));
     expect(screen.getByTestId('registration-checkbox-insights')).toBeChecked();
   });
 });
@@ -824,20 +698,16 @@ describe('Step File system configuration', () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-    });
-    await act(async () => {
-      await clickNext();
-    });
+    user.click(screen.getByTestId('upload-aws'));
+    await clickNext();
 
     // aws step
     switchToAWSManual();
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-    });
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
+    await clickNext();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -845,9 +715,7 @@ describe('Step File system configuration', () => {
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
   };
 
   test('Error validation occurs upon clicking next button', async () => {
@@ -856,13 +724,13 @@ describe('Step File system configuration', () => {
     const manuallyConfigurePartitions = screen.getByText(
       /manually configure partitions/i
     );
-    manuallyConfigurePartitions.click();
+    user.click(manuallyConfigurePartitions);
 
     const addPartition = await screen.findByTestId('file-system-add-partition');
 
     // Create duplicate partitions
-    addPartition.click();
-    addPartition.click();
+    user.click(addPartition);
+    user.click(addPartition);
 
     expect(await getNextButton()).toBeEnabled();
 
@@ -883,8 +751,14 @@ describe('Step File system configuration', () => {
     expect(rows).toHaveLength(3);
 
     // Change mountpoint of final row to /var, resolving errors
-    within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
-    within(rows[2]).getByRole('option', { name: '/var' }).click();
+    const mountPointOptions = within(rows[2]).getAllByRole('button', {
+      name: 'Options menu',
+    })[0];
+    user.click(mountPointOptions);
+    const varButton = await within(rows[2]).findByRole('option', {
+      name: '/var',
+    });
+    user.click(varButton);
 
     await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
@@ -899,18 +773,16 @@ describe('Step Details', () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-      await clickNext();
-    });
+    user.click(screen.getByTestId('upload-aws'));
+    await clickNext();
 
     // aws step
     switchToAWSManual();
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-    });
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
+    await clickNext();
     // skip registration
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -918,16 +790,14 @@ describe('Step Details', () => {
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
-    await act(async () => {
-      await clickNext();
+    await clickNext();
 
-      // skip fsc
-      await clickNext();
-      // skip packages
-      await clickNext();
-      // skip repositories
-      await clickNext();
-    });
+    // skip fsc
+    await clickNext();
+    // skip packages
+    await clickNext();
+    // skip repositories
+    await clickNext();
   };
 
   test('image name invalid for more than 63 chars', async () => {
@@ -939,9 +809,7 @@ describe('Step Details', () => {
     });
     // 101 character name
     const invalidName = 'a'.repeat(64);
-    await act(async () => {
-      await user.type(nameInput, invalidName);
-    });
+    await user.type(nameInput, invalidName);
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
     await user.clear(nameInput);
@@ -974,18 +842,16 @@ describe('Step Review', () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-      await clickNext();
-    });
+    user.click(screen.getByTestId('upload-aws'));
+    await clickNext();
 
     // aws step
     switchToAWSManual();
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-    });
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
+    await clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -994,18 +860,16 @@ describe('Step Review', () => {
     // skip registration
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
-    await act(async () => {
-      await clickNext();
-      // skip fsc
-      await clickNext();
 
-      // skip packages
-      await clickNext();
-      // skip repositories
-      await clickNext();
-      // skip name
-      await clickNext();
-    });
+    await clickNext();
+    // skip fsc
+    await clickNext();
+    // skip packages
+    await clickNext();
+    // skip repositories
+    await clickNext();
+    // skip name
+    await clickNext();
   };
 
   // eslint-disable-next-line no-unused-vars
@@ -1028,28 +892,24 @@ describe('Step Review', () => {
     await user.click(centos);
 
     // select aws as upload destination
-    const awsTile = screen.getByTestId('upload-aws');
-    await act(async () => {
-      awsTile.click();
-      await clickNext();
-    });
+    user.click(await screen.findByTestId('upload-aws'));
+    await clickNext();
 
     // aws step
     switchToAWSManual();
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    await act(async () => {
-      await clickNext();
-
-      // skip fsc
-      await clickNext();
-
-      // skip packages
-      await clickNext();
-      // skip repositories
-      await clickNext();
-      // skip name
-      await clickNext();
-    });
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
+    await clickNext();
+    // skip fsc
+    await clickNext();
+    // skip packages
+    await clickNext();
+    // skip repositories
+    await clickNext();
+    // skip name
+    await clickNext();
   };
 
   test('has 3 buttons', async () => {
@@ -1153,26 +1013,17 @@ describe('Click through all steps', () => {
     await user.click(screen.getByTestId('checkbox-guest-image'));
     await user.click(screen.getByTestId('checkbox-image-installer'));
 
-    screen.getByRole('button', { name: /Next/ }).click();
+    await clickNext();
     await user.click(
       screen.getByRole('radio', { name: /manually enter an account id\./i })
     );
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
-    const bn1 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn1.click();
-    });
+    await clickNext();
 
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    const bn2 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn2.click();
-    });
+    await clickNext();
 
-    const azm = screen.getByTestId('azure-radio-manual');
-    await act(async () => {
-      azm.click();
-    });
+    await user.click(screen.getByTestId('azure-radio-manual'));
     // Randomly generated GUID
     await user.type(
       screen.getByTestId('azure-tenant-id-manual'),
@@ -1186,10 +1037,7 @@ describe('Click through all steps', () => {
       screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
-    const bn4 = screen.getByRole('button', { name: /Next/ });
-    await act(async () => {
-      bn4.click();
-    });
+    await clickNext();
 
     // registration
     const activationKeyDropdown = await screen.findByRole('textbox', {
@@ -1202,24 +1050,29 @@ describe('Click through all steps', () => {
     await user.click(activationKey);
     screen.getByDisplayValue('name0');
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // fsc
     (await screen.findByTestId('file-system-config-radio-manual')).click();
-    const ap = await screen.findByTestId('file-system-add-partition');
-    ap.click();
-    ap.click();
+    const addPartition = await screen.findByTestId('file-system-add-partition');
+    await user.click(addPartition);
+    await user.click(addPartition);
+
     const tbody = screen.getByTestId('file-system-configuration-tbody');
     const rows = within(tbody).getAllByRole('row');
-    expect(rows).toHaveLength(3);
-    await act(async () => {
-      await clickNext();
-    });
+    await waitFor(() => expect(rows).toHaveLength(3));
+    await clickNext();
+
     // set mountpoint of final row to /var/tmp
-    within(rows[2]).getAllByRole('button', { name: 'Options menu' })[0].click();
-    within(rows[2]).getByRole('option', { name: '/var' }).click();
+    const mountPointMenu = within(rows[2]).getAllByRole('button', {
+      name: 'Options menu',
+    })[0];
+    user.click(mountPointMenu);
+
+    const varButton = await within(rows[2]).findByRole('option', {
+      name: '/var',
+    });
+    user.click(varButton);
     await waitForElementToBeRemoved(() =>
       screen.queryAllByRole('heading', {
         name: 'Danger alert: Duplicate mount point.',
@@ -1237,11 +1090,16 @@ describe('Click through all steps', () => {
       within(rows[2]).getByRole('textbox', { name: 'Size text input' }),
       '{backspace}100'
     );
-    within(rows[2]).getAllByRole('button', { name: 'Options menu' })[1].click();
-    within(rows[2]).getByRole('option', { name: 'MiB' }).click();
-    await act(async () => {
-      await clickNext();
+    const unitMenu = within(rows[2]).getAllByRole('button', {
+      name: 'Options menu',
+    })[1];
+    user.click(unitMenu);
+
+    const mibButton = await within(rows[2]).findByRole('option', {
+      name: 'MiB',
     });
+    user.click(mibButton);
+    await clickNext();
 
     screen.getByText(
       /Images built with Image Builder include all required packages/i
@@ -1252,19 +1110,13 @@ describe('Click through all steps', () => {
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
-    const bot = screen.getByRole('option', {
-      name: /test summary for test package/,
-    });
-    await act(async () => {
-      bot.click();
-    });
-    const bas = screen.getByRole('button', { name: /Add selected/ });
-    await act(async () => {
-      bas.click();
-    });
-    await act(async () => {
-      await clickNext();
-    });
+    user.click(
+      await screen.findByRole('option', {
+        name: /test summary for test package/,
+      })
+    );
+    user.click(screen.getByRole('button', { name: /Add selected/ }));
+    await clickNext();
 
     // Custom repositories
     await user.click(
@@ -1274,38 +1126,32 @@ describe('Click through all steps', () => {
       await screen.findByRole('checkbox', { name: /select row 1/i })
     );
 
-    await act(async () => {
-      await clickNext();
-      // Custom packages
-      await clickNext();
-    });
+    await clickNext();
+    // Custom packages
+    await clickNext();
 
     // Enter image name
     const nameInput = screen.getByRole('textbox', {
       name: 'Image Name',
     });
 
-    await act(async () => {
-      await user.type(nameInput, 'my-image-name');
-    });
+    await user.type(nameInput, 'my-image-name');
 
     // Enter description for image
     const descriptionInput = screen.getByRole('textbox', {
       name: /Description/,
     });
-    await act(async () => {
-      await user.type(
-        descriptionInput,
-        'this is a perfect description for image'
-      );
-      await clickNext();
-    });
+    await user.type(
+      descriptionInput,
+      'this is a perfect description for image'
+    );
+    await clickNext();
 
     // review
     const targetEnvironmentsExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    targetEnvironmentsExpandable.click();
+    user.click(targetEnvironmentsExpandable);
     await screen.findAllByText('AWS');
     await screen.findAllByText('GCP');
     await screen.findByText('VMWare vSphere (.ova)');
@@ -1315,9 +1161,7 @@ describe('Click through all steps', () => {
     const registrationExpandable = await screen.findByTestId(
       'registration-expandable'
     );
-    await act(async () => {
-      registrationExpandable.click();
-    });
+    user.click(registrationExpandable);
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Use remote host configuration (rhc) utility'
@@ -1326,9 +1170,7 @@ describe('Click through all steps', () => {
     const imageDetailsExpandable = await screen.findByTestId(
       'image-details-expandable'
     );
-    await act(async () => {
-      imageDetailsExpandable.click();
-    });
+    user.click(imageDetailsExpandable);
     await screen.findByText('my-image-name');
     await screen.findByText('this is a perfect description for image');
 
@@ -1336,19 +1178,13 @@ describe('Click through all steps', () => {
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
 
-    const brp = screen.getByTestId('repositories-popover-button');
-    await act(async () => {
-      brp.click();
-    });
+    user.click(screen.getByTestId('repositories-popover-button'));
     const repotbody = await screen.findByTestId(
       'additional-repositories-table'
     );
     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-    const fsc = screen.getByTestId('file-system-configuration-popover');
-    await act(async () => {
-      fsc.click();
-    });
+    user.click(screen.getByTestId('file-system-configuration-popover'));
     const revtbody = await screen.findByTestId(
       'file-system-configuration-tbody-review'
     );
@@ -1484,10 +1320,7 @@ describe('Click through all steps', () => {
         return Promise.resolve({ id });
       });
 
-    const create = screen.getByRole('button', { name: /Create/ });
-    await act(async () => {
-      await user.click(create);
-    });
+    await user.click(screen.getByRole('button', { name: /Create/ }));
 
     // API request sent to backend
     expect(composeImage).toHaveBeenCalledTimes(6);
@@ -1509,16 +1342,14 @@ describe('Keyboard accessibility', () => {
   };
 
   const selectAllEnvironments = () => {
-    const awsTile = screen.getByTestId('upload-aws');
-    awsTile.click();
-    const googleTile = screen.getByTestId('upload-google');
-    googleTile.click();
-    const azureTile = screen.getByTestId('upload-azure');
-    azureTile.click();
-    const virtualizationCheckbox = screen.getByRole('checkbox', {
-      name: /virtualization guest image checkbox/i,
-    });
-    virtualizationCheckbox.click();
+    user.click(screen.getByTestId('upload-aws'));
+    user.click(screen.getByTestId('upload-google'));
+    user.click(screen.getByTestId('upload-azure'));
+    user.click(
+      screen.getByRole('checkbox', {
+        name: /virtualization guest image checkbox/i,
+      })
+    );
   };
 
   test('autofocus on each step first input element', async () => {
@@ -1526,22 +1357,18 @@ describe('Keyboard accessibility', () => {
 
     // Image output
     selectAllEnvironments();
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // Target environment aws
     expect(screen.getByTestId('aws-radio-source')).toHaveFocus();
     const awsSourceDropdown = await getSourceDropdown();
-    awsSourceDropdown.click();
+    user.click(awsSourceDropdown);
     const awsSource = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    awsSource.click();
+    user.click(awsSource);
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // Target environment google
     const googleAccountRadio = screen.getByRole('radio', {
@@ -1549,27 +1376,23 @@ describe('Keyboard accessibility', () => {
     });
     expect(googleAccountRadio).toHaveFocus();
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // Target environment azure
     expect(screen.getByTestId('azure-radio-source')).toHaveFocus();
     const azureSourceDropdown = await getSourceDropdown();
-    azureSourceDropdown.click();
+    user.click(azureSourceDropdown);
     const azureSource = await screen.findByRole('option', {
       name: /azureSource1/i,
     });
-    azureSource.click();
+    user.click(azureSource);
 
     const resourceGroupDropdown = await screen.findByRole('textbox', {
       name: /select resource group/i,
     });
     await user.click(resourceGroupDropdown);
     await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // Registration
     await screen.findByText(
@@ -1584,24 +1407,16 @@ describe('Keyboard accessibility', () => {
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
     await user.click(registerLaterRadio);
 
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // File system configuration
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
 
     // Packages
-    let availablePackagesInput;
-    // eslint-disable-next-line testing-library/no-unnecessary-act
-    await act(async () => {
-      const view = screen.getByTestId('search-available-pkgs-input');
+    const view = screen.getByTestId('search-available-pkgs-input');
 
-      availablePackagesInput = within(view).getByRole('textbox', {
-        name: /search input/i,
-      });
+    const availablePackagesInput = within(view).getByRole('textbox', {
+      name: /search input/i,
     });
     await waitFor(() => expect(availablePackagesInput).toBeEnabled());
     expect(availablePackagesInput).toHaveFocus();
@@ -1613,24 +1428,20 @@ describe('Keyboard accessibility', () => {
     // Name
     const nameInput = screen.getByRole('textbox', { name: /image name/i });
     expect(nameInput).toHaveFocus();
-    await act(async () => {
-      await clickNext();
-    });
+    await clickNext();
   });
 
   test('pressing Esc closes the wizard', async () => {
     await setUp();
     // wizard needs to be interacted with for the esc key to work
-    const awsTile = screen.getByTestId('upload-aws');
-    await user.click(awsTile);
+    await user.click(screen.getByTestId('upload-aws'));
     await user.keyboard('{escape}');
     expect(router.state.location.pathname).toBe('/insights/image-builder');
   });
 
   test('pressing Enter does not advance the wizard', async () => {
     await setUp();
-    const awsTile = screen.getByTestId('upload-aws');
-    await user.click(awsTile);
+    await user.click(screen.getByTestId('upload-aws'));
     await user.keyboard('{enter}');
     screen.getByRole('heading', {
       name: /image output/i,
