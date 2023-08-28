@@ -40,6 +40,7 @@ const ImageLinkDirect = ({ imageId, isExpired, isInClonesTable }) => {
     'vsphere-ova': '.ova',
     'guest-image': '.qcow2',
     'image-installer': '.iso',
+    wsl: '.tar.gz',
   };
 
   if (uploadStatus.type === 'aws') {

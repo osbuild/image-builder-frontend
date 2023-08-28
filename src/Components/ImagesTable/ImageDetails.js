@@ -338,6 +338,7 @@ const ImageDetails = ({ id }) => {
       )}
       {(compose.request.image_requests[0].image_type === 'guest-image' ||
         compose.request.image_requests[0].image_type === 'image-installer' ||
+        compose.request.image_requests[0].image_type === 'wsl' ||
         compose.request.image_requests[0].image_type === 'vsphere' ||
         compose.request.image_requests[0].image_type === 'vsphere-ova' ||
         compose.request.image_requests[0].image_type ===

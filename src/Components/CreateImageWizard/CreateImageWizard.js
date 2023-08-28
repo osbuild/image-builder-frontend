@@ -268,6 +268,26 @@ const onSave = (values) => {
     requests.push(request);
   }
 
+  if (values['target-environment']?.wsl) {
+    const request = {
+      distribution: values.release,
+      image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'wsl',
+          upload_request: {
+            type: 'aws.s3',
+            options: {},
+          },
+        },
+      ],
+      customizations,
+    };
+    requests.push(request);
+  }
+
   return requests;
 };
 

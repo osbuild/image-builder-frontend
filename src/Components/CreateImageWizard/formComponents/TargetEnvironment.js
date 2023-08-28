@@ -15,7 +15,9 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 
+import { RHEL_8, CENTOS_8 } from '../../../constants.js';
 import { provisioningApi } from '../../../store/provisioningApi';
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const { getState, change } = useFormApi();
@@ -28,8 +30,11 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     vsphere: false,
     'guest-image': false,
     'image-installer': false,
+    wsl: false,
   });
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
+  const { isBeta } = useGetEnvironment();
+  const release = getState()?.values?.release;
 
   useEffect(() => {
     if (getState()?.values?.[input.name]) {
@@ -46,6 +51,11 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
       change(input.name, newEnv);
       return newEnv;
     });
+
+  // hack, wsl isn't supported in el9, causes a rerender
+  if (environment.wsl && ![RHEL_8, CENTOS_8].includes(release)) {
+    handleSetEnvironment('wsl', false);
+  }
 
   const handleKeyDown = (e, env, checked) => {
     if (e.key === ' ') {
@@ -237,6 +247,18 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           name="Bare metal installer"
           data-testid="checkbox-image-installer"
         />
+        {[RHEL_8, CENTOS_8].includes(getState()?.values?.release) &&
+          isBeta() && (
+            <Checkbox
+              label="WSL - Windows Subsystem for Linux (.tar.gz)"
+              isChecked={environment['wsl']}
+              onChange={(checked) => handleSetEnvironment('wsl', checked)}
+              aria-label="windows subsystem for linux checkbox"
+              id="checkbox-wsl"
+              name="WSL"
+              data-testid="checkbox-wsl"
+            />
+          )}
       </FormGroup>
     </FormGroup>
   );

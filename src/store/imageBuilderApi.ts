@@ -242,6 +242,7 @@ export type ImageTypes =
   | "image-installer"
   | "vsphere"
   | "vsphere-ova"
+  | "wsl"
   | "ami"
   | "rhel-edge-commit"
   | "rhel-edge-installer"

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 
+import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
@@ -52,24 +53,28 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
   };
 
   return (
-    <FormGroup isRequired={isRequired} label={label}>
-      <Select
-        ouiaId="release_select"
-        variant={SelectVariant.single}
-        onToggle={() => setIsOpen(!isOpen)}
-        onSelect={setRelease}
-        selections={RELEASES.get(getState()?.values?.[input.name])}
-        isOpen={isOpen}
-        {...(!showDevelopmentOptions && {
-          loadingVariant: {
-            text: 'Show options for further development of RHEL',
-            onClick: handleExpand,
-          },
-        })}
-      >
-        {setSelectOptions()}
-      </Select>
-    </FormGroup>
+    <FormSpy>
+      {() => (
+        <FormGroup isRequired={isRequired} label={label}>
+          <Select
+            ouiaId="release_select"
+            variant={SelectVariant.single}
+            onToggle={() => setIsOpen(!isOpen)}
+            onSelect={setRelease}
+            selections={RELEASES.get(getState()?.values?.[input.name])}
+            isOpen={isOpen}
+            {...(!showDevelopmentOptions && {
+              loadingVariant: {
+                text: 'Show options for further development of RHEL',
+                onClick: handleExpand,
+              },
+            })}
+          >
+            {setSelectOptions()}
+          </Select>
+        </FormGroup>
+      )}
+    </FormSpy>
   );
 };
 
