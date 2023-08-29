@@ -76,7 +76,7 @@ const registrationStep = {
       component: componentTypes.PLAIN_TEXT,
       name: 'registration-general-description',
       label:
-        'Automatically Register your systems with Red Hat to enhance security and track your spending.',
+        'Automatically register your systems with Red Hat to enhance security and track your spending.',
     },
     {
       name: 'register-system',
