@@ -136,22 +136,19 @@ describe('Create Image Wizard', () => {
 
 describe('Step Image output', () => {
   const user = userEvent.setup();
-  const setUp = () => {
+  const setUp = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await user.click(await screen.findByTestId('upload-aws'));
 
-    // load from sidebar
-    user.click(
-      screen.getByRole('button', {
-        name: 'Image output',
-      })
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Image output'
     );
   };
 
   test('clicking Next loads Upload to AWS', async () => {
-    setUp();
+    await setUp();
 
     await clickNext();
 
@@ -160,14 +157,14 @@ describe('Step Image output', () => {
   });
 
   test('clicking Cancel loads landing page', async () => {
-    setUp();
+    await setUp();
     await clickNext();
 
     await verifyCancelButton(router);
   });
 
-  test('target environment is required', () => {
-    setUp();
+  test('target environment is required', async () => {
+    await setUp();
 
     const destination = screen.getByTestId('target-select');
     const required = within(destination).getByText('*');
@@ -176,7 +173,8 @@ describe('Step Image output', () => {
   });
 
   test('selecting and deselecting a tile disables the next button', async () => {
-    setUp();
+    await setUp();
+    const nextButton = await getNextButton();
 
     const awsTile = screen.getByTestId('upload-aws');
     // this has already been clicked once in the setup function
@@ -190,11 +188,11 @@ describe('Step Image output', () => {
     user.click(azureTile); // select
     user.click(azureTile); // deselect
 
-    expect(await getNextButton()).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('expect only RHEL releases before expansion', async () => {
-    setUp();
+    await setUp();
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -215,7 +213,7 @@ describe('Step Image output', () => {
   });
 
   test('expect all releases after expansion', async () => {
-    setUp();
+    await setUp();
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
@@ -246,7 +244,7 @@ describe('Step Image output', () => {
   });
 
   test('CentOS acknowledgement appears', async () => {
-    setUp();
+    await setUp();
 
     const releaseMenu = screen.getByRole('button', {
       name: /options menu/i,
