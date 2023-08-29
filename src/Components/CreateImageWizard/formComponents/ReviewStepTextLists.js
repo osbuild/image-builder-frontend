@@ -489,7 +489,7 @@ export const RegisterNowList = () => {
               {getState()?.values?.['register-system'] ===
                 'register-now-rhc' && (
                 <TextListItem>
-                  Use remote host configuration (RHC) utility
+                  Use remote host configuration (rhc) utility
                   <br />
                 </TextListItem>
               )}
