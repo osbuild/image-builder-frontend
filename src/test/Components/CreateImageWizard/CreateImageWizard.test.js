@@ -621,7 +621,7 @@ describe('Step Registration', () => {
     );
     expect(review).toHaveTextContent('Connect to Red Hat Insights');
     expect(review).toHaveTextContent(
-      'Use remote host configuration (RHC) utility'
+      'Use remote host configuration (rhc) utility'
     );
     screen.getAllByText('012345678901');
   });
@@ -688,7 +688,7 @@ describe('Step Registration', () => {
     expect(review).toHaveTextContent('Connect to Red Hat Insights');
     screen.getAllByText('012345678901');
     expect(review).not.toHaveTextContent(
-      'Use remote host configuration (RHC) utility'
+      'Use remote host configuration (rhc) utility'
     );
   });
 
@@ -756,7 +756,7 @@ describe('Step Registration', () => {
     screen.getAllByText('012345678901');
     expect(review).not.toHaveTextContent('Connect to Red Hat Insights');
     expect(review).not.toHaveTextContent(
-      'Use remote host configuration (RHC) utility'
+      'Use remote host configuration (rhc) utility'
     );
   });
 
@@ -1320,7 +1320,7 @@ describe('Click through all steps', () => {
     });
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
-      'Use remote host configuration (RHC) utility'
+      'Use remote host configuration (rhc) utility'
     );
 
     const imageDetailsExpandable = await screen.findByTestId(

@@ -44,7 +44,7 @@ const RHSMPopover = () => {
       <Button
         variant="plain"
         className="pf-c-form__group-label-help"
-        aria-label="About Remote Host Configuration (RHC)"
+        aria-label="About remote host configuration (rhc)"
         isInline
       >
         <HelpIcon />
@@ -84,7 +84,7 @@ const InsightsPopover = () => {
       <Button
         variant="plain"
         className="pf-c-form__group-label-help"
-        aria-label="About Remote Host Configuration (RHC)"
+        aria-label="About remote host configuration (rhc)"
         isInline
       >
         <HelpIcon />
@@ -93,18 +93,18 @@ const InsightsPopover = () => {
   );
 };
 
-const RHCPopover = () => {
+const RhcPopover = () => {
   return (
     <Popover
-      headerContent="About Remote Host Configuration (RHC)"
+      headerContent="About remote host configuration (rhc)"
       position="right"
       minWidth="30rem"
       bodyContent={
         <TextContent>
           <Text>
-            RHC allows Red Hat Enterprise Linux hosts to connect to Red Hat
-            Insights. RHC is required to use the Red Hat Insights Remediations
-            service.
+            Remote host configuration allows Red Hat Enterprise Linux hosts to
+            connect to Red Hat Insights. Remote host configuration is required
+            to use the Red Hat Insights Remediations service.
           </Text>
           <Button
             component="a"
@@ -115,7 +115,7 @@ const RHCPopover = () => {
             isInline
             href="https://access.redhat.com/articles/rhc"
           >
-            Learn more about Remote Host Configuration
+            Learn more about remote host configuration
           </Button>
         </TextContent>
       }
@@ -123,7 +123,7 @@ const RHCPopover = () => {
       <Button
         variant="plain"
         className="pf-c-form__group-label-help"
-        aria-label="About Remote Host Configuration (RHC)"
+        aria-label="About remote host configuration (rhc)"
         isInline
       >
         <HelpIcon />
@@ -207,7 +207,7 @@ const Registration = ({ label, ...props }) => {
                         <>
                           Enable remote remediations and system management with
                           automation
-                          <RHCPopover />
+                          <RhcPopover />
                         </>
                       }
                       data-testid="registration-checkbox-rhc"
