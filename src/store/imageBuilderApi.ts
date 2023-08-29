@@ -7,12 +7,6 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/architectures/${queryArg.distribution}` }),
     }),
-    getCloneStatus: build.query<
-      GetCloneStatusApiResponse,
-      GetCloneStatusApiArg
-    >({
-      query: (queryArg) => ({ url: `/clones/${queryArg.id}` }),
-    }),
     getComposes: build.query<GetComposesApiResponse, GetComposesApiArg>({
       query: (queryArg) => ({
         url: `/composes`,
@@ -33,6 +27,12 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/composes/${queryArg.composeId}/clones`,
         params: { limit: queryArg.limit, offset: queryArg.offset },
       }),
+    }),
+    getCloneStatus: build.query<
+      GetCloneStatusApiResponse,
+      GetCloneStatusApiArg
+    >({
+      query: (queryArg) => ({ url: `/clones/${queryArg.id}` }),
     }),
     getPackages: build.query<GetPackagesApiResponse, GetPackagesApiArg>({
       query: (queryArg) => ({
@@ -55,12 +55,6 @@ export type GetArchitecturesApiResponse =
 export type GetArchitecturesApiArg = {
   /** distribution for which to look up available architectures */
   distribution: string;
-};
-export type GetCloneStatusApiResponse =
-  /** status 200 clone status */ UploadStatus;
-export type GetCloneStatusApiArg = {
-  /** Id of clone status to get */
-  id: string;
 };
 export type GetComposesApiResponse =
   /** status 200 a list of composes */ ComposesResponse;
@@ -86,6 +80,12 @@ export type GetComposeClonesApiArg = {
   /** clones page offset, default 0 */
   offset?: number;
 };
+export type GetCloneStatusApiResponse =
+  /** status 200 clone status */ UploadStatus;
+export type GetCloneStatusApiArg = {
+  /** Id of clone status to get */
+  id: string;
+};
 export type GetPackagesApiResponse =
   /** status 200 a list of packages */ PackagesResponse;
 export type GetPackagesApiArg = {
@@ -101,14 +101,14 @@ export type GetPackagesApiArg = {
   offset?: number;
 };
 export type Repository = {
+  rhsm: boolean;
   baseurl?: string;
+  mirrorlist?: string;
+  metalink?: string;
+  gpgkey?: string;
   check_gpg?: boolean;
   check_repo_gpg?: boolean;
-  gpgkey?: string;
   ignore_ssl?: boolean;
-  metalink?: string;
-  mirrorlist?: string;
-  rhsm: boolean;
 };
 export type ArchitectureItem = {
   arch: string;
@@ -116,6 +116,23 @@ export type ArchitectureItem = {
   repositories: Repository[];
 };
 export type Architectures = ArchitectureItem[];
+export type ComposesResponseItem = {
+  id: string;
+  request: any;
+  created_at: string;
+  image_name?: string;
+};
+export type ComposesResponse = {
+  meta: {
+    count: number;
+  };
+  links: {
+    first: string;
+    last: string;
+  };
+  data: ComposesResponseItem[];
+};
+export type UploadTypes = "aws" | "gcp" | "azure" | "aws.s3";
 export type AwsUploadStatus = {
   ami: string;
   region: string;
@@ -124,45 +141,27 @@ export type Awss3UploadStatus = {
   url: string;
 };
 export type GcpUploadStatus = {
-  image_name: string;
   project_id: string;
+  image_name: string;
 };
 export type AzureUploadStatus = {
   image_name: string;
 };
-export type UploadTypes = "aws" | "gcp" | "azure" | "aws.s3";
 export type UploadStatus = {
+  status: "success" | "failure" | "pending" | "running";
+  type: UploadTypes;
   options:
     | AwsUploadStatus
     | Awss3UploadStatus
     | GcpUploadStatus
     | AzureUploadStatus;
-  status: "success" | "failure" | "pending" | "running";
-  type: UploadTypes;
-};
-export type ComposesResponseItem = {
-  created_at: string;
-  id: string;
-  image_name?: string;
-  request: any;
-};
-export type ComposesResponse = {
-  data: ComposesResponseItem[];
-  links: {
-    first: string;
-    last: string;
-  };
-  meta: {
-    count: number;
-  };
 };
 export type ComposeStatusError = {
-  details?: any;
   id: number;
   reason: string;
+  details?: any;
 };
 export type ImageStatus = {
-  error?: ComposeStatusError;
   status:
     | "success"
     | "failure"
@@ -171,48 +170,7 @@ export type ImageStatus = {
     | "uploading"
     | "registering";
   upload_status?: UploadStatus;
-};
-export type CustomRepository = {
-  baseurl?: string[];
-  check_gpg?: boolean;
-  check_repo_gpg?: boolean;
-  enabled?: boolean;
-  filename?: string;
-  gpgkey?: string[];
-  id: string;
-  metalink?: string;
-  mirrorlist?: string;
-  name?: string;
-  priority?: number;
-  ssl_verify?: boolean;
-};
-export type Filesystem = {
-  min_size: any;
-  mountpoint: string;
-};
-export type OpenScap = {
-  profile_id: string;
-};
-export type Subscription = {
-  "activation-key": string;
-  "base-url": string;
-  insights: boolean;
-  organization: number;
-  rhc?: boolean;
-  "server-url": string;
-};
-export type User = {
-  name: string;
-  ssh_key: string;
-};
-export type Customizations = {
-  custom_repositories?: CustomRepository[];
-  filesystem?: Filesystem[];
-  openscap?: OpenScap;
-  packages?: string[];
-  payload_repositories?: Repository[];
-  subscription?: Subscription;
-  users?: User[];
+  error?: ComposeStatusError;
 };
 export type Distributions =
   | "rhel-8"
@@ -247,13 +205,6 @@ export type ImageTypes =
   | "rhel-edge-commit"
   | "rhel-edge-installer"
   | "vhd";
-export type OsTree = {
-  contenturl?: string;
-  parent?: string;
-  ref?: string;
-  rhsm?: boolean;
-  url?: string;
-};
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[];
   share_with_sources?: string[];
@@ -263,70 +214,121 @@ export type GcpUploadRequestOptions = {
   share_with_accounts: string[];
 };
 export type AzureUploadRequestOptions = {
-  image_name?: string;
-  resource_group: string;
   source_id?: string;
-  subscription_id?: string;
   tenant_id?: string;
+  subscription_id?: string;
+  resource_group: string;
+  image_name?: string;
 };
 export type UploadRequest = {
+  type: UploadTypes;
   options:
     | AwsUploadRequestOptions
     | Awss3UploadRequestOptions
     | GcpUploadRequestOptions
     | AzureUploadRequestOptions;
-  type: UploadTypes;
+};
+export type OsTree = {
+  url?: string;
+  contenturl?: string;
+  ref?: string;
+  parent?: string;
+  rhsm?: boolean;
 };
 export type ImageRequest = {
   architecture: "x86_64" | "aarch64";
   image_type: ImageTypes;
-  ostree?: OsTree;
   upload_request: UploadRequest;
+  ostree?: OsTree;
+  size?: any;
+};
+export type Subscription = {
+  organization: number;
+  "activation-key": string;
+  "server-url": string;
+  "base-url": string;
+  insights: boolean;
+  rhc?: boolean;
+};
+export type CustomRepository = {
+  id: string;
+  name?: string;
+  filename?: string;
+  baseurl?: string[];
+  mirrorlist?: string;
+  metalink?: string;
+  gpgkey?: string[];
+  check_gpg?: boolean;
+  check_repo_gpg?: boolean;
+  enabled?: boolean;
+  priority?: number;
+  ssl_verify?: boolean;
+};
+export type OpenScap = {
+  profile_id: string;
+};
+export type Filesystem = {
+  mountpoint: string;
+  min_size: any;
+};
+export type User = {
+  name: string;
+  ssh_key: string;
+};
+export type Customizations = {
+  subscription?: Subscription;
+  packages?: string[];
+  payload_repositories?: Repository[];
+  custom_repositories?: CustomRepository[];
+  openscap?: OpenScap;
+  filesystem?: Filesystem[];
+  users?: User[];
 };
 export type ComposeRequest = {
-  customizations?: Customizations;
   distribution: Distributions;
   image_name?: string;
+  image_description?: string;
   image_requests: ImageRequest[];
+  customizations?: Customizations;
 };
 export type ComposeStatus = {
   image_status: ImageStatus;
   request: ComposeRequest;
 };
 export type ClonesResponseItem = {
-  created_at: string;
   id: string;
   request: any;
+  created_at: string;
 };
 export type ClonesResponse = {
-  data: ClonesResponseItem[];
+  meta: {
+    count: number;
+  };
   links: {
     first: string;
     last: string;
   };
-  meta: {
-    count: number;
-  };
+  data: ClonesResponseItem[];
 };
 export type Package = {
   name: string;
   summary: string;
 };
 export type PackagesResponse = {
-  data: Package[];
+  meta: {
+    count: number;
+  };
   links: {
     first: string;
     last: string;
   };
-  meta: {
-    count: number;
-  };
+  data: Package[];
 };
 export const {
   useGetArchitecturesQuery,
-  useGetCloneStatusQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
   useGetComposeClonesQuery,
+  useGetCloneStatusQuery,
   useGetPackagesQuery,
 } = injectedRtkApi;
