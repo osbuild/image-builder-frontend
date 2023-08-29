@@ -63,22 +63,21 @@ afterEach(() => {
   server.resetHandlers();
 });
 
+const getSourceDropdown = async () => {
+  const sourceDropdown = await screen.findByRole('textbox', {
+    name: /select source/i,
+  });
+  // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
+  await waitFor(() => expect(sourceDropdown).toBeEnabled());
+  return sourceDropdown;
+};
+
 describe('Step Upload to Azure', () => {
-  const getSourceDropdown = async () => {
-    const sourceDropdown = await screen.findByRole('textbox', {
-      name: /select source/i,
-    });
-    // Wait for isSuccess === true, dropdown is disabled while isSuccess === false
-    await waitFor(() => expect(sourceDropdown).toBeEnabled());
-
-    return sourceDropdown;
-  };
-
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
     // select Azure as upload destination
-    user.click(await screen.findByTestId('upload-azure'));
+    await user.click(await screen.findByTestId('upload-azure'));
 
     await clickNext();
 
@@ -104,7 +103,7 @@ describe('Step Upload to Azure', () => {
       screen.getByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
-    clickNext();
+    await clickNext();
 
     await screen.findByRole('textbox', {
       name: 'Select activation key',
