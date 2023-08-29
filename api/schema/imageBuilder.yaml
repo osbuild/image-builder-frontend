@@ -1,0 +1,1070 @@
+---
+openapi: 3.0.1
+info:
+  version: "1.0"
+  title: Image-builder service
+  description: Service that relays image build requests
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+  - url: "/api/image-builder/v1"
+  - url: "/api/image-builder/v1.0"
+
+paths:
+  /version:
+    get:
+      summary: get the service version
+      description: "get the service version"
+      operationId: getVersion
+      responses:
+        '200':
+          description: a service version
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Version'
+  /ready:
+    get:
+      summary: return the readiness
+      operationId: getReadiness
+      responses:
+        '200':
+          description: readiness
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+  /openapi.json:
+    get:
+      summary: get the openapi json specification
+      operationId: getOpenapiJson
+      tags:
+        - meta
+      responses:
+        '200':
+          description: returns this document
+          content:
+            application/json:
+              schema:
+                type: object
+  /distributions:
+    get:
+      summary: get the available distributions
+      operationId: getDistributions
+      responses:
+        '200':
+          description: a list of available distributions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DistributionsResponse'
+  /architectures/{distribution}:
+    get:
+      summary: get the architectures and their image types available for a given distribution
+      parameters:
+        - in: path
+          name: distribution
+          schema:
+            type: string
+          required: true
+          description: distribution for which to look up available architectures
+          example: 'rhel-84'
+      operationId: getArchitectures
+      responses:
+        '200':
+          description: a list of available architectures and their associated image types
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Architectures'
+  /composes:
+    get:
+      summary: get a collection of previous compose requests for the logged in user
+      parameters:
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 100
+          description: max amount of composes, default 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: composes page offset, default 0
+      responses:
+        '200':
+          description: a list of composes
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComposesResponse'
+  /composes/{composeId}:
+    parameters:
+      - in: path
+        name: composeId
+        schema:
+          type: string
+          format: uuid
+          example: '123e4567-e89b-12d3-a456-426655440000'
+        required: true
+        description: Id of compose
+    get:
+      summary: get status of an image compose
+      description: "status of an image compose"
+      operationId: getComposeStatus
+      responses:
+        '200':
+          description: compose status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComposeStatus'
+    delete:
+      summary: delete a compose
+      description: |
+        Deletes a compose, the compose will still count towards quota.
+      operationId: deleteCompose
+      responses:
+        200:
+          description: OK
+  /composes/{composeId}/metadata:
+    get:
+      summary: get metadata of an image compose
+      parameters:
+        - in: path
+          name: composeId
+          schema:
+            type: string
+            format: uuid
+            example: '123e4567-e89b-12d3-a456-426655440000'
+          required: true
+          description: Id of compose metadata to get
+      description: "metadata for an image compose"
+      operationId: getComposeMetadata
+      responses:
+        '200':
+          description: compose metadata
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComposeMetadata'
+  /composes/{composeId}/clone:
+    post:
+      summary: clone a compose
+      description: |
+        Clones a compose. Only composes with the 'aws' image type currently support cloning.
+      parameters:
+        - in: path
+          name: composeId
+          schema:
+            type: string
+            format: uuid
+            example: '123e4567-e89b-12d3-a456-426655440000'
+          required: true
+          description: Id of compose to clone
+      operationId: cloneCompose
+      requestBody:
+        required: true
+        description: details of the new clone
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CloneRequest"
+      responses:
+        '201':
+          description: cloning has started
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CloneResponse"
+  /composes/{composeId}/clones:
+    get:
+      summary: get clones of a compose
+      parameters:
+        - in: path
+          name: composeId
+          schema:
+            type: string
+            format: uuid
+            example: '123e4567-e89b-12d3-a456-426655440000'
+          required: true
+          description: Id of compose to get the clones of
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 100
+          description: max amount of clones, default 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: clones page offset, default 0
+      description: |
+        Returns a list of all the clones which were started for a compose
+      operationId: getComposeClones
+      responses:
+        '200':
+          description: compose clones
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClonesResponse'
+  /clones/{id}:
+    get:
+      summary: get status of a compose clone
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+            example: '123e4567-e89b-12d3-a456-426655440000'
+          required: true
+          description: Id of clone status to get
+      description: status of a clone
+      operationId: getCloneStatus
+      responses:
+        '200':
+          description: clone status
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadStatus'
+  /compose:
+    post:
+      summary: compose image
+      description: "compose image"
+      operationId: composeImage
+      requestBody:
+        required: true
+        description: details of image to be composed
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ComposeRequest"
+      responses:
+        '201':
+          description: compose has started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComposeResponse'
+        '400':
+          description: the compose request is malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPErrorList'
+  /packages:
+    get:
+      parameters:
+        - in: query
+          name: distribution
+          required: true
+          schema:
+            $ref: '#/components/schemas/Distributions'
+          description: distribution to look up packages for
+        - in: query
+          name: architecture
+          required: true
+          schema:
+            type: string
+            enum: ['x86_64', 'aarch64']
+          description: architecture to look up packages for
+        - in: query
+          name: search
+          required: true
+          schema:
+            type: string
+          description: packages to look for
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            default: 100
+            minimum: 1
+            maximum: 100
+          description: max amount of packages, default 100
+        - in: query
+          name: offset
+          schema:
+            type: integer
+            default: 0
+            minimum: 0
+          description: packages page offset, default 0
+      responses:
+        '200':
+          description: a list of packages
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PackagesResponse'
+
+components:
+  schemas:
+    HTTPError:
+      required:
+        - title
+        - detail
+      properties:
+        title:
+          type: string
+        detail:
+          type: string
+    HTTPErrorList:
+      required:
+        - errors
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/HTTPError'
+    Version:
+      required:
+        - version
+      properties:
+        version:
+          type: string
+    Readiness:
+      type: object
+      required:
+        - readiness
+      properties:
+        readiness:
+          type: string
+    DistributionsResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/DistributionItem'
+    DistributionItem:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        description:
+          type: string
+          example: 'Red Hat Enterprise Linux (RHEL) 8.4'
+        name:
+          type: string
+          example: 'rhel-84'
+    Architectures:
+      type: array
+      items:
+        $ref: '#/components/schemas/ArchitectureItem'
+    ArchitectureItem:
+      type: object
+      required:
+        - arch
+        - image_types
+        - repositories
+      properties:
+        arch:
+          type: string
+          example: 'x86_64'
+        image_types:
+          type: array
+          items:
+            type: string
+            example: 'qcow2'
+        repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repository'
+          description: Base repositories for the given distribution and architecture.
+    ComposeStatus:
+      required:
+        - image_status
+        - request
+      properties:
+        image_status:
+          $ref: '#/components/schemas/ImageStatus'
+        request:
+          $ref: "#/components/schemas/ComposeRequest"
+    ImageStatus:
+      required:
+       - status
+      properties:
+        status:
+          type: string
+          enum: ['success', 'failure', 'pending', 'building', 'uploading', 'registering']
+          example: 'success'
+        upload_status:
+          $ref: '#/components/schemas/UploadStatus'
+        error:
+          $ref: '#/components/schemas/ComposeStatusError'
+    ComposeStatusError:
+      required:
+       - id
+       - reason
+      properties:
+        id:
+          type: integer
+        reason:
+          type: string
+        details: {}
+    UploadStatus:
+      required:
+        - status
+        - type
+        - options
+      properties:
+        status:
+          type: string
+          enum: ['success', 'failure', 'pending', 'running']
+        type:
+          $ref: '#/components/schemas/UploadTypes'
+        options:
+          oneOf:
+            - $ref: '#/components/schemas/AWSUploadStatus'
+            - $ref: '#/components/schemas/AWSS3UploadStatus'
+            - $ref: '#/components/schemas/GCPUploadStatus'
+            - $ref: '#/components/schemas/AzureUploadStatus'
+    AWSUploadStatus:
+      type: object
+      required:
+        - ami
+        - region
+      properties:
+        ami:
+          type: string
+          example: 'ami-0c830793775595d4b'
+        region:
+          type: string
+          example: 'eu-west-1'
+    AWSS3UploadStatus:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+    GCPUploadStatus:
+      type: object
+      required:
+        - project_id
+        - image_name
+      properties:
+        project_id:
+          type: string
+          example: 'ascendant-braid-303513'
+        image_name:
+          type: string
+          example: 'my-image'
+    AzureUploadStatus:
+      type: object
+      required:
+        - image_name
+      properties:
+        image_name:
+          type: string
+          example: 'my-image'
+    ComposeRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - distribution
+        - image_requests
+      properties:
+        distribution:
+          $ref: '#/components/schemas/Distributions'
+        image_name:
+          type: string
+          example: "MyImageName"
+          maxLength: 100
+        image_description:
+          type: string
+          example: "MyImageDescription"
+          maxLength: 250
+        image_requests:
+          type: array
+          minItems: 1
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/ImageRequest'
+          uniqueItems: true
+          description: |
+            Array of exactly one image request. Having more image requests in one compose is currently not supported.
+        customizations:
+            $ref: '#/components/schemas/Customizations'
+    Distributions:
+      type: string
+      enum:
+        - rhel-8
+        - rhel-8-nightly
+        - rhel-84
+        - rhel-85
+        - rhel-86
+        - rhel-87
+        - rhel-88
+        - rhel-9
+        - rhel-9-nightly
+        - rhel-90
+        - rhel-91
+        - rhel-92
+        - centos-8
+        - centos-9
+        - fedora-37
+        - fedora-38
+        - fedora-39
+    ImageRequest:
+      type: object
+      additionalProperties: false
+      required:
+        - architecture
+        - image_type
+        - upload_request
+      properties:
+        architecture:
+          type: string
+          enum:
+            - x86_64
+            - aarch64
+          description: |
+            CPU architecture of the image, x86_64 and aarch64 are currently supported.
+        image_type:
+          $ref: '#/components/schemas/ImageTypes'
+        upload_request:
+          $ref: '#/components/schemas/UploadRequest'
+        ostree:
+          $ref: '#/components/schemas/OSTree'
+        size:
+          x-go-type: uint64
+          example: 4294967296
+          description: |
+            Size of image, in bytes. When set to 0 the image size is a minimum
+            defined by the image type.
+    ImageTypes:
+      type: string
+      enum:
+        - aws
+        - azure
+        - edge-commit
+        - edge-installer
+        - gcp
+        - guest-image
+        - image-installer
+        - vsphere
+        - vsphere-ova
+        - wsl
+        # backwards compatible aliases
+        - ami  # == aws
+        - rhel-edge-commit  # == edge-commit
+        - rhel-edge-installer  # == edge-installer
+        - vhd  # == azure
+    ComposesResponse:
+      required:
+        - meta
+        - links
+        - data
+      properties:
+        meta:
+          type: object
+          required:
+            - count
+          properties:
+            count:
+              type: integer
+        links:
+          type: object
+          required:
+            - first
+            - last
+          properties:
+            first:
+              type: string
+              example: "/api/image-builder/v1/composes?limit=10&offset=0"
+            last:
+              type: string
+              example: "/api/image-builder/v1/composes?limit=10&offset=10"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ComposesResponseItem'
+    ComposesResponseItem:
+      required:
+        - id
+        - request
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        request: {}
+        created_at:
+          type: string
+        image_name:
+          type: string
+    ComposeResponse:
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+    UploadRequest:
+      type: object
+      required:
+        - type
+        - options
+      properties:
+        type:
+          $ref: '#/components/schemas/UploadTypes'
+        options:
+          anyOf:
+            - $ref: '#/components/schemas/AWSUploadRequestOptions'
+            - $ref: '#/components/schemas/AWSS3UploadRequestOptions'
+            - $ref: '#/components/schemas/GCPUploadRequestOptions'
+            - $ref: '#/components/schemas/AzureUploadRequestOptions'
+    UploadTypes:
+      type: string
+      enum: ['aws', 'gcp', 'azure', 'aws.s3']
+    AWSUploadRequestOptions:
+      type: object
+      properties:
+        share_with_accounts:
+          type: array
+          example: ['123456789012']
+          items:
+            type: string
+          uniqueItems: true
+        share_with_sources:
+          type: array
+          example: ['12345']
+          items:
+            type: string
+          uniqueItems: true
+    AWSS3UploadRequestOptions:
+      type: object
+    GCPUploadRequestOptions:
+      type: object
+      required:
+        - share_with_accounts
+      properties:
+        share_with_accounts:
+          type: array
+          example: [
+            'user:alice@example.com',
+            'serviceAccount:my-other-app@appspot.gserviceaccount.com',
+            'group:admins@example.com',
+            'domain:example.com'
+            ]
+          description: |
+            List of valid Google accounts to share the imported Compute Node image with.
+            Each string must contain a specifier of the account type. Valid formats are:
+              - 'user:{emailid}': An email address that represents a specific
+                Google account. For example, 'alice@example.com'.
+              - 'serviceAccount:{emailid}': An email address that represents a
+                service account. For example, 'my-other-app@appspot.gserviceaccount.com'.
+              - 'group:{emailid}': An email address that represents a Google group.
+                For example, 'admins@example.com'.
+              - 'domain:{domain}': The G Suite domain (primary) that represents all
+                the users of that domain. For example, 'google.com' or 'example.com'.
+                If not specified, the imported Compute Node image is not shared with any
+                account.
+          items:
+            type: string
+          uniqueItems: true
+    AzureUploadRequestOptions:
+      type: object
+      required:
+        - resource_group
+      properties:
+        source_id:
+          type: string
+          example: '12345'
+          description: |
+            ID of the source that will be used to resolve the tenant and subscription IDs.
+            Do not provide a tenant_id or subscription_id when providing a source_id.
+        tenant_id:
+          type: string
+          example: '5c7ef5b6-1c3f-4da0-a622-0b060239d7d7'
+          description: |
+            ID of the tenant where the image should be uploaded. This link explains how
+            to find it in the Azure Portal:
+            https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-how-to-find-tenant
+            When providing a tenant_id, also be sure to provide a subscription_id and do not include a source_id.
+        subscription_id:
+          type: string
+          example: '4e5d8b2c-ab24-4413-90c5-612306e809e2'
+          description: |
+            ID of subscription where the image should be uploaded.
+            When providing a subscription_id, also be sure to provide a tenant_id and do not include a source_id.
+        resource_group:
+          type: string
+          example: 'ToucanResourceGroup'
+          description: |
+            Name of the resource group where the image should be uploaded.
+        image_name:
+          type: string
+          example: 'LinuxImage'
+          pattern: '(^[a-zA-Z0-9]$)|(^[a-zA-Z0-9][a-zA-Z0-9_\.-]*[a-zA-Z0-9_]$)'
+          minLength: 1
+          maxLength: 60
+          description: |
+            Name of the created image.
+            Must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens.
+            The total length is limited to 60 characters.
+    Customizations:
+      type: object
+      properties:
+        subscription:
+          $ref: '#/components/schemas/Subscription'
+        packages:
+          type: array
+          maxItems: 10000
+          example: ['postgresql']
+          items:
+            type: string
+        payload_repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Repository'
+        custom_repositories:
+          type: array
+          items:
+            $ref: '#/components/schemas/CustomRepository'
+        openscap:
+          $ref: '#/components/schemas/OpenSCAP'
+        filesystem:
+          type: array
+          maxItems: 128
+          items:
+            $ref: '#/components/schemas/Filesystem'
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/User'
+          description:
+            "list of users that a customer can add, also specifying their respective groups and SSH keys"
+    User:
+      type: object
+      required:
+        - name
+        - ssh_key
+      properties:
+        name:
+          type: string
+          example: "user1"
+        ssh_key:
+          type: string
+          example: "ssh-rsa AAAAB3NzaC1"
+    Filesystem:
+      type: object
+      required:
+        - mountpoint
+        - min_size
+      properties:
+        mountpoint:
+          type: string
+          example: '/var'
+        min_size:
+          x-go-type: uint64
+          example: 2147483648
+          description: 'size of the filesystem in bytes'
+    Subscription:
+      type: object
+      required:
+        - organization
+        - activation-key
+        - server-url
+        - base-url
+        - insights
+      properties:
+        organization:
+          type: integer
+          example: 2040324
+        activation-key:
+          type: string
+          format: password
+          example: 'my-secret-key'
+        server-url:
+          type: string
+          example: 'subscription.rhsm.redhat.com'
+        base-url:
+          type: string
+          example: http://cdn.redhat.com/
+        insights:
+          type: boolean
+          example: true
+        rhc:
+          type: boolean
+          default: false
+          example: true
+          description: |
+            Optional flag to use rhc to register the system, which also always enables Insights.
+    OSTree:
+      type: object
+      properties:
+        url:
+          type: string
+        contenturl:
+          type: string
+          description: |
+            A URL which, if set, is used for fetching content. Implies that `url` is set as well,
+            which will be used for metadata only.
+        ref:
+          type: string
+          example: 'rhel/8/x86_64/edge'
+        parent:
+          type: string
+          description: >
+            Can be either a commit (example:
+            02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like
+            reference (example: rhel/8/x86_64/edge)
+          example: 'rhel/8/x86_64/edge'
+        rhsm:
+          type: boolean
+          description: |
+            Determines whether a valid subscription manager (candlepin) identity is required to
+            access this repository. Consumer certificates will be used as client certificates when
+            fetching metadata and content.
+    PackagesResponse:
+      type: object
+      required:
+        - meta
+        - links
+        - data
+      properties:
+        meta:
+          type: object
+          required:
+            - count
+          properties:
+            count:
+              type: integer
+        links:
+          type: object
+          required:
+            - first
+            - last
+          properties:
+            first:
+              type: string
+              example: "/api/image-builder/v1/packages?limit=10&offset=0&distribution...."
+            last:
+              type: string
+              example: "/api/image-builder/v1/packages?limit=10&offset=10&distribution...."
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Package'
+    Package:
+      required:
+        - name
+        - summary
+      properties:
+        name:
+          type: string
+        summary:
+          type: string
+    ComposeMetadata:
+      type: object
+      properties:
+        packages:
+          type: array
+          items:
+            $ref: '#/components/schemas/PackageMetadata'
+          description: 'Package list including NEVRA'
+        ostree_commit:
+          type: string
+          description: 'ID (hash) of the built commit'
+    PackageMetadata:
+      required:
+        - type
+        - name
+        - version
+        - release
+        - arch
+        - sigmd5
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        version:
+          type: string
+        release:
+          type: string
+        epoch:
+          type: string
+        arch:
+          type: string
+        sigmd5:
+          type: string
+        signature:
+          type: string
+    Repository:
+      type: object
+      required:
+        - rhsm
+      properties:
+        rhsm:
+          type: boolean
+        baseurl:
+          type: string
+          format: uri
+          example: 'https://cdn.redhat.com/content/dist/rhel8/8/x86_64/baseos/os/'
+        mirrorlist:
+          type: string
+          format: uri
+          example: 'http://mirrorlist.centos.org/?release=8-stream&arch=aarch64&repo=BaseOS'
+        metalink:
+          type: string
+          format: uri
+          example: 'https://mirrors.fedoraproject.org/metalink?repo=fedora-32&arch=x86_64'
+        gpgkey:
+          type: string
+        check_gpg:
+          type: boolean
+        check_repo_gpg:
+          type: boolean
+          default: false
+          description: |
+            Enables gpg verification of the repository metadata
+        ignore_ssl:
+          type: boolean
+    CustomRepository:
+      type: object
+      required:
+        - id
+      description: |
+        Repository configuration for custom repositories.
+        At least one of the 'baseurl', 'mirrorlist', 'metalink' properties must
+        be specified. If more of them are specified, the order of precedence is
+        the same as listed above. Id is required.
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        filename:
+          type: string
+        baseurl:
+          type: array
+          example: [ 'https://cdn.redhat.com/content/dist/rhel8/8/x86_64/baseos/os/' ]
+          items:
+            type: string
+            format: uri
+        mirrorlist:
+          type: string
+          format: uri
+          example: 'http://mirrorlist.centos.org/?release=8-stream&arch=aarch64&repo=BaseOS'
+        metalink:
+          type: string
+          format: uri
+          example: 'https://mirrors.fedoraproject.org/metalink?repo=fedora-32&arch=x86_64'
+        gpgkey:
+          type: array
+          example: [ "-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGAcScoBEADLf8YHkezJ6adlMYw7aGGIlJalt8Jj2x/B2K+hIfIuxGtpVj7e\nLRgDU76jaT5pVD5mFMJ3pkeneR/cTmqqQkNyQshX2oQXwEzUSb1CNMCfCGgkX8Q2\nzZkrIcCrF0Q2wrKblaudhU+iVanADsm18YEqsb5AU37dtUrM3QYdWg9R+XiPfV8R\nKBjT03vVBOdMSsY39LaCn6Ip1Ovp8IEo/IeEVY1qmCOPAaK0bJH3ufg4Cueks+TS\nwQWTeCLxuZL6OMXoOPKwvMQfxbg1XD8vuZ0Ktj/cNH2xau0xmsAu9HJpekvOPRxl\nyqtjyZfroVieFypwZgvQwtnnM8/gSEu/JVTrY052mEUT7Ccb74kcHFTFfMklnkG/\n0fU4ARa504H3xj0ktbe3vKcPXoPOuKBVsHSv00UGYAyPeuy+87cU/YEhM7k3SVKj\n6eIZgyiMO0wl1YGDRKculwks9A+ulkg1oTb4s3zmZvP07GoTxW42jaK5WS+NhZee\n860XoVhbc1KpS+jfZojsrEtZ8PbUZ+YvF8RprdWArjHbJk2JpRKAxThxsQAsBhG1\n0Lux2WaMB0g2I5PcMdJ/cqjo08ccrjBXuixWri5iu9MXp8qT/fSzNmsdIgn8/qZK\ni8Qulfu77uqhW/wt2btnitgRsqjhxMujYU4Zb4hktF8hKU/XX742qhL5KwARAQAB\ntDFGZWRvcmEgKDM1KSA8ZmVkb3JhLTM1LXByaW1hcnlAZmVkb3JhcHJvamVjdC5v\ncmc+iQJOBBMBCAA4FiEEeH6mrhFH7uVsQLMM20Y5cZhnxY8FAmAcScoCGw8FCwkI\nBwIGFQoJCAsCBBYCAwECHgECF4AACgkQ20Y5cZhnxY+NYA/7BYpglySAZYHhjyKh\n/+f6zPfVvbH20Eq3kI7OFBN0nLX+BU1muvS+qTuS3WLrB3m3GultpKREJKLtm5ED\n1rGzXAoT1yp9YI8LADdMCCOyjAjsoWU87YUuC+/bnjrTeR2LROCfyPC76W985iOV\nm5S+bsQDw7C2LrldAM4MDuoyZ1SitGaZ4KQLVt+TEa14isYSGCjzo7PY8V3JOk50\ngqWg82N/bm2EzS7T83WEDb1lvj4IlvxgIqKeg11zXYxmrYSZJJCfvzf+lNS6uxgH\njx/J0ylZ2LibGr6GAAyO9UWrAZSwSM0EcjT8wECnxkSDuyqmWwVvNBXuEIV8Oe3Y\nMiU1fJN8sd7DpsFx5M+XdnMnQS+HrjTPKD3mWrlAdnEThdYV8jZkpWhDys3/99eO\nhk0rLny0jNwkauf/iU8Oc6XvMkjLRMJg5U9VKyJuWWtzwXnjMN5WRFBqK4sZomMM\nftbTH1+5ybRW/A3vBbaxRW2t7UzNjczekSZEiaLN9L/HcJCIR1QF8682DdAlEF9d\nk2gQiYSQAaaJ0JJAzHvRkRJLLgK2YQYiHNVy2t3JyFfsram5wSCWOfhPeIyLBTZJ\nvrpNlPbefsT957Tf2BNIugzZrC5VxDSKkZgRh1VGvSIQnCyzkQy6EU2qPpiW59G/\nhPIXZrKocK3KLS9/izJQTRltjMA=\n=PfT7\n-----END PGP PUBLIC KEY BLOCK-----\n" ]
+          description: 'GPG key used to sign packages in this repository. Can be a gpg key or a URL'
+          items:
+            type: string
+        check_gpg:
+          type: boolean
+        check_repo_gpg:
+          type: boolean
+        enabled:
+          type: boolean
+        priority:
+          type: integer
+        ssl_verify:
+          type: boolean
+    OpenSCAP:
+      type: object
+      required:
+        - profile_id
+      properties:
+        profile_id:
+          type: string
+          example: "xccdf_org.ssgproject.content_profile_cis"
+    ClonesResponse:
+      required:
+        - meta
+        - links
+        - data
+      properties:
+        meta:
+          type: object
+          required:
+            - count
+          properties:
+            count:
+              type: integer
+        links:
+          type: object
+          required:
+            - first
+            - last
+          properties:
+            first:
+              type: string
+              example: "/api/image-builder/v1/composes?limit=10&offset=0"
+            last:
+              type: string
+              example: "/api/image-builder/v1/composes?limit=10&offset=10"
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ClonesResponseItem'
+    ClonesResponseItem:
+      required:
+        - id
+        - request
+        - created_at
+      properties:
+        id:
+          type: string
+          format: uuid
+        request: {}
+        created_at:
+          type: string
+    CloneRequest:
+      oneOf:
+      - $ref: '#/components/schemas/AWSEC2Clone'
+    AWSEC2Clone:
+      type: object
+      required:
+        - region
+      properties:
+        region:
+          type: string
+          description: |
+            A region as described in
+            https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions
+        share_with_accounts:
+          type: array
+          maxItems: 100
+          example: ['123456789012']
+          description: |
+            An array of AWS account IDs as described in
+            https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
+          items:
+            type: string
+            pattern: '^[0-9]{12}$'
+        share_with_sources:
+          type: array
+          example: ['12345']
+          items:
+            type: string
+          uniqueItems: true
+    CloneResponse:
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: '123e4567-e89b-12d3-a456-426655440000'
