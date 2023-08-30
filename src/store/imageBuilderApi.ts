@@ -116,62 +116,6 @@ export type ArchitectureItem = {
   repositories: Repository[];
 };
 export type Architectures = ArchitectureItem[];
-export type ComposesResponseItem = {
-  id: string;
-  request: any;
-  created_at: string;
-  image_name?: string;
-};
-export type ComposesResponse = {
-  meta: {
-    count: number;
-  };
-  links: {
-    first: string;
-    last: string;
-  };
-  data: ComposesResponseItem[];
-};
-export type UploadTypes = "aws" | "gcp" | "azure" | "aws.s3";
-export type AwsUploadStatus = {
-  ami: string;
-  region: string;
-};
-export type Awss3UploadStatus = {
-  url: string;
-};
-export type GcpUploadStatus = {
-  project_id: string;
-  image_name: string;
-};
-export type AzureUploadStatus = {
-  image_name: string;
-};
-export type UploadStatus = {
-  status: "success" | "failure" | "pending" | "running";
-  type: UploadTypes;
-  options:
-    | AwsUploadStatus
-    | Awss3UploadStatus
-    | GcpUploadStatus
-    | AzureUploadStatus;
-};
-export type ComposeStatusError = {
-  id: number;
-  reason: string;
-  details?: any;
-};
-export type ImageStatus = {
-  status:
-    | "success"
-    | "failure"
-    | "pending"
-    | "building"
-    | "uploading"
-    | "registering";
-  upload_status?: UploadStatus;
-  error?: ComposeStatusError;
-};
 export type Distributions =
   | "rhel-8"
   | "rhel-8-nightly"
@@ -205,6 +149,7 @@ export type ImageTypes =
   | "rhel-edge-commit"
   | "rhel-edge-installer"
   | "vhd";
+export type UploadTypes = "aws" | "gcp" | "azure" | "aws.s3";
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[];
   share_with_sources?: string[];
@@ -291,13 +236,74 @@ export type ComposeRequest = {
   image_requests: ImageRequest[];
   customizations?: Customizations;
 };
+export type ComposesResponseItem = {
+  id: string;
+  request: ComposeRequest;
+  created_at: string;
+  image_name?: string;
+};
+export type ComposesResponse = {
+  meta: {
+    count: number;
+  };
+  links: {
+    first: string;
+    last: string;
+  };
+  data: ComposesResponseItem[];
+};
+export type AwsUploadStatus = {
+  ami: string;
+  region: string;
+};
+export type Awss3UploadStatus = {
+  url: string;
+};
+export type GcpUploadStatus = {
+  project_id: string;
+  image_name: string;
+};
+export type AzureUploadStatus = {
+  image_name: string;
+};
+export type UploadStatus = {
+  status: "success" | "failure" | "pending" | "running";
+  type: UploadTypes;
+  options:
+    | AwsUploadStatus
+    | Awss3UploadStatus
+    | GcpUploadStatus
+    | AzureUploadStatus;
+};
+export type ComposeStatusError = {
+  id: number;
+  reason: string;
+  details?: any;
+};
+export type ImageStatus = {
+  status:
+    | "success"
+    | "failure"
+    | "pending"
+    | "building"
+    | "uploading"
+    | "registering";
+  upload_status?: UploadStatus;
+  error?: ComposeStatusError;
+};
 export type ComposeStatus = {
   image_status: ImageStatus;
   request: ComposeRequest;
 };
+export type Awsec2Clone = {
+  region: string;
+  share_with_accounts?: string[];
+  share_with_sources?: string[];
+};
+export type CloneRequest = Awsec2Clone;
 export type ClonesResponseItem = {
   id: string;
-  request: any;
+  request: CloneRequest;
   created_at: string;
 };
 export type ClonesResponse = {
