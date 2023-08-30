@@ -25,6 +25,7 @@ const ImagesTable = () => {
       ErrorComponent={<ErrorState />}
       navigateProp={useNavigate}
       locationProp={useLocation}
+      contentRepoLinkProp={false}
       showHeaderProp={false}
       docLinkProp={
         'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/creating_customized_images_by_using_insights_image_builder/index'
