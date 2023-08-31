@@ -734,6 +734,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
     return {
       data: [
         {
+          compose_id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
           created_at: '2021-04-27T12:31:12Z',
           id: 'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d',
           request: {
@@ -742,6 +743,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
+          compose_id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
           created_at: '2021-04-28T12:31:12Z',
           id: '48fce414-0cc0-4a16-8645-e3f0edec3212',
           request: {
@@ -750,6 +752,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
+          compose_id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
           created_at: '2021-04-27T12:31:12Z',
           id: '0169538e-515c-477e-b934-f12783939313',
           request: {
@@ -758,6 +761,7 @@ export const mockClones = (composeId: string): ClonesResponse => {
           },
         },
         {
+          compose_id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
           created_at: '2021-04-27T12:31:12Z',
           id: '4a851db1-919f-43ca-a7ef-dd209877a77e',
           request: {

@@ -334,6 +334,7 @@ export type Awsec2Clone = {
 export type CloneRequest = Awsec2Clone;
 export type ClonesResponseItem = {
   id: string;
+  compose_id: string;
   request: CloneRequest;
   created_at: string;
 };
