@@ -16,9 +16,15 @@ import { resolveRelPath } from '../../Utilities/path';
 const ImageDetail = () => {
   const dispatch = useDispatch();
   const notificationProp = getNotificationProp(dispatch);
+  // Feature flag for the federated modules
   const edgeParityFlag = useFlag('edgeParity.image-list');
+  // Feature flag to access the 'local' images table list
+  const edgeLocalImageTable = useFlag('image-builder.edge.local-image-table');
 
-  return edgeParityFlag ? (
+  if (edgeLocalImageTable) {
+    return <div />;
+  }
+  if (edgeParityFlag) {
     <AsyncComponent
       appName="edge"
       module="./ImagesDetail"
@@ -29,10 +35,9 @@ const ImageDetail = () => {
       pathPrefix={resolveRelPath('')}
       urlName={manageEdgeImagesUrlName}
       paramsProp={useParams}
-    />
-  ) : (
-    <Unavailable />
-  );
+    />;
+  }
+  return <Unavailable />;
 };
 
 export default ImageDetail;

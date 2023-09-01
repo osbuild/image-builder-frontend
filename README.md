@@ -157,6 +157,39 @@ And voilà!
 To add a new endpoint, simply update the `api/config/foobar.ts` file with new
 endpoints in the `filterEndpoints` table.
 
+
+#### Unleash feature flags for the frontend
+
+Your user needs to have the corresponding rights, do the
+same as this MR in internal gitlab https://gitlab.cee.redhat.com/service/app-interface/-/merge_requests/79225
+you can ask on the slack channel https://redhat-internal.slack.com/archives/C023YSA47A4 for a merge if your MR stays unchecked for a little while.
+
+Then connect to the following platforms:
+* https://insights-stage.unleash.devshift.net/ for stage
+* https://insights.unleash.devshift.net prod
+
+Once you have a toggle to work with, on the frontend code there's just need to
+import the `useFlag` hook and to use it. You can get some inspiration from
+existing flags:
+
+https://github.com/RedHatInsights/image-builder-frontend/blob/c84b493eba82ce83a7844943943d91112ffe8322/src/Components/ImagesTable/ImageLink.js#L99
+
+##### Mocking flags for tests
+
+Flags can be mocked for the unit tests to access some feature. Checkout:
+https://github.com/RedHatInsights/image-builder-frontend/blob/c84b493eba82ce83a7844943943d91112ffe8322/src/test/Components/CreateImageWizard/CreateImageWizard.test.js#L74
+
+If the two possible code path accessible via the toggles are defined in the code
+base, then it's good practice to test the two of them. If not, only test what's
+actually owned by the frontend project.
+
+
+##### Cleaning the flags
+
+Unleash toggles are expected to live for a limited amount of time, documentation
+specify 40 days for a release, we should keep that in mind for each toggle
+we're planning on using.
+
 ### Backend Development
 
 To develop both the frontend and the backend you can again use the proxy to run both the
