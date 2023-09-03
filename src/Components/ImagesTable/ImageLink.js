@@ -11,6 +11,7 @@ import ImageLinkDirect from './ImageLinkDirect';
 
 import { MODAL_ANCHOR } from '../../constants';
 import { selectImageById } from '../../store/composesSlice';
+import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
 
 const getImageProvider = ({ imageType }) => {
   switch (imageType) {
@@ -44,12 +45,20 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
   );
 
   const appendTo = useMemo(() => document.querySelector(MODAL_ANCHOR), []);
-
+  const { permissions, isLoading: isLoadingPermission } =
+    useProvisioningPermissions();
   const provider = getImageProvider(image);
+
   if (!error) {
     return (
       <Suspense fallback="loading...">
-        <Button variant="link" isInline onClick={() => openWizard(true)}>
+        <Button
+          spinnerAriaLabel="Loading launch"
+          isLoading={isLoadingPermission}
+          variant="link"
+          isInline
+          onClick={() => openWizard(true)}
+        >
           Launch
         </Button>
         {wizardOpen && (
@@ -58,10 +67,12 @@ const ProvisioningLink = ({ imageId, isExpired, isInClonesTable }) => {
             hasNoBodyWrapper
             appendTo={appendTo}
             showClose={false}
+            onClose={() => openWizard(false)}
             variant={ModalVariant.large}
             aria-label="Open launch wizard"
           >
             <ProvisioningWizard
+              hasAccess={permissions[provider]}
               onClose={() => openWizard(false)}
               image={{
                 name: image.imageName,
