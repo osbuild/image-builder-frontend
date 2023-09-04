@@ -8,6 +8,8 @@ const config: ConfigFile = {
   exportName: 'imageBuilderApi',
   hooks: true,
   filterEndpoints: [
+    'cloneCompose',
+    'composeImage',
     'getComposes',
     'getComposeStatus',
     'getComposeClones',

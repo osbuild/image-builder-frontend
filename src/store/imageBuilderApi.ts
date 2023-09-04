@@ -19,6 +19,13 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/composes/${queryArg.composeId}` }),
     }),
+    cloneCompose: build.mutation<CloneComposeApiResponse, CloneComposeApiArg>({
+      query: (queryArg) => ({
+        url: `/composes/${queryArg.composeId}/clone`,
+        method: "POST",
+        body: queryArg.cloneRequest,
+      }),
+    }),
     getComposeClones: build.query<
       GetComposeClonesApiResponse,
       GetComposeClonesApiArg
@@ -33,6 +40,13 @@ const injectedRtkApi = api.injectEndpoints({
       GetCloneStatusApiArg
     >({
       query: (queryArg) => ({ url: `/clones/${queryArg.id}` }),
+    }),
+    composeImage: build.mutation<ComposeImageApiResponse, ComposeImageApiArg>({
+      query: (queryArg) => ({
+        url: `/compose`,
+        method: "POST",
+        body: queryArg.composeRequest,
+      }),
     }),
     getPackages: build.query<GetPackagesApiResponse, GetPackagesApiArg>({
       query: (queryArg) => ({
@@ -70,6 +84,14 @@ export type GetComposeStatusApiArg = {
   /** Id of compose */
   composeId: string;
 };
+export type CloneComposeApiResponse =
+  /** status 201 cloning has started */ CloneResponse;
+export type CloneComposeApiArg = {
+  /** Id of compose to clone */
+  composeId: string;
+  /** details of the new clone */
+  cloneRequest: CloneRequest;
+};
 export type GetComposeClonesApiResponse =
   /** status 200 compose clones */ ClonesResponse;
 export type GetComposeClonesApiArg = {
@@ -85,6 +107,12 @@ export type GetCloneStatusApiResponse =
 export type GetCloneStatusApiArg = {
   /** Id of clone status to get */
   id: string;
+};
+export type ComposeImageApiResponse =
+  /** status 201 compose has started */ ComposeResponse;
+export type ComposeImageApiArg = {
+  /** details of image to be composed */
+  composeRequest: ComposeRequest;
 };
 export type GetPackagesApiResponse =
   /** status 200 a list of packages */ PackagesResponse;
@@ -295,6 +323,9 @@ export type ComposeStatus = {
   image_status: ImageStatus;
   request: ComposeRequest;
 };
+export type CloneResponse = {
+  id: string;
+};
 export type Awsec2Clone = {
   region: string;
   share_with_accounts?: string[];
@@ -316,6 +347,16 @@ export type ClonesResponse = {
   };
   data: ClonesResponseItem[];
 };
+export type ComposeResponse = {
+  id: string;
+};
+export type HttpError = {
+  title: string;
+  detail: string;
+};
+export type HttpErrorList = {
+  errors: HttpError[];
+};
 export type Package = {
   name: string;
   summary: string;
@@ -334,7 +375,9 @@ export const {
   useGetArchitecturesQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
+  useCloneComposeMutation,
   useGetComposeClonesQuery,
   useGetCloneStatusQuery,
+  useComposeImageMutation,
   useGetPackagesQuery,
 } = injectedRtkApi;
