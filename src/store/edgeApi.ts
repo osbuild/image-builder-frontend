@@ -1,4 +1,4 @@
-import { emptyEdgeApi as api } from './emptyEdgeApi';
+import { emptyEdgeApi as api } from "./emptyEdgeApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getAllImages: build.query<GetAllImagesApiResponse, GetAllImagesApiArg>({
