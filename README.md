@@ -81,6 +81,82 @@ The UI should be running on
 https://prod.foo.redhat.com:1337/beta/insights/image-builder/landing.
 Note that this requires you to have access to either production or stage (plus VPN and proxy config) of insights.
 
+#### API endpoints
+
+API endpoints are programmatically generated with the RTKQ library. This
+sections overview the steps to add new APIs and endpoints.
+
+##### Add a new API
+
+For an hypothetical API called foobar
+
+1. Download the foobar api openapi json or yaml representation under
+`api/schema/foobar.json`
+
+2. Create a new "empty" api file under `src/store/emptyFoobarApi.ts` that has for
+content:
+
+```{ts}
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+import { FOOBAR_API } from '../constants';
+
+// initialize an empty api service that we'll inject endpoints into later as needed
+export const emptyFoobarApi = createApi({
+  reducerPath: 'foobarApi',
+  baseQuery: fetchBaseQuery({ baseUrl: FOO_BAR }),
+  endpoints: () => ({}),
+});
+```
+
+3. Declare the new constat `FOOBAR_API` to the API url in `src/constants.js`
+
+```
+export const FOOBAR_API = 'api/foobar/v1'
+```
+
+4. Create the config file for code generation in `api/config/foobar.ts` containing:
+
+```
+import type { ConfigFile } from '@rtk-query/codegen-openapi';
+
+const config: ConfigFile = {
+  schemaFile: '../schema/foobar.json',
+  apiFile: '../../src/store/emptyFoobarApi.ts',
+  apiImport: 'emptyEdgeApi',
+  outputFile: '../../src/store/foobarApi.ts',
+  exportName: 'foobarApi',
+  hooks: true,
+  filterEndpoints: ['getFoo', 'getBar', 'getFoobar'],
+};
+```
+
+5. Update the `api.sh` script by adding a new line for npx to generate the code:
+
+```
+npx @rtk-query/codegen-openapi ./api/config/foobar.ts &
+```
+
+
+6. Update the `.eslintignore` file by adding a new line for the generated code:
+
+```
+foobarApi.ts
+```
+
+7. run api generation
+
+```
+rpn run api
+```
+
+And voilà!
+
+##### Add a new endpoint
+
+To add a new endpoint, simply update the `api/config/foobar.ts` file with new
+endpoints in the `filterEndpoints` table.
+
 ### Backend Development
 
 To develop both the frontend and the backend you can again use the proxy to run both the
