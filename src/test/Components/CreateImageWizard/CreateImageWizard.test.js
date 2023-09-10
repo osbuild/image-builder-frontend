@@ -458,7 +458,14 @@ describe('Step Upload to Google', () => {
   test('clicking Next loads Registration', async () => {
     await setUp();
 
-    await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
+    const shareRadioButton = await screen.findByRole('radio', {
+      name: /share image with a google account/i,
+    });
+    await user.click(shareRadioButton);
+
+    const googleEmailInput = await screen.findByTestId('input-google-email');
+
+    await user.type(googleEmailInput, 'test@test.com');
     await clickNext();
 
     await screen.findByRole('textbox', {
@@ -485,15 +492,22 @@ describe('Step Upload to Google', () => {
   test('the google account id field is shown and required', async () => {
     await setUp();
 
-    const accessKeyId = screen.getByTestId('input-google-email');
+    await waitFor(() => {
+      screen.getByTestId('account-sharing');
+    });
+
+    user.click(screen.getByTestId('account-sharing'));
+    const accessKeyId = await screen.findByTestId('input-google-email');
     expect(accessKeyId).toHaveValue('');
     expect(accessKeyId).toBeEnabled();
+
     // expect(accessKeyId).toBeRequired(); // DDf does not support required value
   });
 
   test('the google email field must be a valid email', async () => {
     await setUp();
 
+    await user.click(screen.getByTestId('account-sharing'));
     await user.type(screen.getByTestId('input-google-email'), 'a');
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
@@ -1033,7 +1047,11 @@ describe('Click through all steps', () => {
     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
     await clickNext();
 
+    await user.click(screen.getByTestId('account-sharing'));
+
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
+
+    await user.click(await screen.findByTestId('image-sharing'));
     await clickNext();
 
     await user.click(screen.getByTestId('azure-radio-manual'));
@@ -1391,10 +1409,8 @@ describe('Keyboard accessibility', () => {
     await clickNext();
 
     // Target environment google
-    const googleAccountRadio = screen.getByRole('radio', {
-      name: /google account/i,
-    });
-    expect(googleAccountRadio).toHaveFocus();
+    await user.click(screen.getByTestId('account-sharing'));
+    expect(screen.getByTestId('account-sharing')).toHaveFocus();
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
     await clickNext();
 

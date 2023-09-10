@@ -102,20 +102,48 @@ const googleCloudStep = {
       name: 'google-cloud-text-component',
       label: (
         <p>
-          Your image will be uploaded to GCP and shared with the account you
-          provide below.
+          Select how to share your image. The image you create can be used to
+          launch instances on GCP, regardless of which method you select.
         </p>
       ),
     },
     {
-      component: componentTypes.PLAIN_TEXT,
-      name: 'google-cloud-text-component',
-      label: (
-        <p>
-          <b>The shared image will expire within 14 days.</b> To permanently
-          access the image, copy it to your Google Cloud Platform account.
-        </p>
-      ),
+      component: componentTypes.RADIO,
+      label: 'Select image sharing',
+      isRequired: true,
+      name: 'image-sharing',
+      initialValue: 'gcp-account',
+      autoFocus: true,
+      options: [
+        {
+          label: 'Share image with a Google account',
+          'data-testid': 'account-sharing',
+          autoFocus: true,
+          description: (
+            <p>
+              Your image will be uploaded to GCP and shared with the account you
+              provide below.
+              <b>The image expires in 14 days.</b> To keep permanent access to
+              your image, copy it to your GCP project.
+            </p>
+          ),
+          value: 'gcp-account',
+        },
+        {
+          label: 'Share image with Red Hat Insights only',
+          'data-testid': 'image-sharing',
+          description: (
+            <p>
+              Your image will be uploaded to GCP and shared with Red Hat
+              Insights.
+              <b> The image expires in 14 days.</b> You cannot access or
+              recreate this image in your GCP project.
+            </p>
+          ),
+          value: 'insights',
+          autoFocus: true,
+        },
+      ],
     },
     {
       component: 'radio-popover',
@@ -137,6 +165,10 @@ const googleCloudStep = {
           type: validatorTypes.REQUIRED,
         },
       ],
+      condition: {
+        when: 'image-sharing',
+        is: 'gcp-account',
+      },
     },
     {
       component: componentTypes.TEXT_FIELD,
@@ -145,11 +177,16 @@ const googleCloudStep = {
       type: 'text',
       label: 'Principal (e.g. e-mail address)',
       condition: {
-        or: [
-          { when: 'google-account-type', is: 'googleAccount' },
-          { when: 'google-account-type', is: 'serviceAccount' },
-          { when: 'google-account-type', is: 'googleGroup' },
-          { when: 'google-account-type', is: null },
+        and: [
+          { when: 'image-sharing', is: 'gcp-account' },
+          {
+            or: [
+              { when: 'google-account-type', is: 'googleAccount' },
+              { when: 'google-account-type', is: 'serviceAccount' },
+              { when: 'google-account-type', is: 'googleGroup' },
+              { when: 'google-account-type', is: null },
+            ],
+          },
         ],
       },
       isRequired: true,
@@ -170,8 +207,10 @@ const googleCloudStep = {
       type: 'text',
       label: 'Domain',
       condition: {
-        when: 'google-account-type',
-        is: 'domain',
+        and: [
+          { when: 'image-sharing', is: 'gcp-account' },
+          { when: 'google-account-type', is: 'domain' },
+        ],
       },
       isRequired: true,
       validate: [

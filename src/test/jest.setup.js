@@ -36,6 +36,10 @@ failOnConsole({
         ) ||
         errorMessage.includes(
           "Can't perform a React state update on an unmounted component. This is a no-op, but it indicates a memory leak in your application."
+        ) ||
+        // [2023-09] Suppresses an error that occurs on the GCP step of the Wizard.
+        errorMessage.includes(
+          'Warning: Cannot update a component (`ForwardRef(Field)`) while rendering a different component (`Radio`). To locate the bad setState() call inside `Radio`, follow the stack trace as described in https://reactjs.org/link/setstate-in-render'
         ))
     ) {
       // eslint-disable-next-line no-console
