@@ -12,7 +12,7 @@ import {
 export const isGcpUploadRequestOptions = (
   options: UploadRequest['options']
 ): options is GcpUploadRequestOptions => {
-  return (options as GcpUploadRequestOptions).share_with_accounts !== undefined;
+  return true;
 };
 
 export const isAwsUploadRequestOptions = (

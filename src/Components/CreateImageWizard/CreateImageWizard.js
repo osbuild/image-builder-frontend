@@ -122,20 +122,22 @@ const onSave = (values) => {
 
   if (values['target-environment']?.gcp) {
     let share = '';
-    switch (values['google-account-type']) {
-      case 'googleAccount':
-        share = `user:${values['google-email']}`;
-        break;
-      case 'serviceAccount':
-        share = `serviceAccount:${values['google-email']}`;
-        break;
-      case 'googleGroup':
-        share = `group:${values['google-email']}`;
-        break;
-      case 'domain':
-        share = `domain:${values['google-domain']}`;
-        break;
-      // no default
+    if (values['image_sharing'] === 'gcp-account') {
+      switch (values['google-account-type']) {
+        case 'googleAccount':
+          share = `user:${values['google-email']}`;
+          break;
+        case 'serviceAccount':
+          share = `serviceAccount:${values['google-email']}`;
+          break;
+        case 'googleGroup':
+          share = `group:${values['google-email']}`;
+          break;
+        case 'domain':
+          share = `domain:${values['google-domain']}`;
+          break;
+        // no default
+      }
     }
 
     const request = {
@@ -148,15 +150,16 @@ const onSave = (values) => {
           image_type: 'gcp',
           upload_request: {
             type: 'gcp',
-            options: {
-              share_with_accounts: [share],
-            },
+            options: {},
           },
         },
       ],
       customizations,
     };
 
+    if (share !== '') {
+      request.options = [share];
+    }
     requests.push(request);
   }
 
