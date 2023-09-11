@@ -77,6 +77,23 @@ export const selectComposeById = (state, composeId) => {
   }
 };
 
+export const selectEdgeComposesByImageType = (state, composeId) => {
+  // eslint-disable-next-line no-console
+  console.log('vomposeID', state.composes.byId[composeId].request);
+  const composesType =
+    state.composes.byId[composeId].request.image_requests[0].image_type;
+  // eslint-disable-next-line no-debugger
+  debugger;
+  // eslint-disable-next-line no-console
+  console.log('composesType', composesType);
+  if (
+    composesType !== 'rhel-edge-commit' &&
+    composesType !== 'rhel-edge-installer'
+  ) {
+    return composesType;
+  }
+};
+
 export const selectClonesById = (state, composeId) => {
   const compose = state.composes.byId[composeId];
 

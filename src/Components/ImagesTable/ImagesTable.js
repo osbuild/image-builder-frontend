@@ -66,7 +66,20 @@ const ImagesTable = () => {
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
-
+  // @ts-ignore
+  const ImageType = (compose) => {
+    Object.entries(composes.byId).map(([id, compose]) => {
+      /* Skip composes that have been complete */
+      if (
+        compose.request.image_requests[0].image_type !== 'rhel-edge-commit' &&
+        compose.request.image_requests[0].image_type !== 'rhel-edge-installer'
+      ) {
+        return compose.id;
+      } else {
+        return null;
+      }
+    });
+  };
   const pollComposeStatuses = () => {
     Object.entries(composes.byId).map(([id, compose]) => {
       /* Skip composes that have been complete */
@@ -267,65 +280,84 @@ const ImagesTable = () => {
               .slice(itemsStartInclusive, itemsEndExclusive)
               .map((id, rowIndex) => {
                 const compose = composes.byId[id];
-                return (
-                  <Tbody key={id} isExpanded={isExpanded(compose)}>
-                    <Tr className="no-bottom-border">
-                      <Td
-                        expand={{
-                          rowIndex,
-                          isExpanded: isExpanded(compose),
-                          onToggle: () =>
-                            handleToggle(compose, !isExpanded(compose)),
-                        }}
-                      />
-                      <Td dataLabel="Image name">
-                        {compose.request.image_name || id}
-                      </Td>
-                      <Td dataLabel="Created">
-                        {timestampToDisplayString(compose.created_at)}
-                      </Td>
-                      <Td dataLabel="Release">
-                        <Release release={compose.request.distribution} />
-                      </Td>
-                      <Td dataLabel="Target">
-                        <Target composeId={id} />
-                      </Td>
-                      <Td dataLabel="Status">
-                        <ImageBuildStatus
-                          imageId={id}
-                          isImagesTableRow={true}
-                          imageStatus={compose.image_status}
-                        />
-                      </Td>
-                      <Td dataLabel="Instance">
-                        <ImageLink
-                          imageId={id}
-                          isExpired={
-                            hoursToExpiration(compose.created_at) >=
-                            AWS_S3_EXPIRATION_TIME_IN_HOURS
-                              ? true
-                              : false
-                          }
-                        />
-                      </Td>
-                      <Td>
-                        {compose.request.image_requests[0].upload_request
-                          .type === 'aws' ? (
-                          <ActionsColumn items={awsActions(compose)} />
-                        ) : (
-                          <ActionsColumn items={actions(compose)} />
-                        )}
-                      </Td>
-                    </Tr>
-                    <Tr isExpanded={isExpanded(compose)}>
-                      <Td colSpan={8}>
-                        <ExpandableRowContent>
-                          <ImageDetails id={id} />
-                        </ExpandableRowContent>
-                      </Td>
-                    </Tr>
-                  </Tbody>
-                );
+
+                if (
+                  compose &&
+                  compose.request &&
+                  compose.request.image_requests &&
+                  compose.request.image_requests[0]
+                ) {
+                  const imageType =
+                    compose.request.image_requests[0].image_type;
+
+                  // Check if the image_type is not 'rhel-edge-commit' and 'rhel-edge-installer'
+                  if (
+                    imageType !== 'rhel-edge-commit' &&
+                    imageType !== 'rhel-edge-installer'
+                  ) {
+                    return (
+                      <Tbody key={id} isExpanded={isExpanded(compose)}>
+                        <Tr className="no-bottom-border">
+                          <Td
+                            expand={{
+                              rowIndex,
+                              isExpanded: isExpanded(compose),
+                              onToggle: () =>
+                                handleToggle(compose, !isExpanded(compose)),
+                            }}
+                          />
+                          <Td dataLabel="Image name">
+                            {compose.request.image_name || id}
+                          </Td>
+                          <Td dataLabel="Created">
+                            {timestampToDisplayString(compose.created_at)}
+                          </Td>
+                          <Td dataLabel="Release">
+                            <Release release={compose.request.distribution} />
+                          </Td>
+                          <Td dataLabel="Target">
+                            <Target composeId={id} />
+                          </Td>
+                          <Td dataLabel="Status">
+                            <ImageBuildStatus
+                              imageId={id}
+                              isImagesTableRow={true}
+                              imageStatus={compose.image_status}
+                            />
+                          </Td>
+                          <Td dataLabel="Instance">
+                            <ImageLink
+                              imageId={id}
+                              isExpired={
+                                hoursToExpiration(compose.created_at) >=
+                                AWS_S3_EXPIRATION_TIME_IN_HOURS
+                                  ? true
+                                  : false
+                              }
+                            />
+                          </Td>
+                          <Td>
+                            {compose.request.image_requests[0].upload_request
+                              .type === 'aws' ? (
+                              <ActionsColumn items={awsActions(compose)} />
+                            ) : (
+                              <ActionsColumn items={actions(compose)} />
+                            )}
+                          </Td>
+                        </Tr>
+                        <Tr isExpanded={isExpanded(compose)}>
+                          <Td colSpan={8}>
+                            <ExpandableRowContent>
+                              <ImageDetails id={id} />
+                            </ExpandableRowContent>
+                          </Td>
+                        </Tr>
+                      </Tbody>
+                    );
+                  }
+                }
+
+                return null; // Exclude composes that don't meet the criteria
               })}
           </TableComposable>
           <Toolbar className="pf-u-mb-xl">
