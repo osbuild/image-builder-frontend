@@ -32,6 +32,14 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    getImageSetImageView: build.query<
+      GetImageSetImageViewApiResponse,
+      GetImageSetImageViewApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/image-sets/view/${queryArg.imageSetId}/versions/${queryArg.imageId}`,
+      }),
+    }),
     getAllImageSetImagesView: build.query<
       GetAllImageSetImagesViewApiResponse,
       GetAllImageSetImagesViewApiArg
@@ -45,6 +53,15 @@ const injectedRtkApi = api.injectEndpoints({
           limit: queryArg.limit,
           offset: queryArg.offset,
         },
+      }),
+    }),
+    deleteImageSet: build.mutation<
+      DeleteImageSetApiResponse,
+      DeleteImageSetApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/image-sets/${queryArg.imageSetId}`,
+        method: "DELETE",
       }),
     }),
     getAllImages: build.query<GetAllImagesApiResponse, GetAllImagesApiArg>({
@@ -172,6 +189,14 @@ export type GetImageSetsViewApiArg = {
   /** field: return number of image-set view beginning at the offset. */
   offset?: number;
 };
+export type GetImageSetImageViewApiResponse =
+  /** status 200 OK */ ModelsImageSetImageIdViewApi;
+export type GetImageSetImageViewApiArg = {
+  /** the image set id */
+  imageSetId: number;
+  /** the image id */
+  imageId: number;
+};
 export type GetAllImageSetImagesViewApiResponse =
   /** status 200 OK */ ModelsImagesViewDataApi;
 export type GetAllImageSetImagesViewApiArg = {
@@ -187,6 +212,11 @@ export type GetAllImageSetImagesViewApiArg = {
   limit?: number;
   /** field: return number of images beginning at the offset. */
   offset?: number;
+};
+export type DeleteImageSetApiResponse = /** status 200 OK */ ModelsImageSetApi;
+export type DeleteImageSetApiArg = {
+  /** Identifier of the ImageSet */
+  imageSetId: number;
 };
 export type GetAllImagesApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -436,6 +466,19 @@ export type ModelsImageSetsViewResponseApi = {
   count?: number;
   data?: ModelsImageSetView[];
 };
+export type ModelsImageDetailApi = {
+  additional_packages?: number;
+  image?: ModelsImage;
+  packages?: number;
+  update_added?: number;
+  update_removed?: number;
+  update_updated?: number;
+};
+export type ModelsImageSetImageIdViewApi = {
+  ImageBuildIsoURL?: string;
+  ImageDetails?: ModelsImageDetailApi;
+  ImageSet?: ModelsImageSetApi;
+};
 export type ModelsImageView = {
   CommitCheckSum?: string;
   CreatedAt?: ModelsEdgeApiTime;
@@ -482,7 +525,9 @@ export type CreateImage = object;
 export const {
   useListAllImageSetsQuery,
   useGetImageSetsViewQuery,
+  useGetImageSetImageViewQuery,
   useGetAllImageSetImagesViewQuery,
+  useDeleteImageSetMutation,
   useGetAllImagesQuery,
   useCreateImageMutation,
   useCheckImageNameMutation,

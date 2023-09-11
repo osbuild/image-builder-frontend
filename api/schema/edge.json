@@ -3227,7 +3227,7 @@
           {
             "description": "the image set id",
             "in": "path",
-            "name": "image_set_id",
+            "name": "imageSetID",
             "required": true,
             "schema": {
               "type": "integer"
@@ -3236,7 +3236,7 @@
           {
             "description": "the image id",
             "in": "path",
-            "name": "image_id",
+            "name": "imageID",
             "required": true,
             "schema": {
               "type": "integer"
@@ -3465,7 +3465,7 @@
           {
             "description": "Identifier of the ImageSet",
             "in": "path",
-            "name": "ImageSetId",
+            "name": "imageSetID",
             "required": true,
             "schema": {
               "type": "integer"

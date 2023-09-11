@@ -27,6 +27,8 @@ const config: ConfigFile = {
     'getImageSetViewByID',
     'getAllImageSetImagesView',
     'getImageSetsDevicesByID',
+    'deleteImageSet',
+    'getImageSetImageView',
   ],
 };
 
