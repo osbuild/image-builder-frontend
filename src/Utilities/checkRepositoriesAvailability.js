@@ -25,6 +25,8 @@ export const useCheckRepositoriesAvailability = () => {
   const firstRequest = useListRepositoriesQuery({
     availableForArch: 'x86_64',
     availableForVersion: version,
+    contentType: 'rpm',
+    origin: 'external',
   });
 
   const skip =
@@ -36,6 +38,8 @@ export const useCheckRepositoriesAvailability = () => {
     {
       availableForArch: 'x86_64',
       availableForVersion: version,
+      contentType: 'rpm',
+      origin: 'external',
       limit: firstRequest?.data?.meta?.count,
       offset: 0,
     },
