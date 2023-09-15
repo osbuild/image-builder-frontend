@@ -49,6 +49,8 @@ const CustomButtons = ({
       prefetchRepositories({
         availableForArch: 'x86_64',
         availableForVersion: version,
+        contentType: 'rpm',
+        origin: 'external',
       });
     }
   };

@@ -212,6 +212,8 @@ const Repositories = (props) => {
     {
       availableForArch: 'x86_64',
       availableForVersion: version,
+      contentType: 'rpm',
+      origin: 'external',
       limit: 100,
       offset: 0,
     },
@@ -230,6 +232,8 @@ const Repositories = (props) => {
     {
       availableForArch: 'x86_64',
       availableForVersion: version,
+      contentType: 'rpm',
+      origin: 'external',
       limit: firstRequest?.data?.meta?.count,
       offset: 0,
     },

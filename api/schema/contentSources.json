@@ -277,6 +277,10 @@
                         "readOnly": true,
                         "type": "string"
                     },
+                    "content_type": {
+                        "description": "Content Type (rpm) of the repository",
+                        "type": "string"
+                    },
                     "distribution_arch": {
                         "description": "Architecture to restrict client usage to",
                         "example": "x86_64",
@@ -309,6 +313,17 @@
                         "description": "Timestamp of last attempted introspection",
                         "type": "string"
                     },
+                    "last_snapshot": {
+                        "$ref": "#/components/schemas/api.SnapshotResponse"
+                    },
+                    "last_snapshot_task_uuid": {
+                        "description": "UUID of the last snapshot task",
+                        "type": "string"
+                    },
+                    "last_snapshot_uuid": {
+                        "description": "UUID of the last dao.Snapshot",
+                        "type": "string"
+                    },
                     "last_success_introspection_time": {
                         "description": "Timestamp of last successful introspection",
                         "type": "string"
@@ -328,6 +343,10 @@
                     "org_id": {
                         "description": "Organization ID of the owner",
                         "readOnly": true,
+                        "type": "string"
+                    },
+                    "origin": {
+                        "description": "Origin of the repository",
                         "type": "string"
                     },
                     "package_count": {
@@ -525,6 +544,13 @@
             },
             "api.SnapshotResponse": {
                 "properties": {
+                    "added_counts": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "description": "Count of each content type",
+                        "type": "object"
+                    },
                     "content_counts": {
                         "additionalProperties": {
                             "type": "integer"
@@ -536,8 +562,15 @@
                         "description": "Datetime the snapshot was created",
                         "type": "string"
                     },
-                    "distribution_path": {
-                        "description": "Path to pulp distribution",
+                    "removed_counts": {
+                        "additionalProperties": {
+                            "type": "integer"
+                        },
+                        "description": "Count of each content type",
+                        "type": "object"
+                    },
+                    "repository_path": {
+                        "description": "Path to repository snapshot contents",
                         "type": "string"
                     }
                 },
@@ -579,8 +612,20 @@
                         "description": "Organization ID of the owner",
                         "type": "string"
                     },
+                    "repository_name": {
+                        "description": "Name of the associated repository",
+                        "type": "string"
+                    },
+                    "repository_uuid": {
+                        "description": "UUID of the associated repository",
+                        "type": "string"
+                    },
                     "status": {
                         "description": "Status of task (running, failed, completed, canceled, pending)",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of task",
                         "type": "string"
                     },
                     "uuid": {
@@ -731,6 +776,32 @@
             "get": {
                 "description": "Get popular repositories",
                 "operationId": "listPopularRepositories",
+                "parameters": [
+                    {
+                        "description": "Offset into the list of results to return in the response",
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Limit the number of items returned",
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Search term for name and url.",
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "content": {
@@ -958,6 +1029,22 @@
                         "description": "Comma separated list of statuses to optionally filter on",
                         "in": "query",
                         "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Comma separated list of origins to filter (red_hat,external)",
+                        "in": "query",
+                        "name": "origin",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "content type of a repository to filter on (rpm)",
+                        "in": "query",
+                        "name": "content_type",
                         "schema": {
                             "type": "string"
                         }
@@ -2169,6 +2256,22 @@
                         "description": "Filter tasks by status using an exact match",
                         "in": "query",
                         "name": "status",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Filter tasks by type using an exact match",
+                        "in": "query",
+                        "name": "type",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Filter tasks by associated repository UUID using an exact match",
+                        "in": "query",
+                        "name": "repository_uuid",
                         "schema": {
                             "type": "string"
                         }

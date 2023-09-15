@@ -18,6 +18,8 @@ import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 const RepoName = ({ repoUrl }) => {
   const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery({
     url: repoUrl,
+    contentType: 'rpm',
+    origin: 'external',
   });
 
   const errorLoading = () => {

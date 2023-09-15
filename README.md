@@ -147,7 +147,7 @@ foobarApi.ts
 7. run api generation
 
 ```
-rpn run api
+npm run api
 ```
 
 And voilà!

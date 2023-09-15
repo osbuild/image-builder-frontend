@@ -19,6 +19,8 @@ const injectedRtkApi = api.injectEndpoints({
           url: queryArg.url,
           sort_by: queryArg.sortBy,
           status: queryArg.status,
+          origin: queryArg.origin,
+          content_type: queryArg.contentType,
         },
       }),
     }),
@@ -65,6 +67,10 @@ export type ListRepositoriesApiArg = {
   sortBy?: string;
   /** Comma separated list of statuses to optionally filter on */
   status?: string;
+  /** Comma separated list of origins to filter (red_hat,external) */
+  origin?: string;
+  /** content type of a repository to filter on (rpm) */
+  contentType?: string;
 };
 export type ListRepositoriesRpmsApiResponse =
   /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
@@ -80,19 +86,37 @@ export type ListRepositoriesRpmsApiArg = {
   /** Sets the sort order of the results. */
   sortBy?: string;
 };
+export type ApiSnapshotResponse = {
+  added_counts?: {
+    [key: string]: number;
+  };
+  content_counts?: {
+    [key: string]: number;
+  };
+  created_at?: string;
+  removed_counts?: {
+    [key: string]: number;
+  };
+  repository_path?: string;
+};
 export type ApiRepositoryResponse = {
   account_id?: string;
+  content_type?: string;
   distribution_arch?: string;
   distribution_versions?: string[];
   failed_introspections_count?: number;
   gpg_key?: string;
   last_introspection_error?: string;
   last_introspection_time?: string;
+  last_snapshot?: ApiSnapshotResponse;
+  last_snapshot_task_uuid?: string;
+  last_snapshot_uuid?: string;
   last_success_introspection_time?: string;
   last_update_introspection_time?: string;
   metadata_verification?: boolean;
   name?: string;
   org_id?: string;
+  origin?: string;
   package_count?: number;
   snapshot?: boolean;
   status?: string;
