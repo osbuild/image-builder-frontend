@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 
 import { Button, Modal, ModalVariant, Skeleton } from '@patternfly/react-core';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
@@ -18,6 +18,7 @@ import {
   isGcpUploadRequestOptions,
 } from '../../store/typeGuards';
 import { resolveRelPath } from '../../Utilities/path';
+import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
 
 type CloudInstancePropTypes = {
   compose: ComposesResponseItem;
@@ -60,13 +61,22 @@ const ProvisioningLink = ({
   compose,
   composeStatus,
 }: ProvisioningLinkPropTypes) => {
-  const [wizardOpen, openWizard] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [exposedScalprumModule, error] = useLoadModule(
     {
       scope: 'provisioning',
       module: './ProvisioningWizard',
     },
     {}
+  );
+
+  const { permissions, isLoading: isLoadingPermission } =
+    useProvisioningPermissions();
+
+  // Recomputing this value on every render made the modal crash. Using a state
+  // helps avoiding this situation as the value is only set the first time.
+  const [appendTo] = useState(
+    document.querySelector(MODAL_ANCHOR) as HTMLElement
   );
 
   if (
@@ -76,8 +86,7 @@ const ProvisioningLink = ({
   ) {
     return <DisabledProvisioningLink />;
   } else {
-    const appendTo = () => document.querySelector(MODAL_ANCHOR) as HTMLElement;
-    const ProvisioningWizard = exposedScalprumModule.default;
+    const ProvisioningWizard = exposedScalprumModule?.default;
     const provider = getImageProvider(compose);
 
     const options = compose.request.image_requests[0].upload_request.options;
@@ -96,35 +105,44 @@ const ProvisioningLink = ({
 
     return (
       <>
-        <Button variant="link" isInline onClick={() => openWizard(true)}>
-          Launch
-        </Button>
-        {wizardOpen && (
-          <Modal
-            isOpen
-            hasNoBodyWrapper
-            appendTo={appendTo}
-            showClose={false}
-            variant={ModalVariant.large}
-            aria-label="Open launch wizard"
+        <Suspense fallback="loading...">
+          <Button
+            spinnerAriaLabel="Loading launch"
+            isLoading={isLoadingPermission}
+            variant="link"
+            isInline
+            onClick={() => setWizardOpen(true)}
           >
-            <ProvisioningWizard
-              onClose={() => openWizard(false)}
-              image={{
-                name: compose.image_name || compose.id,
-                id: compose.id,
-                architecture:
-                  compose.request.image_requests[0].upload_request.options,
-                provider: provider,
-                sourceIDs: sourceIds,
-                accountIDs: accountIds,
-                uploadOptions:
-                  compose.request.image_requests[0].upload_request.options,
-                uploadStatus: composeStatus.image_status.upload_status,
-              }}
-            />
-          </Modal>
-        )}
+            Launch
+          </Button>
+          {wizardOpen && (
+            <Modal
+              isOpen
+              hasNoBodyWrapper
+              appendTo={appendTo}
+              showClose={false}
+              variant={ModalVariant.large}
+              aria-label="Open launch wizard"
+            >
+              <ProvisioningWizard
+                hasAccess={permissions[provider]}
+                onClose={() => setWizardOpen(false)}
+                image={{
+                  name: compose.image_name || compose.id,
+                  id: compose.id,
+                  architecture:
+                    compose.request.image_requests[0].upload_request.options,
+                  provider: provider,
+                  sourceIDs: sourceIds,
+                  accountIDs: accountIds,
+                  uploadOptions:
+                    compose.request.image_requests[0].upload_request.options,
+                  uploadStatus: composeStatus.image_status.upload_status,
+                }}
+              />
+            </Modal>
+          )}
+        </Suspense>
       </>
     );
   }
