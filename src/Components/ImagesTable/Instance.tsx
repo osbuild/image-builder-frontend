@@ -130,8 +130,7 @@ const ProvisioningLink = ({
                 image={{
                   name: compose.image_name || compose.id,
                   id: compose.id,
-                  architecture:
-                    compose.request.image_requests[0].upload_request.options,
+                  architecture: compose.request.image_requests[0].architecture,
                   provider: provider,
                   sourceIDs: sourceIds,
                   accountIDs: accountIds,
