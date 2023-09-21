@@ -25,19 +25,22 @@ const ImageDetail = () => {
     return <div />;
   }
   if (edgeParityFlag) {
-    <AsyncComponent
-      appName="edge"
-      module="./ImagesDetail"
-      ErrorComponent={<ErrorState />}
-      navigateProp={useNavigate}
-      locationProp={useLocation}
-      notificationProp={notificationProp}
-      pathPrefix={resolveRelPath('')}
-      urlName={manageEdgeImagesUrlName}
-      paramsProp={useParams}
-    />;
+    return (
+      <AsyncComponent
+        appName="edge"
+        module="./ImagesDetail"
+        ErrorComponent={<ErrorState />}
+        navigateProp={useNavigate}
+        locationProp={useLocation}
+        notificationProp={notificationProp}
+        pathPrefix={resolveRelPath('')}
+        urlName={manageEdgeImagesUrlName}
+        paramsProp={useParams}
+      />
+    );
+  } else {
+    return <Unavailable />;
   }
-  return <Unavailable />;
 };
 
 export default ImageDetail;
