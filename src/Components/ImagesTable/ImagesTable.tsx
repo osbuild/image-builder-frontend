@@ -72,6 +72,12 @@ const ImagesTable = () => {
   const { data, isSuccess } = useGetComposesQuery({
     limit: perPage,
     offset: perPage * (page - 1),
+    ignoreImageTypes: [
+      'rhel-edge-commit',
+      'rhel-edge-installer',
+      'edge-commit',
+      'edge-installer',
+    ],
   });
 
   if (!isSuccess) {
