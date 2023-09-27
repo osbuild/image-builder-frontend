@@ -192,7 +192,7 @@ const Registration = ({ label, ...props }) => {
                     registerSystem === 'register-now-insights' ||
                     registerSystem === 'register-now-rhc'
                   }
-                  onChange={(checked) => {
+                  onChange={(_event, checked) => {
                     if (checked) {
                       change(input.name, 'register-now-insights');
                     } else {
@@ -212,7 +212,7 @@ const Registration = ({ label, ...props }) => {
                       }
                       data-testid="registration-checkbox-rhc"
                       isChecked={registerSystem === 'register-now-rhc'}
-                      onChange={(checked) => {
+                      onChange={(_event, checked) => {
                         if (checked) {
                           change(input.name, 'register-now-rhc');
                         } else {

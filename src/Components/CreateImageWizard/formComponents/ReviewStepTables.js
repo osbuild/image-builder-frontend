@@ -2,14 +2,7 @@ import React from 'react';
 
 import { useFormApi } from '@data-driven-forms/react-form-renderer';
 import { Alert, Panel, PanelMain, Spinner } from '@patternfly/react-core';
-import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 
 import { UNIT_GIB, UNIT_MIB } from '../../../constants';
@@ -46,7 +39,7 @@ const RepoName = ({ repoUrl }) => {
       */}
       {isSuccess && data.data?.[0]?.name && <p>{data.data?.[0].name}</p>}
       {isSuccess && !data.data?.[0]?.name && errorLoading()}
-      {isFetching && <Spinner isSVG size="md" />}
+      {isFetching && <Spinner size="md" />}
       {isError && errorLoading()}
     </>
   );
@@ -58,10 +51,7 @@ export const FSReviewTable = () => {
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
-        <TableComposable
-          aria-label="File system configuration table"
-          variant="compact"
-        >
+        <Table aria-label="File system configuration table" variant="compact">
           <Thead>
             <Tr>
               <Th>Mount point</Th>
@@ -85,7 +75,7 @@ export const FSReviewTable = () => {
               </Tr>
             ))}
           </Tbody>
-        </TableComposable>
+        </Table>
       </PanelMain>
     </Panel>
   );
@@ -97,7 +87,7 @@ export const PackagesTable = () => {
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
-        <TableComposable aria-label="Packages table" variant="compact">
+        <Table aria-label="Packages table" variant="compact">
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -110,7 +100,7 @@ export const PackagesTable = () => {
               </Tr>
             ))}
           </Tbody>
-        </TableComposable>
+        </Table>
       </PanelMain>
     </Panel>
   );
@@ -122,10 +112,7 @@ export const RepositoriesTable = () => {
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
-        <TableComposable
-          aria-label="Custom repositories table"
-          variant="compact"
-        >
+        <Table aria-label="Custom repositories table" variant="compact">
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -140,7 +127,7 @@ export const RepositoriesTable = () => {
               </Tr>
             ))}
           </Tbody>
-        </TableComposable>
+        </Table>
       </PanelMain>
     </Panel>
   );

@@ -136,12 +136,12 @@ describe('On Recreate', () => {
     await waitFor(() => expect(createImageButton).toBeEnabled());
 
     // check that the FSC contains a /tmp partition
-    const navigation = await screen.findByRole('navigation');
-    await user.click(
-      await within(navigation).findByRole('button', {
-        name: /file system configuration/i,
-      })
-    );
+    // There are two buttons with the same name but cannot easily select the DDF rendered sidenav.
+    // The sidenav will be the first node found out of all buttons.
+    const buttonsFSC = screen.getAllByRole('button', {
+      name: /file system configuration/i,
+    });
+    await user.click(buttonsFSC[0]);
     await screen.findByRole('heading', { name: /file system configuration/i });
     await screen.findByText('/tmp');
 

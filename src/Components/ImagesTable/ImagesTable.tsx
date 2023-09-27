@@ -5,22 +5,23 @@ import {
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
-  EmptyStateSecondaryActions,
   EmptyStateVariant,
   OnSetPage,
   Pagination,
   PaginationVariant,
   Text,
-  Title,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  EmptyStateActions,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   ActionsColumn,
   ExpandableRowContent,
-  TableComposable,
+  Table,
   Tbody,
   Td,
   Th,
@@ -98,7 +99,7 @@ const ImagesTable = () => {
               </ToolbarItem>
               <ToolbarItem
                 variant="pagination"
-                alignment={{ default: 'alignRight' }}
+                align={{ default: 'alignRight' }}
               >
                 <Pagination
                   itemCount={itemCount}
@@ -113,7 +114,7 @@ const ImagesTable = () => {
               </ToolbarItem>
             </ToolbarContent>
           </Toolbar>
-          <TableComposable variant="compact" data-testid="images-table">
+          <Table variant="compact" data-testid="images-table">
             <Thead>
               <Tr>
                 <Th />
@@ -135,12 +136,12 @@ const ImagesTable = () => {
                 />
               );
             })}
-          </TableComposable>
+          </Table>
           <Toolbar className="pf-u-mb-xl">
             <ToolbarContent>
               <ToolbarItem
                 variant="pagination"
-                alignment={{ default: 'alignRight' }}
+                align={{ default: 'alignRight' }}
               >
                 <Pagination
                   variant={PaginationVariant.bottom}
@@ -164,11 +165,12 @@ const ImagesTable = () => {
 
 const EmptyImagesTable = () => {
   return (
-    <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
-      <EmptyStateIcon icon={PlusCircleIcon} />
-      <Title headingLevel="h4" size="lg">
-        Create an RPM-DNF image
-      </Title>
+    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+      <EmptyStateHeader
+        titleText="Create an RPM-DNF image"
+        icon={<EmptyStateIcon icon={PlusCircleIcon} />}
+        headingLevel="h4"
+      />
       <EmptyStateBody>
         <Text>
           Image builder is a tool for creating deployment-ready customized
@@ -201,29 +203,31 @@ const EmptyImagesTable = () => {
           </Button>
         </Text>
       </EmptyStateBody>
-      <Link
-        to={resolveRelPath('imagewizard')}
-        className="pf-c-button pf-m-primary"
-        data-testid="create-image-action"
-      >
-        Create image
-      </Link>
-      <EmptyStateSecondaryActions>
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
-          isInline
-          href={
-            'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
-          }
-          className="pf-u-pt-md"
+      <EmptyStateFooter>
+        <Link
+          to={resolveRelPath('imagewizard')}
+          className="pf-c-button pf-m-primary"
+          data-testid="create-image-action"
         >
-          Image builder for RPM-DNF documentation
-        </Button>
-      </EmptyStateSecondaryActions>
+          Create image
+        </Link>
+        <EmptyStateActions>
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href={
+              'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
+            }
+            className="pf-u-pt-md"
+          >
+            Image builder for RPM-DNF documentation
+          </Button>
+        </EmptyStateActions>
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

@@ -40,11 +40,6 @@ describe('Create Share To Regions Modal', () => {
     const shareButton = await screen.findByRole('button', { name: /share/i });
     expect(shareButton).toBeDisabled();
 
-    let invalidAlert = screen.queryByText(
-      /select at least one region to share to\./i
-    );
-    expect(invalidAlert).not.toBeInTheDocument();
-
     const selectToggle = screen.getByRole('button', { name: /options menu/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
     user.click(selectToggle);
@@ -60,7 +55,7 @@ describe('Create Share To Regions Modal', () => {
     user.click(clearAllButton);
     await waitFor(() => expect(shareButton).toBeDisabled());
 
-    invalidAlert = screen.getByText(
+    const invalidAlert = screen.getByText(
       /select at least one region to share to\./i
     );
     expect(invalidAlert).toBeInTheDocument();

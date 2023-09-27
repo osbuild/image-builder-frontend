@@ -7,10 +7,6 @@ import {
 import {
   Alert,
   Button,
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
   EmptyState,
   EmptyStateBody,
   EmptyStateIcon,
@@ -20,21 +16,21 @@ import {
   PanelMain,
   SearchInput,
   Spinner,
-  Title,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  EmptyStateHeader,
+  EmptyStateFooter,
 } from '@patternfly/react-core';
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownToggleCheckbox,
+} from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { RepositoryIcon } from '@patternfly/react-icons';
-import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import PropTypes from 'prop-types';
 
 import RepositoriesStatus from './RepositoriesStatus';
@@ -402,10 +398,7 @@ const Repositories = (props) => {
             <Panel>
               <PanelMain>
                 <RepositoryUnavailable />
-                <TableComposable
-                  variant="compact"
-                  data-testid="repositories-table"
-                >
+                <Table variant="compact" data-testid="repositories-table">
                   <Thead>
                     <Tr>
                       <Th />
@@ -442,7 +435,8 @@ const Repositories = (props) => {
                                 rowIndex: rowIndex,
                                 onSelect: (event, isSelecting) =>
                                   handleSelect(repo.url, rowIndex, isSelecting),
-                                disable: isFetching || repo.status !== 'Valid',
+                                isDisabled:
+                                  isFetching || repo.status !== 'Valid',
                               }}
                             />
                             <Td dataLabel={'Name'}>
@@ -487,7 +481,7 @@ const Repositories = (props) => {
                         );
                       })}
                   </Tbody>
-                </TableComposable>
+                </Table>
               </PanelMain>
             </Panel>
           </>
@@ -508,10 +502,11 @@ const Error = () => {
 const Loading = () => {
   return (
     <EmptyState>
-      <EmptyStateIcon variant="container" component={Spinner} />
-      <Title size="lg" headingLevel="h4">
-        Loading
-      </Title>
+      <EmptyStateHeader
+        titleText="Loading"
+        icon={<EmptyStateIcon icon={Spinner} />}
+        headingLevel="h4"
+      />
     </EmptyState>
   );
 };
@@ -519,32 +514,35 @@ const Loading = () => {
 const Empty = ({ isFetching, refetch }) => {
   const { isBeta } = useGetEnvironment();
   return (
-    <EmptyState variant={EmptyStateVariant.large} data-testid="empty-state">
-      <EmptyStateIcon icon={RepositoryIcon} />
-      <Title headingLevel="h4" size="lg">
-        No Custom Repositories
-      </Title>
+    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+      <EmptyStateHeader
+        titleText="No Custom Repositories"
+        icon={<EmptyStateIcon icon={RepositoryIcon} />}
+        headingLevel="h4"
+      />
       <EmptyStateBody>
         Repositories can be added in the &quot;Repositories&quot; area of the
         console. Once added, refresh this page to see them.
       </EmptyStateBody>
-      <Button
-        variant="primary"
-        component="a"
-        target="_blank"
-        href={isBeta() ? '/preview/settings/content' : '/settings/content'}
-        className="pf-u-mr-sm"
-      >
-        Go to repositories
-      </Button>
-      <Button
-        variant="secondary"
-        isInline
-        onClick={() => refetch()}
-        isLoading={isFetching}
-      >
-        {isFetching ? 'Refreshing' : 'Refresh'}
-      </Button>
+      <EmptyStateFooter>
+        <Button
+          variant="primary"
+          component="a"
+          target="_blank"
+          href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+          className="pf-u-mr-sm"
+        >
+          Go to repositories
+        </Button>
+        <Button
+          variant="secondary"
+          isInline
+          onClick={() => refetch()}
+          isLoading={isFetching}
+        >
+          {isFetching ? 'Refreshing' : 'Refresh'}
+        </Button>
+      </EmptyStateFooter>
     </EmptyState>
   );
 };

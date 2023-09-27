@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { FormGroup } from '@patternfly/react-core';
 import {
-  FormGroup,
   Select,
   SelectOption,
   SelectVariant,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { RELEASES } from '../../../constants';

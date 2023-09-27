@@ -2,14 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { Alert, FormGroup, Spinner } from '@patternfly/react-core';
 import {
-  Alert,
-  FormGroup,
   Select,
   SelectOption,
   SelectVariant,
-  Spinner,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { useListActivationKeysQuery } from '../../../store/rhsmApi';
@@ -88,7 +86,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
               isNoResultsOption={true}
               data-testid="activation-keys-loading"
             >
-              <Spinner isSVG size="md" />
+              <Spinner size="md" />
             </SelectOption>
           )}
         </Select>

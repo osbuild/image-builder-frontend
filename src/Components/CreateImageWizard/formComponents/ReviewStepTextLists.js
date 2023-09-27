@@ -523,7 +523,7 @@ export const RegisterNowList = () => {
                 variant="plain"
                 aria-label="About activation key"
                 className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                isSmall
+                size="sm"
               >
                 <HelpIcon />
               </Button>

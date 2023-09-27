@@ -170,7 +170,7 @@ const HelpPopover = ({ header, body }: HelpPopoverPropTypes) => {
         minWidth="35rem"
         headerContent={header}
         bodyContent={body}
-        reference={ref}
+        triggerRef={ref}
       />
     </>
   );

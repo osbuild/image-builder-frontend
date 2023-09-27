@@ -67,7 +67,9 @@ const ReviewStep = () => {
       <RepositoryUnavailable />
       <ExpandableSection
         toggleContent={'Image output'}
-        onToggle={onToggleImageOutput}
+        onToggle={(_event, isExpandedImageOutput) =>
+          onToggleImageOutput(isExpandedImageOutput)
+        }
         isExpanded={isExpandedImageOutput}
         isIndented
         data-testid="image-output-expandable"
@@ -76,7 +78,9 @@ const ReviewStep = () => {
       </ExpandableSection>
       <ExpandableSection
         toggleContent={'Target environments'}
-        onToggle={onToggleTargetEnvs}
+        onToggle={(_event, isExpandedTargetEnvs) =>
+          onToggleTargetEnvs(isExpandedTargetEnvs)
+        }
         isExpanded={isExpandedTargetEnvs}
         isIndented
         data-testid="target-environments-expandable"
@@ -129,7 +133,7 @@ const ReviewStep = () => {
       </ExpandableSection>
       <ExpandableSection
         toggleContent={'File system configuration'}
-        onToggle={onToggleFSC}
+        onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
         isExpanded={isExpandedFSC}
         isIndented
         data-testid="file-system-configuration-expandable"
@@ -138,7 +142,9 @@ const ReviewStep = () => {
       </ExpandableSection>
       <ExpandableSection
         toggleContent={'Content'}
-        onToggle={onToggleContent}
+        onToggle={(_event, isExpandedContent) =>
+          onToggleContent(isExpandedContent)
+        }
         isExpanded={isExpandedContent}
         isIndented
         data-testid="content-expandable"
@@ -148,7 +154,9 @@ const ReviewStep = () => {
       {isRhel(getState()?.values?.release) && (
         <ExpandableSection
           toggleContent={'Registration'}
-          onToggle={onToggleRegistration}
+          onToggle={(_event, isExpandedRegistration) =>
+            onToggleRegistration(isExpandedRegistration)
+          }
           isExpanded={isExpandedRegistration}
           isIndented
           data-testid="registration-expandable"
@@ -165,7 +173,9 @@ const ReviewStep = () => {
         getState()?.values?.['image-description']) && (
         <ExpandableSection
           toggleContent={'Image details'}
-          onToggle={onToggleImageDetail}
+          onToggle={(_event, isExpandedImageDetail) =>
+            onToggleImageDetail(isExpandedImageDetail)
+          }
           isExpanded={isExpandedImageDetail}
           isIndented
           data-testid="image-details-expandable"
@@ -176,7 +186,9 @@ const ReviewStep = () => {
       {getState()?.values?.['oscap-profile'] && (
         <ExpandableSection
           toggleContent={'OpenSCAP Compliance'}
-          onToggle={onToggleOscapDetails}
+          onToggle={(_event, isExpandedOscapDetail) =>
+            onToggleOscapDetails(isExpandedOscapDetail)
+          }
           isExpanded={isExpandedOscapDetail}
           isIndented
           data-testid="oscap-detail-expandable"

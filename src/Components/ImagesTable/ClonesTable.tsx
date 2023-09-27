@@ -1,14 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { ClipboardCopy, Skeleton } from '@patternfly/react-core';
-import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { StatusClone, AwsDetailsStatus } from './Status';
 
@@ -139,7 +132,7 @@ const ClonesTable = ({ compose }: ClonesTablePropTypes) => {
   const { data } = useGetComposeClonesQuery({ composeId: compose.id });
 
   return (
-    <TableComposable variant="compact" data-testid="clones-table">
+    <Table variant="compact" data-testid="clones-table">
       <Thead>
         <Tr className="no-bottom-border">
           <Th className="pf-m-width-60">AMI</Th>
@@ -151,7 +144,7 @@ const ClonesTable = ({ compose }: ClonesTablePropTypes) => {
       {data?.data.map((clone) => (
         <CloneRow clone={clone} key={clone.id} />
       ))}
-    </TableComposable>
+    </Table>
   );
 };
 

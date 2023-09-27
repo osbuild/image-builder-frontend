@@ -4,13 +4,12 @@ import FormSpy from '@data-driven-forms/react-form-renderer/form-spy';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { Alert } from '@patternfly/react-core';
+import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
-  FormGroup,
   Select,
   SelectOption,
   SelectVariant,
-  Spinner,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { extractProvisioningList } from '../../../store/helpers';
@@ -115,7 +114,7 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
             ))}
           {isFetching && (
             <SelectOption isNoResultsOption={true}>
-              <Spinner isSVG size="lg" />
+              <Spinner size="lg" />
             </SelectOption>
           )}
         </Select>
