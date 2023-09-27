@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
+import { TextInput } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
-  TextInput,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
@@ -48,13 +48,13 @@ const SizeUnit = ({ ...props }) => {
         type="text"
         value={size}
         aria-label="Size text input"
-        onChange={(v) => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))}
+        onChange={(_event, v) => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))}
       />
       <Select
         ouiaId="unit"
         className="pf-u-w-50"
         isOpen={isOpen}
-        onToggle={onToggle}
+        onToggle={(_event, isOpen) => onToggle(isOpen)}
         onSelect={onSelect}
         selections={
           unit === UNIT_KIB ? 'KiB' : unit === UNIT_MIB ? 'MiB' : 'GiB'

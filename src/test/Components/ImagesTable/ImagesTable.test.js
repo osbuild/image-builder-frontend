@@ -116,11 +116,8 @@ describe('Images Table', () => {
     const { findAllByRole } = within(table);
     const rows = await findAllByRole('row');
 
-    // first row is header so look at index 1
-    const imageId = rows[1].cells[1].textContent;
-
     const actionsButton = await within(rows[1]).findByRole('button', {
-      name: 'Actions',
+      name: 'Kebab toggle',
     });
 
     expect(actionsButton).toBeEnabled();
@@ -151,7 +148,7 @@ describe('Images Table', () => {
 
     // first row is header so look at index 1
     const actionsButton = await within(rows[1]).findByRole('button', {
-      name: 'Actions',
+      name: 'Kebab toggle',
     });
     await user.click(actionsButton);
 

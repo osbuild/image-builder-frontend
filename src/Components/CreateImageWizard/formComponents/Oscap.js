@@ -2,15 +2,12 @@ import React, { useState } from 'react';
 
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { Alert, Radio, FormGroup, Spinner } from '@patternfly/react-core';
 import {
-  Alert,
-  Radio,
-  FormGroup,
   Select,
   SelectOption,
   SelectVariant,
-  Spinner,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { useGetOscapProfilesQuery } from '../../../store/imageBuilderApi';
@@ -96,8 +93,8 @@ const ProfileSelector = ({ input, showSelector }) => {
         {isSuccess &&
           data.map((key, index) => <SelectOption key={index} value={key} />)}
         {isFetching && (
-          <SelectOption isNoResultsOption={true} data-testid="profiles-loading">
-            <Spinner isSVG size="md" />
+          <SelectOption isNoResultsOption={true} data-testid="policies-loading">
+            <Spinner size="md" />
           </SelectOption>
         )}
       </Select>

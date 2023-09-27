@@ -5,12 +5,17 @@ import {
   Button,
   Form,
   FormGroup,
+  HelperText,
+  HelperTextItem,
+  FormHelperText,
   Popover,
+  ValidatedOptions,
+} from '@patternfly/react-core';
+import {
   Select,
   SelectOption,
   SelectVariant,
-  ValidatedOptions,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import { ExclamationCircleIcon, HelpIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
@@ -92,9 +97,11 @@ const RegionsSelect = ({
     if (selected.includes(selection)) {
       nextSelected = selected.filter((region) => region !== selection);
       setSelected(nextSelected);
+      setIsOpen(false);
     } else {
       nextSelected = [...selected, selection];
       setSelected(nextSelected);
+      setIsOpen(false);
     }
     nextSelected.length === 0
       ? setValidated(ValidatedOptions.error)
@@ -122,9 +129,6 @@ const RegionsSelect = ({
       <FormGroup
         label="Select region"
         isRequired
-        validated={validated}
-        helperTextInvalid={helperTextInvalid}
-        helperTextInvalidIcon={<ExclamationCircleIcon />}
         labelIcon={
           <Popover
             headerContent={<div>Sharing images to other regions</div>}
@@ -144,7 +148,7 @@ const RegionsSelect = ({
               aria-describedby="simple-form-name-01"
               className="pf-c-form__group-label-help"
             >
-              <HelpIcon noVerticalAlign />
+              <HelpIcon />
             </button>
           </Popover>
         }
@@ -172,6 +176,18 @@ const RegionsSelect = ({
             />
           ))}
         </Select>
+        {validated !== 'success' && (
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem
+                icon={<ExclamationCircleIcon />}
+                variant={validated}
+              >
+                {helperTextInvalid}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        )}
       </FormGroup>
       <ActionGroup>
         <Button

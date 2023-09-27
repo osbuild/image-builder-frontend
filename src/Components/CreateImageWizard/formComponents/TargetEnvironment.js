@@ -142,7 +142,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
         <Checkbox
           label="VMWare vSphere"
           isChecked={environment.vsphere || environment['vsphere-ova']}
-          onChange={(checked) => {
+          onChange={(_event, checked) => {
             handleSetEnvironment('vsphere-ova', checked);
             handleSetEnvironment('vsphere', false);
           }}
@@ -182,7 +182,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               </Popover>
             </>
           }
-          onChange={(checked) => {
+          onChange={(_event, checked) => {
             handleSetEnvironment('vsphere-ova', checked);
             handleSetEnvironment('vsphere', !checked);
           }}
@@ -215,7 +215,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               </Popover>
             </>
           }
-          onChange={(checked) => {
+          onChange={(_event, checked) => {
             handleSetEnvironment('vsphere-ova', !checked);
             handleSetEnvironment('vsphere', checked);
           }}
@@ -230,7 +230,9 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
         <Checkbox
           label="Virtualization - Guest image (.qcow2)"
           isChecked={environment['guest-image']}
-          onChange={(checked) => handleSetEnvironment('guest-image', checked)}
+          onChange={(_event, checked) =>
+            handleSetEnvironment('guest-image', checked)
+          }
           aria-label="Virtualization guest image checkbox"
           id="checkbox-guest-image"
           name="Virtualization guest image"
@@ -239,7 +241,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
         <Checkbox
           label="Bare metal - Installer (.iso)"
           isChecked={environment['image-installer']}
-          onChange={(checked) =>
+          onChange={(_event, checked) =>
             handleSetEnvironment('image-installer', checked)
           }
           aria-label="Bare metal installer checkbox"
@@ -252,7 +254,9 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             <Checkbox
               label="WSL - Windows Subsystem for Linux (.tar.gz)"
               isChecked={environment['wsl']}
-              onChange={(checked) => handleSetEnvironment('wsl', checked)}
+              onChange={(_event, checked) =>
+                handleSetEnvironment('wsl', checked)
+              }
               aria-label="windows subsystem for linux checkbox"
               id="checkbox-wsl"
               name="WSL"

@@ -19,14 +19,7 @@ import {
 } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import styles from '@patternfly/react-styles/css/components/Table/table';
-import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { v4 as uuidv4 } from 'uuid';
 
 import MountPoint, { MountPointValidPrefixes } from './MountPoint';
@@ -304,7 +297,7 @@ const FileSystemConfiguration = ({ ...props }) => {
   // customizations. Having a customizations added by the user first would mess
   // up the logic.
   if (isFetchingCustomizations) {
-    return <Spinner isSVG size="lg" />;
+    return <Spinner size="lg" />;
   }
 
   return (
@@ -357,7 +350,7 @@ const FileSystemConfiguration = ({ ...props }) => {
               </Button>
             </Text>
           </TextContent>
-          <TableComposable
+          <Table
             aria-label="File system table"
             className={isDragging && styles.modifiers.dragOver}
             variant="compact"
@@ -458,7 +451,7 @@ const FileSystemConfiguration = ({ ...props }) => {
                 </Tr>
               ))}
             </Tbody>
-          </TableComposable>
+          </Table>
           <TextContent>
             <Button
               ouiaId="add-partition"

@@ -3,13 +3,12 @@ import React, { useState } from 'react';
 import FormSpy from '@data-driven-forms/react-form-renderer/form-spy';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
+import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
-  FormGroup,
   Select,
   SelectOption,
   SelectVariant,
-  Spinner,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 import { useGetSourceUploadInfoQuery } from '../../../store/provisioningApi';
@@ -67,7 +66,7 @@ const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
             isNoResultsOption={true}
             data-testid="azure-resource-groups-loading"
           >
-            <Spinner isSVG size="lg" />
+            <Spinner size="lg" />
           </SelectOption>
         )}
         {resourceGroups.map((name, index) => (

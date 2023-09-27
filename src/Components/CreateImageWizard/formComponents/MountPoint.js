@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 
 import path from 'path';
 
+import { TextInput } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
-  TextInput,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
 export const MountPointValidPrefixes = [
@@ -68,7 +68,7 @@ const MountPoint = ({ ...props }) => {
         ouiaId="mount-point"
         className="pf-u-w-50"
         isOpen={isOpen}
-        onToggle={onToggle}
+        onToggle={(_event, isOpen) => onToggle(isOpen)}
         onSelect={onSelect}
         selections={prefix}
         variant={SelectVariant.single}
@@ -85,7 +85,7 @@ const MountPoint = ({ ...props }) => {
           type="text"
           value={suffix}
           aria-label="Mount point suffix text input"
-          onChange={(v) => setSuffix(v)}
+          onChange={(_event, v) => setSuffix(v)}
         />
       )}
     </>

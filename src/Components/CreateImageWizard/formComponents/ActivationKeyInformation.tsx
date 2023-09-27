@@ -15,14 +15,7 @@ import {
 } from '@patternfly/react-core';
 import { Button, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import {
-  TableComposable,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 
@@ -46,7 +39,7 @@ const ActivationKeyInformation = (): JSX.Element => {
 
   return (
     <>
-      {isFetchingActivationKeyInfo && <Spinner isSVG size="lg" />}
+      {isFetchingActivationKeyInfo && <Spinner size="lg" />}
       {isSuccessActivationKeyInfo && (
         <TextContent>
           <TextList component={TextListVariants.dl}>
@@ -91,7 +84,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                   variant="plain"
                   aria-label="About additional repositories"
                   className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                  isSmall
+                  size="sm"
                 >
                   <HelpIcon />
                 </Button>
@@ -109,7 +102,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                       <Text component={TextVariants.h3}>
                         Additional repositories
                       </Text>
-                      <TableComposable
+                      <Table
                         aria-label="Additional repositories table"
                         variant="compact"
                       >
@@ -127,7 +120,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                             )
                           )}
                         </Tbody>
-                      </TableComposable>
+                      </Table>
                     </TextContent>
                   }
                 >
