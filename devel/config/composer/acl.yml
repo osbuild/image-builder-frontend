@@ -1,4 +1,0 @@
-## hack since oauth server is
-## using http
-- claim: typ
-  pattern: ^Bearer$
