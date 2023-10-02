@@ -69,7 +69,7 @@ const registrationStep = {
     </Title>
   ),
   name: 'registration',
-  nextStep: 'File system configuration',
+  nextStep: 'Compliance',
   buttons: CustomButtons,
   fields: [
     {

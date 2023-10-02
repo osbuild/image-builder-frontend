@@ -1,6 +1,7 @@
 export { default as awsTarget } from './aws';
 export { default as googleCloudTarget } from './googleCloud';
 export { default as msAzureTarget } from './msAzure';
+export { default as oscap } from './oscap';
 export { default as packages } from './packages';
 export { default as packagesContentSources } from './packagesContentSources';
 export { default as registration } from './registration';

@@ -16,6 +16,7 @@ import CentOSAcknowledgement from './formComponents/CentOSAcknowledgement';
 import FileSystemConfiguration from './formComponents/FileSystemConfiguration';
 import GalleryLayout from './formComponents/GalleryLayout';
 import ImageOutputReleaseSelect from './formComponents/ImageOutputReleaseSelect';
+import { Oscap } from './formComponents/Oscap';
 import {
   ContentSourcesPackages,
   RedHatPackages,
@@ -72,6 +73,7 @@ const ImageCreator = ({
         'azure-sources-select': AzureSourcesSelect,
         'azure-resource-groups': AzureResourceGroups,
         'gallery-layout': GalleryLayout,
+        'oscap-profile-selector': Oscap,
         registration: Registration,
         ...customComponentMapper,
       }}
