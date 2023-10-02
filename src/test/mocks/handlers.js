@@ -19,6 +19,10 @@ import {
   mockStatus,
 } from '../fixtures/composes';
 import {
+  distributionOscapProfiles,
+  oscapCustomizations,
+} from '../fixtures/oscap';
+import {
   mockPackagesResults,
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
@@ -91,4 +95,16 @@ export const handlers = [
   rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
     return res(ctx.status(200), ctx.json({}));
   }),
+  rest.get(
+    `${IMAGE_BUILDER_API}/oscap/:distribution/profiles`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(distributionOscapProfiles(req)));
+    }
+  ),
+  rest.get(
+    `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(oscapCustomizations(req)));
+    }
+  ),
 ];
