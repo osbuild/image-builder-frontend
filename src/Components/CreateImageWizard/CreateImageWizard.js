@@ -19,6 +19,7 @@ import {
   registration,
   repositories,
   review,
+  oscap,
 } from './steps';
 import {
   fileSystemConfigurationValidator,
@@ -93,6 +94,12 @@ const onSave = (values) => {
         min_size: fsc.size * fsc.unit,
       });
     }
+  }
+
+  if (values['oscap-policy']) {
+    customizations.openscap = {
+      profile_id: values['oscap-policy'],
+    };
   }
 
   const requests = [];
@@ -470,6 +477,10 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
       formState['register-system'] = 'register-later';
     }
 
+    // oscap policy
+    formState['oscap-policy'] =
+      composeRequest?.customizations?.openscap?.profile_id;
+
     return formState;
   } else {
     return;
@@ -494,6 +505,8 @@ const formStepHistory = (composeRequest, contentSourcesEnabled) => {
     if (isRhel(composeRequest?.distribution)) {
       steps.push('registration');
     }
+
+    steps.push('Compliance');
 
     if (contentSourcesEnabled) {
       steps.push('File system configuration', 'packages', 'repositories');
@@ -654,6 +667,7 @@ const CreateImageWizard = () => {
               fileSystemConfiguration,
               imageName,
               review,
+              oscap,
             ],
             initialState: {
               activeStep: initialStep || 'image-output', // name of the active step
