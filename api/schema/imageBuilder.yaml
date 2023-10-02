@@ -51,11 +51,13 @@ paths:
                 type: object
   /distributions:
     get:
-      summary: get the available distributions
+      summary: get the distributions available to this user
       operationId: getDistributions
       responses:
         '200':
-          description: a list of available distributions
+          description: |
+            A list of distributions this user has access to. Some distributions are restricted, so
+            this list might not correspond to the Distributions (enum) schema for a given user.
           content:
             application/json:
               schema:
@@ -67,7 +69,7 @@ paths:
         - in: path
           name: distribution
           schema:
-            type: string
+            $ref: '#/components/schemas/Distributions'
           required: true
           description: distribution for which to look up available architectures
           example: 'rhel-84'
@@ -79,6 +81,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Architectures'
+        '403':
+          description: user is not allowed to build or query this distribution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPErrorList'
   /composes:
     get:
       summary: get a collection of previous compose requests for the logged in user
@@ -98,6 +106,16 @@ paths:
             default: 0
             minimum: 0
           description: composes page offset, default 0
+        - in: query
+          name: ignoreImageTypes
+          required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ImageTypes'
+              example: ['rhel-edge-installer', 'rhel-edge-commit', ...]
+          description: |
+            Filter the composes on image type. The filter is optional and can be specified multiple times.
       responses:
         '200':
           description: a list of composes
@@ -267,6 +285,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPErrorList'
+        '403':
+          description: user is not allowed to build this distribution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPErrorList'
   /packages:
     get:
       parameters:
@@ -311,6 +335,54 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/PackagesResponse'
+        '403':
+          description: user is not allowed to build or query this distribution
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPErrorList'
+  /oscap/{distribution}/profiles:
+    parameters:
+      - in: path
+        name: distribution
+        schema:
+          $ref: '#/components/schemas/Distributions'
+        required: true
+    get:
+      summary: get the available profiles for a given distribution. This is a temporary endpoint meant to be removed soon.
+      operationId: getOscapProfiles
+      responses:
+        '200':
+          description: |
+            A list of profiles configurable for this distribution.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DistributionProfileResponse'
+  /oscap/{distribution}/{profile}/customizations:
+    parameters:
+      - in: path
+        name: distribution
+        schema:
+          $ref: '#/components/schemas/Distributions'
+        required: true
+      - in: path
+        name: profile
+        schema:
+          $ref: '#/components/schemas/DistributionProfileItem'
+        required: true
+        description: Name of the profile to retrieve customizations from
+    get:
+      summary: get the customizations for a given distribution and profile. This is a temporary endpoint meant to be removed soon.
+      operationId: getOscapCustomizations
+      responses:
+        '200':
+          description: |
+            A customizations array updated with the needed elements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customizations'
 
 components:
   schemas:
@@ -346,6 +418,8 @@ components:
           type: string
     DistributionsResponse:
       type: array
+      description: |
+        List of distributions this user is allowed to build.
       items:
         $ref: '#/components/schemas/DistributionItem'
     DistributionItem:
@@ -501,6 +575,11 @@ components:
             $ref: '#/components/schemas/Customizations'
     Distributions:
       type: string
+      description: |
+        List of all distributions that image builder supports. A user might not have access to
+        restricted distributions.
+
+        Restricted distributions include the RHEL nightlies and the Fedora distributions.
       enum:
         - rhel-8
         - rhel-8-nightly
@@ -519,6 +598,7 @@ components:
         - fedora-37
         - fedora-38
         - fedora-39
+        - fedora-40
     ImageRequest:
       type: object
       additionalProperties: false
@@ -651,8 +731,6 @@ components:
       type: object
     GCPUploadRequestOptions:
       type: object
-      required:
-        - share_with_accounts
       properties:
         share_with_accounts:
           type: array
@@ -1075,3 +1153,29 @@ components:
           type: string
           format: uuid
           example: '123e4567-e89b-12d3-a456-426655440000'
+    DistributionProfileResponse:
+      type: array
+      description: |
+        List of profiles for a given distribution
+      items:
+        $ref: '#/components/schemas/DistributionProfileItem'
+    DistributionProfileItem:
+      type: string
+      enum:
+        - xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced
+        - xccdf_org.ssgproject.content_profile_anssi_bp28_high
+        - xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary
+        - xccdf_org.ssgproject.content_profile_anssi_bp28_minimal
+        - xccdf_org.ssgproject.content_profile_cis
+        - xccdf_org.ssgproject.content_profile_cis_server_l1
+        - xccdf_org.ssgproject.content_profile_cis_workstation_l1
+        - xccdf_org.ssgproject.content_profile_cis_workstation_l2
+        - xccdf_org.ssgproject.content_profile_cui
+        - xccdf_org.ssgproject.content_profile_e8
+        - xccdf_org.ssgproject.content_profile_hipaa
+        - xccdf_org.ssgproject.content_profile_ism_o
+        - xccdf_org.ssgproject.content_profile_ospp
+        - xccdf_org.ssgproject.content_profile_pci-dss
+        - xccdf_org.ssgproject.content_profile_standard
+        - xccdf_org.ssgproject.content_profile_stig
+        - xccdf_org.ssgproject.content_profile_stig_gui

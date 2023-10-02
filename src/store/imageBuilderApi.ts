@@ -10,7 +10,11 @@ const injectedRtkApi = api.injectEndpoints({
     getComposes: build.query<GetComposesApiResponse, GetComposesApiArg>({
       query: (queryArg) => ({
         url: `/composes`,
-        params: { limit: queryArg.limit, offset: queryArg.offset },
+        params: {
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+          ignoreImageTypes: queryArg.ignoreImageTypes,
+        },
       }),
     }),
     getComposeStatus: build.query<
@@ -60,6 +64,22 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    getOscapProfiles: build.query<
+      GetOscapProfilesApiResponse,
+      GetOscapProfilesApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/oscap/${queryArg.distribution}/profiles`,
+      }),
+    }),
+    getOscapCustomizations: build.query<
+      GetOscapCustomizationsApiResponse,
+      GetOscapCustomizationsApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/oscap/${queryArg.distribution}/${queryArg.profile}/customizations`,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -68,7 +88,7 @@ export type GetArchitecturesApiResponse =
   /** status 200 a list of available architectures and their associated image types */ Architectures;
 export type GetArchitecturesApiArg = {
   /** distribution for which to look up available architectures */
-  distribution: string;
+  distribution: Distributions;
 };
 export type GetComposesApiResponse =
   /** status 200 a list of composes */ ComposesResponse;
@@ -77,6 +97,9 @@ export type GetComposesApiArg = {
   limit?: number;
   /** composes page offset, default 0 */
   offset?: number;
+  /** Filter the composes on image type. The filter is optional and can be specified multiple times.
+   */
+  ignoreImageTypes?: ImageTypes[];
 };
 export type GetComposeStatusApiResponse =
   /** status 200 compose status */ ComposeStatus;
@@ -128,6 +151,20 @@ export type GetPackagesApiArg = {
   /** packages page offset, default 0 */
   offset?: number;
 };
+export type GetOscapProfilesApiResponse =
+  /** status 200 A list of profiles configurable for this distribution.
+   */ DistributionProfileResponse;
+export type GetOscapProfilesApiArg = {
+  distribution: Distributions;
+};
+export type GetOscapCustomizationsApiResponse =
+  /** status 200 A customizations array updated with the needed elements.
+   */ Customizations;
+export type GetOscapCustomizationsApiArg = {
+  distribution: Distributions;
+  /** Name of the profile to retrieve customizations from */
+  profile: DistributionProfileItem;
+};
 export type Repository = {
   rhsm: boolean;
   baseurl?: string;
@@ -144,6 +181,13 @@ export type ArchitectureItem = {
   repositories: Repository[];
 };
 export type Architectures = ArchitectureItem[];
+export type HttpError = {
+  title: string;
+  detail: string;
+};
+export type HttpErrorList = {
+  errors: HttpError[];
+};
 export type Distributions =
   | "rhel-8"
   | "rhel-8-nightly"
@@ -161,7 +205,8 @@ export type Distributions =
   | "centos-9"
   | "fedora-37"
   | "fedora-38"
-  | "fedora-39";
+  | "fedora-39"
+  | "fedora-40";
 export type ImageTypes =
   | "aws"
   | "azure"
@@ -184,7 +229,7 @@ export type AwsUploadRequestOptions = {
 };
 export type Awss3UploadRequestOptions = object;
 export type GcpUploadRequestOptions = {
-  share_with_accounts: string[];
+  share_with_accounts?: string[];
 };
 export type AzureUploadRequestOptions = {
   source_id?: string;
@@ -351,13 +396,6 @@ export type ClonesResponse = {
 export type ComposeResponse = {
   id: string;
 };
-export type HttpError = {
-  title: string;
-  detail: string;
-};
-export type HttpErrorList = {
-  errors: HttpError[];
-};
 export type Package = {
   name: string;
   summary: string;
@@ -372,6 +410,25 @@ export type PackagesResponse = {
   };
   data: Package[];
 };
+export type DistributionProfileItem =
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_high"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_minimal"
+  | "xccdf_org.ssgproject.content_profile_cis"
+  | "xccdf_org.ssgproject.content_profile_cis_server_l1"
+  | "xccdf_org.ssgproject.content_profile_cis_workstation_l1"
+  | "xccdf_org.ssgproject.content_profile_cis_workstation_l2"
+  | "xccdf_org.ssgproject.content_profile_cui"
+  | "xccdf_org.ssgproject.content_profile_e8"
+  | "xccdf_org.ssgproject.content_profile_hipaa"
+  | "xccdf_org.ssgproject.content_profile_ism_o"
+  | "xccdf_org.ssgproject.content_profile_ospp"
+  | "xccdf_org.ssgproject.content_profile_pci-dss"
+  | "xccdf_org.ssgproject.content_profile_standard"
+  | "xccdf_org.ssgproject.content_profile_stig"
+  | "xccdf_org.ssgproject.content_profile_stig_gui";
+export type DistributionProfileResponse = DistributionProfileItem[];
 export const {
   useGetArchitecturesQuery,
   useGetComposesQuery,
@@ -381,4 +438,6 @@ export const {
   useGetCloneStatusQuery,
   useComposeImageMutation,
   useGetPackagesQuery,
+  useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
 } = injectedRtkApi;

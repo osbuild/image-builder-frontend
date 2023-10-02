@@ -16,6 +16,8 @@ const config: ConfigFile = {
     'getCloneStatus',
     'getArchitectures',
     'getPackages',
+    'getOscapProfiles',
+    'getOscapCustomizations',
   ],
 };
 

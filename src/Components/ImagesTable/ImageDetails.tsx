@@ -118,8 +118,10 @@ const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
 const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts']
 ) => {
-  const splitGCPSharedWith = sharedWith[0].split(':');
-  return splitGCPSharedWith[1];
+  if (sharedWith) {
+    const splitGCPSharedWith = sharedWith[0].split(':');
+    return splitGCPSharedWith[1];
+  }
 };
 
 type AwsDetailsPropTypes = {
