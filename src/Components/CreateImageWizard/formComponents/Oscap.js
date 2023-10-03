@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 
 import { useGetOscapProfilesQuery } from '../../../store/imageBuilderApi';
 import { reinitFileSystemConfiguratioStep } from '../steps/fileSystemConfiguration';
+import { reinitPackagesStep } from '../steps/packages';
 
 /**
  * Every time there is change on this form step's state, reinitialise the steps
@@ -24,6 +25,7 @@ import { reinitFileSystemConfiguratioStep } from '../steps/fileSystemConfigurati
  */
 const reinitDependingSteps = (change) => {
   reinitFileSystemConfiguratioStep(change);
+  reinitPackagesStep(change);
 };
 
 /**

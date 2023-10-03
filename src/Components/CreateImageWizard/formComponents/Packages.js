@@ -30,7 +30,10 @@ import {
 import PropTypes from 'prop-types';
 
 import api from '../../../api';
-import { useGetArchitecturesQuery } from '../../../store/imageBuilderApi';
+import {
+  useGetArchitecturesQuery,
+  useGetOscapCustomizationsQuery,
+} from '../../../store/imageBuilderApi';
 
 const ExactMatch = ({
   pkgList,
@@ -125,6 +128,28 @@ const Packages = ({ getAllPackages, isSuccess }) => {
     new Set()
   );
   const firstInputElement = useRef(null);
+
+  const oscapPolicy = getState()?.values?.['oscap-policy'];
+
+  const { data: customizations, isSuccess: isSuccessCustomizations } =
+    useGetOscapCustomizationsQuery(
+      {
+        distribution: getState()?.values?.['release'],
+        profile: oscapPolicy,
+      },
+      {
+        skip: !oscapPolicy,
+      }
+    );
+  useEffect(() => {
+    if (customizations && customizations.packages && isSuccessCustomizations) {
+      const oscapPackages = {};
+      for (const pkg of customizations.packages) {
+        oscapPackages[pkg] = { name: pkg };
+      }
+      updateState(oscapPackages);
+    }
+  }, [customizations, isSuccessCustomizations]);
 
   // this effect only triggers on mount
   useEffect(() => {
