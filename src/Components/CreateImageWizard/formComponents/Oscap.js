@@ -14,6 +14,17 @@ import {
 import PropTypes from 'prop-types';
 
 import { useGetOscapProfilesQuery } from '../../../store/imageBuilderApi';
+import { reinitFileSystemConfiguratioStep } from '../steps/fileSystemConfiguration';
+
+/**
+ * Every time there is change on this form step's state, reinitialise the steps
+ * that are depending on it. This will ensure that if the user goes back and
+ * change their mind, going forward again leaves them in a coherent and workable
+ * form state.
+ */
+const reinitDependingSteps = (change) => {
+  reinitFileSystemConfiguratioStep(change);
+};
 
 /**
  * Component for the user to select the policy to apply to their image.
@@ -49,12 +60,15 @@ const PolicySelector = ({ input, showSelector }) => {
   const handleClear = () => {
     selectPolicy(undefined);
     change(input.name, undefined);
+    reinitDependingSteps(change);
   };
 
   const setPolicy = (_, selection) => {
     selectPolicy(selection);
     setIsOpen(false);
     change(input.name, selection);
+    reinitDependingSteps(change);
+    change('file-system-config-radio', 'manual');
   };
 
   return (
@@ -125,6 +139,7 @@ const AddPolicy = ({ input }) => {
           isChecked={wantsPolicy}
           onChange={() => {
             setWantsPolicy(true);
+            reinitDependingSteps(change);
           }}
         />
         <Radio
@@ -137,6 +152,7 @@ const AddPolicy = ({ input }) => {
           onChange={() => {
             setWantsPolicy(false);
             change(input.name, undefined);
+            reinitDependingSteps(change);
           }}
         />
       </FormGroup>

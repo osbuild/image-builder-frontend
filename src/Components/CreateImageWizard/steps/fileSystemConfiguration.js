@@ -15,6 +15,11 @@ import StepTemplate from './stepTemplate';
 
 import FileSystemConfigButtons from '../formComponents/FileSystemConfigButtons';
 
+export const reinitFileSystemConfiguratioStep = (change) => {
+  change('file-system-configuration', undefined);
+  change('file-system-config-radio', 'automatic');
+};
+
 const fileSystemConfigurationStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-filesystem',
@@ -63,6 +68,10 @@ const fileSystemConfigurationStep = {
           className: 'pf-u-mt-sm',
         },
       ],
+      condition: {
+        when: 'oscap-policy',
+        is: undefined,
+      },
     },
     {
       component: 'file-system-configuration',
@@ -73,8 +82,13 @@ const fileSystemConfigurationStep = {
         { type: validatorTypes.REQUIRED },
       ],
       condition: {
-        when: 'file-system-config-radio',
-        is: 'manual',
+        or: [
+          {
+            when: 'file-system-config-radio',
+            is: 'manual',
+          },
+          { not: [{ when: 'oscap-policy', is: undefined }] },
+        ],
       },
     },
     {
@@ -111,7 +125,10 @@ const fileSystemConfigurationStep = {
         </TextContent>
       ),
       condition: {
-        or: [{ when: 'file-system-config-radio', is: 'automatic' }],
+        or: [
+          { when: 'file-system-config-radio', is: 'automatic' },
+          { when: 'oscap-policy', is: undefined },
+        ],
       },
     },
   ],
