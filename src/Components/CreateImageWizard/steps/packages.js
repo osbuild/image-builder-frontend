@@ -7,6 +7,10 @@ import StepTemplate from './stepTemplate';
 
 import CustomButtons from '../formComponents/CustomButtons';
 
+export const reinitPackagesStep = (change) => {
+  change('selected-packages', undefined);
+};
+
 const packagesStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-packages',
