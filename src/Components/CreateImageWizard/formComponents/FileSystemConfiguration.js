@@ -7,6 +7,7 @@ import {
   Alert,
   Button,
   Popover,
+  Spinner,
   Text,
   TextContent,
   TextVariants,
@@ -28,10 +29,11 @@ import {
 } from '@patternfly/react-table';
 import { v4 as uuidv4 } from 'uuid';
 
-import MountPoint from './MountPoint';
+import MountPoint, { MountPointValidPrefixes } from './MountPoint';
 import SizeUnit from './SizeUnit';
 
-import { UNIT_GIB } from '../../../constants';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
+import { useGetOscapCustomizationsQuery } from '../../../store/imageBuilderApi';
 
 const initialRow = {
   id: uuidv4(),
@@ -51,6 +53,56 @@ const FileSystemConfiguration = ({ ...props }) => {
   const [tempItemOrder, setTempItemOrder] = useState([]);
   const bodyref = useRef();
   const [rows, setRows] = useState([initialRow]);
+
+  const oscapPolicy = getState()?.values?.['oscap-policy'];
+  const hasNoOscapPolicy = !oscapPolicy;
+  const hasCustomizations = !(
+    getState()?.values?.['file-system-configuration'] === undefined ||
+    getState().values['file-system-configuration'].length === 1
+  );
+
+  const {
+    data: customizations,
+    isFetching: isFetchingCustomizations,
+    isSuccess,
+  } = useGetOscapCustomizationsQuery(
+    {
+      distribution: getState()?.values?.['release'],
+      profile: oscapPolicy,
+    },
+    {
+      // Don't override the user's data if they made customizations
+      skip: hasNoOscapPolicy || hasCustomizations,
+    }
+  );
+
+  useEffect(() => {
+    if (hasCustomizations || rows.length > 1) {
+      return;
+    }
+    if (customizations && customizations.filesystem && isSuccess) {
+      const newRows = rows;
+
+      // Only keep the required partitions that have a valid mount points
+      const fss = customizations.filesystem.filter((fs) =>
+        MountPointValidPrefixes.includes(fs.mountpoint)
+      );
+
+      // And add them all to the list.
+      for (const fs of fss) {
+        newRows.push({
+          id: uuidv4(),
+          mountpoint: fs.mountpoint,
+          fstype: 'xfs',
+          size: fs.min_size / UNIT_MIB, // the unit from the customizations are in bytes
+          unit: UNIT_MIB, // and using MIB seems sensible here instead
+        });
+      }
+      setRows(newRows);
+      setItemOrder(newRows.map((row) => row.id));
+      change('file-system-config-radio', 'manual');
+    }
+  }, [customizations, isSuccess]);
 
   useEffect(() => {
     const fsc = getState()?.values?.['file-system-configuration'];
@@ -243,6 +295,13 @@ const FileSystemConfiguration = ({ ...props }) => {
 
     setRows(newRows);
   };
+
+  // Don't let the user interact with the partitions while we are getting the
+  // customizations. Having a customizations added by the user first would mess
+  // up the logic.
+  if (isFetchingCustomizations) {
+    return <Spinner isSVG size="lg" />;
+  }
 
   return (
     <FormSpy>
