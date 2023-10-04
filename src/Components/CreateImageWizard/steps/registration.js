@@ -69,7 +69,13 @@ const registrationStep = {
     </Title>
   ),
   name: 'registration',
-  nextStep: 'Compliance',
+  nextStep: ({ values }) => {
+    if (values.isBeta) {
+      return 'Compliance';
+    } else {
+      return 'File system configuration';
+    }
+  },
   buttons: CustomButtons,
   fields: [
     {

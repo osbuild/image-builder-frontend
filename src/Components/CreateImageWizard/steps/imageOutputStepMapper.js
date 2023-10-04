@@ -1,7 +1,7 @@
 import isRhel from '../../../Utilities/isRhel.js';
 
 const imageOutputStepMapper = (
-  { 'target-environment': targetEnv, release } = {},
+  { 'target-environment': targetEnv, release, isBeta } = {},
   { skipAws, skipGoogle, skipAzure } = {}
 ) => {
   if (!skipAws && targetEnv?.aws) {
@@ -16,7 +16,13 @@ const imageOutputStepMapper = (
     return 'ms-azure-target-env';
   }
 
-  return isRhel(release) ? 'registration' : 'File system configuration';
+  if (isRhel(release)) {
+    return 'registration';
+  }
+  if (isBeta) {
+    return 'Compliance';
+  }
+  return 'File system configuration';
 };
 
 export default imageOutputStepMapper;
