@@ -478,8 +478,10 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
     }
 
     // oscap policy
-    formState['oscap-policy'] =
-      composeRequest?.customizations?.openscap?.profile_id;
+    if (isBeta) {
+      formState['oscap-policy'] =
+        composeRequest?.customizations?.openscap?.profile_id;
+    }
 
     return formState;
   } else {
@@ -487,7 +489,7 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
   }
 };
 
-const formStepHistory = (composeRequest, contentSourcesEnabled) => {
+const formStepHistory = (composeRequest, contentSourcesEnabled, isBeta) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -506,7 +508,9 @@ const formStepHistory = (composeRequest, contentSourcesEnabled) => {
       steps.push('registration');
     }
 
-    steps.push('Compliance');
+    if (isBeta) {
+      steps.push('Compliance');
+    }
 
     if (contentSourcesEnabled) {
       steps.push('File system configuration', 'packages', 'repositories');
@@ -564,7 +568,11 @@ const CreateImageWizard = () => {
     isBeta(),
     isProd()
   );
-  const stepHistory = formStepHistory(composeRequest, contentSourcesEnabled);
+  const stepHistory = formStepHistory(
+    composeRequest,
+    contentSourcesEnabled,
+    isBeta()
+  );
 
   if (initialState) {
     initialState.isBeta = isBeta();
