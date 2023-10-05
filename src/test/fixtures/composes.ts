@@ -44,6 +44,11 @@ export const composesEndpoint = (
   } as ComposesResponse;
 };
 
+/**
+ * Upon adding an entry in the mockComposes, add it at the very end of the array
+ * and add a corresponding ComposeStatus object (at the same position in the
+ * mockStatus call, for easier tracking).
+ */
 export const mockComposes: ComposesResponseItem[] = [
   {
     id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
@@ -275,8 +280,47 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
+  {
+    id: '1679d95b-8f1d-4982-8c53-8c2afa4ab04c',
+    image_name: 'testOscapImageName',
+    created_at: '2021-04-27T12:31:12Z',
+    request: {
+      distribution: RHEL_8,
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            options: {},
+            type: 'aws.s3',
+          },
+        },
+      ],
+      customizations: {
+        filesystem: [
+          { min_size: 10 * 1024 * 1024 * 1024, mountpoint: '/' },
+          { min_size: 1073741824, mountpoint: '/tmp' },
+        ],
+        packages: [
+          'aide',
+          'sudo',
+          'rsyslog',
+          'firewalld',
+          'nftables',
+          'libselinux',
+        ],
+        openscap: {
+          profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+        },
+      },
+    },
+  },
 ];
 
+/**
+ * MockStatus should have the same composeRequest as the one defined in the
+ * composes, and the order should be identical.
+ */
 export const mockStatus = (composeId: string): ComposeStatus => {
   const mockComposes: { [key: string]: ComposeStatus } = {
     '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
@@ -643,6 +687,49 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             },
           },
         ],
+      },
+    },
+    '1679d95b-8f1d-4982-8c53-8c2afa4ab04c': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://s3.amazonaws.com/1679d95b-8f1d-4982-8c53-8c2afa4ab04c-disk.qcow2',
+          },
+          status: 'success',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
+            },
+          },
+        ],
+        customizations: {
+          filesystem: [
+            { min_size: 10 * 1024 * 1024 * 1024, mountpoint: '/' },
+            { min_size: 1073741824, mountpoint: '/tmp' },
+          ],
+          packages: [
+            'aide',
+            'sudo',
+            'rsyslog',
+            'firewalld',
+            'nftables',
+            'libselinux',
+          ],
+          openscap: {
+            profile_id:
+              'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          },
+        },
       },
     },
   };
