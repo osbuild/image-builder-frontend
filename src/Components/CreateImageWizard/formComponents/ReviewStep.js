@@ -15,6 +15,7 @@ import {
   FSCList,
   ImageDetailsList,
   ImageOutputList,
+  OscapList,
   RegisterLaterList,
   RegisterNowList,
   TargetEnvAWSList,
@@ -33,6 +34,7 @@ const ReviewStep = () => {
   const [isExpandedContent, setIsExpandedContent] = useState(false);
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(false);
   const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(false);
+  const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(false);
   const { change, getState } = useFormApi();
 
   useEffect(() => {
@@ -57,6 +59,8 @@ const ReviewStep = () => {
     setIsExpandedRegistration(isExpandedRegistration);
   const onToggleImageDetail = (isExpandedImageDetail) =>
     setIsExpandedImageDetail(isExpandedImageDetail);
+  const onToggleOscapDetails = (isExpandedOscapDetail) =>
+    setIsExpandedOscapDetail(isExpandedOscapDetail);
 
   return (
     <>
@@ -167,6 +171,17 @@ const ReviewStep = () => {
           data-testid="image-details-expandable"
         >
           <ImageDetailsList />
+        </ExpandableSection>
+      )}
+      {getState()?.values?.['oscap-policy'] && (
+        <ExpandableSection
+          toggleContent={'OpenSCAP Compliance'}
+          onToggle={onToggleOscapDetails}
+          isExpanded={isExpandedOscapDetail}
+          isIndented
+          data-testid="oscap-detail-expandable"
+        >
+          <OscapList />
         </ExpandableSection>
       )}
     </>
