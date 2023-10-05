@@ -589,3 +589,24 @@ export const ImageDetailsList = () => {
     </TextContent>
   );
 };
+
+export const OscapList = () => {
+  const { getState } = useFormApi();
+  const oscapPolicy = getState()?.values?.['oscap-policy'];
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Policy
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {oscapPolicy}
+        </TextListItem>
+      </TextList>
+      <br />
+    </TextContent>
+  );
+};
