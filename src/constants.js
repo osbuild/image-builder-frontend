@@ -1,4 +1,3 @@
-export const COMPLIANCE_API = '/api/compliance/v1';
 export const IMAGE_BUILDER_API = '/api/image-builder/v1';
 export const RHSM_API = '/api/rhsm/v2';
 export const EDGE_API = '/api/edge/v1';
