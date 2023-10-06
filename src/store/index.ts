@@ -3,7 +3,6 @@ import { configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import clonesSlice from './clonesSlice';
-import { complianceApi } from './complianceApi';
 import composesSlice from './composesSlice';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
@@ -14,7 +13,6 @@ import { rhsmApi } from './rhsmApi';
 export const reducer = {
   clones: clonesSlice,
   composes: composesSlice,
-  [complianceApi.reducerPath]: complianceApi.reducer,
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
@@ -26,7 +24,6 @@ export const reducer = {
 export const middleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware().concat(
     promiseMiddleware,
-    complianceApi.middleware,
     contentSourcesApi.middleware,
     imageBuilderApi.middleware,
     rhsmApi.middleware,
