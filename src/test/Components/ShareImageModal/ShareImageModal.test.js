@@ -40,18 +40,20 @@ describe('Create Share To Regions Modal', () => {
     const shareButton = await screen.findByRole('button', { name: /share/i });
     expect(shareButton).toBeDisabled();
 
-    const selectToggle = screen.getByRole('button', { name: /options menu/i });
+    const selectToggle = screen.getByRole('button', { name: /menu toggle/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
     user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
-      name: /us-east-2 us east \(ohio\)/i,
+      name: /us east \(ohio\) us\-east\-2/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
     user.click(usEast2);
     await waitFor(() => expect(shareButton).toBeEnabled());
 
-    const clearAllButton = screen.getByRole('button', { name: /clear all/i });
+    const clearAllButton = screen.getByRole('button', {
+      name: /clear input value/i,
+    });
     user.click(clearAllButton);
     await waitFor(() => expect(shareButton).toBeDisabled());
 
@@ -97,16 +99,16 @@ describe('Create Share To Regions Modal', () => {
     renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
 
     const selectToggle = await screen.findByRole('button', {
-      name: /options menu/i,
+      name: /menu toggle/i,
     });
     // eslint-disable-next-line testing-library/no-unnecessary-act
     user.click(selectToggle);
 
     // parent region disabled
     const usEast1 = await screen.findByRole('option', {
-      name: /us-east-1 us east \(n. virginia\)/i,
+      name: /us east \(n. virginia\) us-east-1/i,
     });
-    expect(usEast1).toHaveClass('pf-m-disabled');
+    expect(usEast1).toBeDisabled();
 
     // close the select again to avoid state update
     // eslint-disable-next-line testing-library/no-unnecessary-act

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   ActionGroup,
@@ -9,14 +9,23 @@ import {
   HelperTextItem,
   FormHelperText,
   Popover,
-  ValidatedOptions,
-} from '@patternfly/react-core';
-import {
   Select,
   SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
-import { ExclamationCircleIcon, HelpIcon } from '@patternfly/react-icons';
+  SelectList,
+  ValidatedOptions,
+  MenuToggle,
+  MenuToggleElement,
+  TextInputGroup,
+  TextInputGroupMain,
+  TextInputGroupUtilities,
+  ChipGroup,
+  Chip,
+} from '@patternfly/react-core';
+import {
+  ExclamationCircleIcon,
+  HelpIcon,
+  TimesIcon,
+} from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
 import { AWS_REGIONS } from '../../constants';
@@ -55,28 +64,72 @@ const generateRequests = (
 type RegionsSelectPropTypes = {
   composeId: string;
   handleClose: any;
-  handleToggle: any;
-  isOpen: boolean;
-  setIsOpen: any;
 };
 
-const RegionsSelect = ({
-  composeId,
-  handleClose,
-  handleToggle,
-  isOpen,
-  setIsOpen,
-}: RegionsSelectPropTypes) => {
+const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
   const navigate = useNavigate();
+
+  const [isOpen, setIsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  const [selected, setSelected] = useState<string[]>([]);
-  const titleId = 'Clone this image';
   const [validated, setValidated] = useState<ValidatedOptions>(
     ValidatedOptions.default
   );
-  const [helperTextInvalid] = useState(
-    'Select at least one region to share to.'
-  );
+
+  const initialRegions = AWS_REGIONS;
+
+  const [inputValue, setInputValue] = useState<string>('');
+  const [selected, setSelected] = useState<string[]>([]);
+  const [selectOptions, setSelectOptions] = useState(initialRegions);
+
+  // Filter dropdown items when there is a typed input
+  useEffect(() => {
+    let newSelectOptions = initialRegions;
+
+    if (inputValue) {
+      newSelectOptions = initialRegions.filter((region) =>
+        region.value.toLowerCase().includes(inputValue.toLowerCase())
+      );
+
+      // When no options are found after filtering, display 'No results found'
+      if (!newSelectOptions.length) {
+        newSelectOptions = [
+          {
+            disableRegion: false,
+            description: `No results found for "${inputValue}"`,
+            value: 'empty',
+          },
+        ];
+      }
+
+      // Open the menu when the input value changes and the new value is not empty
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+    }
+
+    setSelectOptions(newSelectOptions);
+  }, [inputValue]);
+
+  const onTextInputChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
+    setInputValue(value);
+  };
+
+  const onSelect = (value: string) => {
+    if (value && value !== 'no results') {
+      setSelected(
+        selected.includes(value)
+          ? selected.filter((selection) => selection !== value)
+          : [...selected, value]
+      );
+      setValidated(ValidatedOptions.success);
+    } else {
+      setValidated(ValidatedOptions.error);
+    }
+  };
+
   const [cloneCompose] = useCloneComposeMutation();
 
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
@@ -87,33 +140,6 @@ const RegionsSelect = ({
     return undefined;
   }
 
-  const options = AWS_REGIONS;
-
-  const handleSelect = (
-    event: React.MouseEvent<Element, MouseEvent> | React.ChangeEvent<Element>,
-    selection: string
-  ): void => {
-    let nextSelected;
-    if (selected.includes(selection)) {
-      nextSelected = selected.filter((region) => region !== selection);
-      setSelected(nextSelected);
-      setIsOpen(false);
-    } else {
-      nextSelected = [...selected, selection];
-      setSelected(nextSelected);
-      setIsOpen(false);
-    }
-    nextSelected.length === 0
-      ? setValidated(ValidatedOptions.error)
-      : setValidated(ValidatedOptions.default);
-  };
-
-  const handleClear = () => {
-    setSelected([]);
-    setIsOpen(false);
-    setValidated(ValidatedOptions.error);
-  };
-
   const handleSubmit = async () => {
     setIsSaving(true);
     const requests = generateRequests(composeId, composeStatus, selected);
@@ -121,9 +147,63 @@ const RegionsSelect = ({
     navigate(resolveRelPath(''));
   };
 
+  const handleToggle = () => {
+    if (!selected.length) setValidated(ValidatedOptions.error);
+    setIsOpen(!isOpen);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      variant="typeahead"
+      onClick={handleToggle}
+      innerRef={toggleRef}
+      isExpanded={isOpen}
+      isFullWidth
+    >
+      <TextInputGroup isPlain>
+        <TextInputGroupMain
+          value={inputValue}
+          onClick={handleToggle}
+          onChange={onTextInputChange}
+          placeholder="Select region"
+          isExpanded={isOpen}
+        >
+          <ChipGroup aria-label="Selected regions">
+            {selected.map((selection, index) => (
+              <Chip
+                key={index}
+                onClick={(ev) => {
+                  ev.stopPropagation();
+                  onSelect(selection);
+                }}
+              >
+                {selection}
+              </Chip>
+            ))}
+          </ChipGroup>
+        </TextInputGroupMain>
+        <TextInputGroupUtilities>
+          {selected.length > 0 && (
+            <Button
+              variant="plain"
+              onClick={() => {
+                setInputValue('');
+                setSelected([]);
+                setValidated(ValidatedOptions.error);
+              }}
+              aria-label="Clear input value"
+            >
+              <TimesIcon aria-hidden />
+            </Button>
+          )}
+        </TextInputGroupUtilities>
+      </TextInputGroup>
+    </MenuToggle>
+  );
+
   return (
     <Form>
-      <span id={titleId} hidden>
+      <span id="Clone this image" hidden>
         Select a region
       </span>
       <FormGroup
@@ -141,40 +221,37 @@ const RegionsSelect = ({
               </div>
             }
           >
-            <button
-              type="button"
-              aria-label="More info for name field"
-              onClick={(e) => e.preventDefault()}
-              aria-describedby="simple-form-name-01"
-              className="pf-c-form__group-label-help"
+            <Button
+              variant="plain"
+              aria-label="About regions"
+              className="pf-u-pl-sm header-button"
+              isInline
             >
               <HelpIcon />
-            </button>
+            </Button>
           </Popover>
         }
       >
         <Select
-          variant={SelectVariant.typeaheadMulti}
-          typeAheadAriaLabel="Select a region"
-          onToggle={handleToggle}
-          onSelect={handleSelect}
-          onClear={handleClear}
-          selections={selected}
+          isScrollable
           isOpen={isOpen}
-          aria-labelledby={titleId}
-          placeholderText="Select a region"
-          menuAppendTo="parent"
-          validated={validated}
-          maxHeight="25rem"
+          selected={selected}
+          onSelect={(ev, selection) => onSelect(selection as string)}
+          onOpenChange={handleToggle}
+          toggle={toggle}
         >
-          {options.map((option, index) => (
-            <SelectOption
-              isDisabled={option.disableRegion}
-              key={index}
-              value={option.value}
-              {...(option.description && { description: option.description })}
-            />
-          ))}
+          <SelectList isAriaMultiselectable>
+            {selectOptions.map((option) => (
+              <SelectOption
+                isDisabled={option.disableRegion}
+                key={option.value}
+                description={option.value}
+                value={option.value}
+              >
+                {option.description}
+              </SelectOption>
+            ))}
+          </SelectList>
         </Select>
         {validated !== 'success' && (
           <FormHelperText>
@@ -183,7 +260,7 @@ const RegionsSelect = ({
                 icon={<ExclamationCircleIcon />}
                 variant={validated}
               >
-                {helperTextInvalid}
+                Select at least one region to share to.
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
