@@ -129,7 +129,7 @@ describe('On Recreate', () => {
     await waitFor(() => expect(createImageButton).toBeEnabled());
 
     // check that the FSC contains a /tmp partition
-    const navigation = screen.getByRole('navigation');
+    const navigation = await screen.findByRole('navigation');
     await user.click(
       await within(navigation).findByRole('button', {
         name: /file system configuration/i,
