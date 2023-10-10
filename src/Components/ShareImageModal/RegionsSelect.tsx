@@ -12,8 +12,6 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon, HelpIcon } from '@patternfly/react-icons';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 import { AWS_REGIONS } from '../../constants';
@@ -64,7 +62,6 @@ const RegionsSelect = ({
   isOpen,
   setIsOpen,
 }: RegionsSelectPropTypes) => {
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
   const [selected, setSelected] = useState<string[]>([]);
@@ -113,32 +110,8 @@ const RegionsSelect = ({
   const handleSubmit = async () => {
     setIsSaving(true);
     const requests = generateRequests(composeId, composeStatus, selected);
-    // https://redux-toolkit.js.org/rtk-query/usage/mutations#frequently-used-mutation-hook-return-values
-    // If you want to immediately access the result of a mutation, you need to chain `.unwrap()`
-    // if you actually want the payload or to catch the error.
-    // We do this so we can dispatch the appropriate notification (success or failure).
-    await Promise.all(requests.map((request) => cloneCompose(request).unwrap()))
-      .then(() => {
-        setIsSaving(false);
-        navigate(resolveRelPath(''));
-        dispatch(
-          addNotification({
-            variant: 'success',
-            title: 'Your image is being shared',
-          })
-        );
-      })
-      .catch((err) => {
-        navigate(resolveRelPath(''));
-        // TODO The error should be typed.
-        dispatch(
-          addNotification({
-            variant: 'danger',
-            title: 'Your image could not be shared',
-            description: `Status code ${err.status}: ${err.data.errors[0].detail}`,
-          })
-        );
-      });
+    await Promise.allSettled(requests.map((request) => cloneCompose(request)));
+    navigate(resolveRelPath(''));
   };
 
   return (
