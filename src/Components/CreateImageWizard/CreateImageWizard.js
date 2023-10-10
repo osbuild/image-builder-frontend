@@ -1,9 +1,7 @@
 import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useFlag } from '@unleash/proxy-client-react';
-import { useDispatch, useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import ImageCreator from './ImageCreator';
@@ -533,7 +531,6 @@ const formStepHistory = (composeRequest, contentSourcesEnabled, isBeta) => {
 
 const CreateImageWizard = () => {
   const [composeImage] = useComposeImageMutation();
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   // composeId is an optional param that is used for Recreate image
   const { composeId } = useParams();
@@ -596,39 +593,10 @@ const CreateImageWizard = () => {
       onSubmit={async ({ values, setIsSaving }) => {
         setIsSaving(true);
         const requests = onSave(values);
-        // https://redux-toolkit.js.org/rtk-query/usage/mutations#frequently-used-mutation-hook-return-values
-        // If you want to immediately access the result of a mutation, you need to chain `.unwrap()`
-        // if you actually want the payload or to catch the error.
-        // We do this so we can dispatch the appropriate notification (success or failure).
-        await Promise.all(
-          requests.map((composeRequest) =>
-            composeImage({ composeRequest }).unwrap()
-          )
-        )
-          .then(() => {
-            navigate(resolveRelPath(''));
-            dispatch(
-              addNotification({
-                variant: 'success',
-                title: 'Your image is being created',
-              })
-            );
-          })
-          .catch((err) => {
-            let msg = err.response.statusText;
-            if (err.response.data?.errors[0]?.detail) {
-              msg = err.response.data?.errors[0]?.detail;
-            }
-
-            navigate(resolveRelPath(''));
-            dispatch(
-              addNotification({
-                variant: 'danger',
-                title: 'Your image could not be created',
-                description: 'Status code ' + err.response.status + ': ' + msg,
-              })
-            );
-          });
+        await Promise.allSettled(
+          requests.map((composeRequest) => composeImage({ composeRequest }))
+        );
+        navigate(resolveRelPath(''));
       }}
       defaultArch="x86_64"
       customValidatorMapper={{
