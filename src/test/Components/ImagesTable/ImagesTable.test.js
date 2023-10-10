@@ -123,18 +123,14 @@ describe('Images Table', () => {
       name: 'Actions',
     });
 
-    await waitFor(() => {
-      expect(actionsButton).toBeEnabled();
-    });
+    expect(actionsButton).toBeEnabled();
 
-    user.click(actionsButton);
+    await user.click(actionsButton);
     const recreateButton = await screen.findByRole('menuitem', {
       name: 'Recreate image',
     });
 
-    act(() => {
-      user.click(recreateButton);
-    });
+    await user.click(recreateButton);
 
     await waitFor(() =>
       expect(router.state.location.pathname).toBe(
@@ -157,7 +153,7 @@ describe('Images Table', () => {
     const actionsButton = await within(rows[1]).findByRole('button', {
       name: 'Actions',
     });
-    user.click(actionsButton);
+    await user.click(actionsButton);
 
     const downloadButton = await screen.findByRole('menuitem', {
       name: 'Download compose request (.json)',
@@ -165,7 +161,7 @@ describe('Images Table', () => {
 
     // No actual clicking because downloading is hard to test.
     // Instead, we just check href and download properties of the <a> element.
-    const downloadLink = within(downloadButton).getByRole('link');
+    const downloadLink = await within(downloadButton).findByRole('link');
     expect(downloadLink.download).toBe(
       'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json'
     );
@@ -174,8 +170,11 @@ describe('Images Table', () => {
     expect(hrefParts.length).toBe(2);
     const [header, encodedRequest] = hrefParts;
     expect(header).toBe('data:text/plain;charset=utf-8');
-    expect(encodedRequest).toBe(
-      encodeURIComponent(JSON.stringify(expectedRequest, null, '  '))
+
+    await waitFor(() =>
+      expect(encodedRequest).toBe(
+        encodeURIComponent(JSON.stringify(expectedRequest, null, '  '))
+      )
     );
   });
 
