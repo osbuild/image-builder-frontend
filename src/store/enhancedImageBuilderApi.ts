@@ -14,13 +14,31 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       },
     },
     cloneCompose: {
-      invalidatesTags: (_request, _error, arg) => {
-        return [{ type: 'Clone', id: arg.composeId }];
+      onQueryStarted: async (
+        { composeId, cloneRequest },
+        { dispatch, queryFulfilled }
+      ) => {
+        queryFulfilled.then(() => {
+          dispatch(
+            imageBuilderApi.util.invalidateTags([
+              // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
+              // @ts-expect-error
+              { type: 'Clone', id: composeId },
+            ])
+          );
+        });
       },
     },
     composeImage: {
-      invalidatesTags: () => {
-        return [{ type: 'Compose' }];
+      onQueryStarted: async (
+        { composeRequest },
+        { dispatch, queryFulfilled }
+      ) => {
+        queryFulfilled.then(() => {
+          // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
+          // @ts-expect-error
+          dispatch(imageBuilderApi.util.invalidateTags(['Compose']));
+        });
       },
     },
   },

@@ -593,20 +593,20 @@ const CreateImageWizard = () => {
   return (
     <ImageCreator
       onClose={handleClose}
-      onSubmit={({ values, setIsSaving }) => {
+      onSubmit={async ({ values, setIsSaving }) => {
         setIsSaving(true);
         const requests = onSave(values);
-        navigate(resolveRelPath(''));
         // https://redux-toolkit.js.org/rtk-query/usage/mutations#frequently-used-mutation-hook-return-values
         // If you want to immediately access the result of a mutation, you need to chain `.unwrap()`
         // if you actually want the payload or to catch the error.
         // We do this so we can dispatch the appropriate notification (success or failure).
-        Promise.all(
+        await Promise.all(
           requests.map((composeRequest) =>
             composeImage({ composeRequest }).unwrap()
           )
         )
           .then(() => {
+            navigate(resolveRelPath(''));
             dispatch(
               addNotification({
                 variant: 'success',
@@ -620,6 +620,7 @@ const CreateImageWizard = () => {
               msg = err.response.data?.errors[0]?.detail;
             }
 
+            navigate(resolveRelPath(''));
             dispatch(
               addNotification({
                 variant: 'danger',
