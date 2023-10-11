@@ -11,7 +11,8 @@ export WORKSPACE=${WORKSPACE:-$APP_ROOT} # if running in jenkins, use the build'
 export APP_ROOT=$(pwd)
 #16 is the default Node version. Change this to override it.
 export NODE_BUILD_VERSION=16
-COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master
+# COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master
+COMMON_BUILDER=https://raw.githubusercontent.com/jrusz/insights-frontend-builder-common/remove-pr-tag
 
 # --------------------------------------------
 # Options that must be configured by app owner
@@ -24,7 +25,8 @@ export IQE_ENV="ephemeral"
 export IQE_IMAGE_TAG="image-builder"
 
 # bootstrap bonfire and it's config
-CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
+# CICD_URL=https://raw.githubusercontent.com/RedHatInsights/cicd-tools/main
+CICD_URL=https://raw.githubusercontent.com/RedHatInsights/cicd-tools/main
 curl -s "$CICD_URL"/bootstrap.sh > .cicd_bootstrap.sh && source .cicd_bootstrap.sh
 
 # # source is preferred to | bash -s in this case to avoid a subshell
