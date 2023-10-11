@@ -199,11 +199,15 @@ describe('Images Table', () => {
   test('check error details', async () => {
     await renderWithReduxRouter('', {});
 
-    const table = await screen.findByTestId('images-table');
-    const { findAllByRole } = within(table);
-    const rows = await findAllByRole('row');
+    let table = await screen.findByTestId('images-table');
+    let rows = await within(table).findAllByRole('row');
 
-    const errorPopover = await within(rows[2]).findByText(
+    // GCP image
+    const errorPopoverR2 = await within(rows[2]).findByText(
+      /image build failed/i
+    );
+    // AWS image
+    const errorPopoverR7 = await within(rows[7]).findByText(
       /image build failed/i
     );
 
@@ -211,11 +215,61 @@ describe('Images Table', () => {
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
 
-    user.click(errorPopover);
-
+    user.click(errorPopoverR2);
+    await screen.findByTestId('errorstatus-popover');
+    expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
+    user.click(errorPopoverR2);
     await waitFor(() =>
-      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+      expect(
+        screen.queryByTestId('errorstatus-popover')
+      ).not.toBeInTheDocument()
     );
+
+    user.click(errorPopoverR7);
+    await screen.findByTestId('errorstatus-popover');
+    expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
+    user.click(errorPopoverR7);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('errorstatus-popover')
+      ).not.toBeInTheDocument()
+    );
+
+    // Go to next page on the table
+    const pagination = await screen.findByTestId('images-pagination-top');
+    const pageButtons = await within(pagination).findAllByRole('button');
+    user.click(pageButtons[pageButtons.length - 1]);
+    await screen.findAllByText(/9e7d0d51-7106-42ab-98f2-f89872a9d599/i);
+
+    // rows = await findAllByRole('row');
+    rows = [];
+    table = await screen.findByTestId('images-table');
+    rows = await within(table).findAllByRole('row');
+
+    const errorPopoverP2R5 = await within(rows[5]).findByText(
+      /image build failed/i
+    );
+    const errorPopoverP2R6 = await within(rows[6]).findByText(
+      /image build failed/i
+    );
+
+    user.click(errorPopoverP2R5);
+    await screen.findByTestId('errorstatus-popover');
+    expect(screen.getAllByText(/Something went very wrong/i)[0]).toBeVisible();
+    expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible();
+    user.click(errorPopoverP2R5);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('errorstatus-popover')
+      ).not.toBeInTheDocument()
+    );
+
+    user.click(errorPopoverP2R6);
+    await screen.findByTestId('errorstatus-popover');
+    expect(
+      screen.getAllByText(/Something went very wrong for Azure/i)[0]
+    ).toBeVisible();
+    expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible();
   });
 });
 
