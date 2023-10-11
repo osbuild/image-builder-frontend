@@ -24,6 +24,7 @@ import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
 import {
   ClonesResponseItem,
   ComposeStatus,
+  ComposeStatusError,
   ComposesResponseItem,
   UploadStatus,
   useGetComposeStatusQuery,
@@ -41,7 +42,7 @@ export const StatusClone = ({ clone, status }: StatusClonePropTypes) => {
         <ErrorStatus
           icon={statuses.failureSharing.icon}
           text={statuses.failureSharing.text}
-          reason={`Failed to share image to ${clone.request.region}`}
+          error={`Failed to share image to ${clone.request.region}`}
         />
       );
     case 'success':
@@ -77,7 +78,7 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
         <ErrorStatus
           icon={statuses[data.image_status.status].icon}
           text={statuses[data.image_status.status].text}
-          reason={data?.image_status?.error?.details?.reason || ''}
+          error={data?.image_status?.error || ''}
         />
       );
     default:
@@ -109,7 +110,7 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
         <ErrorStatus
           icon={statuses['failure'].icon}
           text={statuses['failure'].text}
-          reason={data.image_status.error?.details?.reason || ''}
+          error={data.image_status.error || ''}
         />
       );
     default:
@@ -133,7 +134,7 @@ export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
         <ErrorStatus
           icon={statuses[status.image_status.status].icon}
           text={statuses[status.image_status.status].text}
-          reason={status.image_status.error?.reason || ''}
+          error={status.image_status.error || ''}
         />
       );
     default:
@@ -179,6 +180,14 @@ export const AwsS3Status = ({
         text={`Expires in ${remainingTime} ${
           remainingTime > 1 ? 'hours' : 'hour'
         }`}
+      />
+    );
+  } else if (status === 'failure') {
+    return (
+      <ErrorStatus
+        icon={statuses[status].icon}
+        text={statuses[status].text}
+        error={composeStatus.image_status.error || ''}
       />
     );
   } else {
@@ -259,14 +268,31 @@ const Status = ({ icon, text }: StatusPropTypes) => {
 type ErrorStatusPropTypes = {
   icon: JSX.Element;
   text: string;
-  reason: string;
+  error: ComposeStatusError | string;
 };
 
-const ErrorStatus = ({ icon, text, reason }: ErrorStatusPropTypes) => {
+const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
+  let reason = '';
+  if (typeof error === 'string') {
+    reason = error;
+  } else {
+    if (error.reason) {
+      reason = error.reason;
+    }
+    if (error.details?.reason) {
+      if (reason !== '') {
+        reason = `${reason}\n\n${error.details?.reason}`;
+      } else {
+        reason = error.details.reason;
+      }
+    }
+  }
+
   return (
     <Flex className="pf-u-align-items-baseline pf-m-nowrap">
       <div className="pf-u-mr-sm">{icon}</div>
       <Popover
+        data-testid="errorstatus-popover"
         position="bottom"
         minWidth="30rem"
         bodyContent={

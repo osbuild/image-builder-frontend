@@ -315,6 +315,42 @@ export const mockComposes: ComposesResponseItem[] = [
       },
     },
   },
+  {
+    id: '9e7d0d51-7106-42ab-98f2-f89872a9d599',
+    created_at: currentDateInString,
+    request: {
+      distribution: RHEL_8,
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'guest-image',
+          upload_request: {
+            options: {},
+            type: 'aws.s3',
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: '1c00daa5-1cfe-4765-8fdd-d1dccf841baf',
+    created_at: currentDateInString,
+    request: {
+      distribution: RHEL_8,
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'azure',
+          upload_request: {
+            type: 'azure',
+            options: {
+              resource_group: 'my_resource_group',
+            },
+          },
+        },
+      ],
+    },
+  },
 ];
 
 /**
@@ -730,6 +766,70 @@ export const mockStatus = (composeId: string): ComposeStatus => {
               'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
           },
         },
+      },
+    },
+    '9e7d0d51-7106-42ab-98f2-f89872a9d599': {
+      image_status: {
+        status: 'failure',
+        error: {
+          id: 0,
+          reason: 'Something went very wrong',
+          details: {
+            reason: 'There was an error',
+          },
+        },
+        upload_status: {
+          options: {
+            url: 'https://s3.amazonaws.com/9e7d0d51-7106-42ab-98f2-f89872a9d599-disk.qcow2',
+          },
+          status: 'failure',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              options: {},
+              type: 'aws.s3',
+            },
+          },
+        ],
+      },
+    },
+    '1c00daa5-1cfe-4765-8fdd-d1dccf841baf': {
+      image_status: {
+        status: 'failure',
+        error: {
+          id: 0,
+          reason: 'Something went very wrong for Azure',
+          details: {
+            reason: 'There was an error',
+          },
+        },
+        upload_status: {
+          options: {
+            image_name: 'name',
+          },
+          status: 'failure',
+          type: 'aws.s3',
+        },
+      },
+      request: {
+        distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'vhd',
+            upload_request: {
+              options: {},
+              type: 'azure',
+            },
+          },
+        ],
       },
     },
   };
