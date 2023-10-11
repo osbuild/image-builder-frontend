@@ -11,6 +11,7 @@ globals:
 plugins:
   - import
 rules:
+  rulesdir/forbid-pf-relative-imports: off
   import/order:
     - error
     - groups:
