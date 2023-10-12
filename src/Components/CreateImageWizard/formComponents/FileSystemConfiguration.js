@@ -83,9 +83,13 @@ const FileSystemConfiguration = ({ ...props }) => {
     if (customizations && customizations.filesystem && isSuccess) {
       const newRows = rows;
 
-      // Only keep the required partitions that have a valid mount points
+      // The filesystem customizations required by the OpenSCAP profile may
+      // contain some unsupported mountpoints. They need to be filtered out to
+      // prevent undefined behaviour in the frontend and the backend
       const fss = customizations.filesystem.filter((fs) =>
-        MountPointValidPrefixes.includes(fs.mountpoint)
+        MountPointValidPrefixes.includes(
+          '/'.concat(fs.mountpoint.split('/')[1])
+        )
       );
 
       // And add them all to the list.
