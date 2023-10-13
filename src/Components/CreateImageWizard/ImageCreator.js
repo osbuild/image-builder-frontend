@@ -8,6 +8,7 @@ import { Spinner } from '@patternfly/react-core';
 import PropTypes from 'prop-types';
 
 import ActivationKeys from './formComponents/ActivationKeys';
+import ArchSelect from './formComponents/ArchSelect';
 import { AWSSourcesSelect } from './formComponents/AWSSourcesSelect';
 import AzureAuthButton from './formComponents/AzureAuthButton';
 import AzureResourceGroups from './formComponents/AzureResourceGroups';
@@ -74,6 +75,7 @@ const ImageCreator = ({
         'azure-resource-groups': AzureResourceGroups,
         'gallery-layout': GalleryLayout,
         'oscap-profile-selector': Oscap,
+        'image-output-arch-select': ArchSelect,
         registration: Registration,
         ...customComponentMapper,
       }}
