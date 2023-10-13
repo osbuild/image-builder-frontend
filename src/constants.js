@@ -7,6 +7,8 @@ export const RHEL_8 = 'rhel-88';
 export const RHEL_9 = 'rhel-92';
 export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
+export const X86_64 = 'x86_64';
+export const AARCH64 = 'aarch64';
 
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
@@ -18,6 +20,8 @@ export const RELEASES = new Map([
   [CENTOS_9, 'CentOS Stream 9'],
   [CENTOS_8, 'CentOS Stream 8'],
 ]);
+
+export const ARCHS = [X86_64, AARCH64];
 
 export const DEFAULT_AWS_REGION = 'us-east-1';
 

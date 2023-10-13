@@ -112,7 +112,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'aws',
           upload_request: {
             type: 'aws',
@@ -151,7 +151,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'gcp',
           upload_request: {
             type: 'gcp',
@@ -182,7 +182,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'azure',
           upload_request: {
             type: 'azure',
@@ -205,7 +205,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'vsphere',
           upload_request: {
             type: 'aws.s3',
@@ -225,7 +225,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'vsphere-ova',
           upload_request: {
             type: 'aws.s3',
@@ -245,7 +245,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'guest-image',
           upload_request: {
             type: 'aws.s3',
@@ -265,7 +265,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'image-installer',
           upload_request: {
             type: 'aws.s3',
@@ -285,7 +285,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'wsl',
           upload_request: {
             type: 'aws.s3',
@@ -330,6 +330,7 @@ const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
     formState['image-description'] = composeRequest.image_description;
 
     formState.release = composeRequest?.distribution;
+    formState.arch = imageRequest.architecture;
     // set defaults for target environment first
     formState['target-environment'] = {
       aws: false,

@@ -7,7 +7,7 @@ import { Text } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 
-import { RHEL_9 } from '../../../constants.js';
+import { RHEL_9, X86_64 } from '../../../constants.js';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import CustomButtons from '../formComponents/CustomButtons';
 
@@ -36,6 +36,18 @@ const imageOutputStep = {
       label: 'Release',
       name: 'release',
       initialValue: RHEL_9,
+      isRequired: true,
+      validate: [
+        {
+          type: validatorTypes.REQUIRED,
+        },
+      ],
+    },
+    {
+      component: 'image-output-arch-select',
+      label: 'Architecture',
+      name: 'arch',
+      initialValue: X86_64,
       isRequired: true,
       validate: [
         {
