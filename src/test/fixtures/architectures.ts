@@ -55,6 +55,7 @@ export const mockArchitecturesByDistro = (
           'image-installer',
           'vsphere',
           'vsphere-ova',
+          'wsl',
         ],
         repositories: [
           {
