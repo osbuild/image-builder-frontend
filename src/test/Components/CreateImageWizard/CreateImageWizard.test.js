@@ -193,9 +193,9 @@ describe('Step Image output', () => {
   test('expect only RHEL releases before expansion', async () => {
     await setUp();
 
-    const releaseMenu = screen.getByRole('button', {
+    const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
-    });
+    })[0];
     await user.click(releaseMenu);
 
     await screen.findByRole('option', {
@@ -214,9 +214,9 @@ describe('Step Image output', () => {
   test('expect all releases after expansion', async () => {
     await setUp();
 
-    const releaseMenu = screen.getByRole('button', {
+    const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
-    });
+    })[0];
     await user.click(releaseMenu);
 
     const showOptionsButton = screen.getByRole('button', {
@@ -245,9 +245,9 @@ describe('Step Image output', () => {
   test('CentOS acknowledgement appears', async () => {
     await setUp();
 
-    const releaseMenu = screen.getByRole('button', {
+    const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
-    });
+    })[0];
     await user.click(releaseMenu);
 
     const showOptionsButton = screen.getByRole('button', {
@@ -915,9 +915,9 @@ describe('Step Review', () => {
   const setUpCentOS = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
-    const releaseMenu = screen.getByRole('button', {
+    const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
-    });
+    })[0];
     await user.click(releaseMenu);
 
     const showOptionsButton = screen.getByRole('button', {
