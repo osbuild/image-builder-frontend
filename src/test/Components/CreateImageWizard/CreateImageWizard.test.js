@@ -276,7 +276,9 @@ describe('Step Upload to AWS', () => {
     ));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
 
     await clickNext();
 
@@ -444,7 +446,9 @@ describe('Step Upload to Google', () => {
     ));
 
     // select gcp as upload destination
-    user.click(screen.getByTestId('upload-google'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-google'))
+    );
 
     await clickNext();
 
@@ -525,7 +529,9 @@ describe('Step Registration', () => {
     ));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
 
     await clickNext();
     await user.click(
@@ -717,7 +723,9 @@ describe('Step File system configuration', () => {
     ));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
@@ -796,7 +804,9 @@ describe('Step Details', () => {
     ));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
@@ -869,7 +879,9 @@ describe('Step Review', () => {
     ));
 
     // select aws as upload destination
-    user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
@@ -919,7 +931,9 @@ describe('Step Review', () => {
     await user.click(centos);
 
     // select aws as upload destination
-    user.click(await screen.findByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
@@ -1024,16 +1038,19 @@ describe('Click through all steps', () => {
     await setUp();
 
     // select image output
-    const releaseMenu = screen.getByRole('button', {
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
-    });
+    })[0];
     await user.click(releaseMenu);
     const releaseOption = screen.getByRole('option', {
       name: 'Red Hat Enterprise Linux (RHEL) 8',
     });
     await user.click(releaseOption);
 
-    await user.click(screen.getByTestId('upload-aws'));
+    await waitFor(() => screen.findByTestId('upload-aws'));
     await user.click(screen.getByTestId('upload-azure'));
     await user.click(screen.getByTestId('upload-google'));
     await user.click(screen.getByTestId('checkbox-vmware'));
@@ -1379,11 +1396,13 @@ describe('Keyboard accessibility', () => {
     await clickNext();
   };
 
-  const selectAllEnvironments = () => {
-    user.click(screen.getByTestId('upload-aws'));
-    user.click(screen.getByTestId('upload-google'));
-    user.click(screen.getByTestId('upload-azure'));
-    user.click(
+  const selectAllEnvironments = async () => {
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await user.click(screen.getByTestId('upload-google'));
+    await user.click(screen.getByTestId('upload-azure'));
+    await user.click(
       screen.getByRole('checkbox', {
         name: /virtualization guest image checkbox/i,
       })
@@ -1394,7 +1413,7 @@ describe('Keyboard accessibility', () => {
     await setUp();
 
     // Image output
-    selectAllEnvironments();
+    await selectAllEnvironments();
     await clickNext();
 
     // Target environment aws
@@ -1470,14 +1489,18 @@ describe('Keyboard accessibility', () => {
   test('pressing Esc closes the wizard', async () => {
     await setUp();
     // wizard needs to be interacted with for the esc key to work
-    await user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await user.keyboard('{escape}');
     expect(router.state.location.pathname).toBe('/insights/image-builder');
   });
 
   test('pressing Enter does not advance the wizard', async () => {
     await setUp();
-    await user.click(screen.getByTestId('upload-aws'));
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
     await user.keyboard('{enter}');
     screen.getByRole('heading', {
       name: /image output/i,
@@ -1496,6 +1519,7 @@ describe('Keyboard accessibility', () => {
     await setUp();
     await clickNext();
 
+    await waitFor(() => screen.findByTestId('upload-aws'));
     testTile(screen.getByTestId('upload-aws'));
     testTile(screen.getByTestId('upload-google'));
     testTile(screen.getByTestId('upload-azure'));

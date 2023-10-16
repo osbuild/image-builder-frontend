@@ -511,7 +511,9 @@ describe('Step Packages', () => {
       ));
 
       // select aws as upload destination
-      user.click(screen.getByTestId('upload-aws'));
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
       await clickNext();
 
       // aws step
