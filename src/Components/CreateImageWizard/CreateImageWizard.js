@@ -198,6 +198,26 @@ const onSave = (values) => {
     requests.push(request);
   }
 
+  if (values['target-environment']?.oci) {
+    const request = {
+      distribution: values.release,
+      image_name: values?.['image-name'],
+      image_description: values?.['image-description'],
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'oci',
+          upload_request: {
+            type: 'oci.objectstorage',
+            options: {},
+          },
+        },
+      ],
+      customizations,
+    };
+    requests.push(request);
+  }
+
   if (values['target-environment']?.vsphere) {
     const request = {
       distribution: values.release,
@@ -336,13 +356,17 @@ const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
       aws: false,
       azure: false,
       gcp: false,
+      oci: false,
       'guest-image': false,
     };
     // then select the one from the request
     // if the image type is to a cloud provider we use the upload_request.type
     // or if the image is intended for download we use the image_type
     let targetEnvironment;
-    if (uploadRequest.type === 'aws.s3') {
+    if (
+      uploadRequest.type === 'aws.s3' ||
+      uploadRequest.type === 'oci.objectstorage'
+    ) {
       targetEnvironment = imageRequest.image_type;
     } else {
       targetEnvironment = uploadRequest.type;

@@ -21,6 +21,7 @@ import {
   TargetEnvAWSList,
   TargetEnvAzureList,
   TargetEnvGCPList,
+  TargetEnvOciList,
   TargetEnvOtherList,
 } from './ReviewStepTextLists';
 
@@ -93,6 +94,9 @@ const ReviewStep = () => {
         )}
         {getState()?.values?.['target-environment']?.azure && (
           <TargetEnvAzureList />
+        )}
+        {getState()?.values?.['target-environment']?.oci && (
+          <TargetEnvOciList />
         )}
         {getState()?.values?.['target-environment']?.vsphere && (
           <TextContent>
