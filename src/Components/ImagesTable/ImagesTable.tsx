@@ -36,8 +36,9 @@ import {
   AwsS3Details,
   AzureDetails,
   GcpDetails,
+  OciDetails,
 } from './ImageDetails';
-import { AwsS3Instance, CloudInstance } from './Instance';
+import { AwsS3Instance, CloudInstance, OciInstance } from './Instance';
 import Release from './Release';
 import { AwsS3Status, CloudStatus } from './Status';
 import { AwsTarget, Target } from './Target';
@@ -281,6 +282,8 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
       return <GcpRow compose={compose} rowIndex={rowIndex} />;
     case 'azure':
       return <AzureRow compose={compose} rowIndex={rowIndex} />;
+    case 'oci.objectstorage':
+      return <OciRow compose={compose} rowIndex={rowIndex} />;
     case 'aws.s3':
       return <AwsS3Row compose={compose} rowIndex={rowIndex} />;
   }
@@ -315,6 +318,27 @@ type AzureRowPropTypes = {
 const AzureRow = ({ compose, rowIndex }: AzureRowPropTypes) => {
   const details = <AzureDetails compose={compose} />;
   const instance = <CloudInstance compose={compose} />;
+  const status = <CloudStatus compose={compose} />;
+
+  return (
+    <Row
+      compose={compose}
+      rowIndex={rowIndex}
+      details={details}
+      instance={instance}
+      status={status}
+    />
+  );
+};
+
+type OciRowPropTypes = {
+  compose: ComposesResponseItem;
+  rowIndex: number;
+};
+
+const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
+  const details = <OciDetails compose={compose} />;
+  const instance = <OciInstance compose={compose} />;
   const status = <CloudStatus compose={compose} />;
 
   return (

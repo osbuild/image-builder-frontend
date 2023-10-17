@@ -23,6 +23,7 @@ const targetOptions: { [key in ImageTypes]: string } = {
   'rhel-edge-commit': 'RHEL Edge Commit',
   'rhel-edge-installer': 'RHEL Edge Installer',
   vhd: '',
+  oci: 'Oracle Cloud Infrastructure',
 };
 
 type TargetPropTypes = {
