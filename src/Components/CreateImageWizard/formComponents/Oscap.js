@@ -29,13 +29,15 @@ const reinitDependingSteps = (change) => {
 };
 
 /**
- * Component for the user to select the policy to apply to their image.
- * The selected policy will be stored in the `oscap-policy` form state variable.
+ * Component for the user to select the profile to apply to their image.
+ * The selected profile will be stored in the `oscap-profile` form state variable.
  * The Component is shown or not depending on the ShowSelector variable.
  */
-const PolicySelector = ({ input, showSelector }) => {
+const ProfileSelector = ({ input, showSelector }) => {
   const { change, getState } = useFormApi();
-  const [policy, selectPolicy] = useState(getState()?.values?.['oscap-policy']);
+  const [profile, selectProfile] = useState(
+    getState()?.values?.['oscap-profile']
+  );
   const [isOpen, setIsOpen] = useState(false);
 
   const { data, isFetching, isSuccess, isError, refetch } =
@@ -60,13 +62,13 @@ const PolicySelector = ({ input, showSelector }) => {
   };
 
   const handleClear = () => {
-    selectPolicy(undefined);
+    selectProfile(undefined);
     change(input.name, undefined);
     reinitDependingSteps(change);
   };
 
-  const setPolicy = (_, selection) => {
-    selectPolicy(selection);
+  const setProfile = (_, selection) => {
+    selectProfile(selection);
     setIsOpen(false);
     change(input.name, selection);
     reinitDependingSteps(change);
@@ -76,98 +78,98 @@ const PolicySelector = ({ input, showSelector }) => {
   return (
     <FormGroup
       isRequired={true}
-      label={'Policy to use for this image'}
-      data-testid="policies-form-group"
+      label={'Profile to use for this image'}
+      data-testid="profiles-form-group"
     >
       <Select
-        ouiaId="policySelect"
+        ouiaId="profileSelect"
         variant={SelectVariant.typeahead}
         onToggle={handleToggle}
-        onSelect={setPolicy}
+        onSelect={setProfile}
         onClear={handleClear}
-        selections={policy}
+        selections={profile}
         isOpen={isOpen}
-        placeholderText="Select a policy"
-        typeAheadAriaLabel="Select a policy"
+        placeholderText="Select a profile"
+        typeAheadAriaLabel="Select a profile"
         isDisabled={!isSuccess}
       >
         {isSuccess &&
           data.map((key, index) => <SelectOption key={index} value={key} />)}
         {isFetching && (
-          <SelectOption isNoResultsOption={true} data-testid="policies-loading">
+          <SelectOption isNoResultsOption={true} data-testid="profiles-loading">
             <Spinner isSVG size="md" />
           </SelectOption>
         )}
       </Select>
       {isError && (
         <Alert
-          title="Error fetching the policies"
+          title="Error fetching the profiles"
           variant="danger"
           isPlain
           isInline
         >
-          Cannot get the list of policies
+          Cannot get the list of profiles
         </Alert>
       )}
     </FormGroup>
   );
 };
 
-PolicySelector.propTypes = {
+ProfileSelector.propTypes = {
   input: PropTypes.any,
   showSelector: PropTypes.bool,
 };
 
 /**
  * Component to prompt the use with two choices:
- * - to add a policy, in which case the PolicySelector will allow the user to
- *   pick a policy to be stored in the `oscap-policy` variable.
- * - to not add a policy, in which case the `oscap-policy` form state goes
+ * - to add a profile, in which case the ProfileSelector will allow the user to
+ *   pick a profile to be stored in the `oscap-profile` variable.
+ * - to not add a profile, in which case the `oscap-profile` form state goes
  *   undefined.
  */
-const AddPolicy = ({ input }) => {
+const AddProfile = ({ input }) => {
   const { change, getState } = useFormApi();
-  const oscapPolicy = getState()?.values?.['oscap-policy'];
-  const [wantsPolicy, setWantsPolicy] = useState(oscapPolicy !== undefined);
+  const oscapProfile = getState()?.values?.['oscap-profile'];
+  const [wantsProfile, setWantsProfile] = useState(oscapProfile !== undefined);
   return (
     <>
-      <FormGroup label="Compliance policy">
+      <FormGroup label="Compliance profile">
         <Radio
-          name="add-a-policy"
+          name="add-a-profile"
           className="pf-u-mt-md"
-          data-testid="add-a-policy-radio"
-          id="add-a-policy"
-          label="Add a policy"
-          isChecked={wantsPolicy}
+          data-testid="add-a-profile-radio"
+          id="add-a-profile"
+          label="Add a profile"
+          isChecked={wantsProfile}
           onChange={() => {
-            setWantsPolicy(true);
+            setWantsProfile(true);
             reinitDependingSteps(change);
           }}
         />
         <Radio
-          name="dont-add-a-policy"
+          name="dont-add-a-profile"
           className="pf-u-mt-md"
-          data-testid="dont-add-a-policy-radio"
-          id="dont-add-a-policy"
-          label="Do not add a policy"
-          isChecked={!wantsPolicy}
+          data-testid="dont-add-a-profile-radio"
+          id="dont-add-a-profile"
+          label="Do not add a profile"
+          isChecked={!wantsProfile}
           onChange={() => {
-            setWantsPolicy(false);
+            setWantsProfile(false);
             change(input.name, undefined);
             reinitDependingSteps(change);
           }}
         />
       </FormGroup>
-      <PolicySelector input={input} showSelector={wantsPolicy} />
+      <ProfileSelector input={input} showSelector={wantsProfile} />
     </>
   );
 };
 
-AddPolicy.propTypes = {
+AddProfile.propTypes = {
   input: PropTypes.object,
 };
 
 export const Oscap = ({ ...props }) => {
   const { input } = useFieldApi(props);
-  return <AddPolicy input={input} />;
+  return <AddProfile input={input} />;
 };

@@ -94,9 +94,9 @@ const onSave = (values) => {
     }
   }
 
-  if (values['oscap-policy']) {
+  if (values['oscap-profile']) {
     customizations.openscap = {
-      profile_id: values['oscap-policy'],
+      profile_id: values['oscap-profile'],
     };
   }
 
@@ -475,9 +475,8 @@ const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
       formState['register-system'] = 'register-later';
     }
 
-    // oscap policy
     if (enableOscap) {
-      formState['oscap-policy'] =
+      formState['oscap-profile'] =
         composeRequest?.customizations?.openscap?.profile_id;
     }
 

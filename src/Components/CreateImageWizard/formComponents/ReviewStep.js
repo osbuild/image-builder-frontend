@@ -173,7 +173,7 @@ const ReviewStep = () => {
           <ImageDetailsList />
         </ExpandableSection>
       )}
-      {getState()?.values?.['oscap-policy'] && (
+      {getState()?.values?.['oscap-profile'] && (
         <ExpandableSection
           toggleContent={'OpenSCAP Compliance'}
           onToggle={onToggleOscapDetails}

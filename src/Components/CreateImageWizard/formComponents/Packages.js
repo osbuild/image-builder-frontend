@@ -129,16 +129,16 @@ const Packages = ({ getAllPackages, isSuccess }) => {
   );
   const firstInputElement = useRef(null);
 
-  const oscapPolicy = getState()?.values?.['oscap-policy'];
+  const oscapProfile = getState()?.values?.['oscap-profile'];
 
   const { data: customizations, isSuccess: isSuccessCustomizations } =
     useGetOscapCustomizationsQuery(
       {
         distribution: getState()?.values?.['release'],
-        profile: oscapPolicy,
+        profile: oscapProfile,
       },
       {
-        skip: !oscapPolicy,
+        skip: !oscapProfile,
       }
     );
   useEffect(() => {
