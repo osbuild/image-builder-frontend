@@ -52,6 +52,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     aws: false,
     azure: false,
     gcp: false,
+    oci: false,
     'vsphere-ova': false,
     vsphere: false,
     'guest-image': false,
@@ -210,6 +211,25 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               onKeyDown={(e) => handleKeyDown(e, 'azure', !environment.azure)}
               onMouseEnter={() => prefetchSources({ provider: 'azure' })}
               isSelected={environment.azure}
+              isStacked
+              isDisplayLarge
+            />
+          )}
+          {allowedTargets.includes('oci') && isBeta() && (
+            <Tile
+              className="tile pf-u-mr-sm"
+              data-testid="upload-oci"
+              title="Oracle Cloud Infrastructure"
+              icon={
+                <img
+                  className="provider-icon"
+                  src={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
+                  alt="Oracle Cloud Infrastructure logo"
+                />
+              }
+              onClick={() => handleSetEnvironment('oci', !environment.oci)}
+              onKeyDown={(e) => handleKeyDown(e, 'oci', !environment.oci)}
+              isSelected={environment.oci}
               isStacked
               isDisplayLarge
             />

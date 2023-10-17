@@ -236,6 +236,27 @@ export const TargetEnvAzureList = () => {
   );
 };
 
+export const TargetEnvOciList = () => {
+  return (
+    <TextContent>
+      <Text component={TextVariants.h3}>Oracle Cloud Infrastructure</Text>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Object Storage URL
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          The URL for the built image will be ready to copy
+          <br />
+        </TextListItem>
+      </TextList>
+      <br />
+    </TextContent>
+  );
+};
+
 export const TargetEnvOtherList = () => {
   return (
     <>
