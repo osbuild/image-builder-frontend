@@ -1,7 +1,7 @@
 import isRhel from '../../../Utilities/isRhel.js';
 
 const imageOutputStepMapper = (
-  { 'target-environment': targetEnv, release, isBeta } = {},
+  { 'target-environment': targetEnv, release, enableOscap } = {},
   { skipAws, skipGoogle, skipAzure } = {}
 ) => {
   if (!skipAws && targetEnv?.aws) {
@@ -19,7 +19,7 @@ const imageOutputStepMapper = (
   if (isRhel(release)) {
     return 'registration';
   }
-  if (isBeta) {
+  if (enableOscap) {
     return 'Compliance';
   }
   return 'File system configuration';

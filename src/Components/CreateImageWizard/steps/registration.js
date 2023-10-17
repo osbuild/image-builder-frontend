@@ -70,7 +70,7 @@ const registrationStep = {
   ),
   name: 'registration',
   nextStep: ({ values }) => {
-    if (values.isBeta) {
+    if (values.enableOscap) {
       return 'Compliance';
     } else {
       return 'File system configuration';
