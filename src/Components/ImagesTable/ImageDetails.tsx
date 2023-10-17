@@ -28,6 +28,7 @@ import {
   isAzureUploadStatus,
   isGcpUploadRequestOptions,
   isGcpUploadStatus,
+  isOciUploadStatus,
 } from '../../store/typeGuards';
 
 const SourceNotFoundPopover = () => {
@@ -352,6 +353,66 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
                 variant="inline-compact"
               >
                 {uploadStatus?.image_name}
+              </ClipboardCopy>
+            )}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
+    </>
+  );
+};
+
+type OciDetailsPropTypes = {
+  compose: ComposesResponseItem;
+};
+
+export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
+  const { data: composeStatus } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
+
+  const options = composeStatus?.image_status.upload_status?.options;
+
+  if (options && !isOciUploadStatus(options)) {
+    throw TypeError(
+      `Error: uploadStatus must be of type OciUploadStatus, not ${typeof options}.`
+    );
+  }
+
+  return (
+    <>
+      <div className="pf-u-font-weight-bold pf-u-pb-md">Build Information</div>
+      <DescriptionList isHorizontal isCompact className=" pf-u-pl-xl">
+        <DescriptionListGroup>
+          <DescriptionListTerm>UUID</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ClipboardCopy
+              hoverTip="Copy"
+              clickTip="Copied"
+              variant="inline-compact"
+              ouiaId="gcp-uuid"
+            >
+              {compose.id}
+            </ClipboardCopy>
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
+      <br />
+      <div className="pf-u-font-weight-bold pf-u-pb-md">
+        Cloud Provider Identifiers
+      </div>
+      <DescriptionList isHorizontal isCompact className=" pf-u-pl-xl">
+        <DescriptionListGroup>
+          <DescriptionListTerm>Object Storage URL</DescriptionListTerm>
+          <DescriptionListDescription>
+            {composeStatus?.image_status.status === 'success' && (
+              <ClipboardCopy
+                hoverTip="Copy"
+                clickTip="Copied"
+                variant="inline-compact"
+                isBlock
+              >
+                {options?.url}
               </ClipboardCopy>
             )}
           </DescriptionListDescription>
