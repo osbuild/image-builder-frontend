@@ -14,7 +14,7 @@
     "@patternfly/react-table": "4.113.3",
     "@redhat-cloud-services/frontend-components": "3.11.2",
     "@redhat-cloud-services/frontend-components-notifications": "3.2.14",
-    "@redhat-cloud-services/frontend-components-utilities": "3.7.4",
+    "@redhat-cloud-services/frontend-components-utilities": "4.0.2",
     "@reduxjs/toolkit": "^1.9.5",
     "@scalprum/react-core": "^0.5.1",
     "@unleash/proxy-client-react": "^3.6.0",
