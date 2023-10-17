@@ -66,7 +66,7 @@ afterEach(() => {
 });
 
 describe('Step Compliance', () => {
-  test('create an image with an oscap policy', async () => {
+  test('create an image with an oscap profile', async () => {
     const user = userEvent.setup();
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
@@ -88,16 +88,16 @@ describe('Step Compliance', () => {
     // Now we should be in the Compliance step
     await screen.findByRole('heading', { name: /OpenSCAP Compliance/i });
     expect(
-      await screen.findByRole('radio', { name: /do not add a policy/i })
+      await screen.findByRole('radio', { name: /do not add a profile/i })
     ).toBeChecked();
     await user.click(
-      await screen.findByRole('radio', { name: 'Add a policy' })
+      await screen.findByRole('radio', { name: 'Add a profile' })
     );
     expect(
-      await screen.findByRole('radio', { name: 'Add a policy' })
+      await screen.findByRole('radio', { name: 'Add a profile' })
     ).toBeChecked();
     await user.click(
-      await screen.findByRole('textbox', { name: /select a policy/i })
+      await screen.findByRole('textbox', { name: /select a profile/i })
     );
     await user.click(
       await screen.findByRole('option', {
@@ -125,7 +125,7 @@ describe('On Recreate', () => {
       'imagewizard/1679d95b-8f1d-4982-8c53-8c2afa4ab04c'
     ));
   };
-  test('with oscap policy', async () => {
+  test('with oscap profile', async () => {
     const user = userEvent.setup();
     await setup();
 

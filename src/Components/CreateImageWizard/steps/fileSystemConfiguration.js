@@ -69,7 +69,7 @@ const fileSystemConfigurationStep = {
         },
       ],
       condition: {
-        when: 'oscap-policy',
+        when: 'oscap-profile',
         is: undefined,
       },
     },
@@ -87,7 +87,7 @@ const fileSystemConfigurationStep = {
             when: 'file-system-config-radio',
             is: 'manual',
           },
-          { not: [{ when: 'oscap-policy', is: undefined }] },
+          { not: [{ when: 'oscap-profile', is: undefined }] },
         ],
       },
     },
@@ -127,7 +127,7 @@ const fileSystemConfigurationStep = {
       condition: {
         or: [
           { when: 'file-system-config-radio', is: 'automatic' },
-          { when: 'oscap-policy', is: undefined },
+          { when: 'oscap-profile', is: undefined },
         ],
       },
     },

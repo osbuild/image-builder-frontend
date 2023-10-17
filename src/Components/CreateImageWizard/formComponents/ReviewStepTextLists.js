@@ -592,7 +592,7 @@ export const ImageDetailsList = () => {
 
 export const OscapList = () => {
   const { getState } = useFormApi();
-  const oscapPolicy = getState()?.values?.['oscap-policy'];
+  const oscapProfile = getState()?.values?.['oscap-profile'];
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>
@@ -600,10 +600,10 @@ export const OscapList = () => {
           component={TextListItemVariants.dt}
           className="pf-u-min-width"
         >
-          Policy
+          Profile
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {oscapPolicy}
+          {oscapProfile}
         </TextListItem>
       </TextList>
       <br />

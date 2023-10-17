@@ -54,8 +54,8 @@ const FileSystemConfiguration = ({ ...props }) => {
   const bodyref = useRef();
   const [rows, setRows] = useState([initialRow]);
 
-  const oscapPolicy = getState()?.values?.['oscap-policy'];
-  const hasNoOscapPolicy = !oscapPolicy;
+  const oscapProfile = getState()?.values?.['oscap-profile'];
+  const hasNoOscapProfile = !oscapProfile;
   const hasCustomizations = !(
     getState()?.values?.['file-system-configuration'] === undefined ||
     getState().values['file-system-configuration'].length === 1
@@ -68,11 +68,11 @@ const FileSystemConfiguration = ({ ...props }) => {
   } = useGetOscapCustomizationsQuery(
     {
       distribution: getState()?.values?.['release'],
-      profile: oscapPolicy,
+      profile: oscapProfile,
     },
     {
       // Don't override the user's data if they made customizations
-      skip: hasNoOscapPolicy || hasCustomizations,
+      skip: hasNoOscapProfile || hasCustomizations,
     }
   );
 

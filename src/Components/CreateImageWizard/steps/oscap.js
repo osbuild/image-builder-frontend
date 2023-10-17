@@ -20,14 +20,14 @@ const oscapStep = {
       name: 'oscap-text-component',
       label: (
         <Text>
-          Monitor regulatory compliance policies of registered RHEL systems you
+          Monitor regulatory compliance profiles of registered RHEL systems you
           must adhere to via OpenSCAP.
         </Text>
       ),
     },
     {
       component: 'oscap-profile-selector',
-      name: 'oscap-policy',
+      name: 'oscap-profile',
       label: 'Available profiles for the distribution',
     },
   ],
