@@ -5,6 +5,7 @@ import {
   AzureUploadStatus,
   GcpUploadRequestOptions,
   GcpUploadStatus,
+  OciUploadStatus,
   UploadRequest,
   UploadStatus,
 } from './imageBuilderApi';
@@ -31,6 +32,12 @@ export const isGcpUploadStatus = (
   status: UploadStatus['options']
 ): status is GcpUploadStatus => {
   return (status as GcpUploadStatus).project_id !== undefined;
+};
+
+export const isOciUploadStatus = (
+  status: UploadStatus['options']
+): status is OciUploadStatus => {
+  return (status as OciUploadStatus).url !== undefined;
 };
 
 export const isAwss3UploadStatus = (

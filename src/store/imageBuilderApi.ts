@@ -215,6 +215,7 @@ export type ImageTypes =
   | "gcp"
   | "guest-image"
   | "image-installer"
+  | "oci"
   | "vsphere"
   | "vsphere-ova"
   | "wsl"
@@ -222,7 +223,12 @@ export type ImageTypes =
   | "rhel-edge-commit"
   | "rhel-edge-installer"
   | "vhd";
-export type UploadTypes = "aws" | "gcp" | "azure" | "aws.s3";
+export type UploadTypes =
+  | "aws"
+  | "gcp"
+  | "azure"
+  | "aws.s3"
+  | "oci.objectstorage";
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[];
   share_with_sources?: string[];
@@ -238,13 +244,15 @@ export type AzureUploadRequestOptions = {
   resource_group: string;
   image_name?: string;
 };
+export type OciUploadRequestOptions = object;
 export type UploadRequest = {
   type: UploadTypes;
   options:
     | AwsUploadRequestOptions
     | Awss3UploadRequestOptions
     | GcpUploadRequestOptions
-    | AzureUploadRequestOptions;
+    | AzureUploadRequestOptions
+    | OciUploadRequestOptions;
 };
 export type OsTree = {
   url?: string;
@@ -339,6 +347,9 @@ export type GcpUploadStatus = {
 export type AzureUploadStatus = {
   image_name: string;
 };
+export type OciUploadStatus = {
+  url: string;
+};
 export type UploadStatus = {
   status: "success" | "failure" | "pending" | "running";
   type: UploadTypes;
@@ -346,7 +357,8 @@ export type UploadStatus = {
     | AwsUploadStatus
     | Awss3UploadStatus
     | GcpUploadStatus
-    | AzureUploadStatus;
+    | AzureUploadStatus
+    | OciUploadStatus;
 };
 export type ComposeStatusError = {
   id: number;
