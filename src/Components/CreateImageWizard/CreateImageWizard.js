@@ -320,7 +320,7 @@ const parseSizeUnit = (bytesize) => {
 };
 
 // map the compose request object to the expected form state
-const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
+const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -476,7 +476,7 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
     }
 
     // oscap policy
-    if (isBeta) {
+    if (enableOscap) {
       formState['oscap-policy'] =
         composeRequest?.customizations?.openscap?.profile_id;
     }
@@ -487,7 +487,11 @@ const requestToState = (composeRequest, distroInfo, isBeta, isProd) => {
   }
 };
 
-const formStepHistory = (composeRequest, contentSourcesEnabled, isBeta) => {
+const formStepHistory = (
+  composeRequest,
+  contentSourcesEnabled,
+  enableOscap
+) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -506,7 +510,7 @@ const formStepHistory = (composeRequest, contentSourcesEnabled, isBeta) => {
       steps.push('registration');
     }
 
-    if (isBeta) {
+    if (enableOscap) {
       steps.push('Compliance');
     }
 
@@ -559,24 +563,30 @@ const CreateImageWizard = () => {
 
   const { isBeta, isProd } = useGetEnvironment();
 
+  // Only allow oscap to be used in Beta even if the flag says the feature is
+  // activated.
+  const oscapFeatureFlag =
+    useFlag('image-builder.wizard.oscap.enabled') && isBeta();
   let initialState = requestToState(
     composeRequest,
     distroInfo,
-    isBeta(),
-    isProd()
+    isProd(),
+    oscapFeatureFlag
   );
   const stepHistory = formStepHistory(
     composeRequest,
     contentSourcesEnabled,
-    isBeta()
+    oscapFeatureFlag
   );
 
   if (initialState) {
     initialState.isBeta = isBeta();
     initialState.contentSourcesEnabled = contentSourcesEnabled;
+    initialState.enableOscap = oscapFeatureFlag;
   } else {
     initialState = {
       isBeta: isBeta(),
+      enableOscap: oscapFeatureFlag,
       contentSourcesEnabled,
     };
   }
