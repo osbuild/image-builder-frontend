@@ -22,6 +22,7 @@ export IQE_MARKER_EXPRESSION="ui"
 export IQE_SELENIUM="true"
 export IQE_ENV="ephemeral"
 export IQE_IMAGE_TAG="image-builder"
+export RESERVE_DURATION="2h"
 
 # bootstrap bonfire and it's config
 CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
