@@ -351,6 +351,46 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
+  {
+    id: '0c1ec8d8-be39-47f2-9bd4-a3fff8244fce',
+    created_at: '2023-10-17T00:01:02Z',
+    image_name: 'oci-image',
+    request: {
+      distribution: 'rhel-92',
+      image_name: 'oci-image',
+      customizations: {},
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'oci',
+          upload_request: {
+            type: 'oci.objectstorage',
+            options: {},
+          },
+        },
+      ],
+    },
+  },
+  {
+    id: 'ea23cfd6-fd8b-43ed-adfc-9f76bb8487ef',
+    created_at: currentDateInString,
+    image_name: 'expiring-oci-image',
+    request: {
+      distribution: 'rhel-92',
+      image_name: 'oci-image',
+      customizations: {},
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'oci',
+          upload_request: {
+            type: 'oci.objectstorage',
+            options: {},
+          },
+        },
+      ],
+    },
+  },
 ];
 
 /**
@@ -827,6 +867,60 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             upload_request: {
               options: {},
               type: 'azure',
+            },
+          },
+        ],
+      },
+    },
+    '0c1ec8d8-be39-47f2-9bd4-a3fff8244fce': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://oci-link-to-the.objectstorage.in-a-region.oci.customer-oci.com/p/there-is-a-lot-of-characters/b/image-builder-crc-stage/o/osbuild-upload-1234567890123456789',
+          },
+          status: 'success',
+          type: 'oci.objectstorage',
+        },
+      },
+      request: {
+        distribution: 'rhel-92',
+        image_name: 'oci-image',
+        customizations: {},
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'oci',
+            upload_request: {
+              type: 'oci.objectstorage',
+              options: {},
+            },
+          },
+        ],
+      },
+    },
+    'ea23cfd6-fd8b-43ed-adfc-9f76bb8487ef': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            url: 'https://oci-link-to-the.objectstorage.in-a-region.oci.customer-oci.com/p/there-is-a-lot-of-characters/b/image-builder-crc-stage/o/osbuild-upload-9876543210987654321',
+          },
+          status: 'success',
+          type: 'oci.objectstorage',
+        },
+      },
+      request: {
+        distribution: 'rhel-92',
+        image_name: 'oci-image',
+        customizations: {},
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'oci',
+            upload_request: {
+              type: 'oci.objectstorage',
+              options: {},
             },
           },
         ],

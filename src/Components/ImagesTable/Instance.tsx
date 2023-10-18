@@ -203,6 +203,7 @@ export const OciInstance = ({ compose }: OciInstancePropTypes) => {
     <Popover
       position="bottom"
       headerContent={<div>Launch an OCI image</div>}
+      minWidth="30rem"
       bodyContent={
         <>
           <p>
