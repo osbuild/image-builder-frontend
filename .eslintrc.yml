@@ -1,7 +1,8 @@
 extends: [
     "@redhat-cloud-services/eslint-config-redhat-cloud-services",
-    "react-app",
-    "react-app/jest"
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended",
+    "plugin:testing-library/react"
   ]
 globals:
   insights: 'readonly'
@@ -12,6 +13,7 @@ plugins:
   - import
 rules:
   rulesdir/forbid-pf-relative-imports: off
+  no-unused-vars: warn
   import/order:
     - error
     - groups:
@@ -36,6 +38,7 @@ rules:
     - destructuring: any
   no-console: 2
   eqeqeq: error
+  array-callback-return: warn
 overrides:
   - files: "**/*.ts?(x)"
     parser: "@typescript-eslint/parser"
