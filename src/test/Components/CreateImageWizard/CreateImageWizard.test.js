@@ -78,7 +78,7 @@ jest.mock('@unleash/proxy-client-react', () => ({
 const searchForAvailablePackages = async (searchbox, searchTerm) => {
   const user = userEvent.setup();
   await user.type(searchbox, searchTerm);
-  user.click(
+  await user.click(
     await screen.findByRole('button', {
       name: /search button for available packages/i,
     })
@@ -177,15 +177,15 @@ describe('Step Image output', () => {
 
     const awsTile = screen.getByTestId('upload-aws');
     // this has already been clicked once in the setup function
-    user.click(awsTile); // deselect
+    await user.click(awsTile); // deselect
 
     const googleTile = screen.getByTestId('upload-google');
-    user.click(googleTile); // select
-    user.click(googleTile); // deselect
+    await user.click(googleTile); // select
+    await user.click(googleTile); // deselect
 
     const azureTile = screen.getByTestId('upload-azure');
-    user.click(azureTile); // select
-    user.click(azureTile); // deselect
+    await user.click(azureTile); // select
+    await user.click(azureTile); // deselect
 
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
@@ -353,7 +353,7 @@ describe('Step Upload to AWS', () => {
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    user.click(
+    await user.click(
       screen.getByRole('radio', {
         name: /use an account configured from sources\./i,
       })
@@ -362,12 +362,12 @@ describe('Step Upload to AWS', () => {
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
     const sourceDropdown = await getSourceDropdown();
-    user.click(sourceDropdown);
+    await user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    user.click(source);
+    await user.click(source);
 
     await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
   });
@@ -376,12 +376,12 @@ describe('Step Upload to AWS', () => {
     await setUp();
 
     const sourceDropdown = await getSourceDropdown();
-    user.click(sourceDropdown);
+    await user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    user.click(source);
+    await user.click(source);
 
     await clickNext();
 
@@ -426,7 +426,7 @@ describe('Step Upload to AWS', () => {
     //     return Promise.resolve({ id });
     //   });
 
-    user.click(screen.getByRole('button', { name: /Create/ }));
+    await user.click(screen.getByRole('button', { name: /Create/ }));
 
     // returns back to the landing page
     await waitFor(() =>
@@ -498,7 +498,7 @@ describe('Step Upload to Google', () => {
       screen.getByTestId('account-sharing');
     });
 
-    user.click(screen.getByTestId('account-sharing'));
+    await user.click(screen.getByTestId('account-sharing'));
     const accessKeyId = await screen.findByTestId('input-google-email');
     expect(accessKeyId).toHaveValue('');
     expect(accessKeyId).toBeEnabled();
@@ -689,7 +689,7 @@ describe('Step Registration', () => {
     ]);
 
     // click the later radio button which should remove any input fields
-    user.click(screen.getByTestId('registration-radio-later'));
+    await user.click(screen.getByTestId('registration-radio-later'));
 
     await removeKeyInformation;
 
@@ -751,13 +751,13 @@ describe('Step File system configuration', () => {
     const manuallyConfigurePartitions = screen.getByText(
       /manually configure partitions/i
     );
-    user.click(manuallyConfigurePartitions);
+    await user.click(manuallyConfigurePartitions);
 
     const addPartition = await screen.findByTestId('file-system-add-partition');
 
     // Create duplicate partitions
-    user.click(addPartition);
-    user.click(addPartition);
+    await user.click(addPartition);
+    await user.click(addPartition);
 
     expect(await getNextButton()).toBeEnabled();
 
@@ -781,11 +781,11 @@ describe('Step File system configuration', () => {
     const mountPointOptions = within(rows[2]).getAllByRole('button', {
       name: 'Options menu',
     })[0];
-    user.click(mountPointOptions);
+    await user.click(mountPointOptions);
     const varButton = await within(rows[2]).findByRole('option', {
       name: '/var',
     });
-    user.click(varButton);
+    await user.click(varButton);
 
     await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
@@ -1118,17 +1118,17 @@ describe('Click through all steps', () => {
     const mountPointMenu = within(rows[2]).getAllByRole('button', {
       name: 'Options menu',
     })[0];
-    user.click(mountPointMenu);
+    await user.click(mountPointMenu);
 
     const varButton = await within(rows[2]).findByRole('option', {
       name: '/var',
     });
-    user.click(varButton);
-    await waitForElementToBeRemoved(() =>
-      screen.queryAllByRole('heading', {
+    await user.click(varButton);
+    expect(
+      screen.queryByRole('heading', {
         name: 'Danger alert: Duplicate mount point.',
       })
-    );
+    ).not.toBeInTheDocument();
     await user.type(
       within(rows[2]).getByRole('textbox', {
         name: 'Mount point suffix text input',
@@ -1144,12 +1144,12 @@ describe('Click through all steps', () => {
     const unitMenu = within(rows[2]).getAllByRole('button', {
       name: 'Options menu',
     })[1];
-    user.click(unitMenu);
+    await user.click(unitMenu);
 
     const mibButton = await within(rows[2]).findByRole('option', {
       name: 'MiB',
     });
-    user.click(mibButton);
+    await user.click(mibButton);
     await clickNext();
 
     screen.getByText(
@@ -1161,12 +1161,12 @@ describe('Click through all steps', () => {
     await waitFor(() => expect(searchbox).toBeEnabled());
 
     await searchForAvailablePackages(searchbox, 'test');
-    user.click(
+    await user.click(
       await screen.findByRole('option', {
         name: /test summary for test package/,
       })
     );
-    user.click(screen.getByRole('button', { name: /Add selected/ }));
+    await user.click(screen.getByRole('button', { name: /Add selected/ }));
     await clickNext();
 
     // Custom repositories
@@ -1202,7 +1202,7 @@ describe('Click through all steps', () => {
     const targetEnvironmentsExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    user.click(targetEnvironmentsExpandable);
+    await user.click(targetEnvironmentsExpandable);
     await screen.findAllByText('AWS');
     await screen.findAllByText('GCP');
     await screen.findByText('VMWare vSphere (.ova)');
@@ -1212,7 +1212,7 @@ describe('Click through all steps', () => {
     const registrationExpandable = await screen.findByTestId(
       'registration-expandable'
     );
-    user.click(registrationExpandable);
+    await user.click(registrationExpandable);
     const review = screen.getByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Use remote host configuration (rhc) utility'
@@ -1221,7 +1221,7 @@ describe('Click through all steps', () => {
     const imageDetailsExpandable = await screen.findByTestId(
       'image-details-expandable'
     );
-    user.click(imageDetailsExpandable);
+    await user.click(imageDetailsExpandable);
     await screen.findByText('my-image-name');
     await screen.findByText('this is a perfect description for image');
 
@@ -1229,13 +1229,13 @@ describe('Click through all steps', () => {
     await screen.findByText('Self-Support');
     await screen.findByText('Production');
 
-    user.click(screen.getByTestId('repositories-popover-button'));
+    await user.click(screen.getByTestId('repositories-popover-button'));
     const repotbody = await screen.findByTestId(
       'additional-repositories-table'
     );
     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-    user.click(screen.getByTestId('file-system-configuration-popover'));
+    await user.click(screen.getByTestId('file-system-configuration-popover'));
     const revtbody = await screen.findByTestId(
       'file-system-configuration-tbody-review'
     );
@@ -1419,28 +1419,31 @@ describe('Keyboard accessibility', () => {
     // Target environment aws
     expect(screen.getByTestId('aws-radio-source')).toHaveFocus();
     const awsSourceDropdown = await getSourceDropdown();
-    user.click(awsSourceDropdown);
+    await user.click(awsSourceDropdown);
     const awsSource = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    user.click(awsSource);
+    await user.click(awsSource);
 
     await clickNext();
 
     // Target environment google
-    await user.click(screen.getByTestId('account-sharing'));
-    expect(screen.getByTestId('account-sharing')).toHaveFocus();
-    await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
+    await user.click(await screen.findByTestId('account-sharing'));
+    expect(await screen.findByTestId('account-sharing')).toHaveFocus();
+    await user.type(
+      await screen.findByTestId('input-google-email'),
+      'test@test.com'
+    );
     await clickNext();
 
     // Target environment azure
     expect(screen.getByTestId('azure-radio-source')).toHaveFocus();
     const azureSourceDropdown = await getSourceDropdown();
-    user.click(azureSourceDropdown);
+    await user.click(azureSourceDropdown);
     const azureSource = await screen.findByRole('option', {
       name: /azureSource1/i,
     });
-    user.click(azureSource);
+    await user.click(azureSource);
 
     const resourceGroupDropdown = await screen.findByRole('textbox', {
       name: /select resource group/i,

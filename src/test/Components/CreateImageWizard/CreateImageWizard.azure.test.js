@@ -159,7 +159,7 @@ describe('Step Upload to Azure', () => {
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    user.click(screen.getByTestId('azure-radio-source'));
+    await user.click(screen.getByTestId('azure-radio-source'));
 
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
@@ -169,9 +169,9 @@ describe('Step Upload to Azure', () => {
     expect(screen.getByTestId('azure-tenant-id-source')).toHaveValue('');
     expect(screen.getByTestId('azure-subscription-id-source')).toHaveValue('');
 
-    user.click(sourceDropdown);
+    await user.click(sourceDropdown);
 
-    user.click(
+    await user.click(
       await screen.findByRole('option', {
         name: /azureSource1/i,
       })
@@ -198,8 +198,8 @@ describe('Step Upload to Azure', () => {
 
     const sourceDropdown = await getSourceDropdown();
 
-    user.click(sourceDropdown);
-    user.click(
+    await user.click(sourceDropdown);
+    await user.click(
       await screen.findByRole('option', {
         name: /azureSource1/i,
       })
@@ -208,8 +208,8 @@ describe('Step Upload to Azure', () => {
       expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
     );
 
-    user.click(sourceDropdown);
-    user.click(
+    await user.click(sourceDropdown);
+    await user.click(
       await screen.findByRole('option', {
         name: /azureSource2/i,
       })
