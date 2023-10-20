@@ -34,7 +34,7 @@ import {
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
-import DocumentationButton from '../sharedComponents/DocumentationButton';
+import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 const handleKeyDown = (e, handleClose) => {
   if (e.key === 'Escape') {
@@ -597,75 +597,73 @@ const CreateImageWizard = () => {
   const currentDate = new Date();
 
   return (
-    <ImageCreator
-      onClose={handleClose}
-      onSubmit={async ({ values, setIsSaving }) => {
-        setIsSaving(true);
-        const requests = onSave(values);
-        await Promise.allSettled(
-          requests.map((composeRequest) => composeImage({ composeRequest }))
-        );
-        navigate(resolveRelPath(''));
-      }}
-      defaultArch="x86_64"
-      customValidatorMapper={{
-        fileSystemConfigurationValidator,
-        targetEnvironmentValidator,
-      }}
-      schema={{
-        fields: [
-          {
-            component: componentTypes.WIZARD,
-            name: 'image-builder-wizard',
-            className: 'imageBuilder',
-            isDynamic: true,
-            inModal: false,
-            onKeyDown: (e) => {
-              handleKeyDown(e, handleClose);
-            },
-            buttonLabels: {
-              submit: 'Create image',
-            },
-            showTitles: true,
-            title: 'Image Builder',
-            crossroads: [
-              'target-environment',
-              'release',
-              'payload-repositories',
-            ],
-            description: (
-              <>
-                Image builder allows you to create a custom image and push it to
-                target environments. <DocumentationButton />
-              </>
-            ),
-            // order in this array does not reflect order in wizard nav, this order is managed inside
-            // of each step by `nextStep` property!
+    <>
+      <ImageBuilderHeader />
+      <section className="pf-l-page__main-section pf-c-page__main-section">
+        <ImageCreator
+          onClose={handleClose}
+          onSubmit={async ({ values, setIsSaving }) => {
+            setIsSaving(true);
+            const requests = onSave(values);
+            await Promise.allSettled(
+              requests.map((composeRequest) => composeImage({ composeRequest }))
+            );
+            navigate(resolveRelPath(''));
+          }}
+          defaultArch="x86_64"
+          customValidatorMapper={{
+            fileSystemConfigurationValidator,
+            targetEnvironmentValidator,
+          }}
+          schema={{
             fields: [
-              imageOutput,
-              awsTarget,
-              googleCloudTarget,
-              msAzureTarget,
-              registration,
-              packages,
-              packagesContentSources,
-              repositories,
-              fileSystemConfiguration,
-              imageName,
-              review,
-              oscap,
+              {
+                component: componentTypes.WIZARD,
+                name: 'image-builder-wizard',
+                className: 'imageBuilder',
+                isDynamic: true,
+                inModal: false,
+                onKeyDown: (e) => {
+                  handleKeyDown(e, handleClose);
+                },
+                buttonLabels: {
+                  submit: 'Create image',
+                },
+                showTitles: true,
+                crossroads: [
+                  'target-environment',
+                  'release',
+                  'payload-repositories',
+                ],
+                // order in this array does not reflect order in wizard nav, this order is managed inside
+                // of each step by `nextStep` property!
+                fields: [
+                  imageOutput,
+                  awsTarget,
+                  googleCloudTarget,
+                  msAzureTarget,
+                  registration,
+                  packages,
+                  packagesContentSources,
+                  repositories,
+                  fileSystemConfiguration,
+                  imageName,
+                  review,
+                  oscap,
+                ],
+                initialState: {
+                  activeStep: initialStep || 'image-output', // name of the active step
+                  activeStepIndex: stepHistory.length, // active index
+                  maxStepIndex: stepHistory.length, // max achieved index
+                  prevSteps: stepHistory, // array with names of previously visited steps
+                },
+              },
             ],
-            initialState: {
-              activeStep: initialStep || 'image-output', // name of the active step
-              activeStepIndex: stepHistory.length, // active index
-              maxStepIndex: stepHistory.length, // max achieved index
-              prevSteps: stepHistory, // array with names of previously visited steps
-            },
-          },
-        ],
-      }}
-      initialValues={initialState}
-    />
+          }}
+          initialValues={initialState}
+        />
+      </section>
+    </>
   );
 };
 

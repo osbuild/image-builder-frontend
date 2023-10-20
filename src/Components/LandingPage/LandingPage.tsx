@@ -12,12 +12,6 @@ import {
   TabAction,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
-import {
-  OpenSourceBadge,
-  PageHeader,
-  PageHeaderTitle,
-} from '@redhat-cloud-services/frontend-components';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
@@ -29,6 +23,7 @@ import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
+import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
   const { pathname } = useLocation();
@@ -61,65 +56,7 @@ export const LandingPage = () => {
   );
   return (
     <>
-      {/*@ts-ignore*/}
-      <PageHeader>
-        <PageHeaderTitle className="title" title="Image Builder" />
-        <Popover
-          minWidth="35rem"
-          headerContent={'About image builder'}
-          bodyContent={
-            <TextContent>
-              <Text>
-                Image builder is a tool for creating deployment-ready customized
-                system images: installation disks, virtual machines, cloud
-                vendor-specific images, and others. By using image builder, you
-                can make these images faster than manual procedures because it
-                eliminates the specific configurations required for each output
-                type.
-              </Text>
-              <Text>
-                <Button
-                  component="a"
-                  target="_blank"
-                  variant="link"
-                  icon={<ExternalLinkAltIcon />}
-                  iconPosition="right"
-                  isInline
-                  href={
-                    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
-                  }
-                >
-                  Image builder for RPM-DNF documentation
-                </Button>
-              </Text>
-              <Text>
-                <Button
-                  component="a"
-                  target="_blank"
-                  variant="link"
-                  icon={<ExternalLinkAltIcon />}
-                  iconPosition="right"
-                  isInline
-                  href={
-                    'https://access.redhat.com/documentation/en-us/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index'
-                  }
-                >
-                  Image builder for OSTree documentation
-                </Button>
-              </Text>
-            </TextContent>
-          }
-        >
-          <Button
-            variant="plain"
-            aria-label="About image builder"
-            className="pf-u-pl-sm header-button"
-          >
-            <HelpIcon />
-          </Button>
-        </Popover>
-        <OpenSourceBadge repositoriesURL="https://www.osbuild.org/guides/image-builder-service/architecture.html" />
-      </PageHeader>
+      <ImageBuilderHeader />
       {edgeParityFlag ? (
         <Tabs
           className="pf-c-tabs pf-c-page-header pf-c-table"

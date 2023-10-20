@@ -143,9 +143,7 @@ describe('Step Image output', () => {
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Image output'
-    );
+    await screen.findByRole('heading', { name: 'Image output' });
   };
 
   test('clicking Next loads Upload to AWS', async () => {
@@ -282,9 +280,9 @@ describe('Step Upload to AWS', () => {
 
     await clickNext();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Amazon Web Services'
-    );
+    await screen.findByRole('heading', {
+      name: 'Target environment - Amazon Web Services',
+    });
   };
 
   test('clicking Next loads Registration', async () => {
@@ -450,9 +448,9 @@ describe('Step Upload to Google', () => {
 
     await clickNext();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Google Cloud Platform'
-    );
+    await screen.findByRole('heading', {
+      name: 'Target environment - Google Cloud Platform',
+    });
   };
 
   test('clicking Next loads Registration', async () => {
@@ -549,7 +547,9 @@ describe('Step Registration', () => {
 
     await clickNext();
 
-    screen.getByRole('heading', { name: /file system configuration/i });
+    await screen.findByRole('heading', {
+      name: 'File system configuration',
+    });
   });
 
   test('clicking Back loads Upload to AWS', async () => {

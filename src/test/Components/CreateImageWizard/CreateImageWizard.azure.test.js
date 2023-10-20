@@ -85,9 +85,9 @@ describe('Step Upload to Azure', () => {
 
     await clickNext();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
-      'Target environment - Microsoft Azure'
-    );
+    await screen.findByRole('heading', {
+      name: 'Target environment - Microsoft Azure',
+    });
   };
 
   test('clicking Next loads Registration', async () => {
