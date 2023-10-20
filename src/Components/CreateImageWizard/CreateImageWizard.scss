@@ -1,5 +1,9 @@
-.pf-c-wizard__nav-list {
+.pf-v5-c-wizard__nav-list {
     padding-right: 0px;
+}
+
+.pf-v5-c-wizard__nav {
+    overflow-y: unset;
 }
 
 .pf-c-popover[data-popper-reference-hidden="true"] {
