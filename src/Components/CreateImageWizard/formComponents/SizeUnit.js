@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { TextInput } from '@patternfly/react-core';
+import { Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
@@ -41,32 +41,37 @@ const SizeUnit = ({ ...props }) => {
   };
 
   return (
-    <>
-      <TextInput
-        ouiaId="size"
-        className="pf-u-w-50"
-        type="text"
-        value={size}
-        aria-label="Size text input"
-        onChange={(_event, v) => setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))}
-      />
-      <Select
-        ouiaId="unit"
-        className="pf-u-w-50"
-        isOpen={isOpen}
-        onToggle={(_event, isOpen) => onToggle(isOpen)}
-        onSelect={onSelect}
-        selections={
-          unit === UNIT_KIB ? 'KiB' : unit === UNIT_MIB ? 'MiB' : 'GiB'
-        }
-        variant={SelectVariant.single}
-        aria-label="Unit select"
-      >
-        {['KiB', 'MiB', 'GiB'].map((u, index) => {
-          return <SelectOption key={index} value={u} />;
-        })}
-      </Select>
-    </>
+    // TODO make these stack vertically for xs viewport
+    <Grid>
+      <GridItem span={6}>
+        <TextInput
+          ouiaId="size"
+          type="text"
+          value={size}
+          aria-label="Size text input"
+          onChange={(_event, v) =>
+            setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))
+          }
+        />
+      </GridItem>
+      <GridItem span={6}>
+        <Select
+          ouiaId="unit"
+          isOpen={isOpen}
+          onToggle={(_event, isOpen) => onToggle(isOpen)}
+          onSelect={onSelect}
+          selections={
+            unit === UNIT_KIB ? 'KiB' : unit === UNIT_MIB ? 'MiB' : 'GiB'
+          }
+          variant={SelectVariant.single}
+          aria-label="Unit select"
+        >
+          {['KiB', 'MiB', 'GiB'].map((u, index) => {
+            return <SelectOption key={index} value={u} />;
+          })}
+        </Select>
+      </GridItem>
+    </Grid>
   );
 };
 

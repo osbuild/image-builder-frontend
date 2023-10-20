@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import path from 'path';
 
-import { TextInput } from '@patternfly/react-core';
+import {
+  FormGroup,
+  FormSelect,
+  FormSelectOption,
+  Grid,
+  GridItem,
+  TextInput,
+} from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
@@ -63,32 +70,35 @@ const MountPoint = ({ ...props }) => {
   };
 
   return (
-    <>
-      <Select
-        ouiaId="mount-point"
-        className="pf-u-w-50"
-        isOpen={isOpen}
-        onToggle={(_event, isOpen) => onToggle(isOpen)}
-        onSelect={onSelect}
-        selections={prefix}
-        variant={SelectVariant.single}
-        isDisabled={prefix === '/' ? true : false}
-      >
-        {MountPointValidPrefixes.map((pfx, index) => {
-          return <SelectOption key={index} value={pfx} />;
-        })}
-      </Select>
-      {prefix !== '/' && !prefix.startsWith('/boot') && (
-        <TextInput
-          ouiaId="mount-suffix"
-          className="pf-u-w-50"
-          type="text"
-          value={suffix}
-          aria-label="Mount point suffix text input"
-          onChange={(_event, v) => setSuffix(v)}
-        />
-      )}
-    </>
+    // TODO make these stack vertically for xs viewport
+    <Grid>
+      <GridItem span={6}>
+        <FormSelect
+          ouiaId="mount-point"
+          isOpen={isOpen}
+          onToggle={(_event, isOpen) => onToggle(isOpen)}
+          onSelect={onSelect}
+          selections={prefix}
+          variant={SelectVariant.single}
+          isDisabled={prefix === '/' ? true : false}
+        >
+          {MountPointValidPrefixes.map((pfx, index) => {
+            return <FormSelectOption key={index} value={pfx} />;
+          })}
+        </FormSelect>
+      </GridItem>
+      <GridItem span={6}>
+        {prefix !== '/' && !prefix.startsWith('/boot') && (
+          <TextInput
+            ouiaId="mount-suffix"
+            type="text"
+            value={suffix}
+            aria-label="Mount point suffix text input"
+            onChange={(_event, v) => setSuffix(v)}
+          />
+        )}
+      </GridItem>
+    </Grid>
   );
 };
 
