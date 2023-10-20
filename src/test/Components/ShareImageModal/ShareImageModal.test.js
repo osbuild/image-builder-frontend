@@ -42,19 +42,19 @@ describe('Create Share To Regions Modal', () => {
 
     const selectToggle = screen.getByRole('button', { name: /menu toggle/i });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    user.click(selectToggle);
+    await user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
       name: /us east \(ohio\) us\-east\-2/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    user.click(usEast2);
+    await user.click(usEast2);
     await waitFor(() => expect(shareButton).toBeEnabled());
 
     const clearAllButton = screen.getByRole('button', {
       name: /clear input value/i,
     });
-    user.click(clearAllButton);
+    await user.click(clearAllButton);
     await waitFor(() => expect(shareButton).toBeDisabled());
 
     const invalidAlert = screen.getByText(
@@ -71,7 +71,7 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const cancelButton = await screen.findByRole('button', { name: /cancel/i });
-    user.click(cancelButton);
+    await user.click(cancelButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -87,7 +87,7 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const closeButton = await screen.findByRole('button', { name: /close/i });
-    user.click(closeButton);
+    await user.click(closeButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -102,7 +102,7 @@ describe('Create Share To Regions Modal', () => {
       name: /menu toggle/i,
     });
     // eslint-disable-next-line testing-library/no-unnecessary-act
-    user.click(selectToggle);
+    await user.click(selectToggle);
 
     // parent region disabled
     const usEast1 = await screen.findByRole('option', {

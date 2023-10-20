@@ -9,8 +9,7 @@
   ],
   "rules": {
     "react/display-name": "off",
-    "react/prop-types": "off",
-    "testing-library/await-async-events": "off"
+    "react/prop-types": "off"
   },
   "extends": [
     "plugin:testing-library/react",
