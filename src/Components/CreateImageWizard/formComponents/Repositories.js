@@ -399,7 +399,7 @@ const Repositories = (props) => {
                 </ToolbarItem>
               </ToolbarContent>
             </Toolbar>
-            <Panel isScrollable>
+            <Panel>
               <PanelMain>
                 <RepositoryUnavailable />
                 <TableComposable
