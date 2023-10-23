@@ -212,20 +212,20 @@ describe('Images Table', () => {
       screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
     ).not.toBeVisible();
 
-    user.click(errorPopoverR2);
+    await user.click(errorPopoverR2);
     await screen.findByTestId('errorstatus-popover');
     expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
-    user.click(errorPopoverR2);
+    await user.click(errorPopoverR2);
     await waitFor(() =>
       expect(
         screen.queryByTestId('errorstatus-popover')
       ).not.toBeInTheDocument()
     );
 
-    user.click(errorPopoverR7);
+    await user.click(errorPopoverR7);
     await screen.findByTestId('errorstatus-popover');
     expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
-    user.click(errorPopoverR7);
+    await user.click(errorPopoverR7);
     await waitFor(() =>
       expect(
         screen.queryByTestId('errorstatus-popover')
@@ -235,7 +235,7 @@ describe('Images Table', () => {
     // Go to next page on the table
     const pagination = await screen.findByTestId('images-pagination-top');
     const pageButtons = await within(pagination).findAllByRole('button');
-    user.click(pageButtons[pageButtons.length - 1]);
+    await user.click(pageButtons[pageButtons.length - 1]);
     await screen.findAllByText(/9e7d0d51-7106-42ab-98f2-f89872a9d599/i);
 
     // rows = await findAllByRole('row');
@@ -250,18 +250,18 @@ describe('Images Table', () => {
       /image build failed/i
     );
 
-    user.click(errorPopoverP2R5);
+    await user.click(errorPopoverP2R5);
     await screen.findByTestId('errorstatus-popover');
     expect(screen.getAllByText(/Something went very wrong/i)[0]).toBeVisible();
     expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible();
-    user.click(errorPopoverP2R5);
+    await user.click(errorPopoverP2R5);
     await waitFor(() =>
       expect(
         screen.queryByTestId('errorstatus-popover')
       ).not.toBeInTheDocument()
     );
 
-    user.click(errorPopoverP2R6);
+    await user.click(errorPopoverP2R6);
     await screen.findByTestId('errorstatus-popover');
     expect(
       screen.getAllByText(/Something went very wrong for Azure/i)[0]
