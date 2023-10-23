@@ -2,14 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import path from 'path';
 
-import {
-  FormGroup,
-  FormSelect,
-  FormSelectOption,
-  Grid,
-  GridItem,
-  TextInput,
-} from '@patternfly/react-core';
+import { Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
@@ -73,7 +66,7 @@ const MountPoint = ({ ...props }) => {
     // TODO make these stack vertically for xs viewport
     <Grid>
       <GridItem span={6}>
-        <FormSelect
+        <Select
           ouiaId="mount-point"
           isOpen={isOpen}
           onToggle={(_event, isOpen) => onToggle(isOpen)}
@@ -83,9 +76,9 @@ const MountPoint = ({ ...props }) => {
           isDisabled={prefix === '/' ? true : false}
         >
           {MountPointValidPrefixes.map((pfx, index) => {
-            return <FormSelectOption key={index} value={pfx} />;
+            return <SelectOption key={index} value={pfx} />;
           })}
-        </FormSelect>
+        </Select>
       </GridItem>
       <GridItem span={6}>
         {prefix !== '/' && !prefix.startsWith('/boot') && (
