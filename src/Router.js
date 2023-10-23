@@ -11,9 +11,16 @@ const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
   import('./Components/CreateImageWizard/CreateImageWizard')
 );
+const CreateImageWizardV2 = lazy(() =>
+  import('./Components/CreateImageWizardV2/CreateImageWizard')
+);
 
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
+
+  const experimentalWizard =
+    useFlag('image-builder.new-wizard.enabled') ||
+    process.env.EXPERIMENTAL === true;
   return (
     <Routes>
       <Route
@@ -31,7 +38,11 @@ export const Router = () => {
         path="imagewizard/:composeId?"
         element={
           <Suspense>
-            <CreateImageWizard />
+            {experimentalWizard ? (
+              <CreateImageWizardV2 />
+            ) : (
+              <CreateImageWizard />
+            )}
           </Suspense>
         }
       />
