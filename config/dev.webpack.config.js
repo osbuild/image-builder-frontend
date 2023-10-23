@@ -106,6 +106,29 @@ if (process.env.MSW) {
   plugins[definePluginIndex] = newDefinePlugin;
 }
 
+if (process.env.EXPERIMENTAL) {
+  /*
+  We would like the client to be able to determine whether or not it is in
+  experimental mode at run time based on the value of process.env.EXPERIMENTAL.
+  We can add that variable to process.env via the DefinesPlugin plugin, but
+  DefinePlugin has already been added by config() to the default webpackConfig.
+
+  Therefore, we find it in the `plugins` array based on its type, then update
+  it to add our new process.env.EXPERIMENTAL variable.
+  */
+  const definePluginIndex = plugins.findIndex(
+    (plugin) => plugin instanceof webpack.DefinePlugin
+  );
+  const definePlugin = plugins[definePluginIndex];
+
+  const newDefinePlugin = new webpack.DefinePlugin({
+    ...definePlugin.definitions,
+    'process.env.EXPERIMENTAL': true,
+  });
+
+  plugins[definePluginIndex] = newDefinePlugin;
+}
+
 module.exports = {
   ...webpackConfig,
   plugins,
