@@ -14,7 +14,7 @@ const App = (props) => {
   useEffect(() => {
     updateDocumentTitle('Image Builder | Red Hat Insights');
     hideGlobalFilter();
-  }, []);
+  }, [hideGlobalFilter, updateDocumentTitle]);
 
   return (
     <React.Fragment>
