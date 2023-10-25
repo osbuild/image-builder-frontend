@@ -15,7 +15,6 @@ import {
   composesEndpoint,
   mockClones,
   mockCloneStatus,
-  mockComposes,
   mockStatus,
 } from '../fixtures/composes';
 import {

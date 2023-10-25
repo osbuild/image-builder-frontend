@@ -1,8 +1,5 @@
-import React from 'react';
-
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-dom/test-utils';
 
 import '@testing-library/jest-dom';
 import {
@@ -57,45 +54,6 @@ describe('Images Table', () => {
     const imageNameValues = mockComposes.map((compose) =>
       compose.image_name ? compose.image_name : compose.id
     );
-
-    const statusValues = [
-      'Ready',
-      'Image build failed',
-      'Image build is pending',
-      'Image build in progress',
-      'Image upload in progress',
-      'Cloud registration in progress',
-      'Image build failed',
-      'Ready',
-      'Image build in progress',
-      'Expired',
-    ];
-
-    const targetValues = [
-      'Amazon Web Services (5)',
-      'Google Cloud PlatformFAKE',
-      'Amazon Web Services (1)',
-      'Amazon Web Services (1)',
-      'Amazon Web Services (1)',
-      'Amazon Web Services (1)',
-      'Amazon Web Services (1)',
-      'Google Cloud Platform',
-      'Microsoft Azure',
-      'VMWare vSphere',
-    ];
-
-    const instanceValues = [
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Launch',
-      'Recreate image',
-    ];
 
     // 10 rows for 10 images
     expect(rows).toHaveLength(10);
