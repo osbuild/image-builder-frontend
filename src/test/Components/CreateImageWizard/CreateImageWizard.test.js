@@ -38,7 +38,6 @@ const routes = [
   },
 ];
 
-let store = undefined;
 let router = undefined;
 
 // Mocking getComposes is necessary because in many tests we call navigate()
@@ -269,7 +268,7 @@ describe('Step Image output', () => {
 describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router, store } = await renderCustomRoutesWithReduxRouter(
+    ({ router } = await renderCustomRoutesWithReduxRouter(
       'imagewizard',
       {},
       routes
@@ -1027,7 +1026,7 @@ describe('Step Review', () => {
 describe('Click through all steps', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router, store } = await renderCustomRoutesWithReduxRouter(
+    ({ router } = await renderCustomRoutesWithReduxRouter(
       'imagewizard',
       {},
       routes
@@ -1380,7 +1379,7 @@ describe('Click through all steps', () => {
     await waitFor(() =>
       expect(router.state.location.pathname).toBe('/insights/image-builder')
     );
-    // expect(store.getState().composes.allIds).toEqual(ids);
+
     // set test timeout of 20 seconds
   }, 20000);
 });
