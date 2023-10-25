@@ -2,7 +2,7 @@ import React from 'react';
 
 import '@testing-library/jest-dom';
 
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
@@ -27,8 +27,6 @@ const routes = [
     element: <ShareImageModal />,
   },
 ];
-
-let router = undefined;
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -68,7 +66,7 @@ afterEach(() => {
 describe('Step Compliance', () => {
   test('create an image with an oscap profile', async () => {
     const user = userEvent.setup();
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
@@ -121,9 +119,7 @@ describe('Step Compliance', () => {
 
 describe('On Recreate', () => {
   const setup = async () => {
-    ({ router } = renderWithReduxRouter(
-      'imagewizard/1679d95b-8f1d-4982-8c53-8c2afa4ab04c'
-    ));
+    renderWithReduxRouter('imagewizard/1679d95b-8f1d-4982-8c53-8c2afa4ab04c');
   };
   test('with oscap profile', async () => {
     const user = userEvent.setup();

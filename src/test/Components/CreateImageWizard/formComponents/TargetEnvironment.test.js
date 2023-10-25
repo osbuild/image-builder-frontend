@@ -3,7 +3,6 @@ import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
 
 import CreateImageWizard from '../../../../Components/CreateImageWizard/CreateImageWizard';
 import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../constants';
@@ -36,8 +35,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-let router = undefined;
-
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
@@ -45,18 +42,13 @@ beforeAll(() => {
 
 afterEach(() => {
   jest.clearAllMocks();
-  router = undefined;
   server.resetHandlers();
 });
 
 describe('Check that the target filtering is in accordance to mock content', () => {
   test('rhel9 x86_64', async () => {
     const user = userEvent.setup();
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
@@ -95,11 +87,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
   test('rhel8 x86_64', async () => {
     const user = userEvent.setup();
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select rhel8
     const releaseMenu = screen.getAllByRole('button', {
@@ -147,11 +135,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
   test('rhel9 aarch64', async () => {
     const user = userEvent.setup();
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select aarch64
     const archMenu = screen.getAllByRole('button', {
@@ -192,11 +176,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
   test('rhel8 aarch64', async () => {
     const user = userEvent.setup();
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select rhel8
     const releaseMenu = screen.getAllByRole('button', {
@@ -250,11 +230,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 describe('Check step consistency', () => {
   test('going back and forth with selected options only keeps the one compatible', async () => {
     const user = userEvent.setup();
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
