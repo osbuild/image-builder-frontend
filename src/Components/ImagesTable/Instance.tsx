@@ -211,7 +211,7 @@ export const AwsS3Instance = ({
 
   if (status !== 'success') {
     return (
-      <Button isDisabled variant="link" isInline>
+      <Button component="a" isDisabled variant="link" isInline>
         Download ({fileExtensions[compose.request.image_requests[0].image_type]}
         )
       </Button>
