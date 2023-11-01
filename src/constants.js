@@ -12,12 +12,12 @@ export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
 export const UNIT_GIB = 1024 ** 3;
 
-export const RELEASES = new Map([
-  [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
-  [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
-  [CENTOS_9, 'CentOS Stream 9'],
-  [CENTOS_8, 'CentOS Stream 8'],
-]);
+export const RELEASES = [
+  { value: 'RHEL_9', label: 'Red Hat Enterprise Linux (RHEL) 9' },
+  { value: 'RHEL_8', label: 'Red Hat Enterprise Linux (RHEL) 8' },
+  { value: 'CENTOS_9', label: 'CentOS Stream 9' },
+  { value: 'CENTOS_8', label: 'CentOS Stream 8' },
+];
 
 export const DEFAULT_AWS_REGION = 'us-east-1';
 
