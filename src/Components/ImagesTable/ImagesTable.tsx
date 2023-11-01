@@ -40,11 +40,12 @@ import {
 } from './ImageDetails';
 import { AwsS3Instance, CloudInstance, OciInstance } from './Instance';
 import Release from './Release';
-import { AwsS3Status, CloudStatus } from './Status';
+import { ExpiringStatus, CloudStatus } from './Status';
 import { AwsTarget, Target } from './Target';
 
 import {
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
+  OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
 import {
@@ -337,9 +338,20 @@ type OciRowPropTypes = {
 };
 
 const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
+  const daysToExpiration = Math.floor(
+    computeHoursToExpiration(compose.created_at) / 24
+  );
+  const isExpired = daysToExpiration >= OCI_STORAGE_EXPIRATION_TIME_IN_DAYS;
+
   const details = <OciDetails compose={compose} />;
-  const instance = <OciInstance compose={compose} />;
-  const status = <CloudStatus compose={compose} />;
+  const instance = <OciInstance compose={compose} isExpired={isExpired} />;
+  const status = (
+    <ExpiringStatus
+      compose={compose}
+      isExpired={isExpired}
+      timeToExpiration={daysToExpiration}
+    />
+  );
 
   return (
     <Row
@@ -364,10 +376,10 @@ const AwsS3Row = ({ compose, rowIndex }: AwsS3RowPropTypes) => {
   const details = <AwsS3Details compose={compose} />;
   const instance = <AwsS3Instance compose={compose} isExpired={isExpired} />;
   const status = (
-    <AwsS3Status
+    <ExpiringStatus
       compose={compose}
       isExpired={isExpired}
-      hoursToExpiration={hoursToExpiration}
+      timeToExpiration={hoursToExpiration}
     />
   );
 
