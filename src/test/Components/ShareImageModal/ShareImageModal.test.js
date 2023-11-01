@@ -45,7 +45,7 @@ describe('Create Share To Regions Modal', () => {
     await user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
-      name: /us east \(ohio\) us\-east\-2/i,
+      name: /us east \(ohio\) us-east-2/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
     await user.click(usEast2);
