@@ -20,7 +20,10 @@ import {
   PendingIcon,
 } from '@patternfly/react-icons';
 
-import { AWS_S3_EXPIRATION_TIME_IN_HOURS } from '../../constants';
+import {
+  AWS_S3_EXPIRATION_TIME_IN_HOURS,
+  OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
+} from '../../constants';
 import {
   ClonesResponseItem,
   ComposeStatus,
@@ -147,17 +150,17 @@ export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
   }
 };
 
-type AwsS3StatusPropTypes = {
+type ExpiringStatusPropTypes = {
   compose: ComposesResponseItem;
   isExpired: boolean;
-  hoursToExpiration: number;
+  timeToExpiration: number;
 };
 
-export const AwsS3Status = ({
+export const ExpiringStatus = ({
   compose,
   isExpired,
-  hoursToExpiration,
-}: AwsS3StatusPropTypes) => {
+  timeToExpiration,
+}: ExpiringStatusPropTypes) => {
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -167,18 +170,30 @@ export const AwsS3Status = ({
   }
 
   const status = composeStatus.image_status.status;
-  const remainingTime = AWS_S3_EXPIRATION_TIME_IN_HOURS - hoursToExpiration;
+  const remainingHours = AWS_S3_EXPIRATION_TIME_IN_HOURS - timeToExpiration;
+  const remainingDays = OCI_STORAGE_EXPIRATION_TIME_IN_DAYS - timeToExpiration;
+
+  const imageType = compose.request.image_requests[0].upload_request.type;
 
   if (isExpired) {
     return (
       <Status icon={statuses['expired'].icon} text={statuses['expired'].text} />
     );
-  } else if (status === 'success') {
+  } else if (imageType === 'aws.s3' && status === 'success') {
     return (
       <Status
         icon={statuses['expiring'].icon}
-        text={`Expires in ${remainingTime} ${
-          remainingTime > 1 ? 'hours' : 'hour'
+        text={`Expires in ${remainingHours} ${
+          remainingHours > 1 ? 'hours' : 'hour'
+        }`}
+      />
+    );
+  } else if (imageType === 'oci.objectstorage' && status === 'success') {
+    return (
+      <Status
+        icon={statuses['expiring'].icon}
+        text={`Expires in ${remainingDays} ${
+          remainingDays > 1 ? 'days' : 'day'
         }`}
       />
     );
