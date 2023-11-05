@@ -108,7 +108,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
     }
 
     setSelectOptions(newSelectOptions);
-  }, [inputValue]);
+  }, [inputValue, isOpen, initialRegions]);
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,

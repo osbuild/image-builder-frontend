@@ -67,7 +67,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
     if (getState()?.values?.[input.name]) {
       setEnvironment(getState().values[input.name]);
     }
-  }, []);
+  }, [getState, input.name]);
 
   const handleSetEnvironment = (env, checked) =>
     setEnvironment((prevEnv) => {
