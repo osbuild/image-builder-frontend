@@ -33,7 +33,10 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'success',
-                title: 'Your image is being shared',
+                title:
+                  'Your image is being shared to ' +
+                  cloneRequest.region +
+                  ' region',
               })
             );
           })
