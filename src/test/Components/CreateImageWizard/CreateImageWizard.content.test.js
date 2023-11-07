@@ -826,8 +826,8 @@ describe('Step Custom repositories', () => {
     await setUp();
 
     await user.click(
-      await screen.findByRole('button', {
-        name: /select/i,
+      screen.getByRole('button', {
+        name: /^select$/i,
       })
     );
 
@@ -860,6 +860,120 @@ describe('Step Custom repositories', () => {
     rows.shift();
 
     await waitFor(() => expect(rows).toHaveLength(10));
+  });
+
+  test('press on Selected button to see selected repositories list', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    const getSelectedButton = async () =>
+      await screen.findByRole('button', {
+        name: /selected repositories/i,
+      });
+
+    const selectedButton = await getSelectedButton();
+    await user.click(selectedButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await clickNext();
+    clickBack();
+    expect(firstRepoCheckbox.checked).toEqual(true);
+  });
+
+  test('press on All button to see all repositories list', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    const getSecondRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 1/i,
+      });
+    const secondRepoCheckbox = await getSecondRepoCheckbox();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+
+    const getAllButton = async () =>
+      await screen.findByRole('button', {
+        name: /all repositories/i,
+      });
+
+    const allButton = await getAllButton();
+    await user.click(allButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+
+    await clickNext();
+    clickBack();
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+  });
+
+  test('press on Selected button to see selected repositories list at the second page and filter checked repo', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    const getNextPageButton = async () =>
+      screen.getByRole('button', {
+        name: /go to next page/i,
+      });
+
+    const nextPageButton = await getNextPageButton();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await user.click(nextPageButton);
+
+    const getSelectedButton = async () =>
+      await screen.findByRole('button', {
+        name: /selected repositories/i,
+      });
+
+    const selectedButton = await getSelectedButton();
+    await user.click(selectedButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await user.type(
+      await screen.findByRole('textbox', { name: /search repositories/i }),
+      '13lk3'
+    );
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await clickNext();
+    clickBack();
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(false);
   });
 });
 

@@ -21,6 +21,8 @@ import {
   ToolbarItem,
   EmptyStateHeader,
   EmptyStateFooter,
+  ToggleGroup,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
 import {
   Dropdown,
@@ -195,6 +197,7 @@ const Repositories = (props) => {
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
+  const [toggleSelected, setToggleSelected] = useState('toggle-group-all');
   const [selected, setSelected] = useState(
     getState()?.values?.['payload-repositories']
       ? getState().values['payload-repositories'].map((repo) => repo.baseurl)
@@ -251,6 +254,12 @@ const Repositories = (props) => {
     return data ? initializeRepositories(data.data) : {};
   }, [firstRequest.data, followupRequest.data]);
 
+  const handleToggleClick = (event, _isSelected) => {
+    const id = event.currentTarget.id;
+    setPage(1);
+    setToggleSelected(id);
+  };
+
   const isRepoSelected = (repoURL) => selected.includes(repoURL);
 
   const handlePerPageSelect = (event, newPerPage, newPage) => {
@@ -269,14 +278,17 @@ const Repositories = (props) => {
   };
 
   const filteredRepositoryURLs = useMemo(() => {
-    const filteredRepoURLs = Object.values(repositories)
-      .filter((repo) =>
-        repo.name.toLowerCase().includes(filterValue.toLowerCase())
-      )
-      .map((repo) => repo.url);
-
-    return filteredRepoURLs;
-  }, [filterValue, repositories]);
+    const repoUrls = Object.values(repositories).filter((repo) =>
+      repo.name.toLowerCase().includes(filterValue.toLowerCase())
+    );
+    if (toggleSelected === 'toggle-group-all') {
+      return repoUrls.map((repo) => repo.url);
+    } else if (toggleSelected === 'toggle-group-selected') {
+      return repoUrls
+        .filter((repo) => isRepoSelected(repo.url))
+        .map((repo) => repo.url);
+    }
+  }, [filterValue, repositories, toggleSelected]);
 
   const handleClearFilter = () => {
     setFilterValue('');
@@ -382,6 +394,24 @@ const Repositories = (props) => {
                     {isFetching ? 'Refreshing' : 'Refresh'}
                   </Button>
                 </ToolbarItem>
+                <ToolbarItem>
+                  <ToggleGroup aria-label="Filter repositories list">
+                    <ToggleGroupItem
+                      text="All"
+                      aria-label="All repositories"
+                      buttonId="toggle-group-all"
+                      isSelected={toggleSelected === 'toggle-group-all'}
+                      onChange={handleToggleClick}
+                    />
+                    <ToggleGroupItem
+                      text="Selected"
+                      aria-label="Selected repositories"
+                      buttonId="toggle-group-selected"
+                      isSelected={toggleSelected === 'toggle-group-selected'}
+                      onChange={handleToggleClick}
+                    />
+                  </ToggleGroup>
+                </ToolbarItem>
                 <ToolbarItem variant="pagination">
                   <Pagination
                     itemCount={filteredRepositoryURLs.length}
@@ -411,7 +441,6 @@ const Repositories = (props) => {
                   </Thead>
                   <Tbody>
                     {filteredRepositoryURLs
-                      .slice()
                       .sort((a, b) => {
                         if (repositories[a].name < repositories[b].name) {
                           return -1;
