@@ -121,6 +121,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -160,6 +161,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
 
     if (share !== '') {
@@ -194,6 +196,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -214,6 +217,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -234,6 +238,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -254,6 +259,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -274,6 +280,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -294,6 +301,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
@@ -314,6 +322,7 @@ const onSave = (values) => {
         },
       ],
       customizations,
+      client_id: 'ui',
     };
     requests.push(request);
   }
