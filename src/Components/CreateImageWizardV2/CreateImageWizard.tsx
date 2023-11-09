@@ -16,6 +16,7 @@ import {
   useGetAllowedTargets,
 } from './steps/ImageOutput/Environment';
 import ImageOutputStep from './steps/ImageOutput/ImageOutput';
+import ReviewStep from './steps/Review/ReviewStep';
 
 import { RHEL_9, X86_64 } from '../../constants';
 import './CreateImageWizard.scss';
@@ -134,6 +135,13 @@ const CreateImageWizard = () => {
               isError={isError}
               isSuccess={isSuccess}
             />
+          </WizardStep>
+          <WizardStep
+            name="Review"
+            id="step-review"
+            footer={<CustomWizardFooter isNextDisabled={true} />}
+          >
+            <ReviewStep release={release} arch={arch} />
           </WizardStep>
         </Wizard>
       </section>
