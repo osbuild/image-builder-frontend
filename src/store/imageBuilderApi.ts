@@ -317,6 +317,7 @@ export type ComposeRequest = {
   distribution: Distributions;
   image_name?: string;
   image_description?: string;
+  client_id?: string;
   image_requests: ImageRequest[];
   customizations?: Customizations;
 };
@@ -325,6 +326,7 @@ export type ComposesResponseItem = {
   request: ComposeRequest;
   created_at: string;
   image_name?: string;
+  client_id?: string;
 };
 export type ComposesResponse = {
   meta: {

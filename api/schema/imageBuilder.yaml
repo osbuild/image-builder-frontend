@@ -601,6 +601,9 @@ components:
           type: string
           example: "MyImageDescription"
           maxLength: 250
+        client_id:
+          type: string
+          example: "ui"
         image_requests:
           type: array
           minItems: 1
@@ -766,6 +769,8 @@ components:
         created_at:
           type: string
         image_name:
+          type: string
+        client_id:
           type: string
     ComposeResponse:
       required:
