@@ -11,3 +11,4 @@ export { default as imageOutput } from './imageOutput';
 export { default as nextStepMapper } from './imageOutputStepMapper';
 export { default as fileSystemConfiguration } from './fileSystemConfiguration';
 export { default as imageName } from './imageName';
+export { default as blueprintName } from './blueprintName';

@@ -10,6 +10,11 @@ import {
   Text,
   TextContent,
   TabAction,
+  PageSection,
+  PageSectionVariants,
+  Sidebar,
+  SidebarContent,
+  SidebarPanel,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -21,6 +26,7 @@ import Quickstarts from './Quickstarts';
 
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
+import BlueprintsSidebar from '../Blueprints/BlueprintsSidebar';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -47,13 +53,41 @@ export const LandingPage = () => {
   };
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
-  const traditionalImageList = (
-    <section className="pf-l-page__main-section pf-c-page__main-section">
-      <Quickstarts />
+  const experimentalFlag = process.env.EXPERIMENTAL;
 
-      <ImagesTable />
-    </section>
+  const traditionalImageList = (
+    <>
+      <PageSection>
+        <Quickstarts />
+      </PageSection>
+      <PageSection>
+        <ImagesTable />
+      </PageSection>
+    </>
   );
+
+  const experimentalImageList = (
+    <>
+      <PageSection>
+        <Quickstarts />
+      </PageSection>
+      <PageSection variant={PageSectionVariants.light}>
+        <Sidebar hasBorder hasGutter>
+          <SidebarPanel>
+            <BlueprintsSidebar />
+          </SidebarPanel>
+          <SidebarContent>
+            <ImagesTable />
+          </SidebarContent>
+        </Sidebar>
+      </PageSection>
+    </>
+  );
+
+  const imageList = experimentalFlag
+    ? experimentalImageList
+    : traditionalImageList;
+
   return (
     <>
       <ImageBuilderHeader />
@@ -99,7 +133,7 @@ export const LandingPage = () => {
               />
             }
           >
-            {traditionalImageList}
+            {imageList}
           </Tab>
           <Tab
             eventKey={1}
@@ -147,7 +181,7 @@ export const LandingPage = () => {
           </Tab>
         </Tabs>
       ) : (
-        traditionalImageList
+        imageList
       )}
       <Outlet />
     </>

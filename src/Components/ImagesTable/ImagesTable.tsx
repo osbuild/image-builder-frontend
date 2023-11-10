@@ -12,10 +12,18 @@ import {
   Text,
   Toolbar,
   ToolbarContent,
+  ToolbarFilter,
+  ToolbarGroup,
   ToolbarItem,
   EmptyStateActions,
   EmptyStateHeader,
   EmptyStateFooter,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectOption,
+  SelectList,
+  Badge,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -28,6 +36,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import { filter } from 'lodash';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -63,6 +72,74 @@ import {
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
+  const [isVersionSelectOpen, setIsVersionSelectOpen] = useState(false);
+  const [filters, setFilters] = useState<{
+    imageType: string[];
+    version: string[];
+  }>({
+    imageType: [],
+    version: [],
+  });
+  const experimentalFlag = process.env.EXPERIMENTAL;
+
+  const onSelect = (
+    selectType: string,
+    event: React.MouseEvent | React.ChangeEvent | any,
+    selection: string
+  ) => {
+    const checked = (event.target as HTMLInputElement).checked;
+    setFilters((prev: any) => {
+      const prevSelections = prev[selectType];
+      return {
+        ...prev,
+        [selectType]: checked
+          ? [...prevSelections, selection]
+          : prevSelections.filter((value: string) => value !== selection),
+      };
+    });
+  };
+
+  const onTypeSelect = (
+    event: React.MouseEvent | React.ChangeEvent | any,
+    selection: string
+  ) => {
+    onSelect('imageType', event, selection);
+  };
+
+  const onVersionSelect = (
+    event: React.MouseEvent | React.ChangeEvent | any,
+    selection: string
+  ) => {
+    onSelect('version', event, selection);
+  };
+
+  const onDelete = (filterType: string, selection: string) => {
+    const filterTypeSelections = filters.imageType.filter(
+      (fil: string) => fil !== selection
+    );
+    if (filterType === 'imageType') {
+      setFilters({
+        imageType: filterTypeSelections,
+        version: filters.version,
+      });
+    } else if (filterType === 'version') {
+      setFilters({
+        imageType: filters.imageType.filter((fil: string) => fil !== selection),
+        version: filters.version.filter((fil: string) => fil !== selection),
+      });
+    } else {
+      setFilters({ imageType: [], version: [] });
+    }
+  };
+
+  const onDeleteGroup = (filterType: string) => {
+    if (filterType === 'imageType') {
+      setFilters({ imageType: [], version: filters.version });
+    } else if (filterType === 'version') {
+      setFilters({ imageType: filters.imageType, version: [] });
+    }
+  };
 
   const onSetPage: OnSetPage = (_, page) => setPage(page);
 
@@ -89,22 +166,128 @@ const ImagesTable = () => {
   const composes = data.data;
   const itemCount = data.meta.count;
 
+  const typeMenuItems = (
+    <SelectList>
+      <SelectOption
+        hasCheckbox
+        key="typeConventional"
+        value="Conventional"
+        isSelected={filters.imageType.includes('Conventional')}
+      >
+        Conventional
+      </SelectOption>
+      <SelectOption
+        hasCheckbox
+        key="typeImmutable"
+        value="Immutable"
+        isSelected={filters.imageType.includes('Immutable')}
+        isDisabled
+      >
+        Immutable
+      </SelectOption>
+    </SelectList>
+  );
+
+  const versionMenuItems = (
+    <SelectList>
+      <SelectOption
+        hasCheckbox
+        key="versionNewest"
+        value="Newest"
+        isSelected={filters.version.includes('Newest')}
+        isDisabled
+      >
+        Newest
+      </SelectOption>
+      <SelectOption
+        hasCheckbox
+        key="versionOldest"
+        value="Oldest"
+        isSelected={filters.version.includes('Oldest')}
+        isDisabled
+      >
+        Oldest
+      </SelectOption>
+    </SelectList>
+  );
+
   return (
     <>
       {data.meta.count === 0 && <EmptyImagesTable />}
       {data.meta.count > 0 && (
         <>
-          <Toolbar>
+          <Toolbar clearAllFilters={() => onDelete('', '')}>
             <ToolbarContent>
-              <ToolbarItem>
-                <Link
-                  to={resolveRelPath('imagewizard')}
-                  className="pf-c-button pf-m-primary"
-                  data-testid="create-image-action"
-                >
-                  Create image
-                </Link>
-              </ToolbarItem>
+              {experimentalFlag && (
+                <ToolbarGroup variant="filter-group">
+                  <ToolbarFilter
+                    categoryName="imageType"
+                    chips={filters.imageType}
+                    deleteChip={(category, chip) =>
+                      onDelete(category as string, chip as string)
+                    }
+                    deleteChipGroup={(category) =>
+                      onDeleteGroup(category as string)
+                    }
+                  >
+                    <Select
+                      aria-label="Select image type"
+                      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                        <MenuToggle
+                          ref={toggleRef}
+                          onClick={() => setIsTypeSelectOpen(!isTypeSelectOpen)}
+                          isExpanded={isTypeSelectOpen}
+                        >
+                          Image type
+                          {filters.imageType.length > 0 && (
+                            <Badge isRead>{filters.imageType.length}</Badge>
+                          )}
+                        </MenuToggle>
+                      )}
+                      onSelect={onTypeSelect}
+                      selected={filters.imageType}
+                      isOpen={isTypeSelectOpen}
+                      onOpenChange={(isOpen) => setIsTypeSelectOpen(isOpen)}
+                    >
+                      {typeMenuItems}
+                    </Select>
+                  </ToolbarFilter>
+                  <ToolbarFilter
+                    categoryName="version"
+                    chips={filters.version}
+                    deleteChip={(category, chip) =>
+                      onDelete(category as string, chip as string)
+                    }
+                    deleteChipGroup={(category) =>
+                      onDeleteGroup(category as string)
+                    }
+                  >
+                    <Select
+                      aria-label="Select image version"
+                      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                        <MenuToggle
+                          ref={toggleRef}
+                          onClick={() =>
+                            setIsVersionSelectOpen(!isVersionSelectOpen)
+                          }
+                          isExpanded={isVersionSelectOpen}
+                        >
+                          Image version
+                          {filters.version.length > 0 && (
+                            <Badge isRead>{filters.version.length}</Badge>
+                          )}
+                        </MenuToggle>
+                      )}
+                      onSelect={onVersionSelect}
+                      selected={filters.version}
+                      isOpen={isVersionSelectOpen}
+                      onOpenChange={(isOpen) => setIsVersionSelectOpen(isOpen)}
+                    >
+                      {versionMenuItems}
+                    </Select>
+                  </ToolbarFilter>
+                </ToolbarGroup>
+              )}
               <ToolbarItem
                 variant="pagination"
                 align={{ default: 'alignRight' }}

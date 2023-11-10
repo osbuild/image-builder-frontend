@@ -3,13 +3,15 @@ import React, { lazy, Suspense } from 'react';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Route, Routes } from 'react-router-dom';
 
-import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
   import('./Components/CreateImageWizard/CreateImageWizard')
+);
+const CreateBlueprintWizard = lazy(() =>
+  import('./Components/CreateImageWizard/CreateBlueprintWizard')
 );
 const CreateImageWizardV2 = lazy(() =>
   import('./Components/CreateImageWizardV2/CreateImageWizard')
@@ -18,7 +20,7 @@ const CreateImageWizardV2 = lazy(() =>
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
 
-  const experimentalWizard =
+  const experimental =
     useFlag('image-builder.new-wizard.enabled') ||
     process.env.EXPERIMENTAL === true;
   return (
@@ -33,30 +35,23 @@ export const Router = () => {
       >
         <Route path="share/:composeId" element={<ShareImageModal />} />
       </Route>
-
       <Route
         path="imagewizard/:composeId?"
         element={
           <Suspense>
-            {experimentalWizard ? (
-              <CreateImageWizardV2 />
-            ) : (
-              <CreateImageWizard />
-            )}
+            {experimental ? <CreateImageWizardV2 /> : <CreateImageWizard />}
           </Suspense>
         }
       />
-      {edgeParityFlag && (
+      {experimental && (
         <Route
-          path={`/${manageEdgeImagesUrlName}/:imageId`}
-          element={<EdgeImageDetail />}
-        >
-          <Route path="*" element={<EdgeImageDetail />} />
-          <Route
-            path={`versions/:imageVersionId/*`}
-            element={<EdgeImageDetail />}
-          />
-        </Route>
+          path="blueprintwizard/:blueprintId?"
+          element={
+            <Suspense>
+              <CreateBlueprintWizard />
+            </Suspense>
+          }
+        />
       )}
     </Routes>
   );

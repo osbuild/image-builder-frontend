@@ -13,7 +13,7 @@ export const Quickstarts = () => {
 
   return (
     <ExpandableSection
-      className="pf-m-light pf-u-mb-xl expand-section"
+      className="pf-m-light expand-section"
       toggleText="Help get started with new features"
       onToggle={(_event, val) => setShowHint(val)}
       isExpanded={showHint}
