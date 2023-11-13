@@ -19,7 +19,6 @@ export const MountPointValidPrefixes = [
   '/srv',
   '/tmp',
   '/usr',
-  '/usr/local',
   '/var',
 ];
 
@@ -81,15 +80,17 @@ const MountPoint = ({ ...props }) => {
         </Select>
       </GridItem>
       <GridItem span={6}>
-        {prefix !== '/' && !prefix.startsWith('/boot') && (
-          <TextInput
-            ouiaId="mount-suffix"
-            type="text"
-            value={suffix}
-            aria-label="Mount point suffix text input"
-            onChange={(_event, v) => setSuffix(v)}
-          />
-        )}
+        {prefix !== '/' &&
+          !prefix.startsWith('/boot') &&
+          !prefix.startsWith('/usr') && (
+            <TextInput
+              ouiaId="mount-suffix"
+              type="text"
+              value={suffix}
+              aria-label="Mount point suffix text input"
+              onChange={(_event, v) => setSuffix(v)}
+            />
+          )}
       </GridItem>
     </Grid>
   );
