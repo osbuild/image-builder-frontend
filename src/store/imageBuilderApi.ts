@@ -201,6 +201,7 @@ export type Distributions =
   | "rhel-90"
   | "rhel-91"
   | "rhel-92"
+  | "rhel-93"
   | "centos-8"
   | "centos-9"
   | "fedora-37"
@@ -309,6 +310,7 @@ export type Customizations = {
   openscap?: OpenScap;
   filesystem?: Filesystem[];
   users?: User[];
+  partitioning_mode?: "raw" | "lvm" | "auto-lvm";
 };
 export type ComposeRequest = {
   distribution: Distributions;

@@ -4,7 +4,7 @@ export const mockArchitecturesByDistro = (
   distro: Distributions
 ): Architectures => {
   const mockDistros: { [key: string]: Architectures } = {
-    'rhel-92': [
+    'rhel-93': [
       {
         arch: 'x86_64',
         image_types: [
