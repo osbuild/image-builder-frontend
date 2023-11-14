@@ -465,7 +465,9 @@ const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
       for (const fsc of fs) {
         const [size, unit] = parseSizeUnit(fsc.min_size);
         fileSystemConfiguration.push({
-          mountpoint: fsc.mountpoint,
+          mountpoint: fsc.mountpoint.includes('/usr/')
+            ? '/usr'
+            : fsc.mountpoint,
           size,
           unit,
         });
