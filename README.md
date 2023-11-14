@@ -262,3 +262,33 @@ To generate or update API slice definitions, run:
 ```bash
 npm run api
 ```
+
+### Using MSW data in development
+
+If you want to develop in environment with mocked data, 
+run the command `npm run stage-beta:msw`. 
+To enable msw, you must configure SSL certification on your computer.
+
+## Mac Configurations
+Follow these steps to find and paste the certification file into the 'Keychain Access' application:
+
+1. Open the 'Keychain Access' application.
+
+2. Select 'login' on the left side.
+
+3. Navigate to the 'Certificates' tab.
+
+4. Drag the certification file (usually located at /image-builder-frontend/node_modules/.cache/webpack-dev-server/server.pem) to the certification list.
+
+5. Double-click on the added certificate (localhost certificate) to open the localhost window.
+
+6. Open the 'Trust' dropdown menu.
+
+7. Set all options to 'Always Trust'.
+
+8. Close the localhost screen.
+
+9. Run `npm run stage-beta:msw` and open the Firefox browser to verify that it is working as expected.
+
+
+
