@@ -25,7 +25,7 @@ import {
   RepositoriesTable,
 } from './ReviewStepTables';
 
-import { ARCHS, RELEASES, UNIT_GIB } from '../../../constants';
+import { RELEASES, UNIT_GIB } from '../../../constants';
 import { extractProvisioningList } from '../../../store/helpers';
 import { useGetSourceListQuery } from '../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';

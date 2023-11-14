@@ -52,10 +52,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       },
     },
     composeImage: {
-      onQueryStarted: async (
-        { composeRequest },
-        { dispatch, queryFulfilled }
-      ) => {
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {
             // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()

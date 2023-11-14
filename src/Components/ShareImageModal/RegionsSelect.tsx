@@ -63,7 +63,7 @@ const generateRequests = (
 
 type RegionsSelectPropTypes = {
   composeId: string;
-  handleClose: any;
+  handleClose: () => void;
 };
 
 const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
