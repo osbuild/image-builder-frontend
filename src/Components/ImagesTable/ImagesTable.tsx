@@ -430,7 +430,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
 
 type RowPropTypes = {
   compose: ComposesResponseItem;
-  rowIndex: any;
+  rowIndex: number;
   status: JSX.Element;
   target?: JSX.Element;
   actions?: JSX.Element;

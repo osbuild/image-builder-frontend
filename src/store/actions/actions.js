@@ -21,10 +21,11 @@ export const fetchComposes = (limit, offset) => async (dispatch) => {
   const composeRequest = await api.getComposes(limit, offset);
   if (!composeRequest) return;
 
-  composeRequest.data.map((compose) => {
+  composeRequest.data.forEach((compose) => {
     dispatch(composeAdded({ compose, insert: false }));
     dispatch(fetchComposeStatus(compose.id));
   });
+
   dispatch(composesUpdatedCount({ count: composeRequest.meta.count }));
 
   composeRequest.data.forEach((compose) => {
