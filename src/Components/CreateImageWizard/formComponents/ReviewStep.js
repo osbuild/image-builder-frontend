@@ -24,6 +24,7 @@ import {
   TargetEnvOciList,
   TargetEnvOtherList,
 } from './ReviewStepTextLists';
+import UsrSubDirectoriesDisabled from './UsrSubDirectoriesDisabled';
 
 import isRhel from '../../../Utilities/isRhel';
 
@@ -66,6 +67,9 @@ const ReviewStep = () => {
   return (
     <>
       <RepositoryUnavailable />
+      {getState()?.values?.['file-system-configuration']?.find((mp) =>
+        mp.mountpoint.includes('/usr')
+      ) && <UsrSubDirectoriesDisabled />}
       <ExpandableSection
         toggleContent={'Image output'}
         onToggle={(_event, isExpandedImageOutput) =>

@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import MountPoint, { MountPointValidPrefixes } from './MountPoint';
 import SizeUnit from './SizeUnit';
+import UsrSubDirectoriesDisabled from './UsrSubDirectoriesDisabled';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
 import { useGetOscapCustomizationsQuery } from '../../../store/imageBuilderApi';
@@ -307,6 +308,9 @@ const FileSystemConfiguration = ({ ...props }) => {
           <TextContent>
             <Text component={TextVariants.h3}>Configure partitions</Text>
           </TextContent>
+          {getState()?.values?.['file-system-configuration']?.find((mp) =>
+            mp.mountpoint.includes('/usr')
+          ) && <UsrSubDirectoriesDisabled />}
           {rows.length > 1 &&
             getState()?.errors?.['file-system-configuration']?.duplicates
               ?.length !== 0 &&
