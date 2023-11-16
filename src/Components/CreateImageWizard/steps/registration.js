@@ -118,17 +118,21 @@ const registrationStep = {
       component: componentTypes.PLAIN_TEXT,
       name: 'subscription-activation-description',
       label: (
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
-          isInline
-          href="https://console.redhat.com/insights/connector/activation-keys"
-        >
-          Create and manage activation keys here
-        </Button>
+        <span>
+          By default, activation key is generated and preset for you. Admins can
+          create and manage keys by visiting the&nbsp;
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href="https://console.redhat.com/insights/connector/activation-keys"
+          >
+            Activation keys page
+          </Button>
+        </span>
       ),
       condition: {
         or: [

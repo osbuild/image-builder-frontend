@@ -13,7 +13,7 @@ import { rest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { PROVISIONING_API } from '../../../constants.js';
+import { PROVISIONING_API, RHSM_API } from '../../../constants.js';
 import { server } from '../../mocks/server.js';
 import {
   clickBack,
@@ -572,6 +572,20 @@ describe('Step Registration', () => {
     await setUp();
 
     await verifyCancelButton(router);
+  });
+
+  test('activation key dropdown empty state', async () => {
+    server.use(
+      rest.get(`${RHSM_API}/activation_keys`, (req, res, ctx) =>
+        res(ctx.status(200), ctx.json({ body: [] }))
+      )
+    );
+    await setUp();
+    const activationKeyDropdown = await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+    await user.click(activationKeyDropdown);
+    await screen.findByText('No activation keys found');
   });
 
   test('should allow registering with rhc', async () => {
