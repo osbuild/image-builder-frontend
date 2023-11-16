@@ -105,6 +105,33 @@ describe('Step Image output', () => {
       }),
       'a@a.fr'
     );
+
+    // go to azure page
+    await clickNext();
+    // enter a source and a resource group
+    await user.click(
+      await screen.findByRole('combobox', {
+        name: /source-typeahead-select-input/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('option', {
+        name: /azureSource1/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('combobox', {
+        name: /resource-group-selecttypeahead-select-input/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('option', {
+        name: /myResourceGroup1/i,
+      })
+    );
+
+    // go to review page
+    await clickNext();
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));

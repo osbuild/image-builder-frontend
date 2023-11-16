@@ -20,6 +20,9 @@ import ReviewStep from './steps/Review/ReviewStep';
 import AWSTarget, {
   validateAWSAccountID,
 } from './steps/TargetEnvironment/AWS/AWSTarget';
+import AzureTarget, {
+  validateAzureId,
+} from './steps/TargetEnvironment/Azure/AzureTarget';
 import GCPTarget, {
   GCPAccountTypes,
   validateGCPData,
@@ -147,6 +150,29 @@ const CreateImageWizard = () => {
     useState<GCPAccountTypes>('googleAccount');
   const [gcpAccountEmail, setGcpAccountEmail] = useState('');
   const [gcpDomain, setGcpDomain] = useState('');
+  // Azure
+  const [azureManual, setAzureManual] = useState(false);
+  const [azureSource, setAzureSource] = useState<[number, string]>([0, '']);
+  const {
+    tenantId,
+    subscriptionId,
+    resourceGroups,
+    isError: azureIDError,
+  } = useGetAccountData(azureSource[0], 'azure');
+  const [azureTenantId, setAzureTenantId] = useState(tenantId);
+  const [azureSubId, setAzureSubId] = useState(subscriptionId);
+  const [azureResourceGroup, setAzureResourceGroup] = useState('');
+  const [prevTenantId, setPrevTenantId] = useState(tenantId);
+  const [prevSubscriptionId, setPrevSubscriptionId] = useState(subscriptionId);
+  if (prevTenantId !== tenantId || prevSubscriptionId !== subscriptionId) {
+    setPrevTenantId(tenantId);
+    setPrevSubscriptionId(subscriptionId);
+    setAzureTenantId(tenantId);
+    setAzureSubId(subscriptionId);
+    // when the tenant id or the subscription_id is changing, reset the resource
+    // group as the user will need to update it from a new list.
+    setAzureResourceGroup('');
+  }
   return (
     <>
       <ImageBuilderHeader />
@@ -230,6 +256,40 @@ const CreateImageWizard = () => {
                   setAccountEmail={setGcpAccountEmail}
                   domain={gcpDomain}
                   setDomain={setGcpDomain}
+                />
+              </WizardStep>,
+              <WizardStep
+                name="Microsoft Azure"
+                id="azure-sub-step"
+                key="azure-sub-step"
+                isHidden={
+                  !(environment.azure.selected && environment.azure.authorized)
+                }
+                footer={
+                  <CustomWizardFooter
+                    isNextDisabled={
+                      !(
+                        validateAzureId(azureTenantId) &&
+                        validateAzureId(azureSubId) &&
+                        azureResourceGroup
+                      )
+                    }
+                  />
+                }
+              >
+                <AzureTarget
+                  manual={azureManual}
+                  setManual={setAzureManual}
+                  source={azureSource}
+                  setSource={setAzureSource}
+                  tenantId={azureTenantId}
+                  setTenantId={setAzureTenantId}
+                  subscriptionId={azureSubId}
+                  setSubscriptionId={setAzureSubId}
+                  isErrorFetchingDetails={azureIDError}
+                  resourceGroups={resourceGroups}
+                  resourceGroup={azureResourceGroup}
+                  setResourceGroup={setAzureResourceGroup}
                 />
               </WizardStep>,
             ]}
