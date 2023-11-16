@@ -40,7 +40,7 @@ export const mockArchitecturesByDistro = (
         ],
       },
     ],
-    'rhel-88': [
+    'rhel-89': [
       {
         arch: 'x86_64',
         image_types: [

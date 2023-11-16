@@ -60,7 +60,7 @@ describe('Images Table', () => {
     rows.forEach(async (row, index) => {
       expect(row.cells[1]).toHaveTextContent(imageNameValues[index]);
       expect(row.cells[2]).toHaveTextContent('Apr 27, 2021');
-      expect(row.cells[3]).toHaveTextContent('RHEL 8.8');
+      expect(row.cells[3]).toHaveTextContent('RHEL 8.9');
     });
 
     // TODO Test remaining table content.
