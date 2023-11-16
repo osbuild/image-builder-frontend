@@ -134,7 +134,7 @@ describe('On Recreate', () => {
     // check that the FSC contains a /tmp partition
     // There are two buttons with the same name but cannot easily select the DDF rendered sidenav.
     // The sidenav will be the first node found out of all buttons.
-    const buttonsFSC = screen.getAllByRole('button', {
+    const buttonsFSC = await screen.findAllByRole('button', {
       name: /file system configuration/i,
     });
     await user.click(buttonsFSC[0]);
