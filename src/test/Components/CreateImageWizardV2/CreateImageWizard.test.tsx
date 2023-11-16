@@ -96,6 +96,15 @@ describe('Step Image output', () => {
     });
     await user.click(source);
 
+    // go to gcp page
+    await clickNext();
+    //enter an email address
+    await user.type(
+      await screen.findByRole('textbox', {
+        name: /gcp account email/i,
+      }),
+      'a@a.fr'
+    );
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));

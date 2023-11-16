@@ -20,6 +20,11 @@ import ReviewStep from './steps/Review/ReviewStep';
 import AWSTarget, {
   validateAWSAccountID,
 } from './steps/TargetEnvironment/AWS/AWSTarget';
+import GCPTarget, {
+  GCPAccountTypes,
+  validateGCPData,
+} from './steps/TargetEnvironment/GCP/GCPTarget';
+import { useGetAccountData } from './steps/TargetEnvironment/SourcesSelect';
 
 import { RHEL_9, X86_64 } from '../../constants';
 import './CreateImageWizard.scss';
@@ -136,6 +141,12 @@ const CreateImageWizard = () => {
     setPrevAwsID(awsID);
     setAwsAccountId(awsID);
   }
+  // GCP
+  const [shareGoogleAccount, setShareGoogleAccount] = useState(true);
+  const [gcpAccountType, setGcpAccountType] =
+    useState<GCPAccountTypes>('googleAccount');
+  const [gcpAccountEmail, setGcpAccountEmail] = useState('');
+  const [gcpDomain, setGcpDomain] = useState('');
   return (
     <>
       <ImageBuilderHeader />
@@ -188,6 +199,37 @@ const CreateImageWizard = () => {
                   isErrorFetchingDetails={awsIDError}
                   associatedAccountId={awsAccountId}
                   setAssociatedAccountId={setAwsAccountId}
+                />
+              </WizardStep>,
+              <WizardStep
+                name="Google Cloud Platform"
+                id="gcp-sub-step"
+                key="gcp-sub-step"
+                isHidden={
+                  !(environment.gcp.selected && environment.gcp.authorized)
+                }
+                footer={
+                  <CustomWizardFooter
+                    isNextDisabled={
+                      !validateGCPData(
+                        shareGoogleAccount,
+                        gcpAccountType,
+                        gcpAccountEmail,
+                        gcpDomain
+                      )
+                    }
+                  />
+                }
+              >
+                <GCPTarget
+                  shareGoogleAccount={shareGoogleAccount}
+                  setShareGoogleAccount={setShareGoogleAccount}
+                  accountType={gcpAccountType}
+                  setAccountType={setGcpAccountType}
+                  accountEmail={gcpAccountEmail}
+                  setAccountEmail={setGcpAccountEmail}
+                  domain={gcpDomain}
+                  setDomain={setGcpDomain}
                 />
               </WizardStep>,
             ]}
