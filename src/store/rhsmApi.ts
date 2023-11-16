@@ -7,6 +7,16 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: () => ({ url: `/activation_keys` }),
     }),
+    createActivationKeys: build.mutation<
+      CreateActivationKeysApiResponse,
+      CreateActivationKeysApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/activation_keys`,
+        method: "POST",
+        body: queryArg.body,
+      }),
+    }),
     showActivationKey: build.query<
       ShowActivationKeyApiResponse,
       ShowActivationKeyApiArg
@@ -22,6 +32,22 @@ export type ListActivationKeysApiResponse =
     body?: ActivationKeys[];
   };
 export type ListActivationKeysApiArg = void;
+export type CreateActivationKeysApiResponse = /** status 200 Activation key */ {
+  body?: ActivationKeys;
+};
+export type CreateActivationKeysApiArg = {
+  /** Create an activation key */
+  body: {
+    additionalRepositories?: {
+      repositoryLabel?: string;
+    }[];
+    name: string;
+    releaseVersion?: string;
+    role?: string;
+    serviceLevel?: string;
+    usage?: string;
+  };
+};
 export type ShowActivationKeyApiResponse = /** status 200 Activation key */ {
   body?: ActivationKeys;
 };
@@ -45,5 +71,8 @@ export type ErrorDetails = {
   code?: number;
   message?: string;
 };
-export const { useListActivationKeysQuery, useShowActivationKeyQuery } =
-  injectedRtkApi;
+export const {
+  useListActivationKeysQuery,
+  useCreateActivationKeysMutation,
+  useShowActivationKeyQuery,
+} = injectedRtkApi;

@@ -2,16 +2,65 @@ import React, { useEffect, useState } from 'react';
 
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import { Alert, FormGroup, Spinner } from '@patternfly/react-core';
+import {
+  Alert,
+  FormGroup,
+  Spinner,
+  EmptyState,
+  Button,
+  EmptyStateIcon,
+  EmptyStateBody,
+  EmptyStateHeader,
+  EmptyStateFooter,
+  EmptyStateActions,
+} from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
+import { WrenchIcon, AddCircleOIcon } from '@patternfly/react-icons';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
 
-import { useListActivationKeysQuery } from '../../../store/rhsmApi';
+import {
+  useListActivationKeysQuery,
+  useCreateActivationKeysMutation,
+} from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
+
+const EmptyActivationsKeyState = ({ handleActivationKeyFn, isLoading }) => (
+  <EmptyState variant="xs">
+    <EmptyStateHeader
+      titleText="No activation keys found"
+      headingLevel="h4"
+      icon={<EmptyStateIcon icon={WrenchIcon} />}
+    />
+    <EmptyStateBody>
+      Get started by building a default key, which will be generated and present
+      for you.
+    </EmptyStateBody>
+    <EmptyStateFooter>
+      <EmptyStateActions>
+        <Button
+          onClick={handleActivationKeyFn}
+          icon={<AddCircleOIcon />}
+          isLoading={isLoading}
+          iconPosition="left"
+          variant="link"
+        >
+          Create activation key
+        </Button>
+      </EmptyStateActions>
+    </EmptyStateFooter>
+  </EmptyState>
+);
+
+EmptyActivationsKeyState.propTypes = {
+  handleActivationKeyFn: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool,
+};
 
 const ActivationKeys = ({ label, isRequired, ...props }) => {
   const { isProd } = useGetEnvironment();
@@ -22,6 +71,8 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     getState()?.values?.['subscription-activation-key']
   );
 
+  const dispatch = useDispatch();
+
   const {
     data: activationKeys,
     isFetching: isFetchingActivationKeys,
@@ -30,6 +81,8 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     refetch,
   } = useListActivationKeysQuery();
 
+  const [createActivationKey, { isLoading: isLoadingActivationKey }] =
+    useCreateActivationKeysMutation();
   useEffect(() => {
     if (isProd()) {
       change('subscription-server-url', 'subscription.rhsm.redhat.com');
@@ -58,6 +111,28 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
     setIsOpen(!isOpen);
   };
 
+  const handleCreateActivationKey = async () => {
+    const res = await createActivationKey({
+      body: {
+        name: 'activation-key-default',
+        serviceLevel: 'Self-Support',
+      },
+    });
+    refetch();
+    if (res.error) {
+      dispatch(
+        addNotification({
+          variant: 'danger',
+          title: 'Error creating activation key',
+          description: res.error?.data?.error?.message,
+        })
+      );
+    }
+  };
+
+  const isActivationKeysEmpty =
+    isSuccessActivationKeys && activationKeys.body.length === 0;
+
   return (
     <>
       <FormGroup
@@ -77,11 +152,17 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
           typeAheadAriaLabel="Select activation key"
           isDisabled={!isSuccessActivationKeys}
         >
+          {isActivationKeysEmpty && (
+            <EmptyActivationsKeyState
+              handleActivationKeyFn={handleCreateActivationKey}
+              isLoading={isLoadingActivationKey}
+            />
+          )}
           {isSuccessActivationKeys &&
             activationKeys.body.map((key, index) => (
               <SelectOption key={index} value={key.name} />
             ))}
-          {isFetchingActivationKeys && (
+          {!isSuccessActivationKeys && isFetchingActivationKeys && (
             <SelectOption
               isNoResultsOption={true}
               data-testid="activation-keys-loading"
