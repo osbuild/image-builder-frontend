@@ -85,6 +85,16 @@ describe('Step Image output', () => {
     await screen.findByRole('heading', { name: 'Image output' });
 
     await clickNext();
+    // enter a source to be able to click next
+    await user.click(
+      await screen.findByRole('combobox', {
+        name: /source-typeahead-select-input/i,
+      })
+    );
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await user.click(source);
 
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');
@@ -122,6 +132,16 @@ describe('Step Image output', () => {
     await user.click(await screen.findByTestId('upload-aws'));
 
     await clickNext();
+    // enter a source to be able to click next
+    await user.click(
+      await screen.findByRole('combobox', {
+        name: /source-typeahead-select-input/i,
+      })
+    );
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await user.click(source);
 
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');

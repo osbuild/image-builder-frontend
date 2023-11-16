@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -17,6 +17,9 @@ import {
 } from './steps/ImageOutput/Environment';
 import ImageOutputStep from './steps/ImageOutput/ImageOutput';
 import ReviewStep from './steps/Review/ReviewStep';
+import AWSTarget, {
+  validateAWSAccountID,
+} from './steps/TargetEnvironment/AWS/AWSTarget';
 
 import { RHEL_9, X86_64 } from '../../constants';
 import './CreateImageWizard.scss';
@@ -75,7 +78,9 @@ const CustomWizardFooter = ({ isNextDisabled }: CustomWizardFooterPropType) => {
 
 const CreateImageWizard = () => {
   const navigate = useNavigate();
+  //
   // Image output step states
+  //
   const [release, setRelease] = useState<Distributions>(RHEL_9);
   const [arch, setArch] = useState<ArchitectureItem['arch']>(X86_64);
   const {
@@ -110,6 +115,27 @@ const CreateImageWizard = () => {
     setPrevAllowedTargets(allowedTargets);
     setEnvironment(filterEnvironment(environment, allowedTargets));
   }
+
+  //
+  // Target environment states
+  //
+  const showTargetEnv =
+    (environment.aws.selected && environment.aws.authorized) ||
+    (environment.gcp.selected && environment.gcp.authorized) ||
+    (environment.azure.selected && environment.azure.authorized);
+  // AWS
+  const [awsManual, setAwsManual] = useState(false);
+  const [awsSource, setAwsSource] = useState<[number, string]>([0, '']);
+  const { accountId: awsID, isError: awsIDError } = useGetAccountData(
+    awsSource[0],
+    'aws'
+  );
+  const [awsAccountId, setAwsAccountId] = useState(awsID);
+  const [prevAwsID, setPrevAwsID] = useState(awsID);
+  if (awsID !== prevAwsID) {
+    setPrevAwsID(awsID);
+    setAwsAccountId(awsID);
+  }
   return (
     <>
       <ImageBuilderHeader />
@@ -136,6 +162,36 @@ const CreateImageWizard = () => {
               isSuccess={isSuccess}
             />
           </WizardStep>
+          <WizardStep
+            name="Target environment"
+            id="step-target-environment"
+            isHidden={!showTargetEnv}
+            steps={[
+              <WizardStep
+                name="Amazon Web Services"
+                id="aws-sub-step"
+                key="aws-sub-step"
+                isHidden={
+                  !(environment.aws.selected && environment.aws.authorized)
+                }
+                footer={
+                  <CustomWizardFooter
+                    isNextDisabled={!validateAWSAccountID(awsAccountId)}
+                  />
+                }
+              >
+                <AWSTarget
+                  manual={awsManual}
+                  setManual={setAwsManual}
+                  source={awsSource}
+                  setSource={setAwsSource}
+                  isErrorFetchingDetails={awsIDError}
+                  associatedAccountId={awsAccountId}
+                  setAssociatedAccountId={setAwsAccountId}
+                />
+              </WizardStep>,
+            ]}
+          />
           <WizardStep
             name="Review"
             id="step-review"
