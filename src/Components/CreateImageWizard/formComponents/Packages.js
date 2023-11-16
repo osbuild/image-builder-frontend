@@ -253,7 +253,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
     return () => {
       document.removeEventListener('keydown', keydownHandler, true);
     };
-  });
+  }, []);
 
   const updateState = useCallback(
     (newChosenPackages) => {
