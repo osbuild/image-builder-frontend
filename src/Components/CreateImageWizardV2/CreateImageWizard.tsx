@@ -299,7 +299,22 @@ const CreateImageWizard = () => {
             id="step-review"
             footer={<CustomWizardFooter isNextDisabled={true} />}
           >
-            <ReviewStep release={release} arch={arch} />
+            <ReviewStep
+              release={release}
+              arch={arch}
+              environment={environment}
+              awsManual={awsManual}
+              awsAccountId={awsAccountId}
+              awsSource={awsSource}
+              gcpAccountType={gcpAccountType}
+              gcpAccountEmail={gcpAccountEmail}
+              gcpDomain={gcpDomain}
+              azureManual={azureManual}
+              azureSource={azureSource}
+              azureTenantId={azureTenantId}
+              azureSubscriptionId={azureSubId}
+              azureResourceGroup={azureResourceGroup}
+            />
           </WizardStep>
         </Wizard>
       </section>

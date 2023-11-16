@@ -76,14 +76,36 @@ describe('Create Image Wizard', () => {
 });
 
 describe('Step Image output', () => {
-  test('clicking Next loads the review step with correct information about the image output', async () => {
+  test('clicking Next until the review step with correct information about the image output', async () => {
     const user = userEvent.setup();
     await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
-    // select aws as upload destination
+    // select every upload target
     await user.click(await screen.findByTestId('upload-aws'));
-    await screen.findByRole('heading', { name: 'Image output' });
+    await user.click(await screen.findByTestId('upload-google'));
+    await user.click(await screen.findByTestId('upload-azure'));
+    await user.click(
+      await screen.findByRole('checkbox', {
+        name: /vmware checkbox/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('checkbox', {
+        name: /virtualization guest image checkbox/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('radio', {
+        name: /open virtualization format \(\.ova\)/i,
+      })
+    );
+    await user.click(
+      await screen.findByRole('checkbox', {
+        name: /bare metal installer checkbox/i,
+      })
+    );
 
+    // go to aws target page
     await clickNext();
     // enter a source to be able to click next
     await user.click(
@@ -139,6 +161,17 @@ describe('Step Image output', () => {
     expect(
       await screen.findByText(/red hat enterprise linux \(rhel\) 9/i)
     ).not.toBeNaN();
+    // check the environment
+    const targetEnvironmentsExpandable = await screen.findByTestId(
+      'target-environments-expandable'
+    );
+    await user.click(targetEnvironmentsExpandable);
+    await screen.findAllByText('AWS');
+    await screen.findAllByText('GCP');
+    await screen.findAllByText('Microsoft Azure');
+    await screen.findByText('VMWare vSphere (.ova)');
+    await screen.findByText('Virtualization - Guest image (.qcow2)');
+    await screen.findByText('Bare metal - Installer (.iso)');
   });
 
   test('selecting rhel8 and aarch64 shows accordingly in the review step', async () => {
@@ -167,6 +200,7 @@ describe('Step Image output', () => {
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
 
+    // go to aws target page
     await clickNext();
     // enter a source to be able to click next
     await user.click(
@@ -179,6 +213,8 @@ describe('Step Image output', () => {
     });
     await user.click(source);
 
+    // go to review page
+    await clickNext();
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));

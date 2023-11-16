@@ -23,6 +23,19 @@ export type GCPAccountTypes =
   | 'googleGroup'
   | 'domain';
 
+export const gcpAccountToString = (type: GCPAccountTypes) => {
+  switch (type) {
+    case 'googleAccount':
+      return 'Google account';
+    case 'serviceAccount':
+      return 'Service account';
+    case 'googleGroup':
+      return 'Google group';
+    case 'domain':
+      return 'Domain';
+  }
+};
+
 type GCPTargetPropTypes = {
   shareGoogleAccount: boolean;
   setShareGoogleAccount: Dispatch<SetStateAction<boolean>>;
