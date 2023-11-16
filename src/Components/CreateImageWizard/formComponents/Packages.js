@@ -149,7 +149,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
       }
       updateState(oscapPackages);
     }
-  }, [customizations, isSuccessCustomizations]);
+  }, [customizations, isSuccessCustomizations, updateState]);
 
   // this effect only triggers on mount
   useEffect(() => {
@@ -203,7 +203,7 @@ const Packages = ({ getAllPackages, isSuccess }) => {
 
       return 0;
     };
-  });
+  }, []);
 
   const availablePackagesDisplayList = useMemo(() => {
     if (availablePackages === undefined) {
@@ -213,14 +213,14 @@ const Packages = ({ getAllPackages, isSuccess }) => {
       searchResultsComparator(packagesSearchName)
     );
     return availablePackagesList;
-  }, [availablePackages]);
+  }, [availablePackages, packagesSearchName, searchResultsComparator]);
 
   const chosenPackagesDisplayList = useMemo(() => {
     const chosenPackagesList = Object.values(chosenPackages)
       .filter((pkg) => (pkg.name.includes(filterChosen) ? true : false))
       .sort(searchResultsComparator(filterChosen));
     return chosenPackagesList;
-  }, [chosenPackages, filterChosen]);
+  }, [chosenPackages, filterChosen, searchResultsComparator]);
 
   // call api to list available packages
   const handleAvailablePackagesSearch = async () => {
@@ -255,12 +255,15 @@ const Packages = ({ getAllPackages, isSuccess }) => {
     };
   });
 
-  const updateState = (newChosenPackages) => {
-    setSelectedAvailablePackages(new Set());
-    setSelectedChosenPackages(new Set());
-    setChosenPackages(newChosenPackages);
-    change('selected-packages', Object.values(newChosenPackages));
-  };
+  const updateState = useCallback(
+    (newChosenPackages) => {
+      setSelectedAvailablePackages(new Set());
+      setSelectedChosenPackages(new Set());
+      setChosenPackages(newChosenPackages);
+      change('selected-packages', Object.values(newChosenPackages));
+    },
+    [change]
+  );
 
   const moveSelectedToChosen = () => {
     const newChosenPackages = { ...chosenPackages };
