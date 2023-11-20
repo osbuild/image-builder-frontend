@@ -66,12 +66,12 @@ afterEach(() => {
 });
 
 describe('Create Image Wizard', () => {
-  test('renders component', () => {
+  test('renders component', async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
-    screen.getByRole('heading', { name: /Image Builder/ });
+    await screen.findByRole('heading', { name: /Image Builder/ });
 
-    screen.getByRole('button', { name: 'Image output' });
+    await screen.findByRole('button', { name: 'Image output' });
   });
 });
 
@@ -155,7 +155,7 @@ describe('Step Image output', () => {
     // go to review page
     await clickNext();
     await screen.findByRole('heading', { name: 'Review' });
-    const view = screen.getByTestId('image-output-expandable');
+    const view = await screen.findByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));
     expect(await screen.findByText(/x86_64/i)).not.toBeNaN();
     expect(
@@ -216,7 +216,7 @@ describe('Step Image output', () => {
     // go to review page
     await clickNext();
     await screen.findByRole('heading', { name: 'Review' });
-    const view = screen.getByTestId('image-output-expandable');
+    const view = await screen.findByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));
     expect(await screen.findByText(/aarch64/i)).not.toBeNaN();
     expect(
