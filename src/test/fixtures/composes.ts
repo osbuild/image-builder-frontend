@@ -317,6 +317,10 @@ export const mockComposes: ComposesResponseItem[] = [
         ],
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          profile_name:
+            'CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation',
+          profile_description:
+            'This  is a mocked profile description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere velit enim, tincidunt porttitor nisl elementum eu.',
         },
       },
     },
@@ -814,6 +818,10 @@ export const mockStatus = (composeId: string): ComposeStatus => {
           openscap: {
             profile_id:
               'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+            profile_name:
+              ' CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation',
+            profile_description:
+              'This  is a mocked profile description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere velit enim, tincidunt porttitor nisl elementum eu.',
           },
         },
       },

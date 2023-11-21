@@ -193,7 +193,7 @@ const ReviewStep = () => {
       )}
       {getState()?.values?.['oscap-profile'] && (
         <ExpandableSection
-          toggleContent={'OpenSCAP Compliance'}
+          toggleContent={'OpenSCAP'}
           onToggle={(_event, isExpandedOscapDetail) =>
             onToggleOscapDetails(isExpandedOscapDetail)
           }

@@ -1,17 +1,23 @@
 import React from 'react';
 
 import componentTypes from '@data-driven-forms/react-form-renderer/component-types';
-import { Text } from '@patternfly/react-core';
+import { Text, Title } from '@patternfly/react-core';
 
 import StepTemplate from './stepTemplate';
 
+import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import CustomButtons from '../formComponents/CustomButtons';
 
 const oscapStep = {
   StepTemplate,
   id: 'wizard-systemconfiguration-oscap',
-  title: 'OpenSCAP Compliance',
+  title: 'OpenSCAP',
   name: 'Compliance',
+  customTitle: (
+    <Title headingLevel="h1" size="xl">
+      OpenSCAP profile
+    </Title>
+  ),
   nextStep: 'File system configuration',
   buttons: CustomButtons,
   fields: [
@@ -20,8 +26,8 @@ const oscapStep = {
       name: 'oscap-text-component',
       label: (
         <Text>
-          Monitor regulatory compliance profiles of registered RHEL systems you
-          must adhere to via OpenSCAP.
+          Use OpenSCAP to monitor the adherence of your registered RHEL systems
+          to a selected regulatory compliance profile. <DocumentationButton />
         </Text>
       ),
     },

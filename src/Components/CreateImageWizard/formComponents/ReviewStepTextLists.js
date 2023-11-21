@@ -28,6 +28,7 @@ import {
 
 import { RELEASES, UNIT_GIB } from '../../../constants';
 import { extractProvisioningList } from '../../../store/helpers';
+import { useGetOscapCustomizationsQuery } from '../../../store/imageBuilderApi';
 import { useGetSourceListQuery } from '../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
@@ -618,6 +619,11 @@ export const ImageDetailsList = () => {
 export const OscapList = () => {
   const { getState } = useFormApi();
   const oscapProfile = getState()?.values?.['oscap-profile'];
+  const { data } = useGetOscapCustomizationsQuery({
+    distribution: getState()?.values?.['release'],
+    profile: oscapProfile,
+  });
+
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>
@@ -625,7 +631,29 @@ export const OscapList = () => {
           component={TextListItemVariants.dt}
           className="pf-u-min-width"
         >
-          Profile
+          Profile name:
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {data?.openscap?.profile_name}
+        </TextListItem>
+      </TextList>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Profile description:
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {data?.openscap?.profile_description}
+        </TextListItem>
+      </TextList>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Reference ID:
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {oscapProfile}
