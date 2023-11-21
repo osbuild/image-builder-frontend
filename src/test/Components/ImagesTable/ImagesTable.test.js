@@ -196,7 +196,6 @@ describe('Images Table', () => {
     await user.click(pageButtons[pageButtons.length - 1]);
     await screen.findAllByText(/9e7d0d51-7106-42ab-98f2-f89872a9d599/i);
 
-    // rows = await findAllByRole('row');
     rows = [];
     table = await screen.findByTestId('images-table');
     rows = await within(table).findAllByRole('row');

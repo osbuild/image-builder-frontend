@@ -242,7 +242,6 @@ describe('Step Upload to Azure', () => {
     await screen.findByText(
       /Sources cannot be reached, try again later or enter an account info for upload manually\./i
     );
-    //
   });
 
   // set test timeout to 15 seconds
