@@ -205,7 +205,7 @@ const onSave = (values) => {
       image_description: values?.['image-description'],
       image_requests: [
         {
-          architecture: 'x86_64',
+          architecture: values['arch'],
           image_type: 'oci',
           upload_request: {
             type: 'oci.objectstorage',
