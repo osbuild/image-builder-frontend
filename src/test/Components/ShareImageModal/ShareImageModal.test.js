@@ -41,7 +41,6 @@ describe('Create Share To Regions Modal', () => {
     expect(shareButton).toBeDisabled();
 
     const selectToggle = screen.getByRole('button', { name: /menu toggle/i });
-    // eslint-disable-next-line testing-library/no-unnecessary-act
     await user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
@@ -101,7 +100,6 @@ describe('Create Share To Regions Modal', () => {
     const selectToggle = await screen.findByRole('button', {
       name: /menu toggle/i,
     });
-    // eslint-disable-next-line testing-library/no-unnecessary-act
     await user.click(selectToggle);
 
     // parent region disabled
@@ -111,7 +109,6 @@ describe('Create Share To Regions Modal', () => {
     expect(usEast1).toBeDisabled();
 
     // close the select again to avoid state update
-    // eslint-disable-next-line testing-library/no-unnecessary-act
     await user.click(selectToggle);
   });
 

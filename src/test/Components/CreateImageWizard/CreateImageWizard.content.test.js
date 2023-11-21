@@ -273,7 +273,6 @@ describe('Step Packages', () => {
       // review page
       clickNext();
 
-      // await screen.findByTestId('chosen-packages-count');
       let chosen = await screen.findByTestId('chosen-packages-count');
       expect(chosen).toHaveTextContent('2');
 
@@ -292,7 +291,6 @@ describe('Step Packages', () => {
       clickNext();
       clickNext();
 
-      // await screen.findByTestId('chosen-packages-count');
       chosen = await screen.findByTestId('chosen-packages-count');
       expect(chosen).toHaveTextContent('1');
     });
@@ -486,7 +484,6 @@ describe('Step Packages', () => {
       chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
         'option'
       );
-      // eslint-disable-next-line jest-dom/prefer-in-document
       expect(chosenPackagesItems).toHaveLength(1);
 
       await user.click(
@@ -542,8 +539,6 @@ describe('Step Packages', () => {
       const searchbox = within(view).getByRole('textbox', {
         name: /search input/i,
       });
-
-      //const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
@@ -637,7 +632,6 @@ describe('Step Packages', () => {
       // review page
       clickNext();
 
-      // await screen.findByTestId('chosen-packages-count');
       const chosen = await screen.findByTestId('chosen-packages-count');
       expect(chosen).toHaveTextContent('2');
     });
@@ -757,7 +751,6 @@ describe('Step Packages', () => {
       await user.click(chosenSearchbox);
       await searchForChosenPackages(chosenSearchbox, 'lib');
       chosenPackagesItems = within(chosenPackagesList).getAllByRole('option');
-      // eslint-disable-next-line jest-dom/prefer-in-document
       expect(chosenPackagesItems).toHaveLength(1);
 
       await user.click(
