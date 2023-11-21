@@ -63,6 +63,7 @@ const ExactMatch = ({
 export const RedHatPackages = ({ defaultArch }) => {
   const { getState } = useFormApi();
   const distribution = getState()?.values?.release;
+  const arch = getState()?.values?.arch;
   const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
     useGetArchitecturesQuery({ distribution });
 
@@ -70,12 +71,10 @@ export const RedHatPackages = ({ defaultArch }) => {
     // if the env is stage beta then use content-sources api
     // else use image-builder api
     if (getState()?.values?.contentSourcesEnabled) {
-      const filteredArchx86_64 = distributionInformation.find(
-        (info) => info.arch === 'x86_64'
+      const filteredByArch = distributionInformation.find(
+        (info) => info.arch === arch
       );
-      const repoUrls = filteredArchx86_64.repositories.map(
-        (repo) => repo.baseurl
-      );
+      const repoUrls = filteredByArch.repositories.map((repo) => repo.baseurl);
       return await api.getPackagesContentSources(repoUrls, packagesSearchName);
     } else {
       const args = [
