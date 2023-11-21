@@ -52,7 +52,7 @@ export const composesEndpoint = (
 export const mockComposes: ComposesResponseItem[] = [
   {
     id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-    image_name: 'testImageName',
+    image_name: 'test-image-name',
     created_at: '2021-04-27T12:31:12Z',
     request: {
       distribution: RHEL_8,
@@ -282,7 +282,7 @@ export const mockComposes: ComposesResponseItem[] = [
   },
   {
     id: '1679d95b-8f1d-4982-8c53-8c2afa4ab04c',
-    image_name: 'testOscapImageName',
+    image_name: 'test-oscap-image-name',
     created_at: '2021-04-27T12:31:12Z',
     request: {
       distribution: RHEL_8,
@@ -1049,7 +1049,7 @@ export const mockComposesShareImageModal = {
   byId: {
     '1579d95b-8f1d-4982-8c53-8c2afa4ab04c': {
       id: '1579d95b-8f1d-4982-8c53-8c2afa4abc',
-      image_name: 'testImageName',
+      image_name: 'test-image-name',
       created_at: '2021-04-27T12:31:12Z',
       request: {
         distribution: RHEL_8,
