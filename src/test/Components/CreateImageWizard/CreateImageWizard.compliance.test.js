@@ -64,9 +64,12 @@ afterEach(() => {
 });
 
 describe('Step Compliance', () => {
-  test('create an image with an oscap profile', async () => {
-    const user = userEvent.setup();
+  const user = userEvent.setup();
+  const setup = async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+  };
+  test('create an image with None oscap profile', async () => {
+    await setup();
 
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
@@ -84,36 +87,75 @@ describe('Step Compliance', () => {
     await clickNext();
 
     // Now we should be in the Compliance step
-    await screen.findByRole('heading', { name: /OpenSCAP Compliance/i });
-    expect(
-      await screen.findByRole('radio', { name: /do not add a profile/i })
-    ).toBeChecked();
-    await user.click(
-      await screen.findByRole('radio', { name: 'Add a profile' })
-    );
-    expect(
-      await screen.findByRole('radio', { name: 'Add a profile' })
-    ).toBeChecked();
-    await user.click(
-      await screen.findByRole('textbox', { name: /select a profile/i })
-    );
-    await user.click(
-      await screen.findByRole('option', {
-        name: /xccdf_org\.ssgproject\.content_profile_cis_workstation/i,
-      })
-    );
+    await screen.findByRole('heading', { name: /OpenSCAP/i });
 
-    // check that the FSC contains a /tmp partition
+    await user.click(
+      screen.getByRole('textbox', { name: /select a profile/i })
+    );
+    await user.click(screen.getByText(/none/i));
+
+    // check that the FSC does not contain a /tmp partition
     await clickNext();
     await screen.findByRole('heading', { name: /File system configuration/i });
-    await screen.findByText('/tmp');
+    expect(
+      screen.queryByRole('cell', {
+        name: /tmp/i,
+      })
+    ).not.toBeInTheDocument();
 
-    // check that the Packages contain a nftable package
+    // check that there are no Packages contained when selecting the "None" profile option
     await clickNext();
     await screen.findByRole('heading', {
       name: /Additional Red Hat packages/i,
     });
-    await screen.findByText('nftables');
+    screen.getByText(/no packages added/i);
+  });
+
+  test('create an image with an oscap profile', async () => {
+    await setup();
+
+    // select aws as upload destination
+    await user.click(await screen.findByTestId('upload-aws'));
+    await clickNext();
+
+    // aws step
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
+    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+
+    await clickNext();
+    // skip registration
+    await user.click(screen.getByLabelText('Register later'));
+    await clickNext();
+
+    // Now we should be at the OpenSCAP step
+    await screen.findByRole('heading', { name: /OpenSCAP/i });
+
+    await user.click(
+      screen.getByRole('textbox', {
+        name: /select a profile/i,
+      })
+    );
+
+    await user.click(
+      await screen.findByText(
+        /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
+      )
+    );
+    // check that the FSC contains a /tmp partition
+    await clickNext();
+    await screen.findByRole('heading', { name: /File system configuration/i });
+    await screen.findByText(/tmp/i);
+
+    // check that the Packages contain a nftable package
+    await clickNext();
+
+    await screen.findByRole('heading', {
+      name: /Additional Red Hat packages/i,
+    });
+    await screen.findByText(/nftables/i);
+    await screen.findByText(/libselinux/i);
   });
 });
 
@@ -124,8 +166,9 @@ describe('On Recreate', () => {
   test('with oscap profile', async () => {
     const user = userEvent.setup();
     await setup();
-
-    await screen.findByRole('heading', { name: /review/i });
+    await screen.findByRole('button', {
+      name: /review/i,
+    });
     const createImageButton = await screen.findByRole('button', {
       name: /create image/i,
     });

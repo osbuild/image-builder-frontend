@@ -103,7 +103,8 @@ export const handlers = [
   rest.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
     (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(oscapCustomizations(req)));
+      const { profile } = req.params;
+      return res(ctx.status(200), ctx.json(oscapCustomizations(profile)));
     }
   ),
 ];
