@@ -15,7 +15,29 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 
 import StepTemplate from './stepTemplate';
 
+import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import CustomButtons from '../formComponents/CustomButtons';
+
+const ManageKeysButton = () => {
+  const { isProd } = useGetEnvironment();
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      icon={<ExternalLinkAltIcon />}
+      iconPosition="right"
+      isInline
+      href={
+        isProd()
+          ? 'https://console.redhat.com/insights/connector/activation-keys'
+          : 'https://console.stage.redhat.com/insights/connector/activation-keys'
+      }
+    >
+      Activation keys page
+    </Button>
+  );
+};
 
 const PopoverActivation = () => {
   const [orgId, setOrgId] = useState(null);
@@ -121,17 +143,7 @@ const registrationStep = {
         <span>
           By default, activation key is generated and preset for you. Admins can
           create and manage keys by visiting the&nbsp;
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href="https://console.redhat.com/insights/connector/activation-keys"
-          >
-            Activation keys page
-          </Button>
+          <ManageKeysButton />
         </span>
       ),
       condition: {
