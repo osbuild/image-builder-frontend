@@ -204,12 +204,13 @@ const Repositories = (props) => {
       : []
   );
 
+  const arch = getState().values?.arch;
   const release = getState().values?.release;
   const version = releaseToVersion(release);
 
   const firstRequest = useListRepositoriesQuery(
     {
-      availableForArch: 'x86_64',
+      availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
       origin: 'external',
@@ -229,7 +230,7 @@ const Repositories = (props) => {
   // Fetch *all* repositories if there are more than 100 so that typeahead filter works
   const followupRequest = useListRepositoriesQuery(
     {
-      availableForArch: 'x86_64',
+      availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
       origin: 'external',
