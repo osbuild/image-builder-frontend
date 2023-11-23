@@ -154,6 +154,10 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               {compose.id}
             </ClipboardCopy>
           </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
+          </DescriptionListDescription>
         </DescriptionListGroup>
         {options.share_with_sources?.[0] && (
           <DescriptionListGroup>
@@ -239,6 +243,10 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
               {compose.id}
             </ClipboardCopy>
           </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
+          </DescriptionListDescription>
         </DescriptionListGroup>
         {sourceId && (
           <DescriptionListGroup>
@@ -320,6 +328,10 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
               {compose.id}
             </ClipboardCopy>
           </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
+          </DescriptionListDescription>
         </DescriptionListGroup>
         {composeStatus?.image_status.status === 'success' && (
           <DescriptionListGroup>
@@ -395,6 +407,10 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
               {compose.id}
             </ClipboardCopy>
           </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
+          </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
       <br />
@@ -442,6 +458,10 @@ export const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
             >
               {compose.id}
             </ClipboardCopy>
+          </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
           </DescriptionListDescription>
         </DescriptionListGroup>
       </DescriptionList>
