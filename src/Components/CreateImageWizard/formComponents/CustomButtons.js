@@ -44,10 +44,11 @@ const CustomButtons = ({
       prefetchActivationKeys();
     }
     if (currentStep.id === 'wizard-systemconfiguration-packages') {
+      const arch = getState().values?.arch;
       const release = getState().values?.release;
       const version = releaseToVersion(release);
       prefetchRepositories({
-        availableForArch: 'x86_64',
+        availableForArch: arch,
         availableForVersion: version,
         contentType: 'rpm',
         origin: 'external',
