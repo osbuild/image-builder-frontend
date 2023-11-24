@@ -39,7 +39,7 @@
     "@redhat-cloud-services/frontend-components-config": "5.0.5",
     "@rtk-query/codegen-openapi": "1.0.0",
     "@testing-library/dom": "9.3.3",
-    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/jest-dom": "6.1.4",
     "@testing-library/react": "14.1.2",
     "@testing-library/user-event": "14.4.3",
     "@types/react": "18.2.36",

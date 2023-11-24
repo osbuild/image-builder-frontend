@@ -1,13 +1,12 @@
 import React from 'react';
 
-import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => false,
     isProd: () => true,

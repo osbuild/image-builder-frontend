@@ -1,7 +1,5 @@
 import React from 'react';
 
-import '@testing-library/jest-dom';
-
 import {
   screen,
   waitFor,
@@ -40,15 +38,7 @@ const routes = [
 
 let router = undefined;
 
-// Mocking getComposes is necessary because in many tests we call navigate()
-// to navigate to the images table (via useNavigate hook), which will in turn
-// result in a call to getComposes. If it is not mocked, tests fail due to MSW
-// being unable to resolve that endpoint.
-// jest
-//   .spyOn(api, 'getComposes')
-//   .mockImplementation(() => Promise.resolve(mockComposesEmpty));
-
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -67,9 +57,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.enable-content-sources' ? true : false
   ),
 }));
@@ -108,7 +98,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   router = undefined;
   server.resetHandlers();
 });
@@ -398,32 +388,6 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
-
-    // const composeImage = jest
-    //   .spyOn(api, 'composeImage')
-    //   .mockImplementation((body) => {
-    //     expect(body).toEqual({
-    //       distribution: RHEL_9,
-    //       image_name: undefined,
-    //       customizations: {
-    //         packages: undefined,
-    //       },
-    //       image_requests: [
-    //         {
-    //           architecture: 'x86_64',
-    //           image_type: 'aws',
-    //           upload_request: {
-    //             type: 'aws',
-    //             options: {
-    //               share_with_sources: ['123'],
-    //             },
-    //           },
-    //         },
-    //       ],
-    //     });
-    //     const id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
-    //     return Promise.resolve({ id });
-    //   });
 
     await user.click(screen.getByRole('button', { name: /Create/ }));
 
@@ -1253,136 +1217,6 @@ describe('Click through all steps', () => {
       'file-system-configuration-tbody-review'
     );
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
-
-    // // mock the backend API
-    // const ids = [];
-    // const composeImage = jest
-    //   .spyOn(api, 'composeImage')
-    //   .mockImplementation((body) => {
-    //     let id;
-    //     let expectedbody = {};
-    //     if (body.image_requests[0].upload_request.type === 'aws') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'aws',
-    //             upload_request: {
-    //               type: 'aws',
-    //               options: {
-    //                 share_with_accounts: ['012345678901'],
-    //               },
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f56';
-    //     } else if (body.image_requests[0].upload_request.type === 'gcp') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'gcp',
-    //             upload_request: {
-    //               type: 'gcp',
-    //               options: {
-    //                 share_with_accounts: ['user:test@test.com'],
-    //               },
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f57';
-    //     } else if (body.image_requests[0].upload_request.type === 'azure') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'azure',
-    //             upload_request: {
-    //               type: 'azure',
-    //               options: {
-    //                 tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-    //                 subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
-    //                 resource_group: 'testResourceGroup',
-    //               },
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f58';
-    //     } else if (body.image_requests[0].image_type === 'vsphere-ova') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'vsphere-ova',
-    //             upload_request: {
-    //               type: 'aws.s3',
-    //               options: {},
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f59';
-    //     } else if (body.image_requests[0].image_type === 'guest-image') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'guest-image',
-    //             upload_request: {
-    //               type: 'aws.s3',
-    //               options: {},
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5a';
-    //     } else if (body.image_requests[0].image_type === 'image-installer') {
-    //       expectedbody = {
-    //         distribution: RHEL_8,
-    //         image_name: 'my-image-name',
-    //         image_description: 'this is a perfect description for image',
-    //         image_requests: [
-    //           {
-    //             architecture: 'x86_64',
-    //             image_type: 'image-installer',
-    //             upload_request: {
-    //               type: 'aws.s3',
-    //               options: {},
-    //             },
-    //           },
-    //         ],
-    //         customizations: customizations,
-    //       };
-    //       id = 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b';
-    //     }
-    //     expect(body).toEqual(expectedbody);
-
-    //     ids.unshift(id);
-    //     return Promise.resolve({ id });
-    //   });
 
     await user.click(screen.getByRole('button', { name: /Create/ }));
 
