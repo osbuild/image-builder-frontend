@@ -125,10 +125,7 @@ const fileSystemConfigurationStep = {
         </TextContent>
       ),
       condition: {
-        or: [
-          { when: 'file-system-config-radio', is: 'automatic' },
-          { when: 'oscap-profile', is: undefined },
-        ],
+        or: [{ when: 'file-system-config-radio', is: 'automatic' }],
       },
     },
   ],
