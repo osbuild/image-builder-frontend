@@ -62,7 +62,7 @@
     "@babel/preset-react": "7.23.3",
     "@babel/preset-typescript": "7.23.3",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.3",
-    "@redhat-cloud-services/frontend-components-config": "5.0.5",
+    "@redhat-cloud-services/frontend-components-config": "6.0.5",
     "@rtk-query/codegen-openapi": "1.0.0",
     "@testing-library/dom": "9.3.3",
     "@testing-library/jest-dom": "6.1.4",
