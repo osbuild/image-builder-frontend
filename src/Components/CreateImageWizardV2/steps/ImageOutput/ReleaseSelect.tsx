@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useContext, useRef, useState } from 'react';
 
 import {
   Select,
@@ -17,17 +11,15 @@ import {
 import { RELEASES } from '../../../../constants';
 import { Distributions } from '../../../../store/imageBuilderApi';
 import isRhel from '../../../../Utilities/isRhel';
-
-type ReleaseSelectType = {
-  setRelease: Dispatch<SetStateAction<Distributions>>;
-  release: Distributions;
-};
+import { ImageWizardContext } from '../../ImageWizardContext';
 
 /**
  * Allows the user to choose the release they want to build.
  * Follows the PF5 pattern: https://www.patternfly.org/components/menus/select#view-more
  */
-const ReleaseSelect = ({ setRelease, release }: ReleaseSelectType) => {
+const ReleaseSelect = () => {
+  const { releaseState } = useContext(ImageWizardContext);
+  const [release, setRelease] = releaseState;
   // By default the component doesn't show the Centos releases and only the RHEL
   // ones. The user has the option to click on a button to make them appear.
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect } from 'react';
+import React, { Dispatch, SetStateAction } from 'react';
 
 import { extractProvisioningList } from '../../../../store/helpers';
 import {
@@ -60,7 +60,6 @@ type SourcesSelectPropType = {
   provider: 'aws' | 'azure' | 'gcp';
   selectedSource: [number, string];
   setSelectedSource: Dispatch<SetStateAction<[number, string]>>;
-  setFetchingError: Dispatch<SetStateAction<boolean>>;
 };
 
 /**
@@ -70,14 +69,12 @@ type SourcesSelectPropType = {
  * @param provider azure or aws depending on the context
  * @param selectedSource the source the user has selected from the select menue
  * @param setSelectedSource a function to update the selected source
- * @param setFetchingError a function to notify if accessing the data for the
  * source ended up in an error.
  */
 export const SourcesSelect = ({
   provider,
   selectedSource,
   setSelectedSource,
-  setFetchingError,
 }: SourcesSelectPropType) => {
   const {
     data: rawSources,
@@ -85,11 +82,6 @@ export const SourcesSelect = ({
     isError,
     refetch,
   } = useGetSourceListQuery({ provider: provider });
-  // If an error occurs during data acquisition, notify the parent component so
-  // that a customized error can get displayed.
-  useEffect(() => {
-    setFetchingError(isError);
-  }, [isError]);
 
   const sources =
     rawSources !== undefined ? extractProvisioningList(rawSources) : [];

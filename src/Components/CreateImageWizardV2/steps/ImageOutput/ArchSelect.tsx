@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent, SetStateAction } from 'react';
+import React, { FormEvent, useContext } from 'react';
 
 import {
   FormGroup,
@@ -7,17 +7,14 @@ import {
 } from '@patternfly/react-core';
 
 import { ARCHS } from '../../../../constants';
-import { ArchitectureItem } from '../../../../store/imageBuilderApi';
-
-type ArchSelectType = {
-  setArch: Dispatch<SetStateAction<ArchitectureItem['arch']>>;
-  arch: ArchitectureItem['arch'];
-};
+import { ImageWizardContext } from '../../ImageWizardContext';
 
 /**
  * Allows the user to pick the architecture to build
  */
-const ArchSelect = ({ setArch, arch }: ArchSelectType) => {
+const ArchSelect = () => {
+  const { architectureState } = useContext(ImageWizardContext);
+  const [arch, setArch] = architectureState;
   const onChange = (_event: FormEvent<HTMLSelectElement>, value: string) => {
     setArch(value);
   };

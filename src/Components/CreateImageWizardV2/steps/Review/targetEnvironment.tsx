@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 
 import {
   Text,
@@ -11,10 +11,8 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
-import {
-  GCPAccountTypes,
-  gcpAccountToString,
-} from '../TargetEnvironment/GCP/GCPTarget';
+import { ImageWizardContext } from '../../ImageWizardContext';
+import { gcpAccountToString } from '../TargetEnvironment/GCP/GCPTarget';
 
 const ExpirationWarning = () => {
   return (
@@ -24,17 +22,12 @@ const ExpirationWarning = () => {
   );
 };
 
-type TargetEnvAWSListPropTypes = {
-  manual: boolean;
-  accountId: string;
-  source: [number, string];
-};
-
-export const TargetEnvAWSList = ({
-  manual,
-  accountId,
-  source,
-}: TargetEnvAWSListPropTypes) => {
+export const TargetEnvAWSList = () => {
+  const { isAwsManualState, associatedAwsAccountIdState, awsSourceState } =
+    useContext(ImageWizardContext);
+  const [accountId] = associatedAwsAccountIdState;
+  const [source] = awsSourceState;
+  const [isManual] = isAwsManualState;
   return (
     <TextContent>
       <Text component={TextVariants.h3}>AWS</Text>
@@ -57,10 +50,10 @@ export const TargetEnvAWSList = ({
           {accountId}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
-          {!manual ? 'Source' : null}
+          {!isManual ? 'Source' : null}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {!manual && source[1]}
+          {!isManual && source[1]}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           Default region
@@ -74,17 +67,12 @@ export const TargetEnvAWSList = ({
   );
 };
 
-type TargetEnvGCPListPropTypes = {
-  accountType: GCPAccountTypes;
-  accountEmail: string;
-  domain: string;
-};
-
-export const TargetEnvGCPList = ({
-  accountType,
-  accountEmail,
-  domain,
-}: TargetEnvGCPListPropTypes) => {
+export const TargetEnvGCPList = () => {
+  const { gcpAccountTypeState, gcpAccountEmailState, gcpDomainState } =
+    useContext(ImageWizardContext);
+  const [accountType] = gcpAccountTypeState;
+  const [accountEmail] = gcpAccountEmailState;
+  const [domain] = gcpDomainState;
   return (
     <TextContent>
       <Text component={TextVariants.h3}>GCP</Text>
@@ -138,21 +126,19 @@ export const TargetEnvGCPList = ({
   );
 };
 
-type TargetEnvAzureListPropTypes = {
-  manual: boolean;
-  source: [number, string];
-  tenantId: string;
-  subscriptionId: string;
-  resourceGroup: string;
-};
-
-export const TargetEnvAzureList = ({
-  manual,
-  source,
-  tenantId,
-  subscriptionId,
-  resourceGroup,
-}: TargetEnvAzureListPropTypes) => {
+export const TargetEnvAzureList = () => {
+  const {
+    azureTenantIdState,
+    azureSourceState,
+    azureSubscriptionIdState,
+    azureResourceGroupState,
+    isAzureManualState,
+  } = useContext(ImageWizardContext);
+  const [tenantId] = azureTenantIdState;
+  const [subscriptionId] = azureSubscriptionIdState;
+  const [source] = azureSourceState;
+  const [resourceGroup] = azureResourceGroupState;
+  const [manual] = isAzureManualState;
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>

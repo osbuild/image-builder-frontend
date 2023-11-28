@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useContext } from 'react';
 
 import {
   Form,
@@ -16,6 +16,7 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 
 import ValidatedTextField from '../../../common/ValidatedTextField';
+import { ImageWizardContext } from '../../../ImageWizardContext';
 
 export type GCPAccountTypes =
   | 'googleAccount'
@@ -36,17 +37,6 @@ export const gcpAccountToString = (type: GCPAccountTypes) => {
   }
 };
 
-type GCPTargetPropTypes = {
-  shareGoogleAccount: boolean;
-  setShareGoogleAccount: Dispatch<SetStateAction<boolean>>;
-  accountType: GCPAccountTypes;
-  setAccountType: Dispatch<SetStateAction<GCPAccountTypes>>;
-  accountEmail: string;
-  setAccountEmail: Dispatch<SetStateAction<string>>;
-  domain: string;
-  setDomain: Dispatch<SetStateAction<string>>;
-};
-
 export const validateEmail = (email: string) => {
   return /^[a-z0-9._%+-]+@[a-z0-9.-]+.[a-z]{2,}$/.test(email);
 };
@@ -58,12 +48,17 @@ export const validateEmail = (email: string) => {
  * - the domain has some text if the user chose it
  * - the user only wants to share with insights
  */
-export const validateGCPData = (
-  shareGoogleAccount: boolean,
-  accountType: GCPAccountTypes,
-  email: string,
-  domain: string
-) => {
+export const ValidateGCPStep = () => {
+  const {
+    isShareGoogleAccountState,
+    gcpAccountTypeState,
+    gcpAccountEmailState,
+    gcpDomainState,
+  } = useContext(ImageWizardContext);
+  const [shareGoogleAccount] = isShareGoogleAccountState;
+  const [accountType] = gcpAccountTypeState;
+  const [email] = gcpAccountEmailState;
+  const [domain] = gcpDomainState;
   if (shareGoogleAccount) {
     if (accountType !== 'domain') {
       return validateEmail(email);
@@ -124,32 +119,17 @@ const AccountTypePopoverInfo = () => {
   );
 };
 
-/**
- * Component to display the available customization for sharing on google cloud
- * platform.
- *
- * @param shareGoogleAccount is set to true is the data is shared with a google
- * account, false if only shared with insights.
- * @param setShareGoogleAccount a function to update shareGoogleAccount
- * @param accountType the type of google account to share with (see the propType
- * for more details
- * @param setAccountType a function to update the accountType
- * @param accountEmail the account email, if the type if a google/service
- * account or a google group
- * @param setAccountEmail a function to update the account email
- * @param domain if the account type is domain, domain must be filled up
- * @param setDomain a function to update the domain
- */
-const GCPTarget = ({
-  shareGoogleAccount,
-  setShareGoogleAccount,
-  accountType,
-  setAccountType,
-  accountEmail,
-  setAccountEmail,
-  domain,
-  setDomain,
-}: GCPTargetPropTypes) => {
+const GCPTarget = () => {
+  const {
+    gcpAccountTypeState,
+    gcpAccountEmailState,
+    gcpDomainState,
+    isShareGoogleAccountState,
+  } = useContext(ImageWizardContext);
+  const [accountType, setAccountType] = gcpAccountTypeState;
+  const [accountEmail, setAccountEmail] = gcpAccountEmailState;
+  const [domain, setDomain] = gcpDomainState;
+  const [shareGoogleAccount, setShareGoogleAccount] = isShareGoogleAccountState;
   const clearState = () => {
     // resets when the user switches from sharing to a google account or insights,
     setAccountType('googleAccount');

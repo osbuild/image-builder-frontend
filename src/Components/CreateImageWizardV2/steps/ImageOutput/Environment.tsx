@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction } from 'react';
+import React, { useContext } from 'react';
 
 import {
   Checkbox,
@@ -19,6 +19,7 @@ import {
 } from '../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../store/provisioningApi';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { ImageWizardContext } from '../../ImageWizardContext';
 
 type useGetAllowedTargetsPropType = {
   architecture: ArchitectureItem['arch'];
@@ -113,26 +114,23 @@ export const filterEnvironment = (
  * authorized set to true
  * @param env the environment to scan
  */
-export const hasUserSelectedAtLeastOneEnv = (
-  env: EnvironmentStateType
-): boolean => {
+export const ValidateImageOutputStep = (): boolean => {
   let atLeastOne = false;
-  Object.values(env).forEach(({ selected, authorized }) => {
+  const { environmentState } = useContext(ImageWizardContext);
+  const [environment] = environmentState;
+  Object.values(environment).forEach(({ selected, authorized }) => {
     atLeastOne = atLeastOne || (selected && authorized);
   });
   return atLeastOne;
-};
-
-type EnvironmentPropType = {
-  environment: EnvironmentStateType;
-  setEnvironment: Dispatch<SetStateAction<EnvironmentStateType>>;
 };
 
 /**
  * Displays a component that allows the user to pick the target they want
  * to build on.
  */
-const Environment = ({ setEnvironment, environment }: EnvironmentPropType) => {
+const Environment = () => {
+  const { environmentState } = useContext(ImageWizardContext);
+  const [environment, setEnvironment] = environmentState;
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const { isBeta } = useGetEnvironment();
 

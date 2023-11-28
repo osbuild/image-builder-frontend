@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useContext } from 'react';
 
 import {
   Alert,
@@ -16,8 +16,10 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { DEFAULT_AWS_REGION } from '../../../../../constants';
+import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import ValidatedTextField from '../../../common/ValidatedTextField';
-import { SourcesSelect } from '../SourcesSelect';
+import { ImageWizardContext } from '../../../ImageWizardContext';
+import { SourcesSelect, useGetAccountData } from '../SourcesSelect';
 
 const SourcesButton = () => {
   return (
@@ -35,44 +37,30 @@ const SourcesButton = () => {
   );
 };
 
-export const validateAWSAccountID = (accountId: string) => {
+export const ValidateAWSStep = (): boolean => {
+  const { associatedAwsAccountIdState } = useContext(ImageWizardContext);
+  const [associatedAccountId] = associatedAwsAccountIdState;
+  return validateAWSAccountID(associatedAccountId);
+};
+
+const validateAWSAccountID = (accountId: string) => {
   return /^\d+$/.test(accountId) && accountId.length === 12;
 };
 
-type AWSTargetPropTypes = {
-  manual: boolean;
-  setManual: Dispatch<SetStateAction<boolean>>;
-  associatedAccountId: string;
-  setAssociatedAccountId: Dispatch<SetStateAction<string>>;
-  source: [number, string];
-  setSource: Dispatch<SetStateAction<[number, string]>>;
-  isErrorFetchingDetails: boolean;
-};
-
-/**
- * Component to display the configuration form for the user to enter their aws
- * account ID.
- *
- * @param manual shall the user enter the account ID manually if set to true or
- * go use the sources if set to false
- * @param setManual function to update the `manual` value
- * @param associatedAccountId the account ID either computed via the
- * selectedSourceId or manually entered by the user
- * @param setAssociatedAccountId a function to update the associatedAccountId
- * @param selectedSource the source the user has selected
- * @param setSelectedSource a function to update selectedSource
- * @param isErrorDetails shall be set to true if the associatedAccountId
- * couldn't get retrieved from the selectedSourceId
- */
-const AWSTarget = ({
-  manual,
-  setManual,
-  associatedAccountId,
-  setAssociatedAccountId,
-  source,
-  setSource,
-  isErrorFetchingDetails,
-}: AWSTargetPropTypes) => {
+const AWSTarget = () => {
+  const { isAwsManualState, associatedAwsAccountIdState, awsSourceState } =
+    useContext(ImageWizardContext);
+  const [associatedAccountId, setAssociatedAccountId] =
+    associatedAwsAccountIdState;
+  const [source, setSource] = awsSourceState;
+  const [isManual, setIsManual] = isAwsManualState;
+  const { isError: isErrorFetchingDetails } = useGetAccountData(
+    source[0],
+    'aws'
+  );
+  const { isError: isErrorFetchingSources } = useGetSourceListQuery({
+    provider: 'aws',
+  });
   const clearAwsTarget = () => {
     // reset the selected source state so the UI doesn't keep
     // previously entered data when the user goes back to their
@@ -80,7 +68,6 @@ const AWSTarget = ({
     setAssociatedAccountId('');
     setSource([0, '']);
   };
-  const [isErrorFetchingSources, setIsErrorFetchingSources] = useState(false);
   return (
     <>
       <Form>
@@ -102,10 +89,10 @@ const AWSTarget = ({
             id="aws-from-sources"
             label="Use an account configured from Sources."
             description="Use a configured source to launch environments directly from the console."
-            checked={!manual}
-            isChecked={!manual}
+            checked={!isManual}
+            isChecked={!isManual}
             onClick={() => {
-              setManual(false);
+              setIsManual(false);
               clearAwsTarget();
             }}
           />
@@ -113,21 +100,20 @@ const AWSTarget = ({
             name="aws-from-manual"
             id="aws-from-manual"
             label="Manually enter an account ID."
-            checked={manual}
-            isChecked={manual}
+            checked={isManual}
+            isChecked={isManual}
             onClick={() => {
-              setManual(true);
+              setIsManual(true);
               clearAwsTarget();
             }}
           />
         </FormGroup>
-        {!manual && (
+        {!isManual && (
           <>
             <SourcesSelect
               provider="aws"
               selectedSource={source}
               setSelectedSource={setSource}
-              setFetchingError={setIsErrorFetchingSources}
             />
             <>
               {isErrorFetchingSources && (
@@ -158,7 +144,7 @@ const AWSTarget = ({
             <SourcesButton />
           </>
         )}
-        {manual && (
+        {isManual && (
           <ValidatedTextField
             aria="AWS account ID"
             label="AWS account ID"
@@ -187,7 +173,7 @@ const AWSTarget = ({
               </HelperText>
             </FormGroup>
           </GalleryItem>
-          {!manual && (
+          {!isManual && (
             <GalleryItem>
               <FormGroup label="Associated Account ID" isRequired>
                 <TextInput

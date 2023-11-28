@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 
 import {
   ExpandableSection,
@@ -18,46 +18,11 @@ import {
   TargetEnvOtherList,
 } from './targetEnvironment';
 
-import {
-  ArchitectureItem,
-  Distributions,
-} from '../../../../store/imageBuilderApi';
-import { EnvironmentStateType } from '../ImageOutput/Environment';
-import { GCPAccountTypes } from '../TargetEnvironment/GCP/GCPTarget';
+import { ImageWizardContext } from '../../ImageWizardContext';
 
-type ReviewStepPropTypes = {
-  release: Distributions;
-  arch: ArchitectureItem['arch'];
-  environment: EnvironmentStateType;
-  awsManual: boolean;
-  awsAccountId: string;
-  awsSource: [number, string];
-  gcpAccountType: GCPAccountTypes;
-  gcpAccountEmail: string;
-  gcpDomain: string;
-  azureManual: boolean;
-  azureSource: [number, string];
-  azureTenantId: string;
-  azureSubscriptionId: string;
-  azureResourceGroup: string;
-};
-
-const ReviewStep = ({
-  release,
-  arch,
-  environment,
-  awsManual,
-  awsAccountId,
-  awsSource,
-  gcpAccountType,
-  gcpAccountEmail,
-  gcpDomain,
-  azureManual,
-  azureSource,
-  azureTenantId,
-  azureSubscriptionId,
-  azureResourceGroup,
-}: ReviewStepPropTypes) => {
+const ReviewStep = () => {
+  const { environmentState } = useContext(ImageWizardContext);
+  const [environment] = environmentState;
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(false);
 
@@ -78,7 +43,7 @@ const ReviewStep = ({
           isIndented
           data-testid="image-output-expandable"
         >
-          <ImageOutputList release={release} arch={arch} />
+          <ImageOutputList />
         </ExpandableSection>
         <ExpandableSection
           toggleContent={'Target environments'}
@@ -90,27 +55,13 @@ const ReviewStep = ({
           data-testid="target-environments-expandable"
         >
           {environment.aws.selected && environment.aws.authorized && (
-            <TargetEnvAWSList
-              manual={awsManual}
-              accountId={awsAccountId}
-              source={awsSource}
-            />
+            <TargetEnvAWSList />
           )}
           {environment.gcp.selected && environment.gcp.authorized && (
-            <TargetEnvGCPList
-              accountType={gcpAccountType}
-              accountEmail={gcpAccountEmail}
-              domain={gcpDomain}
-            />
+            <TargetEnvGCPList />
           )}
           {environment.azure.selected && environment.azure.authorized && (
-            <TargetEnvAzureList
-              manual={azureManual}
-              source={azureSource}
-              tenantId={azureTenantId}
-              subscriptionId={azureSubscriptionId}
-              resourceGroup={azureResourceGroup}
-            />
+            <TargetEnvAzureList />
           )}
           {environment.oci.selected && environment.oci.authorized && (
             <TargetEnvOciList />

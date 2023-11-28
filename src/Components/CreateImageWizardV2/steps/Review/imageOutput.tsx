@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 
 import {
   TextContent,
@@ -9,20 +9,12 @@ import {
 } from '@patternfly/react-core';
 
 import { RELEASES } from '../../../../constants';
-import {
-  ArchitectureItem,
-  Distributions,
-} from '../../../../store/imageBuilderApi';
+import { ImageWizardContext } from '../../ImageWizardContext';
 
-type ImageOutputListPropTypes = {
-  release: Distributions;
-  arch: ArchitectureItem['arch'];
-};
-
-export const ImageOutputList = ({
-  release,
-  arch,
-}: ImageOutputListPropTypes) => {
+export const ImageOutputList = () => {
+  const { releaseState, architectureState } = useContext(ImageWizardContext);
+  const [release] = releaseState;
+  const [arch] = architectureState;
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>

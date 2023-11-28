@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useContext } from 'react';
 
 import {
   Alert,
@@ -15,9 +15,11 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import TypeAheadSelect from '../../../common/TypeAheadSelect';
 import ValidatedTextField from '../../../common/ValidatedTextField';
-import { SourcesSelect } from '../SourcesSelect';
+import { ImageWizardContext } from '../../../ImageWizardContext';
+import { SourcesSelect, useGetAccountData } from '../SourcesSelect';
 
 type AzureAuthButtonPropTypes = {
   tenantId: string;
@@ -60,69 +62,48 @@ const SourcesButton = () => {
   );
 };
 
-export const validateAzureId = (value: string) => {
+export const ValidateAzureStep = () => {
+  const {
+    azureTenantIdState,
+    azureSubscriptionIdState,
+    azureResourceGroupState,
+  } = useContext(ImageWizardContext);
+  const [tenantId] = azureTenantIdState;
+  const [subId] = azureSubscriptionIdState;
+  const [resourceGroup] = azureResourceGroupState;
+  return validateAzureId(tenantId) && validateAzureId(subId) && resourceGroup;
+};
+
+const validateAzureId = (value: string) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
     value
   );
 };
 
-export const validateResourceGroup = (value: string) => {
+const validateResourceGroup = (value: string) => {
   return /^[-\w._()]+[-\w_()]$/.test(value);
 };
 
-type AzureTargetPropTypes = {
-  manual: boolean;
-  setManual: Dispatch<SetStateAction<boolean>>;
-  isErrorFetchingDetails: boolean;
-  source: [number, string];
-  setSource: Dispatch<SetStateAction<[number, string]>>;
-  subscriptionId: string;
-  setSubscriptionId: Dispatch<SetStateAction<string>>;
-  tenantId: string;
-  setTenantId: Dispatch<SetStateAction<string>>;
-  resourceGroup: string;
-  setResourceGroup: Dispatch<SetStateAction<string>>;
-  resourceGroups: string[];
-};
-
-/**
- * Component that enables the user to enter the necessary information to upload
- * to azure.
- * @param manual set to true if the user will enter the information manually, set to
- * false if they are fetched from the sources
- * @param setManual a function to update the `manual` value
- * @param source if not in manual mode holds the selected source by
- * the user.
- * @param setsource a function to update the sourceId
- * @param tenantId a value either computed via the sources if a sourceId
- * was selected or manually entered by the user
- * @param setTenantId a function to update the tenantId
- * @param subscriptionId a value either computed via the sources if a sourceId
- * was selected or manually entered by the user
- * @param setSubscriptionId a function to update the subscriptionId
- * @param resourceGroup holds a resource group the user either selected
- * in a set of possibilities or entered manually
- * @param setResourceGroup a function to update the
- * ResourceGroup
- * @param resourceGroups a list of resource groups computed via the sources if a
- * sourceId was selected that contains choices for the user to select
- * the resourceGroup.
- */
-const AzureTarget = ({
-  manual,
-  setManual,
-  isErrorFetchingDetails,
-  source,
-  setSource,
-  tenantId,
-  setTenantId,
-  subscriptionId,
-  setSubscriptionId,
-  resourceGroup,
-  setResourceGroup,
-  resourceGroups,
-}: AzureTargetPropTypes) => {
-  const [isErrorFetchingSources, setIsErrorFetchingSources] = useState(false);
+const AzureTarget = () => {
+  const {
+    azureSourceState,
+    azureTenantIdState,
+    azureResourceGroupState,
+    azureSubscriptionIdState,
+    isAzureManualState,
+  } = useContext(ImageWizardContext);
+  const [source, setSource] = azureSourceState;
+  const [tenantId, setTenantId] = azureTenantIdState;
+  const [resourceGroup, setResourceGroup] = azureResourceGroupState;
+  const [subscriptionId, setSubscriptionId] = azureSubscriptionIdState;
+  const [isManual, setIsManual] = isAzureManualState;
+  const { isError: isErrorFetchingDetails, resourceGroups } = useGetAccountData(
+    source[0],
+    'azure'
+  );
+  const { isError: isErrorFetchingSources } = useGetSourceListQuery({
+    provider: 'azure',
+  });
   const clearState = () => {
     // when the user switches from manual to automatic, reset everything
     setSource([0, '']);
@@ -169,10 +150,10 @@ const AzureTarget = ({
             description={
               'Use a configured source to launch environments directly from the console.'
             }
-            checked={!manual}
-            isChecked={!manual}
+            checked={!isManual}
+            isChecked={!isManual}
             onClick={() => {
-              setManual(false);
+              setIsManual(false);
               clearState();
             }}
           />
@@ -180,21 +161,20 @@ const AzureTarget = ({
             name="azure-share-manual"
             id="azure-share-manual"
             label="Manually enter the account information."
-            checked={manual}
-            isChecked={manual}
+            checked={isManual}
+            isChecked={isManual}
             onClick={() => {
-              setManual(true);
+              setIsManual(true);
               clearState();
             }}
           />
         </FormGroup>
-        {!manual && (
+        {!isManual && (
           <>
             <SourcesSelect
               provider="azure"
               selectedSource={source}
               setSelectedSource={setSource}
-              setFetchingError={setIsErrorFetchingSources}
             />
             <>
               {isErrorFetchingSources && (
@@ -224,7 +204,7 @@ const AzureTarget = ({
             <SourcesButton />
           </>
         )}
-        {!manual && (
+        {!isManual && (
           <>
             <Gallery hasGutter>
               <GalleryItem>
@@ -262,7 +242,7 @@ const AzureTarget = ({
             </FormGroup>
           </>
         )}
-        {manual && (
+        {isManual && (
           <>
             <ValidatedTextField
               aria="Azure tenant id"
