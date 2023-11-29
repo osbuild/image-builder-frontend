@@ -125,7 +125,8 @@ const fileSystemConfigurationStep = {
         </TextContent>
       ),
       condition: {
-        or: [{ when: 'file-system-config-radio', is: 'automatic' }],
+        when: 'file-system-config-radio',
+        is: 'automatic',
       },
     },
   ],
