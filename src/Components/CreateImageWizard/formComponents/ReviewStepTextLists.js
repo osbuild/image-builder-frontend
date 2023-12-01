@@ -19,6 +19,7 @@ import PropTypes from 'prop-types';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import { AwsAccountId } from './AwsAccountId';
+import ReleaseLifecycle from './ReleaseLifecycle';
 import {
   FSReviewTable,
   PackagesTable,
@@ -44,6 +45,7 @@ export const ImageOutputList = () => {
   const { getState } = useFormApi();
   return (
     <TextContent>
+      <ReleaseLifecycle />
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
