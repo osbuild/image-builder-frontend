@@ -209,6 +209,7 @@ export type Distributions =
   | "fedora-38"
   | "fedora-39"
   | "fedora-40";
+export type ClientId = "api" | "ui";
 export type ImageTypes =
   | "aws"
   | "azure"
@@ -294,6 +295,8 @@ export type CustomRepository = {
 };
 export type OpenScap = {
   profile_id: string;
+  profile_name?: string;
+  profile_description?: string;
 };
 export type Filesystem = {
   mountpoint: string;
@@ -317,7 +320,7 @@ export type ComposeRequest = {
   distribution: Distributions;
   image_name?: string;
   image_description?: string;
-  client_id?: string;
+  client_id?: ClientId;
   image_requests: ImageRequest[];
   customizations?: Customizations;
 };
@@ -326,7 +329,7 @@ export type ComposesResponseItem = {
   request: ComposeRequest;
   created_at: string;
   image_name?: string;
-  client_id?: string;
+  client_id?: ClientId;
 };
 export type ComposesResponse = {
   meta: {
