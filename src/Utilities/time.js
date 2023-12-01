@@ -38,3 +38,12 @@ export const computeHoursToExpiration = (imageCreatedAt) => {
     return 0;
   }
 };
+
+export const toMonthAndYear = (dateString) => {
+  const options = {
+    year: 'numeric',
+    month: 'long',
+  };
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', options);
+};
