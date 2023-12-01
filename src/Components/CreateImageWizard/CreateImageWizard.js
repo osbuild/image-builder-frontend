@@ -128,7 +128,7 @@ const onSave = (values) => {
 
   if (values['target-environment']?.gcp) {
     let share = '';
-    if (values['image_sharing'] === 'gcp-account') {
+    if (values['image-sharing'] === 'gcp-account') {
       switch (values['google-account-type']) {
         case 'googleAccount':
           share = `user:${values['google-email']}`;
@@ -165,7 +165,9 @@ const onSave = (values) => {
     };
 
     if (share !== '') {
-      request.options = [share];
+      request.image_requests[0].upload_request.options.share_with_accounts = [
+        share,
+      ];
     }
     requests.push(request);
   }
