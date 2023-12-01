@@ -3,6 +3,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import {
+  act,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -11,9 +12,15 @@ import {
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
+import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { PROVISIONING_API, RHSM_API } from '../../../constants.js';
+import {
+  IMAGE_BUILDER_API,
+  PROVISIONING_API,
+  RHEL_8,
+  RHSM_API,
+} from '../../../constants.js';
 import { server } from '../../mocks/server.js';
 import {
   clickBack,
@@ -1040,7 +1047,7 @@ describe('Click through all steps', () => {
 
     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
 
-    await user.click(await screen.findByTestId('image-sharing'));
+    await user.click(await screen.findByTestId('account-sharing'));
     await clickNext();
 
     await user.click(screen.getByTestId('azure-radio-manual'));
@@ -1213,7 +1220,205 @@ describe('Click through all steps', () => {
     );
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
+    // mock the backend API
+    const payload_repos = [
+      {
+        baseurl: 'http://yum.theforeman.org/releases/3.4/el8/x86_64/',
+        check_gpg: true,
+        check_repo_gpg: false,
+        gpgkey:
+          '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
+        rhsm: false,
+      },
+      {
+        baseurl:
+          'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+        check_gpg: false,
+        rhsm: false,
+      },
+    ];
+
+    const custom_repos = [
+      {
+        baseurl: ['http://yum.theforeman.org/releases/3.4/el8/x86_64/'],
+        check_gpg: true,
+        check_repo_gpg: false,
+        gpgkey: [
+          '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
+        ],
+        id: 'dbad4dfc-1547-45f8-b5af-1d7fec0476c6',
+        name: '13lk3',
+      },
+      {
+        baseurl: [
+          'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+        ],
+        check_gpg: false,
+        id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
+        name: '2lmdtj',
+      },
+    ];
+
+    const cust = {
+      filesystem: [
+        {
+          mountpoint: '/',
+          min_size: 10737418240,
+        },
+        {
+          mountpoint: '/home',
+          min_size: 1073741824,
+        },
+        {
+          mountpoint: '/var/tmp',
+          min_size: 104857600,
+        },
+      ],
+      custom_repositories: custom_repos,
+      payload_repositories: payload_repos,
+      packages: ['test'],
+      subscription: {
+        'activation-key': 'name0',
+        insights: true,
+        rhc: true,
+        organization: 5,
+        'server-url': 'subscription.rhsm.redhat.com',
+        'base-url': 'https://cdn.redhat.com/',
+      },
+    };
+
+    const expectedComposeReqs = {
+      aws: {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['012345678901'],
+              },
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+      gcp: {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'gcp',
+            upload_request: {
+              type: 'gcp',
+              options: {
+                share_with_accounts: ['user:test@test.com'],
+              },
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+      azure: {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'azure',
+            upload_request: {
+              type: 'azure',
+              options: {
+                tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+                subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
+                resource_group: 'testResourceGroup',
+              },
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+      'vsphere-ova': {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'vsphere-ova',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+      'guest-image': {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'guest-image',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+      'image-installer': {
+        distribution: RHEL_8,
+        image_name: 'my-image-name',
+        image_description: 'this is a perfect description for image',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'image-installer',
+            upload_request: {
+              type: 'aws.s3',
+              options: {},
+            },
+          },
+        ],
+        client_id: 'ui',
+        customizations: cust,
+      },
+    };
+
+    let timesCalled = 0;
+    const receivedComposeReqs = {};
+
+    server.use(
+      rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
+        timesCalled += 1;
+        receivedComposeReqs[req.body.image_requests[0].image_type] = req.body;
+        return res(
+          ctx.status(201),
+          ctx.json({
+            id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b',
+          })
+        );
+      })
+    );
     await user.click(screen.getByRole('button', { name: /Create/ }));
+
+    expect(receivedComposeReqs).toEqual(expectedComposeReqs);
+    expect(timesCalled).toEqual(6);
 
     // returns back to the landing page
     await waitFor(() =>
