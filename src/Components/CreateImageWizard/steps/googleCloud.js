@@ -131,7 +131,7 @@ const googleCloudStep = {
         },
         {
           label: 'Share image with Red Hat Insights only',
-          'data-testid': 'image-sharing',
+          'data-testid': 'insights-only-sharing',
           description: (
             <p>
               Your image will be uploaded to GCP and shared with Red Hat
