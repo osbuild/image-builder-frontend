@@ -3,6 +3,16 @@ import failOnConsole from 'jest-fail-on-console';
 
 import { server } from './mocks/server';
 
+// ResizeObserver is needed for responsive Chart.js charts.
+// As it's not defined in jsdom it needs to be mocked or polyfilled
+// Following is the minimal mock implementation needed for
+// the tests to run correctly
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
 // or with options:
 failOnConsole({
   shouldFailOnWarn: false,
