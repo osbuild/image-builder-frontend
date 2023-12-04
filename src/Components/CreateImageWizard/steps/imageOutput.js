@@ -44,6 +44,11 @@ const imageOutputStep = {
       ],
     },
     {
+      component: 'image-output-release-lifecycle',
+      label: 'Release lifecycle',
+      name: 'release-lifecycle',
+    },
+    {
       component: 'image-output-arch-select',
       label: 'Architecture',
       name: 'arch',

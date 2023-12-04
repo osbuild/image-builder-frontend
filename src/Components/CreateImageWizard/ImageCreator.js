@@ -25,6 +25,7 @@ import {
 import RadioWithPopover from './formComponents/RadioWithPopover';
 import Registration from './formComponents/Registration';
 import RegistrationKeyInformation from './formComponents/RegistrationKeyInformation';
+import ReleaseLifecycle from './formComponents/ReleaseLifecycle';
 import Repositories from './formComponents/Repositories';
 import Review from './formComponents/ReviewStep';
 import TargetEnvironment from './formComponents/TargetEnvironment';
@@ -76,6 +77,7 @@ const ImageCreator = ({
         'gallery-layout': GalleryLayout,
         'oscap-profile-selector': Oscap,
         'image-output-arch-select': ArchSelect,
+        'image-output-release-lifecycle': ReleaseLifecycle,
         registration: Registration,
         ...customComponentMapper,
       }}
