@@ -361,7 +361,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
             data-testid="checkbox-image-installer"
           />
         )}
-        {allowedTargets.includes('wsl') && isBeta && (
+        {allowedTargets.includes('wsl') && isBeta() && (
           <Checkbox
             label="WSL - Windows Subsystem for Linux (.tar.gz)"
             isChecked={environment['wsl']}
