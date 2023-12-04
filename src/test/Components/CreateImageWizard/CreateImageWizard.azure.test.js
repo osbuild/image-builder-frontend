@@ -194,7 +194,7 @@ describe('Step Upload to Azure', () => {
   }, 10000);
 
   test('handles change of selected Source', async () => {
-    setUp();
+    await setUp();
 
     const sourceDropdown = await getSourceDropdown();
 
@@ -237,7 +237,7 @@ describe('Step Upload to Azure', () => {
       )
     );
 
-    setUp();
+    await setUp();
 
     await screen.findByText(
       /Sources cannot be reached, try again later or enter an account info for upload manually\./i
