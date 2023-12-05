@@ -1184,7 +1184,7 @@ describe('Click through all steps', () => {
     await user.click(targetEnvironmentsExpandable);
     await screen.findAllByText('AWS');
     await screen.findAllByText('GCP');
-    await screen.findByText('VMWare vSphere (.ova)');
+    await screen.findByText('VMware vSphere (.ova)');
     await screen.findByText('Virtualization - Guest image (.qcow2)');
     await screen.findByText('Bare metal - Installer (.iso)');
 

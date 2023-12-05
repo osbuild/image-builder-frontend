@@ -243,15 +243,15 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           data-testid="target-private"
         >
           <Checkbox
-            label="VMWare vSphere"
+            label="VMware vSphere"
             isChecked={environment.vsphere || environment['vsphere-ova']}
             onChange={(_event, checked) => {
               handleSetEnvironment('vsphere-ova', checked);
               handleSetEnvironment('vsphere', false);
             }}
-            aria-label="VMWare checkbox"
+            aria-label="VMware checkbox"
             id="checkbox-vmware"
-            name="VMWare"
+            name="VMware"
             data-testid="checkbox-vmware"
           />
         </FormGroup>
@@ -264,7 +264,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           {allowedTargets.includes('vsphere-ova') && (
             <Radio
               name="vsphere-radio"
-              aria-label="VMWare vSphere radio button OVA"
+              aria-label="VMware vSphere radio button OVA"
               id="vsphere-radio-ova"
               label={
                 <>
@@ -276,7 +276,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
                       <TextContent>
                         <Text>
                           An OVA file is a virtual appliance used by
-                          virtualization platforms such as VMWare vSphere. It is
+                          virtualization platforms such as VMware vSphere. It is
                           a package that contains files used to describe a
                           virtual machine, which includes a VMDK image, OVF
                           descriptor file and a manifest file.
@@ -299,7 +299,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
           <Radio
             className="pf-u-mt-sm"
             name="vsphere-radio"
-            aria-label="VMWare vSphere radio button VMDK"
+            aria-label="VMware vSphere radio button VMDK"
             id="vsphere-radio-vmdk"
             label={
               <>
