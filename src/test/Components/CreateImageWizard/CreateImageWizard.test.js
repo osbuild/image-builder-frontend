@@ -197,10 +197,10 @@ describe('Step Image output', () => {
     await user.click(releaseMenu);
 
     await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 8',
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
     });
     await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 9',
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
@@ -223,10 +223,10 @@ describe('Step Image output', () => {
     await user.click(showOptionsButton);
 
     await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 8',
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
     });
     await screen.findByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 9',
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('option', {
       name: 'CentOS Stream 8',
@@ -1025,7 +1025,7 @@ describe('Click through all steps', () => {
     })[0];
     await user.click(releaseMenu);
     const releaseOption = screen.getByRole('option', {
-      name: 'Red Hat Enterprise Linux (RHEL) 8',
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
     });
     await user.click(releaseOption);
 

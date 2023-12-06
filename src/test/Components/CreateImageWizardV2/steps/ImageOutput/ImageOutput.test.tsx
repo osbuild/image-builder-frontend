@@ -83,12 +83,12 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
     // select rhel8
     const releaseMenu = screen.getAllByRole('button', {
-      name: 'Red Hat Enterprise Linux (RHEL) 9',
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     })[0];
     await user.click(releaseMenu);
     await user.click(
       await screen.findByRole('option', {
-        name: 'Red Hat Enterprise Linux (RHEL) 8',
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
 
@@ -166,12 +166,12 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
     // select rhel8
     const releaseMenu = screen.getAllByRole('button', {
-      name: 'Red Hat Enterprise Linux (RHEL) 9',
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     })[0];
     await user.click(releaseMenu);
     await user.click(
       await screen.findByRole('option', {
-        name: 'Red Hat Enterprise Linux (RHEL) 8',
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
 
