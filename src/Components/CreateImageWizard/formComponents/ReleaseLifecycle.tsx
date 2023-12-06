@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Chart, registerables } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
 
 import {
@@ -26,7 +27,10 @@ import {
 import 'chartjs-adapter-moment';
 import { toMonthAndYear } from '../../../Utilities/time';
 
+Chart.register(annotationPlugin);
 Chart.register(...registerables);
+
+const currentDate = new Date().toString();
 
 export const chartMajorVersionCfg = {
   data: {
@@ -86,6 +90,18 @@ export const chartMajorVersionCfg = {
       },
       legend: {
         position: 'bottom' as const,
+      },
+      annotation: {
+        annotations: {
+          today: {
+            type: 'line' as const,
+            xMin: currentDate,
+            xMax: currentDate,
+            borderColor: 'black',
+            borderWidth: 2,
+            borderDash: [8, 2],
+          },
+        },
       },
     },
   },
