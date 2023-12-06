@@ -11,8 +11,17 @@ import {
 } from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
 
-import { RELEASES } from '../../../constants';
+import {
+  RELEASES,
+  RHEL_8,
+  RHEL_8_FULL_SUPPORT,
+  RHEL_8_MAINTENANCE_SUPPORT,
+  RHEL_9,
+  RHEL_9_FULL_SUPPORT,
+  RHEL_9_MAINTENANCE_SUPPORT,
+} from '../../../constants';
 import isRhel from '../../../Utilities/isRhel';
+import { toMonthAndYear } from '../../../Utilities/time';
 
 const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
   const { change, getState } = useFormApi();
@@ -29,6 +38,25 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
     setShowDevelopmentOptions(true);
   };
 
+  const setDescription = (key) => {
+    let fullSupportEnd = '';
+    let maintenanceSupportEnd = '';
+
+    if (key === RHEL_8) {
+      fullSupportEnd = toMonthAndYear(RHEL_8_FULL_SUPPORT[1]);
+      maintenanceSupportEnd = toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[1]);
+    }
+
+    if (key === RHEL_9) {
+      fullSupportEnd = toMonthAndYear(RHEL_9_FULL_SUPPORT[1]);
+      maintenanceSupportEnd = toMonthAndYear(RHEL_9_MAINTENANCE_SUPPORT[1]);
+    }
+
+    if (isRhel(key)) {
+      return `Full support ends: ${fullSupportEnd} | Maintenance support ends: ${maintenanceSupportEnd}`;
+    }
+  };
+
   const setSelectOptions = () => {
     var options = [];
     const filteredRhel = new Map(
@@ -43,7 +71,7 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
 
     filteredRhel.forEach((value, key) => {
       options.push(
-        <SelectOption key={value} value={key}>
+        <SelectOption key={value} value={key} description={setDescription(key)}>
           {RELEASES.get(key)}
         </SelectOption>
       );
