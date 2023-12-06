@@ -96,7 +96,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(releaseMenu);
     await user.click(
       screen.getByRole('option', {
-        name: 'Red Hat Enterprise Linux (RHEL) 8',
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
 
@@ -185,7 +185,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(releaseMenu);
     await user.click(
       screen.getByRole('option', {
-        name: 'Red Hat Enterprise Linux (RHEL) 8',
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
 
