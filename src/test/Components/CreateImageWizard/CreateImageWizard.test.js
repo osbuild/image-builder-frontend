@@ -240,6 +240,35 @@ describe('Step Image output', () => {
     await user.click(releaseMenu);
   });
 
+  test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
+    await setUp();
+
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    await user.click(releaseMenu);
+
+    await user.click(
+      await screen.findByRole('option', {
+        name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+      })
+    );
+    expect(
+      screen.queryByTestId('release-lifecycle-chart')
+    ).not.toBeInTheDocument();
+
+    await user.click(releaseMenu);
+
+    await user.click(
+      await screen.findByRole('option', {
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+      })
+    );
+    expect(
+      await screen.findByTestId('release-lifecycle-chart')
+    ).toBeInTheDocument();
+  });
+
   test('CentOS acknowledgement appears', async () => {
     await setUp();
 
