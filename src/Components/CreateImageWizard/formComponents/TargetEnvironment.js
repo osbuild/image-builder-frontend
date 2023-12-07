@@ -215,7 +215,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
               isDisplayLarge
             />
           )}
-          {allowedTargets.includes('oci') && isBeta() && (
+          {allowedTargets.includes('oci') && (
             <Tile
               className="tile pf-u-mr-sm"
               data-testid="upload-oci"
