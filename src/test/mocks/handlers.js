@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { HttpResponse, http } from 'msw';
 
 import {
   CONTENT_SOURCES_API,
@@ -29,82 +29,80 @@ import { mockRepositoryResults } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
 export const handlers = [
-  rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) => {
-    const provider = req.url.searchParams.get('provider');
-    return res(ctx.status(200), ctx.json(mockSourcesByProvider(provider)));
+  http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
+    const url = new URL(request.url);
+    const provider = url.searchParams.get('provider');
+    return HttpResponse.json(mockSourcesByProvider(provider));
   }),
-  rest.get(
+  http.get(
     `${PROVISIONING_API}/sources/:sourceId/upload_info`,
-    (req, res, ctx) => {
-      const { sourceId } = req.params;
+    ({ params }) => {
+      const { sourceId } = params;
       if (sourceId === '666' || sourceId === '667' || sourceId === '123') {
-        return res(ctx.status(200), ctx.json(mockUploadInfo(sourceId)));
+        return HttpResponse.json(mockUploadInfo(sourceId));
       } else {
-        return res(ctx.status(404));
+        return new HttpResponse(null, {
+          status: 404,
+        });
       }
     }
   ),
-  rest.post(`${CONTENT_SOURCES_API}/rpms/names`, async (req, res, ctx) => {
-    const { search } = await req.json();
-    return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
+  http.post(`${CONTENT_SOURCES_API}/rpms/names`, async ({ request }) => {
+    const { search } = await request.json();
+    return HttpResponse.json(mockSourcesPackagesResults(search));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/packages`, (req, res, ctx) => {
-    const search = req.url.searchParams.get('search');
-    return res(ctx.status(200), ctx.json(mockPackagesResults(search)));
+  http.get(`${IMAGE_BUILDER_API}/packages`, ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search');
+    return HttpResponse.json(mockPackagesResults(search));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/architectures/:distro`, (req, res, ctx) => {
-    const { distro } = req.params;
-    return res(ctx.status(200), ctx.json(mockArchitecturesByDistro(distro)));
+  http.get(`${IMAGE_BUILDER_API}/architectures/:distro`, ({ params }) => {
+    const { distro } = params;
+    return HttpResponse.json(mockArchitecturesByDistro(distro));
   }),
-  rest.get(`${RHSM_API}/activation_keys`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockActivationKeysResults()));
+  http.get(`${RHSM_API}/activation_keys`, () => {
+    return HttpResponse.json(mockActivationKeysResults());
   }),
-  rest.get(`${RHSM_API}/activation_keys/:key`, (req, res, ctx) => {
-    const { key } = req.params;
-    return res(ctx.status(200), ctx.json(mockActivationKeyInformation(key)));
+  http.get(`${RHSM_API}/activation_keys/:key`, ({ params }) => {
+    const { key } = params;
+    return HttpResponse.json(mockActivationKeyInformation(key));
   }),
-  rest.get(`${CONTENT_SOURCES_API}/repositories/`, (req, res, ctx) => {
-    const available_for_arch = req.url.searchParams.get('available_for_arch');
-    const available_for_version = req.url.searchParams.get(
-      'available_for_version'
-    );
-    const limit = req.url.searchParams.get('limit');
-    const offset = req.url.searchParams.get('offset');
+  http.get(`${CONTENT_SOURCES_API}/repositories/`, ({ request }) => {
+    const url = new URL(request.url);
+    const available_for_arch = url.searchParams.get('available_for_arch');
+    const available_for_version = url.searchParams.get('available_for_version');
+    const limit = url.searchParams.get('limit');
+    const offset = url.searchParams.get('offset');
     const args = { available_for_arch, available_for_version, limit, offset };
-    return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
+    return HttpResponse.json(mockRepositoryResults(args));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(composesEndpoint(req)));
+  http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
+    const url = new URL(request.url);
+    return HttpResponse.json(composesEndpoint(url));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/composes/:composeId`, (req, res, ctx) => {
-    const { composeId } = req.params;
-    return res(ctx.status(200), ctx.json(mockStatus(composeId)));
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId`, ({ params }) => {
+    const { composeId } = params;
+    return HttpResponse.json(mockStatus(composeId));
   }),
-  rest.get(
-    `${IMAGE_BUILDER_API}/composes/:composeId/clones`,
-    (req, res, ctx) => {
-      const { composeId } = req.params;
-      return res(ctx.status(200), ctx.json(mockClones(composeId)));
-    }
-  ),
-  rest.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, (req, res, ctx) => {
-    const { cloneId } = req.params;
-    return res(ctx.status(200), ctx.json(mockCloneStatus(cloneId)));
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId/clones`, ({ params }) => {
+    const { composeId } = params;
+    return HttpResponse.json(mockClones(composeId));
   }),
-  rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({}));
+  http.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, ({ params }) => {
+    const { cloneId } = params;
+    return HttpResponse.json(mockCloneStatus(cloneId));
   }),
-  rest.get(
-    `${IMAGE_BUILDER_API}/oscap/:distribution/profiles`,
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(distributionOscapProfiles(req)));
-    }
-  ),
-  rest.get(
+  http.post(`${IMAGE_BUILDER_API}/compose`, () => {
+    return HttpResponse.json({});
+  }),
+  http.get(`${IMAGE_BUILDER_API}/oscap/:distribution/profiles`, () => {
+    return HttpResponse.json(distributionOscapProfiles());
+  }),
+  http.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
-    (req, res, ctx) => {
-      const { profile } = req.params;
-      return res(ctx.status(200), ctx.json(oscapCustomizations(profile)));
+    ({ params }) => {
+      const { profile } = params;
+      return HttpResponse.json(oscapCustomizations(profile));
     }
   ),
 ];
