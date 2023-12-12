@@ -7,13 +7,6 @@ import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server.js';
 import { renderWithReduxRouter } from '../../testUtils';
 
-jest.mock('../../../store/actions/actions', () => {
-  return {
-    fetchComposes: () => ({ type: 'foo' }),
-    fetchComposeStatus: () => ({ type: 'bar' }),
-  };
-});
-
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => false,
