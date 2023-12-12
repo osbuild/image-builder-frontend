@@ -4,32 +4,6 @@ import { CONTENT_SOURCES_API, IMAGE_BUILDER_API } from './constants';
 
 const postHeaders = { headers: { 'Content-Type': 'application/json' } };
 
-async function composeImage(body) {
-  const path = '/compose';
-  const request = await axios.post(
-    IMAGE_BUILDER_API.concat(path),
-    body,
-    postHeaders
-  );
-  return request.data;
-}
-
-async function getComposes(limit, offset) {
-  const params = new URLSearchParams({
-    limit,
-    offset,
-  });
-  const path = '/composes?' + params.toString();
-  const request = await axios.get(IMAGE_BUILDER_API.concat(path));
-  return request.data;
-}
-
-async function getComposeStatus(id) {
-  const path = '/composes/' + id;
-  const request = await axios.get(IMAGE_BUILDER_API.concat(path));
-  return request.data;
-}
-
 async function getPackages(distribution, architecture, search, limit) {
   const params = new URLSearchParams({
     distribution,
@@ -69,40 +43,7 @@ async function getVersion() {
   return request.data;
 }
 
-// get clones of a compose
-async function getClones(id, limit, offset) {
-  const params = new URLSearchParams({
-    limit,
-    offset,
-  });
-  const path = `/composes/${id}/clones?${params}`;
-  const request = await axios.get(IMAGE_BUILDER_API.concat(path));
-  return request.data;
-}
-
-async function getCloneStatus(id) {
-  const path = `/clones/${id}`;
-  const request = await axios.get(IMAGE_BUILDER_API.concat(path));
-  return request.data;
-}
-
-async function cloneImage(composeId, body) {
-  const path = `/composes/${composeId}/clone`;
-  const request = await axios.post(
-    IMAGE_BUILDER_API.concat(path),
-    body,
-    postHeaders
-  );
-  return request.data;
-}
-
 const apiCalls = {
-  cloneImage,
-  composeImage,
-  getClones,
-  getCloneStatus,
-  getComposes,
-  getComposeStatus,
   getPackages,
   getPackagesContentSources,
   getVersion,
