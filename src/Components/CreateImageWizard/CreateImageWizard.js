@@ -28,7 +28,6 @@ import './CreateImageWizard.scss';
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
 import {
   useComposeImageMutation,
-  useGetArchitecturesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import isRhel from '../../Utilities/isRhel';
@@ -351,7 +350,7 @@ const parseSizeUnit = (bytesize) => {
 };
 
 // map the compose request object to the expected form state
-const requestToState = (composeRequest, distroInfo, isProd, enableOscap) => {
+const requestToState = (composeRequest, isProd, enableOscap) => {
   if (composeRequest) {
     const imageRequest = composeRequest.image_requests[0];
     const uploadRequest = imageRequest.upload_request;
@@ -585,15 +584,6 @@ const CreateImageWizard = () => {
   const composeRequest = composeId ? data?.request : undefined;
   const contentSourcesEnabled = useFlag('image-builder.enable-content-sources');
 
-  // TODO: This causes an annoying re-render when using Recreate image
-  const { data: distroInfo } = useGetArchitecturesQuery(
-    { distribution: composeRequest?.distribution },
-    {
-      // distroInfo is only needed when recreating an image, skip otherwise
-      skip: composeId ? false : true,
-    }
-  );
-
   // Assume that if a request is available that we should start on review step
   // This will occur if 'Recreate image' is clicked
   const initialStep = composeRequest ? 'review' : undefined;
@@ -604,12 +594,7 @@ const CreateImageWizard = () => {
   // activated.
   const oscapFeatureFlag =
     useFlag('image-builder.wizard.oscap.enabled') && isBeta();
-  let initialState = requestToState(
-    composeRequest,
-    distroInfo,
-    isProd(),
-    oscapFeatureFlag
-  );
+  let initialState = requestToState(composeRequest, isProd(), oscapFeatureFlag);
   const stepHistory = formStepHistory(
     composeRequest,
     contentSourcesEnabled,
@@ -629,10 +614,6 @@ const CreateImageWizard = () => {
   }
 
   const handleClose = () => navigate(resolveRelPath(''));
-
-  // In case the `created_at` date is undefined when creating an image
-  // a temporary value with current date is added
-  const currentDate = new Date();
 
   return (
     <>
