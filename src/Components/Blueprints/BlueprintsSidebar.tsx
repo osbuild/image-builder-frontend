@@ -5,8 +5,8 @@ import { SearchInput } from '@patternfly/react-core';
 
 import BlueprintCard from './BlueprintCard';
 
-import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
-import { Blueprint } from '../../store/imageBuilderApi';
+import { useGetBlueprintsQuery } from '../../store/imageBuilderApiExperimental';
+import { Blueprint } from '../../store/imageBuilderApiExperimental';
 
 const BlueprintsSidebar: React.FunctionComponent = () => {
   const { data: blueprints } = useGetBlueprintsQuery('');

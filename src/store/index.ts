@@ -5,6 +5,7 @@ import promiseMiddleware from 'redux-promise-middleware';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
+import { imageBuilderApiExperimental } from './imageBuilderApiExperimental';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
@@ -21,6 +22,8 @@ export const reducer = {
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
+  [imageBuilderApiExperimental.reducerPath]:
+    imageBuilderApiExperimental.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   notifications: notificationsReducer,
@@ -90,6 +93,7 @@ export const middleware = (getDefaultMiddleware: Function) =>
       promiseMiddleware,
       contentSourcesApi.middleware,
       imageBuilderApi.middleware,
+      imageBuilderApiExperimental.middleware,
       rhsmApi.middleware,
       provisioningApi.middleware
     );

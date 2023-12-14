@@ -14,7 +14,7 @@ import {
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 
-import { Blueprint } from '../../store/imageBuilderApi';
+import { Blueprint } from '../../store/imageBuilderApiExperimental';
 
 const BlueprintCard = (props: {
   blueprint: Blueprint;
