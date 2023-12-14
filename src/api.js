@@ -37,16 +37,9 @@ async function getPackagesContentSources(repoUrls, search) {
   return packages;
 }
 
-async function getVersion() {
-  const path = '/version';
-  const request = await axios.get(IMAGE_BUILDER_API.concat(path));
-  return request.data;
-}
-
 const apiCalls = {
   getPackages,
   getPackagesContentSources,
-  getVersion,
 };
 
 export default apiCalls;
