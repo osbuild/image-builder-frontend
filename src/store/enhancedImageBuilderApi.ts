@@ -66,16 +66,16 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             );
           })
           .catch((err) => {
-            let msg = err.response.statusText;
-            if (err.response.data?.errors[0]?.detail) {
-              msg = err.response.data?.errors[0]?.detail;
+            let msg = err.error.statusText;
+            if (err.error.data?.errors[0]?.detail) {
+              msg = err.error.data?.errors[0]?.detail;
             }
 
             dispatch(
               addNotification({
                 variant: 'danger',
                 title: 'Your image could not be created',
-                description: 'Status code ' + err.response.status + ': ' + msg,
+                description: 'Status code ' + err.error.status + ': ' + msg,
               })
             );
           });
