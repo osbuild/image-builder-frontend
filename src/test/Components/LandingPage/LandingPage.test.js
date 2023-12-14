@@ -24,8 +24,6 @@ describe('Landing Page', () => {
   test('renders page heading', async () => {
     renderWithReduxRouter('', {});
 
-    const composeImage = jest.spyOn(api, 'getVersion');
-    composeImage.mockResolvedValue({ version: '1.0' });
     // check heading
     screen.getByRole('heading', { name: /Image Builder/i });
   });
