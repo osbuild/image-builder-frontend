@@ -26,7 +26,7 @@ import MountPoint, { MountPointValidPrefixes } from './MountPoint';
 import SizeUnit from './SizeUnit';
 import UsrSubDirectoriesDisabled from './UsrSubDirectoriesDisabled';
 
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
+import { UNIT_GIB, UNIT_MIB } from '../../../constants';
 import { useGetOscapCustomizationsQuery } from '../../../store/imageBuilderApi';
 
 const initialRow = {

@@ -3,7 +3,6 @@ import React from 'react';
 import '@testing-library/jest-dom';
 
 import {
-  act,
   screen,
   waitFor,
   waitForElementToBeRemoved,
@@ -12,7 +11,6 @@ import {
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import {

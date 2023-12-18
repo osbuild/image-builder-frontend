@@ -255,7 +255,7 @@ const Repositories = (props) => {
     return data ? initializeRepositories(data.data) : {};
   }, [firstRequest.data, followupRequest.data]);
 
-  const handleToggleClick = (event, _isSelected) => {
+  const handleToggleClick = (event) => {
     const id = event.currentTarget.id;
     setPage(1);
     setToggleSelected(id);
