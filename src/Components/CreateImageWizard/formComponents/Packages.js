@@ -405,7 +405,11 @@ const Packages = ({ getAllPackages, isSuccess }) => {
                   onOptionSelect={(e) => handleSelectAvailable(e, pkg.name)}
                 >
                   <TextContent key={`${pkg.name}`}>
-                    <span className="pf-c-dual-list-selector__item-text">
+                    <span
+                      className={
+                        chosenPackages[pkg.name] && 'pf-v5-u-color-400'
+                      }
+                    >
                       {pkg.name}
                     </span>
                     <small>{pkg.summary}</small>
