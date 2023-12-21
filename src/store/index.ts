@@ -2,8 +2,6 @@ import { notificationsReducer } from '@redhat-cloud-services/frontend-components
 import { configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
-import clonesSlice from './clonesSlice';
-import composesSlice from './composesSlice';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
@@ -11,8 +9,6 @@ import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
 
 export const reducer = {
-  clones: clonesSlice,
-  composes: composesSlice,
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,

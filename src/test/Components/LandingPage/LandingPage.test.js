@@ -1,7 +1,6 @@
 import { screen } from '@testing-library/react';
 import { rest } from 'msw';
 
-import api from '../../../api.js';
 import { IMAGE_BUILDER_API } from '../../../constants.js';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server.js';
