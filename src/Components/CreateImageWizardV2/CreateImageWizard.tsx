@@ -11,10 +11,16 @@ import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput/ImageOutput';
 import ReviewStep from './steps/Review/ReviewStep';
+import { Aws } from './steps/TargetEnvironment/Aws';
+import { isAwsAccountIdValid } from './validators';
 
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
-import { initializeWizard } from '../../store/wizardSlice';
+import {
+  initializeWizard,
+  selectAwsAccountId,
+  selectImageTypes,
+} from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -74,6 +80,44 @@ const CreateImageWizard = () => {
           >
             <ImageOutputStep />
           </WizardStep>
+          <WizardStep
+            name="Target Environment"
+            id="step-target-environment"
+            steps={[
+              <WizardStep
+                name="Amazon Web Services"
+                id="expand-steps-sub-a"
+                key="expand-steps-sub-a"
+                footer={
+                  <CustomWizardFooter
+                    isNextDisabled={
+                      !isAwsAccountIdValid(
+                        useAppSelector((state) => selectAwsAccountId(state))
+                      )
+                    }
+                  />
+                }
+              >
+                <Aws />
+              </WizardStep>,
+              <WizardStep
+                name="Google Cloud Platform"
+                id="expand-steps-sub-b"
+                key="expand-steps-sub-b"
+                footer={<CustomWizardFooter isNextDisabled={false} />}
+              >
+                Substep GCP
+              </WizardStep>,
+              <WizardStep
+                name="Azure"
+                id="expand-steps-sub-c"
+                key="expand-steps-sub-c"
+                footer={<CustomWizardFooter isNextDisabled={false} />}
+              >
+                Substep Azure
+              </WizardStep>,
+            ]}
+          />
           <WizardStep
             name="Review"
             id="step-review"

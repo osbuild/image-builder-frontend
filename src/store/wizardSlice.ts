@@ -10,12 +10,14 @@ type wizardState = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
+  awsAccountId: string | undefined;
 };
 
 const initialState: wizardState = {
   architecture: X86_64,
   distribution: RHEL_9,
   imageTypes: [],
+  awsAccountId: undefined,
 };
 
 export const selectArchitecture = (state: RootState) => {
@@ -28,6 +30,10 @@ export const selectDistribution = (state: RootState) => {
 
 export const selectImageTypes = (state: RootState) => {
   return state.wizard.imageTypes;
+};
+
+export const selectAwsAccountId = (state: RootState) => {
+  return state.wizard.awsAccountId;
 };
 
 export const wizardSlice = createSlice({
@@ -58,6 +64,9 @@ export const wizardSlice = createSlice({
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
       state.imageTypes = action.payload;
     },
+    changeAwsAccountId: (state, action: PayloadAction<string | undefined>) => {
+      state.awsAccountId = action.payload;
+    },
     initializeWizard: () => initialState,
   },
 });
@@ -68,6 +77,7 @@ export const {
   addImageType,
   removeImageType,
   changeImageTypes,
+  changeAwsAccountId,
   initializeWizard,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
