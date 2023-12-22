@@ -9,20 +9,15 @@ import {
 } from '@patternfly/react-core';
 
 import { RELEASES } from '../../../../constants';
+import { useAppSelector } from '../../../../store/hooks';
 import {
-  ArchitectureItem,
-  Distributions,
-} from '../../../../store/imageBuilderApi';
+  selectArchitecture,
+  selectDistribution,
+} from '../../../../store/wizardSlice';
 
-type ImageOutputListPropTypes = {
-  release: Distributions;
-  arch: ArchitectureItem['arch'];
-};
-
-export const ImageOutputList = ({
-  release,
-  arch,
-}: ImageOutputListPropTypes) => {
+export const ImageOutputList = () => {
+  const release = useAppSelector((state) => selectDistribution(state));
+  const arch = useAppSelector((state) => selectArchitecture(state));
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>

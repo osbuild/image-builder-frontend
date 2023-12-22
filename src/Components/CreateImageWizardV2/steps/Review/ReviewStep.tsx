@@ -4,17 +4,7 @@ import { ExpandableSection, Form, Title } from '@patternfly/react-core';
 
 import { ImageOutputList } from './imageOutput';
 
-import {
-  ArchitectureItem,
-  Distributions,
-} from '../../../../store/imageBuilderApi';
-
-type ReviewStepPropTypes = {
-  release: Distributions;
-  arch: ArchitectureItem['arch'];
-};
-
-const ReviewStep = ({ release, arch }: ReviewStepPropTypes) => {
+const ReviewStep = () => {
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
@@ -32,7 +22,7 @@ const ReviewStep = ({ release, arch }: ReviewStepPropTypes) => {
           isIndented
           data-testid="image-output-expandable"
         >
-          <ImageOutputList release={release} arch={arch} />
+          <ImageOutputList />
         </ExpandableSection>
       </Form>
     </>

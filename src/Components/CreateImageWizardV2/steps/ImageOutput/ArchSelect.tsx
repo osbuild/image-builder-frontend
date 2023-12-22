@@ -1,4 +1,4 @@
-import React, { Dispatch, FormEvent, SetStateAction } from 'react';
+import React, { FormEvent } from 'react';
 
 import {
   FormGroup,
@@ -7,19 +7,25 @@ import {
 } from '@patternfly/react-core';
 
 import { ARCHS } from '../../../../constants';
-import { ArchitectureItem } from '../../../../store/imageBuilderApi';
-
-type ArchSelectType = {
-  setArch: Dispatch<SetStateAction<ArchitectureItem['arch']>>;
-  arch: ArchitectureItem['arch'];
-};
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { ImageRequest } from '../../../../store/imageBuilderApi';
+import {
+  changeArchitecture,
+  selectArchitecture,
+} from '../../../../store/wizardSlice';
 
 /**
  * Allows the user to pick the architecture to build
  */
-const ArchSelect = ({ setArch, arch }: ArchSelectType) => {
-  const onChange = (_event: FormEvent<HTMLSelectElement>, value: string) => {
-    setArch(value);
+const ArchSelect = () => {
+  const architecture = useAppSelector((state) => selectArchitecture(state));
+  const dispatch = useAppDispatch();
+
+  const onChange = (
+    _event: FormEvent<HTMLSelectElement>,
+    value: ImageRequest['architecture']
+  ) => {
+    dispatch(changeArchitecture(value));
   };
 
   return (
@@ -29,7 +35,7 @@ const ArchSelect = ({ setArch, arch }: ArchSelectType) => {
       data-testid="architecture-select"
     >
       <FormSelect
-        value={arch}
+        value={architecture}
         onChange={onChange}
         aria-label="Architecture"
         ouiaId="arch_select"

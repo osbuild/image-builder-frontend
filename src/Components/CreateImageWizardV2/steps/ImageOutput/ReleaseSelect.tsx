@@ -1,10 +1,4 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
 
 import {
   Select,
@@ -15,21 +9,23 @@ import {
 } from '@patternfly/react-core';
 
 import { RELEASES } from '../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { Distributions } from '../../../../store/imageBuilderApi';
+import {
+  changeDistribution,
+  selectDistribution,
+} from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
-
-type ReleaseSelectType = {
-  setRelease: Dispatch<SetStateAction<Distributions>>;
-  release: Distributions;
-};
 
 /**
  * Allows the user to choose the release they want to build.
  * Follows the PF5 pattern: https://www.patternfly.org/components/menus/select#view-more
  */
-const ReleaseSelect = ({ setRelease, release }: ReleaseSelectType) => {
+const ReleaseSelect = () => {
   // By default the component doesn't show the Centos releases and only the RHEL
   // ones. The user has the option to click on a button to make them appear.
+  const distribution = useAppSelector((state) => selectDistribution(state));
+  const dispatch = useAppDispatch();
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
   const releaseOptions = () => {
     const options: ReactElement[] = [];
@@ -63,11 +59,11 @@ const ReleaseSelect = ({ setRelease, release }: ReleaseSelectType) => {
   const toggleRef = useRef<HTMLButtonElement>(null);
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined
+    value: 'loader' | Distributions | undefined
   ) => {
     if (value !== 'loader') {
       if (typeof value === 'string') {
-        setRelease(value as Distributions);
+        dispatch(changeDistribution(value));
       }
       setIsOpen(false);
       toggleRef?.current?.focus(); // Only focus the toggle when a non-loader option is selected
@@ -81,7 +77,7 @@ const ReleaseSelect = ({ setRelease, release }: ReleaseSelectType) => {
       isExpanded={isOpen}
       isFullWidth
     >
-      {RELEASES.get(release)}
+      {RELEASES.get(distribution)}
     </MenuToggle>
   );
 
@@ -91,7 +87,7 @@ const ReleaseSelect = ({ setRelease, release }: ReleaseSelectType) => {
         ouiaId="release_select"
         id="release_select"
         isOpen={isOpen}
-        selected={release}
+        selected={distribution}
         onSelect={onSelect}
         onOpenChange={(isOpen) => setIsOpen(isOpen)}
         toggle={{ toggleNode: toggle, toggleRef }}
