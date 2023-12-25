@@ -55,7 +55,12 @@ export const AWSSourcesSelect = ({
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
     change('aws-associated-account-id', sourceDetails?.aws?.account_id);
-  }, [isFetchingDetails, isSuccessDetails]);
+  }, [
+    isFetchingDetails,
+    isSuccessDetails,
+    change,
+    sourceDetails?.aws?.account_id,
+  ]);
 
   const onFormChange = ({ values }) => {
     if (

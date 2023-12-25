@@ -36,7 +36,7 @@ const MountPoint = ({ ...props }) => {
         return;
       }
     }
-  }, []);
+  }, [props.mountpoint]);
 
   useEffect(() => {
     let suf = suffix;

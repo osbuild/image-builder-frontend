@@ -100,7 +100,7 @@ const FileSystemConfiguration = ({ ...props }) => {
       setItemOrder(newRows.map((row) => row.id));
       change('file-system-config-radio', 'manual');
     }
-  }, [customizations, isSuccess]);
+  }, [customizations, isSuccess, change, hasCustomizations, rows]);
 
   useEffect(() => {
     const fsc = getState()?.values?.['file-system-configuration'];
@@ -123,7 +123,7 @@ const FileSystemConfiguration = ({ ...props }) => {
     });
     setRows(newRows);
     setItemOrder(newOrder);
-  }, []);
+  }, [getState]);
 
   const showErrors = () =>
     getState()?.values?.['file-system-config-show-errors'];
@@ -144,7 +144,7 @@ const FileSystemConfiguration = ({ ...props }) => {
         return null;
       })
     );
-  }, [rows, itemOrder]);
+  }, [rows, itemOrder, change, input.name]);
 
   const addRow = () => {
     const id = uuidv4();

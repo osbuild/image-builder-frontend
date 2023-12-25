@@ -91,7 +91,7 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
       change('subscription-server-url', 'subscription.rhsm.stage.redhat.com');
       change('subscription-base-url', 'https://cdn.stage.redhat.com/');
     }
-  }, []);
+  }, [isProd, change]);
 
   const setActivationKey = (_, selection) => {
     selectActivationKey(selection);
