@@ -16,16 +16,16 @@ const FileSystemConfigButtons = ({ handleNext, handlePrev, nextStep }) => {
   );
   const [nextHasBeenClicked, setNextHasBeenClicked] = useState(false);
   const prefetchArchitectures = imageBuilderApi.usePrefetch('getArchitectures');
+  const errors = getState()?.errors?.['file-system-configuration'];
 
   useEffect(() => {
-    const errors = getState()?.errors?.['file-system-configuration'];
     errors ? setHasErrors(true) : setHasErrors(false);
 
     if (!errors) {
       setNextHasBeenClicked(false);
       change('file-system-config-show-errors', false);
     }
-  });
+  }, [errors, change]);
 
   const handleClick = () => {
     if (!hasErrors) {

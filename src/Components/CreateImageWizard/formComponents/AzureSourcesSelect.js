@@ -49,7 +49,13 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
     if (isFetchingDetails || !isSuccessDetails) return;
     change('azure-tenant-id', sourceDetails?.azure?.tenant_id);
     change('azure-subscription-id', sourceDetails?.azure?.subscription_id);
-  }, [isFetchingDetails, isSuccessDetails]);
+  }, [
+    isFetchingDetails,
+    isSuccessDetails,
+    sourceDetails?.azure?.subscription_id,
+    sourceDetails?.azure?.tenant_id,
+    change,
+  ]);
 
   const onFormChange = ({ values }) => {
     if (
