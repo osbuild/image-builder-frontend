@@ -110,7 +110,7 @@ const FileSystemConfiguration = ({ ...props }) => {
 
     const newRows = [];
     const newOrder = [];
-    fsc.map((r) => {
+    fsc.forEach((r) => {
       const id = uuidv4();
       newRows.push({
         id,
@@ -141,6 +141,7 @@ const FileSystemConfiguration = ({ ...props }) => {
             };
           }
         }
+        return null;
       })
     );
   }, [rows, itemOrder]);
