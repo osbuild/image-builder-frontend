@@ -41,6 +41,7 @@ export type CreateActivationKeysApiArg = {
     additionalRepositories?: {
       repositoryLabel?: string;
     }[];
+    /** Name should be present, unique and can only contain letters, numbers, underscores, or hyphens */
     name: string;
     releaseVersion?: string;
     role?: string;
