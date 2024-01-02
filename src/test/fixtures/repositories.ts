@@ -1,6 +1,7 @@
 import {
   ApiLinks,
   ApiRepositoryResponse,
+  ApiRepositoryResponseRead,
   ApiResponseMetadata,
   ListRepositoriesApiArg,
 } from '../../store/contentSourcesApi';
@@ -55,7 +56,7 @@ const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
   return repos;
 };
 
-const testingRepos: ApiRepositoryResponse[] = [
+const testingRepos: ApiRepositoryResponseRead[] = [
   {
     uuid: 'dbad4dfc-1547-45f8-b5af-1d7fec0476c6',
     name: '13lk3',
