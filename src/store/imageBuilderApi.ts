@@ -172,12 +172,15 @@ export type Repository = {
   metalink?: string;
   gpgkey?: string;
   check_gpg?: boolean;
+  /** Enables gpg verification of the repository metadata
+   */
   check_repo_gpg?: boolean;
   ignore_ssl?: boolean;
 };
 export type ArchitectureItem = {
   arch: string;
   image_types: string[];
+  /** Base repositories for the given distribution and architecture. */
   repositories: Repository[];
 };
 export type Architectures = ArchitectureItem[];
@@ -238,13 +241,43 @@ export type AwsUploadRequestOptions = {
 };
 export type Awss3UploadRequestOptions = object;
 export type GcpUploadRequestOptions = {
+  /** List of valid Google accounts to share the imported Compute Node image with.
+    Each string must contain a specifier of the account type. Valid formats are:
+      - 'user:{emailid}': An email address that represents a specific
+        Google account. For example, 'alice@example.com'.
+      - 'serviceAccount:{emailid}': An email address that represents a
+        service account. For example, 'my-other-app@appspot.gserviceaccount.com'.
+      - 'group:{emailid}': An email address that represents a Google group.
+        For example, 'admins@example.com'.
+      - 'domain:{domain}': The G Suite domain (primary) that represents all
+        the users of that domain. For example, 'google.com' or 'example.com'.
+        If not specified, the imported Compute Node image is not shared with any
+        account.
+     */
   share_with_accounts?: string[];
 };
 export type AzureUploadRequestOptions = {
+  /** ID of the source that will be used to resolve the tenant and subscription IDs.
+    Do not provide a tenant_id or subscription_id when providing a source_id.
+     */
   source_id?: string;
+  /** ID of the tenant where the image should be uploaded. This link explains how
+    to find it in the Azure Portal:
+    https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-how-to-find-tenant
+    When providing a tenant_id, also be sure to provide a subscription_id and do not include a source_id.
+     */
   tenant_id?: string;
+  /** ID of subscription where the image should be uploaded.
+    When providing a subscription_id, also be sure to provide a tenant_id and do not include a source_id.
+     */
   subscription_id?: string;
+  /** Name of the resource group where the image should be uploaded.
+   */
   resource_group: string;
+  /** Name of the created image.
+    Must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens.
+    The total length is limited to 60 characters.
+     */
   image_name?: string;
 };
 export type OciUploadRequestOptions = object;
@@ -259,16 +292,30 @@ export type UploadRequest = {
 };
 export type OsTree = {
   url?: string;
+  /** A URL which, if set, is used for fetching content. Implies that `url` is set as well,
+    which will be used for metadata only.
+     */
   contenturl?: string;
   ref?: string;
+  /** Can be either a commit (example: 02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like reference (example: rhel/8/x86_64/edge)
+   */
   parent?: string;
+  /** Determines whether a valid subscription manager (candlepin) identity is required to
+    access this repository. Consumer certificates will be used as client certificates when
+    fetching metadata and content.
+     */
   rhsm?: boolean;
 };
 export type ImageRequest = {
+  /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
+   */
   architecture: "x86_64" | "aarch64";
   image_type: ImageTypes;
   upload_request: UploadRequest;
   ostree?: OsTree;
+  /** Size of image, in bytes. When set to 0 the image size is a minimum
+    defined by the image type.
+     */
   size?: any;
 };
 export type Subscription = {
@@ -277,6 +324,8 @@ export type Subscription = {
   "server-url": string;
   "base-url": string;
   insights: boolean;
+  /** Optional flag to use rhc to register the system, which also always enables Insights.
+   */
   rhc?: boolean;
 };
 export type CustomRepository = {
@@ -286,6 +335,7 @@ export type CustomRepository = {
   baseurl?: string[];
   mirrorlist?: string;
   metalink?: string;
+  /** GPG key used to sign packages in this repository. Can be a gpg key or a URL */
   gpgkey?: string[];
   check_gpg?: boolean;
   check_repo_gpg?: boolean;
@@ -294,12 +344,16 @@ export type CustomRepository = {
   ssl_verify?: boolean;
 };
 export type OpenScap = {
+  /** The policy reference ID */
   profile_id: string;
+  /** The policy type */
   profile_name?: string;
+  /** The longform policy description */
   profile_description?: string;
 };
 export type Filesystem = {
   mountpoint: string;
+  /** size of the filesystem in bytes */
   min_size: any;
 };
 export type User = {
@@ -313,7 +367,13 @@ export type Customizations = {
   custom_repositories?: CustomRepository[];
   openscap?: OpenScap;
   filesystem?: Filesystem[];
+  /** list of users that a customer can add, also specifying their respective groups and SSH keys */
   users?: User[];
+  /** Select how the disk image will be partitioned. 'auto-lvm' will use raw unless
+    there are one or more mountpoints in which case it will use LVM. 'lvm' always
+    uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
+    even when there are one or more mountpoints.
+     */
   partitioning_mode?: "raw" | "lvm" | "auto-lvm";
 };
 export type ComposeRequest = {
@@ -321,6 +381,8 @@ export type ComposeRequest = {
   image_name?: string;
   image_description?: string;
   client_id?: ClientId;
+  /** Array of exactly one image request. Having more image requests in one compose is currently not supported.
+   */
   image_requests: ImageRequest[];
   customizations?: Customizations;
 };
@@ -392,13 +454,20 @@ export type CloneResponse = {
   id: string;
 };
 export type Awsec2Clone = {
+  /** A region as described in
+    https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-regions-availability-zones.html#concepts-regions
+     */
   region: string;
+  /** An array of AWS account IDs as described in
+    https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
+     */
   share_with_accounts?: string[];
   share_with_sources?: string[];
 };
 export type CloneRequest = Awsec2Clone;
 export type ClonesResponseItem = {
   id: string;
+  /** UUID of the parent compose of the clone */
   compose_id: string;
   request: CloneRequest;
   created_at: string;

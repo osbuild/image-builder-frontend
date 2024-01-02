@@ -299,10 +299,12 @@ export type GetImageByOstreeApiArg = {
 };
 export type ModelsEdgeApiTime = {
   time?: string;
+  /** Valid is true if Time is not NULL */
   valid?: boolean;
 };
 export type GormDeletedAt = {
   time?: string;
+  /** Valid is true if Time is not NULL */
   valid?: boolean;
 };
 export type ModelsInstalledPackage = {
@@ -403,7 +405,9 @@ export type ModelsImage = {
   Description?: string;
   Distribution?: string;
   ID?: number;
+  /** TODO: Wipe staging database and set to not nullable */
   ImageSetID?: number;
+  /** TODO: Remove as soon as the frontend stops using */
   ImageType?: string;
   Installer?: ModelsInstaller;
   InstallerID?: number;
@@ -411,29 +415,39 @@ export type ModelsImage = {
   OutputTypes?: string[];
   Packages?: ModelsPackage[];
   Status?: string;
+  /** only for forms */
   SystemsRunning?: number;
   ThirdPartyRepositories?: ModelsThirdPartyRepo[];
+  /** only for forms */
   TotalPackages?: number;
   UpdatedAt?: ModelsEdgeApiTime;
   Version?: number;
   org_id?: string;
+  /** storing for logging reference on resume */
   request_id?: string;
 };
 export type ModelsImageSetApi = {
   CreatedAt?: ModelsEdgeApiTime;
   DeletedAt?: GormDeletedAt;
   ID?: number;
+  /** images of image set */
   Images?: ModelsImage[];
   UpdatedAt?: ModelsEdgeApiTime;
+  /** the image set name */
   name?: string;
+  /** the image set version */
   version?: number;
 };
 export type ModelsImageSetInstallerUrlapi = {
+  /** The image-set latest available image ISO */
   image_build_iso_url?: string;
+  /** image set data */
   image_set?: ModelsImageSetApi;
 };
 export type ModelsImageSetsResponseApi = {
+  /** count of image-sets */
   Count?: number;
+  /** all data of image-sets */
   Data?: ModelsImageSetInstallerUrlapi[];
 };
 export type ErrorsBadRequest = {
@@ -463,20 +477,30 @@ export type ModelsImageSetView = {
   Version?: number;
 };
 export type ModelsImageSetsViewResponseApi = {
+  /** count of image-sets */
   count?: number;
+  /** data of image set view */
   data?: ModelsImageSetView[];
 };
 export type ModelsImageDetailApi = {
+  /** Number of additional packages */
   additional_packages?: number;
   image?: ModelsImage;
+  /** Number of packages */
   packages?: number;
+  /** Number of added update */
   update_added?: number;
+  /** Number of removed update */
   update_removed?: number;
+  /** Number of updated update */
   update_updated?: number;
 };
 export type ModelsImageSetImageIdViewApi = {
+  /** The image-set latest available image ISO */
   ImageBuildIsoURL?: string;
+  /** the requested image details */
   ImageDetails?: ModelsImageDetailApi;
+  /** image set data */
   ImageSet?: ModelsImageSetApi;
 };
 export type ModelsImageView = {
@@ -491,6 +515,7 @@ export type ModelsImageView = {
   Version?: number;
 };
 export type ModelsImagesViewDataApi = {
+  /** total number of image view data */
   count?: number;
   data?: ModelsImageView[];
 };
@@ -505,7 +530,9 @@ export type ImageResponse = {
   Description?: string;
   Distribution?: string;
   ID?: number;
+  /** TODO: Wipe staging database and set to not nullable */
   ImageSetID?: number;
+  /** TODO: Remove as soon as the frontend stops using */
   ImageType?: string;
   Installer?: ModelsInstaller;
   InstallerID?: number;
@@ -513,12 +540,15 @@ export type ImageResponse = {
   OutputTypes?: string[];
   Packages?: ModelsPackage[];
   Status?: string;
+  /** only for forms */
   SystemsRunning?: number;
   ThirdPartyRepositories?: ModelsThirdPartyRepo[];
+  /** only for forms */
   TotalPackages?: number;
   UpdatedAt?: ModelsEdgeApiTime;
   Version?: number;
   org_id?: string;
+  /** storing for logging reference on resume */
   request_id?: string;
 };
 export type CreateImage = object;
