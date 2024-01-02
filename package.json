@@ -12,7 +12,7 @@
     "@patternfly/patternfly": "5.1.0",
     "@patternfly/react-core": "5.1.2",
     "@patternfly/react-table": "5.0.1",
-    "@redhat-cloud-services/frontend-components": "4.0.10",
+    "@redhat-cloud-services/frontend-components": "4.2.1",
     "@redhat-cloud-services/frontend-components-notifications": "4.1.0",
     "@redhat-cloud-services/frontend-components-utilities": "4.0.2",
     "@reduxjs/toolkit": "1.9.5",
@@ -43,7 +43,7 @@
       "\\.(css|scss)$": "identity-obj-proxy"
     },
     "transformIgnorePatterns": [
-      "node_modules/(?!(@scalprum|@openshift|lodash-es|uuid)/)"
+      "node_modules/(?!(@scalprum|@openshift|@redhat-cloud-services|lodash-es|uuid)/)"
     ],
     "setupFiles": [
       "jest-canvas-mock"
