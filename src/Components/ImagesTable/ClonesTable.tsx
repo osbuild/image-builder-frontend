@@ -37,11 +37,8 @@ const Ami = ({ status }: AmiPropTypes) => {
         </ClipboardCopy>
       );
 
-    case 'failure':
-      return undefined;
-
     default:
-      return <Skeleton width="12rem" />;
+      return undefined;
   }
 };
 
