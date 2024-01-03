@@ -13,7 +13,6 @@ globals:
 plugins:
   - import
 rules:
-  rulesdir/forbid-pf-relative-imports: off
   no-unused-vars: warn
   import/order:
     - error
@@ -40,7 +39,9 @@ rules:
   no-console: 2
   eqeqeq: error
   array-callback-return: warn
-  jsx-a11y/no-autofocus: warn
+  # Temporarily disabled
+  jsx-a11y/no-autofocus: off
+  rulesdir/forbid-pf-relative-imports: off
 overrides:
   - files: "**/*.ts?(x)"
     parser: "@typescript-eslint/parser"
