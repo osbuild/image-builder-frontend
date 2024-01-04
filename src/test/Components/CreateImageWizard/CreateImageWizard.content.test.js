@@ -1,7 +1,5 @@
 import React from 'react';
 
-import '@testing-library/jest-dom';
-
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -39,7 +37,7 @@ const routes = [
 
 let router = undefined;
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -78,9 +76,9 @@ const searchForChosenPackages = async (searchbox, searchTerm) => {
 };
 
 let mockContentSourcesEnabled;
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.enable-content-sources'
       ? mockContentSourcesEnabled
       : false
@@ -94,7 +92,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockContentSourcesEnabled = true;
 });
 
@@ -356,7 +354,7 @@ describe('Step Packages', () => {
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
 
-      const getPackages = jest
+      const getPackages = vi
         .spyOn(api, 'getPackages')
         .mockImplementation((distribution, architecture, search, limit) => {
           return limit
@@ -379,7 +377,7 @@ describe('Step Packages', () => {
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
 
-      const getPackages = jest
+      const getPackages = vi
         .spyOn(api, 'getPackages')
         .mockImplementation((distribution, architecture, search, limit) => {
           return limit
@@ -408,7 +406,7 @@ describe('Step Packages', () => {
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
 
-      const getPackages = jest
+      const getPackages = vi
         .spyOn(api, 'getPackages')
         .mockImplementation(() => Promise.resolve(mockPkgResultAlpha));
 
@@ -677,7 +675,7 @@ describe('Step Packages', () => {
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
 
-      const getPackages = jest
+      const getPackages = vi
         .spyOn(api, 'getPackagesContentSources')
         .mockImplementation(() =>
           Promise.resolve(mockPkgResultAlphaContentSources)

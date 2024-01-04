@@ -1,7 +1,8 @@
+import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
-import '@testing-library/jest-dom';
 import {
   mockComposes,
   mockClones,
@@ -9,7 +10,9 @@ import {
 } from '../../fixtures/composes';
 import { renderWithReduxRouter } from '../../testUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => false,
     isProd: () => true,
@@ -17,9 +20,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) => (flag === 'edgeParity.image-list' ? false : true)),
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => (flag === 'edgeParity.image-list' ? false : true)),
 }));
 
 beforeAll(() => {

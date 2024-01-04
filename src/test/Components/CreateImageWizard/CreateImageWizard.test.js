@@ -1,7 +1,5 @@
 import React from 'react';
 
-import '@testing-library/jest-dom';
-
 import {
   screen,
   waitFor,
@@ -45,7 +43,7 @@ const routes = [
 
 let router = undefined;
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -64,9 +62,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.enable-content-sources' ? true : false
   ),
 }));
@@ -105,7 +103,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   router = undefined;
   server.resetHandlers();
 });
