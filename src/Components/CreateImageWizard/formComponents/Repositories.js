@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   useFieldApi,
@@ -155,42 +155,45 @@ const convertSchemaToContentSources = (repo) => {
 };
 
 const Repositories = (props) => {
-  const initializeRepositories = (contentSourcesReposList) => {
-    // Convert list of repositories into an object where key is repo URL
-    const contentSourcesRepos = contentSourcesReposList.reduce(
-      (accumulator, currentValue) => {
-        accumulator[currentValue.url] = currentValue;
-        return accumulator;
-      },
-      {}
-    );
+  const initializeRepositories = useCallback(
+    (contentSourcesReposList) => {
+      // Convert list of repositories into an object where key is repo URL
+      const contentSourcesRepos = contentSourcesReposList.reduce(
+        (accumulator, currentValue) => {
+          accumulator[currentValue.url] = currentValue;
+          return accumulator;
+        },
+        {}
+      );
 
-    // Repositories in the form state can be present when 'Recreate image' is used
-    // to open the wizard that are not necessarily in content sources.
-    const formStateReposList =
-      getState()?.values?.['original-payload-repositories'];
+      // Repositories in the form state can be present when 'Recreate image' is used
+      // to open the wizard that are not necessarily in content sources.
+      const formStateReposList =
+        getState()?.values?.['original-payload-repositories'];
 
-    const mergeRepositories = (contentSourcesRepos, formStateReposList) => {
-      const formStateRepos = {};
+      const mergeRepositories = (contentSourcesRepos, formStateReposList) => {
+        const formStateRepos = {};
 
-      for (const repo of formStateReposList) {
-        formStateRepos[repo.baseurl] = convertSchemaToContentSources(repo);
-        formStateRepos[repo.baseurl].name = '';
-      }
+        for (const repo of formStateReposList) {
+          formStateRepos[repo.baseurl] = convertSchemaToContentSources(repo);
+          formStateRepos[repo.baseurl].name = '';
+        }
 
-      // In case of duplicate repo urls, the repo from Content Sources overwrites the
-      // repo from the form state.
-      const mergedRepos = { ...formStateRepos, ...contentSourcesRepos };
+        // In case of duplicate repo urls, the repo from Content Sources overwrites the
+        // repo from the form state.
+        const mergedRepos = { ...formStateRepos, ...contentSourcesRepos };
 
-      return mergedRepos;
-    };
+        return mergedRepos;
+      };
 
-    const repositories = formStateReposList
-      ? mergeRepositories(contentSourcesRepos, formStateReposList)
-      : contentSourcesRepos;
+      const repositories = formStateReposList
+        ? mergeRepositories(contentSourcesRepos, formStateReposList)
+        : contentSourcesRepos;
 
-    return repositories;
-  };
+      return repositories;
+    },
+    [getState]
+  );
 
   const { getState, change } = useFormApi();
   const { input } = useFieldApi(props);
@@ -254,7 +257,7 @@ const Repositories = (props) => {
 
   const repositories = useMemo(() => {
     return data ? initializeRepositories(data.data) : {};
-  }, [firstRequest.data, followupRequest.data]);
+  }, [data, initializeRepositories]);
 
   const handleToggleClick = (event) => {
     const id = event.currentTarget.id;
@@ -262,7 +265,10 @@ const Repositories = (props) => {
     setToggleSelected(id);
   };
 
-  const isRepoSelected = (repoURL) => selected.includes(repoURL);
+  const isRepoSelected = useCallback(
+    (repoURL) => selected.includes(repoURL),
+    [selected]
+  );
 
   const handlePerPageSelect = (event, newPerPage, newPage) => {
     setPerPage(newPerPage);
@@ -290,7 +296,7 @@ const Repositories = (props) => {
         .filter((repo) => isRepoSelected(repo.url))
         .map((repo) => repo.url);
     }
-  }, [filterValue, repositories, toggleSelected]);
+  }, [filterValue, repositories, toggleSelected, isRepoSelected]);
 
   const handleClearFilter = () => {
     setFilterValue('');

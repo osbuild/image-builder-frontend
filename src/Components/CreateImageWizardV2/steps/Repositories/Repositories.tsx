@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import {
   Alert,
@@ -213,9 +213,10 @@ const Repositories = () => {
     setToggleSelected(id);
   };
 
-  const isRepoSelected = (repoURL: string | undefined) =>
-    selected.includes(repoURL);
-
+  const isRepoSelected = useCallback(
+    (repoURL: string | undefined) => selected.includes(repoURL),
+    [selected]
+  );
   const handlePerPageSelect = (
     _: React.MouseEvent,
     newPerPage: number,
@@ -252,7 +253,7 @@ const Repositories = () => {
         .filter((repo: ApiRepositoryResponseRead) => isRepoSelected(repo.url!))
         .map((repo: ApiRepositoryResponseRead) => repo.url);
     }
-  }, [filterValue, data, toggleSelected]);
+  }, [filterValue, data, toggleSelected, isRepoSelected]);
 
   const handleClearFilter = () => {
     setFilterValue('');
