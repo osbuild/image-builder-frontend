@@ -7,6 +7,7 @@ import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
+import wizardSlice from './wizardSlice';
 
 export const reducer = {
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
@@ -15,6 +16,7 @@ export const reducer = {
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   notifications: notificationsReducer,
+  wizard: wizardSlice,
 };
 
 export const middleware = (getDefaultMiddleware: Function) =>
