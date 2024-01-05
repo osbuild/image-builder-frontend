@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Text, Form, Title } from '@patternfly/react-core';
 
+import ReleaseSelect from './ReleaseSelect';
+
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 
 const ImageOutputStep = () => {
@@ -14,6 +16,7 @@ const ImageOutputStep = () => {
         <br />
         <DocumentationButton />
       </Text>
+      <ReleaseSelect />
     </Form>
   );
 };
