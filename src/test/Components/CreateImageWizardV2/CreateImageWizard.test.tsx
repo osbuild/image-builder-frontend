@@ -116,7 +116,7 @@ describe('Create Image Wizard', () => {
     // check heading
     screen.getByRole('heading', { name: /Image Builder/ });
 
-    // screen.getByRole('button', { name: 'Image output' });
+    screen.getByRole('button', { name: 'Image output' });
     // screen.getByRole('button', { name: 'Register' });
     // screen.getByRole('button', { name: 'File system configuration' });
     // screen.getByRole('button', { name: 'Content' });

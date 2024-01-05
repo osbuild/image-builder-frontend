@@ -15,6 +15,8 @@ import { initializeWizard } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
+import ImageOutputStep from './steps/ImageOutput';
+
 type CustomWizardFooterPropType = {
   disableNext: boolean;
 };
@@ -54,7 +56,9 @@ const CreateImageWizard = () => {
             name="Image output"
             id="step-image-output"
             footer={<CustomWizardFooter disableNext={false} />}
-          ></WizardStep>
+          >
+            <ImageOutputStep />
+          </WizardStep>
           <WizardStep
             name="Review"
             id="step-review"
