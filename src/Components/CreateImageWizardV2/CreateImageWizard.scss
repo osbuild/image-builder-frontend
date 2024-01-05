@@ -1,0 +1,66 @@
+.pf-v5-c-wizard__nav-list {
+    padding-right: 0px;
+}
+
+.pf-v5-c-wizard__nav {
+    overflow-y: unset;
+}
+
+.pf-c-popover[data-popper-reference-hidden="true"] {
+    font-weight: initial;
+    visibility: initial;
+    pointer-events: initial;
+}
+
+.pf-v5-c-dual-list-selector {
+    --pf-v5-c-dual-list-selector__menu--MinHeight: 18rem;
+    --pf-v5-c-dual-list-selector--GridTemplateColumns--pane--MinMax--max: 100vw;
+}
+
+.pf-c-form {
+    --pf-c-form--GridGap: var(--pf-global--spacer--md);
+}
+
+.pf-c-form__group-label {
+    --pf-c-form__group-label--PaddingBottom: var(--pf-global--spacer--xs);
+}
+
+.tiles {
+    display: flex;
+}
+
+.tile {
+    flex: 1 0 0px;
+    max-width: 250px;
+}
+
+.pf-c-tile:focus {
+    --pf-c-tile__title--Color: var(--pf-c-tile__title--Color);
+    --pf-c-tile__icon--Color: var(---pf-global--Color--100);
+    --pf-c-tile--before--BorderWidth: var(--pf-global--BorderWidth--sm);
+    --pf-c-tile--before--BorderColor: var(--pf-global--BorderColor--100);
+}
+
+.pf-c-tile.pf-m-selected:focus {
+    --pf-c-tile__title--Color: var(--pf-c-tile--focus__title--Color);
+    --pf-c-tile__icon--Color: var(--pf-c-tile--focus__icon--Color);
+}
+
+.provider-icon {
+    width: 1em;
+    height: 1em;
+}
+
+.pf-u-min-width {
+    --pf-u-min-width--MinWidth: 18ch;
+}
+
+.pf-u-max-width {
+    --pf-u-max-width--MaxWidth: 26rem;
+}
+
+ul.pf-m-plain {
+    list-style: none;
+    padding-left: 0;
+    margin-left: 0;
+}
