@@ -1,18 +1,18 @@
-// import React from 'react';
+import React from 'react';
 
 // import '@testing-library/jest-dom';
 
-// import {
-//   screen,
-//   waitFor,
-//   waitForElementToBeRemoved,
-//   within,
-// } from '@testing-library/react';
+import {
+  screen,
+  //   waitFor,
+  //   waitForElementToBeRemoved,
+  //   within,
+} from '@testing-library/react';
 // import userEvent from '@testing-library/user-event';
 // import { rest } from 'msw';
 
-// import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
-// import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
+import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 // import {
 //   IMAGE_BUILDER_API,
 //   PROVISIONING_API,
@@ -20,28 +20,28 @@
 //   RHSM_API,
 // } from '../../../constants.js';
 // import { server } from '../../mocks/server.js';
-// import {
-//   clickBack,
-//   clickNext,
-//   getNextButton,
-//   renderCustomRoutesWithReduxRouter,
-//   verifyCancelButton,
-// } from '../../testUtils';
+import {
+  //   clickBack,
+  //   clickNext,
+  //   getNextButton,
+  renderCustomRoutesWithReduxRouter,
+  //   verifyCancelButton,
+} from '../../testUtils';
 
-// const routes = [
-//   {
-//     path: 'insights/image-builder/*',
-//     element: <div />,
-//   },
-//   {
-//     path: 'insights/image-builder/imagewizard/:composeId?',
-//     element: <CreateImageWizard />,
-//   },
-//   {
-//     path: 'insights/image-builder/share /:composeId',
-//     element: <ShareImageModal />,
-//   },
-// ];
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share /:composeId',
+    element: <ShareImageModal />,
+  },
+];
 
 // let router = undefined;
 
@@ -110,22 +110,22 @@
 //   server.resetHandlers();
 // });
 
-// describe('Create Image Wizard', () => {
-//   test('renders component', () => {
-//     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-//     // check heading
-//     screen.getByRole('heading', { name: /Image Builder/ });
+describe('Create Image Wizard', () => {
+  test('renders component', () => {
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+    // check heading
+    screen.getByRole('heading', { name: /Image Builder/ });
 
-//     screen.getByRole('button', { name: 'Image output' });
-//     screen.getByRole('button', { name: 'Register' });
-//     screen.getByRole('button', { name: 'File system configuration' });
-//     screen.getByRole('button', { name: 'Content' });
-//     screen.getByRole('button', { name: 'Additional Red Hat packages' });
-//     screen.getByRole('button', { name: 'Custom repositories' });
-//     screen.getByRole('button', { name: 'Details' });
-//     screen.getByRole('button', { name: 'Review' });
-//   });
-// });
+    // screen.getByRole('button', { name: 'Image output' });
+    // screen.getByRole('button', { name: 'Register' });
+    // screen.getByRole('button', { name: 'File system configuration' });
+    // screen.getByRole('button', { name: 'Content' });
+    // screen.getByRole('button', { name: 'Additional Red Hat packages' });
+    // screen.getByRole('button', { name: 'Custom repositories' });
+    // screen.getByRole('button', { name: 'Details' });
+    // screen.getByRole('button', { name: 'Review' });
+  });
+});
 
 // describe('Step Image output', () => {
 //   const user = userEvent.setup();
