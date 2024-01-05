@@ -1,30 +1,35 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
-import { FormSpy } from '@data-driven-forms/react-form-renderer';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { FormGroup } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import PropTypes from 'prop-types';
 
-import { ARCHS } from '../../../constants';
+import { ARCHS } from '../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { ImageRequest } from '../../../../store/imageBuilderApi';
+import {
+  changeArchitecture,
+  selectArchitecture,
+} from '../../../../store/wizardSlice';
 
-const ArchSelect = ({ label, isRequired, ...props }) => {
-  const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
+const ArchSelect = () => {
+  const arch = useAppSelector((state) => selectArchitecture(state));
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const setArch = (_, selection) => {
-    change(input.name, selection);
+  const setArch = (
+    _event: React.MouseEvent,
+    selection: ImageRequest['architecture']
+  ) => {
+    dispatch(changeArchitecture(selection));
     setIsOpen(false);
   };
 
   const setSelectOptions = () => {
-    var options = [];
+    const options: ReactElement[] = [];
     ARCHS.forEach((arch) => {
       options.push(
         <SelectOption key={arch} value={arch}>
@@ -37,28 +42,19 @@ const ArchSelect = ({ label, isRequired, ...props }) => {
   };
 
   return (
-    <FormSpy>
-      {() => (
-        <FormGroup isRequired={isRequired} label={label}>
-          <Select
-            ouiaId="arch_select"
-            variant={SelectVariant.single}
-            onToggle={() => setIsOpen(!isOpen)}
-            onSelect={setArch}
-            selections={getState()?.values?.[input.name]}
-            isOpen={isOpen}
-          >
-            {setSelectOptions()}
-          </Select>
-        </FormGroup>
-      )}
-    </FormSpy>
+    <FormGroup isRequired={true} label="Architecture">
+      <Select
+        ouiaId="arch_select"
+        variant={SelectVariant.single}
+        onToggle={() => setIsOpen(!isOpen)}
+        onSelect={setArch}
+        selections={arch}
+        isOpen={isOpen}
+      >
+        {setSelectOptions()}
+      </Select>
+    </FormGroup>
   );
-};
-
-ArchSelect.propTypes = {
-  label: PropTypes.node,
-  isRequired: PropTypes.bool,
 };
 
 export default ArchSelect;
