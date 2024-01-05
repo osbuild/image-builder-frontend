@@ -85,8 +85,13 @@ describe('Step Image output', () => {
     await screen.findByRole('heading', { name: 'Image output' });
 
     await clickNext();
+    await screen.findByRole('heading', {
+      name: 'Target environment - Amazon Web Services',
+    });
 
+    await clickNext();
     await screen.findByRole('heading', { name: 'Review' });
+
     const view = screen.getByTestId('image-output-expandable');
     await user.click(await within(view).findByText(/image output/i));
     expect(await screen.findByText(/x86_64/i)).not.toBeNaN();
@@ -121,7 +126,8 @@ describe('Step Image output', () => {
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
 
-    await clickNext();
+    await user.click(await screen.findByRole('button', { name: /Next/ }));
+    await user.click(await screen.findByRole('button', { name: /Next/ }));
 
     await screen.findByRole('heading', { name: 'Review' });
     const view = screen.getByTestId('image-output-expandable');

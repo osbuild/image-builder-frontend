@@ -11,13 +11,6 @@ import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 
-/**
- * Manages the form for the image output step by providing the user with a
- * choice for:
- * - a distribution
- * - a release
- * - a set of environments
- */
 const ImageOutputStep = () => {
   const distribution = useAppSelector((state) => selectDistribution(state));
 

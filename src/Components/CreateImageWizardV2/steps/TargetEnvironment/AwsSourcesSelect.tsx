@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { Alert } from '@patternfly/react-core';
-import { FormGroup, Spinner } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 
-import { extractProvisioningList } from '../../../../store/helpers';
 import { useAppDispatch } from '../../../../store/hooks';
 import {
   useGetSourceListQuery,
@@ -16,6 +15,7 @@ import {
 } from '../../../../store/provisioningApi';
 import { changeAwsAccountId } from '../../../../store/wizardSlice';
 
+// The TODO API only defines a V1ListSourceResponseItem[] type
 type V1ListSourceResponseItem = {
   id?: string;
   name?: string;
@@ -30,22 +30,19 @@ export const AWSSourcesSelect = () => {
     undefined
   );
 
-  const { data, isFetching, isSuccess, isError, refetch } =
-    useGetSourceListQuery({ provider: 'aws' });
+  const { data, isSuccess, isError, refetch } = useGetSourceListQuery({
+    provider: 'aws',
+  });
 
   const sources = data?.data;
 
-  const {
-    data: sourceDetails,
-    isFetching: isFetchingDetails,
-    isSuccess: isSuccessDetails,
-    isError: isErrorDetails,
-  } = useGetSourceUploadInfoQuery(
-    { id: parseInt(source?.id) },
-    {
-      skip: !source,
-    }
-  );
+  const { data: sourceDetails, isError: isErrorDetails } =
+    useGetSourceUploadInfoQuery(
+      { id: parseInt(source?.id) },
+      {
+        skip: !source,
+      }
+    );
 
   useEffect(() => {
     dispatch(changeAwsAccountId(sourceDetails?.aws?.account_id));
@@ -55,7 +52,7 @@ export const AWSSourcesSelect = () => {
     _event: React.MouseEvent<Element, MouseEvent>,
     value: string
   ) => {
-    const source = sources.find((source) => source.name === value);
+    const source = sources?.find((source) => source.name === value);
     setSource(source);
     setIsOpen(false);
   };
@@ -89,7 +86,7 @@ export const AWSSourcesSelect = () => {
           typeAheadAriaLabel="Select source"
           isDisabled={!isSuccess}
         >
-          {sources.map((source) => (
+          {sources?.map((source) => (
             <SelectOption key={source.id} value={source.name} />
           ))}
           {/*isFetching && (

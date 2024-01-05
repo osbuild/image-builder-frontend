@@ -100,22 +100,6 @@ const CreateImageWizard = () => {
               >
                 <Aws />
               </WizardStep>,
-              <WizardStep
-                name="Google Cloud Platform"
-                id="expand-steps-sub-b"
-                key="expand-steps-sub-b"
-                footer={<CustomWizardFooter isNextDisabled={false} />}
-              >
-                Substep GCP
-              </WizardStep>,
-              <WizardStep
-                name="Azure"
-                id="expand-steps-sub-c"
-                key="expand-steps-sub-c"
-                footer={<CustomWizardFooter isNextDisabled={false} />}
-              >
-                Substep Azure
-              </WizardStep>,
             ]}
           />
           <WizardStep
