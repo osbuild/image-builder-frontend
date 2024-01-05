@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Text, Form, Title } from '@patternfly/react-core';
 
+import ArchSelect from './ArchSelect';
 import ReleaseLifecycle from './ReleaseLifecycle';
 import ReleaseSelect from './ReleaseSelect';
 
@@ -19,6 +20,7 @@ const ImageOutputStep = () => {
       </Text>
       <ReleaseSelect />
       <ReleaseLifecycle />
+      <ArchSelect />
     </Form>
   );
 };
