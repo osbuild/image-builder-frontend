@@ -1,14 +1,15 @@
 import React from 'react';
 
-// import '@testing-library/jest-dom';
+import '@testing-library/jest-dom';
 
+import type { Router as RemixRouter } from '@remix-run/router';
 import {
   screen,
-  //   waitFor,
+  waitFor,
   //   waitForElementToBeRemoved,
-  //   within,
+  within,
 } from '@testing-library/react';
-// import userEvent from '@testing-library/user-event';
+import userEvent from '@testing-library/user-event';
 // import { rest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
@@ -19,13 +20,13 @@ import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal
 //   RHEL_8,
 //   RHSM_API,
 // } from '../../../constants.js';
-// import { server } from '../../mocks/server.js';
+import { server } from '../../mocks/server.js';
 import {
   //   clickBack,
-  //   clickNext,
-  //   getNextButton,
+  clickNext,
+  getNextButton,
   renderCustomRoutesWithReduxRouter,
-  //   verifyCancelButton,
+  verifyCancelButton,
 } from '../../testUtils';
 
 const routes = [
@@ -43,26 +44,26 @@ const routes = [
   },
 ];
 
-// let router = undefined;
+let router: RemixRouter | undefined = undefined;
 
-// jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-//   useChrome: () => ({
-//     auth: {
-//       getUser: () => {
-//         return {
-//           identity: {
-//             internal: {
-//               org_id: 5,
-//             },
-//           },
-//         };
-//       },
-//     },
-//     isBeta: () => false,
-//     isProd: () => true,
-//     getEnvironment: () => 'prod',
-//   }),
-// }));
+jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    auth: {
+      getUser: () => {
+        return {
+          identity: {
+            internal: {
+              org_id: 5,
+            },
+          },
+        };
+      },
+    },
+    isBeta: () => false,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
 
 // jest.mock('@unleash/proxy-client-react', () => ({
 //   useUnleashContext: () => jest.fn(),
@@ -99,16 +100,16 @@ const routes = [
 //   return sourceDropdown;
 // };
 
-// beforeAll(() => {
-//   // scrollTo is not defined in jsdom
-//   window.HTMLElement.prototype.scrollTo = function () {};
-// });
+beforeAll(() => {
+  // scrollTo is not defined in jsdom
+  window.HTMLElement.prototype.scrollTo = function () {};
+});
 
-// afterEach(() => {
-//   jest.clearAllMocks();
-//   router = undefined;
-//   server.resetHandlers();
-// });
+afterEach(() => {
+  jest.clearAllMocks();
+  router = undefined;
+  server.resetHandlers();
+});
 
 describe('Create Image Wizard', () => {
   test('renders component', () => {
@@ -127,169 +128,169 @@ describe('Create Image Wizard', () => {
   });
 });
 
-// describe('Step Image output', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = await renderCustomRoutesWithReduxRouter(
-//       'imagewizard',
-//       {},
-//       routes
-//     ));
+describe('Step Image output', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
 
-//     // select aws as upload destination
-//     await user.click(await screen.findByTestId('upload-aws'));
+    // select aws as upload destination
+    await user.click(await screen.findByTestId('upload-aws'));
 
-//     await screen.findByRole('heading', { name: 'Image output' });
-//   };
+    await screen.findByRole('heading', { name: 'Image output' });
+  };
 
-//   test('clicking Next loads Upload to AWS', async () => {
-//     await setUp();
+  // test('clicking Next loads Upload to AWS', async () => {
+  //   await setUp();
 
-//     await clickNext();
+  //   await clickNext();
 
-//     await switchToAWSManual();
-//     await screen.findByText('AWS account ID');
-//   });
+  //   await switchToAWSManual();
+  //   await screen.findByText('AWS account ID');
+  // });
 
-//   test('clicking Cancel loads landing page', async () => {
-//     await setUp();
-//     await clickNext();
+  test('clicking Cancel loads landing page', async () => {
+    await setUp();
+    await clickNext();
 
-//     await verifyCancelButton(router);
-//   });
+    await verifyCancelButton(router);
+  });
 
-//   test('target environment is required', async () => {
-//     await setUp();
+  test('target environment is required', async () => {
+    await setUp();
 
-//     const destination = screen.getByTestId('target-select');
-//     const required = within(destination).getByText('*');
-//     expect(destination).toBeEnabled();
-//     expect(destination).toContainElement(required);
-//   });
+    const destination = await screen.findByTestId('target-select');
+    const required = await within(destination).findByText('*');
+    expect(destination).toBeEnabled();
+    expect(destination).toContainElement(required);
+  });
 
-//   test('selecting and deselecting a tile disables the next button', async () => {
-//     await setUp();
-//     const nextButton = await getNextButton();
+  test('selecting and deselecting a tile disables the next button', async () => {
+    await setUp();
+    const nextButton = await getNextButton();
 
-//     const awsTile = screen.getByTestId('upload-aws');
-//     // this has already been clicked once in the setup function
-//     await user.click(awsTile); // deselect
+    const awsTile = screen.getByTestId('upload-aws');
+    // this has already been clicked once in the setup function
+    await user.click(awsTile); // deselect
 
-//     const googleTile = screen.getByTestId('upload-google');
-//     await user.click(googleTile); // select
-//     await user.click(googleTile); // deselect
+    const googleTile = screen.getByTestId('upload-google');
+    await user.click(googleTile); // select
+    await user.click(googleTile); // deselect
 
-//     const azureTile = screen.getByTestId('upload-azure');
-//     await user.click(azureTile); // select
-//     await user.click(azureTile); // deselect
+    const azureTile = screen.getByTestId('upload-azure');
+    await user.click(azureTile); // select
+    await user.click(azureTile); // deselect
 
-//     await waitFor(() => expect(nextButton).toBeDisabled());
-//   });
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
 
-//   test('expect only RHEL releases before expansion', async () => {
-//     await setUp();
+  test('expect only RHEL releases before expansion', async () => {
+    await setUp();
 
-//     const releaseMenu = screen.getAllByRole('button', {
-//       name: /options menu/i,
-//     })[0];
-//     await user.click(releaseMenu);
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    await user.click(releaseMenu);
 
-//     await screen.findByRole('option', {
-//       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-//     });
-//     await screen.findByRole('option', {
-//       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-//     });
-//     await screen.findByRole('button', {
-//       name: 'Show options for further development of RHEL',
-//     });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+    await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
 
-//     await user.click(releaseMenu);
-//   });
+    await user.click(releaseMenu);
+  });
 
-//   test('expect all releases after expansion', async () => {
-//     await setUp();
+  test('expect all releases after expansion', async () => {
+    await setUp();
 
-//     const releaseMenu = screen.getAllByRole('button', {
-//       name: /options menu/i,
-//     })[0];
-//     await user.click(releaseMenu);
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    await user.click(releaseMenu);
 
-//     const showOptionsButton = screen.getByRole('button', {
-//       name: 'Show options for further development of RHEL',
-//     });
-//     await user.click(showOptionsButton);
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    await user.click(showOptionsButton);
 
-//     await screen.findByRole('option', {
-//       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-//     });
-//     await screen.findByRole('option', {
-//       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-//     });
-//     await screen.findByRole('option', {
-//       name: 'CentOS Stream 8',
-//     });
-//     await screen.findByRole('option', {
-//       name: 'CentOS Stream 9',
-//     });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+    await screen.findByRole('option', {
+      name: 'CentOS Stream 8',
+    });
+    await screen.findByRole('option', {
+      name: 'CentOS Stream 9',
+    });
 
-//     expect(showOptionsButton).not.toBeInTheDocument();
+    expect(showOptionsButton).not.toBeInTheDocument();
 
-//     await user.click(releaseMenu);
-//   });
+    await user.click(releaseMenu);
+  });
 
-//   test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
-//     await setUp();
+  test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
+    await setUp();
 
-//     const releaseMenu = screen.getAllByRole('button', {
-//       name: /options menu/i,
-//     })[0];
-//     await user.click(releaseMenu);
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    await user.click(releaseMenu);
 
-//     await user.click(
-//       await screen.findByRole('option', {
-//         name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-//       })
-//     );
-//     expect(
-//       screen.queryByTestId('release-lifecycle-chart')
-//     ).not.toBeInTheDocument();
+    await user.click(
+      await screen.findByRole('option', {
+        name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+      })
+    );
+    expect(
+      screen.queryByTestId('release-lifecycle-chart')
+    ).not.toBeInTheDocument();
 
-//     await user.click(releaseMenu);
+    await user.click(releaseMenu);
 
-//     await user.click(
-//       await screen.findByRole('option', {
-//         name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-//       })
-//     );
-//     expect(
-//       await screen.findByTestId('release-lifecycle-chart')
-//     ).toBeInTheDocument();
-//   });
+    await user.click(
+      await screen.findByRole('option', {
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+      })
+    );
+    expect(
+      await screen.findByTestId('release-lifecycle-chart')
+    ).toBeInTheDocument();
+  });
 
-//   test('CentOS acknowledgement appears', async () => {
-//     await setUp();
+  test('CentOS acknowledgement appears', async () => {
+    await setUp();
 
-//     const releaseMenu = screen.getAllByRole('button', {
-//       name: /options menu/i,
-//     })[0];
-//     await user.click(releaseMenu);
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    await user.click(releaseMenu);
 
-//     const showOptionsButton = screen.getByRole('button', {
-//       name: 'Show options for further development of RHEL',
-//     });
-//     await user.click(showOptionsButton);
+    const showOptionsButton = screen.getByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    await user.click(showOptionsButton);
 
-//     const centOSButton = screen.getByRole('option', {
-//       name: 'CentOS Stream 9',
-//     });
-//     await user.click(centOSButton);
+    const centOSButton = screen.getByRole('option', {
+      name: 'CentOS Stream 9',
+    });
+    await user.click(centOSButton);
 
-//     await screen.findByText(
-//       'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
-//     );
-//   });
-// });
+    await screen.findByText(
+      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
+    );
+  });
+});
 
 // describe('Step Upload to AWS', () => {
 //   const user = userEvent.setup();
