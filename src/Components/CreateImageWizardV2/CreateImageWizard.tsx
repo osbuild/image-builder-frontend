@@ -47,6 +47,8 @@ const CreateImageWizard = () => {
   // Ensure the wizard starts with a fresh initial state
   dispatch(initializeWizard);
 
+  const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
+
   return (
     <>
       <ImageBuilderHeader />
@@ -57,15 +59,27 @@ const CreateImageWizard = () => {
             id="step-image-output"
             footer={
               <CustomWizardFooter
-                disableNext={
-                  useAppSelector((state) => selectImageTypes(state)).length ===
-                  0
-                }
+                disableNext={targetEnvironments.length === 0}
               />
             }
           >
             <ImageOutputStep />
           </WizardStep>
+          <WizardStep
+            name="Target Environment"
+            id="step-target-environment"
+            steps={[
+              <WizardStep
+                name="Amazon Web Services"
+                id="wizard-target-aws"
+                key="wizard-target-aws"
+                footer={<CustomWizardFooter disableNext={true} />}
+                isHidden={!targetEnvironments.includes('aws')}
+              >
+                {/* <Aws /> */}
+              </WizardStep>,
+            ]}
+          />
           <WizardStep
             name="Review"
             id="step-review"
