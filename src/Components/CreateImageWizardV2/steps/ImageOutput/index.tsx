@@ -5,6 +5,7 @@ import { Text, Form, Title } from '@patternfly/react-core';
 import ArchSelect from './ArchSelect';
 import ReleaseLifecycle from './ReleaseLifecycle';
 import ReleaseSelect from './ReleaseSelect';
+import TargetEnvironment from './TargetEnvironment';
 
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 
@@ -21,6 +22,7 @@ const ImageOutputStep = () => {
       <ReleaseSelect />
       <ReleaseLifecycle />
       <ArchSelect />
+      <TargetEnvironment />
     </Form>
   );
 };
