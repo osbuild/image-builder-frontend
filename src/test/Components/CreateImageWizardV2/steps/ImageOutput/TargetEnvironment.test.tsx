@@ -4,11 +4,11 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../Components/CreateImageWizard/CreateImageWizard';
-import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../constants';
-import { mockArchitecturesByDistro } from '../../../fixtures/architectures';
-import { server } from '../../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../../testUtils';
+import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
+import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../../constants';
+import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
+import { server } from '../../../../mocks/server';
+import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 
 const routes = [
   {
@@ -58,7 +58,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(await screen.findByRole('option', { name: 'x86_64' }));
 
     // make sure this test is in SYNC with the mocks
-    let images_types = [];
+    let images_types: string[] = []; // type is `string[]` and not `ImageType[]` because in imageBuilderAPI ArchitectureItem['image_types'] is type string
     mockArchitecturesByDistro(RHEL_9).forEach((elem) => {
       if (elem.arch === X86_64) {
         images_types = elem.image_types;
@@ -108,7 +108,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(await screen.findByRole('option', { name: 'x86_64' }));
 
     // make sure this test is in SYNC with the mocks
-    let images_types = [];
+    let images_types: string[] = [];
     mockArchitecturesByDistro(RHEL_8).forEach((elem) => {
       if (elem.arch === X86_64) {
         images_types = elem.image_types;
@@ -145,7 +145,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(await screen.findByRole('option', { name: 'aarch64' }));
 
     // make sure this test is in SYNC with the mocks
-    let images_types = [];
+    let images_types: string[] = [];
     mockArchitecturesByDistro(RHEL_9).forEach((elem) => {
       if (elem.arch === AARCH64) {
         images_types = elem.image_types;
@@ -197,7 +197,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await user.click(await screen.findByRole('option', { name: 'aarch64' }));
 
     // make sure this test is in SYNC with the mocks
-    let images_types = [];
+    let images_types: string[] = [];
     mockArchitecturesByDistro(RHEL_8).forEach((elem) => {
       if (elem.arch === AARCH64) {
         images_types = elem.image_types;
