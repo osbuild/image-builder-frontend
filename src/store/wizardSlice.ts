@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { Distributions, ImageRequest } from './imageBuilderApi';
+import { Distributions, ImageRequest, ImageTypes } from './imageBuilderApi';
 
 import { RHEL_9, X86_64 } from '../constants';
 
@@ -9,11 +9,13 @@ import { RootState } from '.';
 type wizardState = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
+  imageTypes: ImageTypes[];
 };
 
 const initialState: wizardState = {
   architecture: X86_64,
   distribution: RHEL_9,
+  imageTypes: [],
 };
 
 export const selectArchitecture = (state: RootState) => {
@@ -22,6 +24,10 @@ export const selectArchitecture = (state: RootState) => {
 
 export const selectDistribution = (state: RootState) => {
   return state.wizard.distribution;
+};
+
+export const selectImageTypes = (state: RootState) => {
+  return state.wizard.imageTypes;
 };
 
 export const wizardSlice = createSlice({
@@ -38,9 +44,30 @@ export const wizardSlice = createSlice({
     changeDistribution: (state, action: PayloadAction<Distributions>) => {
       state.distribution = action.payload;
     },
+    addImageType: (state, action: PayloadAction<ImageTypes>) => {
+      // Remove (if present) before adding to avoid duplicates
+      state.imageTypes = state.imageTypes.filter(
+        (imageType) => imageType !== action.payload
+      );
+      state.imageTypes.push(action.payload);
+    },
+    removeImageType: (state, action: PayloadAction<ImageTypes>) => {
+      state.imageTypes = state.imageTypes.filter(
+        (imageType) => imageType !== action.payload
+      );
+    },
+    changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
+      state.imageTypes = action.payload;
+    },
   },
 });
 
-export const { initializeWizard, changeArchitecture, changeDistribution } =
-  wizardSlice.actions;
+export const {
+  initializeWizard,
+  changeArchitecture,
+  changeDistribution,
+  addImageType,
+  removeImageType,
+  changeImageTypes,
+} = wizardSlice.actions;
 export default wizardSlice.reducer;
