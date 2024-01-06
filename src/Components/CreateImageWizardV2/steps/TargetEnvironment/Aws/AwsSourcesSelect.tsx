@@ -1,82 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
-import { FormSpy } from '@data-driven-forms/react-form-renderer';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import { Alert } from '@patternfly/react-core';
-import { FormGroup, Spinner } from '@patternfly/react-core';
+import { Alert, Spinner } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import PropTypes from 'prop-types';
 
-import { extractProvisioningList } from '../../../store/helpers';
+import { useAppDispatch } from '../../../../../store/hooks';
+import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import {
-  useGetSourceListQuery,
-  useGetSourceUploadInfoQuery,
-} from '../../../store/provisioningApi';
+  changeAwsSource,
+  resetAwsSource,
+} from '../../../../../store/wizardSlice';
 
-export const AWSSourcesSelect = ({
-  label,
-  isRequired,
-  className,
-  ...props
-}) => {
-  const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
+import { V1ListSourceResponseItem } from '.';
+
+type AwsSourcesSelectPropTypes = {
+  source: V1ListSourceResponseItem | undefined;
+  setSource: React.Dispatch<
+    React.SetStateAction<V1ListSourceResponseItem | undefined>
+  >;
+};
+
+export const AwsSourcesSelect = ({
+  source,
+  setSource,
+}: AwsSourcesSelectPropTypes) => {
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedSourceId, setSelectedSourceId] = useState(
-    getState()?.values?.['aws-sources-select']
-  );
 
-  const {
-    data: rawSources,
-    isFetching,
-    isSuccess,
-    isError,
-    refetch,
-  } = useGetSourceListQuery({ provider: 'aws' });
-  const sources = extractProvisioningList(rawSources);
+  const { data, isFetching, isLoading, isSuccess, isError, refetch } =
+    useGetSourceListQuery({
+      provider: 'aws',
+    });
 
-  const {
-    data: sourceDetails,
-    isFetching: isFetchingDetails,
-    isSuccess: isSuccessDetails,
-    isError: isErrorDetails,
-  } = useGetSourceUploadInfoQuery(
-    { id: selectedSourceId },
-    {
-      skip: !selectedSourceId,
-    }
-  );
+  const sources = data?.data;
 
-  useEffect(() => {
-    if (isFetchingDetails || !isSuccessDetails) return;
-    change('aws-associated-account-id', sourceDetails?.aws?.account_id);
-  }, [isFetchingDetails, isSuccessDetails]);
-
-  const onFormChange = ({ values }) => {
-    if (
-      values['aws-target-type'] !== 'aws-target-type-source' ||
-      values[input.name] === undefined
-    ) {
-      change(input.name, undefined);
-      change('aws-associated-account-id', undefined);
-    }
-  };
-
-  const handleSelect = (_, sourceName) => {
-    const sourceId = sources.find((source) => source.name === sourceName).id;
-    setSelectedSourceId(sourceId);
+  const handleSelect = (
+    _event: React.MouseEvent<Element, MouseEvent>,
+    value: string
+  ) => {
+    const source = sources?.find((source) => source.name === value);
+    setSource(source);
+    source?.id && dispatch(changeAwsSource(source.id));
     setIsOpen(false);
-    change(input.name, sourceId);
   };
 
   const handleClear = () => {
-    setSelectedSourceId();
-    change(input.name, undefined);
+    dispatch(resetAwsSource());
+    setSource(undefined);
   };
 
   const handleToggle = () => {
@@ -88,40 +62,36 @@ export const AWSSourcesSelect = ({
     setIsOpen(!isOpen);
   };
 
+  const selectOptions = sources?.map((source) => (
+    <SelectOption key={source.id} value={source.name} />
+  ));
+
+  const loadingSpinner = (
+    <SelectOption key={'fetching'} isNoResultsOption={true}>
+      <Spinner size="lg" />
+    </SelectOption>
+  );
+
+  if (isFetching) {
+    selectOptions?.push(loadingSpinner);
+  }
+
   return (
     <>
-      <FormSpy subscription={{ values: true }} onChange={onFormChange} />
-      <FormGroup
-        isRequired={isRequired}
-        label={label}
-        data-testid="sources"
-        className={className}
-      >
+      <FormGroup isRequired label={'Source Name'} data-testid="sources">
         <Select
           ouiaId="source_select"
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
           onSelect={handleSelect}
           onClear={handleClear}
-          selections={
-            selectedSourceId
-              ? sources.find((source) => source.id === selectedSourceId)?.name
-              : undefined
-          }
+          selections={source?.name}
           isOpen={isOpen}
           placeholderText="Select source"
           typeAheadAriaLabel="Select source"
-          isDisabled={!isSuccess}
+          isDisabled={!isSuccess || isLoading}
         >
-          {isSuccess &&
-            sources.map((source) => (
-              <SelectOption key={source.id} value={source.name} />
-            ))}
-          {isFetching && (
-            <SelectOption isNoResultsOption={true}>
-              <Spinner size="lg" />
-            </SelectOption>
-          )}
+          {selectOptions}
         </Select>
       </FormGroup>
       <>
@@ -136,25 +106,7 @@ export const AWSSourcesSelect = ({
             ID manually.
           </Alert>
         )}
-        {!isError && isErrorDetails && (
-          <Alert
-            variant={'danger'}
-            isPlain
-            isInline
-            title={'AWS details unavailable'}
-          >
-            The AWS account ID for the selected source could not be resolved.
-            There might be a problem with the source. Verify that the source is
-            valid in Sources or select a different source.
-          </Alert>
-        )}
       </>
     </>
   );
-};
-
-AWSSourcesSelect.propTypes = {
-  className: PropTypes.string,
-  label: PropTypes.node,
-  isRequired: PropTypes.bool,
 };
