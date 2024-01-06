@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -10,10 +10,17 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
+import Aws, { AwsShareMethod } from './steps/TargetEnvironment/Aws';
+import { isAwsAccountIdValid } from './validators';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
-import { initializeWizard, selectImageTypes } from '../../store/wizardSlice';
+import {
+  initializeWizard,
+  selectAwsAccount,
+  selectAwsSource,
+  selectImageTypes,
+} from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -49,6 +56,11 @@ const CreateImageWizard = () => {
 
   const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
 
+  const [awsShareMethod, setAwsShareMethod] =
+    useState<AwsShareMethod>('sources');
+  const awsAccountId = useAppSelector((state) => selectAwsAccount(state));
+  const awsSourceId = useAppSelector((state) => selectAwsSource(state));
+
   return (
     <>
       <ImageBuilderHeader />
@@ -68,15 +80,32 @@ const CreateImageWizard = () => {
           <WizardStep
             name="Target Environment"
             id="step-target-environment"
+            isHidden={
+              !targetEnvironments.find(
+                (target) =>
+                  target === 'aws' || target === 'gcp' || target === 'azure'
+              )
+            }
             steps={[
               <WizardStep
                 name="Amazon Web Services"
                 id="wizard-target-aws"
                 key="wizard-target-aws"
-                footer={<CustomWizardFooter disableNext={true} />}
+                footer={
+                  <CustomWizardFooter
+                    disableNext={
+                      awsShareMethod === 'manual'
+                        ? !isAwsAccountIdValid(awsAccountId)
+                        : awsSourceId === undefined
+                    }
+                  />
+                }
                 isHidden={!targetEnvironments.includes('aws')}
               >
-                {/* <Aws /> */}
+                <Aws
+                  shareMethod={awsShareMethod}
+                  setShareMethod={setAwsShareMethod}
+                />
               </WizardStep>,
             ]}
           />
