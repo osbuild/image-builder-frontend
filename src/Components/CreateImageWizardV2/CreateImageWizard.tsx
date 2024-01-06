@@ -9,13 +9,13 @@ import {
 } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom';
 
-import { useAppDispatch } from '../../store/hooks';
+import ImageOutputStep from './steps/ImageOutput';
+
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
-import { initializeWizard } from '../../store/wizardSlice';
+import { initializeWizard, selectImageTypes } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
-
-import ImageOutputStep from './steps/ImageOutput';
 
 type CustomWizardFooterPropType = {
   disableNext: boolean;
@@ -55,7 +55,14 @@ const CreateImageWizard = () => {
           <WizardStep
             name="Image output"
             id="step-image-output"
-            footer={<CustomWizardFooter disableNext={false} />}
+            footer={
+              <CustomWizardFooter
+                disableNext={
+                  useAppSelector((state) => selectImageTypes(state)).length ===
+                  0
+                }
+              />
+            }
           >
             <ImageOutputStep />
           </WizardStep>
