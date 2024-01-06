@@ -8,7 +8,14 @@ import { imageBuilderApi } from './enhancedImageBuilderApi';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
-import wizardSlice, {changeArchitecture, changeDistribution, changeImageTypes, selectArchitecture, selectDistribution, selectImageTypes} from './wizardSlice';
+import wizardSlice, {
+  changeArchitecture,
+  changeDistribution,
+  changeImageTypes,
+  selectArchitecture,
+  selectDistribution,
+  selectImageTypes,
+} from './wizardSlice';
 
 export const reducer = {
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
