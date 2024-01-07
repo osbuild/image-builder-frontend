@@ -10,19 +10,19 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-// import { rest } from 'msw';
+import { rest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-// import {
-//   IMAGE_BUILDER_API,
-//   PROVISIONING_API,
-//   RHEL_8,
-//   RHSM_API,
-// } from '../../../constants.js';
+import {
+  //   IMAGE_BUILDER_API,
+  PROVISIONING_API,
+  //   RHEL_8,
+  //   RHSM_API,
+} from '../../../constants.js';
 import { server } from '../../mocks/server.js';
 import {
-  //   clickBack,
+  clickBack,
   clickNext,
   getNextButton,
   renderCustomRoutesWithReduxRouter,
@@ -82,23 +82,23 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 //   );
 // };
 
-// const switchToAWSManual = async () => {
-//   const user = userEvent.setup();
-//   const manualRadio = screen.getByRole('radio', {
-//     name: /manually enter an account id\./i,
-//   });
-//   await user.click(manualRadio);
-//   return manualRadio;
-// };
+const switchToAWSManual = async () => {
+  const user = userEvent.setup();
+  const manualRadio = screen.getByRole('radio', {
+    name: /manually enter an account id\./i,
+  });
+  await user.click(manualRadio);
+  return manualRadio;
+};
 
-// const getSourceDropdown = async () => {
-//   const sourceDropdown = screen.getByRole('textbox', {
-//     name: /select source/i,
-//   });
-//   await waitFor(() => expect(sourceDropdown).toBeEnabled());
+const getSourceDropdown = async () => {
+  const sourceDropdown = screen.getByRole('textbox', {
+    name: /select source/i,
+  });
+  await waitFor(() => expect(sourceDropdown).toBeEnabled());
 
-//   return sourceDropdown;
-// };
+  return sourceDropdown;
+};
 
 beforeAll(() => {
   // scrollTo is not defined in jsdom
@@ -143,14 +143,14 @@ describe('Step Image output', () => {
     await screen.findByRole('heading', { name: 'Image output' });
   };
 
-  // test('clicking Next loads Upload to AWS', async () => {
-  //   await setUp();
+  test('clicking Next loads Upload to AWS', async () => {
+    await setUp();
 
-  //   await clickNext();
+    await clickNext();
 
-  //   await switchToAWSManual();
-  //   await screen.findByText('AWS account ID');
-  // });
+    await switchToAWSManual();
+    await screen.findByText('AWS account ID');
+  });
 
   test('clicking Cancel loads landing page', async () => {
     await setUp();
@@ -292,145 +292,147 @@ describe('Step Image output', () => {
   });
 });
 
-// describe('Step Upload to AWS', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = await renderCustomRoutesWithReduxRouter(
-//       'imagewizard',
-//       {},
-//       routes
-//     ));
+describe('Step Upload to AWS', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
 
-//     // select aws as upload destination
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-aws'))
-//     );
+    // select aws as upload destination
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
 
-//     await clickNext();
+    await clickNext();
 
-//     await screen.findByRole('heading', {
-//       name: 'Target environment - Amazon Web Services',
-//     });
-//   };
+    await screen.findByRole('heading', {
+      name: 'Target environment - Amazon Web Services',
+    });
+  };
 
-//   test('clicking Next loads Registration', async () => {
-//     await setUp();
+  // test('clicking Next loads Registration', async () => {
+  //   await setUp();
 
-//     await switchToAWSManual();
-//     await user.type(
-//       await screen.findByTestId('aws-account-id'),
-//       '012345678901'
-//     );
-//     await clickNext();
+  //   await switchToAWSManual();
+  //   await user.type(
+  //     await screen.findByTestId('aws-account-id'),
+  //     '012345678901'
+  //   );
+  //   await clickNext();
 
-//     await screen.findByRole('textbox', {
-//       name: 'Select activation key',
-//     });
+  //   await screen.findByRole('textbox', {
+  //     name: 'Select activation key',
+  //   });
 
-//     screen.getByText('Automatically register and enable advanced capabilities');
-//   });
+  //   screen.getByText('Automatically register and enable advanced capabilities');
+  // });
 
-//   test('clicking Back loads Release', async () => {
-//     await setUp();
+  test('clicking Back loads Release', async () => {
+    await setUp();
 
-//     await clickBack();
+    await clickBack();
 
-//     screen.getByTestId('upload-aws');
-//   });
+    screen.getByTestId('upload-aws');
+  });
 
-//   test('clicking Cancel loads landing page', async () => {
-//     await setUp();
+  test('clicking Cancel loads landing page', async () => {
+    await setUp();
 
-//     await verifyCancelButton(router);
-//   });
+    await verifyCancelButton(router);
+  });
 
-//   test('component renders error state correctly', async () => {
-//     server.use(
-//       rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
-//         res(ctx.status(500))
-//       )
-//     );
-//     await setUp();
-//     await screen.findByText(
-//       /sources cannot be reached, try again later or enter an aws account id manually\./i
-//     );
-//   });
+  test('component renders error state correctly', async () => {
+    server.use(
+      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
+        res(ctx.status(500))
+      )
+    );
+    await setUp();
+    await screen.findByText(
+      /sources cannot be reached, try again later or enter an aws account id manually\./i
+    );
+  });
 
-//   test('validation works', async () => {
-//     await setUp();
-//     const nextButton = await getNextButton();
+  test('validation works', async () => {
+    await setUp();
+    const nextButton = await getNextButton();
 
-//     expect(nextButton).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
 
-//     await user.click(
-//       screen.getByRole('radio', { name: /manually enter an account id\./i })
-//     );
+    await user.click(
+      screen.getByRole('radio', { name: /manually enter an account id\./i })
+    );
 
-//     expect(nextButton).toHaveClass('pf-m-disabled');
+    expect(nextButton).toHaveClass('pf-m-disabled');
 
-//     const awsAccId = screen.getByTestId('aws-account-id');
-//     expect(awsAccId).toHaveValue('');
-//     expect(awsAccId).toBeEnabled();
-//     await user.type(awsAccId, '012345678901');
+    const awsAccId = await screen.findByRole('textbox', {
+      name: 'aws account id',
+    });
+    expect(awsAccId).toHaveValue('');
+    expect(awsAccId).toBeEnabled();
+    await user.type(awsAccId, '012345678901');
 
-//     expect(nextButton).not.toHaveClass('pf-m-disabled');
+    expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-//     await user.click(
-//       screen.getByRole('radio', {
-//         name: /use an account configured from sources\./i,
-//       })
-//     );
+    await user.click(
+      screen.getByRole('radio', {
+        name: /use an account configured from sources\./i,
+      })
+    );
 
-//     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
-//     const sourceDropdown = await getSourceDropdown();
-//     await user.click(sourceDropdown);
+    const sourceDropdown = await getSourceDropdown();
+    await user.click(sourceDropdown);
 
-//     const source = await screen.findByRole('option', {
-//       name: /my_source/i,
-//     });
-//     await user.click(source);
+    const source = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await user.click(source);
 
-//     await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
-//   });
+    await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
+  });
 
-//   test('compose request share_with_sources field is correct', async () => {
-//     await setUp();
+  // test('compose request share_with_sources field is correct', async () => {
+  //   await setUp();
 
-//     const sourceDropdown = await getSourceDropdown();
-//     await user.click(sourceDropdown);
+  //   const sourceDropdown = await getSourceDropdown();
+  //   await user.click(sourceDropdown);
 
-//     const source = await screen.findByRole('option', {
-//       name: /my_source/i,
-//     });
-//     await user.click(source);
+  //   const source = await screen.findByRole('option', {
+  //     name: /my_source/i,
+  //   });
+  //   await user.click(source);
 
-//     await clickNext();
+  //   await clickNext();
 
-//     // registration
-//     await screen.findByRole('textbox', {
-//       name: 'Select activation key',
-//     });
+  //   // registration
+  //   await screen.findByRole('textbox', {
+  //     name: 'Select activation key',
+  //   });
 
-//     const registerLaterRadio = screen.getByLabelText('Register later');
-//     await user.click(registerLaterRadio);
+  //   const registerLaterRadio = screen.getByLabelText('Register later');
+  //   await user.click(registerLaterRadio);
 
-//     // click through to review step
-//     await clickNext();
-//     await clickNext();
-//     await clickNext();
-//     await clickNext();
-//     await clickNext();
+  //   // click through to review step
+  //   await clickNext();
+  //   await clickNext();
+  //   await clickNext();
+  //   await clickNext();
+  //   await clickNext();
 
-//     await user.click(screen.getByRole('button', { name: /Create/ }));
+  //   await user.click(screen.getByRole('button', { name: /Create/ }));
 
-//     // returns back to the landing page
-//     await waitFor(() =>
-//       expect(router.state.location.pathname).toBe('/insights/image-builder')
-//     );
-//     // set test timeout of 10 seconds
-//   }, 10000);
-// });
+  //   // returns back to the landing page
+  //   await waitFor(() =>
+  //     expect(router.state.location.pathname).toBe('/insights/image-builder')
+  //   );
+  //   // set test timeout of 10 seconds
+  // }, 10000);
+});
 
 // describe('Step Upload to Google', () => {
 //   const user = userEvent.setup();
