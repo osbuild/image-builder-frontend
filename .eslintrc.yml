@@ -10,6 +10,7 @@ globals:
   shallow: readonly
   render: 'readonly'
   mount: 'readonly'
+  vi: true
 plugins:
   - import
 rules:

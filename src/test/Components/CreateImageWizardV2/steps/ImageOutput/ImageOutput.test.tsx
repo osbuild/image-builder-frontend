@@ -1,8 +1,9 @@
 import React from 'react';
-import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import '@testing-library/jest-dom';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
 import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../../constants';
@@ -10,13 +11,15 @@ import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
 import { server } from '../../../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
 const routes = [
   {
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <CreateImageWizard />,
   },
 ];
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -41,7 +44,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   server.resetHandlers();
 });
 

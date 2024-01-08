@@ -1,10 +1,8 @@
-import '@testing-library/jest-dom';
-
 import { useFlag } from '@unleash/proxy-client-react';
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.edge.local-image-table' ? true : false
   ),
 }));
