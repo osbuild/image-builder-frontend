@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Grid, GridItem, TextInput } from '@patternfly/react-core';
 import {
@@ -15,28 +15,33 @@ const SizeUnit = ({ ...props }) => {
   const [unit, setUnit] = useState(props.unit || UNIT_GIB);
   const [size, setSize] = useState(props.size || 1);
 
-  useEffect(() => {
-    props.onChange(size, unit);
-  }, [unit, size]);
+  const handleSizeChange = (newValue) => {
+    const newSize = isNaN(parseInt(newValue)) ? 0 : parseInt(newValue);
+    setSize(newSize);
+    props.onChange(newSize, unit);
+  };
 
   const onToggle = (isOpen) => {
     setIsOpen(isOpen);
   };
 
   const onSelect = (event, selection) => {
+    let newUnit;
     switch (selection) {
       case 'KiB':
-        setUnit(UNIT_KIB);
+        newUnit = UNIT_KIB;
         break;
       case 'MiB':
-        setUnit(UNIT_MIB);
+        newUnit = UNIT_MIB;
         break;
       case 'GiB':
-        setUnit(UNIT_GIB);
+        newUnit = UNIT_GIB;
         break;
       // no default
     }
 
+    setUnit(newUnit);
+    props.onChange(newUnit, size);
     setIsOpen(false);
   };
 
@@ -49,9 +54,7 @@ const SizeUnit = ({ ...props }) => {
           type="text"
           value={size}
           aria-label="Size text input"
-          onChange={(_event, v) =>
-            setSize(isNaN(parseInt(v)) ? 0 : parseInt(v))
-          }
+          onChange={(_event, v) => handleSizeChange(v)}
         />
       </GridItem>
       <GridItem span={6}>
