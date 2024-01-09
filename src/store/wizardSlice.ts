@@ -6,6 +6,10 @@ import {
   AwsShareMethod,
   V1ListSourceResponseItem,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
+import {
+  GcpAccountTypes as GcpAccountType,
+  GcpShareMethod,
+} from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
@@ -19,6 +23,11 @@ type wizardState = {
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
   };
+  gcp: {
+    shareMethod: GcpShareMethod;
+    accountType: GcpAccountType;
+    email: string | undefined;
+  };
 };
 
 const initialState: wizardState = {
@@ -29,6 +38,11 @@ const initialState: wizardState = {
     accountId: undefined,
     shareMethod: 'sources',
     source: undefined,
+  },
+  gcp: {
+    shareMethod: 'withGoogle',
+    accountType: 'google',
+    email: undefined,
   },
 };
 
@@ -56,6 +70,18 @@ export const selectAwsSource = (
 
 export const selectAwsShareMethod = (state: RootState) => {
   return state.wizard.aws.shareMethod;
+};
+
+export const selectGcpShareMethod = (state: RootState) => {
+  return state.wizard.gcp.shareMethod;
+};
+
+export const selectGcpAccountType = (state: RootState) => {
+  return state.wizard.gcp.accountType;
+};
+
+export const selectGcpEmail = (state: RootState) => {
+  return state.wizard.gcp.email;
 };
 
 export const wizardSlice = createSlice({
@@ -99,6 +125,15 @@ export const wizardSlice = createSlice({
     ) => {
       state.aws.source = action.payload;
     },
+    changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
+      state.gcp.shareMethod = action.payload;
+    },
+    changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
+      state.gcp.accountType = action.payload;
+    },
+    changeGcpEmail: (state, action: PayloadAction<string | undefined>) => {
+      state.gcp.email = action.payload;
+    },
   },
 });
 
@@ -112,5 +147,8 @@ export const {
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSource,
+  changeGcpShareMethod,
+  changeGcpAccountType,
+  changeGcpEmail,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
