@@ -11,7 +11,8 @@ import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
 import Aws from './steps/TargetEnvironment/Aws';
-import { isAwsAccountIdValid } from './validators';
+import Gcp from './steps/TargetEnvironment/Gcp';
+import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
@@ -20,6 +21,8 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+  selectGcpEmail,
+  selectGcpShareMethod,
   selectImageTypes,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
@@ -52,14 +55,22 @@ const CreateImageWizard = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // Ensure the wizard starts with a fresh initial state
+  // IMPORTANT: Ensure the wizard starts with a fresh initial state
   dispatch(initializeWizard);
 
-  const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
+  /*           *
+   * Selectors *
+   *           */
 
+  // Image Output
+  const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
+  // AWS
   const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
   const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
   const awsSourceId = useAppSelector((state) => selectAwsSource(state));
+  // GCP
+  const gcpShareMethod = useAppSelector((state) => selectGcpShareMethod(state));
+  const gcpEmail = useAppSelector((state) => selectGcpEmail(state));
 
   return (
     <>
@@ -103,6 +114,22 @@ const CreateImageWizard = () => {
                 isHidden={!targetEnvironments.includes('aws')}
               >
                 <Aws />
+              </WizardStep>,
+              <WizardStep
+                name="Google Cloud Platform"
+                id="wizard-target-gcp"
+                key="wizard-target-gcp"
+                footer={
+                  <CustomWizardFooter
+                    disableNext={
+                      gcpShareMethod === 'withGoogle' &&
+                      !isGcpEmailValid(gcpEmail)
+                    }
+                  />
+                }
+                isHidden={!targetEnvironments.includes('gcp')}
+              >
+                <Gcp />
               </WizardStep>,
             ]}
           />
