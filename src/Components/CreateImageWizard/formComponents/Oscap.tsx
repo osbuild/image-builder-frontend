@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
+import useFieldApi, {
+  UseFieldApiConfig,
+} from '@data-driven-forms/react-form-renderer/use-field-api';
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Alert,
@@ -17,16 +19,21 @@ import {
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 import { HelpIcon } from '@patternfly/react-icons';
-import PropTypes from 'prop-types';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
 import {
+  DistributionProfileItem,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
 } from '../../../store/imageBuilderApi';
 import { reinitFileSystemConfiguratioStep } from '../steps/fileSystemConfiguration';
 import { reinitPackagesStep } from '../steps/packages';
+
+type ChangeType = <F extends keyof Record<string, string | undefined>>(
+  name: F,
+  value?: Record<string, string | undefined>[F]
+) => void;
 
 /**
  * Every time there is change on this form step's state, reinitialise the steps
@@ -34,20 +41,23 @@ import { reinitPackagesStep } from '../steps/packages';
  * change their mind, going forward again leaves them in a coherent and workable
  * form state.
  */
-const reinitDependingSteps = (change) => {
+const reinitDependingSteps = (change: ChangeType) => {
   reinitFileSystemConfiguratioStep(change);
   reinitPackagesStep(change);
 };
-
+type ProfileSelectorProps = {
+  input: { name: string };
+};
 /**
  * Component for the user to select the profile to apply to their image.
  * The selected profile will be stored in the `oscap-profile` form state variable.
  * The Component is shown or not depending on the ShowSelector variable.
  */
-const ProfileSelector = ({ input }) => {
+
+const ProfileSelector = ({ input }: ProfileSelectorProps) => {
   const { change, getState } = useFormApi();
+  const [profileName, setProfileName] = useState<string>('None');
   const [profile, setProfile] = useState(getState()?.values?.['oscap-profile']);
-  const [profileName, setProfileName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const {
     data: profiles,
@@ -68,9 +78,14 @@ const ProfileSelector = ({ input }) => {
       skip: !profile,
     }
   );
+
   useEffect(() => {
-    if (data) {
-      setProfileName(data?.openscap?.profile_name);
+    if (
+      data &&
+      data.openscap &&
+      typeof data.openscap.profile_name === 'string'
+    ) {
+      setProfileName(data.openscap.profile_name);
     }
   }, [data]);
 
@@ -84,17 +99,47 @@ const ProfileSelector = ({ input }) => {
   const handleClear = () => {
     setProfile(undefined);
     change(input.name, undefined);
+    // @ts-ignore
     setProfileName(undefined);
     reinitDependingSteps(change);
   };
 
-  const handleSelect = (_, selection) => {
+  const handleSelect = (_: React.MouseEvent, selection: string) => {
     setProfile(selection);
     setIsOpen(false);
     change(input.name, selection);
     reinitDependingSteps(change);
     change('file-system-config-radio', 'manual');
   };
+
+  const options = [
+    <OScapNoneOption setProfileName={setProfileName} key="oscap-none-option" />,
+  ];
+  if (isSuccess) {
+    options.concat(
+      profiles.map((profile_id) => {
+        return (
+          <OScapSelectOption
+            key={profile_id}
+            profile_id={profile_id}
+            setProfileName={setProfileName}
+          />
+        );
+      })
+    );
+  }
+
+  if (isFetching) {
+    options.push(
+      <SelectOption
+        isNoResultsOption={true}
+        data-testid="policies-loading"
+        key={'None'}
+      >
+        <Spinner size="md" />
+      </SelectOption>
+    );
+  }
 
   return (
     <FormGroup
@@ -134,42 +179,28 @@ const ProfileSelector = ({ input }) => {
         typeAheadAriaLabel="Select a profile"
         isDisabled={!isSuccess}
         onFilter={(_event, value) => {
-          return [
-            <OScapNoneOption setProfileName={setProfileName} key={profiles} />,
-          ].concat(
-            profiles.map((profile_id, index) => {
-              return (
-                <OScapSelectOption
-                  key={index}
-                  profile_id={profile_id}
-                  setProfileName={setProfileName}
-                  input={value}
-                />
-              );
-            })
-          );
+          if (profiles) {
+            return [
+              <OScapNoneOption
+                setProfileName={setProfileName}
+                key="oscap-none-option"
+              />,
+            ].concat(
+              profiles.map((profile_id, index) => {
+                return (
+                  <OScapSelectOption
+                    key={index}
+                    profile_id={profile_id}
+                    setProfileName={setProfileName}
+                    input={value}
+                  />
+                );
+              })
+            );
+          }
         }}
       >
-        {isSuccess &&
-          [
-            <OScapNoneOption setProfileName={setProfileName} key={profiles} />,
-          ].concat(
-            profiles.map((profile_id) => {
-              return (
-                <OScapSelectOption
-                  key={profile_id}
-                  profile_id={profile_id}
-                  setProfileName={setProfileName}
-                />
-              );
-            })
-          )}
-
-        {isFetching && (
-          <SelectOption isNoResultsOption={true} data-testid="policies-loading">
-            <Spinner size="md" />
-          </SelectOption>
-        )}
+        {options}
       </Select>
       {isError && (
         <Alert
@@ -185,7 +216,11 @@ const ProfileSelector = ({ input }) => {
   );
 };
 
-const OScapNoneOption = ({ setProfileName }) => {
+type OScapNoneOptionPropType = {
+  setProfileName: (name: string) => void;
+};
+
+const OScapNoneOption = ({ setProfileName }: OScapNoneOptionPropType) => {
   return (
     <SelectOption
       value={undefined}
@@ -198,19 +233,26 @@ const OScapNoneOption = ({ setProfileName }) => {
   );
 };
 
-OScapNoneOption.propTypes = {
-  setProfileName: PropTypes.any,
+type OScapSelectOptionPropType = {
+  profile_id: DistributionProfileItem;
+  setProfileName: (name: string) => void;
+  input?: string;
 };
 
-const OScapSelectOption = ({ profile_id, setProfileName, input }) => {
+const OScapSelectOption = ({
+  profile_id,
+  setProfileName,
+  input,
+}: OScapSelectOptionPropType) => {
   const { getState } = useFormApi();
   const { data } = useGetOscapCustomizationsQuery({
     distribution: getState()?.values?.['release'],
     profile: profile_id,
   });
+
   if (
     input &&
-    !data?.openscap?.profile_name.toLowerCase().includes(input.toLowerCase())
+    !data?.openscap?.profile_name?.toLowerCase().includes(input.toLowerCase())
   ) {
     return null;
   }
@@ -220,7 +262,9 @@ const OScapSelectOption = ({ profile_id, setProfileName, input }) => {
       key={profile_id}
       value={profile_id}
       onClick={() => {
-        setProfileName(data?.openscap?.profile_name);
+        if (data?.openscap?.profile_name) {
+          setProfileName(data.openscap.profile_name);
+        }
       }}
     >
       <p>{data?.openscap?.profile_name}</p>
@@ -228,15 +272,8 @@ const OScapSelectOption = ({ profile_id, setProfileName, input }) => {
   );
 };
 
-OScapSelectOption.propTypes = {
-  profile_id: PropTypes.string,
-  setProfileName: PropTypes.any,
-  input: PropTypes.string,
-};
-
-ProfileSelector.propTypes = {
-  input: PropTypes.any,
-  showSelector: PropTypes.bool,
+type ProfileTypeProp = {
+  input: { name: string };
 };
 
 /**
@@ -246,7 +283,7 @@ ProfileSelector.propTypes = {
  * - to not add a profile, in which case the `oscap-profile` form state goes
  *   undefined.
  */
-const AddProfile = ({ input }) => {
+const AddProfile = ({ input }: ProfileTypeProp) => {
   return (
     <>
       <ProfileSelector input={input} />
@@ -255,11 +292,9 @@ const AddProfile = ({ input }) => {
   );
 };
 
-AddProfile.propTypes = {
-  input: PropTypes.object,
-};
+interface OscapProps extends UseFieldApiConfig {}
 
-export const Oscap = ({ ...props }) => {
+export const Oscap = (props: OscapProps) => {
   const { input } = useFieldApi(props);
   return <AddProfile input={input} />;
 };
