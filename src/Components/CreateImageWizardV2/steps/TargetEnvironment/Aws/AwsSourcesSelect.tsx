@@ -8,28 +8,17 @@ import {
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 
-import { useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import {
   changeAwsSource,
-  resetAwsSource,
+  selectAwsSource,
 } from '../../../../../store/wizardSlice';
 
-import { V1ListSourceResponseItem } from '.';
-
-type AwsSourcesSelectPropTypes = {
-  source: V1ListSourceResponseItem | undefined;
-  setSource: React.Dispatch<
-    React.SetStateAction<V1ListSourceResponseItem | undefined>
-  >;
-};
-
-export const AwsSourcesSelect = ({
-  source,
-  setSource,
-}: AwsSourcesSelectPropTypes) => {
+export const AwsSourcesSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const source = useAppSelector((state) => selectAwsSource(state));
 
   const { data, isFetching, isLoading, isSuccess, isError, refetch } =
     useGetSourceListQuery({
@@ -43,14 +32,12 @@ export const AwsSourcesSelect = ({
     value: string
   ) => {
     const source = sources?.find((source) => source.name === value);
-    setSource(source);
-    source?.id && dispatch(changeAwsSource(source.id));
+    dispatch(changeAwsSource(source));
     setIsOpen(false);
   };
 
   const handleClear = () => {
-    dispatch(resetAwsSource());
-    setSource(undefined);
+    dispatch(changeAwsSource(undefined));
   };
 
   const handleToggle = () => {

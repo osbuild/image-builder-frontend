@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -10,14 +10,15 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
-import Aws, { AwsShareMethod } from './steps/TargetEnvironment/Aws';
+import Aws from './steps/TargetEnvironment/Aws';
 import { isAwsAccountIdValid } from './validators';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
   initializeWizard,
-  selectAwsAccount,
+  selectAwsAccountId,
+  selectAwsShareMethod,
   selectAwsSource,
   selectImageTypes,
 } from '../../store/wizardSlice';
@@ -56,9 +57,8 @@ const CreateImageWizard = () => {
 
   const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
 
-  const [awsShareMethod, setAwsShareMethod] =
-    useState<AwsShareMethod>('sources');
-  const awsAccountId = useAppSelector((state) => selectAwsAccount(state));
+  const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
+  const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
   const awsSourceId = useAppSelector((state) => selectAwsSource(state));
 
   return (
@@ -102,10 +102,7 @@ const CreateImageWizard = () => {
                 }
                 isHidden={!targetEnvironments.includes('aws')}
               >
-                <Aws
-                  shareMethod={awsShareMethod}
-                  setShareMethod={setAwsShareMethod}
-                />
+                <Aws />
               </WizardStep>,
             ]}
           />

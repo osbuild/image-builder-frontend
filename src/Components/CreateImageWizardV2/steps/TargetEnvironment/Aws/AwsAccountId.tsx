@@ -7,15 +7,13 @@ import {
   TextInput,
 } from '@patternfly/react-core';
 
+import { useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
+import { selectAwsSource } from '../../../../../store/wizardSlice';
 
-import { V1ListSourceResponseItem } from '.';
+export const AwsAccountId = () => {
+  const source = useAppSelector((state) => selectAwsSource(state));
 
-type AwsAccountIdProps = {
-  source: V1ListSourceResponseItem | undefined;
-};
-
-export const AwsAccountId = ({ source }: AwsAccountIdProps) => {
   const { data, isError } = useGetSourceUploadInfoQuery(
     {
       id: parseInt(source?.id as string),
@@ -29,7 +27,7 @@ export const AwsAccountId = ({ source }: AwsAccountIdProps) => {
         readOnlyVariant="default"
         isRequired
         id="aws-account-id"
-        value={data ? data.aws?.account_id : ''}
+        value={source && data ? data.aws?.account_id : ''}
         aria-label="aws account id"
       />
       <HelperText>

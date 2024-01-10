@@ -10,12 +10,8 @@ import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
 import wizardSlice, {
   changeArchitecture,
-  changeAwsAccount,
-  changeAwsSource,
   changeDistribution,
   changeImageTypes,
-  resetAwsAccount,
-  resetAwsSource,
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
@@ -82,30 +78,6 @@ startAppListening({
     );
 
     listenerApi.dispatch(changeImageTypes(filteredImageTypes));
-  },
-});
-
-// We do not allow both an AWS source id and account id
-// Setting an AWS account id removes the AWS source id if present
-startAppListening({
-  actionCreator: changeAwsAccount,
-  effect: (action, listenerApi) => {
-    const state = listenerApi.getState();
-    if (state.wizard.aws.shareWithSources[0]) {
-      listenerApi.dispatch(resetAwsSource());
-    }
-  },
-});
-
-// We do not allow both an AWS source id and account id
-// Setting an AWS source id removes the AWS account id if present
-startAppListening({
-  actionCreator: changeAwsSource,
-  effect: (action, listenerApi) => {
-    const state = listenerApi.getState();
-    if (state.wizard.aws.shareWithAccounts[0]) {
-      listenerApi.dispatch(resetAwsAccount());
-    }
   },
 });
 
