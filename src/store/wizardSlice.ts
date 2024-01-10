@@ -2,6 +2,10 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { Distributions, ImageRequest, ImageTypes } from './imageBuilderApi';
 
+import {
+  AwsShareMethod,
+  V1ListSourceResponseItem,
+} from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
@@ -11,8 +15,9 @@ type wizardState = {
   distribution: Distributions;
   imageTypes: ImageTypes[];
   aws: {
-    shareWithAccounts: string[];
-    shareWithSources: string[];
+    accountId: string | undefined;
+    shareMethod: AwsShareMethod;
+    source: V1ListSourceResponseItem | undefined;
   };
 };
 
@@ -21,8 +26,9 @@ const initialState: wizardState = {
   distribution: RHEL_9,
   imageTypes: [],
   aws: {
-    shareWithAccounts: [],
-    shareWithSources: [],
+    accountId: undefined,
+    shareMethod: 'sources',
+    source: undefined,
   },
 };
 
@@ -38,12 +44,18 @@ export const selectImageTypes = (state: RootState) => {
   return state.wizard.imageTypes;
 };
 
-export const selectAwsAccount = (state: RootState): string | undefined => {
-  return state.wizard.aws.shareWithAccounts[0];
+export const selectAwsAccountId = (state: RootState): string | undefined => {
+  return state.wizard.aws.accountId;
 };
 
-export const selectAwsSource = (state: RootState): string | undefined => {
-  return state.wizard.aws.shareWithSources[0];
+export const selectAwsSource = (
+  state: RootState
+): V1ListSourceResponseItem | undefined => {
+  return state.wizard.aws.source;
+};
+
+export const selectAwsShareMethod = (state: RootState) => {
+  return state.wizard.aws.shareMethod;
 };
 
 export const wizardSlice = createSlice({
@@ -75,21 +87,17 @@ export const wizardSlice = createSlice({
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
       state.imageTypes = action.payload;
     },
-    changeAwsAccount: (state, action: PayloadAction<string>) => {
-      state.aws.shareWithAccounts[0] = action.payload;
+    changeAwsAccountId: (state, action: PayloadAction<string | undefined>) => {
+      state.aws.accountId = action.payload;
     },
-    changeAwsSource: (state, action: PayloadAction<string>) => {
-      state.aws.shareWithSources[0] = action.payload;
+    changeAwsShareMethod: (state, action: PayloadAction<AwsShareMethod>) => {
+      state.aws.shareMethod = action.payload;
     },
-    resetAws: (state) => {
-      state.aws.shareWithAccounts = [];
-      state.aws.shareWithSources = [];
-    },
-    resetAwsAccount: (state) => {
-      state.aws.shareWithAccounts = [];
-    },
-    resetAwsSource: (state) => {
-      state.aws.shareWithAccounts = [];
+    changeAwsSource: (
+      state,
+      action: PayloadAction<V1ListSourceResponseItem | undefined>
+    ) => {
+      state.aws.source = action.payload;
     },
   },
 });
@@ -101,10 +109,8 @@ export const {
   addImageType,
   removeImageType,
   changeImageTypes,
-  changeAwsAccount,
+  changeAwsAccountId,
+  changeAwsShareMethod,
   changeAwsSource,
-  resetAws,
-  resetAwsAccount,
-  resetAwsSource,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

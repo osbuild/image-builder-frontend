@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Radio,
@@ -20,9 +20,11 @@ import { AwsSourcesSelect } from './AwsSourcesSelect';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  changeAwsAccount,
-  resetAws,
-  selectAwsAccount,
+  changeAwsAccountId,
+  changeAwsShareMethod,
+  changeAwsSource,
+  selectAwsAccountId,
+  selectAwsShareMethod,
 } from '../../../../../store/wizardSlice';
 import { ValidatedTextInput } from '../../../ValidatedTextInput';
 import { isAwsAccountIdValid } from '../../../validators';
@@ -53,19 +55,11 @@ const SourcesButton = () => {
   );
 };
 
-type AwsPropTypes = {
-  shareMethod: AwsShareMethod;
-  setShareMethod: React.Dispatch<React.SetStateAction<AwsShareMethod>>;
-};
-
-const Aws = ({ shareMethod, setShareMethod }: AwsPropTypes) => {
+const Aws = () => {
   const dispatch = useAppDispatch();
 
-  const [source, setSource] = useState<V1ListSourceResponseItem | undefined>(
-    undefined
-  );
-
-  const shareWithAccount = useAppSelector((state) => selectAwsAccount(state));
+  const shareMethod = useAppSelector((state) => selectAwsShareMethod(state));
+  const shareWithAccount = useAppSelector((state) => selectAwsAccountId(state));
 
   return (
     <Form>
@@ -87,9 +81,9 @@ const Aws = ({ shareMethod, setShareMethod }: AwsPropTypes) => {
           description="Use a configured sources to launch environments directly from the console."
           isChecked={shareMethod === 'sources'}
           onChange={() => {
-            dispatch(resetAws());
-            setSource(undefined);
-            setShareMethod('sources');
+            dispatch(changeAwsSource(undefined));
+            dispatch(changeAwsAccountId(undefined));
+            dispatch(changeAwsShareMethod('sources'));
           }}
         />
         <Radio
@@ -98,15 +92,15 @@ const Aws = ({ shareMethod, setShareMethod }: AwsPropTypes) => {
           name="radio-8"
           isChecked={shareMethod === 'manual'}
           onChange={() => {
-            dispatch(resetAws());
-            setSource(undefined);
-            setShareMethod('manual');
+            dispatch(changeAwsSource(undefined));
+            dispatch(changeAwsAccountId(undefined));
+            dispatch(changeAwsShareMethod('manual'));
           }}
         />
       </FormGroup>
       {shareMethod === 'sources' && (
         <>
-          <AwsSourcesSelect source={source} setSource={setSource} />
+          <AwsSourcesSelect />
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
@@ -124,7 +118,7 @@ const Aws = ({ shareMethod, setShareMethod }: AwsPropTypes) => {
               </HelperText>
             </GalleryItem>
             <GalleryItem>
-              <AwsAccountId source={source} />
+              <AwsAccountId />
             </GalleryItem>
           </Gallery>
         </>
@@ -136,7 +130,7 @@ const Aws = ({ shareMethod, setShareMethod }: AwsPropTypes) => {
               ariaLabel="aws account id"
               value={shareWithAccount || ''}
               validator={isAwsAccountIdValid}
-              onChange={(_event, value) => dispatch(changeAwsAccount(value))}
+              onChange={(_event, value) => dispatch(changeAwsAccountId(value))}
               helperText="Should be 12 characters long."
             />
           </FormGroup>
