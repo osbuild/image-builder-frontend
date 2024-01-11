@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import {
   Button,
@@ -36,7 +36,6 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { filter } from 'lodash';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -63,13 +62,18 @@ import {
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
+import { Blueprint } from '../../store/imageBuilderApiExperimental';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   computeHoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
-
-const ImagesTable = () => {
+interface imagesTableProps {
+  blueprints?: Blueprint[];
+  selectedBlueprint?: string;
+  setSelectedBlueprint?: Dispatch<SetStateAction<string>>;
+}
+const ImagesTable = (props: imagesTableProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
@@ -82,6 +86,10 @@ const ImagesTable = () => {
     version: [],
   });
   const experimentalFlag = process.env.EXPERIMENTAL;
+
+  const selectedBlueprintName = props.blueprints?.find(
+    (blueprint: Blueprint) => blueprint.id === props.selectedBlueprint
+  )?.name;
 
   const onSelect = (
     selectType: string,
@@ -216,7 +224,14 @@ const ImagesTable = () => {
       {data.meta.count === 0 && <EmptyImagesTable />}
       {data.meta.count > 0 && (
         <>
-          <Toolbar clearAllFilters={() => onDelete('', '')}>
+          <Toolbar
+            clearAllFilters={() => {
+              onDelete('', '');
+              props.setSelectedBlueprint
+                ? props.setSelectedBlueprint('')
+                : null;
+            }}
+          >
             <ToolbarContent>
               {experimentalFlag && (
                 <ToolbarGroup variant="filter-group">
@@ -286,6 +301,17 @@ const ImagesTable = () => {
                       {versionMenuItems}
                     </Select>
                   </ToolbarFilter>
+                  <ToolbarFilter
+                    categoryName="blueprint"
+                    chips={selectedBlueprintName ? [selectedBlueprintName] : []}
+                    deleteChip={() =>
+                      props.setSelectedBlueprint
+                        ? props.setSelectedBlueprint('')
+                        : null
+                    }
+                  >
+                    {}
+                  </ToolbarFilter>
                 </ToolbarGroup>
               )}
               <ToolbarItem
@@ -319,6 +345,12 @@ const ImagesTable = () => {
               </Tr>
             </Thead>
             {composes.map((compose, rowIndex) => {
+              if (
+                props.selectedBlueprint &&
+                compose.blueprint_id !== props.selectedBlueprint
+              ) {
+                return null;
+              }
               return (
                 <ImagesTableRow
                   compose={compose}

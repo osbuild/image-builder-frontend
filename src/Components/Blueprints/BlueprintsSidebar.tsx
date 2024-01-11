@@ -1,25 +1,30 @@
-/* eslint-disable no-console */
-import React, { useState } from 'react';
+import React, { useState, Dispatch, SetStateAction } from 'react';
 
 import { SearchInput } from '@patternfly/react-core';
 
 import BlueprintCard from './BlueprintCard';
 
-import { useGetBlueprintsQuery } from '../../store/imageBuilderApiExperimental';
 import { Blueprint } from '../../store/imageBuilderApiExperimental';
 
-const BlueprintsSidebar: React.FunctionComponent = () => {
-  const { data: blueprints } = useGetBlueprintsQuery('');
+interface blueprintProps {
+  blueprints: Blueprint[];
+  selectedBlueprint: string;
+  setSelectedBlueprint: Dispatch<SetStateAction<string>>;
+}
+const BlueprintsSidebar = (props: blueprintProps) => {
   const [blueprintFilter, setBlueprintFilter] = useState('');
-  const [selectedBlueprint, setSelectedBlueprint] = useState('');
 
   const onChange = (value: string) => {
     setBlueprintFilter(value);
   };
 
-  const filteredBlueprints = blueprints?.filter((blueprint: Blueprint) => {
-    return blueprint.name.toLowerCase().includes(blueprintFilter.toLowerCase());
-  });
+  const filteredBlueprints = props.blueprints?.filter(
+    (blueprint: Blueprint) => {
+      return blueprint.name
+        .toLowerCase()
+        .includes(blueprintFilter.toLowerCase());
+    }
+  );
 
   return (
     <>
@@ -35,8 +40,8 @@ const BlueprintsSidebar: React.FunctionComponent = () => {
           <BlueprintCard
             key={blueprint.id}
             blueprint={blueprint}
-            selectedBlueprint={selectedBlueprint}
-            setSelectedBlueprint={setSelectedBlueprint}
+            selectedBlueprint={props.selectedBlueprint}
+            setSelectedBlueprint={props.setSelectedBlueprint}
           />
           <br />
         </>

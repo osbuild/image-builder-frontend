@@ -24,6 +24,7 @@ import './LandingPage.scss';
 
 import Quickstarts from './Quickstarts';
 
+import { useGetBlueprintsQuery } from '../../store/imageBuilderApiExperimental';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSidebar';
@@ -51,6 +52,8 @@ export const LandingPage = () => {
     }
     setActiveTabKey(tabIndex);
   };
+  const { data: blueprints } = useGetBlueprintsQuery('');
+  const [selectedBlueprint, setSelectedBlueprint] = useState<string>('');
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const experimentalFlag = process.env.EXPERIMENTAL;
@@ -78,10 +81,18 @@ export const LandingPage = () => {
           className="pf-v5-u-background-color-100 pf-v5-u-p-lg"
         >
           <SidebarPanel>
-            <BlueprintsSidebar />
+            <BlueprintsSidebar
+              blueprints={blueprints}
+              selectedBlueprint={selectedBlueprint}
+              setSelectedBlueprint={setSelectedBlueprint}
+            />
           </SidebarPanel>
           <SidebarContent>
-            <ImagesTable />
+            <ImagesTable
+              blueprints={blueprints}
+              selectedBlueprint={selectedBlueprint}
+              setSelectedBlueprint={setSelectedBlueprint}
+            />
           </SidebarContent>
         </Sidebar>
       </PageSection>
