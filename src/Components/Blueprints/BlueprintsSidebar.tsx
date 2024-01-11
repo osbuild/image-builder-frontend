@@ -1,10 +1,22 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 
-import { SearchInput } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  SearchInput,
+} from '@patternfly/react-core';
+import { CubesIcon } from '@patternfly/react-icons';
 
 import BlueprintCard from './BlueprintCard';
 
 import { Blueprint } from '../../store/imageBuilderApiExperimental';
+import { Link } from 'react-router-dom';
+import { resolveRelPath } from '../../Utilities/path';
 
 interface blueprintProps {
   blueprints: Blueprint[];
@@ -26,7 +38,28 @@ const BlueprintsSidebar = (props: blueprintProps) => {
     }
   );
 
-  return (
+  const blueprintsEmpty = (
+    <EmptyState>
+      <EmptyStateHeader
+        titleText="Create a blueprint"
+        headingLevel="h4"
+        icon={<EmptyStateIcon icon={CubesIcon} />}
+      />
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <Link
+            to={resolveRelPath('blueprintwizard')}
+            className="pf-c-button pf-m-primary pf-u-mr-md"
+            data-testid="create-blueprint-action"
+          >
+            Create
+          </Link>
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
+
+  return props.blueprints?.length ? (
     <>
       <SearchInput
         placeholder="Search by blueprint name"
@@ -47,6 +80,8 @@ const BlueprintsSidebar = (props: blueprintProps) => {
         </>
       ))}
     </>
+  ) : (
+    blueprintsEmpty
   );
 };
 
