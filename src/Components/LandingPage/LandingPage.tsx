@@ -71,8 +71,12 @@ export const LandingPage = () => {
       <PageSection>
         <Quickstarts />
       </PageSection>
-      <PageSection variant={PageSectionVariants.light}>
-        <Sidebar hasBorder hasGutter>
+      <PageSection>
+        <Sidebar
+          hasBorder
+          hasGutter
+          className="pf-v5-u-background-color-100 pf-v5-u-p-lg"
+        >
           <SidebarPanel>
             <BlueprintsSidebar />
           </SidebarPanel>
