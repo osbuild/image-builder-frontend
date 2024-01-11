@@ -612,7 +612,7 @@ const CreateBlueprintWizard = () => {
 
   return (
     <>
-      <ImageBuilderHeader />
+      <ImageBuilderHeader noButtons={true} />
       <section className="pf-l-page__main-section pf-c-page__main-section">
         <ImageCreator
           onClose={handleClose}

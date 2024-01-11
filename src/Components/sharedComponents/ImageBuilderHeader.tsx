@@ -20,7 +20,7 @@ import { Link } from 'react-router-dom';
 import './ImageBuilderHeader.scss';
 import { resolveRelPath } from '../../Utilities/path';
 
-export const ImageBuilderHeader = () => {
+export const ImageBuilderHeader = (props: { noButtons?: boolean }) => {
   const experimentalFlag = process.env.EXPERIMENTAL;
   return (
     <>
@@ -85,24 +85,26 @@ export const ImageBuilderHeader = () => {
             </Popover>
             <OpenSourceBadge repositoriesURL="https://www.osbuild.org/guides/image-builder-service/architecture.html" />
           </FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
-            {experimentalFlag && (
+          {!props.noButtons && (
+            <FlexItem align={{ default: 'alignRight' }}>
+              {experimentalFlag && (
+                <Link
+                  to={resolveRelPath('blueprintwizard')}
+                  className="pf-c-button pf-m-primary pf-u-mr-md"
+                  data-testid="create-blueprint-action"
+                >
+                  Create
+                </Link>
+              )}
               <Link
-                to={resolveRelPath('blueprintwizard')}
-                className="pf-c-button pf-m-primary pf-u-mr-md"
-                data-testid="create-blueprint-action"
+                to={resolveRelPath('imagewizard')}
+                className="pf-c-button pf-m-primary"
+                data-testid="create-image-action"
               >
-                Create
+                Build images
               </Link>
-            )}
-            <Link
-              to={resolveRelPath('imagewizard')}
-              className="pf-c-button pf-m-primary"
-              data-testid="create-image-action"
-            >
-              Build images
-            </Link>
-          </FlexItem>
+            </FlexItem>
+          )}
         </Flex>
       </PageHeader>
     </>
