@@ -18,6 +18,11 @@ const config: ConfigFile = {
     'getPackages',
     'getOscapProfiles',
     'getOscapCustomizations',
+    'createBlueprint',
+    'updateBlueprint',
+    'composeBlueprint',
+    'getBlueprints',
+    'getBlueprintComposes',
   ],
 };
 

@@ -80,6 +80,59 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/oscap/${queryArg.distribution}/${queryArg.profile}/customizations`,
       }),
     }),
+    createBlueprint: build.mutation<
+      CreateBlueprintApiResponse,
+      CreateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprint`,
+        method: "POST",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    updateBlueprint: build.mutation<
+      UpdateBlueprintApiResponse,
+      UpdateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprint/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    composeBlueprint: build.mutation<
+      ComposeBlueprintApiResponse,
+      ComposeBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprint/${queryArg.id}/compose`,
+        method: "POST",
+      }),
+    }),
+    getBlueprints: build.query<GetBlueprintsApiResponse, GetBlueprintsApiArg>({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints`,
+        params: {
+          search: queryArg.search,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+        },
+      }),
+    }),
+    getBlueprintComposes: build.query<
+      GetBlueprintComposesApiResponse,
+      GetBlueprintComposesApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprint/${queryArg.id}/composes`,
+        params: {
+          blueprint_version: queryArg.blueprintVersion,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+          ignoreImageTypes: queryArg.ignoreImageTypes,
+        },
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -126,7 +179,7 @@ export type GetComposeClonesApiArg = {
   offset?: number;
 };
 export type GetCloneStatusApiResponse =
-  /** status 200 clone status */ UploadStatus;
+  /** status 200 clone status */ CloneStatusResponse;
 export type GetCloneStatusApiArg = {
   /** Id of clone status to get */
   id: string;
@@ -165,6 +218,52 @@ export type GetOscapCustomizationsApiArg = {
   /** Name of the profile to retrieve customizations from */
   profile: DistributionProfileItem;
 };
+export type CreateBlueprintApiResponse =
+  /** status 201 blueprint was saved */ CreateBlueprintResponse;
+export type CreateBlueprintApiArg = {
+  /** details of blueprint */
+  createBlueprintRequest: CreateBlueprintRequest;
+};
+export type UpdateBlueprintApiResponse =
+  /** status 200 blueprint was update */ CreateBlueprintResponse;
+export type UpdateBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+  /** details of blueprint */
+  createBlueprintRequest: CreateBlueprintRequest;
+};
+export type ComposeBlueprintApiResponse =
+  /** status 201 compose was created */ ComposeResponse[];
+export type ComposeBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+};
+export type GetBlueprintsApiResponse =
+  /** status 200 a list of blueprints */ BlueprintsResponse;
+export type GetBlueprintsApiArg = {
+  /** search for blueprints by name or description */
+  search?: string;
+  /** max amount of blueprints, default 100 */
+  limit?: number;
+  /** blueprint page offset, default 0 */
+  offset?: number;
+};
+export type GetBlueprintComposesApiResponse =
+  /** status 200 a list of composes */ ComposesResponse;
+export type GetBlueprintComposesApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+  /** Filter by a specific version of the Blueprint we want to fetch composes for
+   */
+  blueprintVersion?: number;
+  /** max amount of composes, default 100 */
+  limit?: number;
+  /** composes page offset, default 0 */
+  offset?: number;
+  /** Filter the composes on image type. The filter is optional and can be specified multiple times.
+   */
+  ignoreImageTypes?: ImageTypes[];
+};
 export type Repository = {
   rhsm: boolean;
   baseurl?: string;
@@ -176,6 +275,7 @@ export type Repository = {
    */
   check_repo_gpg?: boolean;
   ignore_ssl?: boolean;
+  module_hotfixes?: boolean;
 };
 export type ArchitectureItem = {
   arch: string;
@@ -318,6 +418,40 @@ export type ImageRequest = {
      */
   size?: any;
 };
+export type Container = {
+  /** Reference to the container to embed */
+  source: string;
+  /** Name to use for the container from the image */
+  name?: string;
+  /** Control TLS verifification */
+  tls_verify?: boolean;
+};
+export type Directory = {
+  /** Path to the directory */
+  path: string;
+  /** Permissions string for the directory in octal format */
+  mode?: string;
+  /** Owner of the directory as a user name or a uid */
+  user?: string | number;
+  /** Group of the directory as a group name or a gid */
+  group?: string | number;
+  /** Ensure that the parent directories exist */
+  ensure_parents?: boolean;
+};
+export type File = {
+  /** Path to the file */
+  path: string;
+  /** Permissions string for the file in octal format */
+  mode?: string;
+  /** Owner of the file as a uid or a user name */
+  user?: string | number;
+  /** Group of the file as a gid or a group name */
+  group?: string | number;
+  /** Contents of the file as plain text */
+  data?: string;
+  /** Ensure that the parent directories exist */
+  ensure_parents?: boolean;
+};
 export type Subscription = {
   organization: number;
   "activation-key": string;
@@ -342,6 +476,7 @@ export type CustomRepository = {
   enabled?: boolean;
   priority?: number;
   ssl_verify?: boolean;
+  module_hotfixes?: boolean;
 };
 export type OpenScap = {
   /** The policy reference ID */
@@ -360,7 +495,73 @@ export type User = {
   name: string;
   ssh_key: string;
 };
+export type Services = {
+  /** List of services to enable by default */
+  enabled?: string[];
+  /** List of services to disable by default */
+  disabled?: string[];
+};
+export type Kernel = {
+  /** Name of the kernel to use */
+  name?: string;
+  /** Appends arguments to the bootloader kernel command line */
+  append?: string;
+};
+export type Group = {
+  /** Name of the group to create */
+  name: string;
+  /** Group id of the group to create (optional) */
+  gid?: number;
+};
+export type Timezone = {
+  /** Name of the timezone, defaults to UTC */
+  timezone?: string;
+  /** List of ntp servers */
+  ntpservers?: string[];
+};
+export type Locale = {
+  /** List of locales to be installed, the first one becomes primary, subsequent ones are secondary
+   */
+  languages?: string[];
+  /** Sets the keyboard layout */
+  keyboard?: string;
+};
+export type FirewallCustomization = {
+  /** List of ports (or port ranges) and protocols to open */
+  ports?: string[];
+  /** Firewalld services to enable or disable */
+  services?: {
+    /** List of services to enable */
+    enabled?: string[];
+    /** List of services to disable */
+    disabled?: string[];
+  };
+};
+export type Fdo = {
+  manufacturing_server_url?: string;
+  diun_pub_key_insecure?: string;
+  diun_pub_key_hash?: string;
+  diun_pub_key_root_certs?: string;
+};
+export type IgnitionEmbedded = {
+  config: string;
+};
+export type IgnitionFirstboot = {
+  /** Provisioning URL */
+  url: string;
+};
+export type Ignition = {
+  embedded?: IgnitionEmbedded;
+  firstboot?: IgnitionFirstboot;
+};
+export type Fips = {
+  /** Enables the system FIPS mode */
+  enabled?: boolean;
+};
 export type Customizations = {
+  containers?: Container[];
+  directories?: Directory[];
+  files?: File[];
   subscription?: Subscription;
   packages?: string[];
   payload_repositories?: Repository[];
@@ -369,12 +570,27 @@ export type Customizations = {
   filesystem?: Filesystem[];
   /** list of users that a customer can add, also specifying their respective groups and SSH keys */
   users?: User[];
+  services?: Services;
+  /** Configures the hostname */
+  hostname?: string;
+  kernel?: Kernel;
+  /** List of groups to create */
+  groups?: Group[];
+  timezone?: Timezone;
+  locale?: Locale;
+  firewall?: FirewallCustomization;
+  /** Name of the installation device, currently only useful for the edge-simplified-installer type
+   */
+  installation_device?: string;
+  fdo?: Fdo;
+  ignition?: Ignition;
   /** Select how the disk image will be partitioned. 'auto-lvm' will use raw unless
     there are one or more mountpoints in which case it will use LVM. 'lvm' always
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
   partitioning_mode?: "raw" | "lvm" | "auto-lvm";
+  fips?: Fips;
 };
 export type ComposeRequest = {
   distribution: Distributions;
@@ -392,6 +608,8 @@ export type ComposesResponseItem = {
   created_at: string;
   image_name?: string;
   client_id?: ClientId;
+  blueprint_id?: string | null;
+  blueprint_version?: number | null;
 };
 export type ComposesResponse = {
   meta: {
@@ -482,6 +700,9 @@ export type ClonesResponse = {
   };
   data: ClonesResponseItem[];
 };
+export type CloneStatusResponse = {
+  compose_id?: string;
+} & UploadStatus;
 export type ComposeResponse = {
   id: string;
 };
@@ -518,6 +739,35 @@ export type DistributionProfileItem =
   | "xccdf_org.ssgproject.content_profile_stig"
   | "xccdf_org.ssgproject.content_profile_stig_gui";
 export type DistributionProfileResponse = DistributionProfileItem[];
+export type CreateBlueprintResponse = {
+  id: string;
+};
+export type CreateBlueprintRequest = {
+  name: string;
+  description: string;
+  distribution: Distributions;
+  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+   */
+  image_requests: ImageRequest[];
+  customizations: Customizations;
+};
+export type BlueprintItem = {
+  id: string;
+  version: number;
+  name: string;
+  description: string;
+  last_modified_at: string;
+};
+export type BlueprintsResponse = {
+  meta: {
+    count: number;
+  };
+  links: {
+    first: string;
+    last: string;
+  };
+  data: BlueprintItem[];
+};
 export const {
   useGetArchitecturesQuery,
   useGetComposesQuery,
@@ -529,4 +779,9 @@ export const {
   useGetPackagesQuery,
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
+  useCreateBlueprintMutation,
+  useUpdateBlueprintMutation,
+  useComposeBlueprintMutation,
+  useGetBlueprintsQuery,
+  useGetBlueprintComposesQuery,
 } = injectedRtkApi;
