@@ -36,6 +36,7 @@ const blueprintNameStep = {
     {
       component: componentTypes.TEXT_FIELD,
       name: 'blueprint-name',
+      isRequired: true,
       type: 'text',
       label: 'Blueprint Name',
       placeholder: 'Blueprint Name',
