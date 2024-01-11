@@ -66,7 +66,7 @@ const BlueprintCard = (props: {
   );
 
   return (
-    <Card>
+    <Card className="pf-v5-u-mb-md">
       <CardHeader actions={{ actions: headerActions }}>
         <CardTitle>{props.blueprint.name}</CardTitle>
       </CardHeader>

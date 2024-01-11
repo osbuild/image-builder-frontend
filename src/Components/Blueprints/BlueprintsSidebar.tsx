@@ -76,7 +76,6 @@ const BlueprintsSidebar = (props: blueprintProps) => {
             selectedBlueprint={props.selectedBlueprint}
             setSelectedBlueprint={props.setSelectedBlueprint}
           />
-          <br />
         </>
       ))}
     </>
