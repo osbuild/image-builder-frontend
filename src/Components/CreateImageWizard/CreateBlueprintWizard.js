@@ -643,7 +643,7 @@ const CreateBlueprintWizard = () => {
                   handleKeyDown(e, handleClose);
                 },
                 buttonLabels: {
-                  submit: 'Create blueprint',
+                  submit: 'Create',
                 },
                 showTitles: true,
                 crossroads: [
