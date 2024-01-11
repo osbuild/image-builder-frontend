@@ -1,6 +1,11 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { Distributions, ImageRequest, ImageTypes } from './imageBuilderApi';
+import {
+  DistributionProfileItem,
+  Distributions,
+  ImageRequest,
+  ImageTypes,
+} from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
 import {
@@ -37,6 +42,9 @@ type wizardState = {
     registrationType: string;
     activationKey: ActivationKeys['name'];
   };
+  openScap: {
+    profile: DistributionProfileItem | undefined;
+  };
 };
 
 const initialState: wizardState = {
@@ -60,6 +68,9 @@ const initialState: wizardState = {
   registration: {
     registrationType: 'register-now-rhc',
     activationKey: '',
+  },
+  openScap: {
+    profile: undefined,
   },
 };
 
@@ -115,6 +126,10 @@ export const selectRegistrationType = (state: RootState) => {
 
 export const selectActivationKey = (state: RootState) => {
   return state.wizard.registration.activationKey;
+};
+
+export const selectProfile = (state: RootState) => {
+  return state.wizard.openScap.profile;
 };
 
 export const wizardSlice = createSlice({
@@ -190,6 +205,12 @@ export const wizardSlice = createSlice({
     ) => {
       state.registration.activationKey = action.payload;
     },
+    changeOscapProfile: (
+      state,
+      action: PayloadAction<DistributionProfileItem | undefined>
+    ) => {
+      state.openScap.profile = action.payload;
+    },
   },
 });
 
@@ -210,5 +231,6 @@ export const {
   changeGcpEmail,
   changeRegistrationType,
   changeActivationKey,
+  changeOscapProfile,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

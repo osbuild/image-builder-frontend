@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
+import OscapStep from './steps/Oscap';
 import RegistrationStep from './steps/Registration';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
@@ -158,6 +159,13 @@ const CreateImageWizard = () => {
             }
           >
             <RegistrationStep />
+          </WizardStep>
+          <WizardStep
+            name="OpenSCAP"
+            id="step-oscap"
+            footer={<CustomWizardFooter disableNext={false} />}
+          >
+            <OscapStep />
           </WizardStep>
           <WizardStep
             name="Review"
