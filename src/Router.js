@@ -4,7 +4,6 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { Route, Routes } from 'react-router-dom';
 
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-import { manageEdgeImagesUrlName } from './Utilities/edge';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
@@ -18,8 +17,6 @@ const CreateImageWizardV2 = lazy(() =>
 );
 
 export const Router = () => {
-  const edgeParityFlag = useFlag('edgeParity.image-list');
-
   const experimental =
     useFlag('image-builder.new-wizard.enabled') ||
     process.env.EXPERIMENTAL === true;

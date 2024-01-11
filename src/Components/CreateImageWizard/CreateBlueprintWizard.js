@@ -606,10 +606,6 @@ const CreateBlueprintWizard = () => {
 
   const handleClose = () => navigate(resolveRelPath(''));
 
-  // In case the `created_at` date is undefined when creating an image
-  // a temporary value with current date is added
-  const currentDate = new Date();
-
   return (
     <>
       <ImageBuilderHeader noButtons={true} />

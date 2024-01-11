@@ -1,21 +1,19 @@
 import React, { useState, Dispatch, SetStateAction } from 'react';
 
 import {
-  Button,
   EmptyState,
   EmptyStateActions,
-  EmptyStateBody,
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
   SearchInput,
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
+import { Link } from 'react-router-dom';
 
 import BlueprintCard from './BlueprintCard';
 
 import { Blueprint } from '../../store/imageBuilderApiExperimental';
-import { Link } from 'react-router-dom';
 import { resolveRelPath } from '../../Utilities/path';
 
 interface blueprintProps {

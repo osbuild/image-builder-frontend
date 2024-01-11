@@ -11,10 +11,7 @@ import {
   mockActivationKeysResults,
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
-import {
-  mockGetBlueprints,
-  mockGetBlueprintsTest,
-} from '../fixtures/blueprints';
+import { mockGetBlueprints } from '../fixtures/blueprints';
 import {
   composesEndpoint,
   mockClones,

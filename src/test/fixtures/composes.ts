@@ -89,7 +89,7 @@ export const mockComposes: ComposesResponseItem[] = [
         },
       ],
     },
-    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc'
+    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfc',
   },
   {
     id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58',
@@ -107,7 +107,7 @@ export const mockComposes: ComposesResponseItem[] = [
         },
       ],
     },
-    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfd'
+    blueprint_id: '677b010b-e95e-4694-9813-d11d847f1bfd',
   },
   {
     id: '42ad0826-30b5-4f64-a24e-957df26fd564',

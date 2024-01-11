@@ -78,13 +78,15 @@ const ImagesTable = (props: imagesTableProps) => {
   const [perPage, setPerPage] = useState(10);
   const [isTypeSelectOpen, setIsTypeSelectOpen] = useState(false);
   const [isVersionSelectOpen, setIsVersionSelectOpen] = useState(false);
-  const [filters, setFilters] = useState<{
+  interface filterProps {
     imageType: string[];
     version: string[];
-  }>({
+  }
+  const [filters, setFilters] = useState<filterProps>({
     imageType: [],
     version: [],
   });
+
   const experimentalFlag = process.env.EXPERIMENTAL;
 
   const selectedBlueprintName = props.blueprints?.find(
@@ -93,12 +95,12 @@ const ImagesTable = (props: imagesTableProps) => {
 
   const onSelect = (
     selectType: string,
-    event: React.MouseEvent | React.ChangeEvent | any,
+    event: React.MouseEvent | React.ChangeEvent | undefined,
     selection: string
   ) => {
-    const checked = (event.target as HTMLInputElement).checked;
-    setFilters((prev: any) => {
-      const prevSelections = prev[selectType];
+    const checked = (event?.target as HTMLInputElement).checked;
+    setFilters((prev: filterProps) => {
+      const prevSelections = prev[selectType as keyof filterProps];
       return {
         ...prev,
         [selectType]: checked
@@ -109,14 +111,14 @@ const ImagesTable = (props: imagesTableProps) => {
   };
 
   const onTypeSelect = (
-    event: React.MouseEvent | React.ChangeEvent | any,
+    event: React.MouseEvent | React.ChangeEvent | undefined,
     selection: string
   ) => {
     onSelect('imageType', event, selection);
   };
 
   const onVersionSelect = (
-    event: React.MouseEvent | React.ChangeEvent | any,
+    event: React.MouseEvent | React.ChangeEvent | undefined,
     selection: string
   ) => {
     onSelect('version', event, selection);

@@ -11,7 +11,6 @@ import {
   TextContent,
   TabAction,
   PageSection,
-  PageSectionVariants,
   Sidebar,
   SidebarContent,
   SidebarPanel,
