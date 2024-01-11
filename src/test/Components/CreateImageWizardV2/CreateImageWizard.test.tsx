@@ -434,6 +434,52 @@ describe('Step Upload to AWS', () => {
   // }, 10000);
 });
 
+describe('Step Oscap profile', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+
+    // select aws as upload destination
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await clickNext();
+
+    await screen.findByRole('heading', {
+      name: 'Target environment - Amazon Web Services',
+    });
+    await switchToAWSManual();
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /aws account id/i,
+      }),
+      '012345678901'
+    );
+    await clickNext();
+  };
+  test('create an image with an oscap profile', async () => {
+    await setUp();
+    screen.getByText(
+      /use openscap to monitor the adherence of your registered rhel systems to a selected regulatory compliance profile/i
+    );
+    await user.click(
+      screen.getByRole('textbox', {
+        name: /select a profile/i,
+      })
+    );
+    await user.click(
+      screen.getByText(/disa stig with gui for red hat enterprise linux 8/i)
+    );
+
+    screen.getByText(/content_profile_stig_gui/i);
+    await clickNext();
+  });
+});
+
 // describe('Step Upload to Google', () => {
 //   const user = userEvent.setup();
 //   const setUp = async () => {

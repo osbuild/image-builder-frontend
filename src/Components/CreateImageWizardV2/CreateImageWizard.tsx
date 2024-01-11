@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
+import OscapStep from './steps/Oscap';
 import Aws from './steps/TargetEnvironment/Aws';
 import { isAwsAccountIdValid } from './validators';
 
@@ -21,6 +22,7 @@ import {
   selectAwsShareMethod,
   selectAwsSource,
   selectImageTypes,
+  selectProfile,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -60,6 +62,7 @@ const CreateImageWizard = () => {
   const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
   const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
   const awsSourceId = useAppSelector((state) => selectAwsSource(state));
+  const oscapProfile = useAppSelector((state) => selectProfile(state));
 
   return (
     <>
@@ -106,6 +109,15 @@ const CreateImageWizard = () => {
               </WizardStep>,
             ]}
           />
+          <WizardStep
+            name="OpenSCAP"
+            id="step-oscap"
+            footer={
+            <CustomWizardFooter disableNext={oscapProfile === undefined} />
+            }
+          >
+            <OscapStep />
+          </WizardStep>
           <WizardStep
             name="Review"
             id="step-review"

@@ -1,6 +1,12 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { Distributions, ImageRequest, ImageTypes } from './imageBuilderApi';
+import {
+  DistributionProfileItem,
+  Distributions,
+  ImageRequest,
+  ImageTypes,
+  OpenScap,
+} from './imageBuilderApi';
 
 import {
   AwsShareMethod,
@@ -19,6 +25,12 @@ type wizardState = {
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
   };
+  profile: DistributionProfileItem;
+  openScap: {
+    profileId: OpenScap['profile_id'];
+    profileName: OpenScap['profile_name'];
+    profileDescription: OpenScap['profile_description'];
+  };
 };
 
 const initialState: wizardState = {
@@ -29,6 +41,12 @@ const initialState: wizardState = {
     accountId: undefined,
     shareMethod: 'sources',
     source: undefined,
+  },
+  profile: undefined,
+  openScap: {
+    profileId: 'None',
+    profileName: undefined,
+    profileDescription: undefined,
   },
 };
 
@@ -56,6 +74,22 @@ export const selectAwsSource = (
 
 export const selectAwsShareMethod = (state: RootState) => {
   return state.wizard.aws.shareMethod;
+};
+
+export const selectProfile = (state: RootState) => {
+  return state.wizard.profile;
+};
+
+export const selectOscapProfileId = (state: RootState) => {
+  return state.wizard.openScap.profileId;
+};
+
+export const selectOscapProfileName = (state: RootState) => {
+  return state.wizard.openScap.profileName;
+};
+
+export const selectOscapProfileDescription = (state: RootState) => {
+  return state.wizard.openScap.profileDescription;
 };
 
 export const wizardSlice = createSlice({
@@ -99,6 +133,24 @@ export const wizardSlice = createSlice({
     ) => {
       state.aws.source = action.payload;
     },
+    changeOscapProfile: (
+      state,
+      action: PayloadAction<DistributionProfileItem>
+    ) => {
+      state.profile = action.payload;
+    },
+    changeOscapProfileName: (
+      state,
+      action: PayloadAction<string | undefined>
+    ) => {
+      state.openScap.profileName = action.payload;
+    },
+    changeOscapProfileDescription: (
+      state,
+      action: PayloadAction<string | undefined>
+    ) => {
+      state.openScap.profileDescription = action.payload;
+    },
   },
 });
 
@@ -112,5 +164,8 @@ export const {
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSource,
+  changeOscapProfile,
+  changeOscapProfileDescription,
+  changeOscapProfileName,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
