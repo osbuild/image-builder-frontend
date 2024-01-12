@@ -15,7 +15,12 @@ import { ValidatedTextInput } from '../../../ValidatedTextInput';
 import { isGcpEmailValid } from '../../../validators';
 
 export type GcpShareMethod = 'withGoogle' | 'withInsights';
-export type GcpAccountTypes = 'google' | 'service' | 'group' | 'domain';
+export type GcpAccountType =
+  | 'google'
+  | 'service'
+  | 'group'
+  | 'domain'
+  | undefined;
 
 const Gcp = () => {
   const dispatch = useAppDispatch();

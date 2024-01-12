@@ -7,7 +7,7 @@ import {
   V1ListSourceResponseItem,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import {
-  GcpAccountTypes as GcpAccountType,
+  GcpAccountType,
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { RHEL_9, X86_64 } from '../constants';
@@ -126,6 +126,14 @@ export const wizardSlice = createSlice({
       state.aws.source = action.payload;
     },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
+      switch (action.payload) {
+        case 'withInsights':
+          state.gcp.accountType = undefined;
+          state.gcp.email = undefined;
+          break;
+        case 'withGoogle':
+          state.gcp.accountType = 'google';
+      }
       state.gcp.shareMethod = action.payload;
     },
     changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
