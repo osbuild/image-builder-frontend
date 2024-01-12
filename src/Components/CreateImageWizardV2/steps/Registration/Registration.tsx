@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
 
-import { FormSpy } from '@data-driven-forms/react-form-renderer';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
   Button,
   Checkbox,
@@ -13,7 +10,13 @@ import {
   TextContent,
 } from '@patternfly/react-core';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
-import PropTypes from 'prop-types';
+
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  changeActivationKey,
+  changeRegistrationType,
+  selectRegistrationType,
+} from '../../../../store/wizardSlice';
 
 const RHSMPopover = () => {
   return (
@@ -132,121 +135,117 @@ const RhcPopover = () => {
   );
 };
 
-const Registration = ({ label, ...props }) => {
-  const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
-  const registerSystem = getState()?.values?.['register-system'];
+const Registration = () => {
+  const dispatch = useAppDispatch();
+
+  const registrationType = useAppSelector((state) =>
+    selectRegistrationType(state)
+  );
+
   const [showOptions, setShowOptions] = useState(
-    registerSystem === 'register-now-insights' ||
-      registerSystem === 'register-now'
+    registrationType === 'register-now-insights' ||
+      registrationType === 'register-now'
   );
 
   return (
-    <FormSpy>
-      {() => (
-        <FormGroup label={label}>
-          <Radio
-            autoFocus
-            label={
-              (!showOptions &&
-                'Automatically register and enable advanced capabilities') || (
+    <FormGroup label="Registration method">
+      <Radio
+        autoFocus
+        label={
+          (!showOptions &&
+            'Automatically register and enable advanced capabilities') || (
+            <>
+              Monitor & manage subscriptions and access to Red Hat content
+              <RHSMPopover />
+            </>
+          )
+        }
+        data-testid="registration-radio-now"
+        name="register-system"
+        id="register-system-now"
+        isChecked={registrationType.startsWith('register-now')}
+        onChange={() => {
+          dispatch(changeRegistrationType('register-now-rhc'));
+        }}
+        description={
+          !showOptions && (
+            <Button
+              component="a"
+              data-testid="registration-additional-options"
+              variant="link"
+              isDisabled={!registrationType.startsWith('register-now')}
+              isInline
+              onClick={() => setShowOptions(!showOptions)}
+            >
+              Show additional connection options
+            </Button>
+          )
+        }
+        body={
+          showOptions && (
+            <Checkbox
+              className="pf-u-ml-lg"
+              label={
                 <>
-                  Monitor & manage subscriptions and access to Red Hat content
-                  <RHSMPopover />
+                  Enable predictive analytics and management capabilities
+                  <InsightsPopover />
                 </>
-              )
-            }
-            data-testid="registration-radio-now"
-            name="register-system"
-            id="register-system-now"
-            isChecked={registerSystem.startsWith('register-now')}
-            onChange={() => {
-              change(input.name, 'register-now-rhc');
-            }}
-            description={
-              !showOptions && (
-                <Button
-                  component="a"
-                  data-testid="registration-additional-options"
-                  variant="link"
-                  isDisabled={!registerSystem.startsWith('register-now')}
-                  isInline
-                  onClick={() => setShowOptions(!showOptions)}
-                >
-                  Show additional connection options
-                </Button>
-              )
-            }
-            body={
-              showOptions && (
+              }
+              data-testid="registration-checkbox-insights"
+              isChecked={
+                registrationType === 'register-now-insights' ||
+                registrationType === 'register-now-rhc'
+              }
+              onChange={(_event, checked) => {
+                if (checked) {
+                  dispatch(changeRegistrationType('register-now-insights'));
+                } else {
+                  dispatch(changeRegistrationType('register-now'));
+                }
+              }}
+              id="register-system-now-insights"
+              name="register-system-insights"
+              body={
                 <Checkbox
-                  className="pf-u-ml-lg"
                   label={
                     <>
-                      Enable predictive analytics and management capabilities
-                      <InsightsPopover />
+                      Enable remote remediations and system management with
+                      automation
+                      <RhcPopover />
                     </>
                   }
-                  data-testid="registration-checkbox-insights"
-                  isChecked={
-                    registerSystem === 'register-now-insights' ||
-                    registerSystem === 'register-now-rhc'
-                  }
+                  data-testid="registration-checkbox-rhc"
+                  isChecked={registrationType === 'register-now-rhc'}
                   onChange={(_event, checked) => {
                     if (checked) {
-                      change(input.name, 'register-now-insights');
+                      dispatch(changeRegistrationType('register-now-rhc'));
                     } else {
-                      change(input.name, 'register-now');
+                      dispatch(changeRegistrationType('register-now-insights'));
                     }
                   }}
-                  id="register-system-now-insights"
-                  name="register-system-insights"
-                  body={
-                    <Checkbox
-                      label={
-                        <>
-                          Enable remote remediations and system management with
-                          automation
-                          <RhcPopover />
-                        </>
-                      }
-                      data-testid="registration-checkbox-rhc"
-                      isChecked={registerSystem === 'register-now-rhc'}
-                      onChange={(_event, checked) => {
-                        if (checked) {
-                          change(input.name, 'register-now-rhc');
-                        } else {
-                          change(input.name, 'register-now-insights');
-                        }
-                      }}
-                      id="register-system-now-rhc"
-                      name="register-system-rhc"
-                    />
-                  }
+                  id="register-system-now-rhc"
+                  name="register-system-rhc"
                 />
-              )
-            }
-          />
-          <Radio
-            name="register-system"
-            className="pf-u-mt-md"
-            data-testid="registration-radio-later"
-            id="register-system-later"
-            label="Register later"
-            isChecked={registerSystem === 'register-later'}
-            onChange={() => {
-              setShowOptions(false);
-              change(input.name, 'register-later');
-            }}
-          />
-        </FormGroup>
-      )}
-    </FormSpy>
+              }
+            />
+          )
+        }
+      />
+      <Radio
+        name="register-system"
+        className="pf-u-mt-md"
+        data-testid="registration-radio-later"
+        id="register-system-later"
+        label="Register later"
+        isChecked={registrationType === 'register-later'}
+        onChange={() => {
+          setShowOptions(false);
+          dispatch(changeRegistrationType('register-later'));
+          dispatch(changeActivationKey(undefined));
+        }}
+      />
+    </FormGroup>
   );
-};
-
-Registration.propTypes = {
-  label: PropTypes.node,
 };
 
 export default Registration;

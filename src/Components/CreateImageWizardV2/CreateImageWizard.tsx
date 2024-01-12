@@ -10,6 +10,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import ImageOutputStep from './steps/ImageOutput';
+import RegistrationStep from './steps/Registration';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
@@ -18,12 +19,14 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
   initializeWizard,
+  selectActivationKey,
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
+  selectRegistrationType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -76,6 +79,11 @@ const CreateImageWizard = () => {
   // GCP
   const gcpShareMethod = useAppSelector((state) => selectGcpShareMethod(state));
   const gcpEmail = useAppSelector((state) => selectGcpEmail(state));
+
+  const registrationType = useAppSelector((state) =>
+    selectRegistrationType(state)
+  );
+  const activationKey = useAppSelector((state) => selectActivationKey(state));
 
   return (
     <>
@@ -138,6 +146,19 @@ const CreateImageWizard = () => {
               </WizardStep>,
             ]}
           />
+          <WizardStep
+            name="Register"
+            id="step-register"
+            footer={
+              <CustomWizardFooter
+                disableNext={
+                  registrationType !== 'register-later' && !activationKey
+                }
+              />
+            }
+          >
+            <RegistrationStep />
+          </WizardStep>
           <WizardStep
             name="Review"
             id="step-review"
