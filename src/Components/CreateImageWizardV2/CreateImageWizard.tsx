@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Button,
@@ -56,7 +56,12 @@ const CreateImageWizard = () => {
   const dispatch = useAppDispatch();
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
-  dispatch(initializeWizard);
+  useEffect(() => {
+    dispatch(initializeWizard());
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /*           *
    * Selectors *
