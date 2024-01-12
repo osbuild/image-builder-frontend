@@ -434,86 +434,86 @@ describe('Step Upload to AWS', () => {
   // }, 10000);
 });
 
-// describe('Step Upload to Google', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = await renderCustomRoutesWithReduxRouter(
-//       'imagewizard',
-//       {},
-//       routes
-//     ));
+describe('Step Upload to Google', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
 
-//     // select gcp as upload destination
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-google'))
-//     );
+    // select gcp as upload destination
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-google'))
+    );
 
-//     await clickNext();
+    await clickNext();
 
-//     await screen.findByRole('heading', {
-//       name: 'Target environment - Google Cloud Platform',
-//     });
-//   };
+    await screen.findByRole('heading', {
+      name: 'Target environment - Google Cloud Platform',
+    });
+  };
 
-//   test('clicking Next loads Registration', async () => {
-//     await setUp();
+  test('clicking Next loads Registration', async () => {
+    await setUp();
 
-//     const shareRadioButton = await screen.findByRole('radio', {
-//       name: /share image with a google account/i,
-//     });
-//     await user.click(shareRadioButton);
+    const shareRadioButton = await screen.findByRole('radio', {
+      name: /share image with a google account/i,
+    });
+    await user.click(shareRadioButton);
 
-//     const googleEmailInput = await screen.findByTestId('input-google-email');
+    const googleEmailInput = await screen.findByTestId('input-google-email');
 
-//     await user.type(googleEmailInput, 'test@test.com');
-//     await clickNext();
+    await user.type(googleEmailInput, 'test@test.com');
+    await clickNext();
 
-//     await screen.findByRole('textbox', {
-//       name: 'Select activation key',
-//     });
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
 
-//     screen.getByText('Automatically register and enable advanced capabilities');
-//   });
+    screen.getByText('Automatically register and enable advanced capabilities');
+  });
 
-//   test('clicking Back loads Release', async () => {
-//     await setUp();
+  test('clicking Back loads Release', async () => {
+    await setUp();
 
-//     await clickBack();
+    await clickBack();
 
-//     screen.getByTestId('upload-google');
-//   });
+    screen.getByTestId('upload-google');
+  });
 
-//   test('clicking Cancel loads landing page', async () => {
-//     await setUp();
+  test('clicking Cancel loads landing page', async () => {
+    await setUp();
 
-//     await verifyCancelButton(router);
-//   });
+    await verifyCancelButton(router);
+  });
 
-//   test('the google account id field is shown and required', async () => {
-//     await setUp();
+  test('the google account id field is shown and required', async () => {
+    await setUp();
 
-//     await waitFor(() => {
-//       screen.getByTestId('account-sharing');
-//     });
+    await waitFor(() => {
+      screen.getByTestId('account-sharing');
+    });
 
-//     await user.click(screen.getByTestId('account-sharing'));
-//     const accessKeyId = await screen.findByTestId('input-google-email');
-//     expect(accessKeyId).toHaveValue('');
-//     expect(accessKeyId).toBeEnabled();
-//   });
+    await user.click(screen.getByTestId('account-sharing'));
+    const accessKeyId = await screen.findByTestId('input-google-email');
+    expect(accessKeyId).toHaveValue('');
+    expect(accessKeyId).toBeEnabled();
+  });
 
-//   test('the google email field must be a valid email', async () => {
-//     await setUp();
+  test('the google email field must be a valid email', async () => {
+    await setUp();
 
-//     await user.click(screen.getByTestId('account-sharing'));
-//     await user.type(screen.getByTestId('input-google-email'), 'a');
-//     expect(await getNextButton()).toHaveClass('pf-m-disabled');
-//     expect(await getNextButton()).toBeDisabled();
-//     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
-//     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-//     expect(await getNextButton()).toBeEnabled();
-//   });
-// });
+    await user.click(screen.getByTestId('account-sharing'));
+    await user.type(screen.getByTestId('input-google-email'), 'a');
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeDisabled();
+    await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeEnabled();
+  });
+});
 
 // describe('Step Registration', () => {
 //   const user = userEvent.setup();
