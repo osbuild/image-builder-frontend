@@ -40,9 +40,10 @@ const Gcp = () => {
       </Text>
       <FormGroup label="Select image sharing" isRequired>
         <Radio
-          id="radio-with-description"
+          id="share-with-google"
+          data-testid="share-with-google"
           label="Share image with a Google acount"
-          name="radio-7"
+          name="radio-1"
           description={
             <Text>
               Your image will be uploaded to GCP and shared with the account you
@@ -57,9 +58,10 @@ const Gcp = () => {
           }}
         />
         <Radio
-          id="radio"
+          id="share-with-insights"
+          data-testid="share-with-insights"
           label="Share image with Red Hat Insights only"
-          name="radio-8"
+          name="radio-2"
           description={
             <Text>
               Your image will be uploaded to GCP and shared with Red Hat
@@ -78,36 +80,40 @@ const Gcp = () => {
         <>
           <FormGroup label="Account type" isRequired>
             <Radio
-              id="google"
+              id="google-account"
+              data-testid="google-account"
               label="Google account"
-              name="radio-9"
+              name="radio-3"
               isChecked={accountType === 'google'}
               onChange={() => {
                 dispatch(changeGcpAccountType('google'));
               }}
             />
             <Radio
-              id="service"
+              id="service-account"
+              data-testid="service-account"
               label="Service account"
-              name="radio-10"
+              name="radio-4"
               isChecked={accountType === 'service'}
               onChange={() => {
                 dispatch(changeGcpAccountType('service'));
               }}
             />
             <Radio
-              id="group"
+              id="google-group"
+              data-testid="google-group"
               label="Google group"
-              name="radio-11"
+              name="radio-5"
               isChecked={accountType === 'group'}
               onChange={() => {
                 dispatch(changeGcpAccountType('group'));
               }}
             />
             <Radio
-              id="domain"
+              id="google-domain"
+              data-testid="google-domain"
               label="Google Workspace domain or Cloud Identity domain"
-              name="radio-12"
+              name="radio-6"
               isChecked={accountType === 'domain'}
               onChange={() => {
                 dispatch(changeGcpAccountType('domain'));
@@ -123,7 +129,8 @@ const Gcp = () => {
             isRequired
           >
             <ValidatedTextInput
-              ariaLabel="principal"
+              ariaLabel="google principal"
+              data-testid="principal"
               value={gcpEmail || ''}
               validator={isGcpEmailValid}
               onChange={(_event, value) => dispatch(changeGcpEmail(value))}
