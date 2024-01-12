@@ -8,6 +8,7 @@ import {
 } from '@patternfly/react-core';
 
 interface ValidatedTextInputPropTypes extends TextInputProps {
+  dataTestId?: string | undefined;
   ariaLabel: string | undefined;
   helperText: string | undefined;
   validator: (value: string | undefined) => Boolean;
@@ -15,6 +16,7 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
 }
 
 export const ValidatedTextInput = ({
+  dataTestId,
   ariaLabel,
   helperText,
   validator,
@@ -39,6 +41,7 @@ export const ValidatedTextInput = ({
     <>
       <TextInput
         value={value}
+        data-testid={dataTestId}
         type="text"
         onChange={onChange}
         validated={handleValidation()}
