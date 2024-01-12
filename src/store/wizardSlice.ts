@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { Distributions, ImageRequest, ImageTypes } from './imageBuilderApi';
+import { ActivationKeys } from './rhsmApi';
 
 import {
   AwsShareMethod,
@@ -15,6 +16,10 @@ import { RHEL_9, X86_64 } from '../constants';
 import { RootState } from '.';
 
 type wizardState = {
+  env: {
+    serverUrl: string | undefined;
+    baseUrl: string | undefined;
+  };
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
@@ -28,9 +33,17 @@ type wizardState = {
     accountType: GcpAccountType;
     email: string | undefined;
   };
+  registration: {
+    registrationType: string;
+    activationKey: ActivationKeys['name'];
+  };
 };
 
 const initialState: wizardState = {
+  env: {
+    serverUrl: undefined,
+    baseUrl: undefined,
+  },
   architecture: X86_64,
   distribution: RHEL_9,
   imageTypes: [],
@@ -44,6 +57,18 @@ const initialState: wizardState = {
     accountType: 'google',
     email: undefined,
   },
+  registration: {
+    registrationType: 'register-now-rhc',
+    activationKey: '',
+  },
+};
+
+export const selectServerUrl = (state: RootState) => {
+  return state.wizard.env.serverUrl;
+};
+
+export const selectBaseUrl = (state: RootState) => {
+  return state.wizard.env.baseUrl;
 };
 
 export const selectArchitecture = (state: RootState) => {
@@ -84,11 +109,25 @@ export const selectGcpEmail = (state: RootState) => {
   return state.wizard.gcp.email;
 };
 
+export const selectRegistrationType = (state: RootState) => {
+  return state.wizard.registration.registrationType;
+};
+
+export const selectActivationKey = (state: RootState) => {
+  return state.wizard.registration.activationKey;
+};
+
 export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,
   reducers: {
     initializeWizard: () => initialState,
+    changeServerUrl: (state, action: PayloadAction<string | undefined>) => {
+      state.env.serverUrl = action.payload;
+    },
+    changeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
+      state.env.baseUrl = action.payload;
+    },
     changeArchitecture: (
       state,
       action: PayloadAction<ImageRequest['architecture']>
@@ -142,11 +181,22 @@ export const wizardSlice = createSlice({
     changeGcpEmail: (state, action: PayloadAction<string | undefined>) => {
       state.gcp.email = action.payload;
     },
+    changeRegistrationType: (state, action: PayloadAction<string>) => {
+      state.registration.registrationType = action.payload;
+    },
+    changeActivationKey: (
+      state,
+      action: PayloadAction<ActivationKeys['name']>
+    ) => {
+      state.registration.activationKey = action.payload;
+    },
   },
 });
 
 export const {
   initializeWizard,
+  changeServerUrl,
+  changeBaseUrl,
   changeArchitecture,
   changeDistribution,
   addImageType,
@@ -158,5 +208,7 @@ export const {
   changeGcpShareMethod,
   changeGcpAccountType,
   changeGcpEmail,
+  changeRegistrationType,
+  changeActivationKey,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
