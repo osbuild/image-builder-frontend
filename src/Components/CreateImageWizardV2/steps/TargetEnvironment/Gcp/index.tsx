@@ -130,7 +130,7 @@ const Gcp = () => {
           >
             <ValidatedTextInput
               ariaLabel="google principal"
-              data-testid="principal"
+              dataTestId="principal"
               value={gcpEmail || ''}
               validator={isGcpEmailValid}
               onChange={(_event, value) => dispatch(changeGcpEmail(value))}
