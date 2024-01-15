@@ -13,6 +13,7 @@ import DetailsStep from './steps/Details';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import RegistrationStep from './steps/Registration';
+import RepositoriesStep from './steps/Repositories';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
@@ -179,6 +180,20 @@ const CreateImageWizard = () => {
           >
             <OscapStep />
           </WizardStep>
+          <WizardStep
+            name="Content"
+            id="step-content"
+            steps={[
+              <WizardStep
+                name="Custom repositories"
+                id="wizard-custom-repositories"
+                key="wizard-custom-repositories"
+                footer={<CustomWizardFooter disableNext={false} />}
+              >
+                <RepositoriesStep />
+              </WizardStep>,
+            ]}
+          ></WizardStep>
           <WizardStep
             name="Details"
             id="step-details"
