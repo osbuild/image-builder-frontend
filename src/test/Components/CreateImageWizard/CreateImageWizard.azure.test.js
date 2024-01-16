@@ -96,15 +96,15 @@ describe('Step Upload to Azure', () => {
     await user.click(await screen.findByTestId('azure-radio-manual'));
     // Randomly generated GUID
     await user.type(
-      screen.getByTestId('azure-tenant-id-manual'),
+      await screen.findByTestId('azure-tenant-id-manual'),
       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
     );
     await user.type(
-      screen.getByTestId('azure-subscription-id-manual'),
+      await screen.findByTestId('azure-subscription-id-manual'),
       '60631143-a7dc-4d15-988b-ba83f3c99711'
     );
     await user.type(
-      screen.getByTestId('azure-resource-group-manual'),
+      await screen.findByTestId('azure-resource-group-manual'),
       'testResourceGroup'
     );
     await clickNext();
@@ -123,7 +123,7 @@ describe('Step Upload to Azure', () => {
 
     await clickBack();
 
-    screen.getByTestId('upload-azure');
+    await screen.findByTestId('upload-azure');
   });
 
   test('clicking Cancel loads landing page', async () => {
@@ -137,37 +137,43 @@ describe('Step Upload to Azure', () => {
     const nextButton = await getNextButton();
 
     expect(nextButton).toHaveClass('pf-m-disabled');
-    expect(screen.getByTestId('azure-radio-source')).toBeChecked();
+    expect(await screen.findByTestId('azure-radio-source')).toBeChecked();
 
-    await user.click(screen.getByTestId('azure-radio-manual'));
-    expect(screen.getByTestId('azure-radio-manual')).toBeChecked();
+    await user.click(await screen.findByTestId('azure-radio-manual'));
+    expect(await screen.findByTestId('azure-radio-manual')).toBeChecked();
 
     expect(nextButton).toHaveClass('pf-m-disabled');
 
-    const tenantId = screen.getByTestId('azure-tenant-id-manual');
+    const tenantId = await screen.findByTestId('azure-tenant-id-manual');
     expect(tenantId).toHaveValue('');
     expect(tenantId).toBeEnabled();
     await user.type(tenantId, 'c983c2cd-94d7-44e1-9c6e-9cfa3a40995f');
-    const subscription = screen.getByTestId('azure-subscription-id-manual');
+    const subscription = await screen.findByTestId(
+      'azure-subscription-id-manual'
+    );
     expect(subscription).toHaveValue('');
     expect(subscription).toBeEnabled();
     await user.type(subscription, 'f8f200aa-6234-4bfb-86c2-163d33dffc0c');
-    const resourceGroup = screen.getByTestId('azure-resource-group-manual');
+    const resourceGroup = await screen.findByTestId(
+      'azure-resource-group-manual'
+    );
     expect(resourceGroup).toHaveValue('');
     expect(resourceGroup).toBeEnabled();
     await user.type(resourceGroup, 'testGroup');
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    await user.click(screen.getByTestId('azure-radio-source'));
+    await user.click(await screen.findByTestId('azure-radio-source'));
 
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
     const sourceDropdown = await getSourceDropdown();
 
     // manual values should be cleared out
-    expect(screen.getByTestId('azure-tenant-id-source')).toHaveValue('');
-    expect(screen.getByTestId('azure-subscription-id-source')).toHaveValue('');
+    expect(await screen.findByTestId('azure-tenant-id-source')).toHaveValue('');
+    expect(
+      await screen.findByTestId('azure-subscription-id-source')
+    ).toHaveValue('');
 
     await user.click(sourceDropdown);
 
@@ -177,18 +183,20 @@ describe('Step Upload to Azure', () => {
       })
     );
     // wait for fetching the upload info
-    await waitFor(() =>
-      expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
+    expect(await screen.findByTestId('azure-tenant-id-source')).not.toHaveValue(
+      ''
     );
 
     await user.click(
-      screen.getByRole('textbox', {
+      await screen.findByRole('textbox', {
         name: /select resource group/i,
       })
     );
     const groups = screen.getAllByLabelText(/^Resource group/);
     expect(groups).toHaveLength(2);
-    await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
+    await user.click(
+      await screen.findByLabelText('Resource group myResourceGroup1')
+    );
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
   }, 10000);
@@ -204,8 +212,8 @@ describe('Step Upload to Azure', () => {
         name: /azureSource1/i,
       })
     );
-    await waitFor(() =>
-      expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
+    expect(await screen.findByTestId('azure-tenant-id-source')).not.toHaveValue(
+      ''
     );
 
     await user.click(sourceDropdown);
@@ -214,20 +222,22 @@ describe('Step Upload to Azure', () => {
         name: /azureSource2/i,
       })
     );
-    await waitFor(() =>
+    await waitFor(() => {
       expect(screen.getByTestId('azure-tenant-id-source')).toHaveValue(
         '73d5694c-7a28-417e-9fca-55840084f508'
-      )
-    );
+      );
+    });
 
     await user.click(
-      screen.getByRole('textbox', {
+      await screen.findByRole('textbox', {
         name: /select resource group/i,
       })
     );
-    const groups = screen.getByLabelText(/^Resource group/);
+    const groups = await screen.findByLabelText(/^Resource group/);
     expect(groups).toBeInTheDocument();
-    expect(screen.getByLabelText('Resource group theirGroup2')).toBeVisible();
+    expect(
+      await screen.findByLabelText('Resource group theirGroup2')
+    ).toBeVisible();
   });
 
   test('component renders error state correctly', async () => {

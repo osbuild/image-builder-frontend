@@ -84,7 +84,7 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 const switchToAWSManual = async () => {
   const user = userEvent.setup();
-  const manualRadio = screen.getByRole('radio', {
+  const manualRadio = await screen.findByRole('radio', {
     name: /manually enter an account id\./i,
   });
   await user.click(manualRadio);
@@ -92,7 +92,7 @@ const switchToAWSManual = async () => {
 };
 
 const getSourceDropdown = async () => {
-  const sourceDropdown = screen.getByRole('textbox', {
+  const sourceDropdown = await screen.findByRole('textbox', {
     name: /select source/i,
   });
   await waitFor(() => expect(sourceDropdown).toBeEnabled());
@@ -112,19 +112,19 @@ afterEach(() => {
 });
 
 describe('Create Image Wizard', () => {
-  test('renders component', () => {
+  test('renders component', async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
-    screen.getByRole('heading', { name: /Image Builder/ });
+    await screen.findByRole('heading', { name: /Image Builder/ });
 
-    screen.getByRole('button', { name: 'Image output' });
-    screen.getByRole('button', { name: 'Register' });
-    // screen.getByRole('button', { name: 'File system configuration' });
-    // screen.getByRole('button', { name: 'Content' });
-    // screen.getByRole('button', { name: 'Additional Red Hat packages' });
-    // screen.getByRole('button', { name: 'Custom repositories' });
-    // screen.getByRole('button', { name: 'Details' });
-    // screen.getByRole('button', { name: 'Review' });
+    await screen.findByRole('button', { name: 'Image output' });
+    await screen.findByRole('button', { name: 'Register' });
+    // await screen.findByRole('button', { name: 'File system configuration' });
+    // await screen.findByRole('button', { name: 'Content' });
+    // await screen.findByRole('button', { name: 'Additional Red Hat packages' });
+    // await screen.findByRole('button', { name: 'Custom repositories' });
+    // await screen.findByRole('button', { name: 'Details' });
+    // await screen.findByRole('button', { name: 'Review' });
   });
 });
 
@@ -172,15 +172,15 @@ describe('Step Image output', () => {
     await setUp();
     const nextButton = await getNextButton();
 
-    const awsTile = screen.getByTestId('upload-aws');
+    const awsTile = await screen.findByTestId('upload-aws');
     // this has already been clicked once in the setup function
     await user.click(awsTile); // deselect
 
-    const googleTile = screen.getByTestId('upload-google');
+    const googleTile = await screen.findByTestId('upload-google');
     await user.click(googleTile); // select
     await user.click(googleTile); // deselect
 
-    const azureTile = screen.getByTestId('upload-azure');
+    const azureTile = await screen.findByTestId('upload-azure');
     await user.click(azureTile); // select
     await user.click(azureTile); // deselect
 
@@ -216,7 +216,7 @@ describe('Step Image output', () => {
     })[0];
     await user.click(releaseMenu);
 
-    const showOptionsButton = screen.getByRole('button', {
+    const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
     await user.click(showOptionsButton);
@@ -276,12 +276,12 @@ describe('Step Image output', () => {
     })[0];
     await user.click(releaseMenu);
 
-    const showOptionsButton = screen.getByRole('button', {
+    const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
     await user.click(showOptionsButton);
 
-    const centOSButton = screen.getByRole('option', {
+    const centOSButton = await screen.findByRole('option', {
       name: 'CentOS Stream 9',
     });
     await user.click(centOSButton);
@@ -329,7 +329,9 @@ describe('Step Upload to AWS', () => {
       name: 'Select activation key',
     });
 
-    screen.getByText('Automatically register and enable advanced capabilities');
+    await screen.findByText(
+      'Automatically register and enable advanced capabilities'
+    );
   });
 
   test('clicking Back loads Release', async () => {
@@ -337,7 +339,7 @@ describe('Step Upload to AWS', () => {
 
     await clickBack();
 
-    screen.getByTestId('upload-aws');
+    await screen.findByTestId('upload-aws');
   });
 
   test('clicking Cancel loads landing page', async () => {
@@ -365,7 +367,9 @@ describe('Step Upload to AWS', () => {
     expect(nextButton).toHaveClass('pf-m-disabled');
 
     await user.click(
-      screen.getByRole('radio', { name: /manually enter an account id\./i })
+      await screen.findByRole('radio', {
+        name: /manually enter an account id\./i,
+      })
     );
 
     expect(nextButton).toHaveClass('pf-m-disabled');
@@ -380,7 +384,7 @@ describe('Step Upload to AWS', () => {
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
     await user.click(
-      screen.getByRole('radio', {
+      await screen.findByRole('radio', {
         name: /use an account configured from sources\./i,
       })
     );
@@ -416,7 +420,7 @@ describe('Step Upload to AWS', () => {
       name: 'Select activation key',
     });
 
-    const registerLaterRadio = screen.getByLabelText('Register later');
+    const registerLaterRadio = await screen.findByLabelText('Register later');
     await user.click(registerLaterRadio);
 
     //   // click through to review step
@@ -426,7 +430,7 @@ describe('Step Upload to AWS', () => {
     //   await clickNext();
     //   await clickNext();
 
-    //   await user.click(screen.getByRole('button', { name: /Create/ }));
+    //   await user.click(await screen.findByRole('button', { name: /Create/ }));
 
     //   // returns back to the landing page
     //   await waitFor(() =>
@@ -474,7 +478,7 @@ describe('Step Upload to AWS', () => {
         name: 'Select activation key',
       });
 
-      screen.getByText(
+      await screen.findByText(
         'Automatically register and enable advanced capabilities'
       );
     });
@@ -484,7 +488,7 @@ describe('Step Upload to AWS', () => {
 
       await clickBack();
 
-      screen.getByTestId('upload-google');
+      await screen.findByTestId('upload-google');
     });
 
     test('clicking Cancel loads landing page', async () => {
@@ -529,7 +533,9 @@ describe('Step Upload to AWS', () => {
 
       await clickNext();
       await user.click(
-        screen.getByRole('radio', { name: /manually enter an account id\./i })
+        await screen.findByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
       );
       await user.type(
         await screen.findByRole('textbox', {
@@ -547,7 +553,7 @@ describe('Step Upload to AWS', () => {
     // test('clicking Next loads file system configuration', async () => {
     //   await setUp();
 
-    //   const registerLaterRadio = screen.getByTestId('registration-radio-later');
+    //   const registerLaterRadio = await screen.findByTestId('registration-radio-later');
     //   await user.click(registerLaterRadio);
 
     //   await clickNext();
@@ -563,9 +569,11 @@ describe('Step Upload to AWS', () => {
       await clickBack();
 
       await user.click(
-        screen.getByRole('radio', { name: /manually enter an account id\./i })
+        await screen.findByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
       );
-      screen.getByText('AWS account ID');
+      await screen.findByText('AWS account ID');
     });
 
     test('clicking Cancel loads landing page', async () => {
@@ -599,14 +607,14 @@ describe('Step Upload to AWS', () => {
         name: 'name0',
       });
       await user.click(activationKey);
-      screen.getByDisplayValue('name0');
+      await screen.findByDisplayValue('name0');
 
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
-      //     const review = screen.getByTestId('review-registration');
+      //     const review = await screen.findByTestId('review-registration');
       //     expect(review).toHaveTextContent(
       //       'Register with Red Hat Subscription Manager (RHSM)'
       //     );
@@ -620,8 +628,10 @@ describe('Step Upload to AWS', () => {
     test('should allow registering without rhc', async () => {
       await setUp();
 
-      await user.click(screen.getByTestId('registration-additional-options'));
-      await user.click(screen.getByTestId('registration-checkbox-rhc'));
+      await user.click(
+        await screen.findByTestId('registration-additional-options')
+      );
+      await user.click(await screen.findByTestId('registration-checkbox-rhc'));
 
       // going back and forward when rhc isn't selected should keep additional options shown
       await clickBack();
@@ -629,8 +639,8 @@ describe('Step Upload to AWS', () => {
         name: 'aws account id',
       });
       await clickNext();
-      screen.getByTestId('registration-checkbox-insights');
-      screen.getByTestId('registration-checkbox-rhc');
+      await screen.findByTestId('registration-checkbox-insights');
+      await screen.findByTestId('registration-checkbox-rhc');
 
       const activationKeyDropdown = await screen.findByRole('textbox', {
         name: 'Select activation key',
@@ -640,14 +650,14 @@ describe('Step Upload to AWS', () => {
         name: 'name0',
       });
       await user.click(activationKey);
-      screen.getByDisplayValue('name0');
+      await screen.findByDisplayValue('name0');
 
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
-      //     const review = screen.getByTestId('review-registration');
+      //     const review = await screen.findByTestId('review-registration');
       //     expect(review).toHaveTextContent(
       //       'Register with Red Hat Subscription Manager (RHSM)'
       //     );
@@ -661,8 +671,12 @@ describe('Step Upload to AWS', () => {
     test('should allow registering without insights or rhc', async () => {
       await setUp();
 
-      await user.click(screen.getByTestId('registration-additional-options'));
-      await user.click(screen.getByTestId('registration-checkbox-insights'));
+      await user.click(
+        await screen.findByTestId('registration-additional-options')
+      );
+      await user.click(
+        await screen.findByTestId('registration-checkbox-insights')
+      );
 
       // going back and forward when neither rhc or insights is selected should keep additional options shown
       await clickBack();
@@ -670,8 +684,8 @@ describe('Step Upload to AWS', () => {
         name: 'aws account id',
       });
       await clickNext();
-      screen.getByTestId('registration-checkbox-insights');
-      screen.getByTestId('registration-checkbox-rhc');
+      await screen.findByTestId('registration-checkbox-insights');
+      await screen.findByTestId('registration-checkbox-rhc');
 
       const activationKeyDropdown = await screen.findByRole('textbox', {
         name: 'Select activation key',
@@ -681,14 +695,14 @@ describe('Step Upload to AWS', () => {
         name: 'name0',
       });
       await user.click(activationKey);
-      screen.getByDisplayValue('name0');
+      await screen.findByDisplayValue('name0');
 
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
-      //     const review = screen.getByTestId('review-registration');
+      //     const review = await screen.findByTestId('review-registration');
       //     expect(review).toHaveTextContent(
       //       'Register with Red Hat Subscription Manager (RHSM)'
       //     );
@@ -706,7 +720,7 @@ describe('Step Upload to AWS', () => {
       ]);
 
       // click the later radio button which should remove any input fields
-      await user.click(screen.getByTestId('registration-radio-later'));
+      await user.click(await screen.findByTestId('registration-radio-later'));
 
       await removeKeyInformation;
 
@@ -715,19 +729,25 @@ describe('Step Upload to AWS', () => {
       //     await clickNext();
       //     await clickNext();
       //     await clickNext();
-      //     screen.getByText('Register the system later');
+      //     await screen.findByText('Register the system later');
     });
 
     test('registering with rhc implies registering with insights', async () => {
       await setUp();
-      await user.click(screen.getByTestId('registration-additional-options'));
+      await user.click(
+        await screen.findByTestId('registration-additional-options')
+      );
 
-      await user.click(screen.getByTestId('registration-checkbox-insights'));
-      expect(screen.getByTestId('registration-checkbox-rhc')).not.toBeChecked();
-
-      await user.click(screen.getByTestId('registration-checkbox-rhc'));
+      await user.click(
+        await screen.findByTestId('registration-checkbox-insights')
+      );
       expect(
-        screen.getByTestId('registration-checkbox-insights')
+        await screen.findByTestId('registration-checkbox-rhc')
+      ).not.toBeChecked();
+
+      await user.click(await screen.findByTestId('registration-checkbox-rhc'));
+      expect(
+        await screen.findByTestId('registration-checkbox-insights')
       ).toBeChecked();
     });
   });
@@ -759,7 +779,7 @@ describe('Step Upload to AWS', () => {
   //       name: 'Select activation key',
   //     });
 
-  //     const registerLaterRadio = screen.getByTestId('registration-radio-later');
+  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
   //     await user.click(registerLaterRadio);
   //     await clickNext();
   //   };
@@ -767,7 +787,7 @@ describe('Step Upload to AWS', () => {
   //   test('Error validation occurs upon clicking next button', async () => {
   //     await setUp();
 
-  //     const manuallyConfigurePartitions = screen.getByText(
+  //     const manuallyConfigurePartitions = await screen.findByText(
   //       /manually configure partitions/i
   //     );
   //     await user.click(manuallyConfigurePartitions);
@@ -783,7 +803,7 @@ describe('Step Upload to AWS', () => {
   //     // Clicking next causes errors to appear
   //     await clickNext();
 
-  //     const mountPointWarning = screen.getByRole('heading', {
+  //     const mountPointWarning = await screen.findByRole('heading', {
   //       name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
   //       hidden: true,
   //     });
@@ -792,7 +812,7 @@ describe('Step Upload to AWS', () => {
   //       name: /danger alert: duplicate mount point\./i,
   //     });
 
-  //     const tbody = screen.getByTestId('file-system-configuration-tbody');
+  //     const tbody = await screen.findByTestId('file-system-configuration-tbody');
   //     const rows = within(tbody).getAllByRole('row');
   //     expect(rows).toHaveLength(3);
 
@@ -840,7 +860,7 @@ describe('Step Upload to AWS', () => {
   //       name: 'Select activation key',
   //     });
 
-  //     const registerLaterRadio = screen.getByTestId('registration-radio-later');
+  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
   //     await user.click(registerLaterRadio);
   //     await clickNext();
 
@@ -856,7 +876,7 @@ describe('Step Upload to AWS', () => {
   //     await setUp();
 
   //     // Enter image name
-  //     const nameInput = screen.getByRole('textbox', {
+  //     const nameInput = await screen.findByRole('textbox', {
   //       name: 'Image Name',
   //     });
   //     // 64 character name
@@ -871,7 +891,7 @@ describe('Step Upload to AWS', () => {
   //     expect(await getNextButton()).toBeEnabled();
 
   //     // Enter description image
-  //     const descriptionInput = screen.getByRole('textbox', {
+  //     const descriptionInput = await screen.findByRole('textbox', {
   //       name: /description/i,
   //     });
 
@@ -916,7 +936,7 @@ describe('Step Upload to AWS', () => {
   //     });
 
   //     // skip registration
-  //     const registerLaterRadio = screen.getByTestId('registration-radio-later');
+  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
   //     await user.click(registerLaterRadio);
 
   //     await clickNext();
@@ -938,12 +958,12 @@ describe('Step Upload to AWS', () => {
   //     })[0];
   //     await user.click(releaseMenu);
 
-  //     const showOptionsButton = screen.getByRole('button', {
+  //     const showOptionsButton = await screen.findByRole('button', {
   //       name: 'Show options for further development of RHEL',
   //     });
   //     await user.click(showOptionsButton);
 
-  //     const centos = screen.getByRole('option', {
+  //     const centos = await screen.findByRole('option', {
   //       name: 'CentOS Stream 8',
   //     });
   //     await user.click(centos);
@@ -974,9 +994,9 @@ describe('Step Upload to AWS', () => {
   //   test('has 3 buttons', async () => {
   //     await setUp();
 
-  //     screen.getByRole('button', { name: /Create/ });
-  //     screen.getByRole('button', { name: /Back/ });
-  //     screen.getByRole('button', { name: /Cancel/ });
+  //     await screen.findByRole('button', { name: /Create/ });
+  //     await screen.findByRole('button', { name: /Back/ });
+  //     await screen.findByRole('button', { name: /Cancel/ });
   //   });
 
   //   test('clicking Back loads Image name', async () => {
@@ -984,7 +1004,7 @@ describe('Step Upload to AWS', () => {
 
   //     await clickBack();
 
-  //     screen.getByRole('heading', {
+  //     await screen.findByRole('heading', {
   //       name: 'Details',
   //     });
   //   });
@@ -998,25 +1018,25 @@ describe('Step Upload to AWS', () => {
   //   test('has Registration expandable section for rhel', async () => {
   //     await setUp();
 
-  //     const targetExpandable = screen.getByTestId(
+  //     const targetExpandable = await screen.findByTestId(
   //       'target-environments-expandable'
   //     );
-  //     const registrationExpandable = screen.getByTestId(
+  //     const registrationExpandable = await screen.findByTestId(
   //       'registration-expandable'
   //     );
-  //     const contentExpandable = screen.getByTestId('content-expandable');
-  //     const fscExpandable = screen.getByTestId(
+  //     const contentExpandable = await screen.findByTestId('content-expandable');
+  //     const fscExpandable = await screen.findByTestId(
   //       'file-system-configuration-expandable'
   //     );
 
   //     await user.click(targetExpandable);
-  //     screen.getByText('AWS');
+  //     await screen.findByText('AWS');
   //     await user.click(registrationExpandable);
-  //     screen.getByText('Register the system later');
+  //     await screen.findByText('Register the system later');
   //     await user.click(contentExpandable);
-  //     screen.getByText('Additional Red Hatand 3rd party packages');
+  //     await screen.findByText('Additional Red Hatand 3rd party packages');
   //     await user.click(fscExpandable);
-  //     screen.getByText('Configuration type');
+  //     await screen.findByText('Configuration type');
   //   });
 
   //   test('has no Registration expandable for centos', async () => {
@@ -1034,11 +1054,11 @@ describe('Step Upload to AWS', () => {
   //     ).not.toBeInTheDocument();
 
   //     await user.click(targetExpandable);
-  //     screen.getByText('AWS');
+  //     await screen.findByText('AWS');
   //     await user.click(contentExpandable);
-  //     screen.getByText('Additional Red Hatand 3rd party packages');
+  //     await screen.findByText('Additional Red Hatand 3rd party packages');
   //     await user.click(fscExpandable);
-  //     screen.getByText('Configuration type');
+  //     await screen.findByText('Configuration type');
   //   });
   // });
 
@@ -1063,44 +1083,44 @@ describe('Step Upload to AWS', () => {
   //       name: /options menu/i,
   //     })[0];
   //     await user.click(releaseMenu);
-  //     const releaseOption = screen.getByRole('option', {
+  //     const releaseOption = await screen.findByRole('option', {
   //       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
   //     });
   //     await user.click(releaseOption);
 
   //     await waitFor(() => screen.findByTestId('upload-aws'));
-  //     await user.click(screen.getByTestId('upload-azure'));
-  //     await user.click(screen.getByTestId('upload-google'));
-  //     await user.click(screen.getByTestId('checkbox-vmware'));
-  //     await user.click(screen.getByTestId('checkbox-guest-image'));
-  //     await user.click(screen.getByTestId('checkbox-image-installer'));
+  //     await user.click(await screen.findByTestId('upload-azure'));
+  //     await user.click(await screen.findByTestId('upload-google'));
+  //     await user.click(await screen.findByTestId('checkbox-vmware'));
+  //     await user.click(await screen.findByTestId('checkbox-guest-image'));
+  //     await user.click(await screen.findByTestId('checkbox-image-installer'));
 
   //     await clickNext();
   //     await user.click(
-  //       screen.getByRole('radio', { name: /manually enter an account id\./i })
+  //       await screen.findByRole('radio', { name: /manually enter an account id\./i })
   //     );
-  //     await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+  //     await user.type(await screen.findByTestId('aws-account-id'), '012345678901');
   //     await clickNext();
 
-  //     await user.click(screen.getByTestId('account-sharing'));
+  //     await user.click(await screen.findByTestId('account-sharing'));
 
-  //     await user.type(screen.getByTestId('input-google-email'), 'test@test.com');
+  //     await user.type(await screen.findByTestId('input-google-email'), 'test@test.com');
 
   //     await user.click(await screen.findByTestId('account-sharing'));
   //     await clickNext();
 
-  //     await user.click(screen.getByTestId('azure-radio-manual'));
+  //     await user.click(await screen.findByTestId('azure-radio-manual'));
   //     // Randomly generated GUID
   //     await user.type(
-  //       screen.getByTestId('azure-tenant-id-manual'),
+  //       await screen.findByTestId('azure-tenant-id-manual'),
   //       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
   //     );
   //     await user.type(
-  //       screen.getByTestId('azure-subscription-id-manual'),
+  //       await screen.findByTestId('azure-subscription-id-manual'),
   //       '60631143-a7dc-4d15-988b-ba83f3c99711'
   //     );
   //     await user.type(
-  //       screen.getByTestId('azure-resource-group-manual'),
+  //       await screen.findByTestId('azure-resource-group-manual'),
   //       'testResourceGroup'
   //     );
   //     await clickNext();
@@ -1114,7 +1134,7 @@ describe('Step Upload to AWS', () => {
   //       name: 'name0',
   //     });
   //     await user.click(activationKey);
-  //     screen.getByDisplayValue('name0');
+  //     await screen.findByDisplayValue('name0');
 
   //     await clickNext();
 
@@ -1127,7 +1147,7 @@ describe('Step Upload to AWS', () => {
   //     await user.click(addPartition);
   //     await user.click(addPartition);
 
-  //     const tbody = screen.getByTestId('file-system-configuration-tbody');
+  //     const tbody = await screen.findByTestId('file-system-configuration-tbody');
   //     const rows = within(tbody).getAllByRole('row');
   //     await waitFor(() => expect(rows).toHaveLength(3));
   //     await clickNext();
@@ -1170,7 +1190,7 @@ describe('Step Upload to AWS', () => {
   //     await user.click(mibButton);
   //     await clickNext();
 
-  //     screen.getByText(
+  //     await screen.findByText(
   //       /Images built with Image Builder include all required packages/i
   //     );
 
@@ -1184,7 +1204,7 @@ describe('Step Upload to AWS', () => {
   //         name: /test summary for test package/,
   //       })
   //     );
-  //     await user.click(screen.getByRole('button', { name: /Add selected/ }));
+  //     await user.click(await screen.findByRole('button', { name: /Add selected/ }));
   //     await clickNext();
 
   //     // Custom repositories
@@ -1200,14 +1220,14 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     // Enter image name
-  //     const nameInput = screen.getByRole('textbox', {
+  //     const nameInput = await screen.findByRole('textbox', {
   //       name: 'Image Name',
   //     });
 
   //     await user.type(nameInput, 'my-image-name');
 
   //     // Enter description for image
-  //     const descriptionInput = screen.getByRole('textbox', {
+  //     const descriptionInput = await screen.findByRole('textbox', {
   //       name: /Description/,
   //     });
   //     await user.type(
@@ -1231,7 +1251,7 @@ describe('Step Upload to AWS', () => {
   //       'registration-expandable'
   //     );
   //     await user.click(registrationExpandable);
-  //     const review = screen.getByTestId('review-registration');
+  //     const review = await screen.findByTestId('review-registration');
   //     expect(review).toHaveTextContent(
   //       'Use remote host configuration (rhc) utility'
   //     );
@@ -1247,13 +1267,13 @@ describe('Step Upload to AWS', () => {
   //     await screen.findByText('Self-Support');
   //     await screen.findByText('Production');
 
-  //     await user.click(screen.getByTestId('repositories-popover-button'));
+  //     await user.click(await screen.findByTestId('repositories-popover-button'));
   //     const repotbody = await screen.findByTestId(
   //       'additional-repositories-table'
   //     );
   //     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-  //     await user.click(screen.getByTestId('file-system-configuration-popover'));
+  //     await user.click(await screen.findByTestId('file-system-configuration-popover'));
   //     const revtbody = await screen.findByTestId(
   //       'file-system-configuration-tbody-review'
   //     );
@@ -1454,7 +1474,7 @@ describe('Step Upload to AWS', () => {
   //         );
   //       })
   //     );
-  //     await user.click(screen.getByRole('button', { name: /Create/ }));
+  //     await user.click(await screen.findByRole('button', { name: /Create/ }));
 
   //     expect(receivedComposeReqs).toEqual(expectedComposeReqs);
   //     expect(timesCalled).toEqual(6);
@@ -1483,10 +1503,10 @@ describe('Step Upload to AWS', () => {
   //     await waitFor(
   //       async () => await user.click(await screen.findByTestId('upload-aws'))
   //     );
-  //     await user.click(screen.getByTestId('upload-google'));
-  //     await user.click(screen.getByTestId('upload-azure'));
+  //     await user.click(await screen.findByTestId('upload-google'));
+  //     await user.click(await screen.findByTestId('upload-azure'));
   //     await user.click(
-  //       screen.getByRole('checkbox', {
+  //       await screen.findByRole('checkbox', {
   //         name: /virtualization guest image checkbox/i,
   //       })
   //     );
@@ -1500,7 +1520,7 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     // Target environment aws
-  //     expect(screen.getByTestId('aws-radio-source')).toHaveFocus();
+  //     expect(await screen.findByTestId('aws-radio-source')).toHaveFocus();
   //     const awsSourceDropdown = await getSourceDropdown();
   //     await user.click(awsSourceDropdown);
   //     const awsSource = await screen.findByRole('option', {
@@ -1520,7 +1540,7 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     // Target environment azure
-  //     expect(screen.getByTestId('azure-radio-source')).toHaveFocus();
+  //     expect(await screen.findByTestId('azure-radio-source')).toHaveFocus();
   //     const azureSourceDropdown = await getSourceDropdown();
   //     await user.click(azureSourceDropdown);
   //     const azureSource = await screen.findByRole('option', {
@@ -1532,20 +1552,20 @@ describe('Step Upload to AWS', () => {
   //       name: /select resource group/i,
   //     });
   //     await user.click(resourceGroupDropdown);
-  //     await user.click(screen.getByLabelText('Resource group myResourceGroup1'));
+  //     await user.click(await screen.findByLabelText('Resource group myResourceGroup1'));
   //     await clickNext();
 
   //     // Registration
   //     await screen.findByText(
   //       'Automatically register and enable advanced capabilities'
   //     );
-  //     const registerRadio = screen.getByTestId('registration-radio-now');
+  //     const registerRadio = await screen.findByTestId('registration-radio-now');
   //     expect(registerRadio).toHaveFocus();
   //     await screen.findByRole('textbox', {
   //       name: 'Select activation key',
   //     });
   //     // skip registration
-  //     const registerLaterRadio = screen.getByTestId('registration-radio-later');
+  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
   //     await user.click(registerLaterRadio);
 
   //     await clickNext();
@@ -1554,7 +1574,7 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     // Packages
-  //     const view = screen.getByTestId('search-available-pkgs-input');
+  //     const view = await screen.findByTestId('search-available-pkgs-input');
 
   //     const availablePackagesInput = within(view).getByRole('textbox', {
   //       name: /search input/i,
@@ -1567,7 +1587,7 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     // Name
-  //     const nameInput = screen.getByRole('textbox', { name: /image name/i });
+  //     const nameInput = await screen.findByRole('textbox', { name: /image name/i });
   //     expect(nameInput).toHaveFocus();
   //     await clickNext();
   //   });
@@ -1588,7 +1608,7 @@ describe('Step Upload to AWS', () => {
   //       async () => await user.click(await screen.findByTestId('upload-aws'))
   //     );
   //     await user.keyboard('{enter}');
-  //     screen.getByRole('heading', {
+  //     await screen.findByRole('heading', {
   //       name: /image output/i,
   //     });
   //   });
@@ -1606,8 +1626,8 @@ describe('Step Upload to AWS', () => {
   //     await clickNext();
 
   //     await waitFor(() => screen.findByTestId('upload-aws'));
-  //     testTile(screen.getByTestId('upload-aws'));
-  //     testTile(screen.getByTestId('upload-google'));
-  //     testTile(screen.getByTestId('upload-azure'));
+  //     testTile(await screen.findByTestId('upload-aws'));
+  //     testTile(await screen.findByTestId('upload-google'));
+  //     testTile(await screen.findByTestId('upload-azure'));
   //   });
 });

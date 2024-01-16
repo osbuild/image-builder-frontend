@@ -116,7 +116,7 @@ describe('Step Packages', () => {
 
       // aws step
       await user.click(
-        screen.getByRole('radio', {
+        await screen.findByRole('radio', {
           name: /manually enter an account id\./i,
         })
       );
@@ -151,7 +151,9 @@ describe('Step Packages', () => {
 
       await clickBack();
 
-      screen.getByRole('heading', { name: /file system configuration/i });
+      await screen.findByRole('heading', {
+        name: /file system configuration/i,
+      });
     });
 
     test('clicking Cancel loads landing page', async () => {
@@ -176,8 +178,10 @@ describe('Step Packages', () => {
     test('should display default state', async () => {
       await setUp();
 
-      screen.getByText('Search above to add additionalpackages to your image');
-      screen.getByText('No packages added');
+      await screen.findByText(
+        'Search above to add additionalpackages to your image'
+      );
+      await screen.findByText('No packages added');
     });
 
     test('search results should be sorted with most relevant results first', async () => {
@@ -190,7 +194,9 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
@@ -212,12 +218,18 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'test');
 
       await user.click(await screen.findByTestId('available-pkgs-testPkg'));
-      await user.click(screen.getByRole('button', { name: /Add selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Add selected/ })
+      );
 
-      await user.click(screen.getByTestId('selected-pkgs-testPkg'));
-      await user.click(screen.getByRole('button', { name: /Remove selected/ }));
+      await user.click(await screen.findByTestId('selected-pkgs-testPkg'));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove selected/ })
+      );
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
         'option'
       );
@@ -238,10 +250,14 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
-      await user.click(screen.getByRole('button', { name: /Remove all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove all/ })
+      );
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
         'option'
       );
@@ -261,11 +277,13 @@ describe('Step Packages', () => {
       await user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
       // remove a single package
       await user.click(await screen.findByTestId('selected-pkgs-lib-test'));
-      await user.click(screen.getByRole('button', { name: /Remove selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove selected/ })
+      );
 
       // skip name page
       clickNext();
@@ -281,11 +299,13 @@ describe('Step Packages', () => {
       clickBack();
       await screen.findByTestId('search-available-pkgs-input');
       await user.click(
-        screen.getByRole('option', {
+        await screen.findByRole('option', {
           name: /summary for test package/,
         })
       );
-      await user.click(screen.getByRole('button', { name: /Remove selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove selected/ })
+      );
 
       // review page
       clickNext();
@@ -343,7 +363,7 @@ describe('Step Packages', () => {
       await user.click(searchboxChosen);
       await user.type(searchboxChosen, 'asdf');
 
-      expect(screen.getByText('No packages found')).toBeInTheDocument();
+      expect(await screen.findByText('No packages found')).toBeInTheDocument();
       // We need to clear this input in order to not have sideeffects on other tests
       await searchForChosenPackages(searchboxChosen, '');
     });
@@ -367,8 +387,8 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'testPkg');
       await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
 
-      screen.getByText('Over 100 results found. Refine your search.');
-      screen.getByText('Too many results to display');
+      await screen.findByText('Over 100 results found. Refine your search.');
+      await screen.findByText('Too many results to display');
     });
 
     test('should display an exact match if found regardless of too many results', async () => {
@@ -390,14 +410,16 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'testPkg-128');
       await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
-      const availablePackagesItems = within(availablePackagesList).getByRole(
-        'option'
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
       );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findByRole('option');
       expect(availablePackagesItems).toBeInTheDocument();
-      screen.getByText('Exact match');
-      screen.getByText('testPkg-128');
-      screen.getByText('Too many results to display');
+      await screen.findByText('Exact match');
+      await screen.findByText('testPkg-128');
+      await screen.findByText('Too many results to display');
     });
 
     test('search results should be sorted alphabetically', async () => {
@@ -415,7 +437,9 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'test');
       await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(1));
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
         'option'
       );
@@ -437,7 +461,9 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
@@ -464,7 +490,9 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(availableSearchbox, 'test');
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
@@ -472,7 +500,7 @@ describe('Step Packages', () => {
 
       await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
-      const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
+      const chosenPackagesList = await screen.findByTestId('chosen-pkgs-list');
       let chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
         'option'
       );
@@ -515,16 +543,23 @@ describe('Step Packages', () => {
 
       // aws step
       await user.click(
-        screen.getByRole('radio', { name: /manually enter an account id\./i })
+        await screen.findByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
       );
-      await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+      await user.type(
+        await screen.findByTestId('aws-account-id'),
+        '012345678901'
+      );
       await clickNext();
       // skip registration
       await screen.findByRole('textbox', {
         name: 'Select activation key',
       });
 
-      const registerLaterRadio = screen.getByTestId('registration-radio-later');
+      const registerLaterRadio = await screen.findByTestId(
+        'registration-radio-later'
+      );
       await user.click(registerLaterRadio);
       await clickNext();
       // skip fsc
@@ -536,7 +571,7 @@ describe('Step Packages', () => {
 
       const view = await screen.findByTestId('search-available-pkgs-input');
 
-      const searchbox = within(view).getByRole('textbox', {
+      const searchbox = await within(view).findByRole('textbox', {
         name: /search input/i,
       });
 
@@ -569,12 +604,18 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'test');
 
       await user.click(await screen.findByTestId('available-pkgs-testPkg'));
-      await user.click(screen.getByRole('button', { name: /Add selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Add selected/ })
+      );
 
       await user.click(await screen.findByTestId('selected-pkgs-testPkg'));
-      await user.click(screen.getByRole('button', { name: /Remove selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove selected/ })
+      );
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
         'option'
       );
@@ -595,10 +636,14 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
-      await user.click(screen.getByRole('button', { name: /Remove all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove all/ })
+      );
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
@@ -618,11 +663,13 @@ describe('Step Packages', () => {
       await user.click(searchbox);
 
       await searchForAvailablePackages(searchbox, 'test');
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
       // remove a single package
       await user.click(await screen.findByTestId('selected-pkgs-lib-test'));
-      await user.click(screen.getByRole('button', { name: /Remove selected/ }));
+      await user.click(
+        await screen.findByRole('button', { name: /Remove selected/ })
+      );
       // skip Custom repositories page
       clickNext();
 
@@ -659,12 +706,12 @@ describe('Step Packages', () => {
       await user.click(searchboxAvailable);
       await searchForAvailablePackages(searchboxAvailable, 'test');
 
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
       await user.click(searchboxChosen);
       await user.type(searchboxChosen, 'asdf');
 
-      expect(screen.getByText('No packages found')).toBeInTheDocument();
+      expect(await screen.findByText('No packages found')).toBeInTheDocument();
       // We need to clear this input in order to not have sideeffects on other tests
       await searchForChosenPackages(searchboxChosen, '');
     });
@@ -686,7 +733,9 @@ describe('Step Packages', () => {
       await searchForAvailablePackages(searchbox, 'test');
       await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(1));
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = within(availablePackagesList).getAllByRole(
         'option'
       );
@@ -708,14 +757,18 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
 
       await user.click(
-        screen.getByRole('button', { name: /clear available packages search/i })
+        await screen.findByRole('button', {
+          name: /clear available packages search/i,
+        })
       );
 
       await screen.findByText(
@@ -733,15 +786,17 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(availableSearchbox, 'test');
 
-      const availablePackagesList = screen.getByTestId('available-pkgs-list');
+      const availablePackagesList = await screen.findByTestId(
+        'available-pkgs-list'
+      );
       const availablePackagesItems = await within(
         availablePackagesList
       ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
 
-      await user.click(screen.getByRole('button', { name: /Add all/ }));
+      await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
-      const chosenPackagesList = screen.getByTestId('chosen-pkgs-list');
+      const chosenPackagesList = await screen.findByTestId('chosen-pkgs-list');
       let chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
         'option'
       );
@@ -777,9 +832,14 @@ describe('Step Custom repositories', () => {
 
     // aws step
     await user.click(
-      screen.getByRole('radio', { name: /manually enter an account id\./i })
+      await screen.findByRole('radio', {
+        name: /manually enter an account id\./i,
+      })
     );
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
 
     await clickNext();
     // skip registration
@@ -787,7 +847,7 @@ describe('Step Custom repositories', () => {
       name: 'Select activation key',
     });
 
-    await user.click(screen.getByLabelText('Register later'));
+    await user.click(await screen.findByLabelText('Register later'));
     await clickNext();
     // skip fsc
     await clickNext();
@@ -819,12 +879,12 @@ describe('Step Custom repositories', () => {
     await setUp();
 
     await user.click(
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /^select$/i,
       })
     );
 
-    screen.getByText(/select all \(1015 items\)/i);
+    await screen.findByText(/select all \(1015 items\)/i);
   });
 
   test('filter works', async () => {
@@ -933,7 +993,7 @@ describe('Step Custom repositories', () => {
     const firstRepoCheckbox = await getFirstRepoCheckbox();
 
     const getNextPageButton = async () =>
-      screen.getByRole('button', {
+      await screen.findByRole('button', {
         name: /go to next page/i,
       });
 

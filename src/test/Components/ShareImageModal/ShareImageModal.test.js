@@ -40,7 +40,9 @@ describe('Create Share To Regions Modal', () => {
     const shareButton = await screen.findByRole('button', { name: /share/i });
     expect(shareButton).toBeDisabled();
 
-    const selectToggle = screen.getByRole('button', { name: /menu toggle/i });
+    const selectToggle = await screen.findByRole('button', {
+      name: /menu toggle/i,
+    });
     await user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
@@ -50,13 +52,13 @@ describe('Create Share To Regions Modal', () => {
     await user.click(usEast2);
     await waitFor(() => expect(shareButton).toBeEnabled());
 
-    const clearAllButton = screen.getByRole('button', {
+    const clearAllButton = await screen.findByRole('button', {
       name: /clear input value/i,
     });
     await user.click(clearAllButton);
     await waitFor(() => expect(shareButton).toBeDisabled());
 
-    const invalidAlert = screen.getByText(
+    const invalidAlert = await screen.findByText(
       /select at least one region to share to\./i
     );
     expect(invalidAlert).toBeInTheDocument();

@@ -77,22 +77,27 @@ describe('Step Compliance', () => {
 
     // aws step
     await user.click(
-      screen.getByRole('radio', { name: /manually enter an account id\./i })
+      await screen.findByRole('radio', {
+        name: /manually enter an account id\./i,
+      })
     );
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
 
     await clickNext();
     // skip registration
-    await user.click(screen.getByLabelText('Register later'));
+    await user.click(await screen.findByLabelText('Register later'));
     await clickNext();
 
     // Now we should be in the Compliance step
     await screen.findByRole('heading', { name: /OpenSCAP/i });
 
     await user.click(
-      screen.getByRole('textbox', { name: /select a profile/i })
+      await screen.findByRole('textbox', { name: /select a profile/i })
     );
-    await user.click(screen.getByText(/none/i));
+    await user.click(await screen.findByText(/none/i));
 
     // check that the FSC does not contain a /tmp partition
     await clickNext();
@@ -108,7 +113,7 @@ describe('Step Compliance', () => {
     await screen.findByRole('heading', {
       name: /Additional Red Hat packages/i,
     });
-    screen.getByText(/no packages added/i);
+    await screen.findByText(/no packages added/i);
   });
 
   test('create an image with an oscap profile', async () => {
@@ -120,20 +125,25 @@ describe('Step Compliance', () => {
 
     // aws step
     await user.click(
-      screen.getByRole('radio', { name: /manually enter an account id\./i })
+      await screen.findByRole('radio', {
+        name: /manually enter an account id\./i,
+      })
     );
-    await user.type(screen.getByTestId('aws-account-id'), '012345678901');
+    await user.type(
+      await screen.findByTestId('aws-account-id'),
+      '012345678901'
+    );
 
     await clickNext();
     // skip registration
-    await user.click(screen.getByLabelText('Register later'));
+    await user.click(await screen.findByLabelText('Register later'));
     await clickNext();
 
     // Now we should be at the OpenSCAP step
     await screen.findByRole('heading', { name: /OpenSCAP/i });
 
     await user.click(
-      screen.getByRole('textbox', {
+      await screen.findByRole('textbox', {
         name: /select a profile/i,
       })
     );
