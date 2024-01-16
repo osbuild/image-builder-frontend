@@ -13,6 +13,7 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   helperText: string | undefined;
   validator: (value: string | undefined) => Boolean;
   value: string;
+  placeholder?: string;
 }
 
 export const ValidatedTextInput = ({
@@ -21,6 +22,7 @@ export const ValidatedTextInput = ({
   helperText,
   validator,
   value,
+  placeholder,
   onChange,
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
@@ -47,6 +49,7 @@ export const ValidatedTextInput = ({
         validated={handleValidation()}
         aria-label={ariaLabel}
         onBlur={handleBlur}
+        placeholder={placeholder}
       />
       {!isPristine && !validator(value) && (
         <HelperText>

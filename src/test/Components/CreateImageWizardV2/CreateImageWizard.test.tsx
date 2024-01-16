@@ -833,62 +833,82 @@ describe('Step Upload to AWS', () => {
   //   });
   // });
 
-  // describe('Step Details', () => {
-  //   const user = userEvent.setup();
-  //   const setUp = async () => {
-  //     ({ router } = await renderCustomRoutesWithReduxRouter(
-  //       'imagewizard',
-  //       {},
-  //       routes
-  //     ));
+  describe('Step Details', () => {
+    const user = userEvent.setup();
+    const setUp = async () => {
+      ({ router } = await renderCustomRoutesWithReduxRouter(
+        'imagewizard',
+        {},
+        routes
+      ));
 
-  //     // select aws as upload destination
-  //     await waitFor(
-  //       async () => await user.click(await screen.findByTestId('upload-aws'))
-  //     );
-  //     await clickNext();
+      // select aws as upload destination
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
+      await clickNext();
 
-  //     // aws step
-  //     await switchToAWSManual();
-  //     await user.type(
-  //       await screen.findByTestId('aws-account-id'),
-  //       '012345678901'
-  //     );
-  //     await clickNext();
-  //     // skip registration
-  //     await screen.findByRole('textbox', {
-  //       name: 'Select activation key',
-  //     });
+      // aws step
+      await switchToAWSManual();
+      await user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      );
 
-  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
-  //     await user.click(registerLaterRadio);
-  //     await clickNext();
+      await clickNext();
+      // skip registration
+      await screen.findByRole('textbox', {
+        name: 'Select activation key',
+      });
 
-  //     // skip fsc
-  //     await clickNext();
-  //     // skip packages
-  //     await clickNext();
-  //     // skip repositories
-  //     await clickNext();
-  //   };
+      const registerLaterRadio = screen.getByTestId('registration-radio-later');
+      await user.click(registerLaterRadio);
+      await clickNext();
+      // skip oscap
+      await clickNext();
+    };
+    //     // skip fsc
+    //     await clickNext();
+    //     // skip packages
+    //     await clickNext();
+    //     // skip repositories
+    //     await clickNext();
+    //   };
 
-  //   test('image name invalid for more than 63 chars', async () => {
-  //     await setUp();
+    test('image name invalid for more than 63 chars', async () => {
+      await setUp();
 
-  //     // Enter image name
-  //     const nameInput = await screen.findByRole('textbox', {
-  //       name: 'Image Name',
-  //     });
-  //     // 64 character name
-  //     const invalidName = 'a'.repeat(64);
-  //     await user.type(nameInput, invalidName);
-  //     expect(await getNextButton()).toHaveClass('pf-m-disabled');
-  //     expect(await getNextButton()).toBeDisabled();
-  //     await user.clear(nameInput);
+      //     // Enter image name
+      //     const nameInput = await screen.findByRole('textbox', {
+      //       name: 'Image Name',
+      //     });
+      //     // 64 character name
+      //     const invalidName = 'a'.repeat(64);
+      //     await user.type(nameInput, invalidName);
+      //     expect(await getNextButton()).toHaveClass('pf-m-disabled');
+      //     expect(await getNextButton()).toBeDisabled();
+      //     await user.clear(nameInput);
+      //     // Enter image name
+      screen.logTestingPlaygroundURL();
 
-  //     await user.type(nameInput, 'valid-name');
-  //     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-  //     expect(await getNextButton()).toBeEnabled();
+      const nameInput = screen.getByRole('textbox', {
+        name: /blueprint name/i,
+      });
+      const invalidName = 'a'.repeat(64);
+
+      await user.type(nameInput, invalidName);
+
+      expect(await getNextButton()).toHaveClass('pf-m-disabled');
+
+      expect(await getNextButton()).toBeDisabled();
+      await user.clear(nameInput);
+      await user.type(nameInput, 'valid-name');
+      expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+      expect(await getNextButton()).toBeEnabled();
+    });
+  });
 
   //     // Enter description image
   //     const descriptionInput = await screen.findByRole('textbox', {

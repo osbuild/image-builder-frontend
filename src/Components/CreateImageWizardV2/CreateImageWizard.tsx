@@ -9,12 +9,18 @@ import {
 } from '@patternfly/react-core';
 import { useNavigate } from 'react-router-dom';
 
+import DetailsStep from './steps/Details';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import RegistrationStep from './steps/Registration';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
-import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
+import {
+  isAwsAccountIdValid,
+  isBlueprintDescriptionValid,
+  isBlueprintNameValid,
+  isGcpEmailValid,
+} from './validators';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
@@ -24,6 +30,8 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+  selectBlueprintDescription,
+  selectBlueprintName,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
@@ -83,6 +91,10 @@ const CreateImageWizard = () => {
 
   const registrationType = useAppSelector((state) =>
     selectRegistrationType(state)
+  );
+  const blueprintName = useAppSelector((state) => selectBlueprintName(state));
+  const blueprintDescription = useAppSelector((state) =>
+    selectBlueprintDescription(state)
   );
   const activationKey = useAppSelector((state) => selectActivationKey(state));
 
@@ -166,6 +178,20 @@ const CreateImageWizard = () => {
             footer={<CustomWizardFooter disableNext={false} />}
           >
             <OscapStep />
+          </WizardStep>
+          <WizardStep
+            name="Details"
+            id="step-details"
+            footer={
+              <CustomWizardFooter
+                disableNext={
+                  !isBlueprintNameValid(blueprintName) ||
+                  !isBlueprintDescriptionValid(blueprintDescription)
+                }
+              />
+            }
+          >
+            <DetailsStep />
           </WizardStep>
           <WizardStep
             name="Review"

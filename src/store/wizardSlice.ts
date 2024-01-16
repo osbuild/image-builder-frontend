@@ -45,6 +45,10 @@ type wizardState = {
   openScap: {
     profile: DistributionProfileItem | undefined;
   };
+  details: {
+    blueprintName: string;
+    blueprintDescription: string;
+  };
 };
 
 const initialState: wizardState = {
@@ -71,6 +75,10 @@ const initialState: wizardState = {
   },
   openScap: {
     profile: undefined,
+  },
+  details: {
+    blueprintName: '',
+    blueprintDescription: '',
   },
 };
 
@@ -130,6 +138,14 @@ export const selectActivationKey = (state: RootState) => {
 
 export const selectProfile = (state: RootState) => {
   return state.wizard.openScap.profile;
+};
+
+export const selectBlueprintName = (state: RootState) => {
+  return state.wizard.details.blueprintName;
+};
+
+export const selectBlueprintDescription = (state: RootState) => {
+  return state.wizard.details.blueprintDescription;
 };
 
 export const wizardSlice = createSlice({
@@ -205,11 +221,20 @@ export const wizardSlice = createSlice({
     ) => {
       state.registration.activationKey = action.payload;
     },
+
     changeOscapProfile: (
       state,
       action: PayloadAction<DistributionProfileItem | undefined>
     ) => {
       state.openScap.profile = action.payload;
+    },
+
+    changeBlueprintName: (state, action: PayloadAction<string>) => {
+      state.details.blueprintName = action.payload;
+    },
+
+    changeBlueprintDescription: (state, action: PayloadAction<string>) => {
+      state.details.blueprintDescription = action.payload;
     },
   },
 });
@@ -232,5 +257,7 @@ export const {
   changeRegistrationType,
   changeActivationKey,
   changeOscapProfile,
+  changeBlueprintName,
+  changeBlueprintDescription,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
