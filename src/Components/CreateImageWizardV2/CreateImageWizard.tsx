@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -56,7 +56,12 @@ const CreateImageWizard = () => {
   const dispatch = useAppDispatch();
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
-  dispatch(initializeWizard);
+  // Perform the action only once per render of the wizard.
+  const [needsReinit, setNeedsReinit] = useState(true);
+  if (needsReinit) {
+    dispatch(initializeWizard());
+    setNeedsReinit(false);
+  }
 
   /*           *
    * Selectors *
