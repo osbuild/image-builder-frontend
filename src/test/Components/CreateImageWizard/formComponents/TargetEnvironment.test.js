@@ -95,7 +95,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     })[0];
     await user.click(releaseMenu);
     await user.click(
-      screen.getByRole('option', {
+      await screen.findByRole('option', {
         name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
@@ -184,7 +184,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     })[0];
     await user.click(releaseMenu);
     await user.click(
-      screen.getByRole('option', {
+      await screen.findByRole('option', {
         name: /Red Hat Enterprise Linux \(RHEL\) 8/,
       })
     );
@@ -240,7 +240,7 @@ describe('Check step consistency', () => {
     await user.click(await screen.findByRole('option', { name: 'x86_64' }));
     await waitFor(async () => await screen.findByTestId('upload-aws'));
     // select GCP, it's available for x86_64
-    await user.click(screen.getByTestId('upload-google'));
+    await user.click(await screen.findByTestId('upload-google'));
     const next = await screen.findByRole('button', { name: /Next/ });
     await waitFor(() => expect(next).toBeEnabled());
     // Change to aarch
@@ -250,7 +250,7 @@ describe('Check step consistency', () => {
     // GCP not being compatible with arch, the next button is disabled
     await waitFor(() => expect(next).toBeDisabled());
     // clicking on AWS the user can go next
-    await user.click(screen.getByTestId('upload-aws'));
+    await user.click(await screen.findByTestId('upload-aws'));
     await waitFor(() => expect(next).toBeEnabled());
     // and going back to x86_64 the user should keep the next button visible
     await user.click(archMenu);

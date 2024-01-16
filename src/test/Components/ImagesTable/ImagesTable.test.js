@@ -233,11 +233,11 @@ describe('Images Table Toolbar', () => {
     await screen.findByTestId('images-table');
 
     // check create image button
-    screen.getByTestId('create-image-action');
+    await screen.findByTestId('create-image-action');
 
     // check pagination renders
-    screen.getByTestId('images-pagination-top');
-    screen.getByTestId('images-pagination-bottom');
+    await screen.findByTestId('images-pagination-top');
+    await screen.findByTestId('images-pagination-bottom');
   });
 });
 
@@ -257,7 +257,7 @@ describe('Clones table', () => {
     const rows = getAllByRole('row');
 
     // first row is header so look at index 1
-    const detailsButton = within(rows[1]).getByRole('button', {
+    const detailsButton = await within(rows[1]).findByRole('button', {
       name: /details/i,
     });
     await user.click(detailsButton);
