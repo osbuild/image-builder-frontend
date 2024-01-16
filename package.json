@@ -15,7 +15,7 @@
     "@redhat-cloud-services/frontend-components": "4.2.1",
     "@redhat-cloud-services/frontend-components-notifications": "4.1.0",
     "@redhat-cloud-services/frontend-components-utilities": "4.0.2",
-    "@reduxjs/toolkit": "1.9.5",
+    "@reduxjs/toolkit": "2.0.1",
     "@scalprum/react-core": "0.6.6",
     "@unleash/proxy-client-react": "4.1.1",
     "classnames": "2.5.1",
@@ -24,7 +24,7 @@
     "react-dom": "18.2.0",
     "react-redux": "8.1.3",
     "react-router-dom": "6.19.0",
-    "redux": "4.2.1",
+    "redux": "5.0.1",
     "redux-promise-middleware": "6.2.0"
   },
   "jest": {

@@ -1,5 +1,5 @@
 import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import { contentSourcesApi } from './contentSourcesApi';
@@ -17,7 +17,7 @@ import wizardSlice, {
   selectImageTypes,
 } from './wizardSlice';
 
-export const reducer = {
+export const reducer = combineReducers({
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
@@ -25,7 +25,7 @@ export const reducer = {
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   notifications: notificationsReducer,
   wizard: wizardSlice,
-};
+});
 
 startAppListening({
   actionCreator: changeArchitecture,
