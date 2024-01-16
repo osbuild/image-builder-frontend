@@ -866,13 +866,13 @@ describe('Step Custom repositories', () => {
 
     expect(firstRepoCheckbox.checked).toEqual(false);
     await user.click(firstRepoCheckbox);
-    expect(firstRepoCheckbox.checked).toEqual(true);
+    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
 
     await clickNext();
-    clickBack();
+    await clickBack();
 
     firstRepoCheckbox = await getFirstRepoCheckbox();
-    expect(firstRepoCheckbox.checked).toEqual(true);
+    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
   });
 
   test('correct number of repositories is fetched', async () => {
@@ -1079,7 +1079,7 @@ describe('On Recreate', () => {
     const availableRepoCheckbox = await screen.findByRole('checkbox', {
       name: /select row 0/i,
     });
-    expect(availableRepoCheckbox).toBeEnabled();
+    await waitFor(() => expect(availableRepoCheckbox).toBeEnabled());
   });
 
   test('with repositories that are no longer available', async () => {
