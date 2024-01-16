@@ -183,8 +183,8 @@ describe('Step Upload to Azure', () => {
       })
     );
     // wait for fetching the upload info
-    expect(await screen.findByTestId('azure-tenant-id-source')).not.toHaveValue(
-      ''
+    await waitFor(() =>
+      expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
     );
 
     await user.click(
@@ -212,8 +212,8 @@ describe('Step Upload to Azure', () => {
         name: /azureSource1/i,
       })
     );
-    expect(await screen.findByTestId('azure-tenant-id-source')).not.toHaveValue(
-      ''
+    await waitFor(() =>
+      expect(screen.getByTestId('azure-tenant-id-source')).not.toHaveValue('')
     );
 
     await user.click(sourceDropdown);
