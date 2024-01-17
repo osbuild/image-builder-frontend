@@ -55,7 +55,8 @@ export const LandingPage = () => {
   const [selectedBlueprint, setSelectedBlueprint] = useState<string>('');
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
-  const experimentalFlag = process.env.EXPERIMENTAL;
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
 
   const traditionalImageList = (
     <>

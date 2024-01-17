@@ -67,14 +67,12 @@ const BlueprintsSidebar = (props: blueprintProps) => {
         className="pf-v5-u-mb-md"
       />
       {filteredBlueprints?.map((blueprint: Blueprint) => (
-        <>
-          <BlueprintCard
-            key={blueprint.id}
-            blueprint={blueprint}
-            selectedBlueprint={props.selectedBlueprint}
-            setSelectedBlueprint={props.setSelectedBlueprint}
-          />
-        </>
+        <BlueprintCard
+          key={blueprint.id}
+          blueprint={blueprint}
+          selectedBlueprint={props.selectedBlueprint}
+          setSelectedBlueprint={props.setSelectedBlueprint}
+        />
       ))}
     </>
   ) : (

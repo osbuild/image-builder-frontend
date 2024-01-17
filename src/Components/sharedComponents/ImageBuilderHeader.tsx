@@ -15,13 +15,15 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Link } from 'react-router-dom';
 
 import './ImageBuilderHeader.scss';
 import { resolveRelPath } from '../../Utilities/path';
 
 export const ImageBuilderHeader = (props: { noButtons?: boolean }) => {
-  const experimentalFlag = process.env.EXPERIMENTAL;
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
   return (
     <>
       {/*@ts-ignore*/}

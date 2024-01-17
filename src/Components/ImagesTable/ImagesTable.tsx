@@ -36,6 +36,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -87,7 +88,8 @@ const ImagesTable = (props: imagesTableProps) => {
     version: [],
   });
 
-  const experimentalFlag = process.env.EXPERIMENTAL;
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
 
   const selectedBlueprintName = props.blueprints?.find(
     (blueprint: Blueprint) => blueprint.id === props.selectedBlueprint
