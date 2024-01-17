@@ -3,8 +3,8 @@ import React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { useCheckRepositoriesAvailability } from '../../../Utilities/checkRepositoriesAvailability';
-import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { useCheckRepositoriesAvailability } from '../../utilities/checkRepositoriesAvailability';
 
 const RepositoryUnavailable = () => {
   const { isBeta } = useGetEnvironment();

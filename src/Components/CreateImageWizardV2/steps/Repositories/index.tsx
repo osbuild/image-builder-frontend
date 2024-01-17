@@ -3,6 +3,8 @@ import React from 'react';
 import { Button, Form, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import Repositories from './Repositories';
+
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const ManageRepositoriesButton = () => {
@@ -32,6 +34,7 @@ const RepositoriesStep = () => {
         <br />
         <ManageRepositoriesButton />
       </Text>
+      <Repositories />
     </Form>
   );
 };
