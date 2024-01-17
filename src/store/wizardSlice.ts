@@ -1,6 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import {
+  CustomRepository,
   DistributionProfileItem,
   Distributions,
   ImageRequest,
@@ -45,6 +46,9 @@ type wizardState = {
   openScap: {
     profile: DistributionProfileItem | undefined;
   };
+  repositories: {
+    customRepositories: CustomRepository[];
+  };
   details: {
     blueprintName: string;
     blueprintDescription: string;
@@ -75,6 +79,9 @@ const initialState: wizardState = {
   },
   openScap: {
     profile: undefined,
+  },
+  repositories: {
+    customRepositories: [],
   },
   details: {
     blueprintName: '',
@@ -138,6 +145,10 @@ export const selectActivationKey = (state: RootState) => {
 
 export const selectProfile = (state: RootState) => {
   return state.wizard.openScap.profile;
+};
+
+export const selectCustomRepositories = (state: RootState) => {
+  return state.wizard.repositories.customRepositories;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -221,18 +232,21 @@ export const wizardSlice = createSlice({
     ) => {
       state.registration.activationKey = action.payload;
     },
-
     changeOscapProfile: (
       state,
       action: PayloadAction<DistributionProfileItem | undefined>
     ) => {
       state.openScap.profile = action.payload;
     },
-
+    changeCustomRepositories: (
+      state,
+      action: PayloadAction<CustomRepository[]>
+    ) => {
+      state.repositories.customRepositories = action.payload;
+    },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
-
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
@@ -257,6 +271,7 @@ export const {
   changeRegistrationType,
   changeActivationKey,
   changeOscapProfile,
+  changeCustomRepositories,
   changeBlueprintName,
   changeBlueprintDescription,
 } = wizardSlice.actions;

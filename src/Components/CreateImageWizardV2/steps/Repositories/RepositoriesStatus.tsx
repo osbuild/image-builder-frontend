@@ -17,12 +17,12 @@ import {
   InProgressIcon,
 } from '@patternfly/react-icons';
 
-import { ApiRepositoryResponse } from '../../../store/contentSourcesApi';
+import { ApiRepositoryResponse } from '../../../../store/contentSourcesApi';
 import {
   convertStringToDate,
   timestampToDisplayString,
-} from '../../../Utilities/time';
-import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
+} from '../../../../Utilities/time';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const getLastIntrospection = (
   repoIntrospections: RepositoryStatusProps['repoIntrospections']

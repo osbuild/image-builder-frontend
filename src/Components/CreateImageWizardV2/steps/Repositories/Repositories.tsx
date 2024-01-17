@@ -1,10 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
 import {
-  useFieldApi,
-  useFormApi,
-} from '@data-driven-forms/react-form-renderer';
-import {
   Alert,
   Button,
   EmptyState,
@@ -33,14 +29,35 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { RepositoryIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import PropTypes from 'prop-types';
 
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
-import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
-import { releaseToVersion } from '../../../Utilities/releaseToVersion';
-import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
+import {
+  ApiRepositoryResponseRead,
+  useListRepositoriesQuery,
+} from '../../../../store/contentSourcesApi';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { CustomRepository } from '../../../../store/imageBuilderApi';
+import {
+  changeCustomRepositories,
+  selectArchitecture,
+  selectCustomRepositories,
+  selectDistribution,
+} from '../../../../store/wizardSlice';
+import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+
+type BulkSelectProps = {
+  selected: (string | undefined)[];
+  count: number | undefined;
+  filteredCount: number | undefined;
+  perPage: number;
+  handleSelectAll: Function;
+  handleSelectPage: Function;
+  handleDeselectAll: Function;
+  isDisabled: boolean;
+};
 
 const BulkSelect = ({
   selected,
@@ -51,7 +68,7 @@ const BulkSelect = ({
   handleSelectPage,
   handleDeselectAll,
   isDisabled,
-}) => {
+}: BulkSelectProps) => {
   const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
 
   const numSelected = selected.length;
@@ -63,14 +80,17 @@ const BulkSelect = ({
   const items = [
     <DropdownItem
       key="none"
-      onClick={handleDeselectAll}
+      onClick={() => handleDeselectAll()}
     >{`Select none (0 items)`}</DropdownItem>,
-    <DropdownItem key="page" onClick={handleSelectPage}>{`Select page (${
-      perPage > filteredCount ? filteredCount : perPage
+    <DropdownItem
+      key="page"
+      onClick={() => handleSelectPage()}
+    >{`Select page (${
+      perPage > filteredCount! ? filteredCount : perPage
     } items)`}</DropdownItem>,
     <DropdownItem
       key="all"
-      onClick={handleSelectAll}
+      onClick={() => handleSelectAll()}
     >{`Select all (${count} items)`}</DropdownItem>,
   ];
 
@@ -107,28 +127,12 @@ const BulkSelect = ({
   );
 };
 
-// Utility function to convert from Content Sources to Image Builder payload repo API schema
-const convertSchemaToIBPayloadRepo = (repo) => {
-  const imageBuilderRepo = {
-    baseurl: repo.url,
-    rhsm: false,
-    check_gpg: false,
-  };
-  if (repo.gpg_key) {
-    imageBuilderRepo.gpgkey = repo.gpg_key;
-    imageBuilderRepo.check_gpg = true;
-    imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
-  }
-
-  return imageBuilderRepo;
-};
-
 // Utility function to convert from Content Sources to Image Builder custom repo API schema
-const convertSchemaToIBCustomRepo = (repo) => {
-  const imageBuilderRepo = {
-    id: repo.uuid,
+const convertSchemaToIBCustomRepo = (repo: ApiRepositoryResponseRead) => {
+  const imageBuilderRepo: CustomRepository = {
+    id: repo.uuid!,
     name: repo.name,
-    baseurl: [repo.url],
+    baseurl: [repo.url!],
     check_gpg: false,
   };
   if (repo.gpg_key) {
@@ -140,73 +144,23 @@ const convertSchemaToIBCustomRepo = (repo) => {
   return imageBuilderRepo;
 };
 
-// Utility function to convert from Image Builder to Content Sources API schema
-const convertSchemaToContentSources = (repo) => {
-  const contentSourcesRepo = {
-    url: repo.baseurl,
-    rhsm: false,
-  };
-  if (repo.gpgkey) {
-    contentSourcesRepo.gpg_key = repo.gpgkey;
-    contentSourcesRepo.metadata_verification = repo.check_repo_gpg;
-  }
+const Repositories = () => {
+  const dispatch = useAppDispatch();
 
-  return contentSourcesRepo;
-};
+  const arch = useAppSelector((state) => selectArchitecture(state));
+  const distribution = useAppSelector((state) => selectDistribution(state));
+  const version = releaseToVersion(distribution);
+  const repositoriesList = useAppSelector((state) =>
+    selectCustomRepositories(state)
+  );
 
-const Repositories = (props) => {
-  const initializeRepositories = (contentSourcesReposList) => {
-    // Convert list of repositories into an object where key is repo URL
-    const contentSourcesRepos = contentSourcesReposList.reduce(
-      (accumulator, currentValue) => {
-        accumulator[currentValue.url] = currentValue;
-        return accumulator;
-      },
-      {}
-    );
-
-    // Repositories in the form state can be present when 'Recreate image' is used
-    // to open the wizard that are not necessarily in content sources.
-    const formStateReposList =
-      getState()?.values?.['original-payload-repositories'];
-
-    const mergeRepositories = (contentSourcesRepos, formStateReposList) => {
-      const formStateRepos = {};
-
-      for (const repo of formStateReposList) {
-        formStateRepos[repo.baseurl] = convertSchemaToContentSources(repo);
-        formStateRepos[repo.baseurl].name = '';
-      }
-
-      // In case of duplicate repo urls, the repo from Content Sources overwrites the
-      // repo from the form state.
-      const mergedRepos = { ...formStateRepos, ...contentSourcesRepos };
-
-      return mergedRepos;
-    };
-
-    const repositories = formStateReposList
-      ? mergeRepositories(contentSourcesRepos, formStateReposList)
-      : contentSourcesRepos;
-
-    return repositories;
-  };
-
-  const { getState, change } = useFormApi();
-  const { input } = useFieldApi(props);
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-group-all');
   const [selected, setSelected] = useState(
-    getState()?.values?.['payload-repositories']
-      ? getState().values['payload-repositories'].map((repo) => repo.baseurl)
-      : []
+    repositoriesList ? repositoriesList.flatMap((repo) => repo.baseurl) : []
   );
-
-  const arch = getState().values?.arch;
-  const release = getState().values?.release;
-  const version = releaseToVersion(release);
 
   const firstRequest = useListRepositoriesQuery(
     {
@@ -245,81 +199,89 @@ const Repositories = (props) => {
 
   const { data, isError, isFetching, isLoading, isSuccess, refetch } =
     useMemo(() => {
-      if (firstRequest?.data?.meta?.count > 100) {
-        return { ...followupRequest };
+      if (firstRequest?.data?.meta?.count) {
+        if (firstRequest?.data?.meta?.count > 100) {
+          return { ...followupRequest };
+        }
       }
       return { ...firstRequest };
     }, [firstRequest, followupRequest]);
 
-  const repositories = useMemo(() => {
-    return data ? initializeRepositories(data.data) : {};
-  }, [firstRequest.data, followupRequest.data]);
-
-  const handleToggleClick = (event) => {
+  const handleToggleClick = (event: React.MouseEvent) => {
     const id = event.currentTarget.id;
     setPage(1);
     setToggleSelected(id);
   };
 
-  const isRepoSelected = (repoURL) => selected.includes(repoURL);
+  const isRepoSelected = (repoURL: string | undefined) =>
+    selected.includes(repoURL);
 
-  const handlePerPageSelect = (event, newPerPage, newPage) => {
+  const handlePerPageSelect = (
+    _: React.MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
     setPerPage(newPerPage);
     setPage(newPage);
   };
 
-  const handleSetPage = (event, newPage) => {
+  const handleSetPage = (_: React.MouseEvent, newPage: number) => {
     setPage(newPage);
   };
 
   // filter displayed selected packages
-  const handleFilterRepositories = (_, value) => {
+  const handleFilterRepositories = (
+    event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
     setPage(1);
     setFilterValue(value);
   };
 
   const filteredRepositoryURLs = useMemo(() => {
-    const repoUrls = Object.values(repositories).filter((repo) =>
-      repo.name.toLowerCase().includes(filterValue.toLowerCase())
+    if (!data || !data.data) {
+      return [];
+    }
+    const repoUrls = data.data.filter((repo) =>
+      repo.name?.toLowerCase().includes(filterValue.toLowerCase())
     );
     if (toggleSelected === 'toggle-group-all') {
-      return repoUrls.map((repo) => repo.url);
+      return repoUrls.map((repo: ApiRepositoryResponseRead) => repo.url);
     } else if (toggleSelected === 'toggle-group-selected') {
       return repoUrls
-        .filter((repo) => isRepoSelected(repo.url))
-        .map((repo) => repo.url);
+        .filter((repo: ApiRepositoryResponseRead) => isRepoSelected(repo.url!))
+        .map((repo: ApiRepositoryResponseRead) => repo.url);
     }
-  }, [filterValue, repositories, toggleSelected]);
+  }, [filterValue, data, toggleSelected]);
 
   const handleClearFilter = () => {
     setFilterValue('');
   };
 
-  const updateFormState = (selectedRepoURLs) => {
+  const updateFormState = (selectedRepoURLs: (string | undefined)[]) => {
     // repositories is stored as an object with repoURLs as keys
     const selectedRepos = [];
     for (const repoURL of selectedRepoURLs) {
-      selectedRepos.push(repositories[repoURL]);
+      selectedRepos.push(data?.data?.find((repo) => repo.url === repoURL));
     }
 
-    const payloadRepositories = selectedRepos.map((repo) =>
-      convertSchemaToIBPayloadRepo(repo)
-    );
-
     const customRepositories = selectedRepos.map((repo) =>
-      convertSchemaToIBCustomRepo(repo)
+      convertSchemaToIBCustomRepo(repo!)
     );
 
-    input.onChange(payloadRepositories);
-    change('custom-repositories', customRepositories);
+    dispatch(changeCustomRepositories(customRepositories));
   };
 
-  const updateSelected = (selectedRepos) => {
+  const updateSelected = (selectedRepos: (string | undefined)[]) => {
     setSelected(selectedRepos);
     updateFormState(selectedRepos);
   };
 
-  const handleSelect = (repoURL, rowIndex, isSelecting) => {
+  const handleSelect = (
+    repoURL: string | undefined,
+    _: number,
+    isSelecting: boolean
+  ) => {
     if (isSelecting === true) {
       updateSelected([...selected, repoURL]);
     } else if (isSelecting === false) {
@@ -330,28 +292,33 @@ const Repositories = (props) => {
   };
 
   const handleSelectAll = () => {
-    updateSelected(Object.keys(repositories));
+    if (data) {
+      updateSelected(data.data?.map((repo) => repo.url) || []);
+    }
   };
 
   const computeStart = () => perPage * (page - 1);
   const computeEnd = () => perPage * page;
 
   const handleSelectPage = () => {
-    const pageRepos = filteredRepositoryURLs.slice(
-      computeStart(),
-      computeEnd()
-    );
+    const pageRepos =
+      filteredRepositoryURLs &&
+      filteredRepositoryURLs.slice(computeStart(), computeEnd());
 
     // Filter to avoid adding duplicates
-    const newSelected = [
+    const newSelected = pageRepos && [
       ...pageRepos.filter((repoId) => !selected.includes(repoId)),
     ];
 
-    updateSelected([...selected, ...newSelected]);
+    updateSelected([...selected, ...newSelected!]);
   };
 
   const handleDeselectAll = () => {
     updateSelected([]);
+  };
+
+  const getRepoNameByUrl = (url: string) => {
+    return data!.data?.find((repo) => repo.url === url)?.name;
   };
 
   return (
@@ -359,7 +326,7 @@ const Repositories = (props) => {
     (isLoading && <Loading />) ||
     (isSuccess && (
       <>
-        {Object.values(repositories).length === 0 ? (
+        {data.data?.length === 0 ? (
           <Empty refetch={refetch} isFetching={isFetching} />
         ) : (
           <>
@@ -368,8 +335,8 @@ const Repositories = (props) => {
                 <ToolbarItem variant="bulk-select">
                   <BulkSelect
                     selected={selected}
-                    count={Object.values(repositories).length}
-                    filteredCount={filteredRepositoryURLs.length}
+                    count={data.data?.length}
+                    filteredCount={filteredRepositoryURLs?.length}
                     perPage={perPage}
                     handleSelectAll={handleSelectAll}
                     handleSelectPage={handleSelectPage}
@@ -415,7 +382,9 @@ const Repositories = (props) => {
                 </ToolbarItem>
                 <ToolbarItem variant="pagination">
                   <Pagination
-                    itemCount={filteredRepositoryURLs.length}
+                    itemCount={
+                      filteredRepositoryURLs && filteredRepositoryURLs.length
+                    }
                     perPage={perPage}
                     page={page}
                     onSetPage={handleSetPage}
@@ -441,75 +410,89 @@ const Repositories = (props) => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {filteredRepositoryURLs
-                      .sort((a, b) => {
-                        if (repositories[a].name < repositories[b].name) {
-                          return -1;
-                        } else if (
-                          repositories[b].name < repositories[a].name
-                        ) {
-                          return 1;
-                        } else {
-                          return 0;
-                        }
-                      })
-                      .slice(computeStart(), computeEnd())
-                      .map((repoURL, rowIndex) => {
-                        const repo = repositories[repoURL];
-                        const repoExists = repo.name ? true : false;
-                        return (
-                          <Tr key={repo.url}>
-                            <Td
-                              select={{
-                                isSelected: isRepoSelected(repo.url),
-                                rowIndex: rowIndex,
-                                onSelect: (event, isSelecting) =>
-                                  handleSelect(repo.url, rowIndex, isSelecting),
-                                isDisabled:
-                                  isFetching || repo.status !== 'Valid',
-                              }}
-                            />
-                            <Td dataLabel={'Name'}>
-                              {repoExists
-                                ? repo.name
-                                : 'Repository with the following url is no longer available:'}
-                              <br />
-                              <Button
-                                component="a"
-                                target="_blank"
-                                variant="link"
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition="right"
-                                isInline
-                                href={repo.url}
-                              >
-                                {repo.url}
-                              </Button>
-                            </Td>
-                            <Td dataLabel={'Architecture'}>
-                              {repoExists ? repo.distribution_arch : '-'}
-                            </Td>
-                            <Td dataLabel={'Version'}>
-                              {repoExists ? repo.distribution_versions : '-'}
-                            </Td>
-                            <Td dataLabel={'Packages'}>
-                              {repoExists ? repo.package_count : '-'}
-                            </Td>
-                            <Td dataLabel={'Status'}>
-                              <RepositoriesStatus
-                                repoStatus={
-                                  repoExists ? repo.status : 'Unavailable'
-                                }
-                                repoUrl={repo.url}
-                                repoIntrospections={
-                                  repo.last_introspection_time
-                                }
-                                repoFailCount={repo.failed_introspections_count}
+                    {filteredRepositoryURLs &&
+                      filteredRepositoryURLs
+                        .sort((a, b) => {
+                          if (getRepoNameByUrl(a!)! < getRepoNameByUrl(b!)!) {
+                            return -1;
+                          } else if (
+                            getRepoNameByUrl(b!)! < getRepoNameByUrl(a!)!
+                          ) {
+                            return 1;
+                          } else {
+                            return 0;
+                          }
+                        })
+                        .slice(computeStart(), computeEnd())
+                        .map((repoURL, rowIndex) => {
+                          const repo = data?.data?.find(
+                            (repo) => repo.url === repoURL
+                          );
+
+                          if (!repo) {
+                            return <></>;
+                          }
+
+                          const repoExists = repo.name ? true : false;
+                          return (
+                            <Tr key={repo.url}>
+                              <Td
+                                select={{
+                                  isSelected: isRepoSelected(repo.url),
+                                  rowIndex: rowIndex,
+                                  onSelect: (event, isSelecting) =>
+                                    handleSelect(
+                                      repo.url,
+                                      rowIndex,
+                                      isSelecting
+                                    ),
+                                  isDisabled:
+                                    isFetching || repo.status !== 'Valid',
+                                }}
                               />
-                            </Td>
-                          </Tr>
-                        );
-                      })}
+                              <Td dataLabel={'Name'}>
+                                {repoExists
+                                  ? repo.name
+                                  : 'Repository with the following url is no longer available:'}
+                                <br />
+                                <Button
+                                  component="a"
+                                  target="_blank"
+                                  variant="link"
+                                  icon={<ExternalLinkAltIcon />}
+                                  iconPosition="right"
+                                  isInline
+                                  href={repo.url}
+                                >
+                                  {repo.url}
+                                </Button>
+                              </Td>
+                              <Td dataLabel={'Architecture'}>
+                                {repoExists ? repo.distribution_arch : '-'}
+                              </Td>
+                              <Td dataLabel={'Version'}>
+                                {repoExists ? repo.distribution_versions : '-'}
+                              </Td>
+                              <Td dataLabel={'Packages'}>
+                                {repoExists ? repo.package_count : '-'}
+                              </Td>
+                              <Td dataLabel={'Status'}>
+                                <RepositoriesStatus
+                                  repoStatus={
+                                    repoExists ? repo.status : 'Unavailable'
+                                  }
+                                  repoUrl={repo.url}
+                                  repoIntrospections={
+                                    repo.last_introspection_time
+                                  }
+                                  repoFailCount={
+                                    repo.failed_introspections_count
+                                  }
+                                />
+                              </Td>
+                            </Tr>
+                          );
+                        })}
                   </Tbody>
                 </Table>
               </PanelMain>
@@ -541,7 +524,12 @@ const Loading = () => {
   );
 };
 
-const Empty = ({ isFetching, refetch }) => {
+type EmptyProps = {
+  isFetching: boolean;
+  refetch: Function;
+};
+
+const Empty = ({ isFetching, refetch }: EmptyProps) => {
   const { isBeta } = useGetEnvironment();
   return (
     <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
@@ -575,22 +563,6 @@ const Empty = ({ isFetching, refetch }) => {
       </EmptyStateFooter>
     </EmptyState>
   );
-};
-
-BulkSelect.propTypes = {
-  selected: PropTypes.array,
-  count: PropTypes.number,
-  filteredCount: PropTypes.number,
-  perPage: PropTypes.number,
-  handleSelectAll: PropTypes.func,
-  handleSelectPage: PropTypes.func,
-  handleDeselectAll: PropTypes.func,
-  isDisabled: PropTypes.bool,
-};
-
-Empty.propTypes = {
-  isFetching: PropTypes.bool,
-  refetch: PropTypes.func,
 };
 
 export default Repositories;
