@@ -11,6 +11,7 @@ import {
   mockActivationKeysResults,
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
+import { mockGetBlueprints } from '../fixtures/blueprints';
 import {
   composesEndpoint,
   mockClones,
@@ -107,4 +108,7 @@ export const handlers = [
       return res(ctx.status(200), ctx.json(oscapCustomizations(profile)));
     }
   ),
+  rest.get(`${IMAGE_BUILDER_API}/experimental/blueprints`, (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockGetBlueprints));
+  }),
 ];
