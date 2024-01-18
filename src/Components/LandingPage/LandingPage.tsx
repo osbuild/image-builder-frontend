@@ -10,6 +10,12 @@ import {
   Text,
   TextContent,
   TabAction,
+  PageSection,
+  Spinner,
+  Sidebar,
+  SidebarContent,
+  SidebarPanel,
+  Bullseye,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -19,8 +25,10 @@ import './LandingPage.scss';
 
 import Quickstarts from './Quickstarts';
 
+import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
+import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -45,15 +53,58 @@ export const LandingPage = () => {
     }
     setActiveTabKey(tabIndex);
   };
+  const [selectedBlueprint, setSelectedBlueprint] = useState<string>('');
+  const { data: blueprints, isLoading } = useGetBlueprintsQuery({});
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
-  const traditionalImageList = (
-    <section className="pf-l-page__main-section pf-c-page__main-section">
-      <Quickstarts />
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
 
-      <ImagesTable />
-    </section>
+  const traditionalImageList = (
+    <>
+      <PageSection>
+        <Quickstarts />
+      </PageSection>
+      <PageSection>
+        <ImagesTable />
+      </PageSection>
+    </>
   );
+
+  const experimentalImageList = (
+    <>
+      <PageSection>
+        <Quickstarts />
+      </PageSection>
+      <PageSection>
+        <Sidebar hasBorder className="pf-v5-u-background-color-100">
+          <SidebarPanel hasPadding width={{ default: 'width_25' }}>
+            <BlueprintsSidebar
+              blueprints={blueprints?.data}
+              selectedBlueprint={selectedBlueprint}
+              setSelectedBlueprint={setSelectedBlueprint}
+            />
+          </SidebarPanel>
+          <SidebarContent>
+            <ImagesTable />
+          </SidebarContent>
+        </Sidebar>
+      </PageSection>
+    </>
+  );
+
+  const imageList = experimentalFlag
+    ? experimentalImageList
+    : traditionalImageList;
+
+  if (isLoading) {
+    return (
+      <Bullseye>
+        <Spinner size="xl" />
+      </Bullseye>
+    );
+  }
+
   return (
     <>
       <ImageBuilderHeader />
@@ -99,7 +150,7 @@ export const LandingPage = () => {
               />
             }
           >
-            {traditionalImageList}
+            {imageList}
           </Tab>
           <Tab
             eventKey={1}
@@ -147,7 +198,7 @@ export const LandingPage = () => {
           </Tab>
         </Tabs>
       ) : (
-        traditionalImageList
+        imageList
       )}
       <Outlet />
     </>

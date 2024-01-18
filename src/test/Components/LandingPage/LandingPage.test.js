@@ -24,7 +24,7 @@ describe('Landing Page', () => {
     renderWithReduxRouter('', {});
 
     // check heading
-    await screen.findByRole('heading', { name: /Image Builder/i });
+    await screen.findByRole('heading', { name: /Images/i });
   });
 
   test('renders EmptyState child component', async () => {
