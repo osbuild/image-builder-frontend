@@ -247,7 +247,7 @@ To run the unit tests, the linter, and the code coverage check run:
 npm run test
 ```
 
-These tests will also be run in our Travis CI when a PR is opened.
+These tests will also be run in our CI when a PR is opened.
 
 ### Using MSW data in development
 
