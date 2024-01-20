@@ -1311,6 +1311,7 @@ describe('Click through all steps', () => {
           'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
         check_gpg: false,
         rhsm: false,
+        module_hotfixes: true,
       },
     ];
 
@@ -1332,6 +1333,7 @@ describe('Click through all steps', () => {
         check_gpg: false,
         id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
         name: '2lmdtj',
+        module_hotfixes: true,
       },
     ];
 

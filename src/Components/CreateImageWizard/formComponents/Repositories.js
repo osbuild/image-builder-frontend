@@ -114,6 +114,10 @@ const convertSchemaToIBPayloadRepo = (repo) => {
     rhsm: false,
     check_gpg: false,
   };
+  // only include the flag if enabled
+  if (repo.module_hotfixes) {
+    imageBuilderRepo.module_hotfixes = repo.module_hotfixes;
+  }
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = repo.gpg_key;
     imageBuilderRepo.check_gpg = true;
@@ -131,6 +135,10 @@ const convertSchemaToIBCustomRepo = (repo) => {
     baseurl: [repo.url],
     check_gpg: false,
   };
+  // only include the flag if enabled
+  if (repo.module_hotfixes) {
+    imageBuilderRepo.module_hotfixes = repo.module_hotfixes;
+  }
   if (repo.gpg_key) {
     imageBuilderRepo.gpgkey = [repo.gpg_key];
     imageBuilderRepo.check_gpg = true;
