@@ -17,6 +17,7 @@ const injectedRtkApi = api.injectEndpoints({
           search: queryArg.search,
           name: queryArg.name,
           url: queryArg.url,
+          uuid: queryArg.uuid,
           sort_by: queryArg.sortBy,
           status: queryArg.status,
           origin: queryArg.origin,
@@ -45,29 +46,31 @@ export { injectedRtkApi as contentSourcesApi };
 export type ListRepositoriesApiResponse =
   /** status 200 OK */ ApiRepositoryCollectionResponseRead;
 export type ListRepositoriesApiArg = {
-  /** Offset into the list of results to return in the response */
+  /** Starting point for retrieving a subset of results. Determines how many items to skip from the beginning of the result set. Default value:`0`. */
   offset?: number;
-  /** Limit the number of items returned */
+  /** Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`. */
   limit?: number;
-  /** Comma separated list of architecture to optionally filter-on (e.g. 'x86_64,s390x' would return Repositories with x86_64 or s390x only) */
+  /** A comma separated list of release versions to filter on. For example, `1,2` would return repositories with versions 1 or 2 only. */
   version?: string;
-  /** Comma separated list of versions to optionally filter-on  (e.g. '7,8' would return Repositories with versions 7 or 8 only) */
+  /** A comma separated list of architectures or platforms for that you want to retrieve repositories. It controls responses where repositories support multiple architectures or platforms. For example, ‘x86_64,s390x' returns repositories with `x86_64` or `s390x` only. */
   arch?: string;
-  /** Filter by compatible arch (e.g. 'x86_64' would return Repositories with the 'x86_64' arch and Repositories where arch is not set) */
+  /** Filter repositories by supported release version. For example, `1` returns repositories with the version `1` or where version is not set. */
   availableForVersion?: string;
-  /** Filter by compatible version (e.g. 7 would return Repositories with the version 7 or where version is not set) */
+  /** Filter repositories by architecture. For example, `x86_64` returns repositories with the version `x86_64` or where architecture is not set. */
   availableForArch?: string;
-  /** Search term for name and url. */
+  /** Term to filter and retrieve items that match the specified search criteria. Search term can include name or URL. */
   search?: string;
-  /** Filter repositories by name using an exact match */
+  /** Filter repositories by name. */
   name?: string;
-  /** Filter repositories by name using an exact match */
+  /** A comma separated list of URLs to control api response. */
   url?: string;
-  /** Sets the sort order of the results */
+  /** A comma separated list of uuids to control api response. */
+  uuid?: string;
+  /** Sort the response data based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
-  /** Comma separated list of statuses to optionally filter on */
+  /** A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`. */
   status?: string;
-  /** Comma separated list of origins to filter (red_hat,external) */
+  /** A comma separated list of origins to filter api response. Origins can include `red_hat` and `external`. */
   origin?: string;
   /** content type of a repository to filter on (rpm) */
   contentType?: string;
@@ -75,15 +78,15 @@ export type ListRepositoriesApiArg = {
 export type ListRepositoriesRpmsApiResponse =
   /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
 export type ListRepositoriesRpmsApiArg = {
-  /** Identifier of the Repository */
+  /** Repository ID. */
   uuid: string;
-  /** Limit the number of items returned */
+  /** Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`. */
   limit?: number;
-  /** Offset into the list of results to return in the response */
+  /** Starting point for retrieving a subset of results. Determines how many items to skip from the beginning of the result set. Default value:`0`. */
   offset?: number;
-  /** Search term for name. */
+  /** Term to filter and retrieve items that match the specified search criteria. Search term can include name. */
   search?: string;
-  /** Sets the sort order of the results. */
+  /** Sort the response based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
 };
 export type ApiSnapshotResponse = {
@@ -103,6 +106,9 @@ export type ApiSnapshotResponse = {
   };
   /** Path to repository snapshot contents */
   repository_path?: string;
+  /** URL to the snapshot's content */
+  url?: string;
+  uuid?: string;
 };
 export type ApiRepositoryResponse = {
   /** Content Type (rpm) of the repository */
@@ -130,6 +136,8 @@ export type ApiRepositoryResponse = {
   last_update_introspection_time?: string;
   /** Verify packages */
   metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
   /** Name of the remote yum repository */
   name?: string;
   /** Origin of the repository */
@@ -171,6 +179,8 @@ export type ApiRepositoryResponseRead = {
   last_update_introspection_time?: string;
   /** Verify packages */
   metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
   /** Name of the remote yum repository */
   name?: string;
   /** Organization ID of the owner */
