@@ -11,7 +11,11 @@ import {
   mockActivationKeysResults,
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
-import { mockGetBlueprints } from '../fixtures/blueprints';
+import {
+  mockBlueprintComposes,
+  mockEmptyBlueprintsComposes,
+  mockGetBlueprints,
+} from '../fixtures/blueprints';
 import {
   composesEndpoint,
   mockClones,
@@ -111,4 +115,14 @@ export const handlers = [
   rest.get(`${IMAGE_BUILDER_API}/experimental/blueprints`, (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockGetBlueprints));
   }),
+  rest.get(
+    `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
+    (req, res, ctx) => {
+      const MilkChocolateBlueprint = mockGetBlueprints.data[1].id;
+      if (req.params.id === MilkChocolateBlueprint) {
+        return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
+      }
+      return res(ctx.status(200), ctx.json(mockBlueprintComposes));
+    }
+  ),
 ];

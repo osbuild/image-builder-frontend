@@ -53,7 +53,9 @@ export const LandingPage = () => {
     }
     setActiveTabKey(tabIndex);
   };
-  const [selectedBlueprint, setSelectedBlueprint] = useState<string>('');
+  const [selectedBlueprint, setSelectedBlueprint] = useState<
+    string | undefined
+  >();
   const { data: blueprints, isLoading } = useGetBlueprintsQuery({});
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
@@ -86,7 +88,7 @@ export const LandingPage = () => {
             />
           </SidebarPanel>
           <SidebarContent>
-            <ImagesTable />
+            <ImagesTable selectedBlueprint={selectedBlueprint} />
           </SidebarContent>
         </Sidebar>
       </PageSection>
