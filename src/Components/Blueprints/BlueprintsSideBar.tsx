@@ -20,8 +20,8 @@ import { BlueprintItem } from '../../store/imageBuilderApi';
 
 type blueprintProps = {
   blueprints: BlueprintItem[] | undefined;
-  selectedBlueprint: string;
-  setSelectedBlueprint: Dispatch<SetStateAction<string>>;
+  selectedBlueprint: string | undefined;
+  setSelectedBlueprint: Dispatch<SetStateAction<string | undefined>>;
 };
 
 const BlueprintsSidebar = ({
@@ -65,6 +65,16 @@ const BlueprintsSidebar = ({
             onChange={(_event, value) => onChange(value)}
             onClear={() => onChange('')}
           />
+        </StackItem>
+        <StackItem>
+          <Button
+            isBlock
+            onClick={() => setSelectedBlueprint(undefined)}
+            variant="link"
+            isDisabled={!selectedBlueprint}
+          >
+            Show all images
+          </Button>
         </StackItem>
         {blueprints.map((blueprint: BlueprintItem) => (
           <StackItem key={blueprint.id}>

@@ -54,6 +54,7 @@ import {
 import {
   ComposesResponseItem,
   ComposeStatus,
+  useGetBlueprintComposesQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
@@ -63,7 +64,11 @@ import {
   timestampToDisplayString,
 } from '../../Utilities/time';
 
-const ImagesTable = () => {
+type ImageTableProps = {
+  selectedBlueprint?: string | undefined;
+};
+
+const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
 
@@ -74,16 +79,53 @@ const ImagesTable = () => {
     setPerPage(perPage);
   };
 
-  const { data, isError, isSuccess } = useGetComposesQuery({
-    limit: perPage,
-    offset: perPage * (page - 1),
-    ignoreImageTypes: [
-      'rhel-edge-commit',
-      'rhel-edge-installer',
-      'edge-commit',
-      'edge-installer',
-    ],
-  });
+  const {
+    data: blueprintsComposes,
+    isSuccess: isBlueprintsSuccess,
+    isFetching: isFetchingBlueprintsCompose,
+    isError: isBlueprintsError,
+  } = useGetBlueprintComposesQuery(
+    {
+      id: selectedBlueprint as string,
+      limit: perPage,
+      offset: perPage * (page - 1),
+    },
+    { skip: !selectedBlueprint }
+  );
+
+  const {
+    data: composesData,
+    isSuccess: isComposesSuccess,
+    isError: isComposesError,
+    isFetching: isFetchingComposes,
+  } = useGetComposesQuery(
+    {
+      limit: perPage,
+      offset: perPage * (page - 1),
+      ignoreImageTypes: [
+        'rhel-edge-commit',
+        'rhel-edge-installer',
+        'edge-commit',
+        'edge-installer',
+      ],
+    },
+    { skip: !!selectedBlueprint }
+  );
+
+  const data = selectedBlueprint ? blueprintsComposes : composesData;
+  const isSuccess = selectedBlueprint ? isBlueprintsSuccess : isComposesSuccess;
+  const isError = selectedBlueprint ? isBlueprintsError : isComposesError;
+  const isFetching = selectedBlueprint
+    ? isFetchingBlueprintsCompose
+    : isFetchingComposes;
+
+  if (isFetching) {
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
+  }
 
   if (!isSuccess) {
     if (isError) {
@@ -103,13 +145,13 @@ const ImagesTable = () => {
     );
   }
 
-  const composes = data.data;
-  const itemCount = data.meta.count;
+  const composes = data?.data;
+  const itemCount = data?.meta.count || 0;
 
   return (
     <>
-      {data.meta.count === 0 && <EmptyImagesTable />}
-      {data.meta.count > 0 && (
+      {itemCount === 0 && <EmptyImagesTable />}
+      {itemCount > 0 && (
         <>
           <Toolbar>
             <ToolbarContent>
@@ -152,7 +194,7 @@ const ImagesTable = () => {
                 <Th />
               </Tr>
             </Thead>
-            {composes.map((compose, rowIndex) => {
+            {composes?.map((compose, rowIndex) => {
               return (
                 <ImagesTableRow
                   compose={compose}

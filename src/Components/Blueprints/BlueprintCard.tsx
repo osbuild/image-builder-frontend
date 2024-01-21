@@ -19,8 +19,10 @@ import { BlueprintItem } from '../../store/imageBuilderApi';
 
 type blueprintProps = {
   blueprint: BlueprintItem;
-  selectedBlueprint: string;
-  setSelectedBlueprint: React.Dispatch<React.SetStateAction<string>>;
+  selectedBlueprint: string | undefined;
+  setSelectedBlueprint: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
 };
 
 const BlueprintCard = ({
@@ -34,8 +36,10 @@ const BlueprintCard = ({
     setIsOpen(!isOpen);
   };
 
-  const onClickHandler = () => {
-    setSelectedBlueprint(blueprint.id);
+  const onClickHandler = ({
+    currentTarget: { id: blueprintID },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedBlueprint(blueprintID);
   };
 
   const headerActions = (
@@ -76,7 +80,6 @@ const BlueprintCard = ({
       <CardHeader
         selectableActions={{
           selectableActionId: blueprint.id,
-          selectableActionAriaLabelledby: 'blueprint radio select',
           name: blueprint.name,
           variant: 'single',
           isChecked: isChecked,
