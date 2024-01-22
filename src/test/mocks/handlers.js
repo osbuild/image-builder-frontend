@@ -131,6 +131,12 @@ export const handlers = [
 
     return res(ctx.status(200), ctx.json(resp));
   }),
+  rest.post(
+    `${IMAGE_BUILDER_API}/experimental/blueprint/:id/compose`,
+    (req, res, ctx) => {
+      return res(ctx.status(200));
+    }
+  ),
   rest.get(
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
     (req, res, ctx) => {

@@ -3,11 +3,16 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { imageBuilderApi } from './imageBuilderApi';
 
 const enhancedApi = imageBuilderApi.enhanceEndpoints({
-  addTagTypes: ['Clone', 'Compose', 'Blueprint'],
+  addTagTypes: ['Clone', 'Compose', 'Blueprint', 'BlueprintComposes'],
   endpoints: {
     getBlueprints: {
       providesTags: () => {
         return [{ type: 'Blueprint' }];
+      },
+    },
+    getBlueprintComposes: {
+      providesTags: () => {
+        return [{ type: 'BlueprintComposes' }];
       },
     },
     getComposes: {
@@ -51,6 +56,34 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
                 variant: 'danger',
                 title: 'Your image could not be shared',
                 description: `Status code ${err.status}: ${err.data.errors[0].detail}`,
+              })
+            );
+          });
+      },
+    },
+    composeBlueprint: {
+      invalidatesTags: [{ type: 'Compose' }, { type: 'BlueprintComposes' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Blueprint is being built',
+              })
+            );
+          })
+          .catch((err) => {
+            let msg = err.error.statusText;
+            if (err.error.data?.errors[0]?.detail) {
+              msg = err.error.data?.errors[0]?.detail;
+            }
+
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Blueprint could not be built',
+                description: `Status code ${err.error.status}: ${msg}`,
               })
             );
           });
