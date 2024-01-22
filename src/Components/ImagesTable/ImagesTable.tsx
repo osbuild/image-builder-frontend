@@ -82,7 +82,7 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const {
     data: blueprintsComposes,
     isSuccess: isBlueprintsSuccess,
-    isFetching: isFetchingBlueprintsCompose,
+    isLoading: isLoadingBlueprintsCompose,
     isError: isBlueprintsError,
   } = useGetBlueprintComposesQuery(
     {
@@ -97,7 +97,7 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
     data: composesData,
     isSuccess: isComposesSuccess,
     isError: isComposesError,
-    isFetching: isFetchingComposes,
+    isLoading: isLoadingComposes,
   } = useGetComposesQuery(
     {
       limit: perPage,
@@ -115,11 +115,11 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const data = selectedBlueprint ? blueprintsComposes : composesData;
   const isSuccess = selectedBlueprint ? isBlueprintsSuccess : isComposesSuccess;
   const isError = selectedBlueprint ? isBlueprintsError : isComposesError;
-  const isFetching = selectedBlueprint
-    ? isFetchingBlueprintsCompose
-    : isFetchingComposes;
+  const isLoading = selectedBlueprint
+    ? isLoadingBlueprintsCompose
+    : isLoadingComposes;
 
-  if (isFetching) {
+  if (isLoading) {
     return (
       <Bullseye>
         <Spinner />

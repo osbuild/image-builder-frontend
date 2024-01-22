@@ -6,6 +6,7 @@ import { IMAGE_BUILDER_API } from '../../../constants';
 import { emptyGetBlueprints } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
 import { renderWithReduxRouter } from '../../testUtils';
+import '@testing-library/jest-dom';
 
 import '@testing-library/jest-dom';
 
@@ -70,6 +71,20 @@ describe('Blueprints', () => {
     });
     await user.click(blueprintRadioBtn);
     expect(screen.queryByTestId('images-table')).not.toBeInTheDocument();
+  });
+  test('click build image button', async () => {
+    renderWithReduxRouter('', {});
+    const nameMatcher = (_, element) =>
+      element.getAttribute('name') === blueprintNameWithComposes;
+
+    const blueprintRadioBtn = await screen.findByRole('radio', {
+      name: nameMatcher,
+    });
+    await user.click(blueprintRadioBtn);
+    const buildImageBtn = await screen.findByRole('button', {
+      name: /Build image/i,
+    });
+    expect(buildImageBtn).toBeEnabled();
   });
 
   describe('filtering', () => {

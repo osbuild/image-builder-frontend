@@ -16,15 +16,25 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 
+import { useComposeBlueprintMutation } from '../../store/imageBuilderApi';
 import './ImageBuilderHeader.scss';
 
 type ImageBuilderHeaderPropTypes = {
   experimentalFlag?: string | true | undefined;
+  selectedBlueprint?: string | undefined;
 };
 
 export const ImageBuilderHeader = ({
   experimentalFlag,
+  selectedBlueprint,
 }: ImageBuilderHeaderPropTypes) => {
+  const [buildBlueprint, { isLoading: imageBuildLoading }] =
+    useComposeBlueprintMutation();
+
+  const onBuildHandler = async () => {
+    selectedBlueprint && (await buildBlueprint({ id: selectedBlueprint }));
+  };
+
   return (
     <>
       {/*@ts-ignore*/}
@@ -94,7 +104,14 @@ export const ImageBuilderHeader = ({
                 <Button>New blueprint</Button>
               </FlexItem>
               <FlexItem>
-                <Button isDisabled>Build images</Button>
+                <Button
+                  ouiaId="build-images-button"
+                  onClick={onBuildHandler}
+                  isDisabled={!selectedBlueprint}
+                  isLoading={imageBuildLoading}
+                >
+                  Build images
+                </Button>
               </FlexItem>{' '}
             </>
           )}
