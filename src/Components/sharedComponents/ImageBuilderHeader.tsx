@@ -18,7 +18,13 @@ import {
 
 import './ImageBuilderHeader.scss';
 
-export const ImageBuilderHeader = () => {
+type ImageBuilderHeaderPropTypes = {
+  experimentalFlag?: string | true | undefined;
+};
+
+export const ImageBuilderHeader = ({
+  experimentalFlag,
+}: ImageBuilderHeaderPropTypes) => {
   return (
     <>
       {/*@ts-ignore*/}
@@ -82,12 +88,16 @@ export const ImageBuilderHeader = () => {
             </Popover>
             <OpenSourceBadge repositoriesURL="https://www.osbuild.org/guides/image-builder-service/architecture.html" />
           </FlexItem>
-          <FlexItem align={{ default: 'alignRight' }}>
-            <Button>New blueprint</Button>
-          </FlexItem>
-          <FlexItem>
-            <Button isDisabled>Build images</Button>
-          </FlexItem>
+          {experimentalFlag && (
+            <>
+              <FlexItem align={{ default: 'alignRight' }}>
+                <Button>New blueprint</Button>
+              </FlexItem>
+              <FlexItem>
+                <Button isDisabled>Build images</Button>
+              </FlexItem>{' '}
+            </>
+          )}
         </Flex>
       </PageHeader>
     </>
