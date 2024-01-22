@@ -80,35 +80,6 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/oscap/${queryArg.distribution}/${queryArg.profile}/customizations`,
       }),
     }),
-    createBlueprint: build.mutation<
-      CreateBlueprintApiResponse,
-      CreateBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprint`,
-        method: "POST",
-        body: queryArg.createBlueprintRequest,
-      }),
-    }),
-    updateBlueprint: build.mutation<
-      UpdateBlueprintApiResponse,
-      UpdateBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprint/${queryArg.id}`,
-        method: "PUT",
-        body: queryArg.createBlueprintRequest,
-      }),
-    }),
-    composeBlueprint: build.mutation<
-      ComposeBlueprintApiResponse,
-      ComposeBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprint/${queryArg.id}/compose`,
-        method: "POST",
-      }),
-    }),
     getBlueprints: build.query<GetBlueprintsApiResponse, GetBlueprintsApiArg>({
       query: (queryArg) => ({
         url: `/experimental/blueprints`,
@@ -119,12 +90,41 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    createBlueprint: build.mutation<
+      CreateBlueprintApiResponse,
+      CreateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints`,
+        method: "POST",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    updateBlueprint: build.mutation<
+      UpdateBlueprintApiResponse,
+      UpdateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    composeBlueprint: build.mutation<
+      ComposeBlueprintApiResponse,
+      ComposeBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints/${queryArg.id}/compose`,
+        method: "POST",
+      }),
+    }),
     getBlueprintComposes: build.query<
       GetBlueprintComposesApiResponse,
       GetBlueprintComposesApiArg
     >({
       query: (queryArg) => ({
-        url: `/experimental/blueprint/${queryArg.id}/composes`,
+        url: `/experimental/blueprints/${queryArg.id}/composes`,
         params: {
           blueprint_version: queryArg.blueprintVersion,
           limit: queryArg.limit,
@@ -218,6 +218,16 @@ export type GetOscapCustomizationsApiArg = {
   /** Name of the profile to retrieve customizations from */
   profile: DistributionProfileItem;
 };
+export type GetBlueprintsApiResponse =
+  /** status 200 a list of blueprints */ BlueprintsResponse;
+export type GetBlueprintsApiArg = {
+  /** search for blueprints by name or description */
+  search?: string;
+  /** max amount of blueprints, default 100 */
+  limit?: number;
+  /** blueprint page offset, default 0 */
+  offset?: number;
+};
 export type CreateBlueprintApiResponse =
   /** status 201 blueprint was saved */ CreateBlueprintResponse;
 export type CreateBlueprintApiArg = {
@@ -225,7 +235,7 @@ export type CreateBlueprintApiArg = {
   createBlueprintRequest: CreateBlueprintRequest;
 };
 export type UpdateBlueprintApiResponse =
-  /** status 200 blueprint was update */ CreateBlueprintResponse;
+  /** status 200 blueprint was updated */ CreateBlueprintResponse;
 export type UpdateBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
@@ -237,16 +247,6 @@ export type ComposeBlueprintApiResponse =
 export type ComposeBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
-};
-export type GetBlueprintsApiResponse =
-  /** status 200 a list of blueprints */ BlueprintsResponse;
-export type GetBlueprintsApiArg = {
-  /** search for blueprints by name or description */
-  search?: string;
-  /** max amount of blueprints, default 100 */
-  limit?: number;
-  /** blueprint page offset, default 0 */
-  offset?: number;
 };
 export type GetBlueprintComposesApiResponse =
   /** status 200 a list of composes */ ComposesResponse;
@@ -739,18 +739,6 @@ export type DistributionProfileItem =
   | "xccdf_org.ssgproject.content_profile_stig"
   | "xccdf_org.ssgproject.content_profile_stig_gui";
 export type DistributionProfileResponse = DistributionProfileItem[];
-export type CreateBlueprintResponse = {
-  id: string;
-};
-export type CreateBlueprintRequest = {
-  name: string;
-  description: string;
-  distribution: Distributions;
-  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
-   */
-  image_requests: ImageRequest[];
-  customizations: Customizations;
-};
 export type BlueprintItem = {
   id: string;
   version: number;
@@ -768,6 +756,18 @@ export type BlueprintsResponse = {
   };
   data: BlueprintItem[];
 };
+export type CreateBlueprintResponse = {
+  id: string;
+};
+export type CreateBlueprintRequest = {
+  name: string;
+  description: string;
+  distribution: Distributions;
+  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+   */
+  image_requests: ImageRequest[];
+  customizations: Customizations;
+};
 export const {
   useGetArchitecturesQuery,
   useGetComposesQuery,
@@ -779,9 +779,9 @@ export const {
   useGetPackagesQuery,
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
+  useGetBlueprintsQuery,
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
   useComposeBlueprintMutation,
-  useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
 } = injectedRtkApi;
