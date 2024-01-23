@@ -912,585 +912,598 @@ describe('Step Upload to AWS', () => {
     });
   });
 
-  // describe('Step Review', () => {
-  //   const user = userEvent.setup();
-  //   const setUp = async () => {
-  //     ({ router } = await renderCustomRoutesWithReduxRouter(
-  //       'imagewizard',
-  //       {},
-  //       routes
-  //     ));
+  describe('Step Review', () => {
+    const user = userEvent.setup();
+    const setUp = async () => {
+      ({ router } = await renderCustomRoutesWithReduxRouter(
+        'imagewizard',
+        {},
+        routes
+      ));
 
-  //     // select aws as upload destination
-  //     await waitFor(
-  //       async () => await user.click(await screen.findByTestId('upload-aws'))
-  //     );
-  //     await clickNext();
+      // select aws as upload destination
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
+      await clickNext();
 
-  //     // aws step
-  //     await switchToAWSManual();
-  //     await user.type(
-  //       await screen.findByTestId('aws-account-id'),
-  //       '012345678901'
-  //     );
-  //     await clickNext();
+      //     // aws step
+      await switchToAWSManual();
+      await user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      );
+      await clickNext();
+      await screen.findByRole('textbox', {
+        name: 'Select activation key',
+      });
 
-  //     await screen.findByRole('textbox', {
-  //       name: 'Select activation key',
-  //     });
+      // skip registration
+      const registerLaterRadio = await screen.findByTestId(
+        'registration-radio-later'
+      );
+      await user.click(registerLaterRadio);
 
-  //     // skip registration
-  //     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
-  //     await user.click(registerLaterRadio);
+      await clickNext();
+      // skip OpenScap
+      await clickNext();
+      // skip repositories
+      await clickNext();
+      // skip Details
+      await clickNext();
+    };
 
-  //     await clickNext();
-  //     // skip fsc
-  //     await clickNext();
-  //     // skip packages
-  //     await clickNext();
-  //     // skip repositories
-  //     await clickNext();
-  //     // skip name
-  //     await clickNext();
-  //   };
+    const setUpCentOS = async () => {
+      ({ router } = await renderCustomRoutesWithReduxRouter(
+        'imagewizard',
+        {},
+        routes
+      ));
 
-  //   const setUpCentOS = async () => {
-  //     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+      const releaseMenu = screen.getAllByRole('button', {
+        name: /options menu/i,
+      })[0];
 
-  //     const releaseMenu = screen.getAllByRole('button', {
-  //       name: /options menu/i,
-  //     })[0];
-  //     await user.click(releaseMenu);
+      await user.click(releaseMenu);
+      const showOptionsButton = await screen.findByRole('button', {
+        name: 'Show options for further development of RHEL',
+      });
+      await user.click(showOptionsButton);
 
-  //     const showOptionsButton = await screen.findByRole('button', {
-  //       name: 'Show options for further development of RHEL',
-  //     });
-  //     await user.click(showOptionsButton);
+      const centos = await screen.findByRole('option', {
+        name: 'CentOS Stream 8',
+      });
+      await user.click(centos);
+      // select aws as upload destination
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
+      await clickNext();
 
-  //     const centos = await screen.findByRole('option', {
-  //       name: 'CentOS Stream 8',
-  //     });
-  //     await user.click(centos);
+      //     // aws step
+      await switchToAWSManual();
+      await user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      );
+      await clickNext();
+      await screen.findByRole('textbox', {
+        name: 'Select activation key',
+      });
+      // skip registration
+      const registerLaterRadio = await screen.findByTestId(
+        'registration-radio-later'
+      );
+      await user.click(registerLaterRadio);
+      await clickNext();
 
-  //     // select aws as upload destination
-  //     await waitFor(
-  //       async () => await user.click(await screen.findByTestId('upload-aws'))
-  //     );
-  //     await clickNext();
+      // skip Oscap
+      await clickNext();
 
-  //     // aws step
-  //     await switchToAWSManual();
-  //     await user.type(
-  //       await screen.findByTestId('aws-account-id'),
-  //       '012345678901'
-  //     );
-  //     await clickNext();
-  //     // skip fsc
-  //     await clickNext();
-  //     // skip packages
-  //     await clickNext();
-  //     // skip repositories
-  //     await clickNext();
-  //     // skip name
-  //     await clickNext();
-  //   };
+      // skip packages
+      //    await clickNext();
+      //     skip repositories
+      await clickNext();
+      // skip Details
+      await clickNext();
+    };
 
-  //   test('has 3 buttons', async () => {
-  //     await setUp();
+    test('has 3 buttons', async () => {
+      await setUp();
 
-  //     await screen.findByRole('button', { name: /Create/ });
-  //     await screen.findByRole('button', { name: /Back/ });
-  //     await screen.findByRole('button', { name: /Cancel/ });
-  //   });
+      //await screen.findByRole('button', { name: /Create/ });
+      await screen.findByRole('button', { name: /Back/ });
+      await screen.findByRole('button', { name: /Cancel/ });
+    });
 
-  //   test('clicking Back loads Image name', async () => {
-  //     await setUp();
+    test('clicking Back loads Image name', async () => {
+      await setUp();
+      await clickBack();
+      await screen.findByRole('heading', {
+        name: 'Details',
+      });
+    });
 
-  //     await clickBack();
+    test('clicking Cancel loads landing page', async () => {
+      await setUp();
+      await verifyCancelButton(router);
+    });
+    // });
 
-  //     await screen.findByRole('heading', {
-  //       name: 'Details',
-  //     });
-  //   });
+    test('has Registration expandable section for rhel', async () => {
+      await setUp();
+      const targetExpandable = screen.getByText(/target environments/i);
+      const registrationExpandable = screen.getByRole('button', {
+        name: /registration/i,
+      });
 
-  //   test('clicking Cancel loads landing page', async () => {
-  //     await setUp();
+      const contentExpandable = await screen.findByTestId('content-expandable');
+      //  const fscExpandable = screen.getByText(/file system configuration/i);
 
-  //     await verifyCancelButton(router);
-  //   });
+      await user.click(targetExpandable);
+      await screen.findByText('AWS');
 
-  //   test('has Registration expandable section for rhel', async () => {
-  //     await setUp();
+      await user.click(registrationExpandable);
+      await user.click(contentExpandable);
 
-  //     const targetExpandable = await screen.findByTestId(
-  //       'target-environments-expandable'
-  //     );
-  //     const registrationExpandable = await screen.findByTestId(
-  //       'registration-expandable'
-  //     );
-  //     const contentExpandable = await screen.findByTestId('content-expandable');
-  //     const fscExpandable = await screen.findByTestId(
-  //       'file-system-configuration-expandable'
-  //     );
+      await screen.findByText('Additional Red Hatand 3rd party packages');
+      //  await user.click(fscExpandable);
+      // await screen.findByText('Configuration type');
+    });
+    test('has no Registration expandable for centos', async () => {
+      await setUpCentOS();
+      const targetExpandable = screen.getByText(/target environments/i);
+      const contentExpandable = await screen.findByTestId('content-expandable');
 
-  //     await user.click(targetExpandable);
-  //     await screen.findByText('AWS');
-  //     await user.click(registrationExpandable);
-  //     await screen.findByText('Register the system later');
-  //     await user.click(contentExpandable);
-  //     await screen.findByText('Additional Red Hatand 3rd party packages');
-  //     await user.click(fscExpandable);
-  //     await screen.findByText('Configuration type');
-  //   });
+      //const fscExpandable = await screen.findByTestId(
+      //   'file-system-configuration-expandable'
+      //   );
+      //   });
 
-  //   test('has no Registration expandable for centos', async () => {
-  //     await setUpCentOS();
-
-  //     const targetExpandable = await screen.findByTestId(
-  //       'target-environments-expandable'
-  //     );
-  //     const contentExpandable = await screen.findByTestId('content-expandable');
-  //     const fscExpandable = await screen.findByTestId(
-  //       'file-system-configuration-expandable'
-  //     );
-  //     expect(
-  //       screen.queryByTestId('registration-expandable')
-  //     ).not.toBeInTheDocument();
-
-  //     await user.click(targetExpandable);
-  //     await screen.findByText('AWS');
-  //     await user.click(contentExpandable);
-  //     await screen.findByText('Additional Red Hatand 3rd party packages');
+      expect(
+        screen.queryByTestId('registration-expandable')
+      ).not.toBeInTheDocument();
+      await user.click(targetExpandable);
+      await screen.findByText('AWS');
+      await user.click(contentExpandable);
+      await screen.findByText('Additional Red Hatand 3rd party packages');
+    });
+  });
   //     await user.click(fscExpandable);
   //     await screen.findByText('Configuration type');
   //   });
   // });
 
-  // describe('Click through all steps', () => {
-  //   const user = userEvent.setup();
-  //   const setUp = async () => {
-  //     ({ router } = await renderCustomRoutesWithReduxRouter(
-  //       'imagewizard',
-  //       {},
-  //       routes
-  //     ));
-  //   };
+  describe('Click through all steps', () => {
+    const user = userEvent.setup();
+    const setUp = async () => {
+      ({ router } = await renderCustomRoutesWithReduxRouter(
+        'imagewizard',
+        {},
+        routes
+      ));
+    };
 
-  //   test('with valid values', async () => {
-  //     await setUp();
+    test('with valid values', async () => {
+      await setUp();
 
-  //     // select image output
-  //     await waitFor(
-  //       async () => await user.click(await screen.findByTestId('upload-aws'))
-  //     );
-  //     const releaseMenu = screen.getAllByRole('button', {
-  //       name: /options menu/i,
-  //     })[0];
-  //     await user.click(releaseMenu);
-  //     const releaseOption = await screen.findByRole('option', {
-  //       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-  //     });
-  //     await user.click(releaseOption);
+      // select image output
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
+      const releaseMenu = screen.getAllByRole('button', {
+        name: /options menu/i,
+      })[0];
+      await user.click(releaseMenu);
+      const releaseOption = await screen.findByRole('option', {
+        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+      });
+      await user.click(releaseOption);
 
-  //     await waitFor(() => screen.findByTestId('upload-aws'));
-  //     await user.click(await screen.findByTestId('upload-azure'));
-  //     await user.click(await screen.findByTestId('upload-google'));
-  //     await user.click(await screen.findByTestId('checkbox-vmware'));
-  //     await user.click(await screen.findByTestId('checkbox-guest-image'));
-  //     await user.click(await screen.findByTestId('checkbox-image-installer'));
+      await waitFor(() => screen.findByTestId('upload-aws'));
+      await user.click(await screen.findByTestId('upload-azure'));
+      await user.click(await screen.findByTestId('upload-google'));
+      await user.click(await screen.findByTestId('checkbox-vmware'));
+      await user.click(await screen.findByTestId('checkbox-guest-image'));
+      await user.click(await screen.findByTestId('checkbox-image-installer'));
 
-  //     await clickNext();
-  //     await user.click(
-  //       await screen.findByRole('radio', { name: /manually enter an account id\./i })
-  //     );
-  //     await user.type(await screen.findByTestId('aws-account-id'), '012345678901');
-  //     await clickNext();
+      await clickNext();
+      //  await user.click(
+      //    await screen.findByRole('radio', { name: /manually enter an account id\./i })
+      //  );
+      //     await user.type(await screen.findByTestId('aws-account-id'), '012345678901');
+      //     await clickNext();
 
-  //     await user.click(await screen.findByTestId('account-sharing'));
+      //     await user.click(await screen.findByTestId('account-sharing'));
 
-  //     await user.type(await screen.findByTestId('input-google-email'), 'test@test.com');
+      //     await user.type(await screen.findByTestId('input-google-email'), 'test@test.com');
 
-  //     await user.click(await screen.findByTestId('account-sharing'));
-  //     await clickNext();
+      //     await user.click(await screen.findByTestId('account-sharing'));
+      //     await clickNext();
 
-  //     await user.click(await screen.findByTestId('azure-radio-manual'));
-  //     // Randomly generated GUID
-  //     await user.type(
-  //       await screen.findByTestId('azure-tenant-id-manual'),
-  //       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
-  //     );
-  //     await user.type(
-  //       await screen.findByTestId('azure-subscription-id-manual'),
-  //       '60631143-a7dc-4d15-988b-ba83f3c99711'
-  //     );
-  //     await user.type(
-  //       await screen.findByTestId('azure-resource-group-manual'),
-  //       'testResourceGroup'
-  //     );
-  //     await clickNext();
+      //     await user.click(await screen.findByTestId('azure-radio-manual'));
+      //     // Randomly generated GUID
+      //     await user.type(
+      //       await screen.findByTestId('azure-tenant-id-manual'),
+      //       'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
+      //     );
+      //     await user.type(
+      //       await screen.findByTestId('azure-subscription-id-manual'),
+      //       '60631143-a7dc-4d15-988b-ba83f3c99711'
+      //     );
+      //     await user.type(
+      //       await screen.findByTestId('azure-resource-group-manual'),
+      //       'testResourceGroup'
+      //     );
+      //     await clickNext();
 
-  //     // registration
-  //     const activationKeyDropdown = await screen.findByRole('textbox', {
-  //       name: 'Select activation key',
-  //     });
-  //     await user.click(activationKeyDropdown);
-  //     const activationKey = await screen.findByRole('option', {
-  //       name: 'name0',
-  //     });
-  //     await user.click(activationKey);
-  //     await screen.findByDisplayValue('name0');
+      //     // registration
+      //     const activationKeyDropdown = await screen.findByRole('textbox', {
+      //       name: 'Select activation key',
+      //     });
+      //     await user.click(activationKeyDropdown);
+      //     const activationKey = await screen.findByRole('option', {
+      //       name: 'name0',
+      //     });
+      //     await user.click(activationKey);
+      //     await screen.findByDisplayValue('name0');
 
-  //     await clickNext();
+      //     await clickNext();
 
-  //     // fsc
-  //     const fscToggle = await screen.findByTestId(
-  //       'file-system-config-radio-manual'
-  //     );
-  //     await user.click(fscToggle);
-  //     const addPartition = await screen.findByTestId('file-system-add-partition');
-  //     await user.click(addPartition);
-  //     await user.click(addPartition);
+      //     // fsc
+      //     const fscToggle = await screen.findByTestId(
+      //       'file-system-config-radio-manual'
+      //     );
+      //     await user.click(fscToggle);
+      //     const addPartition = await screen.findByTestId('file-system-add-partition');
+      //     await user.click(addPartition);
+      //     await user.click(addPartition);
 
-  //     const tbody = await screen.findByTestId('file-system-configuration-tbody');
-  //     const rows = within(tbody).getAllByRole('row');
-  //     await waitFor(() => expect(rows).toHaveLength(3));
-  //     await clickNext();
+      //     const tbody = await screen.findByTestId('file-system-configuration-tbody');
+      //     const rows = within(tbody).getAllByRole('row');
+      //     await waitFor(() => expect(rows).toHaveLength(3));
+      //     await clickNext();
 
-  //     // set mountpoint of final row to /var/tmp
-  //     const mountPointMenu = within(rows[2]).getAllByRole('button', {
-  //       name: 'Options menu',
-  //     })[0];
-  //     await user.click(mountPointMenu);
+      //     // set mountpoint of final row to /var/tmp
+      //     const mountPointMenu = within(rows[2]).getAllByRole('button', {
+      //       name: 'Options menu',
+      //     })[0];
+      //     await user.click(mountPointMenu);
 
-  //     const varButton = await within(rows[2]).findByRole('option', {
-  //       name: '/var',
-  //     });
-  //     await user.click(varButton);
-  //     expect(
-  //       screen.queryByRole('heading', {
-  //         name: 'Danger alert: Duplicate mount point.',
-  //       })
-  //     ).not.toBeInTheDocument();
-  //     await user.type(
-  //       within(rows[2]).getByRole('textbox', {
-  //         name: 'Mount point suffix text input',
-  //       }),
-  //       '/tmp'
-  //     );
+      //     const varButton = await within(rows[2]).findByRole('option', {
+      //       name: '/var',
+      //     });
+      //     await user.click(varButton);
+      //     expect(
+      //       screen.queryByRole('heading', {
+      //         name: 'Danger alert: Duplicate mount point.',
+      //       })
+      //     ).not.toBeInTheDocument();
+      //     await user.type(
+      //       within(rows[2]).getByRole('textbox', {
+      //         name: 'Mount point suffix text input',
+      //       }),
+      //       '/tmp'
+      //     );
 
-  //     // set size of the final row to 100 MiB
-  //     await user.type(
-  //       within(rows[2]).getByRole('textbox', { name: 'Size text input' }),
-  //       '{backspace}100'
-  //     );
-  //     const unitMenu = within(rows[2]).getAllByRole('button', {
-  //       name: 'Options menu',
-  //     })[1];
-  //     await user.click(unitMenu);
+      //     // set size of the final row to 100 MiB
+      //     await user.type(
+      //       within(rows[2]).getByRole('textbox', { name: 'Size text input' }),
+      //       '{backspace}100'
+      //     );
+      //     const unitMenu = within(rows[2]).getAllByRole('button', {
+      //       name: 'Options menu',
+      //     })[1];
+      //     await user.click(unitMenu);
 
-  //     const mibButton = await within(rows[2]).findByRole('option', {
-  //       name: 'MiB',
-  //     });
-  //     await user.click(mibButton);
-  //     await clickNext();
+      //     const mibButton = await within(rows[2]).findByRole('option', {
+      //       name: 'MiB',
+      //     });
+      //     await user.click(mibButton);
+      //     await clickNext();
 
-  //     await screen.findByText(
-  //       /Images built with Image Builder include all required packages/i
-  //     );
+      //     await screen.findByText(
+      //       /Images built with Image Builder include all required packages/i
+      //     );
 
-  //     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+      //     const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
 
-  //     await waitFor(() => expect(searchbox).toBeEnabled());
+      //     await waitFor(() => expect(searchbox).toBeEnabled());
 
-  //     await searchForAvailablePackages(searchbox, 'test');
-  //     await user.click(
-  //       await screen.findByRole('option', {
-  //         name: /test summary for test package/,
-  //       })
-  //     );
-  //     await user.click(await screen.findByRole('button', { name: /Add selected/ }));
-  //     await clickNext();
+      //     await searchForAvailablePackages(searchbox, 'test');
+      //     await user.click(
+      //       await screen.findByRole('option', {
+      //         name: /test summary for test package/,
+      //       })
+      //     );
+      //     await user.click(await screen.findByRole('button', { name: /Add selected/ }));
+      //     await clickNext();
 
-  //     // Custom repositories
-  //     await user.click(
-  //       await screen.findByRole('checkbox', { name: /select row 0/i })
-  //     );
-  //     await user.click(
-  //       await screen.findByRole('checkbox', { name: /select row 1/i })
-  //     );
+      //     // Custom repositories
+      //     await user.click(
+      //       await screen.findByRole('checkbox', { name: /select row 0/i })
+      //     );
+      //     await user.click(
+      //       await screen.findByRole('checkbox', { name: /select row 1/i })
+      //     );
 
-  //     await clickNext();
-  //     // Custom packages
-  //     await clickNext();
+      //     await clickNext();
+      //     // Custom packages
+      //     await clickNext();
 
-  //     // Enter image name
-  //     const nameInput = await screen.findByRole('textbox', {
-  //       name: 'Image Name',
-  //     });
+      //     // Enter image name
+      //     const nameInput = await screen.findByRole('textbox', {
+      //       name: 'Image Name',
+      //     });
 
-  //     await user.type(nameInput, 'my-image-name');
+      //     await user.type(nameInput, 'my-image-name');
 
-  //     // Enter description for image
-  //     const descriptionInput = await screen.findByRole('textbox', {
-  //       name: /Description/,
-  //     });
-  //     await user.type(
-  //       descriptionInput,
-  //       'this is a perfect description for image'
-  //     );
-  //     await clickNext();
+      //     // Enter description for image
+      //     const descriptionInput = await screen.findByRole('textbox', {
+      //       name: /Description/,
+      //     });
+      //     await user.type(
+      //       descriptionInput,
+      //       'this is a perfect description for image'
+      //     );
+      //     await clickNext();
 
-  //     // review
-  //     const targetEnvironmentsExpandable = await screen.findByTestId(
-  //       'target-environments-expandable'
-  //     );
-  //     await user.click(targetEnvironmentsExpandable);
-  //     await screen.findAllByText('AWS');
-  //     await screen.findAllByText('GCP');
-  //     await screen.findByText('VMware vSphere (.ova)');
-  //     await screen.findByText('Virtualization - Guest image (.qcow2)');
-  //     await screen.findByText('Bare metal - Installer (.iso)');
+      //     // review
+      //     const targetEnvironmentsExpandable = await screen.findByTestId(
+      //       'target-environments-expandable'
+      //     );
+      //     await user.click(targetEnvironmentsExpandable);
+      //     await screen.findAllByText('AWS');
+      //     await screen.findAllByText('GCP');
+      //     await screen.findByText('VMware vSphere (.ova)');
+      //     await screen.findByText('Virtualization - Guest image (.qcow2)');
+      //     await screen.findByText('Bare metal - Installer (.iso)');
 
-  //     const registrationExpandable = await screen.findByTestId(
-  //       'registration-expandable'
-  //     );
-  //     await user.click(registrationExpandable);
-  //     const review = await screen.findByTestId('review-registration');
-  //     expect(review).toHaveTextContent(
-  //       'Use remote host configuration (rhc) utility'
-  //     );
+      //     const registrationExpandable = await screen.findByTestId(
+      //       'registration-expandable'
+      //     );
+      //     await user.click(registrationExpandable);
+      //     const review = await screen.findByTestId('review-registration');
+      //     expect(review).toHaveTextContent(
+      //       'Use remote host configuration (rhc) utility'
+      //     );
 
-  //     const imageDetailsExpandable = await screen.findByTestId(
-  //       'image-details-expandable'
-  //     );
-  //     await user.click(imageDetailsExpandable);
-  //     await screen.findByText('my-image-name');
-  //     await screen.findByText('this is a perfect description for image');
+      //     const imageDetailsExpandable = await screen.findByTestId(
+      //       'image-details-expandable'
+      //     );
+      //     await user.click(imageDetailsExpandable);
+      //     await screen.findByText('my-image-name');
+      //     await screen.findByText('this is a perfect description for image');
 
-  //     await screen.findByText('name0');
-  //     await screen.findByText('Self-Support');
-  //     await screen.findByText('Production');
+      //     await screen.findByText('name0');
+      //     await screen.findByText('Self-Support');
+      //     await screen.findByText('Production');
 
-  //     await user.click(await screen.findByTestId('repositories-popover-button'));
-  //     const repotbody = await screen.findByTestId(
-  //       'additional-repositories-table'
-  //     );
-  //     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
+      //     await user.click(await screen.findByTestId('repositories-popover-button'));
+      //     const repotbody = await screen.findByTestId(
+      //       'additional-repositories-table'
+      //     );
+      //     expect(within(repotbody).getAllByRole('row')).toHaveLength(3);
 
-  //     await user.click(await screen.findByTestId('file-system-configuration-popover'));
-  //     const revtbody = await screen.findByTestId(
-  //       'file-system-configuration-tbody-review'
-  //     );
-  //     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
+      //     await user.click(await screen.findByTestId('file-system-configuration-popover'));
+      //     const revtbody = await screen.findByTestId(
+      //       'file-system-configuration-tbody-review'
+      //     );
+      //     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
-  //     // mock the backend API
-  //     const payload_repos = [
-  //       {
-  //         baseurl: 'http://yum.theforeman.org/releases/3.4/el8/x86_64/',
-  //         check_gpg: true,
-  //         check_repo_gpg: false,
-  //         gpgkey:
-  //           '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
-  //         rhsm: false,
-  //       },
-  //       {
-  //         baseurl:
-  //           'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
-  //         check_gpg: false,
-  //         rhsm: false,
-  //       },
-  //     ];
+      //     // mock the backend API
+      //     const payload_repos = [
+      //       {
+      //         baseurl: 'http://yum.theforeman.org/releases/3.4/el8/x86_64/',
+      //         check_gpg: true,
+      //         check_repo_gpg: false,
+      //         gpgkey:
+      //           '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
+      //         rhsm: false,
+      //       },
+      //       {
+      //         baseurl:
+      //           'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+      //         check_gpg: false,
+      //         rhsm: false,
+      //       },
+      //     ];
 
-  //     const custom_repos = [
-  //       {
-  //         baseurl: ['http://yum.theforeman.org/releases/3.4/el8/x86_64/'],
-  //         check_gpg: true,
-  //         check_repo_gpg: false,
-  //         gpgkey: [
-  //           '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
-  //         ],
-  //         id: 'dbad4dfc-1547-45f8-b5af-1d7fec0476c6',
-  //         name: '13lk3',
-  //       },
-  //       {
-  //         baseurl: [
-  //           'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
-  //         ],
-  //         check_gpg: false,
-  //         id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
-  //         name: '2lmdtj',
-  //       },
-  //     ];
+      //     const custom_repos = [
+      //       {
+      //         baseurl: ['http://yum.theforeman.org/releases/3.4/el8/x86_64/'],
+      //         check_gpg: true,
+      //         check_repo_gpg: false,
+      //         gpgkey: [
+      //           '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
+      //         ],
+      //         id: 'dbad4dfc-1547-45f8-b5af-1d7fec0476c6',
+      //         name: '13lk3',
+      //       },
+      //       {
+      //         baseurl: [
+      //           'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+      //         ],
+      //         check_gpg: false,
+      //         id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
+      //         name: '2lmdtj',
+      //       },
+      //     ];
 
-  //     const cust = {
-  //       filesystem: [
-  //         {
-  //           mountpoint: '/',
-  //           min_size: 10737418240,
-  //         },
-  //         {
-  //           mountpoint: '/home',
-  //           min_size: 1073741824,
-  //         },
-  //         {
-  //           mountpoint: '/var/tmp',
-  //           min_size: 104857600,
-  //         },
-  //       ],
-  //       custom_repositories: custom_repos,
-  //       payload_repositories: payload_repos,
-  //       packages: ['test'],
-  //       subscription: {
-  //         'activation-key': 'name0',
-  //         insights: true,
-  //         rhc: true,
-  //         organization: 5,
-  //         'server-url': 'subscription.rhsm.redhat.com',
-  //         'base-url': 'https://cdn.redhat.com/',
-  //       },
-  //     };
+      //     const cust = {
+      //       filesystem: [
+      //         {
+      //           mountpoint: '/',
+      //           min_size: 10737418240,
+      //         },
+      //         {
+      //           mountpoint: '/home',
+      //           min_size: 1073741824,
+      //         },
+      //         {
+      //           mountpoint: '/var/tmp',
+      //           min_size: 104857600,
+      //         },
+      //       ],
+      //       custom_repositories: custom_repos,
+      //       payload_repositories: payload_repos,
+      //       packages: ['test'],
+      //       subscription: {
+      //         'activation-key': 'name0',
+      //         insights: true,
+      //         rhc: true,
+      //         organization: 5,
+      //         'server-url': 'subscription.rhsm.redhat.com',
+      //         'base-url': 'https://cdn.redhat.com/',
+      //       },
+      //     };
 
-  //     const expectedComposeReqs = {
-  //       aws: {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'aws',
-  //             upload_request: {
-  //               type: 'aws',
-  //               options: {
-  //                 share_with_accounts: ['012345678901'],
-  //               },
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //       gcp: {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'gcp',
-  //             upload_request: {
-  //               type: 'gcp',
-  //               options: {
-  //                 share_with_accounts: ['user:test@test.com'],
-  //               },
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //       azure: {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'azure',
-  //             upload_request: {
-  //               type: 'azure',
-  //               options: {
-  //                 tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-  //                 subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
-  //                 resource_group: 'testResourceGroup',
-  //               },
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //       'vsphere-ova': {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'vsphere-ova',
-  //             upload_request: {
-  //               type: 'aws.s3',
-  //               options: {},
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //       'guest-image': {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'guest-image',
-  //             upload_request: {
-  //               type: 'aws.s3',
-  //               options: {},
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //       'image-installer': {
-  //         distribution: RHEL_8,
-  //         image_name: 'my-image-name',
-  //         image_description: 'this is a perfect description for image',
-  //         image_requests: [
-  //           {
-  //             architecture: 'x86_64',
-  //             image_type: 'image-installer',
-  //             upload_request: {
-  //               type: 'aws.s3',
-  //               options: {},
-  //             },
-  //           },
-  //         ],
-  //         client_id: 'ui',
-  //         customizations: cust,
-  //       },
-  //     };
+      //     const expectedComposeReqs = {
+      //       aws: {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'aws',
+      //             upload_request: {
+      //               type: 'aws',
+      //               options: {
+      //                 share_with_accounts: ['012345678901'],
+      //               },
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //       gcp: {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'gcp',
+      //             upload_request: {
+      //               type: 'gcp',
+      //               options: {
+      //                 share_with_accounts: ['user:test@test.com'],
+      //               },
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //       azure: {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'azure',
+      //             upload_request: {
+      //               type: 'azure',
+      //               options: {
+      //                 tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+      //                 subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
+      //                 resource_group: 'testResourceGroup',
+      //               },
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //       'vsphere-ova': {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'vsphere-ova',
+      //             upload_request: {
+      //               type: 'aws.s3',
+      //               options: {},
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //       'guest-image': {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'guest-image',
+      //             upload_request: {
+      //               type: 'aws.s3',
+      //               options: {},
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //       'image-installer': {
+      //         distribution: RHEL_8,
+      //         image_name: 'my-image-name',
+      //         image_description: 'this is a perfect description for image',
+      //         image_requests: [
+      //           {
+      //             architecture: 'x86_64',
+      //             image_type: 'image-installer',
+      //             upload_request: {
+      //               type: 'aws.s3',
+      //               options: {},
+      //             },
+      //           },
+      //         ],
+      //         client_id: 'ui',
+      //         customizations: cust,
+      //       },
+      //     };
 
-  //     let timesCalled = 0;
-  //     const receivedComposeReqs = {};
+      //     let timesCalled = 0;
+      //     const receivedComposeReqs = {};
 
-  //     server.use(
-  //       rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
-  //         timesCalled += 1;
-  //         receivedComposeReqs[req.body.image_requests[0].image_type] = req.body;
-  //         return res(
-  //           ctx.status(201),
-  //           ctx.json({
-  //             id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b',
-  //           })
-  //         );
-  //       })
-  //     );
-  //     await user.click(await screen.findByRole('button', { name: /Create/ }));
+      //     server.use(
+      //       rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
+      //         timesCalled += 1;
+      //         receivedComposeReqs[req.body.image_requests[0].image_type] = req.body;
+      //         return res(
+      //           ctx.status(201),
+      //           ctx.json({
+      //             id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f5b',
+      //           })
+      //         );
+      //       })
+      //     );
+      //     await user.click(await screen.findByRole('button', { name: /Create/ }));
 
-  //     expect(receivedComposeReqs).toEqual(expectedComposeReqs);
-  //     expect(timesCalled).toEqual(6);
+      //     expect(receivedComposeReqs).toEqual(expectedComposeReqs);
+      //     expect(timesCalled).toEqual(6);
 
-  //     // returns back to the landing page
-  //     await waitFor(() =>
-  //       expect(router.state.location.pathname).toBe('/insights/image-builder')
-  //     );
+      //     // returns back to the landing page
+      //     await waitFor(() =>
+      //       expect(router.state.location.pathname).toBe('/insights/image-builder')
+      //     );
 
-  //     // set test timeout of 20 seconds
-  //   }, 20000);
-  // });
+      //     // set test timeout of 20 seconds
+      //   }, 20000);
+    });
+  });
 
   // describe('Keyboard accessibility', () => {
   //   const user = userEvent.setup();
