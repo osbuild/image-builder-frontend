@@ -14,6 +14,7 @@ import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
+import ReviewStep from './steps/Review';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
@@ -212,7 +213,9 @@ const CreateImageWizard = () => {
             name="Review"
             id="step-review"
             footer={<CustomWizardFooter disableNext={true} />}
-          ></WizardStep>
+          >
+            <ReviewStep />
+          </WizardStep>
         </Wizard>
       </section>
     </>
