@@ -23,21 +23,21 @@ import { RootState } from '.';
 
 type wizardState = {
   env: {
-    serverUrl: string | undefined;
-    baseUrl: string | undefined;
+    serverUrl: string;
+    baseUrl: string;
   };
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
   aws: {
-    accountId: string | undefined;
+    accountId: string;
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
   };
   gcp: {
     shareMethod: GcpShareMethod;
     accountType: GcpAccountType;
-    email: string | undefined;
+    email: string;
   };
   registration: {
     registrationType: string;
@@ -57,21 +57,21 @@ type wizardState = {
 
 const initialState: wizardState = {
   env: {
-    serverUrl: undefined,
-    baseUrl: undefined,
+    serverUrl: '',
+    baseUrl: '',
   },
   architecture: X86_64,
   distribution: RHEL_9,
   imageTypes: [],
   aws: {
-    accountId: undefined,
+    accountId: '',
     shareMethod: 'sources',
     source: undefined,
   },
   gcp: {
     shareMethod: 'withGoogle',
     accountType: 'google',
-    email: undefined,
+    email: '',
   },
   registration: {
     registrationType: 'register-now-rhc',
@@ -109,7 +109,7 @@ export const selectImageTypes = (state: RootState) => {
   return state.wizard.imageTypes;
 };
 
-export const selectAwsAccountId = (state: RootState): string | undefined => {
+export const selectAwsAccountId = (state: RootState): string => {
   return state.wizard.aws.accountId;
 };
 
@@ -164,10 +164,10 @@ export const wizardSlice = createSlice({
   initialState,
   reducers: {
     initializeWizard: () => initialState,
-    changeServerUrl: (state, action: PayloadAction<string | undefined>) => {
+    changeServerUrl: (state, action: PayloadAction<string>) => {
       state.env.serverUrl = action.payload;
     },
-    changeBaseUrl: (state, action: PayloadAction<string | undefined>) => {
+    changeBaseUrl: (state, action: PayloadAction<string>) => {
       state.env.baseUrl = action.payload;
     },
     changeArchitecture: (
@@ -194,7 +194,7 @@ export const wizardSlice = createSlice({
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
       state.imageTypes = action.payload;
     },
-    changeAwsAccountId: (state, action: PayloadAction<string | undefined>) => {
+    changeAwsAccountId: (state, action: PayloadAction<string>) => {
       state.aws.accountId = action.payload;
     },
     changeAwsShareMethod: (state, action: PayloadAction<AwsShareMethod>) => {
@@ -210,7 +210,7 @@ export const wizardSlice = createSlice({
       switch (action.payload) {
         case 'withInsights':
           state.gcp.accountType = undefined;
-          state.gcp.email = undefined;
+          state.gcp.email = '';
           break;
         case 'withGoogle':
           state.gcp.accountType = 'google';
@@ -220,7 +220,7 @@ export const wizardSlice = createSlice({
     changeGcpAccountType: (state, action: PayloadAction<GcpAccountType>) => {
       state.gcp.accountType = action.payload;
     },
-    changeGcpEmail: (state, action: PayloadAction<string | undefined>) => {
+    changeGcpEmail: (state, action: PayloadAction<string>) => {
       state.gcp.email = action.payload;
     },
     changeRegistrationType: (state, action: PayloadAction<string>) => {
