@@ -82,7 +82,7 @@ const Aws = () => {
           isChecked={shareMethod === 'sources'}
           onChange={() => {
             dispatch(changeAwsSource(undefined));
-            dispatch(changeAwsAccountId(undefined));
+            dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('sources'));
           }}
         />
@@ -93,7 +93,7 @@ const Aws = () => {
           isChecked={shareMethod === 'manual'}
           onChange={() => {
             dispatch(changeAwsSource(undefined));
-            dispatch(changeAwsAccountId(undefined));
+            dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('manual'));
           }}
         />
