@@ -243,6 +243,7 @@ const Repositories = (props) => {
     }
   );
 
+  // eslint-disable-next-line no-unused-vars
   const { data, isError, isFetching, isLoading, isSuccess, refetch } =
     useMemo(() => {
       if (firstRequest?.data?.meta?.count > 100) {
@@ -355,7 +356,8 @@ const Repositories = (props) => {
   };
 
   return (
-    (isError && <Error />) ||
+    // Temporarily disable repositories step while service is down
+    (true && <Error />) ||
     (isLoading && <Loading />) ||
     (isSuccess && (
       <>
@@ -523,8 +525,8 @@ const Repositories = (props) => {
 
 const Error = () => {
   return (
-    <Alert title="Repositories unavailable" variant="danger" isPlain isInline>
-      Repositories cannot be reached, try again later.
+    <Alert title="Repositories unavailable" variant="warning" isPlain isInline>
+      The Content service cannot be reached, please check back later.
     </Alert>
   );
 };
