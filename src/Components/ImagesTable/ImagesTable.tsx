@@ -16,6 +16,9 @@ import {
   EmptyStateActions,
   EmptyStateHeader,
   EmptyStateFooter,
+  Alert,
+  Spinner,
+  Bullseye,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -71,7 +74,7 @@ const ImagesTable = () => {
     setPerPage(perPage);
   };
 
-  const { data, isSuccess } = useGetComposesQuery({
+  const { data, isError, isSuccess } = useGetComposesQuery({
     limit: perPage,
     offset: perPage * (page - 1),
     ignoreImageTypes: [
@@ -83,7 +86,21 @@ const ImagesTable = () => {
   });
 
   if (!isSuccess) {
-    return undefined;
+    if (isError) {
+      return (
+        <Alert variant="warning" title="Service unavailable">
+          <p>
+            The Images service is unavailable right now. We&apos;re working on
+            it... please check back later.
+          </p>
+        </Alert>
+      );
+    }
+    return (
+      <Bullseye>
+        <Spinner />
+      </Bullseye>
+    );
   }
 
   const composes = data.data;
