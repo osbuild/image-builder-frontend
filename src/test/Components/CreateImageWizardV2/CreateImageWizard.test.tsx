@@ -123,7 +123,7 @@ describe('Create Image Wizard', () => {
     // await screen.findByRole('button', { name: 'Content' });
     // await screen.findByRole('button', { name: 'Additional Red Hat packages' });
     // await screen.findByRole('button', { name: 'Custom repositories' });
-    // await screen.findByRole('button', { name: 'Details' });
+    await screen.findByRole('button', { name: 'Details' });
     // await screen.findByRole('button', { name: 'Review' });
   });
 });
@@ -880,52 +880,38 @@ describe('Step Upload to AWS', () => {
     test('image name invalid for more than 63 chars', async () => {
       await setUp();
 
-      //     // Enter image name
-      //     const nameInput = await screen.findByRole('textbox', {
-      //       name: 'Image Name',
-      //     });
-      //     // 64 character name
-      //     const invalidName = 'a'.repeat(64);
-      //     await user.type(nameInput, invalidName);
-      //     expect(await getNextButton()).toHaveClass('pf-m-disabled');
-      //     expect(await getNextButton()).toBeDisabled();
-      //     await user.clear(nameInput);
-      //     // Enter image name
-
+      // Enter image name
       const nameInput = await screen.findByRole('textbox', {
         name: /blueprint name/i,
       });
+      // 64 character name
       const invalidName = 'a'.repeat(64);
-
       await user.type(nameInput, invalidName);
-
       expect(await getNextButton()).toHaveClass('pf-m-disabled');
-
       expect(await getNextButton()).toBeDisabled();
       await user.clear(nameInput);
+
       await user.type(nameInput, 'valid-name');
+      expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+      expect(await getNextButton()).toBeEnabled();
+
+      // Enter description image
+      const descriptionInput = await screen.findByRole('textbox', {
+        name: /description/i,
+      });
+
+      const invalidDescription = 'a'.repeat(251);
+      await user.type(descriptionInput, invalidDescription);
+
+      expect(await getNextButton()).toHaveClass('pf-m-disabled');
+      expect(await getNextButton()).toBeDisabled();
+      await user.clear(descriptionInput);
+      await user.type(descriptionInput, 'valid-description');
+
       expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
       expect(await getNextButton()).toBeEnabled();
     });
   });
-
-  //     // Enter description image
-  //     const descriptionInput = await screen.findByRole('textbox', {
-  //       name: /description/i,
-  //     });
-
-  //     const invalidDescription = 'a'.repeat(251);
-  //     await user.type(descriptionInput, invalidDescription);
-
-  //     expect(await getNextButton()).toHaveClass('pf-m-disabled');
-  //     expect(await getNextButton()).toBeDisabled();
-  //     await user.clear(descriptionInput);
-  //     await user.type(descriptionInput, 'valid-description');
-
-  //     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-  //     expect(await getNextButton()).toBeEnabled();
-  //   });
-  // });
 
   // describe('Step Review', () => {
   //   const user = userEvent.setup();
