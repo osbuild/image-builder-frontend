@@ -68,7 +68,10 @@ const CustomButtons = ({
               !formOptions.valid ||
               formOptions.getState().validating ||
               isSaving ||
-              hasUnavailableRepo
+              hasUnavailableRepo ||
+              // Temporarily disable when there are custom repositories
+              getState().values?.['payload-repositories'] ||
+              getState().values?.['custom-repositories']
             }
             isLoading={currentStep.id === 'wizard-review' ? isSaving : null}
             onClick={onNextOrSubmit}

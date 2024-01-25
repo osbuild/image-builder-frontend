@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import {
+  Alert,
   ExpandableSection,
   Text,
   TextContent,
@@ -9,7 +10,8 @@ import {
 } from '@patternfly/react-core';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
-import RepositoryUnavailable from './RepositoryUnavailable';
+// Temporarily disable
+//import RepositoryUnavailable from './RepositoryUnavailable';
 import {
   ContentList,
   FSCList,
@@ -66,7 +68,20 @@ const ReviewStep = () => {
 
   return (
     <>
-      <RepositoryUnavailable />
+      {
+        // Temporarily disable
+        //<RepositoryUnavailable />
+
+        // vv REMOVE WHEN CONTENT REACHABLE AGAIN
+        (getState()?.values?.['payload-repositories'] ||
+          getState()?.values?.['custom-repositories']) && (
+          <Alert title="Repositories unavailable" variant="warning" isInline>
+            The Content service cannot be reached, please check back later.
+          </Alert>
+        )
+        // ^^ REMOVE WHEN CONTENT REACHABLE AGAIN
+      }
+
       {getState()?.values?.['file-system-configuration']?.find((mp) =>
         mp.mountpoint.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
