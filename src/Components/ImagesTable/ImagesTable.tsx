@@ -19,6 +19,7 @@ import {
   Alert,
   Spinner,
   Bullseye,
+  Badge,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
@@ -31,6 +32,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -71,7 +73,8 @@ type ImageTableProps = {
 const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
   const onSetPage: OnSetPage = (_, page) => setPage(page);
 
   const onPerPageSelect: OnSetPage = (_, perPage) => {
@@ -189,6 +192,7 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
                 <Th>Created/Updated</Th>
                 <Th>Release</Th>
                 <Th>Target</Th>
+                {experimentalFlag && <Th>Version</Th>}
                 <Th>Status</Th>
                 <Th>Instance</Th>
                 <Th />
@@ -508,7 +512,8 @@ const Row = ({
 }: RowPropTypes) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
-
+  const experimentalFlag =
+    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
   const navigate = useNavigate();
 
   return (
@@ -531,6 +536,11 @@ const Row = ({
         <Td dataLabel="Target">
           {target ? target : <Target compose={compose} />}
         </Td>
+        {experimentalFlag && (
+          <Td dataLabel="Version">
+            <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
+          </Td>
+        )}
         <Td dataLabel="Status">{status}</Td>
         <Td dataLabel="Instance">{instance}</Td>
         <Td>

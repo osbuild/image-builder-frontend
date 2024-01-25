@@ -45,6 +45,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
       id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
       image_name: 'Dark Chocolate',
       created_at: '2021-09-08T14:38:00.000Z',
+      blueprint_version: 1,
       request: {
         distribution: RHEL_9,
         image_requests: [
@@ -64,6 +65,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
     {
       id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
       created_at: '2021-04-27T12:31:12Z',
+      blueprint_version: 1,
       request: {
         distribution: RHEL_9,
         image_requests: [
