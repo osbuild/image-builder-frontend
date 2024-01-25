@@ -1221,6 +1221,7 @@ describe('Click through all steps', () => {
     );
     await clickNext();
 
+    // Temporarily disable
     // Custom repositories
     // await user.click(
     //   await screen.findByRole('checkbox', { name: /select row 0/i })
@@ -1231,6 +1232,7 @@ describe('Click through all steps', () => {
 
     await clickNext();
 
+    // Temporarily disable
     // Custom packages
     // await clickNext();
 
@@ -1297,6 +1299,8 @@ describe('Click through all steps', () => {
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
     // mock the backend API
+    // Temporarily disable
+    // eslint-disable-next-line no-unused-vars
     const payload_repos = [
       {
         baseurl: 'http://yum.theforeman.org/releases/3.4/el8/x86_64/',
@@ -1314,6 +1318,7 @@ describe('Click through all steps', () => {
       },
     ];
 
+    // Temporarily disable
     // eslint-disable-next-line no-unused-vars
     const custom_repos = [
       {
@@ -1351,9 +1356,9 @@ describe('Click through all steps', () => {
           min_size: 104857600,
         },
       ],
+      // Temporarily disable
       // custom_repositories: custom_repos,
-      custom_repositories: [],
-      payload_repositories: payload_repos,
+      // payload_repositories: payload_repos,
       packages: ['test'],
       subscription: {
         'activation-key': 'name0',
@@ -1365,7 +1370,6 @@ describe('Click through all steps', () => {
       },
     };
 
-    // eslint-disable-next-line
     const expectedComposeReqs = {
       aws: {
         distribution: RHEL_8,
@@ -1479,7 +1483,6 @@ describe('Click through all steps', () => {
       },
     };
 
-    // eslint-disable-next-line
     let timesCalled = 0;
     const receivedComposeReqs = {};
 
@@ -1497,9 +1500,8 @@ describe('Click through all steps', () => {
     );
     await user.click(await screen.findByRole('button', { name: /Create/ }));
 
-    // TODO re-enable asap
-    // expect(receivedComposeReqs).toEqual(expectedComposeReqs);
-    // expect(timesCalled).toEqual(6);
+    expect(receivedComposeReqs).toEqual(expectedComposeReqs);
+    expect(timesCalled).toEqual(6);
 
     // returns back to the landing page
     await waitFor(() =>
