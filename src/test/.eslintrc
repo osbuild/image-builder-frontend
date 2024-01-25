@@ -9,7 +9,8 @@
   ],
   "rules": {
     "react/display-name": "off",
-    "react/prop-types": "off"
+    "react/prop-types": "off",
+    "testing-library/no-debugging-utils": "error"
   },
   "extends": [
     "plugin:testing-library/react",
