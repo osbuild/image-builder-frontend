@@ -891,9 +891,8 @@ describe('Step Upload to AWS', () => {
       //     expect(await getNextButton()).toBeDisabled();
       //     await user.clear(nameInput);
       //     // Enter image name
-      screen.logTestingPlaygroundURL();
 
-      const nameInput = screen.getByRole('textbox', {
+      const nameInput = await screen.findByRole('textbox', {
         name: /blueprint name/i,
       });
       const invalidName = 'a'.repeat(64);
