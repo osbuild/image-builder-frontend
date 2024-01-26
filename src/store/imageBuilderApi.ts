@@ -110,6 +110,15 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.createBlueprintRequest,
       }),
     }),
+    deleteBlueprint: build.mutation<
+      DeleteBlueprintApiResponse,
+      DeleteBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints/${queryArg.id}`,
+        method: "DELETE",
+      }),
+    }),
     composeBlueprint: build.mutation<
       ComposeBlueprintApiResponse,
       ComposeBlueprintApiArg
@@ -241,6 +250,12 @@ export type UpdateBlueprintApiArg = {
   id: string;
   /** details of blueprint */
   createBlueprintRequest: CreateBlueprintRequest;
+};
+export type DeleteBlueprintApiResponse =
+  /** status 204 Successfully deleted */ void;
+export type DeleteBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
 };
 export type ComposeBlueprintApiResponse =
   /** status 201 compose was created */ ComposeResponse[];
@@ -782,6 +797,7 @@ export const {
   useGetBlueprintsQuery,
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
+  useDeleteBlueprintMutation,
   useComposeBlueprintMutation,
   useGetBlueprintComposesQuery,
 } = injectedRtkApi;

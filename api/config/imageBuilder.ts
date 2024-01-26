@@ -23,6 +23,7 @@ const config: ConfigFile = {
     'composeBlueprint',
     'getBlueprints',
     'getBlueprintComposes',
+    'deleteBlueprint',
   ],
 };
 
