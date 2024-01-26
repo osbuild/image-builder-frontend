@@ -12,10 +12,16 @@ import {
   MenuToggle,
   MenuToggleElement,
   DropdownItem,
+  Spinner,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 
-import { BlueprintItem } from '../../store/imageBuilderApi';
+import { DeleteBlueprintModal } from './DeleteBlueprintModal';
+
+import {
+  BlueprintItem,
+  useDeleteBlueprintMutation,
+} from '../../store/imageBuilderApi';
 
 type blueprintProps = {
   blueprint: BlueprintItem;
@@ -34,6 +40,16 @@ const BlueprintCard = ({
   const isChecked = blueprint.id === selectedBlueprint;
   const onSelect = () => {
     setIsOpen(!isOpen);
+  };
+
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [deleteBlueprint, { isLoading }] = useDeleteBlueprintMutation();
+  const handleDelete = async () => {
+    setShowDeleteModal(false);
+    await deleteBlueprint({ id: blueprint.id });
+  };
+  const onDeleteClose = () => {
+    setShowDeleteModal(false);
   };
 
   const onClickHandler = ({
@@ -63,37 +79,49 @@ const BlueprintCard = ({
       >
         <DropdownList>
           <DropdownItem>Edit details</DropdownItem>
-          <DropdownItem>Delete blueprint</DropdownItem>
+          <DropdownItem onClick={() => setShowDeleteModal(true)}>
+            Delete blueprint
+          </DropdownItem>
         </DropdownList>
       </Dropdown>
     </>
   );
 
   return (
-    <Card
-      ouiaId={`blueprint-card-${blueprint.id}`}
-      isCompact
-      isClickable
-      isSelectable
-      isSelected={isChecked}
-    >
-      <CardHeader
-        selectableActions={{
-          selectableActionId: blueprint.id,
-          name: blueprint.name,
-          variant: 'single',
-          isChecked: isChecked,
-          onChange: onClickHandler,
-        }}
-        actions={{ actions: headerActions }}
+    <>
+      <DeleteBlueprintModal
+        onDelete={handleDelete}
+        blueprintName={blueprint?.name}
+        isOpen={showDeleteModal}
+        onClose={onDeleteClose}
+      />
+      <Card
+        ouiaId={`blueprint-card-${blueprint.id}`}
+        isCompact
+        isClickable
+        isSelectable
+        isSelected={isChecked}
       >
-        <CardTitle>{blueprint.name}</CardTitle>
-      </CardHeader>
-      <CardBody>{blueprint.description}</CardBody>
-      <CardFooter>
-        Version <Badge isRead>{blueprint.version}</Badge>
-      </CardFooter>
-    </Card>
+        <CardHeader
+          selectableActions={{
+            selectableActionId: blueprint.id,
+            name: blueprint.name,
+            variant: 'single',
+            isChecked: isChecked,
+            onChange: onClickHandler,
+          }}
+          actions={{ actions: headerActions }}
+        >
+          <CardTitle>
+            {blueprint.name} {isLoading && <Spinner size="md" />}
+          </CardTitle>
+        </CardHeader>
+        <CardBody>{blueprint.description}</CardBody>
+        <CardFooter>
+          Version <Badge isRead>{blueprint.version}</Badge>
+        </CardFooter>
+      </Card>
+    </>
   );
 };
 
