@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import DetailsStep from './steps/Details';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
+import PackagesStep from './steps/Packages';
 import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
@@ -246,6 +247,14 @@ const CreateImageWizard = () => {
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <RepositoriesStep />
+              </WizardStep>,
+              <WizardStep
+                name="Additional packages"
+                id="wizard-additional-packages"
+                key="wizard-additional-packages"
+                footer={<CustomWizardFooter disableNext={false} />}
+              >
+                <PackagesStep />
               </WizardStep>,
             ]}
           ></WizardStep>
