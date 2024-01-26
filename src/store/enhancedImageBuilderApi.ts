@@ -3,8 +3,13 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { imageBuilderApi } from './imageBuilderApi';
 
 const enhancedApi = imageBuilderApi.enhanceEndpoints({
-  addTagTypes: ['Clone', 'Compose'],
+  addTagTypes: ['Clone', 'Compose', 'Blueprint'],
   endpoints: {
+    getBlueprints: {
+      providesTags: () => {
+        return [{ type: 'Blueprint' }];
+      },
+    },
     getComposes: {
       providesTags: () => {
         return [{ type: 'Compose' }];
@@ -76,6 +81,29 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
                 variant: 'danger',
                 title: 'Your image could not be created',
                 description: 'Status code ' + err.error.status + ': ' + msg,
+              })
+            );
+          });
+      },
+    },
+    deleteBlueprint: {
+      invalidatesTags: [{ type: 'Blueprint' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Blueprint was deleted',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Blueprint could not be deleted',
+                description: `Status code ${err.error.status}: ${err.error.data.errors[0].detail}`,
               })
             );
           });
