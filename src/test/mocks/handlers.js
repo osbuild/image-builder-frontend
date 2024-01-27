@@ -113,7 +113,23 @@ export const handlers = [
     }
   ),
   rest.get(`${IMAGE_BUILDER_API}/experimental/blueprints`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockGetBlueprints));
+    const search = req.url.searchParams.get('search');
+    const resp = Object.assign({}, mockGetBlueprints);
+    if (search) {
+      let regexp;
+      try {
+        regexp = new RegExp(search);
+      } catch (e) {
+        const sanitized = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        regexp = new RegExp(sanitized);
+      }
+      resp.data = mockGetBlueprints.data.filter(({ name }) => {
+        return regexp.test(name);
+      });
+      resp.meta.count = resp.data.length;
+    }
+
+    return res(ctx.status(200), ctx.json(resp));
   }),
   rest.get(
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
