@@ -11,11 +11,9 @@ import {
   TextContent,
   TabAction,
   PageSection,
-  Spinner,
   Sidebar,
   SidebarContent,
   SidebarPanel,
-  Bullseye,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -25,7 +23,6 @@ import './LandingPage.scss';
 
 import Quickstarts from './Quickstarts';
 
-import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
@@ -56,7 +53,6 @@ export const LandingPage = () => {
   const [selectedBlueprint, setSelectedBlueprint] = useState<
     string | undefined
   >();
-  const { data: blueprints, isLoading } = useGetBlueprintsQuery({});
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const experimentalFlag =
@@ -82,7 +78,6 @@ export const LandingPage = () => {
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel hasPadding width={{ default: 'width_25' }}>
             <BlueprintsSidebar
-              blueprints={blueprints?.data}
               selectedBlueprint={selectedBlueprint}
               setSelectedBlueprint={setSelectedBlueprint}
             />
@@ -98,14 +93,6 @@ export const LandingPage = () => {
   const imageList = experimentalFlag
     ? experimentalImageList
     : traditionalImageList;
-
-  if (isLoading) {
-    return (
-      <Bullseye>
-        <Spinner size="xl" />
-      </Bullseye>
-    );
-  }
 
   return (
     <>

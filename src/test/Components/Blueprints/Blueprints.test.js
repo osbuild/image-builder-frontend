@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
@@ -70,5 +70,22 @@ describe('Blueprints', () => {
     });
     await user.click(blueprintRadioBtn);
     expect(screen.queryByTestId('images-table')).not.toBeInTheDocument();
+  });
+
+  describe('filtering', () => {
+    test('filter blueprints', async () => {
+      renderWithReduxRouter('', {});
+
+      const searchInput = await screen.findByPlaceholderText(
+        'Search by name or description'
+      );
+      searchInput.focus();
+      await user.keyboard('Milk');
+
+      // wait for debounce
+      await waitFor(() => {
+        expect(screen.getAllByRole('radio')).toHaveLength(1);
+      });
+    });
   });
 });
