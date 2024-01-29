@@ -86,7 +86,7 @@ export const ImageBuilderHeader = ({
                 <HelpIcon />
               </Button>
             </Popover>
-            <OpenSourceBadge repositoriesURL="https://www.osbuild.org/guides/image-builder-service/architecture.html" />
+            <OpenSourceBadge repositoriesURL="https://osbuild.org/docs/service/Architecture/" />
           </FlexItem>
           {experimentalFlag && (
             <>
