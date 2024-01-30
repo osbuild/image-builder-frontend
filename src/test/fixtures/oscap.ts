@@ -32,6 +32,13 @@ export const oscapCustomizations = (
         'nftables',
         'libselinux',
       ],
+      kernel: {
+        append: 'audit_backlog_limit=8192 audit=1',
+      },
+      services: {
+        disabled: ['nfs-server'],
+        enabled: ['crond'],
+      },
     };
   }
   if (profile === 'xccdf_org.ssgproject.content_profile_cis_workstation_l2') {
@@ -52,6 +59,13 @@ export const oscapCustomizations = (
         'nftables',
         'libselinux',
       ],
+      kernel: {
+        append: 'audit_backlog_limit=8192 audit=1',
+      },
+      services: {
+        disabled: ['nfs-server', 'nftables'],
+        enabled: ['crond', 'firewalld'],
+      },
     };
   }
   return {
@@ -70,5 +84,12 @@ export const oscapCustomizations = (
       'nftables',
       'libselinux',
     ],
+    kernel: {
+      append: 'audit_backlog_limit=8192 audit=1',
+    },
+    services: {
+      disabled: ['nfs-server', 'rpcbind', 'autofs', 'nftables'],
+      enabled: ['crond', 'firewalld', 'systemd-journald', 'rsyslog', 'auditd'],
+    },
   };
 };

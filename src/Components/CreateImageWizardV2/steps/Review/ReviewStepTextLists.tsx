@@ -30,7 +30,6 @@ import {
 } from '../../../../constants';
 import { extractProvisioningList } from '../../../../store/helpers';
 import { useAppSelector } from '../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
 import {
@@ -45,12 +44,12 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
-  selectProfile,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 import { MajorReleasesLifecyclesChart } from '../../../CreateImageWizard/formComponents/ReleaseLifecycle';
+import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 
 const ExpirationWarning = () => {
   return (
@@ -501,54 +500,5 @@ export const ImageDetailsList = () => {
 };
 
 export const OscapList = () => {
-  const oscapProfile = useAppSelector((state) => selectProfile(state));
-  const release = useAppSelector((state) => selectDistribution(state));
-  const { data } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if oscapProfile is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: oscapProfile,
-    },
-    {
-      skip: !oscapProfile,
-    }
-  );
-  return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Profile name:
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {data?.openscap?.profile_name}
-        </TextListItem>
-      </TextList>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Profile description:
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {data?.openscap?.profile_description}
-        </TextListItem>
-      </TextList>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Reference ID:
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {oscapProfile}
-        </TextListItem>
-      </TextList>
-      <br />
-    </TextContent>
-  );
+  return <OscapProfileInformation />;
 };
