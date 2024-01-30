@@ -45,7 +45,15 @@ type wizardState = {
   };
   openScap: {
     profile: DistributionProfileItem | undefined;
+    kernel: {
+      kernelAppend: string | undefined;
+    };
+    services: {
+      disabled: string[] | undefined;
+      enabled: string[] | undefined;
+    };
   };
+
   repositories: {
     customRepositories: CustomRepository[];
   };
@@ -79,6 +87,13 @@ const initialState: wizardState = {
   },
   openScap: {
     profile: undefined,
+    kernel: {
+      kernelAppend: '',
+    },
+    services: {
+      disabled: [],
+      enabled: [],
+    },
   },
   repositories: {
     customRepositories: [],
@@ -145,6 +160,18 @@ export const selectActivationKey = (state: RootState) => {
 
 export const selectProfile = (state: RootState) => {
   return state.wizard.openScap.profile;
+};
+
+export const selectKernel = (state: RootState) => {
+  return state.wizard.openScap.kernel.kernelAppend;
+};
+
+export const selectDisabledServices = (state: RootState) => {
+  return state.wizard.openScap.services.disabled;
+};
+
+export const selectEnabledServices = (state: RootState) => {
+  return state.wizard.openScap.services.enabled;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
@@ -238,6 +265,22 @@ export const wizardSlice = createSlice({
     ) => {
       state.openScap.profile = action.payload;
     },
+
+    changeKernel: (state, action: PayloadAction<string | undefined>) => {
+      state.openScap.kernel.kernelAppend = action.payload;
+    },
+    changeDisabledServices: (
+      state,
+      action: PayloadAction<string[] | undefined>
+    ) => {
+      state.openScap.services.disabled = action.payload;
+    },
+    changeEnabledServices: (
+      state,
+      action: PayloadAction<string[] | undefined>
+    ) => {
+      state.openScap.services.enabled = action.payload;
+    },
     changeCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -271,6 +314,9 @@ export const {
   changeRegistrationType,
   changeActivationKey,
   changeOscapProfile,
+  changeKernel,
+  changeDisabledServices,
+  changeEnabledServices,
   changeCustomRepositories,
   changeBlueprintName,
   changeBlueprintDescription,

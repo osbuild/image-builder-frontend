@@ -26,12 +26,23 @@ import {
 } from '../../../../store/imageBuilderApi';
 import {
   changeOscapProfile,
+  changeKernel,
   selectDistribution,
   selectProfile,
+  selectKernel,
+  selectDisabledServices,
+  selectEnabledServices,
+  changeDisabledServices,
+  changeEnabledServices,
 } from '../../../../store/wizardSlice';
 
 const ProfileSelector = () => {
   const oscapProfile = useAppSelector((state) => selectProfile(state));
+  let kernel = useAppSelector((state) => selectKernel(state));
+  let disabledServices = useAppSelector((state) =>
+    selectDisabledServices(state)
+  );
+  let enabledServices = useAppSelector((state) => selectEnabledServices(state));
   const release = useAppSelector((state) => selectDistribution(state));
   const dispatch = useAppDispatch();
   const [profileName, setProfileName] = useState<string | undefined>('None');
@@ -56,6 +67,26 @@ const ProfileSelector = () => {
       skip: !oscapProfile,
     }
   );
+  kernel = data?.kernel?.append;
+  disabledServices = data?.services?.disabled;
+  enabledServices = data?.services?.enabled;
+
+  useEffect(() => {
+    if (isFetching || !isSuccess) return;
+    dispatch(changeKernel(kernel));
+    dispatch(changeDisabledServices(disabledServices));
+    dispatch(changeEnabledServices(enabledServices));
+  }, [
+    isFetching,
+    isSuccess,
+    dispatch,
+    data?.kernel?.append,
+    data?.services?.disabled,
+    data?.services?.enabled,
+    disabledServices,
+    enabledServices,
+    kernel,
+  ]);
 
   useEffect(() => {
     if (
@@ -76,6 +107,9 @@ const ProfileSelector = () => {
 
   const handleClear = () => {
     dispatch(changeOscapProfile(undefined));
+    dispatch(changeKernel(undefined));
+    dispatch(changeDisabledServices(undefined));
+    dispatch(changeEnabledServices(undefined));
     setProfileName(undefined);
   };
 
@@ -84,6 +118,9 @@ const ProfileSelector = () => {
     selection: DistributionProfileItem
   ) => {
     dispatch(changeOscapProfile(selection));
+    dispatch(changeKernel(kernel));
+    dispatch(changeDisabledServices(disabledServices));
+    dispatch(changeEnabledServices(enabledServices));
     setIsOpen(false);
   };
 
