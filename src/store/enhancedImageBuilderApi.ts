@@ -3,11 +3,11 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { imageBuilderApi } from './imageBuilderApi';
 
 const enhancedApi = imageBuilderApi.enhanceEndpoints({
-  addTagTypes: ['Clone', 'Compose', 'Blueprint', 'BlueprintComposes'],
+  addTagTypes: ['Clone', 'Compose', 'Blueprints', 'BlueprintComposes'],
   endpoints: {
     getBlueprints: {
       providesTags: () => {
-        return [{ type: 'Blueprint' }];
+        return [{ type: 'Blueprints' }];
       },
     },
     getBlueprintComposes: {
@@ -23,6 +23,31 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
     getComposeClones: {
       providesTags: (_request, _error, arg) => {
         return [{ type: 'Clone', id: arg.composeId }];
+      },
+    },
+    createBlueprint: {
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
+            // @ts-expect-error
+            dispatch(imageBuilderApi.util.invalidateTags(['Blueprints']));
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Your blueprint is being created',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Your blueprint could not be created',
+                description: `Status code ${err.status}: ${err.data.errors[0].detail}`,
+              })
+            );
+          });
       },
     },
     cloneCompose: {
@@ -93,9 +118,11 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {
-            // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            // @ts-expect-error
-            dispatch(imageBuilderApi.util.invalidateTags(['Compose']));
+            dispatch(
+              // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
+              // @ts-expect-error
+              imageBuilderApi.util.invalidateTags(['Blueprints', 'Compose'])
+            );
             dispatch(
               addNotification({
                 variant: 'success',
@@ -120,7 +147,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       },
     },
     deleteBlueprint: {
-      invalidatesTags: [{ type: 'Blueprint' }],
+      invalidatesTags: [{ type: 'Blueprints' }],
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {

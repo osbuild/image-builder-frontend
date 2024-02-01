@@ -14,15 +14,8 @@ export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
   );
 };
 
-export const isBlueprintNameValid = (blueprintName: string) => {
-  if (blueprintName === '') {
-    return true;
-  }
-  return (
-    /^[a-z][a-z0-9-]+[a-z0-9]$/.test(blueprintName) &&
-    blueprintName.length <= 63
-  );
-};
+export const isBlueprintNameValid = (blueprintName: string) =>
+  blueprintName.length > 0 && blueprintName.length <= 100;
 
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;

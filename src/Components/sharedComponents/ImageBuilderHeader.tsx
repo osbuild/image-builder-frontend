@@ -15,8 +15,10 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import { Link } from 'react-router-dom';
 
 import { useComposeBlueprintMutation } from '../../store/imageBuilderApi';
+import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 
 type ImageBuilderHeaderPropTypes = {
@@ -101,7 +103,13 @@ export const ImageBuilderHeader = ({
           {experimentalFlag && (
             <>
               <FlexItem align={{ default: 'alignRight' }}>
-                <Button>New blueprint</Button>
+                <Link
+                  to={resolveRelPath('imagewizard')}
+                  className="pf-c-button pf-m-primary"
+                  data-testid="create-image-action"
+                >
+                  Create
+                </Link>
               </FlexItem>
               <FlexItem>
                 <Button
