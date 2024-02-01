@@ -15,6 +15,7 @@ import OscapStep from './steps/Oscap';
 import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
+import ReviewWizardFooter from './steps/Review/Footer';
 import Aws from './steps/TargetEnvironment/Aws';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
@@ -52,13 +53,22 @@ export const CustomWizardFooter = ({
   const { goToNextStep, goToPrevStep, close } = useWizardContext();
   return (
     <WizardFooterWrapper>
-      <Button variant="primary" onClick={goToNextStep} isDisabled={disableNext}>
+      <Button
+        ouiaId="wizard-next-btn"
+        variant="primary"
+        onClick={goToNextStep}
+        isDisabled={disableNext}
+      >
         Next
       </Button>
-      <Button variant="secondary" onClick={goToPrevStep}>
+      <Button
+        ouiaId="wizard-back-btn"
+        variant="secondary"
+        onClick={goToPrevStep}
+      >
         Back
       </Button>
-      <Button variant="link" onClick={close}>
+      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
         Cancel
       </Button>
     </WizardFooterWrapper>
@@ -212,7 +222,7 @@ const CreateImageWizard = () => {
           <WizardStep
             name="Review"
             id="step-review"
-            footer={<CustomWizardFooter disableNext={true} />}
+            footer={<ReviewWizardFooter />}
           >
             <ReviewStep />
           </WizardStep>

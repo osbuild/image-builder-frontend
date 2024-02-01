@@ -50,7 +50,7 @@ const DetailsStep = () => {
         Optionally enter a name to identify your image later quickly. If you do
         not provide one, the UUID will be used as the name.
       </Text>
-      <FormGroup label="Blueprint name" fieldId="blueprint-name">
+      <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
         <ValidatedTextInput
           ariaLabel="blueprint name"
           dataTestId="blueprint"
@@ -62,11 +62,7 @@ const DetailsStep = () => {
         />
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>
-              The image name can be 3-63 characters long. It can contain
-              lowercase letters, digits and hyphens, has to start with a letter
-              and cannot end with a hyphen.
-            </HelperTextItem>
+            <HelperTextItem>The name can be 1-100 characters</HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>

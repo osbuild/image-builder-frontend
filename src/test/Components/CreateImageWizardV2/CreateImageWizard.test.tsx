@@ -883,8 +883,7 @@ describe('Step Upload to AWS', () => {
       const nameInput = await screen.findByRole('textbox', {
         name: /blueprint name/i,
       });
-      // 64 character name
-      const invalidName = 'a'.repeat(64);
+      const invalidName = 'a'.repeat(101);
       await user.type(nameInput, invalidName);
       expect(await getNextButton()).toHaveClass('pf-m-disabled');
       expect(await getNextButton()).toBeDisabled();
@@ -952,6 +951,10 @@ describe('Step Upload to AWS', () => {
       // skip repositories
       await clickNext();
       // skip Details
+      const blueprintName = await screen.findByRole('textbox', {
+        name: /blueprint name/i,
+      });
+      await user.type(blueprintName, 'valid-name');
       await clickNext();
     };
 
@@ -1009,6 +1012,10 @@ describe('Step Upload to AWS', () => {
       //     skip repositories
       await clickNext();
       // skip Details
+      const blueprintName = await screen.findByRole('textbox', {
+        name: /blueprint name/i,
+      });
+      await user.type(blueprintName, 'valid-name');
       await clickNext();
     };
 
