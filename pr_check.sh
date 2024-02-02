@@ -33,7 +33,7 @@ source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
 
 # reserve ephemeral namespace
 export DEPLOY_FRONTENDS="true"
-export EXTRA_DEPLOY_ARGS="provisioning sources content-sources rhsm-api-proxy --set-template-ref rhsm-api-proxy=master"
+export EXTRA_DEPLOY_ARGS="provisioning sources rhsm-api-proxy --set-template-ref rhsm-api-proxy=master"
 export APP_NAME="image-builder-crc"
 export DEPLOY_TIMEOUT="1200"
 export REF_ENV="insights-stage"
