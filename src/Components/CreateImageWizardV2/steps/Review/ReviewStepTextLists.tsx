@@ -12,16 +12,22 @@ import {
   TextListItemVariants,
   TextVariants,
   Spinner,
+  FormGroup,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
-import ReleaseLifecycle from './../ImageOutput/ReleaseLifecycle';
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import { AwsAccountId } from './../TargetEnvironment/Aws/AwsAccountId';
 import { RepositoriesTable } from './ReviewStepTables';
 
-import { RELEASES } from '../../../../constants';
+import {
+  RELEASES,
+  RHEL_8,
+  RHEL_8_FULL_SUPPORT,
+  RHEL_8_MAINTENANCE_SUPPORT,
+  RHEL_9,
+} from '../../../../constants';
 import { extractProvisioningList } from '../../../../store/helpers';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
@@ -42,7 +48,9 @@ import {
   selectProfile,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import { toMonthAndYear } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { MajorReleasesLifecyclesChart } from '../../../CreateImageWizard/formComponents/ReleaseLifecycle';
 
 const ExpirationWarning = () => {
   return (
@@ -57,7 +65,21 @@ export const ImageOutputList = () => {
   const arch = useAppSelector((state) => selectArchitecture(state));
   return (
     <TextContent>
-      <ReleaseLifecycle />
+      {distribution === RHEL_8 && (
+        <>
+          <Text className="pf-v5-u-font-size-sm">
+            {RELEASES.get(distribution)} will be supported through{' '}
+            {toMonthAndYear(RHEL_8_FULL_SUPPORT[0])}, with optional ELS support
+            through {toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[0])}. Consider
+            building an image with {RELEASES.get(RHEL_9)} to extend the support
+            period.
+          </Text>
+          <FormGroup label="Release lifecycle">
+            <MajorReleasesLifecyclesChart />
+          </FormGroup>
+          <br />
+        </>
+      )}
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
