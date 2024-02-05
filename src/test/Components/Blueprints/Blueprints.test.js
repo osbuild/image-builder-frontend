@@ -28,7 +28,9 @@ jest.mock('@unleash/proxy-client-react', () => ({
 describe('Blueprints', () => {
   const user = userEvent.setup();
   const blueprintNameWithComposes = 'Dark Chocolate';
+  const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
   const blueprintNameEmptyComposes = 'Milk Chocolate';
+  const blueprintIdEmptyComposes = '193482e4-4bd0-4898-a8bc-dc8c33ed669f';
 
   test('renders blueprints page', async () => {
     renderWithReduxRouter('', {});
@@ -50,37 +52,51 @@ describe('Blueprints', () => {
   });
   test('renders blueprint composes', async () => {
     renderWithReduxRouter('', {});
+    const idMatcher = blueprintIdWithComposes;
     const nameMatcher = (_, element) =>
-      element.getAttribute('name') === blueprintNameWithComposes;
+      element.getAttribute('name') === 'blueprints';
 
-    const blueprintRadioBtn = await screen.findByRole('radio', {
+    const radioButtons = await screen.findAllByRole('radio', {
       name: nameMatcher,
     });
-    await user.click(blueprintRadioBtn);
+    const elementById = radioButtons.find(
+      (button) => button.getAttribute('id') === idMatcher
+    );
+
+    await user.click(elementById);
     const table = await screen.findByTestId('images-table');
     const { findByText } = within(table);
     await findByText(blueprintNameWithComposes);
   });
   test('renders blueprint composes empty state', async () => {
     renderWithReduxRouter('', {});
+    const idMatcher = blueprintIdEmptyComposes;
     const nameMatcher = (_, element) =>
-      element.getAttribute('name') === blueprintNameEmptyComposes;
+      element.getAttribute('name') === 'blueprints';
 
-    const blueprintRadioBtn = await screen.findByRole('radio', {
+    const radioButtons = await screen.findAllByRole('radio', {
       name: nameMatcher,
     });
-    await user.click(blueprintRadioBtn);
+    const elementById = radioButtons.find(
+      (button) => button.getAttribute('id') === idMatcher
+    );
+    await user.click(elementById);
     expect(screen.queryByTestId('images-table')).not.toBeInTheDocument();
   });
   test('click build image button', async () => {
     renderWithReduxRouter('', {});
+    const idMatcher = blueprintIdWithComposes;
     const nameMatcher = (_, element) =>
-      element.getAttribute('name') === blueprintNameWithComposes;
+      element.getAttribute('name') === 'blueprints';
 
-    const blueprintRadioBtn = await screen.findByRole('radio', {
+    const radioButtons = await screen.findAllByRole('radio', {
       name: nameMatcher,
     });
-    await user.click(blueprintRadioBtn);
+    const elementById = radioButtons.find(
+      (button) => button.getAttribute('id') === idMatcher
+    );
+
+    await user.click(elementById);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build image/i,
     });
@@ -99,7 +115,7 @@ describe('Blueprints', () => {
 
       // wait for debounce
       await waitFor(() => {
-        expect(screen.getAllByRole('radio')).toHaveLength(1);
+        expect(screen.getAllByRole('radio')).toHaveLength(2);
       });
     });
   });

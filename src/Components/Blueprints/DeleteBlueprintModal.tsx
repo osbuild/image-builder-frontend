@@ -7,9 +7,11 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 
+import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
+
 interface DeleteBlueprintModalProps {
   onDelete: () => Promise<void>;
-  blueprintName: string;
+  selectedBlueprint: string | undefined;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -18,10 +20,21 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   DeleteBlueprintModalProps
 > = ({
   onDelete,
-  blueprintName,
+  selectedBlueprint,
   isOpen,
   onClose,
 }: DeleteBlueprintModalProps) => {
+  const { blueprintName } = useGetBlueprintsQuery(
+    { search: undefined },
+    {
+      selectFromResult: ({ data }) => ({
+        blueprintName: data?.data?.find(
+          (blueprint: { id: string | undefined }) =>
+            blueprint.id === selectedBlueprint
+        )?.name,
+      }),
+    }
+  );
   return (
     <Modal
       variant={ModalVariant.small}

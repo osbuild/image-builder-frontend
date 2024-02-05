@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -7,6 +7,11 @@ import {
   TextContent,
   Flex,
   FlexItem,
+  Dropdown,
+  DropdownList,
+  MenuToggle,
+  MenuToggleElement,
+  DropdownItem,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
@@ -17,9 +22,13 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { Link } from 'react-router-dom';
 
-import { useComposeBlueprintMutation } from '../../store/imageBuilderApi';
+import {
+  useComposeBlueprintMutation,
+  useDeleteBlueprintMutation,
+} from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
+import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
   experimentalFlag?: string | true | undefined;
@@ -36,10 +45,34 @@ export const ImageBuilderHeader = ({
   const onBuildHandler = async () => {
     selectedBlueprint && (await buildBlueprint({ id: selectedBlueprint }));
   };
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const onSelect = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const [showDeleteModal, setShowDeleteModal] = React.useState(false);
+  const [deleteBlueprint] = useDeleteBlueprintMutation({
+    fixedCacheKey: 'delete-blueprint',
+  });
+  const handleDelete = async () => {
+    if (selectedBlueprint) {
+      setShowDeleteModal(false);
+      await deleteBlueprint({ id: selectedBlueprint });
+    }
+  };
+  const onDeleteClose = () => {
+    setShowDeleteModal(false);
+  };
 
   return (
     <>
       {/*@ts-ignore*/}
+      <DeleteBlueprintModal
+        onDelete={handleDelete}
+        selectedBlueprint={selectedBlueprint}
+        isOpen={showDeleteModal}
+        onClose={onDeleteClose}
+      />
       <PageHeader>
         <Flex>
           <FlexItem>
@@ -120,6 +153,34 @@ export const ImageBuilderHeader = ({
                 >
                   Build images
                 </Button>
+              </FlexItem>
+              <FlexItem>
+                <Dropdown
+                  ouiaId={`blueprints-dropdown`}
+                  isOpen={isOpen}
+                  onSelect={onSelect}
+                  onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+                  shouldFocusToggleOnSelect
+                  toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+                    <MenuToggle
+                      ref={toggleRef}
+                      isExpanded={isOpen}
+                      onClick={() => setIsOpen(!isOpen)}
+                      variant="secondary"
+                      aria-label="blueprint menu toggle"
+                      isDisabled={selectedBlueprint === undefined}
+                    >
+                      Blueprint actions
+                    </MenuToggle>
+                  )}
+                >
+                  <DropdownList>
+                    <DropdownItem>Edit details</DropdownItem>
+                    <DropdownItem onClick={() => setShowDeleteModal(true)}>
+                      Delete blueprint
+                    </DropdownItem>
+                  </DropdownList>
+                </Dropdown>
               </FlexItem>{' '}
             </>
           )}
