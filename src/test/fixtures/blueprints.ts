@@ -23,7 +23,7 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       last_modified_at: '2021-09-09T14:38:00.000Z',
     },
     {
-      id: '677b0101-e952-4694-9813-d11d847f1bfc',
+      id: '193482e4-4bd0-4898-a8bc-dc8c33ed669f',
       name: 'Milk Chocolate',
       description: '40% Milk Chocolate with salted caramel',
       version: 1,

@@ -3,6 +3,9 @@ import React, { useState, useCallback } from 'react';
 import {
   Bullseye,
   Button,
+  Card,
+  CardHeader,
+  CardTitle,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
@@ -103,14 +106,23 @@ const BlueprintsSidebar = ({
               />
             </StackItem>
             <StackItem>
-              <Button
-                isBlock
-                onClick={() => setSelectedBlueprint(undefined)}
-                variant="link"
+              <Card
+                ouiaId={`blueprint-card-all`}
+                isCompact
+                isClickable
                 isDisabled={!selectedBlueprint}
               >
-                Show all images
-              </Button>
+                <CardHeader
+                  selectableActions={{
+                    selectableActionId: 'show-all-card',
+                    name: 'blueprints',
+                    variant: 'single',
+                    onClickAction: () => setSelectedBlueprint(undefined),
+                  }}
+                >
+                  <CardTitle component="a">Clear selection</CardTitle>
+                </CardHeader>
+              </Card>
             </StackItem>
           </>
         )}
