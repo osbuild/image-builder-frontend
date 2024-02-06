@@ -2,11 +2,14 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import { RootState } from '.';
 
+export type versionFilterType = 'latest' | 'all';
+
 type blueprintsState = {
   selectedBlueprintId: string | undefined;
   searchInput?: string;
   offset?: number;
   limit?: number;
+  versionFilter?: versionFilterType;
 };
 
 const initialState: blueprintsState = {
@@ -14,6 +17,7 @@ const initialState: blueprintsState = {
   searchInput: undefined,
   offset: 0,
   limit: 10,
+  versionFilter: 'all',
 };
 
 export const selectSelectedBlueprintId = (state: RootState) =>
@@ -22,6 +26,18 @@ export const selectBlueprintSearchInput = (state: RootState) =>
   state.blueprints.searchInput;
 export const selectOffset = (state: RootState) => state.blueprints.offset;
 export const selectLimit = (state: RootState) => state.blueprints.limit;
+export const selectBlueprintVersionFilter = (state: RootState) =>
+  state.blueprints.versionFilter;
+export const selectBlueprintVersionFilterAPI = (
+  state: RootState
+): number | undefined => {
+  const blueprintVersionFilter = state.blueprints.versionFilter;
+  // We allow only 'latest' filtering, everything else is understood as 'all'
+  if (blueprintVersionFilter === 'latest') {
+    return -1;
+  }
+  return undefined;
+};
 
 export const blueprintsSlice = createSlice({
   name: 'blueprints',
@@ -42,6 +58,12 @@ export const blueprintsSlice = createSlice({
     setBlueprintLimit: (state, action: PayloadAction<number>) => {
       state.limit = action.payload;
     },
+    setBlueprintVersionFilter: (
+      state,
+      action: PayloadAction<versionFilterType>
+    ) => {
+      state.versionFilter = action.payload;
+    },
   },
 });
 
@@ -50,4 +72,5 @@ export const {
   setBlueprintSearchInput,
   setBlueprintsOffset,
   setBlueprintLimit,
+  setBlueprintVersionFilter,
 } = blueprintsSlice.actions;

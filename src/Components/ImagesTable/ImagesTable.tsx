@@ -46,6 +46,8 @@ import {
 } from '../../constants';
 import {
   selectBlueprintSearchInput,
+  selectBlueprintVersionFilter,
+  selectBlueprintVersionFilterAPI,
   selectSelectedBlueprintId,
 } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -70,6 +72,7 @@ const ImagesTable = () => {
   const [perPage, setPerPage] = useState(10);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     { search: blueprintSearchInput },
@@ -100,6 +103,7 @@ const ImagesTable = () => {
       id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
     },
     { skip: !selectedBlueprintId }
   );
@@ -163,7 +167,12 @@ const ImagesTable = () => {
     );
   }
 
-  const composes = data?.data;
+  let composes = data?.data;
+  if (selectedBlueprintId && blueprintVersionFilter === 'latest') {
+    composes = composes?.filter((compose) => {
+      return compose.blueprint_version === selectedBlueprintVersion;
+    });
+  }
   const itemCount = data?.meta.count || 0;
 
   return (
@@ -173,7 +182,7 @@ const ImagesTable = () => {
           itemCount={itemCount}
           perPage={perPage}
           page={page}
-          onSetPage={onSetPage}
+          setPage={setPage}
           onPerPageSelect={onPerPageSelect}
         />
         <Table variant="compact" data-testid="images-table">

@@ -21,6 +21,7 @@ import {
 import { resolveRelPath } from '../../Utilities/path';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
+import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 
@@ -28,7 +29,7 @@ interface imagesTableToolbarProps {
   itemCount: number;
   perPage: number;
   page: number;
-  onSetPage: (event: React.MouseEvent, page: number) => void;
+  setPage: (page: number) => void;
   onPerPageSelect: (event: React.MouseEvent, perPage: number) => void;
 }
 
@@ -36,7 +37,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   itemCount,
   perPage,
   page,
-  onSetPage,
+  setPage,
   onPerPageSelect,
 }: imagesTableToolbarProps) => {
   const experimentalFlag = useExperimentalFlag();
@@ -60,7 +61,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       itemCount={itemCount}
       perPage={perPage}
       page={page}
-      onSetPage={onSetPage}
+      onSetPage={(_, page) => setPage(page)}
       onPerPageSelect={onPerPageSelect}
       widgetId="compose-pagination-top"
       data-testid="images-pagination-top"
@@ -110,6 +111,11 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
           <ToolbarItem>
             <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
           </ToolbarItem>
+          {selectedBlueprintId && (
+            <ToolbarItem>
+              <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
+            </ToolbarItem>
+          )}
           <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
             {pagination}
           </ToolbarItem>

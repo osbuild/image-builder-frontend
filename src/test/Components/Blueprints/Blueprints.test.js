@@ -32,6 +32,20 @@ jest.mock('@unleash/proxy-client-react', () => ({
   ),
 }));
 
+const selectBlueprintById = async (user, bpId) => {
+  const nameMatcher = (_, element) =>
+    element.getAttribute('name') === 'blueprints';
+
+  const radioButtons = await screen.findAllByRole('radio', {
+    name: nameMatcher,
+  });
+  const elementById = radioButtons.find(
+    (button) => button.getAttribute('id') === bpId
+  );
+  await user.click(elementById);
+  return elementById;
+};
+
 describe('Blueprints', () => {
   const user = userEvent.setup();
   const blueprintNameWithComposes = 'Dark Chocolate';
@@ -74,7 +88,7 @@ describe('Blueprints', () => {
     await user.click(elementById);
     const table = await screen.findByTestId('images-table');
     const { findAllByText } = within(table);
-    const images = await findAllByText(blueprintNameWithComposes);
+    const images = await findAllByText('dark-chocolate-aws');
     expect(images).toHaveLength(2);
   });
   test('renders blueprint composes empty state', async () => {
@@ -94,6 +108,7 @@ describe('Blueprints', () => {
     const { findByText } = within(table);
     await findByText('No images');
   });
+
   test('click build image button', async () => {
     renderWithReduxRouter('', {});
     const idMatcher = blueprintIdWithComposes;
@@ -197,6 +212,30 @@ describe('Blueprints', () => {
       await waitFor(() => {
         expect(screen.getAllByRole('radio')).toHaveLength(1);
       });
+    });
+  });
+
+  describe('composes filtering', () => {
+    test('filter composes by blueprint version', async () => {
+      renderWithReduxRouter('', {});
+
+      await selectBlueprintById(user, blueprintIdWithComposes);
+
+      // Wait for the filter appear (right now it's hidden unless a blueprint is selected)
+      const composesVersionFilter = await screen.findByRole('button', {
+        name: /All Versions/i,
+      });
+
+      expect(
+        within(screen.getByTestId('images-table')).getAllByRole('row')
+      ).toHaveLength(4);
+
+      await user.click(composesVersionFilter);
+      const option = await screen.findByRole('menuitem', { name: 'Newest' });
+      await user.click(option);
+      expect(
+        within(screen.getByTestId('images-table')).getAllByRole('row')
+      ).toHaveLength(2);
     });
   });
 });

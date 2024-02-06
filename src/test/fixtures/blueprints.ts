@@ -1,4 +1,4 @@
-import { RHEL_9 } from '../../constants';
+import { RHEL_8, RHEL_9 } from '../../constants';
 import {
   GetBlueprintsApiResponse,
   CreateBlueprintResponse,
@@ -20,7 +20,7 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
       name: 'Dark Chocolate',
       description: '70% Dark Chocolate with crunchy cocoa nibs',
-      version: 1,
+      version: 2,
       last_modified_at: '2021-09-09T14:38:00.000Z',
     },
     {
@@ -75,15 +75,36 @@ export const mockBlueprintComposesOutOfSync: GetBlueprintComposesApiResponse = {
 };
 
 export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
-  meta: { count: 2 },
+  meta: { count: 3 },
   data: [
     {
+      id: '63e42aaf-b543-41c6-899f-3de1e61838dc',
+      image_name: 'dark-chocolate-aws',
+      created_at: '2023-09-08T14:38:00.000Z',
+      blueprint_version: 2,
+      request: {
+        distribution: RHEL_9,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
       id: '1579d95b-8f1d-4982-8c53-8c2afa4ab04c',
-      image_name: 'Dark Chocolate',
+      image_name: 'dark-chocolate-aws',
       created_at: '2021-09-08T14:38:00.000Z',
       blueprint_version: 1,
       request: {
-        distribution: RHEL_9,
+        distribution: RHEL_8,
         image_requests: [
           {
             architecture: 'x86_64',

@@ -1,6 +1,6 @@
 import { PathParams, RestRequest } from 'msw';
 
-import { RHEL_8 } from '../../constants';
+import { RHEL_8, RHEL_9 } from '../../constants';
 import {
   ClonesResponse,
   ComposeStatus,
@@ -401,6 +401,26 @@ export const mockComposes: ComposesResponseItem[] = [
       ],
     },
   },
+  {
+    id: '63e42aaf-b543-41c6-899f-3de1e61838dc',
+    image_name: 'dark-chocolate-v2',
+    created_at: '2023-09-08T14:38:00.000Z',
+    request: {
+      distribution: RHEL_9,
+      image_requests: [
+        {
+          architecture: 'x86_64',
+          image_type: 'aws',
+          upload_request: {
+            type: 'aws',
+            options: {
+              share_with_accounts: ['123123123123'],
+            },
+          },
+        },
+      ],
+    },
+  },
 ];
 
 /**
@@ -423,6 +443,34 @@ export const mockStatus = (composeId: string): ComposeStatus => {
       },
       request: {
         distribution: RHEL_8,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
+        ],
+      },
+    },
+    '63e42aaf-b543-41c6-899f-3de1e61838dc': {
+      image_status: {
+        status: 'success',
+        upload_status: {
+          options: {
+            ami: 'ami-0217b81d9be50e44c',
+            region: 'us-east-1',
+          },
+          status: 'success',
+          type: 'aws',
+        },
+      },
+      request: {
+        distribution: RHEL_9,
         image_requests: [
           {
             architecture: 'x86_64',
