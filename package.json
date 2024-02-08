@@ -58,7 +58,7 @@
     "@babel/eslint-parser": "7.23.9",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",
     "@babel/plugin-transform-runtime": "7.23.9",
-    "@babel/preset-env": "7.23.6",
+    "@babel/preset-env": "7.23.9",
     "@babel/preset-react": "7.23.3",
     "@babel/preset-typescript": "7.23.3",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.3",
