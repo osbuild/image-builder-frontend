@@ -24,7 +24,10 @@ import {
   isAwsAccountIdValid,
   isAzureTenantGUIDValid,
   isAzureSubscriptionIdValid,
+<<<<<<< HEAD
   isAzureResourceGroupValid,
+=======
+>>>>>>> 04343f8 (add some changes when user choose to fill source)
   isBlueprintDescriptionValid,
   isBlueprintNameValid,
   isGcpEmailValid,
@@ -38,7 +41,10 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+<<<<<<< HEAD
   selectAzureResourceGroup,
+=======
+>>>>>>> 04343f8 (add some changes when user choose to fill source)
   selectAzureShareMethod,
   selectAzureSource,
   selectAzureSubscriptionId,
@@ -118,9 +124,12 @@ const CreateImageWizard = () => {
   const azureSubscriptionId = useAppSelector((state) =>
     selectAzureSubscriptionId(state)
   );
+<<<<<<< HEAD
   const azureResourceGroup = useAppSelector((state) =>
     selectAzureResourceGroup(state)
   );
+=======
+>>>>>>> 04343f8 (add some changes when user choose to fill source)
   const azureSource = useAppSelector((state) => selectAzureSource(state));
 
   const registrationType = useAppSelector((state) =>
@@ -200,12 +209,16 @@ const CreateImageWizard = () => {
                     disableNext={
                       azureShareMethod === 'manual'
                         ? !isAzureTenantGUIDValid(azureTenantId) ||
+<<<<<<< HEAD
                           !isAzureSubscriptionIdValid(azureSubscriptionId) ||
                           !isAzureResourceGroupValid(azureResourceGroup)
                         : azureShareMethod === 'sources'
                         ? !isAzureTenantGUIDValid(azureTenantId) ||
                           !isAzureSubscriptionIdValid(azureSubscriptionId) ||
                           !isAzureResourceGroupValid(azureResourceGroup)
+=======
+                          !isAzureSubscriptionIdValid(azureSubscriptionId)
+>>>>>>> 04343f8 (add some changes when user choose to fill source)
                         : azureSource === undefined
                     }
                   />
