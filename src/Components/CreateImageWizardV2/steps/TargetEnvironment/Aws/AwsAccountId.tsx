@@ -5,6 +5,7 @@ import {
   HelperText,
   HelperTextItem,
   TextInput,
+  FormGroup,
 } from '@patternfly/react-core';
 
 import { useAppSelector } from '../../../../../store/hooks';
@@ -23,13 +24,15 @@ export const AwsAccountId = () => {
 
   return (
     <>
-      <TextInput
-        readOnlyVariant="default"
-        isRequired
-        id="aws-account-id"
-        value={source && data ? data.aws?.account_id : ''}
-        aria-label="aws account id"
-      />
+      <FormGroup label="Associated Account ID" isRequired>
+        <TextInput
+          readOnlyVariant="default"
+          isRequired
+          id="aws-account-id"
+          value={source && data ? data.aws?.account_id : ''}
+          aria-label="aws account id"
+        />
+      </FormGroup>
       <HelperText>
         <HelperTextItem component="div" variant="indeterminate">
           This is the account associated with the source.

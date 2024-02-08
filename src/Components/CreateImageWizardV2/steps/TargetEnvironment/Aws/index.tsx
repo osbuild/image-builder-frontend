@@ -104,12 +104,14 @@ const Aws = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-              <TextInput
-                readOnlyVariant="default"
-                isRequired
-                id="someid"
-                value="us-east-1"
-              />
+              <FormGroup label="Default Region" isRequired>
+                <TextInput
+                  readOnlyVariant="default"
+                  isRequired
+                  id="someid"
+                  value="us-east-1"
+                />
+              </FormGroup>
               <HelperText>
                 <HelperTextItem component="div" variant="indeterminate">
                   Images are built in the default region but can be copied to
