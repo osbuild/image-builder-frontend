@@ -127,11 +127,7 @@ const Azure = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-<<<<<<< HEAD
               <FormGroup label="Azure Tenant GUID" isRequired>
-=======
-              <FormGroup label="Azure Tenant GUID">
->>>>>>> 04343f8 (add some changes when user choose to fill source)
                 <TextInput
                   aria-label="Azure Tenant GUID"
                   readOnlyVariant="default"
@@ -142,11 +138,7 @@ const Azure = () => {
               </FormGroup>
             </GalleryItem>
             <GalleryItem>
-<<<<<<< HEAD
               <FormGroup label="Subscription ID" isRequired>
-=======
-              <FormGroup label="Subscription ID">
->>>>>>> 04343f8 (add some changes when user choose to fill source)
                 <TextInput
                   aria-label="Subscription ID"
                   label="Subscription ID"
@@ -158,10 +150,7 @@ const Azure = () => {
               </FormGroup>
             </GalleryItem>
           </Gallery>
-<<<<<<< HEAD
           <AzureAuthButton />
-=======
->>>>>>> 04343f8 (add some changes when user choose to fill source)
           <AzureResourceGroups />
         </>
       )}
@@ -201,10 +190,6 @@ const Azure = () => {
           </FormGroup>
         </>
       )}
-<<<<<<< HEAD
-=======
-      <AzureAuthButton />
->>>>>>> 04343f8 (add some changes when user choose to fill source)
     </Form>
   );
 };

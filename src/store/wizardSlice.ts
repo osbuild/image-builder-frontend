@@ -41,19 +41,11 @@ type wizardState = {
     source: V1ListSourceResponseItem | undefined;
   };
   azure: {
-<<<<<<< HEAD
     shareMethod: AzureShareMethod;
     tenantId: string;
     subscriptionId: string;
     source: string;
     resourceGroup: string;
-=======
-    tenantId: string;
-    shareMethod: AzureShareMethod;
-    subscriptionId: string;
-    source: AzureUploadRequestOptions['source_id'] | undefined;
-    resourceGroup: AzureUploadRequestOptions['resource_group'];
->>>>>>> 04343f8 (add some changes when user choose to fill source)
   };
   gcp: {
     shareMethod: GcpShareMethod;
@@ -99,10 +91,6 @@ const initialState: wizardState = {
     source: undefined,
   },
   azure: {
-<<<<<<< HEAD
-=======
-    tenantId: '',
->>>>>>> 04343f8 (add some changes when user choose to fill source)
     shareMethod: 'sources',
     tenantId: '',
     subscriptionId: '',
@@ -172,11 +160,7 @@ export const selectAwsShareMethod = (state: RootState) => {
   return state.wizard.aws.shareMethod;
 };
 
-<<<<<<< HEAD
 export const selectAzureTenantId = (state: RootState) => {
-=======
-export const selectAzureTenantId = (state: RootState): string => {
->>>>>>> 04343f8 (add some changes when user choose to fill source)
   return state.wizard.azure.tenantId;
 };
 
@@ -192,13 +176,7 @@ export const selectAzureSource = (state: RootState) => {
   return state.wizard.azure.source;
 };
 
-<<<<<<< HEAD
 export const selectAzureResourceGroup = (state: RootState) => {
-=======
-export const selectAzureResourceGroup = (
-  state: RootState
-): AzureUploadRequestOptions['resource_group'] => {
->>>>>>> 04343f8 (add some changes when user choose to fill source)
   return state.wizard.azure.resourceGroup;
 };
 
@@ -316,14 +294,7 @@ export const wizardSlice = createSlice({
     changeAzureSource: (state, action: PayloadAction<string>) => {
       state.azure.source = action.payload;
     },
-<<<<<<< HEAD
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
-=======
-    changeAzureResourceGroup: (
-      state,
-      action: PayloadAction<AzureUploadRequestOptions['resource_group']>
-    ) => {
->>>>>>> 04343f8 (add some changes when user choose to fill source)
       state.azure.resourceGroup = action.payload;
     },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
