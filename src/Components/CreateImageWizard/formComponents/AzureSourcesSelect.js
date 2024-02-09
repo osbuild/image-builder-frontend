@@ -65,6 +65,7 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
       change(input.name, undefined);
       change('azure-tenant-id', undefined);
       change('azure-subscription-id', undefined);
+      change('azure-resource-group', undefined);
     }
   };
 
@@ -76,6 +77,7 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
 
   const handleClear = () => {
     change(input.name, undefined);
+    change('azure-resource-group', undefined);
   };
 
   const handleToggle = () => {
