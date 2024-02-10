@@ -36,6 +36,11 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+  selectAzureShareMethod,
+  selectAzureSource,
+  selectAzureResourceGroup,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintName,
   selectCustomRepositories,
@@ -212,6 +217,18 @@ export const TargetEnvGCPList = () => {
 };
 
 export const TargetEnvAzureList = () => {
+  const { data: rawAzureSources, isSuccess: isSuccessAzureSources } =
+    useGetSourceListQuery({ provider: 'azure' });
+  const shareMethod = useAppSelector((state) => selectAzureShareMethod(state));
+  const tenantId = useAppSelector((state) => selectAzureTenantId(state));
+  const azureSource = useAppSelector((state) => selectAzureSource(state));
+  const azureResourceGroup = useAppSelector((state) =>
+    selectAzureResourceGroup(state)
+  );
+  const subscriptionId = useAppSelector((state) =>
+    selectAzureSubscriptionId(state)
+  );
+
   return (
     <TextContent>
       <Text component={TextVariants.h3}>Microsoft Azure</Text>
@@ -221,6 +238,47 @@ export const TargetEnvAzureList = () => {
           className="pf-u-min-width"
         >
           Image type
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          Red Hat hosted image
+          <br />
+          <ExpirationWarning />
+        </TextListItem>
+        {shareMethod === 'sources' && isSuccessAzureSources && (
+          <>
+            <TextListItem component={TextListItemVariants.dt}>
+              Azure Source
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {
+                rawAzureSources.data?.find(
+                  (source) => source.id === azureSource
+                )?.name
+              }
+            </TextListItem>
+          </>
+        )}
+        {shareMethod === 'manual' && (
+          <>
+            <TextListItem component={TextListItemVariants.dt}>
+              Azure Tenant ID
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {tenantId}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              Subscription ID
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {subscriptionId}
+            </TextListItem>
+          </>
+        )}
+        <TextListItem component={TextListItemVariants.dt}>
+          Resource group
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {azureResourceGroup}
         </TextListItem>
       </TextList>
       <br />
