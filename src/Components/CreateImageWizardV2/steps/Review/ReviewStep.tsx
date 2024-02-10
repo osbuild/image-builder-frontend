@@ -15,7 +15,7 @@ import {
   OscapList,
   RegisterLaterList,
   RegisterNowList,
-  TargetEnvAWSList,
+  TargetEnvAWSList, TargetEnvAzureList,
   TargetEnvGCPList,
   TargetEnvOciList,
   TargetEnvOtherList,
@@ -91,6 +91,7 @@ const Review = () => {
       >
         {environments.includes('aws') && <TargetEnvAWSList />}
         {environments.includes('gcp') && <TargetEnvGCPList />}
+        {environments.includes('azure') && <TargetEnvAzureList />}
         {environments.includes('oci') && <TargetEnvOciList />}
         {environments.includes('vsphere') && (
           <TextContent>
