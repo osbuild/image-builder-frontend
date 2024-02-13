@@ -1,4 +1,6 @@
-import { RootState, store } from '../../../store';
+import { Store } from 'redux';
+
+import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
   CreateBlueprintRequest,
@@ -18,7 +20,6 @@ import {
   selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
-  selectCustomRepositories,
   selectDistribution,
   selectGcpAccountType,
   selectGcpEmail,
@@ -33,7 +34,10 @@ import {
  * @param {string} orgID organization ID
  * @returns {CreateBlueprintRequest} blueprint creation request payload
  */
-export const mapRequestFromState = (orgID: string): CreateBlueprintRequest => {
+export const mapRequestFromState = (
+  store: Store,
+  orgID: string
+): CreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
   const customizations = getCustomizations(state, orgID);
@@ -127,7 +131,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     subscription: getSubscription(state, orgID),
     packages: undefined,
     payload_repositories: undefined,
-    custom_repositories: selectCustomRepositories(state),
+    custom_repositories: undefined,
     openscap: undefined,
     filesystem: undefined,
     users: undefined,
@@ -146,19 +150,36 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
   };
 };
 
-const getSubscription = (state: RootState, orgID: string): Subscription => {
+const getSubscription = (
+  state: RootState,
+  orgID: string
+): Subscription | undefined => {
+  const registrationType = selectRegistrationType(state);
+  const activationKey = selectActivationKey(state);
+
+  if (registrationType === 'register-later') {
+    return undefined;
+  }
+
+  if (activationKey === undefined) {
+    throw new Error(
+      'Activation key unexpectedly undefined while generating subscription customization'
+    );
+  }
+
   const initialSubscription = {
-    'activation-key': selectActivationKey(state) || '',
+    'activation-key': activationKey,
     organization: Number(orgID),
     'server-url': selectServerUrl(state),
     'base-url': selectBaseUrl(state),
   };
-  switch (selectRegistrationType(state)) {
-    case 'register-now-insights':
-      return { ...initialSubscription, insights: true };
+
+  switch (registrationType) {
     case 'register-now-rhc':
       return { ...initialSubscription, insights: true, rhc: true };
-    default:
-      return { ...initialSubscription, insights: false };
+    case 'register-now-insights':
+      return { ...initialSubscription, insights: true, rhc: false };
+    case 'register-now':
+      return { ...initialSubscription, insights: false, rhc: false };
   }
 };

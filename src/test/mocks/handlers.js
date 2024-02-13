@@ -2,6 +2,7 @@ import { rest } from 'msw';
 
 import {
   CONTENT_SOURCES_API,
+  CREATE_BLUEPRINT,
   IMAGE_BUILDER_API,
   PROVISIONING_API,
   RHSM_API,
@@ -137,6 +138,12 @@ export const handlers = [
       return res(ctx.status(200));
     }
   ),
+  rest.post(CREATE_BLUEPRINT, (req, res, ctx) => {
+    const response = {
+      id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+    };
+    return res(ctx.status(201), ctx.json(response));
+  }),
   rest.get(
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
     (req, res, ctx) => {

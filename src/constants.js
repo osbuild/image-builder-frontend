@@ -10,6 +10,8 @@ export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
 
+export const CREATE_BLUEPRINT = `${IMAGE_BUILDER_API}/experimental/blueprints`;
+
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
 export const UNIT_GIB = 1024 ** 3;
