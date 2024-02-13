@@ -12,12 +12,12 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 
 // Temporarily disable
 //import RepositoryUnavailable from './RepositoryUnavailable';
+import OscapProfileInformation from './OscapProfileInformation';
 import {
   ContentList,
   FSCList,
   ImageDetailsList,
   ImageOutputList,
-  OscapList,
   RegisterLaterList,
   RegisterNowList,
   TargetEnvAWSList,
@@ -216,7 +216,7 @@ const ReviewStep = () => {
           isIndented
           data-testid="oscap-detail-expandable"
         >
-          <OscapList />
+          <OscapProfileInformation />
         </ExpandableSection>
       )}
     </>

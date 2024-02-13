@@ -87,6 +87,15 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
     ) {
       setProfileName(data.openscap.profile_name);
     }
+    if (data?.kernel) {
+      change('kernel', data.kernel);
+    }
+    if (data?.services?.enabled) {
+      change('enabledServices', data.services.enabled);
+    }
+    if (data?.services?.disabled) {
+      change('disabledServices', data.services.disabled);
+    }
   }, [data]);
 
   const handleToggle = () => {
@@ -99,6 +108,9 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
   const handleClear = () => {
     setProfile(undefined);
     change(input.name, undefined);
+    change('kernel', undefined);
+    change('disabledServices', undefined);
+    change('enabledServices', undefined);
     // @ts-ignore
     setProfileName(undefined);
     reinitDependingSteps(change);
