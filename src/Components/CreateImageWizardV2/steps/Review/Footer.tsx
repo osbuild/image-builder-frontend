@@ -12,6 +12,7 @@ import {
 } from '@patternfly/react-core';
 import { SpinnerIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import {
@@ -33,7 +34,7 @@ const ReviewWizardFooter = () => {
   const navigate = useNavigate();
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
-
+  const store = useStore();
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
@@ -47,7 +48,7 @@ const ReviewWizardFooter = () => {
   const getBlueprintPayload = async () => {
     const userData = await auth?.getUser();
     const orgId = userData?.identity?.internal?.org_id;
-    const requestBody = orgId && mapRequestFromState(orgId);
+    const requestBody = orgId && mapRequestFromState(store, orgId);
     return requestBody;
   };
 

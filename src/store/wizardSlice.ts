@@ -21,6 +21,12 @@ import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
 
+export type RegistrationType =
+  | 'register-later'
+  | 'register-now'
+  | 'register-now-insights'
+  | 'register-now-rhc';
+
 type wizardState = {
   env: {
     serverUrl: string;
@@ -40,7 +46,7 @@ type wizardState = {
     email: string;
   };
   registration: {
-    registrationType: string;
+    registrationType: RegistrationType;
     activationKey: ActivationKeys['name'];
   };
   openScap: {
@@ -83,7 +89,7 @@ const initialState: wizardState = {
   },
   registration: {
     registrationType: 'register-now-rhc',
-    activationKey: '',
+    activationKey: undefined,
   },
   openScap: {
     profile: undefined,
@@ -250,7 +256,10 @@ export const wizardSlice = createSlice({
     changeGcpEmail: (state, action: PayloadAction<string>) => {
       state.gcp.email = action.payload;
     },
-    changeRegistrationType: (state, action: PayloadAction<string>) => {
+    changeRegistrationType: (
+      state,
+      action: PayloadAction<RegistrationType>
+    ) => {
       state.registration.registrationType = action.payload;
     },
     changeActivationKey: (
