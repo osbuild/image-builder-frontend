@@ -97,6 +97,23 @@ const onSave = (values) => {
     customizations.openscap = {
       profile_id: values['oscap-profile'],
     };
+    if (values['kernel']) {
+      customizations.kernel = values['kernel'];
+    }
+    if (
+      (Array.isArray(values['enabledServices']) &&
+        values['enabledServices'].length > 0) ||
+      (Array.isArray(values['disabledServices']) &&
+        values['disabledServices'].length > 0)
+    ) {
+      customizations.services = {};
+      if (values['enabledServices'].length > 0) {
+        customizations.services.enabled = values['enabledServices'];
+      }
+      if (values['disabledServices'].length > 0) {
+        customizations.services.disabled = values['disabledServices'];
+      }
+    }
   }
 
   const requests = [];
@@ -515,6 +532,11 @@ const requestToState = (composeRequest, isProd, enableOscap) => {
     if (enableOscap) {
       formState['oscap-profile'] =
         composeRequest?.customizations?.openscap?.profile_id;
+      formState['kernel'] = composeRequest?.customizations?.kernel;
+      formState['enabledServices'] =
+        composeRequest?.customizations?.services?.enabled;
+      formState['disabledServices'] =
+        composeRequest?.customizations?.services?.disabled;
     }
 
     return formState;
