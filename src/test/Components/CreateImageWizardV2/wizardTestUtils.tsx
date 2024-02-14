@@ -45,7 +45,9 @@ export const enterBlueprintName = async () => {
   await userEvent.type(blueprintName, 'Red Velvet');
 };
 
-export const saveBlueprint = async () => {
+export const interceptBlueprintRequest = async (requestPathname: string) => {
+  const receivedRequestPromise = spyOnRequest(requestPathname);
+
   const saveButton = await screen.findByRole('button', {
     name: 'Save',
   });
@@ -54,4 +56,6 @@ export const saveBlueprint = async () => {
     name: 'Save changes',
   });
   await userEvent.click(saveChangesButton);
+
+  return await receivedRequestPromise;
 };
