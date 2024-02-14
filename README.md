@@ -1,4 +1,11 @@
-# image-builder-frontend
+# Image Builder Frontend
+
+## Principles
+
+1. We want to use the latest and greatest web technologies.
+2. We want to expose all the options and customizations possible, even if not all are visible by default.
+3. The default path should be ‘short(est)’ clickpath, which should be determined in a data-driven way.
+4. This is an [Insights application](https://github.com/RedHatInsights/), so it abides by some rules and standards of Insights.
 
 ## Table of Contents
 1. [How to build and run image-builder-frontend](#frontend-development)
