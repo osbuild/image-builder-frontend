@@ -201,7 +201,7 @@ we're planning on using.
 
 To develop both the frontend and the backend you can again use the proxy to run both the
 frontend and backend locally against the chrome at cloud.redhat.com. For instructions
-see [devel/README.md](devel/README.md).
+see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-getting-started).
 
 ## File Structure
 
