@@ -10,8 +10,7 @@ import { clickNext } from '../../../../testUtils';
 import {
   enterBlueprintName,
   render,
-  saveBlueprint,
-  spyOnRequest,
+  interceptBlueprintRequest,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -109,10 +108,7 @@ describe('registration request generated correctly', () => {
     await goToRegistrationStep();
     await selectActivationKey();
     await goToReviewStep();
-
-    const receivedRequestPromise = spyOnRequest(CREATE_BLUEPRINT);
-    await saveBlueprint();
-    const receivedRequest = await receivedRequestPromise;
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {
       'activation-key': 'name0',
@@ -137,10 +133,7 @@ describe('registration request generated correctly', () => {
     await deselectEnableRemoteRemediations();
     await selectActivationKey();
     await goToReviewStep();
-
-    const receivedRequestPromise = spyOnRequest(CREATE_BLUEPRINT);
-    await saveBlueprint();
-    const receivedRequest = await receivedRequestPromise;
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {
       'activation-key': 'name0',
@@ -165,10 +158,7 @@ describe('registration request generated correctly', () => {
     await deselectPredictiveAnalytics();
     await selectActivationKey();
     await goToReviewStep();
-
-    const receivedRequestPromise = spyOnRequest(CREATE_BLUEPRINT);
-    await saveBlueprint();
-    const receivedRequest = await receivedRequestPromise;
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {
       'activation-key': 'name0',
@@ -192,10 +182,7 @@ describe('registration request generated correctly', () => {
     await clickShowAdditionalConnectionOptions();
     await clickRegisterLater();
     await goToReviewStep();
-
-    const receivedRequestPromise = spyOnRequest(CREATE_BLUEPRINT);
-    await saveBlueprint();
-    const receivedRequest = await receivedRequestPromise;
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
       ...blueprintRequest,
