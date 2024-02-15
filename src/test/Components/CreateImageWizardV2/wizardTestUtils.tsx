@@ -5,8 +5,12 @@ import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
+import {
+  CreateBlueprintRequest,
+  ImageRequest,
+} from '../../../store/imageBuilderApi';
 import { server } from '../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 export function spyOnRequest(pathname: string) {
   return new Promise((resolve) => {
@@ -34,8 +38,40 @@ const routes = [
   },
 ];
 
+export const imageRequest: ImageRequest = {
+  architecture: 'x86_64',
+  image_type: 'image-installer',
+  upload_request: {
+    options: {},
+    type: 'aws.s3',
+  },
+};
+
+export const blueprintRequest: CreateBlueprintRequest = {
+  name: 'Red Velvet',
+  description: '',
+  distribution: 'rhel-93',
+  image_requests: [imageRequest],
+  customizations: {},
+};
+
 export const render = async () => {
   await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+};
+
+export const goToRegistrationStep = async () => {
+  const bareMetalCheckBox = await screen.findByRole('checkbox', {
+    name: /bare metal installer checkbox/i,
+  });
+  await userEvent.click(bareMetalCheckBox);
+  await clickNext();
+};
+
+export const clickRegisterLater = async () => {
+  const radioButton = await screen.findByRole('radio', {
+    name: 'Register later',
+  });
+  await userEvent.click(radioButton);
 };
 
 export const enterBlueprintName = async () => {

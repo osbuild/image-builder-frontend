@@ -11,6 +11,8 @@ import {
   enterBlueprintName,
   render,
   interceptBlueprintRequest,
+  goToRegistrationStep,
+  clickRegisterLater,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -31,14 +33,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     getEnvironment: () => 'prod',
   }),
 }));
-
-const goToRegistrationStep = async () => {
-  const bareMetalCheckBox = await screen.findByRole('checkbox', {
-    name: /bare metal installer checkbox/i,
-  });
-  await userEvent.click(bareMetalCheckBox);
-  await clickNext();
-};
 
 const selectActivationKey = async () => {
   const activationKeyDropdown = await screen.findByRole('textbox', {
@@ -68,13 +62,6 @@ const deselectPredictiveAnalytics = async () => {
     name: 'Enable predictive analytics and management capabilities',
   });
   await userEvent.click(checkBox);
-};
-
-const clickRegisterLater = async () => {
-  const radioButton = await screen.findByRole('radio', {
-    name: 'Register later',
-  });
-  await userEvent.click(radioButton);
 };
 
 const goToReviewStep = async () => {
