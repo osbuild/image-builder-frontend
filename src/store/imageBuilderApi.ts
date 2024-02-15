@@ -110,6 +110,9 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.createBlueprintRequest,
       }),
     }),
+    getBlueprint: build.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
+      query: (queryArg) => ({ url: `/experimental/blueprints/${queryArg.id}` }),
+    }),
     deleteBlueprint: build.mutation<
       DeleteBlueprintApiResponse,
       DeleteBlueprintApiArg
@@ -250,6 +253,12 @@ export type UpdateBlueprintApiArg = {
   id: string;
   /** details of blueprint */
   createBlueprintRequest: CreateBlueprintRequest;
+};
+export type GetBlueprintApiResponse =
+  /** status 200 detail of a blueprint */ BlueprintResponse;
+export type GetBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
 };
 export type DeleteBlueprintApiResponse =
   /** status 204 Successfully deleted */ void;
@@ -783,6 +792,16 @@ export type CreateBlueprintRequest = {
   image_requests: ImageRequest[];
   customizations: Customizations;
 };
+export type BlueprintResponse = {
+  id: string;
+  name: string;
+  description: string;
+  distribution: Distributions;
+  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+   */
+  image_requests: ImageRequest[];
+  customizations: Customizations;
+};
 export const {
   useGetArchitecturesQuery,
   useGetComposesQuery,
@@ -797,6 +816,7 @@ export const {
   useGetBlueprintsQuery,
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
+  useGetBlueprintQuery,
   useDeleteBlueprintMutation,
   useComposeBlueprintMutation,
   useGetBlueprintComposesQuery,

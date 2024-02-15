@@ -16,7 +16,7 @@ import PackagesStep from './steps/Packages';
 import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
-import ReviewWizardFooter from './steps/Review/Footer';
+import ReviewWizardFooter from './steps/Review/Footer/Footer';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
@@ -85,7 +85,11 @@ export const CustomWizardFooter = ({
   );
 };
 
-const CreateImageWizard = () => {
+type CreateImageWizardProps = {
+  startStepIndex?: number;
+};
+
+const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -136,7 +140,11 @@ const CreateImageWizard = () => {
     <>
       <ImageBuilderHeader />
       <section className="pf-l-page__main-section pf-c-page__main-section">
-        <Wizard onClose={() => navigate(resolveRelPath(''))} isVisitRequired>
+        <Wizard
+          startIndex={startStepIndex}
+          onClose={() => navigate(resolveRelPath(''))}
+          isVisitRequired
+        >
           <WizardStep
             name="Image output"
             id="step-image-output"

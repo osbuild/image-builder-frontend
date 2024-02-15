@@ -20,7 +20,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import {
   useComposeBlueprintMutation,
@@ -41,6 +41,7 @@ export const ImageBuilderHeader = ({
 }: ImageBuilderHeaderPropTypes) => {
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
+  const navigate = useNavigate();
 
   const onBuildHandler = async () => {
     selectedBlueprint && (await buildBlueprint({ id: selectedBlueprint }));
@@ -167,7 +168,7 @@ export const ImageBuilderHeader = ({
                       isExpanded={isOpen}
                       onClick={() => setIsOpen(!isOpen)}
                       variant="secondary"
-                      aria-label="blueprint menu toggle"
+                      aria-label={`blueprint ${selectedBlueprint} menu toggle`}
                       isDisabled={selectedBlueprint === undefined}
                     >
                       Blueprint actions
@@ -175,7 +176,15 @@ export const ImageBuilderHeader = ({
                   )}
                 >
                   <DropdownList>
-                    <DropdownItem>Edit details</DropdownItem>
+                    <DropdownItem
+                      onClick={() =>
+                        navigate(
+                          resolveRelPath(`imagewizard/${selectedBlueprint}`)
+                        )
+                      }
+                    >
+                      Edit details
+                    </DropdownItem>
                     <DropdownItem onClick={() => setShowDeleteModal(true)}>
                       Delete blueprint
                     </DropdownItem>

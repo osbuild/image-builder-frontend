@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dropdown,
-  DropdownItem,
-  DropdownList,
   MenuToggle,
   MenuToggleElement,
   WizardFooterWrapper,
@@ -15,35 +13,50 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import CreateDropdown from './CreateDropdown';
+import EditDropdown from './EditDropdown';
+
 import {
-  useComposeBlueprintMutation,
   useCreateBlueprintMutation,
-} from '../../../../store/imageBuilderApi';
-import { resolveRelPath } from '../../../../Utilities/path';
-import { mapRequestFromState } from '../../utilities/requestMapper';
+  useUpdateBlueprintMutation,
+} from '../../../../../store/imageBuilderApi';
+import { resolveRelPath } from '../../../../../Utilities/path';
+import { mapRequestFromState } from '../../../utilities/requestMapper';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();
   const [
-    createBlueprint,
-    { isLoading: isCreationLoading, isSuccess: isCreationSuccess },
-  ] = useCreateBlueprintMutation();
-  const [buildBlueprint, { isLoading: isBuildLoading }] =
-    useComposeBlueprintMutation();
+    ,
+    {
+      isLoading: isCreationLoading,
+      isSuccess: isCreateSuccess,
+      reset: resetCreate,
+    },
+  ] = useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
+  const [
+    ,
+    {
+      isLoading: isUpdateLoading,
+      isSuccess: isUpdateSuccess,
+      reset: resetUpdate,
+    },
+  ] = useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
-  const navigate = useNavigate();
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
   const onToggleClick = () => {
     setIsOpen(!isOpen);
   };
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (isCreationSuccess) {
+    if (isUpdateSuccess || isCreateSuccess) {
+      resetCreate();
+      resetUpdate();
       navigate(resolveRelPath(''));
     }
-  }, [isCreationSuccess, navigate]);
+  }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
 
   const getBlueprintPayload = async () => {
     const userData = await auth?.getUser();
@@ -52,24 +65,7 @@ const ReviewWizardFooter = () => {
     return requestBody;
   };
 
-  const onSave = async () => {
-    const requestBody = await getBlueprintPayload();
-    setIsOpen(false);
-    !composeId &&
-      requestBody &&
-      createBlueprint({ createBlueprintRequest: requestBody });
-  };
-
-  const onSaveAndBuild = async () => {
-    const requestBody = await getBlueprintPayload();
-    setIsOpen(false);
-    const blueprint =
-      !composeId &&
-      requestBody &&
-      (await createBlueprint({ createBlueprintRequest: requestBody }).unwrap());
-    blueprint && buildBlueprint({ id: blueprint.id });
-    setIsOpen(false);
-  };
+  const isLoadingState = isCreationLoading || isUpdateLoading;
 
   return (
     <WizardFooterWrapper>
@@ -82,7 +78,7 @@ const ReviewWizardFooter = () => {
             ref={toggleRef}
             onClick={onToggleClick}
             isExpanded={isOpen}
-            icon={(isBuildLoading || isCreationLoading) && <SpinnerIcon />}
+            icon={isLoadingState && <SpinnerIcon />}
           >
             Save
           </MenuToggle>
@@ -90,14 +86,18 @@ const ReviewWizardFooter = () => {
         ouiaId="wizard-finish-dropdown"
         shouldFocusToggleOnSelect
       >
-        <DropdownList>
-          <DropdownItem onClick={onSave} ouiaId="wizard-save-btn">
-            Save changes
-          </DropdownItem>
-          <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-build-btn">
-            Save and build images
-          </DropdownItem>
-        </DropdownList>
+        {composeId ? (
+          <EditDropdown
+            getBlueprintPayload={getBlueprintPayload}
+            setIsOpen={setIsOpen}
+            blueprintId={composeId}
+          />
+        ) : (
+          <CreateDropdown
+            getBlueprintPayload={getBlueprintPayload}
+            setIsOpen={setIsOpen}
+          />
+        )}
       </Dropdown>
       <Button
         ouiaId="wizard-back-btn"

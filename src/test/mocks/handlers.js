@@ -14,6 +14,7 @@ import {
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
 import {
   mockBlueprintComposes,
+  mockBlueprintDetail,
   mockEmptyBlueprintsComposes,
   mockGetBlueprints,
 } from '../fixtures/blueprints';
@@ -152,6 +153,12 @@ export const handlers = [
         return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
       }
       return res(ctx.status(200), ctx.json(mockBlueprintComposes));
+    }
+  ),
+  rest.get(
+    `${IMAGE_BUILDER_API}/experimental/blueprints/:id`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(mockBlueprintDetail));
     }
   ),
 ];

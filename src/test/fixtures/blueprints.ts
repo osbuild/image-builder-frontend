@@ -3,6 +3,7 @@ import {
   GetBlueprintsApiResponse,
   CreateBlueprintResponse,
   GetBlueprintComposesApiResponse,
+  GetBlueprintApiResponse,
 } from '../../store/imageBuilderApi';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
@@ -90,4 +91,31 @@ export const mockEmptyBlueprintsComposes: GetBlueprintComposesApiResponse = {
   meta: { count: 0 },
   data: [],
   links: { first: 'first', last: 'last' },
+};
+
+export const updatedBlueprints: GetBlueprintsApiResponse = {
+  ...mockGetBlueprints,
+  data: mockGetBlueprints.data.map((item) => ({
+    ...item,
+    // Update version to 2 for all items
+    version: 2,
+    // If the item name is 'Dark Chocolate', rename it to 'Extra Dark Chocolate'
+    name: item.name === 'Dark Chocolate' ? 'Extra Dark Chocolate' : item.name,
+  })),
+};
+
+export const mockBlueprintDetail: GetBlueprintApiResponse = {
+  ...mockGetBlueprints.data[0],
+  image_requests: mockBlueprintComposes.data[0].request.image_requests,
+  distribution: mockBlueprintComposes.data[0].request.distribution,
+  customizations: {
+    subscription: {
+      organization: 1234,
+      'activation-key': '',
+      'server-url': '',
+      'base-url': '',
+      insights: true,
+      rhc: true,
+    },
+  },
 };

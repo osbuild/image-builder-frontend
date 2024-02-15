@@ -28,7 +28,7 @@ export type RegistrationType =
   | 'register-now-insights'
   | 'register-now-rhc';
 
-type wizardState = {
+export type wizardState = {
   env: {
     serverUrl: string;
     baseUrl: string;
@@ -101,7 +101,7 @@ const initialState: wizardState = {
   },
   gcp: {
     shareMethod: 'withGoogle',
-    accountType: 'google',
+    accountType: 'user',
     email: '',
   },
   registration: {
@@ -244,6 +244,8 @@ export const wizardSlice = createSlice({
   initialState,
   reducers: {
     initializeWizard: () => initialState,
+    loadWizardState: (state, action: PayloadAction<wizardState>) =>
+      action.payload,
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.env.serverUrl = action.payload;
     },
@@ -311,7 +313,7 @@ export const wizardSlice = createSlice({
           state.gcp.email = '';
           break;
         case 'withGoogle':
-          state.gcp.accountType = 'google';
+          state.gcp.accountType = 'user';
       }
       state.gcp.shareMethod = action.payload;
     },
@@ -417,5 +419,6 @@ export const {
   removePackage,
   changeBlueprintName,
   changeBlueprintDescription,
+  loadWizardState,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

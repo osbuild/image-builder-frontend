@@ -16,8 +16,8 @@ import { isGcpEmailValid } from '../../../validators';
 
 export type GcpShareMethod = 'withGoogle' | 'withInsights';
 export type GcpAccountType =
-  | 'google'
-  | 'service'
+  | 'user'
+  | 'serviceAccount'
   | 'group'
   | 'domain'
   | undefined;
@@ -85,9 +85,9 @@ const Gcp = () => {
               data-testid="google-account"
               label="Google account"
               name="radio-3"
-              isChecked={accountType === 'google'}
+              isChecked={accountType === 'user'}
               onChange={() => {
-                dispatch(changeGcpAccountType('google'));
+                dispatch(changeGcpAccountType('user'));
               }}
             />
             <Radio
@@ -95,9 +95,9 @@ const Gcp = () => {
               data-testid="service-account"
               label="Service account"
               name="radio-4"
-              isChecked={accountType === 'service'}
+              isChecked={accountType === 'serviceAccount'}
               onChange={() => {
-                dispatch(changeGcpAccountType('service'));
+                dispatch(changeGcpAccountType('serviceAccount'));
               }}
             />
             <Radio
