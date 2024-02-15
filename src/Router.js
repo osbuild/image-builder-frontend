@@ -12,7 +12,7 @@ const CreateImageWizard = lazy(() =>
   import('./Components/CreateImageWizard/CreateImageWizard')
 );
 const CreateImageWizardV2 = lazy(() =>
-  import('./Components/CreateImageWizardV2/CreateImageWizard')
+  import('./Components/CreateImageWizardV2')
 );
 
 export const Router = () => {

@@ -1,11 +1,18 @@
+import React from 'react';
+
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
+import CreateImageWizard from '../../../Components/CreateImageWizardV2';
+import LandingPage from '../../../Components/LandingPage/LandingPage';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { emptyGetBlueprints } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
-import { renderWithReduxRouter } from '../../testUtils';
+import {
+  renderCustomRoutesWithReduxRouter,
+  renderWithReduxRouter,
+} from '../../testUtils';
 import '@testing-library/jest-dom';
 
 import '@testing-library/jest-dom';
@@ -101,6 +108,47 @@ describe('Blueprints', () => {
       name: /Build image/i,
     });
     expect(buildImageBtn).toBeEnabled();
+  });
+
+  describe('edit blueprint', () => {
+    const editedBlueprintName = 'Dark Chocolate';
+    const routes = [
+      {
+        path: 'insights/image-builder/*',
+        element: <LandingPage />,
+      },
+      {
+        path: 'insights/image-builder/imagewizard/:composeId?',
+        element: <CreateImageWizard />,
+      },
+    ];
+
+    test('open blueprint wizard in editing mode', async () => {
+      await renderCustomRoutesWithReduxRouter(
+        'imagewizard/677b010b-e95e-4694-9813-d11d847f1bfc',
+        {},
+        routes
+      );
+      const blueprintDetails = await screen.findByText('Image details');
+      await user.click(blueprintDetails);
+      await screen.findByText(editedBlueprintName);
+    });
+    test('redirect to index page when blueprint is invalid', async () => {
+      server.use(
+        rest.get(
+          `${IMAGE_BUILDER_API}/experimental/blueprints/invalid-compose-id`,
+          (req, res, ctx) => {
+            return res(ctx.status(404));
+          }
+        )
+      );
+      await renderCustomRoutesWithReduxRouter(
+        'imagewizard/invalid-compose-id',
+        {},
+        routes
+      );
+      await screen.findByRole('heading', { name: /Images/i, level: 1 });
+    });
   });
 
   describe('filtering', () => {

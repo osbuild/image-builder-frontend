@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import { Alert, Spinner } from '@patternfly/react-core';
 import { FormGroup } from '@patternfly/react-core';
@@ -26,6 +26,14 @@ export const AwsSourcesSelect = () => {
     });
 
   const sources = data?.data;
+
+  useEffect(() => {
+    // when the source is already initialized by id (i.e editing / import)
+    if (sources && sources.length > 0) {
+      if (source?.id && !!source?.name)
+        dispatch(changeAwsSource(sources.find((s) => s.id === source.id)));
+    }
+  }, [sources, source, dispatch]);
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,

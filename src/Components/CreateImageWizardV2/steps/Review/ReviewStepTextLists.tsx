@@ -195,9 +195,9 @@ export const TargetEnvGCPList = () => {
               <TextListItem component={TextListItemVariants.dd}>
                 {accountType === 'group'
                   ? 'Google group'
-                  : accountType === 'service'
+                  : accountType === 'serviceAccount'
                   ? 'Service account'
-                  : accountType === 'google'
+                  : accountType === 'user'
                   ? 'Google account'
                   : 'Domain'}
               </TextListItem>
