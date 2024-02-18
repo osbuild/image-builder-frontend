@@ -10,6 +10,8 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
+import { FileSystemPartitionMode } from '../Components/CreateImageWizardV2/steps/FileSystem';
+import { Partition } from '../Components/CreateImageWizardV2/steps/FileSystem/FileSystemConfiguration';
 import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizardV2/steps/Packages/Packages';
 import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
@@ -68,7 +70,10 @@ export type wizardState = {
       enabled: string[] | undefined;
     };
   };
-
+  fileSystem: {
+    mode: FileSystemPartitionMode;
+    partitions: Partition[];
+  };
   repositories: {
     customRepositories: CustomRepository[];
     payloadRepositories: Repository[];
@@ -118,6 +123,14 @@ const initialState: wizardState = {
       disabled: [],
       enabled: [],
     },
+  },
+  fileSystem: {
+    mode: 'automatic',
+    partitions: [
+      { id: '1', mountpoint: '/', min_size: '500' },
+      { id: '2', mountpoint: '/home', min_size: '500' },
+      { id: '3', mountpoint: '/home/var', min_size: '500' },
+    ],
   },
   repositories: {
     customRepositories: [],
@@ -216,6 +229,14 @@ export const selectDisabledServices = (state: RootState) => {
 
 export const selectEnabledServices = (state: RootState) => {
   return state.wizard.openScap.services.enabled;
+};
+
+export const selectFileSystemPartitionMode = (state: RootState) => {
+  return state.wizard.fileSystem.mode;
+};
+
+export const selectPartitions = (state: RootState) => {
+  return state.wizard.fileSystem.partitions;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
@@ -353,6 +374,36 @@ export const wizardSlice = createSlice({
     ) => {
       state.openScap.services.enabled = action.payload;
     },
+    changeFileSystemPartitionMode: (
+      state,
+      action: PayloadAction<FileSystemPartitionMode>
+    ) => {
+      state.fileSystem.mode = action.payload;
+    },
+    changePartitionMountpoint: (
+      state,
+      action: PayloadAction<{ id: string; mountpoint: string }>
+    ) => {
+      const { id, mountpoint } = action.payload;
+      const partitionIndex = state.fileSystem.partitions.findIndex(
+        (partition) => partition.id === id
+      );
+      if (partitionIndex !== -1) {
+        state.fileSystem.partitions[partitionIndex].mountpoint = mountpoint;
+      }
+    },
+    changePartitionMinSize: (
+      state,
+      action: PayloadAction<{ id: string; min_size: string }>
+    ) => {
+      const { id, min_size } = action.payload;
+      const partitionIndex = state.fileSystem.partitions.findIndex(
+        (partition) => partition.id === id
+      );
+      if (partitionIndex !== -1) {
+        state.fileSystem.partitions[partitionIndex].min_size = min_size;
+      }
+    },
     changeCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -409,6 +460,9 @@ export const {
   changeKernel,
   changeDisabledServices,
   changeEnabledServices,
+  changeFileSystemPartitionMode,
+  changePartitionMountpoint,
+  changePartitionMinSize,
   changeCustomRepositories,
   changePayloadRepositories,
   addPackage,

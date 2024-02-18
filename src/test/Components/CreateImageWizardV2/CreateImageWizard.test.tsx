@@ -121,7 +121,7 @@ describe('Create Image Wizard', () => {
 
     await screen.findByRole('button', { name: 'Image output' });
     await screen.findByRole('button', { name: 'Register' });
-    // await screen.findByRole('button', { name: 'File system configuration' });
+    await screen.findByRole('button', { name: 'File system configuration' });
     await screen.findByRole('button', { name: 'Content' });
     await screen.findByRole('button', { name: 'Custom repositories' });
     await screen.findByRole('button', { name: 'Additional packages' });
@@ -430,6 +430,8 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
 
@@ -556,18 +558,21 @@ describe('Step Registration', () => {
     });
   };
 
-  // test('clicking Next loads file system configuration', async () => {
-  //   await setUp();
+  test('clicking Next loads file system configuration', async () => {
+    await setUp();
 
-  //   const registerLaterRadio = await screen.findByTestId('registration-radio-later');
-  //   await user.click(registerLaterRadio);
+    const registerLaterRadio = await screen.findByTestId(
+      'registration-radio-later'
+    );
+    await user.click(registerLaterRadio);
 
-  //   await clickNext();
+    await clickNext();
+    await clickNext();
 
-  //   await screen.findByRole('heading', {
-  //     name: 'File system configuration',
-  //   });
-  // });
+    await screen.findByRole('heading', {
+      name: 'File system configuration',
+    });
+  });
 
   test('clicking Back loads Upload to AWS', async () => {
     await setUp();
@@ -619,6 +624,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -659,6 +665,8 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
+    await clickNext();
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -709,6 +717,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -733,6 +742,8 @@ describe('Step Registration', () => {
 
     await removeKeyInformation;
 
+    await clickNext();
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -762,86 +773,77 @@ describe('Step Registration', () => {
   });
 });
 
-// describe('Step File system configuration', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = await renderCustomRoutesWithReduxRouter(
-//       'imagewizard',
-//       {},
-//       routes
-//     ));
-
-//     // select aws as upload destination
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-aws'))
-//     );
-//     await clickNext();
-
-//     // aws step
-//     await switchToAWSManual();
-//     await user.type(
-//       await screen.findByTestId('aws-account-id'),
-//       '012345678901'
-//     );
-//     await clickNext();
-//     // skip registration
-//     await screen.findByRole('textbox', {
-//       name: 'Select activation key',
-//     });
-
-//     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
-//     await user.click(registerLaterRadio);
-//     await clickNext();
-//   };
-
-//   test('Error validation occurs upon clicking next button', async () => {
-//     await setUp();
-
-//     const manuallyConfigurePartitions = await screen.findByText(
-//       /manually configure partitions/i
-//     );
-//     await user.click(manuallyConfigurePartitions);
-
-//     const addPartition = await screen.findByTestId('file-system-add-partition');
-
-//     // Create duplicate partitions
-//     await user.click(addPartition);
-//     await user.click(addPartition);
-
-//     expect(await getNextButton()).toBeEnabled();
-
-//     // Clicking next causes errors to appear
-//     await clickNext();
-
-//     const mountPointWarning = await screen.findByRole('heading', {
-//       name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
-//       hidden: true,
-//     });
-
-//     const mountPointAlerts = screen.getAllByRole('heading', {
-//       name: /danger alert: duplicate mount point\./i,
-//     });
-
-//     const tbody = await screen.findByTestId('file-system-configuration-tbody');
-//     const rows = within(tbody).getAllByRole('row');
-//     expect(rows).toHaveLength(3);
-
-//     // Change mountpoint of final row to /var, resolving errors
-//     const mountPointOptions = within(rows[2]).getAllByRole('button', {
-//       name: 'Options menu',
-//     })[0];
-//     await user.click(mountPointOptions);
-//     const varButton = await within(rows[2]).findByRole('option', {
-//       name: '/var',
-//     });
-//     await user.click(varButton);
-
-//     await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
-//     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
-//     await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
-//     expect(await getNextButton()).toBeEnabled();
-//   });
-// });
+describe('Step File system configuration', () => {
+  // const user = userEvent.setup();
+  // const setUp = async () => {
+  //   ({ router } = await renderCustomRoutesWithReduxRouter(
+  //     'imagewizard',
+  //     {},
+  //     routes
+  //   ));
+  //   // select aws as upload destination
+  //   await waitFor(
+  //     async () => await user.click(await screen.findByTestId('upload-aws'))
+  //   );
+  //   await clickNext();
+  //   // aws step
+  //   await switchToAWSManual();
+  //   await user.type(
+  //     screen.getByRole('textbox', {
+  //       name: /aws account id/i,
+  //     }),
+  //     '012345678901'
+  //   );
+  //   await clickNext();
+  //   // skip registration
+  //   await screen.findByRole('textbox', {
+  //     name: 'Select activation key',
+  //   });
+  //   const registerLaterRadio = await screen.findByTestId(
+  //     'registration-radio-later'
+  //   );
+  //   await user.click(registerLaterRadio);
+  //   await clickNext();
+  //   await clickNext();
+  // };
+  //test('Error validation occurs upon clicking next button', async () => {
+  //  await setUp();
+  //  const manuallyConfigurePartitions = await screen.findByText(
+  //    /manually configure partitions/i
+  //  );
+  //  await user.click(manuallyConfigurePartitions);
+  //  const addPartition = await screen.findByTestId('file-system-add-partition');
+  //  // Create duplicate partitions
+  //  await user.click(addPartition);
+  //  await user.click(addPartition);
+  //  expect(await getNextButton()).toBeDisabled();
+  //  // Clicking next causes errors to appear
+  //  await clickNext();
+  //  const mountPointWarning = await screen.findByRole('heading', {
+  //    name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
+  //    hidden: true,
+  //  });
+  //  const mountPointAlerts = screen.getAllByRole('heading', {
+  //    name: /danger alert: duplicate mount point\./i,
+  //  });
+  //  const tbody = await screen.findByTestId('file-system-configuration-tbody');
+  //  const rows = within(tbody).getAllByRole('row');
+  //  expect(rows).toHaveLength(3);
+  //  //Change mountpoint of final row to /var, resolving errors
+  //  const mountPointOptions = within(rows[2]).getAllByRole('button', {
+  //    name: 'Options menu',
+  //  })[0];
+  //  await user.click(mountPointOptions);
+  //  const varButton = await within(rows[2]).findByRole('option', {
+  //    name: '/var',
+  //  });
+  //  await user.click(varButton);
+  //  // await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
+  //  //  await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
+  //  //  await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
+  //  expect(await getNextButton()).toBeEnabled();
+  //});
+});
 
 describe('Step Details', () => {
   const user = userEvent.setup();
@@ -883,7 +885,7 @@ describe('Step Details', () => {
     // skip packages
     await clickNext();
     // skip fsc
-    //await clickNext();
+    await clickNext();
   };
 
   test('image name invalid for more than 63 chars', async () => {
@@ -962,6 +964,7 @@ describe('Step Review', () => {
     await clickNext();
     // skip packages
     await clickNext();
+    await clickNext();
     // skip Details
     const blueprintName = await screen.findByRole('textbox', {
       name: /blueprint name/i,
@@ -1023,7 +1026,7 @@ describe('Step Review', () => {
     await clickNext();
     // skip repositories
     await clickNext();
-    // skip Details
+    await clickNext();
     const blueprintName = await screen.findByRole('textbox', {
       name: /blueprint name/i,
     });
@@ -1061,7 +1064,9 @@ describe('Step Review', () => {
     });
 
     const contentExpandable = await screen.findByTestId('content-expandable');
-    //  const fscExpandable = screen.getByText(/file system configuration/i);
+    const fscExpandable = screen.getByTestId(
+      'file-system-configuration-expandable'
+    );
 
     await user.click(targetExpandable);
     await screen.findByText('AWS');
@@ -1071,19 +1076,17 @@ describe('Step Review', () => {
 
     await within(contentExpandable).findByText('Custom repositories');
     await within(contentExpandable).findByText('Additional packages');
-    //  await user.click(fscExpandable);
-    // await screen.findByText('Configuration type');
+    await user.click(fscExpandable);
+    await screen.findByText('Configuration type');
   });
   test('has no Registration expandable for centos', async () => {
     await setUpCentOS();
     const targetExpandable = screen.getByText(/target environments/i);
     const contentExpandable = await screen.findByTestId('content-expandable');
 
-    //const fscExpandable = await screen.findByTestId(
-    //   'file-system-configuration-expandable'
-    //   );
-    //   });
-
+    const fscExpandable = await screen.findByTestId(
+      'file-system-configuration-expandable'
+    );
     expect(
       screen.queryByTestId('registration-expandable')
     ).not.toBeInTheDocument();
@@ -1093,12 +1096,11 @@ describe('Step Review', () => {
     await user.click(contentExpandable);
     await within(contentExpandable).findByText('Custom repositories');
     await within(contentExpandable).findByText('Additional packages');
+
+    await user.click(fscExpandable);
+    await screen.findByText('Configuration type');
   });
 });
-//     await user.click(fscExpandable);
-//     await screen.findByText('Configuration type');
-//   });
-// });
 
 describe('Keyboard accessibility', () => {
   const user = userEvent.setup();
@@ -1199,8 +1201,8 @@ describe('Keyboard accessibility', () => {
     // TODO: Focus on textbox on OpenSCAP step
     await clickNext();
 
-    // File system configuration
-    // await clickNext();
+    //File system configuration
+    await clickNext();
 
     // TODO: Focus on textbox on Custom Repos step
     await clickNext();

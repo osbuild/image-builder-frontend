@@ -43,11 +43,13 @@ const goToRepositoriesStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
+  await clickNext(); // File System
   await clickNext(); // Custom repositories
 };
 
 const goToReviewStep = async () => {
   await clickNext(); // Additional packages
+  await clickNext();
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review
