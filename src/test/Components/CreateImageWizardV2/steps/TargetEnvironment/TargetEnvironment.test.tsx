@@ -119,6 +119,7 @@ const goToReviewStep = async () => {
   await goToRegistrationStep(); // Register
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
+  await clickNext(); // File system customization
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Details

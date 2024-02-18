@@ -64,6 +64,7 @@ export const FSReviewTable = () => {
               <Th>Minimum size</Th>
             </Tr>
           </Thead>
+          <Tbody data-testid="file-system-configuration-tbody-review"></Tbody>
         </Table>
       </PanelMain>
     </Panel>

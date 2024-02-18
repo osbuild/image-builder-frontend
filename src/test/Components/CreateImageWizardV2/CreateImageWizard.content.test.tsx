@@ -144,7 +144,7 @@ describe('Step Packages', () => {
     // skip Repositories
     await clickNext();
     // skip fsc
-    //await clickNext();
+    await clickNext();
   };
 
   test('clicking Next loads Image name', async () => {
@@ -365,7 +365,10 @@ describe('Step Custom repositories', () => {
     // skip OpenSCAP
     await clickNext();
     // skip fsc
-    //await clickNext();
+
+    await clickNext();
+    //     // skip packages
+    //     await clickNext();
   };
 
   test('selected repositories stored in and retrieved from form state', async () => {

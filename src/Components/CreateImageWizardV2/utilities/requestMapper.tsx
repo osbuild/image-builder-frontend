@@ -108,6 +108,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         enabled: [],
       },
     },
+    fileSystem: {
+      mode: 'automatic',
+      partitions: [],
+    },
+
     architecture: request.image_requests[0].architecture,
     distribution: request.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),

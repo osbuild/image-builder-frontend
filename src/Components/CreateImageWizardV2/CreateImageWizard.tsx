@@ -10,6 +10,7 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
+import FileSystemStep from './steps/FileSystem';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import PackagesStep from './steps/Packages';
@@ -131,7 +132,6 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
     selectAzureResourceGroup(state)
   );
   const azureSource = useAppSelector((state) => selectAzureSource(state));
-
   const registrationType = useAppSelector((state) =>
     selectRegistrationType(state)
   );
@@ -248,6 +248,13 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
             footer={<CustomWizardFooter disableNext={false} />}
           >
             <OscapStep />
+          </WizardStep>
+          <WizardStep
+            name="File system configuration"
+            id="step-file-system"
+            footer={<CustomWizardFooter disableNext={false} />}
+          >
+            <FileSystemStep />
           </WizardStep>
           <WizardStep
             name="Content"

@@ -19,6 +19,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import { PackagesTable, RepositoriesTable } from './ReviewStepTables';
+import { FSReviewTable } from './ReviewStepTables';
 
 import {
   RELEASES,
@@ -50,6 +51,7 @@ import {
   selectGcpShareMethod,
   selectPackages,
   selectRegistrationType,
+  selectFileSystemPartitionMode,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
@@ -103,11 +105,83 @@ export const ImageOutputList = () => {
   );
 };
 export const FSCList = () => {
+  const fileSystemPartitionMode = useAppSelector((state) =>
+    selectFileSystemPartitionMode(state)
+  );
+
   return (
     <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Configuration type
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dd}
+          data-testid="partitioning-auto-manual"
+        >
+          {fileSystemPartitionMode === 'manual' ? 'Manual' : 'Automatic'}
+          {fileSystemPartitionMode === 'manual' && (
+            <>
+              {' '}
+              <Popover
+                position="bottom"
+                headerContent="Partitions"
+                hasAutoWidth
+                minWidth="30rem"
+                bodyContent={<FSReviewTable />}
+              >
+                <Button
+                  data-testid="file-system-configuration-popover"
+                  variant="link"
+                  aria-label="File system configuration info"
+                  aria-describedby="file-system-configuration-info"
+                  className="pf-u-pt-0 pf-u-pb-0"
+                >
+                  View partitions
+                </Button>
+              </Popover>
+            </>
+          )}
+        </TextListItem>
+        {fileSystemPartitionMode === 'manual' && (
+          <>
+            <TextListItem component={TextListItemVariants.dt}>
+              Image size (minimum)
+              <Popover
+                hasAutoWidth
+                bodyContent={
+                  <TextContent>
+                    <Text>
+                      Image Builder may extend this size based on requirements,
+                      selected packages, and configurations.
+                    </Text>
+                  </TextContent>
+                }
+              >
+                <Button
+                  variant="plain"
+                  aria-label="File system configuration info"
+                  aria-describedby="file-system-configuration-info"
+                  className="pf-c-form__group-label-help"
+                >
+                  <HelpIcon />
+                </Button>
+              </Popover>
+            </TextListItem>
+            <MinSize />
+          </>
+        )}
+      </TextList>
       <br />
     </TextContent>
   );
+};
+
+export const MinSize = () => {
+  return <TextListItem component={TextListItemVariants.dd} />;
 };
 
 export const TargetEnvAWSList = () => {
