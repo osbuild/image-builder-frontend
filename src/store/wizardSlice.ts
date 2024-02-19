@@ -9,6 +9,7 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
+import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizardV2/steps/Packages/Packages';
 import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
 import {
@@ -69,6 +70,7 @@ type wizardState = {
   repositories: {
     customRepositories: CustomRepository[];
   };
+  packages: IBPackageWithRepositoryInfo[];
   details: {
     blueprintName: string;
     blueprintDescription: string;
@@ -117,6 +119,7 @@ const initialState: wizardState = {
   repositories: {
     customRepositories: [],
   },
+  packages: [],
   details: {
     blueprintName: '',
     blueprintDescription: '',
@@ -215,6 +218,10 @@ export const selectEnabledServices = (state: RootState) => {
 
 export const selectCustomRepositories = (state: RootState) => {
   return state.wizard.repositories.customRepositories;
+};
+
+export const selectPackages = (state: RootState) => {
+  return state.wizard.packages;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -347,6 +354,18 @@ export const wizardSlice = createSlice({
     ) => {
       state.repositories.customRepositories = action.payload;
     },
+    addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
+      state.packages.push(action.payload);
+    },
+    removePackage: (
+      state,
+      action: PayloadAction<IBPackageWithRepositoryInfo>
+    ) => {
+      state.packages.splice(
+        state.packages.findIndex((pkg) => pkg.name === action.payload.name),
+        1
+      );
+    },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
@@ -383,6 +402,8 @@ export const {
   changeDisabledServices,
   changeEnabledServices,
   changeCustomRepositories,
+  addPackage,
+  removePackage,
   changeBlueprintName,
   changeBlueprintDescription,
 } = wizardSlice.actions;
