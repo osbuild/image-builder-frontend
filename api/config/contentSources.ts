@@ -7,7 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/contentSourcesApi.ts',
   exportName: 'contentSourcesApi',
   hooks: true,
-  filterEndpoints: ['listRepositories', 'listRepositoriesRpms'],
+  filterEndpoints: ['listRepositories', 'listRepositoriesRpms', 'searchRpm'],
 };
 
 export default config;

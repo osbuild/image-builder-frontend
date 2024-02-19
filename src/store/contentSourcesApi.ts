@@ -39,6 +39,13 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    searchRpm: build.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
+      query: (queryArg) => ({
+        url: `/rpms/names`,
+        method: "POST",
+        body: queryArg.apiContentUnitSearchRequest,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -88,6 +95,11 @@ export type ListRepositoriesRpmsApiArg = {
   search?: string;
   /** Sort the response based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
+};
+export type SearchRpmApiResponse = /** status 200 OK */ ApiSearchRpmResponse[];
+export type SearchRpmApiArg = {
+  /** request body */
+  apiContentUnitSearchRequest: ApiContentUnitSearchRequest;
 };
 export type ApiSnapshotResponse = {
   /** Count of each content type */
@@ -263,5 +275,24 @@ export type ApiRepositoryRpmCollectionResponse = {
   links?: ApiLinks;
   meta?: ApiResponseMetadata;
 };
-export const { useListRepositoriesQuery, useListRepositoriesRpmsQuery } =
-  injectedRtkApi;
+export type ApiSearchRpmResponse = {
+  /** Package name found */
+  package_name?: string;
+  /** Summary of the package found */
+  summary?: string;
+};
+export type ApiContentUnitSearchRequest = {
+  /** Maximum number of records to return for the search */
+  limit?: number;
+  /** Search string to search content unit names */
+  search?: string;
+  /** URLs of repositories to search */
+  urls?: string[];
+  /** List of RepositoryConfig UUIDs to search */
+  uuids?: string[];
+};
+export const {
+  useListRepositoriesQuery,
+  useListRepositoriesRpmsQuery,
+  useSearchRpmMutation,
+} = injectedRtkApi;
