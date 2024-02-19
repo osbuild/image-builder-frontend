@@ -1221,20 +1221,18 @@ describe('Click through all steps', () => {
     );
     await clickNext();
 
-    // Temporarily disable
     // Custom repositories
-    // await user.click(
-    //   await screen.findByRole('checkbox', { name: /select row 0/i })
-    // );
-    // await user.click(
-    //   await screen.findByRole('checkbox', { name: /select row 1/i })
-    // );
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 0/i })
+    );
+    await user.click(
+      await screen.findByRole('checkbox', { name: /select row 1/i })
+    );
 
     await clickNext();
 
-    // Temporarily disable
     // Custom packages
-    // await clickNext();
+    await clickNext();
 
     // Enter image name
     const nameInput = await screen.findByRole('textbox', {
@@ -1299,8 +1297,6 @@ describe('Click through all steps', () => {
     expect(within(revtbody).getAllByRole('row')).toHaveLength(3);
 
     // mock the backend API
-    // Temporarily disable
-    // eslint-disable-next-line no-unused-vars
     const payload_repos = [
       {
         baseurl: 'http://yum.theforeman.org/releases/3.4/el8/x86_64/',
@@ -1318,8 +1314,6 @@ describe('Click through all steps', () => {
       },
     ];
 
-    // Temporarily disable
-    // eslint-disable-next-line no-unused-vars
     const custom_repos = [
       {
         baseurl: ['http://yum.theforeman.org/releases/3.4/el8/x86_64/'],
@@ -1356,9 +1350,8 @@ describe('Click through all steps', () => {
           min_size: 104857600,
         },
       ],
-      // Temporarily disable
-      // custom_repositories: custom_repos,
-      // payload_repositories: payload_repos,
+      custom_repositories: custom_repos,
+      payload_repositories: payload_repos,
       packages: ['test'],
       subscription: {
         'activation-key': 'name0',

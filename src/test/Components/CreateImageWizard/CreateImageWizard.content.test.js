@@ -18,8 +18,7 @@ import {
   clickBack,
   clickNext,
   renderCustomRoutesWithReduxRouter,
-  // Temporarily disable
-  // renderWithReduxRouter,
+  renderWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
 
@@ -824,8 +823,6 @@ describe('Step Packages', () => {
 
 describe('Step Custom repositories', () => {
   const user = userEvent.setup();
-  // Temporarily disable
-  // eslint-disable-next-line no-unused-vars
   const setUp = async () => {
     ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
 
@@ -857,266 +854,265 @@ describe('Step Custom repositories', () => {
     // skip packages
     await clickNext();
   };
-  // Temporarily disable
-  //  test('selected repositories stored in and retrieved from form state', async () => {
-  //    await setUp();
-  //
-  //    const getFirstRepoCheckbox = async () =>
-  //      await screen.findByRole('checkbox', {
-  //        name: /select row 0/i,
-  //      });
-  //    let firstRepoCheckbox = await getFirstRepoCheckbox();
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(false);
-  //    await user.click(firstRepoCheckbox);
-  //    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  //
-  //    await clickNext();
-  //    await clickBack();
-  //
-  //    firstRepoCheckbox = await getFirstRepoCheckbox();
-  //    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  //  });
-  //
-  //  test('correct number of repositories is fetched', async () => {
-  //    await setUp();
-  //
-  //    await user.click(
-  //      await screen.findByRole('button', {
-  //        name: /^select$/i,
-  //      })
-  //    );
-  //
-  //    await screen.findByText(/select all \(1015 items\)/i);
-  //  });
-  //
-  //  test('filter works', async () => {
-  //    await setUp();
-  //
-  //    await user.type(
-  //      await screen.findByRole('textbox', { name: /search repositories/i }),
-  //      '2zmya'
-  //    );
-  //
-  //    const table = await screen.findByTestId('repositories-table');
-  //    const { getAllByRole } = within(table);
-  //    const getRows = () => getAllByRole('row');
-  //
-  //    let rows = getRows();
-  //    // remove first row from list since it is just header labels
-  //    rows.shift();
-  //
-  //    expect(rows).toHaveLength(1);
-  //
-  //    // clear filter
-  //    await user.click(await screen.findByRole('button', { name: /reset/i }));
-  //
-  //    rows = getRows();
-  //    // remove first row from list since it is just header labels
-  //    rows.shift();
-  //
-  //    await waitFor(() => expect(rows).toHaveLength(10));
-  //  });
-  //
-  //  test('press on Selected button to see selected repositories list', async () => {
-  //    await setUp();
-  //
-  //    const getFirstRepoCheckbox = async () =>
-  //      await screen.findByRole('checkbox', {
-  //        name: /select row 0/i,
-  //      });
-  //    const firstRepoCheckbox = await getFirstRepoCheckbox();
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(false);
-  //    await user.click(firstRepoCheckbox);
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //
-  //    const getSelectedButton = async () =>
-  //      await screen.findByRole('button', {
-  //        name: /selected repositories/i,
-  //      });
-  //
-  //    const selectedButton = await getSelectedButton();
-  //    await user.click(selectedButton);
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //
-  //    await clickNext();
-  //    clickBack();
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //  });
-  //
-  //  test('press on All button to see all repositories list', async () => {
-  //    await setUp();
-  //
-  //    const getFirstRepoCheckbox = async () =>
-  //      await screen.findByRole('checkbox', {
-  //        name: /select row 0/i,
-  //      });
-  //    const firstRepoCheckbox = await getFirstRepoCheckbox();
-  //
-  //    const getSecondRepoCheckbox = async () =>
-  //      await screen.findByRole('checkbox', {
-  //        name: /select row 1/i,
-  //      });
-  //    const secondRepoCheckbox = await getSecondRepoCheckbox();
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(false);
-  //    expect(secondRepoCheckbox.checked).toEqual(false);
-  //    await user.click(firstRepoCheckbox);
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //    expect(secondRepoCheckbox.checked).toEqual(false);
-  //
-  //    const getAllButton = async () =>
-  //      await screen.findByRole('button', {
-  //        name: /all repositories/i,
-  //      });
-  //
-  //    const allButton = await getAllButton();
-  //    await user.click(allButton);
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //    expect(secondRepoCheckbox.checked).toEqual(false);
-  //
-  //    await clickNext();
-  //    clickBack();
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //    expect(secondRepoCheckbox.checked).toEqual(false);
-  //  });
-  //
-  //  test('press on Selected button to see selected repositories list at the second page and filter checked repo', async () => {
-  //    await setUp();
-  //
-  //    const getFirstRepoCheckbox = async () =>
-  //      await screen.findByRole('checkbox', {
-  //        name: /select row 0/i,
-  //      });
-  //
-  //    const firstRepoCheckbox = await getFirstRepoCheckbox();
-  //
-  //    const getNextPageButton = async () =>
-  //      await screen.findByRole('button', {
-  //        name: /go to next page/i,
-  //      });
-  //
-  //    const nextPageButton = await getNextPageButton();
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(false);
-  //    await user.click(firstRepoCheckbox);
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //
-  //    await user.click(nextPageButton);
-  //
-  //    const getSelectedButton = async () =>
-  //      await screen.findByRole('button', {
-  //        name: /selected repositories/i,
-  //      });
-  //
-  //    const selectedButton = await getSelectedButton();
-  //    await user.click(selectedButton);
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //
-  //    await user.type(
-  //      await screen.findByRole('textbox', { name: /search repositories/i }),
-  //      '13lk3'
-  //    );
-  //
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //
-  //    await clickNext();
-  //    clickBack();
-  //    expect(firstRepoCheckbox.checked).toEqual(true);
-  //    await user.click(firstRepoCheckbox);
-  //    expect(firstRepoCheckbox.checked).toEqual(false);
-  //  });
+
+  test('selected repositories stored in and retrieved from form state', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+    let firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
+
+    await clickNext();
+    await clickBack();
+
+    firstRepoCheckbox = await getFirstRepoCheckbox();
+    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
+  });
+
+  test('correct number of repositories is fetched', async () => {
+    await setUp();
+
+    await user.click(
+      await screen.findByRole('button', {
+        name: /^select$/i,
+      })
+    );
+
+    await screen.findByText(/select all \(1015 items\)/i);
+  });
+
+  test('filter works', async () => {
+    await setUp();
+
+    await user.type(
+      await screen.findByRole('textbox', { name: /search repositories/i }),
+      '2zmya'
+    );
+
+    const table = await screen.findByTestId('repositories-table');
+    const { getAllByRole } = within(table);
+    const getRows = () => getAllByRole('row');
+
+    let rows = getRows();
+    // remove first row from list since it is just header labels
+    rows.shift();
+
+    expect(rows).toHaveLength(1);
+
+    // clear filter
+    await user.click(await screen.findByRole('button', { name: /reset/i }));
+
+    rows = getRows();
+    // remove first row from list since it is just header labels
+    rows.shift();
+
+    await waitFor(() => expect(rows).toHaveLength(10));
+  });
+
+  test('press on Selected button to see selected repositories list', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    const getSelectedButton = async () =>
+      await screen.findByRole('button', {
+        name: /selected repositories/i,
+      });
+
+    const selectedButton = await getSelectedButton();
+    await user.click(selectedButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await clickNext();
+    clickBack();
+    expect(firstRepoCheckbox.checked).toEqual(true);
+  });
+
+  test('press on All button to see all repositories list', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    const getSecondRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 1/i,
+      });
+    const secondRepoCheckbox = await getSecondRepoCheckbox();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+
+    const getAllButton = async () =>
+      await screen.findByRole('button', {
+        name: /all repositories/i,
+      });
+
+    const allButton = await getAllButton();
+    await user.click(allButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+
+    await clickNext();
+    clickBack();
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    expect(secondRepoCheckbox.checked).toEqual(false);
+  });
+
+  test('press on Selected button to see selected repositories list at the second page and filter checked repo', async () => {
+    await setUp();
+
+    const getFirstRepoCheckbox = async () =>
+      await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+
+    const firstRepoCheckbox = await getFirstRepoCheckbox();
+
+    const getNextPageButton = async () =>
+      await screen.findByRole('button', {
+        name: /go to next page/i,
+      });
+
+    const nextPageButton = await getNextPageButton();
+
+    expect(firstRepoCheckbox.checked).toEqual(false);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await user.click(nextPageButton);
+
+    const getSelectedButton = async () =>
+      await screen.findByRole('button', {
+        name: /selected repositories/i,
+      });
+
+    const selectedButton = await getSelectedButton();
+    await user.click(selectedButton);
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await user.type(
+      await screen.findByRole('textbox', { name: /search repositories/i }),
+      '13lk3'
+    );
+
+    expect(firstRepoCheckbox.checked).toEqual(true);
+
+    await clickNext();
+    clickBack();
+    expect(firstRepoCheckbox.checked).toEqual(true);
+    await user.click(firstRepoCheckbox);
+    expect(firstRepoCheckbox.checked).toEqual(false);
+  });
 });
 
-// Temporarily disable
-// describe('On Recreate', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = renderWithReduxRouter(
-//       'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346'
-//     ));
-//   };
-//
-//   const setUpUnavailableRepo = async () => {
-//     ({ router } = renderWithReduxRouter(
-//       'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346'
-//     ));
-//   };
-//
-//   test('with valid repositories', async () => {
-//     await setUp();
-//
-//     await screen.findByRole('heading', { name: /review/i });
-//     expect(
-//       screen.queryByText('Previously added custom repository unavailable')
-//     ).not.toBeInTheDocument();
-//
-//     const createImageButton = await screen.findByRole('button', {
-//       name: /create image/i,
-//     });
-//     await waitFor(() => expect(createImageButton).toBeEnabled());
-//
-//     await user.click(
-//       await screen.findByRole('button', { name: /custom repositories/i })
-//     );
-//
-//     await screen.findByRole('heading', { name: /custom repositories/i });
-//     expect(
-//       screen.queryByText('Previously added custom repository unavailable')
-//     ).not.toBeInTheDocument();
-//
-//     const table = await screen.findByTestId('repositories-table');
-//
-//     const { getAllByRole } = within(table);
-//     const rows = getAllByRole('row');
-//
-//     const availableRepo = rows[1].cells[1];
-//     expect(availableRepo).toHaveTextContent(
-//       '13lk3http://yum.theforeman.org/releases/3.4/el8/x86_64/'
-//     );
-//
-//     const availableRepoCheckbox = await screen.findByRole('checkbox', {
-//       name: /select row 0/i,
-//     });
-//     await waitFor(() => expect(availableRepoCheckbox).toBeEnabled());
-//   });
-//
-//   test('with repositories that are no longer available', async () => {
-//     await setUpUnavailableRepo();
-//
-//     await screen.findByRole('heading', { name: /review/i });
-//     await screen.findByText('Previously added custom repository unavailable');
-//
-//     const createImageButton = await screen.findByRole('button', {
-//       name: /create image/i,
-//     });
-//     expect(createImageButton).toBeDisabled();
-//
-//     await user.click(
-//       await screen.findByRole('button', { name: /custom repositories/i })
-//     );
-//
-//     await screen.findByRole('heading', { name: /custom repositories/i });
-//     await screen.findByText('Previously added custom repository unavailable');
-//
-//     const table = await screen.findByTestId('repositories-table');
-//
-//     const { getAllByRole } = within(table);
-//     const rows = getAllByRole('row');
-//
-//     const unavailableRepo = rows[1].cells[1];
-//     expect(unavailableRepo).toHaveTextContent(
-//       'Repository with the following url is no longer available:http://unreachable.link.to.repo.org/x86_64/'
-//     );
-//
-//     const unavailableRepoCheckbox = await screen.findByRole('checkbox', {
-//       name: /select row 0/i,
-//     });
-//     expect(unavailableRepoCheckbox).toBeDisabled();
-//   });
-// });
+describe('On Recreate', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = renderWithReduxRouter(
+      'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346'
+    ));
+  };
+
+  const setUpUnavailableRepo = async () => {
+    ({ router } = renderWithReduxRouter(
+      'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346'
+    ));
+  };
+
+  test('with valid repositories', async () => {
+    await setUp();
+
+    await screen.findByRole('heading', { name: /review/i });
+    expect(
+      screen.queryByText('Previously added custom repository unavailable')
+    ).not.toBeInTheDocument();
+
+    const createImageButton = await screen.findByRole('button', {
+      name: /create image/i,
+    });
+    await waitFor(() => expect(createImageButton).toBeEnabled());
+
+    await user.click(
+      await screen.findByRole('button', { name: /custom repositories/i })
+    );
+
+    await screen.findByRole('heading', { name: /custom repositories/i });
+    expect(
+      screen.queryByText('Previously added custom repository unavailable')
+    ).not.toBeInTheDocument();
+
+    const table = await screen.findByTestId('repositories-table');
+
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    const availableRepo = rows[1].cells[1];
+    expect(availableRepo).toHaveTextContent(
+      '13lk3http://yum.theforeman.org/releases/3.4/el8/x86_64/'
+    );
+
+    const availableRepoCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 0/i,
+    });
+    await waitFor(() => expect(availableRepoCheckbox).toBeEnabled());
+  });
+
+  test('with repositories that are no longer available', async () => {
+    await setUpUnavailableRepo();
+
+    await screen.findByRole('heading', { name: /review/i });
+    await screen.findByText('Previously added custom repository unavailable');
+
+    const createImageButton = await screen.findByRole('button', {
+      name: /create image/i,
+    });
+    expect(createImageButton).toBeDisabled();
+
+    await user.click(
+      await screen.findByRole('button', { name: /custom repositories/i })
+    );
+
+    await screen.findByRole('heading', { name: /custom repositories/i });
+    await screen.findByText('Previously added custom repository unavailable');
+
+    const table = await screen.findByTestId('repositories-table');
+
+    const { getAllByRole } = within(table);
+    const rows = getAllByRole('row');
+
+    const unavailableRepo = rows[1].cells[1];
+    expect(unavailableRepo).toHaveTextContent(
+      'Repository with the following url is no longer available:http://unreachable.link.to.repo.org/x86_64/'
+    );
+
+    const unavailableRepoCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 0/i,
+    });
+    expect(unavailableRepoCheckbox).toBeDisabled();
+  });
+});
