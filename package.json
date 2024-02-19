@@ -15,7 +15,7 @@
     "@redhat-cloud-services/frontend-components": "4.2.3",
     "@redhat-cloud-services/frontend-components-notifications": "4.1.0",
     "@redhat-cloud-services/frontend-components-utilities": "4.0.2",
-    "@reduxjs/toolkit": "2.1.0",
+    "@reduxjs/toolkit": "2.2.1",
     "@scalprum/react-core": "0.6.6",
     "@unleash/proxy-client-react": "4.1.1",
     "classnames": "2.5.1",
