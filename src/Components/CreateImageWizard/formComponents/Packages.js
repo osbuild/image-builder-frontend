@@ -318,212 +318,200 @@ const Packages = ({ getAllPackages, isSuccess }) => {
   };
 
   return (
-    <>
-      {
-        // vv REMOVE WHEN CONTENT REACHABLE AGAIN
-        currentStep.name === 'packages-content-sources' && (
-          <Alert title="Repositories unavailable" variant="warning" isInline>
-            The Content service cannot be reached, please check back later.
-          </Alert>
-          // ^^ REMOVE WHEN CONTENT REACHABLE AGAIN
-        )
-      }
-      <DualListSelector>
-        <DualListSelectorPane
-          title="Available packages"
-          searchInput={
-            <>
-              <SearchInput
-                placeholder="Search for a package"
-                data-testid="search-available-pkgs-input"
-                value={packagesSearchName}
-                ref={firstInputElement}
-                onFocus={() => setFocus('available')}
-                onBlur={() => setFocus('')}
-                onChange={(_, val) => setPackagesSearchName(val)}
-                submitSearchButtonLabel="Search button for available packages"
-                onSearch={handleAvailablePackagesSearch}
-                resetButtonLabel="Clear available packages search"
-                onClear={handleClearAvailableSearch}
-                // Temporarily disable search input for custom packages
-                isDisabled={currentStep.name === 'packages' ? !isSuccess : true}
-              />
-              {availablePackagesDisplayList.length >= 100 && (
-                <Alert
-                  title="Over 100 results found. Refine your search."
-                  variant="warning"
-                  isPlain
-                  isInline
-                />
-              )}
-            </>
-          }
-          status={
-            selectedAvailablePackages.size > 0
-              ? `${selectedAvailablePackages.size}
-          of ${availablePackagesDisplayList.length} items`
-              : `${availablePackagesDisplayList.length} items`
-          }
-        >
-          <DualListSelectorList data-testid="available-pkgs-list">
-            {availablePackages === undefined ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                Search above to add additional
-                <br />
-                packages to your image
-              </p>
-            ) : availablePackagesDisplayList.length === 0 ? (
-              <>
-                <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
-                  No results found
-                </p>
-                <br />
-                <p className="pf-u-text-align-center pf-u-mt-md">
-                  Adjust your search and try again
-                </p>
-              </>
-            ) : availablePackagesDisplayList.length >= 100 ? (
-              <>
-                {availablePackagesDisplayList.some(
-                  (pkg) => pkg.name === packagesSearchName
-                ) && (
-                  <ExactMatch
-                    pkgList={availablePackagesDisplayList}
-                    search={packagesSearchName}
-                    chosenPackages={chosenPackages}
-                    selectedAvailablePackages={selectedAvailablePackages}
-                    handleSelectAvailableFunc={handleSelectAvailable}
-                  />
-                )}
-                <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
-                  Too many results to display
-                </p>
-                <br />
-                <p className="pf-u-text-align-center pf-u-mt-md">
-                  Please make the search more specific
-                  <br />
-                  and try again
-                </p>
-              </>
-            ) : (
-              availablePackagesDisplayList.map((pkg) => {
-                return (
-                  <DualListSelectorListItem
-                    data-testid={`available-pkgs-${pkg.name}`}
-                    key={pkg.name}
-                    isDisabled={chosenPackages[pkg.name] ? true : false}
-                    isSelected={selectedAvailablePackages.has(pkg.name)}
-                    onOptionSelect={(e) => handleSelectAvailable(e, pkg.name)}
-                  >
-                    <TextContent key={`${pkg.name}`}>
-                      <span
-                        className={
-                          chosenPackages[pkg.name] && 'pf-v5-u-color-400'
-                        }
-                      >
-                        {pkg.name}
-                      </span>
-                      <small>{pkg.summary}</small>
-                    </TextContent>
-                  </DualListSelectorListItem>
-                );
-              })
-            )}
-          </DualListSelectorList>
-        </DualListSelectorPane>
-        <DualListSelectorControlsWrapper aria-label="Selector controls">
-          <DualListSelectorControl
-            isDisabled={selectedAvailablePackages.size === 0}
-            onClick={() => moveSelectedToChosen()}
-            aria-label="Add selected"
-            tooltipContent="Add selected"
-          >
-            <AngleRightIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            isDisabled={
-              availablePackagesDisplayList.length === 0 ||
-              // also disable the "Add all" button if there are too many matches
-              // (even if there's an exact match)
-              availablePackagesDisplayList.length >= 100
-            }
-            onClick={() => moveAllToChosen()}
-            aria-label="Add all"
-            tooltipContent="Add all"
-          >
-            <AngleDoubleRightIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            isDisabled={Object.values(chosenPackages).length === 0}
-            onClick={() => removeAllFromChosen()}
-            aria-label="Remove all"
-            tooltipContent="Remove all"
-          >
-            <AngleDoubleLeftIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            onClick={() => removeSelectedFromChosen()}
-            isDisabled={selectedChosenPackages.size === 0}
-            aria-label="Remove selected"
-            tooltipContent="Remove selected"
-          >
-            <AngleLeftIcon />
-          </DualListSelectorControl>
-        </DualListSelectorControlsWrapper>
-        <DualListSelectorPane
-          title="Chosen packages"
-          searchInput={
+    <DualListSelector>
+      <DualListSelectorPane
+        title="Available packages"
+        searchInput={
+          <>
             <SearchInput
               placeholder="Search for a package"
-              data-testid="search-chosen-pkgs-input"
-              value={filterChosen}
-              onFocus={() => setFocus('chosen')}
+              data-testid="search-available-pkgs-input"
+              value={packagesSearchName}
+              ref={firstInputElement}
+              onFocus={() => setFocus('available')}
               onBlur={() => setFocus('')}
-              onChange={(_, val) => setFilterChosen(val)}
-              resetButtonLabel="Clear chosen packages search"
-              onClear={handleClearChosenSearch}
+              onChange={(_, val) => setPackagesSearchName(val)}
+              submitSearchButtonLabel="Search button for available packages"
+              onSearch={handleAvailablePackagesSearch}
+              resetButtonLabel="Clear available packages search"
+              onClear={handleClearAvailableSearch}
+              isDisabled={currentStep.name === 'packages' ? !isSuccess : false}
             />
-          }
-          status={
-            selectedChosenPackages.size > 0
-              ? `${selectedChosenPackages.size}
-          of ${chosenPackagesDisplayList.length} items`
-              : `${chosenPackagesDisplayList.length} items`
-          }
-          isChosen
-        >
-          <DualListSelectorList data-testid="chosen-pkgs-list">
-            {Object.values(chosenPackages).length === 0 ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                No packages added
-              </p>
-            ) : chosenPackagesDisplayList.length === 0 ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                No packages found
-              </p>
-            ) : (
-              chosenPackagesDisplayList.map((pkg) => {
-                return (
-                  <DualListSelectorListItem
-                    data-testid={`selected-pkgs-${pkg.name}`}
-                    key={pkg.name}
-                    isSelected={selectedChosenPackages.has(pkg.name)}
-                    onOptionSelect={(e) => handleSelectChosen(e, pkg.name)}
-                  >
-                    <TextContent key={`${pkg.name}`}>
-                      <span className="pf-c-dual-list-selector__item-text">
-                        {pkg.name}
-                      </span>
-                      <small>{pkg.summary}</small>
-                    </TextContent>
-                  </DualListSelectorListItem>
-                );
-              })
+            {availablePackagesDisplayList.length >= 100 && (
+              <Alert
+                title="Over 100 results found. Refine your search."
+                variant="warning"
+                isPlain
+                isInline
+              />
             )}
-          </DualListSelectorList>
-        </DualListSelectorPane>
-      </DualListSelector>
-    </>
+          </>
+        }
+        status={
+          selectedAvailablePackages.size > 0
+            ? `${selectedAvailablePackages.size}
+          of ${availablePackagesDisplayList.length} items`
+            : `${availablePackagesDisplayList.length} items`
+        }
+      >
+        <DualListSelectorList data-testid="available-pkgs-list">
+          {availablePackages === undefined ? (
+            <p className="pf-u-text-align-center pf-u-mt-md">
+              Search above to add additional
+              <br />
+              packages to your image
+            </p>
+          ) : availablePackagesDisplayList.length === 0 ? (
+            <>
+              <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
+                No results found
+              </p>
+              <br />
+              <p className="pf-u-text-align-center pf-u-mt-md">
+                Adjust your search and try again
+              </p>
+            </>
+          ) : availablePackagesDisplayList.length >= 100 ? (
+            <>
+              {availablePackagesDisplayList.some(
+                (pkg) => pkg.name === packagesSearchName
+              ) && (
+                <ExactMatch
+                  pkgList={availablePackagesDisplayList}
+                  search={packagesSearchName}
+                  chosenPackages={chosenPackages}
+                  selectedAvailablePackages={selectedAvailablePackages}
+                  handleSelectAvailableFunc={handleSelectAvailable}
+                />
+              )}
+              <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
+                Too many results to display
+              </p>
+              <br />
+              <p className="pf-u-text-align-center pf-u-mt-md">
+                Please make the search more specific
+                <br />
+                and try again
+              </p>
+            </>
+          ) : (
+            availablePackagesDisplayList.map((pkg) => {
+              return (
+                <DualListSelectorListItem
+                  data-testid={`available-pkgs-${pkg.name}`}
+                  key={pkg.name}
+                  isDisabled={chosenPackages[pkg.name] ? true : false}
+                  isSelected={selectedAvailablePackages.has(pkg.name)}
+                  onOptionSelect={(e) => handleSelectAvailable(e, pkg.name)}
+                >
+                  <TextContent key={`${pkg.name}`}>
+                    <span
+                      className={
+                        chosenPackages[pkg.name] && 'pf-v5-u-color-400'
+                      }
+                    >
+                      {pkg.name}
+                    </span>
+                    <small>{pkg.summary}</small>
+                  </TextContent>
+                </DualListSelectorListItem>
+              );
+            })
+          )}
+        </DualListSelectorList>
+      </DualListSelectorPane>
+      <DualListSelectorControlsWrapper aria-label="Selector controls">
+        <DualListSelectorControl
+          isDisabled={selectedAvailablePackages.size === 0}
+          onClick={() => moveSelectedToChosen()}
+          aria-label="Add selected"
+          tooltipContent="Add selected"
+        >
+          <AngleRightIcon />
+        </DualListSelectorControl>
+        <DualListSelectorControl
+          isDisabled={
+            availablePackagesDisplayList.length === 0 ||
+            // also disable the "Add all" button if there are too many matches
+            // (even if there's an exact match)
+            availablePackagesDisplayList.length >= 100
+          }
+          onClick={() => moveAllToChosen()}
+          aria-label="Add all"
+          tooltipContent="Add all"
+        >
+          <AngleDoubleRightIcon />
+        </DualListSelectorControl>
+        <DualListSelectorControl
+          isDisabled={Object.values(chosenPackages).length === 0}
+          onClick={() => removeAllFromChosen()}
+          aria-label="Remove all"
+          tooltipContent="Remove all"
+        >
+          <AngleDoubleLeftIcon />
+        </DualListSelectorControl>
+        <DualListSelectorControl
+          onClick={() => removeSelectedFromChosen()}
+          isDisabled={selectedChosenPackages.size === 0}
+          aria-label="Remove selected"
+          tooltipContent="Remove selected"
+        >
+          <AngleLeftIcon />
+        </DualListSelectorControl>
+      </DualListSelectorControlsWrapper>
+      <DualListSelectorPane
+        title="Chosen packages"
+        searchInput={
+          <SearchInput
+            placeholder="Search for a package"
+            data-testid="search-chosen-pkgs-input"
+            value={filterChosen}
+            onFocus={() => setFocus('chosen')}
+            onBlur={() => setFocus('')}
+            onChange={(_, val) => setFilterChosen(val)}
+            resetButtonLabel="Clear chosen packages search"
+            onClear={handleClearChosenSearch}
+          />
+        }
+        status={
+          selectedChosenPackages.size > 0
+            ? `${selectedChosenPackages.size}
+          of ${chosenPackagesDisplayList.length} items`
+            : `${chosenPackagesDisplayList.length} items`
+        }
+        isChosen
+      >
+        <DualListSelectorList data-testid="chosen-pkgs-list">
+          {Object.values(chosenPackages).length === 0 ? (
+            <p className="pf-u-text-align-center pf-u-mt-md">
+              No packages added
+            </p>
+          ) : chosenPackagesDisplayList.length === 0 ? (
+            <p className="pf-u-text-align-center pf-u-mt-md">
+              No packages found
+            </p>
+          ) : (
+            chosenPackagesDisplayList.map((pkg) => {
+              return (
+                <DualListSelectorListItem
+                  data-testid={`selected-pkgs-${pkg.name}`}
+                  key={pkg.name}
+                  isSelected={selectedChosenPackages.has(pkg.name)}
+                  onOptionSelect={(e) => handleSelectChosen(e, pkg.name)}
+                >
+                  <TextContent key={`${pkg.name}`}>
+                    <span className="pf-c-dual-list-selector__item-text">
+                      {pkg.name}
+                    </span>
+                    <small>{pkg.summary}</small>
+                  </TextContent>
+                </DualListSelectorListItem>
+              );
+            })
+          )}
+        </DualListSelectorList>
+      </DualListSelectorPane>
+    </DualListSelector>
   );
 };
 
