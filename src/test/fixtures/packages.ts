@@ -1,11 +1,13 @@
 import {
   ApiRepositoryRpm,
-  ApiRepositoryRpmCollectionResponse,
+  ApiSearchRpmResponse,
 } from '../../store/contentSourcesApi';
 import { PackagesResponse } from '../../store/imageBuilderApi';
 
 export const mockPackagesResults = (search: string): PackagesResponse => {
-  if (search === 'test') {
+  if (search === 'te' || search === 'testPkg-123') {
+    return mockPkgResultAll;
+  } else if (search === 'test') {
     return {
       data: [
         {
@@ -26,6 +28,27 @@ export const mockPackagesResults = (search: string): PackagesResponse => {
         count: 3,
       },
     };
+  } else if (search === 'mock') {
+    return {
+      data: [
+        {
+          name: 'mockPkg',
+          summary: 'test package summary',
+        },
+        {
+          name: 'lib-mock',
+          summary: 'lib-test package summary',
+        },
+        {
+          name: 'mock',
+          summary: 'summary for test package',
+        },
+      ],
+      links: { first: '', last: '' },
+      meta: {
+        count: 3,
+      },
+    };
   } else {
     return { data: [], links: { first: '', last: '' }, meta: { count: 0 } };
   }
@@ -33,23 +56,20 @@ export const mockPackagesResults = (search: string): PackagesResponse => {
 
 export const mockSourcesPackagesResults = (
   search: string
-): ApiRepositoryRpm[] => {
+): ApiSearchRpmResponse[] => {
   if (search === 'test') {
     return [
       {
-        name: 'testPkg',
+        package_name: 'testPkg-sources',
         summary: 'test package summary',
-        version: '1.0',
       },
       {
-        name: 'lib-test',
+        package_name: 'lib-test-sources',
         summary: 'lib-test package summary',
-        version: '1.0',
       },
       {
-        name: 'test',
+        package_name: 'test-sources',
         summary: 'summary for test package',
-        version: '1.0',
       },
     ];
   } else {
@@ -106,7 +126,7 @@ export const mockPkgResultPartial: PackagesResponse = {
   }),
 };
 
-export const mockPkgResultAll: ApiRepositoryRpmCollectionResponse = {
+export const mockPkgResultAll: PackagesResponse = {
   meta: { count: 132 },
   links: { first: '', last: '' },
   data: new Array(132).fill(undefined).map((_, i) => {
