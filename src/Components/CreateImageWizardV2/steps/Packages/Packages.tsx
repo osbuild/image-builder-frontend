@@ -1,545 +1,562 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useState } from 'react';
 
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
-import WizardContext from '@data-driven-forms/react-form-renderer/wizard-context';
 import {
-  Alert,
-  Divider,
-  DualListSelector,
-  DualListSelectorControl,
-  DualListSelectorControlsWrapper,
-  DualListSelectorList,
-  DualListSelectorListItem,
-  DualListSelectorPane,
+  Bullseye,
+  Button,
+  EmptyState,
+  EmptyStateBody,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  Icon,
+  Pagination,
   SearchInput,
-  TextContent,
+  ToggleGroup,
+  ToggleGroupItem,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
 } from '@patternfly/react-core';
 import {
-  AngleDoubleLeftIcon,
-  AngleDoubleRightIcon,
-  AngleLeftIcon,
-  AngleRightIcon,
-} from '@patternfly/react-icons';
-import PropTypes from 'prop-types';
+  Dropdown,
+  DropdownItem,
+  DropdownToggle,
+  DropdownToggleCheckbox,
+} from '@patternfly/react-core/deprecated';
+import { CogIcon, SearchIcon, UserIcon } from '@patternfly/react-icons';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { useDispatch } from 'react-redux';
 
-import api from '../../../api';
+import { useSearchRpmMutation } from '../../../../store/contentSourcesApi';
+import { useAppSelector } from '../../../../store/hooks';
 import {
-  useGetArchitecturesQuery,
-  useGetOscapCustomizationsQuery,
-} from '../../../store/imageBuilderApi';
+  Package,
+  useGetPackagesQuery,
+} from '../../../../store/imageBuilderApi';
+import {
+  removePackage,
+  selectArchitecture,
+  selectPackages,
+  selectCustomRepositories,
+  selectDistribution,
+  addPackage,
+} from '../../../../store/wizardSlice';
 
-const ExactMatch = ({
-  pkgList,
-  search,
-  chosenPackages,
-  selectedAvailablePackages,
-  handleSelectAvailableFunc,
-}) => {
-  const match = pkgList.find((pkg) => pkg.name === search);
-  return (
-    <DualListSelectorListItem
-      data-testid={`exact-match-${match.name}`}
-      isDisabled={chosenPackages[match.name] ? true : false}
-      isSelected={selectedAvailablePackages.has(match.name)}
-      onOptionSelect={(e) => handleSelectAvailableFunc(e, match.name)}
-    >
-      <TextContent key={`${match.name}`}>
-        <small className="pf-u-mb-sm">Exact match</small>
-        <span className="pf-c-dual-list-selector__item-text">{match.name}</span>
-        <small>{match.summary}</small>
-        <Divider />
-      </TextContent>
-    </DualListSelectorListItem>
-  );
+export type IBPackageWithRepositoryInfo = {
+  name: Package['name'];
+  summary: Package['summary'];
+  repository: string;
 };
 
-export const RedHatPackages = ({ defaultArch }) => {
-  const { getState } = useFormApi();
-  const distribution = getState()?.values?.release;
-  const arch = getState()?.values?.arch;
-  const { data: distributionInformation, isSuccess: isSuccessDistroInfo } =
-    useGetArchitecturesQuery({ distribution });
+type BulkSelectProps = {
+  selected: Package[];
+  count: number | undefined;
+  perPage: number;
+  packagesCount: number | undefined;
+  handleSelectAll: Function;
+  handleSelectPage: Function;
+  handleDeselectAll: Function;
+};
 
-  const getAllPackages = async (packagesSearchName) => {
-    // if the env is stage beta then use content-sources api
-    // else use image-builder api
-    if (getState()?.values?.contentSourcesEnabled) {
-      const filteredByArch = distributionInformation.find(
-        (info) => info.arch === arch
-      );
-      const repoUrls = filteredByArch.repositories.map((repo) => repo.baseurl);
-      return await api.getPackagesContentSources(repoUrls, packagesSearchName);
-    } else {
-      const args = [
-        getState()?.values?.release,
-        getState()?.values?.architecture || defaultArch,
-        packagesSearchName,
-      ];
-      const response = await api.getPackages(...args);
-      let { data } = response;
-      const { meta } = response;
-      if (data?.length === meta.count) {
-        return data;
-      } else if (data) {
-        ({ data } = await api.getPackages(...args, meta.count));
-        return data;
+const BulkSelect = ({
+  selected,
+  count,
+  perPage,
+  packagesCount,
+  handleSelectAll,
+  handleSelectPage,
+  handleDeselectAll,
+}: BulkSelectProps) => {
+  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
+
+  const numSelected = selected.length;
+  const allSelected = count !== 0 ? numSelected === count : undefined;
+  const anySelected = numSelected > 0;
+  const someChecked = anySelected ? null : false;
+  const isChecked = allSelected ? true : someChecked;
+
+  const items = [
+    <DropdownItem
+      key="none"
+      onClick={() => handleDeselectAll()}
+    >{`Select none (0 items)`}</DropdownItem>,
+    <DropdownItem
+      key="page"
+      onClick={() => handleSelectPage()}
+    >{`Select page (${
+      perPage > packagesCount! ? packagesCount : perPage
+    } items)`}</DropdownItem>,
+    <DropdownItem key="all" onClick={() => handleSelectAll()}>{`Select all (${
+      packagesCount || 0
+    } items)`}</DropdownItem>,
+  ];
+
+  const handleDropdownSelect = () => toggleDropdown();
+
+  const toggleDropdown = () => setDropdownIsOpen(!dropdownIsOpen);
+
+  return (
+    <Dropdown
+      onSelect={handleDropdownSelect}
+      toggle={
+        <DropdownToggle
+          id="stacked-example-toggle"
+          splitButtonItems={[
+            <DropdownToggleCheckbox
+              id="example-checkbox-1"
+              key="split-checkbox"
+              aria-label="Select all"
+              isChecked={isChecked}
+              onClick={() => {
+                anySelected ? handleDeselectAll() : handleSelectAll();
+              }}
+            />,
+          ]}
+          onToggle={toggleDropdown}
+        >
+          {numSelected !== 0 ? `${numSelected} selected` : null}
+        </DropdownToggle>
       }
-    }
-  };
+      isOpen={dropdownIsOpen}
+      dropdownItems={items}
+    />
+  );
+};
 
+const EmptySearch = () => {
   return (
-    <Packages getAllPackages={getAllPackages} isSuccess={isSuccessDistroInfo} />
+    <Tr>
+      <Td colSpan={4}>
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.sm}>
+            <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+            <EmptyStateBody>
+              Search above to add additional
+              <br />
+              packages to your image
+            </EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
+      </Td>
+    </Tr>
   );
 };
 
-export const ContentSourcesPackages = () => {
-  const { getState } = useFormApi();
-
-  const getAllPackages = async (packagesSearchName) => {
-    const repos = getState()?.values?.['payload-repositories'];
-    const repoUrls = repos?.map((repo) => repo.baseurl);
-    return await api.getPackagesContentSources(repoUrls, packagesSearchName);
-  };
-
-  return <Packages getAllPackages={getAllPackages} />;
+const NoResultsFound = () => {
+  return (
+    <Tr>
+      <Td colSpan={4}>
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.sm}>
+            <EmptyStateHeader titleText="No results found" headingLevel="h4" />
+            <EmptyStateBody>Adjust your search and try again</EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
+      </Td>
+    </Tr>
+  );
 };
 
-const Packages = ({ getAllPackages, isSuccess }) => {
-  const { currentStep } = useContext(WizardContext);
-  const { change, getState } = useFormApi();
-  const [packagesSearchName, setPackagesSearchName] = useState(undefined);
-  const [filterChosen, setFilterChosen] = useState('');
-  const [chosenPackages, setChosenPackages] = useState({});
-  const [focus, setFocus] = useState('');
-  const selectedPackages = getState()?.values?.['selected-packages'];
-  const [availablePackages, setAvailablePackages] = useState(undefined);
-  const [selectedAvailablePackages, setSelectedAvailablePackages] = useState(
-    new Set()
+const TooManyResults = () => {
+  return (
+    <Tr>
+      <Td colSpan={4}>
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.sm}>
+            <EmptyStateHeader
+              titleText="Too many results to display"
+              headingLevel="h4"
+            />
+            <EmptyStateBody>
+              Please make the search more specific and try again
+            </EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
+      </Td>
+    </Tr>
   );
-  const [selectedChosenPackages, setSelectedChosenPackages] = useState(
-    new Set()
+};
+
+const Packages = () => {
+  const dispatch = useDispatch();
+
+  const arch = useAppSelector((state) => selectArchitecture(state));
+  const distribution = useAppSelector((state) => selectDistribution(state));
+  const customRepositories = useAppSelector((state) =>
+    selectCustomRepositories(state)
   );
-  const firstInputElement = useRef(null);
+  const packages = useAppSelector((state) => selectPackages(state));
 
-  const oscapProfile = getState()?.values?.['oscap-profile'];
+  const [perPage, setPerPage] = useState(10);
+  const [page, setPage] = useState(1);
+  const [toggleSelected, setToggleSelected] = useState('toggle-available');
 
-  const { data: customizations, isSuccess: isSuccessCustomizations } =
-    useGetOscapCustomizationsQuery(
+  /*FOLLOW UP
+  const [toggleSourceRepos, setToggleSourceRepos] = useState(
+    'toggle-included-repos'
+  );
+  */
+
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [
+    searchRpms,
+    { data: dataCustomPackages, isSuccess: isSuccessCustomPackages },
+  ] = useSearchRpmMutation();
+
+  const { data: dataDistroPackages, isSuccess: isSuccessDistroPackages } =
+    useGetPackagesQuery(
       {
-        distribution: getState()?.values?.['release'],
-        profile: oscapProfile,
+        distribution: distribution,
+        architecture: arch,
+        search: searchTerm,
       },
-      {
-        skip: !oscapProfile,
-      }
+      { skip: !searchTerm }
     );
-  useEffect(() => {
-    if (customizations && customizations.packages && isSuccessCustomizations) {
-      const oscapPackages = {};
-      for (const pkg of customizations.packages) {
-        oscapPackages[pkg] = { name: pkg };
-      }
-      updateState(oscapPackages);
-    }
-  }, [customizations, isSuccessCustomizations, updateState]);
-
-  // this effect only triggers on mount
-  useEffect(() => {
-    if (selectedPackages) {
-      const newChosenPackages = {};
-      for (const pkg of selectedPackages) {
-        newChosenPackages[pkg.name] = pkg;
-      }
-      setChosenPackages(newChosenPackages);
-    }
-  }, []);
 
   useEffect(() => {
-    if (isSuccess) {
-      firstInputElement.current?.focus();
-    }
-  }, [isSuccess]);
-
-  const searchResultsComparator = useCallback((searchTerm) => {
-    return (a, b) => {
-      a = a.name.toLowerCase();
-      b = b.name.toLowerCase();
-
-      // check exact match first
-      if (a === searchTerm) {
-        return -1;
-      }
-
-      if (b === searchTerm) {
-        return 1;
-      }
-
-      // check for packages that start with the search term
-      if (a.startsWith(searchTerm) && !b.startsWith(searchTerm)) {
-        return -1;
-      }
-
-      if (b.startsWith(searchTerm) && !a.startsWith(searchTerm)) {
-        return 1;
-      }
-
-      // if both (or neither) start with the search term
-      // sort alphabetically
-      if (a < b) {
-        return -1;
-      }
-
-      if (b < a) {
-        return 1;
-      }
-
-      return 0;
+    const fetchCustomPackages = async () => {
+      await searchRpms({
+        apiContentUnitSearchRequest: {
+          search: searchTerm,
+          urls: customRepositories.flatMap((repo) => {
+            if (!repo.baseurl) {
+              throw new Error(
+                `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
+              );
+            }
+            return repo.baseurl;
+          }),
+        },
+      });
     };
-  }, []);
 
-  const availablePackagesDisplayList = useMemo(() => {
-    if (availablePackages === undefined) {
-      return [];
+    fetchCustomPackages();
+  }, [customRepositories, searchRpms, searchTerm]);
+
+  const transformPackageData = () => {
+    let transformedDistroData: IBPackageWithRepositoryInfo[] = [];
+    let transformedCustomData: IBPackageWithRepositoryInfo[] = [];
+
+    if (isSuccessDistroPackages) {
+      transformedDistroData = dataDistroPackages.data.map((values) => ({
+        ...values,
+        repository: 'distro',
+      }));
     }
-    const availablePackagesList = Object.values(availablePackages).sort(
-      searchResultsComparator(packagesSearchName)
+
+    if (isSuccessCustomPackages) {
+      transformedCustomData = dataCustomPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'custom',
+      }));
+    }
+
+    const combinedPackageData = transformedDistroData.concat(
+      transformedCustomData
     );
-    return availablePackagesList;
-  }, [availablePackages, packagesSearchName, searchResultsComparator]);
 
-  const chosenPackagesDisplayList = useMemo(() => {
-    const chosenPackagesList = Object.values(chosenPackages)
-      .filter((pkg) => (pkg.name.includes(filterChosen) ? true : false))
-      .sort(searchResultsComparator(filterChosen));
-    return chosenPackagesList;
-  }, [chosenPackages, filterChosen, searchResultsComparator]);
-
-  // call api to list available packages
-  const handleAvailablePackagesSearch = async () => {
-    const packageList = await getAllPackages(packagesSearchName);
-    // If no packages are found, Image Builder returns null, while
-    // Content Sources returns an empty array [].
-    if (packageList) {
-      const newAvailablePackages = {};
-      for (const pkg of packageList) {
-        newAvailablePackages[pkg.name] = pkg;
-      }
-      setAvailablePackages(newAvailablePackages);
+    if (toggleSelected === 'toggle-available') {
+      return combinedPackageData;
     } else {
-      setAvailablePackages([]);
+      const selectedPackages = [...packages];
+      return selectedPackages;
     }
   };
 
-  const keydownHandler = (event) => {
-    if (event.key === 'Enter') {
-      if (focus === 'available') {
-        event.stopPropagation();
-        handleAvailablePackagesSearch();
+  // Get and sort the list of packages including repository info
+  const transformedPackages = transformPackageData().sort((a, b) => {
+    const aPkg = a.name.toLowerCase();
+    const bPkg = b.name.toLowerCase();
+    // check exact match first
+    if (aPkg === searchTerm) {
+      return -1;
+    }
+    if (bPkg === searchTerm) {
+      return 1;
+    }
+    // check for packages that start with the search term
+    if (aPkg.startsWith(searchTerm) && !bPkg.startsWith(searchTerm)) {
+      return -1;
+    }
+    if (bPkg.startsWith(searchTerm) && !aPkg.startsWith(searchTerm)) {
+      return 1;
+    }
+    // if both (or neither) start with the search term
+    // sort alphabetically
+    if (aPkg < bPkg) {
+      return -1;
+    }
+    if (bPkg < aPkg) {
+      return 1;
+    }
+    return 0;
+  });
+
+  const handleSearch = async (
+    event: React.FormEvent<HTMLInputElement>,
+    selection: string
+  ) => {
+    setSearchTerm(selection);
+  };
+
+  const handleSelect = (
+    pkg: IBPackageWithRepositoryInfo,
+    _: number,
+    isSelecting: boolean
+  ) => {
+    if (isSelecting) {
+      dispatch(addPackage(pkg));
+    } else {
+      dispatch(removePackage(pkg));
+    }
+  };
+
+  const handleSelectAll = () => {
+    for (const pkgIndex in transformedPackages) {
+      dispatch(addPackage(transformedPackages[pkgIndex]));
+    }
+  };
+
+  const handleSelectPage = () => {
+    const packagesSlice = transformedPackages.slice(
+      computeStart(),
+      computeEnd()
+    );
+    for (const pkgIndex in packagesSlice) {
+      if (!packages.some((p) => p.name === packagesSlice[pkgIndex].name)) {
+        dispatch(addPackage(packagesSlice[pkgIndex]));
       }
     }
   };
 
-  useEffect(() => {
-    document.addEventListener('keydown', keydownHandler, true);
-
-    return () => {
-      document.removeEventListener('keydown', keydownHandler, true);
-    };
-  }, []);
-
-  const updateState = useCallback(
-    (newChosenPackages) => {
-      setSelectedAvailablePackages(new Set());
-      setSelectedChosenPackages(new Set());
-      setChosenPackages(newChosenPackages);
-      change('selected-packages', Object.values(newChosenPackages));
-    },
-    [change]
-  );
-
-  const moveSelectedToChosen = () => {
-    const newChosenPackages = { ...chosenPackages };
-    for (const pkgName of selectedAvailablePackages) {
-      newChosenPackages[pkgName] = { ...availablePackages[pkgName] };
+  const handleDeselectAll = () => {
+    for (const pkgIndex in packages) {
+      dispatch(removePackage(packages[pkgIndex]));
     }
-    updateState(newChosenPackages);
   };
 
-  const moveAllToChosen = () => {
-    const newChosenPackages = { ...chosenPackages, ...availablePackages };
-    updateState(newChosenPackages);
+  const handleFilterToggleClick = (event: React.MouseEvent) => {
+    const id = event.currentTarget.id;
+    setPage(1);
+    setToggleSelected(id);
   };
 
-  const removeSelectedFromChosen = () => {
-    const newChosenPackages = {};
-    for (const pkgName in chosenPackages) {
-      if (!selectedChosenPackages.has(pkgName)) {
-        newChosenPackages[pkgName] = { ...chosenPackages[pkgName] };
-      }
+  /*FOLLOW UP
+  const handleRepoToggleClick = (event: React.MouseEvent) => {
+    const id = event.currentTarget.id;
+    setPage(1);
+    setToggleSourceRepos(id);
+  };
+  */
+
+  const handleSetPage = (_: React.MouseEvent, newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handlePerPageSelect = (
+    _: React.MouseEvent,
+    newPerPage: number,
+    newPage: number
+  ) => {
+    setPerPage(newPerPage);
+    setPage(newPage);
+  };
+
+  const computeStart = () => perPage * (page - 1);
+  const computeEnd = () => perPage * page;
+
+  const handleExactMatch = () => {
+    const exactMatch = transformedPackages.find(
+      (pkg) => pkg.name === searchTerm
+    );
+
+    if (exactMatch) {
+      return (
+        <>
+          <Tr key={`${exactMatch.name}`} data-testid="exact-match-row">
+            <Td
+              select={{
+                isSelected: packages.some((p) => p.name === exactMatch.name),
+                rowIndex: 0,
+                onSelect: (event, isSelecting) =>
+                  handleSelect(exactMatch, 0, isSelecting),
+              }}
+            />
+            <Td>{exactMatch.name}</Td>
+            <Td>{exactMatch.summary}</Td>
+            {exactMatch.repository === 'distro' ? (
+              <>
+                <Td>
+                  <Icon status="danger">
+                    <UserIcon />
+                  </Icon>{' '}
+                  Red Hat repository
+                </Td>
+                <Td>Supported</Td>
+              </>
+            ) : (
+              <>
+                <Td>
+                  <Icon>
+                    <CogIcon />
+                  </Icon>{' '}
+                  Custom repository
+                </Td>
+                <Td>Not supported</Td>
+              </>
+            )}
+          </Tr>
+          <TooManyResults />
+        </>
+      );
+    } else {
+      return <TooManyResults />;
     }
-    updateState(newChosenPackages);
-  };
-
-  const removeAllFromChosen = () => {
-    const newChosenPackages = {};
-    updateState(newChosenPackages);
-  };
-
-  const handleSelectAvailable = (event, pkgName) => {
-    const newSelected = new Set(selectedAvailablePackages);
-    newSelected.has(pkgName)
-      ? newSelected.delete(pkgName)
-      : newSelected.add(pkgName);
-    setSelectedAvailablePackages(newSelected);
-  };
-
-  const handleSelectChosen = (event, pkgName) => {
-    const newSelected = new Set(selectedChosenPackages);
-    newSelected.has(pkgName)
-      ? newSelected.delete(pkgName)
-      : newSelected.add(pkgName);
-    setSelectedChosenPackages(newSelected);
-  };
-
-  const handleClearAvailableSearch = () => {
-    setPackagesSearchName('');
-    setAvailablePackages(undefined);
-  };
-
-  const handleClearChosenSearch = () => {
-    setFilterChosen('');
   };
 
   return (
     <>
-      {
-        // vv REMOVE WHEN CONTENT REACHABLE AGAIN
-        currentStep.name === 'packages-content-sources' && (
-          <Alert title="Repositories unavailable" variant="warning" isInline>
-            The Content service cannot be reached, please check back later.
-          </Alert>
-          // ^^ REMOVE WHEN CONTENT REACHABLE AGAIN
-        )
-      }
-      <DualListSelector>
-        <DualListSelectorPane
-          title="Available packages"
-          searchInput={
-            <>
-              <SearchInput
-                placeholder="Search for a package"
-                data-testid="search-available-pkgs-input"
-                value={packagesSearchName}
-                ref={firstInputElement}
-                onFocus={() => setFocus('available')}
-                onBlur={() => setFocus('')}
-                onChange={(_, val) => setPackagesSearchName(val)}
-                submitSearchButtonLabel="Search button for available packages"
-                onSearch={handleAvailablePackagesSearch}
-                resetButtonLabel="Clear available packages search"
-                onClear={handleClearAvailableSearch}
-                // Temporarily disable search input for custom packages
-                isDisabled={currentStep.name === 'packages' ? !isSuccess : true}
-              />
-              {availablePackagesDisplayList.length >= 100 && (
-                <Alert
-                  title="Over 100 results found. Refine your search."
-                  variant="warning"
-                  isPlain
-                  isInline
-                />
-              )}
-            </>
-          }
-          status={
-            selectedAvailablePackages.size > 0
-              ? `${selectedAvailablePackages.size}
-          of ${availablePackagesDisplayList.length} items`
-              : `${availablePackagesDisplayList.length} items`
-          }
-        >
-          <DualListSelectorList data-testid="available-pkgs-list">
-            {availablePackages === undefined ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                Search above to add additional
-                <br />
-                packages to your image
-              </p>
-            ) : availablePackagesDisplayList.length === 0 ? (
-              <>
-                <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
-                  No results found
-                </p>
-                <br />
-                <p className="pf-u-text-align-center pf-u-mt-md">
-                  Adjust your search and try again
-                </p>
-              </>
-            ) : availablePackagesDisplayList.length >= 100 ? (
-              <>
-                {availablePackagesDisplayList.some(
-                  (pkg) => pkg.name === packagesSearchName
-                ) && (
-                  <ExactMatch
-                    pkgList={availablePackagesDisplayList}
-                    search={packagesSearchName}
-                    chosenPackages={chosenPackages}
-                    selectedAvailablePackages={selectedAvailablePackages}
-                    handleSelectAvailableFunc={handleSelectAvailable}
-                  />
-                )}
-                <p className="pf-u-text-align-center pf-u-mt-md pf-u-font-size-lg pf-u-font-weight-bold">
-                  Too many results to display
-                </p>
-                <br />
-                <p className="pf-u-text-align-center pf-u-mt-md">
-                  Please make the search more specific
-                  <br />
-                  and try again
-                </p>
-              </>
-            ) : (
-              availablePackagesDisplayList.map((pkg) => {
-                return (
-                  <DualListSelectorListItem
-                    data-testid={`available-pkgs-${pkg.name}`}
-                    key={pkg.name}
-                    isDisabled={chosenPackages[pkg.name] ? true : false}
-                    isSelected={selectedAvailablePackages.has(pkg.name)}
-                    onOptionSelect={(e) => handleSelectAvailable(e, pkg.name)}
-                  >
-                    <TextContent key={`${pkg.name}`}>
-                      <span
-                        className={
-                          chosenPackages[pkg.name] && 'pf-v5-u-color-400'
-                        }
-                      >
-                        {pkg.name}
-                      </span>
-                      <small>{pkg.summary}</small>
-                    </TextContent>
-                  </DualListSelectorListItem>
-                );
-              })
-            )}
-          </DualListSelectorList>
-        </DualListSelectorPane>
-        <DualListSelectorControlsWrapper aria-label="Selector controls">
-          <DualListSelectorControl
-            isDisabled={selectedAvailablePackages.size === 0}
-            onClick={() => moveSelectedToChosen()}
-            aria-label="Add selected"
-            tooltipContent="Add selected"
-          >
-            <AngleRightIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            isDisabled={
-              availablePackagesDisplayList.length === 0 ||
-              // also disable the "Add all" button if there are too many matches
-              // (even if there's an exact match)
-              availablePackagesDisplayList.length >= 100
-            }
-            onClick={() => moveAllToChosen()}
-            aria-label="Add all"
-            tooltipContent="Add all"
-          >
-            <AngleDoubleRightIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            isDisabled={Object.values(chosenPackages).length === 0}
-            onClick={() => removeAllFromChosen()}
-            aria-label="Remove all"
-            tooltipContent="Remove all"
-          >
-            <AngleDoubleLeftIcon />
-          </DualListSelectorControl>
-          <DualListSelectorControl
-            onClick={() => removeSelectedFromChosen()}
-            isDisabled={selectedChosenPackages.size === 0}
-            aria-label="Remove selected"
-            tooltipContent="Remove selected"
-          >
-            <AngleLeftIcon />
-          </DualListSelectorControl>
-        </DualListSelectorControlsWrapper>
-        <DualListSelectorPane
-          title="Chosen packages"
-          searchInput={
-            <SearchInput
-              placeholder="Search for a package"
-              data-testid="search-chosen-pkgs-input"
-              value={filterChosen}
-              onFocus={() => setFocus('chosen')}
-              onBlur={() => setFocus('')}
-              onChange={(_, val) => setFilterChosen(val)}
-              resetButtonLabel="Clear chosen packages search"
-              onClear={handleClearChosenSearch}
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarItem variant="bulk-select">
+            <BulkSelect
+              selected={packages}
+              count={packages.length}
+              perPage={perPage}
+              packagesCount={transformedPackages.length}
+              handleSelectAll={handleSelectAll}
+              handleSelectPage={handleSelectPage}
+              handleDeselectAll={handleDeselectAll}
             />
-          }
-          status={
-            selectedChosenPackages.size > 0
-              ? `${selectedChosenPackages.size}
-          of ${chosenPackagesDisplayList.length} items`
-              : `${chosenPackagesDisplayList.length} items`
-          }
-          isChosen
-        >
-          <DualListSelectorList data-testid="chosen-pkgs-list">
-            {Object.values(chosenPackages).length === 0 ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                No packages added
-              </p>
-            ) : chosenPackagesDisplayList.length === 0 ? (
-              <p className="pf-u-text-align-center pf-u-mt-md">
-                No packages found
-              </p>
-            ) : (
-              chosenPackagesDisplayList.map((pkg) => {
-                return (
-                  <DualListSelectorListItem
-                    data-testid={`selected-pkgs-${pkg.name}`}
-                    key={pkg.name}
-                    isSelected={selectedChosenPackages.has(pkg.name)}
-                    onOptionSelect={(e) => handleSelectChosen(e, pkg.name)}
-                  >
-                    <TextContent key={`${pkg.name}`}>
-                      <span className="pf-c-dual-list-selector__item-text">
-                        {pkg.name}
-                      </span>
-                      <small>{pkg.summary}</small>
-                    </TextContent>
-                  </DualListSelectorListItem>
-                );
-              })
-            )}
-          </DualListSelectorList>
-        </DualListSelectorPane>
-      </DualListSelector>
+          </ToolbarItem>
+          <ToolbarItem variant="search-filter">
+            <SearchInput
+              aria-label="Search packages"
+              value={searchTerm}
+              onChange={handleSearch}
+            />
+          </ToolbarItem>
+          <ToolbarItem>
+            <Button variant="primary" isInline>
+              Refresh
+            </Button>
+          </ToolbarItem>
+          <ToolbarItem>
+            <ToggleGroup>
+              <ToggleGroupItem
+                text="Available"
+                buttonId="toggle-available"
+                isSelected={toggleSelected === 'toggle-available'}
+                onChange={handleFilterToggleClick}
+              />
+              <ToggleGroupItem
+                text="Selected"
+                buttonId="toggle-selected"
+                isSelected={toggleSelected === 'toggle-selected'}
+                onChange={handleFilterToggleClick}
+              />
+            </ToggleGroup>
+          </ToolbarItem>
+          {/*FOLLOW UP
+          <ToolbarItem>
+            {' '}
+            <ToggleGroup>
+              <ToggleGroupItem
+                text="Included repos"
+                buttonId="toggle-included-repos"
+                isSelected={toggleSourceRepos === 'toggle-included-repos'}
+                onChange={handleRepoToggleClick}
+              />
+              <ToggleGroupItem
+                text="All repos"
+                buttonId="toggle-all-repos"
+                isSelected={toggleSourceRepos === 'toggle-all-repos'}
+                onChange={handleRepoToggleClick}
+              />
+            </ToggleGroup>
+          </ToolbarItem>
+          */}
+          <ToolbarItem variant="pagination">
+            <Pagination
+              itemCount={transformedPackages.length}
+              perPage={perPage}
+              page={page}
+              onSetPage={handleSetPage}
+              onPerPageSelect={handlePerPageSelect}
+              isCompact
+            />
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
+      <Table variant="compact" data-testid="packages-table">
+        <Thead>
+          <Tr>
+            <Th />
+            <Th width={20}>Package name</Th>
+            <Th width={35}>Description</Th>
+            <Th width={25}>Package repository</Th>
+            <Th width={20}>Support</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {!searchTerm && toggleSelected === 'toggle-available' && (
+            <EmptySearch />
+          )}
+          {searchTerm && transformedPackages.length === 0 && <NoResultsFound />}
+          {searchTerm &&
+            transformedPackages.length >= 100 &&
+            handleExactMatch()}
+          {transformedPackages.length < 100 &&
+            transformedPackages
+              .slice(computeStart(), computeEnd())
+              .map((pkg, rowIndex) => (
+                <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
+                  <Td
+                    select={{
+                      isSelected: packages.some((p) => p.name === pkg.name),
+                      rowIndex: rowIndex,
+                      onSelect: (event, isSelecting) =>
+                        handleSelect(pkg, rowIndex, isSelecting),
+                    }}
+                  />
+                  <Td>{pkg.name}</Td>
+                  <Td>{pkg.summary}</Td>
+                  {pkg.repository === 'distro' ? (
+                    <>
+                      <Td>
+                        <Icon status="danger">
+                          <UserIcon />
+                        </Icon>{' '}
+                        Red Hat repository
+                      </Td>
+                      <Td>Supported</Td>
+                    </>
+                  ) : (
+                    <>
+                      <Td>
+                        <Icon>
+                          <CogIcon />
+                        </Icon>{' '}
+                        Custom repository
+                      </Td>
+                      <Td>Not supported</Td>
+                    </>
+                  )}
+                </Tr>
+              ))}
+        </Tbody>
+      </Table>
+      <Pagination
+        itemCount={transformedPackages.length}
+        perPage={perPage}
+        page={page}
+        onSetPage={handleSetPage}
+        onPerPageSelect={handlePerPageSelect}
+        isCompact
+      />
     </>
   );
 };
 
-ExactMatch.propTypes = {
-  pkgList: PropTypes.arrayOf(PropTypes.object),
-  search: PropTypes.string,
-  chosenPackages: PropTypes.object,
-  selectedAvailablePackages: PropTypes.object,
-  handleSelectAvailableFunc: PropTypes.func,
-};
-
-RedHatPackages.propTypes = {
-  defaultArch: PropTypes.string,
-};
-
-Packages.propTypes = {
-  getAllPackages: PropTypes.func,
-  isSuccess: PropTypes.bool,
-};
+export default Packages;
