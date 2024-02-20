@@ -54,9 +54,11 @@ import {
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
 import {
+  BlueprintItem,
   ComposesResponseItem,
   ComposeStatus,
   useGetBlueprintComposesQuery,
+  useGetBlueprintsQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
@@ -73,6 +75,16 @@ type ImageTableProps = {
 const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const { selectedBlueprintVersion } = useGetBlueprintsQuery(
+    {},
+    {
+      selectFromResult: ({ data }) => ({
+        selectedBlueprintVersion: data?.data?.find(
+          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprint
+        )?.version,
+      }),
+    }
+  );
   const experimentalFlag =
     useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
   const onSetPage: OnSetPage = (_, page) => setPage(page);
@@ -121,6 +133,9 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   const isLoading = selectedBlueprint
     ? isLoadingBlueprintsCompose
     : isLoadingComposes;
+
+  const isBlueprintOutSync =
+    blueprintsComposes?.data[0]?.blueprint_version !== selectedBlueprintVersion;
 
   if (isLoading) {
     return (
@@ -198,6 +213,21 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
                 <Th />
               </Tr>
             </Thead>
+
+            {experimentalFlag && isBlueprintOutSync && (
+              <Tbody>
+                <Tr>
+                  <Td colSpan={12}>
+                    <Alert
+                      isInline
+                      title="You haven't built new images for this version of your blueprint yet"
+                      ouiaId="blueprint-out-of-sync-alert"
+                    />
+                  </Td>
+                </Tr>
+              </Tbody>
+            )}
+
             {composes?.map((compose, rowIndex) => {
               return (
                 <ImagesTableRow
