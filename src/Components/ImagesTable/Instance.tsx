@@ -249,7 +249,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
                 ouiaId="oci-link"
                 isBlock
               >
-                {options?.url}
+                {options?.url || ''}
               </ClipboardCopy>
             )}
             {isFetching && <Skeleton />}

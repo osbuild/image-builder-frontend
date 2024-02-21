@@ -277,7 +277,7 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
                 clickTip="Copied"
                 variant="inline-compact"
               >
-                {uploadStatus?.image_name}
+                {uploadStatus?.image_name || ''}
               </ClipboardCopy>
             )}
           </DescriptionListDescription>
@@ -364,7 +364,7 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
                 clickTip="Copied"
                 variant="inline-compact"
               >
-                {uploadStatus?.image_name}
+                {uploadStatus?.image_name || ''}
               </ClipboardCopy>
             )}
           </DescriptionListDescription>
@@ -428,7 +428,7 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
                 variant="inline-compact"
                 isBlock
               >
-                {options?.url}
+                {options?.url || ''}
               </ClipboardCopy>
             )}
           </DescriptionListDescription>
