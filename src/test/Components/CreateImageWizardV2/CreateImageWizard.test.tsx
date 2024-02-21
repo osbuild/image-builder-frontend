@@ -121,10 +121,10 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Register' });
     // await screen.findByRole('button', { name: 'File system configuration' });
     await screen.findByRole('button', { name: 'Content' });
-    // await screen.findByRole('button', { name: 'Additional Red Hat packages' });
     await screen.findByRole('button', { name: 'Custom repositories' });
+    await screen.findByRole('button', { name: 'Additional packages' });
     await screen.findByRole('button', { name: 'Details' });
-    // await screen.findByRole('button', { name: 'Review' });
+    await screen.findByRole('button', { name: 'Review' });
   });
 });
 
@@ -870,10 +870,10 @@ describe('Step Upload to AWS', () => {
       await clickNext();
       // skip repositories
       await clickNext();
-      //     // skip fsc
-      //     await clickNext();
-      //     // skip packages
-      //     await clickNext();
+      // skip packages
+      await clickNext();
+      // skip fsc
+      //await clickNext();
     };
 
     test('image name invalid for more than 63 chars', async () => {
@@ -926,7 +926,7 @@ describe('Step Upload to AWS', () => {
       );
       await clickNext();
 
-      //     // aws step
+      // aws step
       await switchToAWSManual();
       await user.type(
         await screen.findByRole('textbox', {
@@ -949,6 +949,8 @@ describe('Step Upload to AWS', () => {
       // skip OpenScap
       await clickNext();
       // skip repositories
+      await clickNext();
+      // skip packages
       await clickNext();
       // skip Details
       const blueprintName = await screen.findByRole('textbox', {
@@ -985,7 +987,7 @@ describe('Step Upload to AWS', () => {
       );
       await clickNext();
 
-      //     // aws step
+      // aws step
       await switchToAWSManual();
       await user.type(
         await screen.findByRole('textbox', {
@@ -1008,8 +1010,8 @@ describe('Step Upload to AWS', () => {
       await clickNext();
 
       // skip packages
-      //    await clickNext();
-      //     skip repositories
+      await clickNext();
+      // skip repositories
       await clickNext();
       // skip Details
       const blueprintName = await screen.findByRole('textbox', {
