@@ -1059,7 +1059,8 @@ describe('Step Upload to AWS', () => {
       await user.click(registrationExpandable);
       await user.click(contentExpandable);
 
-      await screen.findByText('Additional Red Hatand 3rd party packages');
+      await within(contentExpandable).findByText('Custom repositories');
+      await within(contentExpandable).findByText('Additional packages');
       //  await user.click(fscExpandable);
       // await screen.findByText('Configuration type');
     });
@@ -1078,8 +1079,10 @@ describe('Step Upload to AWS', () => {
       ).not.toBeInTheDocument();
       await user.click(targetExpandable);
       await screen.findByText('AWS');
+
       await user.click(contentExpandable);
-      await screen.findByText('Additional Red Hatand 3rd party packages');
+      await within(contentExpandable).findByText('Custom repositories');
+      await within(contentExpandable).findByText('Additional packages');
     });
   });
   //     await user.click(fscExpandable);

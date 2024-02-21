@@ -18,7 +18,7 @@ import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
-import { RepositoriesTable } from './ReviewStepTables';
+import { PackagesTable, RepositoriesTable } from './ReviewStepTables';
 
 import {
   RELEASES,
@@ -43,6 +43,7 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
+  selectPackages,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
@@ -271,23 +272,10 @@ export const ContentList = () => {
   const customRepositories = useAppSelector((state) =>
     selectCustomRepositories(state)
   );
+  const packages = useAppSelector((state) => selectPackages(state));
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Additional Red Hat
-          <br />
-          and 3rd party packages
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
-          data-testid="chosen-packages-count"
-        >
-          {0}
-        </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           Custom repositories
         </TextListItem>
@@ -309,6 +297,36 @@ export const ContentList = () => {
                 className="pf-u-p-0"
               >
                 {customRepositories?.length || 0}
+              </Button>
+            </Popover>
+          ) : (
+            0
+          )}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Additional packages
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dd}
+          data-testid="chosen-packages-count"
+        >
+          {packages?.length > 0 ? (
+            <Popover
+              position="bottom"
+              headerContent="Additional packages"
+              hasAutoWidth
+              minWidth="60rem"
+              bodyContent={<PackagesTable />}
+            >
+              <Button
+                variant="link"
+                aria-label="About packages"
+                className="pf-u-p-0"
+              >
+                {packages?.length}
               </Button>
             </Popover>
           ) : (
