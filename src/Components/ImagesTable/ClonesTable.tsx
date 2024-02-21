@@ -33,7 +33,7 @@ const Ami = ({ status }: AmiPropTypes) => {
           clickTip="Copied"
           variant="inline-compact"
         >
-          {'ami' in status.options ? status.options.ami : null}
+          {'ami' in status.options ? status.options.ami : ''}
         </ClipboardCopy>
       );
 
