@@ -88,7 +88,9 @@ describe('Blueprints', () => {
       (button) => button.getAttribute('id') === idMatcher
     );
     await user.click(elementById);
-    expect(screen.queryByTestId('images-table')).not.toBeInTheDocument();
+    const table = await screen.findByTestId('images-table');
+    const { findByText } = within(table);
+    await findByText('No images');
   });
   test('click build image button', async () => {
     renderWithReduxRouter('', {});

@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateVariant,
   OnSetPage,
   Pagination,
   PaginationVariant,
-  Text,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
   Alert,
   Spinner,
   Bullseye,
   Badge,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import {
   ActionsColumn,
   ExpandableRowContent,
@@ -36,6 +26,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
+import ImagesEmptyState from './EmptyState';
 import {
   AwsDetails,
   AwsS3Details,
@@ -168,168 +159,98 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
 
   return (
     <>
-      {itemCount === 0 && <EmptyImagesTable />}
-      {itemCount > 0 && (
-        <>
-          <Toolbar>
-            <ToolbarContent>
-              <ToolbarItem>
-                <Link
-                  to={resolveRelPath('imagewizard')}
-                  className="pf-c-button pf-m-primary"
-                  data-testid="create-image-action"
-                >
-                  Create image
-                </Link>
-              </ToolbarItem>
-              <ToolbarItem
-                variant="pagination"
-                align={{ default: 'alignRight' }}
+      <>
+        <Toolbar>
+          <ToolbarContent>
+            <ToolbarItem>
+              <Link
+                to={resolveRelPath('imagewizard')}
+                className="pf-c-button pf-m-primary"
+                data-testid="create-image-action"
               >
-                <Pagination
-                  itemCount={itemCount}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination-top"
-                  data-testid="images-pagination-top"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-          <Table variant="compact" data-testid="images-table">
-            <Thead>
+                Create image
+              </Link>
+            </ToolbarItem>
+            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+              <Pagination
+                itemCount={itemCount}
+                perPage={perPage}
+                page={page}
+                onSetPage={onSetPage}
+                onPerPageSelect={onPerPageSelect}
+                widgetId="compose-pagination-top"
+                data-testid="images-pagination-top"
+                isCompact
+              />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+        <Table variant="compact" data-testid="images-table">
+          <Thead>
+            <Tr>
+              <Th />
+              <Th>Image name</Th>
+              <Th>Created/Updated</Th>
+              <Th>Release</Th>
+              <Th>Target</Th>
+              {experimentalFlag && <Th>Version</Th>}
+              <Th>Status</Th>
+              <Th>Instance</Th>
+              <Th />
+            </Tr>
+          </Thead>
+          {itemCount === 0 && (
+            <Tbody>
               <Tr>
-                <Th />
-                <Th>Image name</Th>
-                <Th>Created/Updated</Th>
-                <Th>Release</Th>
-                <Th>Target</Th>
-                {experimentalFlag && <Th>Version</Th>}
-                <Th>Status</Th>
-                <Th>Instance</Th>
-                <Th />
+                <Td colSpan={12}>
+                  <ImagesEmptyState selectedBlueprint={selectedBlueprint} />
+                </Td>
               </Tr>
-            </Thead>
+            </Tbody>
+          )}
+          {experimentalFlag && isBlueprintOutSync && (
+            <Tbody>
+              <Tr>
+                <Td colSpan={12}>
+                  <Alert
+                    isInline
+                    title="You haven't built new images for this version of your blueprint yet"
+                    ouiaId="blueprint-out-of-sync-alert"
+                  />
+                </Td>
+              </Tr>
+            </Tbody>
+          )}
 
-            {experimentalFlag && isBlueprintOutSync && (
-              <Tbody>
-                <Tr>
-                  <Td colSpan={12}>
-                    <Alert
-                      isInline
-                      title="You haven't built new images for this version of your blueprint yet"
-                      ouiaId="blueprint-out-of-sync-alert"
-                    />
-                  </Td>
-                </Tr>
-              </Tbody>
-            )}
-
-            {composes?.map((compose, rowIndex) => {
-              return (
-                <ImagesTableRow
-                  compose={compose}
-                  rowIndex={rowIndex}
-                  key={compose.id}
-                />
-              );
-            })}
-          </Table>
-          <Toolbar className="pf-u-mb-xl">
-            <ToolbarContent>
-              <ToolbarItem
-                variant="pagination"
-                align={{ default: 'alignRight' }}
-              >
-                <Pagination
-                  variant={PaginationVariant.bottom}
-                  itemCount={itemCount}
-                  perPage={perPage}
-                  page={page}
-                  onSetPage={onSetPage}
-                  onPerPageSelect={onPerPageSelect}
-                  widgetId="compose-pagination-bottom"
-                  data-testid="images-pagination-bottom"
-                  isCompact
-                />
-              </ToolbarItem>
-            </ToolbarContent>
-          </Toolbar>
-        </>
-      )}
+          {composes?.map((compose, rowIndex) => {
+            return (
+              <ImagesTableRow
+                compose={compose}
+                rowIndex={rowIndex}
+                key={compose.id}
+              />
+            );
+          })}
+        </Table>
+        <Toolbar className="pf-u-mb-xl">
+          <ToolbarContent>
+            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+              <Pagination
+                variant={PaginationVariant.bottom}
+                itemCount={itemCount}
+                perPage={perPage}
+                page={page}
+                onSetPage={onSetPage}
+                onPerPageSelect={onPerPageSelect}
+                widgetId="compose-pagination-bottom"
+                data-testid="images-pagination-bottom"
+                isCompact
+              />
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+      </>
     </>
-  );
-};
-
-const EmptyImagesTable = () => {
-  return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
-      <EmptyStateHeader
-        titleText="Create an RPM-DNF image"
-        icon={<EmptyStateIcon icon={PlusCircleIcon} />}
-        headingLevel="h4"
-      />
-      <EmptyStateBody>
-        <Text>
-          Image builder is a tool for creating deployment-ready customized
-          system images: installation disks, virtual machines, cloud
-          vendor-specific images, and others. By using image builder, you can
-          create these images faster than manual procedures because it
-          eliminates the specific configurations required for each output type.
-        </Text>
-        <br />
-        <Text>
-          With RPM-DNF, you can manage the system software by using the DNF
-          package manager and updated RPM packages. This is a simple and
-          adaptive method of managing and modifying the system over its
-          lifecycle.
-        </Text>
-        <br />
-        <Text>
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={
-              'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index'
-            }
-          >
-            Learn more about managing images with DNF
-          </Button>
-        </Text>
-      </EmptyStateBody>
-      <EmptyStateFooter>
-        <Link
-          to={resolveRelPath('imagewizard')}
-          className="pf-c-button pf-m-primary"
-          data-testid="create-image-action"
-        >
-          Create image
-        </Link>
-        <EmptyStateActions>
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={
-              'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
-            }
-            className="pf-u-pt-md"
-          >
-            Image builder for RPM-DNF documentation
-          </Button>
-        </EmptyStateActions>
-      </EmptyStateFooter>
-    </EmptyState>
   );
 };
 
