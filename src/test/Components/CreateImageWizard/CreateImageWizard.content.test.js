@@ -588,9 +588,15 @@ describe('Step Packages', () => {
       ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent('testsummary for test package');
-      expect(secondItem).toHaveTextContent('testPkgtest package summary');
-      expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+      expect(firstItem).toHaveTextContent(
+        'test-sourcessummary for test package'
+      );
+      expect(secondItem).toHaveTextContent(
+        'testPkg-sourcestest package summary'
+      );
+      expect(thirdItem).toHaveTextContent(
+        'lib-test-sourceslib-test package summary'
+      );
     });
 
     test('search results should be sorted after selecting them and then deselecting them', async () => {
@@ -603,12 +609,16 @@ describe('Step Packages', () => {
 
       await searchForAvailablePackages(searchbox, 'test');
 
-      await user.click(await screen.findByTestId('available-pkgs-testPkg'));
+      await user.click(
+        await screen.findByTestId('available-pkgs-testPkg-sources')
+      );
       await user.click(
         await screen.findByRole('button', { name: /Add selected/ })
       );
 
-      await user.click(await screen.findByTestId('selected-pkgs-testPkg'));
+      await user.click(
+        await screen.findByTestId('selected-pkgs-testPkg-sources')
+      );
       await user.click(
         await screen.findByRole('button', { name: /Remove selected/ })
       );
@@ -621,9 +631,15 @@ describe('Step Packages', () => {
       );
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent('testsummary for test package');
-      expect(secondItem).toHaveTextContent('testPkgtest package summary');
-      expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+      expect(firstItem).toHaveTextContent(
+        'test-sourcessummary for test package'
+      );
+      expect(secondItem).toHaveTextContent(
+        'testPkg-sourcestest package summary'
+      );
+      expect(thirdItem).toHaveTextContent(
+        'lib-test-sourceslib-test package summary'
+      );
     });
 
     test('search results should be sorted after adding and then removing all packages', async () => {
@@ -649,9 +665,15 @@ describe('Step Packages', () => {
       ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent('testsummary for test package');
-      expect(secondItem).toHaveTextContent('testPkgtest package summary');
-      expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+      expect(firstItem).toHaveTextContent(
+        'test-sourcessummary for test package'
+      );
+      expect(secondItem).toHaveTextContent(
+        'testPkg-sourcestest package summary'
+      );
+      expect(thirdItem).toHaveTextContent(
+        'lib-test-sourceslib-test package summary'
+      );
     });
 
     test('removing a single package updates the state correctly', async () => {
@@ -666,7 +688,9 @@ describe('Step Packages', () => {
       await user.click(await screen.findByRole('button', { name: /Add all/ }));
 
       // remove a single package
-      await user.click(await screen.findByTestId('selected-pkgs-lib-test'));
+      await user.click(
+        await screen.findByTestId('selected-pkgs-lib-test-sources')
+      );
       await user.click(
         await screen.findByRole('button', { name: /Remove selected/ })
       );
