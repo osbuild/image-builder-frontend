@@ -5,7 +5,10 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
-import { selectCustomRepositories } from '../../../../store/wizardSlice';
+import {
+  selectCustomRepositories,
+  selectPackages,
+} from '../../../../store/wizardSlice';
 
 type repoPropType = {
   repoUrl: string[] | undefined;
@@ -68,9 +71,33 @@ export const FSReviewTable = () => {
 };
 
 export const PackagesTable = () => {
+  const packages = useAppSelector((state) => selectPackages(state));
   return (
     <Panel isScrollable>
-      <PanelMain maxHeight="30ch"></PanelMain>
+      <PanelMain maxHeight="30ch">
+        <Table aria-label="Packages table" variant="compact">
+          <Thead>
+            <Tr>
+              <Th>Name</Th>
+              <Th>Description</Th>
+              <Th>Package repository</Th>
+            </Tr>
+          </Thead>
+          <Tbody data-testid="packages-tbody-review">
+            {packages.map((pkg, pkgIndex) => (
+              <Tr key={pkgIndex}>
+                <Td className="pf-m-width-30">{pkg.name}</Td>
+                <Td>{pkg.summary}</Td>
+                <Td className="pf-m-width-20">
+                  {pkg.repository === 'distro'
+                    ? 'Red Hat repository'
+                    : 'Custom repository'}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
+      </PanelMain>
     </Panel>
   );
 };
