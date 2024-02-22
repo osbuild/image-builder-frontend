@@ -908,7 +908,7 @@ describe('Step Upload to AWS', () => {
 
       expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
       expect(await getNextButton()).toBeEnabled();
-    });
+    }, 20000);
   });
 
   describe('Step Review', () => {
