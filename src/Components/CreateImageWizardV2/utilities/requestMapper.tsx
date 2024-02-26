@@ -31,6 +31,7 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
+  selectPackages,
   selectRegistrationType,
   selectServerUrl,
 } from '../../../store/wizardSlice';
@@ -154,7 +155,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     directories: undefined,
     files: undefined,
     subscription: getSubscription(state, orgID),
-    packages: undefined,
+    packages: getPackages(state),
     payload_repositories: undefined,
     custom_repositories: undefined,
     openscap: undefined,
@@ -173,6 +174,16 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     partitioning_mode: undefined,
     fips: undefined,
   };
+};
+
+const getPackages = (state: RootState) => {
+  const packages = selectPackages(state);
+
+  if (packages.length > 0) {
+    return packages.map((pkg) => pkg.name);
+  } else {
+    return undefined;
+  }
 };
 
 const getSubscription = (
