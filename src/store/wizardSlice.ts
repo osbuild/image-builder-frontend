@@ -9,14 +9,13 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
-import {
-  AwsShareMethod,
-  V1ListSourceResponseItem,
-} from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
+import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
+import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
 import {
   GcpAccountType,
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
+import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
@@ -39,6 +38,13 @@ type wizardState = {
     accountId: string;
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
+  };
+  azure: {
+    shareMethod: AzureShareMethod;
+    tenantId: string;
+    subscriptionId: string;
+    source: string;
+    resourceGroup: string;
   };
   gcp: {
     shareMethod: GcpShareMethod;
@@ -81,6 +87,13 @@ const initialState: wizardState = {
     accountId: '',
     shareMethod: 'sources',
     source: undefined,
+  },
+  azure: {
+    shareMethod: 'sources',
+    tenantId: '',
+    subscriptionId: '',
+    source: '',
+    resourceGroup: '',
   },
   gcp: {
     shareMethod: 'withGoogle',
@@ -142,6 +155,26 @@ export const selectAwsSource = (
 
 export const selectAwsShareMethod = (state: RootState) => {
   return state.wizard.aws.shareMethod;
+};
+
+export const selectAzureTenantId = (state: RootState) => {
+  return state.wizard.azure.tenantId;
+};
+
+export const selectAzureShareMethod = (state: RootState) => {
+  return state.wizard.azure.shareMethod;
+};
+
+export const selectAzureSubscriptionId = (state: RootState) => {
+  return state.wizard.azure.subscriptionId;
+};
+
+export const selectAzureSource = (state: RootState) => {
+  return state.wizard.azure.source;
+};
+
+export const selectAzureResourceGroup = (state: RootState) => {
+  return state.wizard.azure.resourceGroup;
 };
 
 export const selectGcpShareMethod = (state: RootState) => {
@@ -239,6 +272,24 @@ export const wizardSlice = createSlice({
     ) => {
       state.aws.source = action.payload;
     },
+    changeAzureTenantId: (state, action: PayloadAction<string>) => {
+      state.azure.tenantId = action.payload;
+    },
+    changeAzureShareMethod: (
+      state,
+      action: PayloadAction<AzureShareMethod>
+    ) => {
+      state.azure.shareMethod = action.payload;
+    },
+    changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
+      state.azure.subscriptionId = action.payload;
+    },
+    changeAzureSource: (state, action: PayloadAction<string>) => {
+      state.azure.source = action.payload;
+    },
+    changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
+      state.azure.resourceGroup = action.payload;
+    },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
       switch (action.payload) {
         case 'withInsights':
@@ -317,6 +368,11 @@ export const {
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSource,
+  changeAzureTenantId,
+  changeAzureShareMethod,
+  changeAzureSubscriptionId,
+  changeAzureSource,
+  changeAzureResourceGroup,
   changeGcpShareMethod,
   changeGcpAccountType,
   changeGcpEmail,

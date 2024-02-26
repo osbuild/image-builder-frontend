@@ -17,9 +17,13 @@ import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
 import ReviewWizardFooter from './steps/Review/Footer';
 import Aws from './steps/TargetEnvironment/Aws';
+import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
   isAwsAccountIdValid,
+  isAzureTenantGUIDValid,
+  isAzureSubscriptionIdValid,
+  isAzureResourceGroupValid,
   isBlueprintDescriptionValid,
   isBlueprintNameValid,
   isGcpEmailValid,
@@ -33,6 +37,11 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+  selectAzureResourceGroup,
+  selectAzureShareMethod,
+  selectAzureSource,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintName,
   selectGcpEmail,
@@ -100,6 +109,18 @@ const CreateImageWizard = () => {
   // GCP
   const gcpShareMethod = useAppSelector((state) => selectGcpShareMethod(state));
   const gcpEmail = useAppSelector((state) => selectGcpEmail(state));
+  // AZURE
+  const azureShareMethod = useAppSelector((state) =>
+    selectAzureShareMethod(state)
+  );
+  const azureTenantId = useAppSelector((state) => selectAzureTenantId(state));
+  const azureSubscriptionId = useAppSelector((state) =>
+    selectAzureSubscriptionId(state)
+  );
+  const azureResourceGroup = useAppSelector((state) =>
+    selectAzureResourceGroup(state)
+  );
+  const azureSource = useAppSelector((state) => selectAzureSource(state));
 
   const registrationType = useAppSelector((state) =>
     selectRegistrationType(state)
@@ -168,6 +189,29 @@ const CreateImageWizard = () => {
                 isHidden={!targetEnvironments.includes('gcp')}
               >
                 <Gcp />
+              </WizardStep>,
+              <WizardStep
+                name="Azure"
+                id="wizard-target-azure"
+                key="wizard-target-azure"
+                footer={
+                  <CustomWizardFooter
+                    disableNext={
+                      azureShareMethod === 'manual'
+                        ? !isAzureTenantGUIDValid(azureTenantId) ||
+                          !isAzureSubscriptionIdValid(azureSubscriptionId) ||
+                          !isAzureResourceGroupValid(azureResourceGroup)
+                        : azureShareMethod === 'sources'
+                        ? !isAzureTenantGUIDValid(azureTenantId) ||
+                          !isAzureSubscriptionIdValid(azureSubscriptionId) ||
+                          !isAzureResourceGroupValid(azureResourceGroup)
+                        : azureSource === undefined
+                    }
+                  />
+                }
+                isHidden={!targetEnvironments.includes('azure')}
+              >
+                <Azure />
               </WizardStep>,
             ]}
           />

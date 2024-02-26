@@ -1,8 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-import FormSpy from '@data-driven-forms/react-form-renderer/form-spy';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { Alert } from '@patternfly/react-core';
 import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
@@ -10,19 +7,24 @@ import {
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import PropTypes from 'prop-types';
 
-import { extractProvisioningList } from '../../../store/helpers';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   useGetSourceListQuery,
   useGetSourceUploadInfoQuery,
-} from '../../../store/provisioningApi';
+} from '../../../../../store/provisioningApi';
+import {
+  changeAzureResourceGroup,
+  changeAzureSource,
+  changeAzureSubscriptionId,
+  changeAzureTenantId,
+  selectAzureSource,
+} from '../../../../../store/wizardSlice';
 
-const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
-  const { change } = useFormApi();
-  const { input } = useFieldApi(props);
+export const AzureSourcesSelect = () => {
+  const azureSource = useAppSelector((state) => selectAzureSource(state));
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const selectedSourceId = input.value;
 
   const {
     data: rawSources,
@@ -31,7 +33,6 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
     isError,
     refetch,
   } = useGetSourceListQuery({ provider: 'azure' });
-  const sources = extractProvisioningList(rawSources);
 
   const {
     data: sourceDetails,
@@ -39,43 +40,42 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
     isSuccess: isSuccessDetails,
     isError: isErrorDetails,
   } = useGetSourceUploadInfoQuery(
-    { id: selectedSourceId },
+    { id: parseInt(azureSource as string) },
     {
-      skip: !selectedSourceId,
+      skip: !azureSource,
     }
   );
 
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
-    change('azure-tenant-id', sourceDetails?.azure?.tenant_id);
-    change('azure-subscription-id', sourceDetails?.azure?.subscription_id);
+    dispatch(changeAzureTenantId(sourceDetails?.azure?.tenant_id || ''));
+    dispatch(
+      changeAzureSubscriptionId(sourceDetails?.azure?.subscription_id || '')
+    );
   }, [
     isFetchingDetails,
     isSuccessDetails,
-    sourceDetails?.azure?.subscription_id,
     sourceDetails?.azure?.tenant_id,
-    change,
+    sourceDetails?.azure?.subscription_id,
+    dispatch,
   ]);
 
-  const onFormChange = ({ values }) => {
-    if (
-      values['azure-type'] !== 'azure-type-source' ||
-      values[input.name] === undefined
-    ) {
-      change(input.name, undefined);
-      change('azure-tenant-id', undefined);
-      change('azure-subscription-id', undefined);
-    }
-  };
-
-  const handleSelect = (_, sourceName) => {
-    const sourceId = sources.find((source) => source.name === sourceName).id;
-    change(input.name, sourceId);
+  const handleSelect = (
+    _event: React.MouseEvent<Element, MouseEvent>,
+    sourceName: string
+  ) => {
+    const sourceId = rawSources?.data?.find(
+      (source) => source?.name === sourceName
+    )?.id;
+    dispatch(changeAzureSource(sourceId || ''));
     setIsOpen(false);
   };
 
   const handleClear = () => {
-    change(input.name, undefined);
+    dispatch(changeAzureSource(''));
+    dispatch(changeAzureTenantId(''));
+    dispatch(changeAzureSubscriptionId(''));
+    dispatch(changeAzureResourceGroup(''));
   };
 
   const handleToggle = () => {
@@ -86,25 +86,33 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
 
     setIsOpen(!isOpen);
   };
+  const selectOptions = rawSources?.data?.map((source) => (
+    <SelectOption key={source.id} value={source.name} />
+  ));
+
+  if (isSuccess) {
+    if (isFetching) {
+      selectOptions?.push(
+        <SelectOption key="loading" isNoResultsOption={true}>
+          <Spinner size="lg" />
+        </SelectOption>
+      );
+    }
+  }
 
   return (
     <>
-      <FormSpy subscription={{ values: true }} onChange={onFormChange} />
-      <FormGroup
-        isRequired={isRequired}
-        label={label}
-        data-testid="azure-sources"
-      >
+      <FormGroup isRequired label={'Source Name'} data-testid="azure-sources">
         <Select
           ouiaId="source_select"
           variant={SelectVariant.typeahead}
-          className={className}
           onToggle={handleToggle}
           onSelect={handleSelect}
           onClear={handleClear}
           selections={
-            selectedSourceId
-              ? sources.find((source) => source.id === selectedSourceId)?.name
+            azureSource
+              ? rawSources?.data?.find((source) => source.id === azureSource)
+                  ?.name
               : undefined
           }
           isOpen={isOpen}
@@ -114,50 +122,33 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
           maxHeight="25rem"
           isDisabled={!isSuccess}
         >
-          {isSuccess &&
-            sources.map((source) => (
-              <SelectOption key={source.id} value={source.name} />
-            ))}
-          {isFetching && (
-            <SelectOption isNoResultsOption={true}>
-              <Spinner size="lg" />
-            </SelectOption>
-          )}
+          {selectOptions}
         </Select>
       </FormGroup>
-      <>
-        {isError && (
-          <Alert
-            variant={'danger'}
-            isPlain
-            isInline
-            title={'Sources unavailable'}
-          >
-            Sources cannot be reached, try again later or enter an account info
-            for upload manually.
-          </Alert>
-        )}
-        {!isError && isErrorDetails && (
-          <Alert
-            variant={'danger'}
-            isPlain
-            isInline
-            title={'Azure details unavailable'}
-          >
-            Could not fetch Tenant id and Subscription id from Azure for given
-            Source. Check Sources page for the source availability or select a
-            different Source.
-          </Alert>
-        )}
-      </>
+      {isError && (
+        <Alert
+          variant={'danger'}
+          isPlain
+          isInline
+          title={'Sources unavailable'}
+        >
+          Sources cannot be reached, try again later or enter an account info
+          for upload manually.
+        </Alert>
+      )}
+      {!isError && isErrorDetails && (
+        <Alert
+          variant={'danger'}
+          isPlain
+          isInline
+          title={'Azure details unavailable'}
+        >
+          Could not fetch Tenant id and Subscription id from Azure for given
+          Source. Check Sources page for the source availability or select a
+          different Source.
+        </Alert>
+      )}
+      <></>
     </>
   );
 };
-
-AzureSourcesSelect.propTypes = {
-  className: PropTypes.string,
-  label: PropTypes.node,
-  isRequired: PropTypes.bool,
-};
-
-export default AzureSourcesSelect;
