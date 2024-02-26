@@ -1,12 +1,12 @@
 import React from 'react';
 
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { Button, FormGroup } from '@patternfly/react-core';
 
-const AzureAuthButton = () => {
-  const { getState } = useFormApi();
+import { useAppSelector } from '../../../../../store/hooks';
+import { selectAzureTenantId } from '../../../../../store/wizardSlice';
 
-  const tenantId = getState()?.values?.['azure-tenant-id'];
+export const AzureAuthButton = () => {
+  const tenantId = useAppSelector((state) => selectAzureTenantId(state));
   const guidRegex = new RegExp(
     '^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
     'i'
@@ -31,5 +31,3 @@ const AzureAuthButton = () => {
     </FormGroup>
   );
 };
-
-export default AzureAuthButton;

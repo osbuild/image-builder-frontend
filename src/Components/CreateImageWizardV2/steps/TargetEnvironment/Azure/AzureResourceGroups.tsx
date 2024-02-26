@@ -1,75 +1,83 @@
 import React, { useState } from 'react';
 
-import FormSpy from '@data-driven-forms/react-form-renderer/form-spy';
-import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
-import useFormApi from '@data-driven-forms/react-form-renderer/use-form-api';
 import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import PropTypes from 'prop-types';
 
-import { useGetSourceUploadInfoQuery } from '../../../store/provisioningApi';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
+import {
+  changeAzureResourceGroup,
+  selectAzureResourceGroup,
+  selectAzureSource,
+} from '../../../../../store/wizardSlice';
 
-const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
-  const { change, getState } = useFormApi();
-  const { input } = useFieldApi(props);
-  const [isOpen, setIsOpen] = useState(false);
-  const [sourceId, setSourceId] = useState(
-    getState()?.values?.['azure-sources-select']
+export const AzureResourceGroups = () => {
+  const azureSource = useAppSelector((state) => selectAzureSource(state));
+  const azureResourceGroup = useAppSelector((state) =>
+    selectAzureResourceGroup(state)
   );
-  const onFormChange = ({ values }) => {
-    setSourceId(values['azure-sources-select']);
-  };
+  const dispatch = useAppDispatch();
+  const [isOpen, setIsOpen] = useState(false);
 
   const { data: sourceDetails, isFetching } = useGetSourceUploadInfoQuery(
-    { id: sourceId },
+    // @ts-ignore
+    { id: azureSource },
     {
-      skip: !sourceId,
+      skip: !azureSource,
     }
   );
-  const resourceGroups =
-    (sourceId && sourceDetails?.azure?.resource_groups) || [];
 
-  const setResourceGroup = (_, selection) => {
+  const resourceGroups =
+    (azureSource && sourceDetails?.azure?.resource_groups) || [];
+
+  const setResourceGroup = (
+    _event: React.MouseEvent<Element, MouseEvent>,
+    selection: string
+  ) => {
+    const resource =
+      resourceGroups?.find((resource) => resource === selection) || '';
     setIsOpen(false);
-    change(input.name, selection);
+    dispatch(changeAzureResourceGroup(resource));
   };
 
   const handleClear = () => {
-    change(input.name, undefined);
+    dispatch(changeAzureResourceGroup(''));
   };
+  const options: JSX.Element[] = [];
+
+  if (isFetching) {
+    options.push(
+      <SelectOption
+        isNoResultsOption={true}
+        data-testid="azure-resource-groups-loading"
+      >
+        <Spinner size="lg" />
+      </SelectOption>
+    );
+  }
 
   return (
     <FormGroup
-      isRequired={isRequired}
-      label={label}
+      isRequired
+      label={'Resource group'}
       data-testid="azure-resource-groups"
     >
-      <FormSpy subscription={{ values: true }} onChange={onFormChange} />
       <Select
         ouiaId="resource_group_select"
         variant={SelectVariant.typeahead}
-        className={className}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={setResourceGroup}
         onClear={handleClear}
-        selections={input.value}
+        selections={azureResourceGroup}
         isOpen={isOpen}
         placeholderText="Select resource group"
         typeAheadAriaLabel="Select resource group"
       >
-        {isFetching && (
-          <SelectOption
-            isNoResultsOption={true}
-            data-testid="azure-resource-groups-loading"
-          >
-            <Spinner size="lg" />
-          </SelectOption>
-        )}
-        {resourceGroups.map((name, index) => (
+        {resourceGroups.map((name: string, index: number) => (
           <SelectOption
             key={index}
             value={name}
@@ -80,17 +88,3 @@ const AzureResourceGroups = ({ label, isRequired, className, ...props }) => {
     </FormGroup>
   );
 };
-
-AzureResourceGroups.propTypes = {
-  label: PropTypes.node,
-  isRequired: PropTypes.bool,
-  className: PropTypes.string,
-};
-
-AzureResourceGroups.defaultProps = {
-  label: '',
-  isRequired: false,
-  className: '',
-};
-
-export default AzureResourceGroups;
