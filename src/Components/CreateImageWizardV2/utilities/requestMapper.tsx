@@ -75,9 +75,13 @@ const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
       return 'oci.objectstorage';
     case 'wsl':
       return 'aws.s3';
+    case 'guest-image':
+      return 'aws.s3';
     case 'image-installer':
       return 'aws.s3';
     case 'vsphere':
+      return 'aws.s3';
+    case 'vsphere-ova':
       return 'aws.s3';
     case 'ami':
       return 'aws';
