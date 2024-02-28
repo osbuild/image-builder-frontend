@@ -18,7 +18,6 @@ import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
-import { AwsAccountId } from './../TargetEnvironment/Aws/AwsAccountId';
 import { RepositoriesTable } from './ReviewStepTables';
 
 import {
@@ -28,7 +27,6 @@ import {
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
 } from '../../../../constants';
-import { extractProvisioningList } from '../../../../store/helpers';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
@@ -37,6 +35,7 @@ import {
   selectArchitecture,
   selectAwsAccountId,
   selectAwsShareMethod,
+  selectAwsSource,
   selectBlueprintDescription,
   selectBlueprintName,
   selectCustomRepositories,
@@ -47,7 +46,6 @@ import {
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 import { MajorReleasesLifecyclesChart } from '../../../CreateImageWizard/formComponents/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 
@@ -107,14 +105,12 @@ export const FSCList = () => {
 };
 
 export const TargetEnvAWSList = () => {
-  const { data: rawAWSSources, isSuccess } = useGetSourceListQuery({
+  const { isSuccess } = useGetSourceListQuery({
     provider: 'aws',
   });
   const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
   const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
-
-  const awsSources = extractProvisioningList(rawAWSSources);
-  const { isBeta } = useGetEnvironment();
+  const source = useAppSelector((state) => selectAwsSource(state));
 
   return (
     <TextContent>
@@ -135,19 +131,13 @@ export const TargetEnvAWSList = () => {
           Shared to account
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {!isBeta() && awsAccountId}
-          {isBeta() && awsShareMethod === 'sources' && isSuccess && (
-            <AwsAccountId />
-          )}
-          {isBeta() && awsShareMethod === 'manual' && awsAccountId}
+          {awsAccountId}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           {awsShareMethod === 'sources' ? 'Source' : null}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {isSuccess && awsShareMethod === 'sources'
-            ? awsSources?.find((source) => source.id === source)?.name
-            : null}
+          {isSuccess && awsShareMethod === 'sources' ? source?.name : null}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           Default region

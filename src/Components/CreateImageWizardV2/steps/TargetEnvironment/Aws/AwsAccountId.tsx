@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Alert,
@@ -8,11 +8,15 @@ import {
   FormGroup,
 } from '@patternfly/react-core';
 
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
-import { selectAwsSource } from '../../../../../store/wizardSlice';
+import {
+  changeAwsAccountId,
+  selectAwsSource,
+} from '../../../../../store/wizardSlice';
 
 export const AwsAccountId = () => {
+  const dispatch = useAppDispatch();
   const source = useAppSelector((state) => selectAwsSource(state));
 
   const { data, isError } = useGetSourceUploadInfoQuery(
@@ -21,6 +25,10 @@ export const AwsAccountId = () => {
     },
     { skip: source === undefined }
   );
+
+  useEffect(() => {
+    dispatch(changeAwsAccountId(data?.aws?.account_id || ''));
+  }, [data?.aws?.account_id, dispatch]);
 
   return (
     <>
