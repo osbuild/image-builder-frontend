@@ -1,6 +1,7 @@
 import React from 'react';
 import '@testing-library/jest-dom';
 
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
@@ -50,8 +51,8 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-// @ts-ignore
-let router = undefined;
+// The router is just initiliazed here, it's assigned a value in the tests
+let router: RemixRouter | undefined = undefined;
 
 beforeAll(() => {
   // scrollTo is not defined in jsdom
@@ -138,7 +139,6 @@ describe('Step Upload to Azure', () => {
 
   test('clicking Cancel loads landing page', async () => {
     await setUp();
-    // @ts-ignore
     await verifyCancelButton(router);
   });
 
@@ -282,8 +282,6 @@ describe('Step Upload to Azure', () => {
     await screen.findByText(
       /Sources cannot be reached, try again later or enter an account info for upload manually\./i
     );
-  });
-
-  // set test timeout to 15 seconds
-  // @ts-ignore
-}, 15000);
+    // set test timeout to 15 seconds
+  }, 15000);
+});
