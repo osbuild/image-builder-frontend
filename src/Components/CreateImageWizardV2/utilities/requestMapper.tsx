@@ -3,6 +3,7 @@ import { Store } from 'redux';
 import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
+  AzureUploadRequestOptions,
   CreateBlueprintRequest,
   Customizations,
   GcpUploadRequestOptions,
@@ -17,6 +18,11 @@ import {
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSource,
+  selectAzureResourceGroup,
+  selectAzureShareMethod,
+  selectAzureSource,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
   selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
@@ -94,12 +100,27 @@ const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
 const getImageOptions = (
   imageType: ImageTypes,
   state: RootState
-): AwsUploadRequestOptions | GcpUploadRequestOptions => {
+):
+  | AwsUploadRequestOptions
+  | AzureUploadRequestOptions
+  | GcpUploadRequestOptions => {
   switch (imageType) {
     case 'aws':
       if (selectAwsShareMethod(state) === 'sources')
         return { share_with_sources: [selectAwsSource(state)?.id || ''] };
       else return { share_with_accounts: [selectAwsAccountId(state)] };
+    case 'azure':
+      if (selectAzureShareMethod(state) === 'sources')
+        return {
+          source_id: selectAzureSource(state),
+          resource_group: selectAzureResourceGroup(state),
+        };
+      else
+        return {
+          tenant_id: selectAzureTenantId(state),
+          subscription_id: selectAzureSubscriptionId(state),
+          resource_group: selectAzureResourceGroup(state),
+        };
     case 'gcp': {
       let googleAccount: string = '';
       if (selectGcpShareMethod(state) === 'withGoogle') {
