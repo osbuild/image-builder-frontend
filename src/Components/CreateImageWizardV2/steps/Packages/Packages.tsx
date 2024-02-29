@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Bullseye,
-  Button,
   EmptyState,
   EmptyStateBody,
   EmptyStateHeader,
@@ -17,12 +16,6 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core/deprecated';
 import { CogIcon, SearchIcon, UserIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
@@ -46,81 +39,6 @@ export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
   repository: string;
-};
-
-type BulkSelectProps = {
-  selected: Package[];
-  count: number | undefined;
-  perPage: number;
-  packagesCount: number | undefined;
-  handleSelectAll: Function;
-  handleSelectPage: Function;
-  handleDeselectAll: Function;
-};
-
-const BulkSelect = ({
-  selected,
-  count,
-  perPage,
-  packagesCount,
-  handleSelectAll,
-  handleSelectPage,
-  handleDeselectAll,
-}: BulkSelectProps) => {
-  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
-
-  const numSelected = selected.length;
-  const allSelected = count !== 0 ? numSelected === count : undefined;
-  const anySelected = numSelected > 0;
-  const someChecked = anySelected ? null : false;
-  const isChecked = allSelected ? true : someChecked;
-
-  const items = [
-    <DropdownItem
-      key="none"
-      onClick={() => handleDeselectAll()}
-    >{`Select none (0 items)`}</DropdownItem>,
-    <DropdownItem
-      key="page"
-      onClick={() => handleSelectPage()}
-    >{`Select page (${
-      perPage > packagesCount! ? packagesCount : perPage
-    } items)`}</DropdownItem>,
-    <DropdownItem key="all" onClick={() => handleSelectAll()}>{`Select all (${
-      packagesCount || 0
-    } items)`}</DropdownItem>,
-  ];
-
-  const handleDropdownSelect = () => toggleDropdown();
-
-  const toggleDropdown = () => setDropdownIsOpen(!dropdownIsOpen);
-
-  return (
-    <Dropdown
-      onSelect={handleDropdownSelect}
-      toggle={
-        <DropdownToggle
-          id="stacked-example-toggle"
-          splitButtonItems={[
-            <DropdownToggleCheckbox
-              id="example-checkbox-1"
-              key="split-checkbox"
-              aria-label="Select all"
-              isChecked={isChecked}
-              onClick={() => {
-                anySelected ? handleDeselectAll() : handleSelectAll();
-              }}
-            />,
-          ]}
-          onToggle={toggleDropdown}
-        >
-          {numSelected !== 0 ? `${numSelected} selected` : null}
-        </DropdownToggle>
-      }
-      isOpen={dropdownIsOpen}
-      dropdownItems={items}
-    />
-  );
 };
 
 const EmptySearch = () => {
@@ -312,30 +230,6 @@ const Packages = () => {
     }
   };
 
-  const handleSelectAll = () => {
-    for (const pkgIndex in transformedPackages) {
-      dispatch(addPackage(transformedPackages[pkgIndex]));
-    }
-  };
-
-  const handleSelectPage = () => {
-    const packagesSlice = transformedPackages.slice(
-      computeStart(),
-      computeEnd()
-    );
-    for (const pkgIndex in packagesSlice) {
-      if (!packages.some((p) => p.name === packagesSlice[pkgIndex].name)) {
-        dispatch(addPackage(packagesSlice[pkgIndex]));
-      }
-    }
-  };
-
-  const handleDeselectAll = () => {
-    for (const pkgIndex in packages) {
-      dispatch(removePackage(packages[pkgIndex]));
-    }
-  };
-
   const handleFilterToggleClick = (event: React.MouseEvent) => {
     const id = event.currentTarget.id;
     setPage(1);
@@ -419,28 +313,12 @@ const Packages = () => {
     <>
       <Toolbar>
         <ToolbarContent>
-          <ToolbarItem variant="bulk-select">
-            <BulkSelect
-              selected={packages}
-              count={packages.length}
-              perPage={perPage}
-              packagesCount={transformedPackages.length}
-              handleSelectAll={handleSelectAll}
-              handleSelectPage={handleSelectPage}
-              handleDeselectAll={handleDeselectAll}
-            />
-          </ToolbarItem>
           <ToolbarItem variant="search-filter">
             <SearchInput
               aria-label="Search packages"
               value={searchTerm}
               onChange={handleSearch}
             />
-          </ToolbarItem>
-          <ToolbarItem>
-            <Button variant="primary" isInline>
-              Refresh
-            </Button>
           </ToolbarItem>
           <ToolbarItem>
             <ToggleGroup>
