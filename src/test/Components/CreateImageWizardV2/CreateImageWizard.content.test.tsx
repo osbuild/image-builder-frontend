@@ -103,12 +103,6 @@ const toggleSelected = async () => {
   );
 };
 
-const clickRefresh = async () => {
-  await userEvent.click(
-    await screen.findByRole('button', { name: /refresh/i })
-  );
-};
-
 describe('Step Packages', () => {
   const setUp = async () => {
     mockContentSourcesEnabled = false;
@@ -179,13 +173,16 @@ describe('Step Packages', () => {
     await verifyCancelButton(router);
   });
 
-  test('should display search bar and button', async () => {
+  test('should display search bar and toggle buttons', async () => {
     await setUp();
 
     await typeIntoSearchBox('test');
 
     await screen.findByRole('button', {
-      name: /refresh/i,
+      name: /available/i,
+    });
+    await screen.findByRole('button', {
+      name: /selected/i,
     });
   });
 
@@ -201,7 +198,6 @@ describe('Step Packages', () => {
     await setUp();
 
     await typeIntoSearchBox('testPkg-123');
-    await clickRefresh();
 
     await screen.findByTestId('exact-match-row');
 
@@ -284,23 +280,6 @@ describe('Step Packages', () => {
     expect(firstPkgCheckbox.checked).toEqual(true);
   });
 
-  test('removing a single package updates the state correctly', async () => {
-    await setUp();
-
-    await typeIntoSearchBox('test');
-
-    const checkboxes = await getAllCheckboxes();
-
-    await userEvent.click(checkboxes[0]);
-    expect(await screen.findByText('1 selected'));
-
-    await userEvent.click(checkboxes[2]);
-    expect(await screen.findByText('2 selected'));
-
-    await userEvent.click(checkboxes[0]);
-    expect(await screen.findAllByText('1 selected'));
-  });
-
   test('should display empty available state on failed search', async () => {
     await setUp();
 
@@ -329,7 +308,6 @@ describe('Step Packages', () => {
 
     await clearSearchBox();
     await typeIntoSearchBox('mock');
-    await clickRefresh();
 
     await userEvent.click(checkboxes[0]);
     await userEvent.click(checkboxes[1]);
@@ -338,7 +316,6 @@ describe('Step Packages', () => {
 
     await clearSearchBox();
     await typeIntoSearchBox('test');
-    await clickRefresh();
 
     const packagesTable = await screen.findByTestId('packages-table');
 
@@ -348,34 +325,6 @@ describe('Step Packages', () => {
 
     expect(availablePackages[0]).toHaveTextContent('test');
     expect(availablePackages[1]).toHaveTextContent('test-sources');
-  });
-
-  test('bulk select works', async () => {
-    await setUp();
-
-    await typeIntoSearchBox('test');
-
-    await userEvent.click(
-      await screen.findByRole('checkbox', { name: /select all/i })
-    );
-
-    let checkboxes = await getAllCheckboxes();
-
-    for (const checkbox in checkboxes) {
-      const pkgCheckbox = checkboxes[checkbox] as HTMLInputElement;
-      expect(pkgCheckbox.checked).toEqual(true);
-    }
-
-    await userEvent.click(
-      await screen.findByRole('checkbox', { name: /select all/i })
-    );
-
-    checkboxes = await getAllCheckboxes();
-
-    for (const checkbox in checkboxes) {
-      const pkgCheckbox = checkboxes[checkbox] as HTMLInputElement;
-      expect(pkgCheckbox.checked).toEqual(false);
-    }
   });
 });
 
