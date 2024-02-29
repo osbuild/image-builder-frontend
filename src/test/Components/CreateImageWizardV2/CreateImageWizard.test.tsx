@@ -12,6 +12,8 @@ import {
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
+import { enterBlueprintName } from './wizardTestUtils';
+
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import {
@@ -423,20 +425,24 @@ describe('Step Upload to AWS', () => {
     const registerLaterRadio = await screen.findByLabelText('Register later');
     await user.click(registerLaterRadio);
 
-    //   // click through to review step
-    //   await clickNext();
-    //   await clickNext();
-    //   await clickNext();
-    //   await clickNext();
-    //   await clickNext();
+    // click through to review step
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
 
-    //   await user.click(await screen.findByRole('button', { name: /Create/ }));
+    await user.click(await screen.findByRole('button', { name: /Save/ }));
+    await user.click(
+      await screen.findByRole('menuitem', { name: /Save changes/ })
+    );
 
-    //   // returns back to the landing page
-    //   await waitFor(() =>
-    //     expect(router.state.location.pathname).toBe('/insights/image-builder')
-    //   );
-    //   // set test timeout of 10 seconds
+    // returns back to the landing page
+    await waitFor(() =>
+      expect(router?.state.location.pathname).toBe('/insights/image-builder')
+    );
+    // set test timeout of 10 seconds
   }, 10000);
 });
 
