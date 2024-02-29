@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import { Alert, Spinner } from '@patternfly/react-core';
 import { FormGroup } from '@patternfly/react-core';
@@ -11,14 +11,14 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../../store/provisioningApi';
 import {
-  changeAwsSource,
-  selectAwsSource,
+  changeAwsSourceId,
+  selectAwsSourceId,
 } from '../../../../../store/wizardSlice';
 
 export const AwsSourcesSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const source = useAppSelector((state) => selectAwsSource(state));
+  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
 
   const { data, isFetching, isLoading, isSuccess, isError, refetch } =
     useGetSourceListQuery({
@@ -26,26 +26,19 @@ export const AwsSourcesSelect = () => {
     });
 
   const sources = data?.data;
-
-  useEffect(() => {
-    // when the source is already initialized by id (i.e editing / import)
-    if (sources && sources.length > 0) {
-      if (source?.id && !!source?.name)
-        dispatch(changeAwsSource(sources.find((s) => s.id === source.id)));
-    }
-  }, [sources, source, dispatch]);
+  const chosenSource = sources?.find((source) => source.id === sourceId);
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
     value: string
   ) => {
     const source = sources?.find((source) => source.name === value);
-    dispatch(changeAwsSource(source));
+    dispatch(changeAwsSourceId(source?.id));
     setIsOpen(false);
   };
 
   const handleClear = () => {
-    dispatch(changeAwsSource(undefined));
+    dispatch(changeAwsSourceId(undefined));
   };
 
   const handleToggle = () => {
@@ -80,7 +73,7 @@ export const AwsSourcesSelect = () => {
           onToggle={handleToggle}
           onSelect={handleSelect}
           onClear={handleClear}
-          selections={source?.name}
+          selections={chosenSource?.name}
           isOpen={isOpen}
           placeholderText="Select source"
           typeAheadAriaLabel="Select source"
