@@ -459,13 +459,13 @@ export const RegisterNowList = () => {
                   <br />
                 </TextListItem>
               )}
-              {registrationType === 'register-now-insights' ||
-                (registrationType === 'register-now-rhc' && (
-                  <TextListItem>
-                    Connect to Red Hat Insights
-                    <br />
-                  </TextListItem>
-                ))}
+              {(registrationType === 'register-now-insights' ||
+                registrationType === 'register-now-rhc') && (
+                <TextListItem>
+                  Connect to Red Hat Insights
+                  <br />
+                </TextListItem>
+              )}
               {registrationType === 'register-now-rhc' && (
                 <TextListItem>
                   Use remote host configuration (rhc) utility

@@ -615,20 +615,21 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     const review = await screen.findByTestId('review-registration');
-    //     expect(review).toHaveTextContent(
-    //       'Register with Red Hat Subscription Manager (RHSM)'
-    //     );
-    //     expect(review).toHaveTextContent('Connect to Red Hat Insights');
-    //     expect(review).toHaveTextContent(
-    //       'Use remote host configuration (rhc) utility'
-    //     );
-    //     screen.getAllByText('012345678901');
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
+    const review = await screen.findByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    expect(review).toHaveTextContent('Connect to Red Hat Insights');
+    expect(review).toHaveTextContent(
+      'Use remote host configuration (rhc) utility'
+    );
+    screen.getAllByText('012345678901');
   });
 
   test('should allow registering without rhc', async () => {
@@ -658,20 +659,21 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     const review = await screen.findByTestId('review-registration');
-    //     expect(review).toHaveTextContent(
-    //       'Register with Red Hat Subscription Manager (RHSM)'
-    //     );
-    //     expect(review).toHaveTextContent('Connect to Red Hat Insights');
-    //     screen.getAllByText('012345678901');
-    //     expect(review).not.toHaveTextContent(
-    //       'Use remote host configuration (rhc) utility'
-    //     );
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
+    const review = await screen.findByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    expect(review).toHaveTextContent('Connect to Red Hat Insights');
+    screen.getAllByText('012345678901');
+    expect(review).not.toHaveTextContent(
+      'Use remote host configuration (rhc) utility'
+    );
   });
 
   test('should allow registering without insights or rhc', async () => {
@@ -703,20 +705,21 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     const review = await screen.findByTestId('review-registration');
-    //     expect(review).toHaveTextContent(
-    //       'Register with Red Hat Subscription Manager (RHSM)'
-    //     );
-    //     screen.getAllByText('012345678901');
-    //     expect(review).not.toHaveTextContent('Connect to Red Hat Insights');
-    //     expect(review).not.toHaveTextContent(
-    //       'Use remote host configuration (rhc) utility'
-    //     );
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
+    const review = await screen.findByTestId('review-registration');
+    expect(review).toHaveTextContent(
+      'Register with Red Hat Subscription Manager (RHSM)'
+    );
+    screen.getAllByText('012345678901');
+    expect(review).not.toHaveTextContent('Connect to Red Hat Insights');
+    expect(review).not.toHaveTextContent(
+      'Use remote host configuration (rhc) utility'
+    );
   });
 
   test('should hide input fields when clicking Register the system later', async () => {
@@ -730,12 +733,13 @@ describe('Step Registration', () => {
 
     await removeKeyInformation;
 
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await clickNext();
-    //     await screen.findByText('Register the system later');
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
+    await screen.findByText('Register the system later');
   });
 
   test('registering with rhc implies registering with insights', async () => {
