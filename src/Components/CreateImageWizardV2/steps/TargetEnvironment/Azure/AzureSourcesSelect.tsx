@@ -68,6 +68,7 @@ export const AzureSourcesSelect = () => {
       (source) => source?.name === sourceName
     )?.id;
     dispatch(changeAzureSource(sourceId || ''));
+    dispatch(changeAzureResourceGroup(''));
     setIsOpen(false);
   };
 
