@@ -6,6 +6,7 @@ import {
   Distributions,
   ImageRequest,
   ImageTypes,
+  Repository,
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
@@ -69,6 +70,7 @@ type wizardState = {
 
   repositories: {
     customRepositories: CustomRepository[];
+    payloadRepositories: Repository[];
   };
   packages: IBPackageWithRepositoryInfo[];
   details: {
@@ -118,6 +120,7 @@ const initialState: wizardState = {
   },
   repositories: {
     customRepositories: [],
+    payloadRepositories: [],
   },
   packages: [],
   details: {
@@ -218,6 +221,10 @@ export const selectEnabledServices = (state: RootState) => {
 
 export const selectCustomRepositories = (state: RootState) => {
   return state.wizard.repositories.customRepositories;
+};
+
+export const selectPayloadRepositories = (state: RootState) => {
+  return state.wizard.repositories.payloadRepositories;
 };
 
 export const selectPackages = (state: RootState) => {
@@ -354,6 +361,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.repositories.customRepositories = action.payload;
     },
+    changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
+      state.repositories.payloadRepositories = action.payload;
+    },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
       state.packages.push(action.payload);
     },
@@ -402,6 +412,7 @@ export const {
   changeDisabledServices,
   changeEnabledServices,
   changeCustomRepositories,
+  changePayloadRepositories,
   addPackage,
   removePackage,
   changeBlueprintName,
