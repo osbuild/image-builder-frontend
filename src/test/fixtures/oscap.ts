@@ -5,6 +5,7 @@ import {
 
 export const distributionOscapProfiles = (): GetOscapProfilesApiResponse => {
   return [
+    'xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced',
     'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
     'xccdf_org.ssgproject.content_profile_cis_workstation_l2',
     'xccdf_org.ssgproject.content_profile_stig_gui',
@@ -14,6 +15,32 @@ export const distributionOscapProfiles = (): GetOscapProfilesApiResponse => {
 export const oscapCustomizations = (
   profile: string
 ): GetOscapCustomizationsApiResponse => {
+  if (profile === 'xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced') {
+    return {
+      filesystem: [{ min_size: 1073741824, mountpoint: '/tmp' }],
+      openscap: {
+        profile_id: 'xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced',
+        profile_name: 'Sample Test Profile',
+        profile_description:
+          'This is a mocked profile description. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean posuere velit enim, tincidunt porttitor nisl elementum eu.',
+      },
+      packages: [
+        'aide',
+        'sudo',
+        'rsyslog',
+        'firewalld',
+        'nftables',
+        'libselinux',
+      ],
+      kernel: {
+        append: 'audit_backlog_limit=8192 audit=1',
+      },
+      services: {
+        disabled: ['nfs-server'],
+        enabled: ['crond'],
+      },
+    };
+  }
   if (profile === 'xccdf_org.ssgproject.content_profile_cis_workstation_l1') {
     return {
       filesystem: [{ min_size: 1073741824, mountpoint: '/tmp' }],

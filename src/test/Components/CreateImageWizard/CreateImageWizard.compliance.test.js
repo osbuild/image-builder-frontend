@@ -148,11 +148,7 @@ describe('Step Compliance', () => {
       })
     );
 
-    await user.click(
-      await screen.findByText(
-        /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
-      )
-    );
+    await user.click(await screen.findByText(/Sample Test Profile/i));
     await screen.findByText(/kernel arguments:/i);
     await screen.findByText(/audit_backlog_limit=8192 audit=1/i);
     await screen.findByText(/disabled services:/i);

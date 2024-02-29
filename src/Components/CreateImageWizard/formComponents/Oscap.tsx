@@ -22,6 +22,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
+import { RHEL_9 } from '../../../constants';
 import {
   DistributionProfileItem,
   useGetOscapCustomizationsQuery,
@@ -59,6 +60,20 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
   const [profileName, setProfileName] = useState<string>('None');
   const [profile, setProfile] = useState(getState()?.values?.['oscap-profile']);
   const [isOpen, setIsOpen] = useState(false);
+  const unbuildableProfiles =
+    getState()?.values?.['release'] === RHEL_9
+      ? [
+          'xccdf_org.ssgproject.content_profile_cis',
+          'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+          'xccdf_org.ssgproject.content_profile_cis_workstation_l2',
+          'xccdf_org.ssgproject.content_profile_e8',
+          'xccdf_org.ssgproject.content_profile_hipaa',
+          'xccdf_org.ssgproject.content_profile_ism_o',
+          'xccdf_org.ssgproject.content_profile_e8',
+          'xccdf_org.ssgproject.content_profile_stig',
+          'xccdf_org.ssgproject.content_profile_stig_gui',
+        ]
+      : [];
   const {
     data: profiles,
     isFetching,
@@ -129,15 +144,21 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
   ];
   if (isSuccess) {
     options.concat(
-      profiles.map((profile_id) => {
-        return (
-          <OScapSelectOption
-            key={profile_id}
-            profile_id={profile_id}
-            setProfileName={setProfileName}
-          />
-        );
-      })
+      profiles
+        // TODO: until the backend is able to disable the services without
+        // failing, disable the set of unbuildableProfiles
+        .filter((profile_id) => {
+          return !unbuildableProfiles.find((id) => id === profile_id);
+        })
+        .map((profile_id) => {
+          return (
+            <OScapSelectOption
+              key={profile_id}
+              profile_id={profile_id}
+              setProfileName={setProfileName}
+            />
+          );
+        })
     );
   }
 
@@ -198,16 +219,22 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
                 key="oscap-none-option"
               />,
             ].concat(
-              profiles.map((profile_id, index) => {
-                return (
-                  <OScapSelectOption
-                    key={index}
-                    profile_id={profile_id}
-                    setProfileName={setProfileName}
-                    input={value}
-                  />
-                );
-              })
+              profiles
+                // TODO: until the backend is able to disable the services without
+                // failing, disable the set of unbuildableProfiles
+                .filter((profile_id) => {
+                  return !unbuildableProfiles.find((id) => id === profile_id);
+                })
+                .map((profile_id, index) => {
+                  return (
+                    <OScapSelectOption
+                      key={index}
+                      profile_id={profile_id}
+                      setProfileName={setProfileName}
+                      input={value}
+                    />
+                  );
+                })
             );
           }
         }}
