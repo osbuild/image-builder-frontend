@@ -18,7 +18,7 @@ import {
   selectArchitecture,
   selectAwsAccountId,
   selectAwsShareMethod,
-  selectAwsSource,
+  selectAwsSourceId,
   selectAzureResourceGroup,
   selectAzureShareMethod,
   selectAzureSource,
@@ -131,9 +131,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
       shareMethod: awsUploadOptions?.share_with_sources ? 'sources' : 'manual',
       source: { id: awsUploadOptions?.share_with_sources?.[0] },
+      sourceId: awsUploadOptions?.share_with_sources?.[0],
     },
     repositories: {
       customRepositories: request.customizations.custom_repositories || [],
+      payloadRepositories: request.customizations.payload_repositories || [],
     },
     registration: {
       registrationType: request.customizations?.subscription?.rhc
@@ -200,7 +202,7 @@ const getImageOptions = (
   switch (imageType) {
     case 'aws':
       if (selectAwsShareMethod(state) === 'sources')
-        return { share_with_sources: [selectAwsSource(state)?.id || ''] };
+        return { share_with_sources: [selectAwsSourceId(state) || ''] };
       else return { share_with_accounts: [selectAwsAccountId(state)] };
     case 'azure':
       if (selectAzureShareMethod(state) === 'sources')

@@ -37,7 +37,7 @@ import {
   selectActivationKey,
   selectAwsAccountId,
   selectAwsShareMethod,
-  selectAwsSource,
+  selectAwsSourceId,
   selectAzureResourceGroup,
   selectAzureShareMethod,
   selectAzureSource,
@@ -110,7 +110,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   // AWS
   const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
   const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
-  const awsSourceId = useAppSelector((state) => selectAwsSource(state));
+  const awsSourceId = useAppSelector((state) => selectAwsSourceId(state));
   // GCP
   const gcpShareMethod = useAppSelector((state) => selectGcpShareMethod(state));
   const gcpEmail = useAppSelector((state) => selectGcpEmail(state));

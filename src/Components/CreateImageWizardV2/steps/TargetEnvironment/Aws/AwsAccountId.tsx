@@ -12,18 +12,18 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
 import {
   changeAwsAccountId,
-  selectAwsSource,
+  selectAwsSourceId,
 } from '../../../../../store/wizardSlice';
 
 export const AwsAccountId = () => {
   const dispatch = useAppDispatch();
-  const source = useAppSelector((state) => selectAwsSource(state));
+  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
 
   const { data, isError } = useGetSourceUploadInfoQuery(
     {
-      id: parseInt(source?.id as string),
+      id: parseInt(sourceId as string),
     },
-    { skip: source === undefined }
+    { skip: sourceId === undefined || sourceId === '' }
   );
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export const AwsAccountId = () => {
           readOnlyVariant="default"
           isRequired
           id="aws-account-id"
-          value={source && data ? data.aws?.account_id : ''}
+          value={sourceId && data ? data.aws?.account_id : ''}
           aria-label="aws account id"
         />
       </FormGroup>

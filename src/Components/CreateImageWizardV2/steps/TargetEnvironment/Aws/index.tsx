@@ -22,7 +22,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,
   changeAwsShareMethod,
-  changeAwsSource,
+  changeAwsSourceId,
   selectAwsAccountId,
   selectAwsShareMethod,
 } from '../../../../../store/wizardSlice';
@@ -73,7 +73,7 @@ const Aws = () => {
           description="Use a configured sources to launch environments directly from the console."
           isChecked={shareMethod === 'sources'}
           onChange={() => {
-            dispatch(changeAwsSource(undefined));
+            dispatch(changeAwsSourceId(undefined));
             dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('sources'));
           }}
@@ -85,7 +85,7 @@ const Aws = () => {
           name="radio-8"
           isChecked={shareMethod === 'manual'}
           onChange={() => {
-            dispatch(changeAwsSource(undefined));
+            dispatch(changeAwsSourceId(undefined));
             dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('manual'));
           }}

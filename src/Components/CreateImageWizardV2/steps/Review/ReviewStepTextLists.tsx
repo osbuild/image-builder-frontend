@@ -35,12 +35,12 @@ import {
   selectArchitecture,
   selectAwsAccountId,
   selectAwsShareMethod,
-  selectAwsSource,
   selectAzureShareMethod,
   selectAzureSource,
   selectAzureResourceGroup,
   selectAzureSubscriptionId,
   selectAzureTenantId,
+  selectAwsSourceId,
   selectBlueprintDescription,
   selectBlueprintName,
   selectCustomRepositories,
@@ -116,7 +116,17 @@ export const TargetEnvAWSList = () => {
   });
   const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
   const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
-  const source = useAppSelector((state) => selectAwsSource(state));
+  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
+  const { source } = useGetSourceListQuery(
+    {
+      provider: 'aws',
+    },
+    {
+      selectFromResult: ({ data }) => ({
+        source: data?.data?.find((source) => source.id === sourceId),
+      }),
+    }
+  );
 
   return (
     <TextContent>
