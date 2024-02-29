@@ -106,6 +106,7 @@ const Azure = () => {
             dispatch(changeAzureShareMethod('sources'));
             dispatch(changeAzureResourceGroup(''));
           }}
+          autoFocus
         />
         <Radio
           id="radio"

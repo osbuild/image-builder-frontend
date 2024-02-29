@@ -56,6 +56,7 @@ const Gcp = () => {
           onChange={() => {
             dispatch(changeGcpShareMethod('withGoogle'));
           }}
+          autoFocus
         />
         <Radio
           id="share-with-insights"
