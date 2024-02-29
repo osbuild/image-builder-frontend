@@ -1517,146 +1517,144 @@ describe('Click through all steps', () => {
   });
 });
 
-// describe('Keyboard accessibility', () => {
-//   const user = userEvent.setup();
-//   const setUp = async () => {
-//     ({ router } = await renderCustomRoutesWithReduxRouter(
-//       'imagewizard',
-//       {},
-//       routes
-//     ));
-//     await clickNext();
-//   };
+describe('Keyboard accessibility', () => {
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await clickNext();
+  };
 
-//   const selectAllEnvironments = async () => {
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-aws'))
-//     );
-//     await user.click(await screen.findByTestId('upload-google'));
-//     await user.click(await screen.findByTestId('upload-azure'));
-//     await user.click(
-//       await screen.findByRole('checkbox', {
-//         name: /virtualization guest image checkbox/i,
-//       })
-//     );
-//   };
+  const selectAllEnvironments = async () => {
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await user.click(await screen.findByTestId('upload-google'));
+    await user.click(await screen.findByTestId('upload-azure'));
+    await user.click(
+      await screen.findByRole('checkbox', {
+        name: /virtualization guest image checkbox/i,
+      })
+    );
+  };
 
-//   test('autofocus on each step first input element', async () => {
-//     await setUp();
+  test('autofocus on each step first input element', async () => {
+    await setUp();
 
-//     // Image output
-//     await selectAllEnvironments();
-//     await clickNext();
+    // Image output
+    await selectAllEnvironments();
+    await clickNext();
 
-//     // Target environment aws
-//     expect(await screen.findByTestId('aws-radio-source')).toHaveFocus();
-//     const awsSourceDropdown = await getSourceDropdown();
-//     await user.click(awsSourceDropdown);
-//     const awsSource = await screen.findByRole('option', {
-//       name: /my_source/i,
-//     });
-//     await user.click(awsSource);
+    // Target environment aws
+    expect(
+      await screen.findByRole('radio', {
+        name: /use an account configured from sources\./i,
+      })
+    ).toHaveFocus();
+    const awsSourceDropdown = await getSourceDropdown();
+    await user.click(awsSourceDropdown);
+    const awsSource = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await user.click(awsSource);
 
-//     await clickNext();
+    await clickNext();
 
-//     // Target environment google
-//     await user.click(await screen.findByTestId('account-sharing'));
-//     expect(await screen.findByTestId('account-sharing')).toHaveFocus();
-//     await user.type(
-//       await screen.findByTestId('input-google-email'),
-//       'test@test.com'
-//     );
-//     await clickNext();
+    // Target environment google
+    expect(
+      await screen.findByRole('radio', {
+        name: /share image with a google acount/i,
+      })
+    ).toHaveFocus();
+    await user.type(
+      await screen.findByRole('textbox', { name: /google principal/i }),
+      'test@test.com'
+    );
+    await clickNext();
 
-//     // Target environment azure
-//     expect(await screen.findByTestId('azure-radio-source')).toHaveFocus();
-//     const azureSourceDropdown = await getSourceDropdown();
-//     await user.click(azureSourceDropdown);
-//     const azureSource = await screen.findByRole('option', {
-//       name: /azureSource1/i,
-//     });
-//     await user.click(azureSource);
+    // Target environment azure
+    expect(
+      await screen.findByRole('radio', {
+        name: /use an account configured from sources\./i,
+      })
+    ).toHaveFocus();
+    const azureSourceDropdown = await getSourceDropdown();
+    await user.click(azureSourceDropdown);
+    const azureSource = await screen.findByRole('option', {
+      name: /azureSource1/i,
+    });
+    await user.click(azureSource);
 
-//     const resourceGroupDropdown = await screen.findByRole('textbox', {
-//       name: /select resource group/i,
-//     });
-//     await user.click(resourceGroupDropdown);
-//     await user.click(await screen.findByLabelText('Resource group myResourceGroup1'));
-//     await clickNext();
+    const resourceGroupDropdown = await screen.findByRole('textbox', {
+      name: /select resource group/i,
+    });
+    await user.click(resourceGroupDropdown);
+    await user.click(
+      await screen.findByLabelText('Resource group myResourceGroup1')
+    );
+    await clickNext();
 
-//     // Registration
-//     await screen.findByText(
-//       'Automatically register and enable advanced capabilities'
-//     );
-//     const registerRadio = await screen.findByTestId('registration-radio-now');
-//     expect(registerRadio).toHaveFocus();
-//     await screen.findByRole('textbox', {
-//       name: 'Select activation key',
-//     });
-//     // skip registration
-//     const registerLaterRadio = await screen.findByTestId('registration-radio-later');
-//     await user.click(registerLaterRadio);
+    // Registration
+    await screen.findByText(
+      'Automatically register and enable advanced capabilities'
+    );
+    const registerRadio = await screen.findByTestId('registration-radio-now');
+    expect(registerRadio).toHaveFocus();
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+    // skip registration
+    const registerLaterRadio = await screen.findByTestId(
+      'registration-radio-later'
+    );
+    await user.click(registerLaterRadio);
+    await clickNext();
 
-//     await clickNext();
+    // TODO: Focus on textbox on OpenSCAP step
+    await clickNext();
 
-//     // File system configuration
-//     await clickNext();
+    // File system configuration
+    // await clickNext();
 
-//     // Packages
-//     const view = await screen.findByTestId('search-available-pkgs-input');
+    // TODO: Focus on textbox on Custom Repos step
+    await clickNext();
 
-//     const availablePackagesInput = within(view).getByRole('textbox', {
-//       name: /search input/i,
-//     });
-//     await waitFor(() => expect(availablePackagesInput).toBeEnabled());
-//     expect(availablePackagesInput).toHaveFocus();
-//     await clickNext();
+    // TODO: Focus on textbox on Packages step
+    await clickNext();
 
-//     // TODO: what should have focus on Custom Repos step?
-//     await clickNext();
+    // TODO: Focus on textbox on Details step
+    await clickNext();
+  }, 20000);
 
-//     // Name
-//     const nameInput = await screen.findByRole('textbox', { name: /image name/i });
-//     expect(nameInput).toHaveFocus();
-//     await clickNext();
-//   });
+  test('pressing Enter does not advance the wizard', async () => {
+    await setUp();
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await user.keyboard('{enter}');
+    await screen.findByRole('heading', {
+      name: /image output/i,
+    });
+  });
 
-//   test('pressing Esc closes the wizard', async () => {
-//     await setUp();
-//     // wizard needs to be interacted with for the esc key to work
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-aws'))
-//     );
-//     await user.keyboard('{escape}');
-//     expect(router.state.location.pathname).toBe('/insights/image-builder');
-//   });
+  test('target environment tiles are keyboard selectable', async () => {
+    const testTile = async (tile: HTMLElement) => {
+      tile.focus();
+      await user.keyboard('{space}');
+      expect(tile).toHaveClass('pf-m-selected');
+      await user.keyboard('{space}');
+      expect(tile).not.toHaveClass('pf-m-selected');
+    };
 
-//   test('pressing Enter does not advance the wizard', async () => {
-//     await setUp();
-//     await waitFor(
-//       async () => await user.click(await screen.findByTestId('upload-aws'))
-//     );
-//     await user.keyboard('{enter}');
-//     await screen.findByRole('heading', {
-//       name: /image output/i,
-//     });
-//   });
+    await setUp();
+    await clickNext();
 
-//   test('target environment tiles are keyboard selectable', async () => {
-//     const testTile = async (tile) => {
-//       tile.focus();
-//       await user.keyboard('{space}');
-//       expect(tile).toHaveClass('pf-m-selected');
-//       await user.keyboard('{space}');
-//       expect(tile).not.toHaveClass('pf-m-selected');
-//     };
-
-//     await setUp();
-//     await clickNext();
-
-//     await waitFor(() => screen.findByTestId('upload-aws'));
-//     testTile(await screen.findByTestId('upload-aws'));
-//     testTile(await screen.findByTestId('upload-google'));
-//     testTile(await screen.findByTestId('upload-azure'));
-//   });
-//});
+    await waitFor(() => screen.findByTestId('upload-aws'));
+    testTile(await screen.findByTestId('upload-aws'));
+    testTile(await screen.findByTestId('upload-google'));
+    testTile(await screen.findByTestId('upload-azure'));
+  });
+});

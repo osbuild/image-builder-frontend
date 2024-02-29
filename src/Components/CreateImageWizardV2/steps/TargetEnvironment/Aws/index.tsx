@@ -77,6 +77,7 @@ const Aws = () => {
             dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('sources'));
           }}
+          autoFocus
         />
         <Radio
           id="radio"
