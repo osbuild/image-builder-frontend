@@ -1642,9 +1642,9 @@ describe('Keyboard accessibility', () => {
     const testTile = async (tile) => {
       tile.focus();
       await user.keyboard('{space}');
-      expect(tile).toHaveClass('pf-m-selected');
+      await waitFor(() => expect(tile).toHaveClass('pf-m-selected'));
       await user.keyboard('{space}');
-      expect(tile).not.toHaveClass('pf-m-selected');
+      await waitFor(() => expect(tile).not.toHaveClass('pf-m-selected'));
     };
 
     await setUp();
