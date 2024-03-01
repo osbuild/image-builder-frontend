@@ -7,7 +7,7 @@ import {
   WizardStep,
   useWizardContext,
 } from '@patternfly/react-core';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
 import ImageOutputStep from './steps/ImageOutput';
@@ -30,9 +30,11 @@ import {
   isGcpEmailValid,
 } from './validators';
 
+import { RHEL_8 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
+  changeDistribution,
   initializeWizard,
   selectActivationKey,
   selectAwsAccountId,
@@ -92,10 +94,13 @@ type CreateImageWizardProps = {
 const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const [searchParams] = useSearchParams();
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
+    searchParams.get('release') === 'rhel8' &&
+      dispatch(changeDistribution(RHEL_8));
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps

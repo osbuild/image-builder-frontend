@@ -55,8 +55,20 @@ export const blueprintRequest: CreateBlueprintRequest = {
   customizations: {},
 };
 
-export const render = async () => {
-  await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+const preparePathname = (searchParams: {}) => {
+  let pathName = 'imageWizard';
+  const params = Object.entries(searchParams).map(
+    ([param, value]) => `${param}=${value}`
+  );
+  if (params.length > 0) {
+    pathName += `?${params.join('&')}`;
+  }
+  return pathName;
+};
+
+export const render = async (searchParams = {}) => {
+  const pathName = preparePathname(searchParams);
+  await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
 };
 
 export const goToRegistrationStep = async () => {

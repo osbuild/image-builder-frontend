@@ -9,6 +9,7 @@ import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../../constants';
 import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
 import { server } from '../../../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
+import { render } from '../../wizardTestUtils';
 
 const routes = [
   {
@@ -256,5 +257,22 @@ describe('Check step consistency', () => {
     await user.click(archMenu);
     await user.click(await screen.findByRole('option', { name: 'x86_64' }));
     await waitFor(() => expect(next).toBeEnabled());
+  });
+});
+
+describe('set release using query parameter', () => {
+  test('rhel 9 by default (no query parameter)', async () => {
+    await render();
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 9 by default (invalid query parameter)', async () => {
+    await render({ release: 'rhel9001' });
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 8 (query parameter provided)', async () => {
+    await render({ release: 'rhel8' });
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
   });
 });
