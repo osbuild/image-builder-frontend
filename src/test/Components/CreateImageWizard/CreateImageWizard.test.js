@@ -1656,3 +1656,32 @@ describe('Keyboard accessibility', () => {
     testTile(await screen.findByTestId('upload-azure'));
   });
 });
+
+describe('set release using query parameter', () => {
+  test('rhel 9 by default (no query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 9 by default (invalid query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?release=rhel9000',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 8 (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?release=rhel8',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
+  });
+});
