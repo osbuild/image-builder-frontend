@@ -55,7 +55,15 @@ export const blueprintRequest: CreateBlueprintRequest = {
   customizations: {},
 };
 
-const preparePathname = (searchParams: {}) => {
+/**
+ * @example
+ * // returns 'imageWizard?release=rhel8&architecture=aarch64'
+ * preparePathname({ release: 'rhel8', architecture: 'aarch64' });
+ * @example
+ * // returns 'imageWizard'
+ * preparePathname({});
+ */
+function preparePathname(searchParams: { [key: string]: string } = {}): string {
   let pathName = 'imageWizard';
   const params = Object.entries(searchParams).map(
     ([param, value]) => `${param}=${value}`
@@ -64,7 +72,7 @@ const preparePathname = (searchParams: {}) => {
     pathName += `?${params.join('&')}`;
   }
   return pathName;
-};
+}
 
 export const render = async (searchParams = {}) => {
   const pathName = preparePathname(searchParams);
