@@ -72,8 +72,8 @@ export const ImageOutputList = () => {
         <>
           <Text className="pf-v5-u-font-size-sm">
             {RELEASES.get(distribution)} will be supported through{' '}
-            {toMonthAndYear(RHEL_8_FULL_SUPPORT[0])}, with optional ELS support
-            through {toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[0])}. Consider
+            {toMonthAndYear(RHEL_8_FULL_SUPPORT[1])}, with optional ELS support
+            through {toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[1])}. Consider
             building an image with {RELEASES.get(RHEL_9)} to extend the support
             period.
           </Text>
