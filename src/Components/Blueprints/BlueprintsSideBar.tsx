@@ -17,6 +17,7 @@ import {
 import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import debounce from 'lodash/debounce';
+import { Link } from 'react-router-dom';
 
 import BlueprintCard from './BlueprintCard';
 
@@ -31,6 +32,7 @@ import {
   useGetBlueprintsQuery,
   BlueprintItem,
 } from '../../store/imageBuilderApi';
+import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -67,7 +69,15 @@ const BlueprintsSidebar = () => {
     return (
       <EmptyBlueprintState
         icon={PlusCircleIcon}
-        action={<Button>Create</Button>}
+        action={
+          <Link
+            to={resolveRelPath('imagewizard')}
+            className="pf-c-button pf-m-primary"
+            data-testid="create-image-action"
+          >
+            Create
+          </Link>
+        }
         titleText="No blueprints yet"
         bodyText="To get started, create a blueprint."
       />
