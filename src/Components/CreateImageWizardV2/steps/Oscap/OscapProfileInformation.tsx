@@ -61,7 +61,6 @@ export const OscapProfileInformation = (): JSX.Element => {
               <TextListItem component={TextListItemVariants.dd}>
                 {oscapProfileInfo.openscap?.profile_description}
               </TextListItem>
-              component={TextListVariants.dl}
               <TextListItem
                 component={TextListItemVariants.dt}
                 className="pf-u-min-width"
@@ -71,7 +70,6 @@ export const OscapProfileInformation = (): JSX.Element => {
               <TextListItem component={TextListItemVariants.dd}>
                 {RELEASES.get(release)}
               </TextListItem>
-              component={TextListVariants.dl}
               <TextListItem
                 component={TextListItemVariants.dt}
                 className="pf-u-min-width"
