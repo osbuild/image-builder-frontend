@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { FormSpy } from '@data-driven-forms/react-form-renderer';
 import useFieldApi from '@data-driven-forms/react-form-renderer/use-field-api';
@@ -10,6 +10,7 @@ import {
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 import PropTypes from 'prop-types';
+import { useSearchParams } from 'react-router-dom';
 
 import {
   RELEASES,
@@ -28,6 +29,14 @@ const ImageOutputReleaseSelect = ({ label, isRequired, ...props }) => {
   const { input } = useFieldApi(props);
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
+
+  const [searchParams] = useSearchParams();
+
+  // Used to set release to RHEL 8 via search parameter, used by Insights assistant
+  const preloadRelease = searchParams.get('release');
+  useEffect(() => {
+    preloadRelease === 'rhel8' && change(input.name, RHEL_8);
+  }, [change, input.name, preloadRelease]);
 
   const setRelease = (_, selection) => {
     change(input.name, selection);
