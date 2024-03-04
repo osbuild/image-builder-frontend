@@ -146,7 +146,7 @@ const AzureSourcesSelect = ({ label, isRequired, className, ...props }) => {
             isInline
             title={'Azure details unavailable'}
           >
-            Could not fetch Tenant id and Subscription id from Azure for given
+            Could not fetch Tenant ID and Subscription ID from Azure for given
             Source. Check Sources page for the source availability or select a
             different Source.
           </Alert>
