@@ -45,6 +45,11 @@ import {
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
 import {
+  selectBlueprintSearchInput,
+  selectSelectedBlueprintId,
+} from '../../store/BlueprintSlice';
+import { useAppSelector } from '../../store/hooks';
+import {
   BlueprintItem,
   ComposesResponseItem,
   ComposeStatus,
@@ -63,25 +68,18 @@ import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 
-type ImageTableProps = {
-  selectedBlueprint?: string | undefined;
-  setSelectedBlueprint: React.Dispatch<
-    React.SetStateAction<string | undefined>
-  >;
-};
-
-const ImagesTable = ({
-  selectedBlueprint,
-  setSelectedBlueprint,
-}: ImageTableProps) => {
+const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
-    {},
+    { search: blueprintSearchInput },
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data?.find(
-          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprint
+          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
         )?.version,
       }),
     }
@@ -103,11 +101,11 @@ const ImagesTable = ({
     isError: isBlueprintsError,
   } = useGetBlueprintComposesQuery(
     {
-      id: selectedBlueprint as string,
+      id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
     },
-    { skip: !selectedBlueprint }
+    { skip: !selectedBlueprintId }
   );
 
   const {
@@ -126,18 +124,20 @@ const ImagesTable = ({
         'edge-installer',
       ],
     },
-    { skip: !!selectedBlueprint }
+    { skip: !!selectedBlueprintId }
   );
 
-  const data = selectedBlueprint ? blueprintsComposes : composesData;
-  const isSuccess = selectedBlueprint ? isBlueprintsSuccess : isComposesSuccess;
-  const isError = selectedBlueprint ? isBlueprintsError : isComposesError;
-  const isLoading = selectedBlueprint
+  const data = selectedBlueprintId ? blueprintsComposes : composesData;
+  const isSuccess = selectedBlueprintId
+    ? isBlueprintsSuccess
+    : isComposesSuccess;
+  const isError = selectedBlueprintId ? isBlueprintsError : isComposesError;
+  const isLoading = selectedBlueprintId
     ? isLoadingBlueprintsCompose
     : isLoadingComposes;
 
   const isBlueprintOutSync =
-    selectedBlueprint &&
+    selectedBlueprintId &&
     !isFetchingBlueprintsCompose &&
     blueprintsComposes?.data[0]?.blueprint_version !== selectedBlueprintVersion;
 
@@ -174,8 +174,6 @@ const ImagesTable = ({
     <>
       <>
         <DeleteBlueprintModal
-          selectedBlueprint={selectedBlueprint}
-          setSelectedBlueprint={setSelectedBlueprint}
           setShowDeleteModal={setShowDeleteModal}
           isOpen={showDeleteModal}
         />
@@ -198,11 +196,10 @@ const ImagesTable = ({
             {experimentalFlag && (
               <>
                 <ToolbarItem>
-                  <BuildImagesButton selectedBlueprint={selectedBlueprint} />
+                  <BuildImagesButton selectedBlueprint={selectedBlueprintId} />
                 </ToolbarItem>
                 <ToolbarItem>
                   <BlueprintActionsMenu
-                    selectedBlueprint={selectedBlueprint}
                     setShowDeleteModal={setShowDeleteModal}
                   />
                 </ToolbarItem>
@@ -240,7 +237,7 @@ const ImagesTable = ({
             <Tbody>
               <Tr>
                 <Td colSpan={12}>
-                  <ImagesEmptyState selectedBlueprint={selectedBlueprint} />
+                  <ImagesEmptyState selectedBlueprint={selectedBlueprintId} />
                 </Td>
               </Tr>
             </Tbody>
