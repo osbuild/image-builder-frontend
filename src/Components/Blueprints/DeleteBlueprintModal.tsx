@@ -7,22 +7,27 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 
-import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
+import {
+  useDeleteBlueprintMutation,
+  useGetBlueprintsQuery,
+} from '../../store/imageBuilderApi';
 
 interface DeleteBlueprintModalProps {
-  onDelete: () => Promise<void>;
   selectedBlueprint: string | undefined;
+  setSelectedBlueprint: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
+  setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
-  onClose: () => void;
 }
 
 export const DeleteBlueprintModal: React.FunctionComponent<
   DeleteBlueprintModalProps
 > = ({
-  onDelete,
   selectedBlueprint,
+  setSelectedBlueprint,
+  setShowDeleteModal,
   isOpen,
-  onClose,
 }: DeleteBlueprintModalProps) => {
   const { blueprintName } = useGetBlueprintsQuery(
     { search: undefined },
@@ -35,20 +40,33 @@ export const DeleteBlueprintModal: React.FunctionComponent<
       }),
     }
   );
+  const [deleteBlueprint] = useDeleteBlueprintMutation({
+    fixedCacheKey: 'delete-blueprint',
+  });
+  const handleDelete = async () => {
+    if (selectedBlueprint) {
+      setShowDeleteModal(false);
+      await deleteBlueprint({ id: selectedBlueprint });
+      setSelectedBlueprint(undefined);
+    }
+  };
+  const onDeleteClose = () => {
+    setShowDeleteModal(false);
+  };
   return (
     <Modal
       variant={ModalVariant.small}
       titleIconVariant="warning"
       isOpen={isOpen}
-      onClose={onClose}
+      onClose={onDeleteClose}
       title={`Permanently delete ${blueprintName}?`}
       description={'All versions will be lost.'}
     >
       <ActionGroup>
-        <Button variant="danger" type="button" onClick={onDelete}>
+        <Button variant="danger" type="button" onClick={handleDelete}>
           Delete
         </Button>
-        <Button variant="link" type="button" onClick={onClose}>
+        <Button variant="link" type="button" onClick={onDeleteClose}>
           Cancel
         </Button>
       </ActionGroup>
