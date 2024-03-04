@@ -51,9 +51,6 @@ export const LandingPage = () => {
     }
     setActiveTabKey(tabIndex);
   };
-  const [selectedBlueprint, setSelectedBlueprint] = useState<
-    string | undefined
-  >();
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const experimentalFlag = useExperimentalFlag();
@@ -64,7 +61,7 @@ export const LandingPage = () => {
         <Quickstarts />
       </PageSection>
       <PageSection>
-        <ImagesTable setSelectedBlueprint={setSelectedBlueprint} />
+        <ImagesTable />
       </PageSection>
     </>
   );
@@ -74,16 +71,10 @@ export const LandingPage = () => {
       <PageSection>
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel hasPadding width={{ default: 'width_25' }}>
-            <BlueprintsSidebar
-              selectedBlueprint={selectedBlueprint}
-              setSelectedBlueprint={setSelectedBlueprint}
-            />
+            <BlueprintsSidebar />
           </SidebarPanel>
           <SidebarContent>
-            <ImagesTable
-              selectedBlueprint={selectedBlueprint}
-              setSelectedBlueprint={setSelectedBlueprint}
-            />
+            <ImagesTable />
           </SidebarContent>
         </Sidebar>
       </PageSection>

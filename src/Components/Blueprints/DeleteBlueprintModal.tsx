@@ -8,34 +8,34 @@ import {
 } from '@patternfly/react-core';
 
 import {
+  selectBlueprintSearchInput,
+  selectSelectedBlueprintId,
+  setBlueprintId,
+} from '../../store/BlueprintSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
   useDeleteBlueprintMutation,
   useGetBlueprintsQuery,
 } from '../../store/imageBuilderApi';
 
 interface DeleteBlueprintModalProps {
-  selectedBlueprint: string | undefined;
-  setSelectedBlueprint: React.Dispatch<
-    React.SetStateAction<string | undefined>
-  >;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
   isOpen: boolean;
 }
 
 export const DeleteBlueprintModal: React.FunctionComponent<
   DeleteBlueprintModalProps
-> = ({
-  selectedBlueprint,
-  setSelectedBlueprint,
-  setShowDeleteModal,
-  isOpen,
-}: DeleteBlueprintModalProps) => {
+> = ({ setShowDeleteModal, isOpen }: DeleteBlueprintModalProps) => {
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const dispatch = useAppDispatch();
   const { blueprintName } = useGetBlueprintsQuery(
-    { search: undefined },
+    { search: blueprintSearchInput },
     {
       selectFromResult: ({ data }) => ({
         blueprintName: data?.data?.find(
           (blueprint: { id: string | undefined }) =>
-            blueprint.id === selectedBlueprint
+            blueprint.id === selectedBlueprintId
         )?.name,
       }),
     }
@@ -44,10 +44,10 @@ export const DeleteBlueprintModal: React.FunctionComponent<
     fixedCacheKey: 'delete-blueprint',
   });
   const handleDelete = async () => {
-    if (selectedBlueprint) {
+    if (selectedBlueprintId) {
       setShowDeleteModal(false);
-      await deleteBlueprint({ id: selectedBlueprint });
-      setSelectedBlueprint(undefined);
+      await deleteBlueprint({ id: selectedBlueprintId });
+      dispatch(setBlueprintId(undefined));
     }
   };
   const onDeleteClose = () => {

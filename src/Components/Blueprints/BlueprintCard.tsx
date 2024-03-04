@@ -11,23 +11,23 @@ import {
 } from '@patternfly/react-core';
 
 import {
+  selectSelectedBlueprintId,
+  setBlueprintId,
+} from '../../store/BlueprintSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
   BlueprintItem,
   useDeleteBlueprintMutation,
 } from '../../store/imageBuilderApi';
 
 type blueprintProps = {
   blueprint: BlueprintItem;
-  selectedBlueprint: string | undefined;
-  setSelectedBlueprint: React.Dispatch<
-    React.SetStateAction<string | undefined>
-  >;
 };
 
-const BlueprintCard = ({
-  blueprint,
-  selectedBlueprint,
-  setSelectedBlueprint,
-}: blueprintProps) => {
+const BlueprintCard = ({ blueprint }: blueprintProps) => {
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const dispatch = useAppDispatch();
+
   const [, { isLoading }] = useDeleteBlueprintMutation({
     fixedCacheKey: 'delete-blueprint',
   });
@@ -39,11 +39,11 @@ const BlueprintCard = ({
           selectableActions={{
             selectableActionId: blueprint.id,
             name: 'blueprints',
-            onClickAction: () => setSelectedBlueprint(blueprint.id),
+            onClickAction: () => dispatch(setBlueprintId(blueprint.id)),
           }}
         >
           <CardTitle>
-            {isLoading && blueprint.id === selectedBlueprint && (
+            {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size="md" />
             )}
             &nbsp;&nbsp;

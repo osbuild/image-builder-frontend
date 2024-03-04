@@ -2,6 +2,7 @@ import { notificationsReducer } from '@redhat-cloud-services/frontend-components
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
+import { blueprintsSlice } from './BlueprintSlice';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
@@ -25,6 +26,7 @@ export const reducer = combineReducers({
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   notifications: notificationsReducer,
   wizard: wizardSlice,
+  blueprints: blueprintsSlice.reducer,
 });
 
 startAppListening({

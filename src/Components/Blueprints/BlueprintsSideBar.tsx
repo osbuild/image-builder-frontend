@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 
 import {
   Bullseye,
@@ -21,20 +21,18 @@ import debounce from 'lodash/debounce';
 import BlueprintCard from './BlueprintCard';
 
 import {
+  selectBlueprintSearchInput,
+  selectSelectedBlueprintId,
+  setBlueprintId,
+  setBlueprintSearchInput,
+} from '../../store/BlueprintSlice';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
   useGetBlueprintsQuery,
   BlueprintItem,
 } from '../../store/imageBuilderApi';
 
-type blueprintProps = {
-  selectedBlueprint: string | undefined;
-  setSelectedBlueprint: React.Dispatch<
-    React.SetStateAction<string | undefined>
-  >;
-};
-
 type blueprintSearchProps = {
-  filter: string | undefined;
-  setFilter: React.Dispatch<React.SetStateAction<string>>;
   blueprintsTotal: number;
 };
 
@@ -46,27 +44,13 @@ type emptyBlueprintStateProps = {
   bodyText: string;
 };
 
-const BlueprintsSidebar = ({
-  selectedBlueprint,
-  setSelectedBlueprint,
-}: blueprintProps) => {
-  const [blueprintsSearchQuery, setBlueprintsSearchQuery] = useState<
-    string | undefined
-  >();
-  const debouncedSearch = useCallback(
-    debounce((filter) => {
-      setBlueprintsSearchQuery(filter.length > 0 ? filter : undefined);
-    }, 300),
-    [setBlueprintsSearchQuery]
-  );
-  React.useEffect(() => {
-    return () => {
-      debouncedSearch.cancel();
-    };
-  }, [debouncedSearch]);
+const BlueprintsSidebar = () => {
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const { data: blueprintsData, isLoading } = useGetBlueprintsQuery({
-    search: blueprintsSearchQuery,
+    search: blueprintSearchInput,
   });
+  const dispatch = useAppDispatch();
   const blueprints = blueprintsData?.data;
 
   const blueprintsTotal = blueprintsData?.meta?.count || 0;
@@ -79,7 +63,7 @@ const BlueprintsSidebar = ({
     );
   }
 
-  if (blueprintsTotal === 0 && blueprintsSearchQuery === undefined) {
+  if (blueprintsTotal === 0 && blueprintSearchInput === undefined) {
     return (
       <EmptyBlueprintState
         icon={PlusCircleIcon}
@@ -93,21 +77,17 @@ const BlueprintsSidebar = ({
   return (
     <>
       <Stack hasGutter>
-        {(blueprintsTotal > 0 || blueprintsSearchQuery !== undefined) && (
+        {(blueprintsTotal > 0 || blueprintSearchInput !== undefined) && (
           <>
             <StackItem>
-              <BlueprintSearch
-                filter={blueprintsSearchQuery}
-                setFilter={debouncedSearch}
-                blueprintsTotal={blueprintsTotal}
-              />
+              <BlueprintSearch blueprintsTotal={blueprintsTotal} />
             </StackItem>
             <StackItem>
               <Button
                 ouiaId={`clear-selected-blueprint-button`}
                 variant="link"
-                isDisabled={!selectedBlueprint}
-                onClick={() => setSelectedBlueprint(undefined)}
+                isDisabled={!selectedBlueprintId}
+                onClick={() => dispatch(setBlueprintId(undefined))}
               >
                 Clear selection
               </Button>
@@ -118,7 +98,10 @@ const BlueprintsSidebar = ({
           <EmptyBlueprintState
             icon={SearchIcon}
             action={
-              <Button variant="link" onClick={() => debouncedSearch('')}>
+              <Button
+                variant="link"
+                onClick={() => dispatch(setBlueprintSearchInput(undefined))}
+              >
                 Clear all filters
               </Button>
             }
@@ -129,11 +112,7 @@ const BlueprintsSidebar = ({
         {blueprintsTotal > 0 &&
           blueprints?.map((blueprint: BlueprintItem) => (
             <StackItem key={blueprint.id}>
-              <BlueprintCard
-                blueprint={blueprint}
-                selectedBlueprint={selectedBlueprint}
-                setSelectedBlueprint={setSelectedBlueprint}
-              />
+              <BlueprintCard blueprint={blueprint} />
             </StackItem>
           ))}
       </Stack>
@@ -141,18 +120,29 @@ const BlueprintsSidebar = ({
   );
 };
 
-const BlueprintSearch = ({
-  filter,
-  setFilter,
-  blueprintsTotal,
-}: blueprintSearchProps) => {
+const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
+  const blueprintSearchInput = useAppSelector((state) =>
+    selectBlueprintSearchInput(state)
+  );
+  const dispatch = useAppDispatch();
+  const debouncedSearch = useCallback(
+    debounce((filter) => {
+      dispatch(setBlueprintSearchInput(filter.length > 0 ? filter : undefined));
+    }, 300),
+    []
+  );
+  React.useEffect(() => {
+    return () => {
+      debouncedSearch.cancel();
+    };
+  }, [debouncedSearch]);
   const onChange = (value: string) => {
-    setFilter(value);
+    debouncedSearch(value);
   };
 
   return (
     <SearchInput
-      value={filter}
+      value={blueprintSearchInput}
       placeholder="Search by name or description"
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}

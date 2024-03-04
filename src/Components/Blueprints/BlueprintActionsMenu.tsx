@@ -8,20 +8,26 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
+import { useNavigate } from 'react-router-dom';
+
+import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import { useAppSelector } from '../../store/hooks';
+import { resolveRelPath } from '../../Utilities/path';
 
 interface BlueprintActionsMenuProps {
-  selectedBlueprint: string | undefined;
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const BlueprintActionsMenu: React.FunctionComponent<
   BlueprintActionsMenuProps
-> = ({ selectedBlueprint, setShowDeleteModal }: BlueprintActionsMenuProps) => {
+> = ({ setShowDeleteModal }: BlueprintActionsMenuProps) => {
   const [showBlueprintActionsMenu, setShowBlueprintActionsMenu] =
     useState(false);
   const onSelect = () => {
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const navigate = useNavigate();
 
   return (
     <Dropdown
@@ -39,14 +45,20 @@ export const BlueprintActionsMenu: React.FunctionComponent<
           onClick={() => setShowBlueprintActionsMenu(!showBlueprintActionsMenu)}
           variant="plain"
           aria-label="blueprint menu toggle"
-          isDisabled={selectedBlueprint === undefined}
+          isDisabled={selectedBlueprintId === undefined}
         >
           <EllipsisVIcon aria-hidden="true" />
         </MenuToggle>
       )}
     >
       <DropdownList>
-        <DropdownItem>Edit details</DropdownItem>
+        <DropdownItem
+          onClick={() =>
+            navigate(resolveRelPath(`imagewizard/${selectedBlueprintId}`))
+          }
+        >
+          Edit details
+        </DropdownItem>
         <DropdownItem>Download blueprint (.json)</DropdownItem>
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
