@@ -14,7 +14,7 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 2 },
+  meta: { count: 3 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -30,6 +30,13 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       version: 1,
       last_modified_at: '2021-09-08T14:38:00.000Z',
     },
+    {
+      id: '51243667-8d87-4aef-8dd1-84fc58261b05',
+      name: 'Lemon Pie',
+      description: 'Crusted lemon pie with meringue topping',
+      version: 2,
+      last_modified_at: '2021-09-08T14:38:00.000Z',
+    },
   ],
 };
 
@@ -37,6 +44,34 @@ export const emptyGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
   meta: { count: 0 },
   data: [],
+};
+
+export const mockBlueprintComposesOutOfSync: GetBlueprintComposesApiResponse = {
+  meta: { count: 1 },
+  data: [
+    {
+      id: 'edbae1c2-62bc-42c1-ae0c-3110ab718f58',
+      image_name: 'Lemon Pie',
+      created_at: '2021-09-08T14:38:00.000Z',
+      blueprint_version: 1,
+      request: {
+        distribution: RHEL_9,
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
+        ],
+      },
+    },
+  ],
+  links: { first: 'first', last: 'last' },
 };
 
 export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
@@ -65,6 +100,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
     },
     {
       id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
+      image_name: 'Dark Chocolate',
       created_at: '2021-04-27T12:31:12Z',
       blueprint_version: 1,
       request: {

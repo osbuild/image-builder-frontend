@@ -14,6 +14,7 @@ import {
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
 import {
   mockBlueprintComposes,
+  mockBlueprintComposesOutOfSync,
   mockBlueprintDetail,
   mockEmptyBlueprintsComposes,
   mockGetBlueprints,
@@ -148,11 +149,17 @@ export const handlers = [
   rest.get(
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
     (req, res, ctx) => {
-      const MilkChocolateBlueprint = mockGetBlueprints.data[1].id;
-      if (req.params.id === MilkChocolateBlueprint) {
-        return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
+      const emptyBlueprintId = mockGetBlueprints.data[1].id;
+      const outOfSyncBlueprintId = mockGetBlueprints.data[2].id;
+
+      switch (req.params.id) {
+        case emptyBlueprintId:
+          return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
+        case outOfSyncBlueprintId:
+          return res(ctx.status(200), ctx.json(mockBlueprintComposesOutOfSync));
+        default:
+          return res(ctx.status(200), ctx.json(mockBlueprintComposes));
       }
-      return res(ctx.status(200), ctx.json(mockBlueprintComposes));
     }
   ),
   rest.get(
