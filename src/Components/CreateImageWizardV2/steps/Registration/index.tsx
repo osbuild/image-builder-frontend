@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Text, Form, Title, FormGroup } from '@patternfly/react-core';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import ActivationKeysList from './ActivationKeysList';
@@ -8,12 +8,16 @@ import RegisterLaterInformation from './RegisterLaterInformation';
 import Registration from './Registration';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectRegistrationType } from '../../../../store/wizardSlice';
+import {
+  selectActivationKey,
+  selectRegistrationType,
+} from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
   const registrationType = useAppSelector((state) =>
     selectRegistrationType(state)
   );
+  const activationKey = useAppSelector((state) => selectActivationKey(state));
   return (
     <Form>
       <Title headingLevel="h2">Register systems using this image</Title>
@@ -25,7 +29,15 @@ const RegistrationStep = () => {
       {registrationType !== 'register-later' ? (
         <>
           <ActivationKeysList />
-          <ActivationKeyInformation />
+          {activationKey && (
+            <FormGroup
+              isRequired={true}
+              label={'Selected activation key'}
+              data-testid="selected-activation-key"
+            >
+              <ActivationKeyInformation />
+            </FormGroup>
+          )}
         </>
       ) : (
         <RegisterLaterInformation />
