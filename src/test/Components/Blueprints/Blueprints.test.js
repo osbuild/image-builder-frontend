@@ -38,6 +38,7 @@ describe('Blueprints', () => {
   const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
   const blueprintNameEmptyComposes = 'Milk Chocolate';
   const blueprintIdEmptyComposes = '193482e4-4bd0-4898-a8bc-dc8c33ed669f';
+  const blueprintIdOutOfSync = '51243667-8d87-4aef-8dd1-84fc58261b05';
 
   test('renders blueprints page', async () => {
     renderWithReduxRouter('', {});
@@ -72,8 +73,9 @@ describe('Blueprints', () => {
 
     await user.click(elementById);
     const table = await screen.findByTestId('images-table');
-    const { findByText } = within(table);
-    await findByText(blueprintNameWithComposes);
+    const { findAllByText } = within(table);
+    const images = await findAllByText(blueprintNameWithComposes);
+    expect(images).toHaveLength(2);
   });
   test('renders blueprint composes empty state', async () => {
     renderWithReduxRouter('', {});
@@ -110,6 +112,34 @@ describe('Blueprints', () => {
       name: /Build image/i,
     });
     expect(buildImageBtn).toBeEnabled();
+  });
+
+  test('blueprint is out of sync', async () => {
+    renderWithReduxRouter('', {});
+
+    const nameMatcher = (_, element) =>
+      element.getAttribute('name') === 'blueprints';
+
+    const radioButtons = await screen.findAllByRole('radio', {
+      name: nameMatcher,
+    });
+    const outSyncBlueprintCard = radioButtons.find(
+      (button) => button.getAttribute('id') === blueprintIdOutOfSync
+    );
+    await user.click(outSyncBlueprintCard);
+    await screen.findByText(
+      "You haven't built new images for this version of your blueprint yet"
+    );
+
+    const blueprintWithComposes = radioButtons.find(
+      (button) => button.getAttribute('id') === blueprintIdWithComposes
+    );
+    await user.click(blueprintWithComposes);
+    expect(
+      screen.queryByText(
+        "You haven't built new images for this version of your blueprint yet"
+      )
+    ).not.toBeInTheDocument();
   });
 
   describe('edit blueprint', () => {
