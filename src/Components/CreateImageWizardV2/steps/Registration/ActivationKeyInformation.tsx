@@ -2,7 +2,6 @@ import React from 'react';
 
 import {
   Alert,
-  FormGroup,
   Spinner,
   Text,
   TextContent,
@@ -39,113 +38,107 @@ const ActivationKeyInformation = (): JSX.Element => {
     <>
       {isFetchingActivationKeyInfo && <Spinner size="lg" />}
       {isSuccessActivationKeyInfo && (
-        <FormGroup
-          isRequired={true}
-          label={'Selected activation key'}
-          data-testid="selected-activation-key"
-        >
-          <TextContent>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem component={TextListItemVariants.dt}>
-                Name:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                {activationKey}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dt}>
-                Role:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                {activationKeyInfo.body?.role || 'Not defined'}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dt}>
-                SLA:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                {activationKeyInfo.body?.serviceLevel || 'Not defined'}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dt}>
-                Usage:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                {activationKeyInfo.body?.usage || 'Not defined'}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dt}>
-                Additional repositories:
+        <TextContent>
+          <TextList component={TextListVariants.dl}>
+            <TextListItem component={TextListItemVariants.dt}>
+              Name:
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {activationKey}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              Role:
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {activationKeyInfo.body?.role || 'Not defined'}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              SLA:
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {activationKeyInfo.body?.serviceLevel || 'Not defined'}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              Usage:
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {activationKeyInfo.body?.usage || 'Not defined'}
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dt}>
+              Additional repositories:
+              <Popover
+                bodyContent={
+                  <TextContent>
+                    <Text>
+                      The core repositories for your operating system version
+                      are always enabled and do not need to be explicitly added
+                      to the activation key.
+                    </Text>
+                  </TextContent>
+                }
+              >
+                <Button
+                  variant="plain"
+                  aria-label="About additional repositories"
+                  className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                  size="sm"
+                >
+                  <HelpIcon />
+                </Button>
+              </Popover>
+            </TextListItem>
+            <TextListItem
+              component={TextListItemVariants.dd}
+              className="pf-u-display-flex pf-u-align-items-flex-end"
+            >
+              {activationKeyInfo.body?.additionalRepositories &&
+              activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
                 <Popover
+                  position="right"
+                  minWidth="30rem"
                   bodyContent={
                     <TextContent>
-                      <Text>
-                        The core repositories for your operating system version
-                        are always enabled and do not need to be explicitly
-                        added to the activation key.
+                      <Text component={TextVariants.h3}>
+                        Additional repositories
                       </Text>
+                      <Table
+                        aria-label="Additional repositories table"
+                        variant="compact"
+                      >
+                        <Thead>
+                          <Tr>
+                            <Th>Name</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody data-testid="additional-repositories-table">
+                          {activationKeyInfo.body?.additionalRepositories?.map(
+                            (repo, index) => (
+                              <Tr key={index}>
+                                <Td>{repo.repositoryLabel}</Td>
+                              </Tr>
+                            )
+                          )}
+                        </Tbody>
+                      </Table>
                     </TextContent>
                   }
                 >
                   <Button
-                    variant="plain"
-                    aria-label="About additional repositories"
-                    className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                    size="sm"
+                    data-testid="repositories-popover-button"
+                    variant="link"
+                    aria-label="Show additional repositories"
+                    className="pf-u-pl-0 pf-u-pt-0 pf-u-pb-0"
                   >
-                    <HelpIcon />
+                    {activationKeyInfo.body?.additionalRepositories?.length}{' '}
+                    repositories
                   </Button>
                 </Popover>
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dd}
-                className="pf-u-display-flex pf-u-align-items-flex-end"
-              >
-                {activationKeyInfo.body?.additionalRepositories &&
-                activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
-                  <Popover
-                    position="right"
-                    minWidth="30rem"
-                    bodyContent={
-                      <TextContent>
-                        <Text component={TextVariants.h3}>
-                          Additional repositories
-                        </Text>
-                        <Table
-                          aria-label="Additional repositories table"
-                          variant="compact"
-                        >
-                          <Thead>
-                            <Tr>
-                              <Th>Name</Th>
-                            </Tr>
-                          </Thead>
-                          <Tbody data-testid="additional-repositories-table">
-                            {activationKeyInfo.body?.additionalRepositories?.map(
-                              (repo, index) => (
-                                <Tr key={index}>
-                                  <Td>{repo.repositoryLabel}</Td>
-                                </Tr>
-                              )
-                            )}
-                          </Tbody>
-                        </Table>
-                      </TextContent>
-                    }
-                  >
-                    <Button
-                      data-testid="repositories-popover-button"
-                      variant="link"
-                      aria-label="Show additional repositories"
-                      className="pf-u-pl-0 pf-u-pt-0 pf-u-pb-0"
-                    >
-                      {activationKeyInfo.body?.additionalRepositories?.length}{' '}
-                      repositories
-                    </Button>
-                  </Popover>
-                ) : (
-                  'None'
-                )}
-              </TextListItem>
-            </TextList>
-          </TextContent>
-        </FormGroup>
+              ) : (
+                'None'
+              )}
+            </TextListItem>
+          </TextList>
+        </TextContent>
       )}
       {isErrorActivationKeyInfo && (
         <TextContent>
