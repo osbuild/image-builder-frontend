@@ -58,12 +58,21 @@ import {
   computeHoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
+import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
+import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
+import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 
 type ImageTableProps = {
   selectedBlueprint?: string | undefined;
+  setSelectedBlueprint: React.Dispatch<
+    React.SetStateAction<string | undefined>
+  >;
 };
 
-const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
+const ImagesTable = ({
+  selectedBlueprint,
+  setSelectedBlueprint,
+}: ImageTableProps) => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
@@ -85,6 +94,7 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
     setPerPage(perPage);
   };
 
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const {
     data: blueprintsComposes,
     isSuccess: isBlueprintsSuccess,
@@ -163,6 +173,12 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
   return (
     <>
       <>
+        <DeleteBlueprintModal
+          selectedBlueprint={selectedBlueprint}
+          setSelectedBlueprint={setSelectedBlueprint}
+          setShowDeleteModal={setShowDeleteModal}
+          isOpen={showDeleteModal}
+        />
         <Toolbar>
           <ToolbarContent>
             <ToolbarItem>
@@ -174,6 +190,19 @@ const ImagesTable = ({ selectedBlueprint }: ImageTableProps) => {
                 Create image
               </Link>
             </ToolbarItem>
+            {experimentalFlag && (
+              <>
+                <ToolbarItem>
+                  <BuildImagesButton selectedBlueprint={selectedBlueprint} />
+                </ToolbarItem>
+                <ToolbarItem>
+                  <BlueprintActionsMenu
+                    selectedBlueprint={selectedBlueprint}
+                    setShowDeleteModal={setShowDeleteModal}
+                  />
+                </ToolbarItem>
+              </>
+            )}
             <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
               <Pagination
                 itemCount={itemCount}

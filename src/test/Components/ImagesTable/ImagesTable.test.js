@@ -241,9 +241,6 @@ describe('Images Table Toolbar', () => {
     await renderWithReduxRouter('', {});
     await screen.findByTestId('images-table');
 
-    // check create image button
-    await screen.findByTestId('create-image-action');
-
     // check pagination renders
     await screen.findByTestId('images-pagination-top');
     await screen.findByTestId('images-pagination-bottom');

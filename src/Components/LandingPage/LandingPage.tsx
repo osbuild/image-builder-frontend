@@ -64,7 +64,7 @@ export const LandingPage = () => {
         <Quickstarts />
       </PageSection>
       <PageSection>
-        <ImagesTable />
+        <ImagesTable setSelectedBlueprint={setSelectedBlueprint} />
       </PageSection>
     </>
   );
@@ -83,7 +83,10 @@ export const LandingPage = () => {
             />
           </SidebarPanel>
           <SidebarContent>
-            <ImagesTable selectedBlueprint={selectedBlueprint} />
+            <ImagesTable
+              selectedBlueprint={selectedBlueprint}
+              setSelectedBlueprint={setSelectedBlueprint}
+            />
           </SidebarContent>
         </Sidebar>
       </PageSection>
@@ -96,10 +99,7 @@ export const LandingPage = () => {
 
   return (
     <>
-      <ImageBuilderHeader
-        experimentalFlag={experimentalFlag}
-        selectedBlueprint={selectedBlueprint}
-      />
+      <ImageBuilderHeader experimentalFlag={experimentalFlag} />
       {edgeParityFlag ? (
         <Tabs
           className="pf-c-tabs pf-c-page-header pf-c-table"
