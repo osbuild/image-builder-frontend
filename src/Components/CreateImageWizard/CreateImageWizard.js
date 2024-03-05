@@ -104,7 +104,9 @@ const onSave = (values) => {
       (Array.isArray(values['enabledServices']) &&
         values['enabledServices'].length > 0) ||
       (Array.isArray(values['disabledServices']) &&
-        values['disabledServices'].length > 0)
+        values['disabledServices'].length > 0) ||
+      (Array.isArray(values['maskedServices']) &&
+        values['maskedServices'].length > 0)
     ) {
       customizations.services = {};
       if (values['enabledServices'].length > 0) {
@@ -112,6 +114,9 @@ const onSave = (values) => {
       }
       if (values['disabledServices'].length > 0) {
         customizations.services.disabled = values['disabledServices'];
+      }
+      if (values['maskedServices'].length > 0) {
+        customizations.services.masked = values['maskedServices'];
       }
     }
   }
@@ -537,6 +542,8 @@ const requestToState = (composeRequest, isProd, enableOscap) => {
         composeRequest?.customizations?.services?.enabled;
       formState['disabledServices'] =
         composeRequest?.customizations?.services?.disabled;
+      formState['maskedServices'] =
+        composeRequest?.customizations?.services?.masked;
     }
 
     return formState;
