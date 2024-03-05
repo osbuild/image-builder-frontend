@@ -52,7 +52,7 @@ import {
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
-import { MajorReleasesLifecyclesChart } from '../../../CreateImageWizard/formComponents/ReleaseLifecycle';
+import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 
 const ExpirationWarning = () => {
