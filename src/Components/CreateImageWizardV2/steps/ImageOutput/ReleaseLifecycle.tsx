@@ -78,8 +78,7 @@ export const chartMajorVersionCfg = {
       },
     },
     responsive: true,
-    maintainAspectRatio: true,
-    aspectRatio: 1 | 5,
+    maintainAspectRatio: false,
     plugins: {
       tooltip: {
         enabled: false,
