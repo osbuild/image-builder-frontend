@@ -136,3 +136,5 @@ export const OCI_STORAGE_EXPIRATION_TIME_IN_DAYS = 7;
 export const MODAL_ANCHOR = '.pf-c-page.chr-c-page';
 
 export const STATUS_POLLING_INTERVAL = 8000;
+
+export const RH_ICON_SIZE = 16;

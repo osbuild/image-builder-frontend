@@ -7,7 +7,6 @@ import {
   EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
-  Icon,
   Pagination,
   SearchInput,
   ToggleGroup,
@@ -16,10 +15,11 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { CogIcon, SearchIcon, UserIcon } from '@patternfly/react-icons';
+import { SearchIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
+import { RH_ICON_SIZE } from '../../../../constants';
 import { useSearchRpmMutation } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import {
@@ -282,21 +282,21 @@ const Packages = () => {
             {exactMatch.repository === 'distro' ? (
               <>
                 <Td>
-                  <Icon status="danger">
-                    <UserIcon />
-                  </Icon>{' '}
+                  <img
+                    src={
+                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                    }
+                    alt="Red Hat logo"
+                    height={RH_ICON_SIZE}
+                    width={RH_ICON_SIZE}
+                  />{' '}
                   Red Hat repository
                 </Td>
                 <Td>Supported</Td>
               </>
             ) : (
               <>
-                <Td>
-                  <Icon>
-                    <CogIcon />
-                  </Icon>{' '}
-                  Custom repository
-                </Td>
+                <Td>Third party repository</Td>
                 <Td>Not supported</Td>
               </>
             )}
@@ -403,21 +403,21 @@ const Packages = () => {
                   {pkg.repository === 'distro' ? (
                     <>
                       <Td>
-                        <Icon status="danger">
-                          <UserIcon />
-                        </Icon>{' '}
+                        <img
+                          src={
+                            '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                          }
+                          alt="Red Hat logo"
+                          height={RH_ICON_SIZE}
+                          width={RH_ICON_SIZE}
+                        />{' '}
                         Red Hat repository
                       </Td>
                       <Td>Supported</Td>
                     </>
                   ) : (
                     <>
-                      <Td>
-                        <Icon>
-                          <CogIcon />
-                        </Icon>{' '}
-                        Custom repository
-                      </Td>
+                      <Td>Third party repository</Td>
                       <Td>Not supported</Td>
                     </>
                   )}
