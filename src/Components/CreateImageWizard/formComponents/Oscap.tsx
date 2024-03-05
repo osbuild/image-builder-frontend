@@ -96,6 +96,9 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
     if (data?.services?.disabled) {
       change('disabledServices', data.services.disabled);
     }
+    if (data?.services?.masked) {
+      change('maskedServices', data.services.masked);
+    }
   }, [data]);
 
   const handleToggle = () => {
@@ -111,6 +114,7 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
     change('kernel', undefined);
     change('disabledServices', undefined);
     change('enabledServices', undefined);
+    change('maskedServices', undefined);
     setProfileName('');
     reinitDependingSteps(change);
   };
