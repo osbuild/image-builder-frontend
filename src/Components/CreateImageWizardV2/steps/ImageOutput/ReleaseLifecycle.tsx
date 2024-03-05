@@ -103,7 +103,7 @@ export const chartMajorVersionCfg = {
   },
 };
 
-const MajorReleasesLifecyclesChart = () => {
+export const MajorReleasesLifecyclesChart = () => {
   return (
     <Panel>
       <PanelMain maxHeight="10rem">
