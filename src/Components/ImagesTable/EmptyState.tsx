@@ -89,7 +89,7 @@ const EmptyImagesTable = () => {
           <Link
             to={resolveRelPath('imagewizard')}
             className="pf-c-button pf-m-primary"
-            data-testid="create-image-action"
+            data-testid="create-image-action-empty-state"
           >
             Create image
           </Link>

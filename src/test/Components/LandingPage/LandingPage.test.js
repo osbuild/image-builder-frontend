@@ -37,7 +37,7 @@ describe('Landing Page', () => {
     renderWithReduxRouter('', {});
 
     // check action loads
-    await screen.findByTestId('create-image-action');
+    await screen.findByTestId('create-image-action-empty-state');
     // check table loads
     await screen.findByTestId('empty-state');
   });
