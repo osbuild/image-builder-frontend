@@ -19,7 +19,7 @@ import '@testing-library/jest-dom';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
-    isBeta: () => false,
+    isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
