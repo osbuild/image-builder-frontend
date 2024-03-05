@@ -22,7 +22,6 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { useFlag } from '@unleash/proxy-client-react';
 import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -58,7 +57,7 @@ import {
   computeHoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
+import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
@@ -86,8 +85,7 @@ const ImagesTable = ({
       }),
     }
   );
-  const experimentalFlag =
-    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
+  const experimentalFlag = useExperimentalFlag();
   const onSetPage: OnSetPage = (_, page) => setPage(page);
 
   const onPerPageSelect: OnSetPage = (_, perPage) => {
@@ -498,10 +496,7 @@ const Row = ({
 }: RowPropTypes) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
-  const { isBeta } = useGetEnvironment();
-  const experimentalFlag =
-    (useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL) &&
-    isBeta();
+  const experimentalFlag = useExperimentalFlag();
   const navigate = useNavigate();
 
   return (
