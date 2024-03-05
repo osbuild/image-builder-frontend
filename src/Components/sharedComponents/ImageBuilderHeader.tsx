@@ -25,7 +25,7 @@ import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 
 type ImageBuilderHeaderPropTypes = {
-  experimentalFlag?: string | true | undefined;
+  experimentalFlag?: boolean;
 };
 
 export const ImageBuilderHeader = ({
