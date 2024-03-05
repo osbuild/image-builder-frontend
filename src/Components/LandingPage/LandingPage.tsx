@@ -25,6 +25,7 @@ import Quickstarts from './Quickstarts';
 
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
@@ -55,8 +56,10 @@ export const LandingPage = () => {
   >();
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
+  const { isBeta } = useGetEnvironment();
   const experimentalFlag =
-    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
+    (useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL) &&
+    isBeta();
 
   const traditionalImageList = (
     <>

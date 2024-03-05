@@ -58,6 +58,7 @@ import {
   computeHoursToExpiration,
   timestampToDisplayString,
 } from '../../Utilities/time';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
@@ -497,8 +498,10 @@ const Row = ({
 }: RowPropTypes) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
+  const { isBeta } = useGetEnvironment();
   const experimentalFlag =
-    useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL;
+    (useFlag('image-builder.new-wizard.enabled') || process.env.EXPERIMENTAL) &&
+    isBeta();
   const navigate = useNavigate();
 
   return (
