@@ -60,6 +60,9 @@ describe('Blueprints', () => {
     await screen.findByText(blueprintNameEmptyComposes);
   });
   test('renders blueprint empty state', async () => {
+    // scrollTo is not defined in jsdom - needed for the navigation to the wizard
+    window.HTMLElement.prototype.scrollTo = function () {};
+
     server.use(
       rest.get(
         `${IMAGE_BUILDER_API}/experimental/blueprints`,
@@ -69,8 +72,17 @@ describe('Blueprints', () => {
       )
     );
 
-    renderWithReduxRouter('', {});
+    const { router } = await renderWithReduxRouter('', {});
     await screen.findByText('No blueprints yet');
+    const emptyStateAction = screen.getByRole('link', {
+      name: /Add blueprint/i,
+    });
+    expect(emptyStateAction).toBeInTheDocument();
+
+    await user.click(emptyStateAction);
+    expect(router.state.location.pathname).toBe(
+      '/insights/image-builder/imagewizard'
+    );
   });
   test('renders blueprint composes', async () => {
     renderWithReduxRouter('', {});

@@ -72,14 +72,13 @@ const BlueprintsSidebar = () => {
         action={
           <Link
             to={resolveRelPath('imagewizard')}
-            className="pf-c-button pf-m-primary"
-            data-testid="create-image-action"
+            data-testid="create-blueprint-action-emptystate"
           >
-            Create
+            Add blueprint
           </Link>
         }
         titleText="No blueprints yet"
-        bodyText="To get started, create a blueprint."
+        bodyText="Add a blueprint and optionally build related images."
       />
     );
   }
