@@ -21,6 +21,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
 
+import { NewAlert } from './NewAlert';
 import Quickstarts from './Quickstarts';
 
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
@@ -69,6 +70,9 @@ export const LandingPage = () => {
   const experimentalImageList = (
     <>
       <PageSection>
+        <NewAlert />
+      </PageSection>
+      <PageSection className="pf-v5-u-pt-0">
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel hasPadding width={{ default: 'width_25' }}>
             <BlueprintsSidebar />
