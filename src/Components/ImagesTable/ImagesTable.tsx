@@ -180,15 +180,17 @@ const ImagesTable = ({
         />
         <Toolbar>
           <ToolbarContent>
-            <ToolbarItem>
-              <Link
-                to={resolveRelPath('imagewizard')}
-                className="pf-c-button pf-m-primary"
-                data-testid="create-image-action"
-              >
-                Create image
-              </Link>
-            </ToolbarItem>
+            {!experimentalFlag && (
+              <ToolbarItem>
+                <Link
+                  to={resolveRelPath('imagewizard')}
+                  className="pf-c-button pf-m-primary"
+                  data-testid="create-image-action"
+                >
+                  Create image
+                </Link>
+              </ToolbarItem>
+            )}
             {experimentalFlag && (
               <>
                 <ToolbarItem>
