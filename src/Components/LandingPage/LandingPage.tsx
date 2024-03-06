@@ -72,9 +72,6 @@ export const LandingPage = () => {
   const experimentalImageList = (
     <>
       <PageSection>
-        <Quickstarts />
-      </PageSection>
-      <PageSection>
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel hasPadding width={{ default: 'width_25' }}>
             <BlueprintsSidebar
