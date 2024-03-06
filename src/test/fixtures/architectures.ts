@@ -111,6 +111,40 @@ export const mockArchitecturesByDistro = (
         ],
       },
     ],
+    'centos-9': [
+      {
+        arch: 'x86_64',
+        image_types: [
+          'aws',
+          'gcp',
+          'azure',
+          'ami',
+          'vhd',
+          'guest-image',
+          'image-installer',
+          'vsphere',
+          'vsphere-ova',
+        ],
+        repositories: [
+          {
+            baseurl:
+              'http://mirror.centos.org/centos/9-stream/BaseOS/x86_64/os/',
+            rhsm: false,
+          },
+        ],
+      },
+      {
+        arch: 'aarch64',
+        image_types: ['aws', 'guest-image', 'image-installer'],
+        repositories: [
+          {
+            baseurl:
+              'http://mirror.centos.org/centos/9-stream/BaseOS/aarch64/os/',
+            rhsm: false,
+          },
+        ],
+      },
+    ],
   };
   return mockDistros[distro];
 };
