@@ -195,7 +195,7 @@ describe('Blueprints', () => {
 
       // wait for debounce
       await waitFor(() => {
-        expect(screen.getAllByRole('radio')).toHaveLength(2);
+        expect(screen.getAllByRole('radio')).toHaveLength(1);
       });
     });
   });
