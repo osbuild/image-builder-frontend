@@ -11,6 +11,7 @@ import {
   Spinner,
   Bullseye,
   Badge,
+  Title,
 } from '@patternfly/react-core';
 import {
   ActionsColumn,
@@ -179,6 +180,9 @@ const ImagesTable = ({
           isOpen={showDeleteModal}
         />
         <Toolbar>
+          <ToolbarContent>
+            <Title headingLevel="h1">All image types</Title>
+          </ToolbarContent>
           <ToolbarContent>
             {!experimentalFlag && (
               <ToolbarItem>
