@@ -2,25 +2,22 @@ import React from 'react';
 
 import { Button } from '@patternfly/react-core';
 
+import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import { useAppSelector } from '../../store/hooks';
 import { useComposeBlueprintMutation } from '../../store/imageBuilderApi';
 
-interface BuildImagesButtonProps {
-  selectedBlueprint?: string | undefined;
-}
-
-export const BuildImagesButton: React.FunctionComponent<
-  BuildImagesButtonProps
-> = ({ selectedBlueprint }: BuildImagesButtonProps) => {
+export const BuildImagesButton = () => {
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
   const onBuildHandler = async () => {
-    selectedBlueprint && (await buildBlueprint({ id: selectedBlueprint }));
+    selectedBlueprintId && (await buildBlueprint({ id: selectedBlueprintId }));
   };
   return (
     <Button
       ouiaId="build-images-button"
       onClick={onBuildHandler}
-      isDisabled={!selectedBlueprint}
+      isDisabled={!selectedBlueprintId}
       isLoading={imageBuildLoading}
     >
       Build images

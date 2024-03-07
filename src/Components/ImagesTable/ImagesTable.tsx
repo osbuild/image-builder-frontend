@@ -11,7 +11,6 @@ import {
   Spinner,
   Bullseye,
   Badge,
-  Title,
 } from '@patternfly/react-core';
 import {
   ActionsColumn,
@@ -23,7 +22,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-import { Link, NavigateFunction, useNavigate } from 'react-router-dom';
+import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
 import ImagesEmptyState from './EmptyState';
@@ -34,6 +33,7 @@ import {
   GcpDetails,
   OciDetails,
 } from './ImageDetails';
+import ImagesTableToolbar from './ImagesTableToolbar';
 import { AwsS3Instance, CloudInstance, OciInstance } from './Instance';
 import Release from './Release';
 import { ExpiringStatus, CloudStatus } from './Status';
@@ -64,9 +64,6 @@ import {
   timestampToDisplayString,
 } from '../../Utilities/time';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
-import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
-import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
-import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -92,7 +89,6 @@ const ImagesTable = () => {
     setPerPage(perPage);
   };
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const {
     data: blueprintsComposes,
     isSuccess: isBlueprintsSuccess,
@@ -173,54 +169,13 @@ const ImagesTable = () => {
   return (
     <>
       <>
-        <DeleteBlueprintModal
-          setShowDeleteModal={setShowDeleteModal}
-          isOpen={showDeleteModal}
+        <ImagesTableToolbar
+          itemCount={itemCount}
+          perPage={perPage}
+          page={page}
+          onSetPage={onSetPage}
+          onPerPageSelect={onPerPageSelect}
         />
-        <Toolbar>
-          {experimentalFlag && (
-            <ToolbarContent>
-              <Title headingLevel="h1">All image types</Title>
-            </ToolbarContent>
-          )}
-          <ToolbarContent>
-            {!experimentalFlag && (
-              <ToolbarItem>
-                <Link
-                  to={resolveRelPath('imagewizard')}
-                  className="pf-c-button pf-m-primary"
-                  data-testid="create-image-action"
-                >
-                  Create image
-                </Link>
-              </ToolbarItem>
-            )}
-            {experimentalFlag && (
-              <>
-                <ToolbarItem>
-                  <BuildImagesButton selectedBlueprint={selectedBlueprintId} />
-                </ToolbarItem>
-                <ToolbarItem>
-                  <BlueprintActionsMenu
-                    setShowDeleteModal={setShowDeleteModal}
-                  />
-                </ToolbarItem>
-              </>
-            )}
-            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-              <Pagination
-                itemCount={itemCount}
-                perPage={perPage}
-                page={page}
-                onSetPage={onSetPage}
-                onPerPageSelect={onPerPageSelect}
-                widgetId="compose-pagination-top"
-                data-testid="images-pagination-top"
-                isCompact
-              />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
         <Table variant="compact" data-testid="images-table">
           <Thead>
             <Tr>
