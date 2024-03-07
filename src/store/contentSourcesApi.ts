@@ -25,6 +25,9 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    getRepository: build.query<GetRepositoryApiResponse, GetRepositoryApiArg>({
+      query: (queryArg) => ({ url: `/repositories/${queryArg.uuid}` }),
+    }),
     listRepositoriesRpms: build.query<
       ListRepositoriesRpmsApiResponse,
       ListRepositoriesRpmsApiArg
@@ -81,6 +84,12 @@ export type ListRepositoriesApiArg = {
   origin?: string;
   /** content type of a repository to filter on (rpm) */
   contentType?: string;
+};
+export type GetRepositoryApiResponse =
+  /** status 200 OK */ ApiRepositoryResponseRead;
+export type GetRepositoryApiArg = {
+  /** Repository ID. */
+  uuid: string;
 };
 export type ListRepositoriesRpmsApiResponse =
   /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
@@ -293,6 +302,7 @@ export type ApiContentUnitSearchRequest = {
 };
 export const {
   useListRepositoriesQuery,
+  useGetRepositoryQuery,
   useListRepositoriesRpmsQuery,
   useSearchRpmMutation,
 } = injectedRtkApi;
