@@ -35,10 +35,15 @@ import {
   selectImageTypes,
   selectPackages,
   selectPayloadRepositories,
+  selectRecommendedRepositories,
   selectRegistrationType,
   selectServerUrl,
   wizardState,
 } from '../../../store/wizardSlice';
+import {
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
+} from '../steps/Repositories/Repositories';
 import { GcpAccountType } from '../steps/TargetEnvironment/Gcp';
 
 /**
@@ -141,6 +146,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     repositories: {
       customRepositories: request.customizations.custom_repositories || [],
       payloadRepositories: request.customizations.payload_repositories || [],
+      recommendedRepositories: [],
     },
     registration: {
       registrationType: request.customizations?.subscription?.rhc
@@ -321,6 +327,14 @@ const getSubscription = (
 
 const getCustomRepositories = (state: RootState) => {
   const customRepositories = selectCustomRepositories(state);
+  const recommendedRepositories = selectRecommendedRepositories(state);
+
+  for (const repo in recommendedRepositories) {
+    customRepositories.concat(
+      convertSchemaToIBCustomRepo(recommendedRepositories[repo])
+    );
+  }
+
   if (customRepositories.length === 0) {
     return undefined;
   }
@@ -329,6 +343,13 @@ const getCustomRepositories = (state: RootState) => {
 
 const getPayloadRepositories = (state: RootState) => {
   const payloadRepositories = selectPayloadRepositories(state);
+  const recommendedRepositories = selectRecommendedRepositories(state);
+
+  for (const repo in recommendedRepositories) {
+    payloadRepositories.concat(
+      convertSchemaToIBPayloadRepo(recommendedRepositories[repo])
+    );
+  }
   if (payloadRepositories.length === 0) {
     return undefined;
   }
