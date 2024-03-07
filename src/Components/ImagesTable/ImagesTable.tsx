@@ -178,9 +178,11 @@ const ImagesTable = () => {
           isOpen={showDeleteModal}
         />
         <Toolbar>
-          <ToolbarContent>
-            <Title headingLevel="h1">All image types</Title>
-          </ToolbarContent>
+          {experimentalFlag && (
+            <ToolbarContent>
+              <Title headingLevel="h1">All image types</Title>
+            </ToolbarContent>
+          )}
           <ToolbarContent>
             {!experimentalFlag && (
               <ToolbarItem>
