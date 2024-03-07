@@ -74,18 +74,8 @@ describe('Blueprints', () => {
   });
   test('renders blueprint composes', async () => {
     renderWithReduxRouter('', {});
-    const idMatcher = blueprintIdWithComposes;
-    const nameMatcher = (_, element) =>
-      element.getAttribute('name') === 'blueprints';
 
-    const radioButtons = await screen.findAllByRole('radio', {
-      name: nameMatcher,
-    });
-    const elementById = radioButtons.find(
-      (button) => button.getAttribute('id') === idMatcher
-    );
-
-    await user.click(elementById);
+    await selectBlueprintById(user, blueprintIdWithComposes);
     const table = await screen.findByTestId('images-table');
     const { findAllByText } = within(table);
     const images = await findAllByText('dark-chocolate-aws');
@@ -93,17 +83,8 @@ describe('Blueprints', () => {
   });
   test('renders blueprint composes empty state', async () => {
     renderWithReduxRouter('', {});
-    const idMatcher = blueprintIdEmptyComposes;
-    const nameMatcher = (_, element) =>
-      element.getAttribute('name') === 'blueprints';
 
-    const radioButtons = await screen.findAllByRole('radio', {
-      name: nameMatcher,
-    });
-    const elementById = radioButtons.find(
-      (button) => button.getAttribute('id') === idMatcher
-    );
-    await user.click(elementById);
+    await selectBlueprintById(user, blueprintIdEmptyComposes);
     const table = await screen.findByTestId('images-table');
     const { findByText } = within(table);
     await findByText('No images');
@@ -111,18 +92,8 @@ describe('Blueprints', () => {
 
   test('click build image button', async () => {
     renderWithReduxRouter('', {});
-    const idMatcher = blueprintIdWithComposes;
-    const nameMatcher = (_, element) =>
-      element.getAttribute('name') === 'blueprints';
 
-    const radioButtons = await screen.findAllByRole('radio', {
-      name: nameMatcher,
-    });
-    const elementById = radioButtons.find(
-      (button) => button.getAttribute('id') === idMatcher
-    );
-
-    await user.click(elementById);
+    await selectBlueprintById(user, blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build image/i,
     });
@@ -132,24 +103,12 @@ describe('Blueprints', () => {
   test('blueprint is out of sync', async () => {
     renderWithReduxRouter('', {});
 
-    const nameMatcher = (_, element) =>
-      element.getAttribute('name') === 'blueprints';
-
-    const radioButtons = await screen.findAllByRole('radio', {
-      name: nameMatcher,
-    });
-    const outSyncBlueprintCard = radioButtons.find(
-      (button) => button.getAttribute('id') === blueprintIdOutOfSync
-    );
-    await user.click(outSyncBlueprintCard);
+    await selectBlueprintById(user, blueprintIdOutOfSync);
     await screen.findByText(
       "You haven't built new images for this version of your blueprint yet"
     );
 
-    const blueprintWithComposes = radioButtons.find(
-      (button) => button.getAttribute('id') === blueprintIdWithComposes
-    );
-    await user.click(blueprintWithComposes);
+    await selectBlueprintById(user, blueprintIdWithComposes);
     expect(
       screen.queryByText(
         "You haven't built new images for this version of your blueprint yet"
