@@ -31,9 +31,15 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
   const [, { isLoading }] = useDeleteBlueprintMutation({
     fixedCacheKey: 'delete-blueprint',
   });
+
   return (
     <>
-      <Card ouiaId={`blueprint-card-${blueprint.id}`} isCompact isClickable>
+      <Card
+        isSelected={blueprint.id === selectedBlueprintId}
+        ouiaId={`blueprint-card-${blueprint.id}`}
+        isCompact
+        isClickable
+      >
         <CardHeader
           data-testid={blueprint.id}
           selectableActions={{
