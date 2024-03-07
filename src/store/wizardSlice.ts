@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
+import { ApiRepositoryResponseRead } from './contentSourcesApi';
 import {
   CustomRepository,
   DistributionProfileItem,
@@ -80,6 +81,7 @@ export type wizardState = {
   repositories: {
     customRepositories: CustomRepository[];
     payloadRepositories: Repository[];
+    recommendedRepositories: ApiRepositoryResponseRead[];
   };
   packages: IBPackageWithRepositoryInfo[];
   details: {
@@ -134,6 +136,7 @@ const initialState: wizardState = {
   repositories: {
     customRepositories: [],
     payloadRepositories: [],
+    recommendedRepositories: [],
   },
   packages: [],
   details: {
@@ -244,6 +247,10 @@ export const selectCustomRepositories = (state: RootState) => {
 
 export const selectPayloadRepositories = (state: RootState) => {
   return state.wizard.repositories.payloadRepositories;
+};
+
+export const selectRecommendedRepositories = (state: RootState) => {
+  return state.wizard.repositories.recommendedRepositories;
 };
 
 export const selectPackages = (state: RootState) => {
@@ -441,6 +448,27 @@ export const wizardSlice = createSlice({
     changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
       state.repositories.payloadRepositories = action.payload;
     },
+    addRecommendedRepository: (
+      state,
+      action: PayloadAction<ApiRepositoryResponseRead>
+    ) => {
+      if (
+        !state.repositories.recommendedRepositories.some(
+          (repo) => repo.url === action.payload.url
+        )
+      ) {
+        state.repositories.recommendedRepositories.push(action.payload);
+      }
+    },
+    removeRecommendedRepository: (
+      state,
+      action: PayloadAction<ApiRepositoryResponseRead>
+    ) => {
+      state.repositories.recommendedRepositories =
+        state.repositories.recommendedRepositories.filter(
+          (repo) => repo.url !== action.payload.url
+        );
+    },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
       state.packages.push(action.payload);
     },
@@ -497,6 +525,8 @@ export const {
   changePartitionMinSize,
   changeCustomRepositories,
   changePayloadRepositories,
+  addRecommendedRepository,
+  removeRecommendedRepository,
   addPackage,
   removePackage,
   changeBlueprintName,
