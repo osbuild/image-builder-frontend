@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
+import { useExperimentalFlag } from './Utilities/useExperimentalFlag';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const CreateImageWizard = lazy(() =>
@@ -18,9 +19,7 @@ const CreateImageWizardV2 = lazy(() =>
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
 
-  const experimentalWizard =
-    useFlag('image-builder.new-wizard.enabled') ||
-    process.env.EXPERIMENTAL === true;
+  const experimentalFlag = useExperimentalFlag();
   return (
     <Routes>
       <Route
@@ -38,11 +37,7 @@ export const Router = () => {
         path="imagewizard/:composeId?"
         element={
           <Suspense>
-            {experimentalWizard ? (
-              <CreateImageWizardV2 />
-            ) : (
-              <CreateImageWizard />
-            )}
+            {experimentalFlag ? <CreateImageWizardV2 /> : <CreateImageWizard />}
           </Suspense>
         }
       />
