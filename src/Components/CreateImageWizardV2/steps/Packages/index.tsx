@@ -7,7 +7,9 @@ import Packages from './Packages';
 const PackagesStep = () => {
   return (
     <Form>
-      <Title headingLevel="h2">Additional packages</Title>
+      <Title headingLevel="h1" size="xl">
+        Additional packages
+      </Title>
       <Text>
         Images built with Image Builder include all required packages.
       </Text>

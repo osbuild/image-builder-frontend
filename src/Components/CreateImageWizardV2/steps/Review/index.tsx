@@ -7,7 +7,9 @@ import Review from './ReviewStep';
 const ReviewStep = () => {
   return (
     <Form>
-      <Title headingLevel="h2">Review</Title>
+      <Title headingLevel="h1" size="xl">
+        Review
+      </Title>
       <Review />
     </Form>
   );

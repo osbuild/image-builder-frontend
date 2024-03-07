@@ -45,7 +45,9 @@ const DetailsStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h2">Details</Title>
+      <Title headingLevel="h1" size="xl">
+        Details
+      </Title>
       <Text>
         Optionally enter a name to identify your image later quickly. If you do
         not provide one, the UUID will be used as the name.

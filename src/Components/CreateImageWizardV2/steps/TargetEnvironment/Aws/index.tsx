@@ -55,7 +55,9 @@ const Aws = () => {
 
   return (
     <Form>
-      <Title headingLevel="h2">Target environment - Amazon Web Services</Title>
+      <Title headingLevel="h1" size="xl">
+        Target environment - Amazon Web Services
+      </Title>
       <Text>
         Your image will be uploaded to AWS and shared with the account you
         provide below.

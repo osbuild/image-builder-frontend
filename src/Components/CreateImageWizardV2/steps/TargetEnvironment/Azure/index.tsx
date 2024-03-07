@@ -67,7 +67,9 @@ const Azure = () => {
 
   return (
     <Form>
-      <Title headingLevel="h2">Target environment - Microsoft Azure</Title>
+      <Title headingLevel="h1" size="xl">
+        Target environment - Microsoft Azure
+      </Title>
       <Text>
         Upon build, Image Builder sends the image to the selected authorized
         Azure account. The image will be uploaded to the resource group in the

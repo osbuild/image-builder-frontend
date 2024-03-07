@@ -31,7 +31,7 @@ const Gcp = () => {
 
   return (
     <Form>
-      <Title headingLevel="h2">
+      <Title headingLevel="h1" size="xl">
         Target environment - Google Cloud Platform
       </Title>
       <Text>
