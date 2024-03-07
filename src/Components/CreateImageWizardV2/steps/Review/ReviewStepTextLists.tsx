@@ -52,6 +52,7 @@ import {
   selectPackages,
   selectRegistrationType,
   selectFileSystemPartitionMode,
+  selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
@@ -407,69 +408,89 @@ export const TargetEnvOtherList = () => {
 export const ContentList = () => {
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
+  const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
+  const duplicatePackages = packages.filter(
+    (item, index) => packages.indexOf(item) !== index
+  );
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem component={TextListItemVariants.dt}>
-          Custom repositories
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
-          data-testid="custom-repositories-count"
-        >
-          {customRepositories?.length > 0 ? (
-            <Popover
-              position="bottom"
-              headerContent="Custom repositories"
-              hasAutoWidth
-              minWidth="30rem"
-              bodyContent={<RepositoriesTable />}
-            >
-              <Button
-                variant="link"
-                aria-label="About custom repositories"
-                className="pf-u-p-0"
+    <>
+      <TextContent>
+        <TextList component={TextListVariants.dl}>
+          <TextListItem component={TextListItemVariants.dt}>
+            Custom repositories
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dd}
+            data-testid="custom-repositories-count"
+          >
+            {customRepositories?.length + recommendedRepositories.length > 0 ? (
+              <Popover
+                position="bottom"
+                headerContent="Custom repositories"
+                hasAutoWidth
+                minWidth="30rem"
+                bodyContent={<RepositoriesTable />}
               >
-                {customRepositories?.length || 0}
-              </Button>
-            </Popover>
-          ) : (
-            0
-          )}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-u-min-width"
-        >
-          Additional packages
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
-          data-testid="chosen-packages-count"
-        >
-          {packages?.length > 0 ? (
-            <Popover
-              position="bottom"
-              headerContent="Additional packages"
-              hasAutoWidth
-              minWidth="60rem"
-              bodyContent={<PackagesTable />}
-            >
-              <Button
-                variant="link"
-                aria-label="About packages"
-                className="pf-u-p-0"
+                <Button
+                  variant="link"
+                  aria-label="About custom repositories"
+                  className="pf-u-p-0"
+                >
+                  {customRepositories?.length +
+                    recommendedRepositories.length || 0}
+                </Button>
+              </Popover>
+            ) : (
+              0
+            )}
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dt}
+            className="pf-u-min-width"
+          >
+            Additional packages
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dd}
+            data-testid="chosen-packages-count"
+          >
+            {packages?.length > 0 ? (
+              <Popover
+                position="bottom"
+                headerContent="Additional packages"
+                hasAutoWidth
+                minWidth="60rem"
+                bodyContent={<PackagesTable />}
               >
-                {packages?.length}
-              </Button>
-            </Popover>
-          ) : (
-            0
-          )}
-        </TextListItem>
-      </TextList>
+                <Button
+                  variant="link"
+                  aria-label="About packages"
+                  className="pf-u-p-0"
+                >
+                  {packages?.length}
+                </Button>
+              </Popover>
+            ) : (
+              0
+            )}
+          </TextListItem>
+        </TextList>
+      </TextContent>
       <br />
-    </TextContent>
+      {duplicatePackages.length > 0 && (
+        <Alert
+          title="Can not guarantee where some selected packages will come from"
+          variant="warning"
+          isInline
+        >
+          Some of the packages added to this image belong to multiple added
+          repositories. We can not guarantee which repository the package will
+          come from.
+        </Alert>
+      )}
+
+      <br />
+    </>
   );
 };
 

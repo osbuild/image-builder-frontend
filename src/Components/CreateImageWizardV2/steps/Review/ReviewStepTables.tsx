@@ -112,7 +112,9 @@ export const PackagesTable = () => {
                 <Td className="pf-m-width-20">
                   {pkg.repository === 'distro'
                     ? 'Red Hat repository'
-                    : 'Custom repository'}
+                    : pkg.repository === 'custom'
+                    ? 'Custom repository'
+                    : 'EPEL Everything x86_64'}
                 </Td>
               </Tr>
             ))}
