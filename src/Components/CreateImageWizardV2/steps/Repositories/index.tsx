@@ -27,7 +27,9 @@ const ManageRepositoriesButton = () => {
 const RepositoriesStep = () => {
   return (
     <Form>
-      <Title headingLevel="h2">Custom repositories</Title>
+      <Title headingLevel="h1" size="xl">
+        Custom repositories
+      </Title>
       <Text>
         Select from linked custom repositories from which to search and add
         packages to this image.

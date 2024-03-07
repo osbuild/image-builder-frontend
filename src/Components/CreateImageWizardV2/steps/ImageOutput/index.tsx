@@ -17,7 +17,9 @@ const ImageOutputStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h2">Image output</Title>
+      <Title headingLevel="h1" size="xl">
+        Image output
+      </Title>
       <Text>
         Image builder allows you to create a custom image and push it to target
         environments.

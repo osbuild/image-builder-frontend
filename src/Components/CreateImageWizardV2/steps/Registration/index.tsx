@@ -20,7 +20,9 @@ const RegistrationStep = () => {
   const activationKey = useAppSelector((state) => selectActivationKey(state));
   return (
     <Form>
-      <Title headingLevel="h2">Register systems using this image</Title>
+      <Title headingLevel="h1" size="xl">
+        Register systems using this image
+      </Title>
       <Text>
         Automatically register your systems with Red Hat to enhance security and
         track your spending.
