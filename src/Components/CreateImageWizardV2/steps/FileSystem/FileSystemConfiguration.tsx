@@ -17,10 +17,12 @@ import {
 } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { v4 as uuidv4 } from 'uuid';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
+  addPartition,
   changePartitionMinSize,
   changePartitionMountpoint,
   selectImageTypes,
@@ -38,6 +40,19 @@ export type Partition = {
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector((state) => selectPartitions(state));
   const environments = useAppSelector((state) => selectImageTypes(state));
+
+  const dispatch = useAppDispatch();
+
+  const handleAddPartition = () => {
+    const id = uuidv4();
+    dispatch(
+      addPartition({
+        id,
+        mountpoint: '/home',
+        min_size: '1',
+      })
+    );
+  };
 
   return (
     <>
@@ -125,7 +140,7 @@ const FileSystemConfiguration = () => {
           className="pf-u-text-align-left"
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => {}}
+          onClick={handleAddPartition}
         >
           Add partition
         </Button>

@@ -380,6 +380,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.fileSystem.mode = action.payload;
     },
+    addPartition: (state, action: PayloadAction<Partition>) => {
+      state.fileSystem.partitions.push(action.payload);
+    },
     changePartitionMountpoint: (
       state,
       action: PayloadAction<{ id: string; mountpoint: string }>
@@ -461,6 +464,7 @@ export const {
   changeDisabledServices,
   changeEnabledServices,
   changeFileSystemPartitionMode,
+  addPartition,
   changePartitionMountpoint,
   changePartitionMinSize,
   changeCustomRepositories,
