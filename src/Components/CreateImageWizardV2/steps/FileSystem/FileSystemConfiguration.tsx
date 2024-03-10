@@ -26,6 +26,7 @@ import {
   changePartitionMinSize,
   changePartitionMountpoint,
   selectImageTypes,
+  removePartition,
   selectPartitions,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
@@ -163,6 +164,11 @@ const getSuffix = (mountpoint: string) => {
 
 const Row = ({ partition }: RowPropTypes) => {
   const [units, setUnits] = useState<Units>('MiB');
+  const dispatch = useAppDispatch();
+
+  const handleRemovePartition = (id: string) => {
+    dispatch(removePartition(id));
+  };
 
   return (
     <Tr>
@@ -184,9 +190,9 @@ const Row = ({ partition }: RowPropTypes) => {
         <Button
           variant="link"
           icon={<MinusCircleIcon />}
-          onClick={() => {}}
+          onClick={() => handleRemovePartition(partition.id)}
           data-testid="remove-mount-point"
-          isDisabled={true}
+          isDisabled={partition.mountpoint === '/'}
         />
       </Td>
     </Tr>
