@@ -11,7 +11,10 @@ import {
 import { ActivationKeys } from './rhsmApi';
 
 import { FileSystemPartitionMode } from '../Components/CreateImageWizardV2/steps/FileSystem';
-import { Partition } from '../Components/CreateImageWizardV2/steps/FileSystem/FileSystemConfiguration';
+import {
+  Partition,
+  Units,
+} from '../Components/CreateImageWizardV2/steps/FileSystem/FileSystemConfiguration';
 import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizardV2/steps/Packages/Packages';
 import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
@@ -405,6 +408,18 @@ export const wizardSlice = createSlice({
         state.fileSystem.partitions[partitionIndex].mountpoint = mountpoint;
       }
     },
+    changePartitionUnit: (
+      state,
+      action: PayloadAction<{ id: string; unit: Units }>
+    ) => {
+      const { id, unit } = action.payload;
+      const partitionIndex = state.fileSystem.partitions.findIndex(
+        (partition) => partition.id === id
+      );
+      if (partitionIndex !== -1) {
+        state.fileSystem.partitions[partitionIndex].unit = unit;
+      }
+    },
     changePartitionMinSize: (
       state,
       action: PayloadAction<{ id: string; min_size: string }>
@@ -478,6 +493,7 @@ export const {
   addPartition,
   removePartition,
   changePartitionMountpoint,
+  changePartitionUnit,
   changePartitionMinSize,
   changeCustomRepositories,
   changePayloadRepositories,
