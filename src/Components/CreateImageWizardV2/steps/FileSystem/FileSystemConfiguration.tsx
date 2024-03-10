@@ -28,6 +28,7 @@ import {
   selectImageTypes,
   removePartition,
   selectPartitions,
+  changePartitionUnit,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
 import { ValidatedTextInput } from '../../ValidatedTextInput';
@@ -36,6 +37,7 @@ export type Partition = {
   id: string;
   mountpoint: string;
   min_size: string;
+  unit: Units;
 };
 
 const FileSystemConfiguration = () => {
@@ -50,7 +52,8 @@ const FileSystemConfiguration = () => {
       addPartition({
         id,
         mountpoint: '/home',
-        min_size: '1',
+        min_size: UNIT_GIB.toString(),
+        unit: 'GiB',
       })
     );
   };
@@ -163,7 +166,6 @@ const getSuffix = (mountpoint: string) => {
 };
 
 const Row = ({ partition }: RowPropTypes) => {
-  const [units, setUnits] = useState<Units>('MiB');
   const dispatch = useAppDispatch();
 
   const handleRemovePartition = (id: string) => {
@@ -188,10 +190,10 @@ const Row = ({ partition }: RowPropTypes) => {
 
       <Td width={20}>xfs</Td>
       <Td width={20}>
-        <MinimumSize partition={partition} units={units} />
+        <MinimumSize partition={partition} units={partition.unit} />
       </Td>
       <Td width={10}>
-        <SizeUnit units={units} setUnits={setUnits} />
+        <SizeUnit partition={partition} />
       </Td>
       <Td width={10}>
         <Button
@@ -288,9 +290,9 @@ type MinimumSizePropTypes = {
   units: Units;
 };
 
-type Units = 'KiB' | 'MiB' | 'GiB';
+export type Units = 'KiB' | 'MiB' | 'GiB';
 
-const getConversionFactor = (units: Units) => {
+export const getConversionFactor = (units: Units) => {
   switch (units) {
     case 'KiB':
       return UNIT_KIB;
@@ -305,11 +307,11 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
   const conversionFactor = getConversionFactor(units);
 
   const convertToDisplayUnits = (minSize: string) => {
-    return (parseInt(minSize) * conversionFactor).toString();
+    return (parseInt(minSize) / conversionFactor).toString();
   };
 
   const convertToBytes = (minSize: string) => {
-    return (parseInt(minSize) / conversionFactor).toString();
+    return (parseInt(minSize) * conversionFactor).toString();
   };
 
   const dispatch = useAppDispatch();
@@ -328,17 +330,20 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
             min_size: convertToBytes(minSize),
           })
         );
+        dispatch(
+          changePartitionUnit({ id: partition.id, unit: partition.unit })
+        );
       }}
     />
   );
 };
 
 type SizeUnitPropTypes = {
-  units: Units;
-  setUnits: React.Dispatch<React.SetStateAction<Units>>;
+  partition: Partition;
 };
 
-const SizeUnit = ({ units, setUnits }: SizeUnitPropTypes) => {
+const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
+  const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
   const onToggle = (isOpen: boolean) => {
@@ -346,17 +351,17 @@ const SizeUnit = ({ units, setUnits }: SizeUnitPropTypes) => {
   };
 
   const onSelect = (event: React.MouseEvent, selection: Units) => {
-    setUnits(selection);
+    dispatch(changePartitionUnit({ id: partition.id, unit: selection }));
     setIsOpen(false);
   };
 
   return (
     <Select
-      ouiaId="mount-point"
+      ouiaId="unit"
       isOpen={isOpen}
       onToggle={(_event, isOpen) => onToggle(isOpen)}
       onSelect={onSelect}
-      selections={units}
+      selections={partition.unit}
     >
       <SelectOption value={'KiB'} />
       <SelectOption value={'MiB'} />

@@ -8,7 +8,9 @@ import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
   selectPackages,
+  selectPartitions,
 } from '../../../../store/wizardSlice';
+import { getConversionFactor } from '../FileSystem/FileSystemConfiguration';
 
 type repoPropType = {
   repoUrl: string[] | undefined;
@@ -56,6 +58,7 @@ const RepoName = ({ repoUrl }: repoPropType) => {
 };
 
 export const FSReviewTable = () => {
+  const partitions = useAppSelector((state) => selectPartitions(state));
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
@@ -67,7 +70,21 @@ export const FSReviewTable = () => {
               <Th>Minimum size</Th>
             </Tr>
           </Thead>
-          <Tbody data-testid="file-system-configuration-tbody-review"></Tbody>
+          <Tbody data-testid="file-system-configuration-tbody-review">
+            {partitions.map((partition, partitionIndex) => (
+              <Tr key={partitionIndex}>
+                <Td className="pf-m-width-30">{partition.mountpoint}</Td>
+                <Td className="pf-m-width-30">xfs</Td>
+                <Td className="pf-m-width-30">
+                  {(
+                    parseInt(partition.min_size) /
+                    getConversionFactor(partition.unit)
+                  ).toString()}{' '}
+                  {partition.unit}
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
         </Table>
       </PanelMain>
     </Panel>

@@ -3,6 +3,7 @@ import React from 'react';
 import { FormGroup, Label, Radio } from '@patternfly/react-core';
 import { v4 as uuidv4 } from 'uuid';
 
+import { UNIT_GIB } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeFileSystemConfiguration,
@@ -46,7 +47,12 @@ const FileSystemPartition = () => {
           dispatch(changeFileSystemPartitionMode('manual'));
           dispatch(
             changeFileSystemConfiguration([
-              { id: id, mountpoint: '/', min_size: '500' },
+              {
+                id: id,
+                mountpoint: '/',
+                min_size: (10 * UNIT_GIB).toString(),
+                unit: 'GiB',
+              },
             ])
           );
         }}
