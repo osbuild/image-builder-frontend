@@ -33,7 +33,10 @@ import {
   mockPackagesResults,
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
-import { mockRepositoryResults } from '../fixtures/repositories';
+import {
+  mockPopularRepo,
+  mockRepositoryResults,
+} from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
 export const handlers = [
@@ -80,6 +83,10 @@ export const handlers = [
     const offset = req.url.searchParams.get('offset');
     const args = { available_for_arch, available_for_version, limit, offset };
     return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
+  }),
+  rest.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, (req, res, ctx) => {
+    const { repo_id } = req.params;
+    return res(ctx.status(200), ctx.json(mockPopularRepo(repo_id)));
   }),
   rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(composesEndpoint(req)));
