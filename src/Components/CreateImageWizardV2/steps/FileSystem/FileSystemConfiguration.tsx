@@ -28,6 +28,7 @@ import {
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
 import { ValidatedTextInput } from '../../ValidatedTextInput';
+import {isFileSystemConfigValid} from "../../validators";
 
 export type Partition = {
   id: string;
@@ -148,15 +149,22 @@ const getSuffix = (mountpoint: string) => {
 
 const Row = ({ partition }: RowPropTypes) => {
   const [units, setUnits] = useState<Units>('MiB');
-
+  const partitions = useAppSelector((state) => selectPartitions(state));
   return (
     <Tr>
       <Td />
       <Td className="pf-m-width-15">
-        <MountpointPrefix partition={partition} />
+        <MountpointPrefix partition={partition}   />
+        {isFileSystemConfigValid(partitions)?.duplicates?.includes(partition.mountpoint) &&
+            <Alert
+            variant="danger"
+            isInline
+            isPlain
+            title="Duplicate mount point."
+        />}
       </Td>
       <Td className="pf-m-width-15">
-        <MountpointSuffix partition={partition} />
+        <MountpointSuffix partition={partition}/>
       </Td>
       <Td className="pf-m-width-20">xfs</Td>
       <Td className="pf-m-width-30">
@@ -192,6 +200,8 @@ export const mountpointPrefixes = [
 
 type MountpointPrefixPropTypes = {
   partition: Partition;
+
+
 };
 
 const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
@@ -199,7 +209,6 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
   const [isOpen, setIsOpen] = useState(false);
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
-
   const onToggle = (isOpen: boolean) => {
     setIsOpen(isOpen);
   };
@@ -229,12 +238,14 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
 type MountpointSuffixPropTypes = {
   partition: Partition;
+
 };
 
-const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
+const MountpointSuffix = ({ partition}: MountpointSuffixPropTypes) => {
   const dispatch = useAppDispatch();
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
+  debugger;
 
   return (
     <TextInput
@@ -247,8 +258,10 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
             id: partition.id,
             mountpoint: mountpoint,
           })
+
         );
       }}
+
       aria-label="text input example"
     />
   );

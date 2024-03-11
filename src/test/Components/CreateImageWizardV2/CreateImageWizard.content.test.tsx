@@ -381,7 +381,9 @@ describe('Step Custom repositories', () => {
     let firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
 
     expect(firstRepoCheckbox.checked).toEqual(false);
+
     await user.click(firstRepoCheckbox);
+
     expect(firstRepoCheckbox.checked).toEqual(true);
 
     await clickNext();
