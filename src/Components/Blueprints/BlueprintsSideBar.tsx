@@ -20,13 +20,18 @@ import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
 
 import BlueprintCard from './BlueprintCard';
+import BlueprintsPagination from './BlueprintsPagination';
 
 import {
   selectBlueprintSearchInput,
+  selectLimit,
+  selectOffset,
   selectSelectedBlueprintId,
   setBlueprintId,
   setBlueprintSearchInput,
+  setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
+import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   useGetBlueprintsQuery,
@@ -49,8 +54,12 @@ type emptyBlueprintStateProps = {
 const BlueprintsSidebar = () => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintsOffset = useAppSelector(selectOffset);
+  const blueprintsLimit = useAppSelector(selectLimit);
   const { data: blueprintsData, isLoading } = useGetBlueprintsQuery({
     search: blueprintSearchInput,
+    limit: blueprintsLimit,
+    offset: blueprintsOffset,
   });
   const dispatch = useAppDispatch();
   const blueprints = blueprintsData?.data;
@@ -82,7 +91,6 @@ const BlueprintsSidebar = () => {
       />
     );
   }
-
   return (
     <>
       <Stack hasGutter>
@@ -124,6 +132,7 @@ const BlueprintsSidebar = () => {
               <BlueprintCard blueprint={blueprint} />
             </StackItem>
           ))}
+        <BlueprintsPagination />
       </Stack>
     </>
   );
@@ -136,6 +145,8 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
   const dispatch = useAppDispatch();
   const debouncedSearch = useCallback(
     debounce((filter) => {
+      dispatch(setBlueprintsOffset(0));
+      dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
       dispatch(setBlueprintSearchInput(filter.length > 0 ? filter : undefined));
     }, 300),
     []

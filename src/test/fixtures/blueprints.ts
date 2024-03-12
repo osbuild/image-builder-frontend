@@ -14,7 +14,7 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 3 },
+  meta: { count: 11 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -36,6 +36,62 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       description: 'Crusted lemon pie with meringue topping',
       version: 2,
       last_modified_at: '2021-09-08T14:38:00.000Z',
+    },
+    {
+      id: 'b1f10309-a250-4db8-ab64-c110176e3eb7',
+      name: 'Cupcake',
+      description: 'Small cake with frosting',
+      version: 1,
+      last_modified_at: '2021-09-08T14:38:00.000Z',
+    },
+    {
+      id: '8642171b-d4e5-408b-af9f-68ce8a640df8',
+      name: 'Salted Caramel Cheesecake',
+      description: 'Cheesecake topped with salted caramel',
+      version: 1,
+      last_modified_at: '2021-09-08T15:12:00.000Z',
+    },
+    {
+      id: 'f460c4eb-0b73-4a56-a1a6-5defc7e29d6b',
+      name: 'Crustless New York Cheesecake',
+      description: 'Creamy delicius cheesecake',
+      version: 1,
+      last_modified_at: '2021-09-08T16:24:00.000Z',
+    },
+    {
+      id: '366c2c1f-26cd-430a-97a2-f671d7e834b4',
+      name: 'Fresh Plum Kuchen',
+      description: 'Kuchen made from the best plums',
+      version: 1,
+      last_modified_at: '2021-09-08T17:03:00.000Z',
+    },
+    {
+      id: '3f1a2e77-43b2-467d-b71b-c031ae8f3b7f',
+      name: 'Chocolate Angel Cake',
+      description: '70% Dark Chocolate with crunchy cocoa nibs',
+      version: 1,
+      last_modified_at: '2021-09-08T18:10:00.000Z',
+    },
+    {
+      id: '689158a7-aa02-4581-b695-6608383477cb',
+      name: 'Cherry Cola Cake',
+      description: 'Made from fresh cherries',
+      version: 1,
+      last_modified_at: '2021-09-08T19:45:00.000Z',
+    },
+    {
+      id: '6f073028-128d-4e6e-af98-0da2e58c8b60',
+      name: 'Hummingbird Cake',
+      description: 'Banana-pineapple spice cake',
+      version: 1,
+      last_modified_at: '2021-09-08T20:18:00.000Z',
+    },
+    {
+      id: '147032db-8697-4638-8fdd-6f428100d8fc',
+      name: 'Red Velvet',
+      description: 'Layered cake with icing',
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
     },
   ],
 };

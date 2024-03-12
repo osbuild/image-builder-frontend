@@ -74,7 +74,12 @@ export const LandingPage = () => {
       </PageSection>
       <PageSection className="pf-v5-u-pt-0">
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
-          <SidebarPanel hasPadding width={{ default: 'width_25' }}>
+          <SidebarPanel
+            variant="sticky"
+            hasPadding
+            width={{ default: 'width_25' }}
+            className="sidebar-panel"
+          >
             <BlueprintsSidebar />
           </SidebarPanel>
           <SidebarContent>
