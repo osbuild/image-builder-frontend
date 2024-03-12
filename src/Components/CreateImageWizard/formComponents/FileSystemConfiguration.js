@@ -302,6 +302,12 @@ const FileSystemConfiguration = ({ ...props }) => {
     return <Spinner size="lg" />;
   }
 
+  const hasIsoTarget = () => {
+    const isoTarget =
+      getState().values['target-environment']?.['image-installer'];
+    return isoTarget;
+  };
+
   return (
     <FormSpy>
       {() => (
@@ -355,6 +361,13 @@ const FileSystemConfiguration = ({ ...props }) => {
               </Button>
             </Text>
           </TextContent>
+          {hasIsoTarget() && (
+            <Alert
+              variant="warning"
+              isInline
+              title="Filesystem customizations are not applied to 'Bare metal - Installer' images"
+            />
+          )}
           <Table
             aria-label="File system table"
             className={isDragging && styles.modifiers.dragOver}
