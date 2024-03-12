@@ -180,6 +180,43 @@ describe('Blueprints', () => {
       await user.keyboard('Milk');
 
       // wait for debounce
+      await waitFor(
+        () => {
+          expect(screen.getAllByRole('radio')).toHaveLength(1);
+        },
+        {
+          timeout: 1500,
+        }
+      );
+    });
+  });
+
+  describe('pagination', () => {
+    test('paging of blueprints', async () => {
+      renderWithReduxRouter('', {});
+
+      expect(await screen.findAllByRole('radio')).toHaveLength(10);
+
+      const option = await screen.findByTestId('blueprints-pagination-bottom');
+      const prevButton = within(option).getByRole('button', {
+        name: /Go to previous page/i,
+      });
+      const button = within(option).getByRole('button', {
+        name: /Go to next page/i,
+      });
+
+      expect(prevButton).toBeInTheDocument();
+      expect(prevButton).toBeVisible();
+      expect(prevButton).toBeDisabled();
+
+      expect(button).toBeInTheDocument();
+      expect(button).toBeVisible();
+      await waitFor(() => {
+        expect(button).toBeEnabled();
+      });
+
+      await user.click(button);
+
       await waitFor(() => {
         expect(screen.getAllByRole('radio')).toHaveLength(1);
       });

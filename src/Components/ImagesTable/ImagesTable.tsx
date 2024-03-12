@@ -48,6 +48,8 @@ import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
   selectBlueprintVersionFilterAPI,
+  selectLimit,
+  selectOffset,
   selectSelectedBlueprintId,
 } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -73,9 +75,15 @@ const ImagesTable = () => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
+  const blueprintsOffset = useAppSelector(selectOffset);
+  const blueprintsLimit = useAppSelector(selectLimit);
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
-    { search: blueprintSearchInput },
+    {
+      search: blueprintSearchInput,
+      limit: blueprintsLimit,
+      offset: blueprintsOffset,
+    },
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data?.find(
