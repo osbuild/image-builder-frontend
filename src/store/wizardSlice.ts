@@ -126,11 +126,7 @@ const initialState: wizardState = {
   },
   fileSystem: {
     mode: 'automatic',
-    partitions: [
-      { id: '1', mountpoint: '/', min_size: '500' },
-      { id: '2', mountpoint: '/home', min_size: '500' },
-      { id: '3', mountpoint: '/home/var', min_size: '500' },
-    ],
+    partitions: [],
   },
   repositories: {
     customRepositories: [],
@@ -374,6 +370,12 @@ export const wizardSlice = createSlice({
     ) => {
       state.openScap.services.enabled = action.payload;
     },
+    changeFileSystemConfiguration: (
+      state,
+      action: PayloadAction<Partition[]>
+    ) => {
+      state.fileSystem.partitions = action.payload;
+    },
     changeFileSystemPartitionMode: (
       state,
       action: PayloadAction<FileSystemPartitionMode>
@@ -471,6 +473,7 @@ export const {
   changeKernel,
   changeDisabledServices,
   changeEnabledServices,
+  changeFileSystemConfiguration,
   changeFileSystemPartitionMode,
   addPartition,
   removePartition,
