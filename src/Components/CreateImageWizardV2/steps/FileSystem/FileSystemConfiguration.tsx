@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Alert,
   Button,
   Popover,
   Text,
@@ -22,6 +23,7 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changePartitionMinSize,
   changePartitionMountpoint,
+  selectImageTypes,
   selectPartitions,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
@@ -35,6 +37,7 @@ export type Partition = {
 
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector((state) => selectPartitions(state));
+  const environments = useAppSelector((state) => selectImageTypes(state));
 
   return (
     <>
@@ -67,6 +70,13 @@ const FileSystemConfiguration = () => {
           </Button>
         </Text>
       </TextContent>
+      {environments.includes('image-installer') && (
+        <Alert
+          variant="warning"
+          isInline
+          title="Filesystem customizations are not applied to 'Bare metal - Installer' images"
+        />
+      )}
       <Table aria-label="File system table" variant="compact">
         <Thead>
           <Tr>
