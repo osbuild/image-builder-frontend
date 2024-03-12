@@ -4,15 +4,18 @@ import { FormGroup, Label, Radio } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  changeFileSystemPartitionMode,
-  selectFileSystemPartitionMode,
+    changeFileSystemConfiguration,
+    changeFileSystemPartitionMode,
+    selectFileSystemPartitionMode,
 } from '../../../../store/wizardSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
-  const fileSystemPartition = useAppSelector((state) =>
-    selectFileSystemPartitionMode(state)
-  );
+    const id = uuidv4();
+    const fileSystemPartitionMode = useAppSelector((state) =>
+        selectFileSystemPartitionMode(state)
+    );
   return (
     <FormGroup>
       <Radio
@@ -27,7 +30,7 @@ const FileSystemPartition = () => {
         }
         name="sc-radio-automatic"
         description="Automatically partition your image to what is best, depending on the target environment(s)"
-        isChecked={fileSystemPartition === 'automatic'}
+        isChecked={fileSystemPartitionMode === 'automatic'}
         onChange={() => {
           dispatch(changeFileSystemPartitionMode('automatic'));
         }}
@@ -37,9 +40,14 @@ const FileSystemPartition = () => {
         label="Manually configure partitions"
         name="fsc-radio-manual"
         description="Manually configure the file system of your image by adding, removing, and editing partitions"
-        isChecked={fileSystemPartition === 'manual'}
+        isChecked={fileSystemPartitionMode === 'manual'}
         onChange={() => {
           dispatch(changeFileSystemPartitionMode('manual'));
+            dispatch(
+                changeFileSystemConfiguration([
+                    { id: id, mountpoint: '/', min_size: '500' },
+                ])
+            );
         }}
       />
     </FormGroup>

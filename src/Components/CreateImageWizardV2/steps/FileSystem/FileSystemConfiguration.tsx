@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   Alert,
@@ -7,7 +7,7 @@ import {
   Text,
   TextContent,
   TextInput,
-  TextVariants,
+  TextVariants, useWizardContext, WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import {
@@ -20,9 +20,14 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { v4 as uuidv4 } from 'uuid';
 import {
+  changeHasErrorOnSubmit,
   changePartitionMinSize,
   changePartitionMountpoint,
+  selectHasErrorOnSubmit,
+    addPartition,
+  removePartition,
   selectImageTypes,
   selectPartitions,
 } from '../../../../store/wizardSlice';
@@ -36,9 +41,54 @@ export type Partition = {
   min_size: string;
 };
 
+interface LastStepFooterPropsType {
+  isValid: boolean;
+  setIsDisableNext(isDisableNext: boolean): void;
+  isDisableNext: boolean;
+}
+
+export const FileSystemStepFooter: React.FunctionComponent<
+    LastStepFooterPropsType
+> = ({ isValid, setIsDisableNext, isDisableNext }) => {
+  const { goToNextStep, goToPrevStep } = useWizardContext();
+  const dispatch = useAppDispatch();
+  const onValidate = () => {
+    dispatch(changeHasErrorOnSubmit(!isValid));
+    if (!isValid) {
+      setIsDisableNext(true);
+
+    } else {
+      goToNextStep();
+    }
+  };
+
+  return (
+      <WizardFooterWrapper>
+        <Button onClick={onValidate} isDisabled={isDisableNext}>
+          Next
+        </Button>
+        <Button variant="secondary" onClick={goToPrevStep}>
+          Back
+        </Button>
+      </WizardFooterWrapper>
+  );
+};
+
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector((state) => selectPartitions(state));
   const environments = useAppSelector((state) => selectImageTypes(state));
+  const hasErrorOnSubmit =useAppSelector((state) => selectHasErrorOnSubmit(state));
+  const dispatch = useAppDispatch();
+  const handleAddPartition = () => {
+    const id = uuidv4();
+    dispatch(
+        addPartition({
+          id,
+          mountpoint: '/home',
+          min_size: '1',
+        })
+    );
+  };
 
   return (
     <>
@@ -48,6 +98,18 @@ const FileSystemConfiguration = () => {
       {partitions?.find((partition) =>
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
+      {hasErrorOnSubmit &&
+          isFileSystemConfigValid(partitions)?.duplicates?.length !== 0 &&
+          isFileSystemConfigValid(partitions)?.duplicates?.length !==
+          undefined && (
+              <div style={{ padding: '15px 0' }}>
+                <Alert
+                    isInline
+                    variant="warning"
+                    title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
+                />
+              </div>
+          )}
       <TextContent>
         <Text>
           Create partitions for your image by defining mount points and minimum
@@ -126,7 +188,7 @@ const FileSystemConfiguration = () => {
           className="pf-u-text-align-left"
           variant="link"
           icon={<PlusCircleIcon />}
-          onClick={() => {}}
+          onClick={handleAddPartition}
         >
           Add partition
         </Button>
@@ -150,12 +212,18 @@ const getSuffix = (mountpoint: string) => {
 const Row = ({ partition }: RowPropTypes) => {
   const [units, setUnits] = useState<Units>('MiB');
   const partitions = useAppSelector((state) => selectPartitions(state));
+  const dispatch = useAppDispatch();
+
+  const handleRemovePartition = (id: string) => {
+    dispatch(removePartition(id));
+  };
+  const hasErrorOnSubmit =useAppSelector((state) => selectHasErrorOnSubmit(state));
   return (
     <Tr>
       <Td />
       <Td className="pf-m-width-15">
         <MountpointPrefix partition={partition}   />
-        {isFileSystemConfigValid(partitions)?.duplicates?.includes(partition.mountpoint) &&
+        {hasErrorOnSubmit && isFileSystemConfigValid(partitions)?.duplicates?.includes(partition.mountpoint) &&
             <Alert
             variant="danger"
             isInline
@@ -177,9 +245,9 @@ const Row = ({ partition }: RowPropTypes) => {
         <Button
           variant="link"
           icon={<MinusCircleIcon />}
-          onClick={() => {}}
+          onClick={() => handleRemovePartition(partition.id)}
           data-testid="remove-mount-point"
-          isDisabled={true}
+          isDisabled={partition.mountpoint === '/'}
         />
       </Td>
     </Tr>
@@ -238,14 +306,12 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
 type MountpointSuffixPropTypes = {
   partition: Partition;
-
 };
 
-const MountpointSuffix = ({ partition}: MountpointSuffixPropTypes) => {
+const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
   const dispatch = useAppDispatch();
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
-  debugger;
 
   return (
     <TextInput
@@ -257,11 +323,10 @@ const MountpointSuffix = ({ partition}: MountpointSuffixPropTypes) => {
           changePartitionMountpoint({
             id: partition.id,
             mountpoint: mountpoint,
-          })
+          }));
+       dispatch(changeHasErrorOnSubmit(false));
 
-        );
       }}
-
       aria-label="text input example"
     />
   );

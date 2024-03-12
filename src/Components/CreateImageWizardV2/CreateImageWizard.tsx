@@ -37,64 +37,34 @@ import { RHEL_8 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
-  changeDistribution,
-  initializeWizard,
-  selectActivationKey,
-  selectAwsAccountId,
-  selectAwsShareMethod,
-  selectAwsSourceId,
-  selectAzureResourceGroup,
-  selectAzureShareMethod,
-  selectAzureSource,
-  selectAzureSubscriptionId,
-  selectAzureTenantId,
-  selectBlueprintDescription,
-  selectBlueprintName,
-  selectGcpEmail,
-  selectGcpShareMethod,
-  selectImageTypes,
-  selectPartitions,
-  selectRegistrationType,
+    changeDistribution, changeHasErrorOnSubmit,
+    initializeWizard,
+    selectActivationKey,
+    selectAwsAccountId,
+    selectAwsShareMethod,
+    selectAwsSourceId,
+    selectAzureResourceGroup,
+    selectAzureShareMethod,
+    selectAzureSource,
+    selectAzureSubscriptionId,
+    selectAzureTenantId,
+    selectBlueprintDescription,
+    selectBlueprintName,
+    selectGcpEmail,
+    selectGcpShareMethod, selectHasErrorOnSubmit,
+    selectImageTypes,
+    selectPartitions,
+    selectRegistrationType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
+import {FileSystemStepFooter} from "./steps/FileSystem/FileSystemConfiguration";
 
 type CustomWizardFooterPropType = {
   disableNext: boolean;
 };
 
-interface LastStepFooterPropsType {
-  isValid: boolean;
-  setIsDisableNext(isDisableNext: boolean): void;
-  setHasErrorOnSubmit(isSubmitted: boolean): void;
-  isDisableNext: boolean;
-}
 
-const FileSystemStepFooter: React.FunctionComponent<
-  LastStepFooterPropsType
-> = ({ isValid, setHasErrorOnSubmit, setIsDisableNext, isDisableNext }) => {
-  const { goToNextStep, goToPrevStep } = useWizardContext();
-
-  const onValidate = () => {
-    if (!isValid) {
-      setIsDisableNext(true);
-      setHasErrorOnSubmit(true);
-    } else {
-      goToNextStep();
-    }
-  };
-
-  return (
-    <WizardFooterWrapper>
-      <Button onClick={onValidate} isDisabled={isDisableNext}>
-        Next
-      </Button>
-      <Button variant="secondary" onClick={goToPrevStep}>
-        Back
-      </Button>
-    </WizardFooterWrapper>
-  );
-};
 
 export const CustomWizardFooter = ({
   disableNext: disableNext,
@@ -177,11 +147,11 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   );
   const activationKey = useAppSelector((state) => selectActivationKey(state));
   const partitions = useAppSelector((state) => selectPartitions(state));
-  const [hasErrorOnSubmit, setHasErrorOnSubmit] = useState(false);
+  const hasErrorOnSubmit = useAppSelector((state) => selectHasErrorOnSubmit(state));
   const [isDisableNext, setIsDisableNext] = useState(false);
   useEffect(() => {
     setIsDisableNext(false);
-    setHasErrorOnSubmit(false);
+      dispatch(changeHasErrorOnSubmit(false));
   }, [partitions]);
   return (
     <>
@@ -305,24 +275,12 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
                     isFileSystemConfigValid(partitions)?.root === false
                   )
                 }
-                setHasErrorOnSubmit={setHasErrorOnSubmit}
+
                 setIsDisableNext={setIsDisableNext}
                 isDisableNext={isDisableNext}
               />
             }
           >
-            {hasErrorOnSubmit &&
-              isFileSystemConfigValid(partitions)?.duplicates?.length !== 0 &&
-              isFileSystemConfigValid(partitions)?.duplicates?.length !==
-                undefined && (
-                <div style={{ padding: '15px 0' }}>
-                  <Alert
-                    isInline
-                    variant="danger"
-                    title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
-                  />
-                </div>
-              )}
 
             {hasErrorOnSubmit &&
               isFileSystemConfigValid(partitions)?.root === false && (

@@ -23,6 +23,7 @@ import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/type
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
+import {useState} from "react";
 
 export type RegistrationType =
   | 'register-later'
@@ -73,6 +74,7 @@ export type wizardState = {
   fileSystem: {
     mode: FileSystemPartitionMode;
     partitions: Partition[];
+    hasErrorOnSubmit: boolean,
   };
   repositories: {
     customRepositories: CustomRepository[];
@@ -126,11 +128,8 @@ const initialState: wizardState = {
   },
   fileSystem: {
     mode: 'automatic',
-    partitions: [
-      { id: '1', mountpoint: '/', min_size: '500' },
-      { id: '2', mountpoint: '/home', min_size: '500' },
-      { id: '3', mountpoint: '/home/var', min_size: '500' },
-    ],
+    partitions: [],
+    hasErrorOnSubmit: false,
   },
   repositories: {
     customRepositories: [],
@@ -229,6 +228,10 @@ export const selectDisabledServices = (state: RootState) => {
 
 export const selectEnabledServices = (state: RootState) => {
   return state.wizard.openScap.services.enabled;
+};
+
+export const selectHasErrorOnSubmit = (state: RootState) => {
+  return state.wizard.fileSystem.hasErrorOnSubmit;
 };
 
 export const selectFileSystemPartitionMode = (state: RootState) => {
@@ -374,11 +377,31 @@ export const wizardSlice = createSlice({
     ) => {
       state.openScap.services.enabled = action.payload;
     },
+    changeHasErrorOnSubmit: (state, action: PayloadAction<boolean>) => {
+      state.fileSystem.hasErrorOnSubmit = action.payload;
+    },
     changeFileSystemPartitionMode: (
       state,
       action: PayloadAction<FileSystemPartitionMode>
     ) => {
       state.fileSystem.mode = action.payload;
+    },
+    changeFileSystemConfiguration: (
+        state,
+        action: PayloadAction<Partition[]>
+    ) => {
+      state.fileSystem.partitions = action.payload;
+    },
+    addPartition: (state, action: PayloadAction<Partition>) => {
+      state.fileSystem.partitions.push(action.payload);
+    },
+    removePartition: (state, action: PayloadAction<Partition['id']>) => {
+      state.fileSystem.partitions.splice(
+          state.fileSystem.partitions.findIndex(
+              (partition) => partition.id === action.payload
+          ),
+          1
+      );
     },
     changePartitionMountpoint: (
       state,
@@ -460,7 +483,11 @@ export const {
   changeKernel,
   changeDisabledServices,
   changeEnabledServices,
+  changeHasErrorOnSubmit,
   changeFileSystemPartitionMode,
+  changeFileSystemConfiguration,
+  addPartition,
+  removePartition,
   changePartitionMountpoint,
   changePartitionMinSize,
   changeCustomRepositories,
