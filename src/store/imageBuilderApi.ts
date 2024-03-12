@@ -524,6 +524,8 @@ export type Services = {
   enabled?: string[];
   /** List of services to disable by default */
   disabled?: string[];
+  /** List of services to mask by default */
+  masked?: string[];
 };
 export type Kernel = {
   /** Name of the kernel to use */
