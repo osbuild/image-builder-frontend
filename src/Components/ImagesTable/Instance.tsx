@@ -11,6 +11,7 @@ import {
   ModalVariant,
   OrderType,
   Popover,
+  PopoverPosition,
   Skeleton,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -20,6 +21,13 @@ import { useNavigate } from 'react-router-dom';
 
 import { MODAL_ANCHOR } from '../../constants';
 import {
+  selectSelectedBlueprintId,
+  selectBlueprintSearchInput,
+} from '../../store/BlueprintSlice';
+import { useAppSelector } from '../../store/hooks';
+import {
+  BlueprintItem,
+  useGetBlueprintsQuery,
   ComposesResponseItem,
   ComposeStatus,
   ImageTypes,
@@ -93,6 +101,19 @@ const ProvisioningLink = ({
     document.querySelector(MODAL_ANCHOR) as HTMLElement
   );
 
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const { selectedBlueprintVersion } = useGetBlueprintsQuery(
+    { search: blueprintSearchInput },
+    {
+      selectFromResult: ({ data }) => ({
+        selectedBlueprintVersion: data?.data?.find(
+          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
+        )?.version,
+      }),
+    }
+  );
+
   if (
     error ||
     !exposedScalprumModule ||
@@ -117,18 +138,40 @@ const ProvisioningLink = ({
       sourceIds = options.share_with_sources;
     }
 
+    const btn = (
+      <Button
+        spinnerAriaLabel="Loading launch"
+        isLoading={isLoadingPermission}
+        variant="link"
+        isInline
+        onClick={() => setWizardOpen(true)}
+      >
+        Launch
+      </Button>
+    );
+    const buttonWithTooltip = (
+      <Popover
+        triggerAction="hover"
+        position={PopoverPosition.left}
+        aria-label="Outdated image tooltip"
+        headerContent={<div>A newer version is available</div>}
+        bodyContent={
+          <div>
+            This image can be launched, but it is not the latest version.
+          </div>
+        }
+      >
+        {btn}
+      </Popover>
+    );
+
     return (
       <>
         <Suspense fallback="loading...">
-          <Button
-            spinnerAriaLabel="Loading launch"
-            isLoading={isLoadingPermission}
-            variant="link"
-            isInline
-            onClick={() => setWizardOpen(true)}
-          >
-            Launch
-          </Button>
+          {selectedBlueprintVersion &&
+          compose.blueprint_version !== selectedBlueprintVersion
+            ? buttonWithTooltip
+            : btn}
           {wizardOpen && (
             <Modal
               isOpen
