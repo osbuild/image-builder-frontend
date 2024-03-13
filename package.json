@@ -63,7 +63,7 @@
     "@babel/preset-typescript": "7.23.3",
     "@patternfly/react-icons": "5.2.1",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.3",
-    "@redhat-cloud-services/frontend-components-config": "5.0.5",
+    "@redhat-cloud-services/frontend-components-config": "6.0.10",
     "@rtk-query/codegen-openapi": "1.2.0",
     "@testing-library/dom": "9.3.4",
     "@testing-library/jest-dom": "6.4.2",
