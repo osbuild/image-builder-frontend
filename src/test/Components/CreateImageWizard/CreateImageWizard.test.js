@@ -1685,3 +1685,31 @@ describe('set release using query parameter', () => {
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
   });
 });
+describe('set architecture using query parameter', () => {
+  test('x86_64 by default (no query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await screen.findByText('x86_64');
+  });
+
+  test('x86_64 by default (invalid query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?arch=arm',
+      {},
+      routes
+    ));
+    await screen.findByText('x86_64');
+  });
+
+  test('aarch64 (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?arch=aarch64',
+      {},
+      routes
+    ));
+    await screen.findByText('aarch64');
+  });
+});
