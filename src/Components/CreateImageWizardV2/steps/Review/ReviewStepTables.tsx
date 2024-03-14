@@ -15,12 +15,15 @@ type repoPropType = {
 };
 
 const RepoName = ({ repoUrl }: repoPropType) => {
-  const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery({
-    // @ts-ignore
-    url: repoUrl,
-    contentType: 'rpm',
-    origin: 'external',
-  });
+  const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery(
+    {
+      // @ts-ignore if repoUrl is undefined the query is going to get skipped, so it's safe to ignore the linter here
+      url: repoUrl,
+      contentType: 'rpm',
+      origin: 'external',
+    },
+    { skip: !repoUrl }
+  );
 
   const errorLoading = () => {
     return (
