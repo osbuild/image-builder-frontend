@@ -516,7 +516,7 @@ export const RegisterNowList = () => {
     })();
   });
   const { isError } = useShowActivationKeyQuery(
-    // @ts-ignore - type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
+    // @ts-ignore type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
     { name: activationKey },
     {
       skip: !activationKey,

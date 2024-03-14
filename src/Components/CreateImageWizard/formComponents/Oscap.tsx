@@ -111,8 +111,7 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
     change('kernel', undefined);
     change('disabledServices', undefined);
     change('enabledServices', undefined);
-    // @ts-ignore
-    setProfileName(undefined);
+    setProfileName('');
     reinitDependingSteps(change);
   };
 

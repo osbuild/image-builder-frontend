@@ -50,8 +50,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         queryFulfilled
           .then(() => {
             dispatch(
-              // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-              // @ts-expect-error
+              // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
               imageBuilderApi.util.invalidateTags(['Blueprints', 'Blueprint'])
             );
             dispatch(
@@ -78,8 +77,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {
-            // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            // @ts-expect-error
+            // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
             dispatch(imageBuilderApi.util.invalidateTags(['Blueprints']));
             dispatch(
               addNotification({
@@ -110,8 +108,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
           .then(() => {
             dispatch(
               imageBuilderApi.util.invalidateTags([
-                // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-                // @ts-expect-error
+                // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
                 { type: 'Clone', id: composeId },
               ])
             );
@@ -169,8 +166,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         queryFulfilled
           .then(() => {
             dispatch(
-              // Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-              // @ts-expect-error
+              // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
               imageBuilderApi.util.invalidateTags(['Blueprints', 'Compose'])
             );
             dispatch(

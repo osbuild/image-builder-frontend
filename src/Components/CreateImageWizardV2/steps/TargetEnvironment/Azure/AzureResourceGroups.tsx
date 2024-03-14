@@ -24,8 +24,7 @@ export const AzureResourceGroups = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const { data: sourceDetails, isFetching } = useGetSourceUploadInfoQuery(
-    // @ts-ignore
-    { id: azureSource },
+    { id: parseInt(azureSource as string) },
     {
       skip: !azureSource,
     }
