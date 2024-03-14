@@ -173,20 +173,27 @@ const Row = ({ partition }: RowPropTypes) => {
   return (
     <Tr>
       <Td />
-      <Td className="pf-m-width-15">
+      <Td width={20}>
         <MountpointPrefix partition={partition} />
       </Td>
-      <Td className="pf-m-width-15">
-        <MountpointSuffix partition={partition} />
-      </Td>
-      <Td className="pf-m-width-20">xfs</Td>
-      <Td className="pf-m-width-30">
+      {partition.mountpoint !== '/' &&
+      !partition.mountpoint.startsWith('/boot') &&
+      !partition.mountpoint.startsWith('/usr') ? (
+        <Td width={20}>
+          <MountpointSuffix partition={partition} />
+        </Td>
+      ) : (
+        <Td width={20} />
+      )}
+
+      <Td width={20}>xfs</Td>
+      <Td width={20}>
         <MinimumSize partition={partition} units={units} />
       </Td>
-      <Td className="pf-m-width-30">
+      <Td width={10}>
         <SizeUnit units={units} setUnits={setUnits} />
       </Td>
-      <Td className="pf-m-width-10">
+      <Td width={10}>
         <Button
           variant="link"
           icon={<MinusCircleIcon />}
@@ -240,6 +247,7 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
       onToggle={(_event, isOpen) => onToggle(isOpen)}
       onSelect={onSelect}
       selections={prefix}
+      isDisabled={prefix === '/'}
     >
       {mountpointPrefixes.map((prefix, index) => {
         return <SelectOption key={index} value={prefix} />;
