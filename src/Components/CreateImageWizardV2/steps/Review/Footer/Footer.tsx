@@ -69,36 +69,38 @@ const ReviewWizardFooter = () => {
 
   return (
     <WizardFooterWrapper>
-      <Dropdown
-        isOpen={isOpen}
-        onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-          <MenuToggle
-            variant="primary"
-            ref={toggleRef}
-            onClick={onToggleClick}
-            isExpanded={isOpen}
-            icon={isLoadingState && <SpinnerIcon />}
-          >
-            Save
-          </MenuToggle>
-        )}
-        ouiaId="wizard-finish-dropdown"
-        shouldFocusToggleOnSelect
-      >
-        {composeId ? (
-          <EditDropdown
-            getBlueprintPayload={getBlueprintPayload}
-            setIsOpen={setIsOpen}
-            blueprintId={composeId}
-          />
-        ) : (
-          <CreateDropdown
-            getBlueprintPayload={getBlueprintPayload}
-            setIsOpen={setIsOpen}
-          />
-        )}
-      </Dropdown>
+      <div data-testid="wizard-save-button-div">
+        <Dropdown
+          isOpen={isOpen}
+          onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              variant="primary"
+              ref={toggleRef}
+              onClick={onToggleClick}
+              isExpanded={isOpen}
+              icon={isLoadingState && <SpinnerIcon />}
+            >
+              Save
+            </MenuToggle>
+          )}
+          ouiaId="wizard-finish-dropdown"
+          shouldFocusToggleOnSelect
+        >
+          {composeId ? (
+            <EditDropdown
+              getBlueprintPayload={getBlueprintPayload}
+              setIsOpen={setIsOpen}
+              blueprintId={composeId}
+            />
+          ) : (
+            <CreateDropdown
+              getBlueprintPayload={getBlueprintPayload}
+              setIsOpen={setIsOpen}
+            />
+          )}
+        </Dropdown>
+      </div>
       <Button
         ouiaId="wizard-back-btn"
         variant="secondary"
