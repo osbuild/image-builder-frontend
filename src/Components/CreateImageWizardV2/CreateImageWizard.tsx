@@ -31,11 +31,12 @@ import {
   isGcpEmailValid,
 } from './validators';
 
-import { RHEL_8 } from '../../constants';
+import { RHEL_8, AARCH64 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
   changeDistribution,
+  changeArchitecture,
   initializeWizard,
   selectActivationKey,
   selectAwsAccountId,
@@ -102,6 +103,8 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
     dispatch(initializeWizard());
     searchParams.get('release') === 'rhel8' &&
       dispatch(changeDistribution(RHEL_8));
+    searchParams.get('arch') === AARCH64 &&
+      dispatch(changeArchitecture(AARCH64));
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
