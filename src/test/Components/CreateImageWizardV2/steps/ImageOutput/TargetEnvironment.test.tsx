@@ -276,3 +276,20 @@ describe('set release using query parameter', () => {
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
   });
 });
+
+describe('set architecture using query parameter', () => {
+  test('x86_64 by default (no query parameter)', async () => {
+    await render();
+    await screen.findByText('x86_64');
+  });
+
+  test('x86_64 by default (invalid query parameter)', async () => {
+    await render({ arch: 'arm' });
+    await screen.findByText('x86_64');
+  });
+
+  test('aarch64 (query parameter provided)', async () => {
+    await render({ arch: 'aarch64' });
+    await screen.findByText('aarch64');
+  });
+});
