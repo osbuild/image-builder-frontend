@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -11,6 +11,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
+import { FileSystemStepFooter } from './steps/FileSystem/FileSystemConfiguration';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import PackagesStep from './steps/Packages';
@@ -54,6 +55,7 @@ import {
   selectImageTypes,
   selectRegistrationType,
   addImageType,
+  selectPartitions,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -260,7 +262,9 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
           <WizardStep
             name="File system configuration"
             id="step-file-system"
-            footer={<CustomWizardFooter disableNext={false} />}
+            footer={
+              <FileSystemStepFooter/>
+            }
           >
             <FileSystemStep />
           </WizardStep>
