@@ -76,6 +76,7 @@ export type wizardState = {
   fileSystem: {
     mode: FileSystemPartitionMode;
     partitions: Partition[];
+    isNextButtonTouched: boolean;
   };
   repositories: {
     customRepositories: CustomRepository[];
@@ -130,6 +131,7 @@ const initialState: wizardState = {
   fileSystem: {
     mode: 'automatic',
     partitions: [],
+    isNextButtonTouched: true,
   },
   repositories: {
     customRepositories: [],
@@ -232,6 +234,9 @@ export const selectEnabledServices = (state: RootState) => {
 
 export const selectFileSystemPartitionMode = (state: RootState) => {
   return state.wizard.fileSystem.mode;
+};
+export const selectIsNextButtonTouched = (state: RootState) => {
+  return state.wizard.fileSystem.isNextButtonTouched;
 };
 
 export const selectPartitions = (state: RootState) => {
@@ -379,6 +384,10 @@ export const wizardSlice = createSlice({
     ) => {
       state.fileSystem.partitions = action.payload;
     },
+    setIsNextButtonTouched: (state, action: PayloadAction<boolean>) => {
+      state.fileSystem.isNextButtonTouched = action.payload;
+    },
+
     changeFileSystemPartitionMode: (
       state,
       action: PayloadAction<FileSystemPartitionMode>
@@ -489,6 +498,7 @@ export const {
   changeDisabledServices,
   changeEnabledServices,
   changeFileSystemConfiguration,
+  setIsNextButtonTouched,
   changeFileSystemPartitionMode,
   addPartition,
   removePartition,

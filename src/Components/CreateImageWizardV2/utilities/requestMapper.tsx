@@ -111,6 +111,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     fileSystem: {
       mode: 'automatic',
       partitions: [],
+      isNextButtonTouched: true,
     },
 
     architecture: request.image_requests[0].architecture,

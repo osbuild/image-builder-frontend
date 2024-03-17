@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -8,6 +8,8 @@ import {
   TextContent,
   TextInput,
   TextVariants,
+  useWizardContext,
+  WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import {
@@ -29,9 +31,16 @@ import {
   removePartition,
   selectPartitions,
   changePartitionUnit,
+  setIsNextButtonTouched,
+  selectIsNextButtonTouched,
+  selectFileSystemPartitionMode,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
 import { ValidatedTextInput } from '../../ValidatedTextInput';
+import {
+  getDuplicateMountPoints,
+  isFileSystemConfigValid,
+} from '../../validators';
 
 export type Partition = {
   id: string;
@@ -40,12 +49,58 @@ export type Partition = {
   unit: Units;
 };
 
+export const FileSystemStepFooter = () => {
+  const { goToNextStep, goToPrevStep, close } = useWizardContext();
+  const [isValid, setIsValid] = useState(false);
+  const dispatch = useAppDispatch();
+  const [isNextDisabled, setNextDisabled] = useState(false);
+  const fileSystemPartitionMode = useAppSelector((state) =>
+    selectFileSystemPartitionMode(state)
+  );
+  const partitions = useAppSelector((state) => selectPartitions(state));
+
+  const onValidate = () => {
+    dispatch(setIsNextButtonTouched(false));
+    if (!isValid) {
+      setNextDisabled(true);
+    } else {
+      goToNextStep();
+    }
+  };
+  useEffect(() => {
+    if (
+      fileSystemPartitionMode === 'automatic' ||
+      isFileSystemConfigValid(partitions)
+    ) {
+      setIsValid(true);
+    } else setIsValid(false);
+    setNextDisabled(false);
+    dispatch(setIsNextButtonTouched(true));
+  }, [partitions, fileSystemPartitionMode, dispatch]);
+  return (
+    <WizardFooterWrapper>
+      <Button onClick={onValidate} isDisabled={isNextDisabled}>
+        Next
+      </Button>
+      <Button variant="secondary" onClick={goToPrevStep}>
+        Back
+      </Button>
+      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
+        Cancel
+      </Button>
+    </WizardFooterWrapper>
+  );
+};
+
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector((state) => selectPartitions(state));
   const environments = useAppSelector((state) => selectImageTypes(state));
 
   const dispatch = useAppDispatch();
 
+  const isNextButtonPristine = useAppSelector((state) =>
+    selectIsNextButtonTouched(state)
+  );
   const handleAddPartition = () => {
     const id = uuidv4();
     dispatch(
@@ -66,6 +121,17 @@ const FileSystemConfiguration = () => {
       {partitions?.find((partition) =>
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
+      {!isNextButtonPristine &&
+        getDuplicateMountPoints(partitions)?.length !== 0 &&
+        getDuplicateMountPoints(partitions)?.length !== undefined && (
+          <div>
+            <Alert
+              isInline
+              variant="warning"
+              title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
+            />
+          </div>
+        )}
       <TextContent>
         <Text>
           Create partitions for your image by defining mount points and minimum
@@ -167,16 +233,29 @@ const getSuffix = (mountpoint: string) => {
 
 const Row = ({ partition }: RowPropTypes) => {
   const dispatch = useAppDispatch();
-
+  const partitions = useAppSelector((state) => selectPartitions(state));
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
   };
+  const isNextButtonPristine = useAppSelector((state) =>
+    selectIsNextButtonTouched(state)
+  );
+  const duplicates = getDuplicateMountPoints(partitions);
 
   return (
     <Tr>
       <Td />
-      <Td width={20}>
+      <Td className="pf-m-width-20">
         <MountpointPrefix partition={partition} />
+        {!isNextButtonPristine &&
+          duplicates.indexOf(partition.mountpoint) !== -1 && (
+            <Alert
+              variant="danger"
+              isInline
+              isPlain
+              title="Duplicate mount point."
+            />
+          )}
       </Td>
       {partition.mountpoint !== '/' &&
       !partition.mountpoint.startsWith('/boot') &&
