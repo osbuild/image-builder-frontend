@@ -53,6 +53,7 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   selectRegistrationType,
+  addImageType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -105,6 +106,10 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
       dispatch(changeDistribution(RHEL_8));
     searchParams.get('arch') === AARCH64 &&
       dispatch(changeArchitecture(AARCH64));
+    searchParams.get('target') === 'iso' &&
+      dispatch(addImageType('image-installer'));
+    searchParams.get('target') === 'qcow' &&
+      dispatch(addImageType('guest-image'));
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
