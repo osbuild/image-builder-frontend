@@ -4,13 +4,16 @@ import { Alert, AlertActionCloseButton, Text } from '@patternfly/react-core';
 
 export const NewAlert = () => {
   const isAlertDismissed = window.localStorage.getItem(
-    'imageBuilder.alertDismissed'
+    'imageBuilder.newFeatureBlueprintsAlertDismissed'
   );
   const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
 
   const dismissAlert = () => {
     setDisplayAlert(false);
-    window.localStorage.setItem('imageBuilder.alertDismissed', 'true');
+    window.localStorage.setItem(
+      'imageBuilder.newFeatureBlueprintsAlertDismissed',
+      'true'
+    );
   };
 
   if (displayAlert) {
