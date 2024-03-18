@@ -99,7 +99,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       <Toolbar>
         <ToolbarContent>
           <Title headingLevel="h1">
-            {selectedBlueprintId
+            {selectedBlueprintName
               ? `${selectedBlueprintName} images`
               : 'All images'}
           </Title>
