@@ -8,7 +8,10 @@ import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/Cre
 import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../../constants';
 import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
 import { server } from '../../../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
+import {
+  clickNext,
+  renderCustomRoutesWithReduxRouter,
+} from '../../../../testUtils';
 import { render } from '../../wizardTestUtils';
 
 const routes = [
@@ -45,6 +48,23 @@ afterEach(() => {
   jest.clearAllMocks();
   server.resetHandlers();
 });
+
+const clickToReview = async () => {
+  await clickNext();
+  await userEvent.click(
+    await screen.findByRole('radio', { name: /Register later/ })
+  );
+  await clickNext(); // skip Registration
+  await clickNext(); // skip OSCAP
+  await clickNext(); // skip FSC
+  await clickNext(); // skip Repositories
+  await clickNext(); // skip Packages
+  const nameInput = await screen.findByRole('textbox', {
+    name: /blueprint name/i,
+  });
+  await userEvent.type(nameInput, 'name');
+  await clickNext(); // skip Details
+};
 
 describe('Check that the target filtering is in accordance to mock content', () => {
   test('rhel9 x86_64', async () => {
@@ -291,5 +311,39 @@ describe('set architecture using query parameter', () => {
   test('aarch64 (query parameter provided)', async () => {
     await render({ arch: 'aarch64' });
     await screen.findByText('aarch64');
+  });
+});
+
+describe('set target using query parameter', () => {
+  test('no target by default (no query parameter)', async () => {
+    await render();
+    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    expect(nextButton).toBeDisabled();
+  });
+
+  test('no target by default (invalid query parameter)', async () => {
+    await render({ target: 'azure' });
+    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    expect(nextButton).toBeDisabled();
+  });
+
+  test('image-installer (query parameter provided)', async () => {
+    await render({ target: 'iso' });
+    await clickToReview();
+    const targetExpandable = await screen.findByRole('button', {
+      name: /Target environments/,
+    });
+    await userEvent.click(targetExpandable);
+    await screen.findByText('Bare metal - Installer (.iso)');
+  });
+
+  test('guest-installer (query parameter provided)', async () => {
+    await render({ target: 'qcow' });
+    await clickToReview();
+    const targetExpandable = await screen.findByRole('button', {
+      name: /Target environments/,
+    });
+    await userEvent.click(targetExpandable);
+    await screen.findByText('Virtualization - Guest image (.qcow2)');
   });
 });
