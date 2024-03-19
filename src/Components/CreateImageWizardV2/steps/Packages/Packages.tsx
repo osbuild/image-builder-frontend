@@ -36,10 +36,13 @@ import {
   addPackage,
 } from '../../../../store/wizardSlice';
 
+type PackageRepository = 'distro' | 'custom' | '';
+
 export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
-  repository: string;
+  repository: PackageRepository;
+  isRequiredByOpenScap: boolean;
 };
 
 const EmptySearch = () => {
@@ -180,6 +183,7 @@ const Packages = () => {
       transformedDistroData = dataDistroPackages.data.map((values) => ({
         ...values,
         repository: 'distro',
+        isRequiredByOpenScap: false,
       }));
     }
 
@@ -188,6 +192,7 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'custom',
+        isRequiredByOpenScap: false,
       }));
     }
 

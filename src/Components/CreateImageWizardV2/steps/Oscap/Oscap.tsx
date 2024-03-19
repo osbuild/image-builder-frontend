@@ -34,6 +34,10 @@ import {
   selectEnabledServices,
   changeDisabledServices,
   changeEnabledServices,
+  clearOscapPackages,
+  addPackage,
+  selectPackages,
+  removePackage,
 } from '../../../../store/wizardSlice';
 
 const ProfileSelector = () => {
@@ -42,6 +46,7 @@ const ProfileSelector = () => {
   let disabledServices = useAppSelector(selectDisabledServices);
   let enabledServices = useAppSelector(selectEnabledServices);
   const release = useAppSelector(selectDistribution);
+  const packages = useAppSelector(selectPackages);
   const dispatch = useAppDispatch();
   const [profileName, setProfileName] = useState<string | undefined>('None');
   const [isOpen, setIsOpen] = useState(false);
@@ -96,6 +101,25 @@ const ProfileSelector = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    dispatch(clearOscapPackages());
+    for (const pkg in data?.packages) {
+      if (
+        packages.map((pkg) => pkg.name).includes(data?.packages[Number(pkg)])
+      ) {
+        dispatch(removePackage(data?.packages[Number(pkg)]));
+      }
+      dispatch(
+        addPackage({
+          name: data?.packages[Number(pkg)],
+          summary: 'Required by chosen OpenSCAP profile',
+          repository: 'distro',
+          isRequiredByOpenScap: true,
+        })
+      );
+    }
+  }, [data?.packages, dispatch]);
+
   const handleToggle = () => {
     if (!isOpen) {
       refetch();
@@ -108,6 +132,7 @@ const ProfileSelector = () => {
     dispatch(changeKernel(undefined));
     dispatch(changeDisabledServices(undefined));
     dispatch(changeEnabledServices(undefined));
+    dispatch(clearOscapPackages());
     setProfileName(undefined);
   };
 
