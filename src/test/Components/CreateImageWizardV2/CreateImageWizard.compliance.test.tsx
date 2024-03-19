@@ -106,12 +106,16 @@ describe('Step Compliance', () => {
     //   })
     //   ).not.toBeInTheDocument();
 
+    await clickNext(); // skip Repositories
+
     // check that there are no Packages contained when selecting the "None" profile option
-    //   await clickNext();
-    //  await screen.findByRole('heading', {
-    //    name: /Additional Red Hat packages/i,
-    //   });
-    //  await screen.findByText(/no packages added/i);
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: /Additional packages/i,
+    });
+    await screen.findByText(
+      /Search above to add additionalpackages to your image/
+    );
   });
 
   test('create an image with an oscap profile', async () => {
@@ -165,14 +169,16 @@ describe('Step Compliance', () => {
     //    await screen.findByRole('heading', { name: /File system configuration/i });
     //   await screen.findByText(/tmp/i);
 
-    // check that the Packages contain a nftable package
-    //  await clickNext();
+    await clickNext(); // skip Repositories
 
-    //   await screen.findByRole('heading', {
-    //     name: /Additional Red Hat packages/i,
-    //   });
-    //   await screen.findByText(/nftables/i);
-    //    await screen.findByText(/libselinux/i);
+    // check that the Packages contain a nftable package
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: /Additional packages/i,
+    });
+    await user.click(await screen.findByText('Selected'));
+    await screen.findByText(/nftables/i);
+    await screen.findByText(/libselinux/i);
   });
 });
 //
