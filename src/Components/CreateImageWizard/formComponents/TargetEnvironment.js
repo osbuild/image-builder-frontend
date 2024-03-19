@@ -18,6 +18,7 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 import PropTypes from 'prop-types';
 import { useField } from 'react-final-form';
+import { useSearchParams } from 'react-router-dom';
 
 import { useGetArchitecturesQuery } from '../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../store/provisioningApi';
@@ -62,6 +63,16 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const { isBeta } = useGetEnvironment();
   const release = getState()?.values?.release;
+
+  const [searchParams] = useSearchParams();
+
+  // Set the target via search parameter
+  // Used by Insights assistant or external hyperlinks (access.redhat.com, developers.redhat.com)
+  const preloadTarget = searchParams.get('target');
+  useEffect(() => {
+    preloadTarget === 'iso' && handleSetEnvironment('image-installer', true);
+    preloadTarget === 'qcow' && handleSetEnvironment('guest-image', true);
+  }, [preloadTarget]);
 
   useEffect(() => {
     if (getState()?.values?.[input.name]) {

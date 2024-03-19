@@ -99,6 +99,18 @@ const getSourceDropdown = async () => {
   return sourceDropdown;
 };
 
+const clickToReview = async () => {
+  await clickNext();
+  await userEvent.click(
+    await screen.findByRole('radio', { name: /Register later/ })
+  );
+  await clickNext(); // skip Registration
+  await clickNext(); // skip FSC
+  await clickNext(); // skip Repositories
+  await clickNext(); // skip Packages
+  await clickNext(); // skip Details
+};
+
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
@@ -1507,6 +1519,112 @@ describe('Click through all steps', () => {
   }, 20000);
 });
 
+describe('set release using query parameter', () => {
+  test('rhel 9 by default (no query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 9 by default (invalid query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?release=rhel9000',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+  });
+
+  test('rhel 8 (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?release=rhel8',
+      {},
+      routes
+    ));
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
+  });
+});
+describe('set architecture using query parameter', () => {
+  test('x86_64 by default (no query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await screen.findByText('x86_64');
+  });
+
+  test('x86_64 by default (invalid query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?arch=arm',
+      {},
+      routes
+    ));
+    await screen.findByText('x86_64');
+  });
+
+  test('aarch64 (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?arch=aarch64',
+      {},
+      routes
+    ));
+    await screen.findByText('aarch64');
+  });
+});
+describe('set target using query parameter', () => {
+  test('no target by default (no query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    expect(nextButton).toBeDisabled();
+  });
+
+  test('no target by default (invalid query parameter)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?target=azure',
+      {},
+      routes
+    ));
+    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    expect(nextButton).toBeDisabled();
+  });
+
+  test('image-installer (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?target=iso',
+      {},
+      routes
+    ));
+    await clickToReview();
+    const targetExpandable = await screen.findByRole('button', {
+      name: /Target environments/,
+    });
+    await userEvent.click(targetExpandable);
+    await screen.findByText('Bare metal - Installer (.iso)');
+  });
+
+  test('guest-installer (query parameter provided)', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard?target=qcow',
+      {},
+      routes
+    ));
+    await clickToReview();
+    const targetExpandable = await screen.findByRole('button', {
+      name: /Target environments/,
+    });
+    await userEvent.click(targetExpandable);
+    await screen.findByText('Virtualization - Guest image (.qcow2)');
+  });
+});
+
 describe('Keyboard accessibility', () => {
   const user = userEvent.setup();
   const setUp = async () => {
@@ -1654,62 +1772,5 @@ describe('Keyboard accessibility', () => {
     testTile(await screen.findByTestId('upload-aws'));
     testTile(await screen.findByTestId('upload-google'));
     testTile(await screen.findByTestId('upload-azure'));
-  });
-});
-
-describe('set release using query parameter', () => {
-  test('rhel 9 by default (no query parameter)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
-  });
-
-  test('rhel 9 by default (invalid query parameter)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard?release=rhel9000',
-      {},
-      routes
-    ));
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
-  });
-
-  test('rhel 8 (query parameter provided)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard?release=rhel8',
-      {},
-      routes
-    ));
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
-  });
-});
-describe('set architecture using query parameter', () => {
-  test('x86_64 by default (no query parameter)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-    await screen.findByText('x86_64');
-  });
-
-  test('x86_64 by default (invalid query parameter)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard?arch=arm',
-      {},
-      routes
-    ));
-    await screen.findByText('x86_64');
-  });
-
-  test('aarch64 (query parameter provided)', async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard?arch=aarch64',
-      {},
-      routes
-    ));
-    await screen.findByText('aarch64');
   });
 });
