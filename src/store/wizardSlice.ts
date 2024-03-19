@@ -453,6 +453,11 @@ export const wizardSlice = createSlice({
         1
       );
     },
+    clearOscapPackages: (state) => {
+      state.packages = state.packages.filter(
+        (pkg) => pkg.isRequiredByOpenScap !== true
+      );
+    },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
@@ -499,6 +504,7 @@ export const {
   changePayloadRepositories,
   addPackage,
   removePackage,
+  clearOscapPackages,
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,
