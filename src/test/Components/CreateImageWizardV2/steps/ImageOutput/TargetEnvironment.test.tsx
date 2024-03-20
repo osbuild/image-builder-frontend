@@ -338,7 +338,7 @@ describe('set target using query parameter', () => {
   });
 
   test('guest-installer (query parameter provided)', async () => {
-    await render({ target: 'qcow' });
+    await render({ target: 'qcow2' });
     await clickToReview();
     const targetExpandable = await screen.findByRole('button', {
       name: /Target environments/,
