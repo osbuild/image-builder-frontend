@@ -71,7 +71,7 @@ const TargetEnvironment = ({ label, isRequired, ...props }) => {
   const preloadTarget = searchParams.get('target');
   useEffect(() => {
     preloadTarget === 'iso' && handleSetEnvironment('image-installer', true);
-    preloadTarget === 'qcow' && handleSetEnvironment('guest-image', true);
+    preloadTarget === 'qcow2' && handleSetEnvironment('guest-image', true);
   }, [preloadTarget]);
 
   useEffect(() => {
