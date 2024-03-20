@@ -34,8 +34,6 @@ const OscapProfileInformation = (): JSX.Element => {
 
   const enabledServicesDisplayString =
     oscapProfileInfo?.services?.enabled?.join(' ');
-  const disabledServicesDisplayString =
-    oscapProfileInfo?.services?.disabled?.join(' ');
   const maskedServicesDisplayString =
     oscapProfileInfo?.services?.masked?.join(' ');
 
@@ -95,7 +93,7 @@ const OscapProfileInformation = (): JSX.Element => {
               </TextListItem>
               <TextListItem component={TextListItemVariants.dd}>
                 <CodeBlock>
-                  <CodeBlockCode>{disabledServicesDisplayString}</CodeBlockCode>
+                  <CodeBlockCode>{maskedServicesDisplayString}</CodeBlockCode>
                 </CodeBlock>
               </TextListItem>
               <TextListItem
@@ -107,17 +105,6 @@ const OscapProfileInformation = (): JSX.Element => {
               <TextListItem component={TextListItemVariants.dd}>
                 <CodeBlock>
                   <CodeBlockCode>{enabledServicesDisplayString}</CodeBlockCode>
-                </CodeBlock>
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-u-min-width"
-              >
-                Masked services:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                <CodeBlock>
-                  <CodeBlockCode>{maskedServicesDisplayString}</CodeBlockCode>
                 </CodeBlock>
               </TextListItem>
             </TextList>

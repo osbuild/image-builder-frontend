@@ -36,7 +36,7 @@ export const oscapCustomizations = (
         append: 'audit_backlog_limit=8192 audit=1',
       },
       services: {
-        disabled: ['nfs-server'],
+        masked: ['nfs-server'],
         enabled: ['crond'],
       },
     };
