@@ -108,7 +108,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
       dispatch(changeArchitecture(AARCH64));
     searchParams.get('target') === 'iso' &&
       dispatch(addImageType('image-installer'));
-    searchParams.get('target') === 'qcow' &&
+    searchParams.get('target') === 'qcow2' &&
       dispatch(addImageType('guest-image'));
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
