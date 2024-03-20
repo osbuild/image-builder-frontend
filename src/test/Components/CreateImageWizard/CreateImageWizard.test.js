@@ -1612,7 +1612,7 @@ describe('set target using query parameter', () => {
 
   test('guest-installer (query parameter provided)', async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard?target=qcow',
+      'imagewizard?target=qcow2',
       {},
       routes
     ));
