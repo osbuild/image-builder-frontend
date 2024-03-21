@@ -64,7 +64,9 @@ const DetailsStep = () => {
         />
         <FormHelperText>
           <HelperText>
-            <HelperTextItem>The name can be 1-100 characters</HelperTextItem>
+            <HelperTextItem>
+              The name can be 2-100 characters with at least two word characters
+            </HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>

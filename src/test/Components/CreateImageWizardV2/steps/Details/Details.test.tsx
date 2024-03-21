@@ -1,8 +1,9 @@
 import { screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT } from '../../../../../constants';
-import { clickNext } from '../../../../testUtils';
+import { clickNext, getNextButton } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -49,6 +50,31 @@ const enterBlueprintDescription = async () => {
 const goToReviewStep = async () => {
   await clickNext();
 };
+
+describe('validates name', () => {
+  test('with invalid name', async () => {
+    await render();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeDisabled();
+    await enterBlueprintName(' ');
+    expect(nextButton).toBeDisabled();
+  });
+
+  test('with valid name', async () => {
+    await render();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+    await enterBlueprintName('🤣Red Velvet🤣');
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeEnabled();
+  });
+});
 
 describe('registration request generated correctly', () => {
   test('without description', async () => {
