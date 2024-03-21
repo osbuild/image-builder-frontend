@@ -3,7 +3,7 @@ import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
@@ -242,8 +242,12 @@ describe('Step Upload to Azure', () => {
 
   test('component renders error state correctly', async () => {
     server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
-        res(ctx.status(500))
+      http.get(
+        `${PROVISIONING_API}/sources`,
+        () =>
+          new HttpResponse(null, {
+            status: 500,
+          })
       )
     );
 
