@@ -96,7 +96,7 @@ const ProfileSelector = ({ input }: ProfileSelectorProps) => {
     if (data?.services?.masked) {
       change('maskedServices', data.services.masked);
     }
-  }, [data]);
+  }, [data, change]);
 
   const handleToggle = () => {
     if (!isOpen) {
