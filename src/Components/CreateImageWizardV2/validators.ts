@@ -31,7 +31,9 @@ export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
 };
 
 export const isBlueprintNameValid = (blueprintName: string) =>
-  blueprintName.length > 0 && blueprintName.length <= 100;
+  blueprintName.length >= 2 &&
+  blueprintName.length <= 100 &&
+  /\w+/.test(blueprintName);
 
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;

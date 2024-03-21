@@ -94,11 +94,11 @@ export const clickRegisterLater = async () => {
   await userEvent.click(radioButton);
 };
 
-export const enterBlueprintName = async () => {
+export const enterBlueprintName = async (name: string = 'Red Velvet') => {
   const blueprintName = await screen.findByRole('textbox', {
     name: /blueprint name/i,
   });
-  await userEvent.type(blueprintName, 'Red Velvet');
+  await userEvent.type(blueprintName, name);
 };
 
 export const interceptBlueprintRequest = async (requestPathname: string) => {
