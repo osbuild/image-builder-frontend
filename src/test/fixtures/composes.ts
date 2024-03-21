@@ -1,5 +1,3 @@
-import { PathParams, RestRequest } from 'msw';
-
 import { RHEL_8, RHEL_9 } from '../../constants';
 import {
   ClonesResponse,
@@ -25,12 +23,20 @@ export const mockComposesEmpty: ComposesResponse = {
 const currentDate = new Date();
 const currentDateInString = currentDate.toISOString();
 
-export const composesEndpoint = (
-  req: RestRequest<never, PathParams<string>>
-) => {
-  const params = req.url.searchParams;
-  const limit = Number(params.get('limit')) || 100;
-  const offset = Number(params.get('offset')) || 0;
+type Params = {
+  limit: number;
+  offset: number;
+  ignoreImageTypes: string;
+};
+
+type Url = {
+  searchParams: Params;
+};
+
+export const composesEndpoint = (url: Url) => {
+  const params = url.searchParams;
+  const limit = Number(params.limit) || 100;
+  const offset = Number(params.offset) || 0;
 
   return {
     meta: {
