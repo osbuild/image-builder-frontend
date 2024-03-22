@@ -455,10 +455,10 @@ export const wizardSlice = createSlice({
     },
     removePackage: (
       state,
-      action: PayloadAction<IBPackageWithRepositoryInfo>
+      action: PayloadAction<IBPackageWithRepositoryInfo['name']>
     ) => {
       state.packages.splice(
-        state.packages.findIndex((pkg) => pkg.name === action.payload.name),
+        state.packages.findIndex((pkg) => pkg.name === action.payload),
         1
       );
     },
