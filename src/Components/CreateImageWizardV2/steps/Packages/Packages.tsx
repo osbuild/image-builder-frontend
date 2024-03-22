@@ -226,7 +226,7 @@ const Packages = () => {
     if (isSelecting) {
       dispatch(addPackage(pkg));
     } else {
-      dispatch(removePackage(pkg));
+      dispatch(removePackage(pkg.name));
     }
   };
 
