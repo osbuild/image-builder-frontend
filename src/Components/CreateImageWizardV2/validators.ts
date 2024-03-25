@@ -1,3 +1,5 @@
+import { Partition } from './steps/FileSystem/FileSystemConfiguration';
+
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
     awsAccountId !== undefined &&
@@ -37,4 +39,25 @@ export const isBlueprintNameValid = (blueprintName: string) =>
 
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;
+};
+export const isFileSystemConfigValid = (partition: Partition[]) => {
+  const duplicates = getDuplicateMountPoints(partition);
+  return !(duplicates?.length !== 0);
+};
+export const getDuplicateMountPoints = (partitions: Partition[]) => {
+  if (!partitions) {
+    return [];
+  }
+  const mountPointFreqs = {} as { [key: string]: number | boolean };
+  const duplicates = [];
+
+  for (const partition of partitions) {
+    const mountPoint = partition.mountpoint;
+    if (mountPointFreqs[mountPoint]) {
+      duplicates.push(mountPoint);
+    } else {
+      mountPointFreqs[mountPoint] = true;
+    }
+  }
+  return duplicates;
 };
