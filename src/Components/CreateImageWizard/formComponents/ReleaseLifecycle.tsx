@@ -30,7 +30,7 @@ import { toMonthAndYear } from '../../../Utilities/time';
 Chart.register(annotationPlugin);
 Chart.register(...registerables);
 
-const currentDate = new Date().toString();
+const currentDate = new Date().toISOString();
 
 export const chartMajorVersionCfg = {
   data: {
