@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -23,6 +23,7 @@ import { Link } from 'react-router-dom';
 
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
+import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
   experimentalFlag?: boolean;
@@ -31,8 +32,13 @@ type ImageBuilderHeaderPropTypes = {
 export const ImageBuilderHeader = ({
   experimentalFlag,
 }: ImageBuilderHeaderPropTypes) => {
+  const [showImportModal, setShowImportModal] = useState(false);
   return (
     <>
+      <ImportBlueprintModal
+        setShowImportModal={setShowImportModal}
+        isOpen={showImportModal}
+      />
       <PageHeader data-testid="image-builder-header">
         <Flex>
           <FlexItem>
@@ -105,7 +111,12 @@ export const ImageBuilderHeader = ({
                 </Link>
               </FlexItem>
               <FlexItem>
-                <Button variant="link" icon={<ImportIcon />} iconPosition="end">
+                <Button
+                  variant="link"
+                  icon={<ImportIcon />}
+                  iconPosition="end"
+                  onClick={() => setShowImportModal(true)}
+                >
                   Import{' '}
                 </Button>
               </FlexItem>
