@@ -17,7 +17,7 @@ import {
 
 export const AwsAccountId = () => {
   const dispatch = useAppDispatch();
-  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
+  const sourceId = useAppSelector(selectAwsSourceId);
 
   const { data, isError } = useGetSourceUploadInfoQuery(
     {

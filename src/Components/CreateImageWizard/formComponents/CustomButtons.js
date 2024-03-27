@@ -116,7 +116,6 @@ CustomButtons.propTypes = {
   handleNext: PropTypes.func,
   handlePrev: PropTypes.func,
   nextStep: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
-  isSaving: PropTypes.bool,
 };
 
 export default CustomButtons;

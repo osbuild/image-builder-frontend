@@ -28,9 +28,9 @@ import {
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
-  const arch = useAppSelector((state) => selectArchitecture(state));
-  const environments = useAppSelector((state) => selectImageTypes(state));
-  const distribution = useAppSelector((state) => selectDistribution(state));
+  const arch = useAppSelector(selectArchitecture);
+  const environments = useAppSelector(selectImageTypes);
+  const distribution = useAppSelector(selectDistribution);
   const { data } = useGetArchitecturesQuery({
     distribution: distribution,
   });

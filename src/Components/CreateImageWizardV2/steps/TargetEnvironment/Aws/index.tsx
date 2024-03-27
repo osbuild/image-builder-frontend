@@ -50,8 +50,8 @@ const SourcesButton = () => {
 const Aws = () => {
   const dispatch = useAppDispatch();
 
-  const shareMethod = useAppSelector((state) => selectAwsShareMethod(state));
-  const shareWithAccount = useAppSelector((state) => selectAwsAccountId(state));
+  const shareMethod = useAppSelector(selectAwsShareMethod);
+  const shareWithAccount = useAppSelector(selectAwsAccountId);
 
   return (
     <Form>

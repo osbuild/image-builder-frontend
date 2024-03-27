@@ -66,8 +66,8 @@ const ExpirationWarning = () => {
 };
 
 export const ImageOutputList = () => {
-  const distribution = useAppSelector((state) => selectDistribution(state));
-  const arch = useAppSelector((state) => selectArchitecture(state));
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
   return (
     <TextContent>
       {distribution === RHEL_8 && (
@@ -105,9 +105,7 @@ export const ImageOutputList = () => {
   );
 };
 export const FSCList = () => {
-  const fileSystemPartitionMode = useAppSelector((state) =>
-    selectFileSystemPartitionMode(state)
-  );
+  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
 
   return (
     <TextContent>
@@ -188,9 +186,9 @@ export const TargetEnvAWSList = () => {
   const { isSuccess } = useGetSourceListQuery({
     provider: 'aws',
   });
-  const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
-  const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
-  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
+  const awsAccountId = useAppSelector(selectAwsAccountId);
+  const awsShareMethod = useAppSelector(selectAwsShareMethod);
+  const sourceId = useAppSelector(selectAwsSourceId);
   const { source } = useGetSourceListQuery(
     {
       provider: 'aws',
@@ -242,9 +240,9 @@ export const TargetEnvAWSList = () => {
 };
 
 export const TargetEnvGCPList = () => {
-  const accountType = useAppSelector((state) => selectGcpAccountType(state));
-  const sharedMethod = useAppSelector((state) => selectGcpShareMethod(state));
-  const email = useAppSelector((state) => selectGcpEmail(state));
+  const accountType = useAppSelector(selectGcpAccountType);
+  const sharedMethod = useAppSelector(selectGcpShareMethod);
+  const email = useAppSelector(selectGcpEmail);
   return (
     <TextContent>
       <Text component={TextVariants.h3}>GCP</Text>
@@ -303,15 +301,11 @@ export const TargetEnvGCPList = () => {
 export const TargetEnvAzureList = () => {
   const { data: rawAzureSources, isSuccess: isSuccessAzureSources } =
     useGetSourceListQuery({ provider: 'azure' });
-  const shareMethod = useAppSelector((state) => selectAzureShareMethod(state));
-  const tenantId = useAppSelector((state) => selectAzureTenantId(state));
-  const azureSource = useAppSelector((state) => selectAzureSource(state));
-  const azureResourceGroup = useAppSelector((state) =>
-    selectAzureResourceGroup(state)
-  );
-  const subscriptionId = useAppSelector((state) =>
-    selectAzureSubscriptionId(state)
-  );
+  const shareMethod = useAppSelector(selectAzureShareMethod);
+  const tenantId = useAppSelector(selectAzureTenantId);
+  const azureSource = useAppSelector(selectAzureSource);
+  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+  const subscriptionId = useAppSelector(selectAzureSubscriptionId);
 
   return (
     <TextContent>
@@ -411,10 +405,8 @@ export const TargetEnvOtherList = () => {
 };
 
 export const ContentList = () => {
-  const customRepositories = useAppSelector((state) =>
-    selectCustomRepositories(state)
-  );
-  const packages = useAppSelector((state) => selectPackages(state));
+  const customRepositories = useAppSelector(selectCustomRepositories);
+  const packages = useAppSelector(selectPackages);
   return (
     <TextContent>
       <TextList component={TextListVariants.dl}>
@@ -501,10 +493,8 @@ export const RegisterLaterList = () => {
 };
 
 export const RegisterNowList = () => {
-  const activationKey = useAppSelector((state) => selectActivationKey(state));
-  const registrationType = useAppSelector((state) =>
-    selectRegistrationType(state)
-  );
+  const activationKey = useAppSelector(selectActivationKey);
+  const registrationType = useAppSelector(selectRegistrationType);
   const [orgId, setOrgId] = useState<string | undefined>(undefined);
   const { auth } = useChrome();
 
@@ -609,10 +599,8 @@ export const RegisterNowList = () => {
 };
 
 export const ImageDetailsList = () => {
-  const blueprintName = useAppSelector((state) => selectBlueprintName(state));
-  const blueprintDescription = useAppSelector((state) =>
-    selectBlueprintDescription(state)
-  );
+  const blueprintName = useAppSelector(selectBlueprintName);
+  const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
   return (
     <TextContent>

@@ -22,7 +22,7 @@ import {
 } from '../../../../../store/wizardSlice';
 
 export const AzureSourcesSelect = () => {
-  const azureSource = useAppSelector((state) => selectAzureSource(state));
+  const azureSource = useAppSelector(selectAzureSource);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 

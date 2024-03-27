@@ -25,10 +25,8 @@ import {
 
 const DetailsStep = () => {
   const dispatch = useAppDispatch();
-  const blueprintName = useAppSelector((state) => selectBlueprintName(state));
-  const blueprintDescription = useAppSelector((state) =>
-    selectBlueprintDescription(state)
-  );
+  const blueprintName = useAppSelector(selectBlueprintName);
+  const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
     name: string

@@ -15,8 +15,8 @@ import { releaseToVersion } from '../../../Utilities/releaseToVersion.js';
  * repositories that are no longer available in the Repositories service.
  */
 export const useCheckRepositoriesAvailability = () => {
-  const arch = useAppSelector((state) => selectArchitecture(state));
-  const distribution = useAppSelector((state) => selectDistribution(state));
+  const arch = useAppSelector(selectArchitecture);
+  const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
 
   // There needs to be two requests because the default limit for the
@@ -57,9 +57,7 @@ export const useCheckRepositoriesAvailability = () => {
     return { ...firstRequest };
   }, [firstRequest, followupRequest]);
 
-  const customRepositories = useAppSelector((state) =>
-    selectCustomRepositories(state)
-  );
+  const customRepositories = useAppSelector(selectCustomRepositories);
   // customRepositories existing === we came here from Recreate
   if (isSuccess && customRepositories) {
     // Transform the fresh repos array into a Set to access its elements in O(1)

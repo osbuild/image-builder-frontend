@@ -14,10 +14,8 @@ import {
 } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
-  const registrationType = useAppSelector((state) =>
-    selectRegistrationType(state)
-  );
-  const activationKey = useAppSelector((state) => selectActivationKey(state));
+  const registrationType = useAppSelector(selectRegistrationType);
+  const activationKey = useAppSelector(selectActivationKey);
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
