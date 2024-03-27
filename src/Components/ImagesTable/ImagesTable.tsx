@@ -474,7 +474,6 @@ const Row = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
   const experimentalFlag = useExperimentalFlag();
-  const navigate = useNavigate();
 
   return (
     <Tbody key={compose.id} isExpanded={isExpanded}>
@@ -507,7 +506,7 @@ const Row = ({
           {actions ? (
             actions
           ) : (
-            <ActionsColumn items={defaultActions(compose, navigate)} />
+            <ActionsColumn items={defaultActions(compose)} />
           )}
         </Td>
       </Tr>
@@ -520,16 +519,7 @@ const Row = ({
   );
 };
 
-const defaultActions = (
-  compose: ComposesResponseItem,
-  navigate: NavigateFunction
-) => [
-  {
-    title: 'Recreate image',
-    onClick: () => {
-      navigate(resolveRelPath(`imagewizard/${compose.id}`));
-    },
-  },
+const defaultActions = (compose: ComposesResponseItem) => [
   {
     title: (
       <a
@@ -555,7 +545,7 @@ const awsActions = (
     onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
     isDisabled: status?.image_status.status === 'success' ? false : true,
   },
-  ...defaultActions(compose, navigate),
+  ...defaultActions(compose),
 ];
 
 export default ImagesTable;
