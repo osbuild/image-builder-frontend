@@ -426,6 +426,7 @@ type AwsRowPropTypes = {
 
 const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
+  const experimentalFlag = useExperimentalFlag();
 
   const target = <AwsTarget compose={compose} />;
 
@@ -436,7 +437,9 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const details = <AwsDetails compose={compose} />;
 
   const actions = (
-    <ActionsColumn items={awsActions(compose, composeStatus, navigate)} />
+    <ActionsColumn
+      items={awsActions(compose, composeStatus, navigate, experimentalFlag)}
+    />
   );
 
   return (
@@ -507,7 +510,9 @@ const Row = ({
           {actions ? (
             actions
           ) : (
-            <ActionsColumn items={defaultActions(compose, navigate)} />
+            <ActionsColumn
+              items={defaultActions(compose, navigate, experimentalFlag)}
+            />
           )}
         </Td>
       </Tr>
@@ -522,14 +527,19 @@ const Row = ({
 
 const defaultActions = (
   compose: ComposesResponseItem,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  experimentalFlag: boolean
 ) => [
-  {
-    title: 'Recreate image',
-    onClick: () => {
-      navigate(resolveRelPath(`imagewizard/${compose.id}`));
-    },
-  },
+  ...(experimentalFlag
+    ? []
+    : [
+        {
+          title: 'Recreate image',
+          onClick: () => {
+            navigate(resolveRelPath(`imagewizard/${compose.id}`));
+          },
+        },
+      ]),
   {
     title: (
       <a
@@ -548,14 +558,15 @@ const defaultActions = (
 const awsActions = (
   compose: ComposesResponseItem,
   status: ComposeStatus | undefined,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  experimentalFlag: boolean
 ) => [
   {
     title: 'Share to new region',
     onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
     isDisabled: status?.image_status.status === 'success' ? false : true,
   },
-  ...defaultActions(compose, navigate),
+  ...defaultActions(compose, navigate, experimentalFlag),
 ];
 
 export default ImagesTable;
