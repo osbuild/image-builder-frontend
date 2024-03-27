@@ -3,7 +3,8 @@ extends: [
     "@redhat-cloud-services/eslint-config-redhat-cloud-services",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:testing-library/react"
+    "plugin:testing-library/react",
+    "plugin:react-redux/recommended"
   ]
 globals:
   insights: 'readonly'
