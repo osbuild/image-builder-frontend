@@ -52,7 +52,6 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
             {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size="md" />
             )}
-            &nbsp;&nbsp;
             {blueprint.name}
           </CardTitle>
         </CardHeader>
