@@ -446,11 +446,16 @@ export const wizardSlice = createSlice({
     },
     removePackage: (
       state,
-      action: PayloadAction<IBPackageWithRepositoryInfo>
+      action: PayloadAction<IBPackageWithRepositoryInfo['name']>
     ) => {
       state.packages.splice(
-        state.packages.findIndex((pkg) => pkg.name === action.payload.name),
+        state.packages.findIndex((pkg) => pkg.name === action.payload),
         1
+      );
+    },
+    clearOscapPackages: (state) => {
+      state.packages = state.packages.filter(
+        (pkg) => pkg.isRequiredByOpenScap !== true
       );
     },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
@@ -499,6 +504,7 @@ export const {
   changePayloadRepositories,
   addPackage,
   removePackage,
+  clearOscapPackages,
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,

@@ -153,6 +153,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         name: pkg,
         summary: '',
         repository: '',
+        isRequiredByOpenScap: false,
       })) || [],
   };
 };
