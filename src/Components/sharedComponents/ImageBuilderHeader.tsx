@@ -101,7 +101,7 @@ export const ImageBuilderHeader = ({
                   className="pf-c-button pf-m-tertiary"
                   data-testid="blueprints-create-button"
                 >
-                  Create
+                  Create blueprint
                 </Link>
               </FlexItem>
               <FlexItem>
