@@ -1,26 +1,36 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Alert,
   Bullseye,
+  Button,
   EmptyState,
   EmptyStateBody,
+  EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
   EmptyStateVariant,
+  Icon,
   Pagination,
+  Popover,
   SearchInput,
+  Text,
+  TextContent,
   ToggleGroup,
   ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { SearchIcon } from '@patternfly/react-icons';
+import { HelpIcon, OptimizeIcon, SearchIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
 import { RH_ICON_SIZE } from '../../../../constants';
-import { useSearchRpmMutation } from '../../../../store/contentSourcesApi';
+import {
+  useGetRepositoryQuery,
+  useSearchRpmMutation,
+} from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   Package,
@@ -33,7 +43,10 @@ import {
   selectCustomRepositories,
   selectDistribution,
   addPackage,
+  addRecommendedRepository,
+  removeRecommendedRepository,
 } from '../../../../store/wizardSlice';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
@@ -41,84 +54,41 @@ export type IBPackageWithRepositoryInfo = {
   repository: string;
 };
 
-const EmptySearch = () => {
-  return (
-    <Tr>
-      <Td colSpan={4}>
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.sm}>
-            <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-            <EmptyStateBody>
-              Search above to add additional
-              <br />
-              packages to your image
-            </EmptyStateBody>
-          </EmptyState>
-        </Bullseye>
-      </Td>
-    </Tr>
-  );
-};
-
-const NoResultsFound = () => {
-  return (
-    <Tr>
-      <Td colSpan={4}>
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.sm}>
-            <EmptyStateHeader titleText="No results found" headingLevel="h4" />
-            <EmptyStateBody>Adjust your search and try again</EmptyStateBody>
-          </EmptyState>
-        </Bullseye>
-      </Td>
-    </Tr>
-  );
-};
-
-const TooManyResults = () => {
-  return (
-    <Tr>
-      <Td colSpan={4}>
-        <Bullseye>
-          <EmptyState variant={EmptyStateVariant.sm}>
-            <EmptyStateHeader
-              titleText="Too many results to display"
-              headingLevel="h4"
-            />
-            <EmptyStateBody>
-              Please make the search more specific and try again
-            </EmptyStateBody>
-          </EmptyState>
-        </Bullseye>
-      </Td>
-    </Tr>
-  );
-};
-
 const Packages = () => {
   const dispatch = useDispatch();
 
   const arch = useAppSelector((state) => selectArchitecture(state));
   const distribution = useAppSelector((state) => selectDistribution(state));
+
   const customRepositories = useAppSelector((state) =>
     selectCustomRepositories(state)
   );
+
+  const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
+    useGetRepositoryQuery({
+      uuid:
+        distribution === 'rhel-8'
+          ? '3012f536-eb7c-4cfc-838d-a0cfd553224c'
+          : '2b709339-2efe-4daa-b25a-316b1a9fed8d',
+    });
+
   const packages = useAppSelector((state) => selectPackages(state));
 
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
-
-  /*FOLLOW UP
   const [toggleSourceRepos, setToggleSourceRepos] = useState(
     'toggle-included-repos'
   );
-  */
 
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState('');
   const [
     searchRpms,
     { data: dataCustomPackages, isSuccess: isSuccessCustomPackages },
+  ] = useSearchRpmMutation();
+  const [
+    searchRecommendedRpms,
+    { data: dataRecommendedPackages, isSuccess: isSuccessRecommendedPackages },
   ] = useSearchRpmMutation();
 
   const { data: dataDistroPackages, isSuccess: isSuccessDistroPackages } =
@@ -148,12 +118,128 @@ const Packages = () => {
       });
     };
 
-    fetchCustomPackages();
+    if (searchTerm.length > 1) {
+      fetchCustomPackages();
+    }
   }, [customRepositories, searchRpms, searchTerm]);
+
+  useEffect(() => {
+    const fetchRecommendedPackages = async () => {
+      await searchRecommendedRpms({
+        apiContentUnitSearchRequest: {
+          search: searchTerm,
+          urls:
+            distribution === 'rhel-8'
+              ? ['https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/']
+              : ['https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/'],
+        },
+      });
+    };
+
+    if (searchTerm.length > 1) {
+      fetchRecommendedPackages();
+    }
+  }, [distribution, searchRecommendedRpms, searchTerm]);
+
+  const EmptySearch = () => {
+    return (
+      <Tr>
+        <Td colSpan={4}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+              <EmptyStateBody>
+                Search above to add additional
+                <br />
+                packages to your image
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
+
+  const TooManyResults = () => {
+    return (
+      <Tr>
+        <Td colSpan={4}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+              <EmptyStateHeader
+                titleText="Too many results to display"
+                headingLevel="h4"
+              />
+              <EmptyStateBody>
+                Please make the search more specific and try again
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
+
+  const NoResultsFound = () => {
+    const { isBeta } = useGetEnvironment();
+    return (
+      <Tr>
+        <Td colSpan={4}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+              <EmptyStateHeader
+                titleText="No results found"
+                headingLevel="h4"
+              />
+              <EmptyStateBody>
+                Adjust your search and try again, or search from{' '}
+                <Button
+                  variant="link"
+                  isInline
+                  component="a"
+                  target="_blank"
+                  href={
+                    isBeta() ? '/preview/settings/content' : '/settings/content'
+                  }
+                >
+                  your repositories
+                </Button>{' '}
+                and{' '}
+                <Button
+                  variant="link"
+                  isInline
+                  component="a"
+                  target="_blank"
+                  href={
+                    isBeta()
+                      ? '/preview/settings/content/popular-repositories'
+                      : '/settings/content/popular-repositories'
+                  }
+                >
+                  popular repositories
+                </Button>
+              </EmptyStateBody>
+              <EmptyStateFooter>
+                <Button
+                  variant="primary"
+                  onClick={() => setToggleSourceRepos('toggle-all-repos')}
+                >
+                  Search other repositories
+                </Button>
+              </EmptyStateFooter>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
 
   const transformPackageData = () => {
     let transformedDistroData: IBPackageWithRepositoryInfo[] = [];
     let transformedCustomData: IBPackageWithRepositoryInfo[] = [];
+    let transformedRecommendedData: IBPackageWithRepositoryInfo[] = [];
 
     if (isSuccessDistroPackages) {
       transformedDistroData = dataDistroPackages.data.map((values) => ({
@@ -170,9 +256,26 @@ const Packages = () => {
       }));
     }
 
-    const combinedPackageData = transformedDistroData.concat(
+    let combinedPackageData = transformedDistroData.concat(
       transformedCustomData
     );
+
+    if (
+      searchTerm !== '' &&
+      combinedPackageData.length === 0 &&
+      isSuccessRecommendedPackages &&
+      toggleSourceRepos === 'toggle-all-repos'
+    ) {
+      transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
+        repository: 'recommended',
+      }));
+
+      combinedPackageData = combinedPackageData.concat(
+        transformedRecommendedData
+      );
+    }
 
     if (toggleSelected === 'toggle-available') {
       return combinedPackageData;
@@ -225,8 +328,17 @@ const Packages = () => {
   ) => {
     if (isSelecting) {
       dispatch(addPackage(pkg));
+      if (isSuccessEpelRepo && pkg.repository === 'recommended') {
+        dispatch(addRecommendedRepository(epelRepo));
+      }
     } else {
       dispatch(removePackage(pkg));
+      if (
+        isSuccessEpelRepo &&
+        packages.filter((pkg) => pkg.repository === 'recommended').length === 1
+      ) {
+        dispatch(removeRecommendedRepository(epelRepo));
+      }
     }
   };
 
@@ -236,13 +348,11 @@ const Packages = () => {
     setToggleSelected(id);
   };
 
-  /*FOLLOW UP
   const handleRepoToggleClick = (event: React.MouseEvent) => {
     const id = event.currentTarget.id;
     setPage(1);
     setToggleSourceRepos(id);
   };
-  */
 
   const handleSetPage = (_: React.MouseEvent, newPage: number) => {
     setPage(newPage);
@@ -336,25 +446,73 @@ const Packages = () => {
               />
             </ToggleGroup>
           </ToolbarItem>
-          {/*FOLLOW UP
           <ToolbarItem>
             {' '}
             <ToggleGroup>
               <ToggleGroupItem
-                text="Included repos"
+                text={
+                  <>
+                    Included repos{' '}
+                    <Popover
+                      bodyContent={
+                        <TextContent>
+                          <Text>
+                            View packages from the Red Hat repository and
+                            repositories you&apos;ve selected.
+                          </Text>
+                        </TextContent>
+                      }
+                    >
+                      <Button
+                        variant="plain"
+                        aria-label="About included repositories"
+                        component="span"
+                        className="pf-u-p-0"
+                        size="sm"
+                        isInline
+                      >
+                        <HelpIcon />
+                      </Button>
+                    </Popover>
+                  </>
+                }
                 buttonId="toggle-included-repos"
                 isSelected={toggleSourceRepos === 'toggle-included-repos'}
                 onChange={handleRepoToggleClick}
               />
               <ToggleGroupItem
-                text="All repos"
+                text={
+                  <>
+                    All repos{' '}
+                    <Popover
+                      bodyContent={
+                        <TextContent>
+                          <Text>
+                            View packages from popular repositories and your
+                            other repositories not included in the image.
+                          </Text>
+                        </TextContent>
+                      }
+                    >
+                      <Button
+                        variant="plain"
+                        aria-label="About all repositories"
+                        component="span"
+                        className="pf-u-p-0"
+                        size="sm"
+                        isInline
+                      >
+                        <HelpIcon />
+                      </Button>
+                    </Popover>
+                  </>
+                }
                 buttonId="toggle-all-repos"
                 isSelected={toggleSourceRepos === 'toggle-all-repos'}
                 onChange={handleRepoToggleClick}
               />
             </ToggleGroup>
           </ToolbarItem>
-          */}
           <ToolbarItem variant="pagination">
             <Pagination
               itemCount={transformedPackages.length}
@@ -381,7 +539,9 @@ const Packages = () => {
           {!searchTerm && toggleSelected === 'toggle-available' && (
             <EmptySearch />
           )}
-          {searchTerm && transformedPackages.length === 0 && <NoResultsFound />}
+          {searchTerm &&
+            transformedPackages.length === 0 &&
+            toggleSelected === 'toggle-available' && <NoResultsFound />}
           {searchTerm &&
             transformedPackages.length >= 100 &&
             handleExactMatch()}
@@ -415,9 +575,20 @@ const Packages = () => {
                       </Td>
                       <Td>Supported</Td>
                     </>
-                  ) : (
+                  ) : pkg.repository === 'custom' ? (
                     <>
                       <Td>Third party repository</Td>
+                      <Td>Not supported</Td>
+                    </>
+                  ) : (
+                    <>
+                      <Td>
+                        <Icon status="warning">
+                          <OptimizeIcon />
+                        </Icon>{' '}
+                        EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything
+                        x86_64
+                      </Td>
                       <Td>Not supported</Td>
                     </>
                   )}
@@ -433,6 +604,18 @@ const Packages = () => {
         onPerPageSelect={handlePerPageSelect}
         isCompact
       />
+      {packages.some((pkg) => pkg.repository === 'recommended') && (
+        <Alert
+          variant="warning"
+          title="Custom repositories will be added to your image"
+          isInline
+        >
+          You have selected packages that belong to custom repositories. By
+          continuing, you are acknowledging and consenting to adding the
+          following custom repositories to your image: EPEL{' '}
+          {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
+        </Alert>
+      )}
     </>
   );
 };
