@@ -56,7 +56,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'success',
-                title: 'Blueprint was updated',
+                title: 'Changes saved to blueprint',
               })
             );
           })
@@ -82,7 +82,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'success',
-                title: 'Your blueprint is being created',
+                title: 'Blueprint is being created',
               })
             );
           })
@@ -90,7 +90,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'danger',
-                title: 'Your blueprint could not be created',
+                title: 'Blueprint could not be created',
                 description: `Status code ${err.error.status}: ${errorMessage(
                   err
                 )}`,
@@ -144,7 +144,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'success',
-                title: 'Blueprint is being built',
+                title: 'Image is being built',
               })
             );
           })
@@ -152,7 +152,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             dispatch(
               addNotification({
                 variant: 'danger',
-                title: 'Blueprint could not be built',
+                title: 'Image could not be built',
                 description: `Status code ${err.error.status}: ${errorMessage(
                   err
                 )}`,
