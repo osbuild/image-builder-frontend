@@ -37,13 +37,11 @@ import {
 } from '../../../../store/wizardSlice';
 
 const ProfileSelector = () => {
-  const oscapProfile = useAppSelector((state) => selectProfile(state));
-  let kernel = useAppSelector((state) => selectKernel(state));
-  let disabledServices = useAppSelector((state) =>
-    selectDisabledServices(state)
-  );
-  let enabledServices = useAppSelector((state) => selectEnabledServices(state));
-  const release = useAppSelector((state) => selectDistribution(state));
+  const oscapProfile = useAppSelector(selectProfile);
+  let kernel = useAppSelector(selectKernel);
+  let disabledServices = useAppSelector(selectDisabledServices);
+  let enabledServices = useAppSelector(selectEnabledServices);
+  const release = useAppSelector(selectDistribution);
   const dispatch = useAppDispatch();
   const [profileName, setProfileName] = useState<string | undefined>('None');
   const [isOpen, setIsOpen] = useState(false);
@@ -256,7 +254,7 @@ const OScapSelectOption = ({
   setProfileName,
   input,
 }: OScapSelectOptionPropType) => {
-  const release = useAppSelector((state) => selectDistribution(state));
+  const release = useAppSelector(selectDistribution);
   const { data } = useGetOscapCustomizationsQuery({
     distribution: release,
     profile: profile_id,
@@ -285,7 +283,7 @@ const OScapSelectOption = ({
 };
 
 export const Oscap = () => {
-  const oscapProfile = useAppSelector((state) => selectProfile(state));
+  const oscapProfile = useAppSelector(selectProfile);
 
   return (
     <>

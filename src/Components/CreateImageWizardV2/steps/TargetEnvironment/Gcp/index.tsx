@@ -25,9 +25,9 @@ export type GcpAccountType =
 const Gcp = () => {
   const dispatch = useAppDispatch();
 
-  const accountType = useAppSelector((state) => selectGcpAccountType(state));
-  const shareMethod = useAppSelector((state) => selectGcpShareMethod(state));
-  const gcpEmail = useAppSelector((state) => selectGcpEmail(state));
+  const accountType = useAppSelector(selectGcpAccountType);
+  const shareMethod = useAppSelector(selectGcpShareMethod);
+  const gcpEmail = useAppSelector(selectGcpEmail);
 
   return (
     <Form>

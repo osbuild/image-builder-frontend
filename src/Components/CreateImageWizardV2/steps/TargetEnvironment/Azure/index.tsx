@@ -56,14 +56,10 @@ const SourcesButton = () => {
 
 const Azure = () => {
   const dispatch = useAppDispatch();
-  const shareMethod = useAppSelector((state) => selectAzureShareMethod(state));
-  const tenantId = useAppSelector((state) => selectAzureTenantId(state));
-  const subscriptionId = useAppSelector((state) =>
-    selectAzureSubscriptionId(state)
-  );
-  const resourceGroup = useAppSelector((state) =>
-    selectAzureResourceGroup(state)
-  );
+  const shareMethod = useAppSelector(selectAzureShareMethod);
+  const tenantId = useAppSelector(selectAzureTenantId);
+  const subscriptionId = useAppSelector(selectAzureSubscriptionId);
+  const resourceGroup = useAppSelector(selectAzureResourceGroup);
 
   return (
     <Form>

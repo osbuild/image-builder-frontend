@@ -14,9 +14,7 @@ import {
 const FileSystemPartition = () => {
   const id = uuidv4();
   const dispatch = useAppDispatch();
-  const fileSystemPartitionMode = useAppSelector((state) =>
-    selectFileSystemPartitionMode(state)
-  );
+  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
   return (
     <FormGroup>
       <Radio

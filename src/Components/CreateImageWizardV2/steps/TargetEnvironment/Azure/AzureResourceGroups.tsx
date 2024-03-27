@@ -16,10 +16,8 @@ import {
 } from '../../../../../store/wizardSlice';
 
 export const AzureResourceGroups = () => {
-  const azureSource = useAppSelector((state) => selectAzureSource(state));
-  const azureResourceGroup = useAppSelector((state) =>
-    selectAzureResourceGroup(state)
-  );
+  const azureSource = useAppSelector(selectAzureSource);
+  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 

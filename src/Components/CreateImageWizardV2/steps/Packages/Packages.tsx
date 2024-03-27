@@ -98,12 +98,10 @@ const TooManyResults = () => {
 const Packages = () => {
   const dispatch = useDispatch();
 
-  const arch = useAppSelector((state) => selectArchitecture(state));
-  const distribution = useAppSelector((state) => selectDistribution(state));
-  const customRepositories = useAppSelector((state) =>
-    selectCustomRepositories(state)
-  );
-  const packages = useAppSelector((state) => selectPackages(state));
+  const arch = useAppSelector(selectArchitecture);
+  const distribution = useAppSelector(selectDistribution);
+  const customRepositories = useAppSelector(selectCustomRepositories);
+  const packages = useAppSelector(selectPackages);
 
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);

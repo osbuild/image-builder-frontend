@@ -117,7 +117,7 @@ export const MajorReleasesLifecyclesChart = () => {
 };
 
 const ReleaseLifecycle = () => {
-  const release = useAppSelector((state) => selectDistribution(state));
+  const release = useAppSelector(selectDistribution);
   const [isExpanded, setIsExpanded] = useState(true);
 
   const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {

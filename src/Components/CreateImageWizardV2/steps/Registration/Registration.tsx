@@ -138,9 +138,7 @@ const RhcPopover = () => {
 const Registration = () => {
   const dispatch = useAppDispatch();
 
-  const registrationType = useAppSelector((state) =>
-    selectRegistrationType(state)
-  );
+  const registrationType = useAppSelector(selectRegistrationType);
 
   const [showOptions, setShowOptions] = useState(
     registrationType === 'register-now-insights' ||

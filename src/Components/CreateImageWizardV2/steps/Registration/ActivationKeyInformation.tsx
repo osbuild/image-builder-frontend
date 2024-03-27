@@ -20,7 +20,7 @@ import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
 import { selectActivationKey } from '../../../../store/wizardSlice';
 
 const ActivationKeyInformation = (): JSX.Element => {
-  const activationKey = useAppSelector((state) => selectActivationKey(state));
+  const activationKey = useAppSelector(selectActivationKey);
 
   const {
     data: activationKeyInfo,

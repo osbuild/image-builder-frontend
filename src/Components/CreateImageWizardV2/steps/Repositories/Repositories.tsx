@@ -166,13 +166,10 @@ const convertSchemaToIBPayloadRepo = (repo: ApiRepositoryResponseRead) => {
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
-
-  const arch = useAppSelector((state) => selectArchitecture(state));
-  const distribution = useAppSelector((state) => selectDistribution(state));
+  const arch = useAppSelector(selectArchitecture);
+  const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
-  const repositoriesList = useAppSelector((state) =>
-    selectCustomRepositories(state)
-  );
+  const repositoriesList = useAppSelector(selectCustomRepositories);
 
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
