@@ -20,8 +20,8 @@ import {
 } from '../../../../store/wizardSlice';
 
 export const OscapProfileInformation = (): JSX.Element => {
-  const release = useAppSelector((state) => selectDistribution(state));
-  const oscapProfile = useAppSelector((state) => selectProfile(state));
+  const release = useAppSelector(selectDistribution);
+  const oscapProfile = useAppSelector(selectProfile);
 
   const {
     data: oscapProfileInfo,

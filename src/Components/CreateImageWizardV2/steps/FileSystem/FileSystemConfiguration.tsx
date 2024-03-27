@@ -41,8 +41,8 @@ export type Partition = {
 };
 
 const FileSystemConfiguration = () => {
-  const partitions = useAppSelector((state) => selectPartitions(state));
-  const environments = useAppSelector((state) => selectImageTypes(state));
+  const partitions = useAppSelector(selectPartitions);
+  const environments = useAppSelector(selectImageTypes);
 
   const dispatch = useAppDispatch();
 

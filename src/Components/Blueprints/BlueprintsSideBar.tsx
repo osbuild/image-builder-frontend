@@ -139,9 +139,7 @@ const BlueprintsSidebar = () => {
 };
 
 const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
-  const blueprintSearchInput = useAppSelector((state) =>
-    selectBlueprintSearchInput(state)
-  );
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const dispatch = useAppDispatch();
   const debouncedSearch = useCallback(
     debounce((filter) => {

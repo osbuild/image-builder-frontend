@@ -34,16 +34,12 @@ import {
 } from '../../../../store/wizardSlice';
 
 const Review = () => {
-  const blueprintName = useAppSelector((state) => selectBlueprintName(state));
-  const blueprintDescription = useAppSelector((state) =>
-    selectBlueprintDescription(state)
-  );
-  const distribution = useAppSelector((state) => selectDistribution(state));
-  const environments = useAppSelector((state) => selectImageTypes(state));
-  const oscapProfile = useAppSelector((state) => selectProfile(state));
-  const registrationType = useAppSelector((state) =>
-    selectRegistrationType(state)
-  );
+  const blueprintName = useAppSelector(selectBlueprintName);
+  const blueprintDescription = useAppSelector(selectBlueprintDescription);
+  const distribution = useAppSelector(selectDistribution);
+  const environments = useAppSelector(selectImageTypes);
+  const oscapProfile = useAppSelector(selectProfile);
+  const registrationType = useAppSelector(selectRegistrationType);
 
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(false);

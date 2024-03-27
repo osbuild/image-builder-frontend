@@ -29,7 +29,7 @@ const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
   // The Redux store follows the API convention, and data read from or to the store will use
   // the word "Distribution" instead of "Release".
-  const distribution = useAppSelector((state) => selectDistribution(state));
+  const distribution = useAppSelector(selectDistribution);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);

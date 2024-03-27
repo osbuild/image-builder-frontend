@@ -13,7 +13,7 @@ import { selectDistribution } from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 
 const ImageOutputStep = () => {
-  const distribution = useAppSelector((state) => selectDistribution(state));
+  const distribution = useAppSelector(selectDistribution);
 
   return (
     <Form>

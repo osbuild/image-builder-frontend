@@ -139,7 +139,7 @@ const ManageKeysButton = () => {
 const ActivationKeysList = () => {
   const dispatch = useAppDispatch();
 
-  const activationKey = useAppSelector((state) => selectActivationKey(state));
+  const activationKey = useAppSelector(selectActivationKey);
 
   const { isProd } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);

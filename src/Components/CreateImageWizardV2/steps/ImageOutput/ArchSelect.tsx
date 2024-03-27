@@ -16,7 +16,7 @@ import {
 } from '../../../../store/wizardSlice';
 
 const ArchSelect = () => {
-  const arch = useAppSelector((state) => selectArchitecture(state));
+  const arch = useAppSelector(selectArchitecture);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
