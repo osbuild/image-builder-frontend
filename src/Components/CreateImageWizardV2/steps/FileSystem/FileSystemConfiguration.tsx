@@ -54,10 +54,8 @@ export const FileSystemStepFooter = () => {
   const [isValid, setIsValid] = useState(false);
   const dispatch = useAppDispatch();
   const [isNextDisabled, setNextDisabled] = useState(false);
-  const fileSystemPartitionMode = useAppSelector((state) =>
-    selectFileSystemPartitionMode(state)
-  );
-  const partitions = useAppSelector((state) => selectPartitions(state));
+  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
+  const partitions = useAppSelector(selectPartitions);
 
   const onValidate = () => {
     dispatch(setIsNextButtonTouched(false));
@@ -93,14 +91,12 @@ export const FileSystemStepFooter = () => {
 };
 
 const FileSystemConfiguration = () => {
-  const partitions = useAppSelector((state) => selectPartitions(state));
-  const environments = useAppSelector((state) => selectImageTypes(state));
+  const partitions = useAppSelector(selectPartitions);
+  const environments = useAppSelector(selectImageTypes);
 
   const dispatch = useAppDispatch();
 
-  const isNextButtonPristine = useAppSelector((state) =>
-    selectIsNextButtonTouched(state)
-  );
+  const isNextButtonPristine = useAppSelector(selectIsNextButtonTouched);
   const handleAddPartition = () => {
     const id = uuidv4();
     dispatch(
@@ -233,13 +229,11 @@ const getSuffix = (mountpoint: string) => {
 
 const Row = ({ partition }: RowPropTypes) => {
   const dispatch = useAppDispatch();
-  const partitions = useAppSelector((state) => selectPartitions(state));
+  const partitions = useAppSelector(selectPartitions);
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
   };
-  const isNextButtonPristine = useAppSelector((state) =>
-    selectIsNextButtonTouched(state)
-  );
+  const isNextButtonPristine = useAppSelector(selectIsNextButtonTouched);
   const duplicates = getDuplicateMountPoints(partitions);
 
   return (

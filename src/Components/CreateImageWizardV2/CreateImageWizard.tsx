@@ -121,34 +121,24 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
    *           */
 
   // Image Output
-  const targetEnvironments = useAppSelector((state) => selectImageTypes(state));
+  const targetEnvironments = useAppSelector(selectImageTypes);
   // AWS
-  const awsShareMethod = useAppSelector((state) => selectAwsShareMethod(state));
-  const awsAccountId = useAppSelector((state) => selectAwsAccountId(state));
-  const awsSourceId = useAppSelector((state) => selectAwsSourceId(state));
+  const awsShareMethod = useAppSelector(selectAwsShareMethod);
+  const awsAccountId = useAppSelector(selectAwsAccountId);
+  const awsSourceId = useAppSelector(selectAwsSourceId);
   // GCP
-  const gcpShareMethod = useAppSelector((state) => selectGcpShareMethod(state));
-  const gcpEmail = useAppSelector((state) => selectGcpEmail(state));
+  const gcpShareMethod = useAppSelector(selectGcpShareMethod);
+  const gcpEmail = useAppSelector(selectGcpEmail);
   // AZURE
-  const azureShareMethod = useAppSelector((state) =>
-    selectAzureShareMethod(state)
-  );
-  const azureTenantId = useAppSelector((state) => selectAzureTenantId(state));
-  const azureSubscriptionId = useAppSelector((state) =>
-    selectAzureSubscriptionId(state)
-  );
-  const azureResourceGroup = useAppSelector((state) =>
-    selectAzureResourceGroup(state)
-  );
-  const azureSource = useAppSelector((state) => selectAzureSource(state));
-  const registrationType = useAppSelector((state) =>
-    selectRegistrationType(state)
-  );
-  const blueprintName = useAppSelector((state) => selectBlueprintName(state));
-  const blueprintDescription = useAppSelector((state) =>
-    selectBlueprintDescription(state)
-  );
-  const activationKey = useAppSelector((state) => selectActivationKey(state));
+  const azureShareMethod = useAppSelector(selectAzureShareMethod);
+  const azureTenantId = useAppSelector(selectAzureTenantId);
+  const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
+  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+  const azureSource = useAppSelector(selectAzureSource);
+  const registrationType = useAppSelector(selectRegistrationType);
+  const blueprintName = useAppSelector(selectBlueprintName);
+  const blueprintDescription = useAppSelector(selectBlueprintDescription);
+  const activationKey = useAppSelector(selectActivationKey);
 
   return (
     <>

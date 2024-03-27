@@ -11,9 +11,7 @@ import { selectFileSystemPartitionMode } from '../../../../store/wizardSlice';
 export type FileSystemPartitionMode = 'automatic' | 'manual';
 
 const FileSystemStep = () => {
-  const fileSystemPartitionMode = useAppSelector((state) =>
-    selectFileSystemPartitionMode(state)
-  );
+  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
 
   return (
     <Form>

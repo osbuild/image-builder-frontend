@@ -58,7 +58,7 @@ const RepoName = ({ repoUrl }: repoPropType) => {
 };
 
 export const FSReviewTable = () => {
-  const partitions = useAppSelector((state) => selectPartitions(state));
+  const partitions = useAppSelector(selectPartitions);
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
@@ -92,7 +92,7 @@ export const FSReviewTable = () => {
 };
 
 export const PackagesTable = () => {
-  const packages = useAppSelector((state) => selectPackages(state));
+  const packages = useAppSelector(selectPackages);
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
@@ -124,9 +124,7 @@ export const PackagesTable = () => {
 };
 
 export const RepositoriesTable = () => {
-  const repositoriesList = useAppSelector((state) =>
-    selectCustomRepositories(state)
-  );
+  const repositoriesList = useAppSelector(selectCustomRepositories);
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">

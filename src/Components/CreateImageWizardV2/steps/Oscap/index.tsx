@@ -11,7 +11,7 @@ import DocumentationButton from '../../../sharedComponents/DocumentationButton';
 
 const OscapStep = () => {
   const prefetchOscapProfile = imageBuilderApi.usePrefetch('getOscapProfiles');
-  const release = useAppSelector((state) => selectDistribution(state));
+  const release = useAppSelector(selectDistribution);
   prefetchOscapProfile({ distribution: release });
 
   return (

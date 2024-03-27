@@ -18,7 +18,7 @@ import {
 export const AwsSourcesSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const sourceId = useAppSelector((state) => selectAwsSourceId(state));
+  const sourceId = useAppSelector(selectAwsSourceId);
 
   const { data, isFetching, isLoading, isSuccess, isError, refetch } =
     useGetSourceListQuery({
