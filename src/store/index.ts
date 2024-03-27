@@ -86,7 +86,10 @@ startAppListening({
 // Listener middleware must be prepended according to RTK docs:
 // https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
 export const middleware = (getDefaultMiddleware: Function) =>
-  getDefaultMiddleware()
+  getDefaultMiddleware({
+    immutableCheck: false,
+    serializableCheck: false,
+  })
     .prepend(listenerMiddleware.middleware)
     .concat(
       promiseMiddleware,
