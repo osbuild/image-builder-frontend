@@ -196,7 +196,7 @@ const ImagesTable = () => {
         <Table variant="compact" data-testid="images-table">
           <Thead>
             <Tr>
-              <Th />
+              <Th style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }} />
               <Th>Image name</Th>
               <Th>Created/Updated</Th>
               <Th>Release</Th>
