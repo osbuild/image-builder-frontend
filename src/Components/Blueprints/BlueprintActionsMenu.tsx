@@ -12,7 +12,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
+import {
+  BlueprintResponse,
+  useGetBlueprintQuery,
+} from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
+import BetaLabel from '../sharedComponents/BetaLabel';
 
 interface BlueprintActionsMenuProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,7 +33,10 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   };
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const navigate = useNavigate();
-
+  const { data: blueprintDetails } = useGetBlueprintQuery({
+    id: selectedBlueprintId || '',
+  });
+  const blueprintName = blueprintDetails?.name;
   return (
     <Dropdown
       ouiaId={`blueprints-dropdown`}
@@ -59,7 +67,15 @@ export const BlueprintActionsMenu: React.FunctionComponent<
         >
           Edit details
         </DropdownItem>
-        <DropdownItem>Download blueprint (.json)</DropdownItem>
+        <DropdownItem
+          onClick={() => {
+            if (blueprintName && blueprintDetails) {
+              handleExportBlueprint(blueprintName, blueprintDetails);
+            }
+          }}
+        >
+          Download blueprint (.json) <BetaLabel />
+        </DropdownItem>
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
         </DropdownItem>
@@ -67,3 +83,23 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     </Dropdown>
   );
 };
+
+async function handleExportBlueprint(
+  blueprintName: string,
+  blueprint: BlueprintResponse
+) {
+  const opts = {
+    suggestedName: blueprintName.replace(/\s/g, '_').toLowerCase() + '.json',
+    types: [
+      {
+        description: 'Text file',
+        accept: { 'text/plain': ['.json'] },
+      },
+    ],
+  };
+
+  const fileHandle = await (window as any).showSaveFilePicker(opts);
+  const writableStream = await fileHandle.createWritable();
+  await writableStream.write(JSON.stringify(blueprint, null, 2));
+  await writableStream.close();
+}
