@@ -39,15 +39,12 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         ouiaId={`blueprint-card-${blueprint.id}`}
         isCompact
         isClickable
+        onClick={() => dispatch(setBlueprintId(blueprint.id))}
+        isSelectableRaised
+        hasSelectableInput
+        selectableInputAriaLabel={`Select blueprint ${blueprint.name}`}
       >
-        <CardHeader
-          data-testid={blueprint.id}
-          selectableActions={{
-            selectableActionId: blueprint.id,
-            name: 'blueprints',
-            onClickAction: () => dispatch(setBlueprintId(blueprint.id)),
-          }}
-        >
+        <CardHeader data-testid={blueprint.id}>
           <CardTitle>
             {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size="md" />
