@@ -33,17 +33,9 @@ jest.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const selectBlueprintById = async (user, bpId) => {
-  const nameMatcher = (_, element) =>
-    element.getAttribute('name') === 'blueprints';
-
-  const radioButtons = await screen.findAllByRole('radio', {
-    name: nameMatcher,
-  });
-  const elementById = radioButtons.find(
-    (button) => button.getAttribute('id') === bpId
-  );
-  await user.click(elementById);
-  return elementById;
+  const blueprint = await screen.findByTestId(bpId);
+  await user.click(blueprint);
+  return blueprint;
 };
 
 describe('Blueprints', () => {
@@ -182,7 +174,9 @@ describe('Blueprints', () => {
       // wait for debounce
       await waitFor(
         () => {
-          expect(screen.getAllByRole('radio')).toHaveLength(1);
+          expect(
+            screen.getByTestId(blueprintIdEmptyComposes)
+          ).toBeInTheDocument();
         },
         {
           timeout: 1500,
@@ -195,7 +189,7 @@ describe('Blueprints', () => {
     test('paging of blueprints', async () => {
       renderWithReduxRouter('', {});
 
-      expect(await screen.findAllByRole('radio')).toHaveLength(10);
+      expect(await screen.findAllByRole('checkbox')).toHaveLength(10);
 
       const option = await screen.findByTestId('blueprints-pagination-bottom');
       const prevButton = within(option).getByRole('button', {
@@ -218,7 +212,7 @@ describe('Blueprints', () => {
       await user.click(button);
 
       await waitFor(() => {
-        expect(screen.getAllByRole('radio')).toHaveLength(1);
+        expect(screen.getAllByRole('checkbox')).toHaveLength(1);
       });
     });
   });
