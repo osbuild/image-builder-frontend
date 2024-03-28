@@ -167,6 +167,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}
       resultsCount={`${blueprintsTotal} blueprints`}
+      data-testid="blueprints-search-input"
     />
   );
 };
