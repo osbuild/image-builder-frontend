@@ -99,7 +99,7 @@ export const ImageBuilderHeader = ({
                 <Link
                   to={resolveRelPath('imagewizard')}
                   className="pf-c-button pf-m-tertiary"
-                  data-testid="create-image-action"
+                  data-testid="blueprints-create-button"
                 >
                   Create
                 </Link>
