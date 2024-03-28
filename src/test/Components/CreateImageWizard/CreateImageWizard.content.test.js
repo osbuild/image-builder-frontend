@@ -177,7 +177,6 @@ describe('Step Packages', () => {
 
     test('should display default state', async () => {
       await setUp();
-
       await screen.findByText(
         'Search above to add additionalpackages to your image'
       );
