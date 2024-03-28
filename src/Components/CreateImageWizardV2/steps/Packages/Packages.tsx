@@ -51,7 +51,7 @@ const EmptySearch = () => {
             <EmptyStateBody>
               Search above to add additional
               <br />
-              packages to your image
+              packages to your image.
             </EmptyStateBody>
           </EmptyState>
         </Bullseye>
@@ -67,7 +67,7 @@ const NoResultsFound = () => {
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader titleText="No results found" headingLevel="h4" />
-            <EmptyStateBody>Adjust your search and try again</EmptyStateBody>
+            <EmptyStateBody>Adjust your search and try again.</EmptyStateBody>
           </EmptyState>
         </Bullseye>
       </Td>
@@ -82,11 +82,33 @@ const TooManyResults = () => {
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader
+              icon={<EmptyStateIcon icon={SearchIcon} />}
               titleText="Too many results to display"
               headingLevel="h4"
             />
             <EmptyStateBody>
-              Please make the search more specific and try again
+              Please make the search more specific and try again.
+            </EmptyStateBody>
+          </EmptyState>
+        </Bullseye>
+      </Td>
+    </Tr>
+  );
+};
+
+const TooManyResultsWithExactMatch = () => {
+  return (
+    <Tr>
+      <Td colSpan={4}>
+        <Bullseye>
+          <EmptyState variant={EmptyStateVariant.sm}>
+            <EmptyStateHeader
+              titleText="Too many results to display"
+              headingLevel="h4"
+            />
+            <EmptyStateBody>
+              To see more results, please make the search more specific and try
+              again.
             </EmptyStateBody>
           </EmptyState>
         </Bullseye>
@@ -301,7 +323,7 @@ const Packages = () => {
               </>
             )}
           </Tr>
-          <TooManyResults />
+          <TooManyResultsWithExactMatch />
         </>
       );
     } else {

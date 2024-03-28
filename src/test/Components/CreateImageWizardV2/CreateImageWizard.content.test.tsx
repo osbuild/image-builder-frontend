@@ -190,7 +190,7 @@ describe('Step Packages', () => {
     await setUp();
 
     await screen.findByText(
-      'Search above to add additionalpackages to your image'
+      'Search above to add additionalpackages to your image.'
     );
   });
 
