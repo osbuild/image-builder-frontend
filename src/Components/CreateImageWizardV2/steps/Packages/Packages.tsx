@@ -316,6 +316,7 @@ const Packages = () => {
           <ToolbarItem variant="search-filter">
             <SearchInput
               aria-label="Search packages"
+              data-testid="packages-search-input"
               value={searchTerm}
               onChange={handleSearch}
             />
@@ -325,12 +326,14 @@ const Packages = () => {
               <ToggleGroupItem
                 text="Available"
                 buttonId="toggle-available"
+                data-testid="packages-available-toggle"
                 isSelected={toggleSelected === 'toggle-available'}
                 onChange={handleFilterToggleClick}
               />
               <ToggleGroupItem
                 text="Selected"
                 buttonId="toggle-selected"
+                data-testid="packages-selected-toggle"
                 isSelected={toggleSelected === 'toggle-selected'}
                 onChange={handleFilterToggleClick}
               />
