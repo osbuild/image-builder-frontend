@@ -69,8 +69,8 @@ export const DeleteBlueprintModal: React.FunctionComponent<
       titleIconVariant="warning"
       isOpen={isOpen}
       onClose={onDeleteClose}
-      title={`Permanently delete ${blueprintName}?`}
-      description={'All versions will be lost.'}
+      title={'Delete blueprint?'}
+      description={`All versions of ${blueprintName} and its associated images will be deleted.`}
     >
       <ActionGroup>
         <Button variant="danger" type="button" onClick={handleDelete}>
