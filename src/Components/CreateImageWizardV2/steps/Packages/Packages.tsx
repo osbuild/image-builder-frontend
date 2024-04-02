@@ -44,7 +44,7 @@ export type IBPackageWithRepositoryInfo = {
 const EmptySearch = () => {
   return (
     <Tr>
-      <Td colSpan={4}>
+      <Td colSpan={5}>
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
@@ -63,7 +63,7 @@ const EmptySearch = () => {
 const NoResultsFound = () => {
   return (
     <Tr>
-      <Td colSpan={4}>
+      <Td colSpan={5}>
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader titleText="No results found" headingLevel="h4" />
@@ -78,7 +78,7 @@ const NoResultsFound = () => {
 const TooManyResults = () => {
   return (
     <Tr>
-      <Td colSpan={4}>
+      <Td colSpan={5}>
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader
@@ -99,7 +99,7 @@ const TooManyResults = () => {
 const TooManyResultsWithExactMatch = () => {
   return (
     <Tr>
-      <Td colSpan={4}>
+      <Td colSpan={5}>
         <Bullseye>
           <EmptyState variant={EmptyStateVariant.sm}>
             <EmptyStateHeader
