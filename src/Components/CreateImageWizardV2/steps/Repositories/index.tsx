@@ -31,8 +31,8 @@ const RepositoriesStep = () => {
         Custom repositories
       </Title>
       <Text>
-        Select from linked custom repositories from which to search and add
-        packages to this image.
+        Select the linked custom repositories from which you can add packages to
+        the image.
         <br />
         <ManageRepositoriesButton />
       </Text>

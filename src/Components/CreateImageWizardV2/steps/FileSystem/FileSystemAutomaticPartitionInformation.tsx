@@ -13,17 +13,10 @@ const FileSystemAutomaticPartition = () => {
     <TextContent>
       <Text component={TextVariants.h3}>Automatic partitioning</Text>
       <Text>
-        Red Hat will automatically partition your image to what is best,
-        depending on the target environment(s).
-      </Text>
-      <Text>
-        The target environment sometimes dictates the partitioning scheme or
-        parts of it, and sometimes the target environment is unknown (e.g., for
-        the .qcow2 generic cloud image).
-      </Text>
-      <Text>
-        Using automatic partitioning will apply the most current supported
-        configuration.
+        The system automatically partitions your image storage depending on the
+        target environment(s). The target environment sometimes dictates all or
+        part of the partitioning scheme. Automatic partitioning applies the most
+        current supported configuration layout.
         <br></br>
         <Button
           component="a"

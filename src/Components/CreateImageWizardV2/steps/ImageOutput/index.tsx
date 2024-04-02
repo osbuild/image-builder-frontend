@@ -21,8 +21,8 @@ const ImageOutputStep = () => {
         Image output
       </Title>
       <Text>
-        Image builder allows you to create a custom image and push it to target
-        environments.
+        Images enables you to create customized blueprints, create custom images
+        from the blueprints, and push them to target environments
         <br />
         <DocumentationButton />
       </Text>
