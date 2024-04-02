@@ -435,9 +435,8 @@ describe('Step Upload to AWS', () => {
     await enterBlueprintName();
     await clickNext();
 
-    await user.click(await screen.findByRole('button', { name: /Save/ }));
     await user.click(
-      await screen.findByRole('menuitem', { name: /Save changes/ })
+      await screen.findByRole('button', { name: /Save changes/ })
     );
 
     // returns back to the landing page

@@ -105,13 +105,9 @@ export const interceptBlueprintRequest = async (requestPathname: string) => {
   const receivedRequestPromise = spyOnRequest(requestPathname);
 
   const saveButton = await screen.findByRole('button', {
-    name: 'Save',
-  });
-  await userEvent.click(saveButton);
-  const saveChangesButton = await screen.findByRole('menuitem', {
     name: 'Save changes',
   });
-  await userEvent.click(saveChangesButton);
+  await userEvent.click(saveButton);
 
   return await receivedRequestPromise;
 };

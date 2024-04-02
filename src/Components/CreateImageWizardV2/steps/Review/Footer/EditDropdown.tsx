@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { DropdownList, DropdownItem } from '@patternfly/react-core';
+import {
+  DropdownList,
+  DropdownItem,
+  MenuToggleAction,
+  Spinner,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 
 import {
   CreateBlueprintRequest,
@@ -8,28 +15,21 @@ import {
   useUpdateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 
-type CreateDropdownProps = {
+type EditDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
 };
 
-const EditDropdown = ({
+export const EditSaveAndBuildBtn = ({
   getBlueprintPayload,
   setIsOpen,
   blueprintId,
-}: CreateDropdownProps) => {
+}: EditDropdownProps) => {
   const [buildBlueprint] = useComposeBlueprintMutation();
   const [updateBlueprint] = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
-
-  const onSave = async () => {
-    const requestBody = await getBlueprintPayload();
-    setIsOpen(false);
-    requestBody &&
-      updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });
-  };
 
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
@@ -44,9 +44,6 @@ const EditDropdown = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSave} ouiaId="wizard-edit-save-btn">
-        Save changes
-      </DropdownItem>
       <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-edit-build-btn">
         Save and build images
       </DropdownItem>
@@ -54,4 +51,36 @@ const EditDropdown = ({
   );
 };
 
-export default EditDropdown;
+export const EditSaveButton = ({
+  setIsOpen,
+  getBlueprintPayload,
+  blueprintId,
+}: EditDropdownProps) => {
+  const [updateBlueprint, { isLoading }] = useUpdateBlueprintMutation({
+    fixedCacheKey: 'updateBlueprintKey',
+  });
+  const onSave = async () => {
+    const requestBody = await getBlueprintPayload();
+    setIsOpen(false);
+    requestBody &&
+      updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });
+  };
+  return (
+    <MenuToggleAction onClick={onSave} id="wizard-edit-save-btn">
+      <Flex display={{ default: 'inlineFlex' }}>
+        {isLoading && (
+          <FlexItem>
+            <Spinner
+              style={
+                { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
+              }
+              isInline
+              size="md"
+            />
+          </FlexItem>
+        )}
+        <FlexItem>Save changes</FlexItem>
+      </Flex>
+    </MenuToggleAction>
+  );
+};
