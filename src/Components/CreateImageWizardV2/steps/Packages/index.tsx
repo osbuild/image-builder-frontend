@@ -10,9 +10,7 @@ const PackagesStep = () => {
       <Title headingLevel="h1" size="xl">
         Additional packages
       </Title>
-      <Text>
-        Images built with Image Builder include all required packages.
-      </Text>
+      <Text>Blueprints created with Images include all required packages.</Text>
       <Packages />
     </Form>
   );

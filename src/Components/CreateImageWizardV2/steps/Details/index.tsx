@@ -47,8 +47,9 @@ const DetailsStep = () => {
         Details
       </Title>
       <Text>
-        Optionally enter a name to identify your image later quickly. If you do
-        not provide one, the UUID will be used as the name.
+        Enter a name to identify your blueprint. If no name is entered, the
+        images created from this blueprint will use the name of the parent
+        blueprint.
       </Text>
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
         <ValidatedTextInput
@@ -58,7 +59,7 @@ const DetailsStep = () => {
           validator={isBlueprintNameValid}
           onChange={handleNameChange}
           helperText="Please enter a valid name"
-          placeholder="Blueprint name"
+          placeholder="Add blueprint name"
         />
         <FormHelperText>
           <HelperText>
