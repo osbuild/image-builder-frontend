@@ -8,6 +8,7 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Pagination,
+  PaginationVariant,
   SearchInput,
   ToggleGroup,
   ToggleGroupItem,
@@ -454,7 +455,7 @@ const Packages = () => {
         page={page}
         onSetPage={handleSetPage}
         onPerPageSelect={handlePerPageSelect}
-        isCompact
+        variant={PaginationVariant.bottom}
       />
     </>
   );
