@@ -8,13 +8,12 @@ import {
   WizardFooterWrapper,
   useWizardContext,
 } from '@patternfly/react-core';
-import { SpinnerIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import CreateDropdown from './CreateDropdown';
-import EditDropdown from './EditDropdown';
+import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
+import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import { useServerStore } from '../../../../../store/hooks';
 import {
@@ -26,25 +25,13 @@ import { mapRequestFromState } from '../../../utilities/requestMapper';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();
-  const [
-    ,
-    {
-      isLoading: isCreationLoading,
-      isSuccess: isCreateSuccess,
-      reset: resetCreate,
-    },
-  ] = useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
+  const [, { isSuccess: isCreateSuccess, reset: resetCreate }] =
+    useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
 
   // initialize the server store with the data from RTK query
   const serverStore = useServerStore();
-  const [
-    ,
-    {
-      isLoading: isUpdateLoading,
-      isSuccess: isUpdateSuccess,
-      reset: resetUpdate,
-    },
-  ] = useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
+  const [, { isSuccess: isUpdateSuccess, reset: resetUpdate }] =
+    useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
@@ -69,8 +56,6 @@ const ReviewWizardFooter = () => {
     return requestBody;
   };
 
-  const isLoadingState = isCreationLoading || isUpdateLoading;
-
   return (
     <WizardFooterWrapper>
       <div data-testid="wizard-save-button-div">
@@ -83,7 +68,25 @@ const ReviewWizardFooter = () => {
               ref={toggleRef}
               onClick={onToggleClick}
               isExpanded={isOpen}
-              icon={isLoadingState && <SpinnerIcon />}
+              splitButtonOptions={{
+                variant: 'action',
+                items: composeId
+                  ? [
+                      <EditSaveButton
+                        key="wizard-edit-save-btn"
+                        getBlueprintPayload={getBlueprintPayload}
+                        setIsOpen={setIsOpen}
+                        blueprintId={composeId}
+                      />,
+                    ]
+                  : [
+                      <CreateSaveButton
+                        key="wizard-create-save-btn"
+                        getBlueprintPayload={getBlueprintPayload}
+                        setIsOpen={setIsOpen}
+                      />,
+                    ],
+              }}
             >
               Save
             </MenuToggle>
@@ -92,13 +95,13 @@ const ReviewWizardFooter = () => {
           shouldFocusToggleOnSelect
         >
           {composeId ? (
-            <EditDropdown
+            <EditSaveAndBuildBtn
               getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               blueprintId={composeId}
             />
           ) : (
-            <CreateDropdown
+            <CreateSaveAndBuildBtn
               getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
             />

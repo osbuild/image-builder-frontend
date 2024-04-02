@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { DropdownList, DropdownItem } from '@patternfly/react-core';
+import {
+  DropdownList,
+  DropdownItem,
+  MenuToggleAction,
+  Spinner,
+  Flex,
+  FlexItem,
+} from '@patternfly/react-core';
 
 import {
   CreateBlueprintRequest,
@@ -13,7 +20,7 @@ type CreateDropdownProps = {
   setIsOpen: (isOpen: boolean) => void;
 };
 
-const CreateDropdown = ({
+export const CreateSaveAndBuildBtn = ({
   getBlueprintPayload,
   setIsOpen,
 }: CreateDropdownProps) => {
@@ -21,12 +28,6 @@ const CreateDropdown = ({
   const [createBlueprint] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
-
-  const onSave = async () => {
-    const requestBody = await getBlueprintPayload();
-    setIsOpen(false);
-    requestBody && createBlueprint({ createBlueprintRequest: requestBody });
-  };
 
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
@@ -41,9 +42,6 @@ const CreateDropdown = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSave} ouiaId="wizard-create-save-btn">
-        Save changes
-      </DropdownItem>
       <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-create-build-btn">
         Save and build images
       </DropdownItem>
@@ -51,4 +49,34 @@ const CreateDropdown = ({
   );
 };
 
-export default CreateDropdown;
+export const CreateSaveButton = ({
+  setIsOpen,
+  getBlueprintPayload,
+}: CreateDropdownProps) => {
+  const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
+    fixedCacheKey: 'createBlueprintKey',
+  });
+  const onSave = async () => {
+    const requestBody = await getBlueprintPayload();
+    setIsOpen(false);
+    requestBody && createBlueprint({ createBlueprintRequest: requestBody });
+  };
+  return (
+    <MenuToggleAction onClick={onSave} id="wizard-create-save-btn">
+      <Flex display={{ default: 'inlineFlex' }}>
+        {isLoading && (
+          <FlexItem>
+            <Spinner
+              style={
+                { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
+              }
+              isInline
+              size="md"
+            />
+          </FlexItem>
+        )}
+        <FlexItem>Save changes</FlexItem>
+      </Flex>
+    </MenuToggleAction>
+  );
+};
