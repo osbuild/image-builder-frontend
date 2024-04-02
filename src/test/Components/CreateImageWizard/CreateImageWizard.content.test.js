@@ -1016,7 +1016,7 @@ describe('Step Custom repositories', () => {
     const firstRepoCheckbox = await getFirstRepoCheckbox();
 
     const getNextPageButton = async () =>
-      await screen.findByRole('button', {
+      await screen.findAllByRole('button', {
         name: /go to next page/i,
       });
 
@@ -1026,7 +1026,7 @@ describe('Step Custom repositories', () => {
     await user.click(firstRepoCheckbox);
     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await user.click(nextPageButton);
+    await user.click(nextPageButton[0]);
 
     const getSelectedButton = async () =>
       await screen.findByRole('button', {

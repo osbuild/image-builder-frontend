@@ -23,6 +23,7 @@ import {
   EmptyStateFooter,
   ToggleGroup,
   ToggleGroupItem,
+  PaginationVariant,
 } from '@patternfly/react-core';
 import {
   Dropdown,
@@ -427,7 +428,6 @@ const Repositories = (props) => {
                     perPage={perPage}
                     page={page}
                     onSetPage={handleSetPage}
-                    widgetId="compact-example"
                     onPerPageSelect={handlePerPageSelect}
                     isCompact
                   />
@@ -522,6 +522,14 @@ const Repositories = (props) => {
                 </Table>
               </PanelMain>
             </Panel>
+            <Pagination
+              itemCount={filteredRepositoryURLs.length}
+              perPage={perPage}
+              page={page}
+              onSetPage={handleSetPage}
+              onPerPageSelect={handlePerPageSelect}
+              variant={PaginationVariant.bottom}
+            />
           </>
         )}
       </>
