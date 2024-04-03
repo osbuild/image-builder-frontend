@@ -144,9 +144,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       payloadRepositories: request.customizations.payload_repositories || [],
     },
     registration: {
-      registrationType: request.customizations?.subscription?.rhc
-        ? 'register-now-rhc'
-        : 'register-now-insights',
+      registrationType: request.customizations?.subscription
+        ? request.customizations.subscription.rhc
+          ? 'register-now-rhc'
+          : 'register-now-insights'
+        : 'register-later',
       activationKey: request.customizations.subscription?.['activation-key'],
     },
     packages:
