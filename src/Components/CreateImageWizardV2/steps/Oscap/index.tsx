@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Button, Form, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -10,9 +10,14 @@ import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 
 const OscapStep = () => {
-  const prefetchOscapProfile = imageBuilderApi.usePrefetch('getOscapProfiles');
+  const prefetchOscapProfile = imageBuilderApi.usePrefetch(
+    'getOscapProfiles',
+    {}
+  );
   const release = useAppSelector(selectDistribution);
-  prefetchOscapProfile({ distribution: release });
+  useEffect(() => {
+    prefetchOscapProfile({ distribution: release });
+  }, []);
 
   return (
     <Form>
