@@ -104,22 +104,22 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
-        <ToolbarContent>
-          <ToolbarItem>
-            <BuildImagesButton />
-          </ToolbarItem>
-          <ToolbarItem>
-            <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
-          </ToolbarItem>
-          {selectedBlueprintId && (
+        {selectedBlueprintId && (
+          <ToolbarContent>
+            <ToolbarItem>
+              <BuildImagesButton />
+            </ToolbarItem>
+            <ToolbarItem>
+              <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
+            </ToolbarItem>
             <ToolbarItem>
               <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
             </ToolbarItem>
-          )}
-          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-            {pagination}
-          </ToolbarItem>
-        </ToolbarContent>
+            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+              {pagination}
+            </ToolbarItem>
+          </ToolbarContent>
+        )}
       </Toolbar>
     </>
   );
