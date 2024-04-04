@@ -9,6 +9,8 @@ import {
   EmptyStateFooter,
   EmptyStateHeader,
   EmptyStateIcon,
+  Flex,
+  FlexItem,
   SearchInput,
   Spinner,
   Stack,
@@ -100,14 +102,18 @@ const BlueprintsSidebar = () => {
               <BlueprintSearch blueprintsTotal={blueprintsTotal} />
             </StackItem>
             <StackItem>
-              <Button
-                ouiaId={`clear-selected-blueprint-button`}
-                variant="link"
-                isDisabled={!selectedBlueprintId}
-                onClick={() => dispatch(setBlueprintId(undefined))}
-              >
-                Clear selection
-              </Button>
+              <Flex justifyContent={{ default: 'justifyContentCenter' }}>
+                <FlexItem>
+                  <Button
+                    ouiaId={`clear-selected-blueprint-button`}
+                    variant="link"
+                    isDisabled={!selectedBlueprintId}
+                    onClick={() => dispatch(setBlueprintId(undefined))}
+                  >
+                    View all
+                  </Button>
+                </FlexItem>
+              </Flex>
             </StackItem>
           </>
         )}
