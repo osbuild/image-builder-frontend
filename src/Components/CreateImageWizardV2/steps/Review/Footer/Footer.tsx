@@ -16,6 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import CreateDropdown from './CreateDropdown';
 import EditDropdown from './EditDropdown';
 
+import { useServerStore } from '../../../../../store/hooks';
 import {
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
@@ -33,6 +34,9 @@ const ReviewWizardFooter = () => {
       reset: resetCreate,
     },
   ] = useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
+
+  // initialize the server store with the data from RTK query
+  const serverStore = useServerStore();
   const [
     ,
     {
@@ -61,7 +65,7 @@ const ReviewWizardFooter = () => {
   const getBlueprintPayload = async () => {
     const userData = await auth?.getUser();
     const orgId = userData?.identity?.internal?.org_id;
-    const requestBody = orgId && mapRequestFromState(store, orgId);
+    const requestBody = orgId && mapRequestFromState(store, orgId, serverStore);
     return requestBody;
   };
 

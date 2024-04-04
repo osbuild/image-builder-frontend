@@ -7,9 +7,12 @@ import {
   BlueprintResponse,
   CreateBlueprintRequest,
   Customizations,
+  DistributionProfileItem,
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
+  OpenScap,
+  Services,
   Subscription,
   UploadTypes,
 } from '../../../store/imageBuilderApi';
@@ -36,6 +39,7 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
+  selectProfile,
   selectRegistrationType,
   selectServerUrl,
   wizardState,
@@ -46,18 +50,26 @@ import {
 } from '../steps/Repositories/Repositories';
 import { GcpAccountType } from '../steps/TargetEnvironment/Gcp';
 
+type ServerStore = {
+  kernel?: { append?: string };
+  services?: { enabled?: string[]; disabled?: string[] };
+};
+
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object
+ * @param {Store} store redux store
  * @param {string} orgID organization ID
+ *
  * @returns {CreateBlueprintRequest} blueprint creation request payload
  */
 export const mapRequestFromState = (
   store: Store,
-  orgID: string
+  orgID: string,
+  serverStore: ServerStore
 ): CreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
-  const customizations = getCustomizations(state, orgID);
+  const customizations = getCustomizations(state, orgID, serverStore);
 
   return {
     name: selectBlueprintName(state),
@@ -102,16 +114,9 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
     },
-    // TODO: add openscap support
     openScap: {
-      profile: undefined,
-      kernel: {
-        kernelAppend: '',
-      },
-      services: {
-        disabled: [],
-        enabled: [],
-      },
+      profile: request.customizations.openscap
+        ?.profile_id as DistributionProfileItem,
     },
     fileSystem: {
       mode: 'automatic',
@@ -258,7 +263,11 @@ const getImageOptions = (
   return {};
 };
 
-const getCustomizations = (state: RootState, orgID: string): Customizations => {
+const getCustomizations = (
+  state: RootState,
+  orgID: string,
+  serverStore: ServerStore
+): Customizations => {
   return {
     containers: undefined,
     directories: undefined,
@@ -267,12 +276,14 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
-    openscap: undefined,
+    openscap: getOpenscapProfile(state),
     filesystem: undefined,
     users: undefined,
-    services: undefined,
+    services: getServices(serverStore),
     hostname: undefined,
-    kernel: undefined,
+    kernel: serverStore.kernel?.append
+      ? { append: serverStore.kernel?.append }
+      : undefined,
     groups: undefined,
     timezone: undefined,
     locale: undefined,
@@ -283,6 +294,27 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     partitioning_mode: undefined,
     fips: undefined,
   };
+};
+
+const getServices = (serverStore: ServerStore): Services | undefined => {
+  const enabledServices = serverStore.services?.enabled;
+  const disabledServices = serverStore.services?.disabled;
+
+  if (enabledServices || disabledServices) {
+    return {
+      enabled: enabledServices,
+      disabled: disabledServices,
+    };
+  }
+  return undefined;
+};
+
+const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
+  const profile = selectProfile(state);
+  if (profile) {
+    return { profile_id: profile };
+  }
+  return undefined;
 };
 
 const getPackages = (state: RootState) => {

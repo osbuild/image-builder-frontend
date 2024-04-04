@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import {
   Alert,
   FormGroup,
-  Spinner,
   Popover,
   TextContent,
   Text,
@@ -26,14 +25,8 @@ import {
 } from '../../../../store/imageBuilderApi';
 import {
   changeOscapProfile,
-  changeKernel,
   selectDistribution,
   selectProfile,
-  selectKernel,
-  selectDisabledServices,
-  selectEnabledServices,
-  changeDisabledServices,
-  changeEnabledServices,
   clearOscapPackages,
   addPackage,
   selectPackages,
@@ -42,13 +35,10 @@ import {
 
 const ProfileSelector = () => {
   const oscapProfile = useAppSelector(selectProfile);
-  let kernel = useAppSelector(selectKernel);
-  let disabledServices = useAppSelector(selectDisabledServices);
-  let enabledServices = useAppSelector(selectEnabledServices);
+
   const release = useAppSelector(selectDistribution);
   const packages = useAppSelector(selectPackages);
   const dispatch = useAppDispatch();
-  const [profileName, setProfileName] = useState<string | undefined>('None');
   const [isOpen, setIsOpen] = useState(false);
   const {
     data: profiles,
@@ -60,7 +50,7 @@ const ProfileSelector = () => {
     distribution: release,
   });
 
-  const { data } = useGetOscapCustomizationsQuery(
+  const { data: oscapData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
       // @ts-ignore if oscapProfile is undefined the query is going to get skipped, so it's safe here to ignore the linter here
@@ -70,55 +60,28 @@ const ProfileSelector = () => {
       skip: !oscapProfile,
     }
   );
-  kernel = data?.kernel?.append;
-  disabledServices = data?.services?.disabled;
-  enabledServices = data?.services?.enabled;
-
-  useEffect(() => {
-    if (isFetching || !isSuccess) return;
-    dispatch(changeKernel(kernel));
-    dispatch(changeDisabledServices(disabledServices));
-    dispatch(changeEnabledServices(enabledServices));
-  }, [
-    isFetching,
-    isSuccess,
-    dispatch,
-    data?.kernel?.append,
-    data?.services?.disabled,
-    data?.services?.enabled,
-    disabledServices,
-    enabledServices,
-    kernel,
-  ]);
-
-  useEffect(() => {
-    if (
-      data &&
-      data.openscap &&
-      typeof data.openscap.profile_name === 'string'
-    ) {
-      setProfileName(data.openscap.profile_name);
-    }
-  }, [data]);
+  const profileName = oscapProfile ? oscapData?.openscap?.profile_name : 'None';
 
   useEffect(() => {
     dispatch(clearOscapPackages());
-    for (const pkg in data?.packages) {
+    for (const pkg in oscapData?.packages) {
       if (
-        packages.map((pkg) => pkg.name).includes(data?.packages[Number(pkg)])
+        packages
+          .map((pkg) => pkg.name)
+          .includes(oscapData?.packages[Number(pkg)])
       ) {
-        dispatch(removePackage(data?.packages[Number(pkg)]));
+        dispatch(removePackage(oscapData?.packages[Number(pkg)]));
       }
       dispatch(
         addPackage({
-          name: data?.packages[Number(pkg)],
+          name: oscapData?.packages[Number(pkg)],
           summary: 'Required by chosen OpenSCAP profile',
           repository: 'distro',
           isRequiredByOpenScap: true,
         })
       );
     }
-  }, [data?.packages, dispatch]);
+  }, [oscapData?.packages, dispatch]);
 
   const handleToggle = () => {
     if (!isOpen) {
@@ -129,52 +92,26 @@ const ProfileSelector = () => {
 
   const handleClear = () => {
     dispatch(changeOscapProfile(undefined));
-    dispatch(changeKernel(undefined));
-    dispatch(changeDisabledServices(undefined));
-    dispatch(changeEnabledServices(undefined));
     dispatch(clearOscapPackages());
-    setProfileName(undefined);
   };
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    selection: DistributionProfileItem
+    selection: OScapSelectOptionValueType
   ) => {
-    dispatch(changeOscapProfile(selection));
-    dispatch(changeKernel(kernel));
-    dispatch(changeDisabledServices(disabledServices));
-    dispatch(changeEnabledServices(enabledServices));
+    dispatch(changeOscapProfile(selection.id));
     setIsOpen(false);
   };
 
-  const options = [
-    <OScapNoneOption setProfileName={setProfileName} key="oscap-none-option" />,
-  ];
-  if (isSuccess) {
-    options.concat(
-      profiles.map((profile_id) => {
-        return (
-          <OScapSelectOption
-            key={profile_id}
-            profile_id={profile_id}
-            setProfileName={setProfileName}
-          />
-        );
-      })
-    );
-  }
-
-  if (isFetching) {
-    options.push(
-      <SelectOption
-        isNoResultsOption={true}
-        data-testid="policies-loading"
-        key={'None'}
-      >
-        <Spinner size="md" />
-      </SelectOption>
-    );
-  }
+  const options = () => {
+    if (profiles) {
+      return [<OScapNoneOption key="oscap-none-option" />].concat(
+        profiles.map((profile_id, index) => {
+          return <OScapSelectOption key={index} profile_id={profile_id} />;
+        })
+      );
+    }
+  };
 
   return (
     <FormGroup
@@ -203,11 +140,13 @@ const ProfileSelector = () => {
       }
     >
       <Select
+        loadingVariant={isFetching ? 'spinner' : undefined}
         ouiaId="profileSelect"
         variant={SelectVariant.typeahead}
         onToggle={handleToggle}
         onSelect={handleSelect}
         onClear={handleClear}
+        maxHeight="300px"
         selections={profileName}
         isOpen={isOpen}
         placeholderText="Select a profile"
@@ -215,19 +154,13 @@ const ProfileSelector = () => {
         isDisabled={!isSuccess}
         onFilter={(_event, value) => {
           if (profiles) {
-            return [
-              <OScapNoneOption
-                setProfileName={setProfileName}
-                key="oscap-none-option"
-              />,
-            ].concat(
+            return [<OScapNoneOption key="oscap-none-option" />].concat(
               profiles.map((profile_id, index) => {
                 return (
                   <OScapSelectOption
                     key={index}
                     profile_id={profile_id}
-                    setProfileName={setProfileName}
-                    input={value}
+                    filter={value}
                   />
                 );
               })
@@ -235,7 +168,7 @@ const ProfileSelector = () => {
           }
         }}
       >
-        {options}
+        {options()}
       </Select>
       {isError && (
         <Alert
@@ -251,59 +184,51 @@ const ProfileSelector = () => {
   );
 };
 
-type OScapNoneOptionPropType = {
-  setProfileName: (name: string) => void;
-};
-
-const OScapNoneOption = ({ setProfileName }: OScapNoneOptionPropType) => {
+const OScapNoneOption = () => {
   return (
-    <SelectOption
-      value={undefined}
-      onClick={() => {
-        setProfileName('None');
-      }}
-    >
-      <p>{'None'}</p>
-    </SelectOption>
+    <SelectOption value={{ toString: () => 'None', compareTo: () => false }} />
   );
 };
 
 type OScapSelectOptionPropType = {
   profile_id: DistributionProfileItem;
-  setProfileName: (name: string) => void;
-  input?: string;
+  filter?: string;
+};
+
+type OScapSelectOptionValueType = {
+  id: DistributionProfileItem;
+  toString: () => string;
 };
 
 const OScapSelectOption = ({
   profile_id,
-  setProfileName,
-  input,
+  filter,
 }: OScapSelectOptionPropType) => {
   const release = useAppSelector(selectDistribution);
   const { data } = useGetOscapCustomizationsQuery({
     distribution: release,
     profile: profile_id,
   });
-
   if (
-    input &&
-    !data?.openscap?.profile_name?.toLowerCase().includes(input.toLowerCase())
+    filter &&
+    !data?.openscap?.profile_name?.toLowerCase().includes(filter.toLowerCase())
   ) {
     return null;
   }
+  const selectObject = (
+    id: DistributionProfileItem,
+    name?: string
+  ): OScapSelectOptionValueType => ({
+    id,
+    toString: () => name || '',
+  });
 
   return (
     <SelectOption
       key={profile_id}
-      value={profile_id}
-      onClick={() => {
-        if (data?.openscap?.profile_name) {
-          setProfileName(data?.openscap?.profile_name);
-        }
-      }}
-    >
-      <p>{data?.openscap?.profile_name}</p>
-    </SelectOption>
+      value={selectObject(profile_id, data?.openscap?.profile_name)}
+      description={data?.openscap?.profile_description}
+    />
   );
 };
 
