@@ -15,7 +15,11 @@ const { config: webpackConfig, plugins } = config({
   bounceProd: false,
   proxyVerbose: true,
   routes: {
-    '/api/image-builder/v1': { host: 'http://localhost:8086' },
+    '/api/image-builder/v1': {
+      host: `http://${process.env.BACKEND_HOSTNAME ?? 'localhost'}:${
+        process.env.BACKEND_PORT ?? '8086'
+      }`,
+    },
   },
 });
 
