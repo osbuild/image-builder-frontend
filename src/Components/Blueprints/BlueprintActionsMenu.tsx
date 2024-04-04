@@ -13,7 +13,12 @@ import { useNavigate } from 'react-router-dom';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
+import {
+  BlueprintResponse,
+  useLazyGetBlueprintQuery,
+} from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
+import BetaLabel from '../sharedComponents/BetaLabel';
 
 interface BlueprintActionsMenuProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -27,10 +32,21 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const onSelect = () => {
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
-  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const navigate = useNavigate();
   const importExportFlag = useFlag('image-builder.import.enabled');
 
+  const [trigger] = useLazyGetBlueprintQuery();
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
+  if (selectedBlueprintId === undefined) {
+    return null;
+  }
+  const handleClick = () => {
+    trigger({ id: selectedBlueprintId })
+      .unwrap()
+      .then((response: BlueprintResponse) => {
+        handleExportBlueprint(response.name, response);
+      });
+  };
   return (
     <Dropdown
       ouiaId={`blueprints-dropdown`}
@@ -63,7 +79,9 @@ export const BlueprintActionsMenu: React.FunctionComponent<
           Edit details
         </DropdownItem>
         {importExportFlag && (
-          <DropdownItem>Download blueprint (.json)</DropdownItem>
+          <DropdownItem onClick={handleClick}>
+            Download blueprint (.json) <BetaLabel />
+          </DropdownItem>
         )}
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
@@ -72,3 +90,18 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     </Dropdown>
   );
 };
+
+async function handleExportBlueprint(
+  blueprintName: string,
+  blueprint: BlueprintResponse
+) {
+  const jsonData = JSON.stringify(blueprint, null, 2);
+  const blob = new Blob([jsonData], { type: 'application/json' });
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = blueprintName.replace(/\s/g, '_').toLowerCase() + '.json';
+  link.click();
+  URL.revokeObjectURL(url);
+}
