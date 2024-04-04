@@ -6,7 +6,7 @@ const config: ConfigFile = {
   apiImport: 'emptyImageBuilderApi',
   outputFile: '../../src/store/imageBuilderApi.ts',
   exportName: 'imageBuilderApi',
-  hooks: true,
+  hooks: { queries: true, lazyQueries: true, mutations: true },
   filterEndpoints: [
     'cloneCompose',
     'composeImage',
