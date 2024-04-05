@@ -614,8 +614,7 @@ const CreateImageWizard = () => {
 
   // Only allow oscap to be used in Beta even if the flag says the feature is
   // activated.
-  const oscapFeatureFlag =
-    useFlag('image-builder.wizard.oscap.enabled') && isBeta();
+  const oscapFeatureFlag = useFlag('image-builder.wizard.oscap.enabled');
   let initialState = requestToState(composeRequest, isProd(), oscapFeatureFlag);
   const stepHistory = formStepHistory(
     composeRequest,
