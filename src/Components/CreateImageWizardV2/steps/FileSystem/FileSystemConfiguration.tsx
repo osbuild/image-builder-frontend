@@ -158,7 +158,7 @@ const FileSystemConfiguration = () => {
       <FileSystemTable />
       <TextContent>
         <Button
-          ouiaId="add-partition"
+          ouiaId="add-partition-button"
           data-testid="file-system-add-partition"
           className="pf-u-text-align-left"
           variant="link"
@@ -248,7 +248,7 @@ export const Row = ({
           variant="link"
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          data-testid="remove-mount-point"
+          ouiaId="remove-mount-point"
           isDisabled={partition.mountpoint === '/'}
         />
       </Td>
@@ -329,6 +329,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
         );
       }}
       aria-label="text input example"
+      ouiaId="mount-point-text-input"
     />
   );
 };
