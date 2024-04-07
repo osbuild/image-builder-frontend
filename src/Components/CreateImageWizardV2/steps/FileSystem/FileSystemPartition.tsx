@@ -19,6 +19,7 @@ const FileSystemPartition = () => {
     <FormGroup>
       <Radio
         id="automatic file system config radio"
+        ouiaId="automatic-configure-fsc-radio"
         label={
           <>
             <Label isCompact color="blue">
@@ -37,6 +38,7 @@ const FileSystemPartition = () => {
       />
       <Radio
         id="manual file system config radio"
+        ouiaId="manual-configure-fsc-radio"
         label="Manually configure partitions"
         name="fsc-radio-manual"
         description="Manually configure the file system of your image by adding, removing, and editing partitions"
