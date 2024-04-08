@@ -94,8 +94,6 @@ describe('Step Upload to Azure', () => {
 
   test('clicking Next loads Registration', async () => {
     await setUp();
-
-    // await user.click(await screen.findByTestId('azure-radio-manual'));
     await user.click(
       screen.getByText(/manually enter the account information\./i)
     );
@@ -146,7 +144,6 @@ describe('Step Upload to Azure', () => {
     await setUp();
     const nextButton = await getNextButton();
 
-    //  await user.click(await screen.findByTestId('azure-radio-manual'));
     await user.click(
       screen.getByText(/manually enter the account information\./i)
     );

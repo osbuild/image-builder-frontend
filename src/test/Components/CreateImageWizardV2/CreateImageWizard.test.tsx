@@ -16,12 +16,7 @@ import { enterBlueprintName } from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import {
-  //   IMAGE_BUILDER_API,
-  PROVISIONING_API,
-  //   RHEL_8,
-  RHSM_API,
-} from '../../../constants.js';
+import { PROVISIONING_API, RHSM_API } from '../../../constants.js';
 import { server } from '../../mocks/server.js';
 import {
   clickBack,
@@ -66,23 +61,6 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     getEnvironment: () => 'prod',
   }),
 }));
-
-// jest.mock('@unleash/proxy-client-react', () => ({
-//   useUnleashContext: () => jest.fn(),
-//   useFlag: jest.fn((flag) =>
-//     flag === 'image-builder.enable-content-sources' ? true : false
-//   ),
-// }));
-
-// const searchForAvailablePackages = async (searchbox, searchTerm) => {
-//   const user = userEvent.setup();
-//   await user.type(searchbox, searchTerm);
-//   await user.click(
-//     await screen.findByRole('button', {
-//       name: /search button for available packages/i,
-//     })
-//   );
-// };
 
 const switchToAWSManual = async () => {
   const user = userEvent.setup();
@@ -773,75 +751,70 @@ describe('Step Registration', () => {
 });
 
 describe('Step File system configuration', () => {
-  // const user = userEvent.setup();
-  // const setUp = async () => {
-  //   ({ router } = await renderCustomRoutesWithReduxRouter(
-  //     'imagewizard',
-  //     {},
-  //     routes
-  //   ));
-  //   // select aws as upload destination
-  //   await waitFor(
-  //     async () => await user.click(await screen.findByTestId('upload-aws'))
-  //   );
-  //   await clickNext();
-  //   // aws step
-  //   await switchToAWSManual();
-  //   await user.type(
-  //     screen.getByRole('textbox', {
-  //       name: /aws account id/i,
-  //     }),
-  //     '012345678901'
-  //   );
-  //   await clickNext();
-  //   // skip registration
-  //   await screen.findByRole('textbox', {
-  //     name: 'Select activation key',
-  //   });
-  //   const registerLaterRadio = await screen.findByTestId(
-  //     'registration-radio-later'
-  //   );
-  //   await user.click(registerLaterRadio);
-  //   await clickNext();
-  //   await clickNext();
-  // };
-  //test('Error validation occurs upon clicking next button', async () => {
-  //  await setUp();
-  //  const manuallyConfigurePartitions = await screen.findByText(
-  //    /manually configure partitions/i
-  //  );
-  //  await user.click(manuallyConfigurePartitions);
-  //  const addPartition = await screen.findByTestId('file-system-add-partition');
-  //  // Create duplicate partitions
-  //  await user.click(addPartition);
-  //  await user.click(addPartition);
-  //  expect(await getNextButton()).toBeDisabled();
-  //  // Clicking next causes errors to appear
-  //  await clickNext();
-  //  const mountPointWarning = await screen.findByRole('heading', {
-  //    name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
-  //    hidden: true,
-  //  });
-  //  const mountPointAlerts = screen.getAllByRole('heading', {
-  //    name: /danger alert: duplicate mount point\./i,
-  //  });
-  //  const tbody = await screen.findByTestId('file-system-configuration-tbody');
-  //  const rows = within(tbody).getAllByRole('row');
-  //  expect(rows).toHaveLength(3);
-  //  //Change mountpoint of final row to /var, resolving errors
-  //  const mountPointOptions = within(rows[2]).getAllByRole('button', {
-  //    name: 'Options menu',
-  //  })[0];
-  //  await user.click(mountPointOptions);
-  //  const varButton = await within(rows[2]).findByRole('option', {
-  //    name: '/var',
-  //  });
-  //  await user.click(varButton);
-  //  // await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
-  //  //  await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
-  //  //  await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
-  //  expect(await getNextButton()).toBeEnabled();
-  //});
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    // select aws as upload destination
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await clickNext();
+    // aws step
+    await switchToAWSManual();
+    await user.type(
+      screen.getByRole('textbox', {
+        name: /aws account id/i,
+      }),
+      '012345678901'
+    );
+    await clickNext();
+    // skip registration
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+    const registerLaterRadio = await screen.findByTestId(
+      'registration-radio-later'
+    );
+    await user.click(registerLaterRadio);
+    await clickNext();
+    await clickNext();
+  };
+  test('Error validation occurs upon clicking next button', async () => {
+    await setUp();
+    const manuallyConfigurePartitions = await screen.findByText(
+      /manually configure partitions/i
+    );
+    await user.click(manuallyConfigurePartitions);
+    const addPartition = await screen.findByTestId('file-system-add-partition');
+    // Create duplicate partitions
+    await user.click(addPartition);
+    await user.click(addPartition);
+    // Clicking next causes errors to appear
+    await clickNext();
+    expect(await getNextButton()).toBeDisabled();
+    const mountPointAlerts = screen.getAllByRole('heading', {
+      name: /danger alert: duplicate mount point\./i,
+    });
+    const tbody = await screen.findByTestId('file-system-configuration-tbody');
+    const rows = within(tbody).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+    //Change mountpoint of final row to /var, resolving errors
+    const mountPointOptions = within(rows[2]).getAllByRole('button', {
+      name: 'Options menu',
+    })[0];
+    await user.click(mountPointOptions);
+    const varButton = await within(rows[2]).findByRole('option', {
+      name: '/var',
+    });
+    await user.click(varButton);
+    await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
+    await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
+    expect(await getNextButton()).toBeEnabled();
+  });
 });
 
 describe('Step Details', () => {
@@ -1036,7 +1009,7 @@ describe('Step Review', () => {
   test('has 3 buttons', async () => {
     await setUp();
 
-    //await screen.findByRole('button', { name: /Create/ });
+    await screen.findByRole('button', { name: /Save/ });
     await screen.findByRole('button', { name: /Back/ });
     await screen.findByRole('button', { name: /Cancel/ });
   });
@@ -1053,7 +1026,6 @@ describe('Step Review', () => {
     await setUp();
     await verifyCancelButton(router);
   });
-  // });
 
   test('has Registration expandable section for rhel', async () => {
     await setUp();
