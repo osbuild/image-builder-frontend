@@ -361,11 +361,15 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
   const conversionFactor = getConversionFactor(units);
 
   const convertToDisplayUnits = (minSize: string) => {
-    return (parseInt(minSize) / conversionFactor).toString();
+    return minSize.length > 0
+      ? (parseInt(minSize) / conversionFactor).toString()
+      : '0';
   };
 
   const convertToBytes = (minSize: string) => {
-    return (parseInt(minSize) * conversionFactor).toString();
+    return minSize.length > 0
+      ? (parseInt(minSize) * conversionFactor).toString()
+      : '0';
   };
 
   const dispatch = useAppDispatch();
@@ -378,15 +382,17 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
       value={convertToDisplayUnits(partition.min_size)}
       type="text"
       onChange={(event, minSize) => {
-        dispatch(
-          changePartitionMinSize({
-            id: partition.id,
-            min_size: convertToBytes(minSize),
-          })
-        );
-        dispatch(
-          changePartitionUnit({ id: partition.id, unit: partition.unit })
-        );
+        if (minSize === '' || /^\d+$/.test(minSize)) {
+          dispatch(
+            changePartitionMinSize({
+              id: partition.id,
+              min_size: convertToBytes(minSize),
+            })
+          );
+          dispatch(
+            changePartitionUnit({ id: partition.id, unit: partition.unit })
+          );
+        }
       }}
     />
   );
