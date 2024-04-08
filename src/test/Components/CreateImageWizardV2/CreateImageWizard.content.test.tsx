@@ -365,10 +365,7 @@ describe('Step Custom repositories', () => {
     // skip OpenSCAP
     await clickNext();
     // skip fsc
-
     await clickNext();
-    //     // skip packages
-    //     await clickNext();
   };
 
   test('selected repositories stored in and retrieved from form state', async () => {
