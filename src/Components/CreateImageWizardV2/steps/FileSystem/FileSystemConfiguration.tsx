@@ -179,12 +179,17 @@ type RowPropTypes = {
   onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
+const normalizeSuffix = (rawSuffix: string) => {
+  const suffix = rawSuffix.replace(/^\/+/g, '')
+  return suffix.length > 0 ? '/' + suffix : ''
+};
+
 const getPrefix = (mountpoint: string) => {
   return mountpoint.split('/')[1] ? '/' + mountpoint.split('/')[1] : '/';
 };
 const getSuffix = (mountpoint: string) => {
   const prefix = getPrefix(mountpoint);
-  return mountpoint.substring(prefix.length);
+  return normalizeSuffix(mountpoint.substring(prefix.length));
 };
 
 export const Row = ({
@@ -284,7 +289,7 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
   const onSelect = (event: React.MouseEvent, selection: string) => {
     setIsOpen(false);
-    const mountpoint = selection + suffix;
+    const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
     dispatch(
       changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint })
     );
@@ -319,8 +324,8 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
     <TextInput
       value={suffix}
       type="text"
-      onChange={(event: React.FormEvent, suffix) => {
-        const mountpoint = prefix + suffix;
+      onChange={(event: React.FormEvent, newValue) => {
+        const mountpoint = prefix + normalizeSuffix(newValue);
         dispatch(
           changePartitionMountpoint({
             id: partition.id,
