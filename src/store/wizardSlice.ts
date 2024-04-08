@@ -371,6 +371,11 @@ export const wizardSlice = createSlice({
         1
       );
     },
+    changePartitionOrder: (state, action: PayloadAction<string[]>) => {
+      state.fileSystem.partitions = state.fileSystem.partitions.sort(
+        (a, b) => action.payload.indexOf(a.id) - action.payload.indexOf(b.id)
+      );
+    },
     changePartitionMountpoint: (
       state,
       action: PayloadAction<{ id: string; mountpoint: string }>
@@ -494,6 +499,7 @@ export const {
   changePartitionMountpoint,
   changePartitionUnit,
   changePartitionMinSize,
+  changePartitionOrder,
   changeCustomRepositories,
   changePayloadRepositories,
   addRecommendedRepository,
