@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
-  Popover,
   Text,
   TextContent,
   TextInput,
@@ -12,14 +11,12 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
-import {
-  HelpIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-} from '@patternfly/react-icons';
+import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { Td, Tr } from '@patternfly/react-table';
 import { v4 as uuidv4 } from 'uuid';
+
+import FileSystemTable from './FileSystemTable';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -158,47 +155,7 @@ const FileSystemConfiguration = () => {
           title="Filesystem customizations are not applied to 'Bare metal - Installer' images"
         />
       )}
-      <Table aria-label="File system table" variant="compact">
-        <Thead>
-          <Tr>
-            <Th />
-            <Th>Mount point</Th>
-            <Th></Th>
-            <Th>Type</Th>
-            <Th>
-              Minimum size
-              <Popover
-                hasAutoWidth
-                bodyContent={
-                  <TextContent>
-                    <Text>
-                      Image Builder may extend this size based on requirements,
-                      selected packages, and configurations.
-                    </Text>
-                  </TextContent>
-                }
-              >
-                <Button
-                  variant="plain"
-                  aria-label="File system configuration info"
-                  aria-describedby="file-system-configuration-info"
-                  className="pf-c-form__group-label-help"
-                >
-                  <HelpIcon />
-                </Button>
-              </Popover>
-            </Th>
-            <Th />
-            <Th />
-          </Tr>
-        </Thead>
-        <Tbody data-testid="file-system-configuration-tbody">
-          {partitions &&
-            partitions.map((partition) => (
-              <Row key={partition.id} partition={partition} />
-            ))}
-        </Tbody>
-      </Table>
+      <FileSystemTable />
       <TextContent>
         <Button
           ouiaId="add-partition"
@@ -217,6 +174,9 @@ const FileSystemConfiguration = () => {
 
 type RowPropTypes = {
   partition: Partition;
+  onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
+  onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
+  onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
 const getPrefix = (mountpoint: string) => {
@@ -227,7 +187,12 @@ const getSuffix = (mountpoint: string) => {
   return mountpoint.substring(prefix.length);
 };
 
-const Row = ({ partition }: RowPropTypes) => {
+export const Row = ({
+  partition,
+  onDragEnd,
+  onDragStart,
+  onDrop,
+}: RowPropTypes) => {
   const dispatch = useAppDispatch();
   const partitions = useAppSelector(selectPartitions);
   const handleRemovePartition = (id: string) => {
@@ -237,8 +202,18 @@ const Row = ({ partition }: RowPropTypes) => {
   const duplicates = getDuplicateMountPoints(partitions);
 
   return (
-    <Tr>
-      <Td />
+    <Tr
+      draggable
+      id={partition.id}
+      onDrop={onDrop}
+      onDragStart={onDragStart}
+      onDragEnd={onDragEnd}
+    >
+      <Td
+        draggableRow={{
+          id: `draggable-row-${partition.id}`,
+        }}
+      />
       <Td className="pf-m-width-20">
         <MountpointPrefix partition={partition} />
         {!isNextButtonPristine &&
