@@ -94,7 +94,6 @@ const FileSystemConfiguration = () => {
 
   const dispatch = useAppDispatch();
 
-  const isNextButtonPristine = useAppSelector(selectIsNextButtonTouched);
   const handleAddPartition = () => {
     const id = uuidv4();
     dispatch(
@@ -115,17 +114,6 @@ const FileSystemConfiguration = () => {
       {partitions?.find((partition) =>
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
-      {!isNextButtonPristine &&
-        getDuplicateMountPoints(partitions)?.length !== 0 &&
-        getDuplicateMountPoints(partitions)?.length !== undefined && (
-          <div>
-            <Alert
-              isInline
-              variant="warning"
-              title="Duplicate mount points: All mount points must be unique. Remove the duplicate or choose a new mount point."
-            />
-          </div>
-        )}
       <TextContent>
         <Text>
           Create partitions for your image by defining mount points and minimum
