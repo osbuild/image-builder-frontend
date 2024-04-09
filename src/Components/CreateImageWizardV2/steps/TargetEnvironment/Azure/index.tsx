@@ -95,7 +95,7 @@ const Azure = () => {
           id="radio-with-description"
           label="Use an account configured from Sources."
           name="radio-7"
-          description="Use a configured sources to launch environments directly from the console."
+          description="Use a configured source to launch environments directly from the console."
           isChecked={shareMethod === 'sources'}
           onChange={() => {
             dispatch(changeAzureSource(''));
