@@ -37,6 +37,7 @@ import { ValidatedTextInput } from '../../ValidatedTextInput';
 import {
   getDuplicateMountPoints,
   isFileSystemConfigValid,
+  isMountpointMinSizeValid,
 } from '../../validators';
 
 export type Partition = {
@@ -180,8 +181,8 @@ type RowPropTypes = {
 };
 
 const normalizeSuffix = (rawSuffix: string) => {
-  const suffix = rawSuffix.replace(/^\/+/g, '')
-  return suffix.length > 0 ? '/' + suffix : ''
+  const suffix = rawSuffix.replace(/^\/+/g, '');
+  return suffix.length > 0 ? '/' + suffix : '';
 };
 
 const getPrefix = (mountpoint: string) => {
@@ -377,8 +378,8 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
   return (
     <ValidatedTextInput
       ariaLabel="minimum partition size"
-      helperText=""
-      validator={() => true}
+      helperText="Must be larger than 0"
+      validator={isMountpointMinSizeValid}
       value={convertToDisplayUnits(partition.min_size)}
       type="text"
       onChange={(event, minSize) => {
