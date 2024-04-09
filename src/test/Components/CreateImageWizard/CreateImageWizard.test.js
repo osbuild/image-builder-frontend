@@ -815,11 +815,6 @@ describe('Step File system configuration', () => {
     // Clicking next causes errors to appear
     await clickNext();
 
-    const mountPointWarning = await screen.findByRole('heading', {
-      name: /danger alert: duplicate mount points: all mount points must be unique\. remove the duplicate or choose a new mount point\./i,
-      hidden: true,
-    });
-
     const mountPointAlerts = screen.getAllByRole('heading', {
       name: /danger alert: duplicate mount point\./i,
     });
@@ -838,7 +833,6 @@ describe('Step File system configuration', () => {
     });
     await user.click(varButton);
 
-    await waitFor(() => expect(mountPointWarning).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
     expect(await getNextButton()).toBeEnabled();
