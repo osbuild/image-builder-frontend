@@ -32,6 +32,10 @@ export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
   );
 };
 
+export const isMountpointMinSizeValid = (minSize: string) => {
+  return /^\d+$/.test(minSize) && parseInt(minSize) > 0;
+};
+
 export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&
