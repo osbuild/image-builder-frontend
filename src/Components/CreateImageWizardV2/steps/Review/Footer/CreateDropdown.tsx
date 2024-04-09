@@ -43,7 +43,7 @@ export const CreateSaveAndBuildBtn = ({
   return (
     <DropdownList>
       <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-create-build-btn">
-        Save and build images
+        Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
   );
@@ -75,7 +75,7 @@ export const CreateSaveButton = ({
             />
           </FlexItem>
         )}
-        <FlexItem>Save changes</FlexItem>
+        <FlexItem>Save changes to blueprint</FlexItem>
       </Flex>
     </MenuToggleAction>
   );
