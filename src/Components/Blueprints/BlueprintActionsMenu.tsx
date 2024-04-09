@@ -8,6 +8,7 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
@@ -28,6 +29,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   };
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const navigate = useNavigate();
+  const importExportFlag = useFlag('image-builder.import.enabled');
 
   return (
     <Dropdown
@@ -60,7 +62,9 @@ export const BlueprintActionsMenu: React.FunctionComponent<
         >
           Edit details
         </DropdownItem>
-        <DropdownItem>Download blueprint (.json)</DropdownItem>
+        {importExportFlag && (
+          <DropdownItem>Download blueprint (.json)</DropdownItem>
+        )}
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
         </DropdownItem>

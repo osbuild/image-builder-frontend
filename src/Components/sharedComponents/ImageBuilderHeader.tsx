@@ -21,6 +21,7 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Link } from 'react-router-dom';
 
 import { resolveRelPath } from '../../Utilities/path';
@@ -34,13 +35,16 @@ type ImageBuilderHeaderPropTypes = {
 export const ImageBuilderHeader = ({
   experimentalFlag,
 }: ImageBuilderHeaderPropTypes) => {
+  const importExportFlag = useFlag('image-builder.import.enabled');
   const [showImportModal, setShowImportModal] = useState(false);
   return (
     <>
-      <ImportBlueprintModal
-        setShowImportModal={setShowImportModal}
-        isOpen={showImportModal}
-      />
+      {importExportFlag && (
+        <ImportBlueprintModal
+          setShowImportModal={setShowImportModal}
+          isOpen={showImportModal}
+        />
+      )}
       <PageHeader data-testid="image-builder-header">
         <Flex>
           <FlexItem>
@@ -116,14 +120,16 @@ export const ImageBuilderHeader = ({
                 </Link>
               </FlexItem>
               <FlexItem>
-                <Button
-                  variant="secondary"
-                  icon={<ImportIcon />}
-                  iconPosition="end"
-                  onClick={() => setShowImportModal(true)}
-                >
-                  Import{' '}
-                </Button>
+                {importExportFlag && (
+                  <Button
+                    variant="secondary"
+                    icon={<ImportIcon />}
+                    iconPosition="end"
+                    onClick={() => setShowImportModal(true)}
+                  >
+                    Import{' '}
+                  </Button>
+                )}
               </FlexItem>
             </>
           )}
