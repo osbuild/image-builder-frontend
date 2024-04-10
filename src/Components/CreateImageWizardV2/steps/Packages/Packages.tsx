@@ -592,7 +592,37 @@ const Packages = () => {
           <Tr>
             <Th />
             <Th width={20}>Package name</Th>
-            <Th width={35}>Description</Th>
+            <Th width={35}>
+              Description
+              {toggleSelected === 'toggle-selected' && (
+                <Popover
+                  headerContent="Package description"
+                  bodyContent={
+                    <TextContent>
+                      <Text>
+                        The package description provides more information about
+                        the package.
+                      </Text>
+                      <Text>
+                        When editing an existing blueprint, you may see a
+                        &quot;Not available&quot; value in the field because
+                        information about previously added packages can not be
+                        fetched.
+                      </Text>
+                    </TextContent>
+                  }
+                >
+                  <Button
+                    variant="plain"
+                    aria-label="Package description"
+                    className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                    size="sm"
+                  >
+                    <HelpIcon />
+                  </Button>
+                </Popover>
+              )}
+            </Th>
             <Th width={25}>Package repository</Th>
             <Th width={20}>Support</Th>
           </Tr>
@@ -625,7 +655,13 @@ const Packages = () => {
                     }}
                   />
                   <Td>{pkg.name}</Td>
-                  <Td>{pkg.summary}</Td>
+                  <Td>
+                    {pkg.summary ? (
+                      pkg.summary
+                    ) : (
+                      <span className="not-available">Not available</span>
+                    )}
+                  </Td>
                   {pkg.repository === 'distro' ? (
                     <>
                       <Td>
@@ -646,16 +682,21 @@ const Packages = () => {
                       <Td>Third party repository</Td>
                       <Td>Not supported</Td>
                     </>
-                  ) : (
+                  ) : pkg.repository === 'recommended' ? (
                     <>
                       <Td>
                         <Icon status="warning">
                           <OptimizeIcon />
                         </Icon>{' '}
-                        EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything
-                        x86_64
+                        EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                        Everything x86_64
                       </Td>
                       <Td>Not supported</Td>
+                    </>
+                  ) : (
+                    <>
+                      <Td className="not-available">Not available</Td>
+                      <Td className="not-available">Not available</Td>
                     </>
                   )}
                 </Tr>
