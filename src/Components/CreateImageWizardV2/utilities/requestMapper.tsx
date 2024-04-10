@@ -307,7 +307,7 @@ const getServices = (serverStore: ServerStore): Services | undefined => {
   if (enabledServices || disabledServices) {
     return {
       enabled: enabledServices,
-      disabled: disabledServices,
+      masked: disabledServices,
     };
   }
   return undefined;
