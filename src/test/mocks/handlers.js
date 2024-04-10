@@ -153,10 +153,12 @@ export const handlers = [
       return res(ctx.status(200));
     }
   ),
-  rest.post(CREATE_BLUEPRINT, (req, res, ctx) => {
+  rest.post(CREATE_BLUEPRINT, async (req, res, ctx) => {
     const response = {
       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     };
+    const requestBody = await req.json();
+    global.requestBodyForTest = requestBody;
     return res(ctx.status(201), ctx.json(response));
   }),
   rest.get(

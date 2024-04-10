@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Step Upload to AWS compose request share_with_sources field is correct 1`] = `
+{
+  "customizations": {},
+  "description": "",
+  "distribution": "rhel-93",
+  "image_requests": [
+    {
+      "architecture": "x86_64",
+      "image_type": "aws",
+      "upload_request": {
+        "options": {
+          "share_with_sources": [
+            "123",
+          ],
+        },
+        "type": "aws",
+      },
+    },
+  ],
+  "name": "Red Velvet",
+}
+`;

@@ -111,3 +111,17 @@ export const interceptBlueprintRequest = async (requestPathname: string) => {
 
   return await receivedRequestPromise;
 };
+
+declare global {
+  interface Global {
+    requestBodyForTest: CreateBlueprintRequest | undefined;
+  }
+}
+
+
+export const createBlueprintCreationSnapshot = async () => {
+  // @ts-ignore
+  expect(global.requestBodyForTest).toBeDefined();
+ // @ts-ignore
+  expect(global.requestBodyForTest).toMatchSnapshot();
+};

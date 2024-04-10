@@ -12,7 +12,10 @@ import {
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import { enterBlueprintName } from './wizardTestUtils';
+import {
+  createBlueprintCreationSnapshot,
+  enterBlueprintName,
+} from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
@@ -438,7 +441,7 @@ describe('Step Upload to AWS', () => {
     await user.click(
       await screen.findByRole('button', { name: /Save changes to blueprint/ })
     );
-
+    createBlueprintCreationSnapshot();
     // returns back to the landing page
     await waitFor(() =>
       expect(router?.state.location.pathname).toBe('/insights/image-builder')
