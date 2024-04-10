@@ -250,7 +250,7 @@ const Packages = () => {
                   component="a"
                   target="_blank"
                   href={
-                    isBeta() ? '/preview/settings/content' : '/settings/content'
+                    isBeta() ? '/preview/insights/content' : '/insights/content'
                   }
                 >
                   your repositories
@@ -263,8 +263,8 @@ const Packages = () => {
                   target="_blank"
                   href={
                     isBeta()
-                      ? '/preview/settings/content/popular-repositories'
-                      : '/settings/content/popular-repositories'
+                      ? '/preview/insights/content/popular-repositories'
+                      : '/insights/content/popular-repositories'
                   }
                 >
                   popular repositories
