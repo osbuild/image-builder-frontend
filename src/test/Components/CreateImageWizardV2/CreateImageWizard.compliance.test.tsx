@@ -176,7 +176,7 @@ describe('Step Compliance', () => {
     await screen.findByRole('heading', {
       name: /Additional packages/i,
     });
-    await user.click(await screen.findByText('Selected'));
+    await user.click(await screen.findByText(/Selected/));
     await screen.findByText(/nftables/i);
     await screen.findByText(/libselinux/i);
   });

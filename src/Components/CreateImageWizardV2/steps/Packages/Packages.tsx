@@ -498,7 +498,9 @@ const Packages = () => {
                 onChange={handleFilterToggleClick}
               />
               <ToggleGroupItem
-                text="Selected"
+                text={`Selected (${
+                  packages.length <= 100 ? packages.length : '100+'
+                })`}
                 buttonId="toggle-selected"
                 data-testid="packages-selected-toggle"
                 isSelected={toggleSelected === 'toggle-selected'}
