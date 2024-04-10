@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Alert,
   Bullseye,
   Button,
   EmptyState,
@@ -24,6 +23,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core';
 import { HelpIcon, OptimizeIcon, SearchIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
@@ -47,6 +47,7 @@ import {
   addPackage,
   addRecommendedRepository,
   removeRecommendedRepository,
+  selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
@@ -65,6 +66,7 @@ const Packages = () => {
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
+  const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
 
   // select the correct version of EPEL repository
@@ -78,6 +80,8 @@ const Packages = () => {
       url: epelRepoUrlByDistribution,
     });
 
+  const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
+  const [isSelectingPackage, setIsSelectingPackage] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
@@ -285,6 +289,55 @@ const Packages = () => {
     );
   };
 
+  const RepositoryModal = () => {
+    return (
+      <Modal
+        titleIconVariant="warning"
+        title="Custom repositories will be added to your image"
+        isOpen={isRepoModalOpen}
+        onClose={handleCloseModalToggle}
+        width="50%"
+        actions={[
+          <Button
+            key="add"
+            variant="primary"
+            onClick={handleConfirmModalToggle}
+          >
+            Add listed repositories
+          </Button>,
+          <Button key="back" variant="link" onClick={handleCloseModalToggle}>
+            Back
+          </Button>,
+        ]}
+        ouiaId="BasicModal"
+      >
+        You have selected packages that belong to custom repositories. By
+        continuing, you are acknowledging and consenting to adding the following
+        custom repositories to your image:
+        <br />
+        <Table variant="compact">
+          <Thead>
+            <Tr>
+              <Th>Packages</Th>
+              <Th>Repositories</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            <Tr>
+              <Td>{isSelectingPackage}</Td>
+              <Td>
+                EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
+              </Td>
+            </Tr>
+          </Tbody>
+        </Table>
+        <br />
+        To move forward, either add the repos to your image, or go back to
+        review your package selections.
+      </Modal>
+    );
+  };
+
   const transformPackageData = () => {
     let transformedDistroData: IBPackageWithRepositoryInfo[] = [];
     let transformedCustomData: IBPackageWithRepositoryInfo[] = [];
@@ -383,9 +436,11 @@ const Packages = () => {
       if (
         isSuccessEpelRepo &&
         epelRepo.data &&
-        pkg.repository === 'recommended'
+        pkg.repository === 'recommended' &&
+        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
-        dispatch(addRecommendedRepository(epelRepo.data[0]));
+        setIsRepoModalOpen(true);
+        setIsSelectingPackage(pkg.name);
       }
     } else {
       dispatch(removePackage(pkg.name));
@@ -476,8 +531,23 @@ const Packages = () => {
     }
   };
 
+  const handleCloseModalToggle = () => {
+    setIsRepoModalOpen(!isRepoModalOpen);
+  };
+
+  const handleConfirmModalToggle = () => {
+    if (!epelRepo || !epelRepo.data) {
+      throw new Error(
+        `There was an error while adding the recommended repository.`
+      );
+    }
+    dispatch(addRecommendedRepository(epelRepo.data[0]));
+    setIsRepoModalOpen(!isRepoModalOpen);
+  };
+
   return (
     <>
+      <RepositoryModal />
       <Toolbar>
         <ToolbarContent>
           <ToolbarItem variant="search-filter">
@@ -711,18 +781,6 @@ const Packages = () => {
         onPerPageSelect={handlePerPageSelect}
         variant={PaginationVariant.bottom}
       />
-      {packages.some((pkg) => pkg.repository === 'recommended') && (
-        <Alert
-          variant="warning"
-          title="Custom repositories will be added to your image"
-          isInline
-        >
-          You have selected packages that belong to custom repositories. By
-          continuing, you are acknowledging and consenting to adding the
-          following custom repositories to your image: EPEL{' '}
-          {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
-        </Alert>
-      )}
     </>
   );
 };
