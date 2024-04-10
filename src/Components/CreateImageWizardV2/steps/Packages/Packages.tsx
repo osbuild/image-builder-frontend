@@ -15,6 +15,7 @@ import {
   PaginationVariant,
   Popover,
   SearchInput,
+  Spinner,
   Text,
   TextContent,
   ToggleGroup,
@@ -87,11 +88,19 @@ const Packages = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [
     searchRpms,
-    { data: dataCustomPackages, isSuccess: isSuccessCustomPackages },
+    {
+      data: dataCustomPackages,
+      isSuccess: isSuccessCustomPackages,
+      isLoading: isLoadingRpms,
+    },
   ] = useSearchRpmMutation();
   const [
     searchRecommendedRpms,
-    { data: dataRecommendedPackages, isSuccess: isSuccessRecommendedPackages },
+    {
+      data: dataRecommendedPackages,
+      isSuccess: isSuccessRecommendedPackages,
+      isLoading: isLoadingRecommendedPackages,
+    },
   ] = useSearchRpmMutation();
 
   const { data: dataDistroPackages, isSuccess: isSuccessDistroPackages } =
@@ -152,6 +161,25 @@ const Packages = () => {
                 Search above to add additional
                 <br />
                 packages to your image.
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
+
+  const Searching = () => {
+    return (
+      <Tr>
+        <Td colSpan={5}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
+              <EmptyStateBody>
+                {toggleSourceRepos === 'toggle-other-repos'
+                  ? 'Searching for recommendations'
+                  : 'Searching'}
               </EmptyStateBody>
             </EmptyState>
           </Bullseye>
@@ -571,7 +599,11 @@ const Packages = () => {
           {!searchTerm && toggleSelected === 'toggle-available' && (
             <EmptySearch />
           )}
+          {searchTerm && (isLoadingRecommendedPackages || isLoadingRpms) && (
+            <Searching />
+          )}
           {searchTerm &&
+            !isLoadingRecommendedPackages &&
             transformedPackages.length === 0 &&
             toggleSelected === 'toggle-available' && <NoResultsFound />}
           {searchTerm &&
