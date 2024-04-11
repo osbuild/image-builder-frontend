@@ -25,6 +25,16 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    createRepository: build.mutation<
+      CreateRepositoryApiResponse,
+      CreateRepositoryApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/repositories/`,
+        method: "POST",
+        body: queryArg.apiRepositoryRequest,
+      }),
+    }),
     listRepositoriesRpms: build.query<
       ListRepositoriesRpmsApiResponse,
       ListRepositoriesRpmsApiArg
@@ -81,6 +91,12 @@ export type ListRepositoriesApiArg = {
   origin?: string;
   /** content type of a repository to filter on (rpm) */
   contentType?: string;
+};
+export type CreateRepositoryApiResponse =
+  /** status 201 Created */ ApiRepositoryResponseRead;
+export type CreateRepositoryApiArg = {
+  /** request body */
+  apiRepositoryRequest: ApiRepositoryRequest;
 };
 export type ListRepositoriesRpmsApiResponse =
   /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
@@ -251,6 +267,24 @@ export type ErrorsHandlerError = {
 export type ErrorsErrorResponse = {
   errors?: ErrorsHandlerError[];
 };
+export type ApiRepositoryRequest = {
+  /** Architecture to restrict client usage to */
+  distribution_arch?: string;
+  /** Versions to restrict client usage to */
+  distribution_versions?: string[];
+  /** GPG key for repository */
+  gpg_key?: string;
+  /** Verify packages */
+  metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
+  /** Name of the remote yum repository */
+  name?: string;
+  /** Enable snapshotting and hosting of this repository */
+  snapshot?: boolean;
+  /** URL of the remote yum repository */
+  url?: string;
+};
 export type ApiRepositoryRpm = {
   /** The Architecture of the rpm */
   arch?: string;
@@ -293,6 +327,7 @@ export type ApiContentUnitSearchRequest = {
 };
 export const {
   useListRepositoriesQuery,
+  useCreateRepositoryMutation,
   useListRepositoriesRpmsQuery,
   useSearchRpmMutation,
 } = injectedRtkApi;
