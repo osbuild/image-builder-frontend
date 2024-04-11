@@ -28,8 +28,13 @@ import { HelpIcon, OptimizeIcon, SearchIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
-import { RH_ICON_SIZE } from '../../../../constants';
 import {
+  EPEL_8_REPO_DEFINITION,
+  EPEL_9_REPO_DEFINITION,
+  RH_ICON_SIZE,
+} from '../../../../constants';
+import {
+  useCreateRepositoryMutation,
   useListRepositoriesQuery,
   useSearchRpmMutation,
 } from '../../../../store/contentSourcesApi';
@@ -95,7 +100,7 @@ const Packages = () => {
     {
       data: dataCustomPackages,
       isSuccess: isSuccessCustomPackages,
-      isLoading: isLoadingRpms,
+      isLoading: isLoadingCustomPackages,
     },
   ] = useSearchRpmMutation();
   const [
@@ -107,15 +112,20 @@ const Packages = () => {
     },
   ] = useSearchRpmMutation();
 
-  const { data: dataDistroPackages, isSuccess: isSuccessDistroPackages } =
-    useGetPackagesQuery(
-      {
-        distribution: distribution,
-        architecture: arch,
-        search: searchTerm,
-      },
-      { skip: !searchTerm }
-    );
+  const {
+    data: dataDistroPackages,
+    isSuccess: isSuccessDistroPackages,
+    isLoading: isLoadingDistroPackages,
+  } = useGetPackagesQuery(
+    {
+      distribution: distribution,
+      architecture: arch,
+      search: searchTerm,
+    },
+    { skip: !searchTerm }
+  );
+
+  const [createRepository] = useCreateRepositoryMutation();
 
   useEffect(() => {
     const fetchCustomPackages = async () => {
@@ -161,11 +171,19 @@ const Packages = () => {
           <Bullseye>
             <EmptyState variant={EmptyStateVariant.sm}>
               <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-              <EmptyStateBody>
-                Search above to add additional
-                <br />
-                packages to your image.
-              </EmptyStateBody>
+              {toggleSelected === 'toggle-available' ? (
+                <EmptyStateBody>
+                  Search above to add additional
+                  <br />
+                  packages to your image.
+                </EmptyStateBody>
+              ) : (
+                <EmptyStateBody>
+                  No packages selected.
+                  <br />
+                  Search above to see available packages.
+                </EmptyStateBody>
+              )}
             </EmptyState>
           </Bullseye>
         </Td>
@@ -383,10 +401,26 @@ const Packages = () => {
     }
 
     if (toggleSelected === 'toggle-available') {
-      return combinedPackageData;
+      if (toggleSourceRepos === 'toggle-included-repos') {
+        return combinedPackageData.filter(
+          (pkg) => pkg.repository !== 'recommended'
+        );
+      } else {
+        return combinedPackageData.filter(
+          (pkg) => pkg.repository === 'recommended'
+        );
+      }
     } else {
       const selectedPackages = [...packages];
-      return selectedPackages;
+      if (toggleSourceRepos === 'toggle-included-repos') {
+        return selectedPackages.filter(
+          (pkg) => pkg.repository !== 'recommended'
+        );
+      } else {
+        return selectedPackages.filter(
+          (pkg) => pkg.repository === 'recommended'
+        );
+      }
     }
   };
 
@@ -541,8 +575,80 @@ const Packages = () => {
         `There was an error while adding the recommended repository.`
       );
     }
+    const enableEpelRepository = async () => {
+      await createRepository({
+        apiRepositoryRequest: distribution.startsWith('rhel-8')
+          ? EPEL_8_REPO_DEFINITION
+          : EPEL_9_REPO_DEFINITION,
+      });
+    };
+
+    if (epelRepo.data.length === 0) {
+      enableEpelRepository();
+    }
+
     dispatch(addRecommendedRepository(epelRepo.data[0]));
     setIsRepoModalOpen(!isRepoModalOpen);
+  };
+
+  const composePkgTable = () => {
+    return transformedPackages
+      .slice(computeStart(), computeEnd())
+      .map((pkg, rowIndex) => (
+        <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
+          <Td
+            select={{
+              isSelected: packages.some((p) => p.name === pkg.name),
+              rowIndex: rowIndex,
+              onSelect: (event, isSelecting) =>
+                handleSelect(pkg, rowIndex, isSelecting),
+            }}
+          />
+          <Td>{pkg.name}</Td>
+          <Td>
+            {pkg.summary ? (
+              pkg.summary
+            ) : (
+              <span className="not-available">Not available</span>
+            )}
+          </Td>
+          {pkg.repository === 'distro' ? (
+            <>
+              <Td>
+                <img
+                  src={'/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'}
+                  alt="Red Hat logo"
+                  height={RH_ICON_SIZE}
+                  width={RH_ICON_SIZE}
+                />{' '}
+                Red Hat repository
+              </Td>
+              <Td>Supported</Td>
+            </>
+          ) : pkg.repository === 'custom' ? (
+            <>
+              <Td>Third party repository</Td>
+              <Td>Not supported</Td>
+            </>
+          ) : pkg.repository === 'recommended' ? (
+            <>
+              <Td>
+                <Icon status="warning">
+                  <OptimizeIcon />
+                </Icon>{' '}
+                EPEL {distribution.startsWith('rhel-8') ? '8' : '9'} Everything
+                x86_64
+              </Td>
+              <Td>Not supported</Td>
+            </>
+          ) : (
+            <>
+              <Td className="not-available">Not available</Td>
+              <Td className="not-available">Not available</Td>
+            </>
+          )}
+        </Tr>
+      ));
   };
 
   return (
@@ -698,79 +804,24 @@ const Packages = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {!searchTerm && toggleSelected === 'toggle-available' && (
+          {((toggleSelected === 'toggle-selected' && packages.length === 0) ||
+            (!searchTerm && toggleSelected === 'toggle-available')) && (
             <EmptySearch />
           )}
-          {searchTerm && (isLoadingRecommendedPackages || isLoadingRpms) && (
-            <Searching />
-          )}
+          {((searchTerm &&
+            isLoadingRecommendedPackages &&
+            toggleSourceRepos === 'toggle-other-repos') ||
+            (searchTerm &&
+              (isLoadingDistroPackages || isLoadingCustomPackages) &&
+              toggleSourceRepos === 'toggle-included-repos')) && <Searching />}
           {searchTerm &&
-            !isLoadingRecommendedPackages &&
+            isSuccessRecommendedPackages &&
             transformedPackages.length === 0 &&
             toggleSelected === 'toggle-available' && <NoResultsFound />}
           {searchTerm &&
             transformedPackages.length >= 100 &&
             handleExactMatch()}
-          {transformedPackages.length < 100 &&
-            transformedPackages
-              .slice(computeStart(), computeEnd())
-              .map((pkg, rowIndex) => (
-                <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
-                  <Td
-                    select={{
-                      isSelected: packages.some((p) => p.name === pkg.name),
-                      rowIndex: rowIndex,
-                      onSelect: (event, isSelecting) =>
-                        handleSelect(pkg, rowIndex, isSelecting),
-                    }}
-                  />
-                  <Td>{pkg.name}</Td>
-                  <Td>
-                    {pkg.summary ? (
-                      pkg.summary
-                    ) : (
-                      <span className="not-available">Not available</span>
-                    )}
-                  </Td>
-                  {pkg.repository === 'distro' ? (
-                    <>
-                      <Td>
-                        <img
-                          src={
-                            '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                          }
-                          alt="Red Hat logo"
-                          height={RH_ICON_SIZE}
-                          width={RH_ICON_SIZE}
-                        />{' '}
-                        Red Hat repository
-                      </Td>
-                      <Td>Supported</Td>
-                    </>
-                  ) : pkg.repository === 'custom' ? (
-                    <>
-                      <Td>Third party repository</Td>
-                      <Td>Not supported</Td>
-                    </>
-                  ) : pkg.repository === 'recommended' ? (
-                    <>
-                      <Td>
-                        <Icon status="warning">
-                          <OptimizeIcon />
-                        </Icon>{' '}
-                        EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                        Everything x86_64
-                      </Td>
-                      <Td>Not supported</Td>
-                    </>
-                  ) : (
-                    <>
-                      <Td className="not-available">Not available</Td>
-                      <Td className="not-available">Not available</Td>
-                    </>
-                  )}
-                </Tr>
-              ))}
+          {transformedPackages.length < 100 && composePkgTable()}
         </Tbody>
       </Table>
       <Pagination
