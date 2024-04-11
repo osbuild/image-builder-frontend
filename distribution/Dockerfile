@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1.7-labs
 FROM node:18
 
 WORKDIR /app
@@ -13,7 +12,12 @@ COPY package*.json .
 
 RUN npm ci
 
-COPY --exclude=node_modules/* . .
+# with a first line of
+# #syntax=docker/dockerfile:1.7-labs
+# we could use
+# COPY --exclude=node_modules/* . .
+# if also podman would accept that in the future
+COPY . .
 
 EXPOSE 8002
 EXPOSE 1337
