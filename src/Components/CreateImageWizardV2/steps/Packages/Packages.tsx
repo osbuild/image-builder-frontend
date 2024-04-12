@@ -24,7 +24,12 @@ import {
   ToolbarItem,
 } from '@patternfly/react-core';
 import { Modal } from '@patternfly/react-core';
-import { HelpIcon, OptimizeIcon, SearchIcon } from '@patternfly/react-icons';
+import {
+  ExternalLinkAltIcon,
+  HelpIcon,
+  OptimizeIcon,
+  SearchIcon,
+} from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
@@ -308,6 +313,7 @@ const Packages = () => {
   };
 
   const RepositoryModal = () => {
+    const { isBeta } = useGetEnvironment();
     return (
       <Modal
         titleIconVariant="warning"
@@ -331,7 +337,22 @@ const Packages = () => {
       >
         You have selected packages that belong to custom repositories. By
         continuing, you are acknowledging and consenting to adding the following
-        custom repositories to your image:
+        custom repositories to your image.
+        <br />
+        <br />
+        The repositories will also get enabled in{' '}
+        <Button
+          component="a"
+          target="_blank"
+          variant="link"
+          iconPosition="right"
+          isInline
+          icon={<ExternalLinkAltIcon />}
+          href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+        >
+          content services
+        </Button>{' '}
+        if they were not enabled yet:
         <br />
         <Table variant="compact">
           <Thead>
