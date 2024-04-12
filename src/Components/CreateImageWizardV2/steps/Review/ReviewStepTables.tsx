@@ -7,8 +7,10 @@ import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
+  selectDistribution,
   selectPackages,
   selectPartitions,
+  selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { getConversionFactor } from '../FileSystem/FileSystemConfiguration';
 
@@ -126,7 +128,11 @@ export const PackagesTable = () => {
 };
 
 export const RepositoriesTable = () => {
+  const distribution = useAppSelector(selectDistribution);
   const repositoriesList = useAppSelector(selectCustomRepositories);
+  const recommendedRepositoriesList = useAppSelector(
+    selectRecommendedRepositories
+  );
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
@@ -138,12 +144,20 @@ export const RepositoriesTable = () => {
           </Thead>
           <Tbody data-testid="repositories-tbody-review">
             {repositoriesList?.map((repo, repoIndex) => (
-              <Tr key={repoIndex}>
+              <Tr key={repoIndex + 1}>
                 <Td className="pf-m-width-60">
                   <RepoName repoUrl={repo.baseurl} />
                 </Td>
               </Tr>
             ))}
+            {recommendedRepositoriesList.length > 0 && (
+              <Tr key={0}>
+                <Td className="pf-m-width-60">
+                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                  Everything x86_64
+                </Td>
+              </Tr>
+            )}
           </Tbody>
         </Table>
       </PanelMain>
