@@ -177,6 +177,10 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         isNextButtonTouched: true,
       };
 
+  const arch = request.image_requests[0].architecture;
+  if (arch !== 'x86_64' && arch !== 'aarch64') {
+    throw new Error(`image type: ${arch} has no implementation yet`);
+  }
   return {
     wizardMode,
     details: {
@@ -195,7 +199,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     firstBoot: {
       script: getFirstBootScript(request.customizations.files),
     },
-    architecture: request.image_requests[0].architecture,
+    architecture: arch,
     distribution: getLatestMinorRelease(request.distribution),
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
