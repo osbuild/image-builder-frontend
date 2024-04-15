@@ -158,6 +158,7 @@ const FileSystemTable = () => {
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
+      ouiaId="partition_table_v2"
       aria-label="File system table"
       variant="compact"
       data-testid="fsc-table"
