@@ -147,7 +147,7 @@ const FileSystemConfiguration = () => {
       <FileSystemTable />
       <TextContent>
         <Button
-          ouiaId="add-partition-button"
+          ouiaId="add-partition"
           data-testid="file-system-add-partition"
           className="pf-u-text-align-left"
           variant="link"
@@ -323,7 +323,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
         );
       }}
       aria-label="text input example"
-      ouiaId="mount-point-text-input"
+      ouiaId="mount-suffix"
     />
   );
 };
@@ -370,6 +370,7 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
       validator={isMountpointMinSizeValid}
       value={convertToDisplayUnits(partition.min_size)}
       type="text"
+      ouiaId="size"
       onChange={(event, minSize) => {
         if (minSize === '' || /^\d+$/.test(minSize)) {
           dispatch(
