@@ -9,6 +9,7 @@ import {
 
 interface ValidatedTextInputPropTypes extends TextInputProps {
   dataTestId?: string | undefined;
+  ouiaId?: string;
   ariaLabel: string | undefined;
   helperText: string | undefined;
   validator: (value: string | undefined) => Boolean;
@@ -18,6 +19,7 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
 
 export const ValidatedTextInput = ({
   dataTestId,
+  ouiaId,
   ariaLabel,
   helperText,
   validator,
@@ -44,6 +46,7 @@ export const ValidatedTextInput = ({
       <TextInput
         value={value}
         data-testid={dataTestId}
+        ouiaId={ouiaId}
         type="text"
         onChange={onChange}
         validated={handleValidation()}
