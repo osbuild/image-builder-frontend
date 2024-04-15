@@ -160,6 +160,7 @@ const FileSystemTable = () => {
       className={isDragging ? styles.modifiers.dragOver : ''}
       aria-label="File system table"
       variant="compact"
+      data-testid="fsc-table"
     >
       <Thead>
         <Tr>

@@ -322,7 +322,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
           })
         );
       }}
-      aria-label="text input example"
+      aria-label="mountpoint suffix"
       ouiaId="mount-suffix"
     />
   );

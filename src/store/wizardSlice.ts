@@ -212,6 +212,7 @@ export const selectProfile = (state: RootState) => {
 export const selectFileSystemPartitionMode = (state: RootState) => {
   return state.wizard.fileSystem.mode;
 };
+
 export const selectIsNextButtonTouched = (state: RootState) => {
   return state.wizard.fileSystem.isNextButtonTouched;
 };
