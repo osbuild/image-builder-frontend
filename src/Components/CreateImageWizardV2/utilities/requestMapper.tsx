@@ -8,6 +8,7 @@ import {
   CreateBlueprintRequest,
   Customizations,
   DistributionProfileItem,
+  Filesystem,
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
@@ -43,6 +44,8 @@ import {
   selectRegistrationType,
   selectServerUrl,
   wizardState,
+  selectFileSystemPartitionMode,
+  selectPartitions,
 } from '../../../store/wizardSlice';
 import {
   convertSchemaToIBCustomRepo,
@@ -277,7 +280,7 @@ const getCustomizations = (
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscapProfile(state),
-    filesystem: undefined,
+    filesystem: getFileSystem(state),
     users: undefined,
     services: getServices(serverStore),
     hostname: undefined,
@@ -313,6 +316,21 @@ const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
   const profile = selectProfile(state);
   if (profile) {
     return { profile_id: profile };
+  }
+  return undefined;
+};
+
+const getFileSystem = (state: RootState): Filesystem[] | undefined => {
+  const mode = selectFileSystemPartitionMode(state);
+  if (mode === 'manual') {
+    const partitions = selectPartitions(state);
+    const fileSystem = partitions.map((partition) => {
+      return {
+        min_size: parseInt(partition.min_size),
+        mountpoint: partition.mountpoint,
+      };
+    });
+    return fileSystem;
   }
   return undefined;
 };
