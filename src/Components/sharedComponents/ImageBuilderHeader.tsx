@@ -7,13 +7,11 @@ import {
   TextContent,
   Flex,
   FlexItem,
-  Icon,
 } from '@patternfly/react-core';
 import {
   ExternalLinkAltIcon,
   HelpIcon,
   ImportIcon,
-  PlusCircleIcon,
 } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -113,10 +111,7 @@ export const ImageBuilderHeader = ({
                   className="pf-c-button pf-m-primary"
                   data-testid="blueprints-create-button"
                 >
-                  Create blueprint{' '}
-                  <Icon>
-                    <PlusCircleIcon />
-                  </Icon>
+                  Create blueprint
                 </Link>
               </FlexItem>
               <FlexItem>
