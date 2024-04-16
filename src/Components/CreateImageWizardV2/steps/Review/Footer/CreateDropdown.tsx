@@ -18,11 +18,13 @@ import {
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
+  isDisabled?: boolean;
 };
 
 export const CreateSaveAndBuildBtn = ({
   getBlueprintPayload,
   setIsOpen,
+  isDisabled,
 }: CreateDropdownProps) => {
   const [buildBlueprint] = useComposeBlueprintMutation();
   const [createBlueprint] = useCreateBlueprintMutation({
@@ -42,7 +44,11 @@ export const CreateSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-create-build-btn">
+      <DropdownItem
+        onClick={onSaveAndBuild}
+        ouiaId="wizard-create-build-btn"
+        isDisabled={isDisabled}
+      >
         Create blueprint and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -52,6 +58,7 @@ export const CreateSaveAndBuildBtn = ({
 export const CreateSaveButton = ({
   setIsOpen,
   getBlueprintPayload,
+  isDisabled,
 }: CreateDropdownProps) => {
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -62,7 +69,11 @@ export const CreateSaveButton = ({
     requestBody && createBlueprint({ createBlueprintRequest: requestBody });
   };
   return (
-    <MenuToggleAction onClick={onSave} id="wizard-create-save-btn">
+    <MenuToggleAction
+      onClick={onSave}
+      id="wizard-create-save-btn"
+      isDisabled={isDisabled}
+    >
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
           <FlexItem>

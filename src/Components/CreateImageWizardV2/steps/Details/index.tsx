@@ -17,7 +17,7 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '../../../../store/wizardSlice';
-import { ValidatedTextInput } from '../../ValidatedTextInput';
+import { StateValidatedInput } from '../../ValidatedTextInput';
 import {
   isBlueprintDescriptionValid,
   isBlueprintNameValid,
@@ -52,9 +52,11 @@ const DetailsStep = () => {
         blueprint.
       </Text>
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
-        <ValidatedTextInput
+        <StateValidatedInput
           ariaLabel="blueprint name"
           dataTestId="blueprint"
+          stepId="details"
+          inputId="blueprint-name"
           value={blueprintName}
           validator={isBlueprintNameValid}
           onChange={handleNameChange}
@@ -74,9 +76,11 @@ const DetailsStep = () => {
         label="Blueprint description"
         fieldId="blueprint-description-name"
       >
-        <ValidatedTextInput
+        <StateValidatedInput
           ariaLabel="blueprint description"
           dataTestId="blueprint description"
+          stepId="details"
+          inputId="blueprint-description"
           value={blueprintDescription || ''}
           validator={isBlueprintDescriptionValid}
           onChange={handleDescriptionChange}

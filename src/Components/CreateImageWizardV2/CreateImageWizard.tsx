@@ -5,6 +5,7 @@ import {
   Wizard,
   WizardFooterWrapper,
   WizardStep,
+  WizardStepType,
   useWizardContext,
 } from '@patternfly/react-core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -27,8 +28,6 @@ import {
   isAzureTenantGUIDValid,
   isAzureSubscriptionIdValid,
   isAzureResourceGroupValid,
-  isBlueprintDescriptionValid,
-  isBlueprintNameValid,
   isGcpEmailValid,
 } from './validators';
 
@@ -48,12 +47,11 @@ import {
   selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
-  selectBlueprintDescription,
-  selectBlueprintName,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
   selectRegistrationType,
+  selectStepValidation,
   addImageType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
@@ -136,9 +134,15 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const azureSource = useAppSelector(selectAzureSource);
   const registrationType = useAppSelector(selectRegistrationType);
-  const blueprintName = useAppSelector(selectBlueprintName);
-  const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const activationKey = useAppSelector(selectActivationKey);
+
+  const [currentStep, setCurrentStep] = React.useState<WizardStepType>();
+  const onStepChange = (
+    _event: React.MouseEvent<HTMLButtonElement>,
+    currentStep: WizardStepType
+  ) => setCurrentStep(currentStep);
+
+  const detailsValidation = useAppSelector(selectStepValidation('details'));
 
   return (
     <>
@@ -147,6 +151,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
         <Wizard
           startIndex={startStepIndex}
           onClose={() => navigate(resolveRelPath(''))}
+          onStepChange={onStepChange}
           isVisitRequired
         >
           <WizardStep
@@ -280,12 +285,15 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
           <WizardStep
             name="Details"
             id="step-details"
+            status={
+              currentStep?.id !== 'step-details' &&
+              detailsValidation === 'error'
+                ? 'error'
+                : 'default'
+            }
             footer={
               <CustomWizardFooter
-                disableNext={
-                  !isBlueprintNameValid(blueprintName) ||
-                  !isBlueprintDescriptionValid(blueprintDescription)
-                }
+                disableNext={detailsValidation !== 'success'}
               />
             }
           >

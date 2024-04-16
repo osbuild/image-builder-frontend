@@ -15,11 +15,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
-import { useServerStore } from '../../../../../store/hooks';
+import { useServerStore, useAppSelector } from '../../../../../store/hooks';
 import {
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
+import { selectIsValid } from '../../../../../store/wizardSlice';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 
@@ -40,6 +41,7 @@ const ReviewWizardFooter = () => {
     setIsOpen(!isOpen);
   };
   const navigate = useNavigate();
+  const isValid = useAppSelector(selectIsValid);
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -68,6 +70,7 @@ const ReviewWizardFooter = () => {
               ref={toggleRef}
               onClick={onToggleClick}
               isExpanded={isOpen}
+              isDisabled={!isValid}
               splitButtonOptions={{
                 variant: 'action',
                 items: composeId
@@ -77,6 +80,7 @@ const ReviewWizardFooter = () => {
                         getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         blueprintId={composeId}
+                        isDisabled={!isValid}
                       />,
                     ]
                   : [
@@ -84,6 +88,7 @@ const ReviewWizardFooter = () => {
                         key="wizard-create-save-btn"
                         getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
+                        isDisabled={!isValid}
                       />,
                     ],
               }}
@@ -99,11 +104,13 @@ const ReviewWizardFooter = () => {
               getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
               blueprintId={composeId}
+              isDisabled={!isValid}
             />
           ) : (
             <CreateSaveAndBuildBtn
               getBlueprintPayload={getBlueprintPayload}
               setIsOpen={setIsOpen}
+              isDisabled={!isValid}
             />
           )}
         </Dropdown>

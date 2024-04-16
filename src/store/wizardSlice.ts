@@ -82,6 +82,15 @@ export type wizardState = {
     blueprintName: string;
     blueprintDescription: string;
   };
+  stepValidations: {
+    [key: string]: {
+      validated: 'default' | 'success' | 'error';
+      errorText: string | null;
+      inputs: {
+        [key: string]: boolean;
+      };
+    };
+  };
 };
 
 const initialState: wizardState = {
@@ -131,6 +140,7 @@ const initialState: wizardState = {
     blueprintName: '',
     blueprintDescription: '',
   },
+  stepValidations: {},
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -244,6 +254,23 @@ export const selectBlueprintName = (state: RootState) => {
 export const selectBlueprintDescription = (state: RootState) => {
   return state.wizard.details.blueprintDescription;
 };
+
+export const selectIsValid = (state: RootState) => {
+  return Object.values(state.wizard.stepValidations).every(
+    (step) => step.validated === 'success'
+  );
+};
+
+export const selectStepValidation = (stepId: string) => (state: RootState) => {
+  return state.wizard.stepValidations[stepId]?.validated || 'default';
+};
+
+export const selectInputValidation =
+  (stepId: string, inputId: string) => (state: RootState) => {
+    const isValid = state.wizard.stepValidations[stepId]?.inputs?.[inputId];
+    if (isValid === undefined) return 'default';
+    return isValid ? 'success' : 'error';
+  };
 
 export const wizardSlice = createSlice({
   name: 'wizard',
@@ -466,6 +493,32 @@ export const wizardSlice = createSlice({
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
+    setStepInputValidation: (
+      state,
+      action: PayloadAction<{
+        stepId: string;
+        inputId: string;
+        isValid: boolean;
+        errorText: string | undefined;
+      }>
+    ) => {
+      const inputs = {
+        ...state.stepValidations[action.payload.stepId]?.inputs,
+        [action.payload.inputId]: action.payload.isValid,
+      };
+      const validated = Object.values(inputs).every((input) => input === true)
+        ? 'success'
+        : 'error';
+      state.stepValidations[action.payload.stepId] = {
+        ...state.stepValidations[action.payload.stepId],
+        validated,
+        inputs,
+      };
+      if (!action.payload.isValid && action.payload.errorText) {
+        state.stepValidations[action.payload.stepId].errorText =
+          action.payload.errorText;
+      }
+    },
   },
 });
 
@@ -511,5 +564,6 @@ export const {
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,
+  setStepInputValidation,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
