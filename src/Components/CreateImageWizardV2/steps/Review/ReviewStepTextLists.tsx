@@ -60,7 +60,7 @@ import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 
 const ExpirationWarning = () => {
   return (
-    <div className="pf-u-mr-sm pf-u-font-size-sm pf-u-warning-color-100">
+    <div className="pf-u-mr-sm pf-u-font-size-sm pf-v5-u-warning-color-200">
       <ExclamationTriangleIcon /> Expires 14 days after creation
     </div>
   );
