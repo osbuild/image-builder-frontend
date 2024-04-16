@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
@@ -12,10 +12,10 @@ import {
 import { server } from '../../mocks/server';
 import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-export function spyOnRequest(pathname: string) {
+export function spyOnRequest(pathname: string, requestMethod: string = 'POST') {
   return new Promise((resolve) => {
     const listener = async (req: MockedRequest) => {
-      if (req.url.pathname === pathname) {
+      if (req.url.pathname === pathname && req.method === requestMethod) {
         const requestData = await req.clone().json();
         resolve(requestData);
         // Cleanup listener after successful intercept
@@ -99,6 +99,10 @@ export const enterBlueprintName = async (name: string = 'Red Velvet') => {
     name: /blueprint name/i,
   });
   await userEvent.type(blueprintName, name);
+  // Wait for async validation to fire
+  await act(async () => {
+    await new Promise((r) => setTimeout(r, 350));
+  });
 };
 
 export const interceptBlueprintRequest = async (requestPathname: string) => {

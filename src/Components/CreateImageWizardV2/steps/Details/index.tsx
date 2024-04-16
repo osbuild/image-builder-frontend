@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 
 import {
   Form,
@@ -11,6 +11,10 @@ import {
 } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  BlueprintsResponse,
+  useLazyGetBlueprintsQuery,
+} from '../../../../store/imageBuilderApi';
 import {
   changeBlueprintDescription,
   changeBlueprintName,
@@ -27,12 +31,29 @@ const DetailsStep = () => {
   const dispatch = useAppDispatch();
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
+
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
     name: string
   ) => {
     dispatch(changeBlueprintName(name));
   };
+
+  const [trigger] = useLazyGetBlueprintsQuery();
+  const nameUniquenessValidation = useCallback(
+    (newName: string, callback: (isValid: boolean) => void) => {
+      trigger({ name: newName })
+        .unwrap()
+        .then((response: BlueprintsResponse) => {
+          callback((response?.meta?.count || 0) === 0);
+        })
+        .catch(() => {
+          // Just skip the validation if the request fails
+          callback(true);
+        });
+    },
+    [trigger]
+  );
 
   const handleDescriptionChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -59,8 +80,9 @@ const DetailsStep = () => {
           inputId="blueprint-name"
           value={blueprintName}
           validator={isBlueprintNameValid}
+          asyncValidator={nameUniquenessValidation}
           onChange={handleNameChange}
-          helperText="Please enter a valid name"
+          helperText="Please enter a valid unique name"
           placeholder="Add blueprint name"
         />
         <FormHelperText>

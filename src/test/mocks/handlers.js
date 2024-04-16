@@ -124,11 +124,16 @@ export const handlers = [
     }
   ),
   rest.get(`${IMAGE_BUILDER_API}/experimental/blueprints`, (req, res, ctx) => {
+    const nameParam = req.url.searchParams.get('name');
     const search = req.url.searchParams.get('search');
     const limit = req.url.searchParams.get('limit') || '10';
     const offset = req.url.searchParams.get('offset') || '0';
     const resp = Object.assign({}, mockGetBlueprints);
-    if (search) {
+    if (nameParam) {
+      resp.data = resp.data.filter(({ name }) => {
+        return nameParam === name;
+      });
+    } else if (search) {
       let regexp;
       try {
         regexp = new RegExp(search);

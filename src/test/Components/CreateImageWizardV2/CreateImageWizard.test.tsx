@@ -864,16 +864,16 @@ describe('Step Details', () => {
     await setUp();
 
     // Enter image name
+    const invalidName = 'a'.repeat(101);
+    await enterBlueprintName(invalidName);
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeDisabled();
     const nameInput = await screen.findByRole('textbox', {
       name: /blueprint name/i,
     });
-    const invalidName = 'a'.repeat(101);
-    await user.type(nameInput, invalidName);
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-    expect(await getNextButton()).toBeDisabled();
     await user.clear(nameInput);
 
-    await user.type(nameInput, 'valid-name');
+    await enterBlueprintName(); // valid name
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
 
@@ -938,10 +938,7 @@ describe('Step Review', () => {
     await clickNext();
     await clickNext();
     // skip Details
-    const blueprintName = await screen.findByRole('textbox', {
-      name: /blueprint name/i,
-    });
-    await user.type(blueprintName, 'valid-name');
+    await enterBlueprintName();
     await clickNext();
   };
 
@@ -999,10 +996,7 @@ describe('Step Review', () => {
     // skip repositories
     await clickNext();
     await clickNext();
-    const blueprintName = await screen.findByRole('textbox', {
-      name: /blueprint name/i,
-    });
-    await user.type(blueprintName, 'valid-name');
+    await enterBlueprintName();
     await clickNext();
   };
 

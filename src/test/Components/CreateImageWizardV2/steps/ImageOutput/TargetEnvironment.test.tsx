@@ -12,7 +12,7 @@ import {
   clickNext,
   renderCustomRoutesWithReduxRouter,
 } from '../../../../testUtils';
-import { render } from '../../wizardTestUtils';
+import { render, enterBlueprintName } from '../../wizardTestUtils';
 
 const routes = [
   {
@@ -59,10 +59,7 @@ const clickToReview = async () => {
   await clickNext(); // skip FSC
   await clickNext(); // skip Repositories
   await clickNext(); // skip Packages
-  const nameInput = await screen.findByRole('textbox', {
-    name: /blueprint name/i,
-  });
-  await userEvent.type(nameInput, 'name');
+  await enterBlueprintName();
   await clickNext(); // skip Details
 };
 

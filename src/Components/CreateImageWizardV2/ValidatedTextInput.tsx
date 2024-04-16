@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HelperText,
@@ -31,6 +31,10 @@ interface StateValidatedTextInputPropTypes extends TextInputProps {
   ariaLabel: string | undefined;
   helperText: string | undefined;
   validator: (value: string | undefined) => boolean;
+  asyncValidator?: (
+    value: string,
+    callback: (isValid: boolean) => void
+  ) => void;
   value: string;
   placeholder?: string;
 }
@@ -43,6 +47,7 @@ export const StateValidatedInput = ({
   ariaLabel,
   helperText,
   validator,
+  asyncValidator,
   value,
   placeholder,
   onChange,
@@ -53,17 +58,46 @@ export const StateValidatedInput = ({
   // Do not surface validation on pristine state components
   const validated = isPristine ? 'default' : validatedState;
 
-  const handleBlur = () => {
-    setIsPristine(false);
-    const isValid = validator(value);
+  const dispatchValidation = (isValid: boolean) => {
     dispatch(
       setStepInputValidation({
         stepId,
         inputId,
-        isValid,
+        isValid: isValid,
         errorText: isValid ? helperText : undefined,
       })
     );
+  };
+
+  // Debounce async validation
+  // This needs the asyncValidator to be memoized to prevent multiple calls
+  useEffect(() => {
+    if (!asyncValidator || validator(value) === false) {
+      return;
+    }
+    const timer = setTimeout(() => {
+      asyncValidator(value, (asyncIsValid) => {
+        dispatchValidation(asyncIsValid);
+      });
+    }, 300);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [value, asyncValidator]);
+
+  const validate = (newVal: string) => {
+    const isValid = validator(newVal);
+    // When we have async validation, we let the debounce to handle it
+    // skips the async validation if sync validation fails
+    if (isValid && asyncValidator) {
+      return;
+    }
+    dispatchValidation(isValid);
+  };
+
+  const handleBlur = () => {
+    setIsPristine(false);
+    validate(value);
   };
 
   const wrappedOnChange = (
@@ -71,15 +105,7 @@ export const StateValidatedInput = ({
     newVal: string
   ) => {
     if (onChange) onChange(evt, newVal);
-    const isValid = validator(newVal);
-    dispatch(
-      setStepInputValidation({
-        stepId,
-        inputId,
-        isValid,
-        errorText: isValid ? helperText : undefined,
-      })
-    );
+    validate(newVal);
   };
 
   return (
