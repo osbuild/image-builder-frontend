@@ -19,12 +19,14 @@ type EditDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
+  isDisabled?: boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
   getBlueprintPayload,
   setIsOpen,
   blueprintId,
+  isDisabled,
 }: EditDropdownProps) => {
   const [buildBlueprint] = useComposeBlueprintMutation();
   const [updateBlueprint] = useUpdateBlueprintMutation({
@@ -44,7 +46,11 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem onClick={onSaveAndBuild} ouiaId="wizard-edit-build-btn">
+      <DropdownItem
+        onClick={onSaveAndBuild}
+        ouiaId="wizard-edit-build-btn"
+        isDisabled={isDisabled}
+      >
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>
@@ -55,6 +61,7 @@ export const EditSaveButton = ({
   setIsOpen,
   getBlueprintPayload,
   blueprintId,
+  isDisabled,
 }: EditDropdownProps) => {
   const [updateBlueprint, { isLoading }] = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
@@ -66,7 +73,11 @@ export const EditSaveButton = ({
       updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });
   };
   return (
-    <MenuToggleAction onClick={onSave} id="wizard-edit-save-btn">
+    <MenuToggleAction
+      onClick={onSave}
+      id="wizard-edit-save-btn"
+      isDisabled={isDisabled}
+    >
       <Flex display={{ default: 'inlineFlex' }}>
         {isLoading && (
           <FlexItem>

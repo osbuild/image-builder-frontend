@@ -172,6 +172,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         repository: '',
         isRequiredByOpenScap: false,
       })) || [],
+    stepValidations: {},
   };
 };
 
