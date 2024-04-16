@@ -24,6 +24,7 @@ import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
+import { EditBlueprintButton } from '../Blueprints/EditBlueprintButton';
 
 interface imagesTableToolbarProps {
   itemCount: number;
@@ -107,13 +108,16 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
         {selectedBlueprintId && (
           <ToolbarContent>
             <ToolbarItem>
+              <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
+            </ToolbarItem>
+            <ToolbarItem>
               <BuildImagesButton />
             </ToolbarItem>
             <ToolbarItem>
-              <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
+              <EditBlueprintButton />
             </ToolbarItem>
             <ToolbarItem>
-              <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
+              <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
             </ToolbarItem>
             <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
               {pagination}

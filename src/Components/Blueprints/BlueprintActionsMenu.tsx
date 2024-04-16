@@ -9,7 +9,6 @@ import {
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
-import { useNavigate } from 'react-router-dom';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -17,7 +16,6 @@ import {
   BlueprintResponse,
   useLazyGetBlueprintQuery,
 } from '../../store/imageBuilderApi';
-import { resolveRelPath } from '../../Utilities/path';
 import BetaLabel from '../sharedComponents/BetaLabel';
 
 interface BlueprintActionsMenuProps {
@@ -32,7 +30,6 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const onSelect = () => {
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
-  const navigate = useNavigate();
   const importExportFlag = useFlag('image-builder.import.enabled');
 
   const [trigger] = useLazyGetBlueprintQuery();
@@ -71,13 +68,6 @@ export const BlueprintActionsMenu: React.FunctionComponent<
       )}
     >
       <DropdownList>
-        <DropdownItem
-          onClick={() =>
-            navigate(resolveRelPath(`imagewizard/${selectedBlueprintId}`))
-          }
-        >
-          Edit details
-        </DropdownItem>
         {importExportFlag && (
           <DropdownItem onClick={handleClick}>
             Download blueprint (.json) <BetaLabel />
