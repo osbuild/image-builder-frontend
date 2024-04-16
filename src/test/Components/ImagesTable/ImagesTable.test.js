@@ -53,9 +53,9 @@ describe('Images Table', () => {
     // remove first row from list since it is just header labels
     const header = rows.shift();
     // test the header has correct labels
-    expect(header.cells[1]).toHaveTextContent('Image name');
-    expect(header.cells[2]).toHaveTextContent('Created');
-    expect(header.cells[3]).toHaveTextContent('Release');
+    expect(header.cells[1]).toHaveTextContent('Name');
+    expect(header.cells[2]).toHaveTextContent('Updated');
+    expect(header.cells[3]).toHaveTextContent('OS');
     expect(header.cells[4]).toHaveTextContent('Target');
     expect(header.cells[5]).toHaveTextContent('Status');
     expect(header.cells[6]).toHaveTextContent('Instance');
