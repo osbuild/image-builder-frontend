@@ -197,9 +197,9 @@ const ImagesTable = () => {
           <Thead>
             <Tr>
               <Th style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }} />
-              <Th>Image name</Th>
-              <Th>Created/Updated</Th>
-              <Th>Release</Th>
+              <Th>Name</Th>
+              <Th>Updated</Th>
+              <Th>OS</Th>
               <Th>Target</Th>
               {experimentalFlag && <Th>Version</Th>}
               <Th>Status</Th>
