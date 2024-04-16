@@ -102,13 +102,13 @@ export const ImportBlueprintModal: React.FunctionComponent<
             </HelperText>
           </FormHelperText>
         </FormGroup>
+        <ActionGroup>
+          <Button type="button">Review and finish</Button>
+          <Button variant="link" type="button" onClick={onImportClose}>
+            Cancel
+          </Button>
+        </ActionGroup>
       </Form>
-      <ActionGroup>
-        <Button type="button">Review and finish</Button>
-        <Button variant="link" type="button" onClick={onImportClose}>
-          Cancel
-        </Button>
-      </ActionGroup>
     </Modal>
   );
 };
