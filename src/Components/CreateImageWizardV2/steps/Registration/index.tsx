@@ -23,8 +23,8 @@ const RegistrationStep = () => {
       </Title>
       <Text>
         To enhance security and track your spending, you can register your
-        systems either automatically with Red Hat, or manually during the
-        initial boot.
+        systems automatically with Red Hat now, or manually during the initial
+        boot later.
       </Text>
       <Registration />
       {registrationType !== 'register-later' ? (
