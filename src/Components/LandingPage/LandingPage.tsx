@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Button,
-  Label,
   Popover,
   Tabs,
   Tab,
@@ -143,14 +142,7 @@ export const LandingPage = () => {
           </Tab>
           <Tab
             eventKey={1}
-            title={
-              <TabTitleText>
-                <Label isCompact color="blue">
-                  New
-                </Label>{' '}
-                Immutable (OSTree){' '}
-              </TabTitleText>
-            }
+            title={<TabTitleText>Immutable (OSTree) </TabTitleText>}
             actions={
               <HelpPopover
                 header={'Immutable (OSTree)'}
