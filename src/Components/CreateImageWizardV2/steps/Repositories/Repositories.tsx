@@ -49,6 +49,7 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
+  selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
@@ -175,6 +176,7 @@ const Repositories = () => {
   const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
   const repositoriesList = useAppSelector(selectCustomRepositories);
+  const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
@@ -235,8 +237,27 @@ const Repositories = () => {
     setToggleSelected(id);
   };
 
-  const isRepoSelected = (repoURL: string | undefined) =>
-    selected.includes(repoURL);
+  const isRepoSelected = (repoURL: string | undefined) => {
+    return (
+      // repository is in the list of selected repositories
+      // or it comes from the repository recommendations
+      selected.includes(repoURL) ||
+      (recommendedRepos.length > 0 && repoURL?.includes('epel')) ||
+      false
+    );
+  };
+
+  const isRepoDisabled = (repo: ApiRepositoryResponseRead) => {
+    return (
+      // repository data is still fetching, it's not valid
+      // or it comes from the repository recommendations
+      // and removing it would mean invalidating packages
+      // added from the recommended repository
+      isFetching ||
+      repo.status !== 'Valid' ||
+      (recommendedRepos.length > 0 && repo.url?.includes('epel'))
+    );
+  };
 
   const handlePerPageSelect = (
     _: React.MouseEvent,
@@ -472,8 +493,7 @@ const Repositories = () => {
                                       rowIndex,
                                       isSelecting
                                     ),
-                                  isDisabled:
-                                    isFetching || repo.status !== 'Valid',
+                                  isDisabled: isRepoDisabled(repo),
                                 }}
                               />
                               <Td dataLabel={'Name'}>
