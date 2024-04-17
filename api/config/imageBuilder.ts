@@ -25,6 +25,7 @@ const config: ConfigFile = {
     'getBlueprintComposes',
     'deleteBlueprint',
     'getBlueprint',
+    'recommendPackage',
   ],
 };
 
