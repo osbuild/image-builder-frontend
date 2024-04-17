@@ -46,6 +46,7 @@ paths:
       operationId: getOpenapiJson
       tags:
         - meta
+        - noAuth
       responses:
         '200':
           description: returns this document
@@ -423,6 +424,12 @@ paths:
         - blueprint
       parameters:
         - in: query
+          name: name
+          required: false
+          schema:
+            type: string
+          description: fetch blueprint with specific name
+        - in: query
           name: search
           required: false
           schema:
@@ -470,7 +477,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreateBlueprintResponse'
-        '400':
+        '422':
           description: blueprint is malformed
           content:
             application/json:
@@ -605,7 +612,8 @@ paths:
           schema:
             type: integer
           description: |
-            Filter by a specific version of the Blueprint we want to fetch composes for
+            Filter by a specific version of the Blueprint we want to fetch composes for.
+            Pass special value -1 to fetch composes for latest version of the Blueprint.
         - in: query
           name: limit
           schema:
@@ -644,7 +652,28 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPErrorList'
-
+  /experimental/recommendations:
+    post:
+      summary: List recommended packages.
+      description: "Returns a list of recommended packages for given list of packages."
+      operationId: recommendPackage
+      tags:
+        - recommendations
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/RecommendPackageRequest"
+        required: true
+      responses:
+        '200':
+          description: Return the recommended packages.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecommendationsResponse"
 components:
   schemas:
     HTTPError:
@@ -670,12 +699,33 @@ components:
       properties:
         version:
           type: string
+        build_time:
+          type: string
+        build_commit:
+          type: string
     Readiness:
       type: object
       required:
         - readiness
       properties:
         readiness:
+          type: string
+    ListResponseMeta:
+      type: object
+      required:
+        - count
+      properties:
+        count:
+          type: integer
+    ListResponseLinks:
+      type: object
+      required:
+        - first
+        - last
+      properties:
+        first:
+          type: string
+        last:
           type: string
     DistributionsResponse:
       type: array
@@ -859,7 +909,6 @@ components:
       additionalProperties: false
       required:
         - name
-        - description
         - distribution
         - image_requests
         - customizations
@@ -898,22 +947,9 @@ components:
         - data
       properties:
         meta:
-          type: object
-          required:
-            - count
-          properties:
-            count:
-              type: integer
+          $ref: '#/components/schemas/ListResponseMeta'
         links:
-          type: object
-          required:
-            - first
-            - last
-          properties:
-            first:
-              type: string
-            last:
-              type: string
+          $ref: '#/components/schemas/ListResponseLinks'
         data:
           type: array
           items:
@@ -993,6 +1029,7 @@ components:
         - fedora-38
         - fedora-39
         - fedora-40
+        - fedora-41
     ImageRequest:
       type: object
       additionalProperties: false
@@ -1020,6 +1057,14 @@ components:
           description: |
             Size of image, in bytes. When set to 0 the image size is a minimum
             defined by the image type.
+        snapshot_date:
+          type: string
+          description: |
+            Snapshotted content will be used instead of the official repositories of the
+            distribution. The snapshot that was made closest to, but before the specified date will
+            be used. If no snapshots made before the specified date can be found, the snapshot
+            closest to, but after the specified date will be used. If no snapshots can be found at
+            all, the request will fail.
     ImageTypes:
       type: string
       enum:
@@ -1046,24 +1091,9 @@ components:
         - data
       properties:
         meta:
-          type: object
-          required:
-            - count
-          properties:
-            count:
-              type: integer
+          $ref: '#/components/schemas/ListResponseMeta'
         links:
-          type: object
-          required:
-            - first
-            - last
-          properties:
-            first:
-              type: string
-              example: "/api/image-builder/v1/composes?limit=10&offset=0"
-            last:
-              type: string
-              example: "/api/image-builder/v1/composes?limit=10&offset=10"
+          $ref: '#/components/schemas/ListResponseLinks'
         data:
           type: array
           items:
@@ -1246,24 +1276,9 @@ components:
         - data
       properties:
         meta:
-          type: object
-          required:
-            - count
-          properties:
-            count:
-              type: integer
+          $ref: '#/components/schemas/ListResponseMeta'
         links:
-          type: object
-          required:
-            - first
-            - last
-          properties:
-            first:
-              type: string
-              example: "/api/image-builder/v1/packages?limit=10&offset=0&distribution...."
-            last:
-              type: string
-              example: "/api/image-builder/v1/packages?limit=10&offset=10&distribution...."
+          $ref: '#/components/schemas/ListResponseLinks'
         data:
           type: array
           items:
@@ -1313,6 +1328,29 @@ components:
           type: string
         signature:
           type: string
+    RecommendPackageRequest:
+      required:
+        - packages
+        - recommendedPackages
+      type: object
+      properties:
+        packages:
+          type: array
+          items:
+            type: string
+        recommendedPackages:
+          type: integer
+          format: int32
+          default: 3
+    RecommendationsResponse:
+      required:
+        - packages
+      type: object
+      properties:
+        packages:
+          type: array
+          items:
+            type: string
     ClonesResponse:
       required:
         - meta
@@ -1320,24 +1358,9 @@ components:
         - data
       properties:
         meta:
-          type: object
-          required:
-            - count
-          properties:
-            count:
-              type: integer
+          $ref: '#/components/schemas/ListResponseMeta'
         links:
-          type: object
-          required:
-            - first
-            - last
-          properties:
-            first:
-              type: string
-              example: "/api/image-builder/v1/composes?limit=10&offset=0"
-            last:
-              type: string
-              example: "/api/image-builder/v1/composes?limit=10&offset=10"
+          $ref: '#/components/schemas/ListResponseLinks'
         data:
           type: array
           items:
@@ -1513,6 +1536,8 @@ components:
             even when there are one or more mountpoints.
         fips:
           $ref: '#/components/schemas/FIPS'
+        installer:
+          $ref: '#/components/schemas/Installer'
     Container:
       type: object
       required:
@@ -1618,6 +1643,11 @@ components:
         data:
           type: string
           description: Contents of the file as plain text
+        data_encoding:
+          type: string
+          enum: ['plain', 'base64']
+          description: When data is base64-encoded to prevent Akamai content filter false positives
+          default: 'plain'
         ensure_parents:
           type: boolean
           description: Ensure that the parent directories exist
@@ -1713,6 +1743,21 @@ components:
           type: boolean
           description: Enables the system FIPS mode
           default: false
+    Installer:
+      type: object
+      additionalProperties: false
+      description: Anaconda installer configuration
+      properties:
+        unattended:
+          type: boolean
+          description: |
+            Create a kickstart file for a fully automated installation
+        sudo-nopasswd:
+          type: array
+          items:
+            type: string
+            description: |
+              Enable passwordless sudo for users or groups (groups must be prefixed by %)
     Ignition:
       type: object
       additionalProperties: false

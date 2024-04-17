@@ -84,6 +84,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/experimental/blueprints`,
         params: {
+          name: queryArg.name,
           search: queryArg.search,
           limit: queryArg.limit,
           offset: queryArg.offset,
@@ -143,6 +144,16 @@ const injectedRtkApi = api.injectEndpoints({
           offset: queryArg.offset,
           ignoreImageTypes: queryArg.ignoreImageTypes,
         },
+      }),
+    }),
+    recommendPackage: build.mutation<
+      RecommendPackageApiResponse,
+      RecommendPackageApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/recommendations`,
+        method: "POST",
+        body: queryArg.recommendPackageRequest,
       }),
     }),
   }),
@@ -233,6 +244,8 @@ export type GetOscapCustomizationsApiArg = {
 export type GetBlueprintsApiResponse =
   /** status 200 a list of blueprints */ BlueprintsResponse;
 export type GetBlueprintsApiArg = {
+  /** fetch blueprint with specific name */
+  name?: string;
   /** search for blueprints by name or description */
   search?: string;
   /** max amount of blueprints, default 100 */
@@ -277,8 +290,9 @@ export type GetBlueprintComposesApiResponse =
 export type GetBlueprintComposesApiArg = {
   /** UUID of a blueprint */
   id: string;
-  /** Filter by a specific version of the Blueprint we want to fetch composes for
-   */
+  /** Filter by a specific version of the Blueprint we want to fetch composes for.
+    Pass special value -1 to fetch composes for latest version of the Blueprint.
+     */
   blueprintVersion?: number;
   /** max amount of composes, default 100 */
   limit?: number;
@@ -287,6 +301,11 @@ export type GetBlueprintComposesApiArg = {
   /** Filter the composes on image type. The filter is optional and can be specified multiple times.
    */
   ignoreImageTypes?: ImageTypes[];
+};
+export type RecommendPackageApiResponse =
+  /** status 200 Return the recommended packages. */ RecommendationsResponse[];
+export type RecommendPackageApiArg = {
+  recommendPackageRequest: RecommendPackageRequest;
 };
 export type Repository = {
   rhsm: boolean;
@@ -335,7 +354,15 @@ export type Distributions =
   | "fedora-37"
   | "fedora-38"
   | "fedora-39"
-  | "fedora-40";
+  | "fedora-40"
+  | "fedora-41";
+export type ListResponseMeta = {
+  count: number;
+};
+export type ListResponseLinks = {
+  first: string;
+  last: string;
+};
 export type ClientId = "api" | "ui";
 export type ImageTypes =
   | "aws"
@@ -441,6 +468,13 @@ export type ImageRequest = {
     defined by the image type.
      */
   size?: any;
+  /** Snapshotted content will be used instead of the official repositories of the
+    distribution. The snapshot that was made closest to, but before the specified date will
+    be used. If no snapshots made before the specified date can be found, the snapshot
+    closest to, but after the specified date will be used. If no snapshots can be found at
+    all, the request will fail.
+     */
+  snapshot_date?: string;
 };
 export type Container = {
   /** Reference to the container to embed */
@@ -473,6 +507,8 @@ export type File = {
   group?: string | number;
   /** Contents of the file as plain text */
   data?: string;
+  /** When data is base64-encoded to prevent Akamai content filter false positives */
+  data_encoding?: "plain" | "base64";
   /** Ensure that the parent directories exist */
   ensure_parents?: boolean;
 };
@@ -584,6 +620,12 @@ export type Fips = {
   /** Enables the system FIPS mode */
   enabled?: boolean;
 };
+export type Installer = {
+  /** Create a kickstart file for a fully automated installation
+   */
+  unattended?: boolean;
+  "sudo-nopasswd"?: string[];
+};
 export type Customizations = {
   containers?: Container[];
   directories?: Directory[];
@@ -617,6 +659,7 @@ export type Customizations = {
      */
   partitioning_mode?: "raw" | "lvm" | "auto-lvm";
   fips?: Fips;
+  installer?: Installer;
 };
 export type ComposeRequest = {
   distribution: Distributions;
@@ -638,13 +681,8 @@ export type ComposesResponseItem = {
   blueprint_version?: number | null;
 };
 export type ComposesResponse = {
-  meta: {
-    count: number;
-  };
-  links: {
-    first: string;
-    last: string;
-  };
+  meta: ListResponseMeta;
+  links: ListResponseLinks;
   data: ComposesResponseItem[];
 };
 export type AwsUploadStatus = {
@@ -717,13 +755,8 @@ export type ClonesResponseItem = {
   created_at: string;
 };
 export type ClonesResponse = {
-  meta: {
-    count: number;
-  };
-  links: {
-    first: string;
-    last: string;
-  };
+  meta: ListResponseMeta;
+  links: ListResponseLinks;
   data: ClonesResponseItem[];
 };
 export type CloneStatusResponse = {
@@ -737,13 +770,8 @@ export type Package = {
   summary: string;
 };
 export type PackagesResponse = {
-  meta: {
-    count: number;
-  };
-  links: {
-    first: string;
-    last: string;
-  };
+  meta: ListResponseMeta;
+  links: ListResponseLinks;
   data: Package[];
 };
 export type DistributionProfileItem =
@@ -773,13 +801,8 @@ export type BlueprintItem = {
   last_modified_at: string;
 };
 export type BlueprintsResponse = {
-  meta: {
-    count: number;
-  };
-  links: {
-    first: string;
-    last: string;
-  };
+  meta: ListResponseMeta;
+  links: ListResponseLinks;
   data: BlueprintItem[];
 };
 export type CreateBlueprintResponse = {
@@ -787,7 +810,7 @@ export type CreateBlueprintResponse = {
 };
 export type CreateBlueprintRequest = {
   name: string;
-  description: string;
+  description?: string;
   distribution: Distributions;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -803,6 +826,13 @@ export type BlueprintResponse = {
    */
   image_requests: ImageRequest[];
   customizations: Customizations;
+};
+export type RecommendationsResponse = {
+  packages: string[];
+};
+export type RecommendPackageRequest = {
+  packages: string[];
+  recommendedPackages: number;
 };
 export const {
   useGetArchitecturesQuery,
@@ -833,4 +863,5 @@ export const {
   useComposeBlueprintMutation,
   useGetBlueprintComposesQuery,
   useLazyGetBlueprintComposesQuery,
+  useRecommendPackageMutation,
 } = injectedRtkApi;
