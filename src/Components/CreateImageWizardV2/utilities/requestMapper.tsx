@@ -46,7 +46,13 @@ import {
   wizardState,
   selectFileSystemPartitionMode,
   selectPartitions,
+  selectSnapshotDate,
+  selectUseLatest,
 } from '../../../store/wizardSlice';
+import {
+  convertMMDDYYYYToYYYYMMDD,
+  convertYYYYMMDDTOMMDDYYYY,
+} from '../../../Utilities/time';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
@@ -102,6 +108,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     (image) => image.image_type === 'azure'
   );
 
+  const snapshot_date = convertYYYYMMDDTOMMDDYYYY(
+    request.image_requests.find((image) => !!image.snapshot_date)
+      ?.snapshot_date || ''
+  );
+
   const awsUploadOptions = aws?.upload_request
     .options as AwsUploadRequestOptions;
   const gcpUploadOptions = gcp?.upload_request
@@ -154,6 +165,10 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       source: { id: awsUploadOptions?.share_with_sources?.[0] },
       sourceId: awsUploadOptions?.share_with_sources?.[0],
     },
+    snapshotting: {
+      useLatest: !snapshot_date,
+      snapshotDate: snapshot_date,
+    },
     repositories: {
       customRepositories: request.customizations.custom_repositories || [],
       payloadRepositories: request.customizations.payload_repositories || [],
@@ -179,6 +194,8 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
 
 const getImageRequests = (state: RootState): ImageRequest[] => {
   const imageTypes = selectImageTypes(state);
+  const snapshotDate = convertMMDDYYYYToYYYYMMDD(selectSnapshotDate(state));
+  const useLatest = selectUseLatest(state);
   return imageTypes.map((type) => ({
     architecture: selectArchitecture(state),
     image_type: type,
@@ -186,6 +203,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
       type: uploadTypeByTargetEnv(type),
       options: getImageOptions(type, state),
     },
+    snapshot_date: useLatest ? '' : snapshotDate,
   }));
 };
 

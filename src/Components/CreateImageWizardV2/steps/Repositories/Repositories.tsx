@@ -351,7 +351,11 @@ const Repositories = () => {
 
   const handleSelectAll = () => {
     if (data) {
-      updateSelected(data.data?.map((repo) => repo.url) || []);
+      updateSelected(
+        data.data
+          ?.filter(({ status }) => status === 'Valid')
+          .map((repo) => repo.url) || []
+      );
     }
   };
 

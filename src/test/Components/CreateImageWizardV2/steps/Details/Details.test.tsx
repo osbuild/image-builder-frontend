@@ -38,6 +38,7 @@ const goToDetailsStep = async () => {
   await clickNext();
   await clickNext();
   await clickNext();
+  await clickNext();
 };
 
 const enterBlueprintDescription = async () => {

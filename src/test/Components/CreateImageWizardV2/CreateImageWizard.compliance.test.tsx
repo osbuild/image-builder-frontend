@@ -106,6 +106,7 @@ describe('Step Compliance', () => {
       })
     ).not.toBeInTheDocument();
 
+    await clickNext(); // skip RepositorySnapshot
     await clickNext(); // skip Repositories
 
     // check that there are no Packages contained when selecting the "None" profile option
@@ -172,6 +173,7 @@ describe('Step Compliance', () => {
     await screen.findByRole('heading', { name: /File system configuration/i });
     await screen.findByText(/tmp/i);
 
+    await clickNext(); // skip RepositorySnapshots
     await clickNext(); // skip Repositories
 
     // check that the Packages contains correct packages

@@ -72,3 +72,13 @@ ul.pf-m-plain {
 .panel-border {
     --pf-v5-c-panel--before--BorderColor: #BEE1F4;
 }
+
+// Targets the alert within the Reviewsteps > content dropdown
+// Removes excess top margin padding
+div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
+    margin-top: 18px;
+
+    h4 {
+        margin-block-start: 0;
+    }
+}

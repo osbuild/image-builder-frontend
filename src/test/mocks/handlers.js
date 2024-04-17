@@ -25,6 +25,7 @@ import {
   mockCloneStatus,
   mockStatus,
 } from '../fixtures/composes';
+import { mockedFeatureResponse } from '../fixtures/features';
 import {
   distributionOscapProfiles,
   oscapCustomizations,
@@ -60,6 +61,15 @@ export const handlers = [
     const { search } = await req.json();
     return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
   }),
+  rest.get(`${CONTENT_SOURCES_API}/features/`, async (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(mockedFeatureResponse));
+  }),
+  rest.post(
+    `${CONTENT_SOURCES_API}/snapshots/for_date/`,
+    async (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(mockSourcesPackagesResults));
+    }
+  ),
   rest.get(`${IMAGE_BUILDER_API}/packages`, (req, res, ctx) => {
     const search = req.url.searchParams.get('search');
     return res(ctx.status(200), ctx.json(mockPackagesResults(search)));

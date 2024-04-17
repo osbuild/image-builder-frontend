@@ -77,6 +77,10 @@ export type wizardState = {
     partitions: Partition[];
     isNextButtonTouched: boolean;
   };
+  snapshotting: {
+    useLatest: boolean;
+    snapshotDate: string;
+  };
   repositories: {
     customRepositories: CustomRepository[];
     payloadRepositories: Repository[];
@@ -135,6 +139,10 @@ const initialState: wizardState = {
     mode: 'automatic',
     partitions: [],
     isNextButtonTouched: true,
+  },
+  snapshotting: {
+    useLatest: true,
+    snapshotDate: '',
   },
   repositories: {
     customRepositories: [],
@@ -239,6 +247,13 @@ export const selectIsNextButtonTouched = (state: RootState) => {
 
 export const selectPartitions = (state: RootState) => {
   return state.wizard.fileSystem.partitions;
+};
+
+export const selectUseLatest = (state: RootState) => {
+  return state.wizard.snapshotting.useLatest;
+};
+export const selectSnapshotDate = (state: RootState) => {
+  return state.wizard.snapshotting.snapshotDate;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
@@ -505,6 +520,12 @@ export const wizardSlice = createSlice({
         state.fileSystem.partitions[partitionIndex].min_size = min_size;
       }
     },
+    changeUseLatest: (state, action: PayloadAction<boolean>) => {
+      state.snapshotting.useLatest = action.payload;
+    },
+    changeSnapshotDate: (state, action: PayloadAction<string>) => {
+      state.snapshotting.snapshotDate = action.payload;
+    },
     changeCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -624,6 +645,8 @@ export const {
   changePartitionUnit,
   changePartitionMinSize,
   changePartitionOrder,
+  changeUseLatest,
+  changeSnapshotDate,
   changeCustomRepositories,
   changePayloadRepositories,
   addRecommendedRepository,

@@ -36,7 +36,7 @@ rules:
   prefer-const:
     - error
     - destructuring: any
-  no-console: 2
+  no-console: 1
   eqeqeq: error
   array-callback-return: warn
   # Temporarily disabled

@@ -1,6 +1,9 @@
 import { emptyContentSourcesApi as api } from "./emptyContentSourcesApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
+    listFeatures: build.query<ListFeaturesApiResponse, ListFeaturesApiArg>({
+      query: () => ({ url: `/features/` }),
+    }),
     listRepositories: build.query<
       ListRepositoriesApiResponse,
       ListRepositoriesApiArg
@@ -56,10 +59,22 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.apiContentUnitSearchRequest,
       }),
     }),
+    listSnapshotsByDate: build.mutation<
+      ListSnapshotsByDateApiResponse,
+      ListSnapshotsByDateApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/snapshots/for_date/`,
+        method: "POST",
+        body: queryArg.apiListSnapshotByDateRequest,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
 export { injectedRtkApi as contentSourcesApi };
+export type ListFeaturesApiResponse = /** status 200 OK */ ApiFeatureSet;
+export type ListFeaturesApiArg = void;
 export type ListRepositoriesApiResponse =
   /** status 200 OK */ ApiRepositoryCollectionResponseRead;
 export type ListRepositoriesApiArg = {
@@ -81,11 +96,11 @@ export type ListRepositoriesApiArg = {
   name?: string;
   /** A comma separated list of URLs to control api response. */
   url?: string;
-  /** A comma separated list of uuids to control api response. */
+  /** A comma separated list of UUIDs to control api response. */
   uuid?: string;
   /** Sort the response data based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
-  /** A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`. */
+  /** A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`, `unavailable`. */
   status?: string;
   /** A comma separated list of origins to filter api response. Origins can include `red_hat` and `external`. */
   origin?: string;
@@ -117,6 +132,21 @@ export type SearchRpmApiArg = {
   /** request body */
   apiContentUnitSearchRequest: ApiContentUnitSearchRequest;
 };
+export type ListSnapshotsByDateApiResponse =
+  /** status 200 OK */ ApiListSnapshotByDateResponse;
+export type ListSnapshotsByDateApiArg = {
+  /** request body */
+  apiListSnapshotByDateRequest: ApiListSnapshotByDateRequest;
+};
+export type ApiFeature = {
+  /** Whether the current user can access the feature */
+  accessible?: boolean;
+  /** Whether the feature is enabled on the running server */
+  enabled?: boolean;
+};
+export type ApiFeatureSet = {
+  [key: string]: ApiFeature;
+};
 export type ApiSnapshotResponse = {
   /** Count of each content type */
   added_counts?: {
@@ -138,6 +168,26 @@ export type ApiSnapshotResponse = {
   url?: string;
   uuid?: string;
 };
+export type ApiTaskInfoResponse = {
+  /** Timestamp of task creation */
+  created_at?: string;
+  /** Timestamp task ended running at */
+  ended_at?: string;
+  /** Error thrown while running task */
+  error?: string;
+  /** Organization ID of the owner */
+  org_id?: string;
+  /** Name of the associated repository */
+  repository_name?: string;
+  /** UUID of the associated repository */
+  repository_uuid?: string;
+  /** Status of task (running, failed, completed, canceled, pending) */
+  status?: string;
+  /** Type of task */
+  type?: string;
+  /** UUID of the object */
+  uuid?: string;
+};
 export type ApiRepositoryResponse = {
   /** Content Type (rpm) of the repository */
   content_type?: string;
@@ -149,11 +199,16 @@ export type ApiRepositoryResponse = {
   failed_introspections_count?: number;
   /** GPG key for repository */
   gpg_key?: string;
+  /** Label used to configure the yum repository on clients */
+  label?: string;
   /** Error of last attempted introspection */
   last_introspection_error?: string;
+  /** Status of last introspection */
+  last_introspection_status?: string;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string;
   last_snapshot?: ApiSnapshotResponse;
+  last_snapshot_task?: ApiTaskInfoResponse;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string;
   /** UUID of the last dao.Snapshot */
@@ -174,7 +229,7 @@ export type ApiRepositoryResponse = {
   package_count?: number;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean;
-  /** Status of repository introspection (Valid, Invalid, Unavailable, Pending) */
+  /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
   status?: string;
   /** URL of the remote yum repository */
   url?: string;
@@ -192,11 +247,16 @@ export type ApiRepositoryResponseRead = {
   failed_introspections_count?: number;
   /** GPG key for repository */
   gpg_key?: string;
+  /** Label used to configure the yum repository on clients */
+  label?: string;
   /** Error of last attempted introspection */
   last_introspection_error?: string;
+  /** Status of last introspection */
+  last_introspection_status?: string;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string;
   last_snapshot?: ApiSnapshotResponse;
+  last_snapshot_task?: ApiTaskInfoResponse;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string;
   /** UUID of the last dao.Snapshot */
@@ -219,7 +279,7 @@ export type ApiRepositoryResponseRead = {
   package_count?: number;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean;
-  /** Status of repository introspection (Valid, Invalid, Unavailable, Pending) */
+  /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
   status?: string;
   /** URL of the remote yum repository */
   url?: string;
@@ -286,7 +346,7 @@ export type ApiRepositoryRequest = {
   url?: string;
 };
 export type ApiRepositoryRpm = {
-  /** The Architecture of the rpm */
+  /** The architecture of the rpm */
   arch?: string;
   /** The checksum of the rpm */
   checksum?: string;
@@ -322,12 +382,31 @@ export type ApiContentUnitSearchRequest = {
   search?: string;
   /** URLs of repositories to search */
   urls?: string[];
-  /** List of RepositoryConfig UUIDs to search */
+  /** List of repository UUIDs to search */
   uuids?: string[];
 };
+export type ApiSnapshotForDate = {
+  /** Is the snapshot after the specified date */
+  is_after?: boolean;
+  match?: ApiSnapshotResponse;
+  /** Repository uuid for associated snapshot */
+  repository_uuid?: string;
+};
+export type ApiListSnapshotByDateResponse = {
+  /** Requested Data */
+  data?: ApiSnapshotForDate[];
+};
+export type ApiListSnapshotByDateRequest = {
+  /** Exact date to search by. */
+  date?: string;
+  /** Repository UUIDs to find snapshots for */
+  repository_uuids?: string[];
+};
 export const {
+  useListFeaturesQuery,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
   useListRepositoriesRpmsQuery,
   useSearchRpmMutation,
+  useListSnapshotsByDateMutation,
 } = injectedRtkApi;

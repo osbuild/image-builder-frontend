@@ -1,4 +1,6 @@
 import 'whatwg-fetch';
+//Needed for correct jest extends types
+import '@testing-library/jest-dom';
 import failOnConsole from 'jest-fail-on-console';
 
 import { server } from './mocks/server';

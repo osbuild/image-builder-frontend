@@ -410,6 +410,7 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
 
@@ -602,6 +603,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -642,6 +644,7 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -695,6 +698,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -719,6 +723,7 @@ describe('Step Registration', () => {
 
     await removeKeyInformation;
 
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -858,6 +863,8 @@ describe('Step Details', () => {
     await clickNext();
     // skip fsc
     await clickNext();
+    // skip snapshots
+    await clickNext();
   };
 
   test('image name invalid for more than 63 chars', async () => {
@@ -932,6 +939,8 @@ describe('Step Review', () => {
     await clickNext();
     // skip OpenScap
     await clickNext();
+    // skip snpashotstep
+    await clickNext();
     // skip repositories
     await clickNext();
     // skip packages
@@ -993,7 +1002,8 @@ describe('Step Review', () => {
 
     // skip Oscap
     await clickNext();
-
+    // skip snpashotstep
+    await clickNext();
     // skip packages
     await clickNext();
     // skip repositories

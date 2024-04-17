@@ -1,9 +1,20 @@
 import React from 'react';
 
-import { Alert, Panel, PanelMain, Spinner } from '@patternfly/react-core';
+import {
+  Alert,
+  EmptyState,
+  EmptyStateHeader,
+  EmptyStateIcon,
+  Panel,
+  PanelMain,
+  Spinner,
+} from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
+import {
+  ApiSnapshotForDate,
+  useListRepositoriesQuery,
+} from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
@@ -90,6 +101,95 @@ export const FSReviewTable = () => {
         </Table>
       </PanelMain>
     </Panel>
+  );
+};
+
+const Error = () => {
+  return (
+    <Alert title="Repositories unavailable" variant="danger" isPlain isInline>
+      Repositories cannot be reached, try again later.
+    </Alert>
+  );
+};
+
+const Loading = () => {
+  return (
+    <EmptyState>
+      <EmptyStateHeader
+        titleText="Loading"
+        icon={<EmptyStateIcon icon={Spinner} />}
+        headingLevel="h4"
+      />
+    </EmptyState>
+  );
+};
+
+export const SnapshotTable = ({
+  snapshotForDate,
+}: {
+  snapshotForDate: ApiSnapshotForDate[];
+}) => {
+  const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
+    uuid: snapshotForDate.map(({ repository_uuid }) => repository_uuid).join(),
+    origin: 'red_hat,external', // Make sure to show both redhat and custom
+  });
+
+  const isAfterSet = new Set(
+    snapshotForDate
+      .filter(({ is_after }) => is_after)
+      .map(({ repository_uuid }) => repository_uuid)
+  );
+
+  const stringToDateToMMDDYYYY = (strDate: string) => {
+    const date = new Date(strDate);
+    return `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date
+      .getDate()
+      .toString()
+      .padStart(2, '0')}/${date.getFullYear()}`;
+  };
+
+  return (
+    (isError && <Error />) ||
+    (isLoading && <Loading />) ||
+    (isSuccess && (
+      <Panel isScrollable>
+        <PanelMain maxHeight="30ch">
+          <Table aria-label="Packages table" variant="compact">
+            <Thead>
+              <Tr>
+                <Th>Name</Th>
+                <Th>Last snapshot date</Th>
+              </Tr>
+            </Thead>
+            <Tbody data-testid="packages-tbody-review">
+              {data?.data?.map(({ uuid, name, last_snapshot }, pkgIndex) => (
+                <Tr key={pkgIndex}>
+                  <Td>{name}</Td>
+                  <Td>
+                    {uuid && isAfterSet.has(uuid) ? (
+                      <Alert
+                        title={
+                          last_snapshot?.created_at
+                            ? stringToDateToMMDDYYYY(last_snapshot.created_at)
+                            : 'N/A'
+                        }
+                        variant="warning"
+                        isPlain
+                        isInline
+                      />
+                    ) : last_snapshot?.created_at ? (
+                      stringToDateToMMDDYYYY(last_snapshot.created_at)
+                    ) : (
+                      'N/A'
+                    )}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </PanelMain>
+      </Panel>
+    ))
   );
 };
 
