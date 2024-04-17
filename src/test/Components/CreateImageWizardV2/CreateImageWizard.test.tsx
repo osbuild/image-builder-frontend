@@ -414,7 +414,7 @@ describe('Step Upload to AWS', () => {
     await clickNext();
 
     await user.click(
-      await screen.findByRole('button', { name: /Save changes to blueprint/ })
+      await screen.findByRole('button', { name: /Create blueprint/ })
     );
 
     // returns back to the landing page
@@ -1009,7 +1009,7 @@ describe('Step Review', () => {
   test('has 3 buttons', async () => {
     await setUp();
 
-    await screen.findByRole('button', { name: /Save/ });
+    await screen.findByRole('button', { name: /Create/ });
     await screen.findByRole('button', { name: /Back/ });
     await screen.findByRole('button', { name: /Cancel/ });
   });
