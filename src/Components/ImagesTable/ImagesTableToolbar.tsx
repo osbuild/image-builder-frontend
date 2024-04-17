@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Alert,
   Pagination,
   Toolbar,
   ToolbarContent,
@@ -12,11 +13,13 @@ import { Link } from 'react-router-dom';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
+  selectBlueprintVersionFilterAPI,
 } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
   useGetBlueprintsQuery,
+  useGetBlueprintComposesQuery,
 } from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
@@ -46,16 +49,38 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
 
-  const { selectedBlueprintName } = useGetBlueprintsQuery(
-    { search: blueprintSearchInput },
-    {
-      selectFromResult: ({ data }) => ({
-        selectedBlueprintName: data?.data?.find(
-          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
-        )?.name,
-      }),
-    }
-  );
+  const { data: blueprintsComposes, isFetching: isFetchingBlueprintsCompose } =
+    useGetBlueprintComposesQuery(
+      {
+        id: selectedBlueprintId as string,
+        limit: perPage,
+        offset: perPage * (page - 1),
+        blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+      },
+      { skip: !selectedBlueprintId }
+    );
+
+  const { selectedBlueprintName, selectedBlueprintVersion } =
+    useGetBlueprintsQuery(
+      { search: blueprintSearchInput },
+      {
+        selectFromResult: ({ data }) => {
+          const bp = data?.data?.find(
+            (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
+          );
+          return {
+            selectedBlueprintName: bp?.name,
+            selectedBlueprintVersion: bp?.version,
+          };
+        },
+      }
+    );
+  const latestImageVersion = blueprintsComposes?.data[0]?.blueprint_version;
+
+  const isBlueprintOutSync =
+    selectedBlueprintId &&
+    !isFetchingBlueprintsCompose &&
+    latestImageVersion !== selectedBlueprintVersion;
 
   const pagination = (
     <Pagination
@@ -105,6 +130,17 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
+        {itemCount > 0 && experimentalFlag && isBlueprintOutSync && (
+          <Alert
+            style={{
+              margin:
+                '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+            }}
+            isInline
+            title={`The selected blueprint is at version ${selectedBlueprintVersion}, images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
+            ouiaId="blueprint-out-of-sync-alert"
+          />
+        )}
         {selectedBlueprintId && (
           <ToolbarContent>
             <ToolbarItem>
