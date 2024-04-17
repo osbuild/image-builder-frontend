@@ -31,6 +31,7 @@ import {
 } from '../fixtures/oscap';
 import {
   mockPackagesResults,
+  mockPkgRecommendations,
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
 import {
@@ -179,6 +180,12 @@ export const handlers = [
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id`,
     (req, res, ctx) => {
       return res(ctx.status(200), ctx.json(mockBlueprintDetail));
+    }
+  ),
+  rest.post(
+    `${IMAGE_BUILDER_API}/experimental/recommendations`,
+    (req, res, ctx) => {
+      return res(ctx.status(200), ctx.json(mockPkgRecommendations));
     }
   ),
 ];

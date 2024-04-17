@@ -103,6 +103,15 @@ const toggleSelected = async () => {
   );
 };
 
+const checkRecommendationsEmptyState = async () => {
+  const recommendationButton = await screen.findByRole('button', {
+    name: 'Recommended Red Hat packages',
+  });
+
+  await userEvent.click(recommendationButton);
+  await screen.findByText('Select packages to generate recommendations.');
+};
+
 describe('Step Packages', () => {
   const setUp = async () => {
     mockContentSourcesEnabled = false;
@@ -325,6 +334,47 @@ describe('Step Packages', () => {
 
     expect(availablePackages[0]).toHaveTextContent('test');
     expect(availablePackages[1]).toHaveTextContent('test-sources');
+  });
+
+  test('should display recommendations', async () => {
+    await setUp();
+
+    await checkRecommendationsEmptyState();
+    await typeIntoSearchBox('test');
+
+    const checkboxes = await getAllCheckboxes();
+
+    await userEvent.click(checkboxes[0]);
+
+    await screen.findByText('recommendedPackage1');
+    await screen.findByText('recommendedPackage2');
+    await screen.findByText('recommendedPackage3');
+  });
+
+  test('allow to add recommendations to selected', async () => {
+    await setUp();
+
+    await checkRecommendationsEmptyState();
+
+    const pkgTable = await screen.findByTestId('packages-table');
+
+    await typeIntoSearchBox('test');
+
+    const checkboxes = await getAllCheckboxes();
+
+    await userEvent.click(checkboxes[0]);
+
+    const addRecButtons = await screen.findAllByTestId(
+      'add-recommendation-button'
+    );
+
+    await userEvent.click(addRecButtons[0]);
+
+    await userEvent.click(
+      await screen.findByRole('button', { name: /Selected/ })
+    );
+
+    await within(pkgTable).findByText('recommendedPackage1');
   });
 });
 
