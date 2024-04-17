@@ -47,6 +47,7 @@ const goToPackagesStep = async () => {
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File System
+  await clickNext(); // Snapshots
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
 };

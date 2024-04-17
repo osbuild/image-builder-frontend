@@ -33,7 +33,7 @@ import {
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 
-const Review = () => {
+const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
@@ -172,7 +172,8 @@ const Review = () => {
         isIndented
         data-testid="content-expandable"
       >
-        <ContentList />
+        {/* Intentional prop drilling for simplicity - To be removed */}
+        <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection

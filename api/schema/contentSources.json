@@ -19,7 +19,56 @@
                         "type": "array"
                     },
                     "uuids": {
-                        "description": "List of RepositoryConfig UUIDs to search",
+                        "description": "List of repository UUIDs to search",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "api.DetectRpmsRequest": {
+                "properties": {
+                    "limit": {
+                        "description": "Maximum number of records to return for the search",
+                        "type": "integer"
+                    },
+                    "rpm_names": {
+                        "description": "List of rpm names to search",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "urls": {
+                        "description": "URLs of repositories to search",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "uuids": {
+                        "description": "List of repository UUIDs to search",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "api.DetectRpmsResponse": {
+                "properties": {
+                    "found": {
+                        "description": "List of rpm names found in given repositories",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "missing": {
+                        "description": "List of rpm names not found in given repositories",
                         "items": {
                             "type": "string"
                         },
@@ -101,7 +150,7 @@
                         "type": "string"
                     },
                     "repository_uuids": {
-                        "description": "Repository uuids to find snapshots for",
+                        "description": "Repository UUIDs to find snapshots for",
                         "items": {
                             "type": "string"
                         },
@@ -112,16 +161,12 @@
             },
             "api.ListSnapshotByDateResponse": {
                 "properties": {
-                    "is_after": {
-                        "description": "Is the snapshot after the specified date",
-                        "type": "boolean"
-                    },
-                    "match": {
-                        "$ref": "#/components/schemas/api.SnapshotResponse"
-                    },
-                    "repository_uuid": {
-                        "description": "Repository uuid for associated snapshot",
-                        "type": "string"
+                    "data": {
+                        "description": "Requested Data",
+                        "items": {
+                            "$ref": "#/components/schemas/api.SnapshotForDate"
+                        },
+                        "type": "array"
                     }
                 },
                 "type": "object"
@@ -211,6 +256,10 @@
                         "description": "Error of last attempted introspection",
                         "type": "string"
                     },
+                    "last_introspection_status": {
+                        "description": "Status of last introspection",
+                        "type": "string"
+                    },
                     "last_introspection_time": {
                         "description": "Timestamp of last attempted introspection",
                         "type": "string"
@@ -228,15 +277,11 @@
                         "type": "integer"
                     },
                     "status": {
-                        "description": "Introspection status of the repository",
+                        "description": "Combined introspection and snapshot status of the repository",
                         "type": "string"
                     },
                     "url": {
                         "description": "URL of the remote yum repository",
-                        "type": "string"
-                    },
-                    "uuid": {
-                        "description": "UUID of the repository if it exists for the user",
                         "type": "string"
                     }
                 },
@@ -453,8 +498,16 @@
                         "description": "GPG key for repository",
                         "type": "string"
                     },
+                    "label": {
+                        "description": "Label used to configure the yum repository on clients",
+                        "type": "string"
+                    },
                     "last_introspection_error": {
                         "description": "Error of last attempted introspection",
+                        "type": "string"
+                    },
+                    "last_introspection_status": {
+                        "description": "Status of last introspection",
                         "type": "string"
                     },
                     "last_introspection_time": {
@@ -463,6 +516,9 @@
                     },
                     "last_snapshot": {
                         "$ref": "#/components/schemas/api.SnapshotResponse"
+                    },
+                    "last_snapshot_task": {
+                        "$ref": "#/components/schemas/api.TaskInfoResponse"
                     },
                     "last_snapshot_task_uuid": {
                         "description": "UUID of the last snapshot task",
@@ -510,7 +566,7 @@
                         "type": "boolean"
                     },
                     "status": {
-                        "description": "Status of repository introspection (Valid, Invalid, Unavailable, Pending)",
+                        "description": "Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending)",
                         "type": "string"
                     },
                     "url": {
@@ -528,7 +584,7 @@
             "api.RepositoryRpm": {
                 "properties": {
                     "arch": {
-                        "description": "The Architecture of the rpm",
+                        "description": "The architecture of the rpm",
                         "type": "string"
                     },
                     "checksum": {
@@ -645,6 +701,10 @@
                     "environment_name": {
                         "description": "Environment found",
                         "type": "string"
+                    },
+                    "id": {
+                        "description": "ID of the environment found",
+                        "type": "string"
                     }
                 },
                 "type": "object"
@@ -655,8 +715,12 @@
                         "description": "Description of the package group found",
                         "type": "string"
                     },
+                    "id": {
+                        "description": "Package group ID",
+                        "type": "string"
+                    },
                     "package_group_name": {
-                        "description": "Package group found",
+                        "description": "Name of package group found",
                         "type": "string"
                     },
                     "package_list": {
@@ -700,6 +764,22 @@
                 },
                 "type": "object"
             },
+            "api.SnapshotForDate": {
+                "properties": {
+                    "is_after": {
+                        "description": "Is the snapshot after the specified date",
+                        "type": "boolean"
+                    },
+                    "match": {
+                        "$ref": "#/components/schemas/api.SnapshotResponse"
+                    },
+                    "repository_uuid": {
+                        "description": "Repository uuid for associated snapshot",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "api.SnapshotResponse": {
                 "properties": {
                     "added_counts": {
@@ -737,6 +817,53 @@
                     },
                     "uuid": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "api.SnapshotRpm": {
+                "properties": {
+                    "arch": {
+                        "description": "The architecture of the rpm",
+                        "type": "string"
+                    },
+                    "epoch": {
+                        "description": "The epoch of the rpm",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "The rpm package name",
+                        "type": "string"
+                    },
+                    "release": {
+                        "description": "The release of the rpm",
+                        "type": "string"
+                    },
+                    "summary": {
+                        "description": "The summary of the rpm",
+                        "type": "string"
+                    },
+                    "version": {
+                        "description": "The version of the  rpm",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "api.SnapshotRpmCollectionResponse": {
+                "properties": {
+                    "data": {
+                        "description": "List of rpms",
+                        "items": {
+                            "$ref": "#/components/schemas/api.SnapshotRpm"
+                        },
+                        "type": "array"
+                    },
+                    "links": {
+                        "$ref": "#/components/schemas/api.Links"
+                    },
+                    "meta": {
+                        "$ref": "#/components/schemas/api.ResponseMetadata"
                     }
                 },
                 "type": "object"
@@ -892,6 +1019,13 @@
                         "description": "Organization ID of the owner",
                         "type": "string"
                     },
+                    "repository_uuids": {
+                        "description": "Repositories added to the template",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
                     "uuid": {
                         "readOnly": true,
                         "type": "string"
@@ -899,6 +1033,26 @@
                     "version": {
                         "description": "Version of the template",
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "api.TemplateUpdateRequest": {
+                "properties": {
+                    "date": {
+                        "description": "Latest date to include snapshots for",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the template",
+                        "type": "string"
+                    },
+                    "repository_uuids": {
+                        "description": "Repositories to add to the template",
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
                     }
                 },
                 "type": "object"
@@ -1462,7 +1616,7 @@
                         }
                     },
                     {
-                        "description": "A comma separated list of uuids to control api response.",
+                        "description": "A comma separated list of UUIDs to control api response.",
                         "in": "query",
                         "name": "uuid",
                         "schema": {
@@ -1478,7 +1632,7 @@
                         }
                     },
                     {
-                        "description": "A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`.",
+                        "description": "A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`, `unavailable`.",
                         "in": "query",
                         "name": "status",
                         "schema": {
@@ -1822,83 +1976,6 @@
                 "summary": "Bulk delete repositories",
                 "tags": [
                     "repositories"
-                ]
-            }
-        },
-        "/repositories/snapshots/for_date/": {
-            "post": {
-                "description": "Get nearest snapshot by date for a list of repositories.",
-                "operationId": "listSnapshotsByDate",
-                "requestBody": {
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "$ref": "#/components/schemas/api.ListSnapshotByDateRequest"
-                            }
-                        }
-                    },
-                    "description": "request body",
-                    "required": true,
-                    "x-originalParamName": "body"
-                },
-                "responses": {
-                    "200": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "items": {
-                                        "$ref": "#/components/schemas/api.ListSnapshotByDateResponse"
-                                    },
-                                    "type": "array"
-                                }
-                            }
-                        },
-                        "description": "OK"
-                    },
-                    "400": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Not Found"
-                    },
-                    "500": {
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Internal Server Error"
-                    }
-                },
-                "summary": "Get nearest snapshot by date for a list of repositories.",
-                "tags": [
-                    "snapshots"
                 ]
             }
         },
@@ -2739,87 +2816,6 @@
                 ]
             }
         },
-        "/repositories/{uuid}/snapshots/{snapshot_uuid}/config.repo": {
-            "get": {
-                "operationId": "getRepoConfigurationFile",
-                "parameters": [
-                    {
-                        "description": "Identifier of the repository",
-                        "in": "path",
-                        "name": "uuid",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "Identifier of the snapshot",
-                        "in": "path",
-                        "name": "snapshot_uuid",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        },
-                        "description": "OK"
-                    },
-                    "400": {
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Bad Request"
-                    },
-                    "401": {
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Unauthorized"
-                    },
-                    "404": {
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Not Found"
-                    },
-                    "500": {
-                        "content": {
-                            "text/plain": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/errors.ErrorResponse"
-                                }
-                            }
-                        },
-                        "description": "Internal Server Error"
-                    }
-                },
-                "summary": "Get configuration file of a repository",
-                "tags": [
-                    "repositories"
-                ]
-            }
-        },
         "/repository_gpg_key/{uuid}": {
             "get": {
                 "description": "Get the GPG key file for a repository.",
@@ -3195,6 +3191,341 @@
                 ]
             }
         },
+        "/rpms/presence": {
+            "post": {
+                "description": "This enables users to detect presence of RPMs (Red Hat Package Manager) in a given list of repositories.",
+                "operationId": "detectRpm",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.DetectRpmsRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/api.DetectRpmsResponse"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "415": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unsupported Media Type"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Detect RPMs presence",
+                "tags": [
+                    "repositories",
+                    "rpms"
+                ]
+            }
+        },
+        "/snapshots/environments/names": {
+            "post": {
+                "description": "This enables users to search for environments in a given list of snapshots.",
+                "operationId": "searchSnapshotEnvironments",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.SnapshotSearchRpmRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/api.SearchEnvironmentResponse"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "415": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unsupported Media Type"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Search environments within snapshots",
+                "tags": [
+                    "snapshots",
+                    "environments"
+                ]
+            }
+        },
+        "/snapshots/for_date/": {
+            "post": {
+                "description": "Get nearest snapshot by date for a list of repositories.",
+                "operationId": "listSnapshotsByDate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.ListSnapshotByDateRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/api.ListSnapshotByDateResponse"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Get nearest snapshot by date for a list of repositories.",
+                "tags": [
+                    "snapshots"
+                ]
+            }
+        },
+        "/snapshots/package_groups/names": {
+            "post": {
+                "description": "This enables users to search for package groups in a given list of snapshots.",
+                "operationId": "searchSnapshotPackageGroups",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.SnapshotSearchRpmRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/api.SearchPackageGroupResponse"
+                                    },
+                                    "type": "array"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "415": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unsupported Media Type"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Search package groups within snapshots",
+                "tags": [
+                    "snapshots",
+                    "environments"
+                ]
+            }
+        },
         "/snapshots/rpms/names": {
             "post": {
                 "description": "This enables users to search for RPMs (Red Hat Package Manager) in a given list of snapshots.",
@@ -3280,6 +3611,175 @@
                 "tags": [
                     "snapshots",
                     "rpms"
+                ]
+            }
+        },
+        "/snapshots/{snapshot_uuid}/config.repo": {
+            "get": {
+                "operationId": "getRepoConfigurationFile",
+                "parameters": [
+                    {
+                        "description": "Identifier of the snapshot",
+                        "in": "path",
+                        "name": "snapshot_uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "content": {
+                            "text/plain": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Get configuration file of a repository",
+                "tags": [
+                    "repositories"
+                ]
+            }
+        },
+        "/snapshots/{uuid}/rpms": {
+            "get": {
+                "description": "List RPMs in a repository snapshot.",
+                "operationId": "listSnapshotRpms",
+                "parameters": [
+                    {
+                        "description": "Snapshot ID.",
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`.",
+                        "in": "query",
+                        "name": "limit",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Starting point for retrieving a subset of results. Determines how many items to skip from the beginning of the result set. Default value:`0`.",
+                        "in": "query",
+                        "name": "offset",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "description": "Term to filter and retrieve items that match the specified search criteria. Search term can include name.",
+                        "in": "query",
+                        "name": "search",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/api.SnapshotRpmCollectionResponse"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "List Snapshot RPMs",
+                "tags": [
+                    "snapshots"
                 ]
             }
         },
@@ -3663,6 +4163,70 @@
             }
         },
         "/templates/{uuid}": {
+            "delete": {
+                "description": "This enables deleting a specific template.",
+                "operationId": "deleteTemplate",
+                "parameters": [
+                    {
+                        "description": "Template ID.",
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Template was successfully deleted"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Delete a template",
+                "tags": [
+                    "templates"
+                ]
+            },
             "get": {
                 "description": "Get template information.",
                 "operationId": "getTemplate",
@@ -3730,6 +4294,208 @@
                     }
                 },
                 "summary": "Get Template",
+                "tags": [
+                    "templates"
+                ]
+            },
+            "patch": {
+                "description": "This operation enables updating some subset of attributes of a template",
+                "operationId": "partialUpdateTemplate",
+                "parameters": [
+                    {
+                        "description": "Template ID.",
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.TemplateUpdateRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/api.TemplateResponse"
+                                }
+                            }
+                        },
+                        "description": "Created",
+                        "headers": {
+                            "Location": {
+                                "description": "resource URL",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "415": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unsupported Media Type"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Update some attributes of a Template",
+                "tags": [
+                    "templates"
+                ]
+            },
+            "put": {
+                "description": "This operation enables updating all attributes of a template",
+                "operationId": "fullUpdateTemplate",
+                "parameters": [
+                    {
+                        "description": "Template ID.",
+                        "in": "path",
+                        "name": "uuid",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/api.TemplateUpdateRequest"
+                            }
+                        }
+                    },
+                    "description": "request body",
+                    "required": true,
+                    "x-originalParamName": "body"
+                },
+                "responses": {
+                    "201": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/api.TemplateResponse"
+                                }
+                            }
+                        },
+                        "description": "Created",
+                        "headers": {
+                            "Location": {
+                                "description": "resource URL",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "415": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unsupported Media Type"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/errors.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Fully update all attributes of a Template",
                 "tags": [
                     "templates"
                 ]

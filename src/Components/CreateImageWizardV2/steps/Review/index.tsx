@@ -4,13 +4,18 @@ import { Form, Title } from '@patternfly/react-core';
 
 import Review from './ReviewStep';
 
-const ReviewStep = () => {
+const ReviewStep = ({
+  snapshottingEnabled,
+}: {
+  snapshottingEnabled: boolean;
+}) => {
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
         Review
       </Title>
-      <Review />
+      {/* Intentional prop drilling for simplicity - To be removed */}
+      <Review snapshottingEnabled={snapshottingEnabled} />
     </Form>
   );
 };

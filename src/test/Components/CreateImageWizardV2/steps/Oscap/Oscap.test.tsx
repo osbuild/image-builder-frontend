@@ -81,6 +81,7 @@ const selectNone = async () => {
 
 const goToReviewStep = async () => {
   await clickNext(); // File system configuration
+  await clickNext(); // Snapshot repositories
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Details

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import {
   Alert,
@@ -16,7 +16,11 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
-import { PackagesTable, RepositoriesTable } from './ReviewStepTables';
+import {
+  PackagesTable,
+  RepositoriesTable,
+  SnapshotTable,
+} from './ReviewStepTables';
 import { FSReviewTable } from './ReviewStepTables';
 
 import {
@@ -26,6 +30,7 @@ import {
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
 } from '../../../../constants';
+import { useListSnapshotsByDateMutation } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
@@ -51,8 +56,14 @@ import {
   selectRegistrationType,
   selectFileSystemPartitionMode,
   selectRecommendedRepositories,
+  selectSnapshotDate,
+  selectUseLatest,
 } from '../../../../store/wizardSlice';
-import { toMonthAndYear } from '../../../../Utilities/time';
+import {
+  convertMMDDYYYYToYYYYMMDD,
+  toMonthAndYear,
+  yyyyMMddFormat,
+} from '../../../../Utilities/time';
 import { MinimumSizePopover } from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
@@ -385,17 +396,126 @@ export const TargetEnvOtherList = () => {
   );
 };
 
-export const ContentList = () => {
+export const ContentList = ({
+  snapshottingEnabled,
+}: {
+  snapshottingEnabled: boolean;
+}) => {
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
+  const snapshotDate = useAppSelector(selectSnapshotDate);
+  const useLatest = useAppSelector(selectUseLatest);
+
+  const customAndRecommendedRepositoryUUIDS = useMemo(
+    () =>
+      [
+        ...customRepositories.map(({ id }) => id),
+        ...recommendedRepositories.map(({ uuid }) => uuid),
+      ] as string[],
+    [customRepositories, recommendedRepositories]
+  );
+
+  const [listSnapshotsByDate, { data, isSuccess, isLoading, isError }] =
+    useListSnapshotsByDateMutation();
+
+  useEffect(() => {
+    listSnapshotsByDate({
+      apiListSnapshotByDateRequest: {
+        repository_uuids: customAndRecommendedRepositoryUUIDS,
+        date: useLatest
+          ? yyyyMMddFormat(new Date())
+          : convertMMDDYYYYToYYYYMMDD(snapshotDate),
+      },
+    });
+  }, [
+    customAndRecommendedRepositoryUUIDS,
+    listSnapshotsByDate,
+    snapshotDate,
+    useLatest,
+  ]);
+
   const duplicatePackages = packages.filter(
     (item, index) => packages.indexOf(item) !== index
   );
+
+  const noRepositoriesSelected =
+    customAndRecommendedRepositoryUUIDS.length === 0;
+
+  const hasSnapshotDateAfter = data?.data?.some(({ is_after }) => is_after);
+
+  const snapshottingText = useMemo(() => {
+    switch (true) {
+      case noRepositoriesSelected:
+        return 'No repositories selected';
+      case isLoading:
+        return '';
+      case useLatest:
+        return 'Use latest';
+      case !!snapshotDate:
+        return `State as of ${snapshotDate}`;
+      default:
+        return '';
+    }
+  }, [noRepositoriesSelected, isLoading, useLatest, snapshotDate]);
+
   return (
     <>
       <TextContent>
         <TextList component={TextListVariants.dl}>
+          {snapshottingEnabled ? (
+            <>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-u-min-width"
+              >
+                Repository Snapshot
+              </TextListItem>
+              <TextListItem
+                component={TextListItemVariants.dd}
+                data-testid="snapshot-method"
+              >
+                <Popover
+                  position="bottom"
+                  headerContent={
+                    useLatest
+                      ? 'Repositories as of today'
+                      : `Repositories as of ${snapshotDate}`
+                  }
+                  hasAutoWidth
+                  minWidth="60rem"
+                  bodyContent={
+                    <SnapshotTable snapshotForDate={data?.data || []} />
+                  }
+                >
+                  <Button
+                    variant="link"
+                    aria-label="Snapshot method"
+                    className="pf-u-p-0"
+                    isDisabled={noRepositoriesSelected || isLoading || isError}
+                    isLoading={isLoading}
+                  >
+                    {snapshottingText}
+                  </Button>
+                </Popover>
+                {!useLatest &&
+                !isLoading &&
+                isSuccess &&
+                hasSnapshotDateAfter ? (
+                  <Alert
+                    variant="warning"
+                    isInline
+                    isPlain
+                    title="A snapshot for this date is not available for some repositories."
+                  />
+                ) : (
+                  ''
+                )}
+              </TextListItem>
+            </>
+          ) : (
+            ''
+          )}
           <TextListItem component={TextListItemVariants.dt}>
             Custom repositories
           </TextListItem>

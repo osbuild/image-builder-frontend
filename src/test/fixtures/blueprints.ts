@@ -144,6 +144,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
           {
             architecture: 'x86_64',
             image_type: 'aws',
+            snapshot_date: '',
             upload_request: {
               type: 'aws',
               options: {
@@ -165,6 +166,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
           {
             architecture: 'x86_64',
             image_type: 'aws',
+            snapshot_date: '',
             upload_request: {
               type: 'aws',
               options: {
@@ -186,6 +188,7 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
           {
             architecture: 'x86_64',
             image_type: 'gcp',
+            snapshot_date: '',
             upload_request: {
               type: 'gcp',
               options: {

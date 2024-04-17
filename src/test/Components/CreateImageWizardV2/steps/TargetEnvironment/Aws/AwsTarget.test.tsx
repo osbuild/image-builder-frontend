@@ -43,6 +43,7 @@ const goToReview = async () => {
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system customization
+  await clickNext(); // Snapshot repositories
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Details
@@ -93,6 +94,7 @@ describe('aws image type request generated correctly', () => {
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
       image_type: 'aws',
+      snapshot_date: '',
       upload_request: {
         options: {
           share_with_sources: ['123'],
@@ -119,6 +121,7 @@ describe('aws image type request generated correctly', () => {
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
       image_type: 'aws',
+      snapshot_date: '',
       upload_request: {
         options: {
           share_with_accounts: ['123123123123'],

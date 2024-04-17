@@ -36,7 +36,7 @@ const EditImageWizard = ({ blueprintId }: EditImageWizardProps) => {
       navigate(resolveRelPath(''));
     }
   }, [error, navigate]);
-  return <CreateImageWizard startStepIndex={13} />;
+  return <CreateImageWizard isEdit />;
 };
 
 export default EditImageWizard;

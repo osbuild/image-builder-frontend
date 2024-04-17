@@ -57,6 +57,7 @@ const clickToReview = async () => {
   await clickNext(); // skip Registration
   await clickNext(); // skip OSCAP
   await clickNext(); // skip FSC
+  await clickNext(); // skip SnapshotRepositories
   await clickNext(); // skip Repositories
   await clickNext(); // skip Packages
   const nameInput = await screen.findByRole('textbox', {

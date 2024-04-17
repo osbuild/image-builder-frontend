@@ -155,6 +155,8 @@ describe('Step Packages', () => {
     await clickNext();
     // skip OpenSCAP
     await clickNext();
+    // skip snapshots
+    await clickNext();
     // skip Repositories
     await clickNext();
     // skip fsc
@@ -430,6 +432,8 @@ describe('Step Custom repositories', () => {
     // skip OpenSCAP
     await clickNext();
     // skip fsc
+    await clickNext();
+    // skip snapshots
     await clickNext();
   };
 

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import {
   Button,
@@ -20,6 +20,7 @@ import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
 import ReviewWizardFooter from './steps/Review/Footer/Footer';
+import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
@@ -32,6 +33,7 @@ import {
 } from './validators';
 
 import { RHEL_8, AARCH64 } from '../../constants';
+import { useListFeaturesQuery } from '../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -53,6 +55,8 @@ import {
   selectRegistrationType,
   selectStepValidation,
   addImageType,
+  selectSnapshotDate,
+  selectUseLatest,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -93,13 +97,32 @@ export const CustomWizardFooter = ({
 };
 
 type CreateImageWizardProps = {
-  startStepIndex?: number;
+  isEdit?: boolean;
 };
 
-const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
+const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+
+  // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
+  // =========================TO REMOVE=======================
+  const { data, isSuccess, isFetching, isError } =
+    useListFeaturesQuery(undefined);
+
+  const snapshottingEnabled = useMemo(
+    () =>
+      !(
+        !isError &&
+        !isFetching &&
+        isSuccess &&
+        data?.snapshots?.accessible === false &&
+        data?.snapshots?.enabled === false
+      ),
+    [data, isSuccess, isFetching, isError]
+  );
+
+  // =========================TO REMOVE=======================
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -139,6 +162,11 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
 
+  const snapshotDate = useAppSelector(selectSnapshotDate);
+  const useLatest = useAppSelector(selectUseLatest);
+
+  const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
+
   const [currentStep, setCurrentStep] = React.useState<WizardStepType>();
   const onStepChange = (
     _event: React.MouseEvent<HTMLButtonElement>,
@@ -152,7 +180,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
       <ImageBuilderHeader />
       <section className="pf-l-page__main-section pf-c-page__main-section">
         <Wizard
-          startIndex={startStepIndex}
+          startIndex={isEdit ? (snapshottingEnabled ? 14 : 13) : 1}
           onClose={() => navigate(resolveRelPath(''))}
           onStepChange={onStepChange}
           isVisitRequired
@@ -268,10 +296,27 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
             name="Content"
             id="step-content"
             steps={[
+              ...(snapshottingEnabled
+                ? [
+                    <WizardStep
+                      name="Repository snapshot"
+                      id="wizard-repository-snapshot"
+                      key="wizard-repository-snapshot"
+                      footer={
+                        <CustomWizardFooter
+                          disableNext={snapshotStepRequiresChoice}
+                        />
+                      }
+                    >
+                      <SnapshotStep />
+                    </WizardStep>,
+                  ]
+                : []),
               <WizardStep
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
+                isDisabled={snapshotStepRequiresChoice}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <RepositoriesStep />
@@ -280,12 +325,13 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
                 name="Additional packages"
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
+                isDisabled={snapshotStepRequiresChoice}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <PackagesStep />
               </WizardStep>,
             ]}
-          ></WizardStep>
+          />
           <WizardStep
             name="Details"
             id="step-details"
@@ -295,6 +341,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
                 ? 'error'
                 : 'default'
             }
+            isDisabled={snapshotStepRequiresChoice}
             footer={
               <CustomWizardFooter
                 disableNext={detailsValidation !== 'success'}
@@ -306,9 +353,11 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
           <WizardStep
             name="Review"
             id="step-review"
+            isDisabled={snapshotStepRequiresChoice}
             footer={<ReviewWizardFooter />}
           >
-            <ReviewStep />
+            {/* Intentional prop drilling for simplicity - To be removed */}
+            <ReviewStep snapshottingEnabled={snapshottingEnabled} />
           </WizardStep>
         </Wizard>
       </section>
