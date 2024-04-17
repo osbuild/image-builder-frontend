@@ -104,7 +104,6 @@ const ImagesTable = () => {
     data: blueprintsComposes,
     isSuccess: isBlueprintsSuccess,
     isLoading: isLoadingBlueprintsCompose,
-    isFetching: isFetchingBlueprintsCompose,
     isError: isBlueprintsError,
   } = useGetBlueprintComposesQuery(
     {
@@ -143,11 +142,6 @@ const ImagesTable = () => {
   const isLoading = selectedBlueprintId
     ? isLoadingBlueprintsCompose
     : isLoadingComposes;
-
-  const isBlueprintOutSync =
-    selectedBlueprintId &&
-    !isFetchingBlueprintsCompose &&
-    blueprintsComposes?.data[0]?.blueprint_version !== selectedBlueprintVersion;
 
   if (isLoading) {
     return (
@@ -207,7 +201,7 @@ const ImagesTable = () => {
               <Th />
             </Tr>
           </Thead>
-          {itemCount === 0 ? (
+          {itemCount === 0 && (
             <Tbody>
               <Tr>
                 <Td colSpan={12}>
@@ -215,21 +209,6 @@ const ImagesTable = () => {
                 </Td>
               </Tr>
             </Tbody>
-          ) : (
-            experimentalFlag &&
-            isBlueprintOutSync && (
-              <Tbody>
-                <Tr>
-                  <Td colSpan={12}>
-                    <Alert
-                      isInline
-                      title="You haven't built new images for this version of your blueprint yet"
-                      ouiaId="blueprint-out-of-sync-alert"
-                    />
-                  </Td>
-                </Tr>
-              </Tbody>
-            )
           )}
 
           {composes?.map((compose, rowIndex) => {
