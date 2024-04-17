@@ -15,11 +15,12 @@ import {
 import {
   ExternalLinkAltIcon,
   PlusCircleIcon,
-  CubesIcon,
+  PlusIcon,
 } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 
 import { resolveRelPath } from '../../Utilities/path';
+import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 
 type ImagesEmptyStateProps = {
   selectedBlueprint?: string;
@@ -29,16 +30,23 @@ const EmptyBlueprintsImagesTable = () => (
   <Bullseye>
     <EmptyState variant={EmptyStateVariant.lg}>
       <EmptyStateHeader
-        icon={<EmptyStateIcon icon={CubesIcon} />}
+        icon={<EmptyStateIcon icon={PlusIcon} />}
         titleText="No images"
         data-testid="empty-state-header"
       />
       <EmptyStateBody>
         <Text>
-          The selected blueprint does not contain any images, build an image
-          from this version or adjust the filters.
+          The selected blueprint does not contain any images, build images from
+          this version or adjust the filters.
         </Text>
       </EmptyStateBody>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <BuildImagesButton variant="link">
+            Build images for this version
+          </BuildImagesButton>
+        </EmptyStateActions>
+      </EmptyStateFooter>
     </EmptyState>
   </Bullseye>
 );
