@@ -1,12 +1,20 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
+import { Button, ButtonProps } from '@patternfly/react-core';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import { useComposeBlueprintMutation } from '../../store/imageBuilderApi';
 
-export const BuildImagesButton = () => {
+type BuildImagesButtonPropTypes = {
+  variant?: ButtonProps['variant'];
+  children?: React.ReactNode;
+};
+
+export const BuildImagesButton = ({
+  variant,
+  children,
+}: BuildImagesButtonPropTypes) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
@@ -19,8 +27,9 @@ export const BuildImagesButton = () => {
       onClick={onBuildHandler}
       isDisabled={!selectedBlueprintId}
       isLoading={imageBuildLoading}
+      variant={variant}
     >
-      Build images
+      {children ? children : 'Build images'}
     </Button>
   );
 };
