@@ -2,7 +2,10 @@ import {
   ApiRepositoryRpm,
   ApiSearchRpmResponse,
 } from '../../store/contentSourcesApi';
-import { PackagesResponse } from '../../store/imageBuilderApi';
+import {
+  PackagesResponse,
+  RecommendPackageApiResponse,
+} from '../../store/imageBuilderApi';
 
 export const mockPackagesResults = (search: string): PackagesResponse => {
   if (search === 'te' || search === 'testPkg-123') {
@@ -137,3 +140,15 @@ export const mockPkgResultAll: PackagesResponse = {
     };
   }),
 };
+
+export const mockPkgRecommendations: RecommendPackageApiResponse = [
+  {
+    packages: [
+      'recommendedPackage1',
+      'recommendedPackage2',
+      'recommendedPackage3',
+      'recommendedPackage4',
+      'recommendedPackage5',
+    ],
+  },
+];
