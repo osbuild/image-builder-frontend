@@ -81,6 +81,9 @@ export type wizardState = {
     useLatest: boolean;
     snapshotDate: string;
   };
+  firstBoot: {
+    script: string;
+  };
   repositories: {
     customRepositories: CustomRepository[];
     payloadRepositories: Repository[];
@@ -155,6 +158,7 @@ const initialState: wizardState = {
     blueprintDescription: '',
   },
   stepValidations: {},
+  firstBoot: { script: '' },
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -296,6 +300,10 @@ export const selectInputValidation =
     if (isValid === undefined) return 'default';
     return isValid ? 'success' : 'error';
   };
+
+export const selectFirstBootScript = (state: RootState) => {
+  return state.wizard.firstBoot?.script;
+};
 
 export const wizardSlice = createSlice({
   name: 'wizard',
@@ -599,6 +607,9 @@ export const wizardSlice = createSlice({
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
+    setFirstBootScript: (state, action: PayloadAction<string>) => {
+      state.firstBoot.script = action.payload;
+    },
     setStepInputValidation: (
       state,
       action: PayloadAction<{
@@ -677,5 +688,6 @@ export const {
   changeBlueprintDescription,
   loadWizardState,
   setStepInputValidation,
+  setFirstBootScript,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

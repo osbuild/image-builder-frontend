@@ -10,6 +10,7 @@ import {
 import {
   ContentList,
   FSCList,
+  FirstBootList,
   ImageDetailsList,
   ImageOutputList,
   OscapList,
@@ -48,6 +49,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(false);
   const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(false);
   const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(false);
+  const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(false);
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -63,6 +65,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedImageDetail(isExpandedImageDetail);
   const onToggleOscapDetails = (isExpandedOscapDetail: boolean) =>
     setIsExpandedOscapDetail(isExpandedOscapDetail);
+  const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
+    setIsExpandedFirstBoot(isExpandableFirstBoot);
 
   return (
     <>
@@ -174,6 +178,17 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       >
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
+      </ExpandableSection>
+      <ExpandableSection
+        toggleContent={'First boot'}
+        onToggle={(_event, isExpandableFirstBoot) =>
+          onToggleFirstBoot(isExpandableFirstBoot)
+        }
+        isExpanded={isExpandableFirstBoot}
+        isIndented
+        data-testid="firstboot-expandable"
+      >
+        <FirstBootList />
       </ExpandableSection>
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection

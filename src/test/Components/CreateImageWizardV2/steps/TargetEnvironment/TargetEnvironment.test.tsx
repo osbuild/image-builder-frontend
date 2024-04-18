@@ -123,6 +123,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Snapshots
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
+  await clickNext(); // First boot
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review

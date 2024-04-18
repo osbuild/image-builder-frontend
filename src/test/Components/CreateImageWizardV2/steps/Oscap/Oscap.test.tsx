@@ -90,6 +90,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Snapshot repositories
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
+  await clickNext(); // FirstBoot
   await clickNext(); // Details
   await enterBlueprintName('oscap');
   await clickNext(); // Review
