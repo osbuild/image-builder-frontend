@@ -53,6 +53,7 @@ const goToPackagesStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // First Boot
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review

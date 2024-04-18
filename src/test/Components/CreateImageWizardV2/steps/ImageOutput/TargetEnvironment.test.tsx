@@ -60,6 +60,7 @@ const clickToReview = async () => {
   await clickNext(); // skip SnapshotRepositories
   await clickNext(); // skip Repositories
   await clickNext(); // skip Packages
+  await clickNext(); // skip First Boot
   const nameInput = await screen.findByRole('textbox', {
     name: /blueprint name/i,
   });

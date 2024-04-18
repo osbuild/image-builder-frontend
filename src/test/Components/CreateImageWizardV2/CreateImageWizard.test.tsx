@@ -418,6 +418,7 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
 
@@ -611,6 +612,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -651,6 +653,7 @@ describe('Step Registration', () => {
     await user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -706,6 +709,7 @@ describe('Step Registration', () => {
     await clickNext();
     await clickNext();
     await clickNext();
+    await clickNext();
     await enterBlueprintName();
     await clickNext();
     const review = await screen.findByTestId('review-registration');
@@ -730,6 +734,7 @@ describe('Step Registration', () => {
 
     await removeKeyInformation;
 
+    await clickNext();
     await clickNext();
     await clickNext();
     await clickNext();
@@ -896,7 +901,9 @@ describe('Step Details', () => {
     await clickNext();
     // skip fsc
     await clickNext();
-    // skip snapshots
+    // skip snapshot
+    await clickNext();
+    //skip firstBoot
     await clickNext();
   };
 
@@ -979,6 +986,8 @@ describe('Step Review', () => {
     // skip packages
     await clickNext();
     await clickNext();
+    // skip firstboot
+    await clickNext();
     // skip Details
     const blueprintName = await screen.findByRole('textbox', {
       name: /blueprint name/i,
@@ -1041,6 +1050,8 @@ describe('Step Review', () => {
     await clickNext();
     // skip repositories
     await clickNext();
+    await clickNext();
+    // skip First boot
     await clickNext();
     const blueprintName = await screen.findByRole('textbox', {
       name: /blueprint name/i,
@@ -1223,7 +1234,7 @@ describe('Keyboard accessibility', () => {
 
     // TODO: Focus on textbox on Packages step
     await clickNext();
-
+    await clickNext();
     // TODO: Focus on textbox on Details step
     await clickNext();
   }, 20000);

@@ -167,6 +167,7 @@ describe('Step Packages', () => {
     await setUp();
 
     await clickNext();
+    await clickNext();
 
     await screen.findByRole('heading', {
       name: 'Details',

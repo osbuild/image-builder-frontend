@@ -71,6 +71,7 @@ const goToReviewStep = async () => {
   await clickNext();
   await clickNext();
   await clickNext();
+  await clickNext();
   await enterBlueprintName();
   await clickNext();
 };

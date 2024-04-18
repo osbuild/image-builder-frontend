@@ -60,6 +60,7 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectPartitions,
+  selectFirstBootScript,
 } from '../../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
@@ -753,4 +754,24 @@ export const ImageDetailsList = () => {
 
 export const OscapList = () => {
   return <OscapProfileInformation />;
+};
+
+export const FirstBootList = () => {
+  const isFirstbootEnabled = !!useAppSelector(selectFirstBootScript);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          First boot script
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {isFirstbootEnabled ? 'Enabled' : 'Disabled'}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
 };

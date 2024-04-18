@@ -3,6 +3,10 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { parseSizeUnit } from './parseSizeUnit';
 
+import {
+  FIRST_BOOT_SERVICE,
+  FIRST_BOOT_SERVICE_DATA,
+} from '../../../constants';
 import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
@@ -11,6 +15,7 @@ import {
   CreateBlueprintRequest,
   Customizations,
   DistributionProfileItem,
+  File,
   Filesystem,
   GcpUploadRequestOptions,
   ImageRequest,
@@ -51,6 +56,7 @@ import {
   selectPartitions,
   selectSnapshotDate,
   selectUseLatest,
+  selectFirstBootScript,
 } from '../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
@@ -170,6 +176,9 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         ?.profile_id as DistributionProfileItem,
     },
     fileSystem: fileSystem,
+    firstBoot: {
+      script: getFirstBootScript(request.customizations.files),
+    },
     architecture: request.image_requests[0].architecture,
     distribution: request.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),
@@ -220,6 +229,13 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       })) || [],
     stepValidations: {},
   };
+};
+
+const getFirstBootScript = (files?: File[]): string => {
+  const firstBootFile = files?.find(
+    (file) => file.path === '/usr/local/sbin/custom-first-boot'
+  );
+  return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
 const getImageRequests = (state: RootState): ImageRequest[] => {
@@ -324,7 +340,23 @@ const getCustomizations = (
   return {
     containers: undefined,
     directories: undefined,
-    files: undefined,
+    files: selectFirstBootScript(state)
+      ? [
+          {
+            path: '/etc/systemd/system/custom-first-boot.service',
+            data: FIRST_BOOT_SERVICE_DATA,
+            data_encoding: 'base64',
+            ensure_parents: true,
+          },
+          {
+            path: '/usr/local/sbin/custom-first-boot',
+            data: btoa(selectFirstBootScript(state)),
+            data_encoding: 'base64',
+            mode: '0774',
+            ensure_parents: true,
+          },
+        ]
+      : undefined,
     subscription: getSubscription(state, orgID),
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
@@ -332,7 +364,7 @@ const getCustomizations = (
     openscap: getOpenscapProfile(state),
     filesystem: getFileSystem(state),
     users: undefined,
-    services: getServices(serverStore),
+    services: getServices(serverStore, state),
     hostname: undefined,
     kernel: serverStore.kernel?.append
       ? { append: serverStore.kernel?.append }
@@ -349,16 +381,33 @@ const getCustomizations = (
   };
 };
 
-const getServices = (serverStore: ServerStore): Services | undefined => {
-  const enabledServices = serverStore.services?.enabled;
-  const disabledServices = serverStore.services?.disabled;
-  const maskedServices = serverStore.services?.masked;
+const getServices = (
+  serverStore: ServerStore,
+  state: RootState
+): Services | undefined => {
+  const serverEnabledServices: string[] | undefined =
+    serverStore.services?.enabled;
+  const serverDisabledServicesFromServer: string[] | undefined =
+    serverStore.services?.disabled;
+  const serverMaskedServices = serverStore.services?.masked;
+  const firstbootFlag: boolean =
+    !!selectFirstBootScript(state) &&
+    !serverEnabledServices?.includes(FIRST_BOOT_SERVICE);
 
-  if (enabledServices || disabledServices || maskedServices) {
+  const enabledServices = [
+    ...(serverEnabledServices ? serverEnabledServices : []),
+    ...(firstbootFlag ? [FIRST_BOOT_SERVICE] : []),
+  ];
+
+  if (
+    enabledServices.length ||
+    serverDisabledServicesFromServer ||
+    serverMaskedServices
+  ) {
     return {
       enabled: enabledServices,
-      disabled: disabledServices,
-      masked: maskedServices,
+      disabled: serverDisabledServicesFromServer,
+      masked: serverMaskedServices,
     };
   }
   return undefined;

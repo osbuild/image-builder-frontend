@@ -8,11 +8,13 @@ import {
   WizardStepType,
   useWizardContext,
 } from '@patternfly/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
 import { FileSystemStepFooter } from './steps/FileSystem/FileSystemConfiguration';
+import FirstBootStep from './steps/FirstBoot';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import PackagesStep from './steps/Packages';
@@ -126,6 +128,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // =========================TO REMOVE=======================
 
+  const firstbootFlag = useFlag('image-builder.firstboot.enabled');
+  const isFirstBootEnabled = isBeta() && firstbootFlag;
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
@@ -176,13 +180,22 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   ) => setCurrentStep(currentStep);
 
   const detailsValidation = useAppSelector(selectStepValidation('details'));
+  let startIndex = 1; // default index
+
+  if (isEdit) {
+    if (snapshottingEnabled) {
+      startIndex = isFirstBootEnabled ? 15 : 14;
+    } else {
+      startIndex = isFirstBootEnabled ? 14 : 13;
+    }
+  }
 
   return (
     <>
       <ImageBuilderHeader />
       <section className="pf-l-page__main-section pf-c-page__main-section">
         <Wizard
-          startIndex={isEdit ? (snapshottingEnabled ? 14 : 13) : 1}
+          startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}
           onStepChange={onStepChange}
           isVisitRequired
@@ -334,6 +347,16 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               </WizardStep>,
             ]}
           />
+          {isFirstBootEnabled && (
+            <WizardStep
+              name="First boot script configuration"
+              id="wizard-first-boot"
+              key="wizard-first-boot"
+              footer={<CustomWizardFooter disableNext={false} />}
+            >
+              <FirstBootStep />
+            </WizardStep>
+          )}
           <WizardStep
             name="Details"
             id="step-details"
