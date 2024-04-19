@@ -20,6 +20,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
   PaginationVariant,
+  Modal,
 } from '@patternfly/react-core';
 import {
   Dropdown,
@@ -50,6 +51,7 @@ import {
   selectCustomRepositories,
   selectDistribution,
   selectRecommendedRepositories,
+  selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
@@ -172,12 +174,15 @@ export const convertSchemaToIBPayloadRepo = (
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
+  const wizardMode = useAppSelector(selectWizardMode);
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
   const repositoriesList = useAppSelector(selectCustomRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
+  const [isRepoRemovalModalOpen, setIsRepoRemovalModalOpen] = useState(false);
+  const [repoToRemove, setRepoToRemove] = useState('');
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
@@ -333,9 +338,14 @@ const Repositories = () => {
     if (isSelecting === true) {
       updateSelected([...selected, repoURL]);
     } else if (isSelecting === false) {
-      updateSelected(
-        selected.filter((selectedRepoId) => selectedRepoId !== repoURL)
-      );
+      if (repoURL && wizardMode === 'edit') {
+        setIsRepoRemovalModalOpen(true);
+        setRepoToRemove(repoURL);
+      } else {
+        updateSelected(
+          selected.filter((selectedRepoId) => selectedRepoId !== repoURL)
+        );
+      }
     }
   };
 
@@ -369,11 +379,59 @@ const Repositories = () => {
     return data!.data?.find((repo) => repo.url === url)?.name;
   };
 
+  const handleCloseModalToggle = () => {
+    setIsRepoRemovalModalOpen(!isRepoRemovalModalOpen);
+  };
+
+  const handleConfirmRemovalModalToggle = () => {
+    updateSelected(
+      selected.filter((selectedRepoId) => selectedRepoId !== repoToRemove)
+    );
+    setIsRepoRemovalModalOpen(!isRepoRemovalModalOpen);
+  };
+
+  const RemoveRepositoryModal = () => {
+    return (
+      <Modal
+        titleIconVariant="warning"
+        title="Removing repositories is not recommended"
+        isOpen={isRepoRemovalModalOpen}
+        onClose={handleCloseModalToggle}
+        width="50%"
+        actions={[
+          <Button
+            key="remove"
+            variant="primary"
+            onClick={handleConfirmRemovalModalToggle}
+          >
+            Remove repository
+          </Button>,
+          <Button key="back" variant="link" onClick={handleCloseModalToggle}>
+            Back
+          </Button>,
+        ]}
+      >
+        If you have added packages from this previously added repository,
+        removing it can lead to build failures. Are you sure you want to remove
+        the repository?
+      </Modal>
+    );
+  };
+
   return (
     (isError && <Error />) ||
     (isLoading && <Loading />) ||
     (isSuccess && (
       <>
+        <RemoveRepositoryModal />
+        {wizardMode === 'edit' && (
+          <Alert
+            title="Removing previously added repositories can lead to problems with selected packages"
+            variant="danger"
+            isPlain
+            isInline
+          />
+        )}
         {data.data?.length === 0 ? (
           <Empty refetch={refetch} isFetching={isFetching} />
         ) : (
