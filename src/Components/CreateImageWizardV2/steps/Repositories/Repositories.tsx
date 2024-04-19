@@ -412,8 +412,7 @@ const Repositories = () => {
         ]}
       >
         If you have added packages from this previously added repository,
-        removing it can lead to build failures. Are you sure you want to remove
-        the repository?
+        removing it can lead to build failures.
       </Modal>
     );
   };
@@ -427,7 +426,7 @@ const Repositories = () => {
         {wizardMode === 'edit' && (
           <Alert
             title="Removing previously added repositories can lead to problems with selected packages"
-            variant="danger"
+            variant="warning"
             isPlain
             isInline
           />
