@@ -384,29 +384,34 @@ const getCustomRepositories = (state: RootState) => {
   const customRepositories = selectCustomRepositories(state);
   const recommendedRepositories = selectRecommendedRepositories(state);
 
+  const customAndRecommendedRepositories = [...customRepositories];
+
   for (const repo in recommendedRepositories) {
-    customRepositories.concat(
+    customAndRecommendedRepositories.push(
       convertSchemaToIBCustomRepo(recommendedRepositories[repo])
     );
   }
 
-  if (customRepositories.length === 0) {
+  if (customAndRecommendedRepositories.length === 0) {
     return undefined;
   }
-  return customRepositories;
+  return customAndRecommendedRepositories;
 };
 
 const getPayloadRepositories = (state: RootState) => {
   const payloadRepositories = selectPayloadRepositories(state);
   const recommendedRepositories = selectRecommendedRepositories(state);
 
+  const payloadAndRecommendedRepositories = [...payloadRepositories];
+
   for (const repo in recommendedRepositories) {
-    payloadRepositories.concat(
+    payloadAndRecommendedRepositories.push(
       convertSchemaToIBPayloadRepo(recommendedRepositories[repo])
     );
   }
-  if (payloadRepositories.length === 0) {
+
+  if (payloadAndRecommendedRepositories.length === 0) {
     return undefined;
   }
-  return payloadRepositories;
+  return payloadAndRecommendedRepositories;
 };
