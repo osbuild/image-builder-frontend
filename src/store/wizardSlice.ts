@@ -28,6 +28,8 @@ import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
 
+type WizardModeOptions = 'create' | 'edit';
+
 export type RegistrationType =
   | 'register-later'
   | 'register-now'
@@ -39,6 +41,7 @@ export type wizardState = {
     serverUrl: string;
     baseUrl: string;
   };
+  wizardMode: WizardModeOptions;
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
@@ -98,6 +101,7 @@ const initialState: wizardState = {
     serverUrl: '',
     baseUrl: '',
   },
+  wizardMode: 'create',
   architecture: X86_64,
   distribution: RHEL_9,
   imageTypes: [],
@@ -145,6 +149,10 @@ const initialState: wizardState = {
 
 export const selectServerUrl = (state: RootState) => {
   return state.wizard.env.serverUrl;
+};
+
+export const selectWizardMode = (state: RootState) => {
+  return state.wizard.wizardMode;
 };
 
 export const selectBaseUrl = (state: RootState) => {
