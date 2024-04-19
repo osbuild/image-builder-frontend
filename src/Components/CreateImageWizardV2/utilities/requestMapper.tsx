@@ -90,6 +90,7 @@ export const mapRequestFromState = (
  * @returns wizardState
  */
 export const mapRequestToState = (request: BlueprintResponse): wizardState => {
+  const wizardMode = 'edit';
   const gcp = request.image_requests.find(
     (image) => image.image_type === 'gcp'
   );
@@ -109,6 +110,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     .options as AzureUploadRequestOptions;
 
   return {
+    wizardMode,
     details: {
       blueprintName: request.name,
       blueprintDescription: request.description,
