@@ -171,14 +171,14 @@ describe('Step Compliance', () => {
 
     await clickNext(); // skip Repositories
 
-    // check that the Packages contain a nftable package
+    // check that the Packages contains correct packages
     await clickNext();
     await screen.findByRole('heading', {
       name: /Additional packages/i,
     });
     await user.click(await screen.findByText(/Selected/));
-    await screen.findByText(/nftables/i);
-    await screen.findByText(/libselinux/i);
+    await screen.findByText(/aide/i);
+    await screen.findByText(/neovim/i);
   });
 });
 //

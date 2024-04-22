@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import {
   Alert,
@@ -14,30 +14,38 @@ import {
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 import { HelpIcon } from '@patternfly/react-icons';
+import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useServerStore,
+} from '../../../../store/hooks';
 import {
   DistributionProfileItem,
+  Filesystem,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
+  useLazyGetOscapCustomizationsQuery,
 } from '../../../../store/imageBuilderApi';
 import {
   changeOscapProfile,
   selectDistribution,
   selectProfile,
-  clearOscapPackages,
   addPackage,
-  selectPackages,
+  addPartition,
+  changeFileSystemPartitionMode,
   removePackage,
+  clearPartitions,
 } from '../../../../store/wizardSlice';
+import { Partition } from '../FileSystem/FileSystemConfiguration';
 
 const ProfileSelector = () => {
   const oscapProfile = useAppSelector(selectProfile);
-
+  const oscapData = useServerStore();
   const release = useAppSelector(selectDistribution);
-  const packages = useAppSelector(selectPackages);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -50,38 +58,9 @@ const ProfileSelector = () => {
     distribution: release,
   });
 
-  const { data: oscapData } = useGetOscapCustomizationsQuery(
-    {
-      distribution: release,
-      // @ts-ignore if oscapProfile is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: oscapProfile,
-    },
-    {
-      skip: !oscapProfile,
-    }
-  );
-  const profileName = oscapProfile ? oscapData?.openscap?.profile_name : 'None';
+  const profileName = oscapProfile ? oscapData.profileName : 'None';
 
-  useEffect(() => {
-    dispatch(clearOscapPackages());
-    for (const pkg in oscapData?.packages) {
-      if (
-        packages
-          .map((pkg) => pkg.name)
-          .includes(oscapData?.packages[Number(pkg)])
-      ) {
-        dispatch(removePackage(oscapData?.packages[Number(pkg)]));
-      }
-      dispatch(
-        addPackage({
-          name: oscapData?.packages[Number(pkg)],
-          summary: 'Required by chosen OpenSCAP profile',
-          repository: 'distro',
-          isRequiredByOpenScap: true,
-        })
-      );
-    }
-  }, [oscapData?.packages, dispatch]);
+  const [trigger] = useLazyGetOscapCustomizationsQuery();
 
   const handleToggle = () => {
     if (!isOpen) {
@@ -92,14 +71,79 @@ const ProfileSelector = () => {
 
   const handleClear = () => {
     dispatch(changeOscapProfile(undefined));
-    dispatch(clearOscapPackages());
+    clearOscapPackages(oscapData.packages || []);
+    dispatch(changeFileSystemPartitionMode('automatic'));
+  };
+
+  const handlePackages = (
+    oldOscapPackages: string[],
+    newOscapPackages: string[]
+  ) => {
+    clearOscapPackages(oldOscapPackages);
+
+    for (const pkg of newOscapPackages) {
+      dispatch(
+        addPackage({
+          name: pkg,
+          summary: 'Required by chosen OpenSCAP profile',
+          repository: 'distro',
+        })
+      );
+    }
+  };
+
+  const clearOscapPackages = (oscapPackages: string[]) => {
+    for (const pkg of oscapPackages) {
+      dispatch(removePackage(pkg));
+    }
+  };
+
+  const handlePartitions = (oscapPartitions: Filesystem[]) => {
+    dispatch(clearPartitions());
+
+    const newPartitions = oscapPartitions.map((filesystem) => {
+      const partition: Partition = {
+        mountpoint: filesystem.mountpoint,
+        min_size: filesystem.min_size.toString(),
+        unit: 'GiB',
+        id: uuidv4(),
+      };
+      return partition;
+    });
+
+    if (newPartitions) {
+      dispatch(changeFileSystemPartitionMode('manual'));
+      for (const partition of newPartitions) {
+        dispatch(addPartition(partition));
+      }
+    }
   };
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
     selection: OScapSelectOptionValueType
   ) => {
-    dispatch(changeOscapProfile(selection.id));
+    if (selection.id === undefined) {
+      // handle user has selected 'None' case
+      handleClear();
+    } else {
+      const oldOscapPackages = oscapData.packages || [];
+      trigger(
+        {
+          distribution: release,
+          profile: selection.id,
+        },
+        true // preferCacheValue
+      )
+        .unwrap()
+        .then((response) => {
+          const oscapPartitions = response.filesystem || [];
+          const newOscapPackages = response.packages || [];
+          handlePartitions(oscapPartitions);
+          handlePackages(oldOscapPackages, newOscapPackages);
+          dispatch(changeOscapProfile(selection.id));
+        });
+    }
     setIsOpen(false);
   };
 

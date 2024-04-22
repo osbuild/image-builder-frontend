@@ -165,14 +165,14 @@ describe('Step Compliance', () => {
     await screen.findByRole('heading', { name: /File system configuration/i });
     await screen.findByText(/tmp/i);
 
-    // check that the Packages contain a nftable package
+    // check that the Packages contains correct packages
     await clickNext();
 
     await screen.findByRole('heading', {
       name: /Additional Red Hat packages/i,
     });
-    await screen.findByText(/nftables/i);
-    await screen.findByText(/libselinux/i);
+    await screen.findByText(/aide/i);
+    await screen.findByText(/neovim/i);
   });
 });
 

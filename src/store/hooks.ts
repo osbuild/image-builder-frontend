@@ -27,7 +27,11 @@ export const useOscapData = () => {
     services: {
       enabled: data?.services?.enabled,
       disabled: data?.services?.disabled,
+      masked: data?.services?.masked,
     },
+    packages: data?.packages,
+    filesystem: data?.filesystem,
+    profileName: data?.openscap?.profile_name,
   };
 };
 

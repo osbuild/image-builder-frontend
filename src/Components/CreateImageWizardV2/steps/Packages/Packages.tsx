@@ -67,7 +67,6 @@ export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
   repository: PackageRepository;
-  isRequiredByOpenScap: boolean;
 };
 
 const Packages = () => {
@@ -386,7 +385,6 @@ const Packages = () => {
       transformedDistroData = dataDistroPackages.data.map((values) => ({
         ...values,
         repository: 'distro',
-        isRequiredByOpenScap: false,
       }));
     }
 
@@ -395,7 +393,6 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'custom',
-        isRequiredByOpenScap: false,
       }));
     }
 
@@ -413,7 +410,6 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'recommended',
-        isRequiredByOpenScap: false,
       }));
 
       combinedPackageData = combinedPackageData.concat(
