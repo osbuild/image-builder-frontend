@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
+import { v4 as uuidv4 } from 'uuid';
 
 import { ApiRepositoryResponseRead } from './contentSourcesApi';
 import {
@@ -24,7 +25,7 @@ import {
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
-import { RHEL_9, X86_64 } from '../constants';
+import { RHEL_9, UNIT_GIB, X86_64 } from '../constants';
 
 import { RootState } from '.';
 
@@ -389,20 +390,64 @@ export const wizardSlice = createSlice({
     setIsNextButtonTouched: (state, action: PayloadAction<boolean>) => {
       state.fileSystem.isNextButtonTouched = action.payload;
     },
-
     changeFileSystemPartitionMode: (
       state,
       action: PayloadAction<FileSystemPartitionMode>
     ) => {
-      state.fileSystem.mode = action.payload;
+      const currentMode = state.fileSystem.mode;
+
+      // Only trigger if mode is being *changed*
+      if (currentMode !== action.payload) {
+        state.fileSystem.mode = action.payload;
+        switch (action.payload) {
+          case 'automatic':
+            state.fileSystem.partitions = [];
+            break;
+          case 'manual':
+            state.fileSystem.partitions = [
+              {
+                id: uuidv4(),
+                mountpoint: '/',
+                min_size: (10 * UNIT_GIB).toString(),
+                unit: 'GiB',
+              },
+            ];
+        }
+      }
+    },
+    clearPartitions: (state) => {
+      const currentMode = state.fileSystem.mode;
+
+      if (currentMode === 'manual') {
+        state.fileSystem.partitions = [
+          {
+            id: uuidv4(),
+            mountpoint: '/',
+            min_size: (10 * UNIT_GIB).toString(),
+            unit: 'GiB',
+          },
+        ];
+      }
     },
     addPartition: (state, action: PayloadAction<Partition>) => {
+      // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
       state.fileSystem.partitions.push(action.payload);
     },
     removePartition: (state, action: PayloadAction<Partition['id']>) => {
       state.fileSystem.partitions.splice(
         state.fileSystem.partitions.findIndex(
           (partition) => partition.id === action.payload
+        ),
+        1
+      );
+    },
+    removePartitionByMountpoint: (
+      state,
+      action: PayloadAction<Partition['mountpoint']>
+    ) => {
+      state.fileSystem.partitions.splice(
+        state.fileSystem.partitions.findIndex(
+          (partition) => partition.mountpoint === action.payload
         ),
         1
       );
@@ -479,7 +524,15 @@ export const wizardSlice = createSlice({
         );
     },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
-      state.packages.push(action.payload);
+      const existingPackageIndex = state.packages.findIndex(
+        (pkg) => pkg.name === action.payload.name
+      );
+
+      if (existingPackageIndex !== -1) {
+        state.packages[existingPackageIndex] = action.payload;
+      } else {
+        state.packages.push(action.payload);
+      }
     },
     removePackage: (
       state,
@@ -488,11 +541,6 @@ export const wizardSlice = createSlice({
       state.packages.splice(
         state.packages.findIndex((pkg) => pkg.name === action.payload),
         1
-      );
-    },
-    clearOscapPackages: (state) => {
-      state.packages = state.packages.filter(
-        (pkg) => pkg.isRequiredByOpenScap !== true
       );
     },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
@@ -556,8 +604,10 @@ export const {
   changeFileSystemConfiguration,
   setIsNextButtonTouched,
   changeFileSystemPartitionMode,
+  clearPartitions,
   addPartition,
   removePartition,
+  removePartitionByMountpoint,
   changePartitionMountpoint,
   changePartitionUnit,
   changePartitionMinSize,
@@ -568,7 +618,6 @@ export const {
   removeRecommendedRepository,
   addPackage,
   removePackage,
-  clearOscapPackages,
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,

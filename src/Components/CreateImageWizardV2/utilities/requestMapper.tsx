@@ -54,8 +54,8 @@ import {
 import { GcpAccountType } from '../steps/TargetEnvironment/Gcp';
 
 type ServerStore = {
-  kernel?: { append?: string };
-  services?: { enabled?: string[]; disabled?: string[] };
+  kernel?: { append?: string }; // TODO use API types
+  services?: { enabled?: string[]; disabled?: string[]; masked?: string[] }; // TODO use API types
 };
 
 /**
@@ -172,7 +172,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         name: pkg,
         summary: '',
         repository: '',
-        isRequiredByOpenScap: false,
       })) || [],
     stepValidations: {},
   };
@@ -305,11 +304,13 @@ const getCustomizations = (
 const getServices = (serverStore: ServerStore): Services | undefined => {
   const enabledServices = serverStore.services?.enabled;
   const disabledServices = serverStore.services?.disabled;
+  const maskedServices = serverStore.services?.masked;
 
-  if (enabledServices || disabledServices) {
+  if (enabledServices || disabledServices || maskedServices) {
     return {
       enabled: enabledServices,
       disabled: disabledServices,
+      masked: maskedServices,
     };
   }
   return undefined;
