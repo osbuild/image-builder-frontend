@@ -394,7 +394,7 @@ const Repositories = () => {
     return (
       <Modal
         titleIconVariant="warning"
-        title="Removing repositories is not recommended"
+        title="Removing repositories can lead to build failures"
         isOpen={isRepoRemovalModalOpen}
         onClose={handleCloseModalToggle}
         width="50%"
@@ -404,15 +404,15 @@ const Repositories = () => {
             variant="primary"
             onClick={handleConfirmRemovalModalToggle}
           >
-            Remove repository
+            Remove anyway
           </Button>,
           <Button key="back" variant="link" onClick={handleCloseModalToggle}>
             Back
           </Button>,
         ]}
       >
-        If you have added packages from this previously added repository,
-        removing it can lead to build failures.
+        We do not recommend removing any repositories if you have added packages
+        from them.
       </Modal>
     );
   };
@@ -425,7 +425,7 @@ const Repositories = () => {
         <RemoveRepositoryModal />
         {wizardMode === 'edit' && (
           <Alert
-            title="Removing previously added repositories can lead to problems with selected packages"
+            title="Removing previously added repositories may lead to issues with selected packages"
             variant="warning"
             isPlain
             isInline
