@@ -92,9 +92,7 @@ const ReviewWizardFooter = () => {
                       />,
                     ],
               }}
-            >
-              Save
-            </MenuToggle>
+            />
           )}
           ouiaId="wizard-finish-dropdown"
           shouldFocusToggleOnSelect
