@@ -424,13 +424,9 @@ const Packages = () => {
     } else {
       const selectedPackages = [...packages];
       if (toggleSourceRepos === 'toggle-included-repos') {
-        return selectedPackages.filter(
-          (pkg) => pkg.repository !== 'recommended'
-        );
+        return selectedPackages;
       } else {
-        return selectedPackages.filter(
-          (pkg) => pkg.repository === 'recommended'
-        );
+        return [];
       }
     }
   };
