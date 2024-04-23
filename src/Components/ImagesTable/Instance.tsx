@@ -40,6 +40,7 @@ import {
   isOciUploadStatus,
 } from '../../store/typeGuards';
 import { resolveRelPath } from '../../Utilities/path';
+import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
 
 type CloudInstancePropTypes = {
@@ -347,6 +348,7 @@ export const AwsS3Instance = ({
   });
 
   const navigate = useNavigate();
+  const experimentalFlag = useExperimentalFlag();
 
   if (!isSuccess) {
     return <Skeleton />;
@@ -386,20 +388,7 @@ export const AwsS3Instance = ({
         )
       </Button>
     );
-  } else if (!isExpired) {
-    return (
-      <Button
-        component="a"
-        target="_blank"
-        variant="link"
-        isInline
-        href={options?.url}
-      >
-        Download ({fileExtensions[compose.request.image_requests[0].image_type]}
-        )
-      </Button>
-    );
-  } else if (isExpired) {
+  } else if (isExpired && !experimentalFlag) {
     return (
       <Button
         component="a"
@@ -409,6 +398,20 @@ export const AwsS3Instance = ({
         isInline
       >
         Recreate image
+      </Button>
+    );
+  } else {
+    return (
+      <Button
+        component="a"
+        target="_blank"
+        variant="link"
+        isInline
+        href={options?.url}
+        isDisabled={isExpired}
+      >
+        Download ({fileExtensions[compose.request.image_requests[0].image_type]}
+        )
       </Button>
     );
   }
