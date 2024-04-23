@@ -13,6 +13,9 @@ import {
   Sidebar,
   SidebarContent,
   SidebarPanel,
+  Title,
+  Toolbar,
+  ToolbarContent,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -75,11 +78,17 @@ export const LandingPage = () => {
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel
             variant="sticky"
-            hasPadding
             width={{ default: 'width_25' }}
             className="sidebar-panel"
           >
-            <BlueprintsSidebar />
+            <Toolbar>
+              <ToolbarContent>
+                <Title headingLevel="h1">{'Blueprints'}</Title>
+              </ToolbarContent>
+            </Toolbar>
+            <SidebarContent hasPadding>
+              <BlueprintsSidebar />
+            </SidebarContent>
           </SidebarPanel>
           <SidebarContent>
             <ImagesTable />
