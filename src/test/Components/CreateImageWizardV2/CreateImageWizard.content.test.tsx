@@ -50,11 +50,16 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 let mockContentSourcesEnabled: boolean;
 jest.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
-    flag === 'image-builder.enable-content-sources'
-      ? mockContentSourcesEnabled
-      : false
-  ),
+  useFlag: jest.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.enable-content-sources':
+        return mockContentSourcesEnabled;
+      case 'image-builder.pkgrecs.enabled':
+        return true;
+      default:
+        return false;
+    }
+  }),
 }));
 
 beforeAll(() => {
