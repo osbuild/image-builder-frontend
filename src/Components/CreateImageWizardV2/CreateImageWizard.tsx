@@ -58,10 +58,12 @@ import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
+  disableBack?: boolean;
   disableNext: boolean;
 };
 
 export const CustomWizardFooter = ({
+  disableBack: disableBack,
   disableNext: disableNext,
 }: CustomWizardFooterPropType) => {
   const { goToNextStep, goToPrevStep, close } = useWizardContext();
@@ -79,6 +81,7 @@ export const CustomWizardFooter = ({
         ouiaId="wizard-back-btn"
         variant="secondary"
         onClick={goToPrevStep}
+        isDisabled={disableBack}
       >
         Back
       </Button>
@@ -160,6 +163,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
             footer={
               <CustomWizardFooter
                 disableNext={targetEnvironments.length === 0}
+                disableBack={true}
               />
             }
           >
