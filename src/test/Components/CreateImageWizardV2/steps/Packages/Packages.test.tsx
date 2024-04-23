@@ -31,6 +31,13 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+jest.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => jest.fn(),
+  useFlag: jest.fn((flag) =>
+    flag === 'image-builder.pkgrecs.enabled' ? true : false
+  ),
+}));
+
 const goToPackagesStep = async () => {
   const bareMetalCheckBox = await screen.findByRole('checkbox', {
     name: /bare metal installer checkbox/i,
