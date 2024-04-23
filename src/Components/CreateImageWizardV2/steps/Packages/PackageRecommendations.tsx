@@ -57,7 +57,6 @@ const PackageRecommendations = () => {
             name: data[0].packages[pkg],
             summary: 'Added from recommended packages',
             repository: 'distro',
-            isRequiredByOpenScap: false,
           })
         );
       }
@@ -70,7 +69,6 @@ const PackageRecommendations = () => {
         name: pkg,
         summary: 'Added from recommended packages',
         repository: 'distro',
-        isRequiredByOpenScap: false,
       })
     );
   };
