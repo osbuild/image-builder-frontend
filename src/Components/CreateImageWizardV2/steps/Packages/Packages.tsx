@@ -4,6 +4,7 @@ import {
   Bullseye,
   Button,
   EmptyState,
+  EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
   EmptyStateHeader,
@@ -269,40 +270,33 @@ const Packages = () => {
                 headingLevel="h4"
               />
               <EmptyStateBody>
-                Adjust your search and try again, or search from{' '}
-                <Button
-                  variant="link"
-                  isInline
-                  component="a"
-                  target="_blank"
-                  href={
-                    isBeta() ? '/preview/insights/content' : '/insights/content'
-                  }
-                >
-                  your repositories
-                </Button>{' '}
-                and{' '}
-                <Button
-                  variant="link"
-                  isInline
-                  component="a"
-                  target="_blank"
-                  href={
-                    isBeta()
-                      ? '/preview/insights/content/popular-repositories'
-                      : '/insights/content/popular-repositories'
-                  }
-                >
-                  popular repositories
-                </Button>
+                Adjust your search and try again, or search from your
+                repositories and popular repositories
               </EmptyStateBody>
               <EmptyStateFooter>
-                <Button
-                  variant="primary"
-                  onClick={() => setToggleSourceRepos('toggle-other-repos')}
-                >
-                  Search other repositories
-                </Button>
+                <EmptyStateActions>
+                  <Button
+                    variant="primary"
+                    onClick={() => setToggleSourceRepos('toggle-other-repos')}
+                  >
+                    Search other repositories
+                  </Button>
+                </EmptyStateActions>
+                <EmptyStateActions>
+                  <Button
+                    variant="link"
+                    isInline
+                    component="a"
+                    target="_blank"
+                    href={
+                      isBeta()
+                        ? '/preview/insights/content'
+                        : '/insights/content'
+                    }
+                  >
+                    View other repositories
+                  </Button>
+                </EmptyStateActions>
               </EmptyStateFooter>
             </EmptyState>
           </Bullseye>
