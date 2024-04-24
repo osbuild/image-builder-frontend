@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Button,
   Checkbox,
   FormGroup,
   Popover,
@@ -205,7 +206,14 @@ const TargetEnvironment = () => {
                         </TextContent>
                       }
                     >
-                      <HelpIcon className="pf-u-ml-sm" />
+                      <Button
+                        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                        variant="plain"
+                        aria-label="About OpenSCAP"
+                        isInline
+                      >
+                        <HelpIcon />
+                      </Button>
                     </Popover>
                   </>
                 }
@@ -244,7 +252,14 @@ const TargetEnvironment = () => {
                       </TextContent>
                     }
                   >
-                    <HelpIcon className="pf-u-ml-sm" />
+                    <Button
+                      className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                      variant="plain"
+                      aria-label="About OpenSCAP"
+                      isInline
+                    >
+                      <HelpIcon />
+                    </Button>
                   </Popover>
                 </>
               }
