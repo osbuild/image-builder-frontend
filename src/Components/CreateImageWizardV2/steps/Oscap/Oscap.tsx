@@ -166,7 +166,6 @@ const ProfileSelector = () => {
           OpenSCAP profile
           <Popover
             maxWidth="30rem"
-            position="left"
             bodyContent={
               <TextContent>
                 <Text>
@@ -176,7 +175,12 @@ const ProfileSelector = () => {
               </TextContent>
             }
           >
-            <Button variant="plain" aria-label="About OpenSCAP" isInline>
+            <Button
+              variant="plain"
+              aria-label="About OpenSCAP"
+              isInline
+              className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0 pf-u-pr-0"
+            >
               <HelpIcon />
             </Button>
           </Popover>
