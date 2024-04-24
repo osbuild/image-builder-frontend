@@ -28,12 +28,11 @@ import {
   removePartition,
   selectPartitions,
   changePartitionUnit,
-  setIsNextButtonTouched,
-  selectIsNextButtonTouched,
   selectFileSystemPartitionMode,
+  selectInputErrors,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
-import { ValidatedTextInput } from '../../ValidatedTextInput';
+import { StateValidatedInput } from '../../ValidatedTextInput';
 import {
   getDuplicateMountPoints,
   isFileSystemConfigValid,
@@ -45,47 +44,6 @@ export type Partition = {
   mountpoint: string;
   min_size: string;
   unit: Units;
-};
-
-export const FileSystemStepFooter = () => {
-  const { goToNextStep, goToPrevStep, close } = useWizardContext();
-  const [isValid, setIsValid] = useState(false);
-  const dispatch = useAppDispatch();
-  const [isNextDisabled, setNextDisabled] = useState(false);
-  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
-  const partitions = useAppSelector(selectPartitions);
-
-  const onValidate = () => {
-    dispatch(setIsNextButtonTouched(false));
-    if (!isValid) {
-      setNextDisabled(true);
-    } else {
-      goToNextStep();
-    }
-  };
-  useEffect(() => {
-    if (
-      fileSystemPartitionMode === 'automatic' ||
-      isFileSystemConfigValid(partitions)
-    ) {
-      setIsValid(true);
-    } else setIsValid(false);
-    setNextDisabled(false);
-    dispatch(setIsNextButtonTouched(true));
-  }, [partitions, fileSystemPartitionMode, dispatch]);
-  return (
-    <WizardFooterWrapper>
-      <Button onClick={onValidate} isDisabled={isNextDisabled}>
-        Next
-      </Button>
-      <Button variant="secondary" onClick={goToPrevStep}>
-        Back
-      </Button>
-      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
-        Cancel
-      </Button>
-    </WizardFooterWrapper>
-  );
 };
 
 const FileSystemConfiguration = () => {
@@ -188,12 +146,10 @@ export const Row = ({
   onDrop,
 }: RowPropTypes) => {
   const dispatch = useAppDispatch();
-  const partitions = useAppSelector(selectPartitions);
+  const mountpointErrors = useAppSelector(selectInputErrors("file-system", `mountpoint-${partition.id}`));
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
   };
-  const isNextButtonPristine = useAppSelector(selectIsNextButtonTouched);
-  const duplicates = getDuplicateMountPoints(partitions);
 
   return (
     <Tr
@@ -210,15 +166,14 @@ export const Row = ({
       />
       <Td className="pf-m-width-20">
         <MountpointPrefix partition={partition} />
-        {!isNextButtonPristine &&
-          duplicates.indexOf(partition.mountpoint) !== -1 && (
-            <Alert
-              variant="danger"
-              isInline
-              isPlain
-              title="Duplicate mount point."
-            />
-          )}
+        {mountpointErrors.length !== 0 && (
+          <Alert
+            variant="danger"
+            isInline
+            isPlain
+            title="Duplicate mount point."
+          />
+        )}
       </Td>
       {partition.mountpoint !== '/' &&
       !partition.mountpoint.startsWith('/boot') &&
@@ -364,7 +319,9 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
 
   return (
-    <ValidatedTextInput
+    <StateValidatedInput
+      stepId="file-system"
+      inputId={`min-size-${partition.id}`}
       ariaLabel="minimum partition size"
       helperText="Must be larger than 0"
       validator={isMountpointMinSizeValid}

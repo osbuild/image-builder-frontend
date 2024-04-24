@@ -12,7 +12,6 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
-import { FileSystemStepFooter } from './steps/FileSystem/FileSystemConfiguration';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
 import PackagesStep from './steps/Packages';
@@ -142,6 +141,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
     currentStep: WizardStepType
   ) => setCurrentStep(currentStep);
 
+  const fileSystemValidation = useAppSelector(selectStepValidation('file-system'));
   const detailsValidation = useAppSelector(selectStepValidation('details'));
 
   return (
@@ -256,7 +256,7 @@ const CreateImageWizard = ({ startStepIndex = 1 }: CreateImageWizardProps) => {
           <WizardStep
             name="File system configuration"
             id="step-file-system"
-            footer={<FileSystemStepFooter />}
+            footer={<CustomWizardFooter disableNext={fileSystemValidation === "error"} />}
           >
             <FileSystemStep />
           </WizardStep>

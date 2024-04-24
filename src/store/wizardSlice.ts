@@ -23,6 +23,7 @@ import {
   GcpAccountType,
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
+import { getDuplicateMountPoints, isBlueprintNameValid, isMountpointMinSizeValid } from '../Components/CreateImageWizardV2/validators';
 import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
 import { RHEL_9, X86_64 } from '../constants';
 
@@ -33,6 +34,14 @@ export type RegistrationType =
   | 'register-now'
   | 'register-now-insights'
   | 'register-now-rhc';
+
+type StepValidation = {
+  validated: 'default' | 'success' | 'error';
+  errorText?: string | null;
+  errors: {
+    [key: string]: string[];
+  };
+};
 
 export type wizardState = {
   env: {
@@ -70,7 +79,6 @@ export type wizardState = {
   fileSystem: {
     mode: FileSystemPartitionMode;
     partitions: Partition[];
-    isNextButtonTouched: boolean;
   };
   repositories: {
     customRepositories: CustomRepository[];
@@ -83,13 +91,7 @@ export type wizardState = {
     blueprintDescription: string;
   };
   stepValidations: {
-    [key: string]: {
-      validated: 'default' | 'success' | 'error';
-      errorText: string | null;
-      inputs: {
-        [key: string]: boolean;
-      };
-    };
+    [key: string]: StepValidation;
   };
 };
 
@@ -128,7 +130,6 @@ const initialState: wizardState = {
   fileSystem: {
     mode: 'automatic',
     partitions: [],
-    isNextButtonTouched: true,
   },
   repositories: {
     customRepositories: [],
@@ -223,10 +224,6 @@ export const selectFileSystemPartitionMode = (state: RootState) => {
   return state.wizard.fileSystem.mode;
 };
 
-export const selectIsNextButtonTouched = (state: RootState) => {
-  return state.wizard.fileSystem.isNextButtonTouched;
-};
-
 export const selectPartitions = (state: RootState) => {
   return state.wizard.fileSystem.partitions;
 };
@@ -267,18 +264,63 @@ export const selectStepValidation = (stepId: string) => (state: RootState) => {
 
 export const selectInputValidation =
   (stepId: string, inputId: string) => (state: RootState) => {
-    const isValid = state.wizard.stepValidations[stepId]?.inputs?.[inputId];
-    if (isValid === undefined) return 'default';
-    return isValid ? 'success' : 'error';
+    const errors = state.wizard.stepValidations[stepId]?.errors?.[inputId];
+    if (errors === undefined) return 'default';
+    return errors.length === 0 ? 'success' : 'error';
   };
+
+export const selectInputErrors =
+  (stepId: string, inputId: string) => (state: RootState) => state.wizard.stepValidations[stepId]?.errors?.[inputId];
+
+const validateFilesystemMinsize = (minSize: string): string[] => {
+  if (!isMountpointMinSizeValid(minSize)) {
+    return ['Invalid size'];
+  }
+  return [];
+};
+
+const validateFilesystemStep = (mode: FileSystemPartitionMode, partitions: Partition[]): StepValidation => {
+  const errors: { [key: string]: string[] } = {};
+  if (mode === 'automatic') {
+    return { validated: 'success', errors };
+  }
+
+  const duplicates = getDuplicateMountPoints(partitions);
+  let errorText = null;
+  for (const partition of partitions) {
+    errors[`min-size-${partition.id}`] = validateFilesystemMinsize(partition.min_size);
+    if (duplicates.includes(partition.mountpoint)) {
+      errors[`mountpoint-${partition.id}`] = ['Mount point already exists'];
+      errorText = 'Duplicate mount points';
+    }
+  }
+  return { validated: Object.values(errors).every((error) => error.length === 0) ? 'success' : 'error', errors, errorText };
+};
+
+const validateState = (state: wizardState) => {
+  const isNameValid = isBlueprintNameValid(state.details.blueprintName);
+  state.stepValidations = {
+    'file-system': validateFilesystemStep(state.fileSystem.mode, state.fileSystem.partitions),
+    'details': {validated: isNameValid ? 'success' : 'error', errors: {name: isNameValid ? [] : ['Invalid name']}},
+  };
+};
+
+const setInputError = (stepValidation: StepValidation, inputId: string, errorText: string | undefined) => {
+  if (errorText) {
+    stepValidation.errors[inputId] = [errorText];
+  }
+  stepValidation.validated = Object.values(stepValidation.errors).every((error) => error.length === 0) ? 'success' : 'error';
+};
 
 export const wizardSlice = createSlice({
   name: 'wizard',
   initialState,
   reducers: {
     initializeWizard: () => initialState,
-    loadWizardState: (state, action: PayloadAction<wizardState>) =>
-      action.payload,
+    loadWizardState: (state, action: PayloadAction<wizardState>) => {
+      validateState(action.payload);
+      return action.payload;
+    },
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.env.serverUrl = action.payload;
     },
@@ -378,18 +420,16 @@ export const wizardSlice = createSlice({
     ) => {
       state.fileSystem.partitions = action.payload;
     },
-    setIsNextButtonTouched: (state, action: PayloadAction<boolean>) => {
-      state.fileSystem.isNextButtonTouched = action.payload;
-    },
-
     changeFileSystemPartitionMode: (
       state,
       action: PayloadAction<FileSystemPartitionMode>
     ) => {
       state.fileSystem.mode = action.payload;
+      state.stepValidations["file-system"] = validateFilesystemStep(action.payload, state.fileSystem.partitions);
     },
     addPartition: (state, action: PayloadAction<Partition>) => {
       state.fileSystem.partitions.push(action.payload);
+      state.stepValidations["file-system"] = validateFilesystemStep(state.fileSystem.mode, state.fileSystem.partitions);
     },
     removePartition: (state, action: PayloadAction<Partition['id']>) => {
       state.fileSystem.partitions.splice(
@@ -398,11 +438,13 @@ export const wizardSlice = createSlice({
         ),
         1
       );
+      state.stepValidations["file-system"] = validateFilesystemStep(state.fileSystem.mode, state.fileSystem.partitions);
     },
     changePartitionOrder: (state, action: PayloadAction<string[]>) => {
       state.fileSystem.partitions = state.fileSystem.partitions.sort(
         (a, b) => action.payload.indexOf(a.id) - action.payload.indexOf(b.id)
       );
+      state.stepValidations["file-system"] = validateFilesystemStep(state.fileSystem.mode, state.fileSystem.partitions);
     },
     changePartitionMountpoint: (
       state,
@@ -414,6 +456,7 @@ export const wizardSlice = createSlice({
       );
       if (partitionIndex !== -1) {
         state.fileSystem.partitions[partitionIndex].mountpoint = mountpoint;
+        state.stepValidations["file-system"] = validateFilesystemStep(state.fileSystem.mode, state.fileSystem.partitions);
       }
     },
     changePartitionUnit: (
@@ -438,6 +481,8 @@ export const wizardSlice = createSlice({
       );
       if (partitionIndex !== -1) {
         state.fileSystem.partitions[partitionIndex].min_size = min_size;
+        state.stepValidations["file-system"] ||= { errors: {}, validated: 'default' };
+        setInputError(state.stepValidations["file-system"], `min-size-${id}`, validateFilesystemMinsize(min_size)[0]);
       }
     },
     changeCustomRepositories: (
@@ -502,21 +547,11 @@ export const wizardSlice = createSlice({
         errorText: string | undefined;
       }>
     ) => {
-      const inputs = {
-        ...state.stepValidations[action.payload.stepId]?.inputs,
-        [action.payload.inputId]: action.payload.isValid,
-      };
-      const validated = Object.values(inputs).every((input) => input === true)
-        ? 'success'
-        : 'error';
-      state.stepValidations[action.payload.stepId] = {
-        ...state.stepValidations[action.payload.stepId],
-        validated,
-        inputs,
-      };
-      if (!action.payload.isValid && action.payload.errorText) {
-        state.stepValidations[action.payload.stepId].errorText =
-          action.payload.errorText;
+      state.stepValidations[action.payload.stepId] ||= { errors: {}, validated: 'default' };
+      if (!action.payload.isValid) {
+        setInputError(state.stepValidations[action.payload.stepId], action.payload.inputId, action.payload.errorText);
+      } else {
+        setInputError(state.stepValidations[action.payload.stepId], action.payload.inputId, undefined);
       }
     },
   },
@@ -546,7 +581,6 @@ export const {
   changeActivationKey,
   changeOscapProfile,
   changeFileSystemConfiguration,
-  setIsNextButtonTouched,
   changeFileSystemPartitionMode,
   addPartition,
   removePartition,
