@@ -46,7 +46,7 @@ const RHSMPopover = () => {
     >
       <Button
         variant="plain"
-        className="pf-c-form__group-label-help"
+        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
       >
@@ -86,7 +86,7 @@ const InsightsPopover = () => {
     >
       <Button
         variant="plain"
-        className="pf-c-form__group-label-help"
+        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
       >
@@ -125,7 +125,7 @@ const RhcPopover = () => {
     >
       <Button
         variant="plain"
-        className="pf-c-form__group-label-help"
+        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
       >
