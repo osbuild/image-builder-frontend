@@ -28,7 +28,6 @@ import {
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
-import { isBlueprintNameValid } from '../Components/CreateImageWizardV2/validators';
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
@@ -78,7 +77,6 @@ export type wizardState = {
   fileSystem: {
     mode: FileSystemPartitionMode;
     partitions: Partition[];
-    isNextButtonTouched: boolean;
   };
   snapshotting: {
     useLatest: boolean;
@@ -97,15 +95,6 @@ export type wizardState = {
   details: {
     blueprintName: string;
     blueprintDescription: string;
-  };
-  stepValidations: {
-    [key: string]: {
-      validated: 'default' | 'success' | 'error';
-      errorText: string | null;
-      inputs: {
-        [key: string]: boolean;
-      };
-    };
   };
 };
 
@@ -145,7 +134,6 @@ const initialState: wizardState = {
   fileSystem: {
     mode: 'automatic',
     partitions: [],
-    isNextButtonTouched: true,
   },
   snapshotting: {
     useLatest: true,
@@ -162,7 +150,6 @@ const initialState: wizardState = {
     blueprintName: '',
     blueprintDescription: '',
   },
-  stepValidations: {},
   firstBoot: { script: '' },
 };
 
@@ -250,10 +237,6 @@ export const selectFileSystemPartitionMode = (state: RootState) => {
   return state.wizard.fileSystem.mode;
 };
 
-export const selectIsNextButtonTouched = (state: RootState) => {
-  return state.wizard.fileSystem.isNextButtonTouched;
-};
-
 export const selectPartitions = (state: RootState) => {
   return state.wizard.fileSystem.partitions;
 };
@@ -293,23 +276,6 @@ export const selectBlueprintDescription = (state: RootState) => {
   return state.wizard.details.blueprintDescription;
 };
 
-export const selectIsValid = (state: RootState) => {
-  return Object.values(state.wizard.stepValidations).every(
-    (step) => step.validated === 'success'
-  );
-};
-
-export const selectStepValidation = (stepId: string) => (state: RootState) => {
-  return state.wizard.stepValidations[stepId]?.validated || 'default';
-};
-
-export const selectInputValidation =
-  (stepId: string, inputId: string) => (state: RootState) => {
-    const isValid = state.wizard.stepValidations[stepId]?.inputs?.[inputId];
-    if (isValid === undefined) return 'default';
-    return isValid ? 'success' : 'error';
-  };
-
 export const selectFirstBootScript = (state: RootState) => {
   return state.wizard.firstBoot?.script;
 };
@@ -319,19 +285,8 @@ export const wizardSlice = createSlice({
   initialState,
   reducers: {
     initializeWizard: () => initialState,
-    loadWizardState: (state, action: PayloadAction<wizardState>) => {
-      const isNameValid = isBlueprintNameValid(
-        action.payload.details.blueprintName
-      );
-      action.payload.stepValidations = {
-        details: {
-          validated: isNameValid ? 'success' : 'error',
-          errorText: null,
-          inputs: { name: isNameValid },
-        },
-      };
-      return action.payload;
-    },
+    loadWizardState: (state, action: PayloadAction<wizardState>) =>
+      action.payload,
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.env.serverUrl = action.payload;
     },
@@ -447,9 +402,6 @@ export const wizardSlice = createSlice({
       action: PayloadAction<Partition[]>
     ) => {
       state.fileSystem.partitions = action.payload;
-    },
-    setIsNextButtonTouched: (state, action: PayloadAction<boolean>) => {
-      state.fileSystem.isNextButtonTouched = action.payload;
     },
     changeFileSystemPartitionMode: (
       state,
@@ -639,32 +591,6 @@ export const wizardSlice = createSlice({
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
-    setStepInputValidation: (
-      state,
-      action: PayloadAction<{
-        stepId: string;
-        inputId: string;
-        isValid: boolean;
-        errorText: string | undefined;
-      }>
-    ) => {
-      const inputs = {
-        ...state.stepValidations[action.payload.stepId]?.inputs,
-        [action.payload.inputId]: action.payload.isValid,
-      };
-      const validated = Object.values(inputs).every((input) => input === true)
-        ? 'success'
-        : 'error';
-      state.stepValidations[action.payload.stepId] = {
-        ...state.stepValidations[action.payload.stepId],
-        validated,
-        inputs,
-      };
-      if (!action.payload.isValid && action.payload.errorText) {
-        state.stepValidations[action.payload.stepId].errorText =
-          action.payload.errorText;
-      }
-    },
   },
 });
 
@@ -695,7 +621,6 @@ export const {
   changeActivationKey,
   changeOscapProfile,
   changeFileSystemConfiguration,
-  setIsNextButtonTouched,
   changeFileSystemPartitionMode,
   clearPartitions,
   addPartition,
@@ -718,7 +643,6 @@ export const {
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,
-  setStepInputValidation,
   setFirstBootScript,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

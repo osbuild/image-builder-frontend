@@ -7,11 +7,7 @@ import {
   TextInputProps,
 } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  setStepInputValidation,
-  selectInputValidation,
-} from '../../store/wizardSlice';
+import { StepValidation } from './utilities/useValidation';
 
 interface ValidatedTextInputPropTypes extends TextInputProps {
   dataTestId?: string | undefined;
@@ -23,63 +19,38 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   placeholder?: string;
 }
 
-interface StateValidatedTextInputPropTypes extends TextInputProps {
+interface HookValidatedTextInputPropTypes extends TextInputProps {
   dataTestId?: string | undefined;
   ouiaId?: string;
-  stepId: string;
-  inputId: string;
   ariaLabel: string | undefined;
   helperText: string | undefined;
-  validator: (value: string | undefined) => boolean;
   value: string;
   placeholder?: string;
+  stepValidation: StepValidation;
+  fieldName: string;
 }
 
-export const StateValidatedInput = ({
+export const HookValidatedInput = ({
   dataTestId,
   ouiaId,
-  stepId,
-  inputId,
   ariaLabel,
   helperText,
-  validator,
   value,
   placeholder,
   onChange,
-}: StateValidatedTextInputPropTypes) => {
-  const dispatch = useAppDispatch();
-  const validatedState = useAppSelector(selectInputValidation(stepId, inputId));
+  stepValidation,
+  fieldName,
+}: HookValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
   // Do not surface validation on pristine state components
-  const validated = isPristine ? 'default' : validatedState;
+  const validated = isPristine
+    ? 'default'
+    : stepValidation.errors[fieldName]
+    ? 'error'
+    : 'success';
 
   const handleBlur = () => {
     setIsPristine(false);
-    const isValid = validator(value);
-    dispatch(
-      setStepInputValidation({
-        stepId,
-        inputId,
-        isValid,
-        errorText: isValid ? helperText : undefined,
-      })
-    );
-  };
-
-  const wrappedOnChange = (
-    evt: React.FormEvent<HTMLInputElement>,
-    newVal: string
-  ) => {
-    if (onChange) onChange(evt, newVal);
-    const isValid = validator(newVal);
-    dispatch(
-      setStepInputValidation({
-        stepId,
-        inputId,
-        isValid,
-        errorText: isValid ? helperText : undefined,
-      })
-    );
   };
 
   return (
@@ -89,7 +60,7 @@ export const StateValidatedInput = ({
         data-testid={dataTestId}
         ouiaId={ouiaId}
         type="text"
-        onChange={wrappedOnChange}
+        onChange={onChange}
         validated={validated}
         aria-label={ariaLabel}
         onBlur={handleBlur}

@@ -817,7 +817,7 @@ describe('Step File system configuration', () => {
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
     const mountPointAlerts = screen.getAllByRole('heading', {
-      name: /danger alert: duplicate mount point\./i,
+      name: /danger alert: duplicate mount point/i,
     });
     const tbody = await screen.findByTestId('file-system-configuration-tbody');
     const rows = within(tbody).getAllByRole('row');
@@ -910,7 +910,7 @@ describe('Step Details', () => {
     await clickNext();
   };
 
-  test('image name invalid for more than 63 chars', async () => {
+  test('image name invalid for more than 100 chars and description for 250', async () => {
     await setUp();
 
     // Enter image name
