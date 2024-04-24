@@ -264,12 +264,11 @@ const Packages = () => {
           <Bullseye>
             <EmptyState variant={EmptyStateVariant.sm}>
               <EmptyStateHeader
-                titleText="No selected packages"
+                titleText="No selected packages in Other repos"
                 headingLevel="h4"
               />
               <EmptyStateBody>
-                There are no selected packages in Other repos. Try looking under
-                &quot;
+                Try looking under &quot;
                 <Button
                   variant="link"
                   onClick={() => setToggleSourceRepos('toggle-included-repos')}
@@ -300,8 +299,8 @@ const Packages = () => {
                   headingLevel="h4"
                 />
                 <EmptyStateBody>
-                  Adjust your search and try again, or search from your
-                  repositories and popular repositories
+                  Adjust your search and try again, or search in other
+                  repositories (your repositories and popular repositories).
                 </EmptyStateBody>
                 <EmptyStateFooter>
                   <EmptyStateActions>
@@ -314,17 +313,20 @@ const Packages = () => {
                   </EmptyStateActions>
                   <EmptyStateActions>
                     <Button
+                      className="pf-u-pt-md"
                       variant="link"
                       isInline
                       component="a"
                       target="_blank"
+                      iconPosition="right"
+                      icon={<ExternalLinkAltIcon />}
                       href={
                         isBeta()
                           ? '/preview/insights/content'
                           : '/insights/content'
                       }
                     >
-                      View other repositories
+                      Manage your repositories and popular repositories
                     </Button>
                   </EmptyStateActions>
                 </EmptyStateFooter>
