@@ -170,12 +170,10 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         partitions: request.customizations.filesystem.map((fs) =>
           convertFilesystemToPartition(fs)
         ),
-        isNextButtonTouched: true,
       }
     : {
         mode: 'automatic' as FileSystemPartitionMode,
         partitions: [],
-        isNextButtonTouched: true,
       };
 
   const arch = request.image_requests[0].architecture;
@@ -259,7 +257,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           repository: '',
           package_list: [],
         })) || [],
-    stepValidations: {},
   };
 };
 

@@ -17,11 +17,8 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '../../../../store/wizardSlice';
-import { StateValidatedInput } from '../../ValidatedTextInput';
-import {
-  isBlueprintDescriptionValid,
-  isBlueprintNameValid,
-} from '../../validators';
+import { useDetailsValidation } from '../../utilities/useValidation';
+import { HookValidatedInput } from '../../ValidatedTextInput';
 
 const DetailsStep = () => {
   const dispatch = useAppDispatch();
@@ -41,6 +38,8 @@ const DetailsStep = () => {
     dispatch(changeBlueprintDescription(description));
   };
 
+  const stepValidation = useDetailsValidation();
+
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
@@ -52,16 +51,15 @@ const DetailsStep = () => {
         blueprint.
       </Text>
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
-        <StateValidatedInput
+        <HookValidatedInput
           ariaLabel="blueprint name"
           dataTestId="blueprint"
-          stepId="details"
-          inputId="blueprint-name"
           value={blueprintName}
-          validator={isBlueprintNameValid}
           onChange={handleNameChange}
           helperText="Please enter a valid name"
           placeholder="Add blueprint name"
+          stepValidation={stepValidation}
+          fieldName="name"
         />
         <FormHelperText>
           <HelperText>
@@ -76,16 +74,15 @@ const DetailsStep = () => {
         label="Blueprint description"
         fieldId="blueprint-description-name"
       >
-        <StateValidatedInput
+        <HookValidatedInput
           ariaLabel="blueprint description"
           dataTestId="blueprint description"
-          stepId="details"
-          inputId="blueprint-description"
           value={blueprintDescription || ''}
-          validator={isBlueprintDescriptionValid}
           onChange={handleDescriptionChange}
           helperText="Please enter a valid description"
           placeholder="Add description"
+          stepValidation={stepValidation}
+          fieldName="description"
         />
       </FormGroup>
     </Form>

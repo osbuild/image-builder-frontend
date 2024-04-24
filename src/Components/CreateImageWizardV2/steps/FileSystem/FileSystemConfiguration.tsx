@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Alert,
@@ -7,8 +7,6 @@ import {
   TextContent,
   TextInput,
   TextVariants,
-  useWizardContext,
-  WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
@@ -33,64 +31,18 @@ import {
   removePartition,
   selectPartitions,
   changePartitionUnit,
-  setIsNextButtonTouched,
-  selectIsNextButtonTouched,
-  selectFileSystemPartitionMode,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
-import { ValidatedTextInput } from '../../ValidatedTextInput';
-import {
-  getDuplicateMountPoints,
-  isFileSystemConfigValid,
-  isMountpointMinSizeValid,
-} from '../../validators';
+import { useFilesystemValidation } from '../../utilities/useValidation';
+import { HookValidatedInput } from '../../ValidatedTextInput';
+
+import { FileSystemContext } from './index';
 
 export type Partition = {
   id: string;
   mountpoint: string;
   min_size: string;
   unit: Units;
-};
-
-export const FileSystemStepFooter = () => {
-  const { goToNextStep, goToPrevStep, close } = useWizardContext();
-  const [isValid, setIsValid] = useState(false);
-  const dispatch = useAppDispatch();
-  const [isNextDisabled, setNextDisabled] = useState(false);
-  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
-  const partitions = useAppSelector(selectPartitions);
-
-  const onValidate = () => {
-    dispatch(setIsNextButtonTouched(false));
-    if (!isValid) {
-      setNextDisabled(true);
-    } else {
-      goToNextStep();
-    }
-  };
-  useEffect(() => {
-    if (
-      fileSystemPartitionMode === 'automatic' ||
-      isFileSystemConfigValid(partitions)
-    ) {
-      setIsValid(true);
-    } else setIsValid(false);
-    setNextDisabled(false);
-    dispatch(setIsNextButtonTouched(true));
-  }, [partitions, fileSystemPartitionMode, dispatch]);
-  return (
-    <WizardFooterWrapper>
-      <Button onClick={onValidate} isDisabled={isNextDisabled}>
-        Next
-      </Button>
-      <Button variant="secondary" onClick={goToPrevStep}>
-        Back
-      </Button>
-      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
-        Cancel
-      </Button>
-    </WizardFooterWrapper>
-  );
 };
 
 const FileSystemConfiguration = () => {
@@ -193,12 +145,11 @@ export const Row = ({
   onDrop,
 }: RowPropTypes) => {
   const dispatch = useAppDispatch();
-  const partitions = useAppSelector(selectPartitions);
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
   };
-  const isNextButtonPristine = useAppSelector(selectIsNextButtonTouched);
-  const duplicates = getDuplicateMountPoints(partitions);
+  const stepValidation = useFilesystemValidation();
+  const isPristine = React.useContext(FileSystemContext);
 
   return (
     <Tr
@@ -215,15 +166,14 @@ export const Row = ({
       />
       <Td className="pf-m-width-20">
         <MountpointPrefix partition={partition} />
-        {!isNextButtonPristine &&
-          duplicates.indexOf(partition.mountpoint) !== -1 && (
-            <Alert
-              variant="danger"
-              isInline
-              isPlain
-              title="Duplicate mount point."
-            />
-          )}
+        {!isPristine && stepValidation.errors[`mountpoint-${partition.id}`] && (
+          <Alert
+            variant="danger"
+            isInline
+            isPlain
+            title={stepValidation.errors[`mountpoint-${partition.id}`]}
+          />
+        )}
       </Td>
       {partition.mountpoint !== '/' &&
       !partition.mountpoint.startsWith('/boot') &&
@@ -352,15 +302,17 @@ export const getConversionFactor = (units: Units) => {
 
 const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
+  const stepValidation = useFilesystemValidation();
 
   return (
-    <ValidatedTextInput
+    <HookValidatedInput
       ariaLabel="minimum partition size"
       helperText="Must be larger than 0"
-      validator={isMountpointMinSizeValid}
       value={partition.min_size}
       type="text"
       ouiaId="size"
+      stepValidation={stepValidation}
+      fieldName={`min-size-${partition.id}`}
       onChange={(event, minSize) => {
         if (minSize === '' || /^\d+$/.test(minSize)) {
           dispatch(

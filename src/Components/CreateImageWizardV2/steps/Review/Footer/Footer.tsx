@@ -15,14 +15,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
-import { useServerStore, useAppSelector } from '../../../../../store/hooks';
+import { useServerStore } from '../../../../../store/hooks';
 import {
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
-import { selectIsValid } from '../../../../../store/wizardSlice';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
+import { useIsBlueprintValid } from '../../../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();
@@ -41,7 +41,7 @@ const ReviewWizardFooter = () => {
     setIsOpen(!isOpen);
   };
   const navigate = useNavigate();
-  const isValid = useAppSelector(selectIsValid);
+  const isValid = useIsBlueprintValid();
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {

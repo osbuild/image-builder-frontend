@@ -11,6 +11,8 @@ import { selectFileSystemPartitionMode } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 export type FileSystemPartitionMode = 'automatic' | 'manual';
 
+export const FileSystemContext = React.createContext<boolean>(true);
+
 const FileSystemStep = () => {
   const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
   const hasIsoTargetOnly = useHasSpecificTargetOnly('image-installer');

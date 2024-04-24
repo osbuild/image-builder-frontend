@@ -1,18 +1,16 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Button,
   Wizard,
   WizardFooterWrapper,
   WizardStep,
-  WizardStepType,
   useWizardContext,
 } from '@patternfly/react-core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
-import FileSystemStep from './steps/FileSystem';
-import { FileSystemStepFooter } from './steps/FileSystem/FileSystemConfiguration';
+import FileSystemStep, { FileSystemContext } from './steps/FileSystem';
 import FirstBootStep from './steps/FirstBoot';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
@@ -25,6 +23,10 @@ import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
+import {
+  useFilesystemValidation,
+  useDetailsValidation,
+} from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
   isAzureTenantGUIDValid,
@@ -54,7 +56,6 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   selectRegistrationType,
-  selectStepValidation,
   addImageType,
   selectSnapshotDate,
   selectUseLatest,
@@ -67,11 +68,13 @@ import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 type CustomWizardFooterPropType = {
   disableBack?: boolean;
   disableNext: boolean;
+  beforeNext?: () => boolean;
 };
 
 export const CustomWizardFooter = ({
   disableBack: disableBack,
   disableNext: disableNext,
+  beforeNext,
 }: CustomWizardFooterPropType) => {
   const { goToNextStep, goToPrevStep, close } = useWizardContext();
   return (
@@ -79,7 +82,9 @@ export const CustomWizardFooter = ({
       <Button
         ouiaId="wizard-next-btn"
         variant="primary"
-        onClick={goToNextStep}
+        onClick={() => {
+          if (!beforeNext || beforeNext()) goToNextStep();
+        }}
         isDisabled={disableNext}
       >
         Next
@@ -172,15 +177,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
 
-  const [currentStep, setCurrentStep] = React.useState<WizardStepType>();
-  const onStepChange = (
-    _event: React.MouseEvent<HTMLButtonElement>,
-    currentStep: WizardStepType
-  ) => setCurrentStep(currentStep);
+  const detailsValidation = useDetailsValidation();
+  const fileSystemValidation = useFilesystemValidation();
+  const [filesystemPristine, setFilesystemPristine] = useState(true);
 
-  const detailsValidation = useAppSelector(selectStepValidation('details'));
   let startIndex = 1; // default index
-
   if (isEdit) {
     if (snapshottingEnabled) {
       startIndex = isFirstBootEnabled ? 15 : 14;
@@ -196,7 +197,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}
-          onStepChange={onStepChange}
           isVisitRequired
         >
           <WizardStep
@@ -302,9 +302,24 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="File system configuration"
             id="step-file-system"
-            footer={<FileSystemStepFooter />}
+            footer={
+              <CustomWizardFooter
+                beforeNext={() => {
+                  if (fileSystemValidation.disabledNext) {
+                    setFilesystemPristine(false);
+                    return false;
+                  }
+                  return true;
+                }}
+                disableNext={
+                  !filesystemPristine && fileSystemValidation.disabledNext
+                }
+              />
+            }
           >
-            <FileSystemStep />
+            <FileSystemContext.Provider value={filesystemPristine}>
+              <FileSystemStep />
+            </FileSystemContext.Provider>
           </WizardStep>
           <WizardStep
             name="Content"
@@ -358,17 +373,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           )}
           <WizardStep
             name="Details"
-            id="step-details"
-            status={
-              currentStep?.id !== 'step-details' &&
-              detailsValidation === 'error'
-                ? 'error'
-                : 'default'
-            }
+            id={'step-details'}
             isDisabled={snapshotStepRequiresChoice}
             footer={
               <CustomWizardFooter
-                disableNext={detailsValidation !== 'success'}
+                disableNext={detailsValidation.disabledNext}
               />
             }
           >
