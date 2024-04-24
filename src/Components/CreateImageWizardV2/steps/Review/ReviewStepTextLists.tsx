@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   Alert,
@@ -11,11 +11,9 @@ import {
   TextListVariants,
   TextListItemVariants,
   TextVariants,
-  Spinner,
   FormGroup,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import { PackagesTable, RepositoriesTable } from './ReviewStepTables';
@@ -57,6 +55,7 @@ import {
 import { toMonthAndYear } from '../../../../Utilities/time';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
+import { PopoverActivation } from '../Registration/ActivationKeysList';
 
 const ExpirationWarning = () => {
   return (
@@ -516,16 +515,7 @@ export const RegisterLaterList = () => {
 export const RegisterNowList = () => {
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
-  const [orgId, setOrgId] = useState<string | undefined>(undefined);
-  const { auth } = useChrome();
 
-  useEffect(() => {
-    (async () => {
-      const userData = await auth?.getUser();
-      const id = userData?.identity?.internal?.org_id;
-      setOrgId(id);
-    })();
-  });
   const { isError } = useShowActivationKeyQuery(
     // @ts-ignore type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
     { name: activationKey },
@@ -570,33 +560,7 @@ export const RegisterNowList = () => {
             </TextList>
           </TextListItem>
           <TextListItem component={TextListItemVariants.dt}>
-            Activation key
-            <Popover
-              bodyContent={
-                <TextContent>
-                  <Text>
-                    Activation keys enable you to register a system with
-                    appropriate subscriptions, system purpose, and repositories
-                    attached.
-                    <br />
-                    <br />
-                    If using an activation key with command line registration,
-                    you must provide your organization&apos;s ID. Your
-                    organization&apos;s ID is{' '}
-                    {orgId !== undefined ? orgId : <Spinner size="md" />}
-                  </Text>
-                </TextContent>
-              }
-            >
-              <Button
-                variant="plain"
-                aria-label="About activation key"
-                className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                size="sm"
-              >
-                <HelpIcon />
-              </Button>
-            </Popover>
+            Activation key <PopoverActivation />
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
             <ActivationKeyInformation />

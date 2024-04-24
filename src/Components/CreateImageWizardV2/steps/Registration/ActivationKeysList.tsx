@@ -38,7 +38,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
-const PopoverActivation = () => {
+export const PopoverActivation = () => {
   const [orgId, setOrgId] = useState<string | undefined>(undefined);
   const { auth } = useChrome();
 
@@ -62,9 +62,12 @@ const PopoverActivation = () => {
           <Text>
             If using an activation key with command line registration, you must
             provide your organization&apos;s ID.
-            {orgId && <br />}
-            {orgId && "Your organization's ID is " + orgId}
           </Text>
+          {orgId ? (
+            <Text>Your organization&apos;s ID is {orgId}</Text>
+          ) : (
+            <Spinner size="md" />
+          )}
         </TextContent>
       }
     >
@@ -72,7 +75,7 @@ const PopoverActivation = () => {
         variant="plain"
         aria-label="Activation key popover"
         aria-describedby="subscription-activation-key"
-        className="pf-c-form__group-label-help"
+        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0 pf-u-pr-0"
       >
         <HelpIcon />
       </Button>
