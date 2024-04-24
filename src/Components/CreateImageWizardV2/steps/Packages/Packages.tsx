@@ -288,30 +288,65 @@ const Packages = () => {
 
   const NoResultsFound = () => {
     const { isBeta } = useGetEnvironment();
-    return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-              <EmptyStateHeader
-                titleText="No results found"
-                headingLevel="h4"
-              />
-              <EmptyStateBody>
-                Adjust your search and try again, or search from your
-                repositories and popular repositories
-              </EmptyStateBody>
-              <EmptyStateFooter>
-                <EmptyStateActions>
-                  <Button
-                    variant="primary"
-                    onClick={() => setToggleSourceRepos('toggle-other-repos')}
-                  >
-                    Search other repositories
-                  </Button>
-                </EmptyStateActions>
-                <EmptyStateActions>
+    if (toggleSourceRepos === 'toggle-included-repos') {
+      return (
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+                <EmptyStateHeader
+                  titleText="No results found"
+                  headingLevel="h4"
+                />
+                <EmptyStateBody>
+                  Adjust your search and try again, or search from your
+                  repositories and popular repositories
+                </EmptyStateBody>
+                <EmptyStateFooter>
+                  <EmptyStateActions>
+                    <Button
+                      variant="primary"
+                      onClick={() => setToggleSourceRepos('toggle-other-repos')}
+                    >
+                      Search other repositories
+                    </Button>
+                  </EmptyStateActions>
+                  <EmptyStateActions>
+                    <Button
+                      variant="link"
+                      isInline
+                      component="a"
+                      target="_blank"
+                      href={
+                        isBeta()
+                          ? '/preview/insights/content'
+                          : '/insights/content'
+                      }
+                    >
+                      View other repositories
+                    </Button>
+                  </EmptyStateActions>
+                </EmptyStateFooter>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      );
+    } else {
+      return (
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+                <EmptyStateHeader
+                  titleText="No results found"
+                  headingLevel="h4"
+                />
+                <EmptyStateBody>
+                  No packages found in known repositories. If you know of a
+                  repository containing this packages, add it to{' '}
                   <Button
                     variant="link"
                     isInline
@@ -323,15 +358,16 @@ const Packages = () => {
                         : '/insights/content'
                     }
                   >
-                    View other repositories
-                  </Button>
-                </EmptyStateActions>
-              </EmptyStateFooter>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
-    );
+                    your repositories
+                  </Button>{' '}
+                  and try searching for it again.
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      );
+    }
   };
 
   const RepositoryModal = () => {
