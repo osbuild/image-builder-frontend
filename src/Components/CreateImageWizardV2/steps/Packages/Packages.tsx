@@ -784,7 +784,6 @@ const Packages = () => {
                         aria-label="About included repositories"
                         component="span"
                         className="pf-u-p-0"
-                        size="sm"
                         isInline
                       >
                         <HelpIcon />
@@ -815,7 +814,6 @@ const Packages = () => {
                         aria-label="About other repositories"
                         component="span"
                         className="pf-u-p-0"
-                        size="sm"
                         isInline
                       >
                         <HelpIcon />
@@ -870,7 +868,6 @@ const Packages = () => {
                     variant="plain"
                     aria-label="Package description"
                     className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                    size="sm"
                   >
                     <HelpIcon />
                   </Button>

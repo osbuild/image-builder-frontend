@@ -81,7 +81,6 @@ const ActivationKeyInformation = (): JSX.Element => {
                   variant="plain"
                   aria-label="About additional repositories"
                   className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                  size="sm"
                 >
                   <HelpIcon />
                 </Button>
