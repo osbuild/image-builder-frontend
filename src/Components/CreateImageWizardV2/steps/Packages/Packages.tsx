@@ -257,6 +257,35 @@ const Packages = () => {
     );
   };
 
+  const TryLookingUnderIncluded = () => {
+    return (
+      <Tr>
+        <Td colSpan={5}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader
+                titleText="No selected packages"
+                headingLevel="h4"
+              />
+              <EmptyStateBody>
+                There are no selected packages in Other repos. Try looking under
+                &quot;
+                <Button
+                  variant="link"
+                  onClick={() => setToggleSourceRepos('toggle-included-repos')}
+                  isInline
+                >
+                  Included repos
+                </Button>
+                &quot;.
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
+
   const NoResultsFound = () => {
     const { isBeta } = useGetEnvironment();
     return (
@@ -825,6 +854,10 @@ const Packages = () => {
             isSuccessRecommendedPackages &&
             transformedPackages.length === 0 &&
             toggleSelected === 'toggle-available' && <NoResultsFound />}
+          {searchTerm &&
+            toggleSelected === 'toggle-selected' &&
+            toggleSourceRepos === 'toggle-other-repos' &&
+            packages.length > 0 && <TryLookingUnderIncluded />}
           {searchTerm &&
             transformedPackages.length >= 100 &&
             handleExactMatch()}
