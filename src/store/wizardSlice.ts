@@ -25,6 +25,7 @@ import {
   GcpShareMethod,
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
+import { isBlueprintNameValid } from '../Components/CreateImageWizardV2/validators';
 import { RHEL_9, UNIT_GIB, X86_64 } from '../constants';
 
 import { RootState } from '.';
@@ -286,8 +287,19 @@ export const wizardSlice = createSlice({
   initialState,
   reducers: {
     initializeWizard: () => initialState,
-    loadWizardState: (state, action: PayloadAction<wizardState>) =>
-      action.payload,
+    loadWizardState: (state, action: PayloadAction<wizardState>) => {
+      const isNameValid = isBlueprintNameValid(
+        action.payload.details.blueprintName
+      );
+      action.payload.stepValidations = {
+        details: {
+          validated: isNameValid ? 'success' : 'error',
+          errorText: null,
+          inputs: { name: isNameValid },
+        },
+      };
+      return action.payload;
+    },
     changeServerUrl: (state, action: PayloadAction<string>) => {
       state.env.serverUrl = action.payload;
     },
