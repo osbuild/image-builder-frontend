@@ -21,6 +21,31 @@ import {
   selectPartitions,
 } from '../../../../store/wizardSlice';
 
+export const MinimumSizePopover = () => {
+  return (
+    <Popover
+      maxWidth="30rem"
+      bodyContent={
+        <TextContent>
+          <Text>
+            Image Builder may extend this size based on requirements, selected
+            packages, and configurations.
+          </Text>
+        </TextContent>
+      }
+    >
+      <Button
+        variant="plain"
+        aria-label="File system configuration info"
+        aria-describedby="file-system-configuration-info"
+        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+      >
+        <HelpIcon />
+      </Button>
+    </Popover>
+  );
+};
+
 const FileSystemTable = () => {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [draggingToItemIndex, setDraggingToItemIndex] = useState<number | null>(
@@ -170,27 +195,7 @@ const FileSystemTable = () => {
           <Th></Th>
           <Th>Type</Th>
           <Th>
-            Minimum size
-            <Popover
-              hasAutoWidth
-              bodyContent={
-                <TextContent>
-                  <Text>
-                    Image Builder may extend this size based on requirements,
-                    selected packages, and configurations.
-                  </Text>
-                </TextContent>
-              }
-            >
-              <Button
-                variant="plain"
-                aria-label="File system configuration info"
-                aria-describedby="file-system-configuration-info"
-                className="pf-c-form__group-label-help"
-              >
-                <HelpIcon />
-              </Button>
-            </Popover>
+            Minimum size <MinimumSizePopover />
           </Th>
           <Th />
           <Th />
