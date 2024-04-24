@@ -13,7 +13,7 @@ import {
   TextVariants,
   FormGroup,
 } from '@patternfly/react-core';
-import { ExclamationTriangleIcon, HelpIcon } from '@patternfly/react-icons';
+import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import { PackagesTable, RepositoriesTable } from './ReviewStepTables';
@@ -53,6 +53,7 @@ import {
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear } from '../../../../Utilities/time';
+import { MinimumSizePopover } from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 import { PopoverActivation } from '../Registration/ActivationKeysList';
@@ -147,27 +148,7 @@ export const FSCList = () => {
         {fileSystemPartitionMode === 'manual' && (
           <>
             <TextListItem component={TextListItemVariants.dt}>
-              Image size (minimum)
-              <Popover
-                hasAutoWidth
-                bodyContent={
-                  <TextContent>
-                    <Text>
-                      Image Builder may extend this size based on requirements,
-                      selected packages, and configurations.
-                    </Text>
-                  </TextContent>
-                }
-              >
-                <Button
-                  variant="plain"
-                  aria-label="File system configuration info"
-                  aria-describedby="file-system-configuration-info"
-                  className="pf-c-form__group-label-help"
-                >
-                  <HelpIcon />
-                </Button>
-              </Popover>
+              Image size (minimum) <MinimumSizePopover />
             </TextListItem>
             <MinSize />
           </>
