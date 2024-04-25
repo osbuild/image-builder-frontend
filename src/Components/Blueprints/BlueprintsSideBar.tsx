@@ -24,6 +24,7 @@ import { Link } from 'react-router-dom';
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
 
+import { DEBOUNCED_SEARCH_WAIT_TIME } from '../../constants';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -152,7 +153,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
       dispatch(setBlueprintsOffset(0));
       dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
       dispatch(setBlueprintSearchInput(filter.length > 0 ? filter : undefined));
-    }, 300),
+    }, DEBOUNCED_SEARCH_WAIT_TIME),
     []
   );
   React.useEffect(() => {
