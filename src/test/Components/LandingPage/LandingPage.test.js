@@ -16,7 +16,16 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 jest.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) => (flag === 'edgeParity.image-list' ? false : true)),
+  useFlag: jest.fn((flag) => {
+    switch (flag) {
+      case 'edgeParity.image-list':
+        return false;
+      case 'image-builder.new-wizard.stable':
+        return false;
+      default:
+        return true;
+    }
+  }),
 }));
 
 describe('Landing Page', () => {
