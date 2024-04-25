@@ -32,9 +32,11 @@ import {
   SearchIcon,
 } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
 
 import {
+  DEBOUNCED_SEARCH_WAIT_TIME,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
   RH_ICON_SIZE,
@@ -534,6 +536,8 @@ const Packages = () => {
     setSearchTerm(selection);
   };
 
+  const debounceOnChange = debounce(handleSearch, DEBOUNCED_SEARCH_WAIT_TIME);
+
   const handleSelect = (
     pkg: IBPackageWithRepositoryInfo,
     _: number,
@@ -735,7 +739,7 @@ const Packages = () => {
               aria-label="Search packages"
               data-testid="packages-search-input"
               value={searchTerm}
-              onChange={handleSearch}
+              onChange={debounceOnChange}
             />
           </ToolbarItem>
           <ToolbarItem>
