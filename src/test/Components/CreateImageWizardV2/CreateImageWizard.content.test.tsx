@@ -323,6 +323,16 @@ describe('Step Packages', () => {
     await clearSearchBox();
     await typeIntoSearchBox('mock');
 
+    // wait for debounce
+    await waitFor(
+      () => {
+        expect(screen.getByText(/mockPkg/)).toBeInTheDocument();
+      },
+      {
+        timeout: 1500,
+      }
+    );
+
     await userEvent.click(checkboxes[0]);
     await userEvent.click(checkboxes[1]);
 
