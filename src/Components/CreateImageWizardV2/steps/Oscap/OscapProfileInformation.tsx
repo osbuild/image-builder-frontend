@@ -40,8 +40,12 @@ export const OscapProfileInformation = (): JSX.Element => {
 
   const enabledServicesDisplayString =
     oscapProfileInfo?.services?.enabled?.join(' ');
-  const disableServicesDisplayString =
-    oscapProfileInfo?.services?.disabled?.join(' ');
+  const disabledAndMaskedServices = [
+    ...(oscapProfileInfo?.services?.disabled ?? []),
+    ...(oscapProfileInfo?.services?.masked ?? []),
+  ];
+  const disabledAndMaskedServicesDisplayString =
+    disabledAndMaskedServices.join(' ');
 
   return (
     <>
@@ -99,7 +103,9 @@ export const OscapProfileInformation = (): JSX.Element => {
               </TextListItem>
               <TextListItem component={TextListItemVariants.dd}>
                 <CodeBlock>
-                  <CodeBlockCode>{disableServicesDisplayString}</CodeBlockCode>
+                  <CodeBlockCode>
+                    {disabledAndMaskedServicesDisplayString}
+                  </CodeBlockCode>
                 </CodeBlock>
               </TextListItem>
               <TextListItem

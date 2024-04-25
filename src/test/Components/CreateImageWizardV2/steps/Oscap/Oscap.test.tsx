@@ -96,6 +96,7 @@ const expectedPackagesCisL1 = ['aide', 'neovim'];
 
 const expectedServicesCisL1 = {
   enabled: ['crond', 'neovim-service'],
+  disabled: ['rpcbind', 'autofs', 'nftables'],
   masked: ['nfs-server', 'emacs-service'],
 };
 

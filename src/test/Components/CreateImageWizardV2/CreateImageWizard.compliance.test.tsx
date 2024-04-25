@@ -99,12 +99,12 @@ describe('Step Compliance', () => {
 
     // check that the FSC does not contain a /tmp partition
     await clickNext();
-    //    await screen.findByRole('heading', { name: /File system configuration/i });
-    //  expect(
-    //   screen.queryByRole('cell', {
-    //     name: /tmp/i,
-    //   })
-    //   ).not.toBeInTheDocument();
+    await screen.findByRole('heading', { name: /File system configuration/i });
+    expect(
+      screen.queryByRole('cell', {
+        name: /tmp/i,
+      })
+    ).not.toBeInTheDocument();
 
     await clickNext(); // skip Repositories
 
@@ -161,13 +161,16 @@ describe('Step Compliance', () => {
     await screen.findByText(/kernel arguments:/i);
     await screen.findByText(/audit_backlog_limit=8192 audit=1/i);
     await screen.findByText(/disabled services:/i);
+    await screen.findByText(
+      /rpcbind autofs nftables nfs-server emacs-service/i
+    );
     await screen.findByText(/enabled services:/i);
     await screen.findByText(/crond/i);
 
     // check that the FSC contains a /tmp partition
     await clickNext();
-    //    await screen.findByRole('heading', { name: /File system configuration/i });
-    //   await screen.findByText(/tmp/i);
+    await screen.findByRole('heading', { name: /File system configuration/i });
+    await screen.findByText(/tmp/i);
 
     await clickNext(); // skip Repositories
 
