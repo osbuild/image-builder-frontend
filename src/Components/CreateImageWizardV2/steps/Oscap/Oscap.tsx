@@ -199,15 +199,26 @@ const ProfileSelector = () => {
         onFilter={(_event, value) => {
           if (profiles) {
             return [<OScapNoneOption key="oscap-none-option" />].concat(
-              profiles.map((profile_id, index) => {
-                return (
-                  <OScapSelectOption
-                    key={index}
-                    profile_id={profile_id}
-                    filter={value}
-                  />
-                );
-              })
+              profiles
+                // stig and stig_gui don't boot at the moment,
+                // so we should filter them out
+                .filter((profile_id) => {
+                  const brokenProfiles = [
+                    'xccdf_org.ssgproject.content_profile_stig',
+                    'xccdf_org.ssgproject.content_profile_stig_gui',
+                  ];
+
+                  return !brokenProfiles.includes(profile_id);
+                })
+                .map((profile_id, index) => {
+                  return (
+                    <OScapSelectOption
+                      key={index}
+                      profile_id={profile_id}
+                      filter={value}
+                    />
+                  );
+                })
             );
           }
         }}
