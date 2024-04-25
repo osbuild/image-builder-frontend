@@ -25,6 +25,8 @@ jest.mock('@unleash/proxy-client-react', () => ({
         return false;
       case 'image-builder.new-wizard.enabled':
         return false;
+      case 'image-builder.new-wizard.stable':
+        return false;
       default:
         return true;
     }
