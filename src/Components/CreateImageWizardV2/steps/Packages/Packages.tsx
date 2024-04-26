@@ -900,7 +900,9 @@ const Packages = () => {
           {searchTerm &&
             transformedPackages.length >= 100 &&
             handleExactMatch()}
-          {transformedPackages.length < 100 && composePkgTable()}
+          {(searchTerm || toggleSelected === 'toggle-selected') &&
+            transformedPackages.length < 100 &&
+            composePkgTable()}
         </Tbody>
       </Table>
       <Pagination
