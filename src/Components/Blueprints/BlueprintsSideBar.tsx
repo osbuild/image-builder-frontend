@@ -94,6 +94,12 @@ const BlueprintsSidebar = () => {
       />
     );
   }
+
+  const handleClickViewAll = () => {
+    dispatch(setBlueprintsOffset(0));
+    dispatch(setBlueprintId(undefined));
+  };
+
   return (
     <>
       <Stack hasGutter>
@@ -109,7 +115,7 @@ const BlueprintsSidebar = () => {
                     ouiaId={`clear-selected-blueprint-button`}
                     variant="link"
                     isDisabled={!selectedBlueprintId}
-                    onClick={() => dispatch(setBlueprintId(undefined))}
+                    onClick={handleClickViewAll}
                   >
                     View all
                   </Button>
