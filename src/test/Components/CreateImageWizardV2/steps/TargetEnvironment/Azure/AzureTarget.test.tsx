@@ -121,7 +121,6 @@ describe('azure image type request generated correctly', () => {
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
       image_type: 'azure',
-      snapshot_date: '',
       upload_request: {
         options: {
           source_id: '666',
@@ -152,7 +151,6 @@ describe('azure image type request generated correctly', () => {
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
       image_type: 'azure',
-      snapshot_date: '',
       upload_request: {
         type: 'azure',
         options: {

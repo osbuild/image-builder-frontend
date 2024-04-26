@@ -203,7 +203,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
       type: uploadTypeByTargetEnv(type),
       options: getImageOptions(type, state),
     },
-    snapshot_date: useLatest ? '' : snapshotDate,
+    snapshot_date: useLatest ? undefined : snapshotDate,
   }));
 };
 

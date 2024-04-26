@@ -41,7 +41,6 @@ const routes = [
 export const imageRequest: ImageRequest = {
   architecture: 'x86_64',
   image_type: 'image-installer',
-  snapshot_date: '',
   upload_request: {
     options: {},
     type: 'aws.s3',
