@@ -516,8 +516,8 @@ const testingRepos: ApiRepositoryResponseRead[] = [
   {
     uuid: 'f087f9ad-dfe6-4627-9d53-447d1a997de5',
     name: 'nginx stable repo',
-    url: 'http://nginx.org/packages/centos/8/x86_64/',
-    distribution_versions: ['8'],
+    url: 'http://nginx.org/packages/centos/9/x86_64/',
+    distribution_versions: ['9'],
     distribution_arch: 'x86_64',
     account_id: '6416440',
     org_id: '13476545',
