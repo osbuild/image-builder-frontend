@@ -907,7 +907,7 @@ describe('Step Custom repositories', () => {
       })
     );
 
-    await screen.findByText(/select all \(1015 items\)/i);
+    await screen.findByText(/select all \(1016 items\)/i);
   });
 
   test('filter works', async () => {
