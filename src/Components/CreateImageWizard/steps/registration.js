@@ -15,6 +15,11 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 
 import StepTemplate from './stepTemplate';
 
+import {
+  ACTIVATION_KEYS_PROD_URL,
+  ACTIVATION_KEYS_STAGE_URL,
+  RHC_URL,
+} from '../../../constants';
 import { useGetEnvironment } from '../../../Utilities/useGetEnvironment';
 import CustomButtons from '../formComponents/CustomButtons';
 
@@ -28,11 +33,7 @@ const ManageKeysButton = () => {
       icon={<ExternalLinkAltIcon />}
       iconPosition="right"
       isInline
-      href={
-        isProd()
-          ? 'https://console.redhat.com/insights/connector/activation-keys'
-          : 'https://console.stage.redhat.com/insights/connector/activation-keys'
-      }
+      href={isProd() ? ACTIVATION_KEYS_PROD_URL : ACTIVATION_KEYS_STAGE_URL}
     >
       Activation keys page
     </Button>
@@ -176,7 +177,7 @@ const registrationStep = {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             isInline
-            href="https://access.redhat.com/articles/rhc"
+            href={RHC_URL}
           >
             Registering with remote host configuration
           </Button>

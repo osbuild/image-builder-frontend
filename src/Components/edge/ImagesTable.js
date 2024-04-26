@@ -7,6 +7,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 
+import { CREATING_IMAGES_WITH_IB_URL } from '../../constants';
 import {
   getNotificationProp,
   manageEdgeImagesUrlName,
@@ -33,9 +34,7 @@ const ImagesTable = () => {
         navigateProp={useNavigate}
         locationProp={useLocation}
         showHeaderProp={false}
-        docLinkProp={
-          'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/creating_customized_images_by_using_insights_image_builder/index'
-        }
+        docLinkProp={CREATING_IMAGES_WITH_IB_URL}
         notificationProp={notificationProp}
         pathPrefix={resolveRelPath('')}
         urlName={manageEdgeImagesUrlName}

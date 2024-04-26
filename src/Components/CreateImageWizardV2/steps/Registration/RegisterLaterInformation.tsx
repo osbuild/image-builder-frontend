@@ -8,6 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { RHC_URL } from '../../../../constants';
+
 const RegisterLaterInformation = () => {
   return (
     <TextContent>
@@ -28,7 +30,7 @@ const RegisterLaterInformation = () => {
         icon={<ExternalLinkAltIcon />}
         iconPosition="right"
         isInline
-        href="https://access.redhat.com/articles/rhc"
+        href={RHC_URL}
       >
         Registering with remote host configuration
       </Button>

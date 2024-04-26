@@ -8,6 +8,8 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../constants';
+
 const FileSystemAutomaticPartition = () => {
   return (
     <TextContent>
@@ -24,7 +26,7 @@ const FileSystemAutomaticPartition = () => {
           variant="link"
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
-          href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation"
+          href={FILE_SYSTEM_CUSTOMIZATION_URL}
           className="pf-u-pl-0"
         >
           Customizing file systems during the image creation

@@ -19,7 +19,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import { useNavigate } from 'react-router-dom';
 
-import { MODAL_ANCHOR } from '../../constants';
+import { FILE_SYSTEM_CUSTOMIZATION_URL, MODAL_ANCHOR } from '../../constants';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -314,7 +314,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
               // TO DO update the link after documentation is up
-              href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation"
+              href={FILE_SYSTEM_CUSTOMIZATION_URL}
               className="pf-u-pl-0"
             >
               Read more about launching OCI images

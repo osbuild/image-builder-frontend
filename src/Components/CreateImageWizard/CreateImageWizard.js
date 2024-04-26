@@ -25,7 +25,13 @@ import {
 } from './validators';
 
 import './CreateImageWizard.scss';
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../constants';
+import {
+  CDN_PROD_URL,
+  CDN_STAGE_URL,
+  UNIT_GIB,
+  UNIT_KIB,
+  UNIT_MIB,
+} from '../../constants';
 import {
   useComposeImageMutation,
   useGetComposeStatusQuery,
@@ -519,11 +525,11 @@ const requestToState = (composeRequest, isProd, enableOscap) => {
 
       if (isProd) {
         formState['subscription-server-url'] = 'subscription.rhsm.redhat.com';
-        formState['subscription-base-url'] = 'https://cdn.redhat.com/';
+        formState['subscription-base-url'] = CDN_PROD_URL;
       } else {
         formState['subscription-server-url'] =
           'subscription.rhsm.stage.redhat.com';
-        formState['subscription-base-url'] = 'https://cdn.stage.redhat.com/';
+        formState['subscription-base-url'] = CDN_STAGE_URL;
       }
     } else {
       formState['register-system'] = 'register-later';

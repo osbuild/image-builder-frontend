@@ -26,6 +26,7 @@ import './LandingPage.scss';
 import { NewAlert } from './NewAlert';
 import Quickstarts from './Quickstarts';
 
+import { MANAGING_WITH_DNF_URL, OSTREE_URL } from '../../constants';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
@@ -134,9 +135,7 @@ export const LandingPage = () => {
                           icon={<ExternalLinkAltIcon />}
                           iconPosition="right"
                           isInline
-                          href={
-                            'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index'
-                          }
+                          href={MANAGING_WITH_DNF_URL}
                         >
                           Learn more about managing images with DNF
                         </Button>
@@ -174,7 +173,7 @@ export const LandingPage = () => {
                         icon={<ExternalLinkAltIcon />}
                         iconPosition="right"
                         isInline
-                        href={'https://ostreedev.github.io/ostree/'}
+                        href={OSTREE_URL}
                       >
                         Learn more about OSTree
                       </Button>

@@ -3,14 +3,48 @@ export const RHSM_API = '/api/rhsm/v2';
 export const EDGE_API = '/api/edge/v1';
 export const CONTENT_SOURCES_API = '/api/content-sources/v1';
 export const PROVISIONING_API = '/api/provisioning/v1';
+export const CREATE_BLUEPRINT = `${IMAGE_BUILDER_API}/experimental/blueprints`;
+
+export const CDN_PROD_URL = 'https://cdn.redhat.com/';
+export const CDN_STAGE_URL = 'https://cdn.stage.redhat.com/';
+export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
+export const FILE_SYSTEM_CUSTOMIZATION_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation';
+export const SUBSCRIPTION_MANAGEMENT_URL =
+  'https://access.redhat.com/products/red-hat-subscription-management';
+export const INSIGHTS_URL =
+  'https://access.redhat.com/products/red-hat-insights';
+export const RHC_URL = 'https://access.redhat.com/articles/rhc';
+export const RELEASE_LIFECYCLE_URL =
+  'https://access.redhat.com/support/policy/updates/errata';
+export const AZURE_AUTH_URL =
+  'https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
+export const ACTIVATION_KEYS_PROD_URL =
+  'https://console.redhat.com/insights/connector/activation-keys';
+export const ACTIVATION_KEYS_STAGE_URL =
+  'https://console.stage.redhat.com/insights/connector/activation-keys';
+export const COMPLIANCE_AND_VULN_SCANNING_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
+export const CREATING_IMAGES_WITH_IB_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/creating_customized_images_by_using_insights_image_builder/index';
+export const MANAGING_WITH_DNF_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index';
+export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service';
+export const OSTREE_URL = 'https://ostreedev.github.io/ostree/';
+export const DOCUMENTATION_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
+export const CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL =
+  'https://access.redhat.com/documentation/en-us/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index';
+export const OSBUILD_SERVICE_ARCHITECTURE_URL =
+  'https://osbuild.org/docs/service/architecture/';
+
 export const RHEL_8 = 'rhel-89';
 export const RHEL_9 = 'rhel-93';
 export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
-
-export const CREATE_BLUEPRINT = `${IMAGE_BUILDER_API}/experimental/blueprints`;
 
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;

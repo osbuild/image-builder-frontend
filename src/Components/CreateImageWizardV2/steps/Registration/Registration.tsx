@@ -11,6 +11,11 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import {
+  INSIGHTS_URL,
+  RHC_URL,
+  SUBSCRIPTION_MANAGEMENT_URL,
+} from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeActivationKey,
@@ -37,7 +42,7 @@ const RHSMPopover = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             isInline
-            href="https://access.redhat.com/products/red-hat-subscription-management"
+            href={SUBSCRIPTION_MANAGEMENT_URL}
           >
             Learn more about Red Hat Subscription Management
           </Button>
@@ -77,7 +82,7 @@ const InsightsPopover = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             isInline
-            href="https://access.redhat.com/products/red-hat-insights"
+            href={INSIGHTS_URL}
           >
             Learn more about Red Hat Insights
           </Button>
@@ -116,7 +121,7 @@ const RhcPopover = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             isInline
-            href="https://access.redhat.com/articles/rhc"
+            href={RHC_URL}
           >
             Learn more about remote host configuration
           </Button>

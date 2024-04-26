@@ -25,6 +25,12 @@ import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
+import {
+  ACTIVATION_KEYS_PROD_URL,
+  ACTIVATION_KEYS_STAGE_URL,
+  CDN_PROD_URL,
+  CDN_STAGE_URL,
+} from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   useListActivationKeysQuery,
@@ -128,11 +134,7 @@ const ManageKeysButton = () => {
       icon={<ExternalLinkAltIcon />}
       iconPosition="right"
       isInline
-      href={
-        isProd()
-          ? 'https://console.redhat.com/insights/connector/activation-keys'
-          : 'https://console.stage.redhat.com/insights/connector/activation-keys'
-      }
+      href={isProd() ? ACTIVATION_KEYS_PROD_URL : ACTIVATION_KEYS_STAGE_URL}
     >
       Activation keys page
     </Button>
@@ -161,10 +163,10 @@ const ActivationKeysList = () => {
   useEffect(() => {
     if (isProd()) {
       dispatch(changeServerUrl('subscription.rhsm.redhat.com'));
-      dispatch(changeBaseUrl('https://cdn.redhat.com/'));
+      dispatch(changeBaseUrl(CDN_PROD_URL));
     } else {
       dispatch(changeServerUrl('subscription.rhsm.stage.redhat.com'));
-      dispatch(changeBaseUrl('https://cdn.stage.redhat.com/'));
+      dispatch(changeBaseUrl(CDN_STAGE_URL));
     }
   }, [dispatch, isProd]);
 

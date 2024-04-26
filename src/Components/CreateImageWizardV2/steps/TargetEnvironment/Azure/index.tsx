@@ -17,6 +17,7 @@ import { AzureAuthButton } from './AzureAuthButton';
 import { AzureResourceGroups } from './AzureResourceGroups';
 import { AzureSourcesSelect } from './AzureSourcesSelect';
 
+import { AZURE_AUTH_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAzureResourceGroup,
@@ -85,7 +86,7 @@ const Azure = () => {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           isInline
-          href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow"
+          href={AZURE_AUTH_URL}
         >
           Learn more about OAuth 2.0
         </Button>

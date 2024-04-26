@@ -26,7 +26,11 @@ import MountPoint, { MountPointValidPrefixes } from './MountPoint';
 import SizeUnit from './SizeUnit';
 import UsrSubDirectoriesDisabled from './UsrSubDirectoriesDisabled';
 
-import { UNIT_GIB, UNIT_MIB } from '../../../constants';
+import {
+  FILE_SYSTEM_CUSTOMIZATION_URL,
+  UNIT_GIB,
+  UNIT_MIB,
+} from '../../../constants';
 import { useGetOscapCustomizationsQuery } from '../../../store/imageBuilderApi';
 
 const initialRow = {
@@ -354,7 +358,7 @@ const FileSystemConfiguration = ({ ...props }) => {
                 variant="link"
                 icon={<ExternalLinkAltIcon />}
                 iconPosition="right"
-                href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation"
+                href={FILE_SYSTEM_CUSTOMIZATION_URL}
                 className="pf-u-pl-0"
               >
                 Read more about manual configuration here

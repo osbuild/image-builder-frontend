@@ -22,6 +22,11 @@ import {
 import { useFlag } from '@unleash/proxy-client-react';
 import { Link } from 'react-router-dom';
 
+import {
+  CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
+  CREATING_IMAGES_WITH_IB_SERVICE_URL,
+  OSBUILD_SERVICE_ARCHITECTURE_URL,
+} from '../../constants';
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
@@ -53,9 +58,7 @@ const AboutImageBuilderPopover = () => {
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
               isInline
-              href={
-                'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
-              }
+              href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
             >
               Image builder for RPM-DNF documentation
             </Button>
@@ -68,9 +71,7 @@ const AboutImageBuilderPopover = () => {
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
               isInline
-              href={
-                'https://access.redhat.com/documentation/en-us/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index'
-              }
+              href={CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL}
             >
               Image builder for OSTree documentation
             </Button>
@@ -110,7 +111,9 @@ export const ImageBuilderHeader = ({
               title={
                 <>
                   Images <AboutImageBuilderPopover />
-                  <OpenSourceBadge repositoriesURL="https://osbuild.org/docs/service/architecture/" />
+                  <OpenSourceBadge
+                    repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
+                  />
                 </>
               }
             />
