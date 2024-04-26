@@ -19,6 +19,10 @@ import {
 } from '@patternfly/react-icons';
 import { Link } from 'react-router-dom';
 
+import {
+  CREATING_IMAGES_WITH_IB_SERVICE_URL,
+  MANAGING_WITH_DNF_URL,
+} from '../../constants';
 import { resolveRelPath } from '../../Utilities/path';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
@@ -100,9 +104,7 @@ const EmptyImagesTable = () => {
                   icon={<ExternalLinkAltIcon />}
                   iconPosition="right"
                   isInline
-                  href={
-                    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index'
-                  }
+                  href={MANAGING_WITH_DNF_URL}
                 >
                   Learn more about managing images with DNF
                 </Button>
@@ -124,9 +126,7 @@ const EmptyImagesTable = () => {
                   icon={<ExternalLinkAltIcon />}
                   iconPosition="right"
                   isInline
-                  href={
-                    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service'
-                  }
+                  href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
                   className="pf-u-pt-md"
                 >
                   Image builder for RPM-DNF documentation

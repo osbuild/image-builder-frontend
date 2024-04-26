@@ -13,6 +13,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import StepTemplate from './stepTemplate';
 
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../constants';
 import FileSystemConfigButtons from '../formComponents/FileSystemConfigButtons';
 
 export const reinitFileSystemConfiguratioStep = (change) => {
@@ -116,7 +117,7 @@ const fileSystemConfigurationStep = {
               variant="link"
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
-              href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation"
+              href={FILE_SYSTEM_CUSTOMIZATION_URL}
               className="pf-u-pl-0"
             >
               Customizing file systems during the image creation

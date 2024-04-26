@@ -3,9 +3,10 @@ import React from 'react';
 import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { DOCUMENTATION_URL } from '../../constants';
+
 const DocumentationButton = () => {
-  const documentationURL =
-    'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
+  const documentationURL = DOCUMENTATION_URL;
 
   return (
     <Button

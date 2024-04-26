@@ -5,6 +5,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { Oscap } from './Oscap';
 
+import { COMPLIANCE_AND_VULN_SCANNING_URL } from '../../../../constants';
 import { imageBuilderApi } from '../../../../store/enhancedImageBuilderApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
@@ -35,9 +36,7 @@ const OscapStep = () => {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           isInline
-          href={
-            'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning'
-          }
+          href={COMPLIANCE_AND_VULN_SCANNING_URL}
         >
           Documentation
         </Button>

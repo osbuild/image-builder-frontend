@@ -8,6 +8,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 
+import { AZURE_AUTH_URL } from '../../../constants';
 import CustomButtons from '../formComponents/CustomButtons';
 
 const SourcesButton = () => {
@@ -69,7 +70,7 @@ const msAzureStep = {
               icon={<ExternalLinkAltIcon />}
               iconPosition="right"
               isInline
-              href="https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow"
+              href={AZURE_AUTH_URL}
             >
               Learn more about OAuth 2.0
             </Button>

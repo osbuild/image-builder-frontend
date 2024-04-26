@@ -24,6 +24,7 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import PropTypes from 'prop-types';
 import { useDispatch } from 'react-redux';
 
+import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../constants';
 import {
   useListActivationKeysQuery,
   useCreateActivationKeysMutation,
@@ -86,10 +87,10 @@ const ActivationKeys = ({ label, isRequired, ...props }) => {
   useEffect(() => {
     if (isProd()) {
       change('subscription-server-url', 'subscription.rhsm.redhat.com');
-      change('subscription-base-url', 'https://cdn.redhat.com/');
+      change('subscription-base-url', CDN_PROD_URL);
     } else {
       change('subscription-server-url', 'subscription.rhsm.stage.redhat.com');
-      change('subscription-base-url', 'https://cdn.stage.redhat.com/');
+      change('subscription-base-url', CDN_STAGE_URL);
     }
   }, [isProd, change]);
 

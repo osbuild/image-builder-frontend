@@ -18,7 +18,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
 
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
+import {
+  FILE_SYSTEM_CUSTOMIZATION_URL,
+  UNIT_GIB,
+  UNIT_KIB,
+  UNIT_MIB,
+} from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   addPartition,
@@ -130,7 +135,7 @@ const FileSystemConfiguration = () => {
             variant="link"
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
-            href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation"
+            href={FILE_SYSTEM_CUSTOMIZATION_URL}
             className="pf-u-pl-0"
           >
             Read more about manual configuration here

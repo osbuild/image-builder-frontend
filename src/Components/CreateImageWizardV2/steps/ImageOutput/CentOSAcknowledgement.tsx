@@ -3,6 +3,8 @@ import React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { DEVELOPERS_URL } from '../../../../constants';
+
 const DeveloperProgramButton = () => {
   return (
     <Button
@@ -12,7 +14,7 @@ const DeveloperProgramButton = () => {
       icon={<ExternalLinkAltIcon />}
       iconPosition="right"
       isInline
-      href={'https://developers.redhat.com/about'}
+      href={DEVELOPERS_URL}
     >
       Red Hat Developer Program
     </Button>

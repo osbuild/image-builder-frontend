@@ -84,8 +84,8 @@ const Packages = () => {
   // select the correct version of EPEL repository
   // the urls are copied over from the content service
   const epelRepoUrlByDistribution = distribution.startsWith('rhel-8')
-    ? 'https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/'
-    : 'https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/';
+    ? EPEL_8_REPO_DEFINITION.url
+    : EPEL_9_REPO_DEFINITION.url;
 
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
     useListRepositoriesQuery({

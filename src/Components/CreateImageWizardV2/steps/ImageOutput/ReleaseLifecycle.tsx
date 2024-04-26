@@ -13,6 +13,7 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';
 
 import {
+  RELEASE_LIFECYCLE_URL,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
@@ -147,7 +148,7 @@ const ReleaseLifecycle = () => {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           isInline
-          href={'https://access.redhat.com/support/policy/updates/errata'}
+          href={RELEASE_LIFECYCLE_URL}
         >
           View Red Hat Enterprise Linux Life Cycle dates
         </Button>
