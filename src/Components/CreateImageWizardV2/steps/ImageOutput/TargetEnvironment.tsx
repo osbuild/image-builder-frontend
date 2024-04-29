@@ -21,6 +21,9 @@ import {
 import { provisioningApi } from '../../../../store/provisioningApi';
 import {
   addImageType,
+  reinitializeAws,
+  reinitializeAzure,
+  reinitializeGcp,
   removeImageType,
   selectArchitecture,
   selectDistribution,
@@ -50,6 +53,16 @@ const TargetEnvironment = () => {
 
   const handleToggleEnvironment = (environment: ImageTypes) => {
     if (environments.includes(environment)) {
+      switch (environment) {
+        case 'aws':
+          dispatch(reinitializeAws());
+          break;
+        case 'azure':
+          dispatch(reinitializeAzure());
+          break;
+        case 'gcp':
+          dispatch(reinitializeGcp());
+      }
       dispatch(removeImageType(environment));
     } else {
       dispatch(addImageType(environment));

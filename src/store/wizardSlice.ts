@@ -354,6 +354,11 @@ export const wizardSlice = createSlice({
     changeAwsSourceId: (state, action: PayloadAction<string | undefined>) => {
       state.aws.sourceId = action.payload;
     },
+    reinitializeAws: (state) => {
+      state.aws.accountId = '';
+      state.aws.shareMethod = 'sources';
+      state.aws.source = undefined;
+    },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
       state.azure.tenantId = action.payload;
     },
@@ -372,6 +377,13 @@ export const wizardSlice = createSlice({
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
       state.azure.resourceGroup = action.payload;
     },
+    reinitializeAzure: (state) => {
+      state.azure.shareMethod = 'sources';
+      state.azure.tenantId = '';
+      state.azure.subscriptionId = '';
+      state.azure.source = '';
+      state.azure.resourceGroup = '';
+    },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
       switch (action.payload) {
         case 'withInsights':
@@ -388,6 +400,11 @@ export const wizardSlice = createSlice({
     },
     changeGcpEmail: (state, action: PayloadAction<string>) => {
       state.gcp.email = action.payload;
+    },
+    reinitializeGcp: (state) => {
+      state.gcp.shareMethod = 'withGoogle';
+      state.gcp.accountType = 'user';
+      state.gcp.email = '';
     },
     changeRegistrationType: (
       state,
@@ -623,14 +640,17 @@ export const {
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSourceId,
+  reinitializeAws,
   changeAzureTenantId,
   changeAzureShareMethod,
   changeAzureSubscriptionId,
   changeAzureSource,
   changeAzureResourceGroup,
+  reinitializeAzure,
   changeGcpShareMethod,
   changeGcpAccountType,
   changeGcpEmail,
+  reinitializeGcp,
   changeRegistrationType,
   changeActivationKey,
   changeOscapProfile,
