@@ -8,7 +8,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -104,7 +104,7 @@ const goToReviewStep = async () => {
 
 describe('file system configuration request generated correctly', () => {
   test('10 GiB / correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await goToReviewStep();
@@ -126,7 +126,7 @@ describe('file system configuration request generated correctly', () => {
   });
 
   test('15 GiB / correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionSize();
@@ -149,7 +149,7 @@ describe('file system configuration request generated correctly', () => {
   });
 
   test('MiB / correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToMiB();
@@ -172,7 +172,7 @@ describe('file system configuration request generated correctly', () => {
   });
 
   test('KiB / correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToKiB();
@@ -195,7 +195,7 @@ describe('file system configuration request generated correctly', () => {
   });
 
   test('/home correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();
@@ -222,7 +222,7 @@ describe('file system configuration request generated correctly', () => {
   });
 
   test('/home/cakerecipes correct', async () => {
-    await render();
+    await renderCreateMode();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();

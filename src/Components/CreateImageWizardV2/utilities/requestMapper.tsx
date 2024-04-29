@@ -120,6 +120,18 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const azureUploadOptions = azure?.upload_request
     .options as AzureUploadRequestOptions;
 
+  const fileSystem = request.customizations.filesystem
+    ? {
+        mode: 'manual',
+        partitions: request.customizations.filesystem,
+        isNextButtonTouched: true,
+      }
+    : {
+        mode: 'automatic',
+        partitions: [],
+        isNextButtonTouched: true,
+      };
+
   return {
     wizardMode,
     details: {
@@ -134,12 +146,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       profile: request.customizations.openscap
         ?.profile_id as DistributionProfileItem,
     },
-    fileSystem: {
-      mode: 'automatic',
-      partitions: [],
-      isNextButtonTouched: true,
-    },
-
+    fileSystem: fileSystem,
     architecture: request.image_requests[0].architecture,
     distribution: request.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),

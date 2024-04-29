@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
-import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
+import ImageWizard from '../../../Components/CreateImageWizardV2';
 import {
   CreateBlueprintRequest,
   ImageRequest,
@@ -12,10 +12,12 @@ import {
 import { server } from '../../mocks/server';
 import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-export function spyOnRequest(pathname: string) {
+type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
+
+export function spyOnRequest(pathname: string, method: RequestTypes) {
   return new Promise((resolve) => {
     const listener = async (req: MockedRequest) => {
-      if (req.url.pathname === pathname) {
+      if (req.url.pathname === pathname && req.method === method) {
         const requestData = await req.clone().json();
         resolve(requestData);
         // Cleanup listener after successful intercept
@@ -34,7 +36,7 @@ const routes = [
   },
   {
     path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
+    element: <ImageWizard />,
   },
 ];
 
@@ -74,9 +76,13 @@ function preparePathname(searchParams: { [key: string]: string } = {}): string {
   return pathName;
 }
 
-export const render = async (searchParams = {}) => {
+export const renderCreateMode = async (searchParams = {}) => {
   const pathName = preparePathname(searchParams);
   await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
+};
+
+export const renderEditMode = async (id: string) => {
+  await renderCustomRoutesWithReduxRouter(`imagewizard/${id}`, {}, routes);
 };
 
 export const goToRegistrationStep = async () => {
@@ -102,10 +108,23 @@ export const enterBlueprintName = async (name: string = 'Red Velvet') => {
 };
 
 export const interceptBlueprintRequest = async (requestPathname: string) => {
-  const receivedRequestPromise = spyOnRequest(requestPathname);
+  const receivedRequestPromise = spyOnRequest(requestPathname, 'POST');
 
   const saveButton = await screen.findByRole('button', {
     name: 'Create blueprint',
+  });
+  await userEvent.click(saveButton);
+
+  return await receivedRequestPromise;
+};
+
+export const interceptEditBlueprintRequest = async (
+  requestPathname: string
+) => {
+  const receivedRequestPromise = spyOnRequest(requestPathname, 'PUT');
+
+  const saveButton = await screen.findByRole('button', {
+    name: 'Save changes to blueprint',
   });
   await userEvent.click(saveButton);
 

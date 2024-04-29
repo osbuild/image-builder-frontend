@@ -13,7 +13,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -124,7 +124,7 @@ describe('repositories request generated correctly', () => {
   };
 
   test('with custom repositories', async () => {
-    await render();
+    await renderCreateMode();
     await goToRepositoriesStep();
     await selectFirstRepository();
     await goToReviewStep();
@@ -142,7 +142,7 @@ describe('repositories request generated correctly', () => {
   });
 
   test('with custom repository with module_hotfixes', async () => {
-    await render();
+    await renderCreateMode();
     await goToRepositoriesStep();
     await selectNginxRepository();
     await goToReviewStep();
@@ -160,7 +160,7 @@ describe('repositories request generated correctly', () => {
   });
 
   test('deselecting a custom repository removes it from the request', async () => {
-    await render();
+    await renderCreateMode();
     await goToRepositoriesStep();
     await selectFirstRepository();
     await deselectFirstRepository();

@@ -12,7 +12,7 @@ import {
   clickNext,
   renderCustomRoutesWithReduxRouter,
 } from '../../../../testUtils';
-import { render } from '../../wizardTestUtils';
+import { renderCreateMode } from '../../wizardTestUtils';
 
 const routes = [
   {
@@ -283,53 +283,53 @@ describe('Check step consistency', () => {
 
 describe('set release using query parameter', () => {
   test('rhel 9 by default (no query parameter)', async () => {
-    await render();
+    await renderCreateMode();
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
   });
 
   test('rhel 9 by default (invalid query parameter)', async () => {
-    await render({ release: 'rhel9001' });
+    await renderCreateMode({ release: 'rhel9001' });
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
   });
 
   test('rhel 8 (query parameter provided)', async () => {
-    await render({ release: 'rhel8' });
+    await renderCreateMode({ release: 'rhel8' });
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
   });
 });
 
 describe('set architecture using query parameter', () => {
   test('x86_64 by default (no query parameter)', async () => {
-    await render();
+    await renderCreateMode();
     await screen.findByText('x86_64');
   });
 
   test('x86_64 by default (invalid query parameter)', async () => {
-    await render({ arch: 'arm' });
+    await renderCreateMode({ arch: 'arm' });
     await screen.findByText('x86_64');
   });
 
   test('aarch64 (query parameter provided)', async () => {
-    await render({ arch: 'aarch64' });
+    await renderCreateMode({ arch: 'aarch64' });
     await screen.findByText('aarch64');
   });
 });
 
 describe('set target using query parameter', () => {
   test('no target by default (no query parameter)', async () => {
-    await render();
+    await renderCreateMode();
     const nextButton = await screen.findByRole('button', { name: /Next/ });
     expect(nextButton).toBeDisabled();
   });
 
   test('no target by default (invalid query parameter)', async () => {
-    await render({ target: 'azure' });
+    await renderCreateMode({ target: 'azure' });
     const nextButton = await screen.findByRole('button', { name: /Next/ });
     expect(nextButton).toBeDisabled();
   });
 
   test('image-installer (query parameter provided)', async () => {
-    await render({ target: 'iso' });
+    await renderCreateMode({ target: 'iso' });
     await clickToReview();
     const targetExpandable = await screen.findByRole('button', {
       name: /Target environments/,
@@ -339,7 +339,7 @@ describe('set target using query parameter', () => {
   });
 
   test('guest-installer (query parameter provided)', async () => {
-    await render({ target: 'qcow2' });
+    await renderCreateMode({ target: 'qcow2' });
     await clickToReview();
     const targetExpandable = await screen.findByRole('button', {
       name: /Target environments/,

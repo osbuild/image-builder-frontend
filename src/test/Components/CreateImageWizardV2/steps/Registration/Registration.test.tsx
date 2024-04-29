@@ -9,7 +9,7 @@ import {
 import { clickNext } from '../../../../testUtils';
 import {
   enterBlueprintName,
-  render,
+  renderCreateMode,
   interceptBlueprintRequest,
   goToRegistrationStep,
   clickRegisterLater,
@@ -94,7 +94,7 @@ describe('registration request generated correctly', () => {
   };
 
   test('register + insights + rhc', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await selectActivationKey();
     await goToReviewStep();
@@ -117,7 +117,7 @@ describe('registration request generated correctly', () => {
   });
 
   test('register + insights', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectEnableRemoteRemediations();
@@ -142,7 +142,7 @@ describe('registration request generated correctly', () => {
   });
 
   test('register', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectPredictiveAnalytics();
@@ -167,7 +167,7 @@ describe('registration request generated correctly', () => {
   });
 
   test('register Later', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await clickRegisterLater();

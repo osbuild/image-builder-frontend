@@ -9,7 +9,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -108,7 +108,7 @@ describe('packages request generated correctly', () => {
   const expectedPackages: string[] = ['test'];
 
   test('with custom packages', async () => {
-    await render();
+    await renderCreateMode();
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
@@ -126,7 +126,7 @@ describe('packages request generated correctly', () => {
   });
 
   test('deselecting a package removes it from the request', async () => {
-    await render();
+    await renderCreateMode();
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
@@ -158,7 +158,7 @@ describe('package recommendations', () => {
   const expectedPackagesWithoutRecommendations: string[] = ['test'];
 
   test('selecting single recommendation adds it to the request', async () => {
-    await render();
+    await renderCreateMode();
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
@@ -178,7 +178,7 @@ describe('package recommendations', () => {
   });
 
   test('clicking "Add all packages" adds all recommendations to the request', async () => {
-    await render();
+    await renderCreateMode();
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
@@ -198,7 +198,7 @@ describe('package recommendations', () => {
   });
 
   test('deselecting a package recommendation removes it from the request', async () => {
-    await render();
+    await renderCreateMode();
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
