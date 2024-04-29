@@ -80,6 +80,13 @@ const getSourceDropdown = async () => {
   return sourceDropdown;
 };
 
+const clickFromImageOutputToFsc = async () => {
+  await clickNext();
+  await userEvent.click(await screen.findByText(/Register later/));
+  await clickNext();
+  await clickNext(); // skip OSCAP
+};
+
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
@@ -819,6 +826,32 @@ describe('Step File system configuration', () => {
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
     expect(await getNextButton()).toBeEnabled();
+  });
+
+  test('Manual partitioning is hidden for ISO targets only', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await user.click(await screen.findByTestId('checkbox-image-installer'));
+    await clickFromImageOutputToFsc();
+    expect(
+      screen.queryByText(/manually configure partitions/i)
+    ).not.toBeInTheDocument();
+  });
+
+  test('Manual partitioning is shown for ISO target and other target', async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+    await user.click(await screen.findByTestId('checkbox-image-installer'));
+    await user.click(await screen.findByTestId('checkbox-guest-image'));
+    await clickFromImageOutputToFsc();
+    await user.click(await screen.findByText(/manually configure partitions/i));
+    await screen.findByText('Configure partitions');
   });
 });
 
