@@ -12,7 +12,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -52,7 +52,7 @@ const goToReview = async () => {
 };
 
 const selectAzureTarget = async () => {
-  await render();
+  await renderCreateMode();
   const azureCard = await screen.findByTestId('upload-azure');
   await userEvent.click(azureCard);
   await clickNext();

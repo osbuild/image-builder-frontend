@@ -10,7 +10,7 @@ import {
   enterBlueprintName,
   goToRegistrationStep,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -54,7 +54,7 @@ const goToReviewStep = async () => {
 
 describe('validates name', () => {
   test('with invalid name', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToDetailsStep();
@@ -66,7 +66,7 @@ describe('validates name', () => {
   });
 
   test('with valid name', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToDetailsStep();
@@ -79,7 +79,7 @@ describe('validates name', () => {
 
 describe('registration request generated correctly', () => {
   test('without description', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToDetailsStep();
@@ -93,7 +93,7 @@ describe('registration request generated correctly', () => {
   });
 
   test('with description', async () => {
-    await render();
+    await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToDetailsStep();

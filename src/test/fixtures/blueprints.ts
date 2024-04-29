@@ -4,6 +4,9 @@ import {
   CreateBlueprintResponse,
   GetBlueprintComposesApiResponse,
   GetBlueprintApiResponse,
+  CreateBlueprintRequest,
+  ImageRequest,
+  BlueprintResponse,
 } from '../../store/imageBuilderApi';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
@@ -12,9 +15,22 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
   },
 ];
 
+export const mockBlueprintIds = {
+  darkChocolate: '677b010b-e95e-4694-9813-d11d847f1bfc',
+  oscap: '260823fd-0a51-43fd-bc1c-77255848de04',
+};
+
+const mockBlueprintNames = {
+  oscap: 'oscap',
+};
+
+const mockBlueprintDescriptions = {
+  oscap: '',
+};
+
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 11 },
+  meta: { count: 12 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -90,6 +106,13 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       id: '147032db-8697-4638-8fdd-6f428100d8fc',
       name: 'Red Velvet',
       description: 'Layered cake with icing',
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['oscap'],
+      name: mockBlueprintNames['oscap'],
+      description: mockBlueprintDescriptions['oscap'],
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
@@ -217,7 +240,7 @@ export const updatedBlueprints: GetBlueprintsApiResponse = {
   })),
 };
 
-export const mockBlueprintDetail: GetBlueprintApiResponse = {
+export const darkChocolateBlueprintResponse: GetBlueprintApiResponse = {
   ...mockGetBlueprints.data[0],
   image_requests: mockBlueprintComposes.data[0].request.image_requests,
   distribution: mockBlueprintComposes.data[0].request.distribution,
@@ -231,4 +254,71 @@ export const mockBlueprintDetail: GetBlueprintApiResponse = {
       rhc: true,
     },
   },
+};
+
+export const baseImageRequest: ImageRequest = {
+  architecture: 'x86_64',
+  image_type: 'guest-image',
+  upload_request: {
+    options: {},
+    type: 'aws.s3',
+  },
+};
+
+export const baseCreateBlueprintRequest: CreateBlueprintRequest = {
+  name: 'Red Velvet',
+  description: '',
+  distribution: 'rhel-93',
+  image_requests: [baseImageRequest],
+  customizations: {},
+};
+
+const expectedOpenscapCisL1 = {
+  profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+};
+
+const expectedPackagesCisL1 = ['aide', 'neovim'];
+
+const expectedServicesCisL1 = {
+  enabled: ['crond', 'neovim-service'],
+  disabled: ['rpcbind', 'autofs', 'nftables'],
+  masked: ['nfs-server', 'emacs-service'],
+};
+
+const expectedKernelCisL1 = {
+  append: 'audit_backlog_limit=8192 audit=1',
+};
+
+const expectedFilesystemCisL1 = [
+  { min_size: 10737418240, mountpoint: '/' },
+  { min_size: 1073741824, mountpoint: '/tmp' },
+  { min_size: 1073741824, mountpoint: '/home' },
+];
+
+export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['oscap'],
+  description: mockBlueprintDescriptions['oscap'],
+  customizations: {
+    packages: expectedPackagesCisL1,
+    openscap: expectedOpenscapCisL1,
+    services: expectedServicesCisL1,
+    kernel: expectedKernelCisL1,
+    filesystem: expectedFilesystemCisL1,
+  },
+};
+
+export const oscapBlueprintResponse: BlueprintResponse = {
+  ...oscapCreateBlueprintRequest,
+  id: mockBlueprintIds['oscap'],
+  description: mockBlueprintDescriptions['oscap'],
+};
+
+export const getMockBlueprintResponses = (id: string) => {
+  switch (id) {
+    case mockBlueprintIds['darkChocolate']:
+      return darkChocolateBlueprintResponse;
+    case mockBlueprintIds['oscap']:
+      return oscapBlueprintResponse;
+  }
 };

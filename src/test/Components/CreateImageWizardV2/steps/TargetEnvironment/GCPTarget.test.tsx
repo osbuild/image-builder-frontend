@@ -15,7 +15,7 @@ import {
   enterBlueprintName,
   imageRequest,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -67,7 +67,7 @@ const createGCPCloudImage = (
 };
 
 const clickGCPTarget = async () => {
-  await render();
+  await renderCreateMode();
   const googleOption = await screen.findByTestId('upload-google');
   await userEvent.click(googleOption);
   await clickNext();

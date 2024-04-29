@@ -12,7 +12,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -52,7 +52,7 @@ const goToReview = async () => {
 };
 
 const selectAwsTarget = async () => {
-  await render();
+  await renderCreateMode();
   const awsCard = await screen.findByTestId('upload-aws');
   await userEvent.click(awsCard);
   await clickNext();

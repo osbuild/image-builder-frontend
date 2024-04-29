@@ -13,7 +13,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -112,7 +112,7 @@ describe('repository snapshot tab - ', () => {
   ];
 
   test('select use a snapshot with 1 repo selected', async () => {
-    await render();
+    await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
     await updateDatePickerWithValue('04/22/2024');
@@ -143,7 +143,7 @@ describe('repository snapshot tab - ', () => {
   });
 
   test('select use a snapshot with no repos selected', async () => {
-    await render();
+    await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
     await updateDatePickerWithValue('04/22/2024');

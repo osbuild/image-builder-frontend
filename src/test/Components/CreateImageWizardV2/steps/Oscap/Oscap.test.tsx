@@ -1,15 +1,21 @@
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
+import {
+  baseCreateBlueprintRequest,
+  mockBlueprintIds,
+  oscapCreateBlueprintRequest,
+} from '../../../../fixtures/blueprints';
 import { clickNext } from '../../../../testUtils';
 import {
-  blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  render,
+  interceptEditBlueprintRequest,
+  renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -85,31 +91,9 @@ const goToReviewStep = async () => {
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Details
-  await enterBlueprintName();
+  await enterBlueprintName('oscap');
   await clickNext(); // Review
 };
-
-const expectedOpenscapCisL1 = {
-  profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
-};
-
-const expectedPackagesCisL1 = ['aide', 'neovim'];
-
-const expectedServicesCisL1 = {
-  enabled: ['crond', 'neovim-service'],
-  disabled: ['rpcbind', 'autofs', 'nftables'],
-  masked: ['nfs-server', 'emacs-service'],
-};
-
-const expectedKernelCisL1 = {
-  append: 'audit_backlog_limit=8192 audit=1',
-};
-
-const expectedFilesystemCisL1 = [
-  { min_size: 10737418240, mountpoint: '/' },
-  { min_size: 1073741824, mountpoint: '/tmp' },
-  { min_size: 1073741824, mountpoint: '/home' },
-];
 
 const expectedOpenscapCisL2 = {
   profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l2',
@@ -134,29 +118,20 @@ const expectedFilesystemCisL2 = [
 
 describe('oscap', () => {
   test('add a profile', async () => {
-    await render();
+    await renderCreateMode();
     await goToOscapStep();
     await selectProfile();
     await goToReviewStep();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      customizations: {
-        packages: expectedPackagesCisL1,
-        openscap: expectedOpenscapCisL1,
-        services: expectedServicesCisL1,
-        kernel: expectedKernelCisL1,
-        filesystem: expectedFilesystemCisL1,
-      },
-    };
+    const expectedRequest = oscapCreateBlueprintRequest;
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
   test('remove a profile', async () => {
-    await render();
+    await renderCreateMode();
     await goToOscapStep();
     await selectProfile();
     await selectNone();
@@ -165,14 +140,15 @@ describe('oscap', () => {
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
+      ...baseCreateBlueprintRequest,
+      name: 'oscap',
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
   test('change profile', async () => {
-    await render();
+    await renderCreateMode();
     await goToOscapStep();
     await selectProfile();
     await selectDifferentProfile();
@@ -181,7 +157,7 @@ describe('oscap', () => {
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
+      ...baseCreateBlueprintRequest,
       customizations: {
         packages: expectedPackagesCisL2,
         openscap: expectedOpenscapCisL2,
@@ -189,8 +165,23 @@ describe('oscap', () => {
         kernel: expectedKernelCisL2,
         filesystem: expectedFilesystemCisL2,
       },
+      name: 'oscap',
     };
 
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+describe('oscap edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['oscap'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = oscapCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

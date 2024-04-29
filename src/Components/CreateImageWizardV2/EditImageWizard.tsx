@@ -7,7 +7,7 @@ import { mapRequestToState } from './utilities/requestMapper';
 
 import { useAppDispatch } from '../../store/hooks';
 import { useGetBlueprintQuery } from '../../store/imageBuilderApi';
-import { loadWizardState, initializeWizard } from '../../store/wizardSlice';
+import { loadWizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 
 type EditImageWizardProps = {
@@ -18,15 +18,18 @@ const EditImageWizard = ({ blueprintId }: EditImageWizardProps) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const { data: blueprintDetails, error } = useGetBlueprintQuery({
+  const {
+    data: blueprintDetails,
+    error,
+    isSuccess,
+  } = useGetBlueprintQuery({
     id: blueprintId,
   });
+
   useEffect(() => {
     if (blueprintId && blueprintDetails) {
       const editBlueprintState = mapRequestToState(blueprintDetails);
       dispatch(loadWizardState(editBlueprintState));
-    } else {
-      dispatch(initializeWizard());
     }
   }, [blueprintId, blueprintDetails, dispatch]);
   useEffect(() => {
@@ -36,7 +39,7 @@ const EditImageWizard = ({ blueprintId }: EditImageWizardProps) => {
       navigate(resolveRelPath(''));
     }
   }, [error, navigate]);
-  return <CreateImageWizard isEdit />;
+  return isSuccess ? <CreateImageWizard isEdit /> : undefined;
 };
 
 export default EditImageWizard;

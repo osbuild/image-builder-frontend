@@ -22,7 +22,7 @@ import {
   goToRegistrationStep,
   imageRequest,
   interceptBlueprintRequest,
-  render,
+  renderCreateMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -130,7 +130,7 @@ const goToReviewStep = async () => {
 
 describe('distribution request generated correctly', () => {
   test('rhel-8', async () => {
-    await render();
+    await renderCreateMode();
     await selectRhel8();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -144,7 +144,7 @@ describe('distribution request generated correctly', () => {
   });
 
   test('rhel-9', async () => {
-    await render();
+    await renderCreateMode();
     await selectRhel9();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -158,7 +158,7 @@ describe('distribution request generated correctly', () => {
   });
 
   test('centos-9', async () => {
-    await render();
+    await renderCreateMode();
     await selectCentos9();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -172,7 +172,7 @@ describe('distribution request generated correctly', () => {
   });
 
   test('centos-8', async () => {
-    await render();
+    await renderCreateMode();
     await selectCentos8();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -188,7 +188,7 @@ describe('distribution request generated correctly', () => {
 
 describe('architecture request generated correctly', () => {
   test('x86_64', async () => {
-    await render();
+    await renderCreateMode();
     await selectX86_64();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -206,7 +206,7 @@ describe('architecture request generated correctly', () => {
   });
 
   test('aarch64', async () => {
-    await render();
+    await renderCreateMode();
     await selectAarch64();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
