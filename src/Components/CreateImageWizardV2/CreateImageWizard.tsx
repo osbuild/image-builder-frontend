@@ -59,6 +59,7 @@ import {
   selectUseLatest,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -101,6 +102,7 @@ type CreateImageWizardProps = {
 };
 
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
+  const { isBeta, isProd } = useGetEnvironment();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -110,17 +112,17 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { data, isSuccess, isFetching, isError } =
     useListFeaturesQuery(undefined);
 
-  const snapshottingEnabled = useMemo(
-    () =>
-      !(
-        !isError &&
-        !isFetching &&
-        isSuccess &&
-        data?.snapshots?.accessible === false &&
-        data?.snapshots?.enabled === false
-      ),
-    [data, isSuccess, isFetching, isError]
-  );
+  const snapshottingEnabled = useMemo(() => {
+    if (isProd() && !isBeta()) return false;
+    // The below checks if other environments permit the snapshot step
+    return !(
+      !isError &&
+      !isFetching &&
+      isSuccess &&
+      data?.snapshots?.accessible === false &&
+      data?.snapshots?.enabled === false
+    );
+  }, [data, isSuccess, isFetching, isError, isBeta, isProd]);
 
   // =========================TO REMOVE=======================
 
