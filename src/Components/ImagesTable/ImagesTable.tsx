@@ -66,6 +66,7 @@ import { resolveRelPath } from '../../Utilities/path';
 import {
   computeHoursToExpiration,
   timestampToDisplayString,
+  timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
 import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 
@@ -469,7 +470,10 @@ const Row = ({
           }}
         />
         <Td dataLabel="Image name">{compose.image_name || compose.id}</Td>
-        <Td dataLabel="Created">
+        <Td
+          dataLabel="Created"
+          title={timestampToDisplayStringDetailed(compose.created_at)}
+        >
           {timestampToDisplayString(compose.created_at)}
         </Td>
         <Td dataLabel="Release">
