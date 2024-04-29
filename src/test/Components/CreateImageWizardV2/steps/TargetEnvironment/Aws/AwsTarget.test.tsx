@@ -6,7 +6,7 @@ import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../../store/imageBuilderApi';
-import { clickNext } from '../../../../../testUtils';
+import { clickBack, clickNext } from '../../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -55,6 +55,17 @@ const selectAwsTarget = async () => {
   await render();
   const awsCard = await screen.findByTestId('upload-aws');
   await userEvent.click(awsCard);
+  await clickNext();
+};
+
+const deselectAwsAndSelectGuestImage = async () => {
+  const awsCard = await screen.findByTestId('upload-aws');
+  await userEvent.click(awsCard);
+  await userEvent.click(
+    await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    })
+  );
   await clickNext();
 };
 
@@ -134,5 +145,17 @@ describe('aws image type request generated correctly', () => {
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('after selecting and deselecting aws', async () => {
+    await selectAwsTarget();
+    await goToAwsStep();
+    await selectSource();
+    await clickBack();
+    await deselectAwsAndSelectGuestImage();
+    await goToReview();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    expect(receivedRequest).toEqual(blueprintRequest);
   });
 });

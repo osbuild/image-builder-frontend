@@ -8,7 +8,7 @@ import {
   ImageRequest,
   ImageTypes,
 } from '../../../../../store/imageBuilderApi';
-import { clickNext } from '../../../../testUtils';
+import { clickBack, clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -70,6 +70,17 @@ const clickGCPTarget = async () => {
   await render();
   const googleOption = await screen.findByTestId('upload-google');
   await userEvent.click(googleOption);
+  await clickNext();
+};
+
+const deselectGcpAndSelectGuestImage = async () => {
+  const googleCard = await screen.findByTestId('upload-google');
+  await userEvent.click(googleCard);
+  await userEvent.click(
+    await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    })
+  );
   await clickNext();
 };
 
@@ -153,5 +164,16 @@ describe('gcp image type request generated correctly', () => {
       image_requests: [expectedImageRequest],
     };
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('after selecting and deselecting gcp', async () => {
+    await clickGCPTarget();
+    await selectGoogleAccount('google-domain');
+    await clickBack();
+    await deselectGcpAndSelectGuestImage();
+    await goToReview();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    expect(receivedRequest).toEqual(blueprintRequest);
   });
 });
