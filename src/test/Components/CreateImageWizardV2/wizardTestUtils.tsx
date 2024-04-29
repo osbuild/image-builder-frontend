@@ -40,7 +40,7 @@ const routes = [
 
 export const imageRequest: ImageRequest = {
   architecture: 'x86_64',
-  image_type: 'image-installer',
+  image_type: 'guest-image',
   upload_request: {
     options: {},
     type: 'aws.s3',
@@ -80,10 +80,10 @@ export const render = async (searchParams = {}) => {
 };
 
 export const goToRegistrationStep = async () => {
-  const bareMetalCheckBox = await screen.findByRole('checkbox', {
-    name: /bare metal installer checkbox/i,
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(bareMetalCheckBox);
+  await userEvent.click(guestImageCheckBox);
   await clickNext();
 };
 

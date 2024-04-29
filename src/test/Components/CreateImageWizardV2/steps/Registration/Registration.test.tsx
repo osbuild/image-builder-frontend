@@ -78,7 +78,7 @@ const goToReviewStep = async () => {
 describe('registration request generated correctly', () => {
   const imageRequest: ImageRequest = {
     architecture: 'x86_64',
-    image_type: 'image-installer',
+    image_type: 'guest-image',
     upload_request: {
       options: {},
       type: 'aws.s3',
