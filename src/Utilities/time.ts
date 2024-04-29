@@ -57,6 +57,28 @@ export const timestampToDisplayString = (ts?: string) => {
   return tsDisplay;
 };
 
+export const timestampToDisplayStringDetailed = (ts?: string) => {
+  // Detailed representation including time and time zone
+  if (!ts) {
+    return '';
+  }
+
+  const ms = Date.parse(ts);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+    timeZoneName: 'short',
+  };
+
+  const tsDisplay = new Intl.DateTimeFormat('en-US', options).format(ms);
+  return tsDisplay;
+};
+
 export const convertStringToDate = (createdAtAsString: string = '') => {
   if (isNaN(Date.parse(createdAtAsString))) {
     // converts property created_at of the image object from string to UTC
