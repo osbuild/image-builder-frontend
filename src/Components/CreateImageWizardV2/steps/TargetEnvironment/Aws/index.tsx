@@ -99,7 +99,7 @@ const Aws = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-              <FormGroup label="Default Region" isRequired>
+              <FormGroup label="Default region" isRequired>
                 <TextInput
                   readOnlyVariant="default"
                   isRequired
@@ -131,7 +131,7 @@ const Aws = () => {
               helperText="Should be 12 characters long."
             />
           </FormGroup>
-          <FormGroup label="Default Region" isRequired>
+          <FormGroup label="Default region" isRequired>
             <TextInput
               value={'us-east-1'}
               type="text"

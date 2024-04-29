@@ -13,7 +13,7 @@ import { RHC_URL } from '../../../../constants';
 const RegisterLaterInformation = () => {
   return (
     <TextContent>
-      <Text component={TextVariants.h3}>Register Later</Text>
+      <Text component={TextVariants.h3}>Register later</Text>
       <Text>
         On initial boot, systems will need to be registered manually before
         having access to updates or Red Hat services. Registering and connecting

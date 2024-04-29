@@ -127,9 +127,9 @@ const Azure = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-              <FormGroup label="Azure Tenant GUID" isRequired>
+              <FormGroup label="Azure tenant GUID" isRequired>
                 <TextInput
-                  aria-label="Azure Tenant GUID"
+                  aria-label="Azure tenant GUID"
                   readOnlyVariant="default"
                   isRequired
                   id="tenant id"
@@ -156,9 +156,9 @@ const Azure = () => {
       )}
       {shareMethod === 'manual' && (
         <>
-          <FormGroup label="Azure Tenant GUID" isRequired>
+          <FormGroup label="Azure tenant GUID" isRequired>
             <ValidatedTextInput
-              ariaLabel="Azure Tenant GUID"
+              ariaLabel="Azure tenant GUID"
               value={tenantId || ''}
               validator={isAzureTenantGUIDValid}
               onChange={(_event, value) => dispatch(changeAzureTenantId(value))}

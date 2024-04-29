@@ -66,7 +66,7 @@ export const AwsSourcesSelect = () => {
 
   return (
     <>
-      <FormGroup isRequired label={'Source Name'} data-testid="sources">
+      <FormGroup isRequired label={'Source name'} data-testid="sources">
         <Select
           ouiaId="source_select"
           variant={SelectVariant.typeahead}

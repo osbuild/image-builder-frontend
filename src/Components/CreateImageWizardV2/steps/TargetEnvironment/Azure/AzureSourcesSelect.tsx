@@ -103,7 +103,7 @@ export const AzureSourcesSelect = () => {
 
   return (
     <>
-      <FormGroup isRequired label={'Source Name'} data-testid="azure-sources">
+      <FormGroup isRequired label={'Source name'} data-testid="azure-sources">
         <Select
           ouiaId="source_select"
           variant={SelectVariant.typeahead}
