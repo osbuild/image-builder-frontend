@@ -6,7 +6,7 @@ import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../../store/imageBuilderApi';
-import { clickNext } from '../../../../../testUtils';
+import { clickBack, clickNext } from '../../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -55,6 +55,17 @@ const selectAzureTarget = async () => {
   await render();
   const azureCard = await screen.findByTestId('upload-azure');
   await userEvent.click(azureCard);
+  await clickNext();
+};
+
+const deselectAzureAndSelectGuestImage = async () => {
+  const azureCard = await screen.findByTestId('upload-azure');
+  await userEvent.click(azureCard);
+  await userEvent.click(
+    await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    })
+  );
   await clickNext();
 };
 
@@ -167,5 +178,17 @@ describe('azure image type request generated correctly', () => {
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('after selecting and deselecting azure', async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectSource();
+    await clickBack();
+    await deselectAzureAndSelectGuestImage();
+    await goToReview();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    expect(receivedRequest).toEqual(blueprintRequest);
   });
 });
