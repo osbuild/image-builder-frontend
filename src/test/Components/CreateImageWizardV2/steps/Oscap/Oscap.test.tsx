@@ -32,10 +32,10 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 }));
 
 const goToOscapStep = async () => {
-  const bareMetalCheckBox = await screen.findByRole('checkbox', {
-    name: /bare metal installer checkbox/i,
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(bareMetalCheckBox);
+  await userEvent.click(guestImageCheckBox);
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
