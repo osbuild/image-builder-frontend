@@ -32,7 +32,7 @@ export const AwsAccountId = () => {
 
   return (
     <>
-      <FormGroup label="Associated Account ID" isRequired>
+      <FormGroup label="Associated account ID" isRequired>
         <TextInput
           readOnlyVariant="default"
           isRequired

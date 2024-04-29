@@ -331,7 +331,7 @@ export const TargetEnvAzureList = () => {
         {shareMethod === 'manual' && (
           <>
             <TextListItem component={TextListItemVariants.dt}>
-              Azure Tenant ID
+              Azure tenant ID
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
               {tenantId}
@@ -469,7 +469,7 @@ export const ContentList = ({
                 component={TextListItemVariants.dt}
                 className="pf-u-min-width"
               >
-                Repository Snapshot
+                Repository snapshot
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dd}
