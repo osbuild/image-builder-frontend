@@ -1,4 +1,11 @@
-import { RHEL_8, RHEL_9 } from '../../constants';
+import {
+  AARCH64,
+  CENTOS_8,
+  CENTOS_9,
+  RHEL_8,
+  RHEL_9,
+  X86_64,
+} from '../../constants';
 import {
   GetBlueprintsApiResponse,
   CreateBlueprintResponse,
@@ -15,22 +22,50 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
   },
 ];
 
-export const mockBlueprintIds = {
+export const mockBlueprintIds: Record<MockBlueprintNames, string> = {
   darkChocolate: '677b010b-e95e-4694-9813-d11d847f1bfc',
+  rhel8: 'd1c2804a-36a1-41d2-9acd-f8333d1384d9',
+  rhel9: 'bb52a4ae-4144-4f41-9a7b-245e3b95709f',
+  centos8: 'f43e645a-4bb2-4da8-af0b-a9ce093fb907',
+  centos9: '63b47cac-102a-4f02-bf23-1b614fda4a99',
+  aarch64: '9b39d1bd-50b7-42df-8d4b-1dd8530877f9',
+  x86_64: 'a062c7ab-faac-4e76-bdd1-7d127a1a1a82',
   oscap: '260823fd-0a51-43fd-bc1c-77255848de04',
 };
 
+type MockBlueprintNames =
+  | 'darkChocolate'
+  | 'rhel8'
+  | 'rhel9'
+  | 'centos8'
+  | 'centos9'
+  | 'x86_64'
+  | 'aarch64'
+  | 'oscap';
+
 const mockBlueprintNames = {
+  rhel8: 'rhel8',
+  rhel9: 'rhel9',
+  centos8: 'centos8',
+  centos9: 'centos9',
   oscap: 'oscap',
+  x86_64: 'x86_64',
+  aarch64: 'aarch64',
 };
 
 const mockBlueprintDescriptions = {
+  rhel8: '',
+  rhel9: '',
+  centos8: '',
+  centos9: '',
+  x86_64: '',
+  aarch64: '',
   oscap: '',
 };
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 12 },
+  meta: { count: 18 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -113,6 +148,48 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       id: mockBlueprintIds['oscap'],
       name: mockBlueprintNames['oscap'],
       description: mockBlueprintDescriptions['oscap'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['rhel8'],
+      name: mockBlueprintNames['rhel8'],
+      description: mockBlueprintDescriptions['rhel8'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['rhel9'],
+      name: mockBlueprintNames['rhel9'],
+      description: mockBlueprintDescriptions['rhel9'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['centos8'],
+      name: mockBlueprintNames['centos8'],
+      description: mockBlueprintDescriptions['centos8'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['centos9'],
+      name: mockBlueprintNames['centos9'],
+      description: mockBlueprintDescriptions['centos9'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['x86_64'],
+      name: mockBlueprintNames['x86_64'],
+      description: mockBlueprintDescriptions['x86_64'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['aarch64'],
+      name: mockBlueprintNames['aarch64'],
+      description: mockBlueprintDescriptions['aarch64'],
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
@@ -295,6 +372,58 @@ const expectedFilesystemCisL1 = [
   { min_size: 1073741824, mountpoint: '/home' },
 ];
 
+export const rhel8CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['rhel8'],
+  description: mockBlueprintDescriptions['rhel8'],
+  distribution: RHEL_8,
+};
+
+export const rhel9CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['rhel9'],
+  description: mockBlueprintDescriptions['rhel9'],
+  distribution: RHEL_9,
+};
+
+export const centos8CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['centos8'],
+  description: mockBlueprintDescriptions['centos8'],
+  distribution: CENTOS_8,
+};
+
+export const centos9CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['centos9'],
+  description: mockBlueprintDescriptions['centos9'],
+  distribution: CENTOS_9,
+};
+
+export const x86_64ImageRequest: ImageRequest = {
+  ...baseImageRequest,
+  architecture: X86_64,
+};
+
+export const x86_64CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['x86_64'],
+  description: mockBlueprintDescriptions['x86_64'],
+  image_requests: [x86_64ImageRequest],
+};
+
+export const aarch64ImageRequest: ImageRequest = {
+  ...baseImageRequest,
+  architecture: AARCH64,
+};
+
+export const aarch64CreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['aarch64'],
+  description: mockBlueprintDescriptions['aarch64'],
+  image_requests: [aarch64ImageRequest],
+};
+
 export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['oscap'],
@@ -308,17 +437,44 @@ export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
   },
 };
 
-export const oscapBlueprintResponse: BlueprintResponse = {
-  ...oscapCreateBlueprintRequest,
-  id: mockBlueprintIds['oscap'],
-  description: mockBlueprintDescriptions['oscap'],
+const createBlueprintRequests = {
+  rhel8: rhel8CreateBlueprintRequest,
+  rhel9: rhel9CreateBlueprintRequest,
+  centos8: centos8CreateBlueprintRequest,
+  centos9: centos9CreateBlueprintRequest,
+  x86_64: x86_64CreateBlueprintRequest,
+  aarch64: aarch64CreateBlueprintRequest,
+  oscap: oscapCreateBlueprintRequest,
 };
 
-export const getMockBlueprintResponses = (id: string) => {
+const createResponse = (
+  request: CreateBlueprintRequest,
+  name: MockBlueprintNames
+) => {
+  const response: BlueprintResponse = {
+    ...request,
+    id: mockBlueprintIds[name],
+    description: mockBlueprintDescriptions[name],
+  };
+  return response;
+};
+
+const resolveName = (
+  id: string,
+  mockBlueprintIds: Record<MockBlueprintNames, string>
+) => {
+  return Object.keys(mockBlueprintIds).find(
+    (key) => mockBlueprintIds[key] === id
+  );
+};
+
+export const getMockBlueprintResponse = (id: string) => {
+  const name: MockBlueprintNames = resolveName(id, mockBlueprintIds);
+
   switch (id) {
     case mockBlueprintIds['darkChocolate']:
       return darkChocolateBlueprintResponse;
-    case mockBlueprintIds['oscap']:
-      return oscapBlueprintResponse;
+    default:
+      return createResponse(createBlueprintRequests[name], name);
   }
 };

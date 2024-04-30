@@ -6,6 +6,7 @@ import {
   CENTOS_8,
   CENTOS_9,
   CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
   RHEL_8,
   RHEL_9,
   X86_64,
@@ -14,6 +15,16 @@ import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
+import {
+  aarch64CreateBlueprintRequest,
+  centos8CreateBlueprintRequest,
+  centos9CreateBlueprintRequest,
+  mockBlueprintIds,
+  oscapCreateBlueprintRequest,
+  rhel8CreateBlueprintRequest,
+  rhel9CreateBlueprintRequest,
+  x86_64CreateBlueprintRequest,
+} from '../../../../fixtures/blueprints';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
@@ -22,7 +33,9 @@ import {
   goToRegistrationStep,
   imageRequest,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -115,7 +128,7 @@ const selectAarch64 = async () => {
   await userEvent.click(aarch64);
 };
 
-const goToReviewStep = async () => {
+const goToReviewStep = async (name: string) => {
   await goToRegistrationStep(); // Register
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -124,21 +137,18 @@ const goToReviewStep = async () => {
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Details
-  await enterBlueprintName();
+  await enterBlueprintName(name);
   await clickNext(); // Review
 };
 
-describe('distribution request generated correctly', () => {
+describe('distribution request generated correctly (create mode)', () => {
   test('rhel-8', async () => {
     await renderCreateMode();
     await selectRhel8();
-    await goToReviewStep();
+    await goToReviewStep('rhel8');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: RHEL_8,
-    };
+    const expectedRequest = rhel8CreateBlueprintRequest;
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
@@ -146,13 +156,10 @@ describe('distribution request generated correctly', () => {
   test('rhel-9', async () => {
     await renderCreateMode();
     await selectRhel9();
-    await goToReviewStep();
+    await goToReviewStep('rhel9');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: RHEL_9,
-    };
+    const expectedRequest = rhel9CreateBlueprintRequest;
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
@@ -160,13 +167,10 @@ describe('distribution request generated correctly', () => {
   test('centos-9', async () => {
     await renderCreateMode();
     await selectCentos9();
-    await goToReviewStep();
+    await goToReviewStep('centos9');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: CENTOS_9,
-    };
+    const expectedRequest = centos9CreateBlueprintRequest;
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
@@ -174,14 +178,61 @@ describe('distribution request generated correctly', () => {
   test('centos-8', async () => {
     await renderCreateMode();
     await selectCentos8();
-    await goToReviewStep();
+    await goToReviewStep('centos8');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: CENTOS_8,
-    };
+    const expectedRequest = centos8CreateBlueprintRequest;
 
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+describe('distribution request generated correctly (edit mode)', () => {
+  test('rhel8', async () => {
+    const id = mockBlueprintIds['rhel8'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = rhel8CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('rhel9', async () => {
+    const id = mockBlueprintIds['rhel9'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = rhel9CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('centos8', async () => {
+    const id = mockBlueprintIds['centos8'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = centos8CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('rhel9', async () => {
+    const id = mockBlueprintIds['centos9'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = centos9CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
@@ -190,17 +241,10 @@ describe('architecture request generated correctly', () => {
   test('x86_64', async () => {
     await renderCreateMode();
     await selectX86_64();
-    await goToReviewStep();
+    await goToReviewStep('x86_64');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedImageRequest: ImageRequest = {
-      ...imageRequest,
-      architecture: X86_64,
-    };
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
+    const expectedRequest = x86_64CreateBlueprintRequest;
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
@@ -208,18 +252,37 @@ describe('architecture request generated correctly', () => {
   test('aarch64', async () => {
     await renderCreateMode();
     await selectAarch64();
-    await goToReviewStep();
+    await goToReviewStep('aarch64');
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedImageRequest: ImageRequest = {
-      ...imageRequest,
-      architecture: AARCH64,
-    };
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
+    const expectedRequest = aarch64CreateBlueprintRequest;
 
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+describe('architecture request generated correctly (edit mode)', () => {
+  test('x86_64', async () => {
+    const id = mockBlueprintIds['x86_64'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = x86_64CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('aarch64', async () => {
+    const id = mockBlueprintIds['aarch64'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = aarch64CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

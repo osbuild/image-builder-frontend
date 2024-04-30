@@ -13,7 +13,7 @@ import {
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
 import {
-  getMockBlueprintResponses,
+  getMockBlueprintResponse,
   mockBlueprintComposes,
   mockBlueprintComposesOutOfSync,
   mockEmptyBlueprintsComposes,
@@ -190,7 +190,7 @@ export const handlers = [
     `${IMAGE_BUILDER_API}/experimental/blueprints/:id`,
     (req, res, ctx) => {
       const id = req.params['id'];
-      return res(ctx.status(200), ctx.json(getMockBlueprintResponses(id)));
+      return res(ctx.status(200), ctx.json(getMockBlueprintResponse(id)));
     }
   ),
   rest.put(
