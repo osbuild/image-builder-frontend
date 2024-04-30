@@ -36,6 +36,7 @@ import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
+  const [showAlert, setShowAlert] = useState(true);
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const tabsPath = [
@@ -73,9 +74,7 @@ export const LandingPage = () => {
   const experimentalImageList = (
     <>
       <PageSection>
-        <NewAlert />
-      </PageSection>
-      <PageSection className="pf-v5-u-pt-0">
+        {showAlert && <NewAlert setShowAlert={setShowAlert} />}
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel
             variant="sticky"
