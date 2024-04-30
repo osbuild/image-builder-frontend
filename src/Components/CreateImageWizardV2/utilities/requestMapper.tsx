@@ -1,6 +1,8 @@
 import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
+import { parseSizeUnit } from './parseSizeUnit';
+
 import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
@@ -55,7 +57,11 @@ import {
   convertYYYYMMDDTOMMDDYYYY,
 } from '../../../Utilities/time';
 import { FileSystemPartitionMode } from '../steps/FileSystem';
-import { Partition, Units } from '../steps/FileSystem/FileSystemConfiguration';
+import {
+  getConversionFactor,
+  Partition,
+  Units,
+} from '../steps/FileSystem/FileSystemConfiguration';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
@@ -94,12 +100,12 @@ export const mapRequestFromState = (
 
 const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
   const id = uuidv4();
-  const unit: Units = 'GiB';
+  const [size, unit] = parseSizeUnit(filesystem.min_size);
   const partition = {
     mountpoint: filesystem.mountpoint,
-    min_size: String(filesystem.min_size),
+    min_size: size,
     id: id,
-    unit: unit,
+    unit: unit as Units,
   };
   return partition;
 };
@@ -368,11 +374,19 @@ const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
 
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
   const mode = selectFileSystemPartitionMode(state);
+
+  const convertToBytes = (minSize: string, conversionFactor: number) => {
+    return minSize.length > 0 ? parseInt(minSize) * conversionFactor : 0;
+  };
+
   if (mode === 'manual') {
     const partitions = selectPartitions(state);
     const fileSystem = partitions.map((partition) => {
       return {
-        min_size: parseInt(partition.min_size),
+        min_size: convertToBytes(
+          partition.min_size,
+          getConversionFactor(partition.unit)
+        ),
         mountpoint: partition.mountpoint,
       };
     });

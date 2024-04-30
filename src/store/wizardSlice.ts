@@ -26,7 +26,7 @@ import {
 } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
 import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
 import { isBlueprintNameValid } from '../Components/CreateImageWizardV2/validators';
-import { RHEL_9, UNIT_GIB, X86_64 } from '../constants';
+import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
 
@@ -452,7 +452,7 @@ export const wizardSlice = createSlice({
               {
                 id: uuidv4(),
                 mountpoint: '/',
-                min_size: (10 * UNIT_GIB).toString(),
+                min_size: '10',
                 unit: 'GiB',
               },
             ];
@@ -467,7 +467,7 @@ export const wizardSlice = createSlice({
           {
             id: uuidv4(),
             mountpoint: '/',
-            min_size: (10 * UNIT_GIB).toString(),
+            min_size: '10',
             unit: 'GiB',
           },
         ];

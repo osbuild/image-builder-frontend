@@ -40,7 +40,8 @@ import {
   removePackage,
   clearPartitions,
 } from '../../../../store/wizardSlice';
-import { Partition } from '../FileSystem/FileSystemConfiguration';
+import { parseSizeUnit } from '../../utilities/parseSizeUnit';
+import { Partition, Units } from '../FileSystem/FileSystemConfiguration';
 
 const ProfileSelector = () => {
   const oscapProfile = useAppSelector(selectProfile);
@@ -102,10 +103,11 @@ const ProfileSelector = () => {
     dispatch(clearPartitions());
 
     const newPartitions = oscapPartitions.map((filesystem) => {
+      const [size, unit] = parseSizeUnit(filesystem.min_size);
       const partition: Partition = {
         mountpoint: filesystem.mountpoint,
-        min_size: filesystem.min_size.toString(),
-        unit: 'GiB',
+        min_size: size.toString(),
+        unit: unit as Units,
         id: uuidv4(),
       };
       return partition;
