@@ -1,8 +1,20 @@
 import React, { useState } from 'react';
 
-import { Alert, AlertActionCloseButton, Text } from '@patternfly/react-core';
+import {
+  Alert,
+  AlertActionCloseButton,
+  AlertActionLink,
+  Flex,
+  FlexItem,
+  Text,
+} from '@patternfly/react-core';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
-export const NewAlert = () => {
+type NewAlertPropTypes = {
+  setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
   const isAlertDismissed = window.localStorage.getItem(
     'imageBuilder.newFeatureBlueprintsAlertDismissed'
   );
@@ -16,11 +28,42 @@ export const NewAlert = () => {
     );
   };
 
+  const { quickStarts } = useChrome();
+  const activateQuickstart = (qs: string) => () =>
+    quickStarts.activateQuickstart(qs);
+
   if (displayAlert) {
     return (
       <Alert
+        style={{ margin: '0 0 16px 0' }}
         title="New in Images: Blueprints!"
         actionClose={<AlertActionCloseButton onClose={dismissAlert} />}
+        actionLinks={
+          <>
+            <Flex>
+              <FlexItem>
+                <AlertActionLink
+                  onClick={activateQuickstart(
+                    'insights-creating-blueprint-images'
+                  )}
+                >
+                  Get started with blueprints
+                </AlertActionLink>
+              </FlexItem>
+              <FlexItem>
+                <AlertActionLink onClick={() => setShowAlert(false)}>
+                  Not now
+                </AlertActionLink>
+              </FlexItem>
+
+              <FlexItem align={{ default: 'alignRight' }}>
+                <AlertActionLink onClick={dismissAlert}>
+                  Don&apos;t show me this again
+                </AlertActionLink>
+              </FlexItem>
+            </Flex>
+          </>
+        }
       >
         <Text>
           Blueprints make it easier for you to manage your images. Images expire
