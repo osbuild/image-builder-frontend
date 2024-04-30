@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  Alert,
   Button,
   DatePicker,
   Flex,
@@ -12,9 +11,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import ConditionalTooltip from './components/ConditionalTooltip';
-
-import { useListFeaturesQuery } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   selectSnapshotDate,

@@ -11,5 +11,3 @@ rules:
       ts-check: true
       minimumDescriptionLength: 5
   "@typescript-eslint/ban-types": off
-  "@typescript-eslint/no-unused-vars":
-    - warn
