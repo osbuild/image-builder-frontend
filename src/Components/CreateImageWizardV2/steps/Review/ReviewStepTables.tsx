@@ -23,7 +23,6 @@ import {
   selectPartitions,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
-import { getConversionFactor } from '../FileSystem/FileSystemConfiguration';
 
 type repoPropType = {
   repoUrl: string[] | undefined;
@@ -89,11 +88,7 @@ export const FSReviewTable = () => {
                 <Td className="pf-m-width-30">{partition.mountpoint}</Td>
                 <Td className="pf-m-width-30">xfs</Td>
                 <Td className="pf-m-width-30">
-                  {(
-                    parseInt(partition.min_size) /
-                    getConversionFactor(partition.unit)
-                  ).toString()}{' '}
-                  {partition.unit}
+                  {parseInt(partition.min_size).toString()} {partition.unit}
                 </Td>
               </Tr>
             ))}

@@ -105,7 +105,7 @@ const FileSystemConfiguration = () => {
       addPartition({
         id,
         mountpoint: '/home',
-        min_size: UNIT_GIB.toString(),
+        min_size: '1',
         unit: 'GiB',
       })
     );
@@ -237,7 +237,7 @@ export const Row = ({
 
       <Td width={20}>xfs</Td>
       <Td width={20}>
-        <MinimumSize partition={partition} units={partition.unit} />
+        <MinimumSize partition={partition} />
       </Td>
       <Td width={10}>
         <SizeUnit partition={partition} />
@@ -335,7 +335,6 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
 
 type MinimumSizePropTypes = {
   partition: Partition;
-  units: Units;
 };
 
 export type Units = 'KiB' | 'MiB' | 'GiB';
@@ -351,21 +350,7 @@ export const getConversionFactor = (units: Units) => {
   }
 };
 
-const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
-  const conversionFactor = getConversionFactor(units);
-
-  const convertToDisplayUnits = (minSize: string) => {
-    return minSize.length > 0
-      ? (parseInt(minSize) / conversionFactor).toString()
-      : '0';
-  };
-
-  const convertToBytes = (minSize: string) => {
-    return minSize.length > 0
-      ? (parseInt(minSize) * conversionFactor).toString()
-      : '0';
-  };
-
+const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
 
   return (
@@ -373,7 +358,7 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
       ariaLabel="minimum partition size"
       helperText="Must be larger than 0"
       validator={isMountpointMinSizeValid}
-      value={convertToDisplayUnits(partition.min_size)}
+      value={partition.min_size}
       type="text"
       ouiaId="size"
       onChange={(event, minSize) => {
@@ -381,7 +366,7 @@ const MinimumSize = ({ partition, units }: MinimumSizePropTypes) => {
           dispatch(
             changePartitionMinSize({
               id: partition.id,
-              min_size: convertToBytes(minSize),
+              min_size: minSize,
             })
           );
           dispatch(

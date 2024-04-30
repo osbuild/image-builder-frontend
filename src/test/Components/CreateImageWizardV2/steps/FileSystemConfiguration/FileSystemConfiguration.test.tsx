@@ -1,7 +1,12 @@
 import { screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, UNIT_GIB } from '../../../../../constants';
+import {
+  CREATE_BLUEPRINT,
+  UNIT_GIB,
+  UNIT_KIB,
+  UNIT_MIB,
+} from '../../../../../constants';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
@@ -161,7 +166,7 @@ describe('file system configuration request generated correctly', () => {
       customizations: {
         filesystem: [
           {
-            min_size: 10 * UNIT_GIB,
+            min_size: 10 * UNIT_MIB,
             mountpoint: '/',
           },
         ],
@@ -184,7 +189,7 @@ describe('file system configuration request generated correctly', () => {
       customizations: {
         filesystem: [
           {
-            min_size: 10 * UNIT_GIB,
+            min_size: 10 * UNIT_KIB,
             mountpoint: '/',
           },
         ],
