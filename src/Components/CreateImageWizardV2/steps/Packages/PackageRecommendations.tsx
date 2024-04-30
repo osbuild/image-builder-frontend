@@ -112,7 +112,7 @@ const PackageRecommendations = () => {
             {isSuccess && !data && (
               <>No recommendations found for the set of selected packages</>
             )}
-            {isSuccess && data && data[0].packages && (
+            {isSuccess && data && data[0]?.packages && (
               <>
                 <TextContent>
                   <Text>
