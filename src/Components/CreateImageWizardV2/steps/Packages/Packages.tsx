@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Bullseye,
@@ -11,13 +11,17 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Icon,
+  InputGroup,
+  InputGroupItem,
+  InputGroupText,
   Pagination,
   PaginationVariant,
   Popover,
-  SearchInput,
   Spinner,
+  Stack,
   Text,
   TextContent,
+  TextInput,
   ToggleGroup,
   ToggleGroupItem,
   Toolbar,
@@ -32,11 +36,11 @@ import {
   SearchIcon,
 } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import { debounce } from 'lodash';
 import { useDispatch } from 'react-redux';
 
+import CustomHelperText from './components/CustomHelperText';
+
 import {
-  DEBOUNCED_SEARCH_WAIT_TIME,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
   RH_ICON_SIZE,
@@ -62,6 +66,7 @@ import {
   removeRecommendedRepository,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
+import useDebounce from '../../../../Utilities/useDebounce';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
@@ -71,6 +76,11 @@ export type IBPackageWithRepositoryInfo = {
   summary: Package['summary'];
   repository: PackageRepository;
 };
+
+export enum RepoToggle {
+  INCLUDED = 'toggle-included-repos',
+  OTHER = 'toggle-other-repos',
+}
 
 const Packages = () => {
   const dispatch = useDispatch();
@@ -97,8 +107,9 @@ const Packages = () => {
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
-  const [toggleSourceRepos, setToggleSourceRepos] = useState(
-    'toggle-included-repos'
+
+  const [toggleSourceRepos, setToggleSourceRepos] = useState<RepoToggle>(
+    RepoToggle.INCLUDED
   );
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -110,6 +121,10 @@ const Packages = () => {
       isLoading: isLoadingCustomPackages,
     },
   ] = useSearchRpmMutation();
+
+  const debouncedSearchTerm = useDebounce(searchTerm);
+  const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
+
   const [
     searchRecommendedRpms,
     {
@@ -127,49 +142,50 @@ const Packages = () => {
     {
       distribution: distribution,
       architecture: arch,
-      search: searchTerm,
+      search: debouncedSearchTerm,
     },
-    { skip: !searchTerm }
+    { skip: !debouncedSearchTerm || debouncedSearchTermLengthOf1 }
   );
 
   const [createRepository] = useCreateRepositoryMutation();
 
   useEffect(() => {
-    const fetchCustomPackages = async () => {
-      await searchRpms({
-        apiContentUnitSearchRequest: {
-          search: searchTerm,
-          urls: customRepositories.flatMap((repo) => {
-            if (!repo.baseurl) {
-              throw new Error(
-                `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
-              );
-            }
-            return repo.baseurl;
-          }),
-        },
-      });
-    };
-
-    if (searchTerm.length > 1) {
-      fetchCustomPackages();
+    if (debouncedSearchTerm.length > 2) {
+      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+        (async () => {
+          await searchRpms({
+            apiContentUnitSearchRequest: {
+              search: debouncedSearchTerm,
+              urls: customRepositories.flatMap((repo) => {
+                if (!repo.baseurl) {
+                  throw new Error(
+                    `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
+                  );
+                }
+                return repo.baseurl;
+              }),
+            },
+          });
+        })();
+      } else {
+        (async () => {
+          await searchRecommendedRpms({
+            apiContentUnitSearchRequest: {
+              search: debouncedSearchTerm,
+              urls: [epelRepoUrlByDistribution],
+            },
+          });
+        })();
+      }
     }
-  }, [customRepositories, searchRpms, searchTerm]);
-
-  useEffect(() => {
-    const fetchRecommendedPackages = async () => {
-      await searchRecommendedRpms({
-        apiContentUnitSearchRequest: {
-          search: searchTerm,
-          urls: [epelRepoUrlByDistribution],
-        },
-      });
-    };
-
-    if (searchTerm.length > 1) {
-      fetchRecommendedPackages();
-    }
-  }, [distribution, searchRecommendedRpms, searchTerm]);
+  }, [
+    customRepositories,
+    searchRpms,
+    debouncedSearchTerm,
+    toggleSourceRepos,
+    searchRecommendedRpms,
+    epelRepoUrlByDistribution,
+  ]);
 
   const EmptySearch = () => {
     return (
@@ -206,7 +222,7 @@ const Packages = () => {
             <EmptyState variant={EmptyStateVariant.sm}>
               <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
               <EmptyStateBody>
-                {toggleSourceRepos === 'toggle-other-repos'
+                {toggleSourceRepos === RepoToggle.OTHER
                   ? 'Searching for recommendations'
                   : 'Searching'}
               </EmptyStateBody>
@@ -226,6 +242,27 @@ const Packages = () => {
               <EmptyStateHeader
                 icon={<EmptyStateIcon icon={SearchIcon} />}
                 titleText="Too many results to display"
+                headingLevel="h4"
+              />
+              <EmptyStateBody>
+                Please make the search more specific and try again.
+              </EmptyStateBody>
+            </EmptyState>
+          </Bullseye>
+        </Td>
+      </Tr>
+    );
+  };
+
+  const TooShort = () => {
+    return (
+      <Tr>
+        <Td colSpan={5}>
+          <Bullseye>
+            <EmptyState variant={EmptyStateVariant.sm}>
+              <EmptyStateHeader
+                icon={<EmptyStateIcon icon={SearchIcon} />}
+                titleText="The search value is too short"
                 headingLevel="h4"
               />
               <EmptyStateBody>
@@ -273,7 +310,7 @@ const Packages = () => {
                 Try looking under &quot;
                 <Button
                   variant="link"
-                  onClick={() => setToggleSourceRepos('toggle-included-repos')}
+                  onClick={() => setToggleSourceRepos(RepoToggle.INCLUDED)}
                   isInline
                 >
                   Included repos
@@ -289,7 +326,7 @@ const Packages = () => {
 
   const NoResultsFound = () => {
     const { isBeta } = useGetEnvironment();
-    if (toggleSourceRepos === 'toggle-included-repos') {
+    if (toggleSourceRepos === RepoToggle.INCLUDED) {
       return (
         <Tr>
           <Td colSpan={5}>
@@ -308,7 +345,7 @@ const Packages = () => {
                   <EmptyStateActions>
                     <Button
                       variant="primary"
-                      onClick={() => setToggleSourceRepos('toggle-other-repos')}
+                      onClick={() => setToggleSourceRepos(RepoToggle.OTHER)}
                     >
                       Search other repositories
                     </Button>
@@ -439,7 +476,7 @@ const Packages = () => {
     );
   };
 
-  const transformPackageData = () => {
+  const transformedPackages = useMemo(() => {
     let transformedDistroData: IBPackageWithRepositoryInfo[] = [];
     let transformedCustomData: IBPackageWithRepositoryInfo[] = [];
     let transformedRecommendedData: IBPackageWithRepositoryInfo[] = [];
@@ -464,10 +501,10 @@ const Packages = () => {
     );
 
     if (
-      searchTerm !== '' &&
+      debouncedSearchTerm !== '' &&
       combinedPackageData.length === 0 &&
       isSuccessRecommendedPackages &&
-      toggleSourceRepos === 'toggle-other-repos'
+      toggleSourceRepos === RepoToggle.OTHER
     ) {
       transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
         name: values.package_name!,
@@ -481,7 +518,7 @@ const Packages = () => {
     }
 
     if (toggleSelected === 'toggle-available') {
-      if (toggleSourceRepos === 'toggle-included-repos') {
+      if (toggleSourceRepos === RepoToggle.INCLUDED) {
         return combinedPackageData.filter(
           (pkg) => pkg.repository !== 'recommended'
         );
@@ -492,30 +529,44 @@ const Packages = () => {
       }
     } else {
       const selectedPackages = [...packages];
-      if (toggleSourceRepos === 'toggle-included-repos') {
+      if (toggleSourceRepos === RepoToggle.INCLUDED) {
         return selectedPackages;
       } else {
         return [];
       }
     }
-  };
-
-  // Get and sort the list of packages including repository info
-  const transformedPackages = transformPackageData().sort((a, b) => {
+  }, [
+    dataCustomPackages,
+    dataDistroPackages?.data,
+    dataRecommendedPackages,
+    debouncedSearchTerm,
+    isSuccessCustomPackages,
+    isSuccessDistroPackages,
+    isSuccessRecommendedPackages,
+    packages,
+    toggleSelected,
+    toggleSourceRepos,
+  ]).sort((a, b) => {
     const aPkg = a.name.toLowerCase();
     const bPkg = b.name.toLowerCase();
     // check exact match first
-    if (aPkg === searchTerm) {
+    if (aPkg === debouncedSearchTerm) {
       return -1;
     }
-    if (bPkg === searchTerm) {
+    if (bPkg === debouncedSearchTerm) {
       return 1;
     }
     // check for packages that start with the search term
-    if (aPkg.startsWith(searchTerm) && !bPkg.startsWith(searchTerm)) {
+    if (
+      aPkg.startsWith(debouncedSearchTerm) &&
+      !bPkg.startsWith(debouncedSearchTerm)
+    ) {
       return -1;
     }
-    if (bPkg.startsWith(searchTerm) && !aPkg.startsWith(searchTerm)) {
+    if (
+      bPkg.startsWith(debouncedSearchTerm) &&
+      !aPkg.startsWith(debouncedSearchTerm)
+    ) {
       return 1;
     }
     // if both (or neither) start with the search term
@@ -535,8 +586,6 @@ const Packages = () => {
   ) => {
     setSearchTerm(selection);
   };
-
-  const debounceOnChange = debounce(handleSearch, DEBOUNCED_SEARCH_WAIT_TIME);
 
   const handleSelect = (
     pkg: IBPackageWithRepositoryInfo,
@@ -572,10 +621,11 @@ const Packages = () => {
     setToggleSelected(id);
   };
 
-  const handleRepoToggleClick = (event: React.MouseEvent) => {
-    const id = event.currentTarget.id;
-    setPage(1);
-    setToggleSourceRepos(id);
+  const handleRepoToggleClick = (type: RepoToggle) => {
+    if (toggleSourceRepos !== type) {
+      setPage(1);
+      setToggleSourceRepos(type);
+    }
   };
 
   const handleSetPage = (_: React.MouseEvent, newPage: number) => {
@@ -596,7 +646,7 @@ const Packages = () => {
 
   const handleExactMatch = () => {
     const exactMatch = transformedPackages.find(
-      (pkg) => pkg.name === searchTerm
+      (pkg) => pkg.name === debouncedSearchTerm
     );
 
     if (exactMatch) {
@@ -729,116 +779,184 @@ const Packages = () => {
       ));
   };
 
+  const bodyContent = useMemo(() => {
+    switch (true) {
+      case debouncedSearchTermLengthOf1 && transformedPackages.length === 0:
+        return TooShort();
+      case (toggleSelected === 'toggle-selected' && packages.length === 0) ||
+        (!debouncedSearchTerm && toggleSelected === 'toggle-available'):
+        return <EmptySearch />;
+      case (debouncedSearchTerm &&
+        isLoadingRecommendedPackages &&
+        toggleSourceRepos === RepoToggle.OTHER) ||
+        (debouncedSearchTerm &&
+          (isLoadingDistroPackages || isLoadingCustomPackages) &&
+          toggleSourceRepos === RepoToggle.INCLUDED):
+        return <Searching />;
+      case debouncedSearchTerm &&
+        transformedPackages.length === 0 &&
+        toggleSelected === 'toggle-available':
+        return <NoResultsFound />;
+      case debouncedSearchTerm &&
+        toggleSelected === 'toggle-selected' &&
+        toggleSourceRepos === RepoToggle.OTHER &&
+        packages.length > 0:
+        return <TryLookingUnderIncluded />;
+      case debouncedSearchTerm && transformedPackages.length >= 100:
+        return handleExactMatch();
+      case (debouncedSearchTerm || toggleSelected === 'toggle-selected') &&
+        transformedPackages.length < 100:
+        return composePkgTable();
+      default:
+        return <></>;
+    }
+    // Would need significant rewrite to fix this
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    debouncedSearchTerm,
+    debouncedSearchTermLengthOf1,
+    isLoadingCustomPackages,
+    isLoadingDistroPackages,
+    isLoadingRecommendedPackages,
+    isSuccessRecommendedPackages,
+    packages.length,
+    toggleSelected,
+    toggleSourceRepos,
+    transformedPackages,
+    transformedPackages.length,
+  ]);
+
   return (
     <>
       <RepositoryModal />
       <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem variant="search-filter">
-            <SearchInput
-              aria-label="Search packages"
-              data-testid="packages-search-input"
-              value={searchTerm}
-              onChange={debounceOnChange}
-            />
-          </ToolbarItem>
-          <ToolbarItem>
-            <ToggleGroup>
-              <ToggleGroupItem
-                text="Available"
-                buttonId="toggle-available"
-                data-testid="packages-available-toggle"
-                isSelected={toggleSelected === 'toggle-available'}
-                onChange={handleFilterToggleClick}
-              />
-              <ToggleGroupItem
-                text={`Selected (${
-                  packages.length <= 100 ? packages.length : '100+'
-                })`}
-                buttonId="toggle-selected"
-                data-testid="packages-selected-toggle"
-                isSelected={toggleSelected === 'toggle-selected'}
-                onChange={handleFilterToggleClick}
-              />
-            </ToggleGroup>
-          </ToolbarItem>
-          <ToolbarItem>
-            {' '}
-            <ToggleGroup>
-              <ToggleGroupItem
-                text={
-                  <>
-                    Included repos{' '}
-                    <Popover
-                      bodyContent={
-                        <TextContent>
-                          <Text>
-                            View packages from the Red Hat repository and
-                            repositories you&apos;ve selected.
-                          </Text>
-                        </TextContent>
-                      }
-                    >
-                      <Button
-                        variant="plain"
-                        aria-label="About included repositories"
-                        component="span"
-                        className="pf-u-p-0"
-                        isInline
+        <Stack>
+          <ToolbarContent>
+            <ToolbarItem variant="search-filter">
+              <InputGroup>
+                <InputGroupItem isFill>
+                  <InputGroupText id="search-icon">
+                    <SearchIcon />
+                  </InputGroupText>
+                  <TextInput
+                    data-ouia-component-id="packages-search-input"
+                    type="text"
+                    validated={
+                      debouncedSearchTermLengthOf1 ? 'error' : 'default'
+                    }
+                    placeholder="Type to search"
+                    aria-label="Search packages"
+                    data-testid="packages-search-input"
+                    value={searchTerm}
+                    onChange={handleSearch}
+                  />
+                </InputGroupItem>
+              </InputGroup>
+            </ToolbarItem>
+            <ToolbarItem>
+              <ToggleGroup>
+                <ToggleGroupItem
+                  text="Available"
+                  buttonId="toggle-available"
+                  data-testid="packages-available-toggle"
+                  isSelected={toggleSelected === 'toggle-available'}
+                  onChange={handleFilterToggleClick}
+                />
+                <ToggleGroupItem
+                  text={`Selected (${
+                    packages.length <= 100 ? packages.length : '100+'
+                  })`}
+                  buttonId="toggle-selected"
+                  data-testid="packages-selected-toggle"
+                  isSelected={toggleSelected === 'toggle-selected'}
+                  onChange={handleFilterToggleClick}
+                />
+              </ToggleGroup>
+            </ToolbarItem>
+            <ToolbarItem>
+              <ToggleGroup>
+                <ToggleGroupItem
+                  text={
+                    <>
+                      Included repos{' '}
+                      <Popover
+                        bodyContent={
+                          <TextContent>
+                            <Text>
+                              View packages from the Red Hat repository and
+                              repositories you&apos;ve selected.
+                            </Text>
+                          </TextContent>
+                        }
                       >
-                        <HelpIcon />
-                      </Button>
-                    </Popover>
-                  </>
-                }
-                buttonId="toggle-included-repos"
-                isSelected={toggleSourceRepos === 'toggle-included-repos'}
-                onChange={handleRepoToggleClick}
-              />
-              <ToggleGroupItem
-                text={
-                  <>
-                    Other repos{' '}
-                    <Popover
-                      bodyContent={
-                        <TextContent>
-                          <Text>
-                            View packages from popular repositories and your
-                            other repositories not included in the image.
-                          </Text>
-                        </TextContent>
-                      }
-                    >
-                      <Button
-                        variant="plain"
-                        aria-label="About other repositories"
-                        component="span"
-                        className="pf-u-p-0"
-                        isInline
+                        <Button
+                          variant="plain"
+                          aria-label="About included repositories"
+                          component="span"
+                          className="pf-u-p-0"
+                          isInline
+                        >
+                          <HelpIcon />
+                        </Button>
+                      </Popover>
+                    </>
+                  }
+                  buttonId={RepoToggle.INCLUDED}
+                  isSelected={toggleSourceRepos === RepoToggle.INCLUDED}
+                  onChange={() => handleRepoToggleClick(RepoToggle.INCLUDED)}
+                />
+                <ToggleGroupItem
+                  text={
+                    <>
+                      Other repos{' '}
+                      <Popover
+                        bodyContent={
+                          <TextContent>
+                            <Text>
+                              View packages from popular repositories and your
+                              other repositories not included in the image.
+                            </Text>
+                          </TextContent>
+                        }
                       >
-                        <HelpIcon />
-                      </Button>
-                    </Popover>
-                  </>
-                }
-                buttonId="toggle-other-repos"
-                isSelected={toggleSourceRepos === 'toggle-other-repos'}
-                onChange={handleRepoToggleClick}
+                        <Button
+                          variant="plain"
+                          aria-label="About other repositories"
+                          component="span"
+                          className="pf-u-p-0"
+                          isInline
+                        >
+                          <HelpIcon />
+                        </Button>
+                      </Popover>
+                    </>
+                  }
+                  buttonId="toggle-other-repos"
+                  isSelected={toggleSourceRepos === RepoToggle.OTHER}
+                  onChange={() => handleRepoToggleClick(RepoToggle.OTHER)}
+                />
+              </ToggleGroup>
+            </ToolbarItem>
+            <ToolbarItem variant="pagination">
+              <Pagination
+                itemCount={transformedPackages.length}
+                perPage={perPage}
+                page={page}
+                onSetPage={handleSetPage}
+                onPerPageSelect={handlePerPageSelect}
+                isCompact
               />
-            </ToggleGroup>
-          </ToolbarItem>
-          <ToolbarItem variant="pagination">
-            <Pagination
-              itemCount={transformedPackages.length}
-              perPage={perPage}
-              page={page}
-              onSetPage={handleSetPage}
-              onPerPageSelect={handlePerPageSelect}
-              isCompact
+            </ToolbarItem>
+          </ToolbarContent>
+          <ToolbarContent>
+            <CustomHelperText
+              hide={!debouncedSearchTermLengthOf1}
+              textValue="The search value must be greater than 1 character"
             />
-          </ToolbarItem>
-        </ToolbarContent>
+          </ToolbarContent>
+        </Stack>
       </Toolbar>
+
       <Table variant="compact" data-testid="packages-table">
         <Thead>
           <Tr>
@@ -878,32 +996,7 @@ const Packages = () => {
             <Th width={20}>Support</Th>
           </Tr>
         </Thead>
-        <Tbody>
-          {((toggleSelected === 'toggle-selected' && packages.length === 0) ||
-            (!searchTerm && toggleSelected === 'toggle-available')) && (
-            <EmptySearch />
-          )}
-          {((searchTerm &&
-            isLoadingRecommendedPackages &&
-            toggleSourceRepos === 'toggle-other-repos') ||
-            (searchTerm &&
-              (isLoadingDistroPackages || isLoadingCustomPackages) &&
-              toggleSourceRepos === 'toggle-included-repos')) && <Searching />}
-          {searchTerm &&
-            isSuccessRecommendedPackages &&
-            transformedPackages.length === 0 &&
-            toggleSelected === 'toggle-available' && <NoResultsFound />}
-          {searchTerm &&
-            toggleSelected === 'toggle-selected' &&
-            toggleSourceRepos === 'toggle-other-repos' &&
-            packages.length > 0 && <TryLookingUnderIncluded />}
-          {searchTerm &&
-            transformedPackages.length >= 100 &&
-            handleExactMatch()}
-          {(searchTerm || toggleSelected === 'toggle-selected') &&
-            transformedPackages.length < 100 &&
-            composePkgTable()}
-        </Tbody>
+        <Tbody>{bodyContent}</Tbody>
       </Table>
       <Pagination
         itemCount={transformedPackages.length}

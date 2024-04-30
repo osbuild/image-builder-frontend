@@ -312,6 +312,14 @@ describe('Step Packages', () => {
     await screen.findByText('Too many results to display');
   });
 
+  test('should display too short', async () => {
+    await setUp();
+
+    await typeIntoSearchBox('t');
+
+    await screen.findByText('The search value is too short');
+  });
+
   test('should display relevant results in selected first', async () => {
     await setUp();
 

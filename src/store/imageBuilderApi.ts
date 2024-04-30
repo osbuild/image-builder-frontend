@@ -303,7 +303,7 @@ export type GetBlueprintComposesApiArg = {
   ignoreImageTypes?: ImageTypes[];
 };
 export type RecommendPackageApiResponse =
-  /** status 200 Return the recommended packages. */ RecommendationsResponse[];
+  /** status 200 Return the recommended packages. */ RecommendationsResponse;
 export type RecommendPackageApiArg = {
   recommendPackageRequest: RecommendPackageRequest;
 };
@@ -472,7 +472,7 @@ export type ImageRequest = {
     distribution. The snapshot that was made closest to, but before the specified date will
     be used. If no snapshots made before the specified date can be found, the snapshot
     closest to, but after the specified date will be used. If no snapshots can be found at
-    all, the request will fail.
+    all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
      */
   snapshot_date?: string;
 };
