@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
+  Bullseye,
   Button,
   ExpandableSection,
   Icon,
@@ -19,47 +20,43 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
 import { addPackage, selectPackages } from '../../../../store/wizardSlice';
+import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
   const dispatch = useDispatch();
 
-  const packages = useAppSelector(selectPackages);
+  const undebouncedPackages = useAppSelector(selectPackages);
+  const packages = useDebounce(undebouncedPackages);
 
   const [isExpanded, setIsExpanded] = useState(false);
-
-  const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
-    setIsExpanded(isExpanded);
-  };
 
   const [fetchRecommendedPackages, { data, isSuccess, isLoading, isError }] =
     useRecommendPackageMutation();
 
   useEffect(() => {
-    const getRecommendedPackages = async () => {
-      await fetchRecommendedPackages({
-        recommendPackageRequest: {
-          packages: packages.map((pkg) => pkg.name),
-          recommendedPackages: 5,
-        },
-      });
-    };
-
-    if (packages.length > 0) {
-      getRecommendedPackages();
+    if (isExpanded && packages.length > 0) {
+      (async () => {
+        await fetchRecommendedPackages({
+          recommendPackageRequest: {
+            packages: packages.map((pkg) => pkg.name),
+            recommendedPackages: 5,
+          },
+        });
+      })();
     }
-  }, [fetchRecommendedPackages, packages]);
+  }, [fetchRecommendedPackages, packages, isExpanded]);
 
   const addAllPackages = () => {
-    if (data) {
-      for (const pkg in data[0].packages) {
+    if (data?.packages?.length) {
+      data.packages.forEach((pkg) =>
         dispatch(
           addPackage({
-            name: data[0].packages[pkg],
+            name: pkg,
             summary: 'Added from recommended packages',
             repository: 'distro',
           })
-        );
-      }
+        )
+      );
     }
   };
 
@@ -74,7 +71,7 @@ const PackageRecommendations = () => {
   };
 
   const isRecommendedPackageSelected = (recPkg: string) => {
-    const foundInPackages = packages.some((pkg) => recPkg === pkg.name);
+    const foundInPackages = packages?.some((pkg) => recPkg === pkg.name);
     return foundInPackages;
   };
 
@@ -91,7 +88,7 @@ const PackageRecommendations = () => {
                 Recommended Red Hat packages
               </>
             }
-            onToggle={onToggle}
+            onToggle={(_, bool) => setIsExpanded(bool)}
             isExpanded={isExpanded}
           >
             {packages.length === 0 && (
@@ -109,10 +106,10 @@ const PackageRecommendations = () => {
                 again by changing your selected packages.
               </Alert>
             )}
-            {isSuccess && !data && (
+            {isSuccess && !data?.packages?.length && (
               <>No recommendations found for the set of selected packages</>
             )}
-            {isSuccess && data && data[0].packages && (
+            {isSuccess && data && data?.packages && (
               <>
                 <TextContent>
                   <Text>
@@ -139,7 +136,7 @@ const PackageRecommendations = () => {
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {data[0].packages.map((pkg) => (
+                    {data.packages.map((pkg) => (
                       <Tr key={pkg}>
                         <Td>{pkg}</Td>
                         {/*<Td>TODO summary</Td>*/}

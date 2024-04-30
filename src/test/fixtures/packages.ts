@@ -141,14 +141,12 @@ export const mockPkgResultAll: PackagesResponse = {
   }),
 };
 
-export const mockPkgRecommendations: RecommendPackageApiResponse = [
-  {
-    packages: [
-      'recommendedPackage1',
-      'recommendedPackage2',
-      'recommendedPackage3',
-      'recommendedPackage4',
-      'recommendedPackage5',
-    ],
-  },
-];
+export const mockPkgRecommendations: RecommendPackageApiResponse = {
+  packages: [
+    'recommendedPackage1',
+    'recommendedPackage2',
+    'recommendedPackage3',
+    'recommendedPackage4',
+    'recommendedPackage5',
+  ],
+};

@@ -194,4 +194,4 @@ export const EPEL_9_REPO_DEFINITION = {
   metadata_verification: false,
 };
 
-export const DEBOUNCED_SEARCH_WAIT_TIME = 300;
+export const DEBOUNCED_SEARCH_WAIT_TIME = 500;
