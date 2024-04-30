@@ -190,7 +190,11 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
       },
     },
     deleteBlueprint: {
-      invalidatesTags: [{ type: 'Blueprints' }],
+      invalidatesTags: [
+        { type: 'Blueprints' },
+        { type: 'BlueprintComposes' },
+        { type: 'Compose' },
+      ],
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {
