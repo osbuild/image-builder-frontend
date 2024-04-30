@@ -102,7 +102,7 @@ type CreateImageWizardProps = {
 };
 
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
-  const { isBeta, isProd } = useGetEnvironment();
+  const { isBeta } = useGetEnvironment();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -113,7 +113,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     useListFeaturesQuery(undefined);
 
   const snapshottingEnabled = useMemo(() => {
-    if (isProd() && !isBeta()) return false;
+    if (!isBeta()) return false;
     // The below checks if other environments permit the snapshot step
     return !(
       !isError &&
@@ -122,7 +122,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       data?.snapshots?.accessible === false &&
       data?.snapshots?.enabled === false
     );
-  }, [data, isSuccess, isFetching, isError, isBeta, isProd]);
+  }, [data, isSuccess, isFetching, isError, isBeta]);
 
   // =========================TO REMOVE=======================
 
