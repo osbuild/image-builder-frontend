@@ -260,16 +260,29 @@ const Repositories = () => {
     );
   };
 
-  const isRepoDisabled = (repo: ApiRepositoryResponseRead) => {
-    return (
-      // repository data is still fetching, it's not valid
-      // or it comes from the repository recommendations
-      // and removing it would mean invalidating packages
-      // added from the recommended repository
-      isFetching ||
-      repo.status !== 'Valid' ||
-      (recommendedRepos.length > 0 && repo.url?.includes('epel'))
-    );
+  const isRepoDisabled = (
+    repo: ApiRepositoryResponseRead
+  ): [boolean, string] => {
+    if (isFetching) {
+      return [true, 'Repository data is still fetching, please wait.'];
+    }
+
+    if (recommendedRepos.length > 0 && repo.url?.includes('epel')) {
+      return [
+        true,
+        'Selecting this repository would invalidate packages added from recommended repositories.\n' +
+          'Please use another combination of custom and recommended repositories.',
+      ];
+    }
+
+    if (repo.status !== 'Valid') {
+      return [
+        true,
+        `Repository can't be selected. The status is still '${repo.status}'.`,
+      ];
+    }
+
+    return [false, '']; // Repository is enabled
   };
 
   const handlePerPageSelect = (
@@ -550,6 +563,8 @@ const Repositories = () => {
                           }
 
                           const repoExists = repo.name ? true : false;
+                          const [isDisabled, disabledReason] =
+                            isRepoDisabled(repo);
                           return (
                             <Tr key={repo.url}>
                               <Td
@@ -562,8 +577,9 @@ const Repositories = () => {
                                       rowIndex,
                                       isSelecting
                                     ),
-                                  isDisabled: isRepoDisabled(repo),
+                                  isDisabled: isDisabled,
                                 }}
+                                title={disabledReason}
                               />
                               <Td dataLabel={'Name'}>
                                 {repoExists
