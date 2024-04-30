@@ -1,4 +1,5 @@
 import { Store } from 'redux';
+import { v4 as uuidv4 } from 'uuid';
 
 import { RootState } from '../../../store';
 import {
@@ -53,6 +54,8 @@ import {
   convertMMDDYYYYToYYYYMMDD,
   convertYYYYMMDDTOMMDDYYYY,
 } from '../../../Utilities/time';
+import { FileSystemPartitionMode } from '../steps/FileSystem';
+import { Partition, Units } from '../steps/FileSystem/FileSystemConfiguration';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
@@ -89,6 +92,18 @@ export const mapRequestFromState = (
   };
 };
 
+const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
+  const id = uuidv4();
+  const unit: Units = 'GiB';
+  const partition = {
+    mountpoint: filesystem.mountpoint,
+    min_size: String(filesystem.min_size),
+    id: id,
+    unit: unit,
+  };
+  return partition;
+};
+
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
@@ -122,12 +137,14 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
 
   const fileSystem = request.customizations.filesystem
     ? {
-        mode: 'manual',
-        partitions: request.customizations.filesystem,
+        mode: 'manual' as FileSystemPartitionMode,
+        partitions: request.customizations.filesystem.map((fs) =>
+          convertFilesystemToPartition(fs)
+        ),
         isNextButtonTouched: true,
       }
     : {
-        mode: 'automatic',
+        mode: 'automatic' as FileSystemPartitionMode,
         partitions: [],
         isNextButtonTouched: true,
       };
