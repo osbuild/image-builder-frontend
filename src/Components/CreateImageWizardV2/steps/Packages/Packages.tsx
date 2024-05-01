@@ -103,7 +103,9 @@ const Packages = () => {
     });
 
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
-  const [isSelectingPackage, setIsSelectingPackage] = useState('');
+  const [isSelectingPackage, setIsSelectingPackage] = useState<
+    IBPackageWithRepositoryInfo | undefined
+  >();
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
@@ -152,30 +154,26 @@ const Packages = () => {
   useEffect(() => {
     if (debouncedSearchTerm.length > 2) {
       if (toggleSourceRepos === RepoToggle.INCLUDED) {
-        (async () => {
-          await searchRpms({
-            apiContentUnitSearchRequest: {
-              search: debouncedSearchTerm,
-              urls: customRepositories.flatMap((repo) => {
-                if (!repo.baseurl) {
-                  throw new Error(
-                    `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
-                  );
-                }
-                return repo.baseurl;
-              }),
-            },
-          });
-        })();
+        searchRpms({
+          apiContentUnitSearchRequest: {
+            search: debouncedSearchTerm,
+            urls: customRepositories.flatMap((repo) => {
+              if (!repo.baseurl) {
+                throw new Error(
+                  `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
+                );
+              }
+              return repo.baseurl;
+            }),
+          },
+        });
       } else {
-        (async () => {
-          await searchRecommendedRpms({
-            apiContentUnitSearchRequest: {
-              search: debouncedSearchTerm,
-              urls: [epelRepoUrlByDistribution],
-            },
-          });
-        })();
+        searchRecommendedRpms({
+          apiContentUnitSearchRequest: {
+            search: debouncedSearchTerm,
+            urls: [epelRepoUrlByDistribution],
+          },
+        });
       }
     }
   }, [
@@ -462,7 +460,7 @@ const Packages = () => {
           </Thead>
           <Tbody>
             <Tr>
-              <Td>{isSelectingPackage}</Td>
+              <Td>{isSelectingPackage?.name}</Td>
               <Td>
                 EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
               </Td>
@@ -593,7 +591,6 @@ const Packages = () => {
     isSelecting: boolean
   ) => {
     if (isSelecting) {
-      dispatch(addPackage(pkg));
       if (
         isSuccessEpelRepo &&
         epelRepo.data &&
@@ -601,7 +598,9 @@ const Packages = () => {
         !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
         setIsRepoModalOpen(true);
-        setIsSelectingPackage(pkg.name);
+        setIsSelectingPackage(pkg);
+      } else {
+        dispatch(addPackage(pkg));
       }
     } else {
       dispatch(removePackage(pkg.name));
@@ -695,26 +694,24 @@ const Packages = () => {
 
   const handleCloseModalToggle = () => {
     setIsRepoModalOpen(!isRepoModalOpen);
+    setIsSelectingPackage(undefined);
   };
 
-  const handleConfirmModalToggle = () => {
+  const handleConfirmModalToggle = async () => {
     if (!epelRepo || !epelRepo.data) {
       throw new Error(
         `There was an error while adding the recommended repository.`
       );
     }
-    const enableEpelRepository = async () => {
+    if (epelRepo.data.length === 0) {
       await createRepository({
         apiRepositoryRequest: distribution.startsWith('rhel-8')
           ? EPEL_8_REPO_DEFINITION
           : EPEL_9_REPO_DEFINITION,
       });
-    };
-
-    if (epelRepo.data.length === 0) {
-      enableEpelRepository();
     }
 
+    dispatch(addPackage(isSelectingPackage!));
     dispatch(addRecommendedRepository(epelRepo.data[0]));
     setIsRepoModalOpen(!isRepoModalOpen);
   };
@@ -823,6 +820,8 @@ const Packages = () => {
     toggleSelected,
     toggleSourceRepos,
     transformedPackages,
+    isSelectingPackage,
+    recommendedRepositories,
     transformedPackages.length,
   ]);
 
