@@ -1,14 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import {
-  Button,
-  ExpandableSection,
-  Form,
-  List,
-  ListItem,
-  Text,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, Button, Form, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Repositories from './Repositories';
@@ -41,11 +33,6 @@ const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
-  const [isExpanded, setIsExpanded] = useState(false);
-  const onToggle = (_event: React.MouseEvent, isExpanded: boolean) => {
-    setIsExpanded(isExpanded);
-  };
-
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
@@ -58,23 +45,16 @@ const RepositoriesStep = () => {
         <ManageRepositoriesButton />
       </Text>
       {recommendedRepos.length > 0 && (
-        <ExpandableSection
-          toggleText={"Why can't I remove a selected repository?"}
-          onToggle={onToggle}
-          isExpanded={isExpanded}
-          isIndented
+        <Alert
+          title="Why can't I remove a selected repository?"
+          variant="info"
+          isInline
         >
           EPEL repository cannot be removed, because packages from it were
           selected. If you wish to remove the repository, please remove
-          following packages on the Packages step:
-          <List>
-            {packages
-              .filter((pkg) => pkg.repository === 'recommended')
-              .map((pkg) => (
-                <ListItem key={pkg.name}>{pkg.name}</ListItem>
-              ))}
-          </List>
-        </ExpandableSection>
+          following packages on the Packages step:{' '}
+          {packages.map((pkg) => pkg.name).join(', ')}
+        </Alert>
       )}
       <Repositories />
     </Form>
