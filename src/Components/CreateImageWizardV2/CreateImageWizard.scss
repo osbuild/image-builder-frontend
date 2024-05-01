@@ -83,6 +83,7 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     }
 }
 
+// This is to fix the pagination UI bug, when patternfly updates this it can be removed!
 .pf-v5-c-pagination.pf-m-bottom .pf-v5-c-menu-toggle {
     display: flex
 }
