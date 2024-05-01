@@ -29,6 +29,7 @@ import {
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
+  UNIT_GIB,
 } from '../../../../constants';
 import { useListSnapshotsByDateMutation } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
@@ -58,12 +59,17 @@ import {
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectUseLatest,
+  selectPartitions,
 } from '../../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
   toMonthAndYear,
   yyyyMMddFormat,
 } from '../../../../Utilities/time';
+import {
+  Partition,
+  getConversionFactor,
+} from '../FileSystem/FileSystemConfiguration';
 import { MinimumSizePopover } from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
@@ -118,6 +124,7 @@ export const ImageOutputList = () => {
 };
 export const FSCList = () => {
   const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
+  const partitions = useAppSelector(selectPartitions);
 
   return (
     <TextContent>
@@ -161,7 +168,7 @@ export const FSCList = () => {
             <TextListItem component={TextListItemVariants.dt}>
               Image size (minimum) <MinimumSizePopover />
             </TextListItem>
-            <MinSize />
+            <MinSize partitions={partitions} />
           </>
         )}
       </TextList>
@@ -170,8 +177,29 @@ export const FSCList = () => {
   );
 };
 
-export const MinSize = () => {
-  return <TextListItem component={TextListItemVariants.dd} />;
+type MinSizeProps = {
+  partitions: Partition[];
+};
+
+export const MinSize = ({ partitions }: MinSizeProps) => {
+  let minSize = '';
+  if (partitions) {
+    let size = 0;
+    for (const partition of partitions) {
+      size += Number(partition.min_size) * getConversionFactor(partition.unit);
+    }
+
+    size = Number((size / UNIT_GIB).toFixed(1));
+    if (size < 1) {
+      minSize = `Less than 1 GiB`;
+    } else {
+      minSize = `${size} GiB`;
+    }
+  }
+
+  return (
+    <TextListItem component={TextListItemVariants.dd}> {minSize} </TextListItem>
+  );
 };
 
 export const TargetEnvAWSList = () => {
