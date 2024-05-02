@@ -261,17 +261,22 @@ const Repositories = () => {
   };
 
   const isRepoDisabled = (
-    repo: ApiRepositoryResponseRead
+    repo: ApiRepositoryResponseRead,
+    isSelected: boolean
   ): [boolean, string] => {
     if (isFetching) {
       return [true, 'Repository data is still fetching, please wait.'];
     }
 
-    if (recommendedRepos.length > 0 && repo.url?.includes('epel')) {
+    if (
+      recommendedRepos.length > 0 &&
+      repo.url?.includes('epel') &&
+      isSelected
+    ) {
       return [
         true,
-        'Selecting this repository would invalidate packages added from recommended repositories.\n' +
-          'Please use another combination of custom and recommended repositories.',
+        'This repository was added because of previously recommended packages added to the image.\n' +
+          'To remove the repository, its related packages must be removed first.',
       ];
     }
 
@@ -563,13 +568,16 @@ const Repositories = () => {
                           }
 
                           const repoExists = repo.name ? true : false;
-                          const [isDisabled, disabledReason] =
-                            isRepoDisabled(repo);
+                          const isSelected = isRepoSelected(repo.url);
+                          const [isDisabled, disabledReason] = isRepoDisabled(
+                            repo,
+                            isSelected
+                          );
                           return (
                             <Tr key={repo.url}>
                               <Td
                                 select={{
-                                  isSelected: isRepoSelected(repo.url),
+                                  isSelected: isSelected,
                                   rowIndex: rowIndex,
                                   onSelect: (event, isSelecting) =>
                                     handleSelect(
