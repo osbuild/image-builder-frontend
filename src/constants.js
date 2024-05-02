@@ -41,7 +41,7 @@ export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 
 export const RHEL_8 = 'rhel-89';
-export const RHEL_9 = 'rhel-93';
+export const RHEL_9 = 'rhel-94';
 export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';

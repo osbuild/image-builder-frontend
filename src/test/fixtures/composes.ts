@@ -366,7 +366,7 @@ export const mockComposes: ComposesResponseItem[] = [
     created_at: '2023-10-17T00:01:02Z',
     image_name: 'oci-image',
     request: {
-      distribution: 'rhel-93',
+      distribution: 'rhel-94',
       image_name: 'oci-image',
       customizations: {},
       image_requests: [
@@ -386,7 +386,7 @@ export const mockComposes: ComposesResponseItem[] = [
     created_at: currentDateInString,
     image_name: 'expiring-oci-image',
     request: {
-      distribution: 'rhel-93',
+      distribution: 'rhel-94',
       image_name: 'oci-image',
       customizations: {},
       image_requests: [
@@ -950,7 +950,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         },
       },
       request: {
-        distribution: 'rhel-93',
+        distribution: 'rhel-94',
         image_name: 'oci-image',
         customizations: {},
         image_requests: [
@@ -977,7 +977,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
         },
       },
       request: {
-        distribution: 'rhel-93',
+        distribution: 'rhel-94',
         image_name: 'oci-image',
         customizations: {},
         image_requests: [
