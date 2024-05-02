@@ -349,6 +349,7 @@ export type Distributions =
   | "rhel-91"
   | "rhel-92"
   | "rhel-93"
+  | "rhel-94"
   | "centos-8"
   | "centos-9"
   | "fedora-37"

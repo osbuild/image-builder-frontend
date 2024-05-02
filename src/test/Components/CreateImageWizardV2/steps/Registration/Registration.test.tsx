@@ -89,7 +89,7 @@ describe('registration request generated correctly', () => {
   const blueprintRequest: CreateBlueprintRequest = {
     name: 'Red Velvet',
     description: '',
-    distribution: 'rhel-93',
+    distribution: 'rhel-94',
     image_requests: [imageRequest],
     customizations: {},
   };
