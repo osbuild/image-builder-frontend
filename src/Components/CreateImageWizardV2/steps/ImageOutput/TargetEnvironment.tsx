@@ -147,7 +147,7 @@ const TargetEnvironment = () => {
               isDisplayLarge
             />
           )}
-          {supportedEnvironments?.includes('oci') && isBeta() && (
+          {supportedEnvironments?.includes('oci') && (
             <Tile
               className="tile pf-u-mr-sm"
               data-testid="upload-oci"
