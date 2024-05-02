@@ -8,7 +8,6 @@ import {
   WizardStepType,
   useWizardContext,
 } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
@@ -61,6 +60,7 @@ import {
   selectUseLatest,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
+import useBetaFlag from '../../Utilities/useBetaFlag';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -128,8 +128,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // =========================TO REMOVE=======================
 
-  const firstbootFlag = useFlag('image-builder.firstboot.enabled');
-  const isFirstBootEnabled = isBeta() && firstbootFlag;
+  const isFirstBootEnabled = useBetaFlag('image-builder.firstboot.enabled');
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
