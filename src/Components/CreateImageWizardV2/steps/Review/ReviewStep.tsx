@@ -33,6 +33,7 @@ import {
   selectProfile,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import useBetaFlag from '../../../../Utilities/useBetaFlag';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const blueprintName = useAppSelector(selectBlueprintName);
@@ -68,6 +69,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
+  const isFirstBootEnabled = useBetaFlag('image-builder.firstboot.enabled');
   return (
     <>
       <ExpandableSection
@@ -179,17 +181,19 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
-      <ExpandableSection
-        toggleContent={'First boot'}
-        onToggle={(_event, isExpandableFirstBoot) =>
-          onToggleFirstBoot(isExpandableFirstBoot)
-        }
-        isExpanded={isExpandableFirstBoot}
-        isIndented
-        data-testid="firstboot-expandable"
-      >
-        <FirstBootList />
-      </ExpandableSection>
+      {isFirstBootEnabled && (
+        <ExpandableSection
+          toggleContent={'First boot'}
+          onToggle={(_event, isExpandableFirstBoot) =>
+            onToggleFirstBoot(isExpandableFirstBoot)
+          }
+          isExpanded={isExpandableFirstBoot}
+          isIndented
+          data-testid="firstboot-expandable"
+        >
+          <FirstBootList />
+        </ExpandableSection>
+      )}
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
           toggleContent={'Image details'}
