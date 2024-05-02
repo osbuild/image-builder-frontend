@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
 import ImageWizard from '../../../Components/CreateImageWizardV2';
+import { RHEL_9 } from '../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
@@ -52,7 +53,7 @@ export const imageRequest: ImageRequest = {
 export const blueprintRequest: CreateBlueprintRequest = {
   name: 'Red Velvet',
   description: '',
-  distribution: 'rhel-94',
+  distribution: RHEL_9,
   image_requests: [imageRequest],
   customizations: {},
 };

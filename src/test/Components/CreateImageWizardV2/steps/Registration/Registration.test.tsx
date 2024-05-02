@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, RHEL_9 } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
@@ -89,7 +89,7 @@ describe('registration request generated correctly', () => {
   const blueprintRequest: CreateBlueprintRequest = {
     name: 'Red Velvet',
     description: '',
-    distribution: 'rhel-94',
+    distribution: RHEL_9,
     image_requests: [imageRequest],
     customizations: {},
   };

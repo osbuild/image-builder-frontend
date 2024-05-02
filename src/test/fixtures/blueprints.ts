@@ -268,7 +268,7 @@ export const baseImageRequest: ImageRequest = {
 export const baseCreateBlueprintRequest: CreateBlueprintRequest = {
   name: 'Red Velvet',
   description: '',
-  distribution: 'rhel-94',
+  distribution: RHEL_9,
   image_requests: [baseImageRequest],
   customizations: {},
 };
