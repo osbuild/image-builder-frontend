@@ -2,6 +2,7 @@ import { PathParams, RestRequest } from 'msw';
 
 import { RHEL_8, RHEL_9 } from '../../constants';
 import {
+  AwsUploadStatus,
   ClonesResponse,
   ComposeStatus,
   ComposesResponse,
@@ -1070,42 +1071,47 @@ export const mockClones = (composeId: string): ClonesResponse => {
   }
 };
 
-export const mockCloneStatus = (cloneId: string): UploadStatus => {
-  const mockClones: { [key: string]: UploadStatus } = {
-    'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d': {
-      options: {
-        ami: 'ami-0e778053cd490ad21',
-        region: 'us-west-1',
-      },
-      status: 'success',
-      type: 'aws',
-    },
-    '48fce414-0cc0-4a16-8645-e3f0edec3212': {
-      options: {
-        ami: 'ami-9f0asd1tlk2142124',
-        region: 'us-west-1',
-      },
-      status: 'success',
-      type: 'aws',
-    },
-    '0169538e-515c-477e-b934-f12783939313': {
-      options: {
-        ami: 'ami-9fdskj12fdsak1211',
-        region: 'us-west-2',
-      },
-      status: 'failure',
-      type: 'aws',
-    },
-    '4a851db1-919f-43ca-a7ef-dd209877a77e': {
-      options: {
-        ami: 'ami-9fdskj12fdsak1211',
-        region: 'eu-central-1',
-      },
-      status: 'success',
-      type: 'aws',
-    },
+type mockClonesType = {
+  [key: string]: {
+    status: UploadStatus['status'];
+    type: UploadStatus['type'];
+    options: AwsUploadStatus;
   };
-  return mockClones[cloneId];
+};
+
+export const mockCloneStatus: mockClonesType = {
+  'f9133ec4-7a9e-4fd9-9a9f-9636b82b0a5d': {
+    options: {
+      ami: 'ami-0e778053cd490ad21',
+      region: 'us-west-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
+  '48fce414-0cc0-4a16-8645-e3f0edec3212': {
+    options: {
+      ami: 'ami-9f0asd1tlk2142124',
+      region: 'us-west-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
+  '0169538e-515c-477e-b934-f12783939313': {
+    options: {
+      ami: 'ami-9fdskj12fdsak1211',
+      region: 'us-west-2',
+    },
+    status: 'failure',
+    type: 'aws',
+  },
+  '4a851db1-919f-43ca-a7ef-dd209877a77e': {
+    options: {
+      ami: 'ami-9fdskj12fdsak1211',
+      region: 'eu-central-1',
+    },
+    status: 'success',
+    type: 'aws',
+  },
 };
 
 // ShareImageModal mocks

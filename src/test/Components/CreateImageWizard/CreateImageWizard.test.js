@@ -19,7 +19,7 @@ import {
   RHEL_8,
   RHSM_API,
 } from '../../../constants.js';
-import { server } from '../../mocks/server.js';
+import { server } from '../../mocks/server';
 import {
   clickBack,
   clickNext,
