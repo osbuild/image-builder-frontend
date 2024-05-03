@@ -50,8 +50,10 @@ export const useCheckRepositoriesAvailability = () => {
   );
 
   const { data: freshRepos, isSuccess } = useMemo(() => {
-    if (firstRequest?.data?.meta?.count > 100) {
-      return { ...followupRequest };
+    if (firstRequest?.data?.meta?.count) {
+      if (firstRequest?.data?.meta?.count > 100) {
+        return { ...followupRequest };
+      }
     }
     return { ...firstRequest };
   }, [firstRequest, followupRequest]);
@@ -62,7 +64,7 @@ export const useCheckRepositoriesAvailability = () => {
     // Transform the fresh repos array into a Set to access its elements in O(1)
     // complexity later in the for loop.
     const freshReposUrls = new Set(
-      freshRepos.data.map((freshRepo) => freshRepo.url)
+      freshRepos.data?.map((freshRepo) => freshRepo.url)
     );
     for (const payloadRepo of payloadRepositories) {
       if (!freshReposUrls.has(payloadRepo.baseurl)) {

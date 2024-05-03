@@ -1,10 +1,11 @@
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { Dispatch } from 'redux';
 
 const manageEdgeImagesUrlName = 'manage-edge-images';
 
-const getNotificationProp = (dispatch) => {
+const getNotificationProp = (dispatch: Dispatch) => {
   return {
-    hasInfo: (hasInfoMessage) => {
+    hasInfo: (hasInfoMessage: Notification) => {
       dispatch({
         ...addNotification({
           variant: 'info',
@@ -12,7 +13,7 @@ const getNotificationProp = (dispatch) => {
         }),
       });
     },
-    hasSuccess: (hasSuccessMessage) => {
+    hasSuccess: (hasSuccessMessage: Notification) => {
       dispatch({
         ...addNotification({
           variant: 'success',
@@ -20,7 +21,8 @@ const getNotificationProp = (dispatch) => {
         }),
       });
     },
-    err: (errMessage, err) => {
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    err: (errMessage: any, err: any) => {
       dispatch({
         ...addNotification({
           variant: 'danger',
