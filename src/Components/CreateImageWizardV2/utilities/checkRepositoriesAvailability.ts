@@ -7,7 +7,7 @@ import {
   selectDistribution,
   selectCustomRepositories,
 } from '../../../store/wizardSlice';
-import { releaseToVersion } from '../../../Utilities/releaseToVersion.js';
+import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 
 /**
  * This checks the list of the custom repositories against a list of repos freshly

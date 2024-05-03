@@ -1,4 +1,4 @@
-import isRhel from '../../../Utilities/isRhel.js';
+import isRhel from '../../../Utilities/isRhel';
 
 const imageOutputStepMapper = (
   { 'target-environment': targetEnv, release, enableOscap } = {},
