@@ -115,7 +115,7 @@ export const handlers = [
   ),
   rest.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, (req, res, ctx) => {
     const { cloneId } = req.params;
-    return res(ctx.status(200), ctx.json(mockCloneStatus(cloneId)));
+    return res(ctx.status(200), ctx.json(mockCloneStatus[cloneId]));
   }),
   rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
     return res(ctx.status(200), ctx.json({}));

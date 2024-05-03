@@ -32,9 +32,9 @@ jest.mock('@unleash/proxy-client-react', () => ({
   ),
 }));
 
-const selectBlueprintById = async (user, bpId) => {
+const selectBlueprintById = async (bpId: string) => {
   const blueprint = await screen.findByTestId(bpId);
-  await user.click(blueprint);
+  await userEvent.click(blueprint);
   return blueprint;
 };
 
@@ -79,7 +79,7 @@ describe('Blueprints', () => {
   test('renders blueprint composes', async () => {
     renderWithReduxRouter('', {});
 
-    await selectBlueprintById(user, blueprintIdWithComposes);
+    await selectBlueprintById(blueprintIdWithComposes);
     const table = await screen.findByTestId('images-table');
     const { findAllByText } = within(table);
     const images = await findAllByText('dark-chocolate-aws');
@@ -88,7 +88,7 @@ describe('Blueprints', () => {
   test('renders blueprint composes empty state', async () => {
     renderWithReduxRouter('', {});
 
-    await selectBlueprintById(user, blueprintIdEmptyComposes);
+    await selectBlueprintById(blueprintIdEmptyComposes);
     const table = await screen.findByTestId('images-table');
     const { findByText } = within(table);
     await findByText('No images');
@@ -97,7 +97,7 @@ describe('Blueprints', () => {
   test('click build image button', async () => {
     renderWithReduxRouter('', {});
 
-    await selectBlueprintById(user, blueprintIdWithComposes);
+    await selectBlueprintById(blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
       name: /Build image/i,
     });
@@ -107,12 +107,12 @@ describe('Blueprints', () => {
   test('blueprint is out of sync', async () => {
     renderWithReduxRouter('', {});
 
-    await selectBlueprintById(user, blueprintIdOutOfSync);
+    await selectBlueprintById(blueprintIdOutOfSync);
     await screen.findByText(
       'The selected blueprint is at version 2, images are at version 1. Build images to synchronize with the latest version.'
     );
 
-    await selectBlueprintById(user, blueprintIdWithComposes);
+    await selectBlueprintById(blueprintIdWithComposes);
     expect(
       screen.queryByText(
         'The selected blueprint is at version 2, images are at version 1. Build images to synchronize with the latest version.'
@@ -221,7 +221,7 @@ describe('Blueprints', () => {
     test('filter composes by blueprint version', async () => {
       renderWithReduxRouter('', {});
 
-      await selectBlueprintById(user, blueprintIdWithComposes);
+      await selectBlueprintById(blueprintIdWithComposes);
 
       // Wait for the filter appear (right now it's hidden unless a blueprint is selected)
       const composesVersionFilter = await screen.findByRole('button', {

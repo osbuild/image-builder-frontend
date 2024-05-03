@@ -53,14 +53,15 @@ describe('Images Table', () => {
     const { getAllByRole } = within(table);
     const rows = getAllByRole('row');
     // remove first row from list since it is just header labels
-    const header = rows.shift();
+    const header: HTMLElement = rows.shift()!;
+    const headerCells = await within(header).findAllByRole('columnheader');
     // test the header has correct labels
-    expect(header.cells[1]).toHaveTextContent('Name');
-    expect(header.cells[2]).toHaveTextContent('Updated');
-    expect(header.cells[3]).toHaveTextContent('OS');
-    expect(header.cells[4]).toHaveTextContent('Target');
-    expect(header.cells[5]).toHaveTextContent('Status');
-    expect(header.cells[6]).toHaveTextContent('Instance');
+    expect(headerCells[1]).toHaveTextContent('Name');
+    expect(headerCells[2]).toHaveTextContent('Updated');
+    expect(headerCells[3]).toHaveTextContent('OS');
+    expect(headerCells[4]).toHaveTextContent('Target');
+    expect(headerCells[5]).toHaveTextContent('Status');
+    expect(headerCells[6]).toHaveTextContent('Instance');
 
     const imageNameValues = mockComposes.map((compose) =>
       compose.image_name ? compose.image_name : compose.id
@@ -69,9 +70,10 @@ describe('Images Table', () => {
     // 10 rows for 10 images
     expect(rows).toHaveLength(10);
     rows.forEach(async (row, index) => {
-      expect(row.cells[1]).toHaveTextContent(imageNameValues[index]);
-      expect(row.cells[2]).toHaveTextContent('Apr 27, 2021');
-      expect(row.cells[3]).toHaveTextContent('RHEL 8.9');
+      const cells = await within(row).findAllByRole('cell');
+      expect(cells[1]).toHaveTextContent(imageNameValues[index]);
+      expect(cells[2]).toHaveTextContent('Apr 27, 2021');
+      expect(cells[3]).toHaveTextContent('RHEL 8.9');
     });
 
     // TODO Test remaining table content.
@@ -127,7 +129,9 @@ describe('Images Table', () => {
 
     // No actual clicking because downloading is hard to test.
     // Instead, we just check href and download properties of the <a> element.
-    const downloadLink = await within(downloadButton).findByRole('link');
+    const downloadLink: HTMLAnchorElement = await within(
+      downloadButton
+    ).findByRole('link');
     expect(downloadLink.download).toBe(
       'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json'
     );
@@ -275,11 +279,12 @@ describe('Clones table', () => {
     const cloneRows = within(clonesTable[0]).getAllByRole('row');
 
     // remove first row from list since it is just header labels
-    const header = cloneRows.shift();
+    const header: HTMLElement = cloneRows.shift()!;
+    const headerCells = within(header).getAllByRole('columnheader');
     // test the header has correct labels
-    expect(header.cells[0]).toHaveTextContent('AMI');
-    expect(header.cells[1]).toHaveTextContent('Region');
-    expect(header.cells[2]).toHaveTextContent('Status');
+    expect(headerCells[0]).toHaveTextContent('AMI');
+    expect(headerCells[1]).toHaveTextContent('Region');
+    expect(headerCells[2]).toHaveTextContent('Status');
 
     // shift by a parent compose as the row has a different format
     cloneRows.shift();
@@ -288,25 +293,29 @@ describe('Clones table', () => {
 
     // prepend parent data
     const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
+
     const clonesTableData = {
       ami: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus(clone.id).options.ami
+          (clone) => mockCloneStatus[clone.id].options.ami
         ),
       ],
       created: [...mockClones(composeId).data.map((clone) => clone.created_at)],
       region: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus(clone.id).options.region
+          (clone) => mockCloneStatus[clone.id].options.region
         ),
       ],
     };
 
     for (const [index, row] of cloneRows.entries()) {
       // render AMIs in correct order
-      let toTest = expect(row.cells[0]);
+      const cells = await within(row).findAllByRole('cell');
+      let toTest = expect(cells[0]);
       switch (index) {
-        case (0, 1, 3):
+        case 0:
+        case 1:
+        case 3:
           toTest.toHaveTextContent(clonesTableData.ami[index]);
           break;
         case 2:
@@ -316,12 +325,14 @@ describe('Clones table', () => {
       }
 
       // region cell
-      expect(row.cells[1]).toHaveTextContent(clonesTableData.region[index]);
+      expect(cells[1]).toHaveTextContent(clonesTableData.region[index]);
 
-      toTest = expect(row.cells[2]);
+      toTest = expect(cells[2]);
       // status cell
       switch (index) {
-        case (0, 1, 3):
+        case 0:
+        case 1:
+        case 3:
           toTest.toHaveTextContent('Ready');
           break;
         case 2:
