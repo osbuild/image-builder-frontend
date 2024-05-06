@@ -18,7 +18,7 @@ import {
   PROVISIONING_API,
   RHEL_8,
   RHSM_API,
-} from '../../../constants.js';
+} from '../../../constants';
 import { server } from '../../mocks/server';
 import {
   clickBack,

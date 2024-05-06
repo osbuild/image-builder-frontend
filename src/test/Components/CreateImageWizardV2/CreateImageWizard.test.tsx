@@ -16,7 +16,7 @@ import { enterBlueprintName } from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { PROVISIONING_API, RHSM_API } from '../../../constants.js';
+import { PROVISIONING_API, RHSM_API } from '../../../constants';
 import { server } from '../../mocks/server';
 import {
   clickBack,

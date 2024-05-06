@@ -7,7 +7,7 @@ import { Text } from '@patternfly/react-core';
 import nextStepMapper from './imageOutputStepMapper';
 import StepTemplate from './stepTemplate';
 
-import { RHEL_9, X86_64 } from '../../../constants.js';
+import { RHEL_9, X86_64 } from '../../../constants';
 import DocumentationButton from '../../sharedComponents/DocumentationButton';
 import CustomButtons from '../formComponents/CustomButtons';
 

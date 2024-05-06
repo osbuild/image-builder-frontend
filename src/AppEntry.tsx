@@ -5,8 +5,12 @@ import { Provider } from 'react-redux';
 import App from './App';
 import { store } from './store';
 
-if (process.env.NODE_ENV === 'development' && process.env.MSW === true) {
+if (
+  process.env.NODE_ENV === 'development' &&
+  process.env.MSW?.toString().toLowerCase() === 'true'
+) {
   // process.env.MSW is set in the webpack config using DefinePlugin
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const { worker } = require('./test/mocks/browser');
   worker.start({
     serviceWorker: {

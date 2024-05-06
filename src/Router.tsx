@@ -9,14 +9,14 @@ import { manageEdgeImagesUrlName } from './Utilities/edge';
 import { useExperimentalFlag } from './Utilities/useExperimentalFlag';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
-const CreateImageWizard = lazy(() =>
-  import('./Components/CreateImageWizard/CreateImageWizard')
+const CreateImageWizard = lazy(
+  () => import('./Components/CreateImageWizard/CreateImageWizard')
 );
-const ImportImageWizard = lazy(() =>
-  import('./Components/CreateImageWizardV2/ImportImageWizard')
+const ImportImageWizard = lazy(
+  () => import('./Components/CreateImageWizardV2/ImportImageWizard')
 );
-const CreateImageWizardV2 = lazy(() =>
-  import('./Components/CreateImageWizardV2')
+const CreateImageWizardV2 = lazy(
+  () => import('./Components/CreateImageWizardV2')
 );
 
 export const Router = () => {

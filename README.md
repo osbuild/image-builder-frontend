@@ -116,7 +116,7 @@ export const emptyFoobarApi = createApi({
 });
 ```
 
-3. Declare the new constat `FOOBAR_API` to the API url in `src/constants.js`
+3. Declare the new constat `FOOBAR_API` to the API url in `src/constants.ts`
 
 ```
 export const FOOBAR_API = 'api/foobar/v1'
