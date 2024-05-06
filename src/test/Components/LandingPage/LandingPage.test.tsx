@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import { rest } from 'msw';
 
-import { IMAGE_BUILDER_API } from '../../../constants.js';
+import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server';
 import { renderWithReduxRouter } from '../../testUtils';
