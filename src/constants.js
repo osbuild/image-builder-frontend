@@ -40,8 +40,8 @@ export const CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL =
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 
-export const RHEL_8 = 'rhel-89';
-export const RHEL_9 = 'rhel-94';
+export const RHEL_8 = 'rhel-8';
+export const RHEL_9 = 'rhel-9';
 export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
