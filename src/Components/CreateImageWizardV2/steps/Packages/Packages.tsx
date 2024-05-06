@@ -39,6 +39,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
 import CustomHelperText from './components/CustomHelperText';
+import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
 
 import {
   EPEL_8_REPO_DEFINITION,
@@ -964,31 +965,7 @@ const Packages = () => {
             <Th width={35}>
               Description
               {toggleSelected === 'toggle-selected' && (
-                <Popover
-                  headerContent="Package description"
-                  bodyContent={
-                    <TextContent>
-                      <Text>
-                        The package description provides more information about
-                        the package.
-                      </Text>
-                      <Text>
-                        When editing an existing blueprint, you may see a
-                        &quot;Not available&quot; value in the field because
-                        information about previously added packages can not be
-                        fetched.
-                      </Text>
-                    </TextContent>
-                  }
-                >
-                  <Button
-                    variant="plain"
-                    aria-label="Package description"
-                    className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-                  >
-                    <HelpIcon />
-                  </Button>
-                </Popover>
+                <PackageInfoNotAvailablePopover />
               )}
             </Th>
             <Th width={25}>Package repository</Th>

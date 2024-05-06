@@ -23,6 +23,7 @@ import {
   selectPartitions,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
+import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
 
 type repoPropType = {
   repoUrl: string[] | undefined;
@@ -197,7 +198,9 @@ export const PackagesTable = () => {
           <Thead>
             <Tr>
               <Th>Name</Th>
-              <Th>Description</Th>
+              <Th>
+                Description <PackageInfoNotAvailablePopover />
+              </Th>
               <Th>Package repository</Th>
             </Tr>
           </Thead>
@@ -205,13 +208,15 @@ export const PackagesTable = () => {
             {packages.map((pkg, pkgIndex) => (
               <Tr key={pkgIndex}>
                 <Td className="pf-m-width-30">{pkg.name}</Td>
-                <Td>{pkg.summary}</Td>
-                <Td className="pf-m-width-20">
+                <Td>{pkg.summary ? pkg.summary : 'Not available'}</Td>
+                <Td className="pf-m-width-30">
                   {pkg.repository === 'distro'
                     ? 'Red Hat repository'
                     : pkg.repository === 'custom'
                     ? 'Custom repository'
-                    : 'EPEL Everything x86_64'}
+                    : pkg.repository === 'recommended'
+                    ? 'EPEL Everything x86_64'
+                    : 'Not available'}
                 </Td>
               </Tr>
             ))}
