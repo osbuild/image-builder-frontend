@@ -6,6 +6,8 @@ import { parseSizeUnit } from './parseSizeUnit';
 import {
   FIRST_BOOT_SERVICE,
   FIRST_BOOT_SERVICE_DATA,
+  RHEL_8,
+  RHEL_9,
 } from '../../../constants';
 import { RootState } from '../../../store';
 import {
@@ -15,6 +17,7 @@ import {
   CreateBlueprintRequest,
   Customizations,
   DistributionProfileItem,
+  Distributions,
   File,
   Filesystem,
   GcpUploadRequestOptions,
@@ -117,6 +120,19 @@ const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
 };
 
 /**
+ * This function overwrites distribution of the blueprints with the major release
+ * Minor releases were previously used and are still present in older blueprints
+ * @param distribution blueprint distribution
+ */
+const getLatestMinorRelease = (distribution: Distributions) => {
+  return distribution.startsWith('rhel-9')
+    ? RHEL_9
+    : distribution.startsWith('rhel-8')
+    ? RHEL_8
+    : distribution;
+};
+
+/**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
  * @param source  V1ListSourceResponseItem
@@ -180,7 +196,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       script: getFirstBootScript(request.customizations.files),
     },
     architecture: request.image_requests[0].architecture,
-    distribution: request.distribution,
+    distribution: getLatestMinorRelease(request.distribution),
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
       shareMethod: azureUploadOptions?.source_id ? 'sources' : 'manual',
