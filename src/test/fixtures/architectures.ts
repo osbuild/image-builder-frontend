@@ -4,7 +4,7 @@ export const mockArchitecturesByDistro = (
   distro: Distributions
 ): Architectures => {
   const mockDistros: { [key: string]: Architectures } = {
-    'rhel-94': [
+    'rhel-9': [
       {
         arch: 'x86_64',
         image_types: [
@@ -23,7 +23,7 @@ export const mockArchitecturesByDistro = (
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel9/9.2/x86_64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel9/9/x86_64/baseos/os',
             rhsm: true,
           },
         ],
@@ -34,13 +34,13 @@ export const mockArchitecturesByDistro = (
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel9/9.2/aarch64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel9/9/aarch64/baseos/os',
             rhsm: true,
           },
         ],
       },
     ],
-    'rhel-89': [
+    'rhel-8': [
       {
         arch: 'x86_64',
         image_types: [
@@ -60,7 +60,7 @@ export const mockArchitecturesByDistro = (
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel8/8.8/x86_64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel8/8/x86_64/baseos/os',
             rhsm: true,
           },
         ],
@@ -71,7 +71,7 @@ export const mockArchitecturesByDistro = (
         repositories: [
           {
             baseurl:
-              'https://cdn.redhat.com/content/dist/rhel8/8.8/aarch64/baseos/os',
+              'https://cdn.redhat.com/content/dist/rhel8/8/aarch64/baseos/os',
             rhsm: true,
           },
         ],

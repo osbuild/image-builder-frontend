@@ -73,7 +73,7 @@ describe('Images Table', () => {
       const cells = await within(row).findAllByRole('cell');
       expect(cells[1]).toHaveTextContent(imageNameValues[index]);
       expect(cells[2]).toHaveTextContent('Apr 27, 2021');
-      expect(cells[3]).toHaveTextContent('RHEL 8.9');
+      expect(cells[3]).toHaveTextContent('RHEL 8');
     });
 
     // TODO Test remaining table content.
