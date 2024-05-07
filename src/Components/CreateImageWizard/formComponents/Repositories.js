@@ -440,7 +440,7 @@ const Repositories = (props) => {
                 <Table variant="compact" data-testid="repositories-table">
                   <Thead>
                     <Tr>
-                      <Th />
+                      <Th aria-label="Selected" />
                       <Th width={45}>Name</Th>
                       <Th width={15}>Architecture</Th>
                       <Th>Version</Th>
