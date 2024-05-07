@@ -190,7 +190,10 @@ const ImagesTable = () => {
       <Table variant="compact" data-testid="images-table">
         <Thead>
           <Tr>
-            <Th style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }} />
+            <Th
+              style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }}
+              aria-label="Details expandable"
+            />
             <Th>Name</Th>
             <Th>Updated</Th>
             <Th>OS</Th>
@@ -198,7 +201,7 @@ const ImagesTable = () => {
             {experimentalFlag && <Th>Version</Th>}
             <Th>Status</Th>
             <Th>Instance</Th>
-            <Th />
+            <Th aria-label="Actions menu" />
           </Tr>
         </Thead>
         {itemCount === 0 && (

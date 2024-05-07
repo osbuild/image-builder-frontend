@@ -190,15 +190,15 @@ const FileSystemTable = () => {
     >
       <Thead>
         <Tr>
-          <Th />
+          <Th aria-label="Drag mount point" />
           <Th>Mount point</Th>
-          <Th></Th>
+          <Th aria-label="Suffix"></Th>
           <Th>Type</Th>
           <Th>
             Minimum size <MinimumSizePopover />
           </Th>
-          <Th />
-          <Th />
+          <Th aria-label="Unit" />
+          <Th aria-label="Remove mount point" />
         </Tr>
       </Thead>
 

@@ -379,7 +379,7 @@ const FileSystemConfiguration = ({ ...props }) => {
           >
             <Thead>
               <Tr>
-                <Th />
+                <Th aria-label="Drag mount point" />
                 <Th>Mount point</Th>
                 <Th>Type</Th>
                 <Th>
@@ -405,7 +405,7 @@ const FileSystemConfiguration = ({ ...props }) => {
                     </Button>
                   </Popover>
                 </Th>
-                <Th />
+                <Th aria-label="Remove mount point" />
               </Tr>
             </Thead>
             <Tbody

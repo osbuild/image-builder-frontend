@@ -960,7 +960,7 @@ const Packages = () => {
       <Table variant="compact" data-testid="packages-table">
         <Thead>
           <Tr>
-            <Th />
+            <Th aria-label="Selected" />
             <Th width={20}>Package name</Th>
             <Th width={35}>
               Description
