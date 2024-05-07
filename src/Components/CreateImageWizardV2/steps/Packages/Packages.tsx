@@ -125,7 +125,7 @@ const Packages = () => {
     },
   ] = useSearchRpmMutation();
 
-  const debouncedSearchTerm = useDebounce(searchTerm);
+  const debouncedSearchTerm = useDebounce(searchTerm.trim());
   const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
 
   const [
