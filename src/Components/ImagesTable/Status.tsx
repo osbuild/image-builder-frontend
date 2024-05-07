@@ -4,11 +4,14 @@ import './ImageBuildStatus.scss';
 import {
   Alert,
   Button,
+  CodeBlock,
+  CodeBlockCode,
   Flex,
   Panel,
   PanelMain,
   Popover,
   Skeleton,
+  Text,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -288,18 +291,23 @@ type ErrorStatusPropTypes = {
 
 const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
   let reason = '';
+  const detailsArray: string[] = [];
   if (typeof error === 'string') {
     reason = error;
   } else {
     if (error.reason) {
       reason = error.reason;
     }
-    if (error.details?.reason) {
-      if (reason !== '') {
-        reason = `${reason}\n\n${error.details?.reason}`;
-      } else {
-        reason = error.details.reason;
+    if (Array.isArray(error.details)) {
+      for (const line in error.details) {
+        detailsArray.push(`${error.details[line]}`);
       }
+    }
+    if (typeof error.details === 'string') {
+      detailsArray.push(error.details);
+    }
+    if (error.details?.reason) {
+      detailsArray.push(`${error.details.reason}`);
     }
   }
 
@@ -309,24 +317,29 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
       <Popover
         data-testid="errorstatus-popover"
         position="bottom"
-        minWidth="30rem"
+        minWidth="40rem"
         bodyContent={
           <>
             <Alert variant="danger" title={text} isInline isPlain />
+            <Text className="pf-u-pt-md pf-u-pb-md">{reason}</Text>
             <Panel isScrollable>
               <PanelMain maxHeight="25rem">
-                <div className="pf-u-mt-sm">
-                  <p>{reason}</p>
-                  <Button
-                    variant="link"
-                    onClick={() => navigator.clipboard.writeText(reason)}
-                    className="pf-u-pl-0 pf-u-mt-md"
-                  >
-                    Copy error text to clipboard <CopyIcon />
-                  </Button>
-                </div>
+                <CodeBlock>
+                  <CodeBlockCode>{detailsArray.join('\n')}</CodeBlockCode>
+                </CodeBlock>
               </PanelMain>
             </Panel>
+            <Button
+              variant="link"
+              onClick={() =>
+                navigator.clipboard.writeText(
+                  reason + '\n\n' + detailsArray.join('\n')
+                )
+              }
+              className="pf-u-pl-0 pf-u-mt-md"
+            >
+              Copy error text to clipboard <CopyIcon />
+            </Button>
           </>
         }
       >
