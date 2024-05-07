@@ -180,66 +180,64 @@ const ImagesTable = () => {
 
   return (
     <>
-      <>
-        <ImagesTableToolbar
-          itemCount={itemCount}
-          perPage={perPage}
-          page={page}
-          setPage={setPage}
-          onPerPageSelect={onPerPageSelect}
-        />
-        <Table variant="compact" data-testid="images-table">
-          <Thead>
+      <ImagesTableToolbar
+        itemCount={itemCount}
+        perPage={perPage}
+        page={page}
+        setPage={setPage}
+        onPerPageSelect={onPerPageSelect}
+      />
+      <Table variant="compact" data-testid="images-table">
+        <Thead>
+          <Tr>
+            <Th style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }} />
+            <Th>Name</Th>
+            <Th>Updated</Th>
+            <Th>OS</Th>
+            <Th>Target</Th>
+            {experimentalFlag && <Th>Version</Th>}
+            <Th>Status</Th>
+            <Th>Instance</Th>
+            <Th />
+          </Tr>
+        </Thead>
+        {itemCount === 0 && (
+          <Tbody>
             <Tr>
-              <Th style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }} />
-              <Th>Name</Th>
-              <Th>Updated</Th>
-              <Th>OS</Th>
-              <Th>Target</Th>
-              {experimentalFlag && <Th>Version</Th>}
-              <Th>Status</Th>
-              <Th>Instance</Th>
-              <Th />
+              <Td colSpan={12}>
+                <ImagesEmptyState selectedBlueprint={selectedBlueprintId} />
+              </Td>
             </Tr>
-          </Thead>
-          {itemCount === 0 && (
-            <Tbody>
-              <Tr>
-                <Td colSpan={12}>
-                  <ImagesEmptyState selectedBlueprint={selectedBlueprintId} />
-                </Td>
-              </Tr>
-            </Tbody>
-          )}
+          </Tbody>
+        )}
 
-          {composes?.map((compose, rowIndex) => {
-            return (
-              <ImagesTableRow
-                compose={compose}
-                rowIndex={rowIndex}
-                key={compose.id}
-              />
-            );
-          })}
-        </Table>
-        <Toolbar className="pf-u-mb-xl">
-          <ToolbarContent>
-            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-              <Pagination
-                variant={PaginationVariant.bottom}
-                itemCount={itemCount}
-                perPage={perPage}
-                page={page}
-                onSetPage={onSetPage}
-                onPerPageSelect={onPerPageSelect}
-                widgetId="compose-pagination-bottom"
-                data-testid="images-pagination-bottom"
-                isCompact
-              />
-            </ToolbarItem>
-          </ToolbarContent>
-        </Toolbar>
-      </>
+        {composes?.map((compose, rowIndex) => {
+          return (
+            <ImagesTableRow
+              compose={compose}
+              rowIndex={rowIndex}
+              key={compose.id}
+            />
+          );
+        })}
+      </Table>
+      <Toolbar className="pf-u-mb-xl">
+        <ToolbarContent>
+          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+            <Pagination
+              variant={PaginationVariant.bottom}
+              itemCount={itemCount}
+              perPage={perPage}
+              page={page}
+              onSetPage={onSetPage}
+              onPerPageSelect={onPerPageSelect}
+              widgetId="compose-pagination-bottom"
+              data-testid="images-pagination-bottom"
+              isCompact
+            />
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
     </>
   );
 };
