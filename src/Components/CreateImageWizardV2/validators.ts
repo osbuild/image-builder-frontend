@@ -27,7 +27,7 @@ export const isAzureResourceGroupValid = (azureResourceGroup: string) => {
 export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
   return (
     gcpShareWithAccount !== undefined &&
-    /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,12}$/.test(gcpShareWithAccount) &&
+    /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,12}$/i.test(gcpShareWithAccount) &&
     gcpShareWithAccount.length <= 253
   );
 };
