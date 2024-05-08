@@ -119,7 +119,6 @@ export const ImageOutputList = () => {
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>{arch}</TextListItem>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -173,7 +172,6 @@ export const FSCList = () => {
           </>
         )}
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -255,7 +253,6 @@ export const TargetEnvAWSList = () => {
           us-east-1
         </TextListItem>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -314,7 +311,6 @@ export const TargetEnvGCPList = () => {
           )}
         </>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -380,7 +376,6 @@ export const TargetEnvAzureList = () => {
           {azureResourceGroup}
         </TextListItem>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -398,10 +393,8 @@ export const TargetEnvOciList = () => {
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           The URL for the built image will be ready to copy
-          <br />
         </TextListItem>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -420,7 +413,6 @@ export const TargetEnvOtherList = () => {
           Built image will be available for download
         </TextListItem>
       </TextList>
-      <br />
     </>
   );
 };
@@ -605,7 +597,6 @@ export const ContentList = ({
           </TextListItem>
         </TextList>
       </TextContent>
-      <br />
       {duplicatePackages.length > 0 && (
         <Alert
           title="Can not guarantee where some selected packages will come from"
@@ -617,8 +608,6 @@ export const ContentList = ({
           come from.
         </Alert>
       )}
-
-      <br />
     </>
   );
 };
@@ -637,7 +626,6 @@ export const RegisterLaterList = () => {
           Register the system later
         </TextListItem>
       </TextList>
-      <br />
     </TextContent>
   );
 };
@@ -696,7 +684,6 @@ export const RegisterNowList = () => {
             <ActivationKeyInformation />
           </TextListItem>
         </TextList>
-        <br />
       </TextContent>
       {isError && (
         <Alert
@@ -747,7 +734,6 @@ export const ImageDetailsList = () => {
           </>
         )}
       </TextList>
-      <br />
     </TextContent>
   );
 };
