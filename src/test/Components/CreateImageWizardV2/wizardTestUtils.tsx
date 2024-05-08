@@ -108,6 +108,17 @@ export const enterBlueprintName = async (name: string = 'Red Velvet') => {
   await userEvent.type(blueprintName, name);
 };
 
+export const openAndDismissSaveAndBuildModal = async () => {
+  await userEvent.click(
+    await screen.findByRole('button', {
+      name: 'Create blueprint',
+    })
+  );
+  await userEvent.click(
+    await screen.findByTestId('close-button-saveandbuild-modal')
+  );
+};
+
 export const interceptBlueprintRequest = async (requestPathname: string) => {
   const receivedRequestPromise = spyOnRequest(requestPathname, 'POST');
 

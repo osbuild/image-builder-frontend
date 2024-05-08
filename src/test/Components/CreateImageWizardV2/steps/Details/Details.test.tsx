@@ -10,6 +10,7 @@ import {
   enterBlueprintName,
   goToRegistrationStep,
   interceptBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
 } from '../../wizardTestUtils';
 
@@ -87,6 +88,9 @@ describe('registration request generated correctly', () => {
     await goToDetailsStep();
     await enterBlueprintName();
     await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = { ...blueprintRequest };

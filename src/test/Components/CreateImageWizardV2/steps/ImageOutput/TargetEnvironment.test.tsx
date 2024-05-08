@@ -332,9 +332,9 @@ describe('set target using query parameter', () => {
   test('image-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'iso' });
     await clickToReview();
-    const targetExpandable = await screen.findByRole('button', {
-      name: /Target environments/,
-    });
+    const targetExpandable = await screen.findByTestId(
+      'target-environments-expandable'
+    );
     await userEvent.click(targetExpandable);
     await screen.findByText('Bare metal - Installer (.iso)');
   });
@@ -342,9 +342,9 @@ describe('set target using query parameter', () => {
   test('guest-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'qcow2' });
     await clickToReview();
-    const targetExpandable = await screen.findByRole('button', {
-      name: /Target environments/,
-    });
+    const targetExpandable = await screen.findByTestId(
+      'target-environments-expandable'
+    );
     await userEvent.click(targetExpandable);
     await screen.findByText('Virtualization - Guest image (.qcow2)');
   });

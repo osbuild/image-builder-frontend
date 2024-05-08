@@ -13,6 +13,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
 } from '../../wizardTestUtils';
 
@@ -76,11 +77,7 @@ const updateDatePickerWithValue = async (date: string) => {
 };
 
 const clickContentDropdown = async () => {
-  await userEvent.click(
-    (
-      await screen.findAllByRole('button', { name: /Content/i })
-    )[1]
-  );
+  await userEvent.click(await screen.findByTestId('content-expandable'));
 };
 
 const getSnapshotMethodElement = async () =>
@@ -126,6 +123,10 @@ describe('repository snapshot tab - ', () => {
     expect(snapshotMethodElement).toHaveTextContent('State as of 04/22/2024');
     // Check that the button is clickable (has 1 repo selected)
     expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'false');
+
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
 
     // Check the date was passed correctly to the blueprint
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
