@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   DropdownList,
@@ -7,6 +7,8 @@ import {
   Spinner,
   Flex,
   FlexItem,
+  Modal,
+  Button,
 } from '@patternfly/react-core';
 
 import {
@@ -63,31 +65,73 @@ export const CreateSaveButton = ({
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
+  const [showModal, setShowModal] = useState(false);
+  const wasModalSeen = window.localStorage.getItem(
+    'imageBuilder.saveAndBuildModalSeen'
+  );
+
+  const SaveAndBuildImagesModal = () => {
+    const handleClose = () => {
+      setShowModal(false);
+    };
+
+    return (
+      <Modal
+        title="Save time by building images"
+        isOpen={showModal}
+        onClose={handleClose}
+        width="50%"
+        actions={[
+          <Button key="back" variant="primary" onClick={handleClose}>
+            Close
+          </Button>,
+        ]}
+      >
+        Building blueprints and images doesn’t need to be a two step process. To
+        build images simultaneously, use the dropdown arrow to the right side of
+        this button.
+      </Modal>
+    );
+  };
+
+  const onClick = () => {
+    if (!wasModalSeen) {
+      setShowModal(true);
+      window.localStorage.setItem('imageBuilder.saveAndBuildModalSeen', 'true');
+    } else {
+      onSave();
+    }
+  };
+
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
     requestBody && createBlueprint({ createBlueprintRequest: requestBody });
   };
+
   return (
-    <MenuToggleAction
-      onClick={onSave}
-      id="wizard-create-save-btn"
-      isDisabled={isDisabled}
-    >
-      <Flex display={{ default: 'inlineFlex' }}>
-        {isLoading && (
-          <FlexItem>
-            <Spinner
-              style={
-                { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
-              }
-              isInline
-              size="md"
-            />
-          </FlexItem>
-        )}
-        <FlexItem>Create blueprint</FlexItem>
-      </Flex>
-    </MenuToggleAction>
+    <>
+      {showModal && <SaveAndBuildImagesModal />}
+      <MenuToggleAction
+        onClick={onClick}
+        id="wizard-create-save-btn"
+        isDisabled={isDisabled}
+      >
+        <Flex display={{ default: 'inlineFlex' }}>
+          {isLoading && (
+            <FlexItem>
+              <Spinner
+                style={
+                  { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
+                }
+                isInline
+                size="md"
+              />
+            </FlexItem>
+          )}
+          <FlexItem>Create blueprint</FlexItem>
+        </Flex>
+      </MenuToggleAction>
+    </>
   );
 };
