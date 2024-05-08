@@ -53,7 +53,6 @@ export const OscapProfileInformation = (): JSX.Element => {
       {isSuccessOscapProfileInfo && (
         <>
           <TextContent>
-            <br />
             <TextList component={TextListVariants.dl}>
               <TextListItem
                 component={TextListItemVariants.dt}
