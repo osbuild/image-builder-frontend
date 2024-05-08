@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 
 import {
+  Button,
   ExpandableSection,
   Text,
   TextContent,
   TextVariants,
+  useWizardContext,
 } from '@patternfly/react-core';
+import { ArrowRightIcon } from '@patternfly/react-icons';
 
 import {
   ContentList,
@@ -36,6 +39,8 @@ import {
 import useBetaFlag from '../../../../Utilities/useBetaFlag';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
+  const { goToStepById } = useWizardContext();
+
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
@@ -43,14 +48,14 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const oscapProfile = useAppSelector(selectProfile);
   const registrationType = useAppSelector(selectRegistrationType);
 
-  const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(false);
-  const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(false);
-  const [isExpandedFSC, setIsExpandedFSC] = useState(false);
-  const [isExpandedContent, setIsExpandedContent] = useState(false);
-  const [isExpandedRegistration, setIsExpandedRegistration] = useState(false);
-  const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(false);
-  const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(false);
-  const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(false);
+  const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
+  const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
+  const [isExpandedFSC, setIsExpandedFSC] = useState(true);
+  const [isExpandedContent, setIsExpandedContent] = useState(true);
+  const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
+  const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(true);
+  const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(true);
+  const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -69,11 +74,43 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
+  type RevisitStepButtonProps = {
+    ariaLabel: string;
+    stepId: string;
+  };
+
+  const RevisitStepButton = ({ ariaLabel, stepId }: RevisitStepButtonProps) => {
+    return (
+      <Button
+        variant="link"
+        aria-label={ariaLabel}
+        component="span"
+        onClick={() => revisitStep(stepId)}
+        className="pf-u-p-0 pf-u-ml-xl"
+        isInline
+      >
+        Revisit step <ArrowRightIcon />
+      </Button>
+    );
+  };
+
+  const revisitStep = (stepId: string) => {
+    goToStepById(stepId);
+  };
+
   const isFirstBootEnabled = useBetaFlag('image-builder.firstboot.enabled');
   return (
     <>
       <ExpandableSection
-        toggleContent={'Image output'}
+        toggleContent={
+          <>
+            Image output{' '}
+            <RevisitStepButton
+              ariaLabel="Revisit Image output step"
+              stepId="step-image-output"
+            />
+          </>
+        }
         onToggle={(_event, isExpandedImageOutput) =>
           onToggleImageOutput(isExpandedImageOutput)
         }
@@ -84,7 +121,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <ImageOutputList />
       </ExpandableSection>
       <ExpandableSection
-        toggleContent={'Target environments'}
+        toggleContent={
+          <>
+            Target environments{' '}
+            <RevisitStepButton
+              ariaLabel="Revisit Target environments step"
+              stepId="step-image-output"
+            />
+          </>
+        }
         onToggle={(_event, isExpandedTargetEnvs) =>
           onToggleTargetEnvs(isExpandedTargetEnvs)
         }
@@ -135,7 +180,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isRhel(distribution) && (
         <ExpandableSection
-          toggleContent={'Registration'}
+          toggleContent={
+            <>
+              Registration{' '}
+              <RevisitStepButton
+                ariaLabel="Revisit Registration step"
+                stepId="step-register"
+              />
+            </>
+          }
           onToggle={(_event, isExpandedRegistration) =>
             onToggleRegistration(isExpandedRegistration)
           }
@@ -149,7 +202,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {oscapProfile && (
         <ExpandableSection
-          toggleContent={'OpenSCAP'}
+          toggleContent={
+            <>
+              OpenSCAP{' '}
+              <RevisitStepButton
+                ariaLabel="Revisit OpenSCAP step"
+                stepId="step-oscap"
+              />
+            </>
+          }
           onToggle={(_event, isExpandedOscapDetail) =>
             onToggleOscapDetails(isExpandedOscapDetail)
           }
@@ -161,7 +222,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         </ExpandableSection>
       )}
       <ExpandableSection
-        toggleContent={'File system configuration'}
+        toggleContent={
+          <>
+            File system configuration{' '}
+            <RevisitStepButton
+              ariaLabel="Revisit File system configuration step"
+              stepId="step-file-system"
+            />
+          </>
+        }
         onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
         isExpanded={isExpandedFSC}
         isIndented
@@ -170,7 +239,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <FSCList />
       </ExpandableSection>
       <ExpandableSection
-        toggleContent={'Content'}
+        toggleContent={
+          <>
+            Content{' '}
+            <RevisitStepButton
+              ariaLabel="Revisit Content step"
+              stepId="wizard-custom-repositories"
+            />
+          </>
+        }
         onToggle={(_event, isExpandedContent) =>
           onToggleContent(isExpandedContent)
         }
@@ -183,7 +260,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isFirstBootEnabled && (
         <ExpandableSection
-          toggleContent={'First boot'}
+          toggleContent={
+            <>
+              First boot{' '}
+              <RevisitStepButton
+                ariaLabel="Revisit First boot step"
+                stepId="wizard-first-boot"
+              />
+            </>
+          }
           onToggle={(_event, isExpandableFirstBoot) =>
             onToggleFirstBoot(isExpandableFirstBoot)
           }
@@ -196,7 +281,15 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
-          toggleContent={'Image details'}
+          toggleContent={
+            <>
+              Image details{' '}
+              <RevisitStepButton
+                ariaLabel="Revisit Image details step"
+                stepId="step-details"
+              />
+            </>
+          }
           onToggle={(_event, isExpandedImageDetail) =>
             onToggleImageDetail(isExpandedImageDetail)
           }
