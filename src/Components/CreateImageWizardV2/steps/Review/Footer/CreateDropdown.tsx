@@ -82,7 +82,12 @@ export const CreateSaveButton = ({
         onClose={handleClose}
         width="50%"
         actions={[
-          <Button key="back" variant="primary" onClick={handleClose}>
+          <Button
+            key="back"
+            variant="primary"
+            data-testid="close-button-saveandbuild-modal"
+            onClick={handleClose}
+          >
             Close
           </Button>,
         ]}

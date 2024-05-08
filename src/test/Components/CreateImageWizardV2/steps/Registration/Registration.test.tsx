@@ -13,6 +13,7 @@ import {
   interceptBlueprintRequest,
   goToRegistrationStep,
   clickRegisterLater,
+  openAndDismissSaveAndBuildModal,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -99,6 +100,9 @@ describe('registration request generated correctly', () => {
     await goToRegistrationStep();
     await selectActivationKey();
     await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {

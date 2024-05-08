@@ -12,7 +12,10 @@ import {
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import { enterBlueprintName } from './wizardTestUtils';
+import {
+  enterBlueprintName,
+  openAndDismissSaveAndBuildModal,
+} from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
@@ -421,6 +424,9 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await enterBlueprintName();
     await clickNext();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
 
     await user.click(
       await screen.findByRole('button', { name: /Create blueprint/ })
@@ -1084,9 +1090,9 @@ describe('Step Review', () => {
   test('has Registration expandable section for rhel', async () => {
     await setUp();
     const targetExpandable = screen.getByText(/target environments/i);
-    const registrationExpandable = screen.getByRole('button', {
-      name: /registration/i,
-    });
+    const registrationExpandable = screen.getByTestId(
+      'registration-expandable'
+    );
 
     const contentExpandable = await screen.findByTestId('content-expandable');
     const fscExpandable = screen.getByTestId(

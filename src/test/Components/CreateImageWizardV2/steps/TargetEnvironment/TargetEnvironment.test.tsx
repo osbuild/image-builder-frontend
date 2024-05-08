@@ -22,6 +22,7 @@ import {
   goToRegistrationStep,
   imageRequest,
   interceptBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
 } from '../../wizardTestUtils';
 
@@ -134,6 +135,9 @@ describe('distribution request generated correctly', () => {
     await renderCreateMode();
     await selectRhel8();
     await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {

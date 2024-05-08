@@ -12,6 +12,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
 } from '../../../wizardTestUtils';
 
@@ -128,6 +129,9 @@ describe('azure image type request generated correctly', () => {
     await selectSource();
     await selectResourceGroup();
     await goToReview();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
