@@ -87,3 +87,8 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
 .pf-v5-c-pagination.pf-m-bottom .pf-v5-c-menu-toggle {
     display: flex
 }
+
+// Fixes min height issues on the main wizard container
+.pf-v5-c-wizard__outer-wrap {
+    min-height: 602px;
+}
