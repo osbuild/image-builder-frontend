@@ -12,7 +12,7 @@ const App = (props) => {
   const { hideGlobalFilter, updateDocumentTitle } = useChrome();
 
   useEffect(() => {
-    updateDocumentTitle('Image Builder | Red Hat Insights');
+    updateDocumentTitle('Images');
     hideGlobalFilter();
   }, [hideGlobalFilter, updateDocumentTitle]);
 
