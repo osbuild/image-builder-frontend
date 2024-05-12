@@ -9,9 +9,29 @@ import {
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
 
+const detectScriptType = (scriptString: string): Language => {
+  const lines = scriptString.split('\n');
+
+  if (lines[0].startsWith('#!')) {
+    // Extract the path from the shebang
+    const path = lines[0].slice(2);
+
+    if (path.includes('bin/bash') || path.includes('bin/sh')) {
+      return Language.shell;
+    } else if (path.includes('bin/python') || path.includes('bin/python3')) {
+      return Language.python;
+    } else if (path.includes('ansible-playbook')) {
+      return Language.yaml;
+    }
+  }
+  // default
+  return Language.shell;
+};
+
 const FirstBootStep = () => {
   const dispatch = useAppDispatch();
   const selectedScript = useAppSelector(selectFirstBootScript);
+  const language = detectScriptType(selectedScript);
 
   return (
     <Form>
@@ -40,7 +60,7 @@ const FirstBootStep = () => {
         isDownloadEnabled
         isCopyEnabled
         isLanguageLabelVisible
-        language={Language.shell}
+        language={language}
         onCodeChange={(code) => dispatch(setFirstBootScript(code))}
         code={selectedScript}
         height="35vh"
