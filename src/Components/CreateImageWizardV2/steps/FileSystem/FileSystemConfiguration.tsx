@@ -11,6 +11,7 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
+import { TextInputProps } from '@patternfly/react-core/src/components/TextInput/TextInput';
 import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
@@ -314,6 +315,11 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
 
+  const dontDragMe: TextInputProps['onDragStart'] = (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+  };
+
   return (
     <TextInput
       value={suffix}
@@ -329,6 +335,8 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
       }}
       aria-label="mountpoint suffix"
       ouiaId="mount-suffix"
+      draggable="true"
+      onDragStart={dontDragMe}
     />
   );
 };
