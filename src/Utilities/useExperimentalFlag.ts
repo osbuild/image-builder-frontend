@@ -20,6 +20,7 @@ const toBoolean = (environmentVariable: string | undefined): boolean => {
 export const useExperimentalFlag = () => {
   const { isBeta } = useGetEnvironment();
   const isExperimental = toBoolean(process.env.EXPERIMENTAL?.toString());
-  const flagSuffix = isBeta() ? 'enabled' : 'stable';
-  return useFlag(`image-builder.new-wizard.${flagSuffix}`) || isExperimental;
+  return (
+    useFlag('image-builder.new-wizard.stable') || isBeta() || isExperimental
+  );
 };
