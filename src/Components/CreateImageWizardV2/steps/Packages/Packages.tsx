@@ -54,7 +54,7 @@ import {
 import { useAppSelector } from '../../../../store/hooks';
 import {
   Package,
-  useGetPackagesQuery,
+  useGetArchitecturesQuery,
 } from '../../../../store/imageBuilderApi';
 import {
   removePackage,
@@ -92,6 +92,11 @@ const Packages = () => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
 
+  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
+    useGetArchitecturesQuery({
+      distribution: distribution,
+    });
+
   // select the correct version of EPEL repository
   // the urls are copied over from the content service
   const epelRepoUrlByDistribution = distribution.startsWith('rhel-8')
@@ -117,7 +122,7 @@ const Packages = () => {
 
   const [searchTerm, setSearchTerm] = useState('');
   const [
-    searchRpms,
+    searchCustomRpms,
     {
       data: dataCustomPackages,
       isSuccess: isSuccessCustomPackages,
@@ -137,25 +142,38 @@ const Packages = () => {
     },
   ] = useSearchRpmMutation();
 
-  const {
-    data: dataDistroPackages,
-    isSuccess: isSuccessDistroPackages,
-    isLoading: isLoadingDistroPackages,
-  } = useGetPackagesQuery(
+  const [
+    searchDistroRpms,
     {
-      distribution: distribution,
-      architecture: arch,
-      search: debouncedSearchTerm,
+      data: dataDistroPackages,
+      isSuccess: isSuccessDistroPackages,
+      isLoading: isLoadingDistroPackages,
     },
-    { skip: !debouncedSearchTerm || debouncedSearchTermLengthOf1 }
-  );
+  ] = useSearchRpmMutation();
 
   const [createRepository] = useCreateRepositoryMutation();
 
   useEffect(() => {
+    if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
+      searchDistroRpms({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm,
+          urls: distroRepositories
+            .filter((archItem) => {
+              return archItem.arch === arch;
+            })[0]
+            .repositories.flatMap((repo) => {
+              if (!repo.baseurl) {
+                throw new Error(`Repository ${repo} missing baseurl`);
+              }
+              return repo.baseurl;
+            }),
+        },
+      });
+    }
     if (debouncedSearchTerm.length > 2) {
       if (toggleSourceRepos === RepoToggle.INCLUDED) {
-        searchRpms({
+        searchCustomRpms({
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
             urls: customRepositories.flatMap((repo) => {
@@ -179,7 +197,7 @@ const Packages = () => {
     }
   }, [
     customRepositories,
-    searchRpms,
+    searchCustomRpms,
     debouncedSearchTerm,
     toggleSourceRepos,
     searchRecommendedRpms,
@@ -481,8 +499,9 @@ const Packages = () => {
     let transformedRecommendedData: IBPackageWithRepositoryInfo[] = [];
 
     if (isSuccessDistroPackages) {
-      transformedDistroData = dataDistroPackages.data.map((values) => ({
-        ...values,
+      transformedDistroData = dataDistroPackages!.map((values) => ({
+        name: values.package_name!,
+        summary: values.summary!,
         repository: 'distro',
       }));
     }
@@ -536,7 +555,7 @@ const Packages = () => {
     }
   }, [
     dataCustomPackages,
-    dataDistroPackages?.data,
+    dataDistroPackages,
     dataRecommendedPackages,
     debouncedSearchTerm,
     isSuccessCustomPackages,
