@@ -2,65 +2,19 @@ import {
   ApiRepositoryRpm,
   ApiSearchRpmResponse,
 } from '../../store/contentSourcesApi';
-import {
-  PackagesResponse,
-  RecommendPackageApiResponse,
-} from '../../store/imageBuilderApi';
-
-export const mockPackagesResults = (search: string): PackagesResponse => {
-  if (search === 'te' || search === 'testPkg-123') {
-    return mockPkgResultAll;
-  } else if (search === 'test') {
-    return {
-      data: [
-        {
-          name: 'testPkg',
-          summary: 'test package summary',
-        },
-        {
-          name: 'lib-test',
-          summary: 'lib-test package summary',
-        },
-        {
-          name: 'test',
-          summary: 'summary for test package',
-        },
-      ],
-      links: { first: '', last: '' },
-      meta: {
-        count: 3,
-      },
-    };
-  } else if (search === 'mock') {
-    return {
-      data: [
-        {
-          name: 'mockPkg',
-          summary: 'test package summary',
-        },
-        {
-          name: 'lib-mock',
-          summary: 'lib-test package summary',
-        },
-        {
-          name: 'mock',
-          summary: 'summary for test package',
-        },
-      ],
-      links: { first: '', last: '' },
-      meta: {
-        count: 3,
-      },
-    };
-  } else {
-    return { data: [], links: { first: '', last: '' }, meta: { count: 0 } };
-  }
-};
+import { RecommendPackageApiResponse } from '../../store/imageBuilderApi';
 
 export const mockSourcesPackagesResults = (
-  search: string
+  search: string,
+  urls: string[]
 ): ApiSearchRpmResponse[] => {
-  if (search === 'test') {
+  const isDistroPkgSearch =
+    urls.filter((u) => u.includes('cdn.redhat.com')).length > 0;
+  if (search === 'te' || search === 'testPkg-123') {
+    return mockPkgResultAll;
+  }
+
+  if (!isDistroPkgSearch) {
     return [
       {
         package_name: 'testPkg-sources',
@@ -75,28 +29,41 @@ export const mockSourcesPackagesResults = (
         summary: 'summary for test package',
       },
     ];
-  } else {
-    return [];
   }
-};
 
-export const mockPkgResultAlpha: PackagesResponse = {
-  meta: { count: 3 },
-  links: { first: '', last: '' },
-  data: [
-    {
-      name: 'lib-test',
-      summary: 'lib-test package summary',
-    },
-    {
-      name: 'Z-test',
-      summary: 'Z-test package summary',
-    },
-    {
-      name: 'test',
-      summary: 'summary for test package',
-    },
-  ],
+  if (search === 'test') {
+    return [
+      {
+        package_name: 'testPkg',
+        summary: 'test package summary',
+      },
+      {
+        package_name: 'lib-test',
+        summary: 'lib-test package summary',
+      },
+      {
+        package_name: 'test',
+        summary: 'summary for test package',
+      },
+    ];
+  }
+  if (search === 'mock' && isDistroPkgSearch) {
+    return [
+      {
+        package_name: 'mockPkg',
+        summary: 'test package summary',
+      },
+      {
+        package_name: 'lib-mock',
+        summary: 'lib-test package summary',
+      },
+      {
+        package_name: 'mock',
+        summary: 'summary for test package',
+      },
+    ];
+  }
+  return [];
 };
 
 export const mockPkgResultAlphaContentSources: ApiRepositoryRpm[] = [
@@ -117,29 +84,23 @@ export const mockPkgResultAlphaContentSources: ApiRepositoryRpm[] = [
   },
 ];
 
-export const mockPkgResultPartial: PackagesResponse = {
-  meta: { count: 132 },
-  links: { first: '', last: '' },
-  data: new Array(100).fill(undefined).map((_, i) => {
+export const mockPkgResultPartial: ApiSearchRpmResponse[] = new Array(100)
+  .fill(undefined)
+  .map((_, i) => {
     return {
-      name: 'testPkg-' + i,
+      package_name: 'testPkg-' + i,
       summary: 'test package summary',
-      version: '1.0',
     };
-  }),
-};
+  });
 
-export const mockPkgResultAll: PackagesResponse = {
-  meta: { count: 132 },
-  links: { first: '', last: '' },
-  data: new Array(132).fill(undefined).map((_, i) => {
+export const mockPkgResultAll: ApiSearchRpmResponse[] = new Array(132)
+  .fill(undefined)
+  .map((_, i) => {
     return {
-      name: 'testPkg-' + i,
+      package_name: 'testPkg-' + i,
       summary: 'test package summary',
-      version: '1.0',
     };
-  }),
-};
+  });
 
 export const mockPkgRecommendations: RecommendPackageApiResponse = {
   packages: [
