@@ -58,8 +58,11 @@ export const handlers = [
     }
   ),
   rest.post(`${CONTENT_SOURCES_API}/rpms/names`, async (req, res, ctx) => {
-    const { search } = await req.json();
-    return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
+    const { search, urls } = await req.json();
+    return res(
+      ctx.status(200),
+      ctx.json(mockSourcesPackagesResults(search, urls))
+    );
   }),
   rest.get(`${CONTENT_SOURCES_API}/features/`, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockedFeatureResponse));

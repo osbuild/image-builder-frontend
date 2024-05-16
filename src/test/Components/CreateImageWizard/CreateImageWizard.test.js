@@ -1219,7 +1219,7 @@ describe('Click through all steps', () => {
     await searchForAvailablePackages(searchbox, 'test');
     await user.click(
       await screen.findByRole('option', {
-        name: /test-sources summary for test package/,
+        name: /test summary for test package/,
       })
     );
     await user.click(
@@ -1360,7 +1360,7 @@ describe('Click through all steps', () => {
       ],
       custom_repositories: custom_repos,
       payload_repositories: payload_repos,
-      packages: ['test-sources'],
+      packages: ['test'],
       subscription: {
         'activation-key': 'name0',
         insights: true,

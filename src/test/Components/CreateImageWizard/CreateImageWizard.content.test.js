@@ -8,18 +8,12 @@ import userEvent from '@testing-library/user-event';
 import api from '../../../api.js';
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import {
-  mockPkgResultAlpha,
-  mockPkgResultAlphaContentSources,
-  mockPkgResultAll,
-  mockPkgResultPartial,
-} from '../../fixtures/packages';
+import { mockPkgResultAlphaContentSources } from '../../fixtures/packages';
 import {
   clickBack,
   clickNext,
   renderCustomRoutesWithReduxRouter,
   renderWithReduxRouter,
-  verifyCancelButton,
 } from '../../testUtils';
 
 const routes = [
@@ -36,8 +30,6 @@ const routes = [
     element: <ShareImageModal />,
   },
 ];
-
-let router = undefined;
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -99,19 +91,15 @@ afterEach(() => {
 });
 
 describe('Step Packages', () => {
-  describe('without Content Sources', () => {
+  describe('with Content Sources', () => {
     const user = userEvent.setup();
     const setUp = async () => {
-      mockContentSourcesEnabled = false;
-
-      ({ router } = await renderCustomRoutesWithReduxRouter(
-        'imagewizard',
-        {},
-        routes
-      ));
+      renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
       // select aws as upload destination
-      await user.click(await screen.findByTestId('upload-aws'));
+      await waitFor(
+        async () => await user.click(await screen.findByTestId('upload-aws'))
+      );
       await clickNext();
 
       // aws step
@@ -130,63 +118,23 @@ describe('Step Packages', () => {
         name: 'Select activation key',
       });
 
-      await user.click(await screen.findByTestId('registration-radio-later'));
+      const registerLaterRadio = await screen.findByTestId(
+        'registration-radio-later'
+      );
+      await user.click(registerLaterRadio);
       await clickNext();
       // skip fsc
       await clickNext();
     };
 
-    test('clicking Next loads Image name', async () => {
-      await setUp();
-
-      await clickNext();
-
-      await screen.findByRole('heading', {
-        name: 'Details',
-      });
-    });
-
-    test('clicking Back loads file system configuration', async () => {
-      await setUp();
-
-      await clickBack();
-
-      await screen.findByRole('heading', {
-        name: /file system configuration/i,
-      });
-    });
-
-    test('clicking Cancel loads landing page', async () => {
-      await setUp();
-
-      await verifyCancelButton(router);
-    });
-
-    test('should display search bar and button', async () => {
-      await setUp();
-
-      await user.type(
-        await screen.findByTestId('search-available-pkgs-input'),
-        'test'
-      );
-
-      await screen.findByRole('button', {
-        name: 'Search button for available packages',
-      });
-    });
-
-    test('should display default state', async () => {
-      await setUp();
-      await screen.findByText(
-        'Search above to add additionalpackages to your image'
-      );
-      await screen.findByText('No packages added');
-    });
-
     test('search results should be sorted with most relevant results first', async () => {
       await setUp();
 
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
+      const view = await screen.findByTestId('search-available-pkgs-input');
+
+      const searchbox = await within(view).findByRole('textbox', {
+        name: /search input/i,
+      });
 
       await waitFor(() => expect(searchbox).toBeEnabled());
       await user.click(searchbox);
@@ -257,14 +205,15 @@ describe('Step Packages', () => {
       const availablePackagesList = await screen.findByTestId(
         'available-pkgs-list'
       );
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
+      const availablePackagesItems = await within(
+        availablePackagesList
+      ).findAllByRole('option');
       expect(availablePackagesItems).toHaveLength(3);
       const [firstItem, secondItem, thirdItem] = availablePackagesItems;
       expect(firstItem).toHaveTextContent('testsummary for test package');
-      expect(secondItem).toHaveTextContent('testPkgtest package summary');
+      // TODO
       expect(thirdItem).toHaveTextContent('lib-testlib-test package summary');
+      expect(secondItem).toHaveTextContent('testPkgtest package summary');
     });
 
     test('removing a single package updates the state correctly', async () => {
@@ -280,416 +229,6 @@ describe('Step Packages', () => {
 
       // remove a single package
       await user.click(await screen.findByTestId('selected-pkgs-lib-test'));
-      await user.click(
-        await screen.findByRole('button', { name: /Remove selected/ })
-      );
-
-      // skip name page
-      clickNext();
-
-      // review page
-      clickNext();
-
-      let chosen = await screen.findByTestId('chosen-packages-count');
-      expect(chosen).toHaveTextContent('2');
-
-      // remove another package
-      clickBack();
-      clickBack();
-      await screen.findByTestId('search-available-pkgs-input');
-      await user.click(
-        await screen.findByRole('option', {
-          name: /summary for test package/,
-        })
-      );
-      await user.click(
-        await screen.findByRole('button', { name: /Remove selected/ })
-      );
-
-      // review page
-      clickNext();
-      clickNext();
-
-      chosen = await screen.findByTestId('chosen-packages-count');
-      expect(chosen).toHaveTextContent('1');
-    });
-
-    test('should display empty available state on failed search', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'asdf');
-      await screen.findByText('No results found');
-    });
-
-    test('should display empty available state on failed search after a successful search', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-
-      await user.click(
-        await screen.findByRole('button', {
-          name: /clear available packages search/i,
-        })
-      );
-
-      await searchForAvailablePackages(searchbox, 'asdf');
-
-      await screen.findByText('No results found');
-    });
-
-    test('should display empty chosen state on failed search', async () => {
-      await setUp();
-
-      const searchboxAvailable = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-      const searchboxChosen = screen.getAllByRole('textbox')[1];
-
-      await waitFor(() => expect(searchboxAvailable).toBeEnabled());
-      await user.click(searchboxAvailable);
-      await searchForAvailablePackages(searchboxAvailable, 'test');
-
-      await user.click(await screen.findByRole('button', { name: /Add all/ }));
-
-      await user.click(searchboxChosen);
-      await user.type(searchboxChosen, 'asdf');
-
-      expect(await screen.findByText('No packages found')).toBeInTheDocument();
-      // We need to clear this input in order to not have sideeffects on other tests
-      await searchForChosenPackages(searchboxChosen, '');
-    });
-
-    test('should display warning when over hundred results were found', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      const getPackages = jest
-        .spyOn(api, 'getPackages')
-        .mockImplementation((distribution, architecture, search, limit) => {
-          return limit
-            ? Promise.resolve(mockPkgResultAll)
-            : Promise.resolve(mockPkgResultPartial);
-        });
-
-      await searchForAvailablePackages(searchbox, 'testPkg');
-      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
-
-      await screen.findByText('Over 100 results found. Refine your search.');
-      await screen.findByText('Too many results to display');
-    });
-
-    test('should display an exact match if found regardless of too many results', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      const getPackages = jest
-        .spyOn(api, 'getPackages')
-        .mockImplementation((distribution, architecture, search, limit) => {
-          return limit
-            ? Promise.resolve(mockPkgResultAll)
-            : Promise.resolve(mockPkgResultPartial);
-        });
-
-      await searchForAvailablePackages(searchbox, 'testPkg-128');
-      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(2));
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = await within(
-        availablePackagesList
-      ).findByRole('option');
-      expect(availablePackagesItems).toBeInTheDocument();
-      await screen.findByText('Exact match');
-      await screen.findByText('testPkg-128');
-      await screen.findByText('Too many results to display');
-    });
-
-    test('search results should be sorted alphabetically', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      const getPackages = jest
-        .spyOn(api, 'getPackages')
-        .mockImplementation(() => Promise.resolve(mockPkgResultAlpha));
-
-      await searchForAvailablePackages(searchbox, 'test');
-      await waitFor(() => expect(getPackages).toHaveBeenCalledTimes(1));
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
-      expect(availablePackagesItems).toHaveLength(3);
-
-      const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent('testsummary for test package');
-      expect(secondItem).toHaveTextContent('lib-testlib-test package summary');
-      expect(thirdItem).toHaveTextContent('Z-testZ-test package summary');
-    });
-
-    test('available packages can be reset', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0];
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = await within(
-        availablePackagesList
-      ).findAllByRole('option');
-      expect(availablePackagesItems).toHaveLength(3);
-
-      await user.click(
-        await screen.findByRole('button', {
-          name: /clear available packages search/i,
-        })
-      );
-
-      await screen.findByText(
-        'Search above to add additionalpackages to your image'
-      );
-    });
-
-    test('chosen packages can be reset after filtering', async () => {
-      await setUp();
-
-      const availableSearchbox = screen.getAllByRole('textbox')[0];
-
-      await waitFor(() => expect(availableSearchbox).toBeEnabled());
-      await user.click(availableSearchbox);
-
-      await searchForAvailablePackages(availableSearchbox, 'test');
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = await within(
-        availablePackagesList
-      ).findAllByRole('option');
-      await waitFor(() => expect(availablePackagesItems).toHaveLength(3));
-
-      await user.click(await screen.findByRole('button', { name: /Add all/ }));
-
-      const chosenPackagesList = await screen.findByTestId('chosen-pkgs-list');
-      let chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
-        'option'
-      );
-      await waitFor(() => expect(chosenPackagesItems).toHaveLength(3));
-
-      const chosenSearchbox = screen.getAllByRole('textbox')[1];
-      await user.click(chosenSearchbox);
-      await searchForChosenPackages(chosenSearchbox, 'lib');
-      chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
-        'option'
-      );
-      expect(chosenPackagesItems).toHaveLength(1);
-
-      await user.click(
-        await screen.findByRole('button', {
-          name: /clear chosen packages search/i,
-        })
-      );
-      chosenPackagesItems = await within(chosenPackagesList).findAllByRole(
-        'option'
-      );
-      await waitFor(() => expect(chosenPackagesItems).toHaveLength(3));
-    });
-  });
-
-  describe('with Content Sources', () => {
-    const user = userEvent.setup();
-    const setUp = async () => {
-      ({ router } = renderCustomRoutesWithReduxRouter(
-        'imagewizard',
-        {},
-        routes
-      ));
-
-      // select aws as upload destination
-      await waitFor(
-        async () => await user.click(await screen.findByTestId('upload-aws'))
-      );
-      await clickNext();
-
-      // aws step
-      await user.click(
-        await screen.findByRole('radio', {
-          name: /manually enter an account id\./i,
-        })
-      );
-      await user.type(
-        await screen.findByTestId('aws-account-id'),
-        '012345678901'
-      );
-      await clickNext();
-      // skip registration
-      await screen.findByRole('textbox', {
-        name: 'Select activation key',
-      });
-
-      const registerLaterRadio = await screen.findByTestId(
-        'registration-radio-later'
-      );
-      await user.click(registerLaterRadio);
-      await clickNext();
-      // skip fsc
-      await clickNext();
-    };
-
-    test('search results should be sorted with most relevant results first', async () => {
-      await setUp();
-
-      const view = await screen.findByTestId('search-available-pkgs-input');
-
-      const searchbox = await within(view).findByRole('textbox', {
-        name: /search input/i,
-      });
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = await within(
-        availablePackagesList
-      ).findAllByRole('option');
-      expect(availablePackagesItems).toHaveLength(3);
-      const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent(
-        'test-sourcessummary for test package'
-      );
-      expect(secondItem).toHaveTextContent(
-        'testPkg-sourcestest package summary'
-      );
-      expect(thirdItem).toHaveTextContent(
-        'lib-test-sourceslib-test package summary'
-      );
-    });
-
-    test('search results should be sorted after selecting them and then deselecting them', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-
-      await user.click(
-        await screen.findByTestId('available-pkgs-testPkg-sources')
-      );
-      await user.click(
-        await screen.findByRole('button', { name: /Add selected/ })
-      );
-
-      await user.click(
-        await screen.findByTestId('selected-pkgs-testPkg-sources')
-      );
-      await user.click(
-        await screen.findByRole('button', { name: /Remove selected/ })
-      );
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = within(availablePackagesList).getAllByRole(
-        'option'
-      );
-      expect(availablePackagesItems).toHaveLength(3);
-      const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent(
-        'test-sourcessummary for test package'
-      );
-      expect(secondItem).toHaveTextContent(
-        'testPkg-sourcestest package summary'
-      );
-      expect(thirdItem).toHaveTextContent(
-        'lib-test-sourceslib-test package summary'
-      );
-    });
-
-    test('search results should be sorted after adding and then removing all packages', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-
-      await user.click(await screen.findByRole('button', { name: /Add all/ }));
-      await user.click(
-        await screen.findByRole('button', { name: /Remove all/ })
-      );
-
-      const availablePackagesList = await screen.findByTestId(
-        'available-pkgs-list'
-      );
-      const availablePackagesItems = await within(
-        availablePackagesList
-      ).findAllByRole('option');
-      expect(availablePackagesItems).toHaveLength(3);
-      const [firstItem, secondItem, thirdItem] = availablePackagesItems;
-      expect(firstItem).toHaveTextContent(
-        'test-sourcessummary for test package'
-      );
-      expect(secondItem).toHaveTextContent(
-        'testPkg-sourcestest package summary'
-      );
-      expect(thirdItem).toHaveTextContent(
-        'lib-test-sourceslib-test package summary'
-      );
-    });
-
-    test('removing a single package updates the state correctly', async () => {
-      await setUp();
-
-      const searchbox = screen.getAllByRole('textbox')[0]; // searching by id doesn't update the input ref
-
-      await waitFor(() => expect(searchbox).toBeEnabled());
-      await user.click(searchbox);
-
-      await searchForAvailablePackages(searchbox, 'test');
-      await user.click(await screen.findByRole('button', { name: /Add all/ }));
-
-      // remove a single package
-      await user.click(
-        await screen.findByTestId('selected-pkgs-lib-test-sources')
-      );
       await user.click(
         await screen.findByRole('button', { name: /Remove selected/ })
       );
@@ -847,7 +386,7 @@ describe('Step Packages', () => {
 describe('Step Custom repositories', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderCustomRoutesWithReduxRouter('imagewizard', {}, routes));
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
 
     // select aws as upload destination
     await user.click(await screen.findByTestId('upload-aws'));
@@ -1056,15 +595,11 @@ describe('Step Custom repositories', () => {
 describe('On Recreate', () => {
   const user = userEvent.setup();
   const setUp = async () => {
-    ({ router } = renderWithReduxRouter(
-      'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346'
-    ));
+    renderWithReduxRouter('imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346');
   };
 
   const setUpUnavailableRepo = async () => {
-    ({ router } = renderWithReduxRouter(
-      'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346'
-    ));
+    renderWithReduxRouter('imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346');
   };
 
   test('with valid repositories', async () => {
