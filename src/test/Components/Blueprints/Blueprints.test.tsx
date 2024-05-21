@@ -109,13 +109,13 @@ describe('Blueprints', () => {
 
     await selectBlueprintById(blueprintIdOutOfSync);
     await screen.findByText(
-      'The selected blueprint is at version 2, images are at version 1. Build images to synchronize with the latest version.'
+      'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.'
     );
 
     await selectBlueprintById(blueprintIdWithComposes);
     expect(
       screen.queryByText(
-        'The selected blueprint is at version 2, images are at version 1. Build images to synchronize with the latest version.'
+        'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.'
       )
     ).not.toBeInTheDocument();
   });

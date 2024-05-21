@@ -137,7 +137,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
             }}
             isInline
-            title={`The selected blueprint is at version ${selectedBlueprintVersion}, images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
+            title={`The selected blueprint is at version ${selectedBlueprintVersion}, the latest images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
             ouiaId="blueprint-out-of-sync-alert"
           />
         )}
