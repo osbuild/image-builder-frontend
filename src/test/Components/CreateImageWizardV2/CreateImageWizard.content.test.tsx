@@ -109,11 +109,10 @@ const toggleSelected = async () => {
 };
 
 const checkRecommendationsEmptyState = async () => {
-  const recommendationButton = await screen.findByRole('button', {
+  await screen.findByRole('button', {
     name: 'Recommended Red Hat packages',
   });
 
-  await userEvent.click(recommendationButton);
   await screen.findByText('Select packages to generate recommendations.');
 };
 

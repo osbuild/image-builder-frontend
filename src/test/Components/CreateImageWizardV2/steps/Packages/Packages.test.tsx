@@ -78,12 +78,6 @@ const deselectFirstPackage = async () => {
   );
 };
 
-const openRecommendationsExpandable = async () => {
-  await userEvent.click(
-    await screen.findByRole('button', { name: /recommended red hat packages/i })
-  );
-};
-
 const addSingleRecommendation = async () => {
   const addPackageButtons = await screen.findAllByText(/add package/i);
   await userEvent.click(addPackageButtons[0]);
@@ -163,7 +157,6 @@ describe('package recommendations', () => {
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
-    await openRecommendationsExpandable();
     await addSingleRecommendation();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -183,7 +176,6 @@ describe('package recommendations', () => {
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
-    await openRecommendationsExpandable();
     await addAllRecommendations();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -203,7 +195,6 @@ describe('package recommendations', () => {
     await goToPackagesStep();
     await searchForPackage();
     await selectFirstPackage();
-    await openRecommendationsExpandable();
     await addSingleRecommendation();
     await switchToSelected();
     await deselectRecommendation();
