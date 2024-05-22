@@ -27,7 +27,7 @@ const PackageRecommendations = () => {
   const undebouncedPackages = useAppSelector(selectPackages);
   const packages = useDebounce(undebouncedPackages);
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
 
   const [fetchRecommendedPackages, { data, isSuccess, isLoading, isError }] =
     useRecommendPackageMutation();
