@@ -104,7 +104,10 @@ export const LandingPage = () => {
 
   return (
     <>
-      <ImageBuilderHeader experimentalFlag={experimentalFlag} />
+      <ImageBuilderHeader
+        experimentalFlag={experimentalFlag}
+        activeTab={activeTabKey}
+      />
       {edgeParityFlag ? (
         <Tabs
           className="pf-c-tabs pf-c-page-header pf-c-table"

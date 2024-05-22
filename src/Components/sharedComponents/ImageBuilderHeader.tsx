@@ -20,7 +20,7 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 import { useFlag } from '@unleash/proxy-client-react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import {
   CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
@@ -33,6 +33,7 @@ import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
   experimentalFlag?: boolean;
+  activeTab?: number;
 };
 
 const AboutImageBuilderPopover = () => {
@@ -92,9 +93,12 @@ const AboutImageBuilderPopover = () => {
 
 export const ImageBuilderHeader = ({
   experimentalFlag,
+  activeTab,
 }: ImageBuilderHeaderPropTypes) => {
+  const navigate = useNavigate();
   const importExportFlag = useFlag('image-builder.import.enabled');
   const [showImportModal, setShowImportModal] = useState(false);
+  const isOnBlueprintsTab = activeTab === 0;
   return (
     <>
       {importExportFlag && (
@@ -121,13 +125,14 @@ export const ImageBuilderHeader = ({
           {experimentalFlag && (
             <>
               <FlexItem align={{ default: 'alignRight' }}>
-                <Link
-                  to={resolveRelPath('imagewizard')}
-                  className="pf-c-button pf-m-primary"
+                <Button
+                  variant="primary"
                   data-testid="blueprints-create-button"
+                  onClick={() => navigate(resolveRelPath('imagewizard'))}
+                  isDisabled={!isOnBlueprintsTab}
                 >
                   Create blueprint
-                </Link>
+                </Button>
               </FlexItem>
               <FlexItem>
                 {importExportFlag && (
@@ -137,6 +142,7 @@ export const ImageBuilderHeader = ({
                     icon={<ImportIcon />}
                     iconPosition="end"
                     onClick={() => setShowImportModal(true)}
+                    isDisabled={!isOnBlueprintsTab}
                   >
                     Import{' '}
                   </Button>
