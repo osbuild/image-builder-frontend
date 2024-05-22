@@ -124,7 +124,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       />
       <Toolbar>
         <ToolbarContent>
-          <Title headingLevel="h1">
+          <Title headingLevel="h2">
             {selectedBlueprintName
               ? `${selectedBlueprintName} images`
               : 'All images'}
