@@ -216,6 +216,7 @@ const Packages = () => {
   }, [
     customRepositories,
     searchCustomRpms,
+    searchDistroRpms,
     debouncedSearchTerm,
     toggleSourceRepos,
     searchRecommendedRpms,
