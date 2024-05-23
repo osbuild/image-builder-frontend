@@ -459,7 +459,7 @@ describe('Step Upload to Google', () => {
     await setUp();
 
     const shareRadioButton = await screen.findByText(
-      /share image with a google acount/i
+      /share image with a google account/i
     );
     await user.click(shareRadioButton);
 
@@ -1176,7 +1176,7 @@ describe('Keyboard accessibility', () => {
     // Target environment google
     expect(
       await screen.findByRole('radio', {
-        name: /share image with a google acount/i,
+        name: /share image with a google account/i,
       })
     ).toHaveFocus();
     await user.type(

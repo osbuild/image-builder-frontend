@@ -42,7 +42,7 @@ const Gcp = () => {
         <Radio
           id="share-with-google"
           data-testid="share-with-google"
-          label="Share image with a Google acount"
+          label="Share image with a Google account"
           name="radio-1"
           description={
             <Text>
