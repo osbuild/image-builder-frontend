@@ -22,7 +22,8 @@ import {
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
   MANAGING_WITH_DNF_URL,
 } from '../../constants';
-import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
+
+import { BuildImagesButtonEmptyState } from '../Blueprints/BuildImagesButton';
 
 type ImagesEmptyStateProps = {
   selectedBlueprint?: string;
@@ -44,9 +45,9 @@ const EmptyBlueprintsImagesTable = () => (
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <BuildImagesButton variant="link">
+          <BuildImagesButtonEmptyState variant="link">
             Build latest images
-          </BuildImagesButton>
+          </BuildImagesButtonEmptyState>
         </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
