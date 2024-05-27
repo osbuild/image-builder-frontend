@@ -343,6 +343,7 @@ export type Distributions =
   | "rhel-87"
   | "rhel-88"
   | "rhel-89"
+  | "rhel-8.10"
   | "rhel-9"
   | "rhel-9-nightly"
   | "rhel-90"
