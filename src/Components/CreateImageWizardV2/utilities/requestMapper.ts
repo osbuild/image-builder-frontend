@@ -242,11 +242,22 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       activationKey: request.customizations.subscription?.['activation-key'],
     },
     packages:
-      request.customizations.packages?.map((pkg) => ({
-        name: pkg,
-        summary: '',
-        repository: '',
-      })) || [],
+      request.customizations.packages
+        ?.filter((pkg) => !pkg.startsWith('@'))
+        .map((pkg) => ({
+          name: pkg,
+          summary: '',
+          repository: '',
+        })) || [],
+    groups:
+      request.customizations.packages
+        ?.filter((grp) => grp.startsWith('@'))
+        .map((grp) => ({
+          name: grp,
+          description: '',
+          repository: '',
+          package_list: [],
+        })) || [],
     stepValidations: {},
   };
 };
