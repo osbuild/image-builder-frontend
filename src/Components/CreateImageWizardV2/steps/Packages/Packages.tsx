@@ -85,6 +85,21 @@ export enum RepoToggle {
   OTHER = 'toggle-other-repos',
 }
 
+export const RedHatRepository = () => {
+  return (
+    <>
+      {' '}
+      <img
+        src={'/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'}
+        alt="Red Hat logo"
+        height={RH_ICON_SIZE}
+        width={RH_ICON_SIZE}
+      />{' '}
+      Red Hat repository
+    </>
+  );
+};
+
 const Packages = () => {
   const dispatch = useDispatch();
 
@@ -698,15 +713,7 @@ const Packages = () => {
             {exactMatch.repository === 'distro' ? (
               <>
                 <Td>
-                  <img
-                    src={
-                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                    }
-                    alt="Red Hat logo"
-                    height={RH_ICON_SIZE}
-                    width={RH_ICON_SIZE}
-                  />{' '}
-                  Red Hat repository
+                  <RedHatRepository />
                 </Td>
                 <Td>Supported</Td>
               </>
@@ -779,13 +786,7 @@ const Packages = () => {
           {pkg.repository === 'distro' ? (
             <>
               <Td>
-                <img
-                  src={'/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'}
-                  alt="Red Hat logo"
-                  height={RH_ICON_SIZE}
-                  width={RH_ICON_SIZE}
-                />{' '}
-                Red Hat repository
+                <RedHatRepository />
               </Td>
               <Td>Supported</Td>
             </>
