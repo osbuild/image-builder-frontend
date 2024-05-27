@@ -17,7 +17,10 @@ import {
   Partition,
   Units,
 } from '../Components/CreateImageWizardV2/steps/FileSystem/FileSystemConfiguration';
-import { IBPackageWithRepositoryInfo } from '../Components/CreateImageWizardV2/steps/Packages/Packages';
+import {
+  GroupWithRepositoryInfo,
+  IBPackageWithRepositoryInfo,
+} from '../Components/CreateImageWizardV2/steps/Packages/Packages';
 import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
 import {
@@ -90,6 +93,7 @@ export type wizardState = {
     recommendedRepositories: ApiRepositoryResponseRead[];
   };
   packages: IBPackageWithRepositoryInfo[];
+  groups: GroupWithRepositoryInfo[];
   details: {
     blueprintName: string;
     blueprintDescription: string;
@@ -153,6 +157,7 @@ const initialState: wizardState = {
     recommendedRepositories: [],
   },
   packages: [],
+  groups: [],
   details: {
     blueprintName: '',
     blueprintDescription: '',
@@ -274,6 +279,10 @@ export const selectRecommendedRepositories = (state: RootState) => {
 
 export const selectPackages = (state: RootState) => {
   return state.wizard.packages;
+};
+
+export const selectGroups = (state: RootState) => {
+  return state.wizard.groups;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -601,6 +610,26 @@ export const wizardSlice = createSlice({
         1
       );
     },
+    addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
+      const existingGrpIndex = state.groups.findIndex(
+        (grp) => grp.name === action.payload.name
+      );
+
+      if (existingGrpIndex !== -1) {
+        state.groups[existingGrpIndex] = action.payload;
+      } else {
+        state.groups.push(action.payload);
+      }
+    },
+    removeGroup: (
+      state,
+      action: PayloadAction<GroupWithRepositoryInfo['name']>
+    ) => {
+      state.groups.splice(
+        state.groups.findIndex((grp) => grp.name === action.payload),
+        1
+      );
+    },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
@@ -684,6 +713,8 @@ export const {
   removeRecommendedRepository,
   addPackage,
   removePackage,
+  addGroup,
+  removeGroup,
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,

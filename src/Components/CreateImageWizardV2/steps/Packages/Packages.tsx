@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 
 import {
   Bullseye,
@@ -52,6 +52,7 @@ import {
   useCreateRepositoryMutation,
   useListRepositoriesQuery,
   useSearchRpmMutation,
+  useSearchPackageGroupMutation,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import {
@@ -59,12 +60,15 @@ import {
   useGetArchitecturesQuery,
 } from '../../../../store/imageBuilderApi';
 import {
-  removePackage,
   selectArchitecture,
   selectPackages,
+  selectGroups,
   selectCustomRepositories,
   selectDistribution,
   addPackage,
+  removePackage,
+  addGroup,
+  removeGroup,
   addRecommendedRepository,
   removeRecommendedRepository,
   selectRecommendedRepositories,
@@ -78,6 +82,13 @@ export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
   repository: PackageRepository;
+};
+
+export type GroupWithRepositoryInfo = {
+  name: string;
+  description: string;
+  repository: PackageRepository;
+  package_list: string[];
 };
 
 export enum RepoToggle {
@@ -108,6 +119,7 @@ const Packages = () => {
   const customRepositories = useAppSelector(selectCustomRepositories);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
@@ -149,6 +161,7 @@ const Packages = () => {
 
   const debouncedSearchTerm = useDebounce(searchTerm.trim());
   const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
+  const debouncedSearchTermIsGroup = debouncedSearchTerm.startsWith('@');
 
   const [
     searchRecommendedRpms,
@@ -168,10 +181,56 @@ const Packages = () => {
     },
   ] = useSearchRpmMutation();
 
+  const [
+    searchDistroGroups,
+    {
+      data: dataDistroGroups,
+      isSuccess: isSuccessDistroGroups,
+      isLoading: isLoadingDistroGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
   const [createRepository, { isLoading: createLoading }] =
     useCreateRepositoryMutation();
 
+  const sortfn = (a: string, b: string) => {
+    const aPkg = a.toLowerCase();
+    const bPkg = b.toLowerCase();
+    // check exact match first
+    if (aPkg === debouncedSearchTerm) {
+      return -1;
+    }
+    if (bPkg === debouncedSearchTerm) {
+      return 1;
+    }
+    // check for packages that start with the search term
+    if (
+      aPkg.startsWith(debouncedSearchTerm) &&
+      !bPkg.startsWith(debouncedSearchTerm)
+    ) {
+      return -1;
+    }
+    if (
+      bPkg.startsWith(debouncedSearchTerm) &&
+      !aPkg.startsWith(debouncedSearchTerm)
+    ) {
+      return 1;
+    }
+    // if both (or neither) start with the search term
+    // sort alphabetically
+    if (aPkg < bPkg) {
+      return -1;
+    }
+    if (bPkg < aPkg) {
+      return 1;
+    }
+    return 0;
+  };
+
   useEffect(() => {
+    if (debouncedSearchTermIsGroup) {
+      return;
+    }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
       searchDistroRpms({
         apiContentUnitSearchRequest: {
@@ -225,6 +284,35 @@ const Packages = () => {
     searchDistroRpms,
     distroRepositories,
     arch,
+  ]);
+
+  useEffect(() => {
+    if (!debouncedSearchTermIsGroup) {
+      return;
+    }
+    if (isSuccessDistroRepositories) {
+      searchDistroGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm.substr(1),
+          urls: distroRepositories
+            .filter((archItem) => {
+              return archItem.arch === arch;
+            })[0]
+            .repositories.flatMap((repo) => {
+              if (!repo.baseurl) {
+                throw new Error(`Repository ${repo} missing baseurl`);
+              }
+              return repo.baseurl;
+            }),
+        },
+      });
+    }
+  }, [
+    customRepositories,
+    searchDistroGroups,
+    debouncedSearchTerm,
+    toggleSourceRepos,
+    epelRepoUrlByDistribution,
   ]);
 
   const EmptySearch = () => {
@@ -591,39 +679,27 @@ const Packages = () => {
     packages,
     toggleSelected,
     toggleSourceRepos,
-  ]).sort((a, b) => {
-    const aPkg = a.name.toLowerCase();
-    const bPkg = b.name.toLowerCase();
-    // check exact match first
-    if (aPkg === debouncedSearchTerm) {
-      return -1;
+  ]).sort((a, b) => sortfn(a.name, b.name));
+
+  const transformedGroups = useMemo(() => {
+    let transformedDistroGroups: GroupWithRepositoryInfo[] = [];
+    if (isSuccessDistroGroups) {
+      transformedDistroGroups = dataDistroGroups!.map((values) => ({
+        name: values.id!,
+        description: values.description!,
+        repository: 'distro',
+        package_list: values.package_list!,
+      }));
     }
-    if (bPkg === debouncedSearchTerm) {
-      return 1;
-    }
-    // check for packages that start with the search term
-    if (
-      aPkg.startsWith(debouncedSearchTerm) &&
-      !bPkg.startsWith(debouncedSearchTerm)
-    ) {
-      return -1;
-    }
-    if (
-      bPkg.startsWith(debouncedSearchTerm) &&
-      !aPkg.startsWith(debouncedSearchTerm)
-    ) {
-      return 1;
-    }
-    // if both (or neither) start with the search term
-    // sort alphabetically
-    if (aPkg < bPkg) {
-      return -1;
-    }
-    if (bPkg < aPkg) {
-      return 1;
-    }
-    return 0;
-  });
+    return transformedDistroGroups;
+  }, [
+    dataDistroGroups,
+    debouncedSearchTerm,
+    isSuccessDistroGroups,
+    groups,
+    toggleSelected,
+    toggleSourceRepos,
+  ]).sort((a, b) => sortfn(a.name, b.name));
 
   const handleSearch = async (
     event: React.FormEvent<HTMLInputElement>,
@@ -662,6 +738,18 @@ const Packages = () => {
       ) {
         dispatch(removeRecommendedRepository(epelRepo.data[0]));
       }
+    }
+  };
+
+  const handleGroupSelect = (
+    grp: GroupWithRepositoryInfo,
+    _: number,
+    isSelecting: boolean
+  ) => {
+    if (isSelecting) {
+      dispatch(addGroup(grp));
+    } else {
+      dispatch(removeGroup(grp.name));
     }
   };
 
@@ -766,86 +854,202 @@ const Packages = () => {
   };
 
   const composePkgTable = () => {
-    return transformedPackages
-      .slice(computeStart(), computeEnd())
-      .map((pkg, rowIndex) => (
-        <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
-          <Td
-            select={{
-              isSelected: packages.some((p) => p.name === pkg.name),
-              rowIndex: rowIndex,
-              onSelect: (event, isSelecting) =>
-                handleSelect(pkg, rowIndex, isSelecting),
-            }}
-          />
-          <Td>{pkg.name}</Td>
-          <Td>
-            {pkg.summary ? (
-              pkg.summary
+    let rows: ReactElement[] = [];
+    rows = rows.concat(
+      transformedGroups
+        .slice(computeStart(), computeEnd())
+        .map((grp, rowIndex) => (
+          <Tr key={`${grp.name}-${rowIndex}`} data-testid="package-row">
+            <Td
+              select={{
+                isSelected: groups.some((g) => g.name === grp.name),
+                rowIndex: rowIndex,
+                onSelect: (event, isSelecting) =>
+                  handleGroupSelect(grp, rowIndex, isSelecting),
+              }}
+            />
+            <Td>
+              @{grp.name}
+              <Popover
+                minWidth="25rem"
+                bodyContent={
+                  <div
+                    style={
+                      grp.package_list.length > 0
+                        ? { height: '40em', overflow: 'scroll' }
+                        : {}
+                    }
+                  >
+                    {grp.package_list.length > 0 ? (
+                      <Table variant="compact">
+                        <Thead>
+                          <Tr>
+                            <Th>Included packages</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {grp.package_list.map((pkg) => (
+                            <Tr key={`details-${pkg}`}>
+                              <Td>{pkg}</Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    ) : (
+                      <Text>This group has no packages</Text>
+                    )}
+                  </div>
+                }
+              >
+                <Button
+                  variant="plain"
+                  aria-label="About included repositories"
+                  component="span"
+                  className="pf-u-p-0"
+                  isInline
+                >
+                  <HelpIcon className="pf-u-ml-xs" />
+                </Button>
+              </Popover>
+            </Td>
+            <Td>
+              {grp.description ? (
+                grp.description
+              ) : (
+                <span className="not-available">Not available</span>
+              )}
+            </Td>
+            {grp.repository === 'distro' ? (
+              <>
+                <Td>
+                  <img
+                    src={
+                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                    }
+                    alt="Red Hat logo"
+                    height={RH_ICON_SIZE}
+                    width={RH_ICON_SIZE}
+                  />{' '}
+                  Red Hat repository
+                </Td>
+                <Td>Supported</Td>
+              </>
+            ) : grp.repository === 'custom' ? (
+              <>
+                <Td>Third party repository</Td>
+                <Td>Not supported</Td>
+              </>
             ) : (
-              <span className="not-available">Not available</span>
+              <>
+                <Td className="not-available">Not available</Td>
+                <Td className="not-available">Not available</Td>
+              </>
             )}
-          </Td>
-          {pkg.repository === 'distro' ? (
-            <>
-              <Td>
-                <RedHatRepository />
-              </Td>
-              <Td>Supported</Td>
-            </>
-          ) : pkg.repository === 'custom' ? (
-            <>
-              <Td>Third party repository</Td>
-              <Td>Not supported</Td>
-            </>
-          ) : pkg.repository === 'recommended' ? (
-            <>
-              <Td>
-                <Icon status="warning">
-                  <OptimizeIcon />
-                </Icon>{' '}
-                EPEL {distribution.startsWith('rhel-8') ? '8' : '9'} Everything
-                x86_64
-              </Td>
-              <Td>Not supported</Td>
-            </>
-          ) : (
-            <>
-              <Td className="not-available">Not available</Td>
-              <Td className="not-available">Not available</Td>
-            </>
-          )}
-        </Tr>
-      ));
+          </Tr>
+        ))
+    );
+
+    rows = rows.concat(
+      transformedPackages
+        .slice(computeStart(), computeEnd())
+        .map((pkg, rowIndex) => (
+          <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
+            <Td
+              select={{
+                isSelected: packages.some((p) => p.name === pkg.name),
+                rowIndex: rowIndex,
+                onSelect: (event, isSelecting) =>
+                  handleSelect(pkg, rowIndex, isSelecting),
+              }}
+            />
+            <Td>{pkg.name}</Td>
+            <Td>
+              {pkg.summary ? (
+                pkg.summary
+              ) : (
+                <span className="not-available">Not available</span>
+              )}
+            </Td>
+            {pkg.repository === 'distro' ? (
+              <>
+                <Td>
+                  <img
+                    src={
+                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                    }
+                    alt="Red Hat logo"
+                    height={RH_ICON_SIZE}
+                    width={RH_ICON_SIZE}
+                  />{' '}
+                  Red Hat repository
+                </Td>
+                <Td>Supported</Td>
+              </>
+            ) : pkg.repository === 'custom' ? (
+              <>
+                <Td>Third party repository</Td>
+                <Td>Not supported</Td>
+              </>
+            ) : pkg.repository === 'recommended' ? (
+              <>
+                <Td>
+                  <Icon status="warning">
+                    <OptimizeIcon />
+                  </Icon>{' '}
+                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                  Everything x86_64
+                </Td>
+                <Td>Not supported</Td>
+              </>
+            ) : (
+              <>
+                <Td className="not-available">Not available</Td>
+                <Td className="not-available">Not available</Td>
+              </>
+            )}
+          </Tr>
+        ))
+    );
+    return rows;
   };
 
   const bodyContent = useMemo(() => {
     switch (true) {
-      case debouncedSearchTermLengthOf1 && transformedPackages.length === 0:
+      case debouncedSearchTermLengthOf1 &&
+        !debouncedSearchTermIsGroup &&
+        transformedPackages.length === 0 &&
+        transformedGroups.length === 0:
         return TooShort();
-      case (toggleSelected === 'toggle-selected' && packages.length === 0) ||
+      case (toggleSelected === 'toggle-selected' &&
+        packages.length === 0 &&
+        groups.length === 0) ||
         (!debouncedSearchTerm && toggleSelected === 'toggle-available'):
         return <EmptySearch />;
       case (debouncedSearchTerm &&
         isLoadingRecommendedPackages &&
         toggleSourceRepos === RepoToggle.OTHER) ||
         (debouncedSearchTerm &&
-          (isLoadingDistroPackages || isLoadingCustomPackages) &&
+          (isLoadingDistroPackages ||
+            isLoadingCustomPackages ||
+            isLoadingDistroGroups) &&
           toggleSourceRepos === RepoToggle.INCLUDED):
         return <Searching />;
       case debouncedSearchTerm &&
         transformedPackages.length === 0 &&
+        transformedGroups.length === 0 &&
         toggleSelected === 'toggle-available':
         return <NoResultsFound />;
       case debouncedSearchTerm &&
         toggleSelected === 'toggle-selected' &&
         toggleSourceRepos === RepoToggle.OTHER &&
-        packages.length > 0:
+        packages.length > 0 &&
+        groups.length > 0:
         return <TryLookingUnderIncluded />;
       case debouncedSearchTerm && transformedPackages.length >= 100:
         return handleExactMatch();
       case (debouncedSearchTerm || toggleSelected === 'toggle-selected') &&
-        transformedPackages.length < 100:
+        transformedPackages.length < 100 &&
+        transformedGroups.length < 100:
         return composePkgTable();
       default:
         return <></>;
@@ -857,17 +1061,21 @@ const Packages = () => {
     perPage,
     debouncedSearchTerm,
     debouncedSearchTermLengthOf1,
+    debouncedSearchTermIsGroup,
     isLoadingCustomPackages,
     isLoadingDistroPackages,
     isLoadingRecommendedPackages,
     isSuccessRecommendedPackages,
+    isLoadingDistroGroups,
     packages.length,
+    groups.length,
     toggleSelected,
     toggleSourceRepos,
     transformedPackages,
     isSelectingPackage,
     recommendedRepositories,
     transformedPackages.length,
+    transformedGroups.length,
   ]);
 
   return (
@@ -886,7 +1094,10 @@ const Packages = () => {
                     data-ouia-component-id="packages-search-input"
                     type="text"
                     validated={
-                      debouncedSearchTermLengthOf1 ? 'error' : 'default'
+                      debouncedSearchTermLengthOf1 &&
+                      !debouncedSearchTermIsGroup
+                        ? 'error'
+                        : 'default'
                     }
                     placeholder="Type to search"
                     aria-label="Search packages"
@@ -994,7 +1205,9 @@ const Packages = () => {
             </ToolbarItem>
             <ToolbarItem variant="pagination">
               <Pagination
-                itemCount={transformedPackages.length}
+                itemCount={
+                  transformedPackages.length + transformedGroups.length
+                }
                 perPage={perPage}
                 page={page}
                 onSetPage={handleSetPage}
@@ -1005,7 +1218,7 @@ const Packages = () => {
           </ToolbarContent>
           <ToolbarContent>
             <CustomHelperText
-              hide={!debouncedSearchTermLengthOf1}
+              hide={!debouncedSearchTermLengthOf1 || debouncedSearchTermIsGroup}
               textValue="The search value must be greater than 1 character"
             />
           </ToolbarContent>
@@ -1030,7 +1243,7 @@ const Packages = () => {
         <Tbody>{bodyContent}</Tbody>
       </Table>
       <Pagination
-        itemCount={transformedPackages.length}
+        itemCount={transformedPackages.length + transformedGroups.length}
         perPage={perPage}
         page={page}
         onSetPage={handleSetPage}

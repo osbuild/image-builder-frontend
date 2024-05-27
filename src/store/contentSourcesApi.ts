@@ -4,6 +4,16 @@ const injectedRtkApi = api.injectEndpoints({
     listFeatures: build.query<ListFeaturesApiResponse, ListFeaturesApiArg>({
       query: () => ({ url: `/features/` }),
     }),
+    searchPackageGroup: build.mutation<
+      SearchPackageGroupApiResponse,
+      SearchPackageGroupApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/package_groups/names`,
+        method: "POST",
+        body: queryArg.apiContentUnitSearchRequest,
+      }),
+    }),
     listRepositories: build.query<
       ListRepositoriesApiResponse,
       ListRepositoriesApiArg
@@ -75,6 +85,12 @@ const injectedRtkApi = api.injectEndpoints({
 export { injectedRtkApi as contentSourcesApi };
 export type ListFeaturesApiResponse = /** status 200 OK */ ApiFeatureSet;
 export type ListFeaturesApiArg = void;
+export type SearchPackageGroupApiResponse =
+  /** status 200 OK */ ApiSearchPackageGroupResponse[];
+export type SearchPackageGroupApiArg = {
+  /** request body */
+  apiContentUnitSearchRequest: ApiContentUnitSearchRequest;
+};
 export type ListRepositoriesApiResponse =
   /** status 200 OK */ ApiRepositoryCollectionResponseRead;
 export type ListRepositoriesApiArg = {
@@ -146,6 +162,37 @@ export type ApiFeature = {
 };
 export type ApiFeatureSet = {
   [key: string]: ApiFeature;
+};
+export type ApiSearchPackageGroupResponse = {
+  /** Description of the package group found */
+  description?: string;
+  /** Package group ID */
+  id?: string;
+  /** Name of package group found */
+  package_group_name?: string;
+  /** Package list of the package group found */
+  package_list?: string[];
+};
+export type ErrorsHandlerError = {
+  /** An explanation specific to the problem */
+  detail?: string;
+  /** HTTP status code applicable to the error */
+  status?: number;
+  /** A summary of the problem */
+  title?: string;
+};
+export type ErrorsErrorResponse = {
+  errors?: ErrorsHandlerError[];
+};
+export type ApiContentUnitSearchRequest = {
+  /** Maximum number of records to return for the search */
+  limit?: number;
+  /** Search string to search content unit names */
+  search?: string;
+  /** URLs of repositories to search */
+  urls?: string[];
+  /** List of repository UUIDs to search */
+  uuids?: string[];
 };
 export type ApiSnapshotResponse = {
   /** Count of each content type */
@@ -316,17 +363,6 @@ export type ApiRepositoryCollectionResponseRead = {
   links?: ApiLinks;
   meta?: ApiResponseMetadata;
 };
-export type ErrorsHandlerError = {
-  /** An explanation specific to the problem */
-  detail?: string;
-  /** HTTP status code applicable to the error */
-  status?: number;
-  /** A summary of the problem */
-  title?: string;
-};
-export type ErrorsErrorResponse = {
-  errors?: ErrorsHandlerError[];
-};
 export type ApiRepositoryRequest = {
   /** Architecture to restrict client usage to */
   distribution_arch?: string;
@@ -375,16 +411,6 @@ export type ApiSearchRpmResponse = {
   /** Summary of the package found */
   summary?: string;
 };
-export type ApiContentUnitSearchRequest = {
-  /** Maximum number of records to return for the search */
-  limit?: number;
-  /** Search string to search content unit names */
-  search?: string;
-  /** URLs of repositories to search */
-  urls?: string[];
-  /** List of repository UUIDs to search */
-  uuids?: string[];
-};
 export type ApiSnapshotForDate = {
   /** Is the snapshot after the specified date */
   is_after?: boolean;
@@ -404,6 +430,7 @@ export type ApiListSnapshotByDateRequest = {
 };
 export const {
   useListFeaturesQuery,
+  useSearchPackageGroupMutation,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
   useListRepositoriesRpmsQuery,

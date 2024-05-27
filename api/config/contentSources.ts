@@ -12,6 +12,7 @@ const config: ConfigFile = {
     'listRepositories',
     'listRepositoriesRpms',
     'searchRpm',
+    'searchPackageGroup',
     'listFeatures',
     'listSnapshotsByDate',
   ],
