@@ -34,6 +34,7 @@ import {
   HelpIcon,
   OptimizeIcon,
   SearchIcon,
+  TimesIcon,
 } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
@@ -613,6 +614,10 @@ const Packages = () => {
     setSearchTerm(selection);
   };
 
+  const handleClear = async () => {
+    setSearchTerm('');
+  };
+
   const handleSelect = (
     pkg: IBPackageWithRepositoryInfo,
     _: number,
@@ -886,6 +891,17 @@ const Packages = () => {
                     onChange={handleSearch}
                   />
                 </InputGroupItem>
+                {searchTerm && (
+                  <InputGroupItem>
+                    <Button
+                      variant="control"
+                      aria-label="clear-package-search"
+                      onClick={handleClear}
+                      icon={<TimesIcon />}
+                      ouiaId="clear-package-search-button"
+                    />
+                  </InputGroupItem>
+                )}
               </InputGroup>
             </ToolbarItem>
             <ToolbarItem>
