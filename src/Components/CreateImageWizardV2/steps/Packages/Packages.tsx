@@ -194,6 +194,7 @@ const Packages = () => {
           },
         });
       }
+      setPage(1);
     }
   }, [
     customRepositories,
@@ -796,55 +797,6 @@ const Packages = () => {
       ));
   };
 
-  const bodyContent = useMemo(() => {
-    switch (true) {
-      case debouncedSearchTermLengthOf1 && transformedPackages.length === 0:
-        return TooShort();
-      case (toggleSelected === 'toggle-selected' && packages.length === 0) ||
-        (!debouncedSearchTerm && toggleSelected === 'toggle-available'):
-        return <EmptySearch />;
-      case (debouncedSearchTerm &&
-        isLoadingRecommendedPackages &&
-        toggleSourceRepos === RepoToggle.OTHER) ||
-        (debouncedSearchTerm &&
-          (isLoadingDistroPackages || isLoadingCustomPackages) &&
-          toggleSourceRepos === RepoToggle.INCLUDED):
-        return <Searching />;
-      case debouncedSearchTerm &&
-        transformedPackages.length === 0 &&
-        toggleSelected === 'toggle-available':
-        return <NoResultsFound />;
-      case debouncedSearchTerm &&
-        toggleSelected === 'toggle-selected' &&
-        toggleSourceRepos === RepoToggle.OTHER &&
-        packages.length > 0:
-        return <TryLookingUnderIncluded />;
-      case debouncedSearchTerm && transformedPackages.length >= 100:
-        return handleExactMatch();
-      case (debouncedSearchTerm || toggleSelected === 'toggle-selected') &&
-        transformedPackages.length < 100:
-        return composePkgTable();
-      default:
-        return <></>;
-    }
-    // Would need significant rewrite to fix this
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    debouncedSearchTerm,
-    debouncedSearchTermLengthOf1,
-    isLoadingCustomPackages,
-    isLoadingDistroPackages,
-    isLoadingRecommendedPackages,
-    isSuccessRecommendedPackages,
-    packages.length,
-    toggleSelected,
-    toggleSourceRepos,
-    transformedPackages,
-    isSelectingPackage,
-    recommendedRepositories,
-    transformedPackages.length,
-  ]);
-
   return (
     <>
       <RepositoryModal />
@@ -991,7 +943,37 @@ const Packages = () => {
             <Th width={20}>Support</Th>
           </Tr>
         </Thead>
-        <Tbody>{bodyContent}</Tbody>
+        <Tbody>
+          {debouncedSearchTermLengthOf1 && transformedPackages.length === 0 ? (
+            <TooShort />
+          ) : (toggleSelected === 'toggle-selected' && packages.length === 0) ||
+            (!debouncedSearchTerm && toggleSelected === 'toggle-available') ? (
+            <EmptySearch />
+          ) : (debouncedSearchTerm &&
+              isLoadingRecommendedPackages &&
+              toggleSourceRepos === RepoToggle.OTHER) ||
+            (debouncedSearchTerm &&
+              (isLoadingDistroPackages || isLoadingCustomPackages) &&
+              toggleSourceRepos === RepoToggle.INCLUDED) ? (
+            <Searching />
+          ) : debouncedSearchTerm &&
+            transformedPackages.length === 0 &&
+            toggleSelected === 'toggle-available' ? (
+            <NoResultsFound />
+          ) : debouncedSearchTerm &&
+            toggleSelected === 'toggle-selected' &&
+            toggleSourceRepos === RepoToggle.OTHER &&
+            packages.length > 0 ? (
+            <TryLookingUnderIncluded />
+          ) : debouncedSearchTerm && transformedPackages.length >= 100 ? (
+            handleExactMatch()
+          ) : (debouncedSearchTerm || toggleSelected === 'toggle-selected') &&
+            transformedPackages.length < 100 ? (
+            composePkgTable()
+          ) : (
+            <></>
+          )}
+        </Tbody>
       </Table>
       <Pagination
         itemCount={transformedPackages.length}
