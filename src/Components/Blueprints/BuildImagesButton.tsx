@@ -19,7 +19,8 @@ export const BuildImagesButton = ({
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
   const onBuildHandler = async () => {
-    selectedBlueprintId && (await buildBlueprint({ id: selectedBlueprintId }));
+    selectedBlueprintId &&
+      (await buildBlueprint({ id: selectedBlueprintId, body: {} }));
   };
   return (
     <Button

@@ -130,6 +130,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/experimental/blueprints/${queryArg.id}/compose`,
         method: "POST",
+        body: queryArg.body,
       }),
     }),
     getBlueprintComposes: build.query<
@@ -284,6 +285,10 @@ export type ComposeBlueprintApiResponse =
 export type ComposeBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
+  /** list of target image types that the user wants to build for this compose */
+  body: {
+    image_types?: ImageTypes[];
+  };
 };
 export type GetBlueprintComposesApiResponse =
   /** status 200 a list of composes */ ComposesResponse;
