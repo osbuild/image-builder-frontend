@@ -59,6 +59,24 @@ afterEach(() => {
   jest.clearAllMocks();
 });
 
+const selectRhel8 = async () => {
+  await userEvent.click(
+    screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0]
+  );
+  const rhel8 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 8/i,
+  });
+  await userEvent.click(rhel8);
+};
+
+const clickFromImageOutputToOpenScap = async () => {
+  await clickNext();
+  await userEvent.click(await screen.findByLabelText('Register later'));
+  await clickNext(); // skip registration
+};
+
 describe('Step Compliance', () => {
   const user = userEvent.setup();
   const setup = async () => {
@@ -185,7 +203,35 @@ describe('Step Compliance', () => {
     await screen.findByText(/aide/i);
     await screen.findByText(/neovim/i);
   });
+
+  test('OpenSCAP dropdown is disabled for WSL targets only', async () => {
+    await setup();
+    await selectRhel8();
+    await user.click(await screen.findByTestId('checkbox-wsl'));
+    await clickFromImageOutputToOpenScap();
+    await screen.findByText(
+      /OpenSCAP profiles are not compatible with WSL images/i
+    );
+    expect(
+      await screen.findByRole('textbox', { name: /select a profile/i })
+    ).toBeDisabled();
+  });
+
+  test('Alert displayed and OpenSCAP dropdown enabled when targets include WSL', async () => {
+    await setup();
+    await selectRhel8();
+    await user.click(await screen.findByTestId('checkbox-image-installer'));
+    await user.click(await screen.findByTestId('checkbox-wsl'));
+    await clickFromImageOutputToOpenScap();
+    await screen.findByText(
+      /OpenSCAP profiles are not compatible with WSL images/i
+    );
+    expect(
+      await screen.findByRole('textbox', { name: /select a profile/i })
+    ).toBeEnabled();
+  });
 });
+
 //
 // TO DO - check if the correct version of Wizard is tested
 //
