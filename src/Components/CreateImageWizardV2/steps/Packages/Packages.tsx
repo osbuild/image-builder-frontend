@@ -830,6 +830,8 @@ const Packages = () => {
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    page,
+    perPage,
     debouncedSearchTerm,
     debouncedSearchTermLengthOf1,
     isLoadingCustomPackages,
