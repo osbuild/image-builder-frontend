@@ -39,7 +39,9 @@ import {
   changeFileSystemPartitionMode,
   removePackage,
   clearPartitions,
+  selectImageTypes,
 } from '../../../../store/wizardSlice';
+import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../utilities/parseSizeUnit';
 import { Partition, Units } from '../FileSystem/FileSystemConfiguration';
 
@@ -47,6 +49,7 @@ const ProfileSelector = () => {
   const oscapProfile = useAppSelector(selectProfile);
   const oscapData = useServerStore();
   const release = useAppSelector(selectDistribution);
+  const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const {
@@ -201,7 +204,7 @@ const ProfileSelector = () => {
         isOpen={isOpen}
         placeholderText="Select a profile"
         typeAheadAriaLabel="Select a profile"
-        isDisabled={!isSuccess}
+        isDisabled={!isSuccess || hasWslTargetOnly}
         onFilter={(_event, value) => {
           if (profiles) {
             return [<OScapNoneOption key="oscap-none-option" />].concat(
@@ -295,9 +298,17 @@ const OScapSelectOption = ({
 
 export const Oscap = () => {
   const oscapProfile = useAppSelector(selectProfile);
+  const environments = useAppSelector(selectImageTypes);
 
   return (
     <>
+      {environments.includes('wsl') && (
+        <Alert
+          variant="warning"
+          isInline
+          title="OpenSCAP profiles are not compatible with WSL images."
+        />
+      )}
       <ProfileSelector />
       <OscapProfileInformation />
       {oscapProfile && (
