@@ -41,7 +41,7 @@ export const EditSaveAndBuildBtn = ({
         id: blueprintId,
         createBlueprintRequest: requestBody,
       }));
-    buildBlueprint({ id: blueprintId });
+    buildBlueprint({ id: blueprintId, body: {} });
   };
 
   return (

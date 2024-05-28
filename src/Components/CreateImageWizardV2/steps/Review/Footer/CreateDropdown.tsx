@@ -39,7 +39,7 @@ export const CreateSaveAndBuildBtn = ({
       (await createBlueprint({
         createBlueprintRequest: requestBody,
       }).unwrap()); // unwrap - access the success payload immediately after a mutation
-    blueprint && buildBlueprint({ id: blueprint.id });
+    blueprint && buildBlueprint({ id: blueprint.id, body: {} });
   };
 
   return (
