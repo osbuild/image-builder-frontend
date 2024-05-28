@@ -8,12 +8,12 @@ import FileSystemPartition from './FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectFileSystemPartitionMode } from '../../../../store/wizardSlice';
-import { useHasIsoTargetOnly } from '../../utilities/hasIsoTargetOnly';
+import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 export type FileSystemPartitionMode = 'automatic' | 'manual';
 
 const FileSystemStep = () => {
   const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
-  const hasIsoTargetOnly = useHasIsoTargetOnly();
+  const hasIsoTargetOnly = useHasSpecificTargetOnly('image-installer');
 
   return (
     <Form>
