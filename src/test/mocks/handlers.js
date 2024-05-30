@@ -31,7 +31,6 @@ import {
   oscapCustomizations,
 } from '../fixtures/oscap';
 import {
-  mockPackagesResults,
   mockPkgRecommendations,
   mockSourcesPackagesResults,
 } from '../fixtures/packages';
@@ -75,7 +74,7 @@ export const handlers = [
   ),
   rest.get(`${IMAGE_BUILDER_API}/packages`, (req, res, ctx) => {
     const search = req.url.searchParams.get('search');
-    return res(ctx.status(200), ctx.json(mockPackagesResults(search)));
+    return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
   }),
   rest.get(`${IMAGE_BUILDER_API}/architectures/:distro`, (req, res, ctx) => {
     const { distro } = req.params;
