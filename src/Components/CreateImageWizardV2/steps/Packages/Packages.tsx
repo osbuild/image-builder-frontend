@@ -47,6 +47,7 @@ import {
   RH_ICON_SIZE,
 } from '../../../../constants';
 import {
+  ApiRepositoryResponseRead,
   useCreateRepositoryMutation,
   useListRepositoriesQuery,
   useSearchRpmMutation,
@@ -151,7 +152,8 @@ const Packages = () => {
     },
   ] = useSearchRpmMutation();
 
-  const [createRepository] = useCreateRepositoryMutation();
+  const [createRepository, { isLoading: createLoading }] =
+    useCreateRepositoryMutation();
 
   useEffect(() => {
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
@@ -202,6 +204,10 @@ const Packages = () => {
     toggleSourceRepos,
     searchRecommendedRpms,
     epelRepoUrlByDistribution,
+    isSuccessDistroRepositories,
+    searchDistroRpms,
+    distroRepositories,
+    arch,
   ]);
 
   const EmptySearch = () => {
@@ -441,6 +447,8 @@ const Packages = () => {
           <Button
             key="add"
             variant="primary"
+            isLoading={createLoading}
+            isDisabled={createLoading}
             onClick={handleConfirmModalToggle}
           >
             Add listed repositories
@@ -723,16 +731,22 @@ const Packages = () => {
         `There was an error while adding the recommended repository.`
       );
     }
+
     if (epelRepo.data.length === 0) {
-      await createRepository({
+      const result = await createRepository({
         apiRepositoryRequest: distribution.startsWith('rhel-8')
           ? EPEL_8_REPO_DEFINITION
           : EPEL_9_REPO_DEFINITION,
       });
+      dispatch(
+        addRecommendedRepository(
+          (result as { data: ApiRepositoryResponseRead }).data
+        )
+      );
+    } else {
+      dispatch(addRecommendedRepository(epelRepo.data[0]));
     }
-
     dispatch(addPackage(isSelectingPackage!));
-    dispatch(addRecommendedRepository(epelRepo.data[0]));
     setIsRepoModalOpen(!isRepoModalOpen);
   };
 

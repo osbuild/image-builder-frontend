@@ -95,7 +95,14 @@ export const handlers = [
     );
     const limit = req.url.searchParams.get('limit');
     const offset = req.url.searchParams.get('offset');
-    const args = { available_for_arch, available_for_version, limit, offset };
+    const search = req.url.searchParams.get('search');
+    const args = {
+      available_for_arch,
+      available_for_version,
+      limit,
+      offset,
+      search,
+    };
     return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
   }),
   rest.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, (req, res, ctx) => {
