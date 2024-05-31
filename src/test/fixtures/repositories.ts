@@ -11,6 +11,7 @@ type repoArgs = {
   available_for_version: ListRepositoriesApiArg['availableForVersion'];
   limit: ListRepositoriesApiArg['limit'];
   offset: ListRepositoriesApiArg['offset'];
+  search: ListRepositoriesApiArg['search'];
 };
 
 export const mockRepositoryResults = (request: repoArgs) => {
@@ -52,6 +53,12 @@ const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
   const fillerRepos = generateFillerRepos(numFillerRepos);
 
   repos = [...repos, ...fillerRepos];
+
+  args.search &&
+    (repos = repos.filter(
+      (repo) =>
+        repo.name?.includes(args.search!) || repo.url?.includes(args.search!)
+    ));
 
   return repos;
 };

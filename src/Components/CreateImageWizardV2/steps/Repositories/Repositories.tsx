@@ -1,37 +1,32 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   Alert,
   Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateVariant,
   Pagination,
   Panel,
   PanelMain,
   SearchInput,
-  Spinner,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  EmptyStateHeader,
-  EmptyStateFooter,
   ToggleGroup,
   ToggleGroupItem,
   PaginationVariant,
+  Grid,
   Modal,
 } from '@patternfly/react-core';
-import {
-  Dropdown,
-  DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { RepositoryIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { BulkSelect } from './components/BulkSelect';
+import Empty from './components/Empty';
+import { Error } from './components/Error';
+import { Loading } from './components/Loading';
+import {
+  convertSchemaToIBCustomRepo,
+  convertSchemaToIBPayloadRepo,
+} from './components/Utilities';
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
@@ -41,144 +36,18 @@ import {
 } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  CustomRepository,
-  Repository,
-} from '../../../../store/imageBuilderApi';
-import {
   changeCustomRepositories,
   changePayloadRepositories,
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
+  selectPackages,
+  selectPayloadRepositories,
   selectRecommendedRepositories,
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-
-type BulkSelectProps = {
-  selected: (string | undefined)[];
-  count: number | undefined;
-  filteredCount: number | undefined;
-  perPage: number;
-  handleSelectAll: Function;
-  handleSelectPage: Function;
-  handleDeselectAll: Function;
-  isDisabled: boolean;
-};
-
-const BulkSelect = ({
-  selected,
-  count,
-  filteredCount,
-  perPage,
-  handleSelectAll,
-  handleSelectPage,
-  handleDeselectAll,
-  isDisabled,
-}: BulkSelectProps) => {
-  const [dropdownIsOpen, setDropdownIsOpen] = useState(false);
-
-  const numSelected = selected.length;
-  const allSelected = count !== 0 ? numSelected === count : undefined;
-  const anySelected = numSelected > 0;
-  const someChecked = anySelected ? null : false;
-  const isChecked = allSelected ? true : someChecked;
-
-  const items = [
-    <DropdownItem
-      key="none"
-      onClick={() => handleDeselectAll()}
-    >{`Select none (0 items)`}</DropdownItem>,
-    <DropdownItem
-      key="page"
-      onClick={() => handleSelectPage()}
-    >{`Select page (${
-      perPage > filteredCount! ? filteredCount : perPage
-    } items)`}</DropdownItem>,
-    <DropdownItem
-      key="all"
-      onClick={() => handleSelectAll()}
-    >{`Select all (${count} items)`}</DropdownItem>,
-  ];
-
-  const handleDropdownSelect = () => {};
-
-  const toggleDropdown = () => setDropdownIsOpen(!dropdownIsOpen);
-
-  return (
-    <Dropdown
-      onSelect={handleDropdownSelect}
-      toggle={
-        <DropdownToggle
-          id="stacked-example-toggle"
-          isDisabled={isDisabled}
-          splitButtonItems={[
-            <DropdownToggleCheckbox
-              id="example-checkbox-1"
-              key="split-checkbox"
-              aria-label="Select all"
-              isChecked={isChecked}
-              onClick={() => {
-                anySelected ? handleDeselectAll() : handleSelectAll();
-              }}
-            />,
-          ]}
-          onToggle={toggleDropdown}
-        >
-          {numSelected !== 0 ? `${numSelected} selected` : null}
-        </DropdownToggle>
-      }
-      isOpen={dropdownIsOpen}
-      dropdownItems={items}
-    />
-  );
-};
-
-// Utility function to convert from Content Sources to Image Builder custom repo API schema
-export const convertSchemaToIBCustomRepo = (
-  repo: ApiRepositoryResponseRead
-) => {
-  const imageBuilderRepo: CustomRepository = {
-    id: repo.uuid!,
-    name: repo.name,
-    baseurl: [repo.url!],
-    check_gpg: false,
-  };
-  // only include the flag if enabled
-  if (repo.module_hotfixes) {
-    imageBuilderRepo.module_hotfixes = repo.module_hotfixes;
-  }
-  if (repo.gpg_key) {
-    imageBuilderRepo.gpgkey = [repo.gpg_key];
-    imageBuilderRepo.check_gpg = true;
-    imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
-  }
-
-  return imageBuilderRepo;
-};
-
-// Utility function to convert from Content Sources to Image Builder payload repo API schema
-export const convertSchemaToIBPayloadRepo = (
-  repo: ApiRepositoryResponseRead
-) => {
-  const imageBuilderRepo: Repository = {
-    baseurl: repo.url,
-    rhsm: false,
-    check_gpg: false,
-  };
-  // only include the flag if enabled
-  if (repo.module_hotfixes) {
-    imageBuilderRepo.module_hotfixes = repo.module_hotfixes;
-  }
-  if (repo.gpg_key) {
-    imageBuilderRepo.gpgkey = repo.gpg_key;
-    imageBuilderRepo.check_gpg = true;
-    imageBuilderRepo.check_repo_gpg = repo.metadata_verification;
-  }
-
-  return imageBuilderRepo;
-};
+import useDebounce from '../../../../Utilities/useDebounce';
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
@@ -186,78 +55,255 @@ const Repositories = () => {
   const arch = useAppSelector(selectArchitecture);
   const distribution = useAppSelector(selectDistribution);
   const version = releaseToVersion(distribution);
-  const repositoriesList = useAppSelector(selectCustomRepositories);
+  const customRepositories = useAppSelector(selectCustomRepositories);
+  const packages = useAppSelector(selectPackages);
+  const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
-  const [isRepoRemovalModalOpen, setIsRepoRemovalModalOpen] = useState(false);
-  const [repoToRemove, setRepoToRemove] = useState('');
+  const [modalOpen, setModalOpen] = useState(false);
+  const [reposToRemove, setReposToRemove] = useState<string[]>([]);
   const [filterValue, setFilterValue] = useState('');
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
-  const [toggleSelected, setToggleSelected] = useState('toggle-group-all');
-  const [selected, setSelected] = useState(
-    repositoriesList ? repositoriesList.flatMap((repo) => repo.baseurl) : []
+  const [toggleSelected, setToggleSelected] = useState<
+    'toggle-group-all' | 'toggle-group-selected'
+  >('toggle-group-all');
+
+  const debouncedFilterValue = useDebounce(filterValue);
+
+  const selected = useMemo(
+    () =>
+      new Set(
+        [
+          ...customRepositories.map(({ baseurl }) => baseurl || []).flat(1),
+          ...(payloadRepositories.map(({ baseurl }) => baseurl) || []),
+          ...(recommendedRepos.map(({ url }) => url) || []),
+        ].filter((url) => !!url) as string[]
+      ),
+    [customRepositories, payloadRepositories, recommendedRepos]
   );
 
-  const firstRequest = useListRepositoriesQuery(
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialSelectedState = useMemo(() => new Set([...selected]), []);
+
+  const {
+    data: { data: previousReposData = [] } = {},
+    isLoading: previousLoading,
+    isSuccess: previousSuccess,
+    refetch: refetchIntial,
+  } = useListRepositoriesQuery(
     {
       availableForArch: arch,
       availableForVersion: version,
-      contentType: 'rpm',
       origin: 'external',
-      limit: 100,
+      limit: 999,
       offset: 0,
+      url: [...initialSelectedState].join(','),
     },
-    // The cached repos may be incorrect, for now refetch on mount to ensure that
-    // they are accurate when this step loads. Future PR will implement prefetching
-    // and this can be removed.
-    { refetchOnMountOrArgChange: true }
+    { refetchOnMountOrArgChange: false }
   );
 
-  const skip =
-    firstRequest?.data?.meta?.count === undefined ||
-    firstRequest?.data?.meta?.count <= 100;
-
-  // Fetch *all* repositories if there are more than 100 so that typeahead filter works
-  const followupRequest = useListRepositoriesQuery(
-    {
-      availableForArch: arch,
-      availableForVersion: version,
-      contentType: 'rpm',
-      origin: 'external',
-      limit: firstRequest?.data?.meta?.count,
-      offset: 0,
-    },
-    {
-      refetchOnMountOrArgChange: true,
-      skip: skip,
+  useEffect(() => {
+    if (toggleSelected === 'toggle-group-selected' && !selected.size) {
+      setToggleSelected('toggle-group-all');
     }
+  }, [selected, toggleSelected]);
+
+  const {
+    data: { data: contentList = [], meta: { count } = { count: 0 } } = {},
+    isError,
+    isFetching,
+    isLoading,
+    refetch: refetchMain,
+  } = useListRepositoriesQuery(
+    {
+      availableForArch: arch,
+      availableForVersion: version,
+      contentType: 'rpm',
+      origin: 'external',
+      limit: perPage,
+      offset: perPage * (page - 1),
+      search: debouncedFilterValue,
+      url:
+        toggleSelected === 'toggle-group-selected'
+          ? [...selected].join(',')
+          : undefined,
+    },
+    { refetchOnMountOrArgChange: 60 }
   );
 
-  const { data, isError, isFetching, isLoading, isSuccess, refetch } =
-    useMemo(() => {
-      if (firstRequest?.data?.meta?.count) {
-        if (firstRequest?.data?.meta?.count > 100) {
-          return { ...followupRequest };
-        }
-      }
-      return { ...firstRequest };
-    }, [firstRequest, followupRequest]);
-
-  const handleToggleClick = (event: React.MouseEvent) => {
-    const id = event.currentTarget.id;
-    setPage(1);
-    setToggleSelected(id);
+  const refresh = () => {
+    // In case the user deletes an intially selected repository.
+    // Refetching will react to both added and removed repositories.
+    refetchMain();
+    refetchIntial();
   };
 
-  const isRepoSelected = (repoURL: string | undefined) => {
-    return (
-      // repository is in the list of selected repositories
-      // or it comes from the repository recommendations
-      selected.includes(repoURL) ||
-      (recommendedRepos.length > 0 && repoURL?.includes('epel')) ||
-      false
+  const addSelected = (
+    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[]
+  ) => {
+    let reposToAdd: ApiRepositoryResponseRead[] = [];
+    // Check if array of items
+    if ((repo as ApiRepositoryResponseRead[])?.length) {
+      reposToAdd = (repo as ApiRepositoryResponseRead[]).filter(
+        ({ url }) => url && !selected.has(url)
+      );
+    } else {
+      // Then it should be a single item
+      const singleRepo = repo as ApiRepositoryResponseRead;
+      if (singleRepo?.url && !selected.has(singleRepo.url)) {
+        reposToAdd.push(singleRepo);
+      }
+    }
+
+    const customToAdd = reposToAdd.map((repo) =>
+      convertSchemaToIBCustomRepo(repo!)
     );
+
+    const payloadToAdd = reposToAdd.map((repo) =>
+      convertSchemaToIBPayloadRepo(repo!)
+    );
+
+    dispatch(changeCustomRepositories([...customRepositories, ...customToAdd]));
+    dispatch(
+      changePayloadRepositories([...payloadRepositories, ...payloadToAdd])
+    );
+  };
+
+  const clearSelected = () => {
+    const recommendedReposSet = new Set(recommendedRepos.map(({ url }) => url));
+    const initiallySelected = [...selected].some(
+      (url) => url && initialSelectedState.has(url)
+    );
+
+    if (initiallySelected) {
+      setModalOpen(true);
+      setReposToRemove([...selected]);
+      return;
+    }
+
+    dispatch(
+      changeCustomRepositories(
+        customRepositories.filter(({ baseurl }) =>
+          baseurl?.some((url) => recommendedReposSet.has(url))
+        )
+      )
+    );
+
+    dispatch(
+      changePayloadRepositories(
+        payloadRepositories.filter(({ baseurl }) =>
+          recommendedReposSet.has(baseurl)
+        )
+      )
+    );
+  };
+
+  const removeSelected = (
+    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[]
+  ) => {
+    if ((repo as ApiRepositoryResponseRead[])?.length) {
+      const itemsToRemove = new Set(
+        (repo as ApiRepositoryResponseRead[]).map(({ url }) => url)
+      );
+
+      dispatch(
+        changeCustomRepositories(
+          customRepositories.filter(
+            ({ baseurl }) => !baseurl?.some((url) => itemsToRemove.has(url))
+          )
+        )
+      );
+
+      dispatch(
+        changePayloadRepositories(
+          payloadRepositories.filter(
+            ({ baseurl }) => !itemsToRemove.has(baseurl)
+          )
+        )
+      );
+
+      return;
+    }
+
+    const urlToRemove = (repo as ApiRepositoryResponseRead)?.url;
+    if (urlToRemove) {
+      dispatch(
+        changeCustomRepositories(
+          customRepositories.filter(
+            ({ baseurl }) => !baseurl?.some((url) => urlToRemove === url)
+          )
+        )
+      );
+
+      dispatch(
+        changePayloadRepositories(
+          payloadRepositories.filter(({ baseurl }) => urlToRemove !== baseurl)
+        )
+      );
+    }
+  };
+
+  const handleAddRemove = (
+    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
+    selected: boolean
+  ) => {
+    if (selected) return addSelected(repo);
+    if ((repo as ApiRepositoryResponseRead[])?.length) {
+      const initiallySelectedItems = (repo as ApiRepositoryResponseRead[]).map(
+        ({ url }) => url
+      );
+
+      const hasSome = initiallySelectedItems.some(
+        (url) => url && initialSelectedState.has(url)
+      );
+
+      if (hasSome) {
+        setModalOpen(true);
+        setReposToRemove(initiallySelectedItems as string[]);
+        return;
+      }
+    } else {
+      const isInitiallySelected =
+        (repo as ApiRepositoryResponseRead).url &&
+        initialSelectedState.has((repo as ApiRepositoryResponseRead).url || '');
+      if (isInitiallySelected) {
+        setModalOpen(true);
+        setReposToRemove([(repo as ApiRepositoryResponseRead).url as string]);
+        return;
+      }
+    }
+    return removeSelected(repo);
+  };
+
+  const previousReposNowUnavailable: number = useMemo(() => {
+    if (
+      !previousLoading &&
+      previousSuccess &&
+      previousReposData.length !== initialSelectedState.size &&
+      previousReposData.length < initialSelectedState.size
+    ) {
+      const prevSet = new Set(previousReposData.map(({ url }) => url));
+      const itemsToRemove = [...initialSelectedState]
+        .filter((url) => !prevSet.has(url))
+        .map((url) => ({ url })) as ApiRepositoryResponseRead[];
+      removeSelected(itemsToRemove);
+      return initialSelectedState.size - previousReposData.length;
+    }
+    return 0;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    previousLoading,
+    previousSuccess,
+    previousReposData,
+    initialSelectedState,
+  ]);
+
+  const handleToggleClick = (
+    toggleType: 'toggle-group-all' | 'toggle-group-selected'
+  ) => {
+    setPage(1);
+    setToggleSelected(toggleType);
   };
 
   const isRepoDisabled = (
@@ -271,7 +317,8 @@ const Repositories = () => {
     if (
       recommendedRepos.length > 0 &&
       repo.url?.includes('epel') &&
-      isSelected
+      isSelected &&
+      packages.length
     ) {
       return [
         true,
@@ -299,418 +346,221 @@ const Repositories = () => {
     setPage(newPage);
   };
 
-  const handleSetPage = (_: React.MouseEvent, newPage: number) => {
-    setPage(newPage);
-  };
-
-  // filter displayed selected packages
   const handleFilterRepositories = (
-    event: React.FormEvent<HTMLInputElement>,
+    e: React.FormEvent<HTMLInputElement>,
     value: string
   ) => {
+    e.preventDefault();
     setPage(1);
     setFilterValue(value);
   };
 
-  const filteredRepositoryURLs = useMemo(() => {
-    if (!data || !data.data) {
-      return [];
-    }
-    const repoUrls = data.data.filter((repo) =>
-      repo.name?.toLowerCase().includes(filterValue.toLowerCase())
-    );
-    if (toggleSelected === 'toggle-group-all') {
-      return repoUrls.map((repo: ApiRepositoryResponseRead) => repo.url);
-    } else if (toggleSelected === 'toggle-group-selected') {
-      return repoUrls
-        .filter((repo: ApiRepositoryResponseRead) => isRepoSelected(repo.url!))
-        .map((repo: ApiRepositoryResponseRead) => repo.url);
-    }
-  }, [filterValue, data, toggleSelected]);
+  const onClose = () => setModalOpen(false);
 
-  const handleClearFilter = () => {
-    setFilterValue('');
-  };
+  const handleRemoveAnyway = () => {
+    const itemsToRemove = new Set(reposToRemove);
 
-  const updateFormState = (selectedRepoURLs: (string | undefined)[]) => {
-    // repositories is stored as an object with repoURLs as keys
-    const selectedRepos = [];
-    for (const repoURL of selectedRepoURLs) {
-      selectedRepos.push(data?.data?.find((repo) => repo.url === repoURL));
-    }
-
-    const customRepositories = selectedRepos.map((repo) =>
-      convertSchemaToIBCustomRepo(repo!)
+    dispatch(
+      changeCustomRepositories(
+        customRepositories.filter(
+          ({ baseurl }) => !baseurl?.some((url) => itemsToRemove.has(url))
+        )
+      )
     );
 
-    const payloadRepositories = selectedRepos.map((repo) =>
-      convertSchemaToIBPayloadRepo(repo!)
+    dispatch(
+      changePayloadRepositories(
+        payloadRepositories.filter(
+          ({ baseurl }) => !itemsToRemove.has(baseurl || '')
+        )
+      )
     );
 
-    dispatch(changeCustomRepositories(customRepositories));
-    dispatch(changePayloadRepositories(payloadRepositories));
+    setReposToRemove([]);
+    onClose();
   };
 
-  const updateSelected = (selectedRepos: (string | undefined)[]) => {
-    setSelected(selectedRepos);
-    updateFormState(selectedRepos);
-  };
-
-  const handleSelect = (
-    repoURL: string | undefined,
-    _: number,
-    isSelecting: boolean
-  ) => {
-    if (isSelecting === true) {
-      updateSelected([...selected, repoURL]);
-    } else if (isSelecting === false) {
-      if (repoURL && wizardMode === 'edit') {
-        setIsRepoRemovalModalOpen(true);
-        setRepoToRemove(repoURL);
-      } else {
-        updateSelected(
-          selected.filter((selectedRepoId) => selectedRepoId !== repoURL)
-        );
-      }
-    }
-  };
-
-  const handleSelectAll = () => {
-    if (data) {
-      updateSelected(
-        data.data
-          ?.filter(({ status }) => status === 'Valid')
-          .map((repo) => repo.url) || []
-      );
-    }
-  };
-
-  const computeStart = () => perPage * (page - 1);
-  const computeEnd = () => perPage * page;
-
-  const handleSelectPage = () => {
-    const pageRepos =
-      filteredRepositoryURLs &&
-      filteredRepositoryURLs.slice(computeStart(), computeEnd());
-
-    // Filter to avoid adding duplicates
-    const newSelected = pageRepos && [
-      ...pageRepos.filter((repoId) => !selected.includes(repoId)),
-    ];
-
-    updateSelected([...selected, ...newSelected!]);
-  };
-
-  const handleDeselectAll = () => {
-    updateSelected([]);
-  };
-
-  const getRepoNameByUrl = (url: string) => {
-    return data!.data?.find((repo) => repo.url === url)?.name;
-  };
-
-  const handleCloseModalToggle = () => {
-    setIsRepoRemovalModalOpen(!isRepoRemovalModalOpen);
-  };
-
-  const handleConfirmRemovalModalToggle = () => {
-    updateSelected(
-      selected.filter((selectedRepoId) => selectedRepoId !== repoToRemove)
-    );
-    setIsRepoRemovalModalOpen(!isRepoRemovalModalOpen);
-  };
-
-  const RemoveRepositoryModal = () => {
-    return (
+  if (isError) return <Error />;
+  if (isLoading) return <Loading />;
+  return (
+    <Grid>
       <Modal
         titleIconVariant="warning"
-        title="Removing repositories can lead to build failures"
-        isOpen={isRepoRemovalModalOpen}
-        onClose={handleCloseModalToggle}
-        width="50%"
+        title="Are you sure?"
+        isOpen={modalOpen}
+        onClose={onClose}
+        variant="small"
         actions={[
-          <Button
-            key="remove"
-            variant="primary"
-            onClick={handleConfirmRemovalModalToggle}
-          >
+          <Button key="remove" variant="primary" onClick={handleRemoveAnyway}>
             Remove anyway
           </Button>,
-          <Button key="back" variant="link" onClick={handleCloseModalToggle}>
+          <Button key="back" variant="link" onClick={onClose}>
             Back
           </Button>,
         ]}
       >
-        We do not recommend removing any repositories if you have added packages
+        You are removing a previously added repository.
+        <br />
+        We do not recommend removing repositories if you have added packages
         from them.
       </Modal>
-    );
-  };
-
-  return (
-    (isError && <Error />) ||
-    (isLoading && <Loading />) ||
-    (isSuccess && (
-      <>
-        <RemoveRepositoryModal />
-        {wizardMode === 'edit' && (
-          <Alert
-            title="Removing previously added repositories may lead to issues with selected packages"
-            variant="warning"
-            isPlain
-            isInline
-          />
-        )}
-        {data.data?.length === 0 ? (
-          <Empty refetch={refetch} isFetching={isFetching} />
-        ) : (
-          <>
-            <Toolbar>
-              <ToolbarContent>
-                <ToolbarItem variant="bulk-select">
-                  <BulkSelect
-                    selected={selected}
-                    count={data.data?.length}
-                    filteredCount={filteredRepositoryURLs?.length}
-                    perPage={perPage}
-                    handleSelectAll={handleSelectAll}
-                    handleSelectPage={handleSelectPage}
-                    handleDeselectAll={handleDeselectAll}
-                    isDisabled={isFetching}
-                  />
-                </ToolbarItem>
-                <ToolbarItem variant="search-filter">
-                  <SearchInput
-                    aria-label="Search repositories"
-                    onChange={handleFilterRepositories}
-                    value={filterValue}
-                    onClear={handleClearFilter}
-                  />
-                </ToolbarItem>
-                <ToolbarItem>
-                  <Button
-                    variant="primary"
-                    isInline
-                    onClick={() => refetch()}
-                    isLoading={isFetching}
-                  >
-                    {isFetching ? 'Refreshing' : 'Refresh'}
-                  </Button>
-                </ToolbarItem>
-                <ToolbarItem>
-                  <ToggleGroup aria-label="Filter repositories list">
-                    <ToggleGroupItem
-                      text="All"
-                      aria-label="All repositories"
-                      buttonId="toggle-group-all"
-                      isSelected={toggleSelected === 'toggle-group-all'}
-                      onChange={handleToggleClick}
-                    />
-                    <ToggleGroupItem
-                      text="Selected"
-                      aria-label="Selected repositories"
-                      buttonId="toggle-group-selected"
-                      isSelected={toggleSelected === 'toggle-group-selected'}
-                      onChange={handleToggleClick}
-                    />
-                  </ToggleGroup>
-                </ToolbarItem>
-                <ToolbarItem variant="pagination">
-                  <Pagination
-                    itemCount={
-                      filteredRepositoryURLs && filteredRepositoryURLs.length
-                    }
-                    perPage={perPage}
-                    page={page}
-                    onSetPage={handleSetPage}
-                    onPerPageSelect={handlePerPageSelect}
-                    isCompact
-                  />
-                </ToolbarItem>
-              </ToolbarContent>
-            </Toolbar>
-            <Panel>
-              <PanelMain>
-                <RepositoryUnavailable />
-                <Table variant="compact" data-testid="repositories-table">
-                  <Thead>
-                    <Tr>
-                      <Th aria-label="Selected" />
-                      <Th width={45}>Name</Th>
-                      <Th width={15}>Architecture</Th>
-                      <Th>Version</Th>
-                      <Th width={10}>Packages</Th>
-                      <Th>Status</Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {filteredRepositoryURLs &&
-                      filteredRepositoryURLs
-                        .sort((a, b) => {
-                          if (getRepoNameByUrl(a!)! < getRepoNameByUrl(b!)!) {
-                            return -1;
-                          } else if (
-                            getRepoNameByUrl(b!)! < getRepoNameByUrl(a!)!
-                          ) {
-                            return 1;
-                          } else {
-                            return 0;
-                          }
-                        })
-                        .slice(computeStart(), computeEnd())
-                        .map((repoURL, rowIndex) => {
-                          const repo = data?.data?.find(
-                            (repo) => repo.url === repoURL
-                          );
-
-                          if (!repo) {
-                            return <></>;
-                          }
-
-                          const repoExists = repo.name ? true : false;
-                          const isSelected = isRepoSelected(repo.url);
-                          const [isDisabled, disabledReason] = isRepoDisabled(
-                            repo,
-                            isSelected
-                          );
-                          return (
-                            <Tr key={repo.url}>
-                              <Td
-                                select={{
-                                  isSelected: isSelected,
-                                  rowIndex: rowIndex,
-                                  onSelect: (event, isSelecting) =>
-                                    handleSelect(
-                                      repo.url,
-                                      rowIndex,
-                                      isSelecting
-                                    ),
-                                  isDisabled: isDisabled,
-                                }}
-                                title={disabledReason}
-                              />
-                              <Td dataLabel={'Name'}>
-                                {repoExists
-                                  ? repo.name
-                                  : 'Repository with the following url is no longer available:'}
-                                <br />
-                                <Button
-                                  component="a"
-                                  target="_blank"
-                                  variant="link"
-                                  icon={<ExternalLinkAltIcon />}
-                                  iconPosition="right"
-                                  isInline
-                                  href={repo.url}
-                                >
-                                  {repo.url}
-                                </Button>
-                              </Td>
-                              <Td dataLabel={'Architecture'}>
-                                {repoExists ? repo.distribution_arch : '-'}
-                              </Td>
-                              <Td dataLabel={'Version'}>
-                                {repoExists ? repo.distribution_versions : '-'}
-                              </Td>
-                              <Td dataLabel={'Packages'}>
-                                {repoExists ? repo.package_count : '-'}
-                              </Td>
-                              <Td dataLabel={'Status'}>
-                                <RepositoriesStatus
-                                  repoStatus={
-                                    repoExists ? repo.status : 'Unavailable'
-                                  }
-                                  repoUrl={repo.url}
-                                  repoIntrospections={
-                                    repo.last_introspection_time
-                                  }
-                                  repoFailCount={
-                                    repo.failed_introspections_count
-                                  }
-                                />
-                              </Td>
-                            </Tr>
-                          );
-                        })}
-                  </Tbody>
-                </Table>
-              </PanelMain>
-            </Panel>
-            <Pagination
-              itemCount={
-                filteredRepositoryURLs && filteredRepositoryURLs.length
-              }
-              perPage={perPage}
-              page={page}
-              onSetPage={handleSetPage}
-              onPerPageSelect={handlePerPageSelect}
-              variant={PaginationVariant.bottom}
-            />
-          </>
-        )}
-      </>
-    ))
-  );
-};
-
-const Error = () => {
-  return (
-    <Alert title="Repositories unavailable" variant="danger" isPlain isInline>
-      Repositories cannot be reached, try again later.
-    </Alert>
-  );
-};
-
-const Loading = () => {
-  return (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText="Loading"
-        icon={<EmptyStateIcon icon={Spinner} />}
-        headingLevel="h4"
-      />
-    </EmptyState>
-  );
-};
-
-type EmptyProps = {
-  isFetching: boolean;
-  refetch: Function;
-};
-
-const Empty = ({ isFetching, refetch }: EmptyProps) => {
-  const { isBeta } = useGetEnvironment();
-  return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
-      <EmptyStateHeader
-        titleText="No Custom Repositories"
-        icon={<EmptyStateIcon icon={RepositoryIcon} />}
-        headingLevel="h4"
-      />
-      <EmptyStateBody>
-        Repositories can be added in the &quot;Repositories&quot; area of the
-        console. Once added, refresh this page to see them.
-      </EmptyStateBody>
-      <EmptyStateFooter>
-        <Button
-          variant="primary"
-          component="a"
-          target="_blank"
-          href={isBeta() ? '/preview/settings/content' : '/settings/content'}
-          className="pf-u-mr-sm"
-        >
-          Go to repositories
-        </Button>
-        <Button
-          variant="secondary"
+      {wizardMode === 'edit' && (
+        <Alert
+          title="Removing previously added repositories may lead to issues with selected packages"
+          variant="warning"
+          isPlain
           isInline
-          onClick={() => refetch()}
-          isLoading={isFetching}
-        >
-          {isFetching ? 'Refreshing' : 'Refresh'}
-        </Button>
-      </EmptyStateFooter>
-    </EmptyState>
+        />
+      )}
+      <Toolbar>
+        <ToolbarContent>
+          <ToolbarItem variant="bulk-select">
+            <BulkSelect
+              selected={selected}
+              contentList={contentList}
+              deselectAll={clearSelected}
+              perPage={perPage}
+              handleAddRemove={handleAddRemove}
+              isDisabled={isFetching || (!selected.size && !contentList.length)}
+            />
+          </ToolbarItem>
+          <ToolbarItem variant="search-filter">
+            <SearchInput
+              aria-label="Search repositories"
+              onChange={handleFilterRepositories}
+              value={filterValue}
+              onClear={() => setFilterValue('')}
+            />
+          </ToolbarItem>
+          <ToolbarItem>
+            <Button
+              variant="primary"
+              isInline
+              onClick={() => refresh()}
+              isLoading={isFetching}
+            >
+              {isFetching ? 'Refreshing' : 'Refresh'}
+            </Button>
+          </ToolbarItem>
+          <ToolbarItem>
+            <ToggleGroup aria-label="Filter repositories list">
+              <ToggleGroupItem
+                text="All"
+                aria-label="All repositories"
+                buttonId="toggle-group-all"
+                isSelected={toggleSelected === 'toggle-group-all'}
+                onChange={() => handleToggleClick('toggle-group-all')}
+              />
+              <ToggleGroupItem
+                text="Selected"
+                isDisabled={!selected.size}
+                aria-label="Selected repositories"
+                buttonId="toggle-group-selected"
+                isSelected={toggleSelected === 'toggle-group-selected'}
+                onChange={() => handleToggleClick('toggle-group-selected')}
+              />
+            </ToggleGroup>
+          </ToolbarItem>
+        </ToolbarContent>
+      </Toolbar>
+      <Panel>
+        <PanelMain>
+          {previousReposNowUnavailable ? (
+            <RepositoryUnavailable quantity={previousReposNowUnavailable} />
+          ) : (
+            ''
+          )}
+          {contentList.length === 0 ? (
+            <Empty hasFilterValue={!!debouncedFilterValue} refetch={refresh} />
+          ) : (
+            <Table variant="compact" data-testid="repositories-table">
+              <Thead>
+                <Tr>
+                  <Th aria-label="Selected" />
+                  <Th width={45}>Name</Th>
+                  <Th width={15}>Architecture</Th>
+                  <Th>Version</Th>
+                  <Th width={10}>Packages</Th>
+                  <Th>Status</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {contentList.map((repo, rowIndex) => {
+                  const {
+                    url = '',
+                    name,
+                    status = '',
+                    distribution_arch,
+                    distribution_versions,
+                    package_count,
+                    last_introspection_time,
+                    failed_introspections_count,
+                  } = repo;
+
+                  const [isDisabled, disabledReason] = isRepoDisabled(
+                    repo,
+                    selected.has(url)
+                  );
+
+                  return (
+                    <Tr key={url}>
+                      <Td
+                        select={{
+                          isSelected: selected.has(url),
+                          rowIndex: rowIndex,
+                          onSelect: (_, isSelecting) =>
+                            handleAddRemove(repo, isSelecting),
+                          isDisabled: isDisabled,
+                        }}
+                        title={disabledReason}
+                      />
+                      <Td dataLabel={'Name'}>
+                        {name}
+                        <br />
+                        <Button
+                          component="a"
+                          target="_blank"
+                          variant="link"
+                          icon={<ExternalLinkAltIcon />}
+                          iconPosition="right"
+                          isInline
+                          href={url}
+                        >
+                          {url}
+                        </Button>
+                      </Td>
+                      <Td dataLabel={'Architecture'}>
+                        {distribution_arch || '-'}
+                      </Td>
+                      <Td dataLabel={'Version'}>
+                        {distribution_versions || '-'}
+                      </Td>
+                      <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
+                      <Td dataLabel={'Status'}>
+                        <RepositoriesStatus
+                          repoStatus={status || 'Unavailable'}
+                          repoUrl={url}
+                          repoIntrospections={last_introspection_time}
+                          repoFailCount={failed_introspections_count}
+                        />
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          )}
+        </PanelMain>
+      </Panel>
+      <Pagination
+        itemCount={count}
+        perPage={perPage}
+        page={page}
+        onSetPage={(_, newPage) => setPage(newPage)}
+        onPerPageSelect={handlePerPageSelect}
+        variant={PaginationVariant.bottom}
+      />
+    </Grid>
   );
 };
 

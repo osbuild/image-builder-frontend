@@ -44,7 +44,7 @@ const RepositoriesStep = () => {
         <br />
         <ManageRepositoriesButton />
       </Text>
-      {recommendedRepos.length > 0 && (
+      {packages.length && recommendedRepos.length ? (
         <Alert
           title="Why can't I remove a selected repository?"
           variant="info"
@@ -55,6 +55,8 @@ const RepositoriesStep = () => {
           following packages on the Packages step:{' '}
           {packages.map((pkg) => pkg.name).join(', ')}
         </Alert>
+      ) : (
+        ''
       )}
       <Repositories />
     </Form>

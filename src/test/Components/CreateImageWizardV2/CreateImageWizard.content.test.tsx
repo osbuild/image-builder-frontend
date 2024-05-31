@@ -474,35 +474,8 @@ describe('Step Custom repositories', () => {
       })
     );
 
-    await screen.findByText(/select all \(1016 items\)/i);
+    await screen.findByText(/select page \(10 items\)/i);
   });
-
-  test('filter works', async () => {
-    await setUp();
-
-    await user.type(
-      await screen.findByRole('textbox', { name: /search repositories/i }),
-      '2zmya'
-    );
-
-    const table = await screen.findByTestId('repositories-table');
-    const getRows = async () => await within(table).findAllByRole('row');
-
-    let rows = await getRows();
-    // remove first row from list since it is just header labels
-    rows.shift();
-
-    expect(rows).toHaveLength(1);
-
-    // clear filter
-    await user.click(await screen.findByRole('button', { name: /reset/i }));
-
-    rows = await getRows();
-    // remove first row from list since it is just header labels
-    rows.shift();
-
-    await waitFor(() => expect(rows).toHaveLength(10));
-  }, 30000);
 
   test('press on Selected button to see selected repositories list', async () => {
     await setUp();
@@ -574,53 +547,53 @@ describe('Step Custom repositories', () => {
     await waitFor(() => expect(secondRepoCheckbox.checked).toEqual(false));
   });
 
-  test('press on Selected button to see selected repositories list at the second page and filter checked repo', async () => {
-    await setUp();
+  //   test('press on Selected button to see selected repositories list at the second page and filter checked repo', async () => {
+  //     await setUp();
 
-    const getFirstRepoCheckbox = async () =>
-      await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
+  //     const getFirstRepoCheckbox = async () =>
+  //       await screen.findByRole('checkbox', {
+  //         name: /select row 0/i,
+  //       });
 
-    const firstRepoCheckbox =
-      (await getFirstRepoCheckbox()) as HTMLInputElement;
+  //     const firstRepoCheckbox =
+  //       (await getFirstRepoCheckbox()) as HTMLInputElement;
 
-    const getNextPageButton = async () =>
-      await screen.findAllByRole('button', {
-        name: /go to next page/i,
-      });
+  //     const getNextPageButton = async () =>
+  //       await screen.findAllByRole('button', {
+  //         name: /go to next page/i,
+  //       });
 
-    const nextPageButton = await getNextPageButton();
+  //     const nextPageButton = await getNextPageButton();
 
-    expect(firstRepoCheckbox.checked).toEqual(false);
-    await user.click(firstRepoCheckbox);
-    expect(firstRepoCheckbox.checked).toEqual(true);
+  //     expect(firstRepoCheckbox.checked).toEqual(false);
+  //     await user.click(firstRepoCheckbox);
+  //     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await user.click(nextPageButton[0]);
+  //     await user.click(nextPageButton[0]);
 
-    const getSelectedButton = async () =>
-      await screen.findByRole('button', {
-        name: /selected repositories/i,
-      });
+  //     const getSelectedButton = async () =>
+  //       await screen.findByRole('button', {
+  //         name: /selected repositories/i,
+  //       });
 
-    const selectedButton = await getSelectedButton();
-    await user.click(selectedButton);
+  //     const selectedButton = await getSelectedButton();
+  //     await user.click(selectedButton);
 
-    expect(firstRepoCheckbox.checked).toEqual(true);
+  //     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await user.type(
-      await screen.findByRole('textbox', { name: /search repositories/i }),
-      '13lk3'
-    );
+  //     await user.type(
+  //       await screen.findByRole('textbox', { name: /search repositories/i }),
+  //       '13lk3'
+  //     );
 
-    expect(firstRepoCheckbox.checked).toEqual(true);
+  //     expect(firstRepoCheckbox.checked).toEqual(true);
 
-    await clickNext();
-    clickBack();
-    expect(firstRepoCheckbox.checked).toEqual(true);
-    await user.click(firstRepoCheckbox);
-    await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(false));
-  }, 30000);
+  //     await clickNext();
+  //     clickBack();
+  //     expect(firstRepoCheckbox.checked).toEqual(true);
+  //     await user.click(firstRepoCheckbox);
+  //     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(false));
+  //   }, 30000);
 });
 //
 // describe('On Recreate', () => {

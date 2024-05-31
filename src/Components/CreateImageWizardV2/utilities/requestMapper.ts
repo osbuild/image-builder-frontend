@@ -74,7 +74,7 @@ import {
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
-} from '../steps/Repositories/Repositories';
+} from '../steps/Repositories/components/Utilities';
 import { GcpAccountType } from '../steps/TargetEnvironment/Gcp';
 
 type ServerStore = {

@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT } from '../../../../../constants';
@@ -69,14 +69,6 @@ const deselectFirstRepository = async () => {
   );
 };
 
-const selectNginxRepository = async () => {
-  const search = await screen.findByLabelText('Search repositories');
-  await userEvent.type(search, 'nginx stable repo');
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
-  );
-};
-
 describe('repositories request generated correctly', () => {
   const expectedPayloadRepositories: Repository[] = [
     {
@@ -102,6 +94,35 @@ describe('repositories request generated correctly', () => {
     },
   ];
 
+  test('with custom repositories', async () => {
+    await renderCreateMode();
+    await goToRepositoriesStep();
+    await selectFirstRepository();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      customizations: {
+        custom_repositories: expectedCustomRepositories,
+        payload_repositories: expectedPayloadRepositories,
+      },
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  const selectNginxRepository = async () => {
+    const search = await screen.findByLabelText('Search repositories');
+    await userEvent.type(search, 'nginx stable repo');
+    await waitFor(
+      () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument
+    );
+    await userEvent.click(
+      await screen.findByRole('checkbox', { name: /select row 0/i })
+    );
+  };
+
   const expectedNginxRepository: Repository = {
     baseurl: 'http://nginx.org/packages/centos/9/x86_64/',
     module_hotfixes: true,
@@ -123,24 +144,6 @@ describe('repositories request generated correctly', () => {
     id: 'f087f9ad-dfe6-4627-9d53-447d1a997de5',
     name: 'nginx stable repo',
   };
-
-  test('with custom repositories', async () => {
-    await renderCreateMode();
-    await goToRepositoriesStep();
-    await selectFirstRepository();
-    await goToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      customizations: {
-        custom_repositories: expectedCustomRepositories,
-        payload_repositories: expectedPayloadRepositories,
-      },
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
 
   test('with custom repository with module_hotfixes', async () => {
     await renderCreateMode();
