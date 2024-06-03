@@ -16,18 +16,46 @@ import { OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
+import PackageRecommendationDescription from './components/PackageRecommendationDescription';
+import { RedHatRepository } from './Packages';
+
+import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
-import { addPackage, selectPackages } from '../../../../store/wizardSlice';
+import {
+  addPackage,
+  selectArchitecture,
+  selectDistribution,
+  selectPackages,
+} from '../../../../store/wizardSlice';
+import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
   const dispatch = useDispatch();
 
+  const arch = useAppSelector(selectArchitecture);
+  const distribution = useAppSelector(selectDistribution);
+  const version = releaseToVersion(distribution);
   const undebouncedPackages = useAppSelector(selectPackages);
   const packages = useDebounce(undebouncedPackages);
+  let distroRepoUrls: string[] = [];
 
   const [isExpanded, setIsExpanded] = useState(true);
+
+  const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
+    useListRepositoriesQuery({
+      availableForArch: arch,
+      availableForVersion: version,
+      contentType: 'rpm',
+      origin: 'red_hat',
+      limit: 100,
+      offset: 0,
+    });
+
+  if (isSuccessDistroRepositories && distroRepositories.data) {
+    distroRepoUrls = distroRepositories.data.map((repo) => repo.url || '');
+  }
 
   const [fetchRecommendedPackages, { data, isSuccess, isLoading, isError }] =
     useRecommendPackageMutation();
@@ -119,8 +147,9 @@ const PackageRecommendations = () => {
                 <Table variant="compact">
                   <Thead>
                     <Tr>
-                      <Th width={80}>Package name</Th>
-                      {/*<Th width={50}>Package summary</Th>*/}
+                      <Th width={20}>Package name</Th>
+                      <Th width={35}>Description</Th>
+                      <Th width={25}>Package repository</Th>
                       <Th width={20}>
                         <Button
                           variant="link"
@@ -138,7 +167,17 @@ const PackageRecommendations = () => {
                     {data.packages.map((pkg) => (
                       <Tr key={pkg}>
                         <Td>{pkg}</Td>
-                        {/*<Td>TODO summary</Td>*/}
+                        <Td>
+                          {distroRepoUrls && (
+                            <PackageRecommendationDescription
+                              pkg={pkg}
+                              urls={distroRepoUrls}
+                            />
+                          )}
+                        </Td>
+                        <Td>
+                          <RedHatRepository />
+                        </Td>
                         <Td>
                           <Button
                             variant="link"
