@@ -7,6 +7,10 @@ export const emptyImageBuilderApi = createApi({
   reducerPath: 'imageBuilderApi',
   baseQuery: fetchBaseQuery({
     baseUrl: IMAGE_BUILDER_API,
+    prepareHeaders: (headers) => {
+      // help the backend distinguish between requests from the UI and the API
+      headers.set('X-ImageBuilder-ui', 'true');
+    },
     paramsSerializer: (params) => {
       /*
        * Image builder backend requires the arrays in get requests to be
