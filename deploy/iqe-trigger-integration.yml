@@ -22,6 +22,10 @@ objects:
         - name: sel-shm
           emptyDir:
             medium: Memory
+        - name: sel-downloads
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi
         containers:
         - name: image-builder-frontend-iqe-${TEST_TYPE}-tests-${IMAGE_TAG}-${UID}
           image: ${IQE_IMAGE}
@@ -90,6 +94,9 @@ objects:
               memory: ${IQE_MEMORY_REQUEST}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
+          volumeMounts:
+            - name: sel-downloads
+              mountPath: /sel-downloads
         - name: image-builder-sel-${TEST_TYPE}-tests-${IMAGE_TAG}-${UID}
           image: ${IQE_SEL_IMAGE}
           env:
@@ -107,6 +114,8 @@ objects:
           volumeMounts:
             - name: sel-shm
               mountPath: /dev/shm
+            - name: sel-downloads
+              mountPath: /home/selenium/Downloads
 parameters:
 - name: IMAGE_TAG
   value: ''
