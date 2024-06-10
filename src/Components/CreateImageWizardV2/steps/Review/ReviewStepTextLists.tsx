@@ -29,6 +29,7 @@ import {
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
+  targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
 import { useListSnapshotsByDateMutation } from '../../../../store/contentSourcesApi';
@@ -221,7 +222,7 @@ export const TargetEnvAWSList = () => {
 
   return (
     <TextContent>
-      <Text component={TextVariants.h3}>AWS</Text>
+      <Text component={TextVariants.h3}>{targetOptions.aws}</Text>
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
@@ -263,7 +264,7 @@ export const TargetEnvGCPList = () => {
   const email = useAppSelector(selectGcpEmail);
   return (
     <TextContent>
-      <Text component={TextVariants.h3}>GCP</Text>
+      <Text component={TextVariants.h3}>{targetOptions.gcp}</Text>
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
@@ -326,7 +327,7 @@ export const TargetEnvAzureList = () => {
 
   return (
     <TextContent>
-      <Text component={TextVariants.h3}>Microsoft Azure</Text>
+      <Text component={TextVariants.h3}>{targetOptions.azure}</Text>
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
@@ -383,7 +384,7 @@ export const TargetEnvAzureList = () => {
 export const TargetEnvOciList = () => {
   return (
     <TextContent>
-      <Text component={TextVariants.h3}>Oracle Cloud Infrastructure</Text>
+      <Text component={TextVariants.h3}>{targetOptions.oci}</Text>
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}

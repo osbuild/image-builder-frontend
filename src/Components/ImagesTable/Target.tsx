@@ -2,29 +2,9 @@ import React from 'react';
 
 import { Skeleton } from '@patternfly/react-core';
 
-import {
-  ImageTypes,
-  useGetComposeClonesQuery,
-} from '../../store/imageBuilderApi';
+import { targetOptions } from '../../constants';
+import { useGetComposeClonesQuery } from '../../store/imageBuilderApi';
 import { ComposesResponseItem } from '../../store/imageBuilderApi';
-
-const targetOptions: { [key in ImageTypes]: string } = {
-  aws: 'Amazon Web Services',
-  azure: 'Microsoft Azure',
-  'edge-commit': 'Edge Commit',
-  'edge-installer': 'Edge Installer',
-  gcp: 'Google Cloud Platform',
-  'guest-image': 'Virtualization - Guest image',
-  'image-installer': 'Bare metal - Installer',
-  vsphere: 'VMware vSphere',
-  'vsphere-ova': 'VMware vSphere',
-  wsl: 'Windows Subsystem for Linux',
-  ami: 'Amazon Web Services',
-  'rhel-edge-commit': 'RHEL Edge Commit',
-  'rhel-edge-installer': 'RHEL Edge Installer',
-  vhd: '',
-  oci: 'Oracle Cloud Infrastructure',
-};
 
 type TargetPropTypes = {
   compose: ComposesResponseItem;
@@ -47,6 +27,6 @@ export const AwsTarget = ({ compose }: AwsTargetPropTypes) => {
     return <Skeleton />;
   }
 
-  const text = `Amazon Web Services (${data.data.length + 1})`;
+  const text = `${targetOptions.aws} (${data.data.length + 1})`;
   return <>{text}</>;
 };
