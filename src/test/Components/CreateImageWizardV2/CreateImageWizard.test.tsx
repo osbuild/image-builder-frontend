@@ -1086,47 +1086,39 @@ describe('Step Review', () => {
 
   test('has Registration expandable section for rhel', async () => {
     await setUp();
-    const targetExpandable = screen.getByText(/target environments/i);
-    const registrationExpandable = screen.getByTestId(
-      'registration-expandable'
+
+    const targetExpandable = await screen.findByTestId(
+      'target-environments-expandable'
     );
-
     const contentExpandable = await screen.findByTestId('content-expandable');
-    const fscExpandable = screen.getByTestId(
-      'file-system-configuration-expandable'
-    );
-
-    await user.click(targetExpandable);
-    await screen.findByText('AWS');
-
-    await user.click(registrationExpandable);
-    await user.click(contentExpandable);
-
-    await within(contentExpandable).findByText('Custom repositories');
-    await within(contentExpandable).findByText('Additional packages');
-    await user.click(fscExpandable);
-    await screen.findByText('Configuration type');
-  });
-  test('has no Registration expandable for centos', async () => {
-    await setUpCentOS();
-    const targetExpandable = screen.getByText(/target environments/i);
-    const contentExpandable = await screen.findByTestId('content-expandable');
-
     const fscExpandable = await screen.findByTestId(
       'file-system-configuration-expandable'
     );
+
+    await within(targetExpandable).findByText('Amazon Web Services');
+    await within(contentExpandable).findByText('Custom repositories');
+    await within(contentExpandable).findByText('Additional packages');
+    await within(fscExpandable).findByText('Configuration type');
+  });
+  test('has no Registration expandable for centos', async () => {
+    await setUpCentOS();
+
+    const targetExpandable = await screen.findByTestId(
+      'target-environments-expandable'
+    );
+    const contentExpandable = await screen.findByTestId('content-expandable');
+    const fscExpandable = await screen.findByTestId(
+      'file-system-configuration-expandable'
+    );
+
     expect(
       screen.queryByTestId('registration-expandable')
     ).not.toBeInTheDocument();
-    await user.click(targetExpandable);
-    await screen.findByText('AWS');
 
-    await user.click(contentExpandable);
+    await within(targetExpandable).findByText('Amazon Web Services');
     await within(contentExpandable).findByText('Custom repositories');
     await within(contentExpandable).findByText('Additional packages');
-
-    await user.click(fscExpandable);
-    await screen.findByText('Configuration type');
+    await within(fscExpandable).findByText('Configuration type');
   });
 });
 
