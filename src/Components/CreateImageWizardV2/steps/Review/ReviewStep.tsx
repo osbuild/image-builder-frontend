@@ -27,6 +27,7 @@ import {
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
+import { targetOptions } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectBlueprintDescription,
@@ -143,20 +144,24 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {environments.includes('oci') && <TargetEnvOciList />}
         {environments.includes('vsphere') && (
           <TextContent>
-            <Text component={TextVariants.h3}>VMware vSphere (.vmdk)</Text>
+            <Text component={TextVariants.h3}>
+              {targetOptions.vsphere} (.vmdk)
+            </Text>
             <TargetEnvOtherList />
           </TextContent>
         )}
         {environments.includes('vsphere-ova') && (
           <TextContent>
-            <Text component={TextVariants.h3}>VMware vSphere (.ova)</Text>
+            <Text component={TextVariants.h3}>
+              {targetOptions['vsphere-ova']} (.ova)
+            </Text>
             <TargetEnvOtherList />
           </TextContent>
         )}
         {environments.includes('guest-image') && (
           <TextContent>
             <Text component={TextVariants.h3}>
-              Virtualization - Guest image (.qcow2)
+              {targetOptions['guest-image']} (.qcow2)
             </Text>
             <TargetEnvOtherList />
           </TextContent>
@@ -164,7 +169,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {environments.includes('image-installer') && (
           <TextContent>
             <Text component={TextVariants.h3}>
-              Bare metal - Installer (.iso)
+              {targetOptions['image-installer']} (.iso)
             </Text>
             <TargetEnvOtherList />
           </TextContent>
@@ -172,7 +177,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {environments.includes('wsl') && (
           <TextContent>
             <Text component={TextVariants.h3}>
-              WSL - Windows Subsystem for Linux (.tar.gz)
+              WSL - {targetOptions.wsl} (.tar.gz)
             </Text>
             <TargetEnvOtherList />
           </TextContent>

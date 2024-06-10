@@ -1,3 +1,5 @@
+import { ImageTypes } from './store/imageBuilderApi';
+
 export const IMAGE_BUILDER_API = '/api/image-builder/v1';
 export const RHSM_API = '/api/rhsm/v2';
 export const EDGE_API = '/api/edge/v1';
@@ -45,6 +47,24 @@ export const RHEL_9 = 'rhel-9';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
+
+export const targetOptions: { [key in ImageTypes]: string } = {
+  aws: 'Amazon Web Services',
+  azure: 'Microsoft Azure',
+  'edge-commit': 'Edge Commit',
+  'edge-installer': 'Edge Installer',
+  gcp: 'Google Cloud Platform',
+  'guest-image': 'Virtualization - Guest image',
+  'image-installer': 'Bare metal - Installer',
+  vsphere: 'VMware vSphere',
+  'vsphere-ova': 'VMware vSphere',
+  wsl: 'Windows Subsystem for Linux',
+  ami: 'Amazon Web Services',
+  'rhel-edge-commit': 'RHEL Edge Commit',
+  'rhel-edge-installer': 'RHEL Edge Installer',
+  vhd: '',
+  oci: 'Oracle Cloud Infrastructure',
+};
 
 export const UNIT_KIB = 1024 ** 1;
 export const UNIT_MIB = 1024 ** 2;
