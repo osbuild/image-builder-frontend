@@ -5,8 +5,8 @@ export const RHSM_API = '/api/rhsm/v2';
 export const EDGE_API = '/api/edge/v1';
 export const CONTENT_SOURCES_API = '/api/content-sources/v1';
 export const PROVISIONING_API = '/api/provisioning/v1';
-export const CREATE_BLUEPRINT = `${IMAGE_BUILDER_API}/experimental/blueprints`;
-export const EDIT_BLUEPRINT = `${IMAGE_BUILDER_API}/experimental/blueprints`;
+export const CREATE_BLUEPRINT = `${IMAGE_BUILDER_API}/blueprints`;
+export const EDIT_BLUEPRINT = `${IMAGE_BUILDER_API}/blueprints`;
 
 export const CDN_PROD_URL = 'https://cdn.redhat.com/';
 export const CDN_STAGE_URL = 'https://cdn.stage.redhat.com/';

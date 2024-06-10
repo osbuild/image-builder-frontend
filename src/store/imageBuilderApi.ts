@@ -7,6 +7,73 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({ url: `/architectures/${queryArg.distribution}` }),
     }),
+    getBlueprints: build.query<GetBlueprintsApiResponse, GetBlueprintsApiArg>({
+      query: (queryArg) => ({
+        url: `/blueprints`,
+        params: {
+          name: queryArg.name,
+          search: queryArg.search,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+        },
+      }),
+    }),
+    createBlueprint: build.mutation<
+      CreateBlueprintApiResponse,
+      CreateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/blueprints`,
+        method: "POST",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    updateBlueprint: build.mutation<
+      UpdateBlueprintApiResponse,
+      UpdateBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/blueprints/${queryArg.id}`,
+        method: "PUT",
+        body: queryArg.createBlueprintRequest,
+      }),
+    }),
+    getBlueprint: build.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
+      query: (queryArg) => ({ url: `/blueprints/${queryArg.id}` }),
+    }),
+    deleteBlueprint: build.mutation<
+      DeleteBlueprintApiResponse,
+      DeleteBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/blueprints/${queryArg.id}`,
+        method: "DELETE",
+      }),
+    }),
+    composeBlueprint: build.mutation<
+      ComposeBlueprintApiResponse,
+      ComposeBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/blueprints/${queryArg.id}/compose`,
+        method: "POST",
+        body: queryArg.body,
+      }),
+    }),
+    getBlueprintComposes: build.query<
+      GetBlueprintComposesApiResponse,
+      GetBlueprintComposesApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/blueprints/${queryArg.id}/composes`,
+        params: {
+          blueprint_version: queryArg.blueprintVersion,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+          ignoreImageTypes: queryArg.ignoreImageTypes,
+        },
+      }),
+    }),
     getComposes: build.query<GetComposesApiResponse, GetComposesApiArg>({
       query: (queryArg) => ({
         url: `/composes`,
@@ -80,73 +147,6 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/oscap/${queryArg.distribution}/${queryArg.profile}/customizations`,
       }),
     }),
-    getBlueprints: build.query<GetBlueprintsApiResponse, GetBlueprintsApiArg>({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints`,
-        params: {
-          name: queryArg.name,
-          search: queryArg.search,
-          limit: queryArg.limit,
-          offset: queryArg.offset,
-        },
-      }),
-    }),
-    createBlueprint: build.mutation<
-      CreateBlueprintApiResponse,
-      CreateBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints`,
-        method: "POST",
-        body: queryArg.createBlueprintRequest,
-      }),
-    }),
-    updateBlueprint: build.mutation<
-      UpdateBlueprintApiResponse,
-      UpdateBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints/${queryArg.id}`,
-        method: "PUT",
-        body: queryArg.createBlueprintRequest,
-      }),
-    }),
-    getBlueprint: build.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
-      query: (queryArg) => ({ url: `/experimental/blueprints/${queryArg.id}` }),
-    }),
-    deleteBlueprint: build.mutation<
-      DeleteBlueprintApiResponse,
-      DeleteBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints/${queryArg.id}`,
-        method: "DELETE",
-      }),
-    }),
-    composeBlueprint: build.mutation<
-      ComposeBlueprintApiResponse,
-      ComposeBlueprintApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints/${queryArg.id}/compose`,
-        method: "POST",
-        body: queryArg.body,
-      }),
-    }),
-    getBlueprintComposes: build.query<
-      GetBlueprintComposesApiResponse,
-      GetBlueprintComposesApiArg
-    >({
-      query: (queryArg) => ({
-        url: `/experimental/blueprints/${queryArg.id}/composes`,
-        params: {
-          blueprint_version: queryArg.blueprintVersion,
-          limit: queryArg.limit,
-          offset: queryArg.offset,
-          ignoreImageTypes: queryArg.ignoreImageTypes,
-        },
-      }),
-    }),
     recommendPackage: build.mutation<
       RecommendPackageApiResponse,
       RecommendPackageApiArg
@@ -166,6 +166,71 @@ export type GetArchitecturesApiResponse =
 export type GetArchitecturesApiArg = {
   /** distribution for which to look up available architectures */
   distribution: Distributions;
+};
+export type GetBlueprintsApiResponse =
+  /** status 200 a list of blueprints */ BlueprintsResponse;
+export type GetBlueprintsApiArg = {
+  /** fetch blueprint with specific name */
+  name?: string;
+  /** search for blueprints by name or description */
+  search?: string;
+  /** max amount of blueprints, default 100 */
+  limit?: number;
+  /** blueprint page offset, default 0 */
+  offset?: number;
+};
+export type CreateBlueprintApiResponse =
+  /** status 201 blueprint was saved */ CreateBlueprintResponse;
+export type CreateBlueprintApiArg = {
+  /** details of blueprint */
+  createBlueprintRequest: CreateBlueprintRequest;
+};
+export type UpdateBlueprintApiResponse =
+  /** status 200 blueprint was updated */ CreateBlueprintResponse;
+export type UpdateBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+  /** details of blueprint */
+  createBlueprintRequest: CreateBlueprintRequest;
+};
+export type GetBlueprintApiResponse =
+  /** status 200 detail of a blueprint */ BlueprintResponse;
+export type GetBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+};
+export type DeleteBlueprintApiResponse =
+  /** status 204 Successfully deleted */ void;
+export type DeleteBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+};
+export type ComposeBlueprintApiResponse =
+  /** status 201 compose was created */ ComposeResponse[];
+export type ComposeBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+  /** list of target image types that the user wants to build for this compose */
+  body: {
+    image_types?: ImageTypes[];
+  };
+};
+export type GetBlueprintComposesApiResponse =
+  /** status 200 a list of composes */ ComposesResponse;
+export type GetBlueprintComposesApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+  /** Filter by a specific version of the Blueprint we want to fetch composes for.
+    Pass special value -1 to fetch composes for latest version of the Blueprint.
+     */
+  blueprintVersion?: number;
+  /** max amount of composes, default 100 */
+  limit?: number;
+  /** composes page offset, default 0 */
+  offset?: number;
+  /** Filter the composes on image type. The filter is optional and can be specified multiple times.
+   */
+  ignoreImageTypes?: ImageTypes[];
 };
 export type GetComposesApiResponse =
   /** status 200 a list of composes */ ComposesResponse;
@@ -242,71 +307,6 @@ export type GetOscapCustomizationsApiArg = {
   /** Name of the profile to retrieve customizations from */
   profile: DistributionProfileItem;
 };
-export type GetBlueprintsApiResponse =
-  /** status 200 a list of blueprints */ BlueprintsResponse;
-export type GetBlueprintsApiArg = {
-  /** fetch blueprint with specific name */
-  name?: string;
-  /** search for blueprints by name or description */
-  search?: string;
-  /** max amount of blueprints, default 100 */
-  limit?: number;
-  /** blueprint page offset, default 0 */
-  offset?: number;
-};
-export type CreateBlueprintApiResponse =
-  /** status 201 blueprint was saved */ CreateBlueprintResponse;
-export type CreateBlueprintApiArg = {
-  /** details of blueprint */
-  createBlueprintRequest: CreateBlueprintRequest;
-};
-export type UpdateBlueprintApiResponse =
-  /** status 200 blueprint was updated */ CreateBlueprintResponse;
-export type UpdateBlueprintApiArg = {
-  /** UUID of a blueprint */
-  id: string;
-  /** details of blueprint */
-  createBlueprintRequest: CreateBlueprintRequest;
-};
-export type GetBlueprintApiResponse =
-  /** status 200 detail of a blueprint */ BlueprintResponse;
-export type GetBlueprintApiArg = {
-  /** UUID of a blueprint */
-  id: string;
-};
-export type DeleteBlueprintApiResponse =
-  /** status 204 Successfully deleted */ void;
-export type DeleteBlueprintApiArg = {
-  /** UUID of a blueprint */
-  id: string;
-};
-export type ComposeBlueprintApiResponse =
-  /** status 201 compose was created */ ComposeResponse[];
-export type ComposeBlueprintApiArg = {
-  /** UUID of a blueprint */
-  id: string;
-  /** list of target image types that the user wants to build for this compose */
-  body: {
-    image_types?: ImageTypes[];
-  };
-};
-export type GetBlueprintComposesApiResponse =
-  /** status 200 a list of composes */ ComposesResponse;
-export type GetBlueprintComposesApiArg = {
-  /** UUID of a blueprint */
-  id: string;
-  /** Filter by a specific version of the Blueprint we want to fetch composes for.
-    Pass special value -1 to fetch composes for latest version of the Blueprint.
-     */
-  blueprintVersion?: number;
-  /** max amount of composes, default 100 */
-  limit?: number;
-  /** composes page offset, default 0 */
-  offset?: number;
-  /** Filter the composes on image type. The filter is optional and can be specified multiple times.
-   */
-  ignoreImageTypes?: ImageTypes[];
-};
 export type RecommendPackageApiResponse =
   /** status 200 Return the recommended packages. */ RecommendationsResponse;
 export type RecommendPackageApiArg = {
@@ -358,6 +358,7 @@ export type Distributions =
   | "rhel-94"
   | "centos-8"
   | "centos-9"
+  | "centos-10"
   | "fedora-37"
   | "fedora-38"
   | "fedora-39"
@@ -370,7 +371,21 @@ export type ListResponseLinks = {
   first: string;
   last: string;
 };
-export type ClientId = "api" | "ui";
+export type BlueprintItem = {
+  id: string;
+  version: number;
+  name: string;
+  description: string;
+  last_modified_at: string;
+};
+export type BlueprintsResponse = {
+  meta: ListResponseMeta;
+  links: ListResponseLinks;
+  data: BlueprintItem[];
+};
+export type CreateBlueprintResponse = {
+  id: string;
+};
 export type ImageTypes =
   | "aws"
   | "azure"
@@ -668,6 +683,29 @@ export type Customizations = {
   fips?: Fips;
   installer?: Installer;
 };
+export type CreateBlueprintRequest = {
+  name: string;
+  description?: string;
+  distribution: Distributions;
+  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+   */
+  image_requests: ImageRequest[];
+  customizations: Customizations;
+};
+export type BlueprintResponse = {
+  id: string;
+  name: string;
+  description: string;
+  distribution: Distributions;
+  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
+   */
+  image_requests: ImageRequest[];
+  customizations: Customizations;
+};
+export type ComposeResponse = {
+  id: string;
+};
+export type ClientId = "api" | "ui";
 export type ComposeRequest = {
   distribution: Distributions;
   image_name?: string;
@@ -769,9 +807,6 @@ export type ClonesResponse = {
 export type CloneStatusResponse = {
   compose_id?: string;
 } & UploadStatus;
-export type ComposeResponse = {
-  id: string;
-};
 export type Package = {
   name: string;
   summary: string;
@@ -800,40 +835,6 @@ export type DistributionProfileItem =
   | "xccdf_org.ssgproject.content_profile_stig"
   | "xccdf_org.ssgproject.content_profile_stig_gui";
 export type DistributionProfileResponse = DistributionProfileItem[];
-export type BlueprintItem = {
-  id: string;
-  version: number;
-  name: string;
-  description: string;
-  last_modified_at: string;
-};
-export type BlueprintsResponse = {
-  meta: ListResponseMeta;
-  links: ListResponseLinks;
-  data: BlueprintItem[];
-};
-export type CreateBlueprintResponse = {
-  id: string;
-};
-export type CreateBlueprintRequest = {
-  name: string;
-  description?: string;
-  distribution: Distributions;
-  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
-   */
-  image_requests: ImageRequest[];
-  customizations: Customizations;
-};
-export type BlueprintResponse = {
-  id: string;
-  name: string;
-  description: string;
-  distribution: Distributions;
-  /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
-   */
-  image_requests: ImageRequest[];
-  customizations: Customizations;
-};
 export type RecommendationsResponse = {
   packages: string[];
 };
@@ -844,6 +845,16 @@ export type RecommendPackageRequest = {
 export const {
   useGetArchitecturesQuery,
   useLazyGetArchitecturesQuery,
+  useGetBlueprintsQuery,
+  useLazyGetBlueprintsQuery,
+  useCreateBlueprintMutation,
+  useUpdateBlueprintMutation,
+  useGetBlueprintQuery,
+  useLazyGetBlueprintQuery,
+  useDeleteBlueprintMutation,
+  useComposeBlueprintMutation,
+  useGetBlueprintComposesQuery,
+  useLazyGetBlueprintComposesQuery,
   useGetComposesQuery,
   useLazyGetComposesQuery,
   useGetComposeStatusQuery,
@@ -860,15 +871,5 @@ export const {
   useLazyGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
-  useGetBlueprintsQuery,
-  useLazyGetBlueprintsQuery,
-  useCreateBlueprintMutation,
-  useUpdateBlueprintMutation,
-  useGetBlueprintQuery,
-  useLazyGetBlueprintQuery,
-  useDeleteBlueprintMutation,
-  useComposeBlueprintMutation,
-  useGetBlueprintComposesQuery,
-  useLazyGetBlueprintComposesQuery,
   useRecommendPackageMutation,
 } = injectedRtkApi;

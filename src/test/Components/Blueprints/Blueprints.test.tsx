@@ -57,12 +57,9 @@ describe('Blueprints', () => {
     window.HTMLElement.prototype.scrollTo = function () {};
 
     server.use(
-      rest.get(
-        `${IMAGE_BUILDER_API}/experimental/blueprints`,
-        (req, res, ctx) => {
-          return res(ctx.status(200), ctx.json(emptyGetBlueprints));
-        }
-      )
+      rest.get(`${IMAGE_BUILDER_API}/blueprints`, (req, res, ctx) => {
+        return res(ctx.status(200), ctx.json(emptyGetBlueprints));
+      })
     );
 
     const { router } = await renderWithReduxRouter('', {});
@@ -163,7 +160,7 @@ describe('Blueprints', () => {
     test('redirect to index page when blueprint is invalid', async () => {
       server.use(
         rest.get(
-          `${IMAGE_BUILDER_API}/experimental/blueprints/invalid-compose-id`,
+          `${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`,
           (req, res, ctx) => {
             return res(ctx.status(404));
           }

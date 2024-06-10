@@ -143,7 +143,7 @@ export const handlers = [
       return res(ctx.status(200), ctx.json(oscapCustomizations(profile)));
     }
   ),
-  rest.get(`${IMAGE_BUILDER_API}/experimental/blueprints`, (req, res, ctx) => {
+  rest.get(`${IMAGE_BUILDER_API}/blueprints`, (req, res, ctx) => {
     const search = req.url.searchParams.get('search');
     const limit = req.url.searchParams.get('limit') || '10';
     const offset = req.url.searchParams.get('offset') || '0';
@@ -168,51 +168,39 @@ export const handlers = [
 
     return res(ctx.status(200), ctx.json(resp));
   }),
-  rest.post(
-    `${IMAGE_BUILDER_API}/experimental/blueprint/:id/compose`,
-    (req, res, ctx) => {
-      return res(ctx.status(200));
-    }
-  ),
+  rest.post(`${IMAGE_BUILDER_API}/blueprint/:id/compose`, (req, res, ctx) => {
+    return res(ctx.status(200));
+  }),
   rest.post(CREATE_BLUEPRINT, (req, res, ctx) => {
     const response = {
       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     };
     return res(ctx.status(201), ctx.json(response));
   }),
-  rest.get(
-    `${IMAGE_BUILDER_API}/experimental/blueprints/:id/composes`,
-    (req, res, ctx) => {
-      const emptyBlueprintId = mockGetBlueprints.data[1].id;
-      const outOfSyncBlueprintId = mockGetBlueprints.data[2].id;
-      const centosBlueprintId = mockGetBlueprints.data[3].id;
+  rest.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, (req, res, ctx) => {
+    const emptyBlueprintId = mockGetBlueprints.data[1].id;
+    const outOfSyncBlueprintId = mockGetBlueprints.data[2].id;
+    const centosBlueprintId = mockGetBlueprints.data[3].id;
 
-      switch (req.params.id) {
-        case emptyBlueprintId:
-          return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
-        case outOfSyncBlueprintId:
-          return res(ctx.status(200), ctx.json(mockBlueprintComposesOutOfSync));
-        case centosBlueprintId:
-          return res(ctx.status(200), ctx.json(mockCentosBlueprintComposes));
-        default:
-          return res(ctx.status(200), ctx.json(mockBlueprintComposes));
-      }
+    switch (req.params.id) {
+      case emptyBlueprintId:
+        return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
+      case outOfSyncBlueprintId:
+        return res(ctx.status(200), ctx.json(mockBlueprintComposesOutOfSync));
+      case centosBlueprintId:
+        return res(ctx.status(200), ctx.json(mockCentosBlueprintComposes));
+      default:
+        return res(ctx.status(200), ctx.json(mockBlueprintComposes));
     }
-  ),
-  rest.get(
-    `${IMAGE_BUILDER_API}/experimental/blueprints/:id`,
-    (req, res, ctx) => {
-      const id = req.params['id'];
-      return res(ctx.status(200), ctx.json(getMockBlueprintResponses(id)));
-    }
-  ),
-  rest.put(
-    `${IMAGE_BUILDER_API}/experimental/blueprints/:id`,
-    (req, res, ctx) => {
-      const id = req.params['id'];
-      return res(ctx.status(200), ctx.json({ id: id }));
-    }
-  ),
+  }),
+  rest.get(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
+    const id = req.params['id'];
+    return res(ctx.status(200), ctx.json(getMockBlueprintResponses(id)));
+  }),
+  rest.put(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
+    const id = req.params['id'];
+    return res(ctx.status(200), ctx.json({ id: id }));
+  }),
   rest.post(
     `${IMAGE_BUILDER_API}/experimental/recommendations`,
     (req, res, ctx) => {
