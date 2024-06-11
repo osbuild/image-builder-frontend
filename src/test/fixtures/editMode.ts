@@ -3,6 +3,7 @@ import {
   mockBlueprintDescriptions,
   mockBlueprintIds,
   mockBlueprintNames,
+  multipleTargetsBlueprintResponse,
 } from './blueprints';
 
 import {
@@ -429,6 +430,8 @@ export const getMockBlueprintResponse = (id: string) => {
   switch (id) {
     case mockBlueprintIds['darkChocolate']:
       return darkChocolateBlueprintResponse;
+    case mockBlueprintIds['multipleTargets']:
+      return multipleTargetsBlueprintResponse;
     case mockBlueprintIds['rhel9']:
       return rhel9BlueprintResponse;
     case mockBlueprintIds['rhel8']:

@@ -15,42 +15,43 @@ import {
   ButtonProps,
   Button,
 } from '@patternfly/react-core';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { skipToken } from '@reduxjs/toolkit/query';
 
+import { targetOptions } from '../../constants';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
-import {useAppDispatch, useAppSelector} from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   ImageTypes,
   useComposeBlueprintMutation,
   useGetBlueprintQuery,
 } from '../../store/imageBuilderApi';
-import {addNotification} from "@redhat-cloud-services/frontend-components-notifications/redux";
 
 export const BuildImagesButton = () => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [deselectedTargets, setDeselectedTargets] = useState<ImageTypes[]>([]);
-  const [buildBlueprint, { isLoading: imageBuildLoading, isError: imageBuildError }] =
-      useComposeBlueprintMutation();
+  const [buildBlueprint, { isLoading: imageBuildLoading }] =
+    useComposeBlueprintMutation();
   const dispatch = useAppDispatch();
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
-      try{
-      await buildBlueprint({
-        id: selectedBlueprintId,
-        body: {
-          image_types: blueprintImageType?.filter(
-            (target) => !deselectedTargets?.includes(target)
-          ),
-        },
-      })}
-      catch(imageBuildError) {
+      try {
+        await buildBlueprint({
+          id: selectedBlueprintId,
+          body: {
+            image_types: blueprintImageType?.filter(
+              (target) => !deselectedTargets?.includes(target)
+            ),
+          },
+        });
+      } catch (imageBuildError) {
         dispatch(
-            addNotification({
-                  variant: 'warning',
-                  title: 'No blueprint was build',
-                })
-            );
+          addNotification({
+            variant: 'warning',
+            title: 'No blueprint was build',
+          })
+        );
       }
     }
   };
@@ -80,24 +81,6 @@ export const BuildImagesButton = () => {
     }
   };
 
-  const handleToggleEnvironment = (target: ImageTypes) => {
-    switch (target) {
-      case 'aws':
-        return 'Amazon Web Services (AWS)';
-      case 'gcp':
-        return 'Google Cloud Platform (GCP)';
-      case 'azure':
-        return 'Microsoft Azure';
-      case 'oci':
-        return 'Oracle Cloud Infrastructure';
-      case 'vsphere-ova':
-        return 'VMware vSphere';
-      case 'guest-image':
-        return 'Virtualization - Guest image (.qcow2)';
-      case 'image-installer':
-        return 'Bare metal - Installer';
-    }
-  };
   return (
     <Dropdown
       isOpen={isOpen}
@@ -105,6 +88,7 @@ export const BuildImagesButton = () => {
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
           variant="primary"
+          data-testid="blueprint-build-image-menu"
           ref={toggleRef}
           isFullWidth
           onClick={onToggleClick}
@@ -113,6 +97,7 @@ export const BuildImagesButton = () => {
             variant: 'action',
             items: [
               <MenuToggleAction
+                data-testid="blueprint-build-image-menu-option"
                 key="split-action"
                 onClick={onBuildHandler}
                 id="wizard-build-image-btn"
@@ -152,6 +137,7 @@ export const BuildImagesButton = () => {
           <MenuList>
             {blueprintImageType?.map((imageType, index) => (
               <MenuItem
+                data-testid="blueprint-menu-items"
                 key={imageType}
                 hasCheckbox
                 itemId={index}
@@ -159,7 +145,7 @@ export const BuildImagesButton = () => {
                   !deselectedTargets || !deselectedTargets.includes(imageType)
                 }
               >
-                {handleToggleEnvironment(imageType)}
+                {targetOptions[imageType]}
               </MenuItem>
             ))}
           </MenuList>
