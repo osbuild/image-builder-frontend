@@ -1,4 +1,4 @@
-import { CENTOS_8, CENTOS_9, RHEL_8, RHEL_9 } from '../constants';
+import { CENTOS_9, RHEL_8, RHEL_9 } from '../constants';
 
 export const releaseToVersion = (release: string) => {
   switch (release) {
@@ -8,8 +8,6 @@ export const releaseToVersion = (release: string) => {
       return '8';
     case CENTOS_9:
       return '9';
-    case CENTOS_8:
-      return '8';
     default:
       return '';
   }

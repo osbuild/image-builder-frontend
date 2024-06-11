@@ -162,7 +162,7 @@ const testingRepos: ApiRepositoryResponseRead[] = [
   {
     uuid: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
     name: '2lmdtj',
-    url: 'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+    url: 'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
     distribution_versions: ['8'],
     distribution_arch: 'any',
     account_id: '6416440',
@@ -198,7 +198,7 @@ const testingRepos: ApiRepositoryResponseRead[] = [
   {
     uuid: 'ffe90892-6e6c-43c0-a284-df78977d8e37',
     name: '4tnt6f',
-    url: 'https://mirror.linux.duke.edu/pub/centos/8-stream/BaseOS/x86_64/os/',
+    url: 'https://mirror.linux.duke.edu/pub/centos/9-stream/BaseOS/x86_64/os/',
     distribution_versions: ['9'],
     distribution_arch: 'aarch64',
     account_id: '6416440',

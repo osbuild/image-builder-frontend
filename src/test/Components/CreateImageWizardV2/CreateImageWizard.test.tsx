@@ -218,9 +218,6 @@ describe('Step Image output', () => {
       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('option', {
-      name: 'CentOS Stream 8',
-    });
-    await screen.findByRole('option', {
       name: 'CentOS Stream 9',
     });
 
@@ -1020,7 +1017,7 @@ describe('Step Review', () => {
     await user.click(showOptionsButton);
 
     const centos = await screen.findByRole('option', {
-      name: 'CentOS Stream 8',
+      name: 'CentOS Stream 9',
     });
     await user.click(centos);
     // select aws as upload destination

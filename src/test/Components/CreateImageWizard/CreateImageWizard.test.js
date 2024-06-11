@@ -239,9 +239,6 @@ describe('Step Image output', () => {
       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('option', {
-      name: 'CentOS Stream 8',
-    });
-    await screen.findByRole('option', {
       name: 'CentOS Stream 9',
     });
 
@@ -974,7 +971,7 @@ describe('Step Review', () => {
     await user.click(showOptionsButton);
 
     const centos = await screen.findByRole('option', {
-      name: 'CentOS Stream 8',
+      name: 'CentOS Stream 9',
     });
     await user.click(centos);
 
@@ -1314,7 +1311,7 @@ describe('Click through all steps', () => {
       },
       {
         baseurl:
-          'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+          'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
         check_gpg: false,
         rhsm: false,
         module_hotfixes: true,
@@ -1334,7 +1331,7 @@ describe('Click through all steps', () => {
       },
       {
         baseurl: [
-          'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+          'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
         ],
         check_gpg: false,
         id: '9cf1d45d-aa06-46fe-87ea-121845cc6bbb',
