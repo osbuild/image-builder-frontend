@@ -229,7 +229,7 @@ describe('Blueprints', () => {
       await user.click(button);
 
       await waitFor(() => {
-        expect(screen.getAllByRole('checkbox')).toHaveLength(2);
+        expect(screen.getAllByRole('checkbox')).toHaveLength(3);
       });
     });
   });
