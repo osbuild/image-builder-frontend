@@ -42,6 +42,7 @@ describe('Blueprints', () => {
   const user = userEvent.setup();
   const blueprintNameWithComposes = 'Dark Chocolate';
   const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
+  const blueprintIdWithMultipleTargets = 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa';
   const blueprintNameEmptyComposes = 'Milk Chocolate';
   const blueprintIdEmptyComposes = '193482e4-4bd0-4898-a8bc-dc8c33ed669f';
   const blueprintIdOutOfSync = '51243667-8d87-4aef-8dd1-84fc58261b05';
@@ -100,6 +101,55 @@ describe('Blueprints', () => {
       name: /Build image/i,
     });
     expect(buildImageBtn).toBeEnabled();
+  });
+
+  test('uncheck Target option and check that build image button is Disable', async () => {
+    renderWithReduxRouter('', {});
+
+    await selectBlueprintById(blueprintIdWithComposes);
+    const buildImageBtn = await screen.findByRole('button', {
+      name: /Build image/i,
+    });
+    expect(buildImageBtn).toBeEnabled();
+    const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
+    await user.click(buildImageDropDown);
+
+    const awsCheckbox = await screen.findByRole('checkbox', {
+      name: /amazon web services/i,
+    });
+    expect(awsCheckbox).toBeChecked();
+
+    await user.click(awsCheckbox);
+    expect(awsCheckbox).not.toBeChecked();
+
+    const buildSelectedBtn = await screen.findByRole('button', {
+      name: /Build selected/i,
+    });
+    expect(buildSelectedBtn).toBeDisabled();
+  });
+
+  test('uncheck one Target option and check that you can build an image', async () => {
+    renderWithReduxRouter('', {});
+
+    await selectBlueprintById(blueprintIdWithMultipleTargets);
+    const buildImageBtn = await screen.findByRole('button', {
+      name: /Build image/i,
+    });
+    expect(buildImageBtn).toBeEnabled();
+    const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
+
+    await user.click(buildImageDropDown);
+    const awsCheckbox = await screen.findByRole('checkbox', {
+      name: /amazon web services/i,
+    });
+    expect(awsCheckbox).toBeChecked();
+
+    await user.click(awsCheckbox);
+    expect(awsCheckbox).not.toBeChecked();
+    const buildSelectedBtn = await screen.findByRole('button', {
+      name: /Build selected/i,
+    });
+    expect(buildSelectedBtn).toBeEnabled();
   });
 
   test('blueprint is out of sync', async () => {
@@ -227,7 +277,7 @@ describe('Blueprints', () => {
       await user.click(button);
 
       await waitFor(() => {
-        expect(screen.getAllByRole('checkbox')).toHaveLength(7);
+        expect(screen.getAllByRole('checkbox')).toHaveLength(8);
       });
     });
   });

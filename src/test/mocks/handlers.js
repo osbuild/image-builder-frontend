@@ -190,8 +190,8 @@ export const handlers = [
   }),
   rest.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, (req, res, ctx) => {
     const emptyBlueprintId = mockGetBlueprints.data[1].id;
-    const outOfSyncBlueprintId = mockGetBlueprints.data[2].id;
-    const centosBlueprintId = mockGetBlueprints.data[3].id;
+    const outOfSyncBlueprintId = mockGetBlueprints.data[3].id;
+    const centosBlueprintId = mockGetBlueprints.data[4].id;
 
     switch (req.params.id) {
       case emptyBlueprintId:

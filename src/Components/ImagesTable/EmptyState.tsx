@@ -22,7 +22,6 @@ import {
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
   MANAGING_WITH_DNF_URL,
 } from '../../constants';
-
 import { BuildImagesButtonEmptyState } from '../Blueprints/BuildImagesButton';
 
 type ImagesEmptyStateProps = {

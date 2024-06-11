@@ -10,6 +10,9 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
   {
     id: '677b010b-e95e-4694-9813-d11d847f1bfc',
   },
+  {
+    id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
+  },
 ];
 
 export const mockBlueprintIds = {
@@ -23,6 +26,7 @@ export const mockBlueprintIds = {
   gcp: '34449e42-1b61-4fd7-9bf2-55210b5f21cd',
   azure: '21698d07-10af-425f-bae3-51e6961318b5',
   registration: '00d2bf0f-55fc-40ae-ad3e-14368c69497a',
+  multipleTargets: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
   oscap: '260823fd-0a51-43fd-bc1c-77255848de04',
   fsc: 'ec486dea-78f8-43ee-9c69-8f76b9d1b143',
   snapshot: '5dafa0fc-a5c8-4dc3-8a03-ceeb3677b28a',
@@ -72,7 +76,7 @@ export const mockBlueprintDescriptions = {
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 27 },
+  meta: { count: 28 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -87,6 +91,13 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       description: '40% Milk Chocolate with salted caramel',
       version: 1,
       last_modified_at: '2021-09-08T14:38:00.000Z',
+    },
+    {
+      id: 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa',
+      name: 'Multiple Target',
+      description: '70% Dark Chocolate with crunchy cocoa nibs',
+      version: 2,
+      last_modified_at: '2021-09-09T14:38:00.000Z',
     },
     {
       id: '51243667-8d87-4aef-8dd1-84fc58261b05',
@@ -389,6 +400,16 @@ export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
               },
             },
           },
+          {
+            architecture: 'x86_64',
+            image_type: 'aws',
+            upload_request: {
+              type: 'aws',
+              options: {
+                share_with_accounts: ['123123123123'],
+              },
+            },
+          },
         ],
       },
     },
@@ -411,6 +432,22 @@ export const updatedBlueprints: GetBlueprintsApiResponse = {
     // If the item name is 'Dark Chocolate', rename it to 'Extra Dark Chocolate'
     name: item.name === 'Dark Chocolate' ? 'Extra Dark Chocolate' : item.name,
   })),
+};
+
+export const multipleTargetsBlueprintResponse: GetBlueprintApiResponse = {
+  ...mockGetBlueprints.data[2],
+  image_requests: mockBlueprintComposes.data[2].request.image_requests,
+  distribution: mockBlueprintComposes.data[2].request.distribution,
+  customizations: {
+    subscription: {
+      organization: 1234,
+      'activation-key': '',
+      'server-url': '',
+      'base-url': '',
+      insights: true,
+      rhc: true,
+    },
+  },
 };
 
 export const darkChocolateBlueprintResponse: GetBlueprintApiResponse = {
