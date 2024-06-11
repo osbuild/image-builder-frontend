@@ -3,7 +3,6 @@ import { userEvent } from '@testing-library/user-event';
 
 import {
   AARCH64,
-  CENTOS_8,
   CENTOS_9,
   CREATE_BLUEPRINT,
   RHEL_8,
@@ -80,15 +79,6 @@ const selectRhel9 = async () => {
     name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
   });
   await userEvent.click(rhel9);
-};
-
-const selectCentos8 = async () => {
-  await openReleaseMenu();
-  await clickShowOptions();
-  const centos8 = await screen.findByRole('option', {
-    name: 'CentOS Stream 8',
-  });
-  await userEvent.click(centos8);
 };
 
 const selectCentos9 = async () => {
@@ -171,20 +161,6 @@ describe('distribution request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       distribution: CENTOS_9,
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('centos-8', async () => {
-    await renderCreateMode();
-    await selectCentos8();
-    await goToReviewStep();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      distribution: CENTOS_8,
     };
 
     expect(receivedRequest).toEqual(expectedRequest);

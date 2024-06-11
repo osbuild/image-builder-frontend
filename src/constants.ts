@@ -42,7 +42,6 @@ export const OSBUILD_SERVICE_ARCHITECTURE_URL =
 
 export const RHEL_8 = 'rhel-8';
 export const RHEL_9 = 'rhel-9';
-export const CENTOS_8 = 'centos-8';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
@@ -56,7 +55,6 @@ export const RELEASES = new Map([
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
   [CENTOS_9, 'CentOS Stream 9'],
-  [CENTOS_8, 'CentOS Stream 8'],
 ]);
 
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];

@@ -737,7 +737,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             },
             {
               baseurl: [
-                'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+                'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
               ],
               check_gpg: false,
               check_repo_gpg: false,
@@ -757,7 +757,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
             },
             {
               baseurl:
-                'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+                'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
               check_gpg: false,
               check_repo_gpg: false,
               gpgkey: '',
@@ -1355,7 +1355,7 @@ export const mockComposesRecreateImage = {
             },
             {
               baseurl: [
-                'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+                'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
               ],
               check_gpg: false,
               check_repo_gpg: false,
@@ -1366,7 +1366,7 @@ export const mockComposesRecreateImage = {
             {
               id: 'f087f9ad-dfe6-4627-9d53-447d1a997de5',
               name: 'nginx stable repo',
-              baseurl: ['http://nginx.org/packages/centos/8/x86_64/'],
+              baseurl: ['http://nginx.org/packages/centos/9/x86_64/'],
               check_gpg: true,
               check_repo_gpg: false,
               gpg_key: [
@@ -1386,7 +1386,7 @@ export const mockComposesRecreateImage = {
             },
             {
               baseurl:
-                'http://mirror.stream.centos.org/SIGs/8/kmods/x86_64/packages-main/',
+                'http://mirror.stream.centos.org/SIGs/9/kmods/x86_64/packages-main/',
               check_gpg: false,
               check_repo_gpg: false,
               gpgkey: '',
@@ -1394,7 +1394,7 @@ export const mockComposesRecreateImage = {
             },
 
             {
-              baseurl: 'http://nginx.org/packages/centos/8/x86_64/',
+              baseurl: 'http://nginx.org/packages/centos/9/x86_64/',
               check_gpg: true,
               check_repo_gpg: false,
               gpg_key: [
