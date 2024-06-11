@@ -25,6 +25,7 @@ import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
+import UsersStep from './steps/Users';
 import {
   isAwsAccountIdValid,
   isAzureTenantGUIDValid,
@@ -346,6 +347,21 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               </WizardStep>,
             ]}
           />
+          <WizardStep
+            name="Users"
+            id="step-users"
+            footer={<CustomWizardFooter disableNext={false} />}
+            isHidden={
+              !targetEnvironments.find(
+                (target) =>
+                  target === 'guest-image' ||
+                  target === 'vsphere' ||
+                  target === 'vsphere-ova'
+              )
+            }
+          >
+            <UsersStep />
+          </WizardStep>
           {isFirstBootEnabled && (
             <WizardStep
               name="First boot script configuration"

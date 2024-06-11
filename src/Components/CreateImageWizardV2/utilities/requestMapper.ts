@@ -187,6 +187,10 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       blueprintName: request.name,
       blueprintDescription: request.description,
     },
+    users: {
+      name: request.customizations.users?.[0].name || '',
+      sshKey: request.customizations.users?.[0].ssh_key || '',
+    },
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',

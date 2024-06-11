@@ -58,6 +58,24 @@ export const blueprintRequest: CreateBlueprintRequest = {
   customizations: {},
 };
 
+export const defaultSshKey =
+  'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDctb+sfjWYdakDtzI9+Kzp5MSHUm+SRC4KuiprWWoQnZjH037uW3p5IPqE2iyrZ6Elo5aIhn+WBhLv3L4bFOMvzgCbMNKajBltGnW7UXevttEv0k9NtcWzSRrYygiDOoWNKEGsAZSTG7BJGjBAblGF7zKoeRE5rGBAfI8Lv64IjPryE/FmXqWLXmAtGf8HyHj+kO37w5btrXtihhhRc4QVlav1hOmlT524rjQLcoQ+UdLSx/j/7IhPImgyL2WFkzquuBPjeCcESRU7oRjDQorC0QT7Q4X2Kvd4c3retfat08Q4d1nGpSNjAeud4RD8OuF0TMi3cUIFmYG+oi5ILPZ3';
+
+export const userRequest: CreateBlueprintRequest = {
+  name: 'Red Velvet',
+  description: '',
+  distribution: RHEL_9,
+  image_requests: [imageRequest],
+  customizations: {
+    users: [
+      {
+        name: 'jdoe',
+        ssh_key: defaultSshKey,
+      },
+    ],
+  },
+};
+
 /**
  * @example
  * // returns 'imageWizard?release=rhel8&architecture=aarch64'
