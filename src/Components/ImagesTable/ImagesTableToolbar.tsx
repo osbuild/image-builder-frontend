@@ -49,16 +49,19 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
 
-  const { data: blueprintsComposes, isFetching: isFetchingBlueprintsCompose } =
-    useGetBlueprintComposesQuery(
-      {
-        id: selectedBlueprintId as string,
-        limit: perPage,
-        offset: perPage * (page - 1),
-        blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
-      },
-      { skip: !selectedBlueprintId }
-    );
+  const {
+    data: blueprintsComposes,
+    isFetching: isFetchingBlueprintsCompose,
+    isSuccess: isSuccessBlueprintsCompose,
+  } = useGetBlueprintComposesQuery(
+    {
+      id: selectedBlueprintId as string,
+      limit: perPage,
+      offset: perPage * (page - 1),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+    },
+    { skip: !selectedBlueprintId }
+  );
 
   const { selectedBlueprintName, selectedBlueprintVersion } =
     useGetBlueprintsQuery(
@@ -116,6 +119,12 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     );
   }
 
+  const isBlueprintDistroCentos8 = () => {
+    if (isSuccessBlueprintsCompose) {
+      return blueprintsComposes.data[0].request.distribution === 'centos-8';
+    }
+  };
+
   return (
     <>
       <DeleteBlueprintModal
@@ -141,6 +150,20 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             ouiaId="blueprint-out-of-sync-alert"
           />
         )}
+        {blueprintsComposes &&
+          blueprintsComposes.data.length > 0 &&
+          isBlueprintDistroCentos8() && (
+            <Alert
+              style={{
+                margin:
+                  '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+              }}
+              isInline
+              variant="warning"
+              title="CentOS Stream 8 is no longer supported, building images from this blueprint will fail."
+              ouiaId="centos-8-blueprint-alert"
+            />
+          )}
         {selectedBlueprintId && (
           <ToolbarContent>
             <ToolbarItem>
