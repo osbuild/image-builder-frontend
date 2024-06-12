@@ -1066,7 +1066,7 @@ describe('Step Review', () => {
   test('has 3 buttons', async () => {
     await setUp();
 
-    await screen.findByRole('button', { name: /Create/ });
+    await screen.findByRole('button', { name: /Create blueprint/ });
     await screen.findByRole('button', { name: /Back/ });
     await screen.findByRole('button', { name: /Cancel/ });
   });

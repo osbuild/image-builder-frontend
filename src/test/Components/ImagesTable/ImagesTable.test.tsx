@@ -23,10 +23,6 @@ jest.mock('@unleash/proxy-client-react', () => ({
     switch (flag) {
       case 'edgeParity.image-list':
         return false;
-      case 'image-builder.new-wizard.enabled':
-        return false;
-      case 'image-builder.new-wizard.stable':
-        return false;
       default:
         return true;
     }
@@ -60,8 +56,9 @@ describe('Images Table', () => {
     expect(headerCells[2]).toHaveTextContent('Updated');
     expect(headerCells[3]).toHaveTextContent('OS');
     expect(headerCells[4]).toHaveTextContent('Target');
-    expect(headerCells[5]).toHaveTextContent('Status');
-    expect(headerCells[6]).toHaveTextContent('Instance');
+    expect(headerCells[5]).toHaveTextContent('Version');
+    expect(headerCells[6]).toHaveTextContent('Status');
+    expect(headerCells[7]).toHaveTextContent('Instance');
 
     const imageNameValues = mockComposes.map((compose) =>
       compose.image_name ? compose.image_name : compose.id
@@ -77,34 +74,6 @@ describe('Images Table', () => {
     });
 
     // TODO Test remaining table content.
-  });
-
-  test('check recreate action', async () => {
-    const { router } = await renderWithReduxRouter('', {});
-
-    // get rows
-    const table = await screen.findByTestId('images-table');
-    const { findAllByRole } = within(table);
-    const rows = await findAllByRole('row');
-
-    const actionsButton = await within(rows[1]).findByRole('button', {
-      name: 'Kebab toggle',
-    });
-
-    expect(actionsButton).toBeEnabled();
-
-    await user.click(actionsButton);
-    const recreateButton = await screen.findByRole('menuitem', {
-      name: 'Recreate image',
-    });
-
-    await user.click(recreateButton);
-
-    await waitFor(() =>
-      expect(router.state.location.pathname).toBe(
-        '/insights/image-builder/imagewizard/1579d95b-8f1d-4982-8c53-8c2afa4ab04c'
-      )
-    );
   });
 
   test('check download compose request action', async () => {

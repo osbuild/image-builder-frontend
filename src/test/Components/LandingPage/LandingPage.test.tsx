@@ -20,8 +20,6 @@ jest.mock('@unleash/proxy-client-react', () => ({
     switch (flag) {
       case 'edgeParity.image-list':
         return false;
-      case 'image-builder.new-wizard.stable':
-        return false;
       default:
         return true;
     }
@@ -33,7 +31,8 @@ describe('Landing Page', () => {
     renderWithReduxRouter('', {});
 
     // check heading
-    await screen.findByRole('heading', { name: /Images/i });
+    const heading = await screen.findByText('Images');
+    expect(heading).toHaveRole('heading');
   });
 
   test('renders EmptyState child component', async () => {
@@ -44,9 +43,6 @@ describe('Landing Page', () => {
     );
 
     renderWithReduxRouter('', {});
-
-    // check action loads
-    await screen.findByTestId('create-image-action-empty-state');
     // check table loads
     await screen.findByTestId('empty-state');
   });

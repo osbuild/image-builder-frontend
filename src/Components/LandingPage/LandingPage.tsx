@@ -24,12 +24,10 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import './LandingPage.scss';
 
 import { NewAlert } from './NewAlert';
-import Quickstarts from './Quickstarts';
 
 import { MANAGING_WITH_DNF_URL, OSTREE_URL } from '../../constants';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
-import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
@@ -58,20 +56,8 @@ export const LandingPage = () => {
   };
 
   const edgeParityFlag = useFlag('edgeParity.image-list');
-  const experimentalFlag = useExperimentalFlag();
 
-  const traditionalImageList = (
-    <>
-      <PageSection>
-        <Quickstarts />
-      </PageSection>
-      <PageSection>
-        <ImagesTable />
-      </PageSection>
-    </>
-  );
-
-  const experimentalImageList = (
+  const imageList = (
     <>
       <PageSection isWidthLimited>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
@@ -98,16 +84,9 @@ export const LandingPage = () => {
     </>
   );
 
-  const imageList = experimentalFlag
-    ? experimentalImageList
-    : traditionalImageList;
-
   return (
     <>
-      <ImageBuilderHeader
-        experimentalFlag={experimentalFlag}
-        activeTab={activeTabKey}
-      />
+      <ImageBuilderHeader activeTab={activeTabKey} />
       {edgeParityFlag ? (
         <Tabs
           className="pf-c-tabs pf-c-page-header pf-c-table"

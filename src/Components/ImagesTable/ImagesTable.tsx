@@ -68,7 +68,6 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
-import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -93,7 +92,6 @@ const ImagesTable = () => {
       }),
     }
   );
-  const experimentalFlag = useExperimentalFlag();
   const onSetPage: OnSetPage = (_, page) => setPage(page);
 
   const onPerPageSelect: OnSetPage = (_, perPage) => {
@@ -198,7 +196,7 @@ const ImagesTable = () => {
             <Th>Updated</Th>
             <Th>OS</Th>
             <Th>Target</Th>
-            {experimentalFlag && <Th>Version</Th>}
+            <Th>Version</Th>
             <Th>Status</Th>
             <Th>Instance</Th>
             <Th aria-label="Actions menu" />
@@ -407,7 +405,6 @@ type AwsRowPropTypes = {
 
 const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
-  const experimentalFlag = useExperimentalFlag();
 
   const target = <AwsTarget compose={compose} />;
 
@@ -418,9 +415,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const details = <AwsDetails compose={compose} />;
 
   const actions = (
-    <ActionsColumn
-      items={awsActions(compose, composeStatus, navigate, experimentalFlag)}
-    />
+    <ActionsColumn items={awsActions(compose, composeStatus, navigate)} />
   );
 
   return (
@@ -457,8 +452,6 @@ const Row = ({
 }: RowPropTypes) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
-  const experimentalFlag = useExperimentalFlag();
-  const navigate = useNavigate();
 
   return (
     <Tbody key={compose.id} isExpanded={isExpanded}>
@@ -483,20 +476,16 @@ const Row = ({
         <Td dataLabel="Target">
           {target ? target : <Target compose={compose} />}
         </Td>
-        {experimentalFlag && (
-          <Td dataLabel="Version">
-            <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
-          </Td>
-        )}
+        <Td dataLabel="Version">
+          <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
+        </Td>
         <Td dataLabel="Status">{status}</Td>
         <Td dataLabel="Instance">{instance}</Td>
         <Td>
           {actions ? (
             actions
           ) : (
-            <ActionsColumn
-              items={defaultActions(compose, navigate, experimentalFlag)}
-            />
+            <ActionsColumn items={defaultActions(compose)} />
           )}
         </Td>
       </Tr>
@@ -509,21 +498,7 @@ const Row = ({
   );
 };
 
-const defaultActions = (
-  compose: ComposesResponseItem,
-  navigate: NavigateFunction,
-  experimentalFlag: boolean
-) => [
-  ...(experimentalFlag
-    ? []
-    : [
-        {
-          title: 'Recreate image',
-          onClick: () => {
-            navigate(resolveRelPath(`imagewizard/${compose.id}`));
-          },
-        },
-      ]),
+const defaultActions = (compose: ComposesResponseItem) => [
   {
     title: (
       <a
@@ -542,15 +517,14 @@ const defaultActions = (
 const awsActions = (
   compose: ComposesResponseItem,
   status: ComposeStatus | undefined,
-  navigate: NavigateFunction,
-  experimentalFlag: boolean
+  navigate: NavigateFunction
 ) => [
   {
     title: 'Share to new region',
     onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
     isDisabled: status?.image_status.status === 'success' ? false : true,
   },
-  ...defaultActions(compose, navigate, experimentalFlag),
+  ...defaultActions(compose),
 ];
 
 export default ImagesTable;

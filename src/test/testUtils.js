@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-import CreateImageWizard from '../Components/CreateImageWizard/CreateImageWizard';
+import ImportImageWizard from '../Components/CreateImageWizardV2/ImportImageWizard';
 import LandingPage from '../Components/LandingPage/LandingPage';
 import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import { middleware, reducer } from '../store';
@@ -44,8 +44,8 @@ export const renderWithReduxRouter = async (
       element: <LandingPage />,
     },
     {
-      path: 'insights/image-builder/imagewizard/:composeId?',
-      element: <CreateImageWizard />,
+      path: 'insights/image-builder/imagewizard/import',
+      element: <ImportImageWizard />,
     },
     {
       path: 'insights/image-builder/share/:composeId',
