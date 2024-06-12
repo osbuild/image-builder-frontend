@@ -153,6 +153,32 @@ export const mockBlueprintComposesOutOfSync: GetBlueprintComposesApiResponse = {
   links: { first: 'first', last: 'last' },
 };
 
+export const mockCentosBlueprintComposes: GetBlueprintComposesApiResponse = {
+  meta: { count: 1 },
+  data: [
+    {
+      id: '4873fd0f-1851-4b9f-b4fe-4639fce90794',
+      image_name: 'Cupcake',
+      created_at: '2021-04-27T12:31:12Z',
+      blueprint_version: 1,
+      request: {
+        distribution: 'centos-8',
+        image_requests: [
+          {
+            architecture: 'x86_64',
+            image_type: 'image-installer',
+            upload_request: {
+              options: {},
+              type: 'aws.s3',
+            },
+          },
+        ],
+      },
+    },
+  ],
+  links: { first: 'first', last: 'last' },
+};
+
 export const mockBlueprintComposes: GetBlueprintComposesApiResponse = {
   meta: { count: 3 },
   data: [

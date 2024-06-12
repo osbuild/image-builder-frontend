@@ -16,6 +16,7 @@ import {
   getMockBlueprintResponses,
   mockBlueprintComposes,
   mockBlueprintComposesOutOfSync,
+  mockCentosBlueprintComposes,
   mockEmptyBlueprintsComposes,
   mockGetBlueprints,
 } from '../fixtures/blueprints';
@@ -184,12 +185,15 @@ export const handlers = [
     (req, res, ctx) => {
       const emptyBlueprintId = mockGetBlueprints.data[1].id;
       const outOfSyncBlueprintId = mockGetBlueprints.data[2].id;
+      const centosBlueprintId = mockGetBlueprints.data[3].id;
 
       switch (req.params.id) {
         case emptyBlueprintId:
           return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
         case outOfSyncBlueprintId:
           return res(ctx.status(200), ctx.json(mockBlueprintComposesOutOfSync));
+        case centosBlueprintId:
+          return res(ctx.status(200), ctx.json(mockCentosBlueprintComposes));
         default:
           return res(ctx.status(200), ctx.json(mockBlueprintComposes));
       }

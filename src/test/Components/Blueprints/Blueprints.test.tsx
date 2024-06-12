@@ -45,6 +45,7 @@ describe('Blueprints', () => {
   const blueprintNameEmptyComposes = 'Milk Chocolate';
   const blueprintIdEmptyComposes = '193482e4-4bd0-4898-a8bc-dc8c33ed669f';
   const blueprintIdOutOfSync = '51243667-8d87-4aef-8dd1-84fc58261b05';
+  const blueprintIdCentos8 = 'b1f10309-a250-4db8-ab64-c110176e3eb7';
 
   test('renders blueprints page', async () => {
     renderWithReduxRouter('', {});
@@ -116,6 +117,22 @@ describe('Blueprints', () => {
     expect(
       screen.queryByText(
         'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  test('CentOS 8 Stream renders', async () => {
+    renderWithReduxRouter('', {});
+
+    await selectBlueprintById(blueprintIdCentos8);
+    await screen.findByText(
+      'CentOS Stream 8 is no longer supported, building images from this blueprint will fail.'
+    );
+
+    await selectBlueprintById(blueprintIdWithComposes);
+    expect(
+      screen.queryByText(
+        'CentOS Stream 8 is no longer supported, building images from this blueprint will fail.'
       )
     ).not.toBeInTheDocument();
   });
