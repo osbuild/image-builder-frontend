@@ -22,8 +22,6 @@ jest.mock('@unleash/proxy-client-react', () => ({
     switch (flag) {
       case 'image-builder.import.enabled':
         return true;
-      case 'image-builder.new-wizard.enabled':
-        return true;
       default:
         return false;
     }
@@ -243,17 +241,15 @@ describe('Import model', () => {
     expect(helperText).toBeInTheDocument();
   });
 
-  test('should enable button on correct blueprint', async () => {
+  test('should enable button on correct blueprint and go to wizard', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, BLUEPRINT_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
     await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    await user.click(reviewButton);
 
-    await userEvent.click(reviewButton);
-    await waitFor(() => {
-      expect(
-        screen.getByRole('heading', { name: 'Image output' })
-      ).toBeInTheDocument();
-    });
+    expect(
+      await screen.findByText('Image output', { selector: 'h1' })
+    ).toBeInTheDocument();
   });
 });

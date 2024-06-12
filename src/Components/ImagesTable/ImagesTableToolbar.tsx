@@ -8,7 +8,6 @@ import {
   ToolbarItem,
   Title,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
 
 import {
   selectSelectedBlueprintId,
@@ -21,8 +20,6 @@ import {
   useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
 } from '../../store/imageBuilderApi';
-import { resolveRelPath } from '../../Utilities/path';
-import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
@@ -44,7 +41,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   setPage,
   onPerPageSelect,
 }: imagesTableToolbarProps) => {
-  const experimentalFlag = useExperimentalFlag();
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -98,27 +94,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     />
   );
 
-  if (!experimentalFlag) {
-    return (
-      <Toolbar>
-        <ToolbarContent>
-          <ToolbarItem>
-            <Link
-              to={resolveRelPath('imagewizard')}
-              className="pf-c-button pf-m-primary"
-              data-testid="create-image-action"
-            >
-              Create image
-            </Link>
-          </ToolbarItem>
-          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-            {pagination}
-          </ToolbarItem>
-        </ToolbarContent>
-      </Toolbar>
-    );
-  }
-
   const isBlueprintDistroCentos8 = () => {
     if (isSuccessBlueprintsCompose) {
       return blueprintsComposes.data[0].request.distribution === 'centos-8';
@@ -139,7 +114,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
-        {itemCount > 0 && experimentalFlag && isBlueprintOutSync && (
+        {itemCount > 0 && isBlueprintOutSync && (
           <Alert
             style={{
               margin:
@@ -164,25 +139,28 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               ouiaId="centos-8-blueprint-alert"
             />
           )}
-        {selectedBlueprintId && (
-          <ToolbarContent>
-            <ToolbarItem>
-              <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
-            </ToolbarItem>
-            <ToolbarItem>
-              <BuildImagesButton />
-            </ToolbarItem>
-            <ToolbarItem>
-              <EditBlueprintButton />
-            </ToolbarItem>
-            <ToolbarItem>
-              <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
-            </ToolbarItem>
-            <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
-              {pagination}
-            </ToolbarItem>
-          </ToolbarContent>
-        )}
+
+        <ToolbarContent>
+          {selectedBlueprintId && (
+            <>
+              <ToolbarItem>
+                <BlueprintVersionFilter onFilterChange={() => setPage(1)} />
+              </ToolbarItem>
+              <ToolbarItem>
+                <BuildImagesButton />
+              </ToolbarItem>
+              <ToolbarItem>
+                <EditBlueprintButton />
+              </ToolbarItem>
+              <ToolbarItem>
+                <BlueprintActionsMenu setShowDeleteModal={setShowDeleteModal} />
+              </ToolbarItem>
+            </>
+          )}
+          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+            {pagination}
+          </ToolbarItem>
+        </ToolbarContent>
       </Toolbar>
     </>
   );

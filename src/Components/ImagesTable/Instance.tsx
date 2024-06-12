@@ -40,7 +40,6 @@ import {
   isOciUploadStatus,
 } from '../../store/typeGuards';
 import { resolveRelPath } from '../../Utilities/path';
-import { useExperimentalFlag } from '../../Utilities/useExperimentalFlag';
 import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
 
 type CloudInstancePropTypes = {
@@ -347,9 +346,6 @@ export const AwsS3Instance = ({
     composeId: compose.id,
   });
 
-  const navigate = useNavigate();
-  const experimentalFlag = useExperimentalFlag();
-
   if (!isSuccess) {
     return <Skeleton />;
   }
@@ -386,18 +382,6 @@ export const AwsS3Instance = ({
       <Button component="a" isDisabled variant="link" isInline>
         Download ({fileExtensions[compose.request.image_requests[0].image_type]}
         )
-      </Button>
-    );
-  } else if (isExpired && !experimentalFlag) {
-    return (
-      <Button
-        component="a"
-        target="_blank"
-        variant="link"
-        onClick={() => navigate(resolveRelPath(`imagewizard/${compose.id}`))}
-        isInline
-      >
-        Recreate image
       </Button>
     );
   } else {

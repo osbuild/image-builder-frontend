@@ -6,12 +6,8 @@ import { Route, Routes } from 'react-router-dom';
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
-import { useExperimentalFlag } from './Utilities/useExperimentalFlag';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
-const CreateImageWizard = lazy(
-  () => import('./Components/CreateImageWizard/CreateImageWizard')
-);
 const ImportImageWizard = lazy(
   () => import('./Components/CreateImageWizardV2/ImportImageWizard')
 );
@@ -22,7 +18,6 @@ const CreateImageWizardV2 = lazy(
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
   const importExportFlag = useFlag('image-builder.import.enabled');
-  const experimentalFlag = useExperimentalFlag();
   return (
     <Routes>
       <Route
@@ -36,7 +31,7 @@ export const Router = () => {
         <Route path="share/:composeId" element={<ShareImageModal />} />
       </Route>
 
-      {importExportFlag && experimentalFlag && (
+      {importExportFlag && (
         <Route
           path="imagewizard/import"
           element={
@@ -50,7 +45,7 @@ export const Router = () => {
         path="imagewizard/:composeId?"
         element={
           <Suspense>
-            {experimentalFlag ? <CreateImageWizardV2 /> : <CreateImageWizard />}
+            <CreateImageWizardV2 />
           </Suspense>
         }
       />

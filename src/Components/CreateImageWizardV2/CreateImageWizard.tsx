@@ -191,7 +191,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   return (
     <>
-      <ImageBuilderHeader />
+      <ImageBuilderHeader inWizard />
       <section className="pf-l-page__main-section pf-c-page__main-section">
         <Wizard
           startIndex={startIndex}

@@ -32,8 +32,8 @@ import './ImageBuilderHeader.scss';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
-  experimentalFlag?: boolean;
   activeTab?: number;
+  inWizard?: boolean;
 };
 
 const AboutImageBuilderPopover = () => {
@@ -92,8 +92,8 @@ const AboutImageBuilderPopover = () => {
 };
 
 export const ImageBuilderHeader = ({
-  experimentalFlag,
   activeTab,
+  inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
   const importExportFlag = useFlag('image-builder.import.enabled');
@@ -122,7 +122,7 @@ export const ImageBuilderHeader = ({
               }
             />
           </FlexItem>
-          {experimentalFlag && (
+          {!inWizard && (
             <>
               <FlexItem align={{ default: 'alignRight' }}>
                 <Button
