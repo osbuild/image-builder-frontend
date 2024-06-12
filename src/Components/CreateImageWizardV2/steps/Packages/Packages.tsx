@@ -384,6 +384,7 @@ const Packages = () => {
                   <EmptyStateActions>
                     <Button
                       variant="primary"
+                      ouiaId="search-other-repositories"
                       onClick={() => setToggleSourceRepos(RepoToggle.OTHER)}
                     >
                       Search other repositories
@@ -466,6 +467,7 @@ const Packages = () => {
             isLoading={createLoading}
             isDisabled={createLoading}
             onClick={handleConfirmModalToggle}
+            ouiaId="Add-listed-repos"
           >
             Add listed repositories
           </Button>,
@@ -473,7 +475,7 @@ const Packages = () => {
             Back
           </Button>,
         ]}
-        ouiaId="BasicModal"
+        ouiaId="Custom-repos-warning-modal"
       >
         You have selected packages that belong to custom repositories. By
         continuing, you are acknowledging and consenting to adding the following
