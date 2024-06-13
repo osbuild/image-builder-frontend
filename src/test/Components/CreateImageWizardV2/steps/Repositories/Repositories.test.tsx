@@ -7,12 +7,12 @@ import {
   CustomRepository,
   Repository,
 } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   expectedCustomRepositories,
   expectedPayloadRepositories,
-  mockBlueprintIds,
   repositoriesCreateBlueprintRequest,
-} from '../../../../fixtures/blueprints';
+} from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
@@ -161,11 +161,13 @@ describe('repositories request generated correctly', () => {
 
     const expectedRequest = blueprintRequest;
 
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
   });
 });
 
-describe('repositories edit mode', () => {
+describe('Repositories edit mode', () => {
   test('edit mode works', async () => {
     const id = mockBlueprintIds['repositories'];
     await renderEditMode(id);

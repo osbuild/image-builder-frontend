@@ -1,13 +1,15 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
 } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { gcpCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { clickBack, clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
@@ -15,8 +17,10 @@ import {
   enterBlueprintName,
   imageRequest,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -179,6 +183,22 @@ describe('gcp image type request generated correctly', () => {
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    expect(receivedRequest).toEqual(blueprintRequest);
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(blueprintRequest);
+    });
+  });
+});
+
+describe('GCP edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['gcp'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = gcpCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });

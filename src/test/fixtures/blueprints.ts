@@ -4,11 +4,6 @@ import {
   CreateBlueprintResponse,
   GetBlueprintComposesApiResponse,
   GetBlueprintApiResponse,
-  CreateBlueprintRequest,
-  ImageRequest,
-  BlueprintResponse,
-  Repository,
-  CustomRepository,
 } from '../../store/imageBuilderApi';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
@@ -19,23 +14,65 @@ export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
 
 export const mockBlueprintIds = {
   darkChocolate: '677b010b-e95e-4694-9813-d11d847f1bfc',
+  rhel9: 'b40509a4-741e-44c8-a2a9-25ef2bbf378c',
+  rhel8: 'c6b0bbcf-f006-4059-a20c-4bcafa452b76',
+  centos9: '2206aa19-f1ae-4691-a386-e9c3f6c2cf99',
+  x86_64: '00ec80dc-a64a-4756-879a-461e98591e6d',
+  aarch64: '035810f9-22b6-4118-bdc1-c46183437d40',
+  aws: 'ae17f987-0808-4398-a0bb-93605f02768e',
+  gcp: '34449e42-1b61-4fd7-9bf2-55210b5f21cd',
+  azure: '21698d07-10af-425f-bae3-51e6961318b5',
+  registration: '00d2bf0f-55fc-40ae-ad3e-14368c69497a',
   oscap: '260823fd-0a51-43fd-bc1c-77255848de04',
+  fsc: 'ec486dea-78f8-43ee-9c69-8f76b9d1b143',
+  snapshot: '5dafa0fc-a5c8-4dc3-8a03-ceeb3677b28a',
   repositories: '6f20ab62-37ba-4afd-9945-734919e9307b',
+  packages: 'b3437c4e-f6f8-4270-8d32-323ac60bc929',
+  firstBoot: 'd0a8376e-e44e-47b3-845d-30f5199a35b6',
+  details: '58991b91-4b98-47e0-b26d-8d908678ddb3',
 };
 
-const mockBlueprintNames = {
+export const mockBlueprintNames = {
+  rhel9: 'rhel9',
+  rhel8: 'rhel8',
+  centos9: 'centos9',
+  x86_64: 'x86_64',
+  aarch64: 'aarch64',
+  aws: 'aws',
+  gcp: 'gcp',
+  azure: 'azure',
+  registration: 'registration',
   oscap: 'oscap',
+  fsc: 'fsc',
+  snapshot: 'snapshot',
   repositories: 'repositories',
+  packages: 'packages',
+  firstBoot: 'firstBoot',
+  details: 'details',
 };
 
-const mockBlueprintDescriptions = {
+export const mockBlueprintDescriptions = {
+  rhel9: '',
+  rhel8: '',
+  centos9: '',
+  x86_64: '',
+  aarch64: '',
+  aws: '',
+  gcp: '',
+  azure: '',
+  registration: '',
   oscap: '',
+  fsc: '',
+  snapshot: '',
   repositories: '',
+  packages: '',
+  firstBoot: '',
+  details: 'This is a test description for the Details step.',
 };
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
   links: { first: 'first', last: 'last' },
-  meta: { count: 13 },
+  meta: { count: 27 },
   data: [
     {
       id: '677b010b-e95e-4694-9813-d11d847f1bfc',
@@ -115,6 +152,69 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
     {
+      id: mockBlueprintIds['rhel9'],
+      name: mockBlueprintNames['rhel9'],
+      description: mockBlueprintDescriptions['rhel9'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['rhel8'],
+      name: mockBlueprintNames['rhel8'],
+      description: mockBlueprintDescriptions['rhel8'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['centos9'],
+      name: mockBlueprintNames['centos9'],
+      description: mockBlueprintDescriptions['centos9'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['x86_64'],
+      name: mockBlueprintNames['x86_64'],
+      description: mockBlueprintDescriptions['x86_64'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['aarch64'],
+      name: mockBlueprintNames['aarch64'],
+      description: mockBlueprintDescriptions['aarch64'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['aws'],
+      name: mockBlueprintNames['aws'],
+      description: mockBlueprintDescriptions['aws'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['gcp'],
+      name: mockBlueprintNames['gcp'],
+      description: mockBlueprintDescriptions['gcp'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['azure'],
+      name: mockBlueprintNames['azure'],
+      description: mockBlueprintDescriptions['azure'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['registration'],
+      name: mockBlueprintNames['registration'],
+      description: mockBlueprintDescriptions['registration'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
       id: mockBlueprintIds['oscap'],
       name: mockBlueprintNames['oscap'],
       description: mockBlueprintDescriptions['oscap'],
@@ -122,9 +222,44 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
     {
+      id: mockBlueprintIds['fsc'],
+      name: mockBlueprintNames['fsc'],
+      description: mockBlueprintDescriptions['fsc'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['snapshot'],
+      name: mockBlueprintNames['snapshot'],
+      description: mockBlueprintDescriptions['snapshot'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
       id: mockBlueprintIds['repositories'],
       name: mockBlueprintNames['repositories'],
       description: mockBlueprintDescriptions['repositories'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['packages'],
+      name: mockBlueprintNames['packages'],
+      description: mockBlueprintDescriptions['packages'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['firstBoot'],
+      name: mockBlueprintNames['firstBoot'],
+      description: mockBlueprintDescriptions['firstBoot'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['details'],
+      name: mockBlueprintNames['details'],
+      description: mockBlueprintDescriptions['details'],
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
@@ -292,113 +427,4 @@ export const darkChocolateBlueprintResponse: GetBlueprintApiResponse = {
       rhc: true,
     },
   },
-};
-
-export const baseImageRequest: ImageRequest = {
-  architecture: 'x86_64',
-  image_type: 'guest-image',
-  upload_request: {
-    options: {},
-    type: 'aws.s3',
-  },
-};
-
-export const baseCreateBlueprintRequest: CreateBlueprintRequest = {
-  name: 'Red Velvet',
-  description: '',
-  distribution: RHEL_9,
-  image_requests: [baseImageRequest],
-  customizations: {},
-};
-
-const expectedOpenscapCisL1 = {
-  profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
-};
-
-const expectedPackagesCisL1 = ['aide', 'neovim'];
-
-const expectedServicesCisL1 = {
-  enabled: ['crond', 'neovim-service'],
-  disabled: ['rpcbind', 'autofs', 'nftables'],
-  masked: ['nfs-server', 'emacs-service'],
-};
-
-const expectedKernelCisL1 = {
-  append: 'audit_backlog_limit=8192 audit=1',
-};
-
-const expectedFilesystemCisL1 = [
-  { min_size: 10737418240, mountpoint: '/' },
-  { min_size: 1073741824, mountpoint: '/tmp' },
-  { min_size: 1073741824, mountpoint: '/home' },
-];
-
-export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
-  ...baseCreateBlueprintRequest,
-  name: mockBlueprintNames['oscap'],
-  description: mockBlueprintDescriptions['oscap'],
-  customizations: {
-    packages: expectedPackagesCisL1,
-    openscap: expectedOpenscapCisL1,
-    services: expectedServicesCisL1,
-    kernel: expectedKernelCisL1,
-    filesystem: expectedFilesystemCisL1,
-  },
-};
-
-export const oscapBlueprintResponse: BlueprintResponse = {
-  ...oscapCreateBlueprintRequest,
-  id: mockBlueprintIds['oscap'],
-  description: mockBlueprintDescriptions['oscap'],
-};
-
-export const expectedPayloadRepositories: Repository[] = [
-  {
-    baseurl: 'http://valid.link.to.repo.org/x86_64/',
-    check_gpg: true,
-    check_repo_gpg: false,
-    gpgkey:
-      '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
-    rhsm: false,
-  },
-];
-
-export const expectedCustomRepositories: CustomRepository[] = [
-  {
-    baseurl: ['http://valid.link.to.repo.org/x86_64/'],
-    check_gpg: true,
-    check_repo_gpg: false,
-    gpgkey: [
-      '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGN9300BEAC1FLODu0cL6saMMHa7yJY1JZUc+jQUI/HdECQrrsTaPXlcc7nM\nykYMMv6amPqbnhH/R5BW2Ano+OMse+PXtUr0NXU4OcvxbnnXkrVBVUf8mXI9DzLZ\njw8KoD+4/s0BuzO78zAJF5uhuyHMAK0ll9v0r92kK45Fas9iZTfRFcqFAzvgjScf\n5jeBnbRs5U3UTz9mtDy802mk357o1A8BD0qlu3kANDpjLbORGWdAj21A6sMJDYXy\nHS9FBNV54daNcr+weky2L9gaF2yFjeu2rSEHCSfkbWfpSiVUx/bDTj7XS6XDOuJT\nJqvGS8jHqjHAIFBirhCA4cY/jLKxWyMr5N6IbXpPAYgt8/YYz2aOYVvdyB8tZ1u1\nkVsMYSGcvTBexZCn1cDkbO6I+waIlsc0uxGqUGBKF83AVYCQqOkBjF1uNnu9qefE\nkEc9obr4JZsAgnisboU25ss5ZJddKlmFMKSi66g4S5ChLEPFq7MB06PhLFioaD3L\nEXza7XitoW5VBwr0BSVKAHMC0T2xbm70zY06a6gQRlvr9a10lPmv4Tptc7xgQReg\nu1TlFPbrkGJ0d8O6vHQRAd3zdsNaVr4gX0Tg7UYiqT9ZUkP7hOc8PYXQ28hHrHTB\nA63MTq0aiPlJ/ivTuX8M6+Bi25dIV6N6IOUi/NQKIYxgovJCDSdCAAM0fQARAQAB\ntCFMdWNhcyBHYXJmaWVsZCA8bHVjYXNAcmVkaGF0LmNvbT6JAlcEEwEIAEEWIQTO\nQZeiHnXqdjmfUURc6PeuecS2PAUCY33fTQIbAwUJA8JnAAULCQgHAgIiAgYVCgkI\nCwIEFgIDAQIeBwIXgAAKCRBc6PeuecS2PCk3D/9jW7xrBB/2MQFKd5l+mNMFyKwc\nL9M/M5RFI9GaQRo55CwnPb0nnxOJR1V5GzZ/YGii53H2ose65CfBOE2L/F/RvKF0\nH9S9MInixlahzzKtV3TpDoZGk5oZIHEMuPmPS4XaHggolrzExY0ib0mQuBBE/uEV\n/HlyHEunBKPhTkAe+6Q+2dl22SUuVfWr4Uzlp65+DkdN3M37WI1a3Suhnef3rOSM\nV6puUzWRR7qcYs5C2In87AcYPn92P5ur1y/C32r8Ftg3fRWnEzI9QfRG52ojNOLK\nyGQ8ZC9PGe0q7VFcF7ridT/uzRU+NVKldbJg+rvBnszb1MjNuR7rUQHyvGmbsUVQ\nRCsgdovkee3lP4gfZHzk2SSLVSo0+NJRNaM90EmPk14Pgi/yfRSDGBVvLBbEanYI\nv1ZtdIPRyKi+/IaMOu/l7nayM/8RzghdU+0f1FAif5qf9nXuI13P8fqcqfu67gNd\nkh0UUF1XyR5UHHEZQQDqCuKEkZJ/+27jYlsG1ZiLb1odlIWoR44RP6k5OJl0raZb\nyLXbAfpITsXiJJBpCam9P9+XR5VSfgkqp5hIa7J8piN3DoMpoExg4PPQr6PbLAJy\nOUCOnuB7yYVbj0wYuMXTuyrcBHh/UymQnS8AMpQoEkCLWS/A/Hze/pD23LgiBoLY\nXIn5A2EOAf7t2IMSlA==\n=OanT\n-----END PGP PUBLIC KEY BLOCK-----',
-    ],
-    id: 'ae39f556-6986-478a-95d1-f9c7e33d066c',
-    name: '01-test-valid-repo',
-  },
-];
-
-export const repositoriesCreateBlueprintRequest: CreateBlueprintRequest = {
-  ...baseCreateBlueprintRequest,
-  name: mockBlueprintNames['repositories'],
-  description: mockBlueprintDescriptions['repositories'],
-  customizations: {
-    custom_repositories: expectedCustomRepositories,
-    payload_repositories: expectedPayloadRepositories,
-  },
-};
-
-export const repositoriesBlueprintResponse: BlueprintResponse = {
-  ...repositoriesCreateBlueprintRequest,
-  id: mockBlueprintIds['repositories'],
-  description: mockBlueprintDescriptions['repositories'],
-};
-
-export const getMockBlueprintResponses = (id: string) => {
-  switch (id) {
-    case mockBlueprintIds['darkChocolate']:
-      return darkChocolateBlueprintResponse;
-    case mockBlueprintIds['oscap']:
-      return oscapBlueprintResponse;
-    case mockBlueprintIds['repositories']:
-      return repositoriesBlueprintResponse;
-  }
 };

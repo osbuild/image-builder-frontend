@@ -1,11 +1,17 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, RHEL_9 } from '../../../../../constants';
+import {
+  CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
+  RHEL_9,
+} from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   enterBlueprintName,
@@ -14,6 +20,8 @@ import {
   goToRegistrationStep,
   clickRegisterLater,
   openAndDismissSaveAndBuildModal,
+  renderEditMode,
+  interceptEditBlueprintRequest,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -184,6 +192,22 @@ describe('registration request generated correctly', () => {
       customizations: {},
     };
 
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
+describe('Registration edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['registration'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = registrationCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
