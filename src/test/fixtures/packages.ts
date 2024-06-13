@@ -1,5 +1,6 @@
 import {
   ApiRepositoryRpm,
+  ApiSearchPackageGroupResponse,
   ApiSearchRpmResponse,
 } from '../../store/contentSourcesApi';
 import { RecommendPackageApiResponse } from '../../store/imageBuilderApi';
@@ -60,6 +61,25 @@ export const mockSourcesPackagesResults = (
       {
         package_name: 'mock',
         summary: 'summary for test package',
+      },
+    ];
+  }
+  return [];
+};
+
+export const mockSourcesGroupsResults = (
+  search: string,
+  urls: string[]
+): ApiSearchPackageGroupResponse[] => {
+  const isDistroPkgSearch =
+    urls.filter((u) => u.includes('cdn.redhat.com')).length > 0;
+  if (isDistroPkgSearch && search === 'grouper') {
+    return [
+      {
+        description: '',
+        id: 'grouper',
+        package_group_name: 'Grouper group',
+        package_list: ['fish1', 'fish2'],
       },
     ];
   }

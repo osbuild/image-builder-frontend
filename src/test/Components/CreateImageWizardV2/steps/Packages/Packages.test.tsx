@@ -77,6 +77,13 @@ const searchForPackage = async () => {
   await userEvent.type(searchBox, 'test');
 };
 
+const searchForGroup = async () => {
+  const searchBox = await screen.findByRole('textbox', {
+    name: /search packages/i,
+  });
+  await userEvent.type(searchBox, '@grouper');
+};
+
 const selectFirstPackage = async () => {
   await userEvent.click(
     await screen.findByRole('checkbox', { name: /select row 0/i })
@@ -143,6 +150,38 @@ describe('packages request generated correctly', () => {
 
     const expectedRequest = blueprintRequest;
 
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('with custom groups', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForGroup();
+    await selectFirstPackage();
+    await goToReviewStep();
+
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      customizations: {
+        packages: ['@grouper'],
+      },
+    };
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('deselecting a group removes it from the request', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForGroup();
+    await selectFirstPackage();
+    await switchToSelected();
+    await deselectFirstPackage();
+    await goToReviewStep();
+
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    const expectedRequest = blueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
