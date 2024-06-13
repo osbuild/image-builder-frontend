@@ -1,16 +1,26 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import {
+  expectedAllPackageRecommendations,
+  expectedPackages,
+  expectedPackagesWithoutRecommendations,
+  expectedSinglePackageRecommendation,
+  packagesCreateBlueprintRequest,
+} from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -101,8 +111,6 @@ const deselectRecommendation = async () => {
 };
 
 describe('packages request generated correctly', () => {
-  const expectedPackages: string[] = ['test'];
-
   test('with custom packages', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -140,22 +148,6 @@ describe('packages request generated correctly', () => {
 });
 
 describe('package recommendations', () => {
-  const expectedSinglePackageRecommendation: string[] = [
-    'test', // recommendations are generated only when some packages have been selected
-    'recommendedPackage1',
-  ];
-
-  const expectedAllPackageRecommendations: string[] = [
-    'test', // recommendations are generated only when some packages have been selected
-    'recommendedPackage1',
-    'recommendedPackage2',
-    'recommendedPackage3',
-    'recommendedPackage4',
-    'recommendedPackage5',
-  ];
-
-  const expectedPackagesWithoutRecommendations: string[] = ['test'];
-
   test('selecting single recommendation adds it to the request', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -212,6 +204,22 @@ describe('package recommendations', () => {
       },
     };
 
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
+describe('Packages edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['packages'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = packagesCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

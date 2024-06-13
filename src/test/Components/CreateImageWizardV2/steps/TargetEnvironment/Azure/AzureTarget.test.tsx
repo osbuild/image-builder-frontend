@@ -1,19 +1,23 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../../fixtures/blueprints';
+import { azureCreateBlueprintRequest } from '../../../../../fixtures/editMode';
 import { clickBack, clickNext } from '../../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -194,6 +198,22 @@ describe('azure image type request generated correctly', () => {
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    expect(receivedRequest).toEqual(blueprintRequest);
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(blueprintRequest);
+    });
+  });
+});
+
+describe('Azure edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['azure'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = azureCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });

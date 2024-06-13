@@ -13,7 +13,6 @@ import {
 } from '../fixtures/activationKeys';
 import { mockArchitecturesByDistro } from '../fixtures/architectures';
 import {
-  getMockBlueprintResponses,
   mockBlueprintComposes,
   mockBlueprintComposesOutOfSync,
   mockCentosBlueprintComposes,
@@ -26,6 +25,7 @@ import {
   mockCloneStatus,
   mockStatus,
 } from '../fixtures/composes';
+import { getMockBlueprintResponse } from '../fixtures/editMode';
 import { mockedFeatureResponse } from '../fixtures/features';
 import {
   distributionOscapProfiles,
@@ -195,7 +195,7 @@ export const handlers = [
   }),
   rest.get(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
     const id = req.params['id'];
-    return res(ctx.status(200), ctx.json(getMockBlueprintResponses(id)));
+    return res(ctx.status(200), ctx.json(getMockBlueprintResponse(id)));
   }),
   rest.put(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
     const id = req.params['id'];

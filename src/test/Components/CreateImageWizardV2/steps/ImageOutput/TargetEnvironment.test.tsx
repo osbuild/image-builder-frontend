@@ -5,14 +5,32 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
-import { AARCH64, RHEL_8, RHEL_9, X86_64 } from '../../../../../constants';
+import {
+  AARCH64,
+  EDIT_BLUEPRINT,
+  RHEL_8,
+  RHEL_9,
+  X86_64,
+} from '../../../../../constants';
 import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import {
+  aarch64CreateBlueprintRequest,
+  centos9CreateBlueprintRequest,
+  rhel8CreateBlueprintRequest,
+  rhel9CreateBlueprintRequest,
+  x86_64CreateBlueprintRequest,
+} from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
 import {
   clickNext,
   renderCustomRoutesWithReduxRouter,
 } from '../../../../testUtils';
-import { renderCreateMode } from '../../wizardTestUtils';
+import {
+  interceptEditBlueprintRequest,
+  renderCreateMode,
+  renderEditMode,
+} from '../../wizardTestUtils';
 
 const routes = [
   {
@@ -347,5 +365,63 @@ describe('set target using query parameter', () => {
     );
     await userEvent.click(targetExpandable);
     await screen.findByText('Virtualization - Guest image (.qcow2)');
+  });
+});
+
+describe('Image Output edit mode', () => {
+  test('edit mode works - rhel9', async () => {
+    const id = mockBlueprintIds['rhel9'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = rhel9CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+  test('edit mode works - rhel8', async () => {
+    const id = mockBlueprintIds['rhel8'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = rhel8CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+  test('edit mode works - centos9', async () => {
+    const id = mockBlueprintIds['centos9'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = centos9CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+  test('edit mode works - x86_64', async () => {
+    const id = mockBlueprintIds['x86_64'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = x86_64CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+  test('edit mode works - aarch64', async () => {
+    const id = mockBlueprintIds['aarch64'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = aarch64CreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });

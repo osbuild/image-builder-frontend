@@ -1,8 +1,10 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { detailsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { clickNext, getNextButton } from '../../../../testUtils';
 import {
   blueprintRequest,
@@ -10,8 +12,10 @@ import {
   enterBlueprintName,
   goToRegistrationStep,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -113,6 +117,22 @@ describe('registration request generated correctly', () => {
       description: 'Now with extra carmine!',
     };
 
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
+describe('Details edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['details'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = detailsCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

@@ -1,13 +1,13 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   baseCreateBlueprintRequest,
-  mockBlueprintIds,
   oscapCreateBlueprintRequest,
-} from '../../../../fixtures/blueprints';
+} from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   clickRegisterLater,
@@ -173,11 +173,13 @@ describe('oscap', () => {
       name: 'oscap',
     };
 
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
   });
 });
 
-describe('oscap edit mode', () => {
+describe('OpenSCAP edit mode', () => {
   test('edit mode works', async () => {
     const id = mockBlueprintIds['oscap'];
     await renderEditMode(id);

@@ -1,22 +1,28 @@
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
   FIRST_BOOT_SERVICE,
-  FIRST_BOOT_SERVICE_DATA,
 } from '../../../../../constants';
-import { File as ImageBuilderFile } from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import {
+  SCRIPT,
+  firstBootCreateBlueprintRequest,
+  firstBootData,
+} from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
-
 import '@testing-library/jest-dom';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -78,26 +84,6 @@ const goToReviewStep = async (): Promise<void> => {
   await clickNext(); // Review
 };
 
-const SCRIPT = `#!/bin/bash
-systemctl enable cockpit.socket`;
-
-const BASE64_SCRIPT = btoa(SCRIPT);
-const firstBootData: ImageBuilderFile[] = [
-  {
-    path: '/etc/systemd/system/custom-first-boot.service',
-    data: FIRST_BOOT_SERVICE_DATA,
-    data_encoding: 'base64',
-    ensure_parents: true,
-  },
-  {
-    path: '/usr/local/sbin/custom-first-boot',
-    data: BASE64_SCRIPT,
-    data_encoding: 'base64',
-    mode: '0774',
-    ensure_parents: true,
-  },
-];
-
 describe('First Boot step', () => {
   test('should render First Boot step', async () => {
     await renderCreateMode();
@@ -124,7 +110,23 @@ describe('First Boot step', () => {
         },
       };
 
-      expect(receivedRequest).toEqual(expectedRequest);
+      await waitFor(() => {
+        expect(receivedRequest).toEqual(expectedRequest);
+      });
     });
+  });
+});
+
+describe('First Boot edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['firstBoot'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = firstBootCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });

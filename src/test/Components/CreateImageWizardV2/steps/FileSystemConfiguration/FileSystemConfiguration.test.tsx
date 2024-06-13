@@ -1,20 +1,25 @@
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
   UNIT_GIB,
   UNIT_KIB,
   UNIT_MIB,
 } from '../../../../../constants';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
+  renderEditMode,
 } from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
@@ -256,6 +261,22 @@ describe('file system configuration request generated correctly', () => {
       },
     };
 
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
+describe('FSC edit mode', () => {
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['fsc'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = fscCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
