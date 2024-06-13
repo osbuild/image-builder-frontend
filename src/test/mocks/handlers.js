@@ -34,6 +34,7 @@ import {
 import {
   mockPkgRecommendations,
   mockSourcesPackagesResults,
+  mockSourcesGroupsResults,
 } from '../fixtures/packages';
 import {
   mockPopularRepo,
@@ -64,6 +65,16 @@ export const handlers = [
       ctx.json(mockSourcesPackagesResults(search, urls))
     );
   }),
+  rest.post(
+    `${CONTENT_SOURCES_API}/package_groups/names`,
+    async (req, res, ctx) => {
+      const { search, urls } = await req.json();
+      return res(
+        ctx.status(200),
+        ctx.json(mockSourcesGroupsResults(search, urls))
+      );
+    }
+  ),
   rest.get(`${CONTENT_SOURCES_API}/features/`, async (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(mockedFeatureResponse));
   }),
