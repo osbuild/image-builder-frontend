@@ -190,6 +190,15 @@ const Packages = () => {
     },
   ] = useSearchPackageGroupMutation();
 
+  const [
+    searchCustomGroups,
+    {
+      data: dataCustomGroups,
+      isSuccess: isSuccessCustomGroups,
+      isLoading: isLoadingCustomGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
   const [createRepository, { isLoading: createLoading }] =
     useCreateRepositoryMutation();
 
@@ -307,9 +316,23 @@ const Packages = () => {
         },
       });
     }
+    searchCustomGroups({
+      apiContentUnitSearchRequest: {
+        search: debouncedSearchTerm.substr(1),
+        urls: customRepositories.flatMap((repo) => {
+          if (!repo.baseurl) {
+            throw new Error(
+              `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
+            );
+          }
+          return repo.baseurl;
+        }),
+      },
+    });
   }, [
     customRepositories,
     searchDistroGroups,
+    searchCustomGroups,
     debouncedSearchTerm,
     toggleSourceRepos,
     epelRepoUrlByDistribution,
@@ -683,6 +706,8 @@ const Packages = () => {
 
   const transformedGroups = useMemo(() => {
     let transformedDistroGroups: GroupWithRepositoryInfo[] = [];
+    let transformedCustomGroups: GroupWithRepositoryInfo[] = [];
+
     if (isSuccessDistroGroups) {
       transformedDistroGroups = dataDistroGroups!.map((values) => ({
         name: values.id!,
@@ -691,11 +716,21 @@ const Packages = () => {
         package_list: values.package_list!,
       }));
     }
-    return transformedDistroGroups;
+    if (isSuccessCustomGroups) {
+      transformedCustomGroups = dataCustomGroups!.map((values) => ({
+        name: values.id!,
+        description: values.description!,
+        repository: 'custom',
+        package_list: values.package_list!,
+      }));
+    }
+    return transformedDistroGroups.concat(transformedCustomGroups);
   }, [
     dataDistroGroups,
+    dataCustomGroups,
     debouncedSearchTerm,
     isSuccessDistroGroups,
+    isSuccessCustomGroups,
     groups,
     toggleSelected,
     toggleSourceRepos,
@@ -1031,7 +1066,8 @@ const Packages = () => {
         (debouncedSearchTerm &&
           (isLoadingDistroPackages ||
             isLoadingCustomPackages ||
-            isLoadingDistroGroups) &&
+            isLoadingDistroGroups ||
+            isLoadingCustomGroups) &&
           toggleSourceRepos === RepoToggle.INCLUDED):
         return <Searching />;
       case debouncedSearchTerm &&
@@ -1067,6 +1103,7 @@ const Packages = () => {
     isLoadingRecommendedPackages,
     isSuccessRecommendedPackages,
     isLoadingDistroGroups,
+    isLoadingCustomGroups,
     packages.length,
     groups.length,
     toggleSelected,
