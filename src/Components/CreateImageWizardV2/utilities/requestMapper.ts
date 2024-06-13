@@ -47,6 +47,7 @@ import {
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
+  selectGroups,
   selectImageTypes,
   selectPackages,
   selectPayloadRepositories,
@@ -253,7 +254,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       request.customizations.packages
         ?.filter((grp) => grp.startsWith('@'))
         .map((grp) => ({
-          name: grp,
+          name: grp.substr(1),
           description: '',
           repository: '',
           package_list: [],
@@ -477,9 +478,12 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
 
 const getPackages = (state: RootState) => {
   const packages = selectPackages(state);
+  const groups = selectGroups(state);
 
-  if (packages.length > 0) {
-    return packages.map((pkg) => pkg.name);
+  if (packages.length > 0 || groups.length > 0) {
+    return packages
+      .map((pkg) => pkg.name)
+      .concat(groups.map((grp) => '@' + grp.name));
   } else {
     return undefined;
   }
