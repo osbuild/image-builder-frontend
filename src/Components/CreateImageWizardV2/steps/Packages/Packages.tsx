@@ -166,6 +166,14 @@ const Packages = () => {
   const debouncedSearchTermLengthOf1 = debouncedSearchTerm.length === 1;
   const debouncedSearchTermIsGroup = debouncedSearchTerm.startsWith('@');
 
+  // While it's searching for packages or groups, only show either packages or groups, without mixing the two.
+  const showPackages =
+    (debouncedSearchTerm && !debouncedSearchTermIsGroup) ||
+    toggleSelected === 'toggle-selected';
+  const showGroups =
+    (debouncedSearchTerm && debouncedSearchTermIsGroup) ||
+    toggleSelected === 'toggle-selected';
+
   const [
     searchRecommendedRpms,
     {
@@ -976,168 +984,173 @@ const Packages = () => {
 
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
-    rows = rows.concat(
-      transformedGroups
-        .slice(computeStart(), computeEnd())
-        .map((grp, rowIndex) => (
-          <Tr key={`${grp.name}-${rowIndex}`} data-testid="package-row">
-            <Td
-              select={{
-                isSelected: groups.some((g) => g.name === grp.name),
-                rowIndex: rowIndex,
-                onSelect: (event, isSelecting) =>
-                  handleGroupSelect(grp, rowIndex, isSelecting),
-              }}
-            />
-            <Td>
-              @{grp.name}
-              <Popover
-                minWidth="25rem"
-                headerContent="Included packages"
-                bodyContent={
-                  <div
-                    style={
-                      grp.package_list.length > 0
-                        ? { height: '40em', overflow: 'scroll' }
-                        : {}
-                    }
-                  >
-                    {grp.package_list.length > 0 ? (
-                      <Table variant="compact">
-                        <Tbody>
-                          {grp.package_list.map((pkg) => (
-                            <Tr key={`details-${pkg}`}>
-                              <Td>{pkg}</Td>
-                            </Tr>
-                          ))}
-                        </Tbody>
-                      </Table>
-                    ) : (
-                      <Text>This group has no packages</Text>
-                    )}
-                  </div>
-                }
-              >
-                <Button
-                  variant="plain"
-                  aria-label="About included repositories"
-                  component="span"
-                  className="pf-u-p-0"
-                  isInline
-                >
-                  <HelpIcon className="pf-u-ml-xs" />
-                </Button>
-              </Popover>
-            </Td>
-            <Td>
-              {grp.description ? (
-                grp.description
-              ) : (
-                <span className="not-available">Not available</span>
-              )}
-            </Td>
-            {grp.repository === 'distro' ? (
-              <>
-                <Td>
-                  <img
-                    src={
-                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                    }
-                    alt="Red Hat logo"
-                    height={RH_ICON_SIZE}
-                    width={RH_ICON_SIZE}
-                  />{' '}
-                  Red Hat repository
-                </Td>
-                <Td>Supported</Td>
-              </>
-            ) : grp.repository === 'custom' ? (
-              <>
-                <Td>Third party repository</Td>
-                <Td>Not supported</Td>
-              </>
-            ) : grp.repository === 'recommended' ? (
-              <>
-                <Td>
-                  <Icon status="warning">
-                    <OptimizeIcon />
-                  </Icon>{' '}
-                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                  Everything x86_64
-                </Td>
-                <Td>Not supported</Td>
-              </>
-            ) : (
-              <>
-                <Td className="not-available">Not available</Td>
-                <Td className="not-available">Not available</Td>
-              </>
-            )}
-          </Tr>
-        ))
-    );
 
-    rows = rows.concat(
-      transformedPackages
-        .slice(computeStart(), computeEnd())
-        .map((pkg, rowIndex) => (
-          <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
-            <Td
-              select={{
-                isSelected: packages.some((p) => p.name === pkg.name),
-                rowIndex: rowIndex,
-                onSelect: (event, isSelecting) =>
-                  handleSelect(pkg, rowIndex, isSelecting),
-              }}
-            />
-            <Td>{pkg.name}</Td>
-            <Td>
-              {pkg.summary ? (
-                pkg.summary
+    if (showGroups) {
+      rows = rows.concat(
+        transformedGroups
+          .slice(computeStart(), computeEnd())
+          .map((grp, rowIndex) => (
+            <Tr key={`${grp.name}-${rowIndex}`} data-testid="package-row">
+              <Td
+                select={{
+                  isSelected: groups.some((g) => g.name === grp.name),
+                  rowIndex: rowIndex,
+                  onSelect: (event, isSelecting) =>
+                    handleGroupSelect(grp, rowIndex, isSelecting),
+                }}
+              />
+              <Td>
+                @{grp.name}
+                <Popover
+                  minWidth="25rem"
+                  headerContent="Included packages"
+                  bodyContent={
+                    <div
+                      style={
+                        grp.package_list.length > 0
+                          ? { height: '40em', overflow: 'scroll' }
+                          : {}
+                      }
+                    >
+                      {grp.package_list.length > 0 ? (
+                        <Table variant="compact">
+                          <Tbody>
+                            {grp.package_list.map((pkg) => (
+                              <Tr key={`details-${pkg}`}>
+                                <Td>{pkg}</Td>
+                              </Tr>
+                            ))}
+                          </Tbody>
+                        </Table>
+                      ) : (
+                        <Text>This group has no packages</Text>
+                      )}
+                    </div>
+                  }
+                >
+                  <Button
+                    variant="plain"
+                    aria-label="About included repositories"
+                    component="span"
+                    className="pf-u-p-0"
+                    isInline
+                  >
+                    <HelpIcon className="pf-u-ml-xs" />
+                  </Button>
+                </Popover>
+              </Td>
+              <Td>
+                {grp.description ? (
+                  grp.description
+                ) : (
+                  <span className="not-available">Not available</span>
+                )}
+              </Td>
+              {grp.repository === 'distro' ? (
+                <>
+                  <Td>
+                    <img
+                      src={
+                        '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                      }
+                      alt="Red Hat logo"
+                      height={RH_ICON_SIZE}
+                      width={RH_ICON_SIZE}
+                    />{' '}
+                    Red Hat repository
+                  </Td>
+                  <Td>Supported</Td>
+                </>
+              ) : grp.repository === 'custom' ? (
+                <>
+                  <Td>Third party repository</Td>
+                  <Td>Not supported</Td>
+                </>
+              ) : grp.repository === 'recommended' ? (
+                <>
+                  <Td>
+                    <Icon status="warning">
+                      <OptimizeIcon />
+                    </Icon>{' '}
+                    EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                    Everything x86_64
+                  </Td>
+                  <Td>Not supported</Td>
+                </>
               ) : (
-                <span className="not-available">Not available</span>
+                <>
+                  <Td className="not-available">Not available</Td>
+                  <Td className="not-available">Not available</Td>
+                </>
               )}
-            </Td>
-            {pkg.repository === 'distro' ? (
-              <>
-                <Td>
-                  <img
-                    src={
-                      '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                    }
-                    alt="Red Hat logo"
-                    height={RH_ICON_SIZE}
-                    width={RH_ICON_SIZE}
-                  />{' '}
-                  Red Hat repository
-                </Td>
-                <Td>Supported</Td>
-              </>
-            ) : pkg.repository === 'custom' ? (
-              <>
-                <Td>Third party repository</Td>
-                <Td>Not supported</Td>
-              </>
-            ) : pkg.repository === 'recommended' ? (
-              <>
-                <Td>
-                  <Icon status="warning">
-                    <OptimizeIcon />
-                  </Icon>{' '}
-                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                  Everything x86_64
-                </Td>
-                <Td>Not supported</Td>
-              </>
-            ) : (
-              <>
-                <Td className="not-available">Not available</Td>
-                <Td className="not-available">Not available</Td>
-              </>
-            )}
-          </Tr>
-        ))
-    );
+            </Tr>
+          ))
+      );
+    }
+
+    if (showPackages) {
+      rows = rows.concat(
+        transformedPackages
+          .slice(computeStart(), computeEnd())
+          .map((pkg, rowIndex) => (
+            <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
+              <Td
+                select={{
+                  isSelected: packages.some((p) => p.name === pkg.name),
+                  rowIndex: rowIndex,
+                  onSelect: (event, isSelecting) =>
+                    handleSelect(pkg, rowIndex, isSelecting),
+                }}
+              />
+              <Td>{pkg.name}</Td>
+              <Td>
+                {pkg.summary ? (
+                  pkg.summary
+                ) : (
+                  <span className="not-available">Not available</span>
+                )}
+              </Td>
+              {pkg.repository === 'distro' ? (
+                <>
+                  <Td>
+                    <img
+                      src={
+                        '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                      }
+                      alt="Red Hat logo"
+                      height={RH_ICON_SIZE}
+                      width={RH_ICON_SIZE}
+                    />{' '}
+                    Red Hat repository
+                  </Td>
+                  <Td>Supported</Td>
+                </>
+              ) : pkg.repository === 'custom' ? (
+                <>
+                  <Td>Third party repository</Td>
+                  <Td>Not supported</Td>
+                </>
+              ) : pkg.repository === 'recommended' ? (
+                <>
+                  <Td>
+                    <Icon status="warning">
+                      <OptimizeIcon />
+                    </Icon>{' '}
+                    EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                    Everything x86_64
+                  </Td>
+                  <Td>Not supported</Td>
+                </>
+              ) : (
+                <>
+                  <Td className="not-available">Not available</Td>
+                  <Td className="not-available">Not available</Td>
+                </>
+              )}
+            </Tr>
+          ))
+      );
+    }
     return rows;
   };
 
