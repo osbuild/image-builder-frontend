@@ -1351,8 +1351,15 @@ const Packages = () => {
             </ToolbarItem>
             <ToolbarItem variant="pagination">
               <Pagination
+                data-testid="packages-pagination-top"
                 itemCount={
-                  transformedPackages.length + transformedGroups.length
+                  searchTerm === '' && toggleSelected === 'toggle-available'
+                    ? 0
+                    : showPackages && showGroups
+                    ? transformedPackages.length + transformedGroups.length
+                    : showPackages
+                    ? transformedPackages.length
+                    : transformedGroups.length
                 }
                 perPage={perPage}
                 page={page}
@@ -1389,7 +1396,16 @@ const Packages = () => {
         <Tbody>{bodyContent}</Tbody>
       </Table>
       <Pagination
-        itemCount={transformedPackages.length + transformedGroups.length}
+        data-testid="packages-pagination-bottom"
+        itemCount={
+          searchTerm === '' && toggleSelected === 'toggle-available'
+            ? 0
+            : showPackages && showGroups
+            ? transformedPackages.length + transformedGroups.length
+            : showPackages
+            ? transformedPackages.length
+            : transformedGroups.length
+        }
         perPage={perPage}
         page={page}
         onSetPage={handleSetPage}
