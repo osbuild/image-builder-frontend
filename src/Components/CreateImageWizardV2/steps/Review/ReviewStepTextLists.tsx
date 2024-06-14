@@ -55,6 +55,7 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectPackages,
+  selectGroups,
   selectRegistrationType,
   selectFileSystemPartitionMode,
   selectRecommendedRepositories,
@@ -425,6 +426,7 @@ export const ContentList = ({
 }) => {
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
@@ -576,7 +578,7 @@ export const ContentList = ({
             component={TextListItemVariants.dd}
             data-testid="chosen-packages-count"
           >
-            {packages?.length > 0 ? (
+            {packages?.length > 0 || groups?.length > 0 ? (
               <Popover
                 position="bottom"
                 headerContent="Additional packages"
@@ -589,7 +591,7 @@ export const ContentList = ({
                   aria-label="About packages"
                   className="pf-u-p-0"
                 >
-                  {packages?.length}
+                  {packages?.length + groups?.length}
                 </Button>
               </Popover>
             ) : (

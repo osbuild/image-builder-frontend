@@ -20,6 +20,7 @@ import {
   selectCustomRepositories,
   selectDistribution,
   selectPackages,
+  selectGroups,
   selectPartitions,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
@@ -191,6 +192,8 @@ export const SnapshotTable = ({
 
 export const PackagesTable = () => {
   const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
+
   return (
     <Panel isScrollable>
       <PanelMain maxHeight="30ch">
@@ -216,6 +219,19 @@ export const PackagesTable = () => {
                     ? 'Custom repository'
                     : pkg.repository === 'recommended'
                     ? 'EPEL Everything x86_64'
+                    : 'Not available'}
+                </Td>
+              </Tr>
+            ))}
+            {groups.map((grp, grpIndex) => (
+              <Tr key={grpIndex}>
+                <Td className="pf-m-width-30">@{grp.name}</Td>
+                <Td>{grp.description ? grp.description : 'Not available'}</Td>
+                <Td className="pf-m-width-30">
+                  {grp.repository === 'distro'
+                    ? 'Red Hat repository'
+                    : grp.repository === 'custom'
+                    ? 'Custom repository'
                     : 'Not available'}
                 </Td>
               </Tr>
