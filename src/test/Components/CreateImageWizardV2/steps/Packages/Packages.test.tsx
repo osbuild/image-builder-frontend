@@ -84,6 +84,13 @@ const searchForGroup = async () => {
   await userEvent.type(searchBox, '@grouper');
 };
 
+const clearSearchInput = async () => {
+  const clearSearchBtn = await screen.findByRole('button', {
+    name: /clear-package-search/i,
+  });
+  await userEvent.click(clearSearchBtn);
+};
+
 const selectFirstPackage = async () => {
   await userEvent.click(
     await screen.findByRole('checkbox', { name: /select row 0/i })
@@ -260,5 +267,47 @@ describe('Packages edit mode', () => {
     );
     const expectedRequest = packagesCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+describe('pagination on packages step', () => {
+  test('itemcount correct after search', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForPackage();
+    await selectFirstPackage();
+    // the pagination in the top right
+    const top = await screen.findByTestId('packages-pagination-top');
+    await expect(top).toHaveTextContent('of 6');
+    const bottom = await screen.findByTestId('packages-pagination-bottom');
+    await expect(bottom).toHaveTextContent('of 6');
+  });
+
+  test('itemcount correct after toggling selected', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForPackage();
+    await selectFirstPackage();
+    await switchToSelected();
+
+    // the pagination in the top right
+    const top = await screen.findByTestId('packages-pagination-top');
+    await expect(top).toHaveTextContent('of 1');
+    const bottom = await screen.findByTestId('packages-pagination-bottom');
+    await expect(bottom).toHaveTextContent('of 1');
+  });
+
+  test('itemcount correct after clearing search input', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForPackage();
+    await selectFirstPackage();
+    await clearSearchInput();
+
+    // the pagination in the top right
+    const top = await screen.findByTestId('packages-pagination-top');
+    await expect(top).toHaveTextContent('of 0');
+    const bottom = await screen.findByTestId('packages-pagination-bottom');
+    await expect(bottom).toHaveTextContent('of 0');
   });
 });
