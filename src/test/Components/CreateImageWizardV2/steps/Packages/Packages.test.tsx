@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -122,6 +122,13 @@ const deselectRecommendation = async () => {
   await userEvent.click(
     await screen.findByRole('checkbox', { name: /select row 1/i })
   );
+};
+
+const openIncludedPackagesPopover = async () => {
+  const popoverBtn = await screen.findByRole('button', {
+    name: /About included packages/i,
+  });
+  await userEvent.click(popoverBtn);
 };
 
 describe('packages request generated correctly', () => {
@@ -309,5 +316,24 @@ describe('pagination on packages step', () => {
     await expect(top).toHaveTextContent('of 0');
     const bottom = await screen.findByTestId('packages-pagination-bottom');
     await expect(bottom).toHaveTextContent('of 0');
+  });
+});
+
+describe('package groups on packages step', () => {
+  test('included packages popover', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await searchForGroup();
+    await selectFirstPackage();
+    await openIncludedPackagesPopover();
+
+    const table = await screen.findByTestId('group-included-packages-table');
+    const rows = await within(table).findAllByRole('row');
+    expect(rows).toHaveLength(2);
+
+    const firstRowCells = await within(rows[0]).findAllByRole('cell');
+    expect(firstRowCells[0]).toHaveTextContent('fish1');
+    const secondRowCells = await within(rows[1]).findAllByRole('cell');
+    expect(secondRowCells[0]).toHaveTextContent('fish2');
   });
 });

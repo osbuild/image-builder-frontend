@@ -1013,7 +1013,10 @@ const Packages = () => {
                       }
                     >
                       {grp.package_list.length > 0 ? (
-                        <Table variant="compact">
+                        <Table
+                          variant="compact"
+                          data-testid="group-included-packages-table"
+                        >
                           <Tbody>
                             {grp.package_list.map((pkg) => (
                               <Tr key={`details-${pkg}`}>
@@ -1030,7 +1033,7 @@ const Packages = () => {
                 >
                   <Button
                     variant="plain"
-                    aria-label="About included repositories"
+                    aria-label="About included packages"
                     component="span"
                     className="pf-u-p-0"
                     isInline
