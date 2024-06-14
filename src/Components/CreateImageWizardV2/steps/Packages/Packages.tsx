@@ -141,6 +141,9 @@ const Packages = () => {
   const [isSelectingPackage, setIsSelectingPackage] = useState<
     IBPackageWithRepositoryInfo | undefined
   >();
+  const [isSelectingGroup, setIsSelectingGroup] = useState<
+    GroupWithRepositoryInfo | undefined
+  >();
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
@@ -196,6 +199,15 @@ const Packages = () => {
       data: dataCustomGroups,
       isSuccess: isSuccessCustomGroups,
       isLoading: isLoadingCustomGroups,
+    },
+  ] = useSearchPackageGroupMutation();
+
+  const [
+    searchRecommendedGroups,
+    {
+      data: dataRecommendedGroups,
+      isSuccess: isSuccessRecommendedGroups,
+      isLoading: isLoadingRecommendedGroups,
     },
   ] = useSearchPackageGroupMutation();
 
@@ -316,23 +328,36 @@ const Packages = () => {
         },
       });
     }
-    searchCustomGroups({
-      apiContentUnitSearchRequest: {
-        search: debouncedSearchTerm.substr(1),
-        urls: customRepositories.flatMap((repo) => {
-          if (!repo.baseurl) {
-            throw new Error(
-              `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
-            );
-          }
-          return repo.baseurl;
-        }),
-      },
-    });
+    if (
+      toggleSourceRepos === RepoToggle.INCLUDED &&
+      customRepositories.length > 0
+    ) {
+      searchCustomGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm.substr(1),
+          urls: customRepositories.flatMap((repo) => {
+            if (!repo.baseurl) {
+              throw new Error(
+                `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
+              );
+            }
+            return repo.baseurl;
+          }),
+        },
+      });
+    } else if (toggleSourceRepos === RepoToggle.OTHER && isSuccessEpelRepo) {
+      searchRecommendedGroups({
+        apiContentUnitSearchRequest: {
+          search: debouncedSearchTerm.substr(1),
+          urls: [epelRepoUrlByDistribution],
+        },
+      });
+    }
   }, [
     customRepositories,
     searchDistroGroups,
     searchCustomGroups,
+    searchRecommendedGroups,
     debouncedSearchTerm,
     toggleSourceRepos,
     epelRepoUrlByDistribution,
@@ -611,13 +636,17 @@ const Packages = () => {
         <Table variant="compact">
           <Thead>
             <Tr>
-              <Th>Packages</Th>
+              {isSelectingPackage ? <Th>Packages</Th> : <Th>Package groups</Th>}
               <Th>Repositories</Th>
             </Tr>
           </Thead>
           <Tbody>
             <Tr>
-              <Td>{isSelectingPackage?.name}</Td>
+              {isSelectingPackage ? (
+                <Td>{isSelectingPackage?.name}</Td>
+              ) : (
+                <Td>{isSelectingGroup?.name}</Td>
+              )}
               <Td>
                 EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
               </Td>
@@ -705,32 +734,67 @@ const Packages = () => {
   ]).sort((a, b) => sortfn(a.name, b.name));
 
   const transformedGroups = useMemo(() => {
-    let transformedDistroGroups: GroupWithRepositoryInfo[] = [];
-    let transformedCustomGroups: GroupWithRepositoryInfo[] = [];
+    let combinedGroupData: GroupWithRepositoryInfo[] = [];
 
     if (isSuccessDistroGroups) {
-      transformedDistroGroups = dataDistroGroups!.map((values) => ({
-        name: values.id!,
-        description: values.description!,
-        repository: 'distro',
-        package_list: values.package_list!,
-      }));
+      combinedGroupData = combinedGroupData.concat(
+        dataDistroGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'distro',
+          package_list: values.package_list!,
+        }))
+      );
     }
     if (isSuccessCustomGroups) {
-      transformedCustomGroups = dataCustomGroups!.map((values) => ({
-        name: values.id!,
-        description: values.description!,
-        repository: 'custom',
-        package_list: values.package_list!,
-      }));
+      combinedGroupData = combinedGroupData.concat(
+        dataCustomGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'custom',
+          package_list: values.package_list!,
+        }))
+      );
     }
-    return transformedDistroGroups.concat(transformedCustomGroups);
+    if (isSuccessRecommendedGroups) {
+      combinedGroupData = combinedGroupData.concat(
+        dataRecommendedGroups!.map((values) => ({
+          name: values.id!,
+          description: values.description!,
+          repository: 'recommended',
+          package_list: values.package_list!,
+        }))
+      );
+    }
+
+    if (toggleSelected === 'toggle-available') {
+      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+        return combinedGroupData.filter(
+          (pkg) => pkg.repository !== 'recommended'
+        );
+      } else {
+        return combinedGroupData.filter(
+          (pkg) => pkg.repository === 'recommended'
+        );
+      }
+    } else {
+      const selectedGroups = [...groups];
+      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+        return selectedGroups;
+      } else {
+        return [];
+      }
+    }
+
+    return combinedGroupData;
   }, [
     dataDistroGroups,
     dataCustomGroups,
+    dataRecommendedGroups,
     debouncedSearchTerm,
     isSuccessDistroGroups,
     isSuccessCustomGroups,
+    isSuccessRecommendedGroups,
     groups,
     toggleSelected,
     toggleSourceRepos,
@@ -782,9 +846,26 @@ const Packages = () => {
     isSelecting: boolean
   ) => {
     if (isSelecting) {
-      dispatch(addGroup(grp));
+      if (
+        isSuccessEpelRepo &&
+        epelRepo.data &&
+        grp.repository === 'recommended' &&
+        !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
+      ) {
+        setIsRepoModalOpen(true);
+        setIsSelectingGroup(grp);
+      } else {
+        dispatch(addGroup(grp));
+      }
     } else {
       dispatch(removeGroup(grp.name));
+      if (
+        isSuccessEpelRepo &&
+        epelRepo.data &&
+        groups.filter((grp) => grp.repository === 'recommended').length === 1
+      ) {
+        dispatch(removeRecommendedRepository(epelRepo.data[0]));
+      }
     }
   };
 
@@ -884,7 +965,12 @@ const Packages = () => {
     } else {
       dispatch(addRecommendedRepository(epelRepo.data[0]));
     }
-    dispatch(addPackage(isSelectingPackage!));
+    if (isSelectingPackage) {
+      dispatch(addPackage(isSelectingPackage!));
+    }
+    if (isSelectingGroup) {
+      dispatch(addGroup(isSelectingGroup!));
+    }
     setIsRepoModalOpen(!isRepoModalOpen);
   };
 
@@ -907,6 +993,7 @@ const Packages = () => {
               @{grp.name}
               <Popover
                 minWidth="25rem"
+                headerContent="Included packages"
                 bodyContent={
                   <div
                     style={
@@ -917,11 +1004,6 @@ const Packages = () => {
                   >
                     {grp.package_list.length > 0 ? (
                       <Table variant="compact">
-                        <Thead>
-                          <Tr>
-                            <Th>Included packages</Th>
-                          </Tr>
-                        </Thead>
                         <Tbody>
                           {grp.package_list.map((pkg) => (
                             <Tr key={`details-${pkg}`}>
@@ -972,6 +1054,17 @@ const Packages = () => {
             ) : grp.repository === 'custom' ? (
               <>
                 <Td>Third party repository</Td>
+                <Td>Not supported</Td>
+              </>
+            ) : grp.repository === 'recommended' ? (
+              <>
+                <Td>
+                  <Icon status="warning">
+                    <OptimizeIcon />
+                  </Icon>{' '}
+                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                  Everything x86_64
+                </Td>
                 <Td>Not supported</Td>
               </>
             ) : (
@@ -1061,7 +1154,7 @@ const Packages = () => {
         (!debouncedSearchTerm && toggleSelected === 'toggle-available'):
         return <EmptySearch />;
       case (debouncedSearchTerm &&
-        isLoadingRecommendedPackages &&
+        (isLoadingRecommendedPackages || isLoadingRecommendedGroups) &&
         toggleSourceRepos === RepoToggle.OTHER) ||
         (debouncedSearchTerm &&
           (isLoadingDistroPackages ||
@@ -1104,6 +1197,7 @@ const Packages = () => {
     isSuccessRecommendedPackages,
     isLoadingDistroGroups,
     isLoadingCustomGroups,
+    isLoadingRecommendedGroups,
     packages.length,
     groups.length,
     toggleSelected,
@@ -1167,7 +1261,9 @@ const Packages = () => {
                 />
                 <ToggleGroupItem
                   text={`Selected (${
-                    packages.length <= 100 ? packages.length : '100+'
+                    packages.length + groups.length <= 100
+                      ? packages.length + groups.length
+                      : '100+'
                   })`}
                   buttonId="toggle-selected"
                   data-testid="packages-selected-toggle"
