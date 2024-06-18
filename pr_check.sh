@@ -26,7 +26,7 @@ export RESERVE_DURATION="2h"
 
 # bootstrap bonfire and it's config
 CICD_URL=https://raw.githubusercontent.com/RedHatInsights/bonfire/master/cicd
-curl -s "$CICD_URL"/bootstrap.sh > .cicd_bootstrap.sh && source .cicd_bootstrap.sh
+curl -s "$CICD_URL"/bootstrap.sh >.cicd_bootstrap.sh && source .cicd_bootstrap.sh
 
 # # source is preferred to | bash -s in this case to avoid a subshell
 source <(curl -sSL $COMMON_BUILDER/src/frontend-build.sh)
@@ -37,6 +37,9 @@ export EXTRA_DEPLOY_ARGS="provisioning sources rhsm-api-proxy --set-template-ref
 export APP_NAME="image-builder-crc"
 export DEPLOY_TIMEOUT="1200"
 export REF_ENV="insights-stage"
+
+# required to deploy without errors
+export COMPONENTS_W_RESOURCES="pulp"
 
 source "$CICD_ROOT"/deploy_ephemeral_env.sh
 
