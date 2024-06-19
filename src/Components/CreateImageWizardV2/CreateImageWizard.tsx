@@ -4,7 +4,9 @@ import {
   Button,
   Wizard,
   WizardFooterWrapper,
+  WizardNavItem,
   WizardStep,
+  WizardStepType,
   useWizardContext,
 } from '@patternfly/react-core';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -189,6 +191,38 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       startIndex = isFirstBootEnabled ? 14 : 13;
     }
   }
+
+  const detailsNavItem = (
+    step: WizardStepType,
+    activeStep: WizardStepType,
+    steps: WizardStepType[],
+    goToStepByIndex: (index: number) => void
+  ) => {
+    const isVisitRequired = true;
+    const hasVisitedNextStep = steps.some(
+      (step) => step.index > step.index + 1 && step.isVisited
+    );
+
+    return (
+      <WizardNavItem
+        key={step.id}
+        id={step.id}
+        content={step.name}
+        isCurrent={activeStep?.id === step.id}
+        isDisabled={
+          step.isDisabled ||
+          (isVisitRequired && !step.isVisited && !hasVisitedNextStep)
+        }
+        isVisited={step.isVisited}
+        stepIndex={step.index}
+        onClick={() => goToStepByIndex(step.index)}
+        status={
+          (step.isVisited && step.id !== activeStep?.id && step.status) ||
+          'default'
+        }
+      />
+    );
+  };
 
   return (
     <>
@@ -375,6 +409,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             name="Details"
             id={'step-details'}
             isDisabled={snapshotStepRequiresChoice}
+            navItem={detailsNavItem}
+            status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
               <CustomWizardFooter
                 disableNext={detailsValidation.disabledNext}
