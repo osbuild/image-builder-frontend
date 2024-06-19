@@ -104,7 +104,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
             onReadFinished={handleFileReadFinished}
             onClearClick={handleClear}
             isLoading={isLoading}
-            allowEditingUploadedText={false}
+            isReadOnly={true}
             browseButtonText="Upload"
             dropzoneProps={{
               accept: { 'text/json': ['.json'] },
