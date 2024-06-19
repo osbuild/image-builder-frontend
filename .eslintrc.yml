@@ -4,6 +4,7 @@ extends: [
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:testing-library/react",
+    "plugin:@typescript-eslint/recommended",
     "plugin:react-redux/recommended"
   ]
 globals:
@@ -11,6 +12,7 @@ globals:
   shallow: readonly
   render: 'readonly'
   mount: 'readonly'
+parser: "@typescript-eslint/parser"
 plugins:
   - import
 rules:
@@ -36,13 +38,17 @@ rules:
   prefer-const:
     - error
     - destructuring: any
-  no-console: 1
+  no-console: error
   eqeqeq: error
   array-callback-return: warn
+  "@typescript-eslint/ban-ts-comment":
+    - error
+    - ts-expect-error: "allow-with-description"
+      ts-ignore: "allow-with-description"
+      ts-nocheck: true
+      ts-check: true
+      minimumDescriptionLength: 5
+  "@typescript-eslint/ban-types": off
   # Temporarily disabled
   jsx-a11y/no-autofocus: off
   rulesdir/forbid-pf-relative-imports: off
-overrides:
-  - files: "**/*.ts?(x)"
-    parser: "@typescript-eslint/parser"
-    extends: ".eslintrc-typescript.yml"
