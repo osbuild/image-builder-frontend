@@ -841,7 +841,9 @@ const Packages = () => {
       if (
         isSuccessEpelRepo &&
         epelRepo.data &&
-        packages.filter((pkg) => pkg.repository === 'recommended').length === 1
+        packages.filter((pkg) => pkg.repository === 'recommended').length ===
+          1 &&
+        groups.filter((grp) => grp.repository === 'recommended').length === 0
       ) {
         dispatch(removeRecommendedRepository(epelRepo.data[0]));
       }
@@ -870,7 +872,8 @@ const Packages = () => {
       if (
         isSuccessEpelRepo &&
         epelRepo.data &&
-        groups.filter((grp) => grp.repository === 'recommended').length === 1
+        groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
+        packages.filter((pkg) => pkg.repository === 'recommended').length === 0
       ) {
         dispatch(removeRecommendedRepository(epelRepo.data[0]));
       }
