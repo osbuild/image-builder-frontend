@@ -232,6 +232,8 @@ export const PackagesTable = () => {
                     ? 'Red Hat repository'
                     : grp.repository === 'custom'
                     ? 'Custom repository'
+                    : grp.repository === 'recommended'
+                    ? 'EPEL Everything x86_64'
                     : 'Not available'}
                 </Td>
               </Tr>
