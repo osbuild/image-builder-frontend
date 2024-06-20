@@ -1,14 +1,14 @@
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
-} from '../../../../../../store/imageBuilderApi';
-import { mockBlueprintIds } from '../../../../../fixtures/blueprints';
-import { azureCreateBlueprintRequest } from '../../../../../fixtures/editMode';
-import { clickBack, clickNext } from '../../../../../testUtils';
+} from '../../../../../store/imageBuilderApi';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
+import { clickBack, clickNext } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -18,7 +18,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
-} from '../../../wizardTestUtils';
+} from '../../wizardTestUtils';
 
 jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
@@ -39,7 +39,7 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-const goToAzureStep = async () => {
+const goToAwsStep = async () => {
   await clickNext();
 };
 
@@ -51,22 +51,22 @@ const goToReview = async () => {
   await clickNext(); // Snapshot repositories
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
-  await clickNext(); // FirstBoot
   await clickNext(); // Details
+  await clickNext(); // FirstBoot
   await enterBlueprintName();
   await clickNext(); // Review
 };
 
-const selectAzureTarget = async () => {
+const selectAwsTarget = async () => {
   await renderCreateMode();
-  const azureCard = await screen.findByTestId('upload-azure');
-  await userEvent.click(azureCard);
+  const awsCard = await screen.findByTestId('upload-aws');
+  await userEvent.click(awsCard);
   await clickNext();
 };
 
-const deselectAzureAndSelectGuestImage = async () => {
-  const azureCard = await screen.findByTestId('upload-azure');
-  await userEvent.click(azureCard);
+const deselectAwsAndSelectGuestImage = async () => {
+  const awsCard = await screen.findByTestId('upload-aws');
+  await userEvent.click(awsCard);
   await userEvent.click(
     await screen.findByRole('checkbox', {
       name: /virtualization guest image checkbox/i,
@@ -83,55 +83,28 @@ const selectSource = async () => {
   );
 
   await userEvent.click(
-    await screen.findByRole('option', { name: /azureSource1/i })
+    await screen.findByRole('option', { name: /my_source/i })
   );
 };
 
-const selectResourceGroup = async () => {
+const enterAccountId = async () => {
   await userEvent.click(
+    await screen.findByText(/manually enter an account id\./i)
+  );
+
+  await userEvent.type(
     await screen.findByRole('textbox', {
-      name: /select resource group/i,
-    })
-  );
-
-  await userEvent.click(
-    await screen.findByRole('option', { name: /myResourceGroup1/i })
+      name: 'aws account id',
+    }),
+    '123123123123'
   );
 };
 
-const selectManuallyEnterInformation = async () => {
-  await userEvent.click(
-    await screen.findByText(/manually enter the account information\./i)
-  );
-};
-
-const enterTenantGuid = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /azure tenant guid/i }),
-    'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
-  );
-};
-
-const enterSubscriptionId = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /subscription id/i }),
-    '60631143-a7dc-4d15-988b-ba83f3c99711'
-  );
-};
-
-const enterResourceGroup = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /resource group/i }),
-    'testResourceGroup'
-  );
-};
-
-describe('azure image type request generated correctly', () => {
+describe('aws image type request generated correctly', () => {
   test('using a source', async () => {
-    await selectAzureTarget();
-    await goToAzureStep();
+    await selectAwsTarget();
+    await goToAwsStep();
     await selectSource();
-    await selectResourceGroup();
     await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -140,13 +113,12 @@ describe('azure image type request generated correctly', () => {
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
-      image_type: 'azure',
+      image_type: 'aws',
       upload_request: {
         options: {
-          source_id: '666',
-          resource_group: 'myResourceGroup1',
+          share_with_sources: ['123'],
         },
-        type: 'azure',
+        type: 'aws',
       },
     };
 
@@ -158,26 +130,21 @@ describe('azure image type request generated correctly', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
-  test('manually entering info', async () => {
-    await selectAzureTarget();
-    await goToAzureStep();
-    await selectManuallyEnterInformation();
-    await enterTenantGuid();
-    await enterSubscriptionId();
-    await enterResourceGroup();
+  test('using an account id', async () => {
+    await selectAwsTarget();
+    await goToAwsStep();
+    await enterAccountId();
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
       architecture: 'x86_64',
-      image_type: 'azure',
+      image_type: 'aws',
       upload_request: {
-        type: 'azure',
         options: {
-          tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
-          subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
-          resource_group: 'testResourceGroup',
+          share_with_accounts: ['123123123123'],
         },
+        type: 'aws',
       },
     };
 
@@ -189,12 +156,12 @@ describe('azure image type request generated correctly', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
-  test('after selecting and deselecting azure', async () => {
-    await selectAzureTarget();
-    await goToAzureStep();
+  test('after selecting and deselecting aws', async () => {
+    await selectAwsTarget();
+    await goToAwsStep();
     await selectSource();
     await clickBack();
-    await deselectAzureAndSelectGuestImage();
+    await deselectAwsAndSelectGuestImage();
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -204,16 +171,16 @@ describe('azure image type request generated correctly', () => {
   });
 });
 
-describe('Azure edit mode', () => {
+describe('AWS edit mode', () => {
   test('edit mode works', async () => {
-    const id = mockBlueprintIds['azure'];
+    const id = mockBlueprintIds['aws'];
     await renderEditMode(id);
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
       `${EDIT_BLUEPRINT}/${id}`
     );
-    const expectedRequest = azureCreateBlueprintRequest;
+    const expectedRequest = awsCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
