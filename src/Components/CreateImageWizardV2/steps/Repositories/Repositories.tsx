@@ -41,6 +41,7 @@ import {
   selectArchitecture,
   selectCustomRepositories,
   selectDistribution,
+  selectGroups,
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
@@ -57,6 +58,7 @@ const Repositories = () => {
   const version = releaseToVersion(distribution);
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
+  const groups = useAppSelector(selectGroups);
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
@@ -318,7 +320,7 @@ const Repositories = () => {
       recommendedRepos.length > 0 &&
       repo.url?.includes('epel') &&
       isSelected &&
-      packages.length
+      (packages.length || groups.length)
     ) {
       return [
         true,
