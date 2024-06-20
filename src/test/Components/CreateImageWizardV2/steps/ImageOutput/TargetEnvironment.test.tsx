@@ -7,11 +7,17 @@ import userEvent from '@testing-library/user-event';
 import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
 import {
   AARCH64,
+  CENTOS_9,
+  CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   RHEL_8,
   RHEL_9,
   X86_64,
 } from '../../../../../constants';
+import {
+  CreateBlueprintRequest,
+  ImageRequest,
+} from '../../../../../store/imageBuilderApi';
 import { mockArchitecturesByDistro } from '../../../../fixtures/architectures';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
@@ -27,7 +33,14 @@ import {
   renderCustomRoutesWithReduxRouter,
 } from '../../../../testUtils';
 import {
+  blueprintRequest,
+  clickRegisterLater,
+  enterBlueprintName,
+  goToRegistrationStep,
+  imageRequest,
+  interceptBlueprintRequest,
   interceptEditBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
@@ -67,23 +80,80 @@ afterEach(() => {
   server.resetHandlers();
 });
 
-const clickToReview = async () => {
-  await clickNext();
-  await userEvent.click(
-    await screen.findByRole('radio', { name: /Register later/ })
-  );
-  await clickNext(); // skip Registration
-  await clickNext(); // skip OSCAP
-  await clickNext(); // skip FSC
-  await clickNext(); // skip SnapshotRepositories
-  await clickNext(); // skip Repositories
-  await clickNext(); // skip Packages
-  await clickNext(); // skip First Boot
-  const nameInput = await screen.findByRole('textbox', {
-    name: /blueprint name/i,
+const openReleaseMenu = async () => {
+  const releaseMenu = screen.getAllByRole('button', {
+    name: /options menu/i,
+  })[0];
+  await userEvent.click(releaseMenu);
+};
+
+const openArchitectureMenu = async () => {
+  const releaseMenu = screen.getAllByRole('button', {
+    name: /options menu/i,
+  })[1];
+  await userEvent.click(releaseMenu);
+};
+
+const clickShowOptions = async () => {
+  const showOptions = await screen.findByRole('button', {
+    name: /show options for further development of rhel/i,
   });
-  await userEvent.type(nameInput, 'name');
-  await clickNext(); // skip Details
+  await userEvent.click(showOptions);
+};
+
+const selectRhel8 = async () => {
+  await openReleaseMenu();
+  const rhel8 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
+  });
+  await userEvent.click(rhel8);
+};
+
+const selectRhel9 = async () => {
+  await openReleaseMenu();
+  const rhel9 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
+  });
+  await userEvent.click(rhel9);
+};
+
+const selectCentos9 = async () => {
+  await openReleaseMenu();
+  await clickShowOptions();
+  const centos9 = await screen.findByRole('option', {
+    name: 'CentOS Stream 9',
+  });
+  await userEvent.click(centos9);
+};
+
+const selectX86_64 = async () => {
+  await openArchitectureMenu();
+  const x86_64 = await screen.findByRole('option', {
+    name: 'x86_64',
+  });
+  await userEvent.click(x86_64);
+};
+
+const selectAarch64 = async () => {
+  await openArchitectureMenu();
+  const aarch64 = await screen.findByRole('option', {
+    name: 'aarch64',
+  });
+  await userEvent.click(aarch64);
+};
+
+const goToReviewStep = async () => {
+  await clickNext(); // Register
+  await clickRegisterLater();
+  await clickNext(); // OpenSCAP
+  await clickNext(); // File system customization
+  await clickNext(); // Snapshots
+  await clickNext(); // Custom repositories
+  await clickNext(); // Additional packages
+  await clickNext(); // First boot
+  await clickNext(); // Details
+  await enterBlueprintName();
+  await clickNext(); // Review
 };
 
 describe('Check that the target filtering is in accordance to mock content', () => {
@@ -349,7 +419,8 @@ describe('set target using query parameter', () => {
 
   test('image-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'iso' });
-    await clickToReview();
+    expect(await screen.findByTestId('checkbox-image-installer')).toBeChecked();
+    await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
@@ -357,14 +428,105 @@ describe('set target using query parameter', () => {
     await screen.findByText('Bare metal - Installer (.iso)');
   });
 
-  test('guest-installer (query parameter provided)', async () => {
+  test('guest-image (query parameter provided)', async () => {
     await renderCreateMode({ target: 'qcow2' });
-    await clickToReview();
+    expect(await screen.findByTestId('checkbox-guest-image')).toBeChecked();
+    await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
     await userEvent.click(targetExpandable);
     await screen.findByText('Virtualization - Guest image (.qcow2)');
+  });
+});
+
+describe('distribution request generated correctly', () => {
+  test('rhel-8', async () => {
+    await renderCreateMode();
+    await selectRhel8();
+    await goToRegistrationStep();
+    await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      distribution: RHEL_8,
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('rhel-9', async () => {
+    await renderCreateMode();
+    await selectRhel9();
+    await goToRegistrationStep();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      distribution: RHEL_9,
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('centos-9', async () => {
+    await renderCreateMode();
+    await selectCentos9();
+    await goToRegistrationStep();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      distribution: CENTOS_9,
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
+describe('architecture request generated correctly', () => {
+  test('x86_64', async () => {
+    await renderCreateMode();
+    await selectX86_64();
+    await goToRegistrationStep();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedImageRequest: ImageRequest = {
+      ...imageRequest,
+      architecture: X86_64,
+    };
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      image_requests: [expectedImageRequest],
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('aarch64', async () => {
+    await renderCreateMode();
+    await selectAarch64();
+    await goToRegistrationStep();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedImageRequest: ImageRequest = {
+      ...imageRequest,
+      architecture: AARCH64,
+    };
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      image_requests: [expectedImageRequest],
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });
 
