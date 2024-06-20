@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  ExpandableSection,
-  Text,
-  TextContent,
-  TextVariants,
-  useWizardContext,
-} from '@patternfly/react-core';
-import { ArrowRightIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { useWizardContext } from '@patternfly/react-core/dist/esm/components/Wizard/WizardContext';
+import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 
 import {
   ContentList,

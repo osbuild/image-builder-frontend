@@ -1,17 +1,15 @@
 import React from 'react';
 
-import {
-  ClipboardCopy,
-  DescriptionList,
-  DescriptionListGroup,
-  DescriptionListDescription,
-  DescriptionListTerm,
-  Button,
-  Popover,
-  Alert,
-  Skeleton,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
+import { DescriptionList } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListGroup } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListDescription } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { DescriptionListTerm } from '@patternfly/react-core/dist/dynamic/components/DescriptionList';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import ClonesTable from './ClonesTable';
 

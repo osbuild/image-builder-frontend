@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Button, FormGroup } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
 
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectAzureTenantId } from '../../../../../store/wizardSlice';

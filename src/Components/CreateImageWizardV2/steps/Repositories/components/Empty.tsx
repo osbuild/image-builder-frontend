@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {
-  EmptyState,
-  EmptyStateVariant,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  EmptyStateBody,
-  EmptyStateFooter,
-  Button,
-} from '@patternfly/react-core';
-import { RepositoryIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateVariant } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import RepositoryIcon from '@patternfly/react-icons/dist/dynamic/icons/repository-icon';
 
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 

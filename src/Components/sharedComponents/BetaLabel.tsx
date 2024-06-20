@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Label } from '@patternfly/react-core';
+import { Label } from '@patternfly/react-core/dist/dynamic/components/Label';
 
 import './BetaLabel.scss';
 

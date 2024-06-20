@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  ExpandableSection,
-  FormGroup,
-  Panel,
-  PanelMain,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import { Chart, registerables } from 'chart.js';
 import annotationPlugin from 'chartjs-plugin-annotation';
 import { Bar } from 'react-chartjs-2';

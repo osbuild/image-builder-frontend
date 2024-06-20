@@ -51,4 +51,3 @@ rules:
   "@typescript-eslint/ban-types": off
   # Temporarily disabled
   jsx-a11y/no-autofocus: off
-  rulesdir/forbid-pf-relative-imports: off

@@ -1,7 +1,10 @@
 import React from 'react';
 
 import { CodeEditor, Language } from '@patternfly/react-code-editor';
-import { Text, Form, Title, Alert } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {

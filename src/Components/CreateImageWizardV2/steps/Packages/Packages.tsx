@@ -1,41 +1,37 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import {
-  Bullseye,
-  Button,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  Icon,
-  InputGroup,
-  InputGroupItem,
-  InputGroupText,
-  Pagination,
-  PaginationVariant,
-  Popover,
-  Spinner,
-  Stack,
-  Text,
-  TextContent,
-  TextInput,
-  ToggleGroup,
-  ToggleGroupItem,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-} from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core';
-import {
-  ExternalLinkAltIcon,
-  HelpIcon,
-  OptimizeIcon,
-  SearchIcon,
-  TimesIcon,
-} from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateVariant } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { InputGroup } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { InputGroupItem } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { InputGroupText } from '@patternfly/react-core/dist/dynamic/components/InputGroup';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { PaginationVariant } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
+import { ToggleGroup } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
+import { ToggleGroupItem } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
+import { Toolbar } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarContent } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { Stack } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
+import OptimizeIcon from '@patternfly/react-icons/dist/dynamic/icons/optimize-icon';
+import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
+import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 

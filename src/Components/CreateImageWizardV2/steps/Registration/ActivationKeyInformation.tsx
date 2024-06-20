@@ -1,18 +1,17 @@
 import React from 'react';
 
-import {
-  Alert,
-  Spinner,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-  TextVariants,
-} from '@patternfly/react-core';
-import { Button, Popover } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextList } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItem } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItemVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppSelector } from '../../../../store/hooks';

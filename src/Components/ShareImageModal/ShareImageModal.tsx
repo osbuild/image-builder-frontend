@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Modal } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import RegionsSelect from './RegionsSelect';

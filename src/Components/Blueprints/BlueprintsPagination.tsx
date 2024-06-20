@@ -3,8 +3,8 @@ import React from 'react';
 import {
   OnSetPage,
   Pagination,
-  PaginationVariant,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { PaginationVariant } from '@patternfly/react-core/dist/dynamic/components/Pagination';
 
 import {
   selectBlueprintSearchInput,

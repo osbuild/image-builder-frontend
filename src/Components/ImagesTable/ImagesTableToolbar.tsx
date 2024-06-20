@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 
-import {
-  Alert,
-  Pagination,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  Title,
-} from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Toolbar } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarContent } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
 
 import {
   selectSelectedBlueprintId,

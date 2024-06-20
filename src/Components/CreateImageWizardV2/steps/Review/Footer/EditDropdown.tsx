@@ -1,13 +1,11 @@
 import React from 'react';
 
-import {
-  DropdownList,
-  DropdownItem,
-  MenuToggleAction,
-  Spinner,
-  Flex,
-  FlexItem,
-} from '@patternfly/react-core';
+import { DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuToggleAction } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 
 import {
   CreateBlueprintRequest,

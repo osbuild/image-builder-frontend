@@ -1,11 +1,10 @@
 import React from 'react';
 
-import {
-  HelperText,
-  HelperTextItem,
-  FormHelperText,
-} from '@patternfly/react-core';
-import { ExclamationCircleIcon } from '@patternfly/react-icons';
+import { FormHelperText } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
+
 export type HelperTextVariant =
   | 'default'
   | 'indeterminate'

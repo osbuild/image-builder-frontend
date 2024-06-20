@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 
 import {
-  Alert,
-  FormGroup,
-  Popover,
-  TextContent,
-  Text,
-  Button,
-} from '@patternfly/react-core';
-import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import { HelpIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
 import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';

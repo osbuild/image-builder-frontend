@@ -1,19 +1,17 @@
 import React, { useEffect, useMemo } from 'react';
 
-import {
-  Alert,
-  Button,
-  Popover,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListVariants,
-  TextListItemVariants,
-  TextVariants,
-  FormGroup,
-} from '@patternfly/react-core';
-import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextList } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItem } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItemVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import ExclamationTriangleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-triangle-icon';
 
 import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import {

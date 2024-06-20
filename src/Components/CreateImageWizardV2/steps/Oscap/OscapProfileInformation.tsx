@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {
-  CodeBlock,
-  CodeBlockCode,
-  Spinner,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { CodeBlock } from '@patternfly/react-core/dist/dynamic/components/CodeBlock';
+import { CodeBlockCode } from '@patternfly/react-core/dist/dynamic/components/CodeBlock';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextList } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItem } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListItemVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextListVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
 
 import { RELEASES } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';

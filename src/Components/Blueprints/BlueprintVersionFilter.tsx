@@ -1,13 +1,13 @@
 import React from 'react';
 
+import { Dropdown } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
   MenuToggle,
   MenuToggleElement,
-} from '@patternfly/react-core';
-import { FilterIcon } from '@patternfly/react-icons';
+} from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import FilterIcon from '@patternfly/react-icons/dist/dynamic/icons/filter-icon';
 
 import {
   versionFilterType,

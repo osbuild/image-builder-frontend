@@ -1,27 +1,23 @@
 import React from 'react';
 
 import './ImageBuildStatus.scss';
-import {
-  Alert,
-  Button,
-  CodeBlock,
-  CodeBlockCode,
-  Flex,
-  Panel,
-  PanelMain,
-  Popover,
-  Skeleton,
-  Text,
-} from '@patternfly/react-core';
-import {
-  CheckCircleIcon,
-  CopyIcon,
-  ExclamationCircleIcon,
-  ExclamationTriangleIcon,
-  InProgressIcon,
-  OffIcon,
-  PendingIcon,
-} from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { CodeBlock } from '@patternfly/react-core/dist/dynamic/components/CodeBlock';
+import { CodeBlockCode } from '@patternfly/react-core/dist/dynamic/components/CodeBlock';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import CheckCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/check-circle-icon';
+import CopyIcon from '@patternfly/react-icons/dist/dynamic/icons/copy-icon';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
+import ExclamationTriangleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-triangle-icon';
+import InProgressIcon from '@patternfly/react-icons/dist/dynamic/icons/in-progress-icon';
+import OffIcon from '@patternfly/react-icons/dist/dynamic/icons/off-icon';
+import PendingIcon from '@patternfly/react-icons/dist/dynamic/icons/pending-icon';
 
 import {
   AWS_S3_EXPIRATION_TIME_IN_HOURS,

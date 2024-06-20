@@ -1,15 +1,13 @@
 import React from 'react';
 
-import {
-  Button,
-  DatePicker,
-  Flex,
-  FormGroup,
-  Grid,
-  Radio,
-  Text,
-  Title,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { DatePicker } from '@patternfly/react-core/dist/dynamic/components/DatePicker';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Radio } from '@patternfly/react-core/dist/dynamic/components/Radio';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Grid } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {

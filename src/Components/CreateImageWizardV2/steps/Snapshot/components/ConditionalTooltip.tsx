@@ -1,6 +1,7 @@
 import React, { cloneElement } from 'react';
 
-import { Tooltip, TooltipProps } from '@patternfly/react-core';
+import { Tooltip } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
+import { TooltipProps } from '@patternfly/react-core/dist/dynamic/components/Tooltip';
 
 interface Props extends TooltipProps {
   show: boolean;

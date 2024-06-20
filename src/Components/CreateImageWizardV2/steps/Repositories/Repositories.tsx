@@ -1,22 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import {
-  Alert,
-  Button,
-  Pagination,
-  Panel,
-  PanelMain,
-  SearchInput,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  ToggleGroup,
-  ToggleGroupItem,
-  PaginationVariant,
-  Grid,
-  Modal,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Pagination } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { PaginationVariant } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
+import { ToggleGroup } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
+import { ToggleGroupItem } from '@patternfly/react-core/dist/dynamic/components/ToggleGroup';
+import { Toolbar } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarContent } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { Grid } from '@patternfly/react-core/dist/dynamic/layouts/Grid';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { BulkSelect } from './components/BulkSelect';

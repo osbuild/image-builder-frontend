@@ -1,6 +1,10 @@
 import React from 'react';
 
-import { Radio, Text, Form, Title, FormGroup } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Radio } from '@patternfly/react-core/dist/dynamic/components/Radio';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
