@@ -98,6 +98,10 @@ export type wizardState = {
     blueprintName: string;
     blueprintDescription: string;
   };
+  users: {
+    name: string;
+    sshKey: string;
+  };
   stepValidations: {
     [key: string]: {
       validated: 'default' | 'success' | 'error';
@@ -161,6 +165,10 @@ const initialState: wizardState = {
   details: {
     blueprintName: '',
     blueprintDescription: '',
+  },
+  users: {
+    name: '',
+    sshKey: '',
   },
   stepValidations: {},
   firstBoot: { script: '' },
@@ -291,6 +299,14 @@ export const selectBlueprintName = (state: RootState) => {
 
 export const selectBlueprintDescription = (state: RootState) => {
   return state.wizard.details.blueprintDescription;
+};
+
+export const selectUserName = (state: RootState) => {
+  return state.wizard.users.name;
+};
+
+export const selectUserSshKey = (state: RootState) => {
+  return state.wizard.users.sshKey;
 };
 
 export const selectIsValid = (state: RootState) => {
@@ -636,6 +652,12 @@ export const wizardSlice = createSlice({
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
+    changeUserName: (state, action: PayloadAction<string>) => {
+      state.users.name = action.payload;
+    },
+    changeUserSshKey: (state, action: PayloadAction<string>) => {
+      state.users.sshKey = action.payload;
+    },
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
@@ -717,6 +739,8 @@ export const {
   removeGroup,
   changeBlueprintName,
   changeBlueprintDescription,
+  changeUserName,
+  changeUserSshKey,
   loadWizardState,
   setStepInputValidation,
   setFirstBootScript,
