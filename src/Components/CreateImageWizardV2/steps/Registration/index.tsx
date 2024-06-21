@@ -1,6 +1,9 @@
 import React from 'react';
 
-import { Text, Form, Title, FormGroup } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import ActivationKeysList from './ActivationKeysList';

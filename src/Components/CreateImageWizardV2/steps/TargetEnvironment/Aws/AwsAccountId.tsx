@@ -1,12 +1,10 @@
 import React, { useEffect } from 'react';
 
-import {
-  Alert,
-  HelperText,
-  HelperTextItem,
-  TextInput,
-  FormGroup,
-} from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';

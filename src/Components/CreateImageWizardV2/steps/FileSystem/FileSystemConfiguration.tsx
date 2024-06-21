@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  Alert,
-  Button,
-  Text,
-  TextContent,
-  TextInput,
-  TextVariants,
-  useWizardContext,
-  WizardFooterWrapper,
-} from '@patternfly/react-core';
 import { Select, SelectOption } from '@patternfly/react-core/deprecated';
-import { MinusCircleIcon, PlusCircleIcon } from '@patternfly/react-icons';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextVariants } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
+import { useWizardContext } from '@patternfly/react-core/dist/esm/components/Wizard/WizardContext';
+import { WizardFooterWrapper } from '@patternfly/react-core/dist/esm/components/Wizard/WizardFooter';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import MinusCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/minus-circle-icon';
+import PlusCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/plus-circle-icon';
 import { Td, Tr } from '@patternfly/react-table';
 import { v4 as uuidv4 } from 'uuid';
 

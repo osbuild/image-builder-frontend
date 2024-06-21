@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  Popover,
-  Text,
-  TextContent,
-  Flex,
-  FlexItem,
-} from '@patternfly/react-core';
-import {
-  ExternalLinkAltIcon,
-  HelpIcon,
-  ImportIcon,
-} from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
+import ImportIcon from '@patternfly/react-icons/dist/dynamic/icons/import-icon';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   OpenSourceBadge,

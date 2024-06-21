@@ -1,22 +1,18 @@
 import React from 'react';
 
-import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateVariant,
-  Text,
-  EmptyStateActions,
-  EmptyStateHeader,
-  EmptyStateFooter,
-  Bullseye,
-} from '@patternfly/react-core';
-import {
-  ExternalLinkAltIcon,
-  PlusCircleIcon,
-  SearchIcon,
-} from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateVariant } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import PlusCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/plus-circle-icon';
+import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 
 import {
   CREATING_IMAGES_WITH_IB_SERVICE_URL,

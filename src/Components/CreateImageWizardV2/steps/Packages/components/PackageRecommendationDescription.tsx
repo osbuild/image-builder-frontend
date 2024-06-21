@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Spinner } from '@patternfly/react-core';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 import { useSearchRpmMutation } from '../../../../../store/contentSourcesApi';
 

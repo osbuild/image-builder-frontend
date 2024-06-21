@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  Button,
-  Popover,
-  Tabs,
-  Tab,
-  TabTitleText,
-  Text,
-  TextContent,
-  TabAction,
-  PageSection,
-  Sidebar,
-  SidebarContent,
-  SidebarPanel,
-  Title,
-  Toolbar,
-  ToolbarContent,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { PageSection } from '@patternfly/react-core/dist/dynamic/components/Page';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Sidebar } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { SidebarContent } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { SidebarPanel } from '@patternfly/react-core/dist/dynamic/components/Sidebar';
+import { Tabs } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { Tab } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { TabTitleText } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { TabAction } from '@patternfly/react-core/dist/dynamic/components/Tabs';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Toolbar } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarContent } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
 import { useFlag } from '@unleash/proxy-client-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 

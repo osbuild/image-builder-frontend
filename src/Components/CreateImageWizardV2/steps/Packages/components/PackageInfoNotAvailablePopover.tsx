@@ -1,7 +1,10 @@
 import React from 'react';
 
-import { Button, Popover, TextContent, Text } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
 
 const PackageInfoNotAvailablePopover = () => {
   return (

@@ -1,20 +1,20 @@
 import React, { Suspense, useState } from 'react';
 
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import {
-  Alert,
-  Button,
-  ClipboardCopy,
   List,
   ListComponent,
-  ListItem,
-  Modal,
-  ModalVariant,
   OrderType,
-  Popover,
-  PopoverPosition,
-  Skeleton,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+} from '@patternfly/react-core/dist/dynamic/components/List';
+import { ListItem } from '@patternfly/react-core/dist/dynamic/components/List';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { PopoverPosition } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import { useNavigate } from 'react-router-dom';

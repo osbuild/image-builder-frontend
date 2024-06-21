@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import FileSystemAutomaticPartition from './FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './FileSystemConfiguration';

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Skeleton } from '@patternfly/react-core';
+import { Skeleton } from '@patternfly/react-core/dist/dynamic/components/Skeleton';
 
 import { targetOptions } from '../../constants';
 import { useGetComposeClonesQuery } from '../../store/imageBuilderApi';

@@ -1,14 +1,12 @@
 import React from 'react';
 
-import {
-  Badge,
-  Card,
-  CardHeader,
-  CardTitle,
-  CardBody,
-  CardFooter,
-  Spinner,
-} from '@patternfly/react-core';
+import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
+import { Card } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { CardHeader } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { CardTitle } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { CardBody } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { CardFooter } from '@patternfly/react-core/dist/dynamic/components/Card';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 import {
   selectSelectedBlueprintId,

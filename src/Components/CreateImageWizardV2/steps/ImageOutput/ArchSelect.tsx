@@ -1,11 +1,11 @@
 import React, { ReactElement, useState } from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
 
 import { ARCHS } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';

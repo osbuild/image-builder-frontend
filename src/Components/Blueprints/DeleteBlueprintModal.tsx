@@ -1,11 +1,9 @@
 import React from 'react';
 
-import {
-  ActionGroup,
-  Button,
-  Modal,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ActionGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
 
 import {
   selectBlueprintSearchInput,

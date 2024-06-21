@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert } from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
 
 export const Error = () => {
   return (

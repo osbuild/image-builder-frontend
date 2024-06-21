@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 
+import { Dropdown } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import {
-  Dropdown,
-  DropdownItem,
-  DropdownList,
   MenuToggle,
   MenuToggleElement,
-} from '@patternfly/react-core';
-import { EllipsisVIcon } from '@patternfly/react-icons';
+} from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import EllipsisVIcon from '@patternfly/react-icons/dist/dynamic/icons/ellipsis-v-icon';
 import { useFlag } from '@unleash/proxy-client-react';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';

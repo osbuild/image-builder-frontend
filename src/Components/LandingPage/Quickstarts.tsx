@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 
-import { Button, ExpandableSection } from '@patternfly/react-core';
-import { ArrowRightIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import ArrowRightIcon from '@patternfly/react-icons/dist/dynamic/icons/arrow-right-icon';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 export const Quickstarts = () => {

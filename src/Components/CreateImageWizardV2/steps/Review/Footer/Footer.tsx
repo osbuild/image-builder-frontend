@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Dropdown } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
 import {
-  Button,
-  Dropdown,
   MenuToggle,
   MenuToggleElement,
-  WizardFooterWrapper,
-  useWizardContext,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { useWizardContext } from '@patternfly/react-core/dist/esm/components/Wizard/WizardContext';
+import { WizardFooterWrapper } from '@patternfly/react-core/dist/esm/components/Wizard/WizardFooter';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';

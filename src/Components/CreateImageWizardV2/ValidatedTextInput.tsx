@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 
-import {
-  HelperText,
-  HelperTextItem,
-  TextInput,
-  TextInputProps,
-} from '@patternfly/react-core';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
+import { TextInputProps } from '@patternfly/react-core/dist/dynamic/components/TextInput';
 
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {

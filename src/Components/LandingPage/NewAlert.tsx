@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 
-import {
-  Alert,
-  AlertActionCloseButton,
-  AlertActionLink,
-  Flex,
-  FlexItem,
-  Text,
-} from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { AlertActionCloseButton } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { AlertActionLink } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 type NewAlertPropTypes = {

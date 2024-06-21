@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { Button, ButtonProps } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ButtonProps } from '@patternfly/react-core/dist/dynamic/components/Button';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';

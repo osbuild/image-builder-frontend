@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Wizard } from '@patternfly/react-core/dist/dynamic/components/Wizard';
 import {
-  Button,
-  Wizard,
-  WizardFooterWrapper,
   WizardStep,
   WizardStepType,
-  useWizardContext,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/Wizard';
+import { useWizardContext } from '@patternfly/react-core/dist/esm/components/Wizard/WizardContext';
+import { WizardFooterWrapper } from '@patternfly/react-core/dist/esm/components/Wizard/WizardFooter';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';

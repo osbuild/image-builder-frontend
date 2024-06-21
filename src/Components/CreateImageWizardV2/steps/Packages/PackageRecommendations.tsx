@@ -1,18 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  Alert,
-  Button,
-  ExpandableSection,
-  Icon,
-  Panel,
-  PanelMain,
-  PanelMainBody,
-  Spinner,
-  Text,
-  TextContent,
-} from '@patternfly/react-core';
-import { OptimizeIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ExpandableSection } from '@patternfly/react-core/dist/dynamic/components/ExpandableSection';
+import { Icon } from '@patternfly/react-core/dist/dynamic/components/Icon';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMainBody } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import OptimizeIcon from '@patternfly/react-icons/dist/dynamic/icons/optimize-icon';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 

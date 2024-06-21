@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Badge } from '@patternfly/react-core/dist/dynamic/components/Badge';
 import {
   OnSetPage,
   Pagination,
-  PaginationVariant,
-  Toolbar,
-  ToolbarContent,
-  ToolbarItem,
-  Alert,
-  Spinner,
-  Bullseye,
-  Badge,
-} from '@patternfly/react-core';
+} from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { PaginationVariant } from '@patternfly/react-core/dist/dynamic/components/Pagination';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Toolbar } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarContent } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { ToolbarItem } from '@patternfly/react-core/dist/dynamic/components/Toolbar';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
 import {
   ActionsColumn,
   ExpandableRowContent,

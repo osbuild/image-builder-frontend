@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from 'react';
 
+import { ValidatedOptions } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { ChipGroup } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import { Chip } from '@patternfly/react-core/dist/dynamic/components/Chip';
+import { ActionGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormHelperText } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
 import {
-  ActionGroup,
-  Button,
-  Form,
-  FormGroup,
-  HelperText,
-  HelperTextItem,
-  FormHelperText,
-  Popover,
-  Select,
-  SelectOption,
-  SelectList,
-  ValidatedOptions,
   MenuToggle,
   MenuToggleElement,
-  TextInputGroup,
-  TextInputGroupMain,
-  TextInputGroupUtilities,
-  ChipGroup,
-  Chip,
-} from '@patternfly/react-core';
-import {
-  ExclamationCircleIcon,
-  HelpIcon,
-  TimesIcon,
-} from '@patternfly/react-icons';
+} from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Select } from '@patternfly/react-core/dist/dynamic/components/Select';
+import { SelectOption } from '@patternfly/react-core/dist/dynamic/components/Select';
+import { SelectList } from '@patternfly/react-core/dist/dynamic/components/Select';
+import { TextInputGroup } from '@patternfly/react-core/dist/dynamic/components/TextInputGroup';
+import { TextInputGroupMain } from '@patternfly/react-core/dist/dynamic/components/TextInputGroup';
+import { TextInputGroupUtilities } from '@patternfly/react-core/dist/dynamic/components/TextInputGroup';
+import ExclamationCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/exclamation-circle-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
+import TimesIcon from '@patternfly/react-icons/dist/dynamic/icons/times-icon';
 import { useNavigate } from 'react-router-dom';
 
 import { AWS_REGIONS } from '../../constants';

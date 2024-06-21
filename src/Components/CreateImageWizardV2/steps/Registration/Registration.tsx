@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
 
-import {
-  Button,
-  Checkbox,
-  FormGroup,
-  Popover,
-  Radio,
-  Text,
-  TextContent,
-} from '@patternfly/react-core';
-import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Checkbox } from '@patternfly/react-core/dist/dynamic/components/Checkbox';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Radio } from '@patternfly/react-core/dist/dynamic/components/Radio';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
 
 import {
   INSIGHTS_URL,

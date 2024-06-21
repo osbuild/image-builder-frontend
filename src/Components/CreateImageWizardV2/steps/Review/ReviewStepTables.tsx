@@ -1,14 +1,12 @@
 import React from 'react';
 
-import {
-  Alert,
-  EmptyState,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  Panel,
-  PanelMain,
-  Spinner,
-} from '@patternfly/react-core';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { Panel } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { PanelMain } from '@patternfly/react-core/dist/dynamic/components/Panel';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import {

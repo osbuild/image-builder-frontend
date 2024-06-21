@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 
-import {
-  DropdownList,
-  DropdownItem,
-  MenuToggleAction,
-  Spinner,
-  Flex,
-  FlexItem,
-  Modal,
-  Button,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { DropdownList } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { DropdownItem } from '@patternfly/react-core/dist/dynamic/components/Dropdown';
+import { MenuToggleAction } from '@patternfly/react-core/dist/dynamic/components/MenuToggle';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
 
 import {
   CreateBlueprintRequest,

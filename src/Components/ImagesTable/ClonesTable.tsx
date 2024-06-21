@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { ClipboardCopy } from '@patternfly/react-core';
+import { ClipboardCopy } from '@patternfly/react-core/dist/dynamic/components/ClipboardCopy';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { StatusClone, AwsDetailsStatus } from './Status';

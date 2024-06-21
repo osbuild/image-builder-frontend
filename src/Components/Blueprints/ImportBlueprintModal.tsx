@@ -1,18 +1,16 @@
 import React from 'react';
 
-import {
-  ActionGroup,
-  Button,
-  DropEvent,
-  FileUpload,
-  Form,
-  FormGroup,
-  FormHelperText,
-  HelperText,
-  HelperTextItem,
-  Modal,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { FileUpload } from '@patternfly/react-core/dist/dynamic/components/FileUpload';
+import { ActionGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormHelperText } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { Modal } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { ModalVariant } from '@patternfly/react-core/dist/dynamic/components/Modal';
+import { DropEvent } from '@patternfly/react-core/dist/esm/helpers/typeUtils';
 import { useNavigate } from 'react-router-dom';
 
 import { BlueprintResponse } from '../../store/imageBuilderApi';

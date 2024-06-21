@@ -1,19 +1,17 @@
 import React from 'react';
 
-import {
-  Radio,
-  Text,
-  Form,
-  Title,
-  FormGroup,
-  TextInput,
-  Gallery,
-  GalleryItem,
-  HelperText,
-  HelperTextItem,
-  Button,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { HelperText } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { HelperTextItem } from '@patternfly/react-core/dist/dynamic/components/HelperText';
+import { Radio } from '@patternfly/react-core/dist/dynamic/components/Radio';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextInput } from '@patternfly/react-core/dist/dynamic/components/TextInput';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
+import { Gallery } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import { GalleryItem } from '@patternfly/react-core/dist/dynamic/layouts/Gallery';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
 
 import { AwsAccountId } from './AwsAccountId';
 import { AwsSourcesSelect } from './AwsSourcesSelect';

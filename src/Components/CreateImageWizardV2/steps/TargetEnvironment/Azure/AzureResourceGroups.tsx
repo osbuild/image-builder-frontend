@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 
-import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';

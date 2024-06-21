@@ -1,22 +1,21 @@
 import React, { useCallback } from 'react';
 
-import {
-  Bullseye,
-  Button,
-  EmptyState,
-  EmptyStateActions,
-  EmptyStateBody,
-  EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
-  Flex,
-  FlexItem,
-  SearchInput,
-  Spinner,
-  Stack,
-  StackItem,
-} from '@patternfly/react-core';
-import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { SearchInput } from '@patternfly/react-core/dist/dynamic/components/SearchInput';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Bullseye } from '@patternfly/react-core/dist/dynamic/layouts/Bullseye';
+import { FlexItem } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Flex } from '@patternfly/react-core/dist/dynamic/layouts/Flex';
+import { Stack } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import { StackItem } from '@patternfly/react-core/dist/dynamic/layouts/Stack';
+import PlusCircleIcon from '@patternfly/react-icons/dist/dynamic/icons/plus-circle-icon';
+import SearchIcon from '@patternfly/react-icons/dist/dynamic/icons/search-icon';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';

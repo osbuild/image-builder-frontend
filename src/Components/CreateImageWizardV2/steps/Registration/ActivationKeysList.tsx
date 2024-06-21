@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  Alert,
-  FormGroup,
-  Spinner,
-  EmptyState,
-  Button,
-  EmptyStateIcon,
-  EmptyStateBody,
-  EmptyStateHeader,
-  EmptyStateFooter,
-  EmptyStateActions,
-  Text,
-  TextContent,
-  Popover,
-} from '@patternfly/react-core';
-import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import { WrenchIcon, AddCircleOIcon } from '@patternfly/react-icons';
-import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { Alert } from '@patternfly/react-core/dist/dynamic/components/Alert';
+import { Button } from '@patternfly/react-core/dist/dynamic/components/Button';
+import { EmptyState } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateIcon } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateBody } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateHeader } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateFooter } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { EmptyStateActions } from '@patternfly/react-core/dist/dynamic/components/EmptyState';
+import { FormGroup } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Popover } from '@patternfly/react-core/dist/dynamic/components/Popover';
+import { Spinner } from '@patternfly/react-core/dist/dynamic/components/Spinner';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { TextContent } from '@patternfly/react-core/dist/dynamic/components/Text';
+import AddCircleOIcon from '@patternfly/react-icons/dist/dynamic/icons/add-circle-o-icon';
+import ExternalLinkAltIcon from '@patternfly/react-icons/dist/dynamic/icons/external-link-alt-icon';
+import HelpIcon from '@patternfly/react-icons/dist/dynamic/icons/help-icon';
+import WrenchIcon from '@patternfly/react-icons/dist/dynamic/icons/wrench-icon';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 

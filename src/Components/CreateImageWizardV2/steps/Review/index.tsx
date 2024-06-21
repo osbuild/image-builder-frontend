@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { Form, Text, Title } from '@patternfly/react-core';
+import { Form } from '@patternfly/react-core/dist/dynamic/components/Form';
+import { Text } from '@patternfly/react-core/dist/dynamic/components/Text';
+import { Title } from '@patternfly/react-core/dist/dynamic/components/Title';
 
 import Review from './ReviewStep';
 
