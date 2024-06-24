@@ -8,6 +8,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "moduleResolution": "node",
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true
   }
