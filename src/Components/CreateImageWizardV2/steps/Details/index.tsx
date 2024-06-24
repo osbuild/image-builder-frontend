@@ -56,7 +56,6 @@ const DetailsStep = () => {
           dataTestId="blueprint"
           value={blueprintName}
           onChange={handleNameChange}
-          helperText="Please enter a valid name"
           placeholder="Add blueprint name"
           stepValidation={stepValidation}
           fieldName="name"
@@ -79,7 +78,6 @@ const DetailsStep = () => {
           dataTestId="blueprint description"
           value={blueprintDescription || ''}
           onChange={handleDescriptionChange}
-          helperText="Please enter a valid description"
           placeholder="Add description"
           stepValidation={stepValidation}
           fieldName="description"
