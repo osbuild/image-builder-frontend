@@ -23,7 +23,6 @@ interface HookValidatedTextInputPropTypes extends TextInputProps {
   dataTestId?: string | undefined;
   ouiaId?: string;
   ariaLabel: string | undefined;
-  helperText: string | undefined;
   value: string;
   placeholder?: string;
   stepValidation: StepValidation;
@@ -34,7 +33,6 @@ export const HookValidatedInput = ({
   dataTestId,
   ouiaId,
   ariaLabel,
-  helperText,
   value,
   placeholder,
   onChange,
@@ -43,7 +41,10 @@ export const HookValidatedInput = ({
 }: HookValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
   // Do not surface validation on pristine state components
+  // Allow step validation to be set on pristine state, when needed
   const validated = isPristine
+    ? 'default'
+    : stepValidation.errors[fieldName] === 'default'
     ? 'default'
     : stepValidation.errors[fieldName]
     ? 'error'
@@ -69,7 +70,7 @@ export const HookValidatedInput = ({
       {validated === 'error' && (
         <HelperText>
           <HelperTextItem variant="error" hasIcon>
-            {helperText}
+            {stepValidation.errors[fieldName]}
           </HelperTextItem>
         </HelperText>
       )}

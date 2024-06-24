@@ -157,7 +157,7 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
     },
     {
       id: '147032db-8697-4638-8fdd-6f428100d8fc',
-      name: 'Red Velvet',
+      name: 'Pink Velvet',
       description: 'Layered cake with icing',
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',

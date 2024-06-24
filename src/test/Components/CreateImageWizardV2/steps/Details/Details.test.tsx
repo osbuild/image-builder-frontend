@@ -82,6 +82,17 @@ describe('validates name', () => {
     const nextButton = await getNextButton();
     expect(nextButton).toBeEnabled();
   });
+
+  test('with non-unique name', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+    await enterBlueprintName('Lemon Pie');
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeDisabled();
+  });
 });
 
 describe('registration request generated correctly', () => {

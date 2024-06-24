@@ -93,7 +93,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Additional packages
   await clickNext(); // FirstBoot
   await clickNext(); // Details
-  await enterBlueprintName('oscap');
+  await enterBlueprintName('Oscap test');
   await clickNext(); // Review
 };
 
@@ -130,7 +130,10 @@ describe('oscap', () => {
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
-    const expectedRequest = oscapCreateBlueprintRequest;
+    const expectedRequest: CreateBlueprintRequest = {
+      ...oscapCreateBlueprintRequest,
+      name: 'Oscap test',
+    };
 
     expect(receivedRequest).toEqual(expectedRequest);
   });
@@ -146,7 +149,7 @@ describe('oscap', () => {
 
     const expectedRequest: CreateBlueprintRequest = {
       ...baseCreateBlueprintRequest,
-      name: 'oscap',
+      name: 'Oscap test',
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
@@ -170,7 +173,7 @@ describe('oscap', () => {
         kernel: expectedKernelCisL2,
         filesystem: expectedFilesystemCisL2,
       },
-      name: 'oscap',
+      name: 'Oscap test',
     };
 
     await waitFor(() => {

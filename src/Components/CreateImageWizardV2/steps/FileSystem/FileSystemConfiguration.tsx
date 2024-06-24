@@ -307,7 +307,6 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
   return (
     <HookValidatedInput
       ariaLabel="minimum partition size"
-      helperText="Must be larger than 0"
       value={partition.min_size}
       type="text"
       ouiaId="size"
