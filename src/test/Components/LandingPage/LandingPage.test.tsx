@@ -1,12 +1,16 @@
+import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import { rest } from 'msw';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server';
 import { renderWithReduxRouter } from '../../testUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => false,
     isProd: () => true,
@@ -14,9 +18,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) => {
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
     switch (flag) {
       case 'edgeParity.image-list':
         return false;

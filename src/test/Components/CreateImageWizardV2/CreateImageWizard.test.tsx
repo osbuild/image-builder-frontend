@@ -11,6 +11,7 @@ import {
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import {
   enterBlueprintName,
@@ -29,6 +30,8 @@ import {
   verifyCancelButton,
 } from '../../testUtils';
 
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
 const routes = [
   {
     path: 'insights/image-builder/*',
@@ -46,7 +49,7 @@ const routes = [
 
 let router: RemixRouter | undefined = undefined;
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -63,6 +66,11 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
+}));
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
 }));
 
 const switchToAWSManual = async () => {
@@ -96,7 +104,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   router = undefined;
   server.resetHandlers();
 });
