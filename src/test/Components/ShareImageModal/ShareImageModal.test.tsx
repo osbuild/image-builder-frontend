@@ -3,11 +3,14 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => false,
     isProd: () => true,
@@ -97,7 +100,7 @@ describe('Create Share To Regions Modal', () => {
   });
 
   test('select options disabled correctly based on status and region', async () => {
-    renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
+    await renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
 
     const selectToggle = await screen.findByRole('button', {
       name: /menu toggle/i,

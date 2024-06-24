@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import {
@@ -13,6 +14,8 @@ import {
   renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
+
+Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 const routes = [
   {
@@ -28,7 +31,7 @@ const routes = [
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -48,9 +51,10 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 }));
 
 let mockContentSourcesEnabled: boolean;
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) => {
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
     switch (flag) {
       case 'image-builder.enable-content-sources':
         return mockContentSourcesEnabled;
@@ -69,7 +73,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   mockContentSourcesEnabled = true;
 });
 
