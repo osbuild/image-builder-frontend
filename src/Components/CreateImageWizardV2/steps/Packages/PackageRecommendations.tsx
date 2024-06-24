@@ -4,15 +4,19 @@ import {
   Alert,
   Button,
   ExpandableSection,
+  Flex,
+  FlexItem,
   Icon,
   Panel,
   PanelMain,
   PanelMainBody,
+  Popover,
   Spinner,
   Text,
   TextContent,
+  TextVariants,
 } from '@patternfly/react-core';
-import { OptimizeIcon } from '@patternfly/react-icons';
+import { HelpIcon, OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
@@ -108,12 +112,39 @@ const PackageRecommendations = () => {
         <PanelMainBody>
           <ExpandableSection
             toggleContent={
-              <>
-                <Icon>
-                  <OptimizeIcon />
-                </Icon>{' '}
-                Recommended Red Hat packages
-              </>
+              <Flex>
+                <FlexItem>
+                  <Icon>
+                    <OptimizeIcon />
+                  </Icon>{' '}
+                  Recommended Red Hat packages{' '}
+                </FlexItem>
+                <FlexItem>
+                  <TextContent>
+                    <Text component={TextVariants.small}>
+                      <em>Powered by RHEL Lightspeed</em>{' '}
+                      <Popover
+                        maxWidth="30rem"
+                        // overrides the expandable behaviour to allow placing
+                        // a popover there
+                        onShow={() => setIsExpanded(false)}
+                        onHide={() => setIsExpanded(false)}
+                        bodyContent={
+                          <TextContent>
+                            <Text>
+                              RHEL Lightspeed provides intelligent tools to
+                              improve the productivity and efficiency of teams
+                              using RHEL.
+                            </Text>
+                          </TextContent>
+                        }
+                      >
+                        <HelpIcon />
+                      </Popover>
+                    </Text>
+                  </TextContent>
+                </FlexItem>
+              </Flex>
             }
             onToggle={(_, bool) => setIsExpanded(bool)}
             isExpanded={isExpanded}
