@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import {
   CREATE_BLUEPRINT,
@@ -23,9 +25,10 @@ import {
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
-import '@testing-library/jest-dom';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -39,9 +42,16 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
       },
     },
     isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
+    isProd: () => false,
+    getEnvironment: () => 'stage',
   }),
+}));
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
+    flag === 'image-builder.firstboot.enabled' ? true : false
+  ),
 }));
 
 const goToFirstBootStep = async (): Promise<void> => {

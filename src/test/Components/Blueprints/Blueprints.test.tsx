@@ -1,8 +1,10 @@
 import React from 'react';
 
+import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
@@ -13,11 +15,10 @@ import {
   renderCustomRoutesWithReduxRouter,
   renderWithReduxRouter,
 } from '../../testUtils';
-import '@testing-library/jest-dom';
 
-import '@testing-library/jest-dom';
+Object.assign(global, { fetch: nodeFetch, Request, Response });
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => true,
     isProd: () => true,
@@ -25,9 +26,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.new-wizard.enabled' ? true : false
   ),
 }));

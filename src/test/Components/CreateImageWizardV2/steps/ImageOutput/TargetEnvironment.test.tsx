@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
 import {
@@ -45,13 +46,16 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
 const routes = [
   {
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <CreateImageWizard />,
   },
 ];
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -70,13 +74,18 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   server.resetHandlers();
 });
 

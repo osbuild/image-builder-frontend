@@ -1,12 +1,14 @@
+import '@testing-library/jest-dom';
+
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
-import '@testing-library/jest-dom';
-
-import '@testing-library/jest-dom';
 import { renderWithReduxRouter } from '../../test/testUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     isBeta: () => true,
     isProd: () => true,
@@ -16,9 +18,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 window.HTMLElement.prototype.scrollTo = function () {};
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) => {
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
     switch (flag) {
       case 'image-builder.import.enabled':
         return true;
