@@ -11,6 +11,8 @@ import {
   Button,
 } from '@patternfly/react-core';
 
+import { setBlueprintId } from '../../../../../store/BlueprintSlice';
+import { useAppDispatch } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
   useComposeBlueprintMutation,
@@ -32,7 +34,7 @@ export const CreateSaveAndBuildBtn = ({
   const [createBlueprint] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
-
+  const dispatch = useAppDispatch();
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
@@ -41,7 +43,11 @@ export const CreateSaveAndBuildBtn = ({
       (await createBlueprint({
         createBlueprintRequest: requestBody,
       }).unwrap()); // unwrap - access the success payload immediately after a mutation
-    blueprint && buildBlueprint({ id: blueprint.id, body: {} });
+
+    if (blueprint) {
+      buildBlueprint({ id: blueprint.id, body: {} });
+      dispatch(setBlueprintId(blueprint.id));
+    }
   };
 
   return (
@@ -65,6 +71,7 @@ export const CreateSaveButton = ({
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
+  const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(false);
   const wasModalSeen = window.localStorage.getItem(
     'imageBuilder.saveAndBuildModalSeen'
@@ -110,8 +117,17 @@ export const CreateSaveButton = ({
 
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
+
     setIsOpen(false);
-    requestBody && createBlueprint({ createBlueprintRequest: requestBody });
+
+    const blueprint =
+      requestBody &&
+      (await createBlueprint({
+        createBlueprintRequest: requestBody,
+      }).unwrap());
+    if (blueprint) {
+      dispatch(setBlueprintId(blueprint?.id));
+    }
   };
 
   return (
