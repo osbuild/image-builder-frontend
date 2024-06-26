@@ -1,5 +1,5 @@
 import { screen } from '@testing-library/react';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
@@ -37,8 +37,8 @@ describe('Landing Page', () => {
 
   test('renders EmptyState child component', async () => {
     server.use(
-      rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(mockComposesEmpty));
+      http.get(`${IMAGE_BUILDER_API}/composes`, () => {
+        return HttpResponse.json(mockComposesEmpty);
       })
     );
 
