@@ -10,7 +10,7 @@ import {
   within,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import {
   enterBlueprintName,
@@ -346,9 +346,9 @@ describe('Step Upload to AWS', () => {
 
   test('component renders error state correctly', async () => {
     server.use(
-      rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) =>
-        res(ctx.status(500))
-      )
+      http.get(`${PROVISIONING_API}/sources`, () => {
+        return new HttpResponse(null, { status: 500 });
+      })
     );
     await setUp();
     await screen.findByText(
@@ -607,8 +607,8 @@ describe('Step Registration', () => {
 
   test('activation key dropdown empty state', async () => {
     server.use(
-      rest.get(`${RHSM_API}/activation_keys`, (req, res, ctx) =>
-        res(ctx.status(200), ctx.json({ body: [] }))
+      http.get(`${RHSM_API}/activation_keys`, () =>
+        HttpResponse.json({ body: [] })
       )
     );
     await setUp();

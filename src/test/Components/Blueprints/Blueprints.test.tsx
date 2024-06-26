@@ -3,7 +3,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
@@ -58,8 +58,8 @@ describe('Blueprints', () => {
   });
   test('renders blueprint empty state', async () => {
     server.use(
-      rest.get(`${IMAGE_BUILDER_API}/blueprints`, (req, res, ctx) => {
-        return res(ctx.status(200), ctx.json(emptyGetBlueprints));
+      http.get(`${IMAGE_BUILDER_API}/blueprints`, () => {
+        return HttpResponse.json(emptyGetBlueprints);
       })
     );
 
@@ -217,12 +217,9 @@ describe('Blueprints', () => {
     });
     test('redirect to index page when blueprint is invalid', async () => {
       server.use(
-        rest.get(
-          `${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`,
-          (req, res, ctx) => {
-            return res(ctx.status(404));
-          }
-        )
+        http.get(`${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`, () => {
+          return new HttpResponse(null, { status: 404 });
+        })
       );
       await renderCustomRoutesWithReduxRouter(
         'imagewizard/invalid-compose-id',
