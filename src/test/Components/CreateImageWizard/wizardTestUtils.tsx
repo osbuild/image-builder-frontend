@@ -2,7 +2,6 @@ import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { MockedRequest } from 'msw';
 
 import ImageWizard from '../../../Components/CreateImageWizard';
 import { RHEL_9 } from '../../../constants';
@@ -17,7 +16,8 @@ type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
 export function spyOnRequest(pathname: string, method: RequestTypes) {
   return new Promise((resolve) => {
-    const listener = async (req: MockedRequest) => {
+    // @ts-expect-error Parameter 'name' implicitly has an 'any' type.ts(7006)
+    const listener = async (req) => {
       if (req.url.pathname === pathname && req.method === method) {
         const requestData = await req.clone().json();
         resolve(requestData);

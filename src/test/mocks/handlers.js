@@ -1,4 +1,4 @@
-import { rest } from 'msw';
+import { http, HttpResponse } from 'msw';
 
 import {
   CONTENT_SOURCES_API,
@@ -43,70 +43,62 @@ import {
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
 export const handlers = [
-  rest.get(`${PROVISIONING_API}/sources`, (req, res, ctx) => {
-    const provider = req.url.searchParams.get('provider');
-    return res(ctx.status(200), ctx.json(mockSourcesByProvider(provider)));
+  http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
+    const url = new URL(request.url);
+    const provider = url.searchParams.get('provider');
+    return HttpResponse.json(mockSourcesByProvider(provider));
   }),
-  rest.get(
+  http.get(
     `${PROVISIONING_API}/sources/:sourceId/upload_info`,
-    (req, res, ctx) => {
-      const { sourceId } = req.params;
+    ({ params }) => {
+      const { sourceId } = params;
       if (sourceId === '666' || sourceId === '667' || sourceId === '123') {
-        return res(ctx.status(200), ctx.json(mockUploadInfo(sourceId)));
+        return HttpResponse.json(mockUploadInfo(sourceId));
       } else {
-        return res(ctx.status(404));
+        return new HttpResponse(null, { status: 404 });
       }
     }
   ),
-  rest.post(`${CONTENT_SOURCES_API}/rpms/names`, async (req, res, ctx) => {
-    const { search, urls } = await req.json();
-    return res(
-      ctx.status(200),
-      ctx.json(mockSourcesPackagesResults(search, urls))
-    );
+  http.post(`${CONTENT_SOURCES_API}/rpms/names`, async ({ request }) => {
+    const { search, urls } = await request.json();
+    return HttpResponse.json(mockSourcesPackagesResults(search, urls));
   }),
-  rest.post(
+  http.post(
     `${CONTENT_SOURCES_API}/package_groups/names`,
-    async (req, res, ctx) => {
-      const { search, urls } = await req.json();
-      return res(
-        ctx.status(200),
-        ctx.json(mockSourcesGroupsResults(search, urls))
-      );
+    async ({ request }) => {
+      const { search, urls } = await request.json();
+      return HttpResponse.json(mockSourcesGroupsResults(search, urls));
     }
   ),
-  rest.get(`${CONTENT_SOURCES_API}/features/`, async (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockedFeatureResponse));
+  http.get(`${CONTENT_SOURCES_API}/features/`, async () => {
+    return HttpResponse.json(mockedFeatureResponse);
   }),
-  rest.post(
-    `${CONTENT_SOURCES_API}/snapshots/for_date/`,
-    async (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockSourcesPackagesResults));
-    }
-  ),
-  rest.get(`${IMAGE_BUILDER_API}/packages`, (req, res, ctx) => {
-    const search = req.url.searchParams.get('search');
-    return res(ctx.status(200), ctx.json(mockSourcesPackagesResults(search)));
+  http.post(`${CONTENT_SOURCES_API}/snapshots/for_date/`, async () => {
+    return HttpResponse.json(mockSourcesPackagesResults);
   }),
-  rest.get(`${IMAGE_BUILDER_API}/architectures/:distro`, (req, res, ctx) => {
-    const { distro } = req.params;
-    return res(ctx.status(200), ctx.json(mockArchitecturesByDistro(distro)));
+  http.get(`${IMAGE_BUILDER_API}/packages`, ({ request }) => {
+    const url = new URL(request.url);
+    const search = url.searchParams.get('search');
+    return HttpResponse.json(mockSourcesPackagesResults(search));
   }),
-  rest.get(`${RHSM_API}/activation_keys`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(mockActivationKeysResults()));
+  http.get(`${IMAGE_BUILDER_API}/architectures/:distro`, ({ params }) => {
+    const { distro } = params;
+    return HttpResponse.json(mockArchitecturesByDistro(distro));
   }),
-  rest.get(`${RHSM_API}/activation_keys/:key`, (req, res, ctx) => {
-    const { key } = req.params;
-    return res(ctx.status(200), ctx.json(mockActivationKeyInformation(key)));
+  http.get(`${RHSM_API}/activation_keys`, () => {
+    return HttpResponse.json(mockActivationKeysResults());
   }),
-  rest.get(`${CONTENT_SOURCES_API}/repositories/`, (req, res, ctx) => {
-    const available_for_arch = req.url.searchParams.get('available_for_arch');
-    const available_for_version = req.url.searchParams.get(
-      'available_for_version'
-    );
-    const limit = req.url.searchParams.get('limit');
-    const offset = req.url.searchParams.get('offset');
-    const search = req.url.searchParams.get('search');
+  http.get(`${RHSM_API}/activation_keys/:key`, ({ params }) => {
+    const { key } = params;
+    return HttpResponse.json(mockActivationKeyInformation(key));
+  }),
+  http.get(`${CONTENT_SOURCES_API}/repositories/`, ({ request }) => {
+    const url = new URL(request.url);
+    const available_for_arch = url.searchParams.get('available_for_arch');
+    const available_for_version = url.searchParams.get('available_for_version');
+    const limit = url.searchParams.get('limit');
+    const offset = url.searchParams.get('offset');
+    const search = url.searchParams.get('search');
     const args = {
       available_for_arch,
       available_for_version,
@@ -114,51 +106,49 @@ export const handlers = [
       offset,
       search,
     };
-    return res(ctx.status(200), ctx.json(mockRepositoryResults(args)));
+    return HttpResponse.json(mockRepositoryResults(args));
   }),
-  rest.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, (req, res, ctx) => {
-    const { repo_id } = req.params;
-    return res(ctx.status(200), ctx.json(mockPopularRepo(repo_id)));
+  http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
+    const { repo_id } = params;
+    return HttpResponse.json(mockPopularRepo(repo_id));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/composes`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json(composesEndpoint(req)));
+  http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
+    return HttpResponse.json(composesEndpoint(request));
   }),
-  rest.get(`${IMAGE_BUILDER_API}/composes/:composeId`, (req, res, ctx) => {
-    const { composeId } = req.params;
-    return res(ctx.status(200), ctx.json(mockStatus(composeId)));
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId`, ({ params }) => {
+    const { composeId } = params;
+    return HttpResponse.json(mockStatus(composeId));
   }),
-  rest.get(
-    `${IMAGE_BUILDER_API}/composes/:composeId/clones`,
-    (req, res, ctx) => {
-      const { composeId } = req.params;
-      return res(ctx.status(200), ctx.json(mockClones(composeId)));
-    }
-  ),
-  rest.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, (req, res, ctx) => {
-    const { cloneId } = req.params;
-    return res(ctx.status(200), ctx.json(mockCloneStatus[cloneId]));
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId/clones`, ({ params }) => {
+    const { composeId } = params;
+    return HttpResponse.json(mockClones(composeId));
   }),
-  rest.post(`${IMAGE_BUILDER_API}/compose`, (req, res, ctx) => {
-    return res(ctx.status(200), ctx.json({}));
+  http.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, ({ params }) => {
+    const { cloneId } = params;
+    return HttpResponse.json(mockCloneStatus[cloneId]);
   }),
-  rest.get(
+  http.post(`${IMAGE_BUILDER_API}/compose`, () => {
+    return HttpResponse.json({});
+  }),
+  http.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/profiles`,
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(distributionOscapProfiles(req)));
+    ({ request }) => {
+      return HttpResponse.json(distributionOscapProfiles(request));
     }
   ),
-  rest.get(
+  http.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
-    (req, res, ctx) => {
-      const { profile } = req.params;
-      return res(ctx.status(200), ctx.json(oscapCustomizations(profile)));
+    ({ params }) => {
+      const { profile } = params;
+      return HttpResponse.json(oscapCustomizations(profile));
     }
   ),
-  rest.get(`${IMAGE_BUILDER_API}/blueprints`, (req, res, ctx) => {
-    const nameParam = req.url.searchParams.get('name');
-    const search = req.url.searchParams.get('search');
-    const limit = req.url.searchParams.get('limit') || '10';
-    const offset = req.url.searchParams.get('offset') || '0';
+  http.get(`${IMAGE_BUILDER_API}/blueprints`, ({ request }) => {
+    const url = new URL(request.url);
+    const nameParam = url.searchParams.get('name');
+    const search = url.searchParams.get('search');
+    const limit = url.searchParams.get('limit') || '10';
+    const offset = url.searchParams.get('offset') || '0';
     const resp = Object.assign({}, mockGetBlueprints);
     if (nameParam) {
       resp.data = resp.data.filter(({ name }) => {
@@ -182,45 +172,43 @@ export const handlers = [
       parseInt(offset) + parseInt(limit)
     );
 
-    return res(ctx.status(200), ctx.json(resp));
+    return HttpResponse.json(resp);
   }),
-  rest.post(`${IMAGE_BUILDER_API}/blueprint/:id/compose`, (req, res, ctx) => {
-    return res(ctx.status(200));
+  http.post(`${IMAGE_BUILDER_API}/blueprint/:id/compose`, () => {
+    return new HttpResponse(null, { status: 200 });
   }),
-  rest.post(CREATE_BLUEPRINT, (req, res, ctx) => {
+  http.post(CREATE_BLUEPRINT, () => {
     const response = {
       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     };
-    return res(ctx.status(201), ctx.json(response));
+    return HttpResponse.json(response);
   }),
-  rest.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, (req, res, ctx) => {
+  http.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, ({ params }) => {
+    const { id } = params;
     const emptyBlueprintId = mockGetBlueprints.data[1].id;
     const outOfSyncBlueprintId = mockGetBlueprints.data[3].id;
     const centosBlueprintId = mockGetBlueprints.data[4].id;
 
-    switch (req.params.id) {
+    switch (id) {
       case emptyBlueprintId:
-        return res(ctx.status(200), ctx.json(mockEmptyBlueprintsComposes));
+        return HttpResponse.json(mockEmptyBlueprintsComposes);
       case outOfSyncBlueprintId:
-        return res(ctx.status(200), ctx.json(mockBlueprintComposesOutOfSync));
+        return HttpResponse.json(mockBlueprintComposesOutOfSync);
       case centosBlueprintId:
-        return res(ctx.status(200), ctx.json(mockCentosBlueprintComposes));
+        return HttpResponse.json(mockCentosBlueprintComposes);
       default:
-        return res(ctx.status(200), ctx.json(mockBlueprintComposes));
+        return HttpResponse.json(mockBlueprintComposes);
     }
   }),
-  rest.get(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
-    const id = req.params['id'];
-    return res(ctx.status(200), ctx.json(getMockBlueprintResponse(id)));
+  http.get(`${IMAGE_BUILDER_API}/blueprints/:id`, ({ params }) => {
+    const id = params['id'];
+    return HttpResponse.json(getMockBlueprintResponse(id));
   }),
-  rest.put(`${IMAGE_BUILDER_API}/blueprints/:id`, (req, res, ctx) => {
-    const id = req.params['id'];
-    return res(ctx.status(200), ctx.json({ id: id }));
+  http.put(`${IMAGE_BUILDER_API}/blueprints/:id`, ({ params }) => {
+    const id = params['id'];
+    return HttpResponse.json({ id: id });
   }),
-  rest.post(
-    `${IMAGE_BUILDER_API}/experimental/recommendations`,
-    (req, res, ctx) => {
-      return res(ctx.status(200), ctx.json(mockPkgRecommendations));
-    }
-  ),
+  http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
+    return HttpResponse.json(mockPkgRecommendations);
+  }),
 ];
