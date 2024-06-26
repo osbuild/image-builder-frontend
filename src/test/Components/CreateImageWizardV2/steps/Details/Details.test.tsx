@@ -57,10 +57,13 @@ const goToDetailsStep = async () => {
 };
 
 const enterBlueprintDescription = async () => {
+  const user = userEvent.setup();
   const blueprintDescription = await screen.findByRole('textbox', {
     name: /blueprint description/i,
   });
-  await userEvent.type(blueprintDescription, 'Now with extra carmine!');
+  await waitFor(() =>
+    user.type(blueprintDescription, 'Now with extra carmine!')
+  );
 };
 
 const goToReviewStep = async () => {

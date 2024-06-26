@@ -182,13 +182,14 @@ const INVALID_IMAGE_TYPE_JSON = `{
   }`;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
+  const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
 
   if (fileInput) {
     const file = new File([content], filename, { type: 'application/json' });
-    await userEvent.upload(fileInput, file);
+    await waitFor(() => user.upload(fileInput, file));
   }
 };
 
@@ -203,7 +204,9 @@ describe('Import model', () => {
 
   const setUp = async () => {
     renderWithReduxRouter('', {});
-    await user.click(await screen.findByTestId('import-blueprint-button'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('import-blueprint-button'))
+    );
     const reviewButton = await screen.findByRole('button', {
       name: /review and finish/i,
     });
@@ -248,7 +251,7 @@ describe('Import model', () => {
     await uploadFile(`blueprints.json`, BLUEPRINT_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
     await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
-    await user.click(reviewButton);
+    await waitFor(() => user.click(reviewButton));
 
     expect(
       await screen.findByText('Image output', { selector: 'h1' })
