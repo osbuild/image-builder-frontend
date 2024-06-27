@@ -88,6 +88,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
       isOpen={isOpen}
       title={'Import pipeline'}
       onClose={onImportClose}
+      ouiaId="import-blueprint-modal"
     >
       <Form>
         <FormGroup fieldId="import-blueprint-file-upload">
