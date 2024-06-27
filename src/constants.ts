@@ -10,6 +10,8 @@ export const EDIT_BLUEPRINT = `${IMAGE_BUILDER_API}/blueprints`;
 
 export const CDN_PROD_URL = 'https://cdn.redhat.com/';
 export const CDN_STAGE_URL = 'https://cdn.stage.redhat.com/';
+export const CONTENT_BETA = '/preview/insights/content';
+export const CONTENT_STABLE = '/insights/content';
 export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
 export const FILE_SYSTEM_CUSTOMIZATION_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation';

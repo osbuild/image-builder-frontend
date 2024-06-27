@@ -43,6 +43,8 @@ import CustomHelperText from './components/CustomHelperText';
 import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
 
 import {
+  CONTENT_BETA,
+  CONTENT_STABLE,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
   RH_ICON_SIZE,
@@ -544,11 +546,7 @@ const Packages = () => {
                       target="_blank"
                       iconPosition="right"
                       icon={<ExternalLinkAltIcon />}
-                      href={
-                        isBeta()
-                          ? '/preview/insights/content'
-                          : '/insights/content'
-                      }
+                      href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
                     >
                       Manage your repositories and popular repositories
                     </Button>
@@ -578,11 +576,7 @@ const Packages = () => {
                     isInline
                     component="a"
                     target="_blank"
-                    href={
-                      isBeta()
-                        ? '/preview/insights/content'
-                        : '/insights/content'
-                    }
+                    href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
                   >
                     your repositories
                   </Button>{' '}
@@ -635,7 +629,7 @@ const Packages = () => {
           iconPosition="right"
           isInline
           icon={<ExternalLinkAltIcon />}
-          href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+          href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
         >
           content services
         </Button>{' '}

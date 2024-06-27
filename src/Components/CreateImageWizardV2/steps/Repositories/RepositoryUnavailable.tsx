@@ -3,6 +3,7 @@ import React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
@@ -28,7 +29,7 @@ const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
         iconPosition="right"
         isInline
         icon={<ExternalLinkAltIcon />}
-        href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+        href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
       >
         Go to Repositories
       </Button>

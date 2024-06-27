@@ -17,6 +17,7 @@ import {
   InProgressIcon,
 } from '@patternfly/react-icons';
 
+import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
 import { ApiRepositoryResponse } from '../../../../store/contentSourcesApi';
 import {
   convertStringToDate,
@@ -118,9 +119,7 @@ const RepositoriesStatus = ({
                 iconPosition="right"
                 isInline
                 icon={<ExternalLinkAltIcon />}
-                href={
-                  isBeta() ? '/preview/settings/content' : '/settings/content'
-                }
+                href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
               >
                 Go to Repositories
               </Button>
