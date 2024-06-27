@@ -138,6 +138,7 @@ export const ImageBuilderHeader = ({
                 {importExportFlag && (
                   <Button
                     data-testid="import-blueprint-button"
+                    ouiaId="import-blueprint-button"
                     variant="secondary"
                     icon={<ImportIcon />}
                     iconPosition="end"
