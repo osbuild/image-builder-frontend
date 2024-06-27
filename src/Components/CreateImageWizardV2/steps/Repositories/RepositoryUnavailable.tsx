@@ -3,12 +3,12 @@ import React from 'react';
 import { Alert, Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
+import { CONTENT_URL } from '../../../../constants';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../utilities/betaPath';
 
 const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
   const { isBeta } = useGetEnvironment();
-
   return (
     <Alert
       variant="warning"
@@ -29,7 +29,7 @@ const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
         iconPosition="right"
         isInline
         icon={<ExternalLinkAltIcon />}
-        href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+        href={betaPath(CONTENT_URL, isBeta())}
       >
         Go to Repositories
       </Button>

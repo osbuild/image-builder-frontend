@@ -5,13 +5,14 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Repositories from './Repositories';
 
-import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
+import { CONTENT_URL } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../utilities/betaPath';
 
 const ManageRepositoriesButton = () => {
   const { isBeta } = useGetEnvironment();
@@ -23,7 +24,7 @@ const ManageRepositoriesButton = () => {
       iconPosition="right"
       isInline
       icon={<ExternalLinkAltIcon />}
-      href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+      href={betaPath(CONTENT_URL, isBeta())}
     >
       Create and manage repositories here
     </Button>

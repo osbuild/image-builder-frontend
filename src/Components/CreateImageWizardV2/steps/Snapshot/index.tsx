@@ -2,13 +2,15 @@ import React from 'react';
 
 import { Alert, Button, Form, Grid, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useHref } from 'react-router-dom';
 
 import Snapshot from './Snapshot';
 
+import { CONTENT_URL } from '../../../../constants';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../utilities/betaPath';
+
 export default function SnapshotStep() {
-  const path = useHref('image-builder');
-  const pathname = path.split('image-builder')[0] + 'content';
+  const { isBeta } = useGetEnvironment();
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
@@ -34,7 +36,7 @@ export default function SnapshotStep() {
           iconPosition="right"
           isInline
           icon={<ExternalLinkAltIcon />}
-          href={pathname + '/repositories'}
+          href={betaPath(CONTENT_URL, isBeta())}
         >
           Create and manage repositories here
         </Button>

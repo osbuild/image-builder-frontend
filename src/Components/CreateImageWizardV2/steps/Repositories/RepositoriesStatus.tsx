@@ -17,13 +17,14 @@ import {
   InProgressIcon,
 } from '@patternfly/react-icons';
 
-import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
+import { CONTENT_URL } from '../../../../constants';
 import { ApiRepositoryResponse } from '../../../../store/contentSourcesApi';
 import {
   convertStringToDate,
   timestampToDisplayString,
 } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../utilities/betaPath';
 
 const getLastIntrospection = (
   repoIntrospections: RepositoryStatusProps['repoIntrospections']
@@ -119,7 +120,7 @@ const RepositoriesStatus = ({
                 iconPosition="right"
                 isInline
                 icon={<ExternalLinkAltIcon />}
-                href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+                href={betaPath(CONTENT_URL, isBeta())}
               >
                 Go to Repositories
               </Button>
