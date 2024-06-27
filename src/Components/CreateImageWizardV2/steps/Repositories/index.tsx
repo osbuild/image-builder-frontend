@@ -5,6 +5,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Repositories from './Repositories';
 
+import { CONTENT_BETA, CONTENT_STABLE } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectPackages,
@@ -22,7 +23,7 @@ const ManageRepositoriesButton = () => {
       iconPosition="right"
       isInline
       icon={<ExternalLinkAltIcon />}
-      href={isBeta() ? '/preview/settings/content' : '/settings/content'}
+      href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
     >
       Create and manage repositories here
     </Button>
