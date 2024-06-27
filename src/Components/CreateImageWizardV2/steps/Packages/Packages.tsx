@@ -43,8 +43,7 @@ import CustomHelperText from './components/CustomHelperText';
 import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
 
 import {
-  CONTENT_BETA,
-  CONTENT_STABLE,
+  CONTENT_URL,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
   RH_ICON_SIZE,
@@ -77,6 +76,7 @@ import {
 } from '../../../../store/wizardSlice';
 import useDebounce from '../../../../Utilities/useDebounce';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../utilities/betaPath';
 
 type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
@@ -546,7 +546,7 @@ const Packages = () => {
                       target="_blank"
                       iconPosition="right"
                       icon={<ExternalLinkAltIcon />}
-                      href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+                      href={betaPath(CONTENT_URL, isBeta())}
                     >
                       Manage your repositories and popular repositories
                     </Button>
@@ -576,7 +576,7 @@ const Packages = () => {
                     isInline
                     component="a"
                     target="_blank"
-                    href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+                    href={betaPath(CONTENT_URL, isBeta())}
                   >
                     your repositories
                   </Button>{' '}
@@ -629,7 +629,7 @@ const Packages = () => {
           iconPosition="right"
           isInline
           icon={<ExternalLinkAltIcon />}
-          href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+          href={betaPath(CONTENT_URL, isBeta())}
         >
           content services
         </Button>{' '}

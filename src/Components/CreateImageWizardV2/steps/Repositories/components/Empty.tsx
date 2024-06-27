@@ -11,8 +11,9 @@ import {
 } from '@patternfly/react-core';
 import { RepositoryIcon } from '@patternfly/react-icons';
 
-import { CONTENT_BETA, CONTENT_STABLE } from '../../../../../constants';
+import { CONTENT_URL } from '../../../../../constants';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
+import { betaPath } from '../../../utilities/betaPath';
 
 type EmptyProps = {
   refetch: () => void;
@@ -43,7 +44,7 @@ export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
           variant="primary"
           component="a"
           target="_blank"
-          href={isBeta() ? CONTENT_BETA : CONTENT_STABLE}
+          href={betaPath(CONTENT_URL, isBeta())}
           className="pf-u-mr-sm"
         >
           Go to repositories
