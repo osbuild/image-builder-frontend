@@ -3,6 +3,7 @@ import '@testing-library/jest-dom';
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizardV2/CreateImageWizard';
 import {
@@ -45,13 +46,16 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
 const routes = [
   {
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <CreateImageWizard />,
   },
 ];
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -70,76 +74,89 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 beforeAll(() => {
   // scrollTo is not defined in jsdom
   window.HTMLElement.prototype.scrollTo = function () {};
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   server.resetHandlers();
 });
 
 const openReleaseMenu = async () => {
+  const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {
     name: /options menu/i,
   })[0];
-  await userEvent.click(releaseMenu);
+  await waitFor(() => user.click(releaseMenu));
 };
 
 const openArchitectureMenu = async () => {
+  const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {
     name: /options menu/i,
   })[1];
-  await userEvent.click(releaseMenu);
+  await waitFor(() => user.click(releaseMenu));
 };
 
 const clickShowOptions = async () => {
+  const user = userEvent.setup();
   const showOptions = await screen.findByRole('button', {
     name: /show options for further development of rhel/i,
   });
-  await userEvent.click(showOptions);
+  await waitFor(() => user.click(showOptions));
 };
 
 const selectRhel8 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
   });
-  await userEvent.click(rhel8);
+  await waitFor(() => user.click(rhel8));
 };
 
 const selectRhel9 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel9 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
   });
-  await userEvent.click(rhel9);
+  await waitFor(() => user.click(rhel9));
 };
 
 const selectCentos9 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   await clickShowOptions();
   const centos9 = await screen.findByRole('option', {
     name: 'CentOS Stream 9',
   });
-  await userEvent.click(centos9);
+  await waitFor(() => user.click(centos9));
 };
 
 const selectX86_64 = async () => {
+  const user = userEvent.setup();
   await openArchitectureMenu();
   const x86_64 = await screen.findByRole('option', {
     name: 'x86_64',
   });
-  await userEvent.click(x86_64);
+  await waitFor(() => user.click(x86_64));
 };
 
 const selectAarch64 = async () => {
+  const user = userEvent.setup();
   await openArchitectureMenu();
   const aarch64 = await screen.findByRole('option', {
     name: 'aarch64',
   });
-  await userEvent.click(aarch64);
+  await waitFor(() => user.click(aarch64));
 };
 
 const goToReviewStep = async () => {
@@ -165,8 +182,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'x86_64' }))
+    );
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = []; // type is `string[]` and not `ImageType[]` because in imageBuilderAPI ArchitectureItem['image_types'] is type string
@@ -204,19 +223,23 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-      })
+    await waitFor(() => user.click(releaseMenu));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('option', {
+          name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+        })
+      )
     );
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'x86_64' }))
+    );
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -252,8 +275,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'aarch64' }))
+    );
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -293,19 +318,23 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-      })
+    await waitFor(() => user.click(releaseMenu));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('option', {
+          name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+        })
+      )
     );
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'aarch64' }))
+    );
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -347,25 +376,35 @@ describe('Check step consistency', () => {
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'x86_64' }))
+    );
     await waitFor(async () => await screen.findByTestId('upload-aws'));
     // select GCP, it's available for x86_64
-    await user.click(await screen.findByTestId('upload-google'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-google'))
+    );
     const next = await screen.findByRole('button', { name: /Next/ });
     await waitFor(() => expect(next).toBeEnabled());
     // Change to aarch
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'aarch64' }))
+    );
     await waitFor(async () => await screen.findByTestId('upload-aws'));
     // GCP not being compatible with arch, the next button is disabled
     await waitFor(() => expect(next).toBeDisabled());
     // clicking on AWS the user can go next
-    await user.click(await screen.findByTestId('upload-aws'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-aws'))
+    );
     await waitFor(() => expect(next).toBeEnabled());
     // and going back to x86_64 the user should keep the next button visible
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    await waitFor(() => user.click(archMenu));
+    await waitFor(async () =>
+      user.click(await screen.findByRole('option', { name: 'x86_64' }))
+    );
     await waitFor(() => expect(next).toBeEnabled());
   });
 });
@@ -405,6 +444,7 @@ describe('set architecture using query parameter', () => {
 });
 
 describe('set target using query parameter', () => {
+  const user = userEvent.setup();
   test('no target by default (no query parameter)', async () => {
     await renderCreateMode();
     const nextButton = await screen.findByRole('button', { name: /Next/ });
@@ -424,7 +464,7 @@ describe('set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    await userEvent.click(targetExpandable);
+    await waitFor(() => user.click(targetExpandable));
     await screen.findByText('Bare metal - Installer (.iso)');
   });
 
@@ -435,7 +475,7 @@ describe('set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    await userEvent.click(targetExpandable);
+    await waitFor(() => user.click(targetExpandable));
     await screen.findByText('Virtualization - Guest image (.qcow2)');
   });
 });

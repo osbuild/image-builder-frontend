@@ -2,12 +2,15 @@ import React from 'react';
 
 import '@testing-library/jest-dom';
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
+
+Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 const routes = [
   {
@@ -24,7 +27,7 @@ const routes = [
   },
 ];
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -43,9 +46,9 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.wizard.oscap.enabled' ? true : false
   ),
 }));
@@ -56,24 +59,30 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
 });
 
 const selectRhel8 = async () => {
-  await userEvent.click(
-    screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0]
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(
+      screen.getAllByRole('button', {
+        name: /options menu/i,
+      })[0]
+    )
   );
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8/i,
   });
-  await userEvent.click(rhel8);
+  await waitFor(async () => user.click(rhel8));
 };
 
 const clickFromImageOutputToOpenScap = async () => {
+  const user = userEvent.setup();
   await clickNext();
-  await userEvent.click(await screen.findByLabelText('Register later'));
+  await waitFor(async () =>
+    user.click(await screen.findByLabelText('Register later'))
+  );
   await clickNext(); // skip registration
 };
 
@@ -86,34 +95,44 @@ describe('Step Compliance', () => {
     await setup();
 
     // select aws as upload destination
-    await user.click(await screen.findByTestId('upload-aws'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /manually enter an account id\./i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
+      )
     );
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
     );
 
     await clickNext();
     // skip registration
-    await user.click(await screen.findByLabelText('Register later'));
+    await waitFor(async () =>
+      user.click(await screen.findByLabelText('Register later'))
+    );
     await clickNext();
 
     // Now we should be in the Compliance step
     await screen.findByRole('heading', { name: /OpenSCAP/i });
 
-    await user.click(
-      await screen.findByRole('textbox', { name: /select a profile/i })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('textbox', { name: /select a profile/i })
+      )
     );
-    await user.click(await screen.findByText(/none/i));
+    await waitFor(async () => user.click(await screen.findByText(/none/i)));
 
     // check that the FSC does not contain a /tmp partition
     await clickNext();
@@ -141,40 +160,52 @@ describe('Step Compliance', () => {
     await setup();
 
     // select aws as upload destination
-    await user.click(await screen.findByTestId('upload-aws'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-aws'))
+    );
     await clickNext();
 
     // aws step
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /manually enter an account id\./i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('radio', {
+          name: /manually enter an account id\./i,
+        })
+      )
     );
 
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
     );
 
     await clickNext();
     // skip registration
-    await user.click(await screen.findByLabelText('Register later'));
+    await waitFor(async () =>
+      user.click(await screen.findByLabelText('Register later'))
+    );
     await clickNext();
 
     // Now we should be at the OpenSCAP step
     await screen.findByRole('heading', { name: /OpenSCAP/i });
 
-    await user.click(
-      await screen.findByRole('textbox', {
-        name: /select a profile/i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('textbox', {
+          name: /select a profile/i,
+        })
+      )
     );
 
-    await user.click(
-      await screen.findByText(
-        /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
+    await waitFor(async () =>
+      user.click(
+        await screen.findByText(
+          /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
+        )
       )
     );
     await screen.findByText(/kernel arguments:/i);
@@ -199,7 +230,7 @@ describe('Step Compliance', () => {
     await screen.findByRole('heading', {
       name: /Additional packages/i,
     });
-    await user.click(await screen.findByText(/Selected/));
+    await waitFor(async () => user.click(await screen.findByText(/Selected/)));
     await screen.findByText(/aide/i);
     await screen.findByText(/neovim/i);
   });
@@ -207,7 +238,9 @@ describe('Step Compliance', () => {
   test('OpenSCAP dropdown is disabled for WSL targets only', async () => {
     await setup();
     await selectRhel8();
-    await user.click(await screen.findByTestId('checkbox-wsl'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('checkbox-wsl'))
+    );
     await clickFromImageOutputToOpenScap();
     await screen.findByText(
       /OpenSCAP profiles are not compatible with WSL images/i
@@ -220,8 +253,12 @@ describe('Step Compliance', () => {
   test('Alert displayed and OpenSCAP dropdown enabled when targets include WSL', async () => {
     await setup();
     await selectRhel8();
-    await user.click(await screen.findByTestId('checkbox-image-installer'));
-    await user.click(await screen.findByTestId('checkbox-wsl'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('checkbox-image-installer'))
+    );
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('checkbox-wsl'))
+    );
     await clickFromImageOutputToOpenScap();
     await screen.findByText(
       /OpenSCAP profiles are not compatible with WSL images/i

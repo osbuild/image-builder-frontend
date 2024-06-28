@@ -1,5 +1,6 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import {
   CREATE_BLUEPRINT,
@@ -22,7 +23,9 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -41,11 +44,17 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 const goToFileSystemConfigurationStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -53,21 +62,24 @@ const goToFileSystemConfigurationStep = async () => {
 };
 
 const clickManuallyConfigurePartitions = async () => {
+  const user = userEvent.setup();
   const button = await screen.findByText(/manually configure partitions/i);
-  await userEvent.click(button);
+  await waitFor(() => user.click(button));
 };
 
 const addPartition = async () => {
+  const user = userEvent.setup();
   const button = await screen.findByRole('button', { name: /add partition/i });
-  await userEvent.click(button);
+  await waitFor(() => user.click(button));
 };
 
 const customizePartition = async () => {
+  const user = userEvent.setup();
   const row = await getRow(2);
   const minSize = await within(row).findByRole('textbox', {
     name: /mountpoint suffix/i,
   });
-  await userEvent.type(minSize, 'cakerecipes');
+  await waitFor(() => user.type(minSize, 'cakerecipes'));
 };
 
 const getRow = async (row: number) => {
@@ -77,31 +89,34 @@ const getRow = async (row: number) => {
 };
 
 const changePartitionSize = async () => {
+  const user = userEvent.setup();
   const row = await getRow(1);
   const minSize = await within(row).findByRole('textbox', {
     name: /minimum partition size/i,
   });
-  await userEvent.type(minSize, '{backspace}5');
+  await waitFor(() => user.type(minSize, '{backspace}5'));
 };
 
 const changePartitionUnitsToKiB = async () => {
+  const user = userEvent.setup();
   const row = await getRow(1);
   const units = await within(row).findAllByRole('button', {
     name: /options menu/i,
   });
-  await userEvent.click(units[1]);
+  await waitFor(() => user.click(units[1]));
   const mibibytes = await screen.findByText('KiB');
-  await userEvent.click(mibibytes);
+  await waitFor(() => user.click(mibibytes));
 };
 
 const changePartitionUnitsToMiB = async () => {
+  const user = userEvent.setup();
   const row = await getRow(1);
   const units = await within(row).findAllByRole('button', {
     name: /options menu/i,
   });
-  await userEvent.click(units[1]);
+  await waitFor(() => user.click(units[1]));
   const mibibytes = await screen.findByText('MiB');
-  await userEvent.click(mibibytes);
+  await waitFor(() => user.click(mibibytes));
 };
 
 const goToReviewStep = async () => {

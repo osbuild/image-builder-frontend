@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
@@ -21,7 +23,9 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -40,11 +44,17 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 const goToSnapshotStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(async () => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -62,26 +72,34 @@ const goToReviewStep = async () => {
 };
 
 const selectFirstRepository = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
   );
 };
 
 const selectUseSnapshot = async () => {
-  await userEvent.click(
-    await screen.findByRole('radio', { name: /Use a snapshot/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('radio', { name: /Use a snapshot/i }))
   );
 };
 
 const updateDatePickerWithValue = async (date: string) => {
-  await userEvent.type(
-    await screen.findByRole('textbox', { name: /Date picker/i }),
-    date
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.type(
+      await screen.findByRole('textbox', { name: /Date picker/i }),
+      date
+    )
   );
 };
 
 const clickContentDropdown = async () => {
-  await userEvent.click(await screen.findByTestId('content-expandable'));
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByTestId('content-expandable'))
+  );
 };
 
 const getSnapshotMethodElement = async () =>

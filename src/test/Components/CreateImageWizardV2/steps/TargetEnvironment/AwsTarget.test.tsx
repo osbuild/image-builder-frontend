@@ -1,5 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
@@ -20,7 +21,9 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -37,6 +40,11 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
+}));
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
 }));
 
 const goToAwsStep = async () => {
@@ -58,45 +66,55 @@ const goToReview = async () => {
 };
 
 const selectAwsTarget = async () => {
+  const user = userEvent.setup();
   await renderCreateMode();
   const awsCard = await screen.findByTestId('upload-aws');
-  await userEvent.click(awsCard);
+  await waitFor(() => user.click(awsCard));
   await clickNext();
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
+  const user = userEvent.setup();
   const awsCard = await screen.findByTestId('upload-aws');
-  await userEvent.click(awsCard);
-  await userEvent.click(
-    await screen.findByRole('checkbox', {
-      name: /virtualization guest image checkbox/i,
-    })
+  await waitFor(() => user.click(awsCard));
+  await waitFor(async () =>
+    user.click(
+      await screen.findByRole('checkbox', {
+        name: /virtualization guest image checkbox/i,
+      })
+    )
   );
   await clickNext();
 };
 
 const selectSource = async () => {
-  await userEvent.click(
-    await screen.findByRole('textbox', {
-      name: /select source/i,
-    })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(
+      await screen.findByRole('textbox', {
+        name: /select source/i,
+      })
+    )
   );
 
-  await userEvent.click(
-    await screen.findByRole('option', { name: /my_source/i })
+  await waitFor(async () =>
+    user.click(await screen.findByRole('option', { name: /my_source/i }))
   );
 };
 
 const enterAccountId = async () => {
-  await userEvent.click(
-    await screen.findByText(/manually enter an account id\./i)
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByText(/manually enter an account id\./i))
   );
 
-  await userEvent.type(
-    await screen.findByRole('textbox', {
-      name: 'aws account id',
-    }),
-    '123123123123'
+  await waitFor(async () =>
+    user.type(
+      await screen.findByRole('textbox', {
+        name: 'aws account id',
+      }),
+      '123123123123'
+    )
   );
 };
 

@@ -5,6 +5,7 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
@@ -17,6 +18,8 @@ import {
   renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
+
+Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 const routes = [
   {
@@ -32,7 +35,7 @@ const routes = [
     element: <ShareImageModal />,
   },
 ];
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -51,6 +54,11 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
@@ -60,7 +68,7 @@ beforeAll(() => {
 });
 
 afterEach(() => {
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   router = undefined;
   server.resetHandlers();
 });
@@ -83,7 +91,9 @@ describe('Step Upload to Azure', () => {
       routes
     ));
     // select Azure as upload destination
-    await user.click(await screen.findByTestId('upload-azure'));
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-azure'))
+    );
 
     await clickNext();
 
@@ -94,27 +104,35 @@ describe('Step Upload to Azure', () => {
 
   test('clicking Next loads Registration', async () => {
     await setUp();
-    await user.click(
-      screen.getByText(/manually enter the account information\./i)
+    await waitFor(async () =>
+      user.click(
+        await screen.findByText(/manually enter the account information\./i)
+      )
     );
     // Randomly generated GUID
-    await user.type(
-      screen.getByRole('textbox', {
-        name: /azure tenant guid/i,
-      }),
-      'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: /azure tenant guid/i,
+        }),
+        'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
+      )
     );
-    await user.type(
-      screen.getByRole('textbox', {
-        name: /subscription id/i,
-      }),
-      '60631143-a7dc-4d15-988b-ba83f3c99711'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: /subscription id/i,
+        }),
+        '60631143-a7dc-4d15-988b-ba83f3c99711'
+      )
     );
-    await user.type(
-      screen.getByRole('textbox', {
-        name: /resource group/i,
-      }),
-      'testResourceGroup'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: /resource group/i,
+        }),
+        'testResourceGroup'
+      )
     );
     await clickNext();
 
@@ -144,8 +162,10 @@ describe('Step Upload to Azure', () => {
     await setUp();
     const nextButton = await getNextButton();
 
-    await user.click(
-      screen.getByText(/manually enter the account information\./i)
+    await waitFor(async () =>
+      user.click(
+        await screen.findByText(/manually enter the account information\./i)
+      )
     );
 
     const tenantId = screen.getByRole('textbox', {
@@ -153,26 +173,34 @@ describe('Step Upload to Azure', () => {
     });
     expect(tenantId).toHaveValue('');
     expect(tenantId).toBeEnabled();
-    await user.type(tenantId, 'c983c2cd-94d7-44e1-9c6e-9cfa3a40995f');
+    await waitFor(
+      async () =>
+        await user.type(tenantId, 'c983c2cd-94d7-44e1-9c6e-9cfa3a40995f')
+    );
     const subscription = screen.getByRole('textbox', {
       name: /subscription id/i,
     });
     expect(subscription).toHaveValue('');
     expect(subscription).toBeEnabled();
-    await user.type(subscription, 'f8f200aa-6234-4bfb-86c2-163d33dffc0c');
+    await waitFor(
+      async () =>
+        await user.type(subscription, 'f8f200aa-6234-4bfb-86c2-163d33dffc0c')
+    );
     const resourceGroup = screen.getByRole('textbox', {
       name: /resource group/i,
     });
     expect(resourceGroup).toHaveValue('');
     expect(resourceGroup).toBeEnabled();
-    await user.type(resourceGroup, 'testGroup');
+    await waitFor(async () => await user.type(resourceGroup, 'testGroup'));
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    await user.click(
-      screen.getByRole('radio', {
-        name: /use an account configured from sources\./i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('radio', {
+          name: /use an account configured from sources\./i,
+        })
+      )
     );
 
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
@@ -192,12 +220,14 @@ describe('Step Upload to Azure', () => {
       })
     ).toHaveValue('');
 
-    await user.click(sourceDropdown);
+    await waitFor(() => user.click(sourceDropdown));
 
-    await user.click(
-      await screen.findByRole('option', {
-        name: /azureSource1/i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('option', {
+          name: /azureSource1/i,
+        })
+      )
     );
     // wait for fetching the upload info
     await waitFor(() =>
@@ -208,15 +238,19 @@ describe('Step Upload to Azure', () => {
       ).not.toHaveValue('')
     );
 
-    await user.click(
-      await screen.findByRole('textbox', {
-        name: /select resource group/i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('textbox', {
+          name: /select resource group/i,
+        })
+      )
     );
     const groups = screen.getAllByLabelText(/^Resource group/);
     expect(groups).toHaveLength(2);
-    await user.click(
-      await screen.findByLabelText('Resource group myResourceGroup1')
+    await waitFor(async () =>
+      user.click(
+        await screen.findByLabelText('Resource group myResourceGroup1')
+      )
     );
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
@@ -226,11 +260,13 @@ describe('Step Upload to Azure', () => {
     await setUp();
 
     const sourceDropdown = await getSourceDropdown();
-    await user.click(sourceDropdown);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /azureSource1/i,
-      })
+    await waitFor(() => user.click(sourceDropdown));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('option', {
+          name: /azureSource1/i,
+        })
+      )
     );
 
     await waitFor(() =>
@@ -241,11 +277,13 @@ describe('Step Upload to Azure', () => {
       ).not.toHaveValue('')
     );
 
-    await user.click(sourceDropdown);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /azureSource2/i,
-      })
+    await waitFor(() => user.click(sourceDropdown));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('option', {
+          name: /azureSource2/i,
+        })
+      )
     );
     await waitFor(() => {
       expect(
@@ -255,10 +293,12 @@ describe('Step Upload to Azure', () => {
       ).toHaveValue('73d5694c-7a28-417e-9fca-55840084f508');
     });
 
-    await user.click(
-      await screen.findByRole('textbox', {
-        name: /select resource group/i,
-      })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('textbox', {
+          name: /select resource group/i,
+        })
+      )
     );
     const groups = await screen.findByLabelText(/^Resource group/);
     expect(groups).toBeInTheDocument();

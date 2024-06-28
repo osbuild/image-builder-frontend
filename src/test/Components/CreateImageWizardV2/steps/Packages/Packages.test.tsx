@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
@@ -23,7 +25,9 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -42,18 +46,19 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-jest.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => jest.fn(),
-  useFlag: jest.fn((flag) =>
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) =>
     flag === 'image-builder.pkgrecs.enabled' ? true : false
   ),
 }));
 
 const goToPackagesStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -71,64 +76,76 @@ const goToReviewStep = async () => {
 };
 
 const searchForPackage = async () => {
+  const user = userEvent.setup();
   const searchBox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await userEvent.type(searchBox, 'test');
+  await waitFor(() => user.type(searchBox, 'test'));
 };
 
 const searchForGroup = async () => {
+  const user = userEvent.setup();
   const searchBox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await userEvent.type(searchBox, '@grouper');
+  await waitFor(() => user.type(searchBox, '@grouper'));
 };
 
 const clearSearchInput = async () => {
+  const user = userEvent.setup();
   const clearSearchBtn = await screen.findByRole('button', {
     name: /clear-package-search/i,
   });
-  await userEvent.click(clearSearchBtn);
+  await waitFor(() => user.click(clearSearchBtn));
 };
 
 const selectFirstPackage = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
   );
 };
 
 const deselectFirstPackage = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
   );
 };
 
 const addSingleRecommendation = async () => {
+  const user = userEvent.setup();
   const addPackageButtons = await screen.findAllByText(/add package/i);
-  await userEvent.click(addPackageButtons[0]);
+  await waitFor(() => user.click(addPackageButtons[0]));
 };
 
 const addAllRecommendations = async () => {
-  await userEvent.click(await screen.findByText(/add all packages/i));
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByText(/add all packages/i))
+  );
 };
 
 const switchToSelected = async () => {
-  await userEvent.click(
-    await screen.findByRole('button', { name: /selected \(\d*\)/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('button', { name: /selected \(\d*\)/i }))
   );
 };
 
 const deselectRecommendation = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 1/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 1/i }))
   );
 };
 
 const openIncludedPackagesPopover = async () => {
+  const user = userEvent.setup();
   const popoverBtn = await screen.findByRole('button', {
     name: /About included packages/i,
   });
-  await userEvent.click(popoverBtn);
+  await waitFor(() => user.click(popoverBtn));
 };
 
 describe('packages request generated correctly', () => {

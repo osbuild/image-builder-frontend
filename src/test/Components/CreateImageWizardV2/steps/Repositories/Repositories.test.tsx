@@ -1,5 +1,7 @@
+import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
@@ -25,7 +27,9 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+Object.assign(global, { fetch: nodeFetch, Request, Response });
+
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
     auth: {
       getUser: () => {
@@ -44,11 +48,17 @@ jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 const goToRepositoriesStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -67,14 +77,16 @@ const goToReviewStep = async () => {
 };
 
 const selectFirstRepository = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
   );
 };
 
 const deselectFirstRepository = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
   );
 };
 
@@ -101,13 +113,14 @@ describe('repositories request generated correctly', () => {
   });
 
   const selectNginxRepository = async () => {
+    const user = userEvent.setup();
     const search = await screen.findByLabelText('Search repositories');
-    await userEvent.type(search, 'nginx stable repo');
+    await waitFor(() => user.type(search, 'nginx stable repo'));
     await waitFor(
       () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument
     );
-    await userEvent.click(
-      await screen.findByRole('checkbox', { name: /select row 0/i })
+    await waitFor(async () =>
+      user.click(await screen.findByRole('checkbox', { name: /select row 0/i }))
     );
   };
 
@@ -168,6 +181,7 @@ describe('repositories request generated correctly', () => {
 });
 
 describe('Repositories edit mode', () => {
+  const user = userEvent.setup();
   test('edit mode works', async () => {
     const id = mockBlueprintIds['repositories'];
     await renderEditMode(id);
@@ -183,16 +197,20 @@ describe('Repositories edit mode', () => {
     const id = mockBlueprintIds['repositories'];
     await renderEditMode(id);
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: /Custom repositories/ })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /Custom repositories/ })
+      )
     );
 
     await screen.findByText(
       /Removing previously added repositories may lead to issues with selected packages/i
     );
 
-    await userEvent.click(
-      await screen.findByRole('button', { name: /Selected repositories/ })
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', { name: /Selected repositories/ })
+      )
     );
 
     const repoCheckbox = await screen.findByRole('checkbox', {
@@ -200,10 +218,10 @@ describe('Repositories edit mode', () => {
     });
     expect(repoCheckbox).toBeChecked();
 
-    await userEvent.click(repoCheckbox);
+    await waitFor(() => user.click(repoCheckbox));
     await screen.findByText(/Are you sure?/);
-    await userEvent.click(
-      await screen.findByRole('button', { name: /Remove anyway/ })
+    await waitFor(async () =>
+      user.click(await screen.findByRole('button', { name: /Remove anyway/ }))
     );
 
     expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument();
