@@ -14,7 +14,7 @@ import {
   ContentList,
   FSCList,
   FirstBootList,
-  ImageDetailsList,
+  DetailsList,
   ImageOutputList,
   OscapList,
   RegisterLaterList,
@@ -288,9 +288,9 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <ExpandableSection
           toggleContent={
             <>
-              Image details{' '}
+              Details{' '}
               <RevisitStepButton
-                ariaLabel="Revisit Image details step"
+                ariaLabel="Revisit Details step"
                 stepId="step-details"
               />
             </>
@@ -302,7 +302,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           isIndented
           data-testid="image-details-expandable"
         >
-          <ImageDetailsList />
+          <DetailsList />
         </ExpandableSection>
       )}
     </>

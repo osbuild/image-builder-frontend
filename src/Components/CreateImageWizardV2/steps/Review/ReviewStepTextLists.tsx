@@ -703,7 +703,7 @@ export const RegisterNowList = () => {
   );
 };
 
-export const ImageDetailsList = () => {
+export const DetailsList = () => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
@@ -716,7 +716,7 @@ export const ImageDetailsList = () => {
               component={TextListItemVariants.dt}
               className="pf-u-min-width"
             >
-              Image name
+              Blueprint name
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
               {blueprintName}

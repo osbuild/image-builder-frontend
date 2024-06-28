@@ -203,7 +203,9 @@ describe('Blueprints', () => {
         {},
         routes
       );
-      const blueprintDetails = await screen.findByText('Image details');
+      const blueprintDetails = await screen.findByTestId(
+        'image-details-expandable'
+      );
       await user.click(blueprintDetails);
       await screen.findByText(editedBlueprintName);
     });
