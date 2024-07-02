@@ -102,6 +102,11 @@ export const ValidatedTextInput = ({
     return validator(value) ? 'success' : 'error';
   };
 
+  const dontDragMe: TextInputProps['onDragStart'] = (evt) => {
+    evt.preventDefault();
+    evt.stopPropagation();
+  };
+
   return (
     <>
       <TextInput
@@ -114,6 +119,8 @@ export const ValidatedTextInput = ({
         aria-label={ariaLabel}
         onBlur={handleBlur}
         placeholder={placeholder}
+        draggable="true"
+        onDragStart={dontDragMe}
       />
       {!isPristine && !validator(value) && (
         <HelperText>
