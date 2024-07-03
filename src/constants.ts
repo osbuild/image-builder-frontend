@@ -15,7 +15,7 @@ export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
 export const FILE_SYSTEM_CUSTOMIZATION_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation';
 export const SUBSCRIPTION_MANAGEMENT_URL =
-  'https://access.redhat.com/products/red-hat-subscription-management';
+  'https://access.redhat.com/management/subscriptions';
 export const INSIGHTS_URL =
   'https://access.redhat.com/products/red-hat-insights';
 export const RHC_URL = 'https://access.redhat.com/articles/rhc';
@@ -30,7 +30,7 @@ export const ACTIVATION_KEYS_STAGE_URL =
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
 export const CREATING_IMAGES_WITH_IB_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html-single/creating_customized_images_by_using_insights_image_builder/index';
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
 export const MANAGING_WITH_DNF_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index';
 export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
