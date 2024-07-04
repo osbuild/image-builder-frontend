@@ -13,7 +13,7 @@ export const CDN_STAGE_URL = 'https://cdn.stage.redhat.com/';
 export const CONTENT_URL = '/insights/content/repositories';
 export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
 export const FILE_SYSTEM_CUSTOMIZATION_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation';
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/customizing-file-systems-during-the-image-creation';
 export const SUBSCRIPTION_MANAGEMENT_URL =
   'https://access.redhat.com/management/subscriptions';
 export const INSIGHTS_URL =
@@ -28,18 +28,18 @@ export const ACTIVATION_KEYS_PROD_URL =
 export const ACTIVATION_KEYS_STAGE_URL =
   'https://console.stage.redhat.com/insights/connector/activation-keys';
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
 export const CREATING_IMAGES_WITH_IB_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
 export const MANAGING_WITH_DNF_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/9/html-single/managing_software_with_the_dnf_tool/index';
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_software_with_the_dnf_tool/index';
 export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
   'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/creating_customized_images_by_using_insights_image_builder/index';
 export const OSTREE_URL = 'https://ostreedev.github.io/ostree/';
 export const DOCUMENTATION_URL =
-  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
 export const CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL =
-  'https://access.redhat.com/documentation/en-us/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index';
+  'https://docs.redhat.com/en/documentation/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index';
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 
