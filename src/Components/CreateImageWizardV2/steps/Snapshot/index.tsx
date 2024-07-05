@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert, Button, Form, Grid, Text, Title } from '@patternfly/react-core';
+import { Button, Form, Grid, Text, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Snapshot from './Snapshot';
@@ -16,14 +16,6 @@ export default function SnapshotStep() {
       <Title headingLevel="h1" size="xl">
         Repository snapshot
       </Title>
-      <Alert
-        variant="info"
-        isInline
-        title="The snapshot date only applies to RHEL content."
-      >
-        Third party, custom repositories will always use the newest repository
-        state available.
-      </Alert>
       <Grid>
         <Text>
           Control the consistency of the packages in the repository used to
