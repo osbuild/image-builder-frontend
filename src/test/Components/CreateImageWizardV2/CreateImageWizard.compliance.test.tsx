@@ -53,15 +53,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   ),
 }));
 
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-});
-
 const selectRhel8 = async () => {
   const user = userEvent.setup();
   await waitFor(async () =>
@@ -87,6 +78,10 @@ const clickFromImageOutputToOpenScap = async () => {
 };
 
 describe('Step Compliance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
   const setup = async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);

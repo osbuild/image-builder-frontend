@@ -71,12 +71,15 @@ const goToReviewStep = async () => {
 };
 
 describe('validates name', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+  });
+
   test('with invalid name', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToDetailsStep();
-
     const nextButton = await getNextButton();
     expect(nextButton).toBeDisabled();
     await enterBlueprintName(' ');
@@ -99,13 +102,16 @@ describe('validates name', () => {
     await clickRegisterLater();
     await goToDetailsStep();
     await enterBlueprintName('Lemon Pie');
-
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 });
 
 describe('registration request generated correctly', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+  });
+
   test('without description', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
@@ -145,6 +151,10 @@ describe('registration request generated correctly', () => {
 });
 
 describe('Details edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['details'];
     await renderEditMode(id);

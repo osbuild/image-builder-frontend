@@ -108,6 +108,10 @@ const selectGoogleAccount = async (optionId: string) => {
 };
 
 describe('gcp image type request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('share image with google account', async () => {
     await clickGCPTarget();
     await selectGoogleAccount('google-account');
@@ -201,6 +205,10 @@ describe('gcp image type request generated correctly', () => {
 });
 
 describe('GCP edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['gcp'];
     await renderEditMode(id);

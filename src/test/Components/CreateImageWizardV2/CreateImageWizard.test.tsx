@@ -100,18 +100,12 @@ const clickFromImageOutputToFsc = async () => {
   await clickNext(); // skip OSCAP
 };
 
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-  router = undefined;
-  server.resetHandlers();
-});
-
 describe('Create Image Wizard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   test('renders component', async () => {
     renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
     // check heading
@@ -129,6 +123,11 @@ describe('Create Image Wizard', () => {
 });
 
 describe('Step Image output', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -291,6 +290,11 @@ describe('Step Image output', () => {
 });
 
 describe('Step Upload to AWS', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -447,6 +451,11 @@ describe('Step Upload to AWS', () => {
 });
 
 describe('Step Upload to Google', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -528,6 +537,11 @@ describe('Step Upload to Google', () => {
 });
 
 describe('Step Registration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -801,6 +815,11 @@ describe('Step Registration', () => {
 });
 
 describe('Step File system configuration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -992,6 +1011,11 @@ describe('Step Details', () => {
 });
 
 describe('Step Review', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
@@ -1167,6 +1191,11 @@ describe('Step Review', () => {
 });
 
 describe('Keyboard accessibility', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(

@@ -28,7 +28,6 @@ import {
   rhel9CreateBlueprintRequest,
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { server } from '../../../../mocks/server';
 import {
   clickNext,
   renderCustomRoutesWithReduxRouter,
@@ -78,16 +77,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
   useFlag: vi.fn(() => false),
 }));
-
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-  server.resetHandlers();
-});
 
 const openReleaseMenu = async () => {
   const user = userEvent.setup();
@@ -174,6 +163,10 @@ const goToReviewStep = async () => {
 };
 
 describe('Check that the target filtering is in accordance to mock content', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('rhel9 x86_64', async () => {
     const user = userEvent.setup();
     await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
@@ -367,6 +360,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
 });
 
 describe('Check step consistency', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('going back and forth with selected options only keeps the one compatible', async () => {
     const user = userEvent.setup();
     await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
@@ -406,6 +403,10 @@ describe('Check step consistency', () => {
 });
 
 describe('set release using query parameter', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('rhel 9 by default (no query parameter)', async () => {
     await renderCreateMode();
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
@@ -423,6 +424,10 @@ describe('set release using query parameter', () => {
 });
 
 describe('set architecture using query parameter', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('x86_64 by default (no query parameter)', async () => {
     await renderCreateMode();
     await screen.findByText('x86_64');
@@ -440,6 +445,11 @@ describe('set architecture using query parameter', () => {
 });
 
 describe('set target using query parameter', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const user = userEvent.setup();
   test('no target by default (no query parameter)', async () => {
     await renderCreateMode();
     const nextButton = await screen.findByRole('button', { name: /Next/ });
@@ -476,6 +486,10 @@ describe('set target using query parameter', () => {
 });
 
 describe('distribution request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('rhel-8', async () => {
     await renderCreateMode();
     await selectRhel8();
@@ -526,6 +540,10 @@ describe('distribution request generated correctly', () => {
 });
 
 describe('architecture request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('x86_64', async () => {
     await renderCreateMode();
     await selectX86_64();
@@ -566,6 +584,10 @@ describe('architecture request generated correctly', () => {
 });
 
 describe('Image Output edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works - rhel9', async () => {
     const id = mockBlueprintIds['rhel9'];
     await renderEditMode(id);

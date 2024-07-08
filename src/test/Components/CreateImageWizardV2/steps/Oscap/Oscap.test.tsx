@@ -126,6 +126,10 @@ const expectedFilesystemCisL2 = [
 ];
 
 describe('oscap', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('add a profile', async () => {
     await renderCreateMode();
     await goToOscapStep();
@@ -190,6 +194,10 @@ describe('oscap', () => {
 });
 
 describe('OpenSCAP edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['oscap'];
     await renderEditMode(id);

@@ -62,17 +62,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-  router = undefined;
-  server.resetHandlers();
-});
-
 const getSourceDropdown = async () => {
   const sourceDropdown = await screen.findByRole('textbox', {
     name: /select source/i,
@@ -83,6 +72,11 @@ const getSourceDropdown = async () => {
 };
 
 describe('Step Upload to Azure', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(

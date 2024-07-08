@@ -130,6 +130,10 @@ const goToReviewStep = async () => {
 };
 
 describe('file system configuration request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('10 GiB / correct', async () => {
     await renderCreateMode();
     await goToFileSystemConfigurationStep();
@@ -283,6 +287,10 @@ describe('file system configuration request generated correctly', () => {
 });
 
 describe('FSC edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['fsc'];
     await renderEditMode(id);

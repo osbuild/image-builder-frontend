@@ -33,6 +33,10 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 describe('Images Table', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
     await renderWithReduxRouter('', {});
@@ -210,6 +214,10 @@ describe('Images Table', () => {
 });
 
 describe('Images Table Toolbar', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('render toolbar', async () => {
     await renderWithReduxRouter('', {});
     await screen.findByTestId('images-table');
@@ -221,6 +229,10 @@ describe('Images Table Toolbar', () => {
 });
 
 describe('Clones table', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
   test('renders clones table', async () => {
     await renderWithReduxRouter('', {});
