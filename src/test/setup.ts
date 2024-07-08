@@ -1,6 +1,9 @@
 import { server } from './mocks/server';
 import 'vitest-canvas-mock';
 
+// scrollTo is not defined in jsdom - needed for the navigation to the wizard
+window.HTMLElement.prototype.scrollTo = function () {};
+
 // ResizeObserver is not defined and needs to be mocked and stubbed
 const MockResizeObserver = vi.fn(() => ({
   observe: vi.fn(),

@@ -32,11 +32,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-});
-
 describe('Images Table', () => {
   const user = userEvent.setup();
   test('render ImagesTable', async () => {

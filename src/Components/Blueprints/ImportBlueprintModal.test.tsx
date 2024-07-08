@@ -16,8 +16,6 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-window.HTMLElement.prototype.scrollTo = function () {};
-
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
   useFlag: vi.fn((flag) => {
