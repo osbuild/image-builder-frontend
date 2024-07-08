@@ -12,7 +12,7 @@ const config = {
     },
     server: {
       deps: {
-        inline: ['@patternfly', 'clsx'],
+        inline: ['vitest-canvas-mock', '@patternfly', 'clsx'],
       },
     },
     fileParallelism: false,
