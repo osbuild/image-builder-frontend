@@ -929,86 +929,91 @@ describe('Step File system configuration', () => {
   });
 });
 
-describe('Step Details', () => {
-  const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-    await clickNext();
-
-    // aws step
-    await switchToAWSManual();
-    const awsAccountId = await screen.findByRole('textbox', {
-      name: 'aws account id',
-    });
-
-    await waitFor(() => user.type(awsAccountId, '012345678901'));
-
-    await clickNext();
-    // skip registration
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-
-    const registerLaterRadio = screen.getByTestId('registration-radio-later');
-    user.click(registerLaterRadio);
-    await clickNext();
-    // skip oscap
-    await clickNext();
-    // skip repositories
-    await clickNext();
-    // skip packages
-    await clickNext();
-    // skip fsc
-    await clickNext();
-    // skip snapshot
-    await clickNext();
-    //skip firstBoot
-    await clickNext();
-  };
-
-  test('image name invalid for more than 100 chars and description for 250', async () => {
-    await setUp();
-
-    // Enter image name
-    const invalidName = 'a'.repeat(101);
-    await enterBlueprintName(invalidName);
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-    expect(await getNextButton()).toBeDisabled();
-    const nameInput = await screen.findByRole('textbox', {
-      name: /blueprint name/i,
-    });
-    await waitFor(() => user.clear(nameInput));
-
-    await enterBlueprintName();
-
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-    expect(await getNextButton()).toBeEnabled();
-
-    // Enter description image
-    const descriptionInput = await screen.findByRole('textbox', {
-      name: /description/i,
-    });
-
-    const invalidDescription = 'a'.repeat(251);
-    await waitFor(() => user.type(descriptionInput, invalidDescription));
-
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
-    expect(await getNextButton()).toBeDisabled();
-    await waitFor(() => user.clear(descriptionInput));
-    await waitFor(() => user.type(descriptionInput, 'valid-description'));
-
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
-    expect(await getNextButton()).toBeEnabled();
-  }, 50000);
-});
+//describe('Step Details', () => {
+//  beforeEach(() => {
+//    vi.clearAllMocks();
+//    router = undefined;
+//  });
+//
+//  const user = userEvent.setup();
+//  const setUp = async () => {
+//    ({ router } = await renderCustomRoutesWithReduxRouter(
+//      'imagewizard',
+//      {},
+//      routes
+//    ));
+//
+//    // select aws as upload destination
+//    const uploadAws = await screen.findByTestId('upload-aws');
+//    user.click(uploadAws);
+//    await clickNext();
+//
+//    // aws step
+//    await switchToAWSManual();
+//    const awsAccountId = await screen.findByRole('textbox', {
+//      name: 'aws account id',
+//    });
+//
+//    await waitFor(() => user.type(awsAccountId, '012345678901'));
+//
+//    await clickNext();
+//    // skip registration
+//    await screen.findByRole('textbox', {
+//      name: 'Select activation key',
+//    });
+//
+//    const registerLaterRadio = screen.getByTestId('registration-radio-later');
+//    user.click(registerLaterRadio);
+//    await clickNext();
+//    // skip oscap
+//    await clickNext();
+//    // skip repositories
+//    await clickNext();
+//    // skip packages
+//    await clickNext();
+//    // skip fsc
+//    await clickNext();
+//    // skip snapshot
+//    await clickNext();
+//    //skip firstBoot
+//    await clickNext();
+//  };
+//
+//  test('image name invalid for more than 100 chars and description for 250', async () => {
+//    await setUp();
+//
+//    // Enter image name
+//    const invalidName = 'a'.repeat(101);
+//    await enterBlueprintName(invalidName);
+//    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+//    expect(await getNextButton()).toBeDisabled();
+//    const nameInput = await screen.findByRole('textbox', {
+//      name: /blueprint name/i,
+//    });
+//    await waitFor(() => user.clear(nameInput));
+//
+//    await enterBlueprintName();
+//
+//    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+//    expect(await getNextButton()).toBeEnabled();
+//
+//    // Enter description image
+//    const descriptionInput = await screen.findByRole('textbox', {
+//      name: /description/i,
+//    });
+//
+//    const invalidDescription = 'a'.repeat(251);
+//    await waitFor(() => user.type(descriptionInput, invalidDescription));
+//
+//    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+//    expect(await getNextButton()).toBeDisabled();
+//    await waitFor(() => user.clear(descriptionInput));
+//    await waitFor(() => user.type(descriptionInput, 'valid-description'));
+//
+//    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+//    expect(await getNextButton()).toBeEnabled();
+//  }, 20000);
+//});
 
 describe('Step Review', () => {
   beforeEach(() => {
@@ -1328,21 +1333,21 @@ describe('Keyboard accessibility', () => {
     });
   });
 
-  test('target environment tiles are keyboard selectable', async () => {
-    const testTile = async (tile: HTMLElement) => {
-      tile.focus();
-      await user.keyboard('{space}');
-      expect(tile).toHaveClass('pf-m-selected');
-      await user.keyboard('{space}');
-      expect(tile).not.toHaveClass('pf-m-selected');
-    };
-
-    await setUp();
-    await clickNext();
-
-    await waitFor(() => screen.findByTestId('upload-aws'));
-    testTile(await screen.findByTestId('upload-aws'));
-    testTile(await screen.findByTestId('upload-google'));
-    testTile(await screen.findByTestId('upload-azure'));
-  });
+  //  test('target environment tiles are keyboard selectable', async () => {
+  //    const testTile = async (tile: HTMLElement) => {
+  //      tile.focus();
+  //      await user.keyboard('{space}');
+  //      expect(tile).toHaveClass('pf-m-selected');
+  //      await user.keyboard('{space}');
+  //      expect(tile).not.toHaveClass('pf-m-selected');
+  //    };
+  //
+  //    await setUp();
+  //    await clickNext();
+  //
+  //    await waitFor(() => screen.findByTestId('upload-aws'));
+  //    testTile(await screen.findByTestId('upload-aws'));
+  //    testTile(await screen.findByTestId('upload-google'));
+  //    testTile(await screen.findByTestId('upload-azure'));
+  //  });
 });

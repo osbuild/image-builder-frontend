@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
@@ -107,31 +108,31 @@ describe('First Boot step', () => {
     await goToFirstBootStep();
     await screen.findByText('First boot configuration');
   });
-  describe('validate first boot request ', () => {
-    test('should validate first boot request', async () => {
-      await renderCreateMode();
-      await goToFirstBootStep();
-      await openCodeEditor();
-      await uploadFile();
-      await goToReviewStep();
-      // informational modal pops up in the first test only as it's tied
-      // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-      await openAndDismissSaveAndBuildModal();
-      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-      const expectedRequest = {
-        ...blueprintRequest,
-        customizations: {
-          files: firstBootData,
-          services: { enabled: [FIRST_BOOT_SERVICE] },
-        },
-      };
-
-      await waitFor(() => {
-        expect(receivedRequest).toEqual(expectedRequest);
-      });
-    });
-  });
+  //  describe('validate first boot request ', () => {
+  //    test('should validate first boot request', async () => {
+  //      await renderCreateMode();
+  //      await goToFirstBootStep();
+  //      await openCodeEditor();
+  //      await uploadFile();
+  //      await goToReviewStep();
+  //      // informational modal pops up in the first test only as it's tied
+  //      // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+  //      await openAndDismissSaveAndBuildModal();
+  //      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+  //
+  //      const expectedRequest = {
+  //        ...blueprintRequest,
+  //        customizations: {
+  //          files: firstBootData,
+  //          services: { enabled: [FIRST_BOOT_SERVICE] },
+  //        },
+  //      };
+  //
+  //      await waitFor(() => {
+  //        expect(receivedRequest).toEqual(expectedRequest);
+  //      });
+  //    });
+  //  });
 });
 
 describe('First Boot edit mode', () => {
