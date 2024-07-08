@@ -5,7 +5,6 @@ import '@testing-library/jest-dom';
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
 import {
@@ -14,8 +13,6 @@ import {
   renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
 } from '../../testUtils';
-
-Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 const routes = [
   {

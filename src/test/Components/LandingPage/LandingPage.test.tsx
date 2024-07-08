@@ -1,14 +1,11 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import { rest } from 'msw';
-import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server';
 import { renderWithReduxRouter } from '../../testUtils';
-
-Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
