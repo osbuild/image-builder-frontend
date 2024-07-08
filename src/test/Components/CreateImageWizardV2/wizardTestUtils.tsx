@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
@@ -87,45 +87,53 @@ export const renderEditMode = async (id: string) => {
 };
 
 export const goToRegistrationStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext();
 };
 
 export const clickRegisterLater = async () => {
+  const user = userEvent.setup();
+  await screen.findByRole('heading', {
+    name: /Register systems using this image/,
+  });
   const radioButton = await screen.findByRole('radio', {
     name: 'Register later',
   });
-  await userEvent.click(radioButton);
+  await waitFor(() => user.click(radioButton));
 };
 
 export const enterBlueprintName = async (name: string = 'Red Velvet') => {
+  const user = userEvent.setup();
   const blueprintName = await screen.findByRole('textbox', {
     name: /blueprint name/i,
   });
-  await userEvent.type(blueprintName, name);
+  await waitFor(() => user.type(blueprintName, name));
 };
 
 export const openAndDismissSaveAndBuildModal = async () => {
-  await userEvent.click(
-    await screen.findByRole('button', {
-      name: 'Create blueprint',
-    })
+  const user = userEvent.setup();
+  const createBlueprintBtn = await screen.findByRole('button', {
+    name: 'Create blueprint',
+  });
+  await waitFor(async () => user.click(createBlueprintBtn));
+  const saveAndBuildModal = await screen.findByTestId(
+    'close-button-saveandbuild-modal'
   );
-  await userEvent.click(
-    await screen.findByTestId('close-button-saveandbuild-modal')
-  );
+  await waitFor(() => user.click(saveAndBuildModal));
 };
 
 export const interceptBlueprintRequest = async (requestPathname: string) => {
+  const user = userEvent.setup();
   const receivedRequestPromise = spyOnRequest(requestPathname, 'POST');
 
   const saveButton = await screen.findByRole('button', {
     name: 'Create blueprint',
   });
-  await userEvent.click(saveButton);
+  await waitFor(() => user.click(saveButton));
 
   return await receivedRequestPromise;
 };
@@ -133,12 +141,13 @@ export const interceptBlueprintRequest = async (requestPathname: string) => {
 export const interceptEditBlueprintRequest = async (
   requestPathname: string
 ) => {
+  const user = userEvent.setup();
   const receivedRequestPromise = spyOnRequest(requestPathname, 'PUT');
 
   const saveButton = await screen.findByRole('button', {
     name: 'Save changes to blueprint',
   });
-  await userEvent.click(saveButton);
+  await waitFor(() => user.click(saveButton));
 
   return await receivedRequestPromise;
 };

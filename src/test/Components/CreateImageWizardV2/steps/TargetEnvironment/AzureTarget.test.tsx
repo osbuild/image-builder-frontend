@@ -66,72 +66,84 @@ const goToReview = async () => {
 };
 
 const selectAzureTarget = async () => {
+  const user = userEvent.setup();
   await renderCreateMode();
   const azureCard = await screen.findByTestId('upload-azure');
-  await userEvent.click(azureCard);
+  await waitFor(() => user.click(azureCard));
   await clickNext();
 };
 
 const deselectAzureAndSelectGuestImage = async () => {
+  const user = userEvent.setup();
   const azureCard = await screen.findByTestId('upload-azure');
-  await userEvent.click(azureCard);
-  await userEvent.click(
-    await screen.findByRole('checkbox', {
-      name: /virtualization guest image checkbox/i,
-    })
-  );
+  await waitFor(() => user.click(azureCard));
+  const guestImageCheckbox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
+  });
+  await waitFor(async () => user.click(guestImageCheckbox));
   await clickNext();
 };
 
 const selectSource = async () => {
-  await userEvent.click(
-    await screen.findByRole('textbox', {
-      name: /select source/i,
-    })
-  );
+  const user = userEvent.setup();
+  const sourceTexbox = await screen.findByRole('textbox', {
+    name: /select source/i,
+  });
+  await waitFor(async () => user.click(sourceTexbox));
 
-  await userEvent.click(
-    await screen.findByRole('option', { name: /azureSource1/i })
-  );
+  const azureSource = await screen.findByRole('option', {
+    name: /azureSource1/i,
+  });
+  await waitFor(async () => user.click(azureSource));
 };
 
 const selectResourceGroup = async () => {
-  await userEvent.click(
-    await screen.findByRole('textbox', {
-      name: /select resource group/i,
-    })
-  );
+  const user = userEvent.setup();
+  const resourceGrpTextbox = await screen.findByRole('textbox', {
+    name: /select resource group/i,
+  });
+  await waitFor(async () => user.click(resourceGrpTextbox));
 
-  await userEvent.click(
-    await screen.findByRole('option', { name: /myResourceGroup1/i })
-  );
+  const myResourceGroup1 = await screen.findByRole('option', {
+    name: /myResourceGroup1/i,
+  });
+  await waitFor(async () => user.click(myResourceGroup1));
 };
 
 const selectManuallyEnterInformation = async () => {
-  await userEvent.click(
-    await screen.findByText(/manually enter the account information\./i)
+  const user = userEvent.setup();
+  const manualOption = await screen.findByText(
+    /manually enter the account information\./i
   );
+  await waitFor(async () => user.click(manualOption));
 };
 
 const enterTenantGuid = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /azure tenant guid/i }),
-    'b8f86d22-4371-46ce-95e7-65c415f3b1e2'
+  const user = userEvent.setup();
+  const tenantGuid = await screen.findByRole('textbox', {
+    name: /azure tenant guid/i,
+  });
+  await waitFor(() =>
+    user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2')
   );
 };
 
 const enterSubscriptionId = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /subscription id/i }),
-    '60631143-a7dc-4d15-988b-ba83f3c99711'
+  const user = userEvent.setup();
+  const subscriptionId = await screen.findByRole('textbox', {
+    name: /subscription id/i,
+  });
+  await waitFor(() =>
+    user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711')
   );
 };
 
 const enterResourceGroup = async () => {
-  await userEvent.type(
-    screen.getByRole('textbox', { name: /resource group/i }),
-    'testResourceGroup'
-  );
+  const user = userEvent.setup();
+  const resourceGroup = await screen.findByRole('textbox', {
+    name: /resource group/i,
+  });
+  await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
 };
 
 describe('azure image type request generated correctly', () => {

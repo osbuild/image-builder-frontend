@@ -55,10 +55,11 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const goToPackagesStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -76,64 +77,79 @@ const goToReviewStep = async () => {
 };
 
 const searchForPackage = async () => {
+  const user = userEvent.setup();
   const searchBox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await userEvent.type(searchBox, 'test');
+  await waitFor(() => user.type(searchBox, 'test'));
 };
 
 const searchForGroup = async () => {
+  const user = userEvent.setup();
   const searchBox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
-  await userEvent.type(searchBox, '@grouper');
+  await waitFor(() => user.type(searchBox, '@grouper'));
 };
 
 const clearSearchInput = async () => {
+  const user = userEvent.setup();
   const clearSearchBtn = await screen.findByRole('button', {
     name: /clear-package-search/i,
   });
-  await userEvent.click(clearSearchBtn);
+  await waitFor(() => user.click(clearSearchBtn));
 };
 
 const selectFirstPackage = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
-  );
+  const user = userEvent.setup();
+  const row0Checkbox = await screen.findByRole('checkbox', {
+    name: /select row 0/i,
+  });
+  await waitFor(async () => user.click(row0Checkbox));
 };
 
 const deselectFirstPackage = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
-  );
+  const user = userEvent.setup();
+  const row0Checkbox = await screen.findByRole('checkbox', {
+    name: /select row 0/i,
+  });
+  await waitFor(async () => user.click(row0Checkbox));
 };
 
 const addSingleRecommendation = async () => {
+  const user = userEvent.setup();
   const addPackageButtons = await screen.findAllByText(/add package/i);
-  await userEvent.click(addPackageButtons[0]);
+  await waitFor(() => user.click(addPackageButtons[0]));
 };
 
 const addAllRecommendations = async () => {
-  await userEvent.click(await screen.findByText(/add all packages/i));
+  const user = userEvent.setup();
+  const addAllBtn = await screen.findByText(/add all packages/i);
+  await waitFor(async () => user.click(addAllBtn));
 };
 
 const switchToSelected = async () => {
-  await userEvent.click(
-    await screen.findByRole('button', { name: /selected \(\d*\)/i })
-  );
+  const user = userEvent.setup();
+  const selectedBtn = await screen.findByRole('button', {
+    name: /selected \(\d*\)/i,
+  });
+  await waitFor(async () => user.click(selectedBtn));
 };
 
 const deselectRecommendation = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 1/i })
-  );
+  const user = userEvent.setup();
+  const row1Checkbox = await screen.findByRole('checkbox', {
+    name: /select row 1/i,
+  });
+  await waitFor(async () => user.click(row1Checkbox));
 };
 
 const openIncludedPackagesPopover = async () => {
+  const user = userEvent.setup();
   const popoverBtn = await screen.findByRole('button', {
     name: /About included packages/i,
   });
-  await userEvent.click(popoverBtn);
+  await waitFor(() => user.click(popoverBtn));
 };
 
 describe('packages request generated correctly', () => {
@@ -291,9 +307,9 @@ describe('pagination on packages step', () => {
     await selectFirstPackage();
     // the pagination in the top right
     const top = await screen.findByTestId('packages-pagination-top');
-    await expect(top).toHaveTextContent('of 6');
+    expect(top).toHaveTextContent('of 6');
     const bottom = await screen.findByTestId('packages-pagination-bottom');
-    await expect(bottom).toHaveTextContent('of 6');
+    expect(bottom).toHaveTextContent('of 6');
   });
 
   test('itemcount correct after toggling selected', async () => {
@@ -305,9 +321,9 @@ describe('pagination on packages step', () => {
 
     // the pagination in the top right
     const top = await screen.findByTestId('packages-pagination-top');
-    await expect(top).toHaveTextContent('of 1');
+    expect(top).toHaveTextContent('of 1');
     const bottom = await screen.findByTestId('packages-pagination-bottom');
-    await expect(bottom).toHaveTextContent('of 1');
+    expect(bottom).toHaveTextContent('of 1');
   });
 
   test('itemcount correct after clearing search input', async () => {
@@ -319,9 +335,9 @@ describe('pagination on packages step', () => {
 
     // the pagination in the top right
     const top = await screen.findByTestId('packages-pagination-top');
-    await expect(top).toHaveTextContent('of 0');
+    expect(top).toHaveTextContent('of 0');
     const bottom = await screen.findByTestId('packages-pagination-bottom');
-    await expect(bottom).toHaveTextContent('of 0');
+    expect(bottom).toHaveTextContent('of 0');
   });
 });
 
@@ -340,6 +356,6 @@ describe('package groups on packages step', () => {
     const firstRowCells = await within(rows[0]).findAllByRole('cell');
     expect(firstRowCells[0]).toHaveTextContent('fish1');
     const secondRowCells = await within(rows[1]).findAllByRole('cell');
-    expect(secondRowCells[0]).toHaveTextContent('fish2');
+    await waitFor(() => expect(secondRowCells[0]).toHaveTextContent('fish2'));
   });
 });

@@ -50,10 +50,11 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const goToSnapshotStep = async () => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(async () => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -71,26 +72,33 @@ const goToReviewStep = async () => {
 };
 
 const selectFirstRepository = async () => {
-  await userEvent.click(
-    await screen.findByRole('checkbox', { name: /select row 0/i })
-  );
+  const user = userEvent.setup();
+  const row0Checkbox = await screen.findByRole('checkbox', {
+    name: /select row 0/i,
+  });
+  await waitFor(async () => user.click(row0Checkbox));
 };
 
 const selectUseSnapshot = async () => {
-  await userEvent.click(
-    await screen.findByRole('radio', { name: /Use a snapshot/i })
-  );
+  const user = userEvent.setup();
+  const snapshotRadio = await screen.findByRole('radio', {
+    name: /Use a snapshot/i,
+  });
+  await waitFor(async () => user.click(snapshotRadio));
 };
 
 const updateDatePickerWithValue = async (date: string) => {
-  await userEvent.type(
-    await screen.findByRole('textbox', { name: /Date picker/i }),
-    date
-  );
+  const user = userEvent.setup();
+  const dateTextbox = await screen.findByRole('textbox', {
+    name: /Date picker/i,
+  });
+  await waitFor(async () => user.type(dateTextbox, date));
 };
 
 const clickContentDropdown = async () => {
-  await userEvent.click(await screen.findByTestId('content-expandable'));
+  const user = userEvent.setup();
+  const contentExpandable = await screen.findByTestId('content-expandable');
+  await waitFor(async () => user.click(contentExpandable));
 };
 
 const getSnapshotMethodElement = async () =>

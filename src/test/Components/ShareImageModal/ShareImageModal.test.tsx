@@ -46,19 +46,19 @@ describe('Create Share To Regions Modal', () => {
     const selectToggle = await screen.findByRole('button', {
       name: /menu toggle/i,
     });
-    await user.click(selectToggle);
+    user.click(selectToggle);
 
     const usEast2 = await screen.findByRole('option', {
       name: /us east \(ohio\) us-east-2/i,
     });
     expect(usEast2).not.toHaveClass('pf-m-disabled');
-    await user.click(usEast2);
+    user.click(usEast2);
     await waitFor(() => expect(shareButton).toBeEnabled());
 
     const clearAllButton = await screen.findByRole('button', {
       name: /clear input value/i,
     });
-    await user.click(clearAllButton);
+    user.click(clearAllButton);
     await waitFor(() => expect(shareButton).toBeDisabled());
 
     const invalidAlert = await screen.findByText(
@@ -75,7 +75,7 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const cancelButton = await screen.findByRole('button', { name: /cancel/i });
-    await user.click(cancelButton);
+    user.click(cancelButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -91,7 +91,7 @@ describe('Create Share To Regions Modal', () => {
     );
 
     const closeButton = await screen.findByRole('button', { name: /close/i });
-    await user.click(closeButton);
+    user.click(closeButton);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -105,7 +105,7 @@ describe('Create Share To Regions Modal', () => {
     const selectToggle = await screen.findByRole('button', {
       name: /menu toggle/i,
     });
-    await user.click(selectToggle);
+    user.click(selectToggle);
 
     // parent region disabled
     const usEast1 = await screen.findByRole('option', {
@@ -114,7 +114,7 @@ describe('Create Share To Regions Modal', () => {
     expect(usEast1).toBeDisabled();
 
     // close the select again to avoid state update
-    await user.click(selectToggle);
+    user.click(selectToggle);
   });
 
   // TODO Verify that sharing clones works once msw/data is incorporated.

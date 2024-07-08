@@ -78,7 +78,7 @@ const switchToAWSManual = async () => {
   const manualRadio = await screen.findByRole('radio', {
     name: /manually enter an account id\./i,
   });
-  await user.click(manualRadio);
+  await waitFor(() => user.click(manualRadio));
   return manualRadio;
 };
 
@@ -92,8 +92,10 @@ const getSourceDropdown = async () => {
 };
 
 const clickFromImageOutputToFsc = async () => {
+  const user = userEvent.setup();
   await clickNext();
-  await userEvent.click(await screen.findByText(/Register later/));
+  const registerLater = await screen.findByText(/Register later/);
+  await waitFor(async () => user.click(registerLater));
   await clickNext();
   await clickNext(); // skip OSCAP
 };
@@ -136,7 +138,8 @@ describe('Step Image output', () => {
     ));
 
     // select aws as upload destination
-    await user.click(await screen.findByTestId('upload-aws'));
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
 
     await screen.findByRole('heading', { name: 'Image output' });
   };
@@ -172,15 +175,15 @@ describe('Step Image output', () => {
 
     const awsTile = await screen.findByTestId('upload-aws');
     // this has already been clicked once in the setup function
-    await user.click(awsTile); // deselect
+    user.click(awsTile); // deselect
 
     const googleTile = await screen.findByTestId('upload-google');
-    await user.click(googleTile); // select
-    await user.click(googleTile); // deselect
+    user.click(googleTile); // select
+    user.click(googleTile); // deselect
 
     const azureTile = await screen.findByTestId('upload-azure');
-    await user.click(azureTile); // select
-    await user.click(azureTile); // deselect
+    user.click(azureTile); // select
+    user.click(azureTile); // deselect
 
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
@@ -191,7 +194,7 @@ describe('Step Image output', () => {
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
+    user.click(releaseMenu);
 
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
@@ -203,7 +206,7 @@ describe('Step Image output', () => {
       name: 'Show options for further development of RHEL',
     });
 
-    await user.click(releaseMenu);
+    user.click(releaseMenu);
   });
 
   test('expect all releases after expansion', async () => {
@@ -212,12 +215,12 @@ describe('Step Image output', () => {
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
+    user.click(releaseMenu);
 
     const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
-    await user.click(showOptionsButton);
+    user.click(showOptionsButton);
 
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
@@ -231,36 +234,36 @@ describe('Step Image output', () => {
 
     expect(showOptionsButton).not.toBeInTheDocument();
 
-    await user.click(releaseMenu);
+    user.click(releaseMenu);
   });
 
   test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
     await setUp();
 
-    const releaseMenu = screen.getAllByRole('button', {
+    const releaseMenu = await screen.findAllByRole('button', {
       name: /options menu/i,
-    })[0];
-    await user.click(releaseMenu);
+    });
+    user.click(releaseMenu[0]);
 
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-      })
+    const rhel8Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+
+    user.click(rhel8Option);
+    await screen.findByTestId('release-lifecycle-chart');
+
+    user.click(releaseMenu[0]);
+
+    const rhel9Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+
+    user.click(rhel9Option);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('release-lifecycle-chart')
+      ).not.toBeInTheDocument()
     );
-    expect(
-      screen.queryByTestId('release-lifecycle-chart')
-    ).not.toBeInTheDocument();
-
-    await user.click(releaseMenu);
-
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-      })
-    );
-    expect(
-      await screen.findByTestId('release-lifecycle-chart')
-    ).toBeInTheDocument();
   });
 
   test('CentOS acknowledgement appears', async () => {
@@ -269,17 +272,17 @@ describe('Step Image output', () => {
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
+    user.click(releaseMenu);
 
     const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
-    await user.click(showOptionsButton);
+    user.click(showOptionsButton);
 
     const centOSButton = await screen.findByRole('option', {
       name: 'CentOS Stream 9',
     });
-    await user.click(centOSButton);
+    user.click(centOSButton);
 
     await screen.findByText(
       'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
@@ -297,9 +300,8 @@ describe('Step Upload to AWS', () => {
     ));
 
     // select aws as upload destination
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
 
     await clickNext();
 
@@ -312,12 +314,10 @@ describe('Step Upload to AWS', () => {
     await setUp();
 
     await switchToAWSManual();
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
-    );
+    const awsAccountId = await screen.findByRole('textbox', {
+      name: 'aws account id',
+    });
+    await waitFor(async () => user.type(awsAccountId, '012345678901'));
     await clickNext();
 
     await screen.findByRole('textbox', {
@@ -361,11 +361,10 @@ describe('Step Upload to AWS', () => {
 
     expect(nextButton).toHaveClass('pf-m-disabled');
 
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /manually enter an account id\./i,
-      })
-    );
+    const manualOption = await screen.findByRole('radio', {
+      name: /manually enter an account id\./i,
+    });
+    await waitFor(async () => user.click(manualOption));
 
     expect(nextButton).toHaveClass('pf-m-disabled');
 
@@ -374,25 +373,25 @@ describe('Step Upload to AWS', () => {
     });
     expect(awsAccId).toHaveValue('');
     expect(awsAccId).toBeEnabled();
-    await user.type(awsAccId, '012345678901');
+    await waitFor(() => user.type(awsAccId, '012345678901'));
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /use an account configured from sources\./i,
-      })
-    );
+    const sourceRadio = await screen.findByRole('radio', {
+      name: /use an account configured from sources\./i,
+    });
+
+    user.click(sourceRadio);
 
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
     const sourceDropdown = await getSourceDropdown();
-    await user.click(sourceDropdown);
+    user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    await user.click(source);
+    user.click(source);
 
     await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
   });
@@ -401,12 +400,12 @@ describe('Step Upload to AWS', () => {
     await setUp();
 
     const sourceDropdown = await getSourceDropdown();
-    await user.click(sourceDropdown);
+    user.click(sourceDropdown);
 
     const source = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    await user.click(source);
+    user.click(source);
 
     await clickNext();
 
@@ -416,7 +415,7 @@ describe('Step Upload to AWS', () => {
     });
 
     const registerLaterRadio = await screen.findByLabelText('Register later');
-    await user.click(registerLaterRadio);
+    user.click(registerLaterRadio);
 
     // click through to review step
     await clickNext();
@@ -433,9 +432,11 @@ describe('Step Upload to AWS', () => {
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
 
-    await user.click(
-      await screen.findByRole('button', { name: /Create blueprint/ })
-    );
+    const createBlueprintBtn = await screen.findByRole('button', {
+      name: /Create blueprint/,
+    });
+
+    user.click(createBlueprintBtn);
 
     // returns back to the landing page
     await waitFor(() =>
@@ -455,9 +456,9 @@ describe('Step Upload to Google', () => {
     ));
 
     // select gcp as upload destination
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-google'))
-    );
+    const uploadGcp = await screen.findByTestId('upload-google');
+
+    user.click(uploadGcp);
 
     await clickNext();
 
@@ -472,11 +473,11 @@ describe('Step Upload to Google', () => {
     const shareRadioButton = await screen.findByText(
       /share image with a google account/i
     );
-    await user.click(shareRadioButton);
+    user.click(shareRadioButton);
 
     const googleEmailInput = await screen.findByTestId('principal');
 
-    await user.type(googleEmailInput, 'test@test.com');
+    await waitFor(() => user.type(googleEmailInput, 'test@test.com'));
     await clickNext();
 
     await screen.findByRole('textbox', {
@@ -513,10 +514,14 @@ describe('Step Upload to Google', () => {
   test('the google email field must be a valid email', async () => {
     await setUp();
 
-    await user.type(await screen.findByTestId('principal'), 'a');
+    await waitFor(async () =>
+      user.type(await screen.findByTestId('principal'), 'a')
+    );
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
-    await user.type(await screen.findByTestId('principal'), 'test@test.com');
+    await waitFor(async () =>
+      user.type(await screen.findByTestId('principal'), 'test@test.com')
+    );
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
   });
@@ -532,21 +537,21 @@ describe('Step Registration', () => {
     ));
 
     // select aws as upload destination
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
 
     await clickNext();
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /manually enter an account id\./i,
-      })
-    );
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
+    const manualOption = await screen.findByRole('radio', {
+      name: /manually enter an account id\./i,
+    });
+    await waitFor(async () => user.click(manualOption));
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
     );
     await clickNext();
 
@@ -561,7 +566,7 @@ describe('Step Registration', () => {
     const registerLaterRadio = await screen.findByTestId(
       'registration-radio-later'
     );
-    await user.click(registerLaterRadio);
+    user.click(registerLaterRadio);
 
     await clickNext();
     await clickNext();
@@ -576,11 +581,10 @@ describe('Step Registration', () => {
 
     await clickBack();
 
-    await user.click(
-      await screen.findByRole('radio', {
-        name: /manually enter an account id\./i,
-      })
-    );
+    const manualOption = await screen.findByRole('radio', {
+      name: /manually enter an account id\./i,
+    });
+    await waitFor(async () => user.click(manualOption));
     await screen.findByText('AWS account ID');
   });
 
@@ -600,7 +604,7 @@ describe('Step Registration', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await user.click(activationKeyDropdown);
+    user.click(activationKeyDropdown);
     await screen.findByText('No activation keys found');
   });
 
@@ -610,11 +614,11 @@ describe('Step Registration', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await user.click(activationKeyDropdown);
+    user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await user.click(activationKey);
+    user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
     await clickNext();
@@ -640,10 +644,13 @@ describe('Step Registration', () => {
   test('should allow registering without rhc', async () => {
     await setUp();
 
-    await user.click(
-      await screen.findByTestId('registration-additional-options')
+    const showOptions = await screen.findByTestId(
+      'registration-additional-options'
     );
-    await user.click(await screen.findByTestId('registration-checkbox-rhc'));
+
+    user.click(showOptions);
+    const rhcCheckbox = await screen.findByTestId('registration-checkbox-rhc');
+    await waitFor(async () => user.click(rhcCheckbox));
 
     // going back and forward when rhc isn't selected should keep additional options shown
     await clickBack();
@@ -657,11 +664,11 @@ describe('Step Registration', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await user.click(activationKeyDropdown);
+    user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await user.click(activationKey);
+    user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
     await clickNext();
@@ -688,12 +695,16 @@ describe('Step Registration', () => {
   test('should allow registering without insights or rhc', async () => {
     await setUp();
 
-    await user.click(
-      await screen.findByTestId('registration-additional-options')
+    const showOptions = await screen.findByTestId(
+      'registration-additional-options'
     );
-    await user.click(
-      await screen.findByTestId('registration-checkbox-insights')
+
+    user.click(showOptions);
+    const insightsCheckbox = await screen.findByTestId(
+      'registration-checkbox-insights'
     );
+
+    user.click(insightsCheckbox);
 
     // going back and forward when neither rhc or insights is selected should keep additional options shown
     await clickBack();
@@ -707,11 +718,11 @@ describe('Step Registration', () => {
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await user.click(activationKeyDropdown);
+    user.click(activationKeyDropdown);
     const activationKey = await screen.findByRole('option', {
       name: 'name0',
     });
-    await user.click(activationKey);
+    user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
     await clickNext();
@@ -741,7 +752,8 @@ describe('Step Registration', () => {
     ]);
 
     // click the later radio button which should remove any input fields
-    await user.click(await screen.findByTestId('registration-radio-later'));
+    const manualOption = await screen.findByTestId('registration-radio-later');
+    await waitFor(async () => user.click(manualOption));
 
     await removeKeyInformation;
 
@@ -760,21 +772,31 @@ describe('Step Registration', () => {
 
   test('registering with rhc implies registering with insights', async () => {
     await setUp();
-    await user.click(
-      await screen.findByTestId('registration-additional-options')
+    const showOptions = await screen.findByTestId(
+      'registration-additional-options'
     );
 
-    await user.click(
-      await screen.findByTestId('registration-checkbox-insights')
-    );
-    expect(
-      await screen.findByTestId('registration-checkbox-rhc')
-    ).not.toBeChecked();
+    user.click(showOptions);
 
-    await user.click(await screen.findByTestId('registration-checkbox-rhc'));
-    expect(
-      await screen.findByTestId('registration-checkbox-insights')
-    ).toBeChecked();
+    const insightsCheckbox = await screen.findByTestId(
+      'registration-checkbox-insights'
+    );
+
+    user.click(insightsCheckbox);
+    await waitFor(async () =>
+      expect(
+        await screen.findByTestId('registration-checkbox-rhc')
+      ).not.toBeChecked()
+    );
+
+    const rhcCheckbox = await screen.findByTestId('registration-checkbox-rhc');
+    user.click(rhcCheckbox);
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByTestId('registration-checkbox-insights')
+      ).toBeChecked()
+    );
   });
 });
 
@@ -787,17 +809,18 @@ describe('Step File system configuration', () => {
       routes
     ));
     // select aws as upload destination
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
     await clickNext();
     // aws step
     await switchToAWSManual();
-    await user.type(
-      screen.getByRole('textbox', {
-        name: /aws account id/i,
-      }),
-      '012345678901'
+    await waitFor(() =>
+      user.type(
+        screen.getByRole('textbox', {
+          name: /aws account id/i,
+        }),
+        '012345678901'
+      )
     );
     await clickNext();
     // skip registration
@@ -807,7 +830,7 @@ describe('Step File system configuration', () => {
     const registerLaterRadio = await screen.findByTestId(
       'registration-radio-later'
     );
-    await user.click(registerLaterRadio);
+    user.click(registerLaterRadio);
     await clickNext();
     await clickNext();
   };
@@ -816,11 +839,11 @@ describe('Step File system configuration', () => {
     const manuallyConfigurePartitions = await screen.findByText(
       /manually configure partitions/i
     );
-    await user.click(manuallyConfigurePartitions);
+    user.click(manuallyConfigurePartitions);
     const addPartition = await screen.findByTestId('file-system-add-partition');
     // Create duplicate partitions
-    await user.click(addPartition);
-    await user.click(addPartition);
+    user.click(addPartition);
+    user.click(addPartition);
     // Clicking next causes errors to appear
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
@@ -834,11 +857,11 @@ describe('Step File system configuration', () => {
     const mountPointOptions = within(rows[2]).getAllByRole('button', {
       name: 'Options menu',
     })[0];
-    await user.click(mountPointOptions);
+    user.click(mountPointOptions);
     const varButton = await within(rows[2]).findByRole('option', {
       name: '/var',
     });
-    await user.click(varButton);
+    user.click(varButton);
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
     await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
     expect(await getNextButton()).toBeEnabled();
@@ -850,7 +873,11 @@ describe('Step File system configuration', () => {
       {},
       routes
     ));
-    await user.click(await screen.findByTestId('checkbox-image-installer'));
+    const imageInstallerCheckbox = await screen.findByTestId(
+      'checkbox-image-installer'
+    );
+
+    user.click(imageInstallerCheckbox);
     await clickFromImageOutputToFsc();
     expect(
       screen.queryByText(/manually configure partitions/i)
@@ -863,10 +890,22 @@ describe('Step File system configuration', () => {
       {},
       routes
     ));
-    await user.click(await screen.findByTestId('checkbox-image-installer'));
-    await user.click(await screen.findByTestId('checkbox-guest-image'));
+    const imageInstallerCheckbox = await screen.findByTestId(
+      'checkbox-image-installer'
+    );
+
+    user.click(imageInstallerCheckbox);
+    const guestImageCheckBox = await screen.findByTestId(
+      'checkbox-guest-image'
+    );
+
+    user.click(guestImageCheckBox);
     await clickFromImageOutputToFsc();
-    await user.click(await screen.findByText(/manually configure partitions/i));
+    const manualOption = await screen.findByText(
+      /manually configure partitions/i
+    );
+
+    user.click(manualOption);
     await screen.findByText('Configure partitions');
   });
 });
@@ -881,19 +920,17 @@ describe('Step Details', () => {
     ));
 
     // select aws as upload destination
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
     await clickNext();
 
     // aws step
     await switchToAWSManual();
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
-    );
+    const awsAccountId = await screen.findByRole('textbox', {
+      name: 'aws account id',
+    });
+
+    await waitFor(() => user.type(awsAccountId, '012345678901'));
 
     await clickNext();
     // skip registration
@@ -902,7 +939,7 @@ describe('Step Details', () => {
     });
 
     const registerLaterRadio = screen.getByTestId('registration-radio-later');
-    await user.click(registerLaterRadio);
+    user.click(registerLaterRadio);
     await clickNext();
     // skip oscap
     await clickNext();
@@ -922,7 +959,6 @@ describe('Step Details', () => {
     await setUp();
 
     // Enter image name
-
     const invalidName = 'a'.repeat(101);
     await enterBlueprintName(invalidName);
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
@@ -930,9 +966,10 @@ describe('Step Details', () => {
     const nameInput = await screen.findByRole('textbox', {
       name: /blueprint name/i,
     });
-    await user.clear(nameInput);
+    await waitFor(() => user.clear(nameInput));
 
     await enterBlueprintName();
+
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
 
@@ -942,12 +979,12 @@ describe('Step Details', () => {
     });
 
     const invalidDescription = 'a'.repeat(251);
-    await user.type(descriptionInput, invalidDescription);
+    await waitFor(() => user.type(descriptionInput, invalidDescription));
 
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
-    await user.clear(descriptionInput);
-    await user.type(descriptionInput, 'valid-description');
+    await waitFor(() => user.clear(descriptionInput));
+    await waitFor(() => user.type(descriptionInput, 'valid-description'));
 
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
@@ -971,11 +1008,13 @@ describe('Step Review', () => {
 
     // aws step
     await switchToAWSManual();
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
     );
     await clickNext();
     await screen.findByRole('textbox', {
@@ -986,7 +1025,7 @@ describe('Step Review', () => {
     const registerLaterRadio = await screen.findByTestId(
       'registration-radio-later'
     );
-    await user.click(registerLaterRadio);
+    await waitFor(() => user.click(registerLaterRadio));
 
     await clickNext();
     // skip OpenScap
@@ -1016,16 +1055,16 @@ describe('Step Review', () => {
       name: /options menu/i,
     })[0];
 
-    await user.click(releaseMenu);
+    await waitFor(() => user.click(releaseMenu));
     const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
-    await user.click(showOptionsButton);
+    await waitFor(() => user.click(showOptionsButton));
 
     const centos = await screen.findByRole('option', {
       name: 'CentOS Stream 9',
     });
-    await user.click(centos);
+    await waitFor(() => user.click(centos));
     // select aws as upload destination
     await waitFor(
       async () => await user.click(await screen.findByTestId('upload-aws'))
@@ -1034,11 +1073,13 @@ describe('Step Review', () => {
 
     // aws step
     await switchToAWSManual();
-    await user.type(
-      await screen.findByRole('textbox', {
-        name: 'aws account id',
-      }),
-      '012345678901'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
     );
     await clickNext();
     await screen.findByRole('textbox', {
@@ -1048,7 +1089,7 @@ describe('Step Review', () => {
     const registerLaterRadio = await screen.findByTestId(
       'registration-radio-later'
     );
-    await user.click(registerLaterRadio);
+    await waitFor(() => user.click(registerLaterRadio));
     await clickNext();
 
     // skip Oscap
@@ -1140,12 +1181,18 @@ describe('Keyboard accessibility', () => {
     await waitFor(
       async () => await user.click(await screen.findByTestId('upload-aws'))
     );
-    await user.click(await screen.findByTestId('upload-google'));
-    await user.click(await screen.findByTestId('upload-azure'));
-    await user.click(
-      await screen.findByRole('checkbox', {
-        name: /virtualization guest image checkbox/i,
-      })
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-google'))
+    );
+    await waitFor(async () =>
+      user.click(await screen.findByTestId('upload-azure'))
+    );
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('checkbox', {
+          name: /virtualization guest image checkbox/i,
+        })
+      )
     );
   };
 
@@ -1163,11 +1210,11 @@ describe('Keyboard accessibility', () => {
       })
     ).toHaveFocus();
     const awsSourceDropdown = await getSourceDropdown();
-    await user.click(awsSourceDropdown);
+    await waitFor(() => user.click(awsSourceDropdown));
     const awsSource = await screen.findByRole('option', {
       name: /my_source/i,
     });
-    await user.click(awsSource);
+    await waitFor(() => user.click(awsSource));
 
     await clickNext();
 
@@ -1177,9 +1224,11 @@ describe('Keyboard accessibility', () => {
         name: /share image with a google account/i,
       })
     ).toHaveFocus();
-    await user.type(
-      await screen.findByRole('textbox', { name: /google principal/i }),
-      'test@test.com'
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', { name: /google principal/i }),
+        'test@test.com'
+      )
     );
     await clickNext();
 
@@ -1190,18 +1239,20 @@ describe('Keyboard accessibility', () => {
       })
     ).toHaveFocus();
     const azureSourceDropdown = await getSourceDropdown();
-    await user.click(azureSourceDropdown);
+    await waitFor(() => user.click(azureSourceDropdown));
     const azureSource = await screen.findByRole('option', {
       name: /azureSource1/i,
     });
-    await user.click(azureSource);
+    await waitFor(() => user.click(azureSource));
 
     const resourceGroupDropdown = await screen.findByRole('textbox', {
       name: /select resource group/i,
     });
-    await user.click(resourceGroupDropdown);
-    await user.click(
-      await screen.findByLabelText('Resource group myResourceGroup1')
+    await waitFor(() => user.click(resourceGroupDropdown));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByLabelText('Resource group myResourceGroup1')
+      )
     );
     await clickNext();
 
@@ -1218,7 +1269,7 @@ describe('Keyboard accessibility', () => {
     const registerLaterRadio = await screen.findByTestId(
       'registration-radio-later'
     );
-    await user.click(registerLaterRadio);
+    await waitFor(() => user.click(registerLaterRadio));
     await clickNext();
 
     // TODO: Focus on textbox on OpenSCAP step
@@ -1242,7 +1293,7 @@ describe('Keyboard accessibility', () => {
     await waitFor(
       async () => await user.click(await screen.findByTestId('upload-aws'))
     );
-    await user.keyboard('{enter}');
+    await waitFor(() => user.keyboard('{enter}'));
     await screen.findByRole('heading', {
       name: /image output/i,
     });
