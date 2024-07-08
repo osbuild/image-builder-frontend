@@ -4,7 +4,6 @@ import '@testing-library/jest-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
-import nodeFetch, { Request, Response } from 'node-fetch';
 
 import CreateImageWizard from '../../../Components/CreateImageWizardV2';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
@@ -15,8 +14,6 @@ import {
   renderCustomRoutesWithReduxRouter,
   renderWithReduxRouter,
 } from '../../testUtils';
-
-Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({

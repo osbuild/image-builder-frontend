@@ -1,5 +1,9 @@
+import nodeFetch, { Request, Response } from 'node-fetch';
+
 import { server } from './mocks/server';
 import 'vitest-canvas-mock';
+
+Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 // scrollTo is not defined in jsdom - needed for the navigation to the wizard
 window.HTMLElement.prototype.scrollTo = function () {};

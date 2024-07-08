@@ -1,6 +1,5 @@
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
@@ -20,8 +19,6 @@ import {
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
-
-Object.assign(global, { fetch: nodeFetch, Request, Response });
 
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
