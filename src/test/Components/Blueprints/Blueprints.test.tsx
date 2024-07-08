@@ -34,8 +34,9 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const selectBlueprintById = async (bpId: string) => {
+  const user = userEvent.setup();
   const blueprint = await screen.findByTestId(bpId);
-  await userEvent.click(blueprint);
+  await waitFor(() => user.click(blueprint));
   return blueprint;
 };
 
@@ -71,9 +72,11 @@ describe('Blueprints', () => {
     });
     expect(emptyStateAction).toBeInTheDocument();
 
-    await user.click(emptyStateAction);
-    expect(router.state.location.pathname).toBe(
-      '/insights/image-builder/imagewizard'
+    user.click(emptyStateAction);
+    await waitFor(() =>
+      expect(router.state.location.pathname).toBe(
+        '/insights/image-builder/imagewizard'
+      )
     );
   });
   test('renders blueprint composes', async () => {
@@ -113,15 +116,15 @@ describe('Blueprints', () => {
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
-    await user.click(buildImageDropDown);
+    user.click(buildImageDropDown);
 
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    await user.click(awsCheckbox);
-    expect(awsCheckbox).not.toBeChecked();
+    user.click(awsCheckbox);
+    await waitFor(() => expect(awsCheckbox).not.toBeChecked());
 
     const buildSelectedBtn = await screen.findByRole('button', {
       name: /Build selected/i,
@@ -139,14 +142,14 @@ describe('Blueprints', () => {
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
 
-    await user.click(buildImageDropDown);
+    user.click(buildImageDropDown);
     const awsCheckbox = await screen.findByRole('checkbox', {
       name: /amazon web services/i,
     });
     expect(awsCheckbox).toBeChecked();
 
-    await user.click(awsCheckbox);
-    expect(awsCheckbox).not.toBeChecked();
+    user.click(awsCheckbox);
+    await waitFor(() => expect(awsCheckbox).not.toBeChecked());
     const buildSelectedBtn = await screen.findByRole('button', {
       name: /Build selected/i,
     });
@@ -207,7 +210,7 @@ describe('Blueprints', () => {
       const blueprintDetails = await screen.findByTestId(
         'image-details-expandable'
       );
-      await user.click(blueprintDetails);
+      user.click(blueprintDetails);
       await screen.findByText(editedBlueprintName);
     });
     test('redirect to index page when blueprint is invalid', async () => {
@@ -236,7 +239,7 @@ describe('Blueprints', () => {
         'Search by name or description'
       );
       searchInput.focus();
-      await user.keyboard('Milk');
+      user.keyboard('Milk');
 
       // wait for debounce
       await waitFor(
@@ -276,8 +279,8 @@ describe('Blueprints', () => {
         expect(button).toBeEnabled();
       });
 
-      await user.click(button);
-      await user.click(button);
+      user.click(button);
+      user.click(button);
 
       await waitFor(() => {
         expect(screen.getAllByRole('checkbox')).toHaveLength(8);
@@ -300,12 +303,14 @@ describe('Blueprints', () => {
         within(screen.getByTestId('images-table')).getAllByRole('row')
       ).toHaveLength(4);
 
-      await user.click(composesVersionFilter);
+      user.click(composesVersionFilter);
       const option = await screen.findByRole('menuitem', { name: 'Newest' });
-      await user.click(option);
-      expect(
-        within(screen.getByTestId('images-table')).getAllByRole('row')
-      ).toHaveLength(2);
+      user.click(option);
+      await waitFor(() =>
+        expect(
+          within(screen.getByTestId('images-table')).getAllByRole('row')
+        ).toHaveLength(2)
+      );
     });
   });
 });

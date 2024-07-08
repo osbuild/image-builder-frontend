@@ -66,46 +66,48 @@ const goToReview = async () => {
 };
 
 const selectAwsTarget = async () => {
+  const user = userEvent.setup();
   await renderCreateMode();
   const awsCard = await screen.findByTestId('upload-aws');
-  await userEvent.click(awsCard);
+  await waitFor(() => user.click(awsCard));
   await clickNext();
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
+  const user = userEvent.setup();
   const awsCard = await screen.findByTestId('upload-aws');
-  await userEvent.click(awsCard);
-  await userEvent.click(
-    await screen.findByRole('checkbox', {
-      name: /virtualization guest image checkbox/i,
-    })
-  );
+  await waitFor(() => user.click(awsCard));
+  const guestImageCheckbox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
+  });
+  await waitFor(async () => user.click(guestImageCheckbox));
   await clickNext();
 };
 
 const selectSource = async () => {
-  await userEvent.click(
-    await screen.findByRole('textbox', {
-      name: /select source/i,
-    })
-  );
+  const user = userEvent.setup();
+  const sourceTexbox = await screen.findByRole('textbox', {
+    name: /select source/i,
+  });
+  await waitFor(async () => user.click(sourceTexbox));
 
-  await userEvent.click(
-    await screen.findByRole('option', { name: /my_source/i })
-  );
+  const sourceOption = await screen.findByRole('option', {
+    name: /my_source/i,
+  });
+  await waitFor(async () => user.click(sourceOption));
 };
 
 const enterAccountId = async () => {
-  await userEvent.click(
-    await screen.findByText(/manually enter an account id\./i)
+  const user = userEvent.setup();
+  const manualOption = await screen.findByText(
+    /manually enter an account id\./i
   );
+  await waitFor(async () => user.click(manualOption));
 
-  await userEvent.type(
-    await screen.findByRole('textbox', {
-      name: 'aws account id',
-    }),
-    '123123123123'
-  );
+  const awsAccountIdTextbox = await screen.findByRole('textbox', {
+    name: 'aws account id',
+  });
+  await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
 };
 
 describe('aws image type request generated correctly', () => {

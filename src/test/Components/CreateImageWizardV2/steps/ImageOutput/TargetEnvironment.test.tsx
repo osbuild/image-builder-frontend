@@ -90,65 +90,73 @@ afterEach(() => {
 });
 
 const openReleaseMenu = async () => {
+  const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {
     name: /options menu/i,
   })[0];
-  await userEvent.click(releaseMenu);
+  await waitFor(() => user.click(releaseMenu));
 };
 
 const openArchitectureMenu = async () => {
+  const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {
     name: /options menu/i,
   })[1];
-  await userEvent.click(releaseMenu);
+  await waitFor(() => user.click(releaseMenu));
 };
 
 const clickShowOptions = async () => {
+  const user = userEvent.setup();
   const showOptions = await screen.findByRole('button', {
     name: /show options for further development of rhel/i,
   });
-  await userEvent.click(showOptions);
+  await waitFor(() => user.click(showOptions));
 };
 
 const selectRhel8 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
   });
-  await userEvent.click(rhel8);
+  await waitFor(() => user.click(rhel8));
 };
 
 const selectRhel9 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel9 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
   });
-  await userEvent.click(rhel9);
+  await waitFor(() => user.click(rhel9));
 };
 
 const selectCentos9 = async () => {
+  const user = userEvent.setup();
   await openReleaseMenu();
   await clickShowOptions();
   const centos9 = await screen.findByRole('option', {
     name: 'CentOS Stream 9',
   });
-  await userEvent.click(centos9);
+  await waitFor(() => user.click(centos9));
 };
 
 const selectX86_64 = async () => {
+  const user = userEvent.setup();
   await openArchitectureMenu();
   const x86_64 = await screen.findByRole('option', {
     name: 'x86_64',
   });
-  await userEvent.click(x86_64);
+  await waitFor(() => user.click(x86_64));
 };
 
 const selectAarch64 = async () => {
+  const user = userEvent.setup();
   await openArchitectureMenu();
   const aarch64 = await screen.findByRole('option', {
     name: 'aarch64',
   });
-  await userEvent.click(aarch64);
+  await waitFor(() => user.click(aarch64));
 };
 
 const goToReviewStep = async () => {
@@ -174,8 +182,9 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    user.click(archMenu);
+    const x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
+    user.click(x86_64Option);
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = []; // type is `string[]` and not `ImageType[]` because in imageBuilderAPI ArchitectureItem['image_types'] is type string
@@ -193,7 +202,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
     // make sure the UX conforms to the mocks
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
+    await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
     await screen.findByTestId('upload-azure');
     await screen.findByTestId('checkbox-guest-image');
@@ -213,19 +222,20 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-      })
-    );
+    user.click(releaseMenu);
+    const rhel8Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+
+    user.click(rhel8Option);
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    user.click(archMenu);
+    const x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
+    user.click(x86_64Option);
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -243,7 +253,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('vsphere-ova');
     expect(images_types).toContain('wsl');
     // make sure the UX conforms to the mocks
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
+    await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
     await screen.findByTestId('upload-azure');
     await screen.findByTestId('checkbox-guest-image');
@@ -261,8 +271,11 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
+    user.click(archMenu);
+    const aarch64Option = await screen.findByRole('option', {
+      name: 'aarch64',
+    });
+    user.click(aarch64Option);
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -280,8 +293,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
     // make sure the UX conforms to the mocks
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
-    expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument();
+    await screen.findByTestId('upload-aws');
+    await waitFor(() =>
+      expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
+    );
     expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
@@ -302,19 +317,21 @@ describe('Check that the target filtering is in accordance to mock content', () 
     const releaseMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[0];
-    await user.click(releaseMenu);
-    await user.click(
-      await screen.findByRole('option', {
-        name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-      })
-    );
+    user.click(releaseMenu);
+    const rhel8Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+    user.click(rhel8Option);
 
     // select x86_64
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
+    user.click(archMenu);
+    const aarch64Option = await screen.findByRole('option', {
+      name: 'aarch64',
+    });
+    user.click(aarch64Option);
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -332,8 +349,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
     // make sure the UX conforms to the mocks
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
-    expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument();
+    await screen.findByTestId('upload-aws');
+    await waitFor(() =>
+      expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
+    );
     expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
@@ -356,25 +375,32 @@ describe('Check step consistency', () => {
     const archMenu = screen.getAllByRole('button', {
       name: /options menu/i,
     })[1];
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
+    user.click(archMenu);
+    let x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
+    user.click(x86_64Option);
+    await screen.findByTestId('upload-aws');
     // select GCP, it's available for x86_64
-    await user.click(await screen.findByTestId('upload-google'));
+    const uploadGcpBtn = await screen.findByTestId('upload-google');
+    user.click(uploadGcpBtn);
     const next = await screen.findByRole('button', { name: /Next/ });
     await waitFor(() => expect(next).toBeEnabled());
     // Change to aarch
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'aarch64' }));
-    await waitFor(async () => await screen.findByTestId('upload-aws'));
+    user.click(archMenu);
+    const aarch64Option = await screen.findByRole('option', {
+      name: 'aarch64',
+    });
+    user.click(aarch64Option);
+    await screen.findByTestId('upload-aws');
     // GCP not being compatible with arch, the next button is disabled
     await waitFor(() => expect(next).toBeDisabled());
     // clicking on AWS the user can go next
-    await user.click(await screen.findByTestId('upload-aws'));
+    const uploadAwsBtn = await screen.findByTestId('upload-aws');
+    user.click(uploadAwsBtn);
     await waitFor(() => expect(next).toBeEnabled());
     // and going back to x86_64 the user should keep the next button visible
-    await user.click(archMenu);
-    await user.click(await screen.findByRole('option', { name: 'x86_64' }));
+    user.click(archMenu);
+    x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
+    user.click(x86_64Option);
     await waitFor(() => expect(next).toBeEnabled());
   });
 });
@@ -417,13 +443,13 @@ describe('set target using query parameter', () => {
   test('no target by default (no query parameter)', async () => {
     await renderCreateMode();
     const nextButton = await screen.findByRole('button', { name: /Next/ });
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('no target by default (invalid query parameter)', async () => {
     await renderCreateMode({ target: 'azure' });
     const nextButton = await screen.findByRole('button', { name: /Next/ });
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('image-installer (query parameter provided)', async () => {
@@ -433,7 +459,7 @@ describe('set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    await userEvent.click(targetExpandable);
+    user.click(targetExpandable);
     await screen.findByText('Bare metal - Installer (.iso)');
   });
 
@@ -444,7 +470,7 @@ describe('set target using query parameter', () => {
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
-    await userEvent.click(targetExpandable);
+    user.click(targetExpandable);
     await screen.findByText('Virtualization - Guest image (.qcow2)');
   });
 });

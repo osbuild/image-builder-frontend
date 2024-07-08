@@ -57,10 +57,13 @@ const goToDetailsStep = async () => {
 };
 
 const enterBlueprintDescription = async () => {
+  const user = userEvent.setup();
   const blueprintDescription = await screen.findByRole('textbox', {
     name: /blueprint description/i,
   });
-  await userEvent.type(blueprintDescription, 'Now with extra carmine!');
+  await waitFor(() =>
+    user.type(blueprintDescription, 'Now with extra carmine!')
+  );
 };
 
 const goToReviewStep = async () => {
@@ -77,7 +80,7 @@ describe('validates name', () => {
     const nextButton = await getNextButton();
     expect(nextButton).toBeDisabled();
     await enterBlueprintName(' ');
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('with valid name', async () => {
@@ -86,9 +89,8 @@ describe('validates name', () => {
     await clickRegisterLater();
     await goToDetailsStep();
     await enterBlueprintName('🤣Red Velvet🤣');
-
     const nextButton = await getNextButton();
-    expect(nextButton).toBeEnabled();
+    await waitFor(() => expect(nextButton).toBeEnabled());
   });
 
   test('with non-unique name', async () => {
@@ -99,7 +101,7 @@ describe('validates name', () => {
     await enterBlueprintName('Lemon Pie');
 
     const nextButton = await getNextButton();
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
   });
 });
 
@@ -118,7 +120,7 @@ describe('registration request generated correctly', () => {
 
     const expectedRequest = { ...blueprintRequest };
 
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));
   });
 
   test('with description', async () => {
@@ -152,6 +154,6 @@ describe('Details edit mode', () => {
       `${EDIT_BLUEPRINT}/${id}`
     );
     const expectedRequest = detailsCreateBlueprintRequest;
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));
   });
 });

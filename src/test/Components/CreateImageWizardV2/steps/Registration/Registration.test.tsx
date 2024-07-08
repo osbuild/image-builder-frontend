@@ -52,33 +52,37 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const selectActivationKey = async () => {
+  const user = userEvent.setup();
   const activationKeyDropdown = await screen.findByRole('textbox', {
     name: 'Select activation key',
   });
-  await userEvent.click(activationKeyDropdown);
+  await waitFor(() => user.click(activationKeyDropdown));
   const activationKey = await screen.findByRole('option', {
     name: 'name0',
   });
-  await userEvent.click(activationKey);
+  await waitFor(() => user.click(activationKey));
 };
 
 const clickShowAdditionalConnectionOptions = async () => {
+  const user = userEvent.setup();
   const link = await screen.findByText('Show additional connection options');
-  await userEvent.click(link);
+  await waitFor(() => user.click(link));
 };
 
 const deselectEnableRemoteRemediations = async () => {
+  const user = userEvent.setup();
   const checkBox = await screen.findByRole('checkbox', {
     name: 'Enable remote remediations and system management with automation',
   });
-  await userEvent.click(checkBox);
+  await waitFor(() => user.click(checkBox));
 };
 
 const deselectPredictiveAnalytics = async () => {
+  const user = userEvent.setup();
   const checkBox = await screen.findByRole('checkbox', {
     name: 'Enable predictive analytics and management capabilities',
   });
-  await userEvent.click(checkBox);
+  await waitFor(() => user.click(checkBox));
 };
 
 const goToReviewStep = async () => {

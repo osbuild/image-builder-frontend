@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { configureStore } from '@reduxjs/toolkit';
-import { screen, render } from '@testing-library/react';
+import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
@@ -80,17 +80,20 @@ export const renderWithProvider = (
 
 export const clickBack = async () => {
   const user = userEvent.setup();
-  await user.click(await screen.findByRole('button', { name: /Back/ }));
+  const backBtn = await screen.findByRole('button', { name: /Back/ });
+  await waitFor(() => user.click(backBtn));
 };
 
 export const clickNext = async () => {
   const user = userEvent.setup();
-  await user.click(await screen.findByRole('button', { name: /Next/ }));
+  const nextBtn = await screen.findByRole('button', { name: /Next/ });
+  await waitFor(() => user.click(nextBtn));
 };
 
 export const clickCancel = async () => {
   const user = userEvent.setup();
-  await user.click(await screen.findByRole('button', { name: /Cancel/ }));
+  const cancelBtn = await screen.findByRole('button', { name: /Cancel/ });
+  await waitFor(() => user.click(cancelBtn));
 };
 
 export const getNextButton = async () => {

@@ -55,10 +55,11 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const goToFirstBootStep = async (): Promise<void> => {
+  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
-  await userEvent.click(guestImageCheckBox);
+  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext();
   await clickNext(); // Registration
   await clickRegisterLater();
@@ -71,20 +72,22 @@ const goToFirstBootStep = async (): Promise<void> => {
 };
 
 const openCodeEditor = async (): Promise<void> => {
+  const user = userEvent.setup();
   const startBtn = await screen.findByRole('button', {
     name: /Start from scratch/i,
   });
-  await userEvent.click(startBtn);
+  await waitFor(() => user.click(startBtn));
 };
 
 const uploadFile = async (): Promise<void> => {
+  const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
 
   if (fileInput) {
     const file = new File([SCRIPT], 'script.sh', { type: 'text/x-sh' });
-    await userEvent.upload(fileInput, file);
+    await waitFor(() => user.upload(fileInput, file));
   }
 };
 
@@ -98,7 +101,7 @@ describe('First Boot step', () => {
   test('should render First Boot step', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
-    expect(screen.getByText('First boot configuration')).toBeInTheDocument();
+    await screen.findByText('First boot configuration');
   });
   describe('validate first boot request ', () => {
     test('should validate first boot request', async () => {

@@ -81,28 +81,30 @@ const createGCPCloudImage = (
 };
 
 const clickGCPTarget = async () => {
+  const user = userEvent.setup();
   await renderCreateMode();
   const googleOption = await screen.findByTestId('upload-google');
-  await userEvent.click(googleOption);
+  await waitFor(() => user.click(googleOption));
   await clickNext();
 };
 
 const deselectGcpAndSelectGuestImage = async () => {
+  const user = userEvent.setup();
   const googleCard = await screen.findByTestId('upload-google');
-  await userEvent.click(googleCard);
-  await userEvent.click(
-    await screen.findByRole('checkbox', {
-      name: /virtualization guest image checkbox/i,
-    })
-  );
+  await waitFor(() => user.click(googleCard));
+  const guestImageCheckbox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
+  });
+  await waitFor(async () => user.click(guestImageCheckbox));
   await clickNext();
 };
 
 const selectGoogleAccount = async (optionId: string) => {
+  const user = userEvent.setup();
   const googleAccountOption = await screen.findByTestId(optionId);
-  await userEvent.click(googleAccountOption);
+  await waitFor(() => user.click(googleAccountOption));
   const principalInput = await screen.findByTestId('principal');
-  await userEvent.type(principalInput, GCP_ACCOUNT);
+  await waitFor(() => user.type(principalInput, GCP_ACCOUNT));
 };
 
 describe('gcp image type request generated correctly', () => {
@@ -167,12 +169,13 @@ describe('gcp image type request generated correctly', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
   test('share image with red hat insight only', async () => {
+    const user = userEvent.setup();
     await clickGCPTarget();
     const shareWithInsightOption = await screen.findByTestId(
       'share-with-insights'
     );
 
-    await userEvent.click(shareWithInsightOption);
+    user.click(shareWithInsightOption);
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {});
@@ -207,6 +210,6 @@ describe('GCP edit mode', () => {
       `${EDIT_BLUEPRINT}/${id}`
     );
     const expectedRequest = gcpCreateBlueprintRequest;
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));
   });
 });
