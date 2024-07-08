@@ -56,9 +56,6 @@ describe('Blueprints', () => {
     await screen.findByText(blueprintNameEmptyComposes);
   });
   test('renders blueprint empty state', async () => {
-    // scrollTo is not defined in jsdom - needed for the navigation to the wizard
-    window.HTMLElement.prototype.scrollTo = function () {};
-
     server.use(
       rest.get(`${IMAGE_BUILDER_API}/blueprints`, (req, res, ctx) => {
         return res(ctx.status(200), ctx.json(emptyGetBlueprints));
