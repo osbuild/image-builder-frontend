@@ -147,6 +147,10 @@ const enterResourceGroup = async () => {
 };
 
 describe('azure image type request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('using a source', async () => {
     await selectAzureTarget();
     await goToAzureStep();
@@ -225,6 +229,10 @@ describe('azure image type request generated correctly', () => {
 });
 
 describe('Azure edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['azure'];
     await renderEditMode(id);

@@ -192,6 +192,10 @@ const uploadFile = async (filename: string, content: string): Promise<void> => {
 };
 
 describe('Import model', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
 
   test('renders import component', async () => {

@@ -98,6 +98,10 @@ const goToReviewStep = async () => {
 };
 
 describe('registration request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const imageRequest: ImageRequest = {
     architecture: 'x86_64',
     image_type: 'guest-image',
@@ -211,6 +215,10 @@ describe('registration request generated correctly', () => {
 });
 
 describe('Registration edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['registration'];
     await renderEditMode(id);

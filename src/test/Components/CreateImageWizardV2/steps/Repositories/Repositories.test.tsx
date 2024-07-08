@@ -93,6 +93,10 @@ const deselectFirstRepository = async () => {
 };
 
 describe('repositories request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('with custom repositories', async () => {
     await renderCreateMode();
     await goToRepositoriesStep();
@@ -181,6 +185,11 @@ describe('repositories request generated correctly', () => {
 });
 
 describe('Repositories edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const user = userEvent.setup();
   test('edit mode works', async () => {
     const id = mockBlueprintIds['repositories'];
     await renderEditMode(id);

@@ -36,6 +36,10 @@ const routes = [
 ];
 
 describe('Create Share To Regions Modal', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
   test('validation', async () => {
     await renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);

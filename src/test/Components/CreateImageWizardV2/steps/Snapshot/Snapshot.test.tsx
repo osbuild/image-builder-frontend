@@ -105,6 +105,10 @@ const getSnapshotMethodElement = async () =>
   await screen.findByRole('button', { name: /Snapshot method/i });
 
 describe('repository snapshot tab - ', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('select use a snapshot with 1 repo selected', async () => {
     await renderCreateMode();
     await goToSnapshotStep();
@@ -160,6 +164,10 @@ describe('repository snapshot tab - ', () => {
 });
 
 describe('Snapshot edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['snapshot'];
     await renderEditMode(id);

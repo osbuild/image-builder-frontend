@@ -98,6 +98,10 @@ const goToReviewStep = async (): Promise<void> => {
 };
 
 describe('First Boot step', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('should render First Boot step', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
@@ -131,6 +135,10 @@ describe('First Boot step', () => {
 });
 
 describe('First Boot edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['firstBoot'];
     await renderEditMode(id);

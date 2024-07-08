@@ -31,6 +31,10 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 describe('Landing Page', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('renders page heading', async () => {
     renderWithReduxRouter('', {});
 

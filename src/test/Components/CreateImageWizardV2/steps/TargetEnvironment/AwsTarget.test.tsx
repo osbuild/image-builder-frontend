@@ -111,6 +111,10 @@ const enterAccountId = async () => {
 };
 
 describe('aws image type request generated correctly', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('using a source', async () => {
     await selectAwsTarget();
     await goToAwsStep();
@@ -182,6 +186,10 @@ describe('aws image type request generated correctly', () => {
 });
 
 describe('AWS edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   test('edit mode works', async () => {
     const id = mockBlueprintIds['aws'];
     await renderEditMode(id);

@@ -41,6 +41,10 @@ const selectBlueprintById = async (bpId: string) => {
 };
 
 describe('Blueprints', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   const user = userEvent.setup();
   const blueprintNameWithComposes = 'Dark Chocolate';
   const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
@@ -186,6 +190,10 @@ describe('Blueprints', () => {
   });
 
   describe('edit blueprint', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     const editedBlueprintName = 'Dark Chocolate';
     const routes = [
       {
@@ -229,6 +237,10 @@ describe('Blueprints', () => {
   });
 
   describe('filtering', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     test('filter blueprints', async () => {
       renderWithReduxRouter('', {});
 
@@ -253,6 +265,10 @@ describe('Blueprints', () => {
   });
 
   describe('pagination', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     test('paging of blueprints', async () => {
       renderWithReduxRouter('', {});
 
@@ -286,6 +302,10 @@ describe('Blueprints', () => {
   });
 
   describe('composes filtering', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
     test('filter composes by blueprint version', async () => {
       renderWithReduxRouter('', {});
 

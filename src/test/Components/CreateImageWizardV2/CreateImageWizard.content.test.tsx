@@ -66,17 +66,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 
-beforeAll(() => {
-  // scrollTo is not defined in jsdom
-  window.HTMLElement.prototype.scrollTo = function () {};
-  mockContentSourcesEnabled = true;
-});
-
-afterEach(() => {
-  vi.clearAllMocks();
-  mockContentSourcesEnabled = true;
-});
-
 const typeIntoSearchBox = async (searchTerm: string) => {
   const user = userEvent.setup();
   const searchbox = await screen.findByRole('textbox', {
@@ -133,6 +122,12 @@ export const selectCustomRepo = async () => {
 };
 
 describe('Step Packages', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockContentSourcesEnabled = true;
+  });
+
+  const user = userEvent.setup();
   const setUp = async () => {
     mockContentSourcesEnabled = false;
 
@@ -425,6 +420,11 @@ describe('Step Packages', () => {
 });
 
 describe('Step Custom repositories', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockContentSourcesEnabled = true;
+  });
+
   const user = userEvent.setup();
   const setUp = async () => {
     ({ router } = await renderCustomRoutesWithReduxRouter(
