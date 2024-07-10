@@ -9,6 +9,7 @@ import {
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import {
   ContentList,
@@ -37,7 +38,6 @@ import {
   selectProfile,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
-import useBetaFlag from '../../../../Utilities/useBetaFlag';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const { goToStepById } = useWizardContext();
@@ -99,7 +99,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     goToStepById(stepId);
   };
 
-  const isFirstBootEnabled = useBetaFlag('image-builder.firstboot.enabled');
+  const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   return (
     <>
       <ExpandableSection
