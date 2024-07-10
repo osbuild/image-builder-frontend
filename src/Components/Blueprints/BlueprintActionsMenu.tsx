@@ -8,7 +8,6 @@ import {
   MenuToggleElement,
 } from '@patternfly/react-core';
 import { EllipsisVIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -16,6 +15,7 @@ import {
   BlueprintResponse,
   useLazyGetBlueprintQuery,
 } from '../../store/imageBuilderApi';
+import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import BetaLabel from '../sharedComponents/BetaLabel';
 
 interface BlueprintActionsMenuProps {
@@ -30,7 +30,9 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const onSelect = () => {
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
-  const importExportFlag = useFlag('image-builder.import.enabled');
+  const importExportFlag = useFlagWithEphemDefault(
+    'image-builder.import.enabled'
+  );
 
   const [trigger] = useLazyGetBlueprintQuery();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
