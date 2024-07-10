@@ -200,7 +200,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   ) => {
     const isVisitRequired = true;
     const hasVisitedNextStep = steps.some(
-      (step) => step.index > step.index + 1 && step.isVisited
+      (s) => s.index > step.index && s.isVisited
     );
 
     return (

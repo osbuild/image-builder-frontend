@@ -37,6 +37,7 @@ export const mockBlueprintIds = {
 };
 
 export const mockBlueprintNames = {
+  darkChocolate: 'Dark Chocolate',
   rhel9: 'rhel9',
   rhel8: 'rhel8',
   centos9: 'centos9',
@@ -56,6 +57,7 @@ export const mockBlueprintNames = {
 };
 
 export const mockBlueprintDescriptions = {
+  darkChockolate: '70% Dark Chocolate with crunchy cocoa nibs',
   rhel9: '',
   rhel8: '',
   centos9: '',
