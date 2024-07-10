@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
+import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
@@ -17,7 +18,9 @@ const CreateImageWizardV2 = lazy(
 
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
-  const importExportFlag = useFlag('image-builder.import.enabled');
+  const importExportFlag = useFlagWithEphemDefault(
+    'image-builder.import.enabled'
+  );
   return (
     <Routes>
       <Route

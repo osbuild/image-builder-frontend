@@ -19,7 +19,6 @@ import {
   PageHeader,
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
-import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -29,6 +28,7 @@ import {
 } from '../../constants';
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
+import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
@@ -96,7 +96,9 @@ export const ImageBuilderHeader = ({
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
-  const importExportFlag = useFlag('image-builder.import.enabled');
+  const importExportFlag = useFlagWithEphemDefault(
+    'image-builder.import.enabled'
+  );
   const [showImportModal, setShowImportModal] = useState(false);
   const isOnBlueprintsTab = activeTab === 0;
   return (
