@@ -279,7 +279,7 @@ const Packages = () => {
         },
       });
     }
-    if (debouncedSearchTerm.length > 2) {
+    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
       if (toggleSourceRepos === RepoToggle.INCLUDED) {
         searchCustomRpms({
           apiContentUnitSearchRequest: {
