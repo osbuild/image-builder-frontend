@@ -116,6 +116,16 @@ const checkRecommendationsEmptyState = async () => {
   await screen.findByText('Select packages to generate recommendations.');
 };
 
+export const selectCustomRepo = async () => {
+  await clickBack();
+  const customRepoCheckbox = await screen.findByRole('checkbox', {
+    name: /select row 0/i,
+  });
+
+  await userEvent.click(customRepoCheckbox);
+  await clickNext();
+};
+
 describe('Step Packages', () => {
   const setUp = async () => {
     mockContentSourcesEnabled = false;
@@ -225,6 +235,7 @@ describe('Step Packages', () => {
   test('search results should be sorted with most relevant results first', async () => {
     await setUp();
 
+    await selectCustomRepo();
     await typeIntoSearchBox('test');
 
     const packagesTable = await screen.findByTestId('packages-table');
@@ -246,6 +257,7 @@ describe('Step Packages', () => {
   test('selected packages are sorted the same way as available packages', async () => {
     await setUp();
 
+    await selectCustomRepo();
     await typeIntoSearchBox('test');
 
     const checkboxes = await getAllCheckboxes();
@@ -323,6 +335,7 @@ describe('Step Packages', () => {
   test('should display relevant results in selected first', async () => {
     await setUp();
 
+    await selectCustomRepo();
     await typeIntoSearchBox('test');
 
     const checkboxes = await getAllCheckboxes();

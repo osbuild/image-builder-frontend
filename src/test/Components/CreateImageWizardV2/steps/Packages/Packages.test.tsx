@@ -12,6 +12,7 @@ import {
   packagesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
+import { selectCustomRepo } from '../../CreateImageWizard.content.test';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -281,6 +282,7 @@ describe('pagination on packages step', () => {
   test('itemcount correct after search', async () => {
     await renderCreateMode();
     await goToPackagesStep();
+    await selectCustomRepo();
     await searchForPackage();
     await selectFirstPackage();
     // the pagination in the top right
