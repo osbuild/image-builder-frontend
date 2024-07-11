@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { screen, within } from '@testing-library/react';
 
 import { renderEditMode } from './wizardTestUtils';
@@ -7,26 +8,23 @@ import {
   mockBlueprintNames,
 } from '../../fixtures/blueprints';
 
-jest.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   useChrome: () => ({
-    auth: {
-      getUser: () => {
-        return {
-          identity: {
-            internal: {
-              org_id: 5,
-            },
-          },
-        };
-      },
-    },
     isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
 }));
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn(() => false),
+}));
+
 describe('EditImageWizard', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
   test('should enable all navigation items in edit mode', async () => {
     const id = mockBlueprintIds['darkChocolate'];
     const name = mockBlueprintNames['darkChocolate'];
