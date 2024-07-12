@@ -10,6 +10,8 @@
 ## Table of Contents
 1. [How to build and run image-builder-frontend](#frontend-development)
    1. [Frontend Development](#frontend-development)
+      1. [API](#api-endpoints)
+      2. [Unleash feature flags](#unleash-feature-flags)
    2. [Backend Development](#backend-development)
 2. [File structure](#file-structure)
 3. [Style Guidelines](#style-guidelines)
@@ -27,7 +29,7 @@ worrying if a feature from stage has been released yet.
 
 #### Nodejs and npm version
 
-Make sure you have npm@7 and node 15+ installed. If you need multiple versions of nodejs check out [nvm](https://github.com/nvm-sh/nvm).
+Make sure you have npm@10 and node 18+ installed. If you need multiple versions of nodejs check out [nvm](https://github.com/nvm-sh/nvm).
 
 #### Webpack proxy
 
@@ -90,17 +92,21 @@ Note that this requires you to have access to either production or stage (plus V
 
 #### API endpoints
 
-API endpoints are programmatically generated with the RTKQ library. This
-sections overview the steps to add new APIs and endpoints.
+API slice definitions are programmatically generated using the [@rtk-query/codegen-openapi](https://redux-toolkit.js.org/rtk-query/usage/code-generation) package.
+
+OpenAPI schema for the endpoints are stored in `/api/schema`. Their
+corresponding configuration files are stored in `/api/config`. Each endpoint
+has a corresponding empty API slice and generated API slice which are stored in
+`/src/store`.
 
 ##### Add a new API
 
-For an hypothetical API called foobar
+For a hypothetical API called foobar
 
-1. Download the foobar api openapi json or yaml representation under
+1. Download the foobar API OpenAPI json or yaml representation under
 `api/schema/foobar.json`
 
-2. Create a new "empty" api file under `src/store/emptyFoobarApi.ts` that has for
+2. Create a new "empty" API file under `src/store/emptyFoobarApi.ts` that has following
 content:
 
 ```{ts}
@@ -116,7 +122,7 @@ export const emptyFoobarApi = createApi({
 });
 ```
 
-3. Declare the new constat `FOOBAR_API` to the API url in `src/constants.ts`
+3. Declare new constant `FOOBAR_API` with the API url in `src/constants.ts`
 
 ```
 export const FOOBAR_API = 'api/foobar/v1'
@@ -164,8 +170,7 @@ And voilà!
 To add a new endpoint, simply update the `api/config/foobar.ts` file with new
 endpoints in the `filterEndpoints` table.
 
-
-#### Unleash feature flags for the frontend
+#### Unleash feature flags
 
 Your user needs to have the corresponding rights, do the
 same as this MR in internal gitlab https://gitlab.cee.redhat.com/service/app-interface/-/merge_requests/79225
@@ -216,7 +221,6 @@ see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-get
 | [`/src/test`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test)                           | test utilities                             |
 | [`/src/test/mocks`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test/mocks)               | mock handlers and server config for MSW    |
 | [`/src/store`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/store)                         | Redux store                                |
-| [`/src/api.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/src/api.js)                       | API calls                                  |
 
 ## Style Guidelines
 
@@ -290,18 +294,3 @@ Follow these steps to find and paste the certification file into the 'Keychain A
 8. Close the localhost screen.
 
 9. Run `npm run stage-beta:msw` and open the Firefox browser to verify that it is working as expected.
-
-
-## API endpoints
-
-API slice definitions are generated using the [@rtk-query/codegen-openapi](https://redux-toolkit.js.org/rtk-query/usage/code-generation) package.
-
-OpenAPI schema for the endpoints are stored in `/api/schema`. Their
-corresponding configuration files are stored in `/api/config`. Each endpoint
-has a corresponding empty API slice and generated API slice which are stored in
-`/src/store`.
-
-To generate or update API slice definitions, run:
-```bash
-npm run api
-```
