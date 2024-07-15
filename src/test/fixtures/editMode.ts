@@ -248,8 +248,8 @@ export const awsCreateBlueprintRequest: CreateBlueprintRequest = {
 
 export const awsBlueprintResponse: BlueprintResponse = {
   ...awsCreateBlueprintRequest,
-  id: mockBlueprintIds['registration'],
-  description: mockBlueprintDescriptions['registration'],
+  id: mockBlueprintIds['aws'],
+  description: mockBlueprintDescriptions['aws'],
 };
 
 export const gcpImageRequest: ImageRequest = {

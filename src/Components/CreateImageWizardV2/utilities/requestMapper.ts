@@ -182,6 +182,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   }
   return {
     wizardMode,
+    blueprintId: request.id,
     details: {
       blueprintName: request.name,
       blueprintDescription: request.description,

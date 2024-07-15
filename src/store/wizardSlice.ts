@@ -45,6 +45,7 @@ export type wizardState = {
     serverUrl: string;
     baseUrl: string;
   };
+  blueprintId?: string;
   wizardMode: WizardModeOptions;
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
@@ -159,6 +160,10 @@ export const selectServerUrl = (state: RootState) => {
 
 export const selectWizardMode = (state: RootState) => {
   return state.wizard.wizardMode;
+};
+
+export const selectBlueprintId = (state: RootState) => {
+  return state.wizard.blueprintId;
 };
 
 export const selectBaseUrl = (state: RootState) => {
