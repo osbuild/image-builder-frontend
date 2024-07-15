@@ -6,11 +6,11 @@ import {
   useLazyGetBlueprintsQuery,
 } from '../../../store/imageBuilderApi';
 import {
+  selectBlueprintId,
   selectBlueprintName,
   selectBlueprintDescription,
   selectFileSystemPartitionMode,
   selectPartitions,
-  selectWizardMode,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -59,7 +59,7 @@ export function useFilesystemValidation(): StepValidation {
 export function useDetailsValidation(): StepValidation {
   const name = useAppSelector(selectBlueprintName);
   const description = useAppSelector(selectBlueprintDescription);
-  const wizardMode = useAppSelector(selectWizardMode);
+  const blueprintId = useAppSelector(selectBlueprintId);
 
   const nameValid = isBlueprintNameValid(name);
   const descriptionValid = isBlueprintDescriptionValid(description);
@@ -68,11 +68,14 @@ export function useDetailsValidation(): StepValidation {
   const [trigger] = useLazyGetBlueprintsQuery();
 
   useEffect(() => {
-    if (wizardMode === 'create' && name !== '' && nameValid) {
+    if (name !== '' && nameValid) {
       trigger({ name })
         .unwrap()
         .then((response: BlueprintsResponse) => {
-          if (response?.meta?.count > 0) {
+          if (
+            response?.meta?.count > 0 &&
+            response.data[0].id !== blueprintId
+          ) {
             setUniqueName(false);
           } else {
             setUniqueName(true);
@@ -83,15 +86,15 @@ export function useDetailsValidation(): StepValidation {
           setUniqueName(true);
         });
     }
-  }, [wizardMode, name, setUniqueName, trigger]);
+  }, [blueprintId, name, setUniqueName, trigger]);
 
   let nameError = '';
   if (!nameValid) {
     nameError = 'Invalid blueprint name';
   } else if (uniqueName === false) {
     nameError = 'Blueprint with this name already exists';
-  } else if (wizardMode === 'create' && uniqueName === null) {
-    // Hack to keep the error message from flickering
+  } else if (!blueprintId && uniqueName === null) {
+    // Hack to keep the error message from flickering in create mode
     nameError = 'default';
   }
 
