@@ -279,8 +279,11 @@ const Packages = () => {
         },
       });
     }
-    if (debouncedSearchTerm.length > 2 && customRepositories.length > 0) {
-      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+    if (debouncedSearchTerm.length > 2) {
+      if (
+        toggleSourceRepos === RepoToggle.INCLUDED &&
+        customRepositories.length > 0
+      ) {
         searchCustomRpms({
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
