@@ -189,7 +189,7 @@ https://github.com/RedHatInsights/image-builder-frontend/blob/c84b493eba82ce83a7
 ##### Mocking flags for tests
 
 Flags can be mocked for the unit tests to access some feature. Checkout:
-https://github.com/osbuild/image-builder-frontend/blob/9a464e416bc3769cfc8e23b62f1dd410eb0e0455/src/test/Components/CreateImageWizardV2/CreateImageWizard.test.tsx#L49
+https://github.com/osbuild/image-builder-frontend/blob/9a464e416bc3769cfc8e23b62f1dd410eb0e0455/src/test/Components/CreateImageWizard/CreateImageWizard.test.tsx#L49
 
 If the two possible code path accessible via the toggles are defined in the code
 base, then it's good practice to test the two of them. If not, only test what's

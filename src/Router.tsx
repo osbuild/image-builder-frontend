@@ -10,11 +10,9 @@ import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
-  () => import('./Components/CreateImageWizardV2/ImportImageWizard')
+  () => import('./Components/CreateImageWizard/ImportImageWizard')
 );
-const CreateImageWizardV2 = lazy(
-  () => import('./Components/CreateImageWizardV2')
-);
+const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard'));
 
 export const Router = () => {
   const edgeParityFlag = useFlag('edgeParity.image-list');
@@ -48,7 +46,7 @@ export const Router = () => {
         path="imagewizard/:composeId?"
         element={
           <Suspense>
-            <CreateImageWizardV2 />
+            <CreateImageWizard />
           </Suspense>
         }
       />

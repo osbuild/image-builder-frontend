@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { BlueprintResponse } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
-import { mapRequestToState } from '../CreateImageWizardV2/utilities/requestMapper';
+import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;

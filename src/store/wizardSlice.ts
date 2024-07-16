@@ -12,22 +12,22 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
-import { FileSystemPartitionMode } from '../Components/CreateImageWizardV2/steps/FileSystem';
+import { FileSystemPartitionMode } from '../Components/CreateImageWizard/steps/FileSystem';
 import {
   Partition,
   Units,
-} from '../Components/CreateImageWizardV2/steps/FileSystem/FileSystemConfiguration';
+} from '../Components/CreateImageWizard/steps/FileSystem/FileSystemConfiguration';
 import {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
-} from '../Components/CreateImageWizardV2/steps/Packages/Packages';
-import { AwsShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Aws';
-import { AzureShareMethod } from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Azure';
+} from '../Components/CreateImageWizard/steps/Packages/Packages';
+import { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
+import { AzureShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Azure';
 import {
   GcpAccountType,
   GcpShareMethod,
-} from '../Components/CreateImageWizardV2/steps/TargetEnvironment/Gcp';
-import { V1ListSourceResponseItem } from '../Components/CreateImageWizardV2/types';
+} from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
+import { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { RHEL_9, X86_64 } from '../constants';
 
 import { RootState } from '.';
