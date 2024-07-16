@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { MockedRequest } from 'msw';
 
-import ImageWizard from '../../../Components/CreateImageWizardV2';
+import ImageWizard from '../../../Components/CreateImageWizard';
 import { RHEL_9 } from '../../../constants';
 import {
   CreateBlueprintRequest,

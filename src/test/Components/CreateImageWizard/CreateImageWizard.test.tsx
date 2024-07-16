@@ -17,7 +17,7 @@ import {
   openAndDismissSaveAndBuildModal,
 } from './wizardTestUtils';
 
-import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { PROVISIONING_API, RHSM_API } from '../../../constants';
 import { server } from '../../mocks/server';

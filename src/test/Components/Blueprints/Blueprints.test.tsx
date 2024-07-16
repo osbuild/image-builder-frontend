@@ -5,7 +5,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import CreateImageWizard from '../../../Components/CreateImageWizardV2';
+import CreateImageWizard from '../../../Components/CreateImageWizard';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { emptyGetBlueprints } from '../../fixtures/blueprints';

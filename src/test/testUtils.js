@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
-import ImportImageWizard from '../Components/CreateImageWizardV2/ImportImageWizard';
+import ImportImageWizard from '../Components/CreateImageWizard/ImportImageWizard';
 import LandingPage from '../Components/LandingPage/LandingPage';
 import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import { middleware, reducer } from '../store';

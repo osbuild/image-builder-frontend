@@ -6,7 +6,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { rest } from 'msw';
 
-import CreateImageWizard from '../../../Components/CreateImageWizardV2/CreateImageWizard';
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { PROVISIONING_API } from '../../../constants';
 import { server } from '../../mocks/server';
