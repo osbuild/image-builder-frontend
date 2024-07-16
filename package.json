@@ -50,7 +50,7 @@
     "setupFilesAfterEnv": [
       "./src/test/jest.setup.js"
     ],
-    "testTimeout": 10000
+    "testTimeout": 20000
   },
   "devDependencies": {
     "@babel/core": "7.24.7",

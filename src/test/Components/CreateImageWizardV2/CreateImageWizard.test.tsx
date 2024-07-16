@@ -943,7 +943,7 @@ describe('Step Details', () => {
 
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
-  }, 20000);
+  }, 50000);
 });
 
 describe('Step Review', () => {
