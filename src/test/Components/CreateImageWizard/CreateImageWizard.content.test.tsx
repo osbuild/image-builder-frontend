@@ -109,12 +109,13 @@ const checkRecommendationsEmptyState = async () => {
 };
 
 export const selectCustomRepo = async () => {
+  const user = userEvent.setup();
   await clickBack();
   const customRepoCheckbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
 
-  await userEvent.click(customRepoCheckbox);
+  user.click(customRepoCheckbox);
   await clickNext();
 };
 
