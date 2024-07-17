@@ -1,3 +1,4 @@
+import { configure } from '@testing-library/react';
 import nodeFetch, { Request, Response } from 'node-fetch';
 
 import { server } from './mocks/server';
@@ -15,6 +16,16 @@ const MockResizeObserver = vi.fn(() => ({
   disconnect: vi.fn(),
 }));
 vi.stubGlobal('ResizeObserver', MockResizeObserver);
+
+// Remove DOM dump from the testing-library output
+configure({
+  getElementError: (message: string) => {
+    const error = new Error(message);
+    error.name = 'TestingLibraryElementError';
+    error.stack = '';
+    return error;
+  },
+});
 
 beforeAll(() => server.listen({ onUnhandledRequest: 'error' }));
 afterAll(() => server.close());
