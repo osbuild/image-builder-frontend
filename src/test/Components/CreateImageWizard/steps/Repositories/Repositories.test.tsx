@@ -223,7 +223,6 @@ describe('Repositories edit mode', () => {
     expect(repoCheckbox).toBeChecked();
 
     await user.click(repoCheckbox);
-    await new Promise((r) => setTimeout(r, 1000));
     await screen.findByText(/Are you sure?/);
     const removeAnywayBtn = await screen.findByRole('button', {
       name: /Remove anyway/,
