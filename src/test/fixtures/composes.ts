@@ -24,20 +24,10 @@ export const mockComposesEmpty: ComposesResponse = {
 const currentDate = new Date();
 const currentDateInString = currentDate.toISOString();
 
-type Params = {
-  limit: number;
-  offset: number;
-  ignoreImageTypes: string;
-};
-
-type Url = {
-  searchParams: Params;
-};
-
-export const composesEndpoint = (url: Url) => {
-  const params = url.searchParams;
-  const limit = Number(params.limit) || 100;
-  const offset = Number(params.offset) || 0;
+export const composesEndpoint = (url: URL) => {
+  const params = new URLSearchParams(url.search);
+  const limit = Number(params.get('limit')) || 100;
+  const offset = Number(params.get('offset')) || 0;
 
   return {
     meta: {
