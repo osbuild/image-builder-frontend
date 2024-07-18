@@ -5,6 +5,8 @@ import { PROVISIONING_API } from '../constants';
 // initialize an empty api service that we'll inject endpoints into later as needed
 export const emptyProvisioningApi = createApi({
   reducerPath: 'provisioningApi',
-  baseQuery: fetchBaseQuery({ baseUrl: PROVISIONING_API }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: window.location.origin + PROVISIONING_API,
+  }),
   endpoints: () => ({}),
 });
