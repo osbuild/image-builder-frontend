@@ -5,6 +5,8 @@ import { CONTENT_SOURCES_API } from '../constants';
 // initialize an empty api service that we'll inject endpoints into later as needed
 export const emptyContentSourcesApi = createApi({
   reducerPath: 'contentSourcesApi',
-  baseQuery: fetchBaseQuery({ baseUrl: CONTENT_SOURCES_API }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: window.location.origin + CONTENT_SOURCES_API,
+  }),
   endpoints: () => ({}),
 });
