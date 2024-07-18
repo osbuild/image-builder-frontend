@@ -220,16 +220,19 @@ describe('Repositories edit mode', () => {
     const repoCheckbox = await screen.findByRole('checkbox', {
       name: /select row 0/i,
     });
-    expect(repoCheckbox).toBeChecked();
+    await waitFor(() => expect(repoCheckbox).toBeChecked());
 
-    await user.click(repoCheckbox);
-    await new Promise((r) => setTimeout(r, 1000));
+    user.click(repoCheckbox);
     await screen.findByText(/Are you sure?/);
     const removeAnywayBtn = await screen.findByRole('button', {
       name: /Remove anyway/,
     });
-    await user.click(removeAnywayBtn);
+    user.click(removeAnywayBtn);
 
-    expect(repoCheckbox).not.toBeChecked();
+    await waitFor(() =>
+      expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument()
+    );
+
+    await waitFor(() => expect(repoCheckbox).not.toBeChecked());
   });
 });
