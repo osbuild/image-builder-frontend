@@ -247,7 +247,7 @@ There are also additional rules added to enforce code style. Those being:
 
 ## Test Guidelines
 
-This project is tested using the [Jest](https://jestjs.io/docs/getting-started) framework, [React Testing Library](https://testing-library.com/docs/react-testing-library/intro), and the [Mock Service Worker](https://mswjs.io/docs/) library.
+This project is tested using the [Vitest](https://vitest.dev/guide/) framework, [React Testing Library](https://testing-library.com/docs/react-testing-library/intro), and the [Mock Service Worker](https://mswjs.io/docs/) library.
 
 All UI contributions must also include a new test or update an existing test in order to maintain code coverage.
 
