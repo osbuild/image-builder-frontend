@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { screen, within } from '@testing-library/react';
 
 import { renderEditMode } from './wizardTestUtils';
