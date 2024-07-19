@@ -260,6 +260,19 @@ npm run test
 
 These tests will also be run in our CI when a PR is opened.
 
+Note that `testing-library` DOM printout is currently disabled for all tests by the following configuration in `src/test/setup.ts`:
+```typescript
+configure({
+  getElementError: (message: string) => {
+    const error = new Error(message);
+    error.name = 'TestingLibraryElementError';
+    error.stack = '';
+    return error;
+  },
+});
+```
+If you'd like to see the stack printed out you can either temporarily disable the configuration or generate a [Testing Playground](https://testing-playground.com/) link by adding `screen.logTestingPlaygroundURL()` to your test.
+
 ### Using MSW data in development
 
 If you want to develop in environment with mocked data, run the command `npm run stage-beta:msw`.
