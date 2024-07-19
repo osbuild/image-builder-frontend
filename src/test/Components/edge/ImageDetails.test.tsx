@@ -1,5 +1,3 @@
-import '@testing-library/jest-dom';
-
 import { useFlag } from '@unleash/proxy-client-react';
 
 vi.mock('@unleash/proxy-client-react', () => ({

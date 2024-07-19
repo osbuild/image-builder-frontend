@@ -1,5 +1,4 @@
 import { screen, waitFor } from '@testing-library/react';
-import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';

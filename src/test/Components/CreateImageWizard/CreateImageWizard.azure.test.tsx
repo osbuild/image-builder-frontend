@@ -1,5 +1,4 @@
 import React from 'react';
-import '@testing-library/jest-dom';
 
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
