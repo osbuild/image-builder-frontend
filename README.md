@@ -70,7 +70,7 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
     Choose a runner (podman or docker), and point the SPANDX_CONFIG variable to
     `profile/local-frontend.js` included in image-builder-frontend.
 
-    ```
+    ```bash
         sudo insights-proxy/scripts/patch-etc-hosts.sh
         export RUNNER="podman"
         export SPANDX_CONFIG=$PATH_TO/image-builder-frontend/profiles/local-frontend.js
@@ -81,7 +81,7 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 
     In the image-builder-frontend checkout directory
 
-    ```
+    ```bash
         npm install
         npm start
     ```
@@ -109,7 +109,7 @@ For a hypothetical API called foobar
 2. Create a new "empty" API file under `src/store/emptyFoobarApi.ts` that has following
 content:
 
-```{ts}
+```typescript
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
 import { FOOBAR_API } from '../constants';
@@ -124,13 +124,13 @@ export const emptyFoobarApi = createApi({
 
 3. Declare new constant `FOOBAR_API` with the API url in `src/constants.ts`
 
-```
+```typescript
 export const FOOBAR_API = 'api/foobar/v1'
 ```
 
 4. Create the config file for code generation in `api/config/foobar.ts` containing:
 
-```
+```typescript
 import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
@@ -146,7 +146,7 @@ const config: ConfigFile = {
 
 5. Update the `api.sh` script by adding a new line for npx to generate the code:
 
-```
+```bash
 npx @rtk-query/codegen-openapi ./api/config/foobar.ts &
 ```
 
@@ -159,7 +159,7 @@ foobarApi.ts
 
 7. run api generation
 
-```
+```bash
 npm run api
 ```
 
