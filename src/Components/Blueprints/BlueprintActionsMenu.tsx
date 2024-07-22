@@ -5,8 +5,8 @@ import {
   DropdownItem,
   DropdownList,
   MenuToggle,
-  MenuToggleElement,
 } from '@patternfly/react-core';
+import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { EllipsisVIcon } from '@patternfly/react-icons';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';

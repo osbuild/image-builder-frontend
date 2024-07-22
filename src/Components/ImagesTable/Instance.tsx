@@ -5,15 +5,17 @@ import {
   Button,
   ClipboardCopy,
   List,
-  ListComponent,
   ListItem,
   Modal,
   ModalVariant,
-  OrderType,
   Popover,
   PopoverPosition,
   Skeleton,
 } from '@patternfly/react-core';
+import {
+  ListComponent,
+  OrderType,
+} from '@patternfly/react-core/dist/esm/components/List/List';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';

@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {
   Dropdown,
   MenuToggle,
-  MenuToggleElement,
   Menu,
   MenuContent,
   MenuList,
@@ -15,6 +14,7 @@ import {
   ButtonProps,
   Button,
 } from '@patternfly/react-core';
+import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { skipToken } from '@reduxjs/toolkit/query';
 

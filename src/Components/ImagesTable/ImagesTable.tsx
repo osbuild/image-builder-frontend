@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  OnSetPage,
   Pagination,
   PaginationVariant,
   Toolbar,
@@ -13,6 +12,7 @@ import {
   Badge,
   Button,
 } from '@patternfly/react-core';
+import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import {
   ActionsColumn,
   ExpandableRowContent,
