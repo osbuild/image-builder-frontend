@@ -27,7 +27,7 @@
     "redux-promise-middleware": "6.2.0"
   },
   "devDependencies": {
-    "@babel/core": "7.24.7",
+    "@babel/core": "7.24.9",
     "@babel/eslint-parser": "7.24.8",
     "@babel/plugin-proposal-object-rest-spread": "7.20.7",
     "@babel/plugin-transform-runtime": "7.24.7",
