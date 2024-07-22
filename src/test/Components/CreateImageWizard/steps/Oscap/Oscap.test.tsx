@@ -6,6 +6,11 @@ import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   baseCreateBlueprintRequest,
+  expectedFilesystemCisL2,
+  expectedKernelCisL2,
+  expectedOpenscapCisL2,
+  expectedPackagesCisL2,
+  expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
@@ -101,27 +106,6 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
-const expectedOpenscapCisL2 = {
-  profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l2',
-};
-
-const expectedPackagesCisL2 = ['aide', 'emacs'];
-
-const expectedServicesCisL2 = {
-  enabled: ['crond', 'emacs-service'],
-  masked: ['nfs-server', 'neovim-service'],
-};
-
-const expectedKernelCisL2 = {
-  append: 'audit_backlog_limit=8192 audit=2',
-};
-
-const expectedFilesystemCisL2 = [
-  { min_size: 10737418240, mountpoint: '/' },
-  { min_size: 1073741824, mountpoint: '/tmp' },
-  { min_size: 1073741824, mountpoint: '/app' },
-];
-
 describe('oscap', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -195,6 +179,7 @@ describe('OpenSCAP edit mode', () => {
     vi.clearAllMocks();
   });
 
+  const user = userEvent.setup();
   test('edit mode works', async () => {
     const id = mockBlueprintIds['oscap'];
     await renderEditMode(id);
@@ -205,5 +190,31 @@ describe('OpenSCAP edit mode', () => {
     );
     const expectedRequest = oscapCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('fsc and packages get populated on edit', async () => {
+    const id = mockBlueprintIds['oscap'];
+    await renderEditMode(id);
+
+    // check that the FSC contains a /tmp partition
+    const fscBtns = await screen.findAllByRole('button', {
+      name: /file system configuration/i,
+    });
+    user.click(fscBtns[0]);
+    await screen.findByRole('heading', { name: /file system configuration/i });
+    await screen.findByText('/tmp');
+    // check that the Packages contain neovim package
+    const packagesNavBtn = await screen.findByRole('button', {
+      name: /additional packages/i,
+    });
+    user.click(packagesNavBtn);
+    await screen.findByRole('heading', {
+      name: /Additional packages/i,
+    });
+    const selectedBtn = await screen.findByRole('button', {
+      name: /Selected/i,
+    });
+    user.click(selectedBtn);
+    await screen.findByText('neovim');
   });
 });
