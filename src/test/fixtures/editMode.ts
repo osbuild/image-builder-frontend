@@ -60,6 +60,27 @@ export const expectedFilesystemCisL1 = [
   { min_size: 1073741824, mountpoint: '/home' },
 ];
 
+export const expectedOpenscapCisL2 = {
+  profile_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l2',
+};
+
+export const expectedPackagesCisL2 = ['aide', 'emacs'];
+
+export const expectedServicesCisL2 = {
+  enabled: ['crond', 'emacs-service'],
+  masked: ['nfs-server', 'neovim-service'],
+};
+
+export const expectedKernelCisL2 = {
+  append: 'audit_backlog_limit=8192 audit=2',
+};
+
+export const expectedFilesystemCisL2 = [
+  { min_size: 10737418240, mountpoint: '/' },
+  { min_size: 1073741824, mountpoint: '/tmp' },
+  { min_size: 1073741824, mountpoint: '/app' },
+];
+
 // FSC
 export const expectedFsc = [
   { min_size: 10 * UNIT_GIB, mountpoint: '/' },
