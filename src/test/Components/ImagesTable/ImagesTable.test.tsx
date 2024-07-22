@@ -154,7 +154,9 @@ describe('Images Table', () => {
 
     await user.click(errorPopoverR2);
     await screen.findByTestId('errorstatus-popover');
-    expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+    );
     await user.click(errorPopoverR2);
     await waitFor(() =>
       expect(
@@ -164,7 +166,9 @@ describe('Images Table', () => {
 
     await user.click(errorPopoverR7);
     await screen.findByTestId('errorstatus-popover');
-    expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible();
+    await waitFor(() =>
+      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+    );
     await user.click(errorPopoverR7);
     await waitFor(() =>
       expect(
@@ -202,10 +206,14 @@ describe('Images Table', () => {
 
     await user.click(errorPopoverP2R6);
     await screen.findByTestId('errorstatus-popover');
-    expect(
-      screen.getAllByText(/Something went very wrong for Azure/i)[0]
-    ).toBeVisible();
-    expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible();
+    await waitFor(() =>
+      expect(
+        screen.getAllByText(/Something went very wrong for Azure/i)[0]
+      ).toBeVisible()
+    );
+    await waitFor(() =>
+      expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible()
+    );
   });
 });
 
