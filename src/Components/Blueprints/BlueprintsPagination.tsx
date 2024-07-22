@@ -1,10 +1,7 @@
 import React from 'react';
 
-import {
-  OnSetPage,
-  Pagination,
-  PaginationVariant,
-} from '@patternfly/react-core';
+import { Pagination, PaginationVariant } from '@patternfly/react-core';
+import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 
 import {
   selectBlueprintSearchInput,

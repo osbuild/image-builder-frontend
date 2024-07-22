@@ -14,13 +14,13 @@ import {
   SelectList,
   ValidatedOptions,
   MenuToggle,
-  MenuToggleElement,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
   ChipGroup,
   Chip,
 } from '@patternfly/react-core';
+import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import {
   ExclamationCircleIcon,
   HelpIcon,

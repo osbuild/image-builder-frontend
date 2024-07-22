@@ -3,7 +3,6 @@ import React from 'react';
 import {
   ActionGroup,
   Button,
-  DropEvent,
   FileUpload,
   Form,
   FormGroup,
@@ -13,6 +12,7 @@ import {
   Modal,
   ModalVariant,
 } from '@patternfly/react-core';
+import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useNavigate } from 'react-router-dom';
 

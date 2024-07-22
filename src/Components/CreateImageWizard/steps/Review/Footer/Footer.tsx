@@ -4,10 +4,10 @@ import {
   Button,
   Dropdown,
   MenuToggle,
-  MenuToggleElement,
   WizardFooterWrapper,
   useWizardContext,
 } from '@patternfly/react-core';
+import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';

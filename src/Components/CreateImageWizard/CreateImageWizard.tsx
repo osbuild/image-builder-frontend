@@ -6,10 +6,10 @@ import {
   WizardFooterWrapper,
   WizardNavItem,
   WizardStep,
-  WizardStepType,
   useWizardContext,
   PageSection,
 } from '@patternfly/react-core';
+import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
