@@ -64,7 +64,7 @@ const selectProfile = async () => {
   const selectProfileDropdown = await screen.findByRole('textbox', {
     name: /select a profile/i,
   });
-  await waitFor(async () => user.click(selectProfileDropdown));
+  await waitFor(async () => await user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
     /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
