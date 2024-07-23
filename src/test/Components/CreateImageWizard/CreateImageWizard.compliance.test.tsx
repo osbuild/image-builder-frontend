@@ -237,8 +237,10 @@ describe('Step Compliance', () => {
     await screen.findByText(
       /OpenSCAP profiles are not compatible with WSL images/i
     );
-    expect(
-      await screen.findByRole('textbox', { name: /select a profile/i })
-    ).toBeEnabled();
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', { name: /select a profile/i })
+      ).toBeEnabled();
+    });
   });
 });
