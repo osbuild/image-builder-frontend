@@ -11,6 +11,7 @@ import {
   Spinner,
   Bullseye,
   Badge,
+  Button,
 } from '@patternfly/react-core';
 import {
   ActionsColumn,
@@ -22,6 +23,7 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
 import './ImagesTable.scss';
@@ -51,6 +53,7 @@ import {
   selectLimit,
   selectOffset,
   selectSelectedBlueprintId,
+  setBlueprintId,
 } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
@@ -452,6 +455,17 @@ const Row = ({
 }: RowPropTypes) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
+  const dispatch = useDispatch();
+
+  const handleClick = ({
+    blueprintId,
+  }: {
+    blueprintId: BlueprintItem['id'];
+  }) => {
+    if (blueprintId) {
+      dispatch(setBlueprintId(blueprintId));
+    }
+  };
 
   return (
     <Tbody key={compose.id} isExpanded={isExpanded}>
@@ -463,7 +477,22 @@ const Row = ({
             onToggle: () => handleToggle(),
           }}
         />
-        <Td dataLabel="Image name">{compose.image_name || compose.id}</Td>
+        <Td dataLabel="Image name">
+          {compose.blueprint_id ? (
+            <Button
+              variant="link"
+              isInline
+              onClick={() =>
+                compose.blueprint_id &&
+                handleClick({ blueprintId: compose.blueprint_id })
+              }
+            >
+              {compose.image_name || compose.id}
+            </Button>
+          ) : (
+            <span> {compose.image_name || compose.id}</span>
+          )}
+        </Td>
         <Td
           dataLabel="Created"
           title={timestampToDisplayStringDetailed(compose.created_at)}
