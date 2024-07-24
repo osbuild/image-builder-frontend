@@ -43,9 +43,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) =>
-    flag === 'image-builder.wizard.oscap.enabled' ? true : false
-  ),
+  useFlag: vi.fn(() => false),
 }));
 
 const selectRhel8 = async () => {
