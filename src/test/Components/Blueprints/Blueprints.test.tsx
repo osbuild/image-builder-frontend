@@ -24,9 +24,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) =>
-    flag === 'image-builder.new-wizard.enabled' ? true : false
-  ),
+  useFlag: vi.fn(() => false),
 }));
 
 const selectBlueprintById = async (bpId: string) => {

@@ -45,20 +45,11 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   }),
 }));
 
-let mockContentSourcesEnabled: boolean;
-
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.enable-content-sources':
-        return mockContentSourcesEnabled;
-      case 'image-builder.pkgrecs.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
+  useFlag: vi.fn((flag) =>
+    flag === 'image-builder.pkgrecs.enabled' ? true : false
+  ),
 }));
 
 const typeIntoSearchBox = async (searchTerm: string) => {
@@ -120,13 +111,10 @@ export const selectCustomRepo = async () => {
 describe('Step Packages', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockContentSourcesEnabled = true;
   });
 
   const user = userEvent.setup();
   const setUp = async () => {
-    mockContentSourcesEnabled = false;
-
     ({ router } = await renderCustomRoutesWithReduxRouter(
       'imagewizard',
       {},
@@ -418,7 +406,6 @@ describe('Step Packages', () => {
 describe('Step Custom repositories', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockContentSourcesEnabled = true;
   });
 
   const user = userEvent.setup();
