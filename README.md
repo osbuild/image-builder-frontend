@@ -35,10 +35,9 @@ Make sure you have npm@10 and node 18+ installed. If you need multiple versions 
 
 1. run `npm ci`
 
-2. run `npm run prod-beta`. This command uses a prod-beta env by default. Configure your
-   environment by the `env` attribute in `dev.webpack.config.js`.
+2. run `npm run start`, select prod environment and choose beta or stable.
 
-3. Secondly redirect a few `prod.foo.redhat.com` to localhost, if this has not been done already.
+3. redirect `prod.foo.redhat.com` to localhost, if this has not been done already.
 
 ```bash
 echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
@@ -50,10 +49,9 @@ echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 
 1. run `npm ci`
 
-2. run `npm run stage-beta`. This command uses a stage-beta env by default. Configure your
-   environment by the `env` attribute in `dev.webpack.config.js`.
+2. run `npm run start`, select stage environment and choose beta or stable.
 
-3. Secondly redirect a few `stage.foo.redhat.com` to localhost, if this has not been done already.
+3. redirect `stage.foo.redhat.com` to localhost, if this has not been done already.
 
 ```bash
 echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
@@ -273,7 +271,7 @@ configure({
 ```
 If you'd like to see the stack printed out you can either temporarily disable the configuration or generate a [Testing Playground](https://testing-playground.com/) link by adding `screen.logTestingPlaygroundURL()` to your test.
 
-### Using MSW data in development
+### ~~Using MSW data in development~~ - CURRENTLY NOT WORKING
 
 If you want to develop in environment with mocked data, run the command `npm run stage-beta:msw`.
 
