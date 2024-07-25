@@ -8,8 +8,8 @@
   },
   "dependencies": {
     "@patternfly/patternfly": "5.3.1",
-    "@patternfly/react-core": "5.3.4",
     "@patternfly/react-code-editor": "5.3.4",
+    "@patternfly/react-core": "5.3.4",
     "@patternfly/react-table": "5.3.4",
     "@redhat-cloud-services/frontend-components": "4.2.13",
     "@redhat-cloud-services/frontend-components-notifications": "4.1.0",
@@ -50,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "7.16.1",
     "@typescript-eslint/parser": "7.17.0",
     "@vitejs/plugin-react": "4.3.1",
+    "@vitest/coverage-v8": "2.0.4",
     "babel-jest": "29.7.0",
     "babel-plugin-dual-import": "1.2.1",
     "babel-plugin-transform-imports": "2.0.0",
@@ -83,7 +84,7 @@
     "ts-patch": "3.2.0",
     "typescript": "5.5.3",
     "uuid": "10.0.0",
-    "vitest": "1.6.0",
+    "vitest": "2.0.4",
     "vitest-canvas-mock": "0.3.3",
     "webpack-bundle-analyzer": "4.10.2",
     "whatwg-fetch": "3.6.20"
