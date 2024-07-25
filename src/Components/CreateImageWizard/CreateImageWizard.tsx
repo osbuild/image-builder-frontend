@@ -36,6 +36,7 @@ import {
   isAzureSubscriptionIdValid,
   isAzureResourceGroupValid,
   isGcpEmailValid,
+  isSnapshotDateValid,
 } from './validators';
 
 import { RHEL_8, AARCH64 } from '../../constants';
@@ -177,7 +178,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
 
-  const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
+  const snapshotStepIsValid = !useLatest && !isSnapshotDateValid(snapshotDate));
 
   const detailsValidation = useDetailsValidation();
   const fileSystemValidation = useFilesystemValidation();
@@ -367,7 +368,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                       key="wizard-repository-snapshot"
                       footer={
                         <CustomWizardFooter
-                          disableNext={snapshotStepRequiresChoice}
+                          disableNext={snapshotStepIsValid}
                         />
                       }
                     >
@@ -379,7 +380,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
-                isDisabled={snapshotStepRequiresChoice}
+                isDisabled={snapshotStepIsValid}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <RepositoriesStep />
@@ -388,7 +389,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Additional packages"
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
-                isDisabled={snapshotStepRequiresChoice}
+                isDisabled={snapshotStepIsValid}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <PackagesStep />
@@ -400,6 +401,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               name="First boot script configuration"
               id="wizard-first-boot"
               key="wizard-first-boot"
+              isDisabled={snapshotStepIsValid}
               footer={<CustomWizardFooter disableNext={false} />}
             >
               <FirstBootStep />
@@ -408,7 +410,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="Details"
             id={'step-details'}
-            isDisabled={snapshotStepRequiresChoice}
+            isDisabled={snapshotStepIsValid}
             navItem={detailsNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
@@ -422,7 +424,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="Review"
             id="step-review"
-            isDisabled={snapshotStepRequiresChoice}
+            isDisabled={snapshotStepIsValid}
             footer={<ReviewWizardFooter />}
           >
             {/* Intentional prop drilling for simplicity - To be removed */}

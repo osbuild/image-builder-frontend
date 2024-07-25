@@ -74,3 +74,7 @@ export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   }
   return duplicates;
 };
+
+export const isSnapshotDateValid = (date: string) => {
+  return !isNaN(new Date(date).getTime());
+};
