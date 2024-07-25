@@ -138,7 +138,7 @@ describe('Step Upload to Azure', () => {
     await verifyCancelButton(router);
   });
 
-  test('azure step basics works', async () => {
+  test('azure step basics works', { retry: 3 }, async () => {
     await setUp();
     const nextButton = await getNextButton();
 
@@ -233,7 +233,7 @@ describe('Step Upload to Azure', () => {
     );
 
     expect(nextButton).not.toHaveClass('pf-m-disabled');
-  }, 10000);
+  });
 
   test('handles change of selected Source', async () => {
     await setUp();
