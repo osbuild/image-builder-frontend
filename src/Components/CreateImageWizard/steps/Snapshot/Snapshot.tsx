@@ -81,7 +81,7 @@ export default function Snapshot() {
               alignContent={{ default: 'alignContentCenter' }}
             >
               <DatePicker
-                id="pick snapshot date radio"
+                id="snapshot-date-picker"
                 name="pick-snapshot-date"
                 value={snapshotDate}
                 required
