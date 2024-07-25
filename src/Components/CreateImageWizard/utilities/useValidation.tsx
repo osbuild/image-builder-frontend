@@ -10,6 +10,7 @@ import {
   selectBlueprintName,
   selectBlueprintDescription,
   selectFileSystemPartitionMode,
+  selectFirstBootScript,
   selectPartitions,
 } from '../../../store/wizardSlice';
 import {
@@ -28,8 +29,11 @@ export type StepValidation = {
 
 export function useIsBlueprintValid(): boolean {
   const filesystem = useFilesystemValidation();
+  const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
-  return !filesystem.disabledNext && !details.disabledNext;
+  return (
+    !filesystem.disabledNext && !firstBoot.disabledNext && !details.disabledNext
+  );
 }
 
 export function useFilesystemValidation(): StepValidation {
@@ -54,6 +58,21 @@ export function useFilesystemValidation(): StepValidation {
     }
   }
   return { errors, disabledNext };
+}
+
+export function useFirstBootValidation(): StepValidation {
+  const script = useAppSelector(selectFirstBootScript);
+  let hasShebang = false;
+  if (script) {
+    hasShebang = script.split('\n')[0].startsWith('#!');
+  }
+  const valid = !script || hasShebang;
+  return {
+    errors: {
+      script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
+    },
+    disabledNext: !valid,
+  };
 }
 
 export function useDetailsValidation(): StepValidation {

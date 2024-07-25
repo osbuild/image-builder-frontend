@@ -13,7 +13,7 @@ import {
   firstBootCreateBlueprintRequest,
   firstBootData,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../../../testUtils';
+import { clickNext, getNextButton } from '../../../../testUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -104,6 +104,22 @@ describe('First Boot step', () => {
     await goToFirstBootStep();
     await screen.findByText('First boot configuration');
   });
+
+  // test('should validate shebang', async () => {
+  //   await renderCreateMode();
+  //   await goToFirstBootStep();
+  //   await openCodeEditor();
+  //   const editor = await screen.findByRole('textbox');
+  //   await userEvent.type(editor, 'echo "Hello, world!"');
+  //   expect(await screen.findByText('Missing shebang')).toBeInTheDocument();
+  //   expect(await getNextButton()).toBeDisabled();
+
+  //   await userEvent.clear(editor);
+  //   await userEvent.type(editor, '#!/bin/bash');
+  //   expect(screen.queryByText('Missing shebang')).not.toBeInTheDocument();
+  //   expect(await getNextButton()).toBeEnabled();
+  // });
+
   //  describe('validate first boot request ', () => {
   //    test('should validate first boot request', async () => {
   //      await renderCreateMode();
