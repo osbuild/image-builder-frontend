@@ -1,13 +1,23 @@
 import React from 'react';
 
 import { CodeEditor, Language } from '@patternfly/react-code-editor';
-import { Text, Form, Title, Alert } from '@patternfly/react-core';
+import {
+  Text,
+  Form,
+  FormGroup,
+  FormHelperText,
+  Title,
+  Alert,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   selectFirstBootScript,
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
+import { useFirstBootValidation } from '../../utilities/useValidation';
 
 const detectScriptType = (scriptString: string): Language => {
   const lines = scriptString.split('\n');
@@ -32,6 +42,7 @@ const FirstBootStep = () => {
   const dispatch = useAppDispatch();
   const selectedScript = useAppSelector(selectFirstBootScript);
   const language = detectScriptType(selectedScript);
+  const { errors } = useFirstBootValidation();
 
   return (
     <Form>
@@ -55,20 +66,31 @@ const FirstBootStep = () => {
           privacy.
         </Text>
       </Alert>
-      <CodeEditor
-        isUploadEnabled
-        isDownloadEnabled
-        isCopyEnabled
-        isLanguageLabelVisible
-        language={language}
-        onCodeChange={(code) => dispatch(setFirstBootScript(code))}
-        code={selectedScript}
-        height="35vh"
-        emptyStateButton={<span data-testid="firstboot_browse">Browse</span>}
-        emptyStateLink={
-          <span data-testid="firstboot_write_manual">Start from scratch</span>
-        }
-      />
+      <FormGroup>
+        <CodeEditor
+          isUploadEnabled
+          isDownloadEnabled
+          isCopyEnabled
+          isLanguageLabelVisible
+          language={language}
+          onCodeChange={(code) => dispatch(setFirstBootScript(code))}
+          code={selectedScript}
+          height="35vh"
+          emptyStateButton={<span data-testid="firstboot_browse">Browse</span>}
+          emptyStateLink={
+            <span data-testid="firstboot_write_manual">Start from scratch</span>
+          }
+        />
+        {errors.script && (
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem variant="error" hasIcon>
+                {errors.script}
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        )}
+      </FormGroup>
     </Form>
   );
 };

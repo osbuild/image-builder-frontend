@@ -28,6 +28,7 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
   useFilesystemValidation,
+  useFirstBootValidation,
   useDetailsValidation,
 } from './utilities/useValidation';
 import {
@@ -179,9 +180,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
 
-  const detailsValidation = useDetailsValidation();
-  const fileSystemValidation = useFilesystemValidation();
   const [filesystemPristine, setFilesystemPristine] = useState(true);
+  const fileSystemValidation = useFilesystemValidation();
+  const firstBootValidation = useFirstBootValidation();
+  const detailsValidation = useDetailsValidation();
 
   let startIndex = 1; // default index
   if (isEdit) {
@@ -192,7 +194,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }
   }
 
-  const detailsNavItem = (
+  // Duplicating some of the logic from the Wizard component to allow for custom nav items status
+  // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128
+  const customStatusNavItem = (
     step: WizardStepType,
     activeStep: WizardStepType,
     steps: WizardStepType[],
@@ -202,6 +206,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     const hasVisitedNextStep = steps.some(
       (s) => s.index > step.index && s.isVisited
     );
+
+    // Only this code is different from the original
+    const status =
+      (step.isVisited && step.id !== activeStep?.id && step.status) ||
+      'default';
 
     return (
       <WizardNavItem
@@ -216,10 +225,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         isVisited={step.isVisited}
         stepIndex={step.index}
         onClick={() => goToStepByIndex(step.index)}
-        status={
-          (step.isVisited && step.id !== activeStep?.id && step.status) ||
-          'default'
-        }
+        status={status}
       />
     );
   };
@@ -400,7 +406,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               name="First boot script configuration"
               id="wizard-first-boot"
               key="wizard-first-boot"
-              footer={<CustomWizardFooter disableNext={false} />}
+              navItem={customStatusNavItem}
+              status={firstBootValidation.disabledNext ? 'error' : 'default'}
+              footer={
+                <CustomWizardFooter
+                  disableNext={firstBootValidation.disabledNext}
+                />
+              }
             >
               <FirstBootStep />
             </WizardStep>
@@ -409,7 +421,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             name="Details"
             id={'step-details'}
             isDisabled={snapshotStepRequiresChoice}
-            navItem={detailsNavItem}
+            navItem={customStatusNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
               <CustomWizardFooter
