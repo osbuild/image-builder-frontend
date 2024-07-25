@@ -270,7 +270,7 @@ const ActivationKeysList = () => {
         </Select>
         <TextContent>
           <Text>
-            By default, activation key is generated and preset for you. Admins
+            By default, an activation key is generated and preset for you. Admins
             can create and manage keys by visiting the <ManageKeysButton />
           </Text>
         </TextContent>
