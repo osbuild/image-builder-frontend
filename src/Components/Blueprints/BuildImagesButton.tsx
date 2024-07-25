@@ -120,11 +120,7 @@ export const BuildImagesButton = () => {
                       />
                     </FlexItem>
                   )}
-                  <FlexItem>
-                    {deselectedTargets.length !== 0
-                      ? 'Build selected'
-                      : 'Build image'}
-                  </FlexItem>
+                  <FlexItem>Build images</FlexItem>
                 </Flex>
               </MenuToggleAction>,
             ],
