@@ -92,22 +92,22 @@ describe('Blueprints', () => {
     await findByText('No images');
   });
 
-  test('click build image button', async () => {
+  test('click build images button', async () => {
     renderWithReduxRouter('', {});
 
     await selectBlueprintById(blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
-      name: /Build image/i,
+      name: /Build images/i,
     });
     expect(buildImageBtn).toBeEnabled();
   });
 
-  test('uncheck Target option and check that build image button is Disable', async () => {
+  test('uncheck Target option and check that build images button is Disable', async () => {
     renderWithReduxRouter('', {});
 
     await selectBlueprintById(blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
-      name: /Build image/i,
+      name: /Build images/i,
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
@@ -122,7 +122,7 @@ describe('Blueprints', () => {
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
 
     const buildSelectedBtn = await screen.findByRole('button', {
-      name: /Build selected/i,
+      name: /Build images/i,
     });
     expect(buildSelectedBtn).toBeDisabled();
   });
@@ -132,7 +132,7 @@ describe('Blueprints', () => {
 
     await selectBlueprintById(blueprintIdWithMultipleTargets);
     const buildImageBtn = await screen.findByRole('button', {
-      name: /Build image/i,
+      name: /Build images/i,
     });
     expect(buildImageBtn).toBeEnabled();
     const buildImageDropDown = screen.getByTestId('blueprint-build-image-menu');
@@ -146,7 +146,7 @@ describe('Blueprints', () => {
     user.click(awsCheckbox);
     await waitFor(() => expect(awsCheckbox).not.toBeChecked());
     const buildSelectedBtn = await screen.findByRole('button', {
-      name: /Build selected/i,
+      name: /Build images/i,
     });
     expect(buildSelectedBtn).toBeEnabled();
   });
