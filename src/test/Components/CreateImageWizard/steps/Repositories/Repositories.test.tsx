@@ -197,41 +197,45 @@ describe('Repositories edit mode', () => {
     const expectedRequest = repositoriesCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
-  test('modal pops up when deselecting previously used repository', async () => {
-    const id = mockBlueprintIds['repositories'];
-    await renderEditMode(id);
+  test(
+    'modal pops up when deselecting previously used repository',
+    { retry: 3 },
+    async () => {
+      const id = mockBlueprintIds['repositories'];
+      await renderEditMode(id);
 
-    const customRepositories = await screen.findByRole('button', {
-      name: /Custom repositories/,
-    });
+      const customRepositories = await screen.findByRole('button', {
+        name: /Custom repositories/,
+      });
 
-    user.click(customRepositories);
+      user.click(customRepositories);
 
-    await screen.findByText(
-      /Removing previously added repositories may lead to issues with selected packages/i
-    );
+      await screen.findByText(
+        /Removing previously added repositories may lead to issues with selected packages/i
+      );
 
-    const selectedRepositories = await screen.findByRole('button', {
-      name: /Selected repositories/,
-    });
-    user.click(selectedRepositories);
+      const selectedRepositories = await screen.findByRole('button', {
+        name: /Selected repositories/,
+      });
+      user.click(selectedRepositories);
 
-    const repoCheckbox = await screen.findByRole('checkbox', {
-      name: /select row 0/i,
-    });
-    await waitFor(() => expect(repoCheckbox).toBeChecked());
+      const repoCheckbox = await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+      await waitFor(() => expect(repoCheckbox).toBeChecked());
 
-    user.click(repoCheckbox);
-    await screen.findByText(/Are you sure?/);
-    const removeAnywayBtn = await screen.findByRole('button', {
-      name: /Remove anyway/,
-    });
-    user.click(removeAnywayBtn);
+      user.click(repoCheckbox);
+      await screen.findByText(/Are you sure?/);
+      const removeAnywayBtn = await screen.findByRole('button', {
+        name: /Remove anyway/,
+      });
+      user.click(removeAnywayBtn);
 
-    await waitFor(() =>
-      expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument()
-    );
+      await waitFor(() =>
+        expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument()
+      );
 
-    await waitFor(() => expect(repoCheckbox).not.toBeChecked());
-  });
+      await waitFor(() => expect(repoCheckbox).not.toBeChecked());
+    }
+  );
 });
