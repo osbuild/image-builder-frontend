@@ -45,6 +45,7 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
+  selectUseLatest,
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
@@ -59,6 +60,8 @@ const Repositories = () => {
   const customRepositories = useAppSelector(selectCustomRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
+  const useLatestContent = useAppSelector(selectUseLatest);
+
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
 
@@ -333,6 +336,13 @@ const Repositories = () => {
       return [
         true,
         `Repository can't be selected. The status is still '${repo.status}'.`,
+      ];
+    }
+
+    if (!repo.snapshot && !isSelected && !useLatestContent) {
+      return [
+        true,
+        `This repository doesn't have snapshots enabled, so it cannot be selected.`,
       ];
     }
 
