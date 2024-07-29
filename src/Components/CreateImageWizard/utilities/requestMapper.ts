@@ -14,6 +14,7 @@ import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
+  BlueprintExportResponse,
   BlueprintResponse,
   CreateBlueprintRequest,
   Customizations,
@@ -62,6 +63,8 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectFirstBootScript,
+  selectMetadata,
+  initialState,
 } from '../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
@@ -73,6 +76,7 @@ import {
   Partition,
   Units,
 } from '../steps/FileSystem/FileSystemConfiguration';
+import { PackageRepository } from '../steps/Packages/Packages';
 import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
@@ -102,6 +106,7 @@ export const mapRequestFromState = (
 
   return {
     name: selectBlueprintName(state),
+    metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution: selectDistribution(state),
     image_requests: imageRequests,
@@ -137,6 +142,58 @@ const getLatestRelease = (distribution: Distributions) => {
     : distribution;
 };
 
+function commonRequestToState(
+  request: BlueprintResponse | BlueprintExportResponse
+) {
+  return {
+    details: {
+      blueprintName: request.name,
+      blueprintDescription: request.description,
+    },
+    openScap: {
+      profile: request.customizations.openscap
+        ?.profile_id as DistributionProfileItem,
+    },
+    fileSystem: request.customizations.filesystem
+      ? {
+          mode: 'manual' as FileSystemConfigurationType,
+          partitions: request.customizations.filesystem.map((fs) =>
+            convertFilesystemToPartition(fs)
+          ),
+        }
+      : {
+          mode: 'automatic' as FileSystemConfigurationType,
+          partitions: [],
+        },
+    firstBoot: {
+      script: getFirstBootScript(request.customizations.files),
+    },
+    distribution: getLatestRelease(request.distribution),
+    repositories: {
+      customRepositories: request.customizations.custom_repositories || [],
+      payloadRepositories: request.customizations.payload_repositories || [],
+      recommendedRepositories: [],
+    },
+    packages:
+      request.customizations.packages
+        ?.filter((pkg) => !pkg.startsWith('@'))
+        .map((pkg) => ({
+          name: pkg,
+          summary: '',
+          repository: '' as PackageRepository,
+        })) || [],
+    groups:
+      request.customizations.packages
+        ?.filter((grp) => grp.startsWith('@'))
+        .map((grp) => ({
+          name: grp.substr(1),
+          description: '',
+          repository: '' as PackageRepository,
+          package_list: [],
+        })) || [],
+  };
+}
+
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
@@ -168,18 +225,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const azureUploadOptions = azure?.upload_request
     .options as AzureUploadRequestOptions;
 
-  const fileSystem = request.customizations.filesystem
-    ? {
-        mode: 'manual' as FileSystemConfigurationType,
-        partitions: request.customizations.filesystem.map((fs) =>
-          convertFilesystemToPartition(fs)
-        ),
-      }
-    : {
-        mode: 'automatic' as FileSystemConfigurationType,
-        partitions: [],
-      };
-
   const arch = request.image_requests[0].architecture;
   if (arch !== 'x86_64' && arch !== 'aarch64') {
     throw new Error(`image type: ${arch} has no implementation yet`);
@@ -187,24 +232,11 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   return {
     wizardMode,
     blueprintId: request.id,
-    details: {
-      blueprintName: request.name,
-      blueprintDescription: request.description,
-    },
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
     },
-    openScap: {
-      profile: request.customizations.openscap
-        ?.profile_id as DistributionProfileItem,
-    },
-    fileSystem: fileSystem,
-    firstBoot: {
-      script: getFirstBootScript(request.customizations.files),
-    },
     architecture: arch,
-    distribution: getLatestRelease(request.distribution),
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
       shareMethod: azureUploadOptions?.source_id ? 'sources' : 'manual',
@@ -232,11 +264,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       useLatest: !snapshot_date,
       snapshotDate: snapshot_date,
     },
-    repositories: {
-      customRepositories: request.customizations.custom_repositories || [],
-      payloadRepositories: request.customizations.payload_repositories || [],
-      recommendedRepositories: [],
-    },
     registration: {
       registrationType: request.customizations?.subscription
         ? request.customizations.subscription.rhc
@@ -245,23 +272,35 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         : 'register-later',
       activationKey: request.customizations.subscription?.['activation-key'],
     },
-    packages:
-      request.customizations.packages
-        ?.filter((pkg) => !pkg.startsWith('@'))
-        .map((pkg) => ({
-          name: pkg,
-          summary: '',
-          repository: '',
-        })) || [],
-    groups:
-      request.customizations.packages
-        ?.filter((grp) => grp.startsWith('@'))
-        .map((grp) => ({
-          name: grp.substr(1),
-          description: '',
-          repository: '',
-          package_list: [],
-        })) || [],
+    ...commonRequestToState(request),
+  };
+};
+
+/**
+ * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
+ * @param request BlueprintExportResponse
+ * @returns wizardState
+ */
+export const mapExportRequestToState = (
+  request: BlueprintExportResponse
+): wizardState => {
+  const wizardMode = 'create';
+
+  return {
+    wizardMode,
+    metadata: {
+      parent_id: request.metadata.parent_id || '',
+      exported_at: request.metadata.exported_at,
+    },
+    env: initialState.env,
+    gcp: initialState.gcp,
+    aws: initialState.aws,
+    azure: initialState.azure,
+    architecture: initialState.architecture,
+    imageTypes: initialState.imageTypes,
+    snapshotting: initialState.snapshotting,
+    registration: initialState.registration,
+    ...commonRequestToState(request),
   };
 };
 

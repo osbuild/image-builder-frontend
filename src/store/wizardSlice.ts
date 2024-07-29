@@ -97,9 +97,13 @@ export type wizardState = {
     blueprintName: string;
     blueprintDescription: string;
   };
+  metadata?: {
+    parent_id: string;
+    exported_at: string;
+  };
 };
 
-const initialState: wizardState = {
+export const initialState: wizardState = {
   env: {
     serverUrl: '',
     baseUrl: '',
@@ -275,6 +279,10 @@ export const selectGroups = (state: RootState) => {
 
 export const selectBlueprintName = (state: RootState) => {
   return state.wizard.details.blueprintName;
+};
+
+export const selectMetadata = (state: RootState) => {
+  return state.wizard.metadata;
 };
 
 export const selectBlueprintDescription = (state: RootState) => {

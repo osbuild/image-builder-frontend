@@ -11,6 +11,30 @@ import { emptyGetBlueprints } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    isBeta: () => true,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.firstboot.enabled':
+        return true;
+      case 'image-builder.snapshots.enabled':
+        return true;
+      case 'image-builder.import.enabled':
+        return true;
+      default:
+        return false;
+    }
+  }),
+}));
+
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
   const blueprint = await screen.findByTestId(bpId);
@@ -303,6 +327,24 @@ describe('Blueprints', () => {
           within(screen.getByTestId('images-table')).getAllByRole('row')
         ).toHaveLength(2)
       );
+    });
+  });
+
+  describe('import/export blueprint', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+    test('exporting blueprint', async () => {
+      renderCustomRoutesWithReduxRouter();
+
+      await selectBlueprintById(blueprintIdWithComposes);
+      const toggleButton = screen.getByTestId('blueprint-action-menu-toggle');
+      await user.click(toggleButton);
+
+      const downloadButton = screen.getByRole('menuitem', {
+        name: /download blueprint \(\.json\) preview/i,
+      });
+      expect(downloadButton).toBeInTheDocument();
     });
   });
 });

@@ -4,106 +4,122 @@ import userEvent from '@testing-library/user-event';
 import { renderCustomRoutesWithReduxRouter } from '../../test/testUtils';
 
 const BLUEPRINT_JSON = `{
-    "customizations": {
-      "files": [
-      ],
-      "kernel": {
-      },
-      "openscap": {
-      },
-      "packages": [
-        "aide",
-        "sudo",
-        "audit",
-        "rsyslog",
-        "firewalld",
-        "nftables",
-        "libselinux"
-      ],
-      "services": {
-        "enabled": [
-          "crond",
-          "firewalld",
-          "systemd-journald",
-          "rsyslog",
-          "auditd"
-        ]
-      },
-      "subscription": {
-      }
-    },
-    "description": "Tested blueprint",
-    "distribution": "rhel-93",
-    "id": "052bf998-7955-45ad-952d-49ce3573e0b7",
-    "image_requests": [
-      {
-        "architecture": "aarch64",
-        "image_type": "aws",
-        "upload_request": {
-          "options": {
-            "share_with_sources": [
-              "473980"
-            ]
-          },
-          "type": "aws"
-        }
-      }
+  "customizations": {
+    "packages": [],
+    "subscription": {
+      "activation-key": "",
+      "base-url": "",
+      "insights": false,
+      "organization": 0,
+      "server-url": ""
+    }
+  },
+  "description": "Lorem ipsum dolor 2211 sit amet, consectetur adipiscing elit. Pellentesque malesuada ultricies diam ac eleifend. Proin ipsum ante, consequat vel justo vel, tristique vestibulum lorem. Vestibulum sit amet pulvinar orci. Vivamus vel ipsum.",
+  "distribution": "rhel-8",
+  "metadata": {
+    "exported_at": "2024-07-29 17:26:51.666952376 +0000 UTC",
+    "parent_id": "b3385e6d-ecc4-485c-b33c-f65131c46f52"
+  },
+  "name": "Crustless New York Cheesecake 1"
+}`;
+
+const INVALID_BLUEPRINT_WITH_SUBSCRIPTION = `{
+  "customizations": {
+    "files": [
     ],
-    "name": "Blueprint test"
-  }`;
+    "kernel": {
+    },
+    "openscap": {
+    },
+    "packages": [
+      "aide",
+      "sudo",
+      "audit",
+      "rsyslog",
+      "firewalld",
+      "nftables",
+      "libselinux"
+    ],
+    "services": {
+      "enabled": [
+        "crond",
+        "firewalld",
+        "systemd-journald",
+        "rsyslog",
+        "auditd"
+      ]
+    },
+    "subscription": {
+      "activation-key": "",
+      "base-url": "",
+      "insights": false,
+      "organization": 0,
+      "server-url": ""
+    }
+  },
+  "description": "Tested blueprint",
+  "distribution": "rhel-93",
+  "id": "052bf998-7955-45ad-952d-49ce3573e0b7",
+  "name": "Blueprint test"
+}`;
+
+const INVALID_BLUEPRINT_WITH_TARGETS = `{
+  "customizations": {
+    "files": [
+    ],
+    "kernel": {
+    },
+    "openscap": {
+    },
+    "packages": [
+      "aide",
+      "sudo",
+      "audit",
+      "rsyslog",
+      "firewalld",
+      "nftables",
+      "libselinux"
+    ],
+    "services": {
+      "enabled": [
+        "crond",
+        "firewalld",
+        "systemd-journald",
+        "rsyslog",
+        "auditd"
+      ]
+    },
+    "subscription": {
+      "activation-key": "",
+      "base-url": "",
+      "insights": false,
+      "organization": 0,
+      "server-url": ""
+    }
+  },
+  "description": "Tested blueprint",
+  "distribution": "rhel-93",
+  "id": "052bf998-7955-45ad-952d-49ce3573e0b7",
+  "image_requests": [
+    {
+      "architecture": "aaaaa",
+      "image_type": "aws",
+      "upload_request": {
+        "options": {
+          "share_with_sources": [
+            "473980"
+          ]
+        },
+        "type": "aws"
+      }
+    }
+  ],
+  "name": "Blueprint test"
+}`;
 
 const INVALID_JSON = `{
   "name": "Blueprint test"
 }`;
-
-const INVALID_ARCHITECTURE_JSON = `{
-    "customizations": {
-      "files": [
-      ],
-      "kernel": {
-      },
-      "openscap": {
-      },
-      "packages": [
-        "aide",
-        "sudo",
-        "audit",
-        "rsyslog",
-        "firewalld",
-        "nftables",
-        "libselinux"
-      ],
-      "services": {
-        "enabled": [
-          "crond",
-          "firewalld",
-          "systemd-journald",
-          "rsyslog",
-          "auditd"
-        ]
-      },
-      "subscription": {
-      }
-    },
-    "description": "Tested blueprint",
-    "distribution": "rhel-93",
-    "id": "052bf998-7955-45ad-952d-49ce3573e0b7",
-    "image_requests": [
-      {
-        "architecture": "aaaaa",
-        "image_type": "aws",
-        "upload_request": {
-          "options": {
-            "share_with_sources": [
-              "473980"
-            ]
-          },
-          "type": "aws"
-        }
-      }
-    ],
-    "name": "Blueprint test"
-  }`;
 
 const INVALID_IMAGE_TYPE_JSON = `{
     "customizations": {
@@ -202,9 +218,20 @@ describe('Import model', () => {
     await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
-  test('should show alert on invalid blueprint incorrect architecture', async () => {
+  test('should show alert on invalid blueprint with targets', async () => {
     await setUp();
-    await uploadFile(`blueprints.json`, INVALID_ARCHITECTURE_JSON);
+    await uploadFile(`blueprints.json`, INVALID_BLUEPRINT_WITH_TARGETS);
+    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    expect(reviewButton).toHaveClass('pf-m-disabled');
+    const helperText = await screen.findByText(
+      /not compatible with the blueprints format\./i
+    );
+    await waitFor(() => expect(helperText).toBeInTheDocument());
+  });
+
+  test('should show alert on invalid blueprint with subscription', async () => {
+    await setUp();
+    await uploadFile(`blueprints.json`, INVALID_BLUEPRINT_WITH_SUBSCRIPTION);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
     expect(reviewButton).toHaveClass('pf-m-disabled');
     const helperText = await screen.findByText(
