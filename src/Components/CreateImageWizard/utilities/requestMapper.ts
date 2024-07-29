@@ -146,18 +146,10 @@ function commonRequestToState(
   request: BlueprintResponse | BlueprintExportResponse
 ) {
   return {
-    details: {
-      blueprintName: request.name,
-      blueprintDescription: request.description,
-    },
-    openScap: {
-      profile: request.customizations.openscap
-        ?.profile_id as DistributionProfileItem,
-    },
-    fileSystem: request.customizations.filesystem
+    fileSystem: request.customizations?.filesystem
       ? {
           mode: 'manual' as FileSystemConfigurationType,
-          partitions: request.customizations.filesystem.map((fs) =>
+          partitions: request.customizations?.filesystem.map((fs) =>
             convertFilesystemToPartition(fs)
           ),
         }
@@ -165,17 +157,13 @@ function commonRequestToState(
           mode: 'automatic' as FileSystemConfigurationType,
           partitions: [],
         },
-    firstBoot: {
-      script: getFirstBootScript(request.customizations.files),
-    },
-    distribution: getLatestRelease(request.distribution),
     repositories: {
-      customRepositories: request.customizations.custom_repositories || [],
-      payloadRepositories: request.customizations.payload_repositories || [],
+      customRepositories: request.customizations?.custom_repositories || [],
+      payloadRepositories: request.customizations?.payload_repositories || [],
       recommendedRepositories: [],
     },
     packages:
-      request.customizations.packages
+      request.customizations?.packages
         ?.filter((pkg) => !pkg.startsWith('@'))
         .map((pkg) => ({
           name: pkg,
@@ -183,7 +171,7 @@ function commonRequestToState(
           repository: '' as PackageRepository,
         })) || [],
     groups:
-      request.customizations.packages
+      request.customizations?.packages
         ?.filter((grp) => grp.startsWith('@'))
         .map((grp) => ({
           name: grp.substr(1),
@@ -232,11 +220,16 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   return {
     wizardMode,
     blueprintId: request.id,
+    details: {
+      blueprintName: request.name,
+      blueprintDescription: request.description,
+    },
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
     },
     architecture: arch,
+    distribution: getLatestRelease(request.distribution),
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
       shareMethod: azureUploadOptions?.source_id ? 'sources' : 'manual',
@@ -272,6 +265,13 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         : 'register-later',
       activationKey: request.customizations.subscription?.['activation-key'],
     },
+    openScap: {
+      profile: request.customizations.openscap
+        ?.profile_id as DistributionProfileItem,
+    },
+    firstBoot: {
+      script: getFirstBootScript(request.customizations.files),
+    },
     ...commonRequestToState(request),
   };
 };
@@ -288,18 +288,35 @@ export const mapExportRequestToState = (
 
   return {
     wizardMode,
+    details: {
+      blueprintName: request.name || '',
+      blueprintDescription: request.description || '',
+    },
     metadata: {
-      parent_id: request.metadata.parent_id || '',
-      exported_at: request.metadata.exported_at,
+      parent_id: request.metadata?.parent_id || '',
+      exported_at: request.metadata?.exported_at || '',
     },
     env: initialState.env,
     gcp: initialState.gcp,
     aws: initialState.aws,
     azure: initialState.azure,
     architecture: initialState.architecture,
+    distribution:
+      getLatestRelease(request.distribution) || initialState.distribution,
     imageTypes: initialState.imageTypes,
     snapshotting: initialState.snapshotting,
     registration: initialState.registration,
+    openScap: request.customizations
+      ? {
+          profile: request.customizations.openscap
+            ?.profile_id as DistributionProfileItem,
+        }
+      : initialState.openScap,
+    firstBoot: request.customizations
+      ? {
+          script: getFirstBootScript(request.customizations.files),
+        }
+      : initialState.firstBoot,
     ...commonRequestToState(request),
   };
 };
