@@ -53,6 +53,12 @@ const injectedRtkApi = api.injectEndpoints({
         method: "DELETE",
       }),
     }),
+    exportBlueprint: build.query<
+      ExportBlueprintApiResponse,
+      ExportBlueprintApiArg
+    >({
+      query: (queryArg) => ({ url: `/blueprints/${queryArg.id}/export` }),
+    }),
     composeBlueprint: build.mutation<
       ComposeBlueprintApiResponse,
       ComposeBlueprintApiArg
@@ -209,6 +215,12 @@ export type GetBlueprintApiArg = {
 export type DeleteBlueprintApiResponse =
   /** status 204 Successfully deleted */ void;
 export type DeleteBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+};
+export type ExportBlueprintApiResponse =
+  /** status 200 detail of a blueprint */ BlueprintExportResponse;
+export type ExportBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
 };
@@ -714,6 +726,13 @@ export type BlueprintResponse = {
   image_requests: ImageRequest[];
   customizations: Customizations;
 };
+export type BlueprintExportResponse = {
+  name: string;
+  description: string;
+  distribution: Distributions;
+  customizations: Customizations;
+  metadata: BlueprintMetadata;
+};
 export type ComposeResponse = {
   id: string;
 };
@@ -864,6 +883,8 @@ export const {
   useGetBlueprintQuery,
   useLazyGetBlueprintQuery,
   useDeleteBlueprintMutation,
+  useExportBlueprintQuery,
+  useLazyExportBlueprintQuery,
   useComposeBlueprintMutation,
   useGetBlueprintComposesQuery,
   useLazyGetBlueprintComposesQuery,

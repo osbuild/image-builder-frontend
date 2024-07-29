@@ -77,7 +77,7 @@ import {
 } from '../../../../store/wizardSlice';
 import useDebounce from '../../../../Utilities/useDebounce';
 
-type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
+export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
 export type IBPackageWithRepositoryInfo = {
   name: Package['name'];

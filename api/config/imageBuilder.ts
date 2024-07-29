@@ -22,6 +22,7 @@ const config: ConfigFile = {
     'updateBlueprint',
     'composeBlueprint',
     'getBlueprints',
+    'exportBlueprint',
     'getBlueprintComposes',
     'deleteBlueprint',
     'getBlueprint',
