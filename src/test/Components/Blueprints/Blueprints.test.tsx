@@ -338,8 +338,10 @@ describe('Blueprints', () => {
       renderCustomRoutesWithReduxRouter();
 
       await selectBlueprintById(blueprintIdWithComposes);
-      const toggleButton = screen.getByTestId('blueprint-action-menu-toggle');
-      await user.click(toggleButton);
+      const toggleButton = await screen.findByTestId(
+        'blueprint-action-menu-toggle'
+      );
+      await waitFor(() => user.click(toggleButton));
 
       const downloadButton = screen.getByRole('menuitem', {
         name: /download blueprint \(\.json\) preview/i,

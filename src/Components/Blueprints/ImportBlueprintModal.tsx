@@ -32,6 +32,10 @@ export const ImportBlueprintModal: React.FunctionComponent<
 > = ({ setShowImportModal, isOpen }: ImportBlueprintModalProps) => {
   const onImportClose = () => {
     setShowImportModal(false);
+    setFilename('');
+    setJsonContent('');
+    setIsRejected(false);
+    setIsInvalidFormat(false);
   };
   const [jsonContent, setJsonContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =

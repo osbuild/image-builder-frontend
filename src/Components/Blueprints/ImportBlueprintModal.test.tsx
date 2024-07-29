@@ -23,7 +23,7 @@ const BLUEPRINT_JSON = `{
   "name": "Crustless New York Cheesecake 1"
 }`;
 
-const INVALID_BLUEPRINT_WITH_SUBSCRIPTION = `{
+const IGNORE_SUBSCRIPTION_BLUEPRINT = `{
   "customizations": {
     "files": [
     ],
@@ -63,7 +63,7 @@ const INVALID_BLUEPRINT_WITH_SUBSCRIPTION = `{
   "name": "Blueprint test"
 }`;
 
-const INVALID_BLUEPRINT_WITH_TARGETS = `{
+const IGNORE_TARGETS_BLUEPRINT = `{
   "customizations": {
     "files": [
     ],
@@ -121,55 +121,6 @@ const INVALID_JSON = `{
   "name": "Blueprint test"
 }`;
 
-const INVALID_IMAGE_TYPE_JSON = `{
-    "customizations": {
-      "files": [
-      ],
-      "kernel": {
-      },
-      "openscap": {
-      },
-      "packages": [
-        "aide",
-        "sudo",
-        "audit",
-        "rsyslog",
-        "firewalld",
-        "nftables",
-        "libselinux"
-      ],
-      "services": {
-        "enabled": [
-          "crond",
-          "firewalld",
-          "systemd-journald",
-          "rsyslog",
-          "auditd"
-        ]
-      },
-      "subscription": {
-      }
-    },
-    "description": "Tested blueprint",
-    "distribution": "rhel-93",
-    "id": "052bf998-7955-45ad-952d-49ce3573e0b7",
-    "image_requests": [
-      {
-        "architecture": "aaaaa",
-        "image_type": "aws",
-        "upload_request": {
-          "options": {
-            "share_with_sources": [
-              "473980"
-            ]
-          },
-          "type": "aws"
-        }
-      }
-    ],
-    "name": "Blueprint test"
-  }`;
-
 const uploadFile = async (filename: string, content: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
@@ -182,7 +133,7 @@ const uploadFile = async (filename: string, content: string): Promise<void> => {
   }
 };
 
-describe('Import model', () => {
+describe('Import modal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -218,37 +169,32 @@ describe('Import model', () => {
     await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
-  test('should show alert on invalid blueprint with targets', async () => {
+  test('should enable button and ignore targets in blueprint file', async () => {
     await setUp();
-    await uploadFile(`blueprints.json`, INVALID_BLUEPRINT_WITH_TARGETS);
+    await uploadFile(`blueprints.json`, IGNORE_TARGETS_BLUEPRINT);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    expect(reviewButton).toHaveClass('pf-m-disabled');
-    const helperText = await screen.findByText(
-      /not compatible with the blueprints format\./i
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Image output', { selector: 'h1' })
+      ).toBeInTheDocument()
     );
-    await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
-  test('should show alert on invalid blueprint with subscription', async () => {
+  test('should enable button and ignore subscription in blueprint file', async () => {
     await setUp();
-    await uploadFile(`blueprints.json`, INVALID_BLUEPRINT_WITH_SUBSCRIPTION);
+    await uploadFile(`blueprints.json`, IGNORE_SUBSCRIPTION_BLUEPRINT);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    expect(reviewButton).toHaveClass('pf-m-disabled');
-    const helperText = await screen.findByText(
-      /not compatible with the blueprints format\./i
-    );
-    await waitFor(() => expect(helperText).toBeInTheDocument());
-  });
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
 
-  test('should show alert on invalid blueprint incorrect image type', async () => {
-    await setUp();
-    await uploadFile(`blueprints.json`, INVALID_IMAGE_TYPE_JSON);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
-    expect(reviewButton).toHaveClass('pf-m-disabled');
-    const helperText = await screen.findByText(
-      /not compatible with the blueprints format\./i
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Image output', { selector: 'h1' })
+      ).toBeInTheDocument()
     );
-    await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
   test('should enable button on correct blueprint and go to wizard', async () => {
