@@ -8,6 +8,7 @@ import {
   WizardStep,
   WizardStepType,
   useWizardContext,
+  PageSection,
 } from '@patternfly/react-core';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -229,7 +230,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   return (
     <>
       <ImageBuilderHeader inWizard />
-      <section className="pf-l-page__main-section pf-c-page__main-section">
+      <PageSection isWidthLimited>
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}
@@ -433,7 +434,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             <ReviewStep snapshottingEnabled={snapshottingEnabled} />
           </WizardStep>
         </Wizard>
-      </section>
+      </PageSection>
     </>
   );
 };
