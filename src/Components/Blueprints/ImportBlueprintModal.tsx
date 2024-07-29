@@ -17,10 +17,10 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '../../store/hooks';
-import { BlueprintResponse } from '../../store/imageBuilderApi';
+import { BlueprintExportResponse } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
-import { mapRequestToState } from '../CreateImageWizard/utilities/requestMapper';
+import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -64,8 +64,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
   };
   const handleDataChange = (_: DropEvent, value: string) => {
     try {
-      const importedBlueprint: BlueprintResponse = JSON.parse(value);
-      const importBlueprintState = mapRequestToState(importedBlueprint);
+      const importedBlueprint: BlueprintExportResponse = JSON.parse(value);
+      const importBlueprintState = mapExportRequestToState(importedBlueprint);
       setImportedBlueprint(importBlueprintState);
       setJsonContent(value);
     } catch (error) {

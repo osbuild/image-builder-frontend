@@ -12,8 +12,8 @@ import { EllipsisVIcon } from '@patternfly/react-icons';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
-  BlueprintResponse,
-  useLazyGetBlueprintQuery,
+  BlueprintExportResponse,
+  useLazyExportBlueprintQuery,
 } from '../../store/imageBuilderApi';
 import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import BetaLabel from '../sharedComponents/BetaLabel';
@@ -34,7 +34,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     'image-builder.import.enabled'
   );
 
-  const [trigger] = useLazyGetBlueprintQuery();
+  const [trigger] = useLazyExportBlueprintQuery();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   if (selectedBlueprintId === undefined) {
     return null;
@@ -42,7 +42,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const handleClick = () => {
     trigger({ id: selectedBlueprintId })
       .unwrap()
-      .then((response: BlueprintResponse) => {
+      .then((response: BlueprintExportResponse) => {
         handleExportBlueprint(response.name, response);
       });
   };
@@ -85,7 +85,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 
 async function handleExportBlueprint(
   blueprintName: string,
-  blueprint: BlueprintResponse
+  blueprint: BlueprintExportResponse
 ) {
   const jsonData = JSON.stringify(blueprint, null, 2);
   const blob = new Blob([jsonData], { type: 'application/json' });
