@@ -2,9 +2,6 @@
     padding-right: 0px;
 }
 
-.pf-v5-c-wizard__nav {
-    overflow-y: unset;
-}
 
 .pf-c-popover[data-popper-reference-hidden="true"] {
     font-weight: initial;
@@ -88,7 +85,6 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     display: flex
 }
 
-// Fixes min height issues on the main wizard container
-.pf-v5-c-wizard__outer-wrap {
-    min-height: 602px;
+.pf-v5-c-wizard__main {
+    flex: 1 1 0
 }
