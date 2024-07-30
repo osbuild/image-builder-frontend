@@ -151,12 +151,19 @@ const Repositories = () => {
     // Check if array of items
     if ((repo as ApiRepositoryResponseRead[])?.length) {
       reposToAdd = (repo as ApiRepositoryResponseRead[]).filter(
-        ({ url }) => url && !selected.has(url)
+        (r) =>
+          r.url &&
+          !isRepoDisabled(r, selected.has(r.url))[0] &&
+          !selected.has(r.url)
       );
     } else {
       // Then it should be a single item
       const singleRepo = repo as ApiRepositoryResponseRead;
-      if (singleRepo?.url && !selected.has(singleRepo.url)) {
+      if (
+        singleRepo?.url &&
+        !isRepoDisabled(singleRepo, selected.has(singleRepo.url))[0] &&
+        !selected.has(singleRepo.url)
+      ) {
         reposToAdd.push(singleRepo);
       }
     }
@@ -433,7 +440,14 @@ const Repositories = () => {
               deselectAll={clearSelected}
               perPage={perPage}
               handleAddRemove={handleAddRemove}
-              isDisabled={isFetching || (!selected.size && !contentList.length)}
+              isDisabled={
+                isFetching ||
+                (!selected.size && !contentList.length) ||
+                contentList.every(
+                  (repo) =>
+                    repo.url && isRepoDisabled(repo, selected.has(repo.url))[0]
+                )
+              }
             />
           </ToolbarItem>
           <ToolbarItem variant="search-filter">
