@@ -172,13 +172,13 @@ describe('Blueprints', () => {
 
     await selectBlueprintById(blueprintIdCentos8);
     await screen.findByText(
-      'CentOS Stream 8 is no longer supported, building images from this blueprint will fail.'
+      /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./
     );
 
     await selectBlueprintById(blueprintIdWithComposes);
     expect(
       screen.queryByText(
-        'CentOS Stream 8 is no longer supported, building images from this blueprint will fail.'
+        /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./
       )
     ).not.toBeInTheDocument();
   });

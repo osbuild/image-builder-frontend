@@ -135,7 +135,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               }}
               isInline
               variant="warning"
-              title="CentOS Stream 8 is no longer supported, building images from this blueprint will fail."
+              title="CentOS Stream 8 is no longer supported, building images from this blueprint will fail. Edit blueprint to update the release to CentOS Stream 9."
               ouiaId="centos-8-blueprint-alert"
             />
           )}
