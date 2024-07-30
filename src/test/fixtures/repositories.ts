@@ -564,6 +564,25 @@ const testingRepos: ApiRepositoryResponseRead[] = [
     metadata_verification: false,
     module_hotfixes: true,
   },
+  {
+    uuid: '024a26b9-7e1d-444d-b4d2-bc57d8597d15',
+    name: 'nosnapshot',
+    url: 'http://nosnapshot.org',
+    distribution_versions: ['any'],
+    distribution_arch: 'any',
+    account_id: '6416440',
+    org_id: '13476545',
+    last_introspection_time: '2022-11-23T08:00:21Z',
+    last_success_introspection_time: '2022-11-23T08:00:21Z',
+    last_update_introspection_time: '2022-10-04T00:18:10Z',
+    last_introspection_error: '',
+    package_count: 1,
+    status: 'Valid',
+    gpg_key: '',
+    metadata_verification: false,
+    module_hotfixes: false,
+    snapshot: false,
+  },
 ];
 
 const generateMeta = (

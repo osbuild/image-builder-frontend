@@ -88,6 +88,14 @@ const deselectFirstRepository = async () => {
   await waitFor(async () => user.click(row0Checkbox));
 };
 
+const clickBulkSelect = async () => {
+  const user = userEvent.setup();
+  const bulkSelectCheckbox = await screen.findByRole('checkbox', {
+    name: /select all/i,
+  });
+  await waitFor(async () => user.click(bulkSelectCheckbox));
+};
+
 describe('repositories request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -177,6 +185,18 @@ describe('repositories request generated correctly', () => {
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
+  });
+
+  test('bulk select', async () => {
+    await renderCreateMode();
+    await goToRepositoriesStep();
+    await clickBulkSelect();
+    await goToReviewStep();
+    const receivedRequest = (await interceptBlueprintRequest(
+      CREATE_BLUEPRINT
+    )) as CreateBlueprintRequest;
+    expect(receivedRequest.customizations.custom_repositories).toHaveLength(6);
+    expect(receivedRequest.customizations.payload_repositories).toHaveLength(6);
   });
 });
 
