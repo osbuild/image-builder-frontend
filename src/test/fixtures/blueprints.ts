@@ -4,6 +4,7 @@ import {
   CreateBlueprintResponse,
   GetBlueprintComposesApiResponse,
   GetBlueprintApiResponse,
+  Distributions,
 } from '../../store/imageBuilderApi';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [
@@ -322,7 +323,7 @@ export const mockCentosBlueprintComposes: GetBlueprintComposesApiResponse = {
       created_at: '2021-04-27T12:31:12Z',
       blueprint_version: 1,
       request: {
-        distribution: 'centos-8',
+        distribution: 'centos-8' as Distributions,
         image_requests: [
           {
             architecture: 'x86_64',

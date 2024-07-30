@@ -19,6 +19,7 @@ import {
   BlueprintItem,
   useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
+  Distributions,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
@@ -96,7 +97,10 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
 
   const isBlueprintDistroCentos8 = () => {
     if (isSuccessBlueprintsCompose) {
-      return blueprintsComposes.data[0].request.distribution === 'centos-8';
+      return (
+        blueprintsComposes.data[0].request.distribution ===
+        ('centos-8' as Distributions)
+      );
     }
   };
 
