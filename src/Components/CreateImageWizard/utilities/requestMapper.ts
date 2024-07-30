@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { parseSizeUnit } from './parseSizeUnit';
 
 import {
+  CENTOS_9,
   FIRST_BOOT_SERVICE,
   FIRST_BOOT_SERVICE_DATA,
   RHEL_8,
@@ -122,14 +123,17 @@ const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
 
 /**
  * This function overwrites distribution of the blueprints with the major release
+ * and deprecated CentOS 8 with CentOS 9
  * Minor releases were previously used and are still present in older blueprints
  * @param distribution blueprint distribution
  */
-const getLatestMinorRelease = (distribution: Distributions) => {
+const getLatestRelease = (distribution: Distributions) => {
   return distribution.startsWith('rhel-9')
     ? RHEL_9
     : distribution.startsWith('rhel-8')
     ? RHEL_8
+    : distribution === 'centos-8'
+    ? CENTOS_9
     : distribution;
 };
 
@@ -200,7 +204,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       script: getFirstBootScript(request.customizations.files),
     },
     architecture: arch,
-    distribution: getLatestMinorRelease(request.distribution),
+    distribution: getLatestRelease(request.distribution),
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
       shareMethod: azureUploadOptions?.source_id ? 'sources' : 'manual',
