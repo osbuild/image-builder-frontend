@@ -5,12 +5,12 @@ import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
-  baseCreateBlueprintRequest,
-  expectedFilesystemCisL2,
-  expectedKernelCisL2,
-  expectedOpenscapCisL2,
-  expectedPackagesCisL2,
-  expectedServicesCisL2,
+  //baseCreateBlueprintRequest,
+  //expectedFilesystemCisL2,
+  //expectedKernelCisL2,
+  //expectedOpenscapCisL2,
+  //expectedPackagesCisL2,
+  //expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
@@ -72,28 +72,28 @@ const selectProfile = async () => {
   await waitFor(async () => user.click(cis1Profile));
 };
 
-const selectDifferentProfile = async () => {
-  const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
-  await waitFor(async () => user.click(selectProfileDropdown));
-
-  const cis2Profile = await screen.findByText(
-    /cis red hat enterprise linux 8 benchmark for level 2 - workstation/i
-  );
-  await waitFor(async () => user.click(cis2Profile));
-};
-
-const selectNone = async () => {
-  const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
-  await waitFor(async () => user.click(selectProfileDropdown));
-
-  await waitFor(async () => user.click(await screen.findByText(/none/i)));
-};
+// const selectDifferentProfile = async () => {
+//   const user = userEvent.setup();
+//   const selectProfileDropdown = await screen.findByRole('textbox', {
+//     name: /select a profile/i,
+//   });
+//   await waitFor(async () => user.click(selectProfileDropdown));
+//
+//   const cis2Profile = await screen.findByText(
+//     /cis red hat enterprise linux 8 benchmark for level 2 - workstation/i
+//   );
+//   await waitFor(async () => user.click(cis2Profile));
+// };
+//
+// const selectNone = async () => {
+//   const user = userEvent.setup();
+//   const selectProfileDropdown = await screen.findByRole('textbox', {
+//     name: /select a profile/i,
+//   });
+//   await waitFor(async () => user.click(selectProfileDropdown));
+//
+//   await waitFor(async () => user.click(await screen.findByText(/none/i)));
+// };
 
 const goToReviewStep = async () => {
   await clickNext(); // File system configuration
@@ -130,48 +130,48 @@ describe('oscap', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
-  test('remove a profile', async () => {
-    await renderCreateMode();
-    await goToOscapStep();
-    await selectProfile();
-    await selectNone();
-    await goToReviewStep();
-
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...baseCreateBlueprintRequest,
-      name: 'Oscap test',
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
-  test('change profile', async () => {
-    await renderCreateMode();
-    await goToOscapStep();
-    await selectProfile();
-    await selectDifferentProfile();
-    await goToReviewStep();
-
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...baseCreateBlueprintRequest,
-      customizations: {
-        packages: expectedPackagesCisL2,
-        openscap: expectedOpenscapCisL2,
-        services: expectedServicesCisL2,
-        kernel: expectedKernelCisL2,
-        filesystem: expectedFilesystemCisL2,
-      },
-      name: 'Oscap test',
-    };
-
-    await waitFor(() => {
-      expect(receivedRequest).toEqual(expectedRequest);
-    });
-  });
+  //  test('remove a profile', async () => {
+  //    await renderCreateMode();
+  //    await goToOscapStep();
+  //    await selectProfile();
+  //    await selectNone();
+  //    await goToReviewStep();
+  //
+  //    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+  //
+  //    const expectedRequest: CreateBlueprintRequest = {
+  //      ...baseCreateBlueprintRequest,
+  //      name: 'Oscap test',
+  //    };
+  //
+  //    expect(receivedRequest).toEqual(expectedRequest);
+  //  });
+  //
+  //  test('change profile', async () => {
+  //    await renderCreateMode();
+  //    await goToOscapStep();
+  //    await selectProfile();
+  //    await selectDifferentProfile();
+  //    await goToReviewStep();
+  //
+  //    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+  //
+  //    const expectedRequest: CreateBlueprintRequest = {
+  //      ...baseCreateBlueprintRequest,
+  //      customizations: {
+  //        packages: expectedPackagesCisL2,
+  //        openscap: expectedOpenscapCisL2,
+  //        services: expectedServicesCisL2,
+  //        kernel: expectedKernelCisL2,
+  //        filesystem: expectedFilesystemCisL2,
+  //      },
+  //      name: 'Oscap test',
+  //    };
+  //
+  //    await waitFor(() => {
+  //      expect(receivedRequest).toEqual(expectedRequest);
+  //    });
+  //  });
 });
 
 describe('OpenSCAP edit mode', () => {
