@@ -24,6 +24,7 @@ const Release = ({ release }: ReleaseProps) => {
     'rhel-92': 'RHEL 9.2',
     'rhel-93': 'RHEL 9.3',
     'rhel-94': 'RHEL 9.4',
+    'rhel-10-nightly': 'RHEL 10',
     'centos-8': 'CentOS Stream 8',
     'centos-9': 'CentOS Stream 9',
     'centos-10': 'CentOS Stream 10',

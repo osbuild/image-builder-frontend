@@ -132,7 +132,7 @@ const getLatestRelease = (distribution: Distributions) => {
     ? RHEL_9
     : distribution.startsWith('rhel-8')
     ? RHEL_8
-    : distribution === 'centos-8'
+    : distribution === ('centos-8' as Distributions)
     ? CENTOS_9
     : distribution;
 };
