@@ -356,7 +356,7 @@ export type Distributions =
   | "rhel-92"
   | "rhel-93"
   | "rhel-94"
-  | "centos-8"
+  | "rhel-10-nightly"
   | "centos-9"
   | "centos-10"
   | "fedora-37"
@@ -683,6 +683,10 @@ export type Customizations = {
   fips?: Fips;
   installer?: Installer;
 };
+export type BlueprintMetadata = {
+  parent_id: string | null;
+  exported_at: string;
+};
 export type CreateBlueprintRequest = {
   name: string;
   description?: string;
@@ -691,6 +695,7 @@ export type CreateBlueprintRequest = {
    */
   image_requests: ImageRequest[];
   customizations: Customizations;
+  metadata?: BlueprintMetadata;
 };
 export type BlueprintResponse = {
   id: string;
