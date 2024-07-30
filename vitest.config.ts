@@ -15,7 +15,6 @@ const config = {
         inline: ['vitest-canvas-mock', '@patternfly'],
       },
     },
-    fileParallelism: false,
     testTimeout: 10000,
   },
   resolve: {
