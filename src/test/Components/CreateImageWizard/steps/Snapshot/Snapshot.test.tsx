@@ -67,12 +67,27 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
+const searchForRepository = async (repo: string) => {
+  const user = userEvent.setup();
+  const search = await screen.findByLabelText('Search repositories');
+  await waitFor(() => user.type(search, repo));
+  await waitFor(() => expect(screen.getByText(repo)).toBeInTheDocument);
+};
+
 const selectFirstRepository = async () => {
   const user = userEvent.setup();
   const row0Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
   await waitFor(async () => user.click(row0Checkbox));
+};
+
+const clickBulkSelect = async () => {
+  const user = userEvent.setup();
+  const bulkSelectCheckbox = await screen.findByRole('checkbox', {
+    name: /select all/i,
+  });
+  await waitFor(async () => user.click(bulkSelectCheckbox));
 };
 
 const selectUseSnapshot = async () => {
@@ -156,6 +171,59 @@ describe('repository snapshot tab - ', () => {
     await waitFor(() => {
       expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'true');
     });
+  });
+
+  test('select is disabled for non-snapshot repository', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseSnapshot();
+    await updateDatePickerWithValue('04/22/2024');
+    await clickNext(); // To repositories step
+    await searchForRepository('nosnapshot');
+
+    const row0Checkbox = await screen.findByRole('checkbox', {
+      name: /select row 0/i,
+    });
+    expect(row0Checkbox).toBeDisabled();
+
+    const bulkSelectCheckbox = await screen.findByRole('checkbox', {
+      name: /select all/i,
+    });
+    // eslint-disable-next-line testing-library/no-node-access
+    expect(bulkSelectCheckbox.closest('div')).toHaveClass('pf-m-disabled');
+  });
+
+  test('select using bulk select works ', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseSnapshot();
+    await updateDatePickerWithValue('04/22/2024');
+    await clickNext(); // To repositories step
+    await searchForRepository('01-test-valid-repo');
+
+    // wait until there's only 1 repository on the page
+    await waitFor(async () => {
+      const rows = await screen.findAllByRole('row');
+      // header row + repo row
+      expect(rows).toHaveLength(2);
+    });
+
+    await clickBulkSelect();
+    await goToReviewStep();
+
+    // Check the date was passed correctly to the blueprint
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    blueprintRequest.image_requests[0].snapshot_date = '2024-04-22';
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      customizations: {
+        custom_repositories: expectedCustomRepositories,
+        payload_repositories: expectedPayloadRepositories,
+      },
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });
 
