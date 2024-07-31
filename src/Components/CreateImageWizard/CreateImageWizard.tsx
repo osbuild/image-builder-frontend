@@ -29,6 +29,7 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import {
   useFilesystemValidation,
+  useSnapshotValidation,
   useFirstBootValidation,
   useDetailsValidation,
 } from './utilities/useValidation';
@@ -60,8 +61,6 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   addImageType,
-  selectSnapshotDate,
-  selectUseLatest,
   selectRegistrationType,
   selectActivationKey,
 } from '../../store/wizardSlice';
@@ -181,9 +180,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   // Snapshots
-  const snapshotDate = useAppSelector(selectSnapshotDate);
-  const useLatest = useAppSelector(selectUseLatest);
-  const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
+  const snapshotValidation = useSnapshotValidation();
   // Filesystem
   const [filesystemPristine, setFilesystemPristine] = useState(true);
   const fileSystemValidation = useFilesystemValidation();
@@ -372,10 +369,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Repository snapshot"
                 id="wizard-repository-snapshot"
                 key="wizard-repository-snapshot"
+                navItem={customStatusNavItem}
+                status={snapshotValidation.disabledNext ? 'error' : 'default'}
                 isHidden={!snapshottingEnabled}
                 footer={
                   <CustomWizardFooter
-                    disableNext={snapshotStepRequiresChoice}
+                    disableNext={snapshotValidation.disabledNext}
                   />
                 }
               >
@@ -385,7 +384,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
-                isDisabled={snapshotStepRequiresChoice}
+                isDisabled={snapshotValidation.disabledNext}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <RepositoriesStep />
@@ -394,7 +393,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Additional packages"
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
-                isDisabled={snapshotStepRequiresChoice}
+                isDisabled={snapshotValidation.disabledNext}
                 footer={<CustomWizardFooter disableNext={false} />}
               >
                 <PackagesStep />
@@ -419,7 +418,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="Details"
             id={'step-details'}
-            isDisabled={snapshotStepRequiresChoice}
             navItem={customStatusNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
@@ -433,7 +431,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="Review"
             id="step-review"
-            isDisabled={snapshotStepRequiresChoice}
             footer={<ReviewWizardFooter />}
           >
             {/* Intentional prop drilling for simplicity - To be removed */}

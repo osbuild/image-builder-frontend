@@ -51,6 +51,13 @@ export const isBlueprintNameValid = (blueprintName: string) =>
   blueprintName.length <= 100 &&
   /\w+/.test(blueprintName);
 
+export const isSnapshotDateValid = (date: Date) => date.getTime() <= Date.now();
+
+export const isSnapshotValid = (dateString: string) => {
+  const date = new Date(dateString);
+  return !isNaN(date.getTime()) && isSnapshotDateValid(date);
+};
+
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;
 };
