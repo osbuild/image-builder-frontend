@@ -54,7 +54,6 @@ const deselectAwsAndSelectGuestImage = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(async () => user.click(guestImageCheckbox));
-  await clickNext();
 };
 
 const selectSource = async () => {
