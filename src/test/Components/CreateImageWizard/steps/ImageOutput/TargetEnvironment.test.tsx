@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Router as RemixRouter } from '@remix-run/router/dist/router';
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
@@ -128,7 +128,6 @@ const selectAarch64 = async () => {
 };
 
 const goToReviewStep = async () => {
-  await clickNext(); // Register
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system customization
@@ -622,6 +621,7 @@ describe('set target using query parameter', () => {
   test('image-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'iso' });
     expect(await screen.findByTestId('checkbox-image-installer')).toBeChecked();
+    await clickNext();
     await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
@@ -633,6 +633,7 @@ describe('set target using query parameter', () => {
   test('guest-image (query parameter provided)', async () => {
     await renderCreateMode({ target: 'qcow2' });
     expect(await screen.findByTestId('checkbox-guest-image')).toBeChecked();
+    await clickNext();
     await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'

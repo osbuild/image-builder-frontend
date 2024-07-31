@@ -101,10 +101,10 @@ export const clickRegisterLater = async () => {
   await screen.findByRole('heading', {
     name: /Register systems using this image/,
   });
-  const radioButton = await screen.findByRole('radio', {
-    name: 'Register later',
+  const registrationCheckbox = await screen.findByRole('checkbox', {
+    name: /automatically register and enable advanced capabilities/i,
   });
-  await waitFor(() => user.click(radioButton));
+  await waitFor(() => user.click(registrationCheckbox));
 };
 
 export const selectCustomRepo = async () => {

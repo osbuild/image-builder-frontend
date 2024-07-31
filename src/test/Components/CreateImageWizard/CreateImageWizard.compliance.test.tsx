@@ -43,7 +43,7 @@ const clickFromImageOutputToOpenScap = async () => {
   const user = userEvent.setup();
   await clickNext();
   await waitFor(async () =>
-    user.click(await screen.findByLabelText('Register later'))
+    user.click(await screen.findByTestId('automatically-register-checkbox'))
   );
   await clickNext(); // skip registration
 };
@@ -77,9 +77,11 @@ describe('Step Compliance', () => {
 
     await clickNext();
     // skip registration
-    const registerLater = await screen.findByLabelText('Register later');
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
 
-    user.click(registerLater);
+    user.click(registrationCheckbox);
     await clickNext();
 
     // Now we should be in the Compliance step
@@ -141,9 +143,11 @@ describe('Step Compliance', () => {
     );
     await clickNext();
     // skip registration
-    const registerLater = await screen.findByLabelText('Register later');
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
 
-    user.click(registerLater);
+    user.click(registrationCheckbox);
     await clickNext();
 
     // Now we should be at the OpenSCAP step

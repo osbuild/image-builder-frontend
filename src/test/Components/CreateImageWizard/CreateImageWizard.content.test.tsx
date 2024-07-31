@@ -107,8 +107,10 @@ describe('Step Packages', () => {
       name: 'Select activation key',
     });
 
-    const registerLater = await screen.findByTestId('registration-radio-later');
-    user.click(registerLater);
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+    user.click(registrationCheckbox);
 
     await clickNext();
     // skip OpenSCAP
@@ -402,9 +404,11 @@ describe('Step Custom repositories', () => {
       name: 'Select activation key',
     });
 
-    const registerLater = await screen.findByLabelText('Register later');
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
 
-    user.click(registerLater);
+    user.click(registrationCheckbox);
     await clickNext();
     // skip OpenSCAP
     await clickNext();

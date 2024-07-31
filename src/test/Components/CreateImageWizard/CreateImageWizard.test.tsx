@@ -194,10 +194,10 @@ describe('Step Review', () => {
     });
 
     // skip registration
-    const registerLaterRadio = await screen.findByTestId(
-      'registration-radio-later'
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
     );
-    await waitFor(() => user.click(registerLaterRadio));
+    await waitFor(() => user.click(registrationCheckbox));
 
     await clickNext();
     // skip OpenScap
@@ -258,10 +258,10 @@ describe('Step Review', () => {
       name: 'Select activation key',
     });
     // skip registration
-    const registerLaterRadio = await screen.findByTestId(
-      'registration-radio-later'
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
     );
-    await waitFor(() => user.click(registerLaterRadio));
+    await waitFor(() => user.click(registrationCheckbox));
     await clickNext();
 
     // skip Oscap
@@ -437,16 +437,13 @@ describe('Keyboard accessibility', () => {
     await screen.findByText(
       'Automatically register and enable advanced capabilities'
     );
-    const registerRadio = await screen.findByTestId('registration-radio-now');
-    expect(registerRadio).toHaveFocus();
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+    expect(registrationCheckbox).toHaveFocus();
     await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    // skip registration
-    const registerLaterRadio = await screen.findByTestId(
-      'registration-radio-later'
-    );
-    await waitFor(() => user.click(registerLaterRadio));
     await clickNext();
 
     // TODO: Focus on textbox on OpenSCAP step

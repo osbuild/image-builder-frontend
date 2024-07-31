@@ -1,13 +1,12 @@
 import React from 'react';
 
-import { Router as RemixRouter } from '@remix-run/router/dist/router';
+import type { Router as RemixRouter } from '@remix-run/router';
 import {
   screen,
   waitFor,
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../../../Components/ShareImageModal/ShareImageModal';
@@ -15,7 +14,6 @@ import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   RHEL_9,
-  RHSM_API,
 } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
@@ -23,7 +21,6 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { server } from '../../../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickBack,
@@ -36,22 +33,10 @@ import {
   interceptBlueprintRequest,
   goToRegistrationStep,
   clickRegisterLater,
-  openAndDismissSaveAndBuildModal,
   renderEditMode,
   interceptEditBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
 } from '../../wizardTestUtils';
-
-const selectActivationKey = async () => {
-  const user = userEvent.setup();
-  const activationKeyDropdown = await screen.findByRole('textbox', {
-    name: 'Select activation key',
-  });
-  await waitFor(() => user.click(activationKeyDropdown));
-  const activationKey = await screen.findByRole('option', {
-    name: 'name0',
-  });
-  await waitFor(() => user.click(activationKey));
-};
 
 const clickShowAdditionalConnectionOptions = async () => {
   const user = userEvent.setup();
@@ -145,10 +130,10 @@ describe('Step Registration', () => {
   test('clicking Next loads file system configuration', async () => {
     await setUp();
 
-    const registerLaterRadio = await screen.findByTestId(
-      'registration-radio-later'
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
     );
-    user.click(registerLaterRadio);
+    user.click(registrationCheckbox);
 
     await clickNext();
     await clickNext();
@@ -176,21 +161,7 @@ describe('Step Registration', () => {
     await verifyCancelButton(router);
   });
 
-  test('activation key dropdown empty state', async () => {
-    server.use(
-      http.get(`${RHSM_API}/activation_keys`, () =>
-        HttpResponse.json({ body: [] })
-      )
-    );
-    await setUp();
-    const activationKeyDropdown = await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-    user.click(activationKeyDropdown);
-    await screen.findByText('No activation keys found');
-  });
-
-  test('should allow registering with rhc', async () => {
+  test('register now includes rhsm, rhc and insights', async () => {
     await setUp();
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
@@ -203,7 +174,15 @@ describe('Step Registration', () => {
     user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
-    await goToReviewStep();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
     const review = await screen.findByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -215,136 +194,38 @@ describe('Step Registration', () => {
     screen.getAllByText('012345678901');
   });
 
-  test('should allow registering without rhc', async () => {
-    await setUp();
-
-    const showOptions = await screen.findByTestId(
-      'registration-additional-options'
-    );
-
-    user.click(showOptions);
-    const rhcCheckbox = await screen.findByTestId('registration-checkbox-rhc');
-    await waitFor(async () => user.click(rhcCheckbox));
-
-    // going back and forward when rhc isn't selected should keep additional options shown
-    await clickBack();
-    await screen.findByRole('textbox', {
-      name: 'aws account id',
-    });
-    await clickNext();
-    await screen.findByTestId('registration-checkbox-insights');
-    await screen.findByTestId('registration-checkbox-rhc');
-
-    const activationKeyDropdown = await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-    user.click(activationKeyDropdown);
-    const activationKey = await screen.findByRole('option', {
-      name: 'name0',
-    });
-    user.click(activationKey);
-    await screen.findByDisplayValue('name0');
-
-    await goToReviewStep();
-    const review = await screen.findByTestId('review-registration');
-    expect(review).toHaveTextContent(
-      'Register with Red Hat Subscription Manager (RHSM)'
-    );
-    expect(review).toHaveTextContent('Connect to Red Hat Insights');
-    screen.getAllByText('012345678901');
-    expect(review).not.toHaveTextContent(
-      'Use remote host configuration (rhc) utility'
-    );
-  });
-
-  test('should allow registering without insights or rhc', async () => {
-    await setUp();
-
-    const showOptions = await screen.findByTestId(
-      'registration-additional-options'
-    );
-
-    user.click(showOptions);
-    const insightsCheckbox = await screen.findByTestId(
-      'registration-checkbox-insights'
-    );
-
-    user.click(insightsCheckbox);
-
-    // going back and forward when neither rhc or insights is selected should keep additional options shown
-    await clickBack();
-    await screen.findByRole('textbox', {
-      name: 'aws account id',
-    });
-    await clickNext();
-    await screen.findByTestId('registration-checkbox-insights');
-    await screen.findByTestId('registration-checkbox-rhc');
-
-    const activationKeyDropdown = await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-    user.click(activationKeyDropdown);
-    const activationKey = await screen.findByRole('option', {
-      name: 'name0',
-    });
-    user.click(activationKey);
-    await screen.findByDisplayValue('name0');
-
-    await goToReviewStep();
-    const review = await screen.findByTestId('review-registration');
-    expect(review).toHaveTextContent(
-      'Register with Red Hat Subscription Manager (RHSM)'
-    );
-    screen.getAllByText('012345678901');
-    expect(review).not.toHaveTextContent('Connect to Red Hat Insights');
-    expect(review).not.toHaveTextContent(
-      'Use remote host configuration (rhc) utility'
-    );
-  });
-
-  test('should hide input fields when clicking Register the system later', async () => {
+  test('should disable dropdown when clicking Register the system later', async () => {
     await setUp();
     const removeKeyInformation = waitForElementToBeRemoved(() => [
-      screen.getByTestId('subscription-activation-key'),
+      screen.getByTestId('selected-activation-key'),
     ]);
 
+    await screen.findByTestId('selected-activation-key');
+
     // click the later radio button which should remove any input fields
-    const manualOption = await screen.findByTestId('registration-radio-later');
-    await waitFor(async () => user.click(manualOption));
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+    await waitFor(async () => user.click(registrationCheckbox));
 
     await removeKeyInformation;
+    await waitFor(async () =>
+      expect(
+        await screen.findByRole('button', { name: /options menu/i })
+      ).toBeDisabled()
+    );
 
-    await goToReviewStep();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await clickNext();
+    await enterBlueprintName();
+    await clickNext();
     await screen.findByText('Register the system later');
-  });
-
-  test('registering with rhc implies registering with insights', async () => {
-    await setUp();
-    const showOptions = await screen.findByTestId(
-      'registration-additional-options'
-    );
-
-    user.click(showOptions);
-
-    const insightsCheckbox = await screen.findByTestId(
-      'registration-checkbox-insights'
-    );
-
-    user.click(insightsCheckbox);
-    await waitFor(async () =>
-      expect(
-        await screen.findByTestId('registration-checkbox-rhc')
-      ).not.toBeChecked()
-    );
-
-    const rhcCheckbox = await screen.findByTestId('registration-checkbox-rhc');
-    user.click(rhcCheckbox);
-
-    await waitFor(async () =>
-      expect(
-        await screen.findByTestId('registration-checkbox-insights')
-      ).toBeChecked()
-    );
   });
 });
 
@@ -373,7 +254,6 @@ describe('registration request generated correctly', () => {
   test('register + insights + rhc', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await selectActivationKey();
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -401,7 +281,6 @@ describe('registration request generated correctly', () => {
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectEnableRemoteRemediations();
-    await selectActivationKey();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -421,13 +300,14 @@ describe('registration request generated correctly', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 
-  test('register', async () => {
+  test('register now', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectPredictiveAnalytics();
-    await selectActivationKey();
     await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {
@@ -443,13 +323,14 @@ describe('registration request generated correctly', () => {
       customizations: { subscription: expectedSubscription },
     };
 
-    expect(receivedRequest).toEqual(expectedRequest);
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
   });
 
-  test('register Later', async () => {
+  test('register later', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickShowAdditionalConnectionOptions();
     await clickRegisterLater();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);

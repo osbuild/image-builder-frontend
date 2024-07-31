@@ -134,8 +134,10 @@ const switchToAWSManual = async () => {
 const clickFromImageOutputToFsc = async () => {
   const user = userEvent.setup();
   await clickNext();
-  const registerLater = await screen.findByText(/Register later/);
-  await waitFor(async () => user.click(registerLater));
+  const registerLaterCheckbox = await screen.findByTestId(
+    'automatically-register-checkbox'
+  );
+  await waitFor(async () => user.click(registerLaterCheckbox));
   await clickNext();
   await clickNext(); // skip OSCAP
 };
@@ -167,10 +169,10 @@ describe('Step File system configuration', () => {
     await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    const registerLaterRadio = await screen.findByTestId(
-      'registration-radio-later'
+    const registerLaterCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
     );
-    user.click(registerLaterRadio);
+    user.click(registerLaterCheckbox);
     await clickNext();
     await clickNext();
   };
