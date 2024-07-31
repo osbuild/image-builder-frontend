@@ -126,6 +126,9 @@ export const enterBlueprintName = async (name: string = 'Red Velvet') => {
   const blueprintName = await screen.findByRole('textbox', {
     name: /blueprint name/i,
   });
+
+  await waitFor(() => user.clear(blueprintName));
+  await waitFor(() => expect(blueprintName).toHaveValue(''));
   await waitFor(() => user.type(blueprintName, name));
 };
 
