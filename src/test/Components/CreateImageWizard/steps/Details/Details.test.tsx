@@ -25,7 +25,6 @@ const goToDetailsStep = async () => {
   await clickNext();
   await clickNext();
   await clickNext();
-  await clickNext();
 };
 
 const enterBlueprintDescription = async () => {
@@ -53,7 +52,7 @@ describe('validates name', () => {
     await clickRegisterLater();
     await goToDetailsStep();
     const nextButton = await getNextButton();
-    expect(nextButton).toBeDisabled();
+    expect(nextButton).toBeEnabled();
     await enterBlueprintName(' ');
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
