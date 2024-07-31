@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Router as RemixRouter } from '@remix-run/router/dist/router';
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -79,7 +79,6 @@ const deselectGcpAndSelectGuestImage = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(async () => user.click(guestImageCheckbox));
-  await clickNext();
 };
 
 const selectGoogleAccount = async (optionId: string) => {
