@@ -13,12 +13,15 @@ import {
   selectFileSystemConfigurationType,
   selectFirstBootScript,
   selectPartitions,
+  selectSnapshotDate,
+  selectUseLatest,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
   isBlueprintNameValid,
   isBlueprintDescriptionValid,
   isMountpointMinSizeValid,
+  isSnapshotValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -30,10 +33,14 @@ export type StepValidation = {
 
 export function useIsBlueprintValid(): boolean {
   const filesystem = useFilesystemValidation();
+  const snapshot = useSnapshotValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
-    !filesystem.disabledNext && !firstBoot.disabledNext && !details.disabledNext
+    !filesystem.disabledNext &&
+    !snapshot.disabledNext &&
+    !firstBoot.disabledNext &&
+    !details.disabledNext
   );
 }
 
@@ -59,6 +66,19 @@ export function useFilesystemValidation(): StepValidation {
     }
   }
   return { errors, disabledNext };
+}
+
+export function useSnapshotValidation(): StepValidation {
+  const snapshotDate = useAppSelector(selectSnapshotDate);
+  const useLatest = useAppSelector(selectUseLatest);
+
+  if (!useLatest && !isSnapshotValid(snapshotDate)) {
+    return {
+      errors: { snapshotDate: 'Invalid snapshot date' },
+      disabledNext: true,
+    };
+  }
+  return { errors: {}, disabledNext: false };
 }
 
 export function useFirstBootValidation(): StepValidation {

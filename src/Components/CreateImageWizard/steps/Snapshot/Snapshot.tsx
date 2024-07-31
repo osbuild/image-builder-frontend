@@ -22,15 +22,7 @@ import {
   dateToMMDDYYYY,
   parseMMDDYYYYtoDate,
 } from '../../../../Utilities/time';
-
-const dateValidators = [
-  (date: Date) => {
-    if (date.getTime() > Date.now()) {
-      return 'Cannot set a date in the future';
-    }
-    return '';
-  },
-];
+import { isSnapshotDateValid } from '../../validators';
 
 export default function Snapshot() {
   const dispatch = useAppDispatch();
@@ -89,7 +81,14 @@ export default function Snapshot() {
                 placeholder="MM/DD/YYYY"
                 dateParse={parseMMDDYYYYtoDate}
                 dateFormat={dateToMMDDYYYY}
-                validators={dateValidators}
+                validators={[
+                  (date: Date) => {
+                    if (!isSnapshotDateValid(date)) {
+                      return 'Cannot set a date in the future';
+                    }
+                    return '';
+                  },
+                ]}
                 onChange={(_, val) => dispatch(changeSnapshotDate(val))}
               />
               <Button
