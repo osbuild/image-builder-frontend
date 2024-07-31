@@ -105,7 +105,7 @@ export function useDetailsValidation(): StepValidation {
           setUniqueName(true);
         });
     }
-  }, [blueprintId, name, setUniqueName, trigger]);
+  }, [blueprintId, name, setUniqueName, trigger, nameValid]);
 
   let nameError = '';
   if (!nameValid) {

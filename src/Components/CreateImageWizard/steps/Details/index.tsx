@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Form,
@@ -14,9 +14,13 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintDescription,
   changeBlueprintName,
+  selectArchitecture,
   selectBlueprintDescription,
   selectBlueprintName,
+  selectDistribution,
+  selectImageTypes,
 } from '../../../../store/wizardSlice';
+import { generateDefaultName } from '../../utilities/generateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { HookValidatedInput } from '../../ValidatedTextInput';
 
@@ -24,6 +28,19 @@ const DetailsStep = () => {
   const dispatch = useAppDispatch();
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
+  const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const targetEnvironments = useAppSelector(selectImageTypes);
+
+  useEffect(() => {
+    if (!blueprintName) {
+      dispatch(
+        changeBlueprintName(
+          generateDefaultName(distribution, arch, targetEnvironments)
+        )
+      );
+    }
+  }, []);
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
     name: string

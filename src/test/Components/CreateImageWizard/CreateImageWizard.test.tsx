@@ -395,7 +395,6 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
-    await clickNext();
     await enterBlueprintName();
     await clickNext();
     // informational modal pops up in the first test only as it's tied
