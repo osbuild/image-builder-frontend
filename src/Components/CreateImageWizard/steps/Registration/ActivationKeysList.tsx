@@ -4,13 +4,7 @@ import {
   Alert,
   FormGroup,
   Spinner,
-  EmptyState,
   Button,
-  EmptyStateIcon,
-  EmptyStateBody,
-  EmptyStateHeader,
-  EmptyStateFooter,
-  EmptyStateActions,
   Text,
   TextContent,
   Popover,
@@ -20,7 +14,6 @@ import {
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import { WrenchIcon, AddCircleOIcon } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -41,6 +34,7 @@ import {
   changeBaseUrl,
   changeServerUrl,
   selectActivationKey,
+  selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
@@ -89,41 +83,6 @@ export const PopoverActivation = () => {
   );
 };
 
-type EmptyActivationsKeyStateProps = {
-  handleActivationKeyFn: () => void;
-  isLoading: boolean;
-};
-
-const EmptyActivationsKeyState = ({
-  handleActivationKeyFn,
-  isLoading,
-}: EmptyActivationsKeyStateProps) => (
-  <EmptyState variant="xs">
-    <EmptyStateHeader
-      titleText="No activation keys found"
-      headingLevel="h4"
-      icon={<EmptyStateIcon icon={WrenchIcon} />}
-    />
-    <EmptyStateBody>
-      Get started by building a default key, which will be generated and present
-      for you.
-    </EmptyStateBody>
-    <EmptyStateFooter>
-      <EmptyStateActions>
-        <Button
-          onClick={() => handleActivationKeyFn()}
-          icon={<AddCircleOIcon />}
-          isLoading={isLoading}
-          iconPosition="left"
-          variant="link"
-        >
-          Create activation key
-        </Button>
-      </EmptyStateActions>
-    </EmptyStateFooter>
-  </EmptyState>
-);
-
 const ManageKeysButton = () => {
   const { isProd } = useGetEnvironment();
   return (
@@ -136,7 +95,7 @@ const ManageKeysButton = () => {
       isInline
       href={isProd() ? ACTIVATION_KEYS_PROD_URL : ACTIVATION_KEYS_STAGE_URL}
     >
-      Activation keys page
+      Customer portal
     </Button>
   );
 };
@@ -145,6 +104,9 @@ const ActivationKeysList = () => {
   const dispatch = useAppDispatch();
 
   const activationKey = useAppSelector(selectActivationKey);
+  const registrationType = useAppSelector(selectRegistrationType);
+
+  const defaultActivationKeyName = 'activation-key-default';
 
   const { isProd } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);
@@ -159,6 +121,10 @@ const ActivationKeysList = () => {
 
   const [createActivationKey, { isLoading: isLoadingActivationKey }] =
     useCreateActivationKeysMutation();
+
+  const recentActivationKey = window.localStorage.getItem(
+    'imageBuilder.recentActivationKey'
+  );
 
   useEffect(() => {
     if (isProd()) {
@@ -175,11 +141,8 @@ const ActivationKeysList = () => {
     selection: string
   ) => {
     setIsOpen(false);
+    window.localStorage.setItem('imageBuilder.recentActivationKey', selection);
     dispatch(changeActivationKey(selection));
-  };
-
-  const handleClear = () => {
-    dispatch(changeActivationKey(undefined));
   };
 
   const handleToggle = () => {
@@ -193,11 +156,16 @@ const ActivationKeysList = () => {
     try {
       await createActivationKey({
         body: {
-          name: 'activation-key-default',
+          name: defaultActivationKeyName,
           serviceLevel: 'Self-Support',
         },
       });
+      window.localStorage.setItem(
+        'imageBuilder.recentActivationKey',
+        defaultActivationKeyName
+      );
       refetch();
+      dispatch(changeActivationKey(defaultActivationKeyName));
     } catch (error) {
       dispatch(
         addNotification({
@@ -209,17 +177,34 @@ const ActivationKeysList = () => {
     }
   };
 
+  const isActivationKeysEmpty =
+    isSuccessActivationKeys &&
+    !isLoadingActivationKey &&
+    activationKeys.body?.length === 0;
+
+  if (isActivationKeysEmpty) {
+    handleCreateActivationKey();
+  }
+
+  useEffect(() => {
+    if (!activationKey && isSuccessActivationKeys) {
+      if (
+        recentActivationKey &&
+        activationKeys?.body?.find((key) => key.name === recentActivationKey)
+      ) {
+        dispatch(changeActivationKey(recentActivationKey));
+      } else if (
+        activationKeys &&
+        activationKeys.body &&
+        activationKeys.body.length > 0
+      ) {
+        dispatch(changeActivationKey(activationKeys?.body[0].name));
+      }
+    }
+  }, [isSuccessActivationKeys]);
+
   const setSelectOptions = () => {
     const selectOptions = [];
-    if (isActivationKeysEmpty) {
-      selectOptions.push(
-        <EmptyActivationsKeyState
-          handleActivationKeyFn={handleCreateActivationKey}
-          isLoading={isLoadingActivationKey}
-          key={'Empty'}
-        />
-      );
-    }
     if (isSuccessActivationKeys) {
       activationKeys.body?.map((key, index) =>
         selectOptions.push(<SelectOption key={index} value={key.name} />)
@@ -240,13 +225,9 @@ const ActivationKeysList = () => {
     return selectOptions;
   };
 
-  const isActivationKeysEmpty =
-    isSuccessActivationKeys && activationKeys.body?.length === 0;
-
   return (
     <>
       <FormGroup
-        isRequired={true}
         label={
           <>
             Activation key to use for this image <PopoverActivation />
@@ -259,20 +240,19 @@ const ActivationKeysList = () => {
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
           onSelect={setActivationKey}
-          onClear={handleClear}
           selections={activationKey}
           isOpen={isOpen}
           placeholderText="Select activation key"
           typeAheadAriaLabel="Select activation key"
-          isDisabled={!isSuccessActivationKeys}
+          isDisabled={
+            !isSuccessActivationKeys || registrationType === 'register-later'
+          }
         >
           {setSelectOptions()}
         </Select>
         <TextContent>
           <Text>
-            By default, an activation key is generated and preset for you.
-            Admins can create and manage keys by visiting the{' '}
-            <ManageKeysButton />
+            Create and manage activation keys in the <ManageKeysButton />
           </Text>
         </TextContent>
       </FormGroup>
