@@ -180,4 +180,4 @@ parameters:
 - name: IQE_PARALLEL_ENABLED
   value: "false"
 - name: SE_NODE_SESSION_TIMEOUT
-  value: 600
+  value: "600"
