@@ -45,9 +45,16 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) =>
-    flag === 'image-builder.pkgrecs.enabled' ? true : false
-  ),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.pkgrecs.enabled':
+        return true;
+      case 'image-builder.firstboot.enabled':
+        return true;
+      default:
+        return false;
+    }
+  }),
 }));
 
 const goToPackagesStep = async () => {
