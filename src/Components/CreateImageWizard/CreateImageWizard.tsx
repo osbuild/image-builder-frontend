@@ -365,22 +365,19 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             name="Content"
             id="step-content"
             steps={[
-              ...(snapshottingEnabled
-                ? [
-                    <WizardStep
-                      name="Repository snapshot"
-                      id="wizard-repository-snapshot"
-                      key="wizard-repository-snapshot"
-                      footer={
-                        <CustomWizardFooter
-                          disableNext={snapshotStepRequiresChoice}
-                        />
-                      }
-                    >
-                      <SnapshotStep />
-                    </WizardStep>,
-                  ]
-                : []),
+              <WizardStep
+                name="Repository snapshot"
+                id="wizard-repository-snapshot"
+                key="wizard-repository-snapshot"
+                isHidden={!snapshottingEnabled}
+                footer={
+                  <CustomWizardFooter
+                    disableNext={snapshotStepRequiresChoice}
+                  />
+                }
+              >
+                <SnapshotStep />
+              </WizardStep>,
               <WizardStep
                 name="Custom repositories"
                 id="wizard-custom-repositories"
