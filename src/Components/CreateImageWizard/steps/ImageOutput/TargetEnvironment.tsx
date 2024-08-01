@@ -12,6 +12,7 @@ import {
   Tile,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import {
@@ -29,12 +30,14 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../store/wizardSlice';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
+
+  const wslFlag = useFlag('image-builder.wsl.enabled');
+
   const { data } = useGetArchitecturesQuery({
     distribution: distribution,
   });
@@ -45,7 +48,6 @@ const TargetEnvironment = () => {
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
-  const { isBeta } = useGetEnvironment();
 
   const supportedEnvironments = data?.find(
     (elem) => elem.arch === arch
@@ -321,7 +323,7 @@ const TargetEnvironment = () => {
             data-testid="checkbox-image-installer"
           />
         )}
-        {supportedEnvironments?.includes('wsl') && isBeta() && (
+        {supportedEnvironments?.includes('wsl') && wslFlag && (
           <Checkbox
             label="WSL - Windows Subsystem for Linux (.tar.gz)"
             isChecked={environments.includes('wsl')}
