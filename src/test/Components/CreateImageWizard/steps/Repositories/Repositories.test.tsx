@@ -46,7 +46,9 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn(() => false),
+  useFlag: vi.fn((flag) =>
+    flag === 'image-builder.firstboot.enabled' ? true : false
+  ),
 }));
 
 const goToRepositoriesStep = async () => {
