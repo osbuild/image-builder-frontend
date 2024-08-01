@@ -401,22 +401,21 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               </WizardStep>,
             ]}
           />
-          {isFirstBootEnabled && (
-            <WizardStep
-              name="First boot script configuration"
-              id="wizard-first-boot"
-              key="wizard-first-boot"
-              navItem={customStatusNavItem}
-              status={firstBootValidation.disabledNext ? 'error' : 'default'}
-              footer={
-                <CustomWizardFooter
-                  disableNext={firstBootValidation.disabledNext}
-                />
-              }
-            >
-              <FirstBootStep />
-            </WizardStep>
-          )}
+          <WizardStep
+            name="First boot script configuration"
+            id="wizard-first-boot"
+            key="wizard-first-boot"
+            navItem={customStatusNavItem}
+            status={firstBootValidation.disabledNext ? 'error' : 'default'}
+            isHidden={!isFirstBootEnabled}
+            footer={
+              <CustomWizardFooter
+                disableNext={firstBootValidation.disabledNext}
+              />
+            }
+          >
+            <FirstBootStep />
+          </WizardStep>
           <WizardStep
             name="Details"
             id={'step-details'}
