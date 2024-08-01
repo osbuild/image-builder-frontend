@@ -188,9 +188,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   let startIndex = 1; // default index
   if (isEdit) {
     if (snapshottingEnabled) {
-      startIndex = isFirstBootEnabled ? 15 : 14;
+      startIndex = 15;
     } else {
-      startIndex = isFirstBootEnabled ? 14 : 13;
+      startIndex = 14;
     }
   }
 
