@@ -47,9 +47,16 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
 
 vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) =>
-    flag === 'image-builder.pkgrecs.enabled' ? true : false
-  ),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.pkgrecs.enabled':
+        return true;
+      case 'image-builder.snapshots.enabled':
+        return true;
+      default:
+        return false;
+    }
+  }),
 }));
 
 const typeIntoSearchBox = async (searchTerm: string) => {
