@@ -12,8 +12,6 @@ import {
 import { RepositoryIcon } from '@patternfly/react-icons';
 
 import { CONTENT_URL } from '../../../../../constants';
-import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
-import { betaPath } from '../../../utilities/betaPath';
 
 type EmptyProps = {
   refetch: () => void;
@@ -21,7 +19,6 @@ type EmptyProps = {
 };
 
 export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
-  const { isBeta } = useGetEnvironment();
   return (
     <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
       <EmptyStateHeader
@@ -44,7 +41,7 @@ export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
           variant="primary"
           component="a"
           target="_blank"
-          href={betaPath(CONTENT_URL, isBeta())}
+          href={CONTENT_URL}
           className="pf-u-mr-sm"
         >
           Go to repositories

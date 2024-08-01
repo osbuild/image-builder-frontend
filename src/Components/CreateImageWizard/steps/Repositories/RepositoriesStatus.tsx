@@ -23,8 +23,6 @@ import {
   convertStringToDate,
   timestampToDisplayString,
 } from '../../../../Utilities/time';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-import { betaPath } from '../../utilities/betaPath';
 
 const getLastIntrospection = (
   repoIntrospections: RepositoryStatusProps['repoIntrospections']
@@ -59,7 +57,6 @@ const RepositoriesStatus = ({
   repoIntrospections,
   repoFailCount,
 }: RepositoryStatusProps) => {
-  const { isBeta } = useGetEnvironment();
   if (repoStatus === 'Valid') {
     return (
       <>
@@ -120,7 +117,7 @@ const RepositoriesStatus = ({
                 iconPosition="right"
                 isInline
                 icon={<ExternalLinkAltIcon />}
-                href={betaPath(CONTENT_URL, isBeta())}
+                href={CONTENT_URL}
               >
                 Go to Repositories
               </Button>

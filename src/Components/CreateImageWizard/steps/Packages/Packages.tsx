@@ -75,8 +75,6 @@ import {
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
 import useDebounce from '../../../../Utilities/useDebounce';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-import { betaPath } from '../../utilities/betaPath';
 
 type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
@@ -514,7 +512,6 @@ const Packages = () => {
   };
 
   const NoResultsFound = () => {
-    const { isBeta } = useGetEnvironment();
     if (toggleSourceRepos === RepoToggle.INCLUDED) {
       return (
         <Tr>
@@ -549,7 +546,7 @@ const Packages = () => {
                       target="_blank"
                       iconPosition="right"
                       icon={<ExternalLinkAltIcon />}
-                      href={betaPath(CONTENT_URL, isBeta())}
+                      href={CONTENT_URL}
                     >
                       Manage your repositories and popular repositories
                     </Button>
@@ -579,7 +576,7 @@ const Packages = () => {
                     isInline
                     component="a"
                     target="_blank"
-                    href={betaPath(CONTENT_URL, isBeta())}
+                    href={CONTENT_URL}
                   >
                     your repositories
                   </Button>{' '}
@@ -594,7 +591,6 @@ const Packages = () => {
   };
 
   const RepositoryModal = () => {
-    const { isBeta } = useGetEnvironment();
     return (
       <Modal
         titleIconVariant="warning"
@@ -632,7 +628,7 @@ const Packages = () => {
           iconPosition="right"
           isInline
           icon={<ExternalLinkAltIcon />}
-          href={betaPath(CONTENT_URL, isBeta())}
+          href={CONTENT_URL}
         >
           content services
         </Button>{' '}

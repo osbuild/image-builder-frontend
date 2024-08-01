@@ -11,11 +11,8 @@ import {
   selectPackages,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-import { betaPath } from '../../utilities/betaPath';
 
 const ManageRepositoriesButton = () => {
-  const { isBeta } = useGetEnvironment();
   return (
     <Button
       component="a"
@@ -24,7 +21,7 @@ const ManageRepositoriesButton = () => {
       iconPosition="right"
       isInline
       icon={<ExternalLinkAltIcon />}
-      href={betaPath(CONTENT_URL, isBeta())}
+      href={CONTENT_URL}
     >
       Create and manage repositories here
     </Button>

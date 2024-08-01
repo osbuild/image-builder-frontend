@@ -6,11 +6,8 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import Snapshot from './Snapshot';
 
 import { CONTENT_URL } from '../../../../constants';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-import { betaPath } from '../../utilities/betaPath';
 
 export default function SnapshotStep() {
-  const { isBeta } = useGetEnvironment();
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
@@ -28,7 +25,7 @@ export default function SnapshotStep() {
           iconPosition="right"
           isInline
           icon={<ExternalLinkAltIcon />}
-          href={betaPath(CONTENT_URL, isBeta())}
+          href={CONTENT_URL}
         >
           Create and manage repositories here
         </Button>
