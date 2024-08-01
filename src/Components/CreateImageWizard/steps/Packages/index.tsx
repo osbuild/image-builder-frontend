@@ -9,10 +9,8 @@ import Packages from './Packages';
 import { CENTOS_9 } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const PackagesStep = () => {
-  const { isBeta } = useGetEnvironment();
   const packageRecommendationsFlag = useFlag('image-builder.pkgrecs.enabled');
   const distribution = useAppSelector(selectDistribution);
   return (
@@ -27,7 +25,7 @@ const PackagesStep = () => {
         package groups.
       </Alert>
       <Packages />
-      {isBeta() && packageRecommendationsFlag && distribution !== CENTOS_9 && (
+      {packageRecommendationsFlag && distribution !== CENTOS_9 && (
         <PackageRecommendations />
       )}
     </Form>
