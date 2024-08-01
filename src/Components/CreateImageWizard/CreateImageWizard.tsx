@@ -187,11 +187,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    if (snapshottingEnabled) {
-      startIndex = 15;
-    } else {
-      startIndex = 14;
-    }
+    startIndex = 15;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
