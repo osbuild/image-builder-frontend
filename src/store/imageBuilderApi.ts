@@ -39,7 +39,10 @@ const injectedRtkApi = api.injectEndpoints({
       }),
     }),
     getBlueprint: build.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
-      query: (queryArg) => ({ url: `/blueprints/${queryArg.id}` }),
+      query: (queryArg) => ({
+        url: `/blueprints/${queryArg.id}`,
+        params: { version: queryArg.version },
+      }),
     }),
     deleteBlueprint: build.mutation<
       DeleteBlueprintApiResponse,
@@ -198,6 +201,10 @@ export type GetBlueprintApiResponse =
 export type GetBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
+  /** Filter by a specific version of the Blueprint we want to fetch.
+    Omit or pass -1 to fetch latest version.
+     */
+  version?: number;
 };
 export type DeleteBlueprintApiResponse =
   /** status 204 Successfully deleted */ void;
