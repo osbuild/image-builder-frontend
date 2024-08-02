@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import {
   Alert,
+  AlertActionLink,
   Pagination,
   Toolbar,
   ToolbarContent,
@@ -22,6 +23,7 @@ import {
   Distributions,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
+import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
 import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
@@ -43,6 +45,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   onPerPageSelect,
 }: imagesTableToolbarProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showDiffModal, setShowDiffModal] = useState(false);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
 
@@ -110,6 +113,14 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
         setShowDeleteModal={setShowDeleteModal}
         isOpen={showDeleteModal}
       />
+      {itemCount > 0 && isBlueprintOutSync && (
+        <BlueprintDiffModal
+          baseVersion={latestImageVersion}
+          blueprintName={selectedBlueprintName}
+          isOpen={showDiffModal}
+          onClose={() => setShowDiffModal(false)}
+        />
+      )}
       <Toolbar>
         <ToolbarContent>
           <Title headingLevel="h2">
@@ -127,6 +138,14 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             isInline
             title={`The selected blueprint is at version ${selectedBlueprintVersion}, the latest images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
             ouiaId="blueprint-out-of-sync-alert"
+            actionLinks={
+              <AlertActionLink
+                onClick={() => setShowDiffModal(true)}
+                id="blueprint_view_version_difference"
+              >
+                View the difference
+              </AlertActionLink>
+            }
           />
         )}
         {blueprintsComposes &&
