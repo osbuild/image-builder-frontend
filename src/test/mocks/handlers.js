@@ -158,6 +158,7 @@ export const handlers = [
       let regexp;
       try {
         regexp = new RegExp(search);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (e) {
         const sanitized = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         regexp = new RegExp(sanitized);
