@@ -91,7 +91,6 @@ export const BuildImagesButton = () => {
           variant="primary"
           data-testid="blueprint-build-image-menu"
           ref={toggleRef}
-          isFullWidth
           onClick={onToggleClick}
           isExpanded={isOpen}
           splitButtonOptions={{
