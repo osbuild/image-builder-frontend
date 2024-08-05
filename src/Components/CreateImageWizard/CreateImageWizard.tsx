@@ -141,14 +141,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
-    searchParams.get('release') === 'rhel8' &&
+    if (searchParams.get('release') === 'rhel8') {
       dispatch(changeDistribution(RHEL_8));
-    searchParams.get('arch') === AARCH64 &&
+    }
+    if (searchParams.get('arch') === AARCH64) {
       dispatch(changeArchitecture(AARCH64));
-    searchParams.get('target') === 'iso' &&
+    }
+    if (searchParams.get('target') === 'iso') {
       dispatch(addImageType('image-installer'));
-    searchParams.get('target') === 'qcow2' &&
+    }
+    if (searchParams.get('target') === 'qcow2') {
       dispatch(addImageType('guest-image'));
+    }
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps

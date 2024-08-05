@@ -13,8 +13,10 @@ import {
   Modal,
   ModalVariant,
 } from '@patternfly/react-core';
+import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useNavigate } from 'react-router-dom';
 
+import { useAppDispatch } from '../../store/hooks';
 import { BlueprintResponse } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
@@ -38,6 +40,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [filename, setFilename] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isRejected, setIsRejected] = React.useState(false);
+  const dispatch = useAppDispatch();
 
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
@@ -67,6 +70,13 @@ export const ImportBlueprintModal: React.FunctionComponent<
       setJsonContent(value);
     } catch (error) {
       setIsInvalidFormat(true);
+      dispatch(
+        addNotification({
+          variant: 'warning',
+          title: 'No blueprint was build',
+          description: error?.data?.error?.message,
+        })
+      );
     }
   };
   const handleFileRejected = () => {

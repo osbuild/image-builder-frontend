@@ -90,7 +90,7 @@ export const PopoverActivation = () => {
 };
 
 type EmptyActivationsKeyStateProps = {
-  handleActivationKeyFn: Function;
+  handleActivationKeyFn: () => void;
   isLoading: boolean;
 };
 
