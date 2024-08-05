@@ -36,11 +36,12 @@ export const EditSaveAndBuildBtn = ({
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
-    requestBody &&
-      (await updateBlueprint({
+    if (requestBody) {
+      await updateBlueprint({
         id: blueprintId,
         createBlueprintRequest: requestBody,
-      }));
+      });
+    }
     buildBlueprint({ id: blueprintId, body: {} });
   };
 
@@ -69,8 +70,9 @@ export const EditSaveButton = ({
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
-    requestBody &&
+    if (requestBody) {
       updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });
+    }
   };
   return (
     <MenuToggleAction

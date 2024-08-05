@@ -50,6 +50,7 @@ export const BuildImagesButton = () => {
           addNotification({
             variant: 'warning',
             title: 'No blueprint was build',
+            description: imageBuildError?.data?.error?.message,
           })
         );
       }
@@ -164,8 +165,9 @@ export const BuildImagesButtonEmptyState = ({
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
   const onBuildHandler = async () => {
-    selectedBlueprintId &&
-      (await buildBlueprint({ id: selectedBlueprintId, body: {} }));
+    if (selectedBlueprintId) {
+      await buildBlueprint({ id: selectedBlueprintId, body: {} });
+    }
   };
   return (
     <Button

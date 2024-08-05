@@ -33,20 +33,22 @@ const numFillerRepos = 1000;
 const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
   let repos = testingRepos;
 
-  args.available_for_arch &&
-    (repos = repos.filter(
+  if (args.available_for_arch) {
+    repos = repos.filter(
       (repo) =>
         repo.distribution_arch === 'any' ||
         repo.distribution_arch === args.available_for_arch
-    ));
+    );
+  }
 
-  args.available_for_version &&
-    (repos = repos.filter((repo) => {
+  if (args.available_for_version) {
+    repos = repos.filter((repo) => {
       return (
         repo.distribution_versions?.includes(args.available_for_version!) ||
         repo.distribution_versions?.includes('any')
       );
-    }));
+    });
+  }
 
   // Filler repos will always appear in response as they have distribution_versions
   // and distribution_arch of 'any'. High count is useful for testing pagination.
@@ -54,11 +56,12 @@ const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
 
   repos = [...repos, ...fillerRepos];
 
-  args.search &&
-    (repos = repos.filter(
+  if (args.search) {
+    repos = repos.filter(
       (repo) =>
         repo.name?.includes(args.search!) || repo.url?.includes(args.search!)
-    ));
+    );
+  }
 
   return repos;
 };
