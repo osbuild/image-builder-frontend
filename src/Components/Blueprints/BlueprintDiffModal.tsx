@@ -3,7 +3,7 @@ import React from 'react';
 import { DiffEditor } from '@monaco-editor/react';
 import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 
-import { BuildImagesButtonEmptyState } from './BuildImagesButton';
+import { BuildImagesButton } from './BuildImagesButton';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -46,7 +46,7 @@ const BlueprintDiffModal = ({
       onClose={onClose}
       title={`Compare ${blueprintName || ''} versions`}
       actions={[
-        <BuildImagesButtonEmptyState key="build-button" />,
+        <BuildImagesButton key="build-button" />,
         <Button
           key="cancel-button"
           variant="link"
