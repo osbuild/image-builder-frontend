@@ -10,7 +10,7 @@ if (
   process.env.MSW?.toString().toLowerCase() === 'true'
 ) {
   // process.env.MSW is set in the webpack config using DefinePlugin
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const { worker } = require('./test/mocks/browser');
   worker.start({
     serviceWorker: {

@@ -85,6 +85,7 @@ startAppListening({
 
 // Listener middleware must be prepended according to RTK docs:
 // https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
 export const middleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware()
     .prepend(listenerMiddleware.middleware)
