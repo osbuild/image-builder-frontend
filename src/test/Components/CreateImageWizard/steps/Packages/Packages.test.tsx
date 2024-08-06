@@ -12,7 +12,7 @@ import {
   packagesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import { clickNext } from '../../../../testUtils';
-import { selectCustomRepo } from '../../CreateImageWizard.content.test';
+import { selectCustomRepo } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,

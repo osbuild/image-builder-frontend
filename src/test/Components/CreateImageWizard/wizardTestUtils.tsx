@@ -10,7 +10,11 @@ import {
   ImageRequest,
 } from '../../../store/imageBuilderApi';
 import { server } from '../../mocks/server';
-import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import {
+  clickBack,
+  clickNext,
+  renderCustomRoutesWithReduxRouter,
+} from '../../testUtils';
 
 type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
@@ -104,6 +108,17 @@ export const clickRegisterLater = async () => {
     name: 'Register later',
   });
   await waitFor(() => user.click(radioButton));
+};
+
+export const selectCustomRepo = async () => {
+  const user = userEvent.setup();
+  await clickBack();
+  const customRepoCheckbox = await screen.findByRole('checkbox', {
+    name: /select row 0/i,
+  });
+
+  user.click(customRepoCheckbox);
+  await clickNext();
 };
 
 export const enterBlueprintName = async (name: string = 'Red Velvet') => {

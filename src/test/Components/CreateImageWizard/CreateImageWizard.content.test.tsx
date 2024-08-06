@@ -4,6 +4,8 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { selectCustomRepo } from './wizardTestUtils';
+
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import {
   clickBack,
@@ -102,17 +104,6 @@ const checkRecommendationsEmptyState = async () => {
   });
 
   await screen.findByText('Select packages to generate recommendations.');
-};
-
-export const selectCustomRepo = async () => {
-  const user = userEvent.setup();
-  await clickBack();
-  const customRepoCheckbox = await screen.findByRole('checkbox', {
-    name: /select row 0/i,
-  });
-
-  user.click(customRepoCheckbox);
-  await clickNext();
 };
 
 describe('Step Packages', () => {
