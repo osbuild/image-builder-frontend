@@ -164,7 +164,7 @@ const PackageRecommendations = () => {
                 again by changing your selected packages.
               </Alert>
             )}
-            {isSuccess && !data?.packages?.length && (
+            {isSuccess && !data?.packages?.length && packages.length > 0 && (
               <>No recommendations found for the set of selected packages</>
             )}
             {isSuccess && data && data?.packages && (
