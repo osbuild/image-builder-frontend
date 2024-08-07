@@ -1,4 +1,6 @@
 #!/bin/bash
+CICD_REPO_BRANCH=do_not_re_pull_mc_image
+BONFIRE_REPO_BRANCH=do_not_re_pull_mc_image
 
 # --------------------------------------------
 # Export vars for helper scripts to use
