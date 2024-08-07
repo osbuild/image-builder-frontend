@@ -15,6 +15,49 @@ const MockResizeObserver = vi.fn(() => ({
 }));
 vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
+vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
+  useChrome: () => ({
+    auth: {
+      getUser: () => {
+        return {
+          identity: {
+            internal: {
+              org_id: 5,
+            },
+          },
+        };
+      },
+    },
+    isBeta: () => true,
+    isProd: () => true,
+    getEnvironment: () => 'prod',
+  }),
+}));
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.import.enabled':
+        return true;
+      case 'image-builder.firstboot.enabled':
+        return true;
+      case 'image-builder.snapshots.enabled':
+        return true;
+      case 'image-builder.wsl.enabled':
+        return true;
+      case 'image-builder.pkgrecs.enabled':
+        return true;
+      case 'edgeParity.image-list':
+        return true;
+      case 'image-builder.edge.local-image-table':
+        return true;
+      default:
+        return false;
+    }
+  }),
+}));
+
 // Remove DOM dump from the testing-library output
 configure({
   getElementError: (message: string) => {
