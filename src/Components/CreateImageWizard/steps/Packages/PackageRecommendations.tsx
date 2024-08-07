@@ -18,6 +18,7 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon, OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
 import PackageRecommendationDescription from './components/PackageRecommendationDescription';
@@ -36,6 +37,7 @@ import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
+  const { analytics } = useChrome();
   const dispatch = useDispatch();
 
   const arch = useAppSelector(selectArchitecture);
@@ -67,12 +69,19 @@ const PackageRecommendations = () => {
   useEffect(() => {
     if (isExpanded && packages.length > 0) {
       (async () => {
-        await fetchRecommendedPackages({
+        const response = await fetchRecommendedPackages({
           recommendPackageRequest: {
             packages: packages.map((pkg) => pkg.name),
             recommendedPackages: 5,
           },
         });
+
+        if (response && response.data && response.data.packages.length > 0) {
+          analytics.track('recommendationsShown', {
+            shownRecommendations: response.data.packages,
+            selectedPackages: packages.map((pkg) => pkg.name),
+          });
+        }
       })();
     }
   }, [fetchRecommendedPackages, packages, isExpanded]);
@@ -213,7 +222,16 @@ const PackageRecommendations = () => {
                           <Button
                             variant="link"
                             component="a"
-                            onClick={() => addRecommendedPackage(pkg)}
+                            onClick={() => {
+                              analytics.track('recommendedPackageAdded', {
+                                packageName: pkg,
+                                selectedPackages: packages.map(
+                                  (pkg) => pkg.name
+                                ),
+                                shownRecommendations: data.packages,
+                              });
+                              addRecommendedPackage(pkg);
+                            }}
                             isInline
                             isDisabled={isRecommendedPackageSelected(pkg)}
                             data-testid="add-recommendation-button"
