@@ -8,11 +8,7 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
-import {
-  ExternalLinkAltIcon,
-  HelpIcon,
-  ImportIcon,
-} from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   OpenSourceBadge,
@@ -20,6 +16,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 import { useNavigate } from 'react-router-dom';
+
+import BetaLabel from './BetaLabel';
 
 import {
   CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
@@ -142,12 +140,12 @@ export const ImageBuilderHeader = ({
                     data-testid="import-blueprint-button"
                     ouiaId="import-blueprint-button"
                     variant="secondary"
-                    icon={<ImportIcon />}
+                    icon={<BetaLabel />}
                     iconPosition="end"
                     onClick={() => setShowImportModal(true)}
                     isDisabled={!isOnBlueprintsTab}
                   >
-                    Import{' '}
+                    Import
                   </Button>
                 )}
               </FlexItem>
