@@ -32,6 +32,11 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     isProd: () => true,
     getEnvironment: () => 'prod',
   }),
+  default: () => ({
+    analytics: {
+      track: () => 'test',
+    },
+  }),
 }));
 
 vi.mock('@unleash/proxy-client-react', () => ({
