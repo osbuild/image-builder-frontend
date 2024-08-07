@@ -28,39 +28,6 @@ const routes = [
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    auth: {
-      getUser: () => {
-        return {
-          identity: {
-            internal: {
-              org_id: 5,
-            },
-          },
-        };
-      },
-    },
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.pkgrecs.enabled':
-        return true;
-      case 'image-builder.snapshots.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
-}));
-
 const typeIntoSearchBox = async (searchTerm: string) => {
   const user = userEvent.setup();
   const searchbox = await screen.findByRole('textbox', {

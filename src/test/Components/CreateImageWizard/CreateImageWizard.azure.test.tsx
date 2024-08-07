@@ -31,29 +31,6 @@ const routes = [
     element: <ShareImageModal />,
   },
 ];
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    auth: {
-      getUser: () => {
-        return {
-          identity: {
-            internal: {
-              org_id: 5,
-            },
-          },
-        };
-      },
-    },
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn(() => false),
-}));
 
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;

@@ -3,26 +3,6 @@ import userEvent from '@testing-library/user-event';
 
 import { renderWithReduxRouter } from '../../test/testUtils';
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'stage',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.import.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
-}));
-
 const BLUEPRINT_JSON = `{
     "customizations": {
       "files": [

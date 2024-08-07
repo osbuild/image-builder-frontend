@@ -8,26 +8,6 @@ import {
 } from '../../fixtures/composes';
 import { renderWithReduxRouter } from '../../testUtils';
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    isBeta: () => false,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'edgeParity.image-list':
-        return false;
-      default:
-        return true;
-    }
-  }),
-}));
-
 describe('Images Table', () => {
   beforeEach(() => {
     vi.clearAllMocks();

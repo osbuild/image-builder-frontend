@@ -6,14 +6,6 @@ import userEvent from '@testing-library/user-event';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    isBeta: () => false,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
 const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
 
 const routes = [

@@ -50,41 +50,6 @@ const routes = [
   },
 ];
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    auth: {
-      getUser: () => {
-        return {
-          identity: {
-            internal: {
-              org_id: 5,
-            },
-          },
-        };
-      },
-    },
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.firstboot.enabled':
-        return true;
-      case 'image-builder.wsl.enabled':
-        return true;
-      case 'image-builder.snapshots.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
-}));
-
 const openReleaseMenu = async () => {
   const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {

@@ -7,21 +7,6 @@ import {
   mockBlueprintNames,
 } from '../../fixtures/blueprints';
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) =>
-    flag === 'image-builder.firstboot.enabled' ? true : false
-  ),
-}));
-
 describe('EditImageWizard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
