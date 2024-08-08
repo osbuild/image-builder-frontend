@@ -1,6 +1,10 @@
+import React from 'react';
+
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../../../Components/ShareImageModal/ShareImageModal';
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
@@ -10,7 +14,8 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext } from '../../wizardTestUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
+import { clickNext, getNextButton } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -101,6 +106,141 @@ const goToReviewStep = async () => {
   await enterBlueprintName();
   await clickNext();
 };
+
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share /:composeId',
+    element: <ShareImageModal />,
+  },
+];
+
+const switchToAWSManual = async () => {
+  const user = userEvent.setup();
+  const manualRadio = await screen.findByRole('radio', {
+    name: /manually enter an account id\./i,
+  });
+  await waitFor(() => user.click(manualRadio));
+  return manualRadio;
+};
+
+const clickFromImageOutputToFsc = async () => {
+  const user = userEvent.setup();
+  await clickNext();
+  const registerLater = await screen.findByText(/Register later/);
+  await waitFor(async () => user.click(registerLater));
+  await clickNext();
+  await clickNext(); // skip OSCAP
+};
+
+describe('Step File system configuration', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const user = userEvent.setup();
+  const setUp = async () => {
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+    // select aws as upload destination
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
+    await clickNext();
+    // aws step
+    await switchToAWSManual();
+    await waitFor(() =>
+      user.type(
+        screen.getByRole('textbox', {
+          name: /aws account id/i,
+        }),
+        '012345678901'
+      )
+    );
+    await clickNext();
+    // skip registration
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+    const registerLaterRadio = await screen.findByTestId(
+      'registration-radio-later'
+    );
+    user.click(registerLaterRadio);
+    await clickNext();
+    await clickNext();
+  };
+  test('Error validation occurs upon clicking next button', async () => {
+    await setUp();
+    const manuallyConfigurePartitions = await screen.findByText(
+      /manually configure partitions/i
+    );
+    user.click(manuallyConfigurePartitions);
+    const addPartition = await screen.findByTestId('file-system-add-partition');
+    // Create duplicate partitions
+    user.click(addPartition);
+    user.click(addPartition);
+    // Clicking next causes errors to appear
+    await clickNext();
+    expect(await getNextButton()).toBeDisabled();
+    const mountPointAlerts = screen.getAllByRole('heading', {
+      name: /danger alert: duplicate mount point/i,
+    });
+    const tbody = await screen.findByTestId('file-system-configuration-tbody');
+    const rows = within(tbody).getAllByRole('row');
+    expect(rows).toHaveLength(3);
+    //Change mountpoint of final row to /var, resolving errors
+    const mountPointOptions = within(rows[2]).getAllByRole('button', {
+      name: 'Options menu',
+    })[0];
+    user.click(mountPointOptions);
+    const varButton = await within(rows[2]).findByRole('option', {
+      name: '/var',
+    });
+    user.click(varButton);
+    await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());
+    await waitFor(() => expect(mountPointAlerts[1]).not.toBeInTheDocument());
+    expect(await getNextButton()).toBeEnabled();
+  });
+
+  test('Manual partitioning is hidden for ISO targets only', async () => {
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+    const imageInstallerCheckbox = await screen.findByTestId(
+      'checkbox-image-installer'
+    );
+
+    user.click(imageInstallerCheckbox);
+    await clickFromImageOutputToFsc();
+    expect(
+      screen.queryByText(/manually configure partitions/i)
+    ).not.toBeInTheDocument();
+  });
+
+  test('Manual partitioning is shown for ISO target and other target', async () => {
+    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+    const imageInstallerCheckbox = await screen.findByTestId(
+      'checkbox-image-installer'
+    );
+
+    user.click(imageInstallerCheckbox);
+    const guestImageCheckBox = await screen.findByTestId(
+      'checkbox-guest-image'
+    );
+
+    user.click(guestImageCheckBox);
+    await clickFromImageOutputToFsc();
+    const manualOption = await screen.findByText(
+      /manually configure partitions/i
+    );
+
+    user.click(manualOption);
+    await screen.findByText('Configure partitions');
+  });
+});
 
 describe('file system configuration request generated correctly', () => {
   beforeEach(() => {
