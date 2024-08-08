@@ -30,6 +30,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.snapshots.enabled':
         return true;
+      case 'image-builder.import.enabled':
+        return true;
       default:
         return false;
     }
@@ -328,6 +330,26 @@ describe('Blueprints', () => {
           within(screen.getByTestId('images-table')).getAllByRole('row')
         ).toHaveLength(2)
       );
+    });
+  });
+
+  describe('import/export blueprint', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+    test('exporting blueprint', async () => {
+      renderWithReduxRouter('', {});
+
+      await selectBlueprintById(blueprintIdWithComposes);
+      const toggleButton = await screen.findByTestId(
+        'blueprint-action-menu-toggle'
+      );
+      await waitFor(() => user.click(toggleButton));
+
+      const downloadButton = screen.getByRole('menuitem', {
+        name: /download blueprint \(\.json\) preview/i,
+      });
+      expect(downloadButton).toBeInTheDocument();
     });
   });
 });

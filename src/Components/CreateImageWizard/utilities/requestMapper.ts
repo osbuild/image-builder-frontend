@@ -14,6 +14,7 @@ import { RootState } from '../../../store';
 import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
+  BlueprintExportResponse,
   BlueprintResponse,
   CreateBlueprintRequest,
   Customizations,
@@ -62,6 +63,8 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectFirstBootScript,
+  selectMetadata,
+  initialState,
 } from '../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
@@ -102,6 +105,7 @@ export const mapRequestFromState = (
 
   return {
     name: selectBlueprintName(state),
+    metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution: selectDistribution(state),
     image_requests: imageRequests,
@@ -262,6 +266,91 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           repository: '',
           package_list: [],
         })) || [],
+  };
+};
+
+/**
+ * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
+ * @param request BlueprintResponse
+ * @param source  V1ListSourceResponseItem
+ * @returns wizardState
+ */
+export const mapExportRequestToState = (
+  request: BlueprintExportResponse
+): wizardState => {
+  const wizardMode = 'create';
+
+  const fileSystem = request.customizations.filesystem
+    ? {
+        mode: 'manual' as FileSystemPartitionMode,
+        partitions: request.customizations.filesystem.map((fs) =>
+          convertFilesystemToPartition(fs)
+        ),
+      }
+    : {
+        mode: 'automatic' as FileSystemPartitionMode,
+        partitions: [],
+      };
+
+  return {
+    wizardMode,
+    details: {
+      blueprintName: request.name,
+      blueprintDescription: request.description,
+    },
+    metadata: {
+      parent_id: request.metadata.parent_id || '',
+      exported_at: request.metadata.exported_at,
+    },
+    env: {
+      serverUrl: request.customizations.subscription?.['server-url'] || '',
+      baseUrl: request.customizations.subscription?.['base-url'] || '',
+    },
+    openScap: {
+      profile: request.customizations.openscap
+        ?.profile_id as DistributionProfileItem,
+    },
+    fileSystem: fileSystem,
+    firstBoot: {
+      script: getFirstBootScript(request.customizations.files),
+    },
+    distribution: getLatestRelease(request.distribution),
+    repositories: {
+      customRepositories: request.customizations.custom_repositories || [],
+      payloadRepositories: request.customizations.payload_repositories || [],
+      recommendedRepositories: [],
+    },
+    registration: {
+      registrationType: request.customizations?.subscription
+        ? request.customizations.subscription.rhc
+          ? 'register-now-rhc'
+          : 'register-now-insights'
+        : 'register-later',
+      activationKey: request.customizations.subscription?.['activation-key'],
+    },
+    packages:
+      request.customizations.packages
+        ?.filter((pkg) => !pkg.startsWith('@'))
+        .map((pkg) => ({
+          name: pkg,
+          summary: '',
+          repository: '',
+        })) || [],
+    groups:
+      request.customizations.packages
+        ?.filter((grp) => grp.startsWith('@'))
+        .map((grp) => ({
+          name: grp.substr(1),
+          description: '',
+          repository: '',
+          package_list: [],
+        })) || [],
+    gcp: initialState.gcp,
+    aws: initialState.aws,
+    azure: initialState.azure,
+    architecture: initialState.architecture,
+    imageTypes: initialState.imageTypes,
+    snapshotting: initialState.snapshotting,
   };
 };
 
