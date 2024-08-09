@@ -9,7 +9,7 @@ import {
   expectedPayloadRepositories,
   snapshotCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../../../testUtils';
+import { clickNext } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,

@@ -9,18 +9,18 @@ import {
   enterBlueprintName,
   openAndDismissSaveAndBuildModal,
 } from './wizardTestUtils';
+import {
+  clickBack,
+  clickNext,
+  getNextButton,
+  verifyCancelButton,
+} from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { PROVISIONING_API } from '../../../constants';
 import { server } from '../../mocks/server';
-import {
-  clickBack,
-  clickNext,
-  getNextButton,
-  renderCustomRoutesWithReduxRouter,
-  verifyCancelButton,
-} from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const routes = [
   {

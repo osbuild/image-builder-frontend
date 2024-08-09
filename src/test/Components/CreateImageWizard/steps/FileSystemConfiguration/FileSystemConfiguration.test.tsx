@@ -10,7 +10,7 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext } from '../../../../testUtils';
+import { clickNext } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
