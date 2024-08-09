@@ -13,7 +13,7 @@ import {
   expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../../../testUtils';
+import { clickNext } from '../../wizardTestUtils';
 import {
   clickRegisterLater,
   enterBlueprintName,

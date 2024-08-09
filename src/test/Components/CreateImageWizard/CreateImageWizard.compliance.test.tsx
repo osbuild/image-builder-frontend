@@ -3,9 +3,11 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { clickNext } from './wizardTestUtils';
+
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { clickNext, renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const routes = [
   {

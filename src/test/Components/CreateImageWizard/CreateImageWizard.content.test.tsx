@@ -5,14 +5,10 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { selectCustomRepo } from './wizardTestUtils';
+import { clickBack, clickNext, verifyCancelButton } from './wizardTestUtils';
 
 import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
-import {
-  clickBack,
-  clickNext,
-  renderCustomRoutesWithReduxRouter,
-  verifyCancelButton,
-} from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const routes = [
   {
