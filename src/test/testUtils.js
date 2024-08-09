@@ -1,8 +1,7 @@
 import React from 'react';
 
 import { configureStore } from '@reduxjs/toolkit';
-import { screen, render, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { render } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
@@ -45,44 +44,4 @@ export const renderCustomRoutesWithReduxRouter = async (
   );
 
   return { router, store };
-};
-
-export const renderWithProvider = (
-  component,
-  container,
-  preloadedState = {}
-) => {
-  const store = configureStore({ reducer, middleware, preloadedState });
-
-  return render(<Provider store={store}>{component}</Provider>, {
-    container: container,
-  });
-};
-
-export const clickBack = async () => {
-  const user = userEvent.setup();
-  const backBtn = await screen.findByRole('button', { name: /Back/ });
-  await waitFor(() => user.click(backBtn));
-};
-
-export const clickNext = async () => {
-  const user = userEvent.setup();
-  const nextBtn = await screen.findByRole('button', { name: /Next/ });
-  await waitFor(() => user.click(nextBtn));
-};
-
-export const clickCancel = async () => {
-  const user = userEvent.setup();
-  const cancelBtn = await screen.findByRole('button', { name: /Cancel/ });
-  await waitFor(() => user.click(cancelBtn));
-};
-
-export const getNextButton = async () => {
-  const next = await screen.findByRole('button', { name: /Next/ });
-  return next;
-};
-
-export const verifyCancelButton = async (router) => {
-  await clickCancel();
-  expect(router.state.location.pathname).toBe('/insights/image-builder');
 };

@@ -26,10 +26,8 @@ import {
   rhel9CreateBlueprintRequest,
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import {
-  clickNext,
-  renderCustomRoutesWithReduxRouter,
-} from '../../../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
+import { clickNext } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,

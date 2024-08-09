@@ -11,7 +11,7 @@ import {
   expectedSinglePackageRecommendation,
   packagesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../../../testUtils';
+import { clickNext } from '../../wizardTestUtils';
 import { selectCustomRepo } from '../../wizardTestUtils';
 import {
   blueprintRequest,

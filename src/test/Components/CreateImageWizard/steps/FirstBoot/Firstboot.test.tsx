@@ -13,7 +13,7 @@ import {
   firstBootCreateBlueprintRequest,
   firstBootData,
 } from '../../../../fixtures/editMode';
-import { clickNext, getNextButton } from '../../../../testUtils';
+import { clickNext, getNextButton } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,

@@ -8,7 +8,7 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { azureCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickBack, clickNext } from '../../../../testUtils';
+import { clickBack, clickNext } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
