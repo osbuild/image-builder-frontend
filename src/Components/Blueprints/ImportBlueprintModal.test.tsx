@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { renderWithReduxRouter } from '../../test/testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../test/testUtils';
 
 const BLUEPRINT_JSON = `{
     "customizations": {
@@ -174,13 +174,13 @@ describe('Import model', () => {
   const user = userEvent.setup();
 
   test('renders import component', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
     const importButton = await screen.findByTestId('import-blueprint-button');
     await waitFor(() => expect(importButton).toBeInTheDocument());
   });
 
   const setUp = async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
     const importBlueprintBtn = await screen.findByTestId(
       'import-blueprint-button'
     );
