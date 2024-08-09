@@ -5,61 +5,17 @@ import {
   Checkbox,
   FormGroup,
   Popover,
-  Radio,
   Text,
   TextContent,
 } from '@patternfly/react-core';
-import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
-import {
-  INSIGHTS_URL,
-  RHC_URL,
-  SUBSCRIPTION_MANAGEMENT_URL,
-} from '../../../../constants';
+import { INSIGHTS_URL, RHC_URL } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  changeActivationKey,
   changeRegistrationType,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
-
-const RHSMPopover = () => {
-  return (
-    <Popover
-      headerContent="About Red Hat Subscription Management"
-      position="right"
-      minWidth="30rem"
-      bodyContent={
-        <TextContent>
-          <Text>
-            Registered systems are entitled to support services, errata,
-            patches, and upgrades.
-          </Text>
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={SUBSCRIPTION_MANAGEMENT_URL}
-          >
-            Learn more about Red Hat Subscription Management
-          </Button>
-        </TextContent>
-      }
-    >
-      <Button
-        variant="plain"
-        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
-        aria-label="About remote host configuration (rhc)"
-        isInline
-      >
-        <HelpIcon />
-      </Button>
-    </Popover>
-  );
-};
 
 const InsightsPopover = () => {
   return (
@@ -142,47 +98,44 @@ const RhcPopover = () => {
 
 const Registration = () => {
   const dispatch = useAppDispatch();
-
   const registrationType = useAppSelector(selectRegistrationType);
 
   const [showOptions, setShowOptions] = useState(
-    registrationType === 'register-now-insights' ||
-      registrationType === 'register-now'
+    registrationType === 'register-later'
   );
 
   return (
     <FormGroup label="Registration method">
-      <Radio
-        autoFocus
-        label={
-          (!showOptions &&
-            'Automatically register and enable advanced capabilities') || (
-            <>
-              Monitor & manage subscriptions and access to Red Hat content
-              <RHSMPopover />
-            </>
-          )
+      <Checkbox
+        label="Automatically register and enable advanced capabilities"
+        data-testid="automatically-register-checkbox"
+        isChecked={
+          registrationType === 'register-now' ||
+          registrationType === 'register-now-insights' ||
+          registrationType === 'register-now-rhc'
         }
-        data-testid="registration-radio-now"
-        name="register-system"
-        id="register-system-now"
-        isChecked={registrationType.startsWith('register-now')}
-        onChange={() => {
-          dispatch(changeRegistrationType('register-now-rhc'));
+        onChange={(_event, checked) => {
+          if (checked) {
+            dispatch(changeRegistrationType('register-now'));
+          } else {
+            dispatch(changeRegistrationType('register-later'));
+            setShowOptions(false);
+          }
         }}
+        id="register-system-now"
+        name="register-system-now"
+        autoFocus
         description={
-          !showOptions && (
-            <Button
-              component="a"
-              data-testid="registration-additional-options"
-              variant="link"
-              isDisabled={!registrationType.startsWith('register-now')}
-              isInline
-              onClick={() => setShowOptions(!showOptions)}
-            >
-              Show additional connection options
-            </Button>
-          )
+          <Button
+            component="a"
+            data-testid="registration-additional-options"
+            variant="link"
+            isDisabled={!registrationType.startsWith('register-now')}
+            isInline
+            onClick={() => setShowOptions(!showOptions)}
+          >
+            {`${!showOptions ? 'Show' : 'Hide'} additional connection options`}
+          </Button>
         }
         body={
           showOptions && (
@@ -233,19 +186,6 @@ const Registration = () => {
             />
           )
         }
-      />
-      <Radio
-        name="register-system"
-        className="pf-u-mt-md"
-        data-testid="registration-radio-later"
-        id="register-system-later"
-        label="Register later"
-        isChecked={registrationType === 'register-later'}
-        onChange={() => {
-          setShowOptions(false);
-          dispatch(changeRegistrationType('register-later'));
-          dispatch(changeActivationKey(undefined));
-        }}
       />
     </FormGroup>
   );

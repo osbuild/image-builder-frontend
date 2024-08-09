@@ -48,7 +48,6 @@ import {
   changeDistribution,
   changeArchitecture,
   initializeWizard,
-  selectActivationKey,
   selectAwsAccountId,
   selectAwsShareMethod,
   selectAwsSourceId,
@@ -60,10 +59,11 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
-  selectRegistrationType,
   addImageType,
   selectSnapshotDate,
   selectUseLatest,
+  selectRegistrationType,
+  selectActivationKey,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -177,17 +177,19 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const azureSource = useAppSelector(selectAzureSource);
+  // Registration
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
-
+  // Snapshots
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
-
   const snapshotStepRequiresChoice = !useLatest && !snapshotDate;
-
+  // Filesystem
   const [filesystemPristine, setFilesystemPristine] = useState(true);
   const fileSystemValidation = useFilesystemValidation();
+  // Firstboot
   const firstBootValidation = useFirstBootValidation();
+  // Details
   const detailsValidation = useDetailsValidation();
 
   let startIndex = 1; // default index
@@ -326,7 +328,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             footer={
               <CustomWizardFooter
                 disableNext={
-                  registrationType !== 'register-later' && !activationKey
+                  registrationType === 'register-now' && !activationKey
                 }
               />
             }

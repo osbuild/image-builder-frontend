@@ -31,7 +31,6 @@ const goToFirstBootStep = async (): Promise<void> => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
-  await clickNext();
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP

@@ -69,7 +69,6 @@ const deselectGcpAndSelectGuestImage = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(async () => user.click(guestImageCheckbox));
-  await clickNext();
 };
 
 const selectGoogleAccount = async (optionId: string) => {
