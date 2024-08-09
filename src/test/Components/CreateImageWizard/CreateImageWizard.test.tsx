@@ -394,10 +394,6 @@ describe('Step Upload to AWS', () => {
     await clickNext();
     await clickNext();
     await clickNext();
-    await clickNext();
-    await clickNext();
-    await enterBlueprintName();
-    await clickNext();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -817,10 +813,7 @@ describe('Step Review', () => {
     await clickNext();
     // skip repositories
     await clickNext();
-    await clickNext();
-    // skip First boot
-    await clickNext();
-    await enterBlueprintName();
+    // skip details
     await clickNext();
   };
 

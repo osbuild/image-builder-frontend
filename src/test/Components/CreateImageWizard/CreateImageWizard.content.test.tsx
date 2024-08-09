@@ -128,7 +128,7 @@ describe('Step Packages', () => {
   test('clicking Next loads Image name', async () => {
     await setUp();
 
-    await clickNext();
+    // skip repositories
     await clickNext();
 
     await screen.findByRole('heading', {
@@ -138,7 +138,7 @@ describe('Step Packages', () => {
 
   test('clicking Back loads repositories', async () => {
     await setUp();
-
+    await clickNext();
     await clickBack();
 
     await screen.findByRole('heading', {
