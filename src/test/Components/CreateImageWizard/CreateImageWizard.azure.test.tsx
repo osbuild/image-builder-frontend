@@ -5,17 +5,18 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
-import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { PROVISIONING_API } from '../../../constants';
-import { server } from '../../mocks/server';
 import {
   clickBack,
   clickNext,
   getNextButton,
-  renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
-} from '../../testUtils';
+} from './wizardTestUtils';
+
+import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
+import { PROVISIONING_API } from '../../../constants';
+import { server } from '../../mocks/server';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const routes = [
   {

@@ -24,12 +24,12 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
+import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickBack,
   clickNext,
-  renderCustomRoutesWithReduxRouter,
   verifyCancelButton,
-} from '../../../../testUtils';
+} from '../../wizardTestUtils';
 import {
   enterBlueprintName,
   renderCreateMode,

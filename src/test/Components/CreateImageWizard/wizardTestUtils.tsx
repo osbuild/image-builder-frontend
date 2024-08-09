@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -10,11 +11,7 @@ import {
   ImageRequest,
 } from '../../../store/imageBuilderApi';
 import { server } from '../../mocks/server';
-import {
-  clickBack,
-  clickNext,
-  renderCustomRoutesWithReduxRouter,
-} from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 type RequestTypes = 'GET' | 'PUT' | 'POST' | 'DELETE';
 
@@ -168,4 +165,34 @@ export const interceptEditBlueprintRequest = async (
   await waitFor(() => user.click(saveButton));
 
   return await receivedRequestPromise;
+};
+
+export const clickBack = async () => {
+  const user = userEvent.setup();
+  const backBtn = await screen.findByRole('button', { name: /Back/ });
+  await waitFor(() => user.click(backBtn));
+};
+
+export const clickNext = async () => {
+  const user = userEvent.setup();
+  const nextBtn = await screen.findByRole('button', { name: /Next/ });
+  await waitFor(() => user.click(nextBtn));
+};
+
+export const clickCancel = async () => {
+  const user = userEvent.setup();
+  const cancelBtn = await screen.findByRole('button', { name: /Cancel/ });
+  await waitFor(() => user.click(cancelBtn));
+};
+
+export const getNextButton = async () => {
+  const next = await screen.findByRole('button', { name: /Next/ });
+  return next;
+};
+
+export const verifyCancelButton = async (router: RemixRouter | undefined) => {
+  await clickCancel();
+  if (router) {
+    expect(router.state.location.pathname).toBe('/insights/image-builder');
+  }
 };
