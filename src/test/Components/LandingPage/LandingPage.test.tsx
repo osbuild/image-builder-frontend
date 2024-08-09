@@ -4,7 +4,7 @@ import { http, HttpResponse } from 'msw';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { mockComposesEmpty } from '../../fixtures/composes';
 import { server } from '../../mocks/server';
-import { renderWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 describe('Landing Page', () => {
   beforeEach(() => {
@@ -12,7 +12,7 @@ describe('Landing Page', () => {
   });
 
   test('renders page heading', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     // check heading
     const heading = await screen.findByText('Images');
@@ -26,7 +26,7 @@ describe('Landing Page', () => {
       })
     );
 
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
     // check table loads
     await screen.findByTestId('empty-state');
   });

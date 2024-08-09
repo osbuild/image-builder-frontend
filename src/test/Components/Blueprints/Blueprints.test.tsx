@@ -9,10 +9,7 @@ import LandingPage from '../../../Components/LandingPage/LandingPage';
 import { IMAGE_BUILDER_API } from '../../../constants';
 import { emptyGetBlueprints } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
-import {
-  renderCustomRoutesWithReduxRouter,
-  renderWithReduxRouter,
-} from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
@@ -36,7 +33,7 @@ describe('Blueprints', () => {
   const blueprintIdCentos8 = 'b1f10309-a250-4db8-ab64-c110176e3eb7';
 
   test('renders blueprints page', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
     await screen.findByText(blueprintNameWithComposes);
     await screen.findByText(blueprintNameEmptyComposes);
   });
@@ -47,7 +44,7 @@ describe('Blueprints', () => {
       })
     );
 
-    const { router } = await renderWithReduxRouter('', {});
+    const { router } = await renderCustomRoutesWithReduxRouter();
     await screen.findByText('No blueprints yet');
     const emptyStateAction = screen.getByRole('link', {
       name: /Add blueprint/i,
@@ -62,7 +59,7 @@ describe('Blueprints', () => {
     );
   });
   test('renders blueprint composes', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdWithComposes);
     const table = await screen.findByTestId('images-table');
@@ -71,7 +68,7 @@ describe('Blueprints', () => {
     expect(images).toHaveLength(2);
   });
   test('renders blueprint composes empty state', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdEmptyComposes);
     const table = await screen.findByTestId('images-table');
@@ -80,7 +77,7 @@ describe('Blueprints', () => {
   });
 
   test('click build images button', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
@@ -90,7 +87,7 @@ describe('Blueprints', () => {
   });
 
   test('uncheck Target option and check that build images button is Disable', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdWithComposes);
     const buildImageBtn = await screen.findByRole('button', {
@@ -115,7 +112,7 @@ describe('Blueprints', () => {
   });
 
   test('uncheck one Target option and check that you can build an image', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdWithMultipleTargets);
     const buildImageBtn = await screen.findByRole('button', {
@@ -139,7 +136,7 @@ describe('Blueprints', () => {
   });
 
   test('blueprint is out of sync', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdOutOfSync);
     await screen.findByText(
@@ -155,7 +152,7 @@ describe('Blueprints', () => {
   });
 
   test('CentOS 8 Stream renders', async () => {
-    renderWithReduxRouter('', {});
+    renderCustomRoutesWithReduxRouter();
 
     await selectBlueprintById(blueprintIdCentos8);
     await screen.findByText(
@@ -220,7 +217,7 @@ describe('Blueprints', () => {
     });
 
     test('filter blueprints', async () => {
-      renderWithReduxRouter('', {});
+      renderCustomRoutesWithReduxRouter();
 
       const searchInput = await screen.findByPlaceholderText(
         'Search by name or description'
@@ -248,7 +245,7 @@ describe('Blueprints', () => {
     });
 
     test('paging of blueprints', async () => {
-      renderWithReduxRouter('', {});
+      renderCustomRoutesWithReduxRouter();
 
       expect(await screen.findAllByRole('checkbox')).toHaveLength(10);
 
@@ -285,7 +282,7 @@ describe('Blueprints', () => {
     });
 
     test('filter composes by blueprint version', async () => {
-      renderWithReduxRouter('', {});
+      renderCustomRoutesWithReduxRouter();
 
       await selectBlueprintById(blueprintIdWithComposes);
 

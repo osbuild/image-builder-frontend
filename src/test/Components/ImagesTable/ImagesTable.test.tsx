@@ -6,7 +6,7 @@ import {
   mockClones,
   mockCloneStatus,
 } from '../../fixtures/composes';
-import { renderWithReduxRouter } from '../../testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 describe('Images Table', () => {
   beforeEach(() => {
@@ -15,7 +15,7 @@ describe('Images Table', () => {
 
   const user = userEvent.setup();
   test('render ImagesTable', async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
 
     const table = await screen.findByTestId('images-table');
 
@@ -55,7 +55,7 @@ describe('Images Table', () => {
   });
 
   test('check download compose request action', async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
 
     // get rows
     const table = await screen.findByTestId('images-table');
@@ -96,7 +96,7 @@ describe('Images Table', () => {
   });
 
   test('check expandable row toggle', async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
 
     const table = await screen.findByTestId('images-table');
     const { findAllByRole } = within(table);
@@ -114,7 +114,7 @@ describe('Images Table', () => {
   });
 
   test('check error details', { retry: 3 }, async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
 
     let table = await screen.findByTestId('images-table');
     let rows = await within(table).findAllByRole('row');
@@ -203,7 +203,7 @@ describe('Images Table Toolbar', () => {
   });
 
   test('render toolbar', async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
     await screen.findByTestId('images-table');
 
     // check pagination renders
@@ -219,7 +219,7 @@ describe('Clones table', () => {
 
   const user = userEvent.setup();
   test('renders clones table', async () => {
-    await renderWithReduxRouter('', {});
+    await renderCustomRoutesWithReduxRouter();
 
     const table = await screen.findByTestId('images-table');
 
