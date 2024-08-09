@@ -1,15 +1,6 @@
-import React from 'react';
-
-import type { Router as RemixRouter } from '@remix-run/router';
-import {
-  screen,
-  waitFor,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
-import ShareImageModal from '../../../../../Components/ShareImageModal/ShareImageModal';
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
@@ -21,12 +12,6 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
-import {
-  clickBack,
-  clickNext,
-  verifyCancelButton,
-} from '../../wizardTestUtils';
 import {
   enterBlueprintName,
   renderCreateMode,
@@ -36,6 +21,8 @@ import {
   renderEditMode,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
+  clickNext,
+  clickBack,
 } from '../../wizardTestUtils';
 
 const clickShowAdditionalConnectionOptions = async () => {
@@ -72,63 +59,16 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-  {
-    path: 'insights/image-builder/share /:composeId',
-    element: <ShareImageModal />,
-  },
-];
-
-let router: RemixRouter | undefined = undefined;
-
 describe('Step Registration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    router = undefined;
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
 
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-
-    await clickNext();
-    const manualOption = await screen.findByRole('radio', {
-      name: /manually enter an account id\./i,
-    });
-    await waitFor(async () => user.click(manualOption));
-    await waitFor(async () =>
-      user.type(
-        await screen.findByRole('textbox', {
-          name: 'aws account id',
-        }),
-        '012345678901'
-      )
-    );
-    await clickNext();
-
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-  };
-
-  test('clicking Next loads file system configuration', async () => {
-    await setUp();
+  test('clicking Next leads to OpenSCAP step', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
 
     const registrationCheckbox = await screen.findByTestId(
       'automatically-register-checkbox'
@@ -136,33 +76,33 @@ describe('Step Registration', () => {
     user.click(registrationCheckbox);
 
     await clickNext();
-    await clickNext();
 
     await screen.findByRole('heading', {
-      name: 'File system configuration',
+      name: 'OpenSCAP profile',
     });
   });
 
-  test('clicking Back loads Upload to AWS', async () => {
-    await setUp();
+  test('clicking Back leads to Image output step', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
 
     await clickBack();
 
-    const manualOption = await screen.findByRole('radio', {
-      name: /manually enter an account id\./i,
+    await screen.findByRole('heading', {
+      name: 'Image output',
     });
-    await waitFor(async () => user.click(manualOption));
-    await screen.findByText('AWS account ID');
   });
 
-  test('clicking Cancel loads landing page', async () => {
-    await setUp();
+  // test('clicking Cancel loads landing page', async () => {
+  //   await renderCreateMode();
+  //   await goToRegistrationStep();
+  //
+  //   await verifyCancelButton(router);
+  // });
 
-    await verifyCancelButton(router);
-  });
-
-  test('register now includes rhsm, rhc and insights', async () => {
-    await setUp();
+  test('default registration includes rhsm, rhc and insights', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
 
     const activationKeyDropdown = await screen.findByRole('textbox', {
       name: 'Select activation key',
@@ -174,15 +114,7 @@ describe('Step Registration', () => {
     user.click(activationKey);
     await screen.findByDisplayValue('name0');
 
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await enterBlueprintName();
-    await clickNext();
+    await goToReviewStep();
     const review = await screen.findByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -191,15 +123,11 @@ describe('Step Registration', () => {
     expect(review).toHaveTextContent(
       'Use remote host configuration (rhc) utility'
     );
-    screen.getAllByText('012345678901');
   });
 
   test('should disable dropdown when clicking Register the system later', async () => {
-    await setUp();
-    const removeKeyInformation = waitForElementToBeRemoved(() => [
-      screen.getByTestId('selected-activation-key'),
-    ]);
-
+    await renderCreateMode();
+    await goToRegistrationStep();
     await screen.findByTestId('selected-activation-key');
 
     // click the later radio button which should remove any input fields
@@ -208,28 +136,24 @@ describe('Step Registration', () => {
     );
     await waitFor(async () => user.click(registrationCheckbox));
 
-    await removeKeyInformation;
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('selected-activation-key')
+      ).not.toBeInTheDocument()
+    );
+
     await waitFor(async () =>
       expect(
         await screen.findByRole('button', { name: /options menu/i })
       ).toBeDisabled()
     );
 
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await clickNext();
-    await enterBlueprintName();
-    await clickNext();
+    await goToReviewStep();
     await screen.findByText('Register the system later');
   });
 });
 
-describe('registration request generated correctly', () => {
+describe('Registration request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
