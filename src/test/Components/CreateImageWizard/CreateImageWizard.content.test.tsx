@@ -572,13 +572,13 @@ describe('Step Custom repositories', () => {
 // describe('On Recreate', () => {
 //   const user = userEvent.setup();
 //   const setUp = async () => {
-//     ({ router } = renderWithReduxRouter(
+//     ({ router } = renderCustomRoutesWithReduxRouter(
 //       'imagewizard/hyk93673-8dcc-4a61-ac30-e9f4940d8346'
 //     ));
 //   };
 //
 //   const setUpUnavailableRepo = async () => {
-//     ({ router } = renderWithReduxRouter(
+//     ({ router } = renderCustomRoutesWithReduxRouter(
 //       'imagewizard/b7193673-8dcc-4a5f-ac30-e9f4940d8346'
 //     ));
 //   };
