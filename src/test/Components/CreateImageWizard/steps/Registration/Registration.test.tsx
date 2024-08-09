@@ -25,6 +25,21 @@ import {
   clickBack,
 } from '../../wizardTestUtils';
 
+const localStorageMock = (() => {
+  let store: { [key: string]: string } = {};
+  return {
+    getItem: (key: string) => store[key] || null,
+    setItem: (key: string, value: string) => {
+      store[key] = value.toString();
+    },
+    clear: () => (store = {}),
+  };
+})();
+
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
+});
+
 const clickShowAdditionalConnectionOptions = async () => {
   const user = userEvent.setup();
   const link = await screen.findByText('Show additional connection options');
@@ -267,6 +282,62 @@ describe('Registration request generated correctly', () => {
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
+  });
+
+  test('register with no key in local storage', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+
+    await screen.findByDisplayValue('name0');
+    await goToReviewStep();
+
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    const expectedSubscription = {
+      'activation-key': 'name0',
+      insights: true,
+      rhc: true,
+      organization: 5,
+      'server-url': 'subscription.rhsm.redhat.com',
+      'base-url': 'https://cdn.redhat.com/',
+    };
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: { subscription: expectedSubscription },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('register with a key in local storage', async () => {
+    await renderCreateMode();
+    localStorage.setItem('imageBuilder.recentActivationKey', 'name1');
+    await goToRegistrationStep();
+
+    await screen.findByDisplayValue('name1');
+    await goToReviewStep();
+
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    const expectedSubscription = {
+      'activation-key': 'name1',
+      insights: true,
+      rhc: true,
+      organization: 5,
+      'server-url': 'subscription.rhsm.redhat.com',
+      'base-url': 'https://cdn.redhat.com/',
+    };
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: { subscription: expectedSubscription },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+
+    // clear mocked values in localStorage so they don't affect following tests
+    localStorage.clear();
   });
 });
 
