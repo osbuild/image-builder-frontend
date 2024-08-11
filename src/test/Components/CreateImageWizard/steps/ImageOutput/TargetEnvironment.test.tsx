@@ -1,6 +1,7 @@
 import React from 'react';
 
-import { screen, waitFor } from '@testing-library/react';
+import { Router as RemixRouter } from '@remix-run/router/dist/router';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
@@ -27,7 +28,11 @@ import {
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
-import { clickNext } from '../../wizardTestUtils';
+import {
+  clickNext,
+  getNextButton,
+  verifyCancelButton,
+} from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -42,6 +47,10 @@ import {
 } from '../../wizardTestUtils';
 
 const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
   {
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <CreateImageWizard />,
@@ -131,6 +140,184 @@ const goToReviewStep = async () => {
   await enterBlueprintName();
   await clickNext(); // Review
 };
+
+let router: RemixRouter | undefined = undefined;
+
+const switchToAWSManual = async () => {
+  const user = userEvent.setup();
+  const manualRadio = await screen.findByRole('radio', {
+    name: /manually enter an account id\./i,
+  });
+  await waitFor(() => user.click(manualRadio));
+  return manualRadio;
+};
+
+describe('Step Image output', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
+  const user = userEvent.setup();
+  const setUp = async () => {
+    ({ router } = await renderCustomRoutesWithReduxRouter(
+      'imagewizard',
+      {},
+      routes
+    ));
+
+    // select aws as upload destination
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
+
+    await screen.findByRole('heading', { name: 'Image output' });
+  };
+
+  test('clicking Next loads Upload to AWS', async () => {
+    await setUp();
+
+    await clickNext();
+
+    await switchToAWSManual();
+    await screen.findByText('AWS account ID');
+  });
+
+  test('clicking Cancel loads landing page', async () => {
+    await setUp();
+    await clickNext();
+
+    await verifyCancelButton(router);
+  });
+
+  test('target environment is required', async () => {
+    await setUp();
+
+    const destination = await screen.findByTestId('target-select');
+    const required = await within(destination).findByText('*');
+    expect(destination).toBeEnabled();
+    expect(destination).toContainElement(required);
+  });
+
+  test('selecting and deselecting a tile disables the next button', async () => {
+    await setUp();
+    const nextButton = await getNextButton();
+
+    const awsTile = await screen.findByTestId('upload-aws');
+    // this has already been clicked once in the setup function
+    user.click(awsTile); // deselect
+
+    const googleTile = await screen.findByTestId('upload-google');
+    user.click(googleTile); // select
+    user.click(googleTile); // deselect
+
+    const azureTile = await screen.findByTestId('upload-azure');
+    user.click(azureTile); // select
+    user.click(azureTile); // deselect
+
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('expect only RHEL releases before expansion', async () => {
+    await setUp();
+
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    user.click(releaseMenu);
+
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+    await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+
+    user.click(releaseMenu);
+  });
+
+  test('expect all releases after expansion', async () => {
+    await setUp();
+
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    user.click(releaseMenu);
+
+    const showOptionsButton = await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    user.click(showOptionsButton);
+
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+    await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+    await screen.findByRole('option', {
+      name: 'CentOS Stream 9',
+    });
+
+    expect(showOptionsButton).not.toBeInTheDocument();
+
+    user.click(releaseMenu);
+  });
+
+  test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
+    await setUp();
+
+    const releaseMenu = await screen.findAllByRole('button', {
+      name: /options menu/i,
+    });
+    user.click(releaseMenu[0]);
+
+    const rhel8Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
+    });
+
+    user.click(rhel8Option);
+    await screen.findByTestId('release-lifecycle-chart');
+
+    user.click(releaseMenu[0]);
+
+    const rhel9Option = await screen.findByRole('option', {
+      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
+    });
+
+    user.click(rhel9Option);
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('release-lifecycle-chart')
+      ).not.toBeInTheDocument()
+    );
+  });
+
+  test('CentOS acknowledgement appears', async () => {
+    await setUp();
+
+    const releaseMenu = screen.getAllByRole('button', {
+      name: /options menu/i,
+    })[0];
+    user.click(releaseMenu);
+
+    const showOptionsButton = await screen.findByRole('button', {
+      name: 'Show options for further development of RHEL',
+    });
+    user.click(showOptionsButton);
+
+    const centOSButton = await screen.findByRole('option', {
+      name: 'CentOS Stream 9',
+    });
+    user.click(centOSButton);
+
+    await screen.findByText(
+      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
+    );
+  });
+});
 
 describe('Check that the target filtering is in accordance to mock content', () => {
   beforeEach(() => {
