@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import {
   Alert,
   Button,
+  FormGroup,
+  Radio,
   Text,
   TextContent,
   TextInput,
@@ -31,6 +33,8 @@ import {
   removePartition,
   selectPartitions,
   changePartitionUnit,
+  selectFileSystemPartitioningMode,
+  changeFileSystemPartitioningMode,
 } from '../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
 import { useFilesystemValidation } from '../../utilities/useValidation';
@@ -48,6 +52,7 @@ export type Partition = {
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector(selectPartitions);
   const environments = useAppSelector(selectImageTypes);
+  const partitioningMode = useAppSelector(selectFileSystemPartitioningMode);
 
   const dispatch = useAppDispatch();
 
@@ -74,9 +79,34 @@ const FileSystemConfiguration = () => {
       <TextContent>
         <Text>
           Create partitions for your image by defining mount points and minimum
-          sizes. Image builder creates partitions with a logical volume (LVM)
-          device type.
+          sizes.
         </Text>
+        <FormGroup>
+          <Radio
+            id="raw partitioning radio"
+            ouiaId="raw-partitioning-radio"
+            label="Use raw partitioning"
+            name="fsc-radio-raw"
+            description="Filesystems will be created directly on top of physical partitions"
+          isChecked={partitioningMode === 'raw'}
+          onChange={() => {
+            dispatch(changeFileSystemPartitioningMode('raw'));
+          }}
+          />
+          <Radio
+            id="lvm partitioning radio"
+            ouiaId="lvm-partitioning-radio"
+            label="Use LVM partitioning"
+            name="fsc-radio-lvm"
+            description="Image builder will allocate a single volume group and create logical volumes for each partition, except for /boot and /boot/efi"
+          isChecked={partitioningMode === 'lvm'}
+          onChange={() => {
+            dispatch(changeFileSystemPartitioningMode('lvm'));
+          }}
+          />
+        </FormGroup>
+      </TextContent>
+      <TextContent>
         <Text>
           The order of partitions may change when the image is installed in
           order to conform to best practices and ensure functionality.
@@ -176,8 +206,8 @@ export const Row = ({
         )}
       </Td>
       {partition.mountpoint !== '/' &&
-      !partition.mountpoint.startsWith('/boot') &&
-      !partition.mountpoint.startsWith('/usr') ? (
+        !partition.mountpoint.startsWith('/boot') &&
+        !partition.mountpoint.startsWith('/usr') ? (
         <Td width={20}>
           <MountpointSuffix partition={partition} />
         </Td>
