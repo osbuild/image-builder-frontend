@@ -18,6 +18,9 @@ const OscapStep = () => {
   const release = useAppSelector(selectDistribution);
   useEffect(() => {
     prefetchOscapProfile({ distribution: release });
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
