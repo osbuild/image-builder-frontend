@@ -57,7 +57,7 @@ import {
   selectPackages,
   selectGroups,
   selectRegistrationType,
-  selectFileSystemPartitionMode,
+  selectFileSystemConfigurationType,
   selectRecommendedRepositories,
   selectSnapshotDate,
   selectUseLatest,
@@ -125,7 +125,9 @@ export const ImageOutputList = () => {
   );
 };
 export const FSCList = () => {
-  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
+  const fileSystemConfigurationType = useAppSelector(
+    selectFileSystemConfigurationType
+  );
   const partitions = useAppSelector(selectPartitions);
 
   return (
@@ -141,8 +143,8 @@ export const FSCList = () => {
           component={TextListItemVariants.dd}
           data-testid="partitioning-auto-manual"
         >
-          {fileSystemPartitionMode === 'manual' ? 'Manual' : 'Automatic'}
-          {fileSystemPartitionMode === 'manual' && (
+          {fileSystemConfigurationType === 'manual' ? 'Manual' : 'Automatic'}
+          {fileSystemConfigurationType === 'manual' && (
             <>
               {' '}
               <Popover
@@ -165,7 +167,7 @@ export const FSCList = () => {
             </>
           )}
         </TextListItem>
-        {fileSystemPartitionMode === 'manual' && (
+        {fileSystemConfigurationType === 'manual' && (
           <>
             <TextListItem component={TextListItemVariants.dt}>
               Image size (minimum) <MinimumSizePopover />

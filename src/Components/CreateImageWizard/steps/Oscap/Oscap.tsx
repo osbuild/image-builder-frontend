@@ -36,7 +36,7 @@ import {
   selectProfile,
   addPackage,
   addPartition,
-  changeFileSystemPartitionMode,
+  changeFileSystemConfigurationType,
   removePackage,
   clearPartitions,
   selectImageTypes,
@@ -76,7 +76,7 @@ const ProfileSelector = () => {
   const handleClear = () => {
     dispatch(changeOscapProfile(undefined));
     clearOscapPackages(oscapData.packages || []);
-    dispatch(changeFileSystemPartitionMode('automatic'));
+    dispatch(changeFileSystemConfigurationType('automatic'));
   };
 
   const handlePackages = (
@@ -117,7 +117,7 @@ const ProfileSelector = () => {
     });
 
     if (newPartitions) {
-      dispatch(changeFileSystemPartitionMode('manual'));
+      dispatch(changeFileSystemConfigurationType('manual'));
       for (const partition of newPartitions) {
         dispatch(addPartition(partition));
       }

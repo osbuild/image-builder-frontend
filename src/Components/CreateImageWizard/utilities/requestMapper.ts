@@ -57,7 +57,7 @@ import {
   selectRegistrationType,
   selectServerUrl,
   wizardState,
-  selectFileSystemPartitionMode,
+  selectFileSystemConfigurationType,
   selectPartitions,
   selectSnapshotDate,
   selectUseLatest,
@@ -67,7 +67,7 @@ import {
   convertMMDDYYYYToYYYYMMDD,
   convertYYYYMMDDTOMMDDYYYY,
 } from '../../../Utilities/time';
-import { FileSystemPartitionMode } from '../steps/FileSystem';
+import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
   getConversionFactor,
   Partition,
@@ -170,13 +170,13 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
 
   const fileSystem = request.customizations.filesystem
     ? {
-        mode: 'manual' as FileSystemPartitionMode,
+        mode: 'manual' as FileSystemConfigurationType,
         partitions: request.customizations.filesystem.map((fs) =>
           convertFilesystemToPartition(fs)
         ),
       }
     : {
-        mode: 'automatic' as FileSystemPartitionMode,
+        mode: 'automatic' as FileSystemConfigurationType,
         partitions: [],
       };
 
@@ -456,7 +456,7 @@ const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
 };
 
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
-  const mode = selectFileSystemPartitionMode(state);
+  const mode = selectFileSystemConfigurationType(state);
 
   const convertToBytes = (minSize: string, conversionFactor: number) => {
     return minSize.length > 0 ? parseInt(minSize) * conversionFactor : 0;

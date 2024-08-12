@@ -9,7 +9,7 @@ import {
   selectBlueprintId,
   selectBlueprintName,
   selectBlueprintDescription,
-  selectFileSystemPartitionMode,
+  selectFileSystemConfigurationType,
   selectFirstBootScript,
   selectPartitions,
 } from '../../../store/wizardSlice';
@@ -37,7 +37,7 @@ export function useIsBlueprintValid(): boolean {
 }
 
 export function useFilesystemValidation(): StepValidation {
-  const mode = useAppSelector(selectFileSystemPartitionMode);
+  const mode = useAppSelector(selectFileSystemConfigurationType);
   const partitions = useAppSelector(selectPartitions);
   let disabledNext = false;
 

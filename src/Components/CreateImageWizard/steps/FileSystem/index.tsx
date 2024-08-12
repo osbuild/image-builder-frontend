@@ -7,14 +7,16 @@ import FileSystemConfiguration from './FileSystemConfiguration';
 import FileSystemPartition from './FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectFileSystemPartitionMode } from '../../../../store/wizardSlice';
+import { selectFileSystemConfigurationType } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
-export type FileSystemPartitionMode = 'automatic' | 'manual';
+export type FileSystemConfigurationType = 'automatic' | 'manual';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
 const FileSystemStep = () => {
-  const fileSystemPartitionMode = useAppSelector(selectFileSystemPartitionMode);
+  const fileSystemConfigurationType = useAppSelector(
+    selectFileSystemConfigurationType
+  );
   const hasIsoTargetOnly = useHasSpecificTargetOnly('image-installer');
 
   return (
@@ -25,18 +27,18 @@ const FileSystemStep = () => {
       <Text>Define the partitioning of the image</Text>
       {hasIsoTargetOnly ? (
         <FileSystemAutomaticPartition />
-      ) : fileSystemPartitionMode === 'automatic' ? (
+      ) : fileSystemConfigurationType === 'automatic' ? (
         <>
           <FileSystemPartition />
           <FileSystemAutomaticPartition />
         </>
-      ) : fileSystemPartitionMode === 'manual' ? (
+      ) : fileSystemConfigurationType === 'manual' ? (
         <>
           <FileSystemPartition />
           <FileSystemConfiguration />
         </>
       ) : (
-        fileSystemPartitionMode === 'oscap' && <FileSystemConfiguration />
+        fileSystemConfigurationType === 'oscap' && <FileSystemConfiguration />
       )}
     </Form>
   );
