@@ -12,7 +12,7 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
-import { FileSystemPartitionMode } from '../Components/CreateImageWizard/steps/FileSystem';
+import { FileSystemConfigurationType } from '../Components/CreateImageWizard/steps/FileSystem';
 import {
   Partition,
   Units,
@@ -76,7 +76,7 @@ export type wizardState = {
     profile: DistributionProfileItem | undefined;
   };
   fileSystem: {
-    mode: FileSystemPartitionMode;
+    mode: FileSystemConfigurationType;
     partitions: Partition[];
   };
   snapshotting: {
@@ -238,7 +238,7 @@ export const selectProfile = (state: RootState) => {
   return state.wizard.openScap.profile;
 };
 
-export const selectFileSystemPartitionMode = (state: RootState) => {
+export const selectFileSystemConfigurationType = (state: RootState) => {
   return state.wizard.fileSystem.mode;
 };
 
@@ -408,9 +408,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.fileSystem.partitions = action.payload;
     },
-    changeFileSystemPartitionMode: (
+    changeFileSystemConfigurationType: (
       state,
-      action: PayloadAction<FileSystemPartitionMode>
+      action: PayloadAction<FileSystemConfigurationType>
     ) => {
       const currentMode = state.fileSystem.mode;
 
@@ -626,7 +626,7 @@ export const {
   changeActivationKey,
   changeOscapProfile,
   changeFileSystemConfiguration,
-  changeFileSystemPartitionMode,
+  changeFileSystemConfigurationType,
   clearPartitions,
   addPartition,
   removePartition,
