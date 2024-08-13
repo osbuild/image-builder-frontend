@@ -10,6 +10,7 @@ import { useAppSelector } from '../../../../store/hooks';
 import { selectFileSystemPartitionMode } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 export type FileSystemPartitionMode = 'automatic' | 'manual';
+export type FileSystemPartitioningMode = 'raw' | 'lvm';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 

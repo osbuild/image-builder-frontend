@@ -62,12 +62,13 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectFirstBootScript,
+  selectFileSystemPartitioningMode,
 } from '../../../store/wizardSlice';
 import {
   convertMMDDYYYYToYYYYMMDD,
   convertYYYYMMDDTOMMDDYYYY,
 } from '../../../Utilities/time';
-import { FileSystemPartitionMode } from '../steps/FileSystem';
+import { FileSystemPartitioningMode, FileSystemPartitionMode } from '../steps/FileSystem';
 import {
   getConversionFactor,
   Partition,
@@ -138,6 +139,26 @@ const getLatestRelease = (distribution: Distributions) => {
 };
 
 /**
+ * This function converts the blueprint partitioning mode to the frontend one.
+ * The biggest difference is that the blueprint also support the "auto-lvm" mode
+ * that we don't support in the UI. We map it to "lvm" if there are any extra
+ * filesystems, otherwise we map it to "raw". Note that an empty partitioning_mode
+ * is treated as "auto-lvm", see the API spec.
+ * @param customizations blueprint customizations
+ */
+const derivePartitioningMode = (customizations: Customizations): FileSystemPartitioningMode => {
+  if (customizations.partitioning_mode == "lvm") {
+    return "lvm";
+  } else if (customizations.partitioning_mode == "raw") {
+    return "raw";
+  } else if (customizations.filesystem?.length ?? 0 > 0) {
+    return "lvm"
+  }
+
+  return "raw";
+}
+
+/**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
  * @param request BlueprintResponse
  * @param source  V1ListSourceResponseItem
@@ -171,12 +192,14 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const fileSystem = request.customizations.filesystem
     ? {
         mode: 'manual' as FileSystemPartitionMode,
+        partitioningMode: derivePartitioningMode(request.customizations),
         partitions: request.customizations.filesystem.map((fs) =>
           convertFilesystemToPartition(fs)
         ),
       }
     : {
         mode: 'automatic' as FileSystemPartitionMode,
+        partitioningMode: derivePartitioningMode(request.customizations),
         partitions: [],
       };
 
@@ -410,7 +433,7 @@ const getCustomizations = (
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
-    partitioning_mode: undefined,
+    partitioning_mode: selectFileSystemPartitioningMode(state),
     fips: undefined,
   };
 };

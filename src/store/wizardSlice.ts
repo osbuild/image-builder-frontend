@@ -12,7 +12,7 @@ import {
 } from './imageBuilderApi';
 import { ActivationKeys } from './rhsmApi';
 
-import { FileSystemPartitionMode } from '../Components/CreateImageWizard/steps/FileSystem';
+import { FileSystemPartitionMode, FileSystemPartitioningMode } from '../Components/CreateImageWizard/steps/FileSystem';
 import {
   Partition,
   Units,
@@ -77,6 +77,7 @@ export type wizardState = {
   };
   fileSystem: {
     mode: FileSystemPartitionMode;
+    partitioningMode: FileSystemPartitioningMode;
     partitions: Partition[];
   };
   snapshotting: {
@@ -134,6 +135,7 @@ const initialState: wizardState = {
   },
   fileSystem: {
     mode: 'automatic',
+    partitioningMode: 'raw',
     partitions: [],
   },
   snapshotting: {
@@ -240,6 +242,10 @@ export const selectProfile = (state: RootState) => {
 
 export const selectFileSystemPartitionMode = (state: RootState) => {
   return state.wizard.fileSystem.mode;
+};
+
+export const selectFileSystemPartitioningMode = (state: RootState) => {
+  return state.wizard.fileSystem.partitioningMode;
 };
 
 export const selectPartitions = (state: RootState) => {
@@ -432,6 +438,12 @@ export const wizardSlice = createSlice({
             ];
         }
       }
+    },
+    changeFileSystemPartitioningMode: (
+      state,
+      action: PayloadAction<FileSystemPartitioningMode>
+    ) => {
+      state.fileSystem.partitioningMode = action.payload;
     },
     clearPartitions: (state) => {
       const currentMode = state.fileSystem.mode;
@@ -627,6 +639,7 @@ export const {
   changeOscapProfile,
   changeFileSystemConfiguration,
   changeFileSystemPartitionMode,
+  changeFileSystemPartitioningMode,
   clearPartitions,
   addPartition,
   removePartition,
