@@ -1,10 +1,6 @@
-import React from 'react';
-
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
-import ShareImageModal from '../../../../../Components/ShareImageModal/ShareImageModal';
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
@@ -14,7 +10,6 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import { clickNext, getNextButton } from '../../wizardTestUtils';
 import {
   blueprintRequest,
@@ -27,12 +22,23 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-const goToFileSystemConfigurationStep = async () => {
+const selectGuestImage = async () => {
   const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
+};
+
+const selectImageInstaller = async () => {
+  const user = userEvent.setup();
+  const imageInstallerCheckbox = await screen.findByTestId(
+    'checkbox-image-installer'
+  );
+  await waitFor(() => user.click(imageInstallerCheckbox));
+};
+
+const goToFileSystemConfigurationStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
@@ -107,30 +113,6 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-  {
-    path: 'insights/image-builder/share /:composeId',
-    element: <ShareImageModal />,
-  },
-];
-
-const switchToAWSManual = async () => {
-  const user = userEvent.setup();
-  const manualRadio = await screen.findByRole('radio', {
-    name: /manually enter an account id\./i,
-  });
-  await waitFor(() => user.click(manualRadio));
-  return manualRadio;
-};
-
 const clickFromImageOutputToFsc = async () => {
   const user = userEvent.setup();
   await clickNext();
@@ -148,53 +130,28 @@ describe('Step File system configuration', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-    await clickNext();
-    // aws step
-    await switchToAWSManual();
-    await waitFor(() =>
-      user.type(
-        screen.getByRole('textbox', {
-          name: /aws account id/i,
-        }),
-        '012345678901'
-      )
-    );
-    await clickNext();
-    // skip registration
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-    const registerLaterCheckbox = await screen.findByTestId(
-      'automatically-register-checkbox'
-    );
-    user.click(registerLaterCheckbox);
-    await clickNext();
-    await clickNext();
-  };
   test('Error validation occurs upon clicking next button', async () => {
-    await setUp();
-    const manuallyConfigurePartitions = await screen.findByText(
-      /manually configure partitions/i
-    );
-    user.click(manuallyConfigurePartitions);
-    const addPartition = await screen.findByTestId('file-system-add-partition');
+    await renderCreateMode();
+    await selectGuestImage();
+    await goToFileSystemConfigurationStep();
+    await clickManuallyConfigurePartitions();
+
     // Create duplicate partitions
-    user.click(addPartition);
-    user.click(addPartition);
+    await addPartition();
+    await addPartition();
+
     // Clicking next causes errors to appear
     await clickNext();
     expect(await getNextButton()).toBeDisabled();
     const mountPointAlerts = screen.getAllByRole('heading', {
       name: /danger alert: duplicate mount point/i,
     });
-    const tbody = await screen.findByTestId('file-system-configuration-tbody');
-    const rows = within(tbody).getAllByRole('row');
+    const fscTable = await screen.findByTestId(
+      'file-system-configuration-tbody'
+    );
+    const rows = within(fscTable).getAllByRole('row');
     expect(rows).toHaveLength(3);
+
     //Change mountpoint of final row to /var, resolving errors
     const mountPointOptions = within(rows[2]).getAllByRole('button', {
       name: 'Options menu',
@@ -210,12 +167,8 @@ describe('Step File system configuration', () => {
   });
 
   test('Manual partitioning is hidden for ISO targets only', async () => {
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    const imageInstallerCheckbox = await screen.findByTestId(
-      'checkbox-image-installer'
-    );
-
-    user.click(imageInstallerCheckbox);
+    await renderCreateMode();
+    await selectImageInstaller();
     await clickFromImageOutputToFsc();
     expect(
       screen.queryByText(/manually configure partitions/i)
@@ -223,34 +176,24 @@ describe('Step File system configuration', () => {
   });
 
   test('Manual partitioning is shown for ISO target and other target', async () => {
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    const imageInstallerCheckbox = await screen.findByTestId(
-      'checkbox-image-installer'
-    );
-
-    user.click(imageInstallerCheckbox);
-    const guestImageCheckBox = await screen.findByTestId(
-      'checkbox-guest-image'
-    );
-
-    user.click(guestImageCheckBox);
+    await renderCreateMode();
+    await selectImageInstaller();
+    await selectGuestImage();
     await clickFromImageOutputToFsc();
-    const manualOption = await screen.findByText(
-      /manually configure partitions/i
-    );
+    await clickManuallyConfigurePartitions();
 
-    user.click(manualOption);
     await screen.findByText('Configure partitions');
   });
 });
 
-describe('file system configuration request generated correctly', () => {
+describe('File system configuration request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test('10 GiB / correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await goToReviewStep();
@@ -276,6 +219,7 @@ describe('file system configuration request generated correctly', () => {
 
   test('15 GiB / correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionSize();
@@ -299,6 +243,7 @@ describe('file system configuration request generated correctly', () => {
 
   test('MiB / correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToMiB();
@@ -322,6 +267,7 @@ describe('file system configuration request generated correctly', () => {
 
   test('KiB / correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToKiB();
@@ -345,6 +291,7 @@ describe('file system configuration request generated correctly', () => {
 
   test('/home correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();
@@ -372,6 +319,7 @@ describe('file system configuration request generated correctly', () => {
 
   test('/home/cakerecipes correct', async () => {
     await renderCreateMode();
+    await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();
@@ -401,7 +349,7 @@ describe('file system configuration request generated correctly', () => {
   });
 });
 
-describe('FSC edit mode', () => {
+describe('File system configuration edit mode', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
