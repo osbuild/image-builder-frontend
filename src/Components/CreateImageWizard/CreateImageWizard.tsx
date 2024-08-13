@@ -71,14 +71,17 @@ type CustomWizardFooterPropType = {
   disableBack?: boolean;
   disableNext: boolean;
   beforeNext?: () => boolean;
+  optional?: boolean;
 };
 
 export const CustomWizardFooter = ({
   disableBack: disableBack,
   disableNext: disableNext,
   beforeNext,
+  optional: optional,
 }: CustomWizardFooterPropType) => {
-  const { goToNextStep, goToPrevStep, close } = useWizardContext();
+  const { goToNextStep, goToPrevStep, goToStepById, close } =
+    useWizardContext();
   return (
     <WizardFooterWrapper>
       <Button
@@ -99,6 +102,18 @@ export const CustomWizardFooter = ({
       >
         Back
       </Button>
+      {optional && (
+        <Button
+          ouiaId="wizard-review-and-finish-btn"
+          variant="tertiary"
+          onClick={() => {
+            if (!beforeNext || beforeNext()) goToStepById('step-details');
+          }}
+          isDisabled={disableNext}
+        >
+          Review and finish
+        </Button>
+      )}
       <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
         Cancel
       </Button>
@@ -320,51 +335,59 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             ]}
           />
           <WizardStep
-            name="Register"
-            id="step-register"
-            footer={
-              <CustomWizardFooter
-                disableNext={
-                  registrationType.startsWith('register-now') && !activationKey
-                }
-              />
-            }
-          >
-            <RegistrationStep />
-          </WizardStep>
-          <WizardStep
-            name="OpenSCAP"
-            id="step-oscap"
-            footer={<CustomWizardFooter disableNext={false} />}
-          >
-            <OscapStep />
-          </WizardStep>
-          <WizardStep
-            name="File system configuration"
-            id="step-file-system"
-            footer={
-              <CustomWizardFooter
-                beforeNext={() => {
-                  if (fileSystemValidation.disabledNext) {
-                    setFilesystemPristine(false);
-                    return false;
-                  }
-                  return true;
-                }}
-                disableNext={
-                  !filesystemPristine && fileSystemValidation.disabledNext
-                }
-              />
-            }
-          >
-            <FileSystemContext.Provider value={filesystemPristine}>
-              <FileSystemStep />
-            </FileSystemContext.Provider>
-          </WizardStep>
-          <WizardStep
-            name="Content"
-            id="step-content"
+            name="Optional steps"
+            id="step-optional-steps"
             steps={[
+              <WizardStep
+                name="Register"
+                id="step-register"
+                key="step-register"
+                footer={
+                  <CustomWizardFooter
+                    disableNext={
+                      registrationType.startsWith('register-now') &&
+                      !activationKey
+                    }
+                    optional={true}
+                  />
+                }
+              >
+                <RegistrationStep />
+              </WizardStep>,
+              <WizardStep
+                name="OpenSCAP"
+                id="step-oscap"
+                key="step-oscap"
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              >
+                <OscapStep />
+              </WizardStep>,
+              <WizardStep
+                name="File system configuration"
+                id="step-file-system"
+                key="step-file-system"
+                footer={
+                  <CustomWizardFooter
+                    beforeNext={() => {
+                      if (fileSystemValidation.disabledNext) {
+                        setFilesystemPristine(false);
+                        return false;
+                      }
+                      return true;
+                    }}
+                    disableNext={
+                      !filesystemPristine && fileSystemValidation.disabledNext
+                    }
+                    optional={true}
+                  />
+                }
+              >
+                <FileSystemContext.Provider value={filesystemPristine}>
+                  <FileSystemStep />
+                </FileSystemContext.Provider>
+              </WizardStep>,
               <WizardStep
                 name="Repository snapshot"
                 id="wizard-repository-snapshot"
@@ -375,6 +398,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
+                    optional={true}
                   />
                 }
               >
@@ -385,7 +409,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
                 isDisabled={snapshotValidation.disabledNext}
-                footer={<CustomWizardFooter disableNext={false} />}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
               >
                 <RepositoriesStep />
               </WizardStep>,
@@ -394,30 +420,33 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
                 isDisabled={snapshotValidation.disabledNext}
-                footer={<CustomWizardFooter disableNext={false} />}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
               >
                 <PackagesStep />
+              </WizardStep>,
+              <WizardStep
+                name="First boot script configuration"
+                id="wizard-first-boot"
+                key="wizard-first-boot"
+                navItem={customStatusNavItem}
+                status={firstBootValidation.disabledNext ? 'error' : 'default'}
+                isHidden={!isFirstBootEnabled}
+                footer={
+                  <CustomWizardFooter
+                    disableNext={firstBootValidation.disabledNext}
+                    optional={true}
+                  />
+                }
+              >
+                <FirstBootStep />
               </WizardStep>,
             ]}
           />
           <WizardStep
-            name="First boot script configuration"
-            id="wizard-first-boot"
-            key="wizard-first-boot"
-            navItem={customStatusNavItem}
-            status={firstBootValidation.disabledNext ? 'error' : 'default'}
-            isHidden={!isFirstBootEnabled}
-            footer={
-              <CustomWizardFooter
-                disableNext={firstBootValidation.disabledNext}
-              />
-            }
-          >
-            <FirstBootStep />
-          </WizardStep>
-          <WizardStep
             name="Details"
-            id={'step-details'}
+            id="step-details"
             navItem={customStatusNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
