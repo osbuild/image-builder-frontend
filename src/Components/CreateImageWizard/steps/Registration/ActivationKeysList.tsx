@@ -95,7 +95,7 @@ const ManageKeysButton = () => {
       isInline
       href={isProd() ? ACTIVATION_KEYS_PROD_URL : ACTIVATION_KEYS_STAGE_URL}
     >
-      Customer portal
+      Activation keys page
     </Button>
   );
 };
@@ -152,41 +152,41 @@ const ActivationKeysList = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleCreateActivationKey = async () => {
-    try {
-      await createActivationKey({
-        body: {
-          name: defaultActivationKeyName,
-          serviceLevel: 'Self-Support',
-        },
-      });
-      window.localStorage.setItem(
-        'imageBuilder.recentActivationKey',
-        defaultActivationKeyName
-      );
-      refetch();
-      dispatch(changeActivationKey(defaultActivationKeyName));
-    } catch (error) {
-      dispatch(
-        addNotification({
-          variant: 'danger',
-          title: 'Error creating activation key',
-          description: error?.data?.error?.message,
-        })
-      );
-    }
-  };
-
-  const isActivationKeysEmpty =
-    isSuccessActivationKeys &&
-    !isLoadingActivationKey &&
-    activationKeys.body?.length === 0;
-
-  if (isActivationKeysEmpty) {
-    handleCreateActivationKey();
-  }
-
   useEffect(() => {
+    const isActivationKeysEmpty =
+      isSuccessActivationKeys &&
+      !isLoadingActivationKey &&
+      activationKeys.body?.length === 0;
+
+    const handleCreateActivationKey = async () => {
+      try {
+        await createActivationKey({
+          body: {
+            name: defaultActivationKeyName,
+            serviceLevel: 'Self-Support',
+          },
+        });
+        window.localStorage.setItem(
+          'imageBuilder.recentActivationKey',
+          defaultActivationKeyName
+        );
+        refetch();
+        dispatch(changeActivationKey(defaultActivationKeyName));
+      } catch (error) {
+        dispatch(
+          addNotification({
+            variant: 'danger',
+            title: 'Error creating activation key',
+            description: error?.data?.error?.message,
+          })
+        );
+      }
+    };
+
+    if (isActivationKeysEmpty) {
+      handleCreateActivationKey();
+    }
+
     if (!activationKey && isSuccessActivationKeys) {
       if (
         recentActivationKey &&
@@ -252,7 +252,7 @@ const ActivationKeysList = () => {
         </Select>
         <TextContent>
           <Text>
-            Create and manage activation keys in the <ManageKeysButton />
+            Create and manage activation keys on the <ManageKeysButton />
           </Text>
         </TextContent>
       </FormGroup>

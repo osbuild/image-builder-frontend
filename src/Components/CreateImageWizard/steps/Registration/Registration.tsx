@@ -116,7 +116,7 @@ const Registration = () => {
         }
         onChange={(_event, checked) => {
           if (checked) {
-            dispatch(changeRegistrationType('register-now'));
+            dispatch(changeRegistrationType('register-now-rhc'));
           } else {
             dispatch(changeRegistrationType('register-later'));
             setShowOptions(false);
