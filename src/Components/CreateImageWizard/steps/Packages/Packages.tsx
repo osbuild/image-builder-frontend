@@ -44,6 +44,7 @@ import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailable
 
 import {
   CONTENT_URL,
+  ContentOrigin,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
   RH_ICON_SIZE,
@@ -135,6 +136,7 @@ const Packages = () => {
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
     useListRepositoriesQuery({
       url: epelRepoUrlByDistribution,
+      origin: ContentOrigin.EXTERNAL,
     });
 
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);

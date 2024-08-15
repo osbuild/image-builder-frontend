@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
+import { ContentOrigin } from '../../../../constants';
 import {
   ApiSnapshotForDate,
   useListRepositoriesQuery,
@@ -36,7 +37,7 @@ const RepoName = ({ repoUrl }: repoPropType) => {
       // @ts-ignore if repoUrl is undefined the query is going to get skipped, so it's safe to ignore the linter here
       url: repoUrl,
       contentType: 'rpm',
-      origin: 'external',
+      origin: ContentOrigin.EXTERNAL,
     },
     { skip: !repoUrl }
   );
@@ -128,7 +129,7 @@ export const SnapshotTable = ({
 }) => {
   const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
     uuid: snapshotForDate.map(({ repository_uuid }) => repository_uuid).join(),
-    origin: 'red_hat,external', // Make sure to show both redhat and custom
+    origin: ContentOrigin.REDHAT + ',' + ContentOrigin.EXTERNAL, // Make sure to show both redhat and external
   });
 
   const isAfterSet = new Set(

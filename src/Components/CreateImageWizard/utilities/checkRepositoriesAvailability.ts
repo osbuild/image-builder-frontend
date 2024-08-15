@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { ContentOrigin } from '../../../constants';
 import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../store/hooks';
 import {
@@ -26,7 +27,7 @@ export const useCheckRepositoriesAvailability = () => {
     availableForArch: arch,
     availableForVersion: version,
     contentType: 'rpm',
-    origin: 'external',
+    origin: ContentOrigin.EXTERNAL,
   });
 
   const skip =
@@ -39,7 +40,7 @@ export const useCheckRepositoriesAvailability = () => {
       availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
-      origin: 'external',
+      origin: ContentOrigin.EXTERNAL,
       limit: firstRequest?.data?.meta?.count,
       offset: 0,
     },

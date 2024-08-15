@@ -24,6 +24,7 @@ import { useDispatch } from 'react-redux';
 import PackageRecommendationDescription from './components/PackageRecommendationDescription';
 import { RedHatRepository } from './Packages';
 
+import { ContentOrigin } from '../../../../constants';
 import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
@@ -54,7 +55,7 @@ const PackageRecommendations = () => {
       availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
-      origin: 'red_hat',
+      origin: ContentOrigin.REDHAT,
       limit: 100,
       offset: 0,
     });
