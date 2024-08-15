@@ -1,10 +1,7 @@
-import React from 'react';
-
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
@@ -14,7 +11,6 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { gcpCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickBack,
   clickNext,
@@ -90,16 +86,6 @@ const selectGoogleAccount = async (optionId: string) => {
 };
 
 let router: RemixRouter | undefined = undefined;
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-];
 
 describe('Step Upload to Google', () => {
   beforeEach(() => {
@@ -108,77 +94,43 @@ describe('Step Upload to Google', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-
-    // select gcp as upload destination
-    const uploadGcp = await screen.findByTestId('upload-google');
-
-    user.click(uploadGcp);
-
-    await clickNext();
-
-    await screen.findByRole('heading', {
-      name: 'Target environment - Google Cloud Platform',
-    });
-  };
 
   test('clicking Next loads Registration', async () => {
-    await setUp();
-
-    const shareRadioButton = await screen.findByText(
-      /share image with a google account/i
-    );
-    user.click(shareRadioButton);
-
-    const googleEmailInput = await screen.findByTestId('principal');
-
-    await waitFor(() => user.type(googleEmailInput, 'test@test.com'));
+    await clickGCPTarget();
+    await selectGoogleAccount('google-account');
     await clickNext();
-
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
+    await screen.findByRole('heading', {
+      name: 'Register systems using this image',
     });
-
-    await screen.findByText(
-      'Automatically register and enable advanced capabilities'
-    );
   });
 
-  test('clicking Back loads Release', async () => {
-    await setUp();
-
+  test('clicking Back loads Image output', async () => {
+    await clickGCPTarget();
     await clickBack();
-
-    await screen.findByTestId('upload-google');
+    await screen.findByRole('heading', { name: 'Image output' });
   });
 
   test('clicking Cancel loads landing page', async () => {
-    await setUp();
-
+    await clickGCPTarget();
     await verifyCancelButton(router);
   });
 
   test('the google account id field is shown and required', async () => {
-    await setUp();
-
+    await clickGCPTarget();
     const principalInput = await screen.findByTestId('principal');
     expect(principalInput).toHaveValue('');
-    expect(principalInput).toBeEnabled();
+    expect(await getNextButton()).toBeDisabled();
   });
 
   test('the google email field must be a valid email', async () => {
-    await setUp();
+    await clickGCPTarget();
 
     await waitFor(async () =>
       user.type(await screen.findByTestId('principal'), 'a')
     );
     expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
+
     await waitFor(async () =>
       user.type(await screen.findByTestId('principal'), 'test@test.com')
     );
@@ -187,7 +139,7 @@ describe('Step Upload to Google', () => {
   });
 });
 
-describe('gcp image type request generated correctly', () => {
+describe('GCP image type request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -210,6 +162,7 @@ describe('gcp image type request generated correctly', () => {
     };
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('share image with service account', async () => {
     await clickGCPTarget();
     await selectGoogleAccount('service-account');
@@ -224,6 +177,7 @@ describe('gcp image type request generated correctly', () => {
     };
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('share image with google group', async () => {
     await clickGCPTarget();
     await selectGoogleAccount('google-group');
@@ -238,6 +192,7 @@ describe('gcp image type request generated correctly', () => {
     };
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('share image with domain', async () => {
     await clickGCPTarget();
     await selectGoogleAccount('google-domain');
@@ -252,6 +207,7 @@ describe('gcp image type request generated correctly', () => {
     };
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('share image with red hat insight only', async () => {
     const user = userEvent.setup();
     await clickGCPTarget();
