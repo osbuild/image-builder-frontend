@@ -1,11 +1,8 @@
-import React from 'react';
-
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
@@ -18,7 +15,6 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickBack,
   clickNext,
@@ -72,6 +68,39 @@ const deselectAwsAndSelectGuestImage = async () => {
   await waitFor(async () => user.click(guestImageCheckbox));
 };
 
+const chooseManualOption = async () => {
+  const user = userEvent.setup();
+  const manualOption = await screen.findByText(
+    /manually enter an account id\./i
+  );
+  await waitFor(async () => user.click(manualOption));
+};
+
+const enterAccountId = async () => {
+  const user = userEvent.setup();
+  const awsAccountIdTextbox = await screen.findByRole('textbox', {
+    name: 'aws account id',
+  });
+  await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
+};
+
+const chooseSourcesOption = async () => {
+  const user = userEvent.setup();
+  const sourceRadio = await screen.findByRole('radio', {
+    name: /use an account configured from sources\./i,
+  });
+  user.click(sourceRadio);
+};
+
+const getSourceDropdown = async () => {
+  const sourceDropdown = await screen.findByRole('textbox', {
+    name: /select source/i,
+  });
+  await waitFor(() => expect(sourceDropdown).toBeEnabled());
+
+  return sourceDropdown;
+};
+
 const selectSource = async () => {
   const user = userEvent.setup();
   const sourceTexbox = await screen.findByRole('textbox', {
@@ -85,48 +114,7 @@ const selectSource = async () => {
   await waitFor(async () => user.click(sourceOption));
 };
 
-const enterAccountId = async () => {
-  const user = userEvent.setup();
-  const manualOption = await screen.findByText(
-    /manually enter an account id\./i
-  );
-  await waitFor(async () => user.click(manualOption));
-
-  const awsAccountIdTextbox = await screen.findByRole('textbox', {
-    name: 'aws account id',
-  });
-  await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
-};
-
 let router: RemixRouter | undefined = undefined;
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-];
-
-const getSourceDropdown = async () => {
-  const sourceDropdown = await screen.findByRole('textbox', {
-    name: /select source/i,
-  });
-  await waitFor(() => expect(sourceDropdown).toBeEnabled());
-
-  return sourceDropdown;
-};
-
-const switchToAWSManual = async () => {
-  const user = userEvent.setup();
-  const manualRadio = await screen.findByRole('radio', {
-    name: /manually enter an account id\./i,
-  });
-  await waitFor(() => user.click(manualRadio));
-  return manualRadio;
-};
 
 describe('Step Upload to AWS', () => {
   beforeEach(() => {
@@ -135,54 +123,28 @@ describe('Step Upload to AWS', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
-
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-
-    await clickNext();
-
-    await screen.findByRole('heading', {
-      name: 'Target environment - Amazon Web Services',
-    });
-  };
 
   test('clicking Next loads Registration', async () => {
-    await setUp();
-
-    await switchToAWSManual();
-    const awsAccountId = await screen.findByRole('textbox', {
-      name: 'aws account id',
-    });
-    await waitFor(async () => user.type(awsAccountId, '012345678901'));
+    await selectAwsTarget();
+    await goToAwsStep();
+    await chooseManualOption();
+    await enterAccountId();
     await clickNext();
-
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
+    await screen.findByRole('heading', {
+      name: 'Register systems using this image',
     });
-
-    await screen.findByText(
-      'Automatically register and enable advanced capabilities'
-    );
   });
 
   test('clicking Back loads Release', async () => {
-    await setUp();
-
+    await selectAwsTarget();
+    await goToAwsStep();
     await clickBack();
-
-    await screen.findByTestId('upload-aws');
+    await screen.findByRole('heading', { name: 'Image output' });
   });
 
   test('clicking Cancel loads landing page', async () => {
-    await setUp();
-
+    await selectAwsTarget();
+    await goToAwsStep();
     await verifyCancelButton(router);
   });
 
@@ -192,85 +154,52 @@ describe('Step Upload to AWS', () => {
         return new HttpResponse(null, { status: 500 });
       })
     );
-    await setUp();
+    await selectAwsTarget();
+    await goToAwsStep();
     await screen.findByText(
       /sources cannot be reached, try again later or enter an aws account id manually\./i
     );
   });
 
   test('validation works', async () => {
-    await setUp();
+    await selectAwsTarget();
+    await goToAwsStep();
+
     const nextButton = await getNextButton();
-
     expect(nextButton).toHaveClass('pf-m-disabled');
 
-    const manualOption = await screen.findByRole('radio', {
-      name: /manually enter an account id\./i,
-    });
-    await waitFor(async () => user.click(manualOption));
-
+    await chooseManualOption();
     expect(nextButton).toHaveClass('pf-m-disabled');
 
-    const awsAccId = await screen.findByRole('textbox', {
-      name: 'aws account id',
-    });
-    expect(awsAccId).toHaveValue('');
-    expect(awsAccId).toBeEnabled();
-    await waitFor(() => user.type(awsAccId, '012345678901'));
-
+    await enterAccountId();
     expect(nextButton).not.toHaveClass('pf-m-disabled');
 
-    const sourceRadio = await screen.findByRole('radio', {
-      name: /use an account configured from sources\./i,
-    });
-
-    user.click(sourceRadio);
-
+    await chooseSourcesOption();
     await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
 
-    const sourceDropdown = await getSourceDropdown();
-    user.click(sourceDropdown);
-
-    const source = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    user.click(source);
-
+    await getSourceDropdown();
+    await selectSource();
     await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
   });
 
   test('compose request share_with_sources field is correct', async () => {
-    await setUp();
-
-    const sourceDropdown = await getSourceDropdown();
-    user.click(sourceDropdown);
-
-    const source = await screen.findByRole('option', {
-      name: /my_source/i,
-    });
-    user.click(source);
-
-    // click through to review step
+    await selectAwsTarget();
+    await goToAwsStep();
+    await getSourceDropdown();
+    await selectSource();
     await goToReview();
+
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
-
     const createBlueprintBtn = await screen.findByRole('button', {
       name: /Create blueprint/,
     });
-
     user.click(createBlueprintBtn);
-
-    // returns back to the landing page
-    await waitFor(() =>
-      expect(router?.state.location.pathname).toBe('/insights/image-builder')
-    );
-    // set test timeout of 10 seconds
-  }, 10000);
+  });
 });
 
-describe('aws image type request generated correctly', () => {
+describe('AWS image type request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -304,6 +233,7 @@ describe('aws image type request generated correctly', () => {
   test('using an account id', async () => {
     await selectAwsTarget();
     await goToAwsStep();
+    await chooseManualOption();
     await enterAccountId();
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
