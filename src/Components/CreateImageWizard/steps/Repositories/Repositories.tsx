@@ -30,6 +30,7 @@ import {
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
+import { ContentOrigin } from '../../../../constants';
 import {
   ApiRepositoryResponseRead,
   useListRepositoriesQuery,
@@ -100,8 +101,8 @@ const Repositories = () => {
     {
       availableForArch: arch,
       availableForVersion: version,
-      origin: 'external',
-      limit: 999,
+      origin: ContentOrigin.EXTERNAL,
+      limit: 999, // O.O Oh dear, if possible this whole call should be removed
       offset: 0,
       url: [...initialSelectedState].join(','),
     },
@@ -125,7 +126,7 @@ const Repositories = () => {
       availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
-      origin: 'external',
+      origin: ContentOrigin.EXTERNAL,
       limit: perPage,
       offset: perPage * (page - 1),
       search: debouncedFilterValue,
