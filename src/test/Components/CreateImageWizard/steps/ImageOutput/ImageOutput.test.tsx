@@ -1,10 +1,7 @@
-import React from 'react';
-
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
 import {
   AARCH64,
   CENTOS_9,
@@ -27,7 +24,6 @@ import {
   rhel9CreateBlueprintRequest,
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickNext,
   getNextButton,
@@ -37,7 +33,6 @@ import {
   blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
-  goToRegistrationStep,
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
@@ -46,30 +41,13 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-];
+let router: RemixRouter | undefined = undefined;
 
 const openReleaseMenu = async () => {
   const user = userEvent.setup();
   const releaseMenu = screen.getAllByRole('button', {
     name: /options menu/i,
   })[0];
-  await waitFor(() => user.click(releaseMenu));
-};
-
-const openArchitectureMenu = async () => {
-  const user = userEvent.setup();
-  const releaseMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[1];
   await waitFor(() => user.click(releaseMenu));
 };
 
@@ -109,6 +87,14 @@ const selectCentos9 = async () => {
   await waitFor(() => user.click(centos9));
 };
 
+const openArchitectureMenu = async () => {
+  const user = userEvent.setup();
+  const releaseMenu = screen.getAllByRole('button', {
+    name: /options menu/i,
+  })[1];
+  await waitFor(() => user.click(releaseMenu));
+};
+
 const selectX86_64 = async () => {
   const user = userEvent.setup();
   await openArchitectureMenu();
@@ -127,7 +113,16 @@ const selectAarch64 = async () => {
   await waitFor(() => user.click(aarch64));
 };
 
+const selectGuestImageTarget = async () => {
+  const user = userEvent.setup();
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
+  });
+  await waitFor(() => user.click(guestImageCheckBox));
+};
+
 const goToReviewStep = async () => {
+  await clickNext();
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system customization
@@ -140,17 +135,6 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
-let router: RemixRouter | undefined = undefined;
-
-const switchToAWSManual = async () => {
-  const user = userEvent.setup();
-  const manualRadio = await screen.findByRole('radio', {
-    name: /manually enter an account id\./i,
-  });
-  await waitFor(() => user.click(manualRadio));
-  return manualRadio;
-};
-
 describe('Step Image output', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -158,51 +142,38 @@ describe('Step Image output', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    ({ router } = await renderCustomRoutesWithReduxRouter(
-      'imagewizard',
-      {},
-      routes
-    ));
 
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-
-    await screen.findByRole('heading', { name: 'Image output' });
-  };
-
-  test('clicking Next loads Upload to AWS', async () => {
-    await setUp();
-
+  test('clicking Next loads Registration', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
     await clickNext();
-
-    await switchToAWSManual();
-    await screen.findByText('AWS account ID');
+    await screen.findByRole('heading', {
+      name: 'Register systems using this image',
+    });
   });
 
   test('clicking Cancel loads landing page', async () => {
-    await setUp();
-    await clickNext();
-
+    await renderCreateMode();
     await verifyCancelButton(router);
   });
 
   test('target environment is required', async () => {
-    await setUp();
+    await renderCreateMode();
+    await selectGuestImageTarget();
 
     const destination = await screen.findByTestId('target-select');
     const required = await within(destination).findByText('*');
+
     expect(destination).toBeEnabled();
     expect(destination).toContainElement(required);
   });
 
   test('selecting and deselecting a tile disables the next button', async () => {
-    await setUp();
+    await renderCreateMode();
     const nextButton = await getNextButton();
 
     const awsTile = await screen.findByTestId('upload-aws');
-    // this has already been clicked once in the setup function
+    user.click(awsTile); // select
     user.click(awsTile); // deselect
 
     const googleTile = await screen.findByTestId('upload-google');
@@ -217,12 +188,8 @@ describe('Step Image output', () => {
   });
 
   test('expect only RHEL releases before expansion', async () => {
-    await setUp();
-
-    const releaseMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0];
-    user.click(releaseMenu);
+    await renderCreateMode();
+    await openReleaseMenu();
 
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
@@ -233,17 +200,11 @@ describe('Step Image output', () => {
     await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
     });
-
-    user.click(releaseMenu);
   });
 
   test('expect all releases after expansion', async () => {
-    await setUp();
-
-    const releaseMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0];
-    user.click(releaseMenu);
+    await renderCreateMode();
+    await openReleaseMenu();
 
     const showOptionsButton = await screen.findByRole('button', {
       name: 'Show options for further development of RHEL',
@@ -261,32 +222,15 @@ describe('Step Image output', () => {
     });
 
     expect(showOptionsButton).not.toBeInTheDocument();
-
-    user.click(releaseMenu);
   });
 
   test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
-    await setUp();
+    await renderCreateMode();
 
-    const releaseMenu = await screen.findAllByRole('button', {
-      name: /options menu/i,
-    });
-    user.click(releaseMenu[0]);
-
-    const rhel8Option = await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-    });
-
-    user.click(rhel8Option);
+    await selectRhel8();
     await screen.findByTestId('release-lifecycle-chart');
 
-    user.click(releaseMenu[0]);
-
-    const rhel9Option = await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 9/,
-    });
-
-    user.click(rhel9Option);
+    await selectRhel9();
     await waitFor(() =>
       expect(
         screen.queryByTestId('release-lifecycle-chart')
@@ -295,23 +239,8 @@ describe('Step Image output', () => {
   });
 
   test('CentOS acknowledgement appears', async () => {
-    await setUp();
-
-    const releaseMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0];
-    user.click(releaseMenu);
-
-    const showOptionsButton = await screen.findByRole('button', {
-      name: 'Show options for further development of RHEL',
-    });
-    user.click(showOptionsButton);
-
-    const centOSButton = await screen.findByRole('option', {
-      name: 'CentOS Stream 9',
-    });
-    user.click(centOSButton);
-
+    await renderCreateMode();
+    await selectCentos9();
     await screen.findByText(
       'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
     );
@@ -324,16 +253,8 @@ describe('Check that the target filtering is in accordance to mock content', () 
   });
 
   test('rhel9 x86_64', async () => {
-    const user = userEvent.setup();
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-
-    // select x86_64
-    const archMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[1];
-    user.click(archMenu);
-    const x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
-    user.click(x86_64Option);
+    await renderCreateMode();
+    await selectX86_64();
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = []; // type is `string[]` and not `ImageType[]` because in imageBuilderAPI ArchitectureItem['image_types'] is type string
@@ -342,6 +263,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
         images_types = elem.image_types;
       }
     });
+
     expect(images_types).toContain('aws');
     expect(images_types).toContain('gcp');
     expect(images_types).toContain('azure');
@@ -350,6 +272,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('vsphere');
     expect(images_types).toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
+
     // make sure the UX conforms to the mocks
     await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
@@ -364,27 +287,9 @@ describe('Check that the target filtering is in accordance to mock content', () 
   });
 
   test('rhel8 x86_64', async () => {
-    const user = userEvent.setup();
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-
-    // select rhel8
-    const releaseMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0];
-    user.click(releaseMenu);
-    const rhel8Option = await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-    });
-
-    user.click(rhel8Option);
-
-    // select x86_64
-    const archMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[1];
-    user.click(archMenu);
-    const x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
-    user.click(x86_64Option);
+    await renderCreateMode();
+    await selectX86_64();
+    await selectRhel8();
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -393,6 +298,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
         images_types = elem.image_types;
       }
     });
+
     expect(images_types).toContain('aws');
     expect(images_types).toContain('gcp');
     expect(images_types).toContain('azure');
@@ -401,6 +307,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('vsphere');
     expect(images_types).toContain('vsphere-ova');
     expect(images_types).toContain('wsl');
+
     // make sure the UX conforms to the mocks
     await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
@@ -413,18 +320,8 @@ describe('Check that the target filtering is in accordance to mock content', () 
   });
 
   test('rhel9 aarch64', async () => {
-    const user = userEvent.setup();
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-
-    // select aarch64
-    const archMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[1];
-    user.click(archMenu);
-    const aarch64Option = await screen.findByRole('option', {
-      name: 'aarch64',
-    });
-    user.click(aarch64Option);
+    await renderCreateMode();
+    await selectAarch64();
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -433,6 +330,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
         images_types = elem.image_types;
       }
     });
+
     expect(images_types).toContain('aws');
     expect(images_types).not.toContain('gcp');
     expect(images_types).not.toContain('azure');
@@ -441,6 +339,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('vsphere');
     expect(images_types).not.toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
+
     // make sure the UX conforms to the mocks
     await screen.findByTestId('upload-aws');
     await waitFor(() =>
@@ -459,28 +358,9 @@ describe('Check that the target filtering is in accordance to mock content', () 
   });
 
   test('rhel8 aarch64', async () => {
-    const user = userEvent.setup();
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-
-    // select rhel8
-    const releaseMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[0];
-    user.click(releaseMenu);
-    const rhel8Option = await screen.findByRole('option', {
-      name: /Red Hat Enterprise Linux \(RHEL\) 8/,
-    });
-    user.click(rhel8Option);
-
-    // select x86_64
-    const archMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[1];
-    user.click(archMenu);
-    const aarch64Option = await screen.findByRole('option', {
-      name: 'aarch64',
-    });
-    user.click(aarch64Option);
+    await renderCreateMode();
+    await selectAarch64();
+    await selectRhel8();
 
     // make sure this test is in SYNC with the mocks
     let images_types: string[] = [];
@@ -489,6 +369,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
         images_types = elem.image_types;
       }
     });
+
     expect(images_types).toContain('aws');
     expect(images_types).not.toContain('gcp');
     expect(images_types).not.toContain('azure');
@@ -497,11 +378,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('vsphere');
     expect(images_types).not.toContain('vsphere-ova');
     expect(images_types).not.toContain('wsl');
+
     // make sure the UX conforms to the mocks
     await screen.findByTestId('upload-aws');
-    await waitFor(() =>
-      expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
-    );
+    expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument();
     expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
@@ -520,45 +400,34 @@ describe('Check step consistency', () => {
     vi.clearAllMocks();
   });
 
-  test('going back and forth with selected options only keeps the one compatible', async () => {
-    const user = userEvent.setup();
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+  const user = userEvent.setup();
 
-    // select x86_64
-    const archMenu = screen.getAllByRole('button', {
-      name: /options menu/i,
-    })[1];
-    user.click(archMenu);
-    let x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
-    user.click(x86_64Option);
-    await screen.findByTestId('upload-aws');
+  test('going back and forth with selected options only keeps the one compatible', async () => {
+    await renderCreateMode();
+    await selectX86_64();
+    const next = await screen.findByRole('button', { name: /Next/ });
+
     // select GCP, it's available for x86_64
     const uploadGcpBtn = await screen.findByTestId('upload-google');
     user.click(uploadGcpBtn);
-    const next = await screen.findByRole('button', { name: /Next/ });
     await waitFor(() => expect(next).toBeEnabled());
-    // Change to aarch
-    user.click(archMenu);
-    const aarch64Option = await screen.findByRole('option', {
-      name: 'aarch64',
-    });
-    user.click(aarch64Option);
-    await screen.findByTestId('upload-aws');
-    // GCP not being compatible with arch, the next button is disabled
+
+    // change to aarch, GCP not being compatible and gets removed from targets
+    await selectAarch64();
     await waitFor(() => expect(next).toBeDisabled());
-    // clicking on AWS the user can go next
+
+    // clicking on AWS enables the Next button
     const uploadAwsBtn = await screen.findByTestId('upload-aws');
     user.click(uploadAwsBtn);
     await waitFor(() => expect(next).toBeEnabled());
-    // and going back to x86_64 the user should keep the next button visible
-    user.click(archMenu);
-    x86_64Option = await screen.findByRole('option', { name: 'x86_64' });
-    user.click(x86_64Option);
+
+    // and going back to x86_64 the Next button stays enabled
+    await selectX86_64();
     await waitFor(() => expect(next).toBeEnabled());
   });
 });
 
-describe('set release using query parameter', () => {
+describe('Set release using query parameter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -600,28 +469,28 @@ describe('set architecture using query parameter', () => {
   });
 });
 
-describe('set target using query parameter', () => {
+describe('Set target using query parameter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   const user = userEvent.setup();
+
   test('no target by default (no query parameter)', async () => {
     await renderCreateMode();
-    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('no target by default (invalid query parameter)', async () => {
     await renderCreateMode({ target: 'azure' });
-    const nextButton = await screen.findByRole('button', { name: /Next/ });
+    const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('image-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'iso' });
     expect(await screen.findByTestId('checkbox-image-installer')).toBeChecked();
-    await clickNext();
     await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
@@ -633,7 +502,6 @@ describe('set target using query parameter', () => {
   test('guest-image (query parameter provided)', async () => {
     await renderCreateMode({ target: 'qcow2' });
     expect(await screen.findByTestId('checkbox-guest-image')).toBeChecked();
-    await clickNext();
     await goToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
@@ -643,7 +511,7 @@ describe('set target using query parameter', () => {
   });
 });
 
-describe('distribution request generated correctly', () => {
+describe('Distribution request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -651,7 +519,7 @@ describe('distribution request generated correctly', () => {
   test('rhel-8', async () => {
     await renderCreateMode();
     await selectRhel8();
-    await goToRegistrationStep();
+    await selectGuestImageTarget();
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -669,7 +537,7 @@ describe('distribution request generated correctly', () => {
   test('rhel-9', async () => {
     await renderCreateMode();
     await selectRhel9();
-    await goToRegistrationStep();
+    await selectGuestImageTarget();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -684,7 +552,7 @@ describe('distribution request generated correctly', () => {
   test('centos-9', async () => {
     await renderCreateMode();
     await selectCentos9();
-    await goToRegistrationStep();
+    await selectGuestImageTarget();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -697,7 +565,7 @@ describe('distribution request generated correctly', () => {
   });
 });
 
-describe('architecture request generated correctly', () => {
+describe('Architecture request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -705,7 +573,7 @@ describe('architecture request generated correctly', () => {
   test('x86_64', async () => {
     await renderCreateMode();
     await selectX86_64();
-    await goToRegistrationStep();
+    await selectGuestImageTarget();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -724,7 +592,7 @@ describe('architecture request generated correctly', () => {
   test('aarch64', async () => {
     await renderCreateMode();
     await selectAarch64();
-    await goToRegistrationStep();
+    await selectGuestImageTarget();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -741,7 +609,7 @@ describe('architecture request generated correctly', () => {
   });
 });
 
-describe('Image Output edit mode', () => {
+describe('Image output edit mode', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -757,6 +625,7 @@ describe('Image Output edit mode', () => {
     const expectedRequest = rhel9CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('edit mode works - rhel8', async () => {
     const id = mockBlueprintIds['rhel8'];
     await renderEditMode(id);
@@ -768,6 +637,7 @@ describe('Image Output edit mode', () => {
     const expectedRequest = rhel8CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('edit mode works - centos9', async () => {
     const id = mockBlueprintIds['centos9'];
     await renderEditMode(id);
@@ -779,6 +649,7 @@ describe('Image Output edit mode', () => {
     const expectedRequest = centos9CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('edit mode works - x86_64', async () => {
     const id = mockBlueprintIds['x86_64'];
     await renderEditMode(id);
@@ -790,6 +661,7 @@ describe('Image Output edit mode', () => {
     const expectedRequest = x86_64CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
   test('edit mode works - aarch64', async () => {
     const id = mockBlueprintIds['aarch64'];
     await renderEditMode(id);
