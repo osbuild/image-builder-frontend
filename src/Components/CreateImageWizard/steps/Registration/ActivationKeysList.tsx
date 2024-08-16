@@ -37,6 +37,7 @@ import {
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import { generateRandomId } from '../../utilities/generateRandomId';
 
 export const PopoverActivation = () => {
   const [orgId, setOrgId] = useState<string | undefined>(undefined);
@@ -106,7 +107,7 @@ const ActivationKeysList = () => {
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
 
-  const defaultActivationKeyName = 'activation-key-default';
+  const defaultActivationKeyName = `activation-key-default-${generateRandomId()}`;
 
   const { isProd } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);
