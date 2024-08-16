@@ -1,3 +1,4 @@
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -23,6 +24,7 @@ import {
   openAndDismissSaveAndBuildModal,
   clickNext,
   clickBack,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 
 const localStorageMock = (() => {
@@ -39,6 +41,9 @@ const localStorageMock = (() => {
 Object.defineProperty(window, 'localStorage', {
   value: localStorageMock,
 });
+
+// Initiliaze the router
+const router: RemixRouter | undefined = undefined;
 
 const clickShowAdditionalConnectionOptions = async () => {
   const user = userEvent.setup();
@@ -62,6 +67,23 @@ const deselectPredictiveAnalytics = async () => {
   await waitFor(() => user.click(checkBox));
 };
 
+const openActivationKeyDropdown = async () => {
+  const user = userEvent.setup();
+  const activationKeyDropdown = await screen.findByRole('textbox', {
+    name: 'Select activation key',
+  });
+  user.click(activationKeyDropdown);
+};
+
+const selectActivationKey = async (key: string) => {
+  const user = userEvent.setup();
+  const activationKey = await screen.findByRole('option', {
+    name: key,
+  });
+  user.click(activationKey);
+  await screen.findByDisplayValue(key);
+};
+
 const goToReviewStep = async () => {
   await clickNext();
   await clickNext();
@@ -79,19 +101,11 @@ describe('Step Registration', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
-
   test('clicking Next leads to OpenSCAP step', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-
-    const registrationCheckbox = await screen.findByTestId(
-      'automatically-register-checkbox'
-    );
-    user.click(registrationCheckbox);
-
+    await clickRegisterLater();
     await clickNext();
-
     await screen.findByRole('heading', {
       name: 'OpenSCAP profile',
     });
@@ -100,36 +114,25 @@ describe('Step Registration', () => {
   test('clicking Back leads to Image output step', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-
     await clickBack();
-
     await screen.findByRole('heading', {
       name: 'Image output',
     });
   });
 
-  // test('clicking Cancel loads landing page', async () => {
-  //   await renderCreateMode();
-  //   await goToRegistrationStep();
-  //
-  //   await verifyCancelButton(router);
-  // });
+  test('clicking Cancel loads landing page', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await verifyCancelButton(router);
+  });
 
   test('default registration includes rhsm, rhc and insights', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-
-    const activationKeyDropdown = await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-    user.click(activationKeyDropdown);
-    const activationKey = await screen.findByRole('option', {
-      name: 'name0',
-    });
-    user.click(activationKey);
-    await screen.findByDisplayValue('name0');
-
+    await openActivationKeyDropdown();
+    await selectActivationKey('name0');
     await goToReviewStep();
+
     const review = await screen.findByTestId('review-registration');
     expect(review).toHaveTextContent(
       'Register with Red Hat Subscription Manager (RHSM)'
@@ -143,26 +146,18 @@ describe('Step Registration', () => {
   test('should disable dropdown when clicking Register the system later', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await screen.findByTestId('selected-activation-key');
-
-    // click the later radio button which should remove any input fields
-    const registrationCheckbox = await screen.findByTestId(
-      'automatically-register-checkbox'
-    );
-    await waitFor(async () => user.click(registrationCheckbox));
+    await clickRegisterLater();
 
     await waitFor(() =>
       expect(
         screen.queryByTestId('selected-activation-key')
       ).not.toBeInTheDocument()
     );
-
     await waitFor(async () =>
       expect(
         await screen.findByRole('button', { name: /options menu/i })
       ).toBeDisabled()
     );
-
     await goToReviewStep();
     await screen.findByText('Register the system later');
   });
