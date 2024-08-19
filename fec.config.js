@@ -6,6 +6,28 @@ const webpack = require('webpack');
 
 const plugins = [];
 
+function add_define(key, value) {
+  const definePluginIndex = plugins.findIndex(
+    (plugin) => plugin instanceof webpack.DefinePlugin
+  );
+  if (definePluginIndex !== -1) {
+    const definePlugin = plugins[definePluginIndex];
+
+    const newDefinePlugin = new webpack.DefinePlugin({
+      ...definePlugin.definitions,
+      [key]: JSON.stringify(value),
+    });
+
+    plugins[definePluginIndex] = newDefinePlugin;
+  } else {
+    plugins.push(
+      new webpack.DefinePlugin({
+        [key]: JSON.stringify(value),
+      })
+    );
+  }
+}
+
 if (process.env.MSW) {
   // Copy mockServiceWorker.js to ./dist/ so it is served with the bundle
   plugins.push(
@@ -25,17 +47,11 @@ if (process.env.MSW) {
   Therefore, we find it in the `plugins` array based on its type, then update
   it to add our new process.env.MSW variable.
   */
-  const definePluginIndex = plugins.findIndex(
-    (plugin) => plugin instanceof webpack.DefinePlugin
-  );
-  const definePlugin = plugins[definePluginIndex];
+  add_define('process.env.MSW', process.env.MSW);
+}
 
-  const newDefinePlugin = new webpack.DefinePlugin({
-    ...definePlugin.definitions,
-    'process.env.MSW': true,
-  });
-
-  plugins[definePluginIndex] = newDefinePlugin;
+if (process.env.NODE_ENV) {
+  add_define('process.env.NODE_ENV', process.env.NODE_ENV);
 }
 
 module.exports = {
