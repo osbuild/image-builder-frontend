@@ -27,7 +27,12 @@ import {
   useGetBlueprintQuery,
 } from '../../store/imageBuilderApi';
 
-export const BuildImagesButton = () => {
+type BuildImagesButtonPropTypes = {
+  // default children is 'Build images'
+  children?: React.ReactNode;
+};
+
+export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [deselectedTargets, setDeselectedTargets] = useState<ImageTypes[]>([]);
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
@@ -120,7 +125,7 @@ export const BuildImagesButton = () => {
                       />
                     </FlexItem>
                   )}
-                  <FlexItem>Build images</FlexItem>
+                  <FlexItem>{children ? children : 'Build images'}</FlexItem>
                 </Flex>
               </MenuToggleAction>,
             ],
