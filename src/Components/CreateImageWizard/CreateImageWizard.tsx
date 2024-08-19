@@ -328,7 +328,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             footer={
               <CustomWizardFooter
                 disableNext={
-                  registrationType === 'register-now' && !activationKey
+                  registrationType.startsWith('register-now') && !activationKey
                 }
               />
             }
