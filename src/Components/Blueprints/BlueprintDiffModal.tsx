@@ -46,7 +46,9 @@ const BlueprintDiffModal = ({
       onClose={onClose}
       title={`Compare ${blueprintName || ''} versions`}
       actions={[
-        <BuildImagesButton key="build-button" />,
+        <BuildImagesButton key="build-button">
+          Synchronize images
+        </BuildImagesButton>,
         <Button
           key="cancel-button"
           variant="link"
