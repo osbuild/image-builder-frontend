@@ -1,14 +1,23 @@
+import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import { PROVISIONING_API } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { azureCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickBack, clickNext } from '../../wizardTestUtils';
+import { server } from '../../../../mocks/server';
+import {
+  clickBack,
+  clickNext,
+  getNextButton,
+  verifyCancelButton,
+} from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -19,6 +28,9 @@ import {
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
+
+// The router is just initiliazed here, it's assigned a value in the tests
+let router: RemixRouter | undefined = undefined;
 
 const goToAzureStep = async () => {
   await clickNext();
@@ -56,7 +68,7 @@ const deselectAzureAndSelectGuestImage = async () => {
   await waitFor(async () => user.click(guestImageCheckbox));
 };
 
-const selectSource = async () => {
+const selectSource = async (sourceName: string) => {
   const user = userEvent.setup();
   const sourceTexbox = await screen.findByRole('textbox', {
     name: /select source/i,
@@ -64,7 +76,7 @@ const selectSource = async () => {
   await waitFor(async () => user.click(sourceTexbox));
 
   const azureSource = await screen.findByRole('option', {
-    name: /azureSource1/i,
+    name: sourceName,
   });
   await waitFor(async () => user.click(azureSource));
 };
@@ -90,35 +102,178 @@ const selectManuallyEnterInformation = async () => {
   await waitFor(async () => user.click(manualOption));
 };
 
-const enterTenantGuid = async () => {
+const selectSourcesOption = async () => {
   const user = userEvent.setup();
-  const tenantGuid = await screen.findByRole('textbox', {
+  const sourcesOption = await screen.findByRole('radio', {
+    name: /use an account configured from sources\./i,
+  });
+  await waitFor(async () => user.click(sourcesOption));
+};
+
+const getTenantGuidInput = async () => {
+  const tenantGuidInput = await screen.findByRole('textbox', {
     name: /azure tenant guid/i,
   });
+  return tenantGuidInput;
+};
+
+const enterTenantGuid = async () => {
+  const user = userEvent.setup();
+  const tenantGuid = await getTenantGuidInput();
   await waitFor(() =>
     user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2')
   );
 };
 
-const enterSubscriptionId = async () => {
-  const user = userEvent.setup();
-  const subscriptionId = await screen.findByRole('textbox', {
+const getSubscriptionIdInput = async () => {
+  const subscriptionIdInput = await screen.findByRole('textbox', {
     name: /subscription id/i,
   });
+  return subscriptionIdInput;
+};
+
+const enterSubscriptionId = async () => {
+  const user = userEvent.setup();
+  const subscriptionId = await getSubscriptionIdInput();
   await waitFor(() =>
     user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711')
   );
 };
 
-const enterResourceGroup = async () => {
-  const user = userEvent.setup();
-  const resourceGroup = await screen.findByRole('textbox', {
+const getResourceGroupInput = async () => {
+  const resourceGroupInput = await screen.findByRole('textbox', {
     name: /resource group/i,
   });
+  return resourceGroupInput;
+};
+
+const enterResourceGroup = async () => {
+  const user = userEvent.setup();
+  const resourceGroup = await getResourceGroupInput();
   await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
 };
 
-describe('azure image type request generated correctly', () => {
+describe('Step Upload to Azure', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    router = undefined;
+  });
+
+  const user = userEvent.setup();
+
+  test('clicking Next loads Registration', async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectManuallyEnterInformation();
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: 'Register systems using this image',
+    });
+  });
+
+  test('clicking Back loads Image output', async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await clickBack();
+    await screen.findByRole('heading', { name: 'Image output' });
+  });
+
+  test('clicking Cancel loads landing page', async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await verifyCancelButton(router);
+  });
+
+  test('basics work', { retry: 3 }, async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectManuallyEnterInformation();
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeDisabled();
+
+    const tenantId = await getTenantGuidInput();
+    expect(tenantId).toHaveValue('');
+    expect(tenantId).toBeEnabled();
+    await enterTenantGuid();
+
+    const subscription = await getSubscriptionIdInput();
+    expect(subscription).toHaveValue('');
+    expect(subscription).toBeEnabled();
+    await enterSubscriptionId();
+
+    const resourceGroup = await getResourceGroupInput();
+    expect(resourceGroup).toHaveValue('');
+    expect(resourceGroup).toBeEnabled();
+    await enterResourceGroup();
+
+    expect(nextButton).toBeEnabled();
+
+    // switch to Sources
+    await selectSourcesOption();
+
+    // manual values should be cleared out
+    expect(await getTenantGuidInput()).toHaveValue('');
+    expect(await getSubscriptionIdInput()).toHaveValue('');
+    expect(await getResourceGroupInput()).toHaveValue('');
+
+    expect(nextButton).toBeDisabled();
+
+    await selectSource('azureSource1');
+
+    // source information should be fetched
+    expect(await getTenantGuidInput()).not.toHaveValue('');
+    expect(await getSubscriptionIdInput()).not.toHaveValue('');
+    await selectResourceGroup();
+
+    await waitFor(() => {
+      expect(nextButton).toBeEnabled();
+    });
+  });
+
+  test('handles change of selected Source', async () => {
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectSource('azureSource1');
+    await waitFor(async () => {
+      expect(await getTenantGuidInput()).toHaveValue(
+        '2fd7c95c-0d63-4e81-b914-3fbd5288daf7'
+      );
+    });
+
+    await selectSource('azureSource2');
+    await waitFor(async () => {
+      expect(await getTenantGuidInput()).toHaveValue(
+        '73d5694c-7a28-417e-9fca-55840084f508'
+      );
+    });
+
+    user.click(await getResourceGroupInput());
+    const groups = await screen.findByLabelText(/Resource group/);
+    expect(groups).toBeInTheDocument();
+    expect(
+      await screen.findByLabelText('Resource group theirGroup2')
+    ).toBeVisible();
+  });
+
+  test('component renders error state correctly', async () => {
+    server.use(
+      http.get(`${PROVISIONING_API}/sources`, () => {
+        return new HttpResponse(null, { status: 500 });
+      })
+    );
+
+    await selectAzureTarget();
+    await goToAzureStep();
+    await screen.findByText(
+      /Sources cannot be reached, try again later or enter an account info for upload manually\./i
+    );
+  });
+});
+
+describe('Azure image type request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -126,9 +281,10 @@ describe('azure image type request generated correctly', () => {
   test('using a source', async () => {
     await selectAzureTarget();
     await goToAzureStep();
-    await selectSource();
+    await selectSource('azureSource1');
     await selectResourceGroup();
     await goToReview();
+
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -188,7 +344,7 @@ describe('azure image type request generated correctly', () => {
   test('after selecting and deselecting azure', async () => {
     await selectAzureTarget();
     await goToAzureStep();
-    await selectSource();
+    await selectSource('azureSource1');
     await clickBack();
     await deselectAzureAndSelectGuestImage();
     await goToReview();
