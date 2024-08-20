@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useAppSelector } from '../../../store/hooks';
 import {
   BlueprintsResponse,
@@ -86,24 +87,35 @@ export function useDetailsValidation(): StepValidation {
 
   const [trigger] = useLazyGetBlueprintsQuery();
 
+  // Debounce the API call to check if the name is unique
   useEffect(() => {
     if (name !== '' && nameValid) {
-      trigger({ name })
-        .unwrap()
-        .then((response: BlueprintsResponse) => {
-          if (
-            response?.meta?.count > 0 &&
-            response.data[0].id !== blueprintId
-          ) {
-            setUniqueName(false);
-          } else {
-            setUniqueName(true);
-          }
-        })
-        .catch(() => {
-          // If the request fails, we assume the name is unique
-          setUniqueName(true);
-        });
+      const timer = setTimeout(
+        () => {
+          setUniqueName(null);
+          trigger({ name })
+            .unwrap()
+            .then((response: BlueprintsResponse) => {
+              if (
+                response?.meta?.count > 0 &&
+                response.data[0].id !== blueprintId
+              ) {
+                setUniqueName(false);
+              } else {
+                setUniqueName(true);
+              }
+            })
+            .catch(() => {
+              // If the request fails, we assume the name is unique
+              setUniqueName(true);
+            });
+        },
+        UNIQUE_VALIDATION_DELAY // If name is empty string, instantly return
+      );
+
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [blueprintId, name, setUniqueName, trigger, nameValid]);
 
@@ -122,6 +134,7 @@ export function useDetailsValidation(): StepValidation {
       name: nameError,
       description: descriptionValid ? '' : 'Invalid description',
     },
-    disabledNext: !!nameError || !descriptionValid,
+    // if uniqueName is null, we are still waiting for the API response
+    disabledNext: !!nameError || !descriptionValid || uniqueName !== true,
   };
 }
