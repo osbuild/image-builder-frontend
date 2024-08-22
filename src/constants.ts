@@ -227,3 +227,5 @@ export enum ContentOrigin {
   'CUSTOM' = 'external,upload',
   'ALL' = 'red_hat,external,upload',
 }
+
+export const AMPLITUDE_MODULE_NAME = 'imageBuilder';

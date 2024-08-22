@@ -10,7 +10,9 @@ import {
   Modal,
   Button,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
+import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { useAppDispatch } from '../../../../../store/hooks';
 import {
@@ -30,6 +32,8 @@ export const CreateSaveAndBuildBtn = ({
   setIsOpen,
   isDisabled,
 }: CreateDropdownProps) => {
+  const { analytics } = useChrome();
+
   const [buildBlueprint] = useComposeBlueprintMutation();
   const [createBlueprint] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -38,6 +42,12 @@ export const CreateSaveAndBuildBtn = ({
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
+
+    analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
+      module: AMPLITUDE_MODULE_NAME,
+      type: 'createBlueprintAndBuildImages',
+    });
+
     const blueprint =
       requestBody &&
       (await createBlueprint({
@@ -68,6 +78,8 @@ export const CreateSaveButton = ({
   getBlueprintPayload,
   isDisabled,
 }: CreateDropdownProps) => {
+  const { analytics } = useChrome();
+
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
@@ -120,11 +132,17 @@ export const CreateSaveButton = ({
 
     setIsOpen(false);
 
+    analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
+      module: AMPLITUDE_MODULE_NAME,
+      type: 'createBlueprint',
+    });
+
     const blueprint =
       requestBody &&
       (await createBlueprint({
         createBlueprintRequest: requestBody,
       }).unwrap());
+
     if (blueprint) {
       dispatch(setBlueprintId(blueprint?.id));
     }

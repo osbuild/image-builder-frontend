@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 import PackageRecommendationDescription from './components/PackageRecommendationDescription';
 import { RedHatRepository } from './Packages';
 
-import { ContentOrigin } from '../../../../constants';
+import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
 import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
@@ -78,10 +78,14 @@ const PackageRecommendations = () => {
         });
 
         if (response && response.data && response.data.packages.length > 0) {
-          analytics.track('recommendationsShown', {
-            shownRecommendations: response.data.packages,
-            selectedPackages: packages.map((pkg) => pkg.name),
-          });
+          analytics.track(
+            `${AMPLITUDE_MODULE_NAME}-packageRecommendationsShown`,
+            {
+              module: AMPLITUDE_MODULE_NAME,
+              shownRecommendations: response.data.packages,
+              selectedPackages: packages.map((pkg) => pkg.name),
+            }
+          );
         }
       })();
     }
@@ -224,13 +228,17 @@ const PackageRecommendations = () => {
                             variant="link"
                             component="a"
                             onClick={() => {
-                              analytics.track('recommendedPackageAdded', {
-                                packageName: pkg,
-                                selectedPackages: packages.map(
-                                  (pkg) => pkg.name
-                                ),
-                                shownRecommendations: data.packages,
-                              });
+                              analytics.track(
+                                `${AMPLITUDE_MODULE_NAME}-recommendedPackageAdded`,
+                                {
+                                  module: AMPLITUDE_MODULE_NAME,
+                                  packageName: pkg,
+                                  selectedPackages: packages.map(
+                                    (pkg) => pkg.name
+                                  ),
+                                  shownRecommendations: data.packages,
+                                }
+                              );
                               addRecommendedPackage(pkg);
                             }}
                             isInline
