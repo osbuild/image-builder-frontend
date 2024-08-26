@@ -18,7 +18,6 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
   selectDistribution,
-  selectImageTypes,
 } from '../../../../store/wizardSlice';
 import { generateDefaultName } from '../../utilities/generateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
@@ -30,15 +29,10 @@ const DetailsStep = () => {
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-  const targetEnvironments = useAppSelector(selectImageTypes);
 
   useEffect(() => {
     if (!blueprintName) {
-      dispatch(
-        changeBlueprintName(
-          generateDefaultName(distribution, arch, targetEnvironments)
-        )
-      );
+      dispatch(changeBlueprintName(generateDefaultName(distribution, arch)));
     }
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.
