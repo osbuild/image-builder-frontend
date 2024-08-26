@@ -1,15 +1,17 @@
-import { ImageTypes } from '../../../store/imageBuilderApi';
+import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
 
 export const generateDefaultName = (
-  distribution: string,
-  arch: string,
-  targetEnvironments: ImageTypes[]
+  distribution: Distributions,
+  arch: ImageRequest['architecture']
 ) => {
   const date = new Date();
   const day = date.getDate().toString().padStart(2, '0');
-  const month = date.toLocaleString('en-US', { month: 'long' });
-  const year = date.getFullYear();
-  return `${distribution} ${arch} ${targetEnvironments.join(
-    ' '
-  )} ${day} ${month} ${year}`;
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const year = date.getFullYear().toString();
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  const dateTimeString = `${month}${day}${year}-${hours}${minutes}`;
+
+  return `${distribution}-${arch}-${dateTimeString}`;
 };
