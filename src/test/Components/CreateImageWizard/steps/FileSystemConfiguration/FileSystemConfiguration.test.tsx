@@ -113,15 +113,15 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
-const clickFromImageOutputToFsc = async () => {
+const clickRevisitButton = async () => {
   const user = userEvent.setup();
-  await clickNext();
-  const registerLaterCheckbox = await screen.findByTestId(
-    'automatically-register-checkbox'
+  const expandable = await screen.findByTestId(
+    'file-system-configuration-expandable'
   );
-  await waitFor(async () => user.click(registerLaterCheckbox));
-  await clickNext();
-  await clickNext(); // skip OSCAP
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-file-system'
+  );
+  await waitFor(() => user.click(revisitButton));
 };
 
 describe('Step File system configuration', () => {
@@ -130,7 +130,7 @@ describe('Step File system configuration', () => {
   });
 
   const user = userEvent.setup();
-  test('Error validation occurs upon clicking next button', async () => {
+  test('error validation occurs upon clicking next button', async () => {
     await renderCreateMode();
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
@@ -166,23 +166,32 @@ describe('Step File system configuration', () => {
     expect(await getNextButton()).toBeEnabled();
   });
 
-  test('Manual partitioning is hidden for ISO targets only', async () => {
+  test('manual partitioning is hidden for ISO targets only', async () => {
     await renderCreateMode();
     await selectImageInstaller();
-    await clickFromImageOutputToFsc();
+    await goToFileSystemConfigurationStep();
     expect(
       screen.queryByText(/manually configure partitions/i)
     ).not.toBeInTheDocument();
   });
 
-  test('Manual partitioning is shown for ISO target and other target', async () => {
+  test('manual partitioning is shown for ISO target and other target', async () => {
     await renderCreateMode();
     await selectImageInstaller();
     await selectGuestImage();
-    await clickFromImageOutputToFsc();
+    await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
 
     await screen.findByText('Configure partitions');
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await selectGuestImage();
+    await goToFileSystemConfigurationStep();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /File system configuration/ });
   });
 });
 

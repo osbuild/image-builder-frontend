@@ -46,7 +46,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Image output' });
     await screen.findByRole('button', { name: 'Register' });
     await screen.findByRole('button', { name: 'File system configuration' });
-    await screen.findByRole('button', { name: 'Content' });
+    await screen.findByRole('button', { name: 'Repository snapshot' });
     await screen.findByRole('button', { name: 'Custom repositories' });
     await screen.findByRole('button', { name: 'Additional packages' });
     await screen.findByRole('button', { name: 'Details' });

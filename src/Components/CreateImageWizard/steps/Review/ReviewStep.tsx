@@ -81,14 +81,20 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
 
   type RevisitStepButtonProps = {
     ariaLabel: string;
+    testId: string;
     stepId: string;
   };
 
-  const RevisitStepButton = ({ ariaLabel, stepId }: RevisitStepButtonProps) => {
+  const RevisitStepButton = ({
+    ariaLabel,
+    testId,
+    stepId,
+  }: RevisitStepButtonProps) => {
     return (
       <Button
         variant="link"
         aria-label={ariaLabel}
+        data-testid={testId}
         component="span"
         onClick={() => revisitStep(stepId)}
         className="pf-u-p-0 pf-u-font-weight-bold"
@@ -103,7 +109,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     goToStepById(stepId);
   };
 
-  const composeExpandable = (label: string, stepId: string) => {
+  const composeExpandable = (label: string, testId: string, stepId: string) => {
     return (
       <TextContent>
         <TextList component={TextListVariants.dl}>
@@ -118,6 +124,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           <TextListItem component={TextListItemVariants.dd}>
             <RevisitStepButton
               ariaLabel={`Revisit ${label} step`}
+              testId={testId}
               stepId={stepId}
             />
           </TextListItem>
@@ -130,7 +137,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   return (
     <>
       <ExpandableSection
-        toggleContent={composeExpandable('Image output', 'step-image-output')}
+        toggleContent={composeExpandable(
+          'Image output',
+          'revisit-image-output',
+          'step-image-output'
+        )}
         onToggle={(_event, isExpandedImageOutput) =>
           onToggleImageOutput(isExpandedImageOutput)
         }
@@ -143,6 +154,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       <ExpandableSection
         toggleContent={composeExpandable(
           'Target environments',
+          'revisit-target-environments',
           'step-image-output'
         )}
         onToggle={(_event, isExpandedTargetEnvs) =>
@@ -199,7 +211,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isRhel(distribution) && (
         <ExpandableSection
-          toggleContent={composeExpandable('Registration', 'step-register')}
+          toggleContent={composeExpandable(
+            'Registration',
+            'revisit-registration',
+            'step-register'
+          )}
           onToggle={(_event, isExpandedRegistration) =>
             onToggleRegistration(isExpandedRegistration)
           }
@@ -213,7 +229,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {oscapProfile && (
         <ExpandableSection
-          toggleContent={composeExpandable('OpenSCAP', 'step-oscap')}
+          toggleContent={composeExpandable(
+            'OpenSCAP',
+            'revisit-openscap',
+            'step-oscap'
+          )}
           onToggle={(_event, isExpandedOscapDetail) =>
             onToggleOscapDetails(isExpandedOscapDetail)
           }
@@ -227,6 +247,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       <ExpandableSection
         toggleContent={composeExpandable(
           'File system configuration',
+          'revisit-file-system',
           'step-file-system'
         )}
         onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
@@ -239,6 +260,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       <ExpandableSection
         toggleContent={composeExpandable(
           'Content',
+          'revisit-custom-repositories',
           'wizard-custom-repositories'
         )}
         onToggle={(_event, isExpandedContent) =>
@@ -253,7 +275,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isFirstBootEnabled && (
         <ExpandableSection
-          toggleContent={composeExpandable('First boot', 'wizard-first-boot')}
+          toggleContent={composeExpandable(
+            'First boot',
+            'revisit-first-boot',
+            'wizard-first-boot'
+          )}
           onToggle={(_event, isExpandableFirstBoot) =>
             onToggleFirstBoot(isExpandableFirstBoot)
           }
@@ -266,7 +292,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
-          toggleContent={composeExpandable('Details', 'step-details')}
+          toggleContent={composeExpandable(
+            'Details',
+            'revisit-details',
+            'step-details'
+          )}
           onToggle={(_event, isExpandedImageDetail) =>
             onToggleImageDetail(isExpandedImageDetail)
           }

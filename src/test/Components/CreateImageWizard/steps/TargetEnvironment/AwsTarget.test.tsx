@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
@@ -50,9 +50,19 @@ const goToReview = async () => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId(
+    'target-environments-expandable'
+  );
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-target-environments'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 const selectAwsTarget = async () => {
   const user = userEvent.setup();
-  await renderCreateMode();
   const awsCard = await screen.findByTestId('upload-aws');
   await waitFor(() => user.click(awsCard));
   await clickNext();
@@ -125,6 +135,7 @@ describe('Step Upload to AWS', () => {
   const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await chooseManualOption();
@@ -135,7 +146,8 @@ describe('Step Upload to AWS', () => {
     });
   });
 
-  test('clicking Back loads Release', async () => {
+  test('clicking Back loads Image output', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await clickBack();
@@ -143,6 +155,7 @@ describe('Step Upload to AWS', () => {
   });
 
   test('clicking Cancel loads landing page', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await verifyCancelButton(router);
@@ -154,6 +167,7 @@ describe('Step Upload to AWS', () => {
         return new HttpResponse(null, { status: 500 });
       })
     );
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await screen.findByText(
@@ -162,6 +176,7 @@ describe('Step Upload to AWS', () => {
   });
 
   test('validation works', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
 
@@ -183,6 +198,7 @@ describe('Step Upload to AWS', () => {
   });
 
   test('compose request share_with_sources field is correct', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await getSourceDropdown();
@@ -197,6 +213,17 @@ describe('Step Upload to AWS', () => {
     });
     user.click(createBlueprintBtn);
   });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await selectAwsTarget();
+    await goToAwsStep();
+    await chooseManualOption();
+    await enterAccountId();
+    await goToReview();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Image output/ });
+  });
 });
 
 describe('AWS image type request generated correctly', () => {
@@ -205,6 +232,7 @@ describe('AWS image type request generated correctly', () => {
   });
 
   test('using a source', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await selectSource();
@@ -231,6 +259,7 @@ describe('AWS image type request generated correctly', () => {
   });
 
   test('using an account id', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await chooseManualOption();
@@ -258,6 +287,7 @@ describe('AWS image type request generated correctly', () => {
   });
 
   test('after selecting and deselecting aws', async () => {
+    await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await selectSource();

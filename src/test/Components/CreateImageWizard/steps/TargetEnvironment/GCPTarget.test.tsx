@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -45,6 +45,17 @@ const goToReview = async () => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId(
+    'target-environments-expandable'
+  );
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-target-environments'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 const createGCPCloudImage = (
   image_type: ImageTypes,
   options: GcpUploadRequestOptions
@@ -61,7 +72,6 @@ const createGCPCloudImage = (
 
 const clickGCPTarget = async () => {
   const user = userEvent.setup();
-  await renderCreateMode();
   const googleOption = await screen.findByTestId('upload-google');
   await waitFor(() => user.click(googleOption));
   await clickNext();
@@ -96,6 +106,7 @@ describe('Step Upload to Google', () => {
   const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('google-account');
     await clickNext();
@@ -105,17 +116,20 @@ describe('Step Upload to Google', () => {
   });
 
   test('clicking Back loads Image output', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await clickBack();
     await screen.findByRole('heading', { name: 'Image output' });
   });
 
   test('clicking Cancel loads landing page', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await verifyCancelButton(router);
   });
 
   test('the google account id field is shown and required', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     const principalInput = await screen.findByTestId('principal');
     expect(principalInput).toHaveValue('');
@@ -123,6 +137,7 @@ describe('Step Upload to Google', () => {
   });
 
   test('the google email field must be a valid email', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
 
     await waitFor(async () =>
@@ -137,6 +152,15 @@ describe('Step Upload to Google', () => {
     expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
   });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await clickGCPTarget();
+    await selectGoogleAccount('google-account');
+    await goToReview();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Image output/ });
+  });
 });
 
 describe('GCP image type request generated correctly', () => {
@@ -145,6 +169,7 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('share image with google account', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('google-account');
     await goToReview();
@@ -164,6 +189,7 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('share image with service account', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('service-account');
     await goToReview();
@@ -179,6 +205,7 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('share image with google group', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('google-group');
     await goToReview();
@@ -194,6 +221,7 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('share image with domain', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('google-domain');
     await goToReview();
@@ -210,6 +238,7 @@ describe('GCP image type request generated correctly', () => {
 
   test('share image with red hat insight only', async () => {
     const user = userEvent.setup();
+    await renderCreateMode();
     await clickGCPTarget();
     const shareWithInsightOption = await screen.findByTestId(
       'share-with-insights'
@@ -227,6 +256,7 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('after selecting and deselecting gcp', async () => {
+    await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount('google-domain');
     await clickBack();

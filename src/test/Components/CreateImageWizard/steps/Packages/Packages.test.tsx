@@ -151,6 +151,20 @@ const deselectRecommendation = async () => {
   await waitFor(async () => user.click(row1Checkbox));
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('content-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-custom-repositories'
+  );
+  await waitFor(() => user.click(revisitButton));
+  await waitFor(() =>
+    expect(
+      screen.queryByRole('button', { name: /Create blueprint/ })
+    ).not.toBeInTheDocument()
+  );
+};
+
 describe('Step Packages', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -324,6 +338,16 @@ describe('Step Packages', () => {
 
     const pkgTable = await screen.findByTestId('packages-table');
     await within(pkgTable).findByText('recommendedPackage1');
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await typeIntoSearchBox('test');
+    await clickFirstPackageCheckbox();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Custom repositories/ });
   });
 
   describe('Pagination', () => {

@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -40,6 +40,15 @@ const goToReviewStep = async () => {
   await clickNext();
   await enterBlueprintName();
   await clickNext();
+};
+
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('content-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-custom-repositories'
+  );
+  await waitFor(() => user.click(revisitButton));
 };
 
 const searchForRepository = async (repo: string) => {
@@ -199,6 +208,17 @@ describe('repository snapshot tab - ', () => {
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseSnapshot();
+    await updateDatePickerWithValue('04/22/2024');
+    await clickNext();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Custom repositories/ });
   });
 });
 
