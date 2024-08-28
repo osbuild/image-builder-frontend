@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -82,7 +82,16 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
-describe('oscap', () => {
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('oscap-detail-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-openscap'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
+describe('OpenSCAP', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -149,6 +158,15 @@ describe('oscap', () => {
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToOscapStep();
+    await selectProfile();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /OpenSCAP/ });
   });
 });
 

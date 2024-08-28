@@ -135,6 +135,15 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('image-output-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-image-output'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Image output', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -244,6 +253,14 @@ describe('Step Image output', () => {
     await screen.findByText(
       'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
     );
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Image output/ });
   });
 });
 
@@ -448,7 +465,7 @@ describe('Set release using query parameter', () => {
   });
 });
 
-describe('set architecture using query parameter', () => {
+describe('Set architecture using query parameter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

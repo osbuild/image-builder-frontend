@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -41,6 +41,15 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('image-details-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-details'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('validates name', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -75,6 +84,16 @@ describe('validates name', () => {
     await enterBlueprintName('Lemon Pie');
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Details/ });
   });
 });
 
