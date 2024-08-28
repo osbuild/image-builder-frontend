@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -67,6 +67,15 @@ const goToReviewStep = async (): Promise<void> => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('firstboot-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-first-boot'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('First Boot step', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -118,6 +127,14 @@ describe('First Boot step', () => {
   //      });
   //    });
   //  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToFirstBootStep();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /First boot/ });
+  });
 });
 
 describe('First Boot edit mode', () => {

@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
@@ -50,9 +50,19 @@ const goToReview = async () => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId(
+    'target-environments-expandable'
+  );
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-target-environments'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 const selectAzureTarget = async () => {
   const user = userEvent.setup();
-  await renderCreateMode();
   const azureCard = await screen.findByTestId('upload-azure');
   await waitFor(() => user.click(azureCard));
   await clickNext();
@@ -162,6 +172,7 @@ describe('Step Upload to Azure', () => {
   const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectManuallyEnterInformation();
@@ -175,6 +186,7 @@ describe('Step Upload to Azure', () => {
   });
 
   test('clicking Back loads Image output', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await clickBack();
@@ -182,12 +194,14 @@ describe('Step Upload to Azure', () => {
   });
 
   test('clicking Cancel loads landing page', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await verifyCancelButton(router);
   });
 
   test('basics work', { retry: 3 }, async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectManuallyEnterInformation();
@@ -234,6 +248,7 @@ describe('Step Upload to Azure', () => {
   });
 
   test('handles change of selected Source', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectSource('azureSource1');
@@ -264,12 +279,23 @@ describe('Step Upload to Azure', () => {
         return new HttpResponse(null, { status: 500 });
       })
     );
-
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await screen.findByText(
       /Sources cannot be reached, try again later or enter an account info for upload manually\./i
     );
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectSource('azureSource1');
+    await selectResourceGroup();
+    await goToReview();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Image output/ });
   });
 });
 
@@ -279,6 +305,7 @@ describe('Azure image type request generated correctly', () => {
   });
 
   test('using a source', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectSource('azureSource1');
@@ -311,6 +338,7 @@ describe('Azure image type request generated correctly', () => {
   });
 
   test('manually entering info', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectManuallyEnterInformation();
@@ -342,6 +370,7 @@ describe('Azure image type request generated correctly', () => {
   });
 
   test('after selecting and deselecting azure', async () => {
+    await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await selectSource('azureSource1');

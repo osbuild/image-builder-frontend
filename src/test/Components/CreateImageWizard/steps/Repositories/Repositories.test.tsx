@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -47,6 +47,15 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('content-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-custom-repositories'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 const selectFirstRepository = async () => {
   const user = userEvent.setup();
   const row0Checkbox = await screen.findByRole('checkbox', {
@@ -70,6 +79,21 @@ const clickBulkSelect = async () => {
   });
   await waitFor(async () => user.click(bulkSelectCheckbox));
 };
+
+describe('Step Custom repositories', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToRepositoriesStep();
+    await selectFirstRepository();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Custom repositories/ });
+  });
+});
 
 describe('repositories request generated correctly', () => {
   beforeEach(() => {

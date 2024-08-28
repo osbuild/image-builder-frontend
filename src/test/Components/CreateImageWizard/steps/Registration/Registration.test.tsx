@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import {
@@ -96,6 +96,15 @@ const goToReviewStep = async () => {
   await clickNext();
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('registration-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-registration'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Registration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -160,6 +169,18 @@ describe('Step Registration', () => {
     );
     await goToReviewStep();
     await screen.findByText('Register the system later');
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await openActivationKeyDropdown();
+    await selectActivationKey('name0');
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', {
+      name: /Register systems using this image/,
+    });
   });
 });
 
