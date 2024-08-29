@@ -17,6 +17,10 @@ const config = {
     testTimeout: 10000,
     fileParallelism: false,
   },
+  reporters: ['default', 'junit'],
+  outputFile: {
+    junit: './coverage/junit.xml',
+  },
   resolve: {
     mainFields: ['module'],
   },
