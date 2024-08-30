@@ -5,6 +5,10 @@ import {
   ExpandableSection,
   Text,
   TextContent,
+  TextList,
+  TextListItem,
+  TextListItemVariants,
+  TextListVariants,
   TextVariants,
   useWizardContext,
 } from '@patternfly/react-core';
@@ -87,7 +91,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         aria-label={ariaLabel}
         component="span"
         onClick={() => revisitStep(stepId)}
-        className="pf-u-p-0 pf-u-ml-xl"
+        className="pf-u-p-0 pf-u-font-weight-bold"
         isInline
       >
         Revisit step <ArrowRightIcon />
@@ -99,19 +103,34 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     goToStepById(stepId);
   };
 
+  const composeExpandable = (label: string, stepId: string) => {
+    return (
+      <TextContent>
+        <TextList component={TextListVariants.dl}>
+          <TextListItem
+            component={TextListItemVariants.dt}
+            className="pf-u-min-width pf-v5-u-text-align-left"
+          >
+            <Button variant="link" isInline>
+              {label}
+            </Button>
+          </TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>
+            <RevisitStepButton
+              ariaLabel={`Revisit ${label} step`}
+              stepId={stepId}
+            />
+          </TextListItem>
+        </TextList>
+      </TextContent>
+    );
+  };
+
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   return (
     <>
       <ExpandableSection
-        toggleContent={
-          <>
-            Image output{' '}
-            <RevisitStepButton
-              ariaLabel="Revisit Image output step"
-              stepId="step-image-output"
-            />
-          </>
-        }
+        toggleContent={composeExpandable('Image output', 'step-image-output')}
         onToggle={(_event, isExpandedImageOutput) =>
           onToggleImageOutput(isExpandedImageOutput)
         }
@@ -122,15 +141,10 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <ImageOutputList />
       </ExpandableSection>
       <ExpandableSection
-        toggleContent={
-          <>
-            Target environments{' '}
-            <RevisitStepButton
-              ariaLabel="Revisit Target environments step"
-              stepId="step-image-output"
-            />
-          </>
-        }
+        toggleContent={composeExpandable(
+          'Target environments',
+          'step-image-output'
+        )}
         onToggle={(_event, isExpandedTargetEnvs) =>
           onToggleTargetEnvs(isExpandedTargetEnvs)
         }
@@ -185,15 +199,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isRhel(distribution) && (
         <ExpandableSection
-          toggleContent={
-            <>
-              Registration{' '}
-              <RevisitStepButton
-                ariaLabel="Revisit Registration step"
-                stepId="step-register"
-              />
-            </>
-          }
+          toggleContent={composeExpandable('Registration', 'step-register')}
           onToggle={(_event, isExpandedRegistration) =>
             onToggleRegistration(isExpandedRegistration)
           }
@@ -207,15 +213,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {oscapProfile && (
         <ExpandableSection
-          toggleContent={
-            <>
-              OpenSCAP{' '}
-              <RevisitStepButton
-                ariaLabel="Revisit OpenSCAP step"
-                stepId="step-oscap"
-              />
-            </>
-          }
+          toggleContent={composeExpandable('OpenSCAP', 'step-oscap')}
           onToggle={(_event, isExpandedOscapDetail) =>
             onToggleOscapDetails(isExpandedOscapDetail)
           }
@@ -227,15 +225,10 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         </ExpandableSection>
       )}
       <ExpandableSection
-        toggleContent={
-          <>
-            File system configuration{' '}
-            <RevisitStepButton
-              ariaLabel="Revisit File system configuration step"
-              stepId="step-file-system"
-            />
-          </>
-        }
+        toggleContent={composeExpandable(
+          'File system configuration',
+          'step-file-system'
+        )}
         onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
         isExpanded={isExpandedFSC}
         isIndented
@@ -244,15 +237,10 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <FSCList />
       </ExpandableSection>
       <ExpandableSection
-        toggleContent={
-          <>
-            Content{' '}
-            <RevisitStepButton
-              ariaLabel="Revisit Content step"
-              stepId="wizard-custom-repositories"
-            />
-          </>
-        }
+        toggleContent={composeExpandable(
+          'Content',
+          'wizard-custom-repositories'
+        )}
         onToggle={(_event, isExpandedContent) =>
           onToggleContent(isExpandedContent)
         }
@@ -265,15 +253,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </ExpandableSection>
       {isFirstBootEnabled && (
         <ExpandableSection
-          toggleContent={
-            <>
-              First boot{' '}
-              <RevisitStepButton
-                ariaLabel="Revisit First boot step"
-                stepId="wizard-first-boot"
-              />
-            </>
-          }
+          toggleContent={composeExpandable('First boot', 'wizard-first-boot')}
           onToggle={(_event, isExpandableFirstBoot) =>
             onToggleFirstBoot(isExpandableFirstBoot)
           }
@@ -286,15 +266,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       )}
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
-          toggleContent={
-            <>
-              Details{' '}
-              <RevisitStepButton
-                ariaLabel="Revisit Details step"
-                stepId="step-details"
-              />
-            </>
-          }
+          toggleContent={composeExpandable('Details', 'step-details')}
           onToggle={(_event, isExpandedImageDetail) =>
             onToggleImageDetail(isExpandedImageDetail)
           }
