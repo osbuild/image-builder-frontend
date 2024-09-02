@@ -37,9 +37,8 @@ export EXTRA_DEPLOY_ARGS="provisioning sources rhsm-api-proxy --set-template-ref
 export APP_NAME="image-builder-crc"
 export DEPLOY_TIMEOUT="1200"
 export REF_ENV="insights-stage"
-
-# required to deploy without errors
-export COMPONENTS_W_RESOURCES="pulp"
+# overwrites any resource limits imposed by bonfire
+export COMPONENTS_W_RESOURCES="compliance"
 
 source "$CICD_ROOT"/deploy_ephemeral_env.sh
 
