@@ -111,7 +111,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
             component={TextListItemVariants.dt}
             className="pf-u-min-width pf-v5-u-text-align-left"
           >
-            <Button variant="link" isInline>
+            <Button variant="link" component="span" isInline>
               {label}
             </Button>
           </TextListItem>
