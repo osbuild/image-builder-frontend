@@ -129,7 +129,6 @@ export const CreateSaveButton = ({
 
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
-
     setIsOpen(false);
 
     analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
