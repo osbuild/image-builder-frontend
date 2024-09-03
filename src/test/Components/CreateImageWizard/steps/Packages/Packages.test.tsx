@@ -15,6 +15,7 @@ import {
 import {
   clickBack,
   clickNext,
+  clickReviewAndFinish,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { selectCustomRepo } from '../../wizardTestUtils';
@@ -194,6 +195,15 @@ describe('Step Packages', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await verifyCancelButton(router);
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
   });
 
   test('should display search bar and toggle buttons', async () => {

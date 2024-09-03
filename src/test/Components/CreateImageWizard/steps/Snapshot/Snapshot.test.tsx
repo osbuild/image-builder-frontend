@@ -9,7 +9,7 @@ import {
   expectedPayloadRepositories,
   snapshotCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../wizardTestUtils';
+import { clickNext, clickReviewAndFinish } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -102,6 +102,25 @@ const getSnapshotMethodElement = async () =>
 describe('repository snapshot tab - ', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
+  });
+
+  test('button Review and finish is disabled for invalid state', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseSnapshot();
+    await updateDatePickerWithValue('00/00/2024');
+    expect(
+      await screen.findByRole('button', { name: /Review and finish/ })
+    ).toBeDisabled();
   });
 
   test('select use a snapshot with 1 repo selected', async () => {

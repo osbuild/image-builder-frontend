@@ -185,6 +185,14 @@ export const clickCancel = async () => {
   await waitFor(() => user.click(cancelBtn));
 };
 
+export const clickReviewAndFinish = async () => {
+  const user = userEvent.setup();
+  const reviewAndFinishBtn = await screen.findByRole('button', {
+    name: /Review and finish/,
+  });
+  await waitFor(() => user.click(reviewAndFinishBtn));
+};
+
 export const getNextButton = async () => {
   const next = await screen.findByRole('button', { name: /Next/ });
   return next;
