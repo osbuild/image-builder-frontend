@@ -13,7 +13,7 @@ import {
   expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../wizardTestUtils';
+import { clickNext, clickReviewAndFinish } from '../../wizardTestUtils';
 import {
   clickRegisterLater,
   enterBlueprintName,
@@ -90,6 +90,21 @@ const clickRevisitButton = async () => {
   );
   await waitFor(() => user.click(revisitButton));
 };
+
+describe('Step Compliance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToOscapStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
+  });
+});
 
 describe('OpenSCAP', () => {
   beforeEach(() => {

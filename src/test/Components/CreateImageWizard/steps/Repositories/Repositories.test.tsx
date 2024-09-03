@@ -13,7 +13,7 @@ import {
   expectedPayloadRepositories,
   repositoriesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext } from '../../wizardTestUtils';
+import { clickNext, clickReviewAndFinish } from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -83,6 +83,15 @@ const clickBulkSelect = async () => {
 describe('Step Custom repositories', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToRepositoriesStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
   });
 
   test('revisit step button on Review works', async () => {

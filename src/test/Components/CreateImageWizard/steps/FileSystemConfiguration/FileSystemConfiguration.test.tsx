@@ -10,7 +10,11 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext, getNextButton } from '../../wizardTestUtils';
+import {
+  clickNext,
+  clickReviewAndFinish,
+  getNextButton,
+} from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -130,6 +134,33 @@ describe('Step File system configuration', () => {
   });
 
   const user = userEvent.setup();
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await selectGuestImage();
+    await goToFileSystemConfigurationStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
+  });
+
+  test('button Review and finish is disabled for invalid state', async () => {
+    await renderCreateMode();
+    await selectGuestImage();
+    await goToFileSystemConfigurationStep();
+    await clickManuallyConfigurePartitions();
+
+    // Create duplicate partitions
+    await addPartition();
+    await addPartition();
+
+    await clickReviewAndFinish();
+    expect(
+      await screen.findByRole('button', { name: /Review and finish/ })
+    ).toBeDisabled();
+  });
+
   test('error validation occurs upon clicking next button', async () => {
     await renderCreateMode();
     await selectGuestImage();

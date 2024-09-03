@@ -1,11 +1,13 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   RHEL_9,
+  RHSM_API,
 } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
@@ -13,6 +15,7 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
+import { server } from '../../../../mocks/server';
 import {
   enterBlueprintName,
   renderCreateMode,
@@ -25,6 +28,7 @@ import {
   clickNext,
   clickBack,
   verifyCancelButton,
+  clickReviewAndFinish,
 } from '../../wizardTestUtils';
 
 const localStorageMock = (() => {
@@ -133,6 +137,29 @@ describe('Step Registration', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await verifyCancelButton(router);
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
+  });
+
+  test('button Review and finish is disabled for invalid state', async () => {
+    server.use(
+      http.get(`${RHSM_API}/activation_keys`, () => {
+        return new HttpResponse(null, { status: 404 });
+      })
+    );
+
+    await renderCreateMode();
+    await goToRegistrationStep();
+    expect(
+      await screen.findByRole('button', { name: /Review and finish/ })
+    ).toBeDisabled();
   });
 
   test('default registration includes rhsm, rhc and insights', async () => {

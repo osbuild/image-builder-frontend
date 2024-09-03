@@ -13,7 +13,11 @@ import {
   firstBootCreateBlueprintRequest,
   firstBootData,
 } from '../../../../fixtures/editMode';
-import { clickNext, getNextButton } from '../../wizardTestUtils';
+import {
+  clickNext,
+  clickReviewAndFinish,
+  getNextButton,
+} from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -85,6 +89,15 @@ describe('First Boot step', () => {
     await renderCreateMode();
     await goToFirstBootStep();
     await screen.findByText('First boot configuration');
+  });
+
+  test('clicking Review and finish leads to Details', async () => {
+    await renderCreateMode();
+    await goToFirstBootStep();
+    await clickReviewAndFinish();
+    await screen.findByRole('heading', {
+      name: 'Details',
+    });
   });
 
   // test('should validate shebang', async () => {
