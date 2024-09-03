@@ -81,7 +81,9 @@ import {
   convertSchemaToIBCustomRepo,
   convertSchemaToIBPayloadRepo,
 } from '../steps/Repositories/components/Utilities';
-import { GcpAccountType } from '../steps/TargetEnvironment/Gcp';
+import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
+import { AzureShareMethod } from '../steps/TargetEnvironment/Azure';
+import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 
 type ServerStore = {
   kernel?: { append?: string }; // TODO use API types
@@ -143,9 +145,52 @@ const getLatestRelease = (distribution: Distributions) => {
 };
 
 function commonRequestToState(
-  request: BlueprintResponse | BlueprintExportResponse
+  request: BlueprintResponse | CreateBlueprintRequest
 ) {
+  const gcp = request.image_requests.find(
+    (image) => image.image_type === 'gcp'
+  );
+  const aws = request.image_requests.find(
+    (image) => image.image_type === 'aws'
+  );
+
+  const azure = request.image_requests.find(
+    (image) => image.image_type === 'azure'
+  );
+
+  const snapshot_date = convertYYYYMMDDTOMMDDYYYY(
+    request.image_requests.find((image) => !!image.snapshot_date)
+      ?.snapshot_date || ''
+  );
+
+  const awsUploadOptions = aws?.upload_request
+    .options as AwsUploadRequestOptions;
+  const gcpUploadOptions = gcp?.upload_request
+    .options as GcpUploadRequestOptions;
+  const azureUploadOptions = azure?.upload_request
+    .options as AzureUploadRequestOptions;
+
+  const arch =
+    request.image_requests[0]?.architecture || initialState.architecture;
+  if (arch !== 'x86_64' && arch !== 'aarch64') {
+    throw new Error(`image type: ${arch} has no implementation yet`);
+  }
   return {
+    details: {
+      blueprintName: request.name || '',
+      blueprintDescription: request.description || '',
+    },
+    openScap: request.customizations
+      ? {
+          profile: request.customizations.openscap
+            ?.profile_id as DistributionProfileItem,
+        }
+      : initialState.openScap,
+    firstBoot: request.customizations
+      ? {
+          script: getFirstBootScript(request.customizations.files),
+        }
+      : initialState.firstBoot,
     fileSystem: request.customizations?.filesystem
       ? {
           mode: 'manual' as FileSystemConfigurationType,
@@ -157,6 +202,40 @@ function commonRequestToState(
           mode: 'automatic' as FileSystemConfigurationType,
           partitions: [],
         },
+    architecture: arch,
+    distribution:
+      getLatestRelease(request.distribution) || initialState.distribution,
+    imageTypes: request.image_requests.map((image) => image.image_type),
+    azure: {
+      shareMethod: (azureUploadOptions?.source_id
+        ? 'sources'
+        : 'manual') as AzureShareMethod,
+      source: azureUploadOptions?.source_id || '',
+      tenantId: azureUploadOptions?.tenant_id || '',
+      subscriptionId: azureUploadOptions?.subscription_id || '',
+      resourceGroup: azureUploadOptions?.resource_group,
+    },
+    gcp: {
+      shareMethod: (gcpUploadOptions?.share_with_accounts
+        ? 'withGoogle'
+        : 'withInsights') as GcpShareMethod,
+      accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
+        ':'
+      )[0] as GcpAccountType,
+      email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
+    },
+    aws: {
+      accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
+      shareMethod: (awsUploadOptions?.share_with_sources
+        ? 'sources'
+        : 'manual') as AwsShareMethod,
+      source: { id: awsUploadOptions?.share_with_sources?.[0] },
+      sourceId: awsUploadOptions?.share_with_sources?.[0],
+    },
+    snapshotting: {
+      useLatest: !snapshot_date,
+      snapshotDate: snapshot_date,
+    },
     repositories: {
       customRepositories: request.customizations?.custom_repositories || [],
       payloadRepositories: request.customizations?.payload_repositories || [],
@@ -190,72 +269,12 @@ function commonRequestToState(
  */
 export const mapRequestToState = (request: BlueprintResponse): wizardState => {
   const wizardMode = 'edit';
-  const gcp = request.image_requests.find(
-    (image) => image.image_type === 'gcp'
-  );
-  const aws = request.image_requests.find(
-    (image) => image.image_type === 'aws'
-  );
-
-  const azure = request.image_requests.find(
-    (image) => image.image_type === 'azure'
-  );
-
-  const snapshot_date = convertYYYYMMDDTOMMDDYYYY(
-    request.image_requests.find((image) => !!image.snapshot_date)
-      ?.snapshot_date || ''
-  );
-
-  const awsUploadOptions = aws?.upload_request
-    .options as AwsUploadRequestOptions;
-  const gcpUploadOptions = gcp?.upload_request
-    .options as GcpUploadRequestOptions;
-  const azureUploadOptions = azure?.upload_request
-    .options as AzureUploadRequestOptions;
-
-  const arch = request.image_requests[0].architecture;
-  if (arch !== 'x86_64' && arch !== 'aarch64') {
-    throw new Error(`image type: ${arch} has no implementation yet`);
-  }
   return {
     wizardMode,
     blueprintId: request.id,
-    details: {
-      blueprintName: request.name,
-      blueprintDescription: request.description,
-    },
     env: {
       serverUrl: request.customizations.subscription?.['server-url'] || '',
       baseUrl: request.customizations.subscription?.['base-url'] || '',
-    },
-    architecture: arch,
-    distribution: getLatestRelease(request.distribution),
-    imageTypes: request.image_requests.map((image) => image.image_type),
-    azure: {
-      shareMethod: azureUploadOptions?.source_id ? 'sources' : 'manual',
-      source: azureUploadOptions?.source_id || '',
-      tenantId: azureUploadOptions?.tenant_id || '',
-      subscriptionId: azureUploadOptions?.subscription_id || '',
-      resourceGroup: azureUploadOptions?.resource_group,
-    },
-    gcp: {
-      shareMethod: gcpUploadOptions?.share_with_accounts
-        ? 'withGoogle'
-        : 'withInsights',
-      accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
-        ':'
-      )[0] as GcpAccountType,
-      email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
-    },
-    aws: {
-      accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
-      shareMethod: awsUploadOptions?.share_with_sources ? 'sources' : 'manual',
-      source: { id: awsUploadOptions?.share_with_sources?.[0] },
-      sourceId: awsUploadOptions?.share_with_sources?.[0],
-    },
-    snapshotting: {
-      useLatest: !snapshot_date,
-      snapshotDate: snapshot_date,
     },
     registration: {
       registrationType: request.customizations?.subscription
@@ -264,13 +283,6 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           : 'register-now-insights'
         : 'register-later',
       activationKey: request.customizations.subscription?.['activation-key'],
-    },
-    openScap: {
-      profile: request.customizations.openscap
-        ?.profile_id as DistributionProfileItem,
-    },
-    firstBoot: {
-      script: getFirstBootScript(request.customizations.files),
     },
     ...commonRequestToState(request),
   };
@@ -282,42 +294,26 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
  * @returns wizardState
  */
 export const mapExportRequestToState = (
-  request: BlueprintExportResponse
+  request: BlueprintExportResponse,
+  image_requests: ImageRequest[]
 ): wizardState => {
   const wizardMode = 'create';
-
+  const blueprintResponse: CreateBlueprintRequest = {
+    name: request.name,
+    description: request.description,
+    distribution: request.distribution,
+    customizations: request.customizations,
+    image_requests: image_requests,
+  };
   return {
     wizardMode,
-    details: {
-      blueprintName: request.name || '',
-      blueprintDescription: request.description || '',
-    },
     metadata: {
-      parent_id: request.metadata?.parent_id || '',
+      parent_id: request.metadata?.parent_id || null,
       exported_at: request.metadata?.exported_at || '',
     },
     env: initialState.env,
-    gcp: initialState.gcp,
-    aws: initialState.aws,
-    azure: initialState.azure,
-    architecture: initialState.architecture,
-    distribution:
-      getLatestRelease(request.distribution) || initialState.distribution,
-    imageTypes: initialState.imageTypes,
-    snapshotting: initialState.snapshotting,
     registration: initialState.registration,
-    openScap: request.customizations
-      ? {
-          profile: request.customizations.openscap
-            ?.profile_id as DistributionProfileItem,
-        }
-      : initialState.openScap,
-    firstBoot: request.customizations
-      ? {
-          script: getFirstBootScript(request.customizations.files),
-        }
-      : initialState.firstBoot,
-    ...commonRequestToState(request),
+    ...commonRequestToState(blueprintResponse),
   };
 };
 

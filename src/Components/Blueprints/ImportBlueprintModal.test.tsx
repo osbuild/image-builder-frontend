@@ -63,7 +63,7 @@ const IGNORE_SUBSCRIPTION_BLUEPRINT = `{
   "name": "Blueprint test"
 }`;
 
-const IGNORE_TARGETS_BLUEPRINT = `{
+const INVALID_ARCHITECTURE_JSON = `{
   "customizations": {
     "files": [
     ],
@@ -169,18 +169,15 @@ describe('Import modal', () => {
     await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
-  test('should enable button and ignore targets in blueprint file', async () => {
+  test('should show alert on invalid blueprint incorrect architecture', async () => {
     await setUp();
-    await uploadFile(`blueprints.json`, IGNORE_TARGETS_BLUEPRINT);
+    await uploadFile(`blueprints.json`, INVALID_ARCHITECTURE_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
-    user.click(reviewButton);
-
-    await waitFor(async () =>
-      expect(
-        await screen.findByText('Image output', { selector: 'h1' })
-      ).toBeInTheDocument()
+    expect(reviewButton).toHaveClass('pf-m-disabled');
+    const helperText = await screen.findByText(
+      /not compatible with the blueprints format\./i
     );
+    await waitFor(() => expect(helperText).toBeInTheDocument());
   });
 
   test('should enable button and ignore subscription in blueprint file', async () => {

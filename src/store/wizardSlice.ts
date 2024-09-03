@@ -98,7 +98,7 @@ export type wizardState = {
     blueprintDescription: string;
   };
   metadata?: {
-    parent_id: string;
+    parent_id: string | null;
     exported_at: string;
   };
 };
