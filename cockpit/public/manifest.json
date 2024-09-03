@@ -1,0 +1,15 @@
+{
+  "dashboard": {
+    "index": {
+      "label": "Image Builder",
+      "icon": "pficon-build",
+      "docs": [
+        {
+          "label": "Creating system images",
+          "url": "https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/creating_customized_rhel_images_using_the_image_builder_service"
+        }
+      ]
+    }
+  },
+  "content-security-policy": "default-src 'self' 'unsafe-eval'"
+}
