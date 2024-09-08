@@ -1575,8 +1575,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/User'
-          description:
-            "list of users that a customer can add, also specifying their respective groups and SSH keys"
+          description: |
+            List of users that a customer can add,
+            also specifying their respective groups and SSH keys and/or password
         services:
             $ref: '#/components/schemas/Services'
         hostname:
@@ -1882,7 +1883,10 @@ components:
       type: object
       required:
         - name
-        - ssh_key
+      description: |
+        At least one of password, ssh_key must be set, validator takes care of it.
+        On update empty string can be used to remove password or ssh_key,
+        but at least one of them still must be present.
       properties:
         name:
           type: string
@@ -1890,6 +1894,14 @@ components:
         ssh_key:
           type: string
           example: "ssh-rsa AAAAB3NzaC1"
+        password:
+          type: string
+          format: password
+          example: "$6$G91SvTj7uVp3xhqj$zVa8nqnJTlewniDII5dmvsBJnj3kloL3CXWdPDu9.e677VoRQd5zB6GKwkDvfGLoRR7NTl5nXLnJywk6IPIvS."
+          description: |
+            Plaintext passwords are also supported, they will be hashed and stored using the SHA-512 algorithm.
+            The password is never returned in the response.
+            Empty string can be used to remove the password during update but only with ssh_key set.
     Filesystem:
       type: object
       required:
@@ -1935,6 +1947,23 @@ components:
           description: |
             Optional flag to use rhc to register the system, which also always enables Insights.
     OpenSCAP:
+      oneOf:
+        - $ref: '#/components/schemas/OpenSCAPProfile'
+        - $ref: '#/components/schemas/OpenSCAPCompliance'
+    OpenSCAPCompliance:
+      type: object
+      required:
+        - policy_id
+      properties:
+        policy_id:
+          type: string
+          format: uuid
+          example: 'fef25b3c-b970-46da-a4e1-cc4d855b98dc'
+          description: |
+            Apply a compliance policy which is defined in the Red Hat Insights Compliance
+            service. This policy can include tailorings. This only works for RHEL images, and the
+            policy needs to be available for the specific RHEL version.
+    OpenSCAPProfile:
       type: object
       required:
         - profile_id
@@ -1942,13 +1971,14 @@ components:
         profile_id:
           type: string
           example: "xccdf_org.ssgproject.content_profile_cis"
-          description: "The policy reference ID"
+          description: |
+            Uses the OpenSCAP tooling directly to apply a pre-defined profile without tailorings.
         profile_name:
           type: string
-          description: "The policy type"
+          description: "The profile type"
         profile_description:
           type: string
-          description: "The longform policy description"
+          description: "The longform profile description"
     CustomRepository:
       type: object
       required:
