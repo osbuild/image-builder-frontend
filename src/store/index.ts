@@ -7,6 +7,7 @@ import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
+import { osbuildComposerApi } from './osbuildComposerApi';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
 import wizardSlice, {
@@ -24,6 +25,7 @@ export const reducer = combineReducers({
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
+  [osbuildComposerApi.reducerPath]: osbuildComposerApi.reducer,
   notifications: notificationsReducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
@@ -94,7 +96,8 @@ export const middleware = (getDefaultMiddleware: Function) =>
       contentSourcesApi.middleware,
       imageBuilderApi.middleware,
       rhsmApi.middleware,
-      provisioningApi.middleware
+      provisioningApi.middleware,
+      osbuildComposerApi.middleware
     );
 
 export const store = configureStore({ reducer, middleware });
