@@ -7,7 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/complianceApi.ts',
   exportName: 'complianceApi',
   hooks: true,
-  filterEndpoints: [],
+  filterEndpoints: ['policies', 'policy'],
 };
 
 export default config;
