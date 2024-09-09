@@ -11,30 +11,6 @@ import { emptyGetBlueprints } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
-vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
-    isBeta: () => true,
-    isProd: () => true,
-    getEnvironment: () => 'prod',
-  }),
-}));
-
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.firstboot.enabled':
-        return true;
-      case 'image-builder.snapshots.enabled':
-        return true;
-      case 'image-builder.import.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
-}));
-
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
   const blueprint = await screen.findByTestId(bpId);
