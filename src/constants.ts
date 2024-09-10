@@ -34,7 +34,7 @@ export const CREATING_IMAGES_WITH_IB_URL =
 export const MANAGING_WITH_DNF_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_software_with_the_dnf_tool/index';
 export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
-  'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/creating_customized_images_by_using_insights_image_builder/index';
+  'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html-single/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
 export const OSTREE_URL = 'https://ostreedev.github.io/ostree/';
 export const DOCUMENTATION_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/creating_customized_images_by_using_insights_image_builder/index';
