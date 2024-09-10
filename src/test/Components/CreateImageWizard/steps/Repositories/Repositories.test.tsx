@@ -1,9 +1,6 @@
-import React from 'react';
-
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
@@ -16,7 +13,6 @@ import {
   expectedPayloadRepositories,
   repositoriesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   clickBack,
   clickNext,
@@ -64,19 +60,25 @@ const clickRevisitButton = async () => {
   await waitFor(() => user.click(revisitButton));
 };
 
-const selectFirstRepository = async () => {
-  const user = userEvent.setup();
-  const row0Checkbox = await screen.findByRole('checkbox', {
+const getFirstRepoCheckbox = async () =>
+  await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
+
+const getSecondRepoCheckbox = async () =>
+  await screen.findByRole('checkbox', {
+    name: /select row 1/i,
+  });
+
+const selectFirstRepository = async () => {
+  const user = userEvent.setup();
+  const row0Checkbox = await getFirstRepoCheckbox();
   await waitFor(async () => user.click(row0Checkbox));
 };
 
 const deselectFirstRepository = async () => {
   const user = userEvent.setup();
-  const row0Checkbox = await screen.findByRole('checkbox', {
-    name: /select row 0/i,
-  });
+  const row0Checkbox = await getFirstRepoCheckbox();
   await waitFor(async () => user.click(row0Checkbox));
 };
 
@@ -88,16 +90,21 @@ const clickBulkSelect = async () => {
   await waitFor(async () => user.click(bulkSelectCheckbox));
 };
 
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-];
+const toggleSelected = async () => {
+  const user = userEvent.setup();
+  const selectedButton = await screen.findByRole('button', {
+    name: /selected repositories/i,
+  });
+  await waitFor(async () => user.click(selectedButton));
+};
+
+const toggleAll = async () => {
+  const user = userEvent.setup();
+  const allButton = await screen.findByRole('button', {
+    name: /all repositories/i,
+  });
+  user.click(allButton);
+};
 
 describe('Step Custom repositories', () => {
   beforeEach(() => {
@@ -105,55 +112,11 @@ describe('Step Custom repositories', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-
-    // select aws as upload destination
-    const uploadAws = await screen.findByTestId('upload-aws');
-    user.click(uploadAws);
-    await clickNext();
-
-    // aws step
-    const manualOption = await screen.findByRole('radio', {
-      name: /manually enter an account id\./i,
-    });
-    await waitFor(() => user.click(manualOption));
-    await waitFor(async () =>
-      user.type(
-        await screen.findByRole('textbox', {
-          name: 'aws account id',
-        }),
-        '012345678901'
-      )
-    );
-
-    await clickNext();
-    // skip registration
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
-
-    const registrationCheckbox = await screen.findByTestId(
-      'automatically-register-checkbox'
-    );
-
-    user.click(registrationCheckbox);
-    await clickNext();
-    // skip OpenSCAP
-    await clickNext();
-    // skip fsc
-    await clickNext();
-    // skip snapshots
-    await clickNext();
-  };
 
   test('selected repositories stored in and retrieved from form state', async () => {
-    await setUp();
+    await renderCreateMode();
+    await goToRepositoriesStep();
 
-    const getFirstRepoCheckbox = async () =>
-      await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
     let firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
 
     expect(firstRepoCheckbox.checked).toEqual(false);
@@ -165,27 +128,23 @@ describe('Step Custom repositories', () => {
 
     firstRepoCheckbox = (await getFirstRepoCheckbox()) as HTMLInputElement;
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
-  }, 30000);
+  });
 
   test('correct number of repositories is fetched', async () => {
-    await setUp();
+    await renderCreateMode();
+    await goToRepositoriesStep();
 
     const select = await screen.findByRole('button', {
       name: /^select$/i,
     });
-
     user.click(select);
-
     await screen.findByText(/select page \(10 items\)/i);
   });
 
   test('press on Selected button to see selected repositories list', async () => {
-    await setUp();
+    await renderCreateMode();
+    await goToRepositoriesStep();
 
-    const getFirstRepoCheckbox = async () =>
-      await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
     const firstRepoCheckbox =
       (await getFirstRepoCheckbox()) as HTMLInputElement;
 
@@ -193,13 +152,7 @@ describe('Step Custom repositories', () => {
     user.click(firstRepoCheckbox);
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
 
-    const getSelectedButton = async () =>
-      await screen.findByRole('button', {
-        name: /selected repositories/i,
-      });
-
-    const selectedButton = await getSelectedButton();
-    user.click(selectedButton);
+    await toggleSelected();
 
     expect(firstRepoCheckbox.checked).toEqual(true);
 
@@ -209,19 +162,11 @@ describe('Step Custom repositories', () => {
   });
 
   test('press on All button to see all repositories list', async () => {
-    await setUp();
+    await renderCreateMode();
+    await goToRepositoriesStep();
 
-    const getFirstRepoCheckbox = async () =>
-      await screen.findByRole('checkbox', {
-        name: /select row 0/i,
-      });
     const firstRepoCheckbox =
       (await getFirstRepoCheckbox()) as HTMLInputElement;
-
-    const getSecondRepoCheckbox = async () =>
-      await screen.findByRole('checkbox', {
-        name: /select row 1/i,
-      });
     const secondRepoCheckbox =
       (await getSecondRepoCheckbox()) as HTMLInputElement;
 
@@ -231,13 +176,7 @@ describe('Step Custom repositories', () => {
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(true));
     expect(secondRepoCheckbox.checked).toEqual(false);
 
-    const getAllButton = async () =>
-      await screen.findByRole('button', {
-        name: /all repositories/i,
-      });
-
-    const allButton = await getAllButton();
-    user.click(allButton);
+    await toggleAll();
 
     expect(firstRepoCheckbox.checked).toEqual(true);
     expect(secondRepoCheckbox.checked).toEqual(false);
@@ -316,7 +255,7 @@ describe('Step Custom repositories', () => {
   });
 });
 
-describe('repositories request generated correctly', () => {
+describe('Repositories request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
