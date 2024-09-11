@@ -14,12 +14,13 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
-import { useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
   useComposeBlueprintMutation,
   useCreateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
+import { selectPackages } from '../../../../../store/wizardSlice';
 
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
@@ -32,7 +33,8 @@ export const CreateSaveAndBuildBtn = ({
   setIsOpen,
   isDisabled,
 }: CreateDropdownProps) => {
-  const { analytics } = useChrome();
+  const { analytics, isBeta } = useChrome();
+  const packages = useAppSelector(selectPackages);
 
   const [buildBlueprint] = useComposeBlueprintMutation();
   const [createBlueprint] = useCreateBlueprintMutation({
@@ -45,7 +47,9 @@ export const CreateSaveAndBuildBtn = ({
 
     analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
       module: AMPLITUDE_MODULE_NAME,
+      isPreview: isBeta(),
       type: 'createBlueprintAndBuildImages',
+      packages: packages.map((pkg) => pkg.name),
     });
 
     const blueprint =
@@ -78,7 +82,8 @@ export const CreateSaveButton = ({
   getBlueprintPayload,
   isDisabled,
 }: CreateDropdownProps) => {
-  const { analytics } = useChrome();
+  const { analytics, isBeta } = useChrome();
+  const packages = useAppSelector(selectPackages);
 
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -133,7 +138,9 @@ export const CreateSaveButton = ({
 
     analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
       module: AMPLITUDE_MODULE_NAME,
+      isPreview: isBeta(),
       type: 'createBlueprint',
+      packages: packages.map((pkg) => pkg.name),
     });
 
     const blueprint =
