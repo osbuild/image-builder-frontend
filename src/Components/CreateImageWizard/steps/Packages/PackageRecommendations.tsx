@@ -38,7 +38,7 @@ import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 const PackageRecommendations = () => {
-  const { analytics } = useChrome();
+  const { analytics, isBeta } = useChrome();
   const dispatch = useDispatch();
 
   const arch = useAppSelector(selectArchitecture);
@@ -82,6 +82,7 @@ const PackageRecommendations = () => {
             `${AMPLITUDE_MODULE_NAME}-packageRecommendationsShown`,
             {
               module: AMPLITUDE_MODULE_NAME,
+              isPreview: isBeta(),
               shownRecommendations: response.data.packages,
               selectedPackages: packages.map((pkg) => pkg.name),
             }
@@ -232,6 +233,7 @@ const PackageRecommendations = () => {
                                 `${AMPLITUDE_MODULE_NAME}-recommendedPackageAdded`,
                                 {
                                   module: AMPLITUDE_MODULE_NAME,
+                                  isPreview: isBeta(),
                                   packageName: pkg,
                                   selectedPackages: packages.map(
                                     (pkg) => pkg.name
