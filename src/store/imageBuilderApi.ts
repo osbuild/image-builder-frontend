@@ -579,14 +579,23 @@ export type CustomRepository = {
   ssl_verify?: boolean;
   module_hotfixes?: boolean;
 };
-export type OpenScap = {
-  /** The policy reference ID */
+export type OpenScapProfile = {
+  /** Uses the OpenSCAP tooling directly to apply a pre-defined profile without tailorings.
+   */
   profile_id: string;
-  /** The policy type */
+  /** The profile type */
   profile_name?: string;
-  /** The longform policy description */
+  /** The longform profile description */
   profile_description?: string;
 };
+export type OpenScapCompliance = {
+  /** Apply a compliance policy which is defined in the Red Hat Insights Compliance
+    service. This policy can include tailorings. This only works for RHEL images, and the
+    policy needs to be available for the specific RHEL version.
+     */
+  policy_id: string;
+};
+export type OpenScap = OpenScapProfile | OpenScapCompliance;
 export type Filesystem = {
   mountpoint: string;
   /** size of the filesystem in bytes */
@@ -594,7 +603,12 @@ export type Filesystem = {
 };
 export type User = {
   name: string;
-  ssh_key: string;
+  ssh_key?: string;
+  /** Plaintext passwords are also supported, they will be hashed and stored using the SHA-512 algorithm.
+    The password is never returned in the response.
+    Empty string can be used to remove the password during update but only with ssh_key set.
+     */
+  password?: string;
 };
 export type Services = {
   /** List of services to enable by default */
@@ -677,7 +691,9 @@ export type Customizations = {
   custom_repositories?: CustomRepository[];
   openscap?: OpenScap;
   filesystem?: Filesystem[];
-  /** list of users that a customer can add, also specifying their respective groups and SSH keys */
+  /** List of users that a customer can add,
+    also specifying their respective groups and SSH keys and/or password
+     */
   users?: User[];
   services?: Services;
   /** Configures the hostname */
