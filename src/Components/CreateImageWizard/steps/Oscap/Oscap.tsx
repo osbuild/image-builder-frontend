@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
+import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   DistributionProfileItem,
@@ -29,9 +30,11 @@ import {
   Services,
 } from '../../../../store/imageBuilderApi';
 import {
-  changeOscapProfile,
+  changeCompliance,
   selectDistribution,
-  selectProfile,
+  selectComplianceProfileID,
+  selectCompliancePolicyID,
+  selectCompliancePolicyTitle,
   addPackage,
   addPartition,
   changeFileSystemConfigurationType,
@@ -42,47 +45,125 @@ import {
   changeMaskedServices,
   changeDisabledServices,
   changeKernelAppend,
+  selectComplianceType,
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../utilities/parseSizeUnit';
 import { Partition, Units } from '../FileSystem/FileSystemConfiguration';
 
+const OpenSCAPFGLabel = () => {
+  return (
+    <>
+      OpenSCAP profile
+      <Popover
+        maxWidth="30rem"
+        bodyContent={
+          <TextContent>
+            <Text>
+              To run a manual compliance scan in OpenSCAP, download this image.
+            </Text>
+          </TextContent>
+        }
+      >
+        <Button
+          variant="plain"
+          aria-label="About OpenSCAP"
+          isInline
+          className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0 pf-u-pr-0"
+        >
+          <HelpIcon />
+        </Button>
+      </Popover>
+    </>
+  );
+};
+
 const ProfileSelector = () => {
-  const oscapProfile = useAppSelector(selectProfile);
+  const policyID = useAppSelector(selectCompliancePolicyID);
+  const policyTitle = useAppSelector(selectCompliancePolicyTitle);
+  const profileID = useAppSelector(selectComplianceProfileID);
   const release = useAppSelector(selectDistribution);
+  const majorVersion = release.split('-')[1];
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const complianceType = useAppSelector(selectComplianceType);
+
   const {
     data: profiles,
     isFetching,
     isSuccess,
     isError,
     refetch,
-  } = useGetOscapProfilesQuery({
-    distribution: release,
-  });
+  } = useGetOscapProfilesQuery(
+    {
+      distribution: release,
+    },
+    {
+      skip: complianceType === 'compliance',
+    }
+  );
+
+  const {
+    data: policies,
+    isFetching: isFetchingPolicies,
+    isSuccess: isSuccessPolicies,
+  } = usePoliciesQuery(
+    {
+      filter: `os_major_version=${majorVersion}`,
+    },
+    {
+      skip: complianceType === 'openscap',
+    }
+  );
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
       // @ts-ignore if openScapProfile is undefined the query is going to get skipped
-      profile: oscapProfile,
+      profile: profileID,
     },
-    { skip: !oscapProfile }
+    { skip: !profileID }
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
 
+  useEffect(() => {
+    if (!policies || policies.data === undefined) {
+      return;
+    }
+
+    if (policyID && !policyTitle) {
+      for (const p of policies.data) {
+        const pol = p as PolicyRead;
+        if (pol.id === policyID) {
+          dispatch(
+            changeCompliance({
+              policyID: pol.id,
+              profileID: pol.ref_id,
+              policyTitle: pol.title,
+            })
+          );
+        }
+      }
+    }
+  }, [isSuccessPolicies]);
+
   const handleToggle = () => {
-    if (!isOpen) {
+    if (!isOpen && complianceType === 'openscap') {
       refetch();
     }
     setIsOpen(!isOpen);
   };
 
   const handleClear = () => {
-    dispatch(changeOscapProfile(undefined));
+    dispatch(
+      changeCompliance({
+        profileID: undefined,
+        policyID: undefined,
+        policyTitle: undefined,
+      })
+    );
     clearOscapPackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
@@ -142,9 +223,9 @@ const ProfileSelector = () => {
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    selection: OScapSelectOptionValueType
+    selection: OScapSelectOptionValueType | ComplianceSelectOptionValueType
   ) => {
-    if (selection.id === undefined) {
+    if (selection.profileID === undefined) {
       // handle user has selected 'None' case
       handleClear();
     } else {
@@ -152,7 +233,7 @@ const ProfileSelector = () => {
       trigger(
         {
           distribution: release,
-          profile: selection.id,
+          profile: selection.profileID as DistributionProfileItem,
         },
         true // preferCacheValue
       )
@@ -164,7 +245,24 @@ const ProfileSelector = () => {
           handlePackages(oldOscapPackages, newOscapPackages);
           handleServices(response.services);
           dispatch(changeKernelAppend(response.kernel?.append || ''));
-          dispatch(changeOscapProfile(selection.id));
+          if (complianceType === 'openscap') {
+            dispatch(
+              changeCompliance({
+                profileID: selection.profileID,
+                policyID: undefined,
+                policyTitle: undefined,
+              })
+            );
+          } else {
+            const compl = selection as ComplianceSelectOptionValueType;
+            dispatch(
+              changeCompliance({
+                profileID: compl.profileID,
+                policyID: compl.policyID,
+                policyTitle: compl.toString(),
+              })
+            );
+          }
         });
     }
     setIsOpen(false);
@@ -180,67 +278,77 @@ const ProfileSelector = () => {
     }
   };
 
+  const complianceOptions = () => {
+    if (!policies || policies.data === undefined) {
+      return [];
+    }
+
+    const res = [<ComplianceNoneOption key="compliance-non-option" />];
+    for (const p of policies.data) {
+      if (p === undefined) {
+        continue;
+      }
+      const pol = p as PolicyRead;
+      res.push(<ComplianceSelectOption key={pol.id} policy={pol} />);
+    }
+    return res;
+  };
+
   return (
     <FormGroup
       isRequired={true}
       data-testid="profiles-form-group"
-      label={
-        <>
-          OpenSCAP profile
-          <Popover
-            maxWidth="30rem"
-            bodyContent={
-              <TextContent>
-                <Text>
-                  To run a manual compliance scan in OpenSCAP, download this
-                  image.
-                </Text>
-              </TextContent>
-            }
-          >
-            <Button
-              variant="plain"
-              aria-label="About OpenSCAP"
-              isInline
-              className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0 pf-u-pr-0"
-            >
-              <HelpIcon />
-            </Button>
-          </Popover>
-        </>
-      }
+      label={complianceType === 'openscap' ? <OpenSCAPFGLabel /> : <>Policy</>}
     >
-      <Select
-        loadingVariant={isFetching ? 'spinner' : undefined}
-        ouiaId="profileSelect"
-        variant={SelectVariant.typeahead}
-        onToggle={handleToggle}
-        onSelect={handleSelect}
-        onClear={handleClear}
-        maxHeight="300px"
-        selections={oscapProfile}
-        isOpen={isOpen}
-        placeholderText="Select a profile"
-        typeAheadAriaLabel="Select a profile"
-        isDisabled={!isSuccess || hasWslTargetOnly}
-        onFilter={(_event, value) => {
-          if (profiles) {
-            return [<OScapNoneOption key="oscap-none-option" />].concat(
-              profiles.map((profile_id, index) => {
-                return (
-                  <OScapSelectOption
-                    key={index}
-                    profile_id={profile_id}
-                    filter={value}
-                  />
-                );
-              })
-            );
+      {complianceType === 'openscap' && (
+        <Select
+          loadingVariant={isFetching ? 'spinner' : undefined}
+          ouiaId="profileSelect"
+          variant={SelectVariant.typeahead}
+          onToggle={handleToggle}
+          onSelect={handleSelect}
+          onClear={handleClear}
+          maxHeight="300px"
+          selections={profileID}
+          isOpen={isOpen}
+          placeholderText="Select a profile"
+          typeAheadAriaLabel="Select a profile"
+          isDisabled={!isSuccess || hasWslTargetOnly}
+          onFilter={(_event, value) => {
+            if (profiles) {
+              return [<OScapNoneOption key="oscap-none-option" />].concat(
+                profiles.map((profile_id, index) => {
+                  return (
+                    <OScapSelectOption
+                      key={index}
+                      profile_id={profile_id}
+                      filter={value}
+                    />
+                  );
+                })
+              );
+            }
+          }}
+        >
+          {options()}
+        </Select>
+      )}
+      {complianceType === 'compliance' && (
+        <Select
+          isDisabled={isFetchingPolicies}
+          isOpen={isOpen}
+          onSelect={handleSelect}
+          onToggle={handleToggle}
+          selections={
+            isFetchingPolicies
+              ? 'Loading policies'
+              : policyTitle || policyID || 'None'
           }
-        }}
-      >
-        {options()}
-      </Select>
+          ouiaId="compliancePolicySelect"
+        >
+          {complianceOptions()}
+        </Select>
+      )}
       {isError && (
         <Alert
           title="Error fetching the profiles"
@@ -267,7 +375,7 @@ type OScapSelectOptionPropType = {
 };
 
 type OScapSelectOptionValueType = {
-  id: DistributionProfileItem;
+  profileID: DistributionProfileItem;
   toString: () => string;
 };
 
@@ -291,7 +399,7 @@ const OScapSelectOption = ({
     id: DistributionProfileItem,
     name?: string
   ): OScapSelectOptionValueType => ({
-    id,
+    profileID: id,
     toString: () => name || '',
   });
 
@@ -303,9 +411,52 @@ const OScapSelectOption = ({
     />
   );
 };
+type ComplianceSelectOptionPropType = {
+  policy: PolicyRead;
+};
+
+type ComplianceSelectOptionValueType = {
+  policyID: string;
+  profileID: string;
+  toString: () => string;
+};
+
+const ComplianceNoneOption = () => {
+  return (
+    <SelectOption value={{ toString: () => 'None', compareTo: () => false }} />
+  );
+};
+
+const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
+  const selectObj = (
+    policyID: string,
+    profileID: string,
+    title: string
+  ): ComplianceSelectOptionValueType => ({
+    policyID,
+    profileID,
+    toString: () => title,
+  });
+
+  const descr = (
+    <>
+      Threshold: {policy.compliance_threshold}
+      <br />
+      Active systems: {policy.total_system_count}
+    </>
+  );
+
+  return (
+    <SelectOption
+      key={policy.id}
+      value={selectObj(policy.id!, policy.ref_id!, policy.title!)}
+      description={descr}
+    />
+  );
+};
 
 export const Oscap = () => {
-  const oscapProfile = useAppSelector(selectProfile);
+  const oscapProfile = useAppSelector(selectComplianceProfileID);
   const environments = useAppSelector(selectImageTypes);
 
   return (

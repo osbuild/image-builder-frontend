@@ -1,21 +1,44 @@
 import React, { useEffect } from 'react';
 
-import { Button, Form, Text, Title } from '@patternfly/react-core';
+import {
+  Button,
+  Form,
+  FormGroup,
+  Radio,
+  Text,
+  Title,
+} from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { Oscap } from './Oscap';
 
-import { COMPLIANCE_AND_VULN_SCANNING_URL } from '../../../../constants';
+import {
+  COMPLIANCE_AND_VULN_SCANNING_URL,
+  COMPLIANCE_PROD_URL,
+  COMPLIANCE_STAGE_URL,
+} from '../../../../constants';
 import { imageBuilderApi } from '../../../../store/enhancedImageBuilderApi';
-import { useAppSelector } from '../../../../store/hooks';
-import { selectDistribution } from '../../../../store/wizardSlice';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  ComplianceType,
+  changeComplianceType,
+  selectDistribution,
+  selectComplianceType,
+} from '../../../../store/wizardSlice';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const OscapStep = () => {
+  const dispatch = useAppDispatch();
+  const complianceEnabled = useFlag('image-builder.compliance.enabled');
+  const complianceType = useAppSelector(selectComplianceType);
   const prefetchOscapProfile = imageBuilderApi.usePrefetch(
     'getOscapProfiles',
     {}
   );
+  const { isProd } = useGetEnvironment();
   const release = useAppSelector(selectDistribution);
+
   useEffect(() => {
     prefetchOscapProfile({ distribution: release });
     // This useEffect hook should run *only* on mount and therefore has an empty
@@ -26,24 +49,78 @@ const OscapStep = () => {
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
-        OpenSCAP profile
+        {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
-      <Text>
-        OpenSCAP enables you to automatically monitor the adherence of your
-        registered RHEL systems to a selected regulatory compliance profile.
-        <br />
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
-          isInline
-          href={COMPLIANCE_AND_VULN_SCANNING_URL}
-        >
-          Documentation
-        </Button>
-      </Text>
+      {complianceEnabled && (
+        <FormGroup>
+          <Radio
+            id="openscap radio openscap type"
+            label="OpenSCAP"
+            name="oscap-radio-openscap"
+            isChecked={complianceType === 'openscap'}
+            onChange={() =>
+              dispatch(changeComplianceType('openscap' as ComplianceType))
+            }
+          />
+          <Radio
+            id="openscap radio compliance type"
+            label="Insights compliance"
+            name="oscap-radio-compliance"
+            isChecked={complianceType === 'compliance'}
+            onChange={() =>
+              dispatch(changeComplianceType('compliance' as ComplianceType))
+            }
+          />
+        </FormGroup>
+      )}
+      {(!complianceEnabled || complianceType === 'openscap') && (
+        <Text>
+          OpenSCAP enables you to automatically monitor the adherence of your
+          registered RHEL systems to a selected regulatory compliance profile.
+          <br />
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href={COMPLIANCE_AND_VULN_SCANNING_URL}
+          >
+            Documentation
+          </Button>
+        </Text>
+      )}
+      {complianceType === 'compliance' && (
+        <Text>
+          Insights compliance enables you to monitor the adherence of your
+          registered RHEL systems to a selected compliance policy.
+          <br />
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href={isProd() ? COMPLIANCE_PROD_URL : COMPLIANCE_STAGE_URL}
+          >
+            Define new policies in Insights Compliance
+          </Button>
+          <br />
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            icon={<ExternalLinkAltIcon />}
+            iconPosition="right"
+            isInline
+            href={COMPLIANCE_AND_VULN_SCANNING_URL}
+          >
+            Documentation
+          </Button>
+        </Text>
+      )}
       <Oscap />
     </Form>
   );
