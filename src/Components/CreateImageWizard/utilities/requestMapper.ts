@@ -26,6 +26,8 @@ import {
   ImageRequest,
   ImageTypes,
   OpenScap,
+  OpenScapCompliance,
+  OpenScapProfile,
   Services,
   Subscription,
   UploadTypes,
@@ -44,6 +46,10 @@ import {
   selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
+  ComplianceType,
+  selectCompliancePolicyID,
+  selectComplianceProfileID,
+  selectComplianceType,
   selectCustomRepositories,
   selectDistribution,
   selectGcpAccountType,
@@ -55,7 +61,6 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
-  selectProfile,
   selectRegistrationType,
   selectServerUrl,
   selectServices,
@@ -166,17 +171,42 @@ function commonRequestToState(
   if (arch !== 'x86_64' && arch !== 'aarch64') {
     throw new Error(`image type: ${arch} has no implementation yet`);
   }
+
+  let oscapProfile = undefined;
+  let compliancePolicyID = undefined;
+  if (request.customizations?.openscap) {
+    const oscapAsProfile = request.customizations?.openscap as OpenScapProfile;
+    if (oscapAsProfile.profile_id !== '') {
+      oscapProfile = oscapAsProfile.profile_id as DistributionProfileItem;
+    }
+    const oscapAsCompliance = request.customizations
+      ?.openscap as OpenScapCompliance;
+    if (oscapAsCompliance.policy_id !== '') {
+      compliancePolicyID = oscapAsCompliance.policy_id;
+    }
+  }
+
   return {
     details: {
       blueprintName: request.name || '',
       blueprintDescription: request.description || '',
     },
-    openScap: request.customizations
-      ? {
-          profile: request.customizations.openscap
-            ?.profile_id as DistributionProfileItem,
-        }
-      : initialState.openScap,
+    compliance:
+      compliancePolicyID !== undefined
+        ? {
+            complianceType: 'compliance' as ComplianceType,
+            policyID: compliancePolicyID,
+            profileID: undefined,
+            policyTitle: undefined,
+          }
+        : oscapProfile !== undefined
+        ? {
+            complianceType: 'openscap' as ComplianceType,
+            profileID: oscapProfile,
+            policyID: undefined,
+            policyTitle: undefined,
+          }
+        : initialState.compliance,
     firstBoot: request.customizations
       ? {
           script: getFirstBootScript(request.customizations.files),
@@ -442,7 +472,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
-    openscap: getOpenscapProfile(state),
+    openscap: getOpenscap(state),
     filesystem: getFileSystem(state),
     users: undefined,
     services: getServices(state),
@@ -487,10 +517,16 @@ const getServices = (state: RootState): Services | undefined => {
   };
 };
 
-const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
-  const profile = selectProfile(state);
-  if (profile) {
+const getOpenscap = (state: RootState): OpenScap | undefined => {
+  const complianceType = selectComplianceType(state);
+  const profile = selectComplianceProfileID(state);
+  const policy = selectCompliancePolicyID(state);
+
+  if (complianceType === 'openscap' && profile) {
     return { profile_id: profile };
+  }
+  if (complianceType === 'compliance' && policy) {
+    return { policy_id: policy };
   }
   return undefined;
 };

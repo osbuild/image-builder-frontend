@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { ApiRepositoryResponseRead } from './contentSourcesApi';
 import {
   CustomRepository,
-  DistributionProfileItem,
   Distributions,
   ImageRequest,
   ImageTypes,
@@ -40,6 +39,8 @@ export type RegistrationType =
   | 'register-now-insights'
   | 'register-now-rhc';
 
+export type ComplianceType = 'openscap' | 'compliance';
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -72,8 +73,11 @@ export type wizardState = {
     registrationType: RegistrationType;
     activationKey: ActivationKeys['name'];
   };
-  openScap: {
-    profile: DistributionProfileItem | undefined;
+  compliance: {
+    complianceType: ComplianceType;
+    policyID: string | undefined;
+    profileID: string | undefined;
+    policyTitle: string | undefined;
   };
   fileSystem: {
     mode: FileSystemConfigurationType;
@@ -141,8 +145,11 @@ export const initialState: wizardState = {
     registrationType: 'register-now-rhc',
     activationKey: undefined,
   },
-  openScap: {
-    profile: undefined,
+  compliance: {
+    complianceType: 'openscap',
+    policyID: undefined,
+    profileID: undefined,
+    policyTitle: undefined,
   },
   fileSystem: {
     mode: 'automatic',
@@ -254,8 +261,20 @@ export const selectActivationKey = (state: RootState) => {
   return state.wizard.registration.activationKey;
 };
 
-export const selectProfile = (state: RootState) => {
-  return state.wizard.openScap.profile;
+export const selectComplianceProfileID = (state: RootState) => {
+  return state.wizard.compliance.profileID;
+};
+
+export const selectCompliancePolicyID = (state: RootState) => {
+  return state.wizard.compliance.policyID;
+};
+
+export const selectCompliancePolicyTitle = (state: RootState) => {
+  return state.wizard.compliance.policyTitle;
+};
+
+export const selectComplianceType = (state: RootState) => {
+  return state.wizard.compliance.complianceType;
 };
 
 export const selectFileSystemConfigurationType = (state: RootState) => {
@@ -427,11 +446,20 @@ export const wizardSlice = createSlice({
     ) => {
       state.registration.activationKey = action.payload;
     },
-    changeOscapProfile: (
+    changeComplianceType: (state, action: PayloadAction<ComplianceType>) => {
+      state.compliance.complianceType = action.payload;
+    },
+    changeCompliance: (
       state,
-      action: PayloadAction<DistributionProfileItem | undefined>
+      action: PayloadAction<{
+        policyID: string | undefined;
+        profileID: string | undefined;
+        policyTitle: string | undefined;
+      }>
     ) => {
-      state.openScap.profile = action.payload;
+      state.compliance.policyID = action.payload.policyID;
+      state.compliance.profileID = action.payload.profileID;
+      state.compliance.policyTitle = action.payload.policyTitle;
     },
 
     changeFileSystemConfiguration: (
@@ -668,7 +696,8 @@ export const {
   reinitializeGcp,
   changeRegistrationType,
   changeActivationKey,
-  changeOscapProfile,
+  changeCompliance,
+  changeComplianceType,
   changeFileSystemConfiguration,
   changeFileSystemConfigurationType,
   clearPartitions,
