@@ -22,6 +22,7 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   DistributionProfileItem,
   Filesystem,
+  OpenScapProfile,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
   useLazyGetOscapCustomizationsQuery,
@@ -279,9 +280,10 @@ const OScapSelectOption = ({
     distribution: release,
     profile: profile_id,
   });
+  const oscapProfile = data?.openscap as OpenScapProfile;
   if (
     filter &&
-    !data?.openscap?.profile_name?.toLowerCase().includes(filter.toLowerCase())
+    !oscapProfile?.profile_name?.toLowerCase().includes(filter.toLowerCase())
   ) {
     return null;
   }
@@ -296,8 +298,8 @@ const OScapSelectOption = ({
   return (
     <SelectOption
       key={profile_id}
-      value={selectObject(profile_id, data?.openscap?.profile_name)}
-      description={data?.openscap?.profile_description}
+      value={selectObject(profile_id, oscapProfile?.profile_name)}
+      description={oscapProfile?.profile_description}
     />
   );
 };
