@@ -150,7 +150,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // =========================TO REMOVE=======================
 
+  // Feature flags
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
+  const complianceEnabled = useFlag('image-builder.compliance.enabled');
+
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
@@ -354,7 +357,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <RegistrationStep />
               </WizardStep>,
               <WizardStep
-                name="OpenSCAP"
+                name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
                 id="step-oscap"
                 key="step-oscap"
                 footer={
