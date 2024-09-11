@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   CodeBlock,
@@ -12,16 +12,30 @@ import {
 } from '@patternfly/react-core';
 
 import { RELEASES } from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
+import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
+  OpenScapProfile,
+  useGetOscapCustomizationsQuery,
+} from '../../../../store/imageBuilderApi';
+import {
+  changeCompliance,
+  selectCompliancePolicyID,
+  selectComplianceProfileID,
   selectDistribution,
-  selectProfile,
 } from '../../../../store/wizardSlice';
 
-export const OscapProfileInformation = (): JSX.Element => {
+type OscapProfileInformationOptionPropType = {
+  allowChangingCompliancePolicy?: boolean;
+};
+
+export const OscapProfileInformation = ({
+  allowChangingCompliancePolicy = false,
+}: OscapProfileInformationOptionPropType): JSX.Element => {
+  const dispatch = useAppDispatch();
   const release = useAppSelector(selectDistribution);
-  const oscapProfile = useAppSelector(selectProfile);
+  const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
 
   const {
     data: oscapProfileInfo,
@@ -30,13 +44,41 @@ export const OscapProfileInformation = (): JSX.Element => {
   } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
-      // @ts-ignore if oscapProfile is undefined the query is going to get skipped, so it's safe here to ignore the linter here
-      profile: oscapProfile,
+      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
+      profile: complianceProfileID,
     },
     {
-      skip: !oscapProfile,
+      skip: !complianceProfileID,
     }
   );
+
+  const {
+    data: policyInfo,
+    isFetching: isFetchingPolicyInfo,
+    isSuccess: isSuccessPolicyInfo,
+  } = usePolicyQuery(
+    {
+      policyId: compliancePolicyID || '',
+    },
+    {
+      skip:
+        !allowChangingCompliancePolicy || complianceProfileID ? true : false,
+    }
+  );
+
+  useEffect(() => {
+    if (!policyInfo || policyInfo.data === undefined) {
+      return;
+    }
+    const pol = policyInfo.data as PolicyRead;
+    dispatch(
+      changeCompliance({
+        policyID: pol.id,
+        profileID: pol.ref_id,
+        policyTitle: pol.title,
+      })
+    );
+  }, [isSuccessPolicyInfo]);
 
   const enabledServicesDisplayString =
     oscapProfileInfo?.services?.enabled?.join(' ');
@@ -47,9 +89,13 @@ export const OscapProfileInformation = (): JSX.Element => {
   const disabledAndMaskedServicesDisplayString =
     disabledAndMaskedServices.join(' ');
 
+  const oscapProfile = oscapProfileInfo?.openscap as OpenScapProfile;
+
   return (
     <>
-      {isFetchingOscapProfileInfo && <Spinner size="lg" />}
+      {(isFetchingOscapProfileInfo || isFetchingPolicyInfo) && (
+        <Spinner size="lg" />
+      )}
       {isSuccessOscapProfileInfo && (
         <>
           <TextContent>
@@ -61,7 +107,7 @@ export const OscapProfileInformation = (): JSX.Element => {
                 Profile description:
               </TextListItem>
               <TextListItem component={TextListItemVariants.dd}>
-                {oscapProfileInfo.openscap?.profile_description}
+                {oscapProfile?.profile_description}
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
@@ -79,7 +125,7 @@ export const OscapProfileInformation = (): JSX.Element => {
                 Reference ID:
               </TextListItem>
               <TextListItem component={TextListItemVariants.dd}>
-                {oscapProfileInfo.openscap?.profile_id}
+                {oscapProfile?.profile_id}
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
