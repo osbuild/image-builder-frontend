@@ -738,7 +738,7 @@ export const DetailsList = () => {
 };
 
 export const OscapList = () => {
-  return <OscapProfileInformation />;
+  return <OscapProfileInformation allowChangingCompliancePolicy={true} />;
 };
 
 export const FirstBootList = () => {
