@@ -37,9 +37,11 @@ import { useAppSelector } from '../../../../store/hooks';
 import {
   selectBlueprintDescription,
   selectBlueprintName,
+  selectComplianceType,
+  selectCompliancePolicyID,
+  selectComplianceProfileID,
   selectDistribution,
   selectImageTypes,
-  selectProfile,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 
@@ -50,7 +52,9 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
   const environments = useAppSelector(selectImageTypes);
-  const oscapProfile = useAppSelector(selectProfile);
+  const complianceType = useAppSelector(selectComplianceType);
+  const complianceProfile = useAppSelector(selectComplianceProfileID);
+  const compliancePolicy = useAppSelector(selectCompliancePolicyID);
   const registrationType = useAppSelector(selectRegistrationType);
 
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
@@ -60,6 +64,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedRegistration, setIsExpandedRegistration] = useState(true);
   const [isExpandedImageDetail, setIsExpandedImageDetail] = useState(true);
   const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(true);
+  const [isExpandedComplianceDetail, setIsExpandedComplianceDetail] =
+    useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
@@ -76,6 +82,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedImageDetail(isExpandedImageDetail);
   const onToggleOscapDetails = (isExpandedOscapDetail: boolean) =>
     setIsExpandedOscapDetail(isExpandedOscapDetail);
+  const onToggleComplianceDetails = (isExpandedComplianceDetail: boolean) =>
+    setIsExpandedComplianceDetail(isExpandedComplianceDetail);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
@@ -227,7 +235,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           {registrationType.startsWith('register-now') && <RegisterNowList />}
         </ExpandableSection>
       )}
-      {oscapProfile && (
+      {complianceProfile && complianceType === 'openscap' && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'OpenSCAP',
@@ -240,6 +248,23 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           isExpanded={isExpandedOscapDetail}
           isIndented
           data-testid="oscap-detail-expandable"
+        >
+          <OscapList />
+        </ExpandableSection>
+      )}
+      {compliancePolicy && complianceType === 'compliance' && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Compliance',
+            'revisit-compliance',
+            'step-oscap'
+          )}
+          onToggle={(_event, isExpandedComplianceDetail) =>
+            onToggleComplianceDetails(isExpandedComplianceDetail)
+          }
+          isExpanded={isExpandedComplianceDetail}
+          isIndented
+          data-testid="compliance-detail-expandable"
         >
           <OscapList />
         </ExpandableSection>
