@@ -38,7 +38,7 @@ export APP_NAME="image-builder-crc"
 export DEPLOY_TIMEOUT="1200"
 export REF_ENV="insights-stage"
 # overwrites any resource limits imposed by bonfire
-export COMPONENTS_W_RESOURCES="compliance"
+export COMPONENTS_W_RESOURCES="compliance notifications-backend notifications-engine"
 
 source "$CICD_ROOT"/deploy_ephemeral_env.sh
 
