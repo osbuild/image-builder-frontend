@@ -35,6 +35,7 @@ export const mockBlueprintIds = {
   packages: 'b3437c4e-f6f8-4270-8d32-323ac60bc929',
   firstBoot: 'd0a8376e-e44e-47b3-845d-30f5199a35b6',
   details: '58991b91-4b98-47e0-b26d-8d908678ddb3',
+  compliance: '21571945-fe23-45e9-8afb-4aa073b8d735',
 };
 
 export const mockBlueprintNames = {
@@ -55,6 +56,7 @@ export const mockBlueprintNames = {
   packages: 'packages',
   firstBoot: 'firstBoot',
   details: 'details',
+  compliance: 'compliance',
 };
 
 export const mockBlueprintDescriptions = {
@@ -75,6 +77,7 @@ export const mockBlueprintDescriptions = {
   packages: '',
   firstBoot: '',
   details: 'This is a test description for the Details step.',
+  compliance: '',
 };
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
@@ -274,6 +277,13 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       id: mockBlueprintIds['details'],
       name: mockBlueprintNames['details'],
       description: mockBlueprintDescriptions['details'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['compliance'],
+      name: mockBlueprintNames['compliance'],
+      description: mockBlueprintDescriptions['compliance'],
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
