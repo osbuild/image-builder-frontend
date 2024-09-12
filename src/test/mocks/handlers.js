@@ -1,6 +1,7 @@
 import { http, HttpResponse } from 'msw';
 
 import {
+  COMPLIANCE_API,
   CONTENT_SOURCES_API,
   CREATE_BLUEPRINT,
   IMAGE_BUILDER_API,
@@ -19,6 +20,7 @@ import {
   mockEmptyBlueprintsComposes,
   mockGetBlueprints,
 } from '../fixtures/blueprints';
+import { mockPolicies } from '../fixtures/compliance';
 import {
   composesEndpoint,
   mockClones,
@@ -211,5 +213,17 @@ export const handlers = [
   }),
   http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
     return HttpResponse.json(mockPkgRecommendations);
+  }),
+  http.get(`${COMPLIANCE_API}/policies`, () => {
+    return HttpResponse.json(mockPolicies);
+  }),
+  http.get(`${COMPLIANCE_API}/policies/:id`, ({ params }) => {
+    const id = params['id'];
+    for (const p of mockPolicies.data) {
+      if (p.id === id) {
+        return HttpResponse.json({ data: p });
+      }
+    }
+    return HttpResponse.error();
   }),
 ];

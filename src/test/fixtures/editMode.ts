@@ -447,6 +447,27 @@ export const detailsBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['details'],
 };
 
+export const complianceCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['compliance'],
+  description: mockBlueprintDescriptions['compliance'],
+  customizations: {
+    packages: expectedPackagesCisL2,
+    openscap: {
+      policy_id: '0ee9a781-b53f-4d9e-91e1-d75aed088c44',
+    },
+    services: expectedServicesCisL2,
+    kernel: expectedKernelCisL2,
+    filesystem: expectedFilesystemCisL2,
+  },
+};
+
+export const complianceBlueprintResponse: BlueprintResponse = {
+  ...complianceCreateBlueprintRequest,
+  id: mockBlueprintIds['compliance'],
+  description: mockBlueprintDescriptions['compliance'],
+};
+
 export const getMockBlueprintResponse = (id: string) => {
   switch (id) {
     case mockBlueprintIds['darkChocolate']:
@@ -485,6 +506,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:
       return detailsBlueprintResponse;
+    case mockBlueprintIds['compliance']:
+      return complianceBlueprintResponse;
     default:
       return;
   }
