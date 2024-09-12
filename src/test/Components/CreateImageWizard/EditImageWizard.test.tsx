@@ -11,6 +11,7 @@ describe('EditImageWizard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+
   test('should enable all navigation items in edit mode', async () => {
     const id = mockBlueprintIds['darkChocolate'];
     const name = mockBlueprintNames['darkChocolate'];
@@ -35,6 +36,21 @@ describe('EditImageWizard', () => {
     const scapNavItem = within(navigation).getByRole('button', {
       name: /openscap/i,
     });
+    const fscNavItem = within(navigation).getByRole('button', {
+      name: /openscap/i,
+    });
+    const snapshotsNavItem = within(navigation).getByRole('button', {
+      name: /openscap/i,
+    });
+    const repositoriesNavItem = within(navigation).getByRole('button', {
+      name: /openscap/i,
+    });
+    const packagesNavItem = within(navigation).getByRole('button', {
+      name: /openscap/i,
+    });
+    const firstbootNavItem = within(navigation).getByRole('button', {
+      name: /openscap/i,
+    });
     const detailsNavItem = within(navigation).getByRole('button', {
       name: /details/i,
     });
@@ -45,6 +61,11 @@ describe('EditImageWizard', () => {
     expect(targetNavItem).toBeEnabled();
     expect(registerNavItem).toBeEnabled();
     expect(scapNavItem).toBeEnabled();
+    expect(fscNavItem).toBeEnabled();
+    expect(snapshotsNavItem).toBeEnabled();
+    expect(repositoriesNavItem).toBeEnabled();
+    expect(packagesNavItem).toBeEnabled();
+    expect(firstbootNavItem).toBeEnabled();
     expect(detailsNavItem).toBeEnabled();
   });
 });
