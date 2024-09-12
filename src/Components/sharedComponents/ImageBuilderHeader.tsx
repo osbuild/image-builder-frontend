@@ -24,6 +24,9 @@ import {
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
   OSBUILD_SERVICE_ARCHITECTURE_URL,
 } from '../../constants';
+import { useAppSelector } from '../../store/hooks';
+import { imageBuilderApi } from '../../store/imageBuilderApi';
+import { selectDistribution } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
@@ -94,6 +97,10 @@ export const ImageBuilderHeader = ({
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
+
+  const distribution = useAppSelector(selectDistribution);
+  const prefetchTargets = imageBuilderApi.usePrefetch('getArchitectures');
+
   const importExportFlag = useFlagWithEphemDefault(
     'image-builder.import.enabled'
   );
@@ -130,6 +137,11 @@ export const ImageBuilderHeader = ({
                   data-testid="blueprints-create-button"
                   onClick={() => navigate(resolveRelPath('imagewizard'))}
                   isDisabled={!isOnBlueprintsTab}
+                  onMouseEnter={() =>
+                    prefetchTargets({
+                      distribution: distribution,
+                    })
+                  }
                 >
                   Create blueprint
                 </Button>
