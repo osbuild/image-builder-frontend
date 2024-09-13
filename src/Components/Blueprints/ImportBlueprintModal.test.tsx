@@ -121,6 +121,33 @@ const INVALID_JSON = `{
   "name": "Blueprint test"
 }`;
 
+const EMPTY_SUBSCRIPTION_VALID = `{
+  "customizations": {
+    "packages": [],
+    "subscription": {}
+  },
+  "description": "short subscription",
+  "distribution": "rhel-8",
+  "metadata": {
+    "exported_at": "2024-07-29 17:26:51.666952376 +0000 UTC",
+    "parent_id": "b3385e6d-ecc4-485c-b33c-f65131c46f52"
+  },
+  "name": "Blueprint can have empty subscription"
+}`;
+
+const NO_SUBSCRIPTION_VALID = `{
+  "customizations": {
+    "packages": []
+  },
+  "description": "shortsubscription",
+  "distribution": "rhel-8",
+  "metadata": {
+    "exported_at": "2024-07-29 17:26:51.666952376 +0000 UTC",
+    "parent_id": "b3385e6d-ecc4-485c-b33c-f65131c46f52"
+  },
+  "name": "Blueprint can have no subscription"
+}`;
+
 const uploadFile = async (filename: string, content: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
@@ -197,6 +224,34 @@ describe('Import modal', () => {
   test('should enable button on correct blueprint and go to wizard', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, BLUEPRINT_JSON);
+    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Image output', { selector: 'h1' })
+      ).toBeInTheDocument()
+    );
+  });
+
+  test('should enable button on correct blueprint with no subscription and go to wizard', async () => {
+    await setUp();
+    await uploadFile(`blueprints.json`, NO_SUBSCRIPTION_VALID);
+    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Image output', { selector: 'h1' })
+      ).toBeInTheDocument()
+    );
+  });
+
+  test('should enable button on correct blueprint with empty subscription and go to wizard', async () => {
+    await setUp();
+    await uploadFile(`blueprints.json`, EMPTY_SUBSCRIPTION_VALID);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
     await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
     user.click(reviewButton);

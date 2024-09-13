@@ -69,16 +69,20 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const handleDataChange = (_: DropEvent, value: string) => {
     try {
       const blueprintFromFile = JSON.parse(value);
+      const customizations = blueprintFromFile.customizations;
       const blueprintExportedResponse: BlueprintExportResponse = {
         name: blueprintFromFile.name,
         description: blueprintFromFile.description,
         distribution: blueprintFromFile.distribution,
-        customizations: blueprintFromFile.customizations,
+        customizations: customizations,
         metadata: blueprintFromFile.metadata,
       };
+      const isSubscriptionPresent =
+        customizations && 'subscription' in customizations;
       const importBlueprintState = mapExportRequestToState(
         blueprintExportedResponse,
-        blueprintFromFile.image_requests || []
+        blueprintFromFile.image_requests || [],
+        isSubscriptionPresent
       );
       setImportedBlueprint(importBlueprintState);
       setJsonContent(value);

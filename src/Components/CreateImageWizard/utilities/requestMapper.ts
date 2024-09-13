@@ -206,32 +206,38 @@ function commonRequestToState(
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),
-    azure: {
-      shareMethod: (azureUploadOptions?.source_id
-        ? 'sources'
-        : 'manual') as AzureShareMethod,
-      source: azureUploadOptions?.source_id || '',
-      tenantId: azureUploadOptions?.tenant_id || '',
-      subscriptionId: azureUploadOptions?.subscription_id || '',
-      resourceGroup: azureUploadOptions?.resource_group,
-    },
-    gcp: {
-      shareMethod: (gcpUploadOptions?.share_with_accounts
-        ? 'withGoogle'
-        : 'withInsights') as GcpShareMethod,
-      accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
-        ':'
-      )[0] as GcpAccountType,
-      email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
-    },
-    aws: {
-      accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
-      shareMethod: (awsUploadOptions?.share_with_sources
-        ? 'sources'
-        : 'manual') as AwsShareMethod,
-      source: { id: awsUploadOptions?.share_with_sources?.[0] },
-      sourceId: awsUploadOptions?.share_with_sources?.[0],
-    },
+    azure: azureUploadOptions
+      ? {
+          shareMethod: (azureUploadOptions?.source_id
+            ? 'sources'
+            : 'manual') as AzureShareMethod,
+          source: azureUploadOptions?.source_id || '',
+          tenantId: azureUploadOptions?.tenant_id || '',
+          subscriptionId: azureUploadOptions?.subscription_id || '',
+          resourceGroup: azureUploadOptions?.resource_group,
+        }
+      : initialState.azure,
+    gcp: gcpUploadOptions
+      ? {
+          shareMethod: (gcpUploadOptions?.share_with_accounts
+            ? 'withGoogle'
+            : 'withInsights') as GcpShareMethod,
+          accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
+            ':'
+          )[0] as GcpAccountType,
+          email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
+        }
+      : initialState.gcp,
+    aws: awsUploadOptions
+      ? {
+          accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
+          shareMethod: (awsUploadOptions?.share_with_sources
+            ? 'sources'
+            : 'manual') as AwsShareMethod,
+          source: { id: awsUploadOptions?.share_with_sources?.[0] },
+          sourceId: awsUploadOptions?.share_with_sources?.[0],
+        }
+      : initialState.aws,
     snapshotting: {
       useLatest: !snapshot_date,
       snapshotDate: snapshot_date,
@@ -295,7 +301,8 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
  */
 export const mapExportRequestToState = (
   request: BlueprintExportResponse,
-  image_requests: ImageRequest[]
+  image_requests: ImageRequest[],
+  subscribed: boolean
 ): wizardState => {
   const wizardMode = 'create';
   const blueprintResponse: CreateBlueprintRequest = {
@@ -311,8 +318,34 @@ export const mapExportRequestToState = (
       parent_id: request.metadata?.parent_id || null,
       exported_at: request.metadata?.exported_at || '',
     },
-    env: initialState.env,
-    registration: initialState.registration,
+    env: subscribed
+      ? {
+          serverUrl:
+            request.customizations.subscription?.['server-url'] ||
+            initialState.env.serverUrl,
+          baseUrl:
+            request.customizations.subscription?.['base-url'] ||
+            initialState.env.baseUrl,
+        }
+      : {
+          serverUrl: '',
+          baseUrl: '',
+        },
+    registration: subscribed
+      ? {
+          registrationType: request.customizations?.subscription
+            ? request.customizations.subscription.rhc
+              ? 'register-now-rhc'
+              : 'register-now-insights'
+            : initialState.registration.registrationType,
+          activationKey:
+            request.customizations.subscription?.['activation-key'] ||
+            initialState.registration.activationKey,
+        }
+      : {
+          registrationType: 'register-later',
+          activationKey: '',
+        },
     ...commonRequestToState(blueprintResponse),
   };
 };
