@@ -18,17 +18,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
-import {
-  useAppDispatch,
-  useAppSelector,
-  useServerStore,
-} from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   DistributionProfileItem,
   Filesystem,
   useGetOscapCustomizationsQuery,
   useGetOscapProfilesQuery,
   useLazyGetOscapCustomizationsQuery,
+  Services,
 } from '../../../../store/imageBuilderApi';
 import {
   changeOscapProfile,
@@ -40,6 +37,10 @@ import {
   removePackage,
   clearPartitions,
   selectImageTypes,
+  changeEnabledServices,
+  changeMaskedServices,
+  changeDisabledServices,
+  changeKernelAppend,
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../utilities/parseSizeUnit';
@@ -47,7 +48,6 @@ import { Partition, Units } from '../FileSystem/FileSystemConfiguration';
 
 const ProfileSelector = () => {
   const oscapProfile = useAppSelector(selectProfile);
-  const oscapData = useServerStore();
   const release = useAppSelector(selectDistribution);
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
@@ -62,7 +62,14 @@ const ProfileSelector = () => {
     distribution: release,
   });
 
-  const profileName = oscapProfile ? oscapData.profileName : 'None';
+  const { data: currentProfileData } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-ignore if openScapProfile is undefined the query is going to get skipped
+      profile: oscapProfile,
+    },
+    { skip: !oscapProfile }
+  );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
 
@@ -75,8 +82,10 @@ const ProfileSelector = () => {
 
   const handleClear = () => {
     dispatch(changeOscapProfile(undefined));
-    clearOscapPackages(oscapData.packages || []);
+    clearOscapPackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
+    handleServices(undefined);
+    dispatch(changeKernelAppend(''));
   };
 
   const handlePackages = (
@@ -124,6 +133,12 @@ const ProfileSelector = () => {
     }
   };
 
+  const handleServices = (services: Services | undefined) => {
+    dispatch(changeEnabledServices(services?.enabled || []));
+    dispatch(changeMaskedServices(services?.masked || []));
+    dispatch(changeDisabledServices(services?.disabled || []));
+  };
+
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
     selection: OScapSelectOptionValueType
@@ -132,7 +147,7 @@ const ProfileSelector = () => {
       // handle user has selected 'None' case
       handleClear();
     } else {
-      const oldOscapPackages = oscapData.packages || [];
+      const oldOscapPackages = currentProfileData?.packages || [];
       trigger(
         {
           distribution: release,
@@ -146,6 +161,8 @@ const ProfileSelector = () => {
           const newOscapPackages = response.packages || [];
           handlePartitions(oscapPartitions);
           handlePackages(oldOscapPackages, newOscapPackages);
+          handleServices(response.services);
+          dispatch(changeKernelAppend(response.kernel?.append || ''));
           dispatch(changeOscapProfile(selection.id));
         });
     }
@@ -200,7 +217,7 @@ const ProfileSelector = () => {
         onSelect={handleSelect}
         onClear={handleClear}
         maxHeight="300px"
-        selections={profileName}
+        selections={oscapProfile}
         isOpen={isOpen}
         placeholderText="Select a profile"
         typeAheadAriaLabel="Select a profile"

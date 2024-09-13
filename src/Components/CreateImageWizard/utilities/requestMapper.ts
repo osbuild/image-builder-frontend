@@ -51,12 +51,14 @@ import {
   selectGcpShareMethod,
   selectGroups,
   selectImageTypes,
+  selectKernel,
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectProfile,
   selectRegistrationType,
   selectServerUrl,
+  selectServices,
   wizardState,
   selectFileSystemConfigurationType,
   selectPartitions,
@@ -85,11 +87,6 @@ import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../steps/TargetEnvironment/Azure';
 import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 
-type ServerStore = {
-  kernel?: { append?: string }; // TODO use API types
-  services?: { enabled?: string[]; disabled?: string[]; masked?: string[] }; // TODO use API types
-};
-
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object
  * @param {Store} store redux store
@@ -99,12 +96,11 @@ type ServerStore = {
  */
 export const mapRequestFromState = (
   store: Store,
-  orgID: string,
-  serverStore: ServerStore
+  orgID: string
 ): CreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
-  const customizations = getCustomizations(state, orgID, serverStore);
+  const customizations = getCustomizations(state, orgID);
 
   return {
     name: selectBlueprintName(state),
@@ -258,6 +254,14 @@ function commonRequestToState(
           repository: '' as PackageRepository,
           package_list: [],
         })) || [],
+    services: {
+      enabled: request.customizations?.services?.enabled || [],
+      masked: request.customizations?.services?.masked || [],
+      disabled: request.customizations?.services?.disabled || [],
+    },
+    kernel: {
+      append: request.customizations?.kernel?.append || '',
+    },
   };
 }
 
@@ -418,11 +422,7 @@ const getImageOptions = (
   return {};
 };
 
-const getCustomizations = (
-  state: RootState,
-  orgID: string,
-  serverStore: ServerStore
-): Customizations => {
+const getCustomizations = (state: RootState, orgID: string): Customizations => {
   return {
     containers: undefined,
     directories: undefined,
@@ -450,10 +450,10 @@ const getCustomizations = (
     openscap: getOpenscapProfile(state),
     filesystem: getFileSystem(state),
     users: undefined,
-    services: getServices(serverStore, state),
+    services: getServices(state),
     hostname: undefined,
-    kernel: serverStore.kernel?.append
-      ? { append: serverStore.kernel?.append }
+    kernel: selectKernel(state).append
+      ? { append: selectKernel(state).append }
       : undefined,
     groups: undefined,
     timezone: undefined,
@@ -467,36 +467,29 @@ const getCustomizations = (
   };
 };
 
-const getServices = (
-  serverStore: ServerStore,
-  state: RootState
-): Services | undefined => {
-  const serverEnabledServices: string[] | undefined =
-    serverStore.services?.enabled;
-  const serverDisabledServicesFromServer: string[] | undefined =
-    serverStore.services?.disabled;
-  const serverMaskedServices = serverStore.services?.masked;
-  const firstbootFlag: boolean =
-    !!selectFirstBootScript(state) &&
-    !serverEnabledServices?.includes(FIRST_BOOT_SERVICE);
-
-  const enabledServices = [
-    ...(serverEnabledServices ? serverEnabledServices : []),
-    ...(firstbootFlag ? [FIRST_BOOT_SERVICE] : []),
-  ];
-
+const getServices = (state: RootState): Services | undefined => {
+  const services = selectServices(state);
   if (
-    enabledServices.length ||
-    serverDisabledServicesFromServer ||
-    serverMaskedServices
+    services.enabled.length === 0 &&
+    services.masked.length === 0 &&
+    services.disabled.length === 0
   ) {
-    return {
-      enabled: enabledServices,
-      disabled: serverDisabledServicesFromServer,
-      masked: serverMaskedServices,
-    };
+    return undefined;
   }
-  return undefined;
+
+  const enabledSvcs = services.enabled || [];
+  const includeFBSvc: boolean =
+    !!selectFirstBootScript(state) &&
+    !services.enabled?.includes(FIRST_BOOT_SERVICE);
+  if (includeFBSvc) {
+    enabledSvcs.push(FIRST_BOOT_SERVICE);
+  }
+
+  return {
+    enabled: enabledSvcs.length ? enabledSvcs : undefined,
+    masked: services.masked.length ? services.masked : undefined,
+    disabled: services.disabled.length ? services.disabled : undefined,
+  };
 };
 
 const getOpenscapProfile = (state: RootState): OpenScap | undefined => {
