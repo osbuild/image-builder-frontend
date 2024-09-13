@@ -93,6 +93,14 @@ export type wizardState = {
   };
   packages: IBPackageWithRepositoryInfo[];
   groups: GroupWithRepositoryInfo[];
+  services: {
+    enabled: string[];
+    masked: string[];
+    disabled: string[];
+  };
+  kernel: {
+    append: string;
+  };
   details: {
     blueprintName: string;
     blueprintDescription: string;
@@ -151,6 +159,14 @@ export const initialState: wizardState = {
   },
   packages: [],
   groups: [],
+  services: {
+    enabled: [],
+    masked: [],
+    disabled: [],
+  },
+  kernel: {
+    append: '',
+  },
   details: {
     blueprintName: '',
     blueprintDescription: '',
@@ -275,6 +291,14 @@ export const selectPackages = (state: RootState) => {
 
 export const selectGroups = (state: RootState) => {
   return state.wizard.groups;
+};
+
+export const selectServices = (state: RootState) => {
+  return state.wizard.services;
+};
+
+export const selectKernel = (state: RootState) => {
+  return state.wizard.kernel;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -604,6 +628,18 @@ export const wizardSlice = createSlice({
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
+    changeEnabledServices: (state, action: PayloadAction<string[]>) => {
+      state.services.enabled = action.payload;
+    },
+    changeMaskedServices: (state, action: PayloadAction<string[]>) => {
+      state.services.masked = action.payload;
+    },
+    changeDisabledServices: (state, action: PayloadAction<string[]>) => {
+      state.services.disabled = action.payload;
+    },
+    changeKernelAppend: (state, action: PayloadAction<string>) => {
+      state.kernel.append = action.payload;
+    },
   },
 });
 
@@ -657,5 +693,9 @@ export const {
   changeBlueprintDescription,
   loadWizardState,
   setFirstBootScript,
+  changeEnabledServices,
+  changeMaskedServices,
+  changeDisabledServices,
+  changeKernelAppend,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

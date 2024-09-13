@@ -15,7 +15,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
-import { useServerStore } from '../../../../../store/hooks';
 import {
   useCreateBlueprintMutation,
   useUpdateBlueprintMutation,
@@ -30,7 +29,6 @@ const ReviewWizardFooter = () => {
     useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
 
   // initialize the server store with the data from RTK query
-  const serverStore = useServerStore();
   const [, { isSuccess: isUpdateSuccess, reset: resetUpdate }] =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
@@ -54,7 +52,7 @@ const ReviewWizardFooter = () => {
   const getBlueprintPayload = async () => {
     const userData = await auth?.getUser();
     const orgId = userData?.identity?.internal?.org_id;
-    const requestBody = orgId && mapRequestFromState(store, orgId, serverStore);
+    const requestBody = orgId && mapRequestFromState(store, orgId);
     return requestBody;
   };
 
