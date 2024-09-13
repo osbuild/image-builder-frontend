@@ -32,6 +32,7 @@ import {
   useSnapshotValidation,
   useFirstBootValidation,
   useDetailsValidation,
+  useRegistrationValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -61,8 +62,6 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   addImageType,
-  selectRegistrationType,
-  selectActivationKey,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -192,8 +191,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const azureSource = useAppSelector(selectAzureSource);
   // Registration
-  const registrationType = useAppSelector(selectRegistrationType);
-  const activationKey = useAppSelector(selectActivationKey);
+  const registrationValidation = useRegistrationValidation();
   // Snapshots
   const snapshotValidation = useSnapshotValidation();
   // Filesystem
@@ -342,12 +340,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Register"
                 id="step-register"
                 key="step-register"
+                navItem={customStatusNavItem}
+                status={
+                  registrationValidation.disabledNext ? 'error' : 'default'
+                }
                 footer={
                   <CustomWizardFooter
-                    disableNext={
-                      registrationType.startsWith('register-now') &&
-                      !activationKey
-                    }
+                    disableNext={registrationValidation.disabledNext}
                     optional={true}
                   />
                 }
