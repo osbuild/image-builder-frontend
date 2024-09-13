@@ -6,6 +6,7 @@ import {
   BlueprintsResponse,
   useLazyGetBlueprintsQuery,
 } from '../../../store/imageBuilderApi';
+import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import {
   selectBlueprintId,
   selectBlueprintName,
@@ -15,6 +16,8 @@ import {
   selectPartitions,
   selectSnapshotDate,
   selectUseLatest,
+  selectActivationKey,
+  selectRegistrationType,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -32,16 +35,46 @@ export type StepValidation = {
 };
 
 export function useIsBlueprintValid(): boolean {
+  const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
+    !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext
   );
+}
+
+export function useRegistrationValidation(): StepValidation {
+  const registrationType = useAppSelector(selectRegistrationType);
+  const activationKey = useAppSelector(selectActivationKey);
+
+  const { isFetching, isError } = useShowActivationKeyQuery(
+    { name: activationKey! },
+    {
+      skip: !activationKey,
+    }
+  );
+
+  if (registrationType !== 'register-later' && !activationKey) {
+    return {
+      errors: { activationKey: 'No activation key selected' },
+      disabledNext: true,
+    };
+  }
+
+  if (activationKey && (isFetching || isError)) {
+    return {
+      errors: { activationKey: 'Invalid activation key' },
+      disabledNext: true,
+    };
+  }
+
+  return { errors: {}, disabledNext: false };
 }
 
 export function useFilesystemValidation(): StepValidation {
