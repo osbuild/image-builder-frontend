@@ -68,10 +68,6 @@ import {
   selectMetadata,
   initialState,
 } from '../../../store/wizardSlice';
-import {
-  convertMMDDYYYYToYYYYMMDD,
-  convertYYYYMMDDTOMMDDYYYY,
-} from '../../../Utilities/time';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
   getConversionFactor,
@@ -154,10 +150,9 @@ function commonRequestToState(
     (image) => image.image_type === 'azure'
   );
 
-  const snapshot_date = convertYYYYMMDDTOMMDDYYYY(
+  const snapshot_date =
     request.image_requests.find((image) => !!image.snapshot_date)
-      ?.snapshot_date || ''
-  );
+      ?.snapshot_date || '';
 
   const awsUploadOptions = aws?.upload_request
     .options as AwsUploadRequestOptions;
@@ -330,7 +325,7 @@ const getFirstBootScript = (files?: File[]): string => {
 
 const getImageRequests = (state: RootState): ImageRequest[] => {
   const imageTypes = selectImageTypes(state);
-  const snapshotDate = convertMMDDYYYYToYYYYMMDD(selectSnapshotDate(state));
+  const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
   return imageTypes.map((type) => ({
     architecture: selectArchitecture(state),

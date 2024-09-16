@@ -64,11 +64,7 @@ import {
   selectPartitions,
   selectFirstBootScript,
 } from '../../../../store/wizardSlice';
-import {
-  convertMMDDYYYYToYYYYMMDD,
-  toMonthAndYear,
-  yyyyMMddFormat,
-} from '../../../../Utilities/time';
+import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
   Partition,
   getConversionFactor,
@@ -449,9 +445,7 @@ export const ContentList = ({
     listSnapshotsByDate({
       apiListSnapshotByDateRequest: {
         repository_uuids: customAndRecommendedRepositoryUUIDS,
-        date: useLatest
-          ? yyyyMMddFormat(new Date())
-          : convertMMDDYYYYToYYYYMMDD(snapshotDate),
+        date: useLatest ? yyyyMMddFormat(new Date()) : snapshotDate,
       },
     });
   }, [

@@ -117,7 +117,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('00/00/2024');
+    await updateDatePickerWithValue('2024-00-00');
     expect(
       await screen.findByRole('button', { name: /Review and finish/ })
     ).toBeDisabled();
@@ -127,7 +127,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('04/22/2024');
+    await updateDatePickerWithValue('2024-04-22');
     await clickNext(); // To repositories step
     await selectFirstRepository();
     await goToReviewStep();
@@ -135,7 +135,7 @@ describe('repository snapshot tab - ', () => {
 
     const snapshotMethodElement = await getSnapshotMethodElement();
     // Check date was recorded correctly
-    expect(snapshotMethodElement).toHaveTextContent('State as of 04/22/2024');
+    expect(snapshotMethodElement).toHaveTextContent('State as of 2024-04-22');
     // Check that the button is clickable (has 1 repo selected)
     expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'false');
 
@@ -162,7 +162,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('04/22/2024');
+    await updateDatePickerWithValue('2024-04-22');
     await clickNext(); // To repositories step
     await goToReviewStep();
     await clickContentDropdown();
@@ -180,7 +180,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('04/22/2024');
+    await updateDatePickerWithValue('2024-04-22');
     await clickNext(); // To repositories step
     await searchForRepository('nosnapshot');
 
@@ -200,7 +200,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('04/22/2024');
+    await updateDatePickerWithValue('2024-04-22');
     await clickNext(); // To repositories step
     await searchForRepository('01-test-valid-repo');
 
@@ -233,7 +233,7 @@ describe('repository snapshot tab - ', () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await selectUseSnapshot();
-    await updateDatePickerWithValue('04/22/2024');
+    await updateDatePickerWithValue('2024-04-22');
     await clickNext();
     await goToReviewStep();
     await clickRevisitButton();

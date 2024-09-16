@@ -19,8 +19,8 @@ import {
   changeSnapshotDate,
 } from '../../../../store/wizardSlice';
 import {
-  dateToMMDDYYYY,
-  parseMMDDYYYYtoDate,
+  parseYYYYMMDDToDate,
+  yyyyMMddFormat,
 } from '../../../../Utilities/time';
 import { isSnapshotDateValid } from '../../validators';
 
@@ -78,9 +78,9 @@ export default function Snapshot() {
                 value={snapshotDate}
                 required
                 requiredDateOptions={{ isRequired: true }}
-                placeholder="MM/DD/YYYY"
-                dateParse={parseMMDDYYYYtoDate}
-                dateFormat={dateToMMDDYYYY}
+                placeholder="YYYY-MM-DD"
+                dateParse={parseYYYYMMDDToDate}
+                dateFormat={yyyyMMddFormat}
                 validators={[
                   (date: Date) => {
                     if (!isSnapshotDateValid(date)) {
