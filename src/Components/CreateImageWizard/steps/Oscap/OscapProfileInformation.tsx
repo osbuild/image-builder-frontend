@@ -124,7 +124,10 @@ export const OscapProfileInformation = ({
               >
                 Reference ID:
               </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              <TextListItem
+                data-testid="oscap-profile-info-ref-id"
+                component={TextListItemVariants.dd}
+              >
                 {oscapProfile?.profile_id}
               </TextListItem>
               <TextListItem
