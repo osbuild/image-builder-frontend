@@ -4,3 +4,4 @@ contentSourcesApi.ts
 rhsmApi.ts
 provisioningApi.ts
 edgeApi.ts
+complianceApi.ts
