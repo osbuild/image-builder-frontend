@@ -1,9 +1,3 @@
-export const parseMMDDYYYYtoDate = (val: string) => {
-  const [mm, dd, yyyy] = val.split('/');
-  const newVal = `${yyyy}-${mm}-${dd}`;
-  return mm && dd && yyyy ? new Date(`${newVal}T00:00:00`) : new Date('');
-};
-
 export const parseYYYYMMDDToDate = (val: string) =>
   val ? new Date(`${val}T00:00:00`) : new Date('');
 
@@ -11,24 +5,6 @@ export const yyyyMMddFormat = (date: Date) =>
   `${date.getFullYear()}-${(date.getMonth() + 1)
     .toString()
     .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-
-export const convertMMDDYYYYToYYYYMMDD = (dateStr: string) => {
-  if (!dateStr) return '';
-  const date = parseMMDDYYYYtoDate(dateStr);
-  return yyyyMMddFormat(date);
-};
-
-export const dateToMMDDYYYY = (date: Date) =>
-  `${(date.getMonth() + 1).toString().padStart(2, '0')}/${date
-    .getDate()
-    .toString()
-    .padStart(2, '0')}/${date.getFullYear()}`;
-
-export const convertYYYYMMDDTOMMDDYYYY = (dateStr: string) => {
-  if (!dateStr) return '';
-  const date = parseYYYYMMDDToDate(dateStr);
-  return dateToMMDDYYYY(date);
-};
 
 export const toMonthAndYear = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = {
