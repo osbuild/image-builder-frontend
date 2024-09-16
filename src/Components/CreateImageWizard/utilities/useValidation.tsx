@@ -67,7 +67,11 @@ export function useRegistrationValidation(): StepValidation {
     };
   }
 
-  if (activationKey && (isFetching || isError)) {
+  if (
+    registrationType !== 'register-later' &&
+    activationKey &&
+    (isFetching || isError)
+  ) {
     return {
       errors: { activationKey: 'Invalid activation key' },
       disabledNext: true,
