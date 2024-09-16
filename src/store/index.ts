@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import { blueprintsSlice } from './BlueprintSlice';
+import { cloudApi } from './cloudApi';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
@@ -24,6 +25,7 @@ export const reducer = combineReducers({
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
+  [cloudApi.reducerPath]: cloudApi.reducer,
   notifications: notificationsReducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
@@ -94,7 +96,8 @@ export const middleware = (getDefaultMiddleware: Function) =>
       contentSourcesApi.middleware,
       imageBuilderApi.middleware,
       rhsmApi.middleware,
-      provisioningApi.middleware
+      provisioningApi.middleware,
+      cloudApi.middleware
     );
 
 export const store = configureStore({ reducer, middleware });
