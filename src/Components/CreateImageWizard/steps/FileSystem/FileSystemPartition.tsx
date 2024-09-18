@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeFileSystemConfigurationType,
   selectFileSystemConfigurationType,
-  selectProfile,
+  selectComplianceProfileID,
 } from '../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {
@@ -14,7 +14,7 @@ const FileSystemPartition = () => {
   const fileSystemConfigurationType = useAppSelector(
     selectFileSystemConfigurationType
   );
-  const hasOscapProfile = useAppSelector(selectProfile);
+  const hasOscapProfile = useAppSelector(selectComplianceProfileID);
 
   if (hasOscapProfile) {
     return undefined;
