@@ -59,7 +59,11 @@ const BlueprintsSidebar = () => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset);
   const blueprintsLimit = useAppSelector(selectLimit);
-  const { data: blueprintsData, isLoading } = useGetBlueprintsQuery({
+  const {
+    data: blueprintsData,
+    isLoading,
+    isFetching,
+  } = useGetBlueprintsQuery({
     search: blueprintSearchInput,
     limit: blueprintsLimit,
     offset: blueprintsOffset,
@@ -77,7 +81,11 @@ const BlueprintsSidebar = () => {
     );
   }
 
-  if (blueprintsTotal === 0 && blueprintSearchInput === undefined) {
+  if (
+    blueprintsTotal === 0 &&
+    blueprintSearchInput === undefined &&
+    !isFetching
+  ) {
     return (
       <EmptyBlueprintState
         icon={PlusCircleIcon}
@@ -103,7 +111,9 @@ const BlueprintsSidebar = () => {
   return (
     <>
       <Stack hasGutter>
-        {(blueprintsTotal > 0 || blueprintSearchInput !== undefined) && (
+        {(blueprintsTotal > 0 ||
+          blueprintSearchInput !== undefined ||
+          isFetching) && (
           <>
             <StackItem>
               <BlueprintSearch blueprintsTotal={blueprintsTotal} />
