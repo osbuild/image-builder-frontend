@@ -168,7 +168,11 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
     };
   }, [debouncedSearch]);
   const onChange = (value: string) => {
-    debouncedSearch(value);
+    if (value.length === 0) {
+      dispatch(setBlueprintSearchInput(undefined));
+    } else {
+      debouncedSearch(value);
+    }
   };
 
   return (
