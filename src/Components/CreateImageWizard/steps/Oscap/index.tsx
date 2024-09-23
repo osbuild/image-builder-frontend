@@ -20,9 +20,18 @@ import {
 } from '../../../../constants';
 import { imageBuilderApi } from '../../../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
 import {
   ComplianceType,
+  selectComplianceProfileID,
+  changeCompliance,
   changeComplianceType,
+  changeEnabledServices,
+  changeMaskedServices,
+  changeDisabledServices,
+  removePackage,
+  changeFileSystemConfigurationType,
+  changeKernelAppend,
   selectDistribution,
   selectComplianceType,
 } from '../../../../store/wizardSlice';
@@ -32,12 +41,21 @@ const OscapStep = () => {
   const dispatch = useAppDispatch();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
+  const profileID = useAppSelector(selectComplianceProfileID);
   const prefetchOscapProfile = imageBuilderApi.usePrefetch(
     'getOscapProfiles',
     {}
   );
   const { isProd } = useGetEnvironment();
   const release = useAppSelector(selectDistribution);
+  const { data: currentProfileData } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-ignore if openScapProfile is undefined the query is going to get skipped
+      profile: profileID,
+    },
+    { skip: !profileID }
+  );
 
   useEffect(() => {
     prefetchOscapProfile({ distribution: release });
@@ -45,6 +63,29 @@ const OscapStep = () => {
     // dependency array. eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const handleTypeChange = (complianceType: string) => {
+    dispatch(changeComplianceType(complianceType as ComplianceType));
+
+    // Avoid showing profile information when switching between types by
+    // clearing the compliance data.
+    dispatch(
+      changeCompliance({
+        profileID: undefined,
+        policyID: undefined,
+        policyTitle: undefined,
+      })
+    );
+    const pkgs = currentProfileData?.packages || [];
+    for (const pkg of pkgs) {
+      dispatch(removePackage(pkg));
+    }
+    dispatch(changeFileSystemConfigurationType('automatic'));
+    dispatch(changeEnabledServices([]));
+    dispatch(changeMaskedServices([]));
+    dispatch(changeDisabledServices([]));
+    dispatch(changeKernelAppend(''));
+  };
 
   return (
     <Form>
@@ -58,18 +99,14 @@ const OscapStep = () => {
             label="OpenSCAP"
             name="oscap-radio-openscap"
             isChecked={complianceType === 'openscap'}
-            onChange={() =>
-              dispatch(changeComplianceType('openscap' as ComplianceType))
-            }
+            onChange={() => handleTypeChange('openscap')}
           />
           <Radio
             id="openscap radio compliance type"
             label="Insights compliance"
             name="oscap-radio-compliance"
             isChecked={complianceType === 'compliance'}
-            onChange={() =>
-              dispatch(changeComplianceType('compliance' as ComplianceType))
-            }
+            onChange={() => handleTypeChange('compliance')}
           />
         </FormGroup>
       )}
