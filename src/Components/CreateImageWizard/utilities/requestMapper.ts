@@ -472,12 +472,12 @@ const getServices = (state: RootState): Services | undefined => {
     return undefined;
   }
 
-  const enabledSvcs = services.enabled || [];
+  let enabledSvcs = services.enabled || [];
   const includeFBSvc: boolean =
     !!selectFirstBootScript(state) &&
     !services.enabled?.includes(FIRST_BOOT_SERVICE);
   if (includeFBSvc) {
-    enabledSvcs.push(FIRST_BOOT_SERVICE);
+    enabledSvcs = [...enabledSvcs, FIRST_BOOT_SERVICE];
   }
 
   return {
