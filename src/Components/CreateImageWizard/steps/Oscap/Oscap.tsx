@@ -296,7 +296,6 @@ const ProfileSelector = () => {
 
   return (
     <FormGroup
-      isRequired={true}
       data-testid="profiles-form-group"
       label={complianceType === 'openscap' ? <OpenSCAPFGLabel /> : <>Policy</>}
     >
