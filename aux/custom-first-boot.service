@@ -1,0 +1,14 @@
+[Unit]
+Description=Run first boot script
+ConditionPathExists=/usr/local/sbin/custom-first-boot
+Wants=network-online.target
+After=network-online.target
+After=osbuild-first-boot.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/custom-first-boot
+ExecStartPost=mv /usr/local/sbin/custom-first-boot /usr/local/sbin/custom-first-boot.done
+
+[Install]
+WantedBy=multi-user.target
