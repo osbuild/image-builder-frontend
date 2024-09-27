@@ -497,7 +497,8 @@ const getServices = (state: RootState): Services | undefined => {
   if (
     services.enabled.length === 0 &&
     services.masked.length === 0 &&
-    services.disabled.length === 0
+    services.disabled.length === 0 &&
+    !selectFirstBootScript(state)
   ) {
     return undefined;
   }
