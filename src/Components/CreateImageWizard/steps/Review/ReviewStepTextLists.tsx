@@ -466,8 +466,6 @@ export const ContentList = ({
 
   const snapshottingText = useMemo(() => {
     switch (true) {
-      case noRepositoriesSelected:
-        return 'No repositories selected';
       case isLoading:
         return '';
       case useLatest:
@@ -477,7 +475,7 @@ export const ContentList = ({
       default:
         return '';
     }
-  }, [noRepositoriesSelected, isLoading, useLatest, snapshotDate]);
+  }, [isLoading, useLatest, snapshotDate]);
 
   return (
     <>

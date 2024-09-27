@@ -169,7 +169,7 @@ describe('repository snapshot tab - ', () => {
 
     const snapshotMethodElement = await getSnapshotMethodElement();
     // Check date was recorded correctly
-    expect(snapshotMethodElement).toHaveTextContent('No repositories selected');
+    expect(snapshotMethodElement).toHaveTextContent('State as of 2024-04-22');
     // Check that the button is clickable (has 1 repo selected)
     await waitFor(() => {
       expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'true');
