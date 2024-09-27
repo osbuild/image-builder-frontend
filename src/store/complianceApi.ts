@@ -8,6 +8,7 @@ const injectedRtkApi = api.injectEndpoints({
         params: {
           limit: queryArg.limit,
           offset: queryArg.offset,
+          ids_only: queryArg.idsOnly,
           sort_by: queryArg.sortBy,
           filter: queryArg.filter,
         },
@@ -37,6 +38,8 @@ export type PoliciesApiArg = {
   limit?: number;
   /** Offset of first item of paginated response */
   offset?: number;
+  /** Indicates whether to return only resource IDs. */
+  idsOnly?: boolean;
   /** Attribute and direction to sort the items by. Represented by an array of fields with an optional direction (`<key>:asc` or `<key>:desc`).<br><br>If no direction is selected, `<key>:asc` is used by default. */
   sortBy?: (
     | "title"
