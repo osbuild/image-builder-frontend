@@ -11,7 +11,7 @@ const config = {
     },
     server: {
       deps: {
-        inline: ['vitest-canvas-mock', '@patternfly'],
+        inline: ['vitest-canvas-mock', '@patternfly', '@monaco-editor'],
       },
     },
     testTimeout: 10000,
