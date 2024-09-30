@@ -107,6 +107,17 @@ export const clickRegisterLater = async () => {
   await waitFor(() => user.click(registrationCheckbox));
 };
 
+export const goToOscapStep = async () => {
+  const user = userEvent.setup();
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /virtualization guest image checkbox/i,
+  });
+  await waitFor(() => user.click(guestImageCheckBox));
+  await clickNext(); // Registration
+  await clickRegisterLater();
+  await clickNext(); // OpenSCAP
+};
+
 export const selectCustomRepo = async () => {
   const user = userEvent.setup();
   await clickBack();

@@ -13,9 +13,12 @@ import {
   expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext, clickReviewAndFinish } from '../../wizardTestUtils';
 import {
-  clickRegisterLater,
+  clickNext,
+  clickReviewAndFinish,
+  goToOscapStep,
+} from '../../wizardTestUtils';
+import {
   enterBlueprintName,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
@@ -23,17 +26,6 @@ import {
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
-
-const goToOscapStep = async () => {
-  const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByRole('checkbox', {
-    name: /virtualization guest image checkbox/i,
-  });
-  await waitFor(() => user.click(guestImageCheckBox));
-  await clickNext(); // Registration
-  await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-};
 
 const selectProfile = async () => {
   const user = userEvent.setup();
