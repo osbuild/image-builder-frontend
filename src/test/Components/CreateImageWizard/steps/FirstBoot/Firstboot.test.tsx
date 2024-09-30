@@ -15,6 +15,7 @@ import {
 import {
   clickNext,
   clickReviewAndFinish,
+  goToOscapStep,
   //getNextButton,
 } from '../../wizardTestUtils';
 import {
@@ -42,6 +43,25 @@ const goToFirstBootStep = async (): Promise<void> => {
   await clickNext(); // Additional packages
   await clickNext(); // Snapshot
   await clickNext(); // First Boot
+};
+
+const selectSimplifiedOscapProfile = async () => {
+  const user = userEvent.setup();
+  const selectProfileDropdown = await screen.findByRole('textbox', {
+    name: /select a profile/i,
+  });
+  await waitFor(() => user.click(selectProfileDropdown));
+
+  const simplifiedProfile = await screen.findByText(/Simplified profile/i);
+  await waitFor(() => user.click(simplifiedProfile));
+};
+
+const goFromOscapToFirstBoot = async () => {
+  await clickNext();
+  await clickNext();
+  await clickNext();
+  await clickNext();
+  await clickNext();
 };
 
 const openCodeEditor = async (): Promise<void> => {
@@ -140,6 +160,36 @@ describe('First boot request generated correctly', () => {
       customizations: {
         files: firstBootData,
         services: { enabled: [FIRST_BOOT_SERVICE] },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('with an OpenSCAP profile', async () => {
+    await renderCreateMode();
+    await goToOscapStep();
+    await selectSimplifiedOscapProfile();
+    await goFromOscapToFirstBoot();
+    await openCodeEditor();
+    await uploadFile();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    // request created with both OpenSCAP and first boot customization
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        filesystem: [{ min_size: 10737418240, mountpoint: '/' }],
+        openscap: {
+          profile_id: 'xccdf_org.ssgproject.content_profile_standard',
+        },
+        files: firstBootData,
+        // services need to contain both serviced included in the OpenSCAP profile
+        // and the first boot script
+        services: { enabled: ['crond', 'emacs-service', FIRST_BOOT_SERVICE] },
       },
     };
 
