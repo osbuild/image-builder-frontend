@@ -494,21 +494,19 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
 
 const getServices = (state: RootState): Services | undefined => {
   const services = selectServices(state);
-  if (
-    services.enabled.length === 0 &&
-    services.masked.length === 0 &&
-    services.disabled.length === 0 &&
-    !selectFirstBootScript(state)
-  ) {
-    return undefined;
-  }
-
   let enabledSvcs = services.enabled || [];
   const includeFBSvc: boolean =
     !!selectFirstBootScript(state) &&
     !services.enabled?.includes(FIRST_BOOT_SERVICE);
   if (includeFBSvc) {
     enabledSvcs = [...enabledSvcs, FIRST_BOOT_SERVICE];
+  }
+  if (
+    enabledSvcs.length === 0 &&
+    services.masked.length === 0 &&
+    services.disabled.length === 0
+  ) {
+    return undefined;
   }
 
   return {
