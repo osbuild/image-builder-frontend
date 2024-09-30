@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
@@ -16,7 +15,7 @@ import {
 import {
   clickNext,
   clickReviewAndFinish,
-  getNextButton,
+  //getNextButton,
 } from '../../wizardTestUtils';
 import {
   blueprintRequest,
@@ -115,38 +114,38 @@ describe('First Boot step', () => {
   //   expect(await getNextButton()).toBeEnabled();
   // });
 
-  //  describe('validate first boot request ', () => {
-  //    test('should validate first boot request', async () => {
-  //      await renderCreateMode();
-  //      await goToFirstBootStep();
-  //      await openCodeEditor();
-  //      await uploadFile();
-  //      await goToReviewStep();
-  //      // informational modal pops up in the first test only as it's tied
-  //      // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-  //      await openAndDismissSaveAndBuildModal();
-  //      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-  //
-  //      const expectedRequest = {
-  //        ...blueprintRequest,
-  //        customizations: {
-  //          files: firstBootData,
-  //          services: { enabled: [FIRST_BOOT_SERVICE] },
-  //        },
-  //      };
-  //
-  //      await waitFor(() => {
-  //        expect(receivedRequest).toEqual(expectedRequest);
-  //      });
-  //    });
-  //  });
-
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
     await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /First boot/ });
+  });
+});
+
+describe('First boot request generated correctly', () => {
+  test('with no OpenSCAP profile selected', async () => {
+    await renderCreateMode();
+    await goToFirstBootStep();
+    await openCodeEditor();
+    await uploadFile();
+    await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        files: firstBootData,
+        services: { enabled: [FIRST_BOOT_SERVICE] },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
   });
 });
 
