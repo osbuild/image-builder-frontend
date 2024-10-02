@@ -1,6 +1,10 @@
+import React from 'react';
+
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import CreateImageWizard from '../../../../../Components/CreateImageWizard/CreateImageWizard';
+import ShareImageModal from '../../../../../Components/ShareImageModal/ShareImageModal';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -13,11 +17,7 @@ import {
   expectedServicesCisL2,
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import {
-  clickNext,
-  clickReviewAndFinish,
-  goToOscapStep,
-} from '../../wizardTestUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../../../testUtils';
 import {
   enterBlueprintName,
   interceptBlueprintRequest,
@@ -25,6 +25,11 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+} from '../../wizardTestUtils';
+import {
+  clickNext,
+  clickReviewAndFinish,
+  goToOscapStep,
 } from '../../wizardTestUtils';
 
 const selectProfile = async () => {
@@ -82,6 +87,224 @@ const clickRevisitButton = async () => {
   );
   await waitFor(() => user.click(revisitButton));
 };
+
+const routes = [
+  {
+    path: 'insights/image-builder/*',
+    element: <div />,
+  },
+  {
+    path: 'insights/image-builder/imagewizard/:composeId?',
+    element: <CreateImageWizard />,
+  },
+  {
+    path: 'insights/image-builder/share/:composeId',
+    element: <ShareImageModal />,
+  },
+];
+
+const selectRhel8 = async () => {
+  const user = userEvent.setup();
+  await waitFor(async () =>
+    user.click(
+      screen.getAllByRole('button', {
+        name: /options menu/i,
+      })[0]
+    )
+  );
+  const rhel8 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 8/i,
+  });
+  await waitFor(async () => user.click(rhel8));
+};
+
+const clickFromImageOutputToOpenScap = async () => {
+  const user = userEvent.setup();
+  await clickNext();
+  await waitFor(async () =>
+    user.click(await screen.findByTestId('automatically-register-checkbox'))
+  );
+  await clickNext(); // skip registration
+};
+
+describe('Step Compliance', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const user = userEvent.setup();
+  const setup = async () => {
+    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+  };
+  test('create an image with None oscap profile', async () => {
+    await setup();
+
+    // select aws as upload destination
+    const uploadAws = await screen.findByTestId('upload-aws');
+    user.click(uploadAws);
+    await clickNext();
+
+    // aws step
+    const manualOption = await screen.findByRole('radio', {
+      name: /manually enter an account id\./i,
+    });
+    await waitFor(() => user.click(manualOption));
+    const awsAccountId = await screen.findByRole('textbox', {
+      name: 'aws account id',
+    });
+    await waitFor(() => user.type(awsAccountId, '012345678901'));
+
+    await clickNext();
+    // skip registration
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+
+    user.click(registrationCheckbox);
+    await clickNext();
+
+    // Now we should be in the Compliance step
+    await screen.findByRole('heading', { name: /OpenSCAP/i });
+
+    const selectProfile = await screen.findByRole('textbox', {
+      name: /select a profile/i,
+    });
+
+    user.click(selectProfile);
+    const noneProfile = await screen.findByText(/none/i);
+    user.click(noneProfile);
+
+    // check that the FSC does not contain a /tmp partition
+    await clickNext();
+    await screen.findByRole('heading', { name: /File system configuration/i });
+    expect(
+      screen.queryByRole('cell', {
+        name: /tmp/i,
+      })
+    ).not.toBeInTheDocument();
+
+    await clickNext(); // skip RepositorySnapshot
+    await clickNext(); // skip Repositories
+
+    // check that there are no Packages contained when selecting the "None" profile option
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: /Additional packages/i,
+    });
+    await screen.findByText(
+      /Search above to add additionalpackages to your image/
+    );
+  });
+
+  test('create an image with an oscap profile', async () => {
+    await setup();
+
+    // select aws as upload destination
+    const uploadAws = await screen.findByTestId('upload-aws');
+
+    user.click(uploadAws);
+    await clickNext();
+
+    // aws step
+    const manualOption = await screen.findByRole('radio', {
+      name: /manually enter an account id\./i,
+    });
+
+    await waitFor(() => user.click(manualOption));
+
+    await waitFor(async () =>
+      user.type(
+        await screen.findByRole('textbox', {
+          name: 'aws account id',
+        }),
+        '012345678901'
+      )
+    );
+    await clickNext();
+    // skip registration
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+
+    user.click(registrationCheckbox);
+    await clickNext();
+
+    // Now we should be at the OpenSCAP step
+    await screen.findByRole('heading', { name: /OpenSCAP/i });
+
+    const selectProfile = await screen.findByRole('textbox', {
+      name: /select a profile/i,
+    });
+    user.click(selectProfile);
+
+    const cis1Profile = await screen.findByText(
+      /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
+    );
+    user.click(cis1Profile);
+    await screen.findByText(/kernel arguments:/i);
+    await screen.findByText(/audit_backlog_limit=8192 audit=1/i);
+    await screen.findByText(/disabled services:/i);
+    await screen.findByText(
+      /rpcbind autofs nftables nfs-server emacs-service/i
+    );
+    await screen.findByText(/enabled services:/i);
+    await screen.findByText(/crond/i);
+
+    // check that the FSC contains a /tmp partition
+    await clickNext();
+    await screen.findByRole('heading', { name: /File system configuration/i });
+    await screen.findByText(/tmp/i);
+
+    await clickNext(); // skip RepositorySnapshots
+    await clickNext(); // skip Repositories
+
+    // check that the Packages contains correct packages
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: /Additional packages/i,
+    });
+    const selected = await screen.findByText(/Selected/);
+    user.click(selected);
+    await screen.findByText(/aide/i);
+    await screen.findByText(/neovim/i);
+  });
+
+  test('OpenSCAP dropdown is disabled for WSL targets only', async () => {
+    await setup();
+    await selectRhel8();
+    const wslCheckbox = await screen.findByTestId('checkbox-wsl');
+    user.click(wslCheckbox);
+    await clickFromImageOutputToOpenScap();
+    await screen.findByText(
+      /OpenSCAP profiles are not compatible with WSL images/i
+    );
+    expect(
+      await screen.findByRole('textbox', { name: /select a profile/i })
+    ).toBeDisabled();
+  });
+
+  test('Alert displayed and OpenSCAP dropdown enabled when targets include WSL', async () => {
+    await setup();
+    await selectRhel8();
+    const imageInstallerCheckbox = await screen.findByTestId(
+      'checkbox-image-installer'
+    );
+
+    user.click(imageInstallerCheckbox);
+    const wslCheckbox = await screen.findByTestId('checkbox-wsl');
+
+    user.click(wslCheckbox);
+    await clickFromImageOutputToOpenScap();
+    await screen.findByText(
+      /OpenSCAP profiles are not compatible with WSL images/i
+    );
+    await waitFor(() => {
+      expect(
+        screen.getByRole('textbox', { name: /select a profile/i })
+      ).toBeEnabled();
+    });
+  });
+});
 
 describe('Step Compliance', () => {
   beforeEach(() => {
