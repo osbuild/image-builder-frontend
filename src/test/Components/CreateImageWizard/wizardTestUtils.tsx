@@ -87,12 +87,14 @@ export const renderEditMode = async (id: string) => {
   await renderCustomRoutesWithReduxRouter(`imagewizard/${id}`, {}, routes);
 };
 
-export const goToRegistrationStep = async () => {
+export const selectGuestImageTarget = async () => {
   const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByRole('checkbox', {
-    name: /virtualization guest image checkbox/i,
-  });
+  const guestImageCheckBox = await screen.findByTestId('checkbox-guest-image');
   await waitFor(() => user.click(guestImageCheckBox));
+};
+
+export const goToRegistrationStep = async () => {
+  await selectGuestImageTarget();
   await clickNext();
 };
 
@@ -108,11 +110,6 @@ export const clickRegisterLater = async () => {
 };
 
 export const goToOscapStep = async () => {
-  const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByRole('checkbox', {
-    name: /virtualization guest image checkbox/i,
-  });
-  await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP

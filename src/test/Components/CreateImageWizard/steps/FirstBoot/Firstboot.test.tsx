@@ -16,6 +16,7 @@ import {
   clickNext,
   clickReviewAndFinish,
   goToOscapStep,
+  selectGuestImageTarget,
   //getNextButton,
 } from '../../wizardTestUtils';
 import {
@@ -170,6 +171,7 @@ describe('First boot request generated correctly', () => {
 
   test('with an OpenSCAP profile', async () => {
     await renderCreateMode();
+    await selectGuestImageTarget();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
     await goFromOscapToFirstBoot();
