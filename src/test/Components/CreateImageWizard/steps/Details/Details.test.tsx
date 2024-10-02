@@ -50,7 +50,7 @@ const clickRevisitButton = async () => {
   await waitFor(() => user.click(revisitButton));
 };
 
-describe('validates name', () => {
+describe('Step Details', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
   });
@@ -97,7 +97,7 @@ describe('validates name', () => {
   });
 });
 
-describe('registration request generated correctly', () => {
+describe('Details request generated correctly', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
   });
