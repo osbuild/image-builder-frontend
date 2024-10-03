@@ -224,7 +224,7 @@ const TargetEnvironment = () => {
                       <Button
                         className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
                         variant="plain"
-                        aria-label="About OpenSCAP"
+                        aria-label="About OVA file"
                         isInline
                       >
                         <HelpIcon />
@@ -270,7 +270,7 @@ const TargetEnvironment = () => {
                     <Button
                       className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
                       variant="plain"
-                      aria-label="About OpenSCAP"
+                      aria-label="About VMDK file"
                       isInline
                     >
                       <HelpIcon />
