@@ -121,6 +121,12 @@ const selectGuestImageTarget = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
 };
 
+const selectVMwareTarget = async () => {
+  const user = userEvent.setup();
+  const vmwareImageCheckBox = await screen.findByTestId('checkbox-vmware');
+  await waitFor(() => user.click(vmwareImageCheckBox));
+};
+
 const goToReviewStep = async () => {
   await clickNext();
   await clickRegisterLater();
@@ -253,6 +259,43 @@ describe('Step Image output', () => {
     await screen.findByText(
       'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
     );
+  });
+
+  test('VMware checkbox select and unselect works', async () => {
+    await renderCreateMode();
+    await selectVMwareTarget();
+
+    let vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
+    let ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
+    let vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+
+    expect(await screen.findByTestId('checkbox-vmware')).toBeChecked();
+    expect(ovaFileRadio).toBeChecked();
+    expect(vmdkFileRadio).not.toBeChecked();
+
+    // switch to VMDK
+    user.click(vmdkFileRadio);
+
+    // refresh values
+    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
+    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
+    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+
+    expect(vmwareCheckbox).toBeChecked();
+    expect(ovaFileRadio).not.toBeChecked();
+    expect(vmdkFileRadio).toBeChecked();
+
+    // unselect VMware
+    user.click(vmwareCheckbox);
+
+    // refresh values
+    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
+    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
+    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+
+    expect(vmwareCheckbox).not.toBeChecked();
+    expect(ovaFileRadio).not.toBeChecked();
+    expect(vmdkFileRadio).not.toBeChecked();
   });
 
   test('revisit step button on Review works', async () => {
