@@ -808,10 +808,12 @@ const Packages = () => {
     selection: string
   ) => {
     setSearchTerm(selection);
+    setToggleSourceRepos(RepoToggle.INCLUDED);
   };
 
   const handleClear = async () => {
     setSearchTerm('');
+    setToggleSourceRepos(RepoToggle.INCLUDED);
   };
 
   const handleSelect = (
