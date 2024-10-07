@@ -1309,6 +1309,7 @@ const Packages = () => {
                           aria-label="About included repositories"
                           component="span"
                           className="pf-u-p-0"
+                          size="sm"
                           isInline
                         >
                           <HelpIcon />
@@ -1339,6 +1340,7 @@ const Packages = () => {
                           aria-label="About other repositories"
                           component="span"
                           className="pf-u-p-0"
+                          size="sm"
                           isInline
                         >
                           <HelpIcon />
