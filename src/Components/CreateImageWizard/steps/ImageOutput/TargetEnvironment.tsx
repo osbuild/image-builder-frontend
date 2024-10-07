@@ -216,6 +216,7 @@ const TargetEnvironment = () => {
                       name="vsphere-radio"
                       aria-label="VMware vSphere radio button OVA"
                       id="vsphere-radio-ova"
+                      data-testid="radio-vsphere-ova"
                       label={
                         <>
                           Open virtualization format (.ova)
@@ -264,6 +265,7 @@ const TargetEnvironment = () => {
                     name="vsphere-radio"
                     aria-label="VMware vSphere radio button VMDK"
                     id="vsphere-radio-vmdk"
+                    data-testid="radio-vsphere-vmdk"
                     label={
                       <>
                         Virtual disk (.vmdk)
