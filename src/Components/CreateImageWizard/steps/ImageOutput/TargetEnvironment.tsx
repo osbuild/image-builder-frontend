@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -44,7 +44,8 @@ const TargetEnvironment = () => {
   // TODO: Handle isFetching state (add skeletons)
   // TODO: Handle isError state (very unlikely...)
 
-  const [hasVSphere, setHasVSphere] = useState(false);
+  const hasVsphere =
+    environments.includes('vsphere') || environments.includes('vsphere-ova');
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
@@ -191,13 +192,18 @@ const TargetEnvironment = () => {
           >
             <Checkbox
               label="VMware vSphere"
-              isChecked={
-                environments.includes('vsphere') ||
-                environments.includes('vsphere-ova')
-              }
+              isChecked={hasVsphere}
               onChange={() => {
-                setHasVSphere(!hasVSphere);
-                handleToggleEnvironment('vsphere-ova');
+                if (!hasVsphere) {
+                  handleToggleEnvironment('vsphere-ova');
+                } else {
+                  if (environments.includes('vsphere')) {
+                    handleToggleEnvironment('vsphere');
+                  }
+                  if (environments.includes('vsphere-ova')) {
+                    handleToggleEnvironment('vsphere-ova');
+                  }
+                }
               }}
               aria-label="VMware checkbox"
               id="checkbox-vmware"
