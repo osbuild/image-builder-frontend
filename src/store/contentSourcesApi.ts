@@ -116,7 +116,7 @@ export type ListRepositoriesApiArg = {
   uuid?: string;
   /** Sort the response data based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
-  /** A comma separated list of statuses to control api response. Statuses can include `pending`, `valid`, `invalid`, `unavailable`. */
+  /** A comma separated list of statuses to control api response. Statuses can include `Pending`, `Valid`, `Invalid`, `Unavailable`. */
   status?: string;
   /** A comma separated list of origins to filter api response. Origins can include `red_hat` and `external`. */
   origin?: string;
@@ -209,8 +209,12 @@ export type ApiSnapshotResponse = {
   removed_counts?: {
     [key: string]: number;
   };
+  /** Name of repository the snapshot belongs to */
+  repository_name?: string;
   /** Path to repository snapshot contents */
   repository_path?: string;
+  /** UUID of the repository the snapshot belongs to */
+  repository_uuid?: string;
   /** URL to the snapshot's content */
   url?: string;
   uuid?: string;
@@ -218,16 +222,22 @@ export type ApiSnapshotResponse = {
 export type ApiTaskInfoResponse = {
   /** Timestamp of task creation */
   created_at?: string;
+  /** UUIDs of parent tasks */
+  dependencies?: string[];
+  /** UUIDs of child tasks */
+  dependents?: string[];
   /** Timestamp task ended running at */
   ended_at?: string;
   /** Error thrown while running task */
   error?: string;
+  /** Name of the associated repository or template */
+  object_name?: string;
+  /** Type of the associated object, either repository or template */
+  object_type?: string;
+  /** UUID of the associated repository or template */
+  object_uuid?: string;
   /** Organization ID of the owner */
   org_id?: string;
-  /** Name of the associated repository */
-  repository_name?: string;
-  /** UUID of the associated repository */
-  repository_uuid?: string;
   /** Status of task (running, failed, completed, canceled, pending) */
   status?: string;
   /** Type of task */
@@ -376,6 +386,26 @@ export type ApiRepositoryRequest = {
   module_hotfixes?: boolean;
   /** Name of the remote yum repository */
   name?: string;
+  /** Enable snapshotting and hosting of this repository */
+  snapshot?: boolean;
+  /** URL of the remote yum repository */
+  url?: string;
+};
+export type ApiRepositoryRequestRead = {
+  /** Architecture to restrict client usage to */
+  distribution_arch?: string;
+  /** Versions to restrict client usage to */
+  distribution_versions?: string[];
+  /** GPG key for repository */
+  gpg_key?: string;
+  /** Verify packages */
+  metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
+  /** Name of the remote yum repository */
+  name?: string;
+  /** Origin of the repository */
+  origin?: string;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean;
   /** URL of the remote yum repository */
