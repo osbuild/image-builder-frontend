@@ -117,6 +117,7 @@ export const expectedCustomRepositories: CustomRepository[] = [
 export const SCRIPT = `#!/bin/bash 
 systemctl enable cockpit.socket`;
 export const BASE64_SCRIPT = btoa(SCRIPT);
+export const SCRIPT_WITHOUT_SHEBANG = `echo "Hello, world!"`;
 
 export const firstBootData: File[] = [
   {
