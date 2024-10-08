@@ -1,28 +1,7 @@
-import React from 'react';
-
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { clickNext } from './wizardTestUtils';
-
-import CreateImageWizard from '../../../Components/CreateImageWizard/CreateImageWizard';
-import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
-import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
-
-const routes = [
-  {
-    path: 'insights/image-builder/*',
-    element: <div />,
-  },
-  {
-    path: 'insights/image-builder/imagewizard/:composeId?',
-    element: <CreateImageWizard />,
-  },
-  {
-    path: 'insights/image-builder/share /:composeId',
-    element: <ShareImageModal />,
-  },
-];
+import { clickNext, renderCreateMode } from './wizardTestUtils';
 
 const getSourceDropdown = async () => {
   const sourceDropdown = await screen.findByRole('textbox', {
@@ -33,22 +12,48 @@ const getSourceDropdown = async () => {
   return sourceDropdown;
 };
 
+const selectAllEnvironments = async () => {
+  const user = userEvent.setup();
+
+  await waitFor(() => user.click(screen.getByTestId('upload-aws')));
+  await waitFor(() => user.click(screen.getByTestId('upload-google')));
+  await waitFor(() => user.click(screen.getByTestId('upload-azure')));
+  await waitFor(() => user.click(screen.getByTestId('checkbox-guest-image')));
+};
+
+const testTile = async (tile: HTMLElement) => {
+  const user = userEvent.setup();
+
+  tile.focus();
+  await waitFor(() => user.keyboard(' '));
+  expect(tile).toHaveClass('pf-m-selected');
+  await waitFor(() => user.keyboard(' '));
+  expect(tile).not.toHaveClass('pf-m-selected');
+};
+
 describe('Create Image Wizard', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test('renders component', async () => {
-    renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
+    await renderCreateMode();
+
     // check heading
     await screen.findByRole('heading', { name: /Images/ });
 
+    // check navigation
     await screen.findByRole('button', { name: 'Image output' });
+    await screen.findByRole('button', { name: 'Optional steps' });
     await screen.findByRole('button', { name: 'Register' });
+    await screen.findByRole('button', { name: 'OpenSCAP' });
     await screen.findByRole('button', { name: 'File system configuration' });
     await screen.findByRole('button', { name: 'Repository snapshot' });
     await screen.findByRole('button', { name: 'Custom repositories' });
     await screen.findByRole('button', { name: 'Additional packages' });
+    await screen.findByRole('button', {
+      name: 'First boot script configuration',
+    });
     await screen.findByRole('button', { name: 'Details' });
     await screen.findByRole('button', { name: 'Review' });
   });
@@ -146,32 +151,9 @@ describe('Keyboard accessibility', () => {
   });
 
   const user = userEvent.setup();
-  const setUp = async () => {
-    await renderCustomRoutesWithReduxRouter('imagewizard', {}, routes);
-    await clickNext();
-  };
-
-  const selectAllEnvironments = async () => {
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
-    await waitFor(async () =>
-      user.click(await screen.findByTestId('upload-google'))
-    );
-    await waitFor(async () =>
-      user.click(await screen.findByTestId('upload-azure'))
-    );
-    await waitFor(async () =>
-      user.click(
-        await screen.findByRole('checkbox', {
-          name: /virtualization guest image checkbox/i,
-        })
-      )
-    );
-  };
 
   test('autofocus on each step first input element', async () => {
-    await setUp();
+    await renderCreateMode();
 
     // Image output
     await selectAllEnvironments();
@@ -257,29 +239,19 @@ describe('Keyboard accessibility', () => {
     await clickNext();
     // TODO: Focus on textbox on Details step
     await clickNext();
-  }, 20000);
+  });
 
   test('pressing Enter does not advance the wizard', async () => {
-    await setUp();
-    await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
-    );
-    await waitFor(() => user.keyboard('{enter}'));
+    await renderCreateMode();
+    user.click(await screen.findByTestId('upload-aws'));
+    user.keyboard('{enter}');
     await screen.findByRole('heading', {
       name: /image output/i,
     });
   });
 
   test('target environment tiles are keyboard selectable', async () => {
-    const testTile = async (tile: HTMLElement) => {
-      tile.focus();
-      await waitFor(() => user.keyboard(' '));
-      expect(tile).toHaveClass('pf-m-selected');
-      await waitFor(() => user.keyboard(' '));
-      expect(tile).not.toHaveClass('pf-m-selected');
-    };
-
-    await setUp();
+    await renderCreateMode();
 
     await testTile(await screen.findByTestId('upload-aws'));
     await testTile(await screen.findByTestId('upload-google'));
