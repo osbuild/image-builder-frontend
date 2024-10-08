@@ -9,6 +9,7 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   SCRIPT,
+  SCRIPT_WITHOUT_SHEBANG,
   firstBootCreateBlueprintRequest,
   firstBootData,
 } from '../../../../fixtures/editMode';
@@ -17,7 +18,7 @@ import {
   clickReviewAndFinish,
   goToOscapStep,
   selectGuestImageTarget,
-  //getNextButton,
+  getNextButton,
 } from '../../wizardTestUtils';
 import {
   blueprintRequest,
@@ -73,14 +74,14 @@ const openCodeEditor = async (): Promise<void> => {
   await waitFor(() => user.click(startBtn));
 };
 
-const uploadFile = async (): Promise<void> => {
+const uploadFile = async (scriptName: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
 
   if (fileInput) {
-    const file = new File([SCRIPT], 'script.sh', { type: 'text/x-sh' });
+    const file = new File([scriptName], 'script.sh', { type: 'text/x-sh' });
     await waitFor(() => user.upload(fileInput, file));
   }
 };
@@ -120,20 +121,17 @@ describe('First Boot step', () => {
     });
   });
 
-  // test('should validate shebang', async () => {
-  //   await renderCreateMode();
-  //   await goToFirstBootStep();
-  //   await openCodeEditor();
-  //   const editor = await screen.findByRole('textbox');
-  //   await userEvent.type(editor, 'echo "Hello, world!"');
-  //   expect(await screen.findByText('Missing shebang')).toBeInTheDocument();
-  //   expect(await getNextButton()).toBeDisabled();
-
-  //   await userEvent.clear(editor);
-  //   await userEvent.type(editor, '#!/bin/bash');
-  //   expect(screen.queryByText('Missing shebang')).not.toBeInTheDocument();
-  //   expect(await getNextButton()).toBeEnabled();
-  // });
+  test('should validate shebang', async () => {
+    await renderCreateMode();
+    await goToFirstBootStep();
+    await openCodeEditor();
+    await uploadFile(SCRIPT_WITHOUT_SHEBANG);
+    expect(await screen.findByText(/Missing shebang/i)).toBeInTheDocument();
+    expect(await getNextButton()).toBeDisabled();
+    await uploadFile(SCRIPT);
+    expect(screen.queryByText(/Missing shebang/i)).not.toBeInTheDocument();
+    expect(await getNextButton()).toBeEnabled();
+  });
 
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
@@ -149,7 +147,7 @@ describe('First boot request generated correctly', () => {
     await renderCreateMode();
     await goToFirstBootStep();
     await openCodeEditor();
-    await uploadFile();
+    await uploadFile(SCRIPT);
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -176,7 +174,7 @@ describe('First boot request generated correctly', () => {
     await selectSimplifiedOscapProfile();
     await goFromOscapToFirstBoot();
     await openCodeEditor();
-    await uploadFile();
+    await uploadFile(SCRIPT);
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
