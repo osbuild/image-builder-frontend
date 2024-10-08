@@ -71,6 +71,13 @@ const TargetEnvironment = () => {
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent, env: ImageTypes) => {
+    if (e.key === ' ') {
+      e.preventDefault();
+      handleToggleEnvironment(env);
+    }
+  };
+
   return (
     <FormGroup
       isRequired={true}
@@ -97,6 +104,7 @@ const TargetEnvironment = () => {
               onClick={() => {
                 handleToggleEnvironment('aws');
               }}
+              onKeyDown={(e) => handleKeyDown(e, 'aws')}
               onMouseEnter={() => prefetchSources({ provider: 'aws' })}
               isSelected={environments.includes('aws')}
               isStacked
@@ -120,6 +128,7 @@ const TargetEnvironment = () => {
               onClick={() => {
                 handleToggleEnvironment('gcp');
               }}
+              onKeyDown={(e) => handleKeyDown(e, 'gcp')}
               isSelected={environments.includes('gcp')}
               onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
               isStacked
@@ -143,6 +152,7 @@ const TargetEnvironment = () => {
               onClick={() => {
                 handleToggleEnvironment('azure');
               }}
+              onKeyDown={(e) => handleKeyDown(e, 'azure')}
               onMouseEnter={() => prefetchSources({ provider: 'azure' })}
               isSelected={environments.includes('azure')}
               isStacked
@@ -164,6 +174,7 @@ const TargetEnvironment = () => {
               onClick={() => {
                 handleToggleEnvironment('oci');
               }}
+              onKeyDown={(e) => handleKeyDown(e, 'oci')}
               isSelected={environments.includes('oci')}
               isStacked
               isDisplayLarge
