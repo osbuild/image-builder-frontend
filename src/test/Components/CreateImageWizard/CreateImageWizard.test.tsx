@@ -270,21 +270,19 @@ describe('Keyboard accessibility', () => {
     });
   });
 
-  //  test('target environment tiles are keyboard selectable', async () => {
-  //    const testTile = async (tile: HTMLElement) => {
-  //      tile.focus();
-  //      await user.keyboard('{space}');
-  //      expect(tile).toHaveClass('pf-m-selected');
-  //      await user.keyboard('{space}');
-  //      expect(tile).not.toHaveClass('pf-m-selected');
-  //    };
-  //
-  //    await setUp();
-  //    await clickNext();
-  //
-  //    await waitFor(() => screen.findByTestId('upload-aws'));
-  //    testTile(await screen.findByTestId('upload-aws'));
-  //    testTile(await screen.findByTestId('upload-google'));
-  //    testTile(await screen.findByTestId('upload-azure'));
-  //  });
+  test('target environment tiles are keyboard selectable', async () => {
+    const testTile = async (tile: HTMLElement) => {
+      tile.focus();
+      await waitFor(() => user.keyboard(' '));
+      expect(tile).toHaveClass('pf-m-selected');
+      await waitFor(() => user.keyboard(' '));
+      expect(tile).not.toHaveClass('pf-m-selected');
+    };
+
+    await setUp();
+
+    await testTile(await screen.findByTestId('upload-aws'));
+    await testTile(await screen.findByTestId('upload-google'));
+    await testTile(await screen.findByTestId('upload-azure'));
+  });
 });
