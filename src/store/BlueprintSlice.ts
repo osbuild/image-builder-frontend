@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import { RootState } from '.';
+import type { RootState } from '.';
 
 export type versionFilterType = 'latest' | 'all';
 
