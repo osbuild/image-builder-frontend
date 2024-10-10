@@ -1,35 +1,35 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import { ApiRepositoryResponseRead } from './contentSourcesApi';
-import {
+import type { ApiRepositoryResponseRead } from './contentSourcesApi';
+import type {
   CustomRepository,
   Distributions,
   ImageRequest,
   ImageTypes,
   Repository,
 } from './imageBuilderApi';
-import { ActivationKeys } from './rhsmApi';
+import type { ActivationKeys } from './rhsmApi';
 
-import { FileSystemConfigurationType } from '../Components/CreateImageWizard/steps/FileSystem';
-import {
+import type { FileSystemConfigurationType } from '../Components/CreateImageWizard/steps/FileSystem';
+import type {
   Partition,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/FileSystemConfiguration';
-import {
+import type {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
 } from '../Components/CreateImageWizard/steps/Packages/Packages';
-import { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
-import { AzureShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Azure';
-import {
+import type { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
+import type { AzureShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Azure';
+import type {
   GcpAccountType,
   GcpShareMethod,
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
-import { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
+import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { RHEL_9, X86_64 } from '../constants';
 
-import { RootState } from '.';
+import type { RootState } from '.';
 
 type WizardModeOptions = 'create' | 'edit';
 

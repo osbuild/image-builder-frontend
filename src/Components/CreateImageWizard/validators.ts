@@ -1,4 +1,4 @@
-import { Partition } from './steps/FileSystem/FileSystemConfiguration';
+import type { Partition } from './steps/FileSystem/FileSystemConfiguration';
 
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (

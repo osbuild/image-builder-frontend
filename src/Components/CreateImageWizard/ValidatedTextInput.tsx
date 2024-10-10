@@ -7,7 +7,7 @@ import {
   TextInputProps,
 } from '@patternfly/react-core';
 
-import { StepValidation } from './utilities/useValidation';
+import type { StepValidation } from './utilities/useValidation';
 
 interface ValidatedTextInputPropTypes extends TextInputProps {
   dataTestId?: string | undefined;
