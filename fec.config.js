@@ -50,8 +50,40 @@ if (process.env.MSW) {
   add_define('process.env.MSW', process.env.MSW);
 }
 
+if (process.env.IMAGE_BUILDER_API_BASEURL) {
+  add_define(
+    'process.env.IMAGE_BUILDER_API_BASEURL',
+    process.env.IMAGE_BUILDER_API_BASEURL
+  );
+}
+
 if (process.env.NODE_ENV) {
   add_define('process.env.NODE_ENV', process.env.NODE_ENV);
+}
+
+if (process.env.FAKE_AUTH) {
+  add_define('process.env.FAKE_AUTH', process.env.FAKE_AUTH);
+}
+
+const devServerConfig = {};
+let customProxy = [];
+
+if (process.env.IMAGE_BUILDER_API_BASEURL) {
+  customProxy = [
+    ...customProxy,
+    {
+      context: ['/api/image-builder/v1'],
+      target: process.env.IMAGE_BUILDER_API_BASEURL,
+      secure: false,
+    },
+  ];
+}
+
+if (process.env.MSW) {
+  devServerConfig.headers = {
+    ...devServerConfig.headers,
+    'Service-Worker-Allowed': '/',
+  };
 }
 
 module.exports = {
@@ -69,9 +101,7 @@ module.exports = {
   code will need to be modified if using MSW in prod-beta or prod-stable so that
   those headers are not overwritten.
   */
-  devServer: process.env.MSW && {
-    headers: { 'Service-Worker-Allowed': '/' },
-  },
+  devServer: { ...devServerConfig },
   appUrl: '/insights/image-builder',
   useProxy: true,
   useAgent: true,
@@ -106,4 +136,5 @@ module.exports = {
     shared: [{ 'react-router-dom': { singleton: true, version: '*' } }],
     exclude: ['react-router-dom'],
   },
+  customProxy: customProxy,
 };
