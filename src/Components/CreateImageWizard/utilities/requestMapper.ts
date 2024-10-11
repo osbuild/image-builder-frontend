@@ -78,7 +78,7 @@ import {
   getConversionFactor,
   Partition,
   Units,
-} from '../steps/FileSystem/FileSystemConfiguration';
+} from '../steps/FileSystem/FileSystemTable';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
   convertSchemaToIBCustomRepo,

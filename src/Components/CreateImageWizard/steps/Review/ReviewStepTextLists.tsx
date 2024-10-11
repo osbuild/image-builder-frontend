@@ -66,10 +66,10 @@ import {
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
-  Partition,
   getConversionFactor,
-} from '../FileSystem/FileSystemConfiguration';
-import { MinimumSizePopover } from '../FileSystem/FileSystemTable';
+  MinimumSizePopover,
+  Partition,
+} from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/OscapProfileInformation';
 import { PopoverActivation } from '../Registration/ActivationKeysList';
