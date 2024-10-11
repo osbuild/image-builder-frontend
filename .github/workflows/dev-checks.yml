@@ -19,6 +19,8 @@ jobs:
       run: npm ci
     - name: Check for manual changes to API
       run: npm run api:generate && [ -z "$(git status --porcelain=v1 2>/dev/null)" ] && echo "✓ No manual API changes." || echo "✗ API manually changed, please refer to the README for the procedure to follow for programmatically generated API endpoints." && [ -z "$(git status --porcelain=v1 2>/dev/null)" ]
+    - name: Check for circular dependencies
+      run: npm run circular
     - name: Run build
       run: npm run build
     - name: Run lint check
