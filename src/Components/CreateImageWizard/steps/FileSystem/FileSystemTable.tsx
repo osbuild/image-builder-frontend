@@ -35,7 +35,7 @@ import {
 import { useFilesystemValidation } from '../../utilities/useValidation';
 import { HookValidatedInput } from '../../ValidatedTextInput';
 
-import { FileSystemContext } from '.';
+export const FileSystemContext = React.createContext<boolean>(true);
 
 export const MinimumSizePopover = () => {
   return (

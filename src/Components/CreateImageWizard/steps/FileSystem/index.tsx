@@ -11,8 +11,6 @@ import { selectFileSystemConfigurationType } from '../../../../store/wizardSlice
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 export type FileSystemConfigurationType = 'automatic' | 'manual';
 
-export const FileSystemContext = React.createContext<boolean>(true);
-
 const FileSystemStep = () => {
   const fileSystemConfigurationType = useAppSelector(
     selectFileSystemConfigurationType
