@@ -49,7 +49,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../utilities/parseSizeUnit';
-import { Partition, Units } from '../FileSystem/FileSystemConfiguration';
+import { Partition, Units } from '../FileSystem/FileSystemTable';
 
 const OpenSCAPFGLabel = () => {
   return (
