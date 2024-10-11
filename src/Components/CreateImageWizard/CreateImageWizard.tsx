@@ -14,7 +14,8 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
-import FileSystemStep, { FileSystemContext } from './steps/FileSystem';
+import FileSystemStep from './steps/FileSystem';
+import { FileSystemContext } from './steps/FileSystem/FileSystemTable';
 import FirstBootStep from './steps/FirstBoot';
 import ImageOutputStep from './steps/ImageOutput';
 import OscapStep from './steps/Oscap';
