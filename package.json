@@ -99,6 +99,7 @@
     "test:watch": "TZ=UTC vitest",
     "test:coverage": "TZ=UTC vitest run --coverage",
     "build": "fec build",
+    "build:cockpit": "webpack --config cockpit/webpack.config.ts",
     "api": "npm-run-all api:pull api:generate",
     "api:generate": "bash api/codegen.sh",
     "api:pull": "bash api/pull.sh",
