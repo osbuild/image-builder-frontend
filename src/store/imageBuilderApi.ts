@@ -731,7 +731,7 @@ export type BlueprintExportResponse = {
   description: string;
   distribution: Distributions;
   customizations: Customizations;
-  metadata: BlueprintMetadata;
+  metadata?: BlueprintMetadata;
 };
 export type ComposeResponse = {
   id: string;
