@@ -127,7 +127,7 @@ export const selectCustomRepo = async () => {
 };
 
 export const enterBlueprintName = async (name: string = 'Red Velvet') => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   const blueprintName = await screen.findByRole('textbox', {
     name: /blueprint name/i,
   });

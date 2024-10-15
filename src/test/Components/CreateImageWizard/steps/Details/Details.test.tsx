@@ -27,14 +27,17 @@ const goToDetailsStep = async () => {
   await clickNext();
 };
 
-const enterBlueprintDescription = async () => {
-  const user = userEvent.setup();
+const enterBlueprintDescription = async (
+  description: string = 'Now with extra carmine!'
+) => {
+  const user = userEvent.setup({ delay: null });
   const blueprintDescription = await screen.findByRole('textbox', {
     name: /blueprint description/i,
   });
-  await waitFor(() =>
-    user.type(blueprintDescription, 'Now with extra carmine!')
-  );
+
+  await waitFor(() => user.clear(blueprintDescription));
+  await waitFor(() => expect(blueprintDescription).toHaveValue(''));
+  await waitFor(() => user.type(blueprintDescription, description));
 };
 
 const goToReviewStep = async () => {
@@ -84,6 +87,42 @@ describe('Step Details', () => {
     await enterBlueprintName('Lemon Pie');
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('name invalid for more than 100 chars', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+
+    // enter invalid image name
+    const invalidName = 'a'.repeat(101);
+    await enterBlueprintName(invalidName);
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeDisabled();
+
+    // enter valid image name
+    await enterBlueprintName();
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeEnabled();
+  });
+
+  test('description invalid for more than 250', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToDetailsStep();
+
+    // enter invalid image description
+    const invalidDescription = 'a'.repeat(251);
+    await enterBlueprintDescription(invalidDescription);
+    expect(await getNextButton()).toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeDisabled();
+
+    // enter valid image description
+    await enterBlueprintDescription();
+    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
+    expect(await getNextButton()).toBeEnabled();
   });
 
   test('revisit step button on Review works', async () => {
