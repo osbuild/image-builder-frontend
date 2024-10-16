@@ -13,6 +13,7 @@ import {
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
+  RHEL_9_BETA,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../constants';
@@ -24,6 +25,7 @@ import {
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../Utilities/time';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
@@ -33,6 +35,7 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
+  const { isBeta } = useGetEnvironment();
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
     dispatch(changeDistribution(selection));
@@ -44,6 +47,10 @@ const ReleaseSelect = () => {
   };
 
   const setDescription = (key: Distributions) => {
+    if (key === RHEL_9_BETA) {
+      return '';
+    }
+
     let fullSupportEnd = '';
     let maintenanceSupportEnd = '';
 
@@ -75,6 +82,11 @@ const ReleaseSelect = () => {
     );
 
     filteredRhel.forEach((value, key) => {
+      // Only show RHEL 9 beta in preview
+      if (key === RHEL_9_BETA && !isBeta()) {
+        return;
+      }
+
       options.push(
         <SelectOption
           key={value}

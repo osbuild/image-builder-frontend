@@ -18,6 +18,7 @@ const Release = ({ release }: ReleaseProps) => {
     'rhel-89': 'RHEL 8.9',
     'rhel-8.10': 'RHEL 8.10',
     'rhel-9': 'RHEL 9',
+    'rhel-9-beta': 'RHEL 9 Beta',
     'rhel-9-nightly': 'RHEL 9',
     'rhel-90': 'RHEL 9.0',
     'rhel-91': 'RHEL 9.1',
