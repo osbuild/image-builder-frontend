@@ -203,7 +203,7 @@ describe('Step Image output', () => {
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
     });
-    await screen.findByRole('option', {
+    await screen.findAllByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('button', {
@@ -223,7 +223,7 @@ describe('Step Image output', () => {
     await screen.findByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 8/,
     });
-    await screen.findByRole('option', {
+    await screen.findAllByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
     await screen.findByRole('option', {
@@ -451,12 +451,16 @@ describe('Set release using query parameter', () => {
 
   test('rhel 9 by default (no query parameter)', async () => {
     await renderCreateMode();
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9', {
+      exact: true,
+    });
   });
 
   test('rhel 9 by default (invalid query parameter)', async () => {
     await renderCreateMode({ release: 'rhel9001' });
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9', {
+      exact: true,
+    });
   });
 
   test('rhel 8 (query parameter provided)', async () => {
