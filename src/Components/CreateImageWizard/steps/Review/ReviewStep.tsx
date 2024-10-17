@@ -44,6 +44,7 @@ import {
   selectImageTypes,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const { goToStepById } = useWizardContext();
