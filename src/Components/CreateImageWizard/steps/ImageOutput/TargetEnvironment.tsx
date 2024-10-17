@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -44,7 +44,8 @@ const TargetEnvironment = () => {
   // TODO: Handle isFetching state (add skeletons)
   // TODO: Handle isError state (very unlikely...)
 
-  const [hasVSphere, setHasVSphere] = useState(false);
+  const hasVsphere =
+    environments.includes('vsphere') || environments.includes('vsphere-ova');
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
@@ -191,13 +192,18 @@ const TargetEnvironment = () => {
           >
             <Checkbox
               label="VMware vSphere"
-              isChecked={
-                environments.includes('vsphere') ||
-                environments.includes('vsphere-ova')
-              }
+              isChecked={hasVsphere}
               onChange={() => {
-                setHasVSphere(!hasVSphere);
-                handleToggleEnvironment('vsphere-ova');
+                if (!hasVsphere) {
+                  handleToggleEnvironment('vsphere-ova');
+                } else {
+                  if (environments.includes('vsphere')) {
+                    handleToggleEnvironment('vsphere');
+                  }
+                  if (environments.includes('vsphere-ova')) {
+                    handleToggleEnvironment('vsphere-ova');
+                  }
+                }
               }}
               aria-label="VMware checkbox"
               id="checkbox-vmware"
@@ -214,6 +220,7 @@ const TargetEnvironment = () => {
                 name="vsphere-radio"
                 aria-label="VMware vSphere radio button OVA"
                 id="vsphere-radio-ova"
+                data-testid="radio-vsphere-ova"
                 label={
                   <>
                     Open virtualization format (.ova)
@@ -261,6 +268,7 @@ const TargetEnvironment = () => {
               name="vsphere-radio"
               aria-label="VMware vSphere radio button VMDK"
               id="vsphere-radio-vmdk"
+              data-testid="radio-vsphere-vmdk"
               label={
                 <>
                   Virtual disk (.vmdk)
