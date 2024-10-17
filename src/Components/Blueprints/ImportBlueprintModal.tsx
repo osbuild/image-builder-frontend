@@ -17,10 +17,11 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { useNavigate } from 'react-router-dom';
 
 import { useAppDispatch } from '../../store/hooks';
-import { BlueprintExportResponse } from '../../store/imageBuilderApi';
+import { BlueprintExportResponse, Container, Directory, Distributions, Fdo, Filesystem, FirewallCustomization, Ignition, Installer, Kernel, Locale, OpenScap, Services, Timezone } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
+import { mapOnPremToHosted } from './OnPremToHostedBlueprintMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -33,11 +34,11 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const onImportClose = () => {
     setShowImportModal(false);
     setFilename('');
-    setJsonContent('');
+    setFileContent('');
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
-  const [jsonContent, setJsonContent] = React.useState('');
+  const [fileContent, setFileContent] = React.useState('');
   const [importedBlueprint, setImportedBlueprint] =
     React.useState<wizardState>();
   const [isInvalidFormat, setIsInvalidFormat] = React.useState(false);
@@ -50,52 +51,63 @@ export const ImportBlueprintModal: React.FunctionComponent<
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
     file: File
   ) => {
+    setFileContent('');
     setFilename(file.name);
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
+  React.useEffect(() => {
+    if (filename && fileContent) {
+      try {
+        const isToml = filename.endsWith('.toml');
+        const isJson = filename.endsWith('.json');
+        if (isToml) {
+          var toml = require('toml');
+          const tomlBlueprint = toml.parse(fileContent);
+          const blueprintFromFile = mapOnPremToHosted(tomlBlueprint);
+          const importBlueprintState = mapExportRequestToState(
+            blueprintFromFile, []
+          );
+          setImportedBlueprint(importBlueprintState);
+        } else if (isJson) {
+          const blueprintFromFile = JSON.parse(fileContent);
+          const blueprintExportedResponse: BlueprintExportResponse = {
+            name: blueprintFromFile.name,
+            description: blueprintFromFile.description,
+            distribution: blueprintFromFile.distribution,
+            customizations: blueprintFromFile.customizations,
+            metadata: blueprintFromFile.metadata,
+          };
+          const importBlueprintState = mapExportRequestToState(
+            blueprintExportedResponse,
+            blueprintFromFile.image_requests || []
+          );
+          setImportedBlueprint(importBlueprintState);
+        }
+      } catch (error) {
+        setIsInvalidFormat(true);
+        dispatch(
+          addNotification({
+            variant: 'warning',
+            title: 'No blueprint was build',
+            description: error?.data?.error?.message,
+          })
+        );
+      }
+    }
+  }, [filename, fileContent]);
   const handleClear = () => {
     setFilename('');
-    setJsonContent('');
+    setFileContent('');
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
-  const handleTextChange = (
-    _: React.ChangeEvent<HTMLTextAreaElement>,
-    value: string
-  ) => {
-    setJsonContent(value);
-  };
   const handleDataChange = (_: DropEvent, value: string) => {
-    try {
-      const blueprintFromFile = JSON.parse(value);
-      const blueprintExportedResponse: BlueprintExportResponse = {
-        name: blueprintFromFile.name,
-        description: blueprintFromFile.description,
-        distribution: blueprintFromFile.distribution,
-        customizations: blueprintFromFile.customizations,
-        metadata: blueprintFromFile.metadata,
-      };
-      const importBlueprintState = mapExportRequestToState(
-        blueprintExportedResponse,
-        blueprintFromFile.image_requests || []
-      );
-      setImportedBlueprint(importBlueprintState);
-      setJsonContent(value);
-    } catch (error) {
-      setIsInvalidFormat(true);
-      dispatch(
-        addNotification({
-          variant: 'warning',
-          title: 'No blueprint was build',
-          description: error?.data?.error?.message,
-        })
-      );
-    }
+    setFileContent(value);
   };
   const handleFileRejected = () => {
     setIsRejected(true);
-    setJsonContent('');
+    setFileContent('');
     setFilename('');
   };
   const handleFileReadStarted = () => {
@@ -119,12 +131,11 @@ export const ImportBlueprintModal: React.FunctionComponent<
           <FileUpload
             id="import-blueprint-file-upload"
             type="text"
-            value={jsonContent}
+            value={fileContent}
             filename={filename}
             filenamePlaceholder="Drag and drop a file or upload one"
             onFileInputChange={handleFileInputChange}
             onDataChange={handleDataChange}
-            onTextChange={handleTextChange}
             onReadStarted={handleFileReadStarted}
             onReadFinished={handleFileReadFinished}
             onClearClick={handleClear}
@@ -132,7 +143,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
             isReadOnly={true}
             browseButtonText="Upload"
             dropzoneProps={{
-              accept: { 'text/json': ['.json'] },
+              accept: { 'text/json': ['.json'], 'text/plain': ['.toml'] },
               maxSize: 25000,
               onDropRejected: handleFileRejected,
             }}
@@ -153,7 +164,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
         <ActionGroup>
           <Button
             type="button"
-            isDisabled={isRejected || isInvalidFormat || !jsonContent}
+            isDisabled={isRejected || isInvalidFormat || !fileContent}
             onClick={() =>
               navigate(resolveRelPath(`imagewizard/import`), {
                 state: { blueprint: importedBlueprint },
