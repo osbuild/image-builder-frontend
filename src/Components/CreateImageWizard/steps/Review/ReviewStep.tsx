@@ -13,7 +13,6 @@ import {
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import {
   ContentList,
@@ -32,6 +31,7 @@ import {
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { targetOptions } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
