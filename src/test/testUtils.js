@@ -8,7 +8,10 @@ import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 import ImportImageWizard from '../Components/CreateImageWizard/ImportImageWizard';
 import LandingPage from '../Components/LandingPage/LandingPage';
 import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
-import { middleware, reducer } from '../store';
+import {
+  serviceMiddleware as middleware,
+  serviceReducer as reducer,
+} from '../store';
 import { resolveRelPath } from '../Utilities/path';
 
 const defaultRoutes = [
