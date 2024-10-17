@@ -25,7 +25,6 @@ import {
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../Utilities/time';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
@@ -35,7 +34,6 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
-  const { isBeta } = useGetEnvironment();
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
     dispatch(changeDistribution(selection));
@@ -82,11 +80,6 @@ const ReleaseSelect = () => {
     );
 
     filteredRhel.forEach((value, key) => {
-      // Only show RHEL 9 beta in preview
-      if (key === RHEL_9_BETA && !isBeta()) {
-        return;
-      }
-
       options.push(
         <SelectOption
           key={value}
