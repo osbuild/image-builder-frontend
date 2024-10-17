@@ -9,7 +9,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 
 import { Router } from './Router';
-import { store } from './store';
+import { onPremStore as store } from './store';
 
 const Application = () => {
   return (
