@@ -36,10 +36,8 @@ import {
 } from '../../store/BlueprintSlice';
 import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  useGetBlueprintsQuery,
-  BlueprintItem,
-} from '../../store/imageBuilderApi';
+import { BlueprintItem } from '../../store/imageBuilderApi';
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {

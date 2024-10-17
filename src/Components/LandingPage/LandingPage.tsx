@@ -18,7 +18,6 @@ import {
   ToolbarContent,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 
 import './LandingPage.scss';
@@ -28,6 +27,7 @@ import { NewAlert } from './NewAlert';
 import { MANAGING_WITH_DNF_URL, OSTREE_URL } from '../../constants';
 import { manageEdgeImagesUrlName } from '../../Utilities/edge';
 import { resolveRelPath } from '../../Utilities/path';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import EdgeImagesTable from '../edge/ImagesTable';
 import ImagesTable from '../ImagesTable/ImagesTable';
