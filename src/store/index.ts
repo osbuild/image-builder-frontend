@@ -3,6 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import { blueprintsSlice } from './BlueprintSlice';
+import { cockpitApi } from './cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
@@ -19,13 +20,22 @@ import wizardSlice, {
   selectImageTypes,
 } from './wizardSlice';
 
-export const reducer = combineReducers({
+export const serviceReducer = combineReducers({
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
   [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
+  notifications: notificationsReducer,
+  wizard: wizardSlice,
+  blueprints: blueprintsSlice.reducer,
+});
+
+export const onPremReducer = combineReducers({
+  // TODO: remove this once we've added all the endpoints we need
+  [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
+  [cockpitApi.reducerPath]: cockpitApi.reducer,
   notifications: notificationsReducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
@@ -88,7 +98,7 @@ startAppListening({
 // Listener middleware must be prepended according to RTK docs:
 // https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const middleware = (getDefaultMiddleware: Function) =>
+export const serviceMiddleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware()
     .prepend(listenerMiddleware.middleware)
     .concat(
@@ -100,7 +110,25 @@ export const middleware = (getDefaultMiddleware: Function) =>
       complianceApi.middleware
     );
 
-export const store = configureStore({ reducer, middleware });
+// Listener middleware must be prepended according to RTK docs:
+// https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
+// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+export const onPremMiddleware = (getDefaultMiddleware: Function) =>
+  getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(
+    promiseMiddleware,
+    imageBuilderApi.middleware, // TODO: remove this once we've added all the endpoints we need
+    cockpitApi.middleware
+  );
+
+export const store = process.env.IS_ON_PREMISE
+  ? configureStore({
+      reducer: onPremReducer,
+      middleware: onPremMiddleware,
+    })
+  : configureStore({
+      reducer: serviceReducer,
+      middleware: serviceMiddleware,
+    });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
 export type RootState = ReturnType<typeof store.getState>;
