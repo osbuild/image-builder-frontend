@@ -31,7 +31,6 @@ import {
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { targetOptions } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
@@ -44,6 +43,7 @@ import {
   selectImageTypes,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const { goToStepById } = useWizardContext();

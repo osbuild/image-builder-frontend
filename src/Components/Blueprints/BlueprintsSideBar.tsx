@@ -25,6 +25,7 @@ import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
 
 import { DEBOUNCED_SEARCH_WAIT_TIME } from '../../constants';
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -36,10 +37,7 @@ import {
 } from '../../store/BlueprintSlice';
 import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  useGetBlueprintsQuery,
-  BlueprintItem,
-} from '../../store/imageBuilderApi';
+import { BlueprintItem } from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {
