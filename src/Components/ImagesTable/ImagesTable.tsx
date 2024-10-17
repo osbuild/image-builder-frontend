@@ -61,10 +61,10 @@ import {
   ComposesResponseItem,
   ComposeStatus,
   useGetBlueprintComposesQuery,
-  useGetBlueprintsQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   computeHoursToExpiration,
@@ -153,7 +153,11 @@ const ImagesTable = () => {
     );
   }
 
-  if (!isSuccess) {
+  // TODO: the check for `IS_ON_PREMISE` should be removed when
+  // we create query functions for the other endpoints. We're skipping
+  // this check because the query request fails, since the `cockpitApi`
+  // still doesn't know how to query the composes endpoint
+  if (!process.env.IS_ON_PREMISE && !isSuccess) {
     if (isError) {
       return (
         <Alert variant="warning" title="Service unavailable">
