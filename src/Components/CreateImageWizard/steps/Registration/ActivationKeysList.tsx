@@ -25,9 +25,11 @@ import {
   CDN_STAGE_URL,
 } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { provisioningApi } from '../../../../store/provisioningApi';
 import {
   useListActivationKeysQuery,
   useCreateActivationKeysMutation,
+  rhsmApi,
 } from '../../../../store/rhsmApi';
 import {
   changeActivationKey,
@@ -119,7 +121,7 @@ const ActivationKeysList = () => {
     isError: isErrorActivationKeys,
     refetch,
   } = useListActivationKeysQuery();
-
+  const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
   const [createActivationKey, { isLoading: isLoadingActivationKey }] =
     useCreateActivationKeysMutation();
 
@@ -248,6 +250,7 @@ const ActivationKeysList = () => {
           isDisabled={
             !isSuccessActivationKeys || registrationType === 'register-later'
           }
+          onMouseEnter={() => prefetchActivationKeys()}
         >
           {setSelectOptions()}
         </Select>
