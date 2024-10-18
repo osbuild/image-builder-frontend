@@ -15,6 +15,8 @@ const config: ConfigFile = {
     'searchPackageGroup',
     'listFeatures',
     'listSnapshotsByDate',
+    'bulkExportRepositories',
+    'bulkImportRepositories',
   ],
 };
 

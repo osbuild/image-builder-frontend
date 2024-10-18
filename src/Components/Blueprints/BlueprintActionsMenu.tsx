@@ -10,6 +10,10 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/Me
 import { EllipsisVIcon } from '@patternfly/react-icons';
 
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
+import {
+  BulkExportRepositoriesApiResponse,
+  useBulkExportRepositoriesMutation,
+} from '../../store/contentSourcesApi';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintExportResponse,
@@ -35,16 +39,23 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   );
 
   const [trigger] = useLazyExportBlueprintQuery();
+  const [bulkExport] = useBulkExportRepositoriesMutation();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   if (selectedBlueprintId === undefined) {
     return null;
   }
-  const handleClick = () => {
-    trigger({ id: selectedBlueprintId })
-      .unwrap()
-      .then((response: BlueprintExportResponse) => {
-        handleExportBlueprint(response.name, response);
-      });
+  const handleClick = async () => {
+    const response = await trigger({ id: selectedBlueprintId }).unwrap();
+    const repo_ids =
+      response.customizations.custom_repositories?.map((r) => r.id) || [];
+    const exportState = repo_ids
+      ? await bulkExport({
+          apiRepositoryExportRequest: {
+            repository_uuids: repo_ids,
+          },
+        }).unwrap()
+      : undefined;
+    handleExportBlueprint(response.name, response, exportState);
   };
   return (
     <Dropdown
@@ -85,11 +96,15 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 
 async function handleExportBlueprint(
   blueprintName: string,
-  blueprint: BlueprintExportResponse
+  blueprint: BlueprintExportResponse,
+  custom_repositories: BulkExportRepositoriesApiResponse | undefined
 ) {
-  const jsonData = JSON.stringify(blueprint, null, 2);
+  const jsonData = JSON.stringify(
+    custom_repositories ? { ...blueprint, custom_repositories } : blueprint,
+    null,
+    2
+  );
   const blob = new Blob([jsonData], { type: 'application/json' });
-
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
