@@ -2,9 +2,9 @@ export const parseYYYYMMDDToDate = (val: string) =>
   val ? new Date(`${val}T00:00:00`) : new Date('');
 
 export const yyyyMMddFormat = (date: Date) =>
-  `${date.getFullYear()}-${(date.getMonth() + 1)
+  `${date.getUTCFullYear()}-${(date.getUTCMonth() + 1)
     .toString()
-    .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    .padStart(2, '0')}-${date.getUTCDate().toString().padStart(2, '0')}`;
 
 export const toMonthAndYear = (dateString: string) => {
   const options: Intl.DateTimeFormatOptions = {
