@@ -217,6 +217,46 @@ see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-get
 
 ## File Structure
 
+### OnPremise Development - Cockpit Build and Install
+
+## Overview
+
+The following scripts are used to build the frontend with Webpack and install it into the Cockpit directories. These scripts streamline the development process by automating build and installation steps.
+
+### Scripts
+
+#### 1. Build the Cockpit Frontend
+
+Runs Webpack with the specified configuration (cockpit/webpack.config.ts) to build the frontend assets.
+Use this command whenever you need to compile the latest changes in your frontend code.
+
+Creates the necessary directory in the user's local Cockpit share (~/.local/share/cockpit/).
+Creates a symbolic link (image-builder-frontend) pointing to the built frontend assets (cockpit/public).
+Use this command after building the frontend to install it locally for development purposes.
+The symbolic link allows Cockpit to serve the frontend assets from your local development environment,
+making it easier to test changes in real-time without deploying to a remote server.
+
+```bash
+make devel-install
+```
+
+```bash
+make build
+```
+
+To uninstall and remove the symbolic link, run the following command:
+
+```bash
+make devel-uninstall
+```
+
+For convenience, you can run the following to combine all three steps:
+
+
+```bash
+make cockpit/all
+```
+
 ### Quick Reference
 | Directory                                                                                                            | Description                                |
 | ---------                                                                                                            | -----------                                |

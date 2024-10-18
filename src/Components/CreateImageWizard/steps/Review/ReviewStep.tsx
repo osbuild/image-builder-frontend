@@ -13,7 +13,6 @@ import {
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import {
   ContentList,
@@ -44,6 +43,7 @@ import {
   selectImageTypes,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const { goToStepById } = useWizardContext();
