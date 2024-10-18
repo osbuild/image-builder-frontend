@@ -663,7 +663,13 @@ export const wizardSlice = createSlice({
       state.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
-      state.snapshotting.snapshotDate = action.payload;
+      const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
+      const date = new Date(action.payload);
+      if (action.payload === '') {
+        state.snapshotting.snapshotDate = action.payload;
+      } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
+        state.snapshotting.snapshotDate = date.toISOString();
+      }
     },
     importCustomRepositories: (
       state,
