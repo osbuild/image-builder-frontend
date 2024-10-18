@@ -104,6 +104,14 @@ const clickContentDropdown = async () => {
 const getSnapshotMethodElement = async () =>
   await screen.findByRole('button', { name: /Snapshot method/i });
 
+const clickReset = async () => {
+  const user = userEvent.setup();
+  const resetButton = await screen.findByRole('button', {
+    name: /Reset/i,
+  });
+  await waitFor(async () => user.click(resetButton));
+};
+
 describe('repository snapshot tab - ', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -150,7 +158,8 @@ describe('repository snapshot tab - ', () => {
 
     // Check the date was passed correctly to the blueprint
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-    blueprintRequest.image_requests[0].snapshot_date = '2024-04-22';
+    blueprintRequest.image_requests[0].snapshot_date =
+      '2024-04-22T00:00:00.000Z';
 
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
@@ -201,6 +210,24 @@ describe('repository snapshot tab - ', () => {
     expect(bulkSelectCheckbox.closest('div')).toHaveClass('pf-m-disabled');
   });
 
+  test('button Reset works to empty the snapshot date', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseSnapshot();
+    await updateDatePickerWithValue('2024-04-22');
+    // Check the Next button is enabled
+    const nextBtn = await screen.findByRole('button', { name: /Next/i });
+    await waitFor(() => {
+      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
+    });
+    // Check the Next button is disabled after resetting the date
+    await clickReset();
+    await waitFor(() => {
+      expect(nextBtn).toHaveAttribute('aria-disabled', 'true');
+    });
+    await screen.findByText(/Date cannot be blank/i);
+  });
+
   test('select using bulk select works ', async () => {
     await renderCreateMode();
     await goToSnapshotStep();
@@ -221,7 +248,8 @@ describe('repository snapshot tab - ', () => {
 
     // Check the date was passed correctly to the blueprint
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-    blueprintRequest.image_requests[0].snapshot_date = '2024-04-22';
+    blueprintRequest.image_requests[0].snapshot_date =
+      '2024-04-22T00:00:00.000Z';
 
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
@@ -242,7 +270,7 @@ describe('repository snapshot tab - ', () => {
     await clickNext();
     await goToReviewStep();
     await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Custom repositories/ });
+    await screen.findByRole('heading', { name: /Custom repositories/i });
   });
 });
 
