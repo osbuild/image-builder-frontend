@@ -28,6 +28,7 @@ export default function Snapshot() {
   const dispatch = useAppDispatch();
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
+
   return (
     <>
       <FormGroup>
@@ -75,7 +76,9 @@ export default function Snapshot() {
               <DatePicker
                 id="snapshot-date-picker"
                 name="pick-snapshot-date"
-                value={snapshotDate}
+                value={
+                  snapshotDate ? yyyyMMddFormat(new Date(snapshotDate)) : ''
+                }
                 required
                 requiredDateOptions={{ isRequired: true }}
                 placeholder="YYYY-MM-DD"

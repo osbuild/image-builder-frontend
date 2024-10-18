@@ -575,7 +575,13 @@ export const wizardSlice = createSlice({
       state.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
-      state.snapshotting.snapshotDate = action.payload;
+      if (action.payload === '') {
+        state.snapshotting.snapshotDate = action.payload;
+      } else {
+        state.snapshotting.snapshotDate = new Date(
+          action.payload
+        ).toISOString();
+      }
     },
     changeCustomRepositories: (
       state,
