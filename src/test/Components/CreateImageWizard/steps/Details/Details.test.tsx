@@ -66,6 +66,7 @@ describe('Step Details', () => {
     const nextButton = await getNextButton();
     expect(nextButton).toBeEnabled();
     await enterBlueprintName(' ');
+    await clickNext();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
@@ -86,6 +87,7 @@ describe('Step Details', () => {
     await goToDetailsStep();
     await enterBlueprintName('Lemon Pie');
     const nextButton = await getNextButton();
+    await clickNext();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 

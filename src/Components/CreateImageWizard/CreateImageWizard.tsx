@@ -204,6 +204,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
+  const [detailsPristine, setDetailsPristine] = useState(true);
   const detailsValidation = useDetailsValidation();
 
   let startIndex = 1; // default index
@@ -454,7 +455,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
               <CustomWizardFooter
-                disableNext={detailsValidation.disabledNext}
+                beforeNext={() => {
+                  if (detailsValidation.disabledNext) {
+                    setDetailsPristine(false);
+                    return false;
+                  }
+                  return true;
+                }}
+                disableNext={!detailsPristine && detailsValidation.disabledNext}
               />
             }
           >
