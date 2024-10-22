@@ -97,5 +97,16 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     // flex: 1 1 0
     
     // TO DO: Remove after the fix
-    min-height: 800px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 95vh;
+}
+
+.pf-v5-c-wizard__footer {
+    position: sticky;
+    bottom: 0;
+    padding: 1rem;
+    background-color: white;  // Ensure background covers content below
+    z-index: 10;  // Ensure the footer is above the content
 }
