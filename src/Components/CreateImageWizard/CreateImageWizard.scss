@@ -100,7 +100,7 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 95vh;
+    min-height: 800px;  /* Always go with pixels */
 }
 
 .pf-v5-c-wizard__footer {
