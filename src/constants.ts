@@ -228,7 +228,6 @@ Description=Custom first boot script
 ConditionFileIsExecutable=/usr/local/sbin/custom-first-boot
 ConditionPathExists=!/var/local/.custom-first-boot-done
 Wants=network-online.target
-Wants=osbuild-first-boot.target
 After=network-online.target
 After=osbuild-first-boot.service
 
