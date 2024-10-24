@@ -75,7 +75,9 @@ export default function Snapshot() {
               <DatePicker
                 id="snapshot-date-picker"
                 name="pick-snapshot-date"
-                value={snapshotDate}
+                value={
+                  snapshotDate ? yyyyMMddFormat(new Date(snapshotDate)) : ''
+                }
                 required
                 requiredDateOptions={{ isRequired: true }}
                 placeholder="YYYY-MM-DD"
