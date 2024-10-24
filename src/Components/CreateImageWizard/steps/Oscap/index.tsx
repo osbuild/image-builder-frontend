@@ -11,7 +11,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
 
-import { Oscap } from './Oscap';
+import { Oscap, removeBetaFromRelease } from './Oscap';
 
 import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
@@ -20,7 +20,10 @@ import {
 } from '../../../../constants';
 import { imageBuilderApi } from '../../../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
+import {
+  useGetOscapCustomizationsQuery,
+  Distributions,
+} from '../../../../store/imageBuilderApi';
 import {
   ComplianceType,
   selectComplianceProfileID,
@@ -47,7 +50,7 @@ const OscapStep = () => {
     {}
   );
   const { isProd } = useGetEnvironment();
-  const release = useAppSelector(selectDistribution);
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
