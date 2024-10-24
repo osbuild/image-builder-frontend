@@ -1,0 +1,15 @@
+{
+  "dashboard": {
+    "index": {
+      "label": "Image Builder",
+      "icon": "pficon-build",
+      "docs": [
+        {
+          "label": "Creating system images",
+          "url": "https://osbuild.org/"
+        }
+      ]
+    }
+  },
+  "content-security-policy": "default-src 'self' 'unsafe-eval'"
+}
