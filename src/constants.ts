@@ -223,9 +223,26 @@ export const EPEL_9_REPO_DEFINITION = {
 export const DEBOUNCED_SEARCH_WAIT_TIME = 500;
 export const UNIQUE_VALIDATION_DELAY = 300;
 
-// Use `make` to generate the following line.
-// prettier-ignore
-export const FIRST_BOOT_SERVICE_DATA = 'W1VuaXRdCkRlc2NyaXB0aW9uPUN1c3RvbSBmaXJzdCBib290IHNjcmlwdApDb25kaXRpb25GaWxlSXNFeGVjdXRhYmxlPS91c3IvbG9jYWwvc2Jpbi9jdXN0b20tZmlyc3QtYm9vdApDb25kaXRpb25GaXJzdEJvb3Q9eWVzCgpXYW50cz1maXJzdC1ib290LWNvbXBsZXRlLnRhcmdldApXYW50cz1uZXR3b3JrLW9ubGluZS50YXJnZXQKV2FudHM9b3NidWlsZC1maXJzdC1ib290LnRhcmdldApCZWZvcmU9Zmlyc3QtYm9vdC1jb21wbGV0ZS50YXJnZXQKQWZ0ZXI9bmV0d29yay1vbmxpbmUudGFyZ2V0CkFmdGVyPW9zYnVpbGQtZmlyc3QtYm9vdC5zZXJ2aWNlCgpbU2VydmljZV0KVHlwZT1vbmVzaG90CkV4ZWNTdGFydD0vdXNyL2xvY2FsL3NiaW4vY3VzdG9tLWZpcnN0LWJvb3QKUmVtYWluQWZ0ZXJFeGl0PXllcwoKW0luc3RhbGxdCldhbnRlZEJ5PWJhc2ljLnRhcmdldApXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldApXYW50ZWRCeT1ncmFwaGljYWwudGFyZ2V0Cg==';
+export const FIRST_BOOT_SERVICE_DATA = btoa(`[Unit]
+Description=Custom first boot script
+ConditionFileIsExecutable=/usr/local/sbin/custom-first-boot
+ConditionPathExists=!/var/local/.custom-first-boot-done
+Wants=network-online.target
+Wants=osbuild-first-boot.target
+After=network-online.target
+After=osbuild-first-boot.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/custom-first-boot
+ExecStartPost=/usr/bin/touch /var/local/.custom-first-boot-done
+RemainAfterExit=yes
+
+[Install]
+WantedBy=basic.target
+WantedBy=multi-user.target
+WantedBy=graphical.target
+`);
 
 export const FIRST_BOOT_SERVICE = 'custom-first-boot';
 
