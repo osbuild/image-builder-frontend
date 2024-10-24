@@ -18,9 +18,11 @@ import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
+import { RHEL_9_BETA, RHEL_9 } from '../../../../constants';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
+  Distributions,
   DistributionProfileItem,
   Filesystem,
   OpenScapProfile,
@@ -82,7 +84,7 @@ const ProfileSelector = () => {
   const policyID = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
   const profileID = useAppSelector(selectComplianceProfileID);
-  const release = useAppSelector(selectDistribution);
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const majorVersion = release.split('-')[1];
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
@@ -452,6 +454,17 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
       description={descr}
     />
   );
+};
+
+// The beta releases won't have any oscap profiles associated with them,
+// so just use the ones from the major release.
+export const removeBetaFromRelease = (dist: Distributions): Distributions => {
+  switch (dist) {
+    case RHEL_9_BETA:
+      return RHEL_9;
+    default:
+      return dist;
+  }
 };
 
 export const Oscap = () => {
