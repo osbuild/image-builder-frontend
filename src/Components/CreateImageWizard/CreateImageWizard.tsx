@@ -65,6 +65,7 @@ import {
   addImageType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -129,6 +130,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
+  const { isBeta } = useGetEnvironment();
 
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
@@ -153,7 +155,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Feature flags
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
-  const complianceEnabled = useFlag('image-builder.compliance.enabled');
+  const complianceEnabled =
+    useFlag('image-builder.compliance.enabled') && isBeta();
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
