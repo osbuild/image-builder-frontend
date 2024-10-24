@@ -1,8 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Alert,
-  Spinner,
   Text,
   TextContent,
   TextList,
@@ -16,7 +15,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
+import { rhsmApi, useShowActivationKeyQuery } from '../../../../store/rhsmApi';
 import { selectActivationKey } from '../../../../store/wizardSlice';
 
 const ActivationKeyInformation = (): JSX.Element => {
@@ -28,15 +27,22 @@ const ActivationKeyInformation = (): JSX.Element => {
     isSuccess: isSuccessActivationKeyInfo,
     isError: isErrorActivationKeyInfo,
   } = useShowActivationKeyQuery(
-    { name: activationKey! },
+    { name: activationKey! || '' },
     {
       skip: !activationKey,
     }
   );
+  const prefetchActivationKeyInfo = rhsmApi.usePrefetch('showActivationKey');
+
+  useEffect(() => {
+    if (activationKey) {
+      prefetchActivationKeyInfo({ name: activationKey });
+    }
+  }, [activationKey, prefetchActivationKeyInfo]);
 
   return (
     <>
-      {isFetchingActivationKeyInfo && <Spinner size="lg" />}
+      {isFetchingActivationKeyInfo}
       {isSuccessActivationKeyInfo && (
         <TextContent>
           <TextList component={TextListVariants.dl}>
@@ -81,6 +87,9 @@ const ActivationKeyInformation = (): JSX.Element => {
                   variant="plain"
                   aria-label="About additional repositories"
                   className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                  onMouseEnter={() =>
+                    prefetchActivationKeyInfo({ name: activationKey || '' })
+                  }
                 >
                   <HelpIcon />
                 </Button>
@@ -127,6 +136,9 @@ const ActivationKeyInformation = (): JSX.Element => {
                     variant="link"
                     aria-label="Show additional repositories"
                     className="pf-u-pl-0 pf-u-pt-0 pf-u-pb-0"
+                    onMouseEnter={() =>
+                      prefetchActivationKeyInfo({ name: activationKey || '' })
+                    }
                   >
                     {activationKeyInfo.body?.additionalRepositories?.length}{' '}
                     repositories
