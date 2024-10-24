@@ -11,7 +11,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
 
-import { Oscap } from './Oscap';
+import { Oscap, removeBetaFromRelease } from './Oscap';
 
 import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
@@ -47,7 +47,7 @@ const OscapStep = () => {
     {}
   );
   const { isProd } = useGetEnvironment();
-  const release = useAppSelector(selectDistribution);
+  const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
