@@ -1,5 +1,5 @@
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag as useUnleashFlag } from '@unleash/proxy-client-react';
 
 export const useGetEnvironment = () => {
   const { isBeta, isProd, getEnvironment } = useChrome();
@@ -24,5 +24,14 @@ export const useFlagWithEphemDefault = (
 ): boolean => {
   const getFlag = useFlag(flag);
   const { getEnvironment } = useChrome();
+  if (process.env.IS_ON_PREMISE) {
+    return false;
+  }
   return (getEnvironment() === 'qa' && ephemDefault) || getFlag;
 };
+
+// Since some of these flags are only relevant to
+// the service, we need a way of bypassing this for on-prem
+export const useFlag = !process.env.IS_ON_PREMISE
+  ? useUnleashFlag
+  : () => false;

@@ -1,12 +1,14 @@
 import React, { lazy, Suspense } from 'react';
 
-import { useFlag } from '@unleash/proxy-client-react';
 import { Route, Routes } from 'react-router-dom';
 
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
-import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
+import {
+  useFlag,
+  useFlagWithEphemDefault,
+} from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
