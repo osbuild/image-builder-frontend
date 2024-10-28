@@ -10,7 +10,6 @@ import {
   PageSection,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
-import { useFlag } from '@unleash/proxy-client-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
@@ -65,6 +64,7 @@ import {
   addImageType,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 

@@ -1,4 +1,4 @@
-import { useFlag } from '@unleash/proxy-client-react';
+import { useFlag } from '../../../Utilities/useGetEnvironment';
 
 describe('mocking unleash calls', () => {
   test('the ege local image table is set to true', () => {
