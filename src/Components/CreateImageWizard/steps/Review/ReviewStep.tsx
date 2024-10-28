@@ -13,7 +13,6 @@ import {
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import {
   ContentList,
