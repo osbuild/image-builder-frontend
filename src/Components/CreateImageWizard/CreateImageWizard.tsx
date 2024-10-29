@@ -27,6 +27,7 @@ import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
+import UsersStep from './steps/Users';
 import {
   useFilesystemValidation,
   useSnapshotValidation,
@@ -132,6 +133,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const [searchParams] = useSearchParams();
   const { isBeta } = useGetEnvironment();
 
+  const isUsersEnabled = useFlag('image-builder.users.enabled');
+
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
   const { data, isSuccess, isFetching, isError } =
@@ -211,7 +214,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 15;
+    startIndex = 16;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -431,6 +434,17 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
               >
                 <PackagesStep />
+              </WizardStep>,
+              <WizardStep
+                name="Users"
+                id="wizard-users"
+                key="wizard-users"
+                isHidden={!isUsersEnabled}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              >
+                <UsersStep />
               </WizardStep>,
               <WizardStep
                 name="First boot script configuration"

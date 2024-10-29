@@ -44,6 +44,7 @@ const goToReview = async () => {
   await clickNext(); // Snapshot repositories
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
+  await clickNext(); // Users
   await clickNext(); // FirstBoot
   await clickNext(); // Details
   await enterBlueprintName();

@@ -52,6 +52,7 @@ const goToPackagesStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // Users
   await clickNext(); // First Boot
   await clickNext(); // Details
   await enterBlueprintName();
@@ -176,6 +177,7 @@ describe('Step Packages', () => {
   test('clicking Next loads First boot', async () => {
     await renderCreateMode();
     await goToPackagesStep();
+    await clickNext();
     await clickNext();
     await screen.findByRole('heading', {
       name: 'First boot configuration',
