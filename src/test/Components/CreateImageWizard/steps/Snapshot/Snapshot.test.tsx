@@ -38,6 +38,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Repositories step
   await clickNext(); // Additional packages
   await clickNext();
+  await clickNext(); // Users
   await enterBlueprintName();
   await clickNext();
 };

@@ -56,6 +56,7 @@ const goToReviewStep = async () => {
   await clickNext();
   await clickNext();
   await clickNext();
+  await clickNext();
 };
 
 describe('Step Review', () => {
