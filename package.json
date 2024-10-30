@@ -37,7 +37,7 @@
     "@redhat-cloud-services/tsc-transform-imports": "1.0.16",
     "@rtk-query/codegen-openapi": "1.2.0",
     "@testing-library/dom": "10.4.0",
-    "@testing-library/jest-dom": "6.5.0",
+    "@testing-library/jest-dom": "6.6.2",
     "@testing-library/react": "16.0.1",
     "@testing-library/user-event": "14.5.2",
     "@types/react": "18.3.11",
