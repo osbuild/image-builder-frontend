@@ -1,19 +1,4 @@
-FISTBOOT_SERVICE := $(shell base64 -w0 < aux/custom-first-boot.service)
 INSTALL_DIR := ~/.local/share/cockpit/image-builder-frontend
-
-help:
-	@cat Makefiles
-
-.PHONY: prep
-prep: src/constants.ts
-
-.PHONY: install
-install:
-	npm install
-
-.PHONY: start
-start: prep
-	npm start
 
 cockpit/all: devel-uninstall devel-install build
 
@@ -30,4 +15,3 @@ devel-uninstall:
 	rm cockpit/public/*.js
 
 .PHONY: cockpit/all devel-install build devel-uninstall
-
