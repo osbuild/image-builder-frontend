@@ -2,7 +2,7 @@ import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
 import { Units } from '../steps/FileSystem/FileSystemTable';
 
 export const parseSizeUnit = (bytesize: string) => {
-  let size;
+  let size: number = 10;
   let unit: Units = 'GiB';
 
   if (parseInt(bytesize) % UNIT_GIB === 0) {
