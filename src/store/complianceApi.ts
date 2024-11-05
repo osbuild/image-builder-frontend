@@ -4,7 +4,9 @@ const injectedRtkApi = api.injectEndpoints({
     policies: build.query<PoliciesApiResponse, PoliciesApiArg>({
       query: (queryArg) => ({
         url: `/policies`,
-        headers: { "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"] },
+        headers: {
+          "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"],
+        },
         params: {
           limit: queryArg.limit,
           offset: queryArg.offset,
@@ -17,7 +19,9 @@ const injectedRtkApi = api.injectEndpoints({
     policy: build.query<PolicyApiResponse, PolicyApiArg>({
       query: (queryArg) => ({
         url: `/policies/${queryArg.policyId}`,
-        headers: { "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"] },
+        headers: {
+          "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"],
+        },
       }),
     }),
   }),

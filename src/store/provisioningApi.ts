@@ -4,7 +4,9 @@ const injectedRtkApi = api.injectEndpoints({
     getSourceList: build.query<GetSourceListApiResponse, GetSourceListApiArg>({
       query: (queryArg) => ({
         url: `/sources`,
-        params: { provider: queryArg.provider },
+        params: {
+          provider: queryArg.provider,
+        },
       }),
     }),
     getSourceUploadInfo: build.query<
