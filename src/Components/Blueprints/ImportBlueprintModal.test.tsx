@@ -1,6 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { clickNext } from '../../test/Components/CreateImageWizard/wizardTestUtils';
 import { renderCustomRoutesWithReduxRouter } from '../../test/testUtils';
 
 const BLUEPRINT_JSON = `{
@@ -121,6 +122,58 @@ const INVALID_JSON = `{
   "name": "Blueprint test"
 }`;
 
+const ONPREM_BLUEPRINT_TOML = `
+name = "tmux"
+description = "tmux image with openssh"
+version = "1.2.16"
+distro = "rhel-93"
+
+[[packages]]
+name = "tmux"
+version = "*"
+
+[[packages]]
+name = "openssh-server"
+version = "*"
+
+[[groups]]
+name = "anaconda-tools"
+
+[customizations]
+hostname = "baseimage"
+fips = true
+
+[[customizations.sshkey]]
+user = "root"
+key = "PUBLIC SSH KEY"
+
+[customizations.services]
+enabled = ["sshd", "cockpit.socket", "httpd"]
+disabled = ["postfix", "telnetd"]
+masked = ["rpcbind"]
+
+[[customizations.files]]
+data = "W1VuaXRdCkRlc2NyaXB0aW9uPVJ1biBmaXJzdCBib290IHNjcmlwdApDb25kaXRpb25QYXRoRXhpc3RzPS91c3IvbG9jYWwvc2Jpbi9jdXN0b20tZmlyc3QtYm9vdApXYW50cz1uZXR3b3JrLW9ubGluZS50YXJnZXQKQWZ0ZXI9bmV0d29yay1vbmxpbmUudGFyZ2V0CkFmdGVyPW9zYnVpbGQtZmlyc3QtYm9vdC5zZXJ2aWNlCgpbU2VydmljZV0KVHlwZT1vbmVzaG90CkV4ZWNTdGFydD0vdXNyL2xvY2FsL3NiaW4vY3VzdG9tLWZpcnN0LWJvb3QKRXhlY1N0YXJ0UG9zdD1tdiAvdXNyL2xvY2FsL3NiaW4vY3VzdG9tLWZpcnN0LWJvb3QgL3Vzci9sb2NhbC9zYmluL2N1c3RvbS1maXJzdC1ib290LmRvbmUKCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldAo="
+data_encoding = "base64"
+ensure_parents = true
+path = "/etc/systemd/system/custom-first-boot.service"
+
+[[customizations.files]]
+data = "IyEvYmluL2Jhc2gKZmlyc3Rib290IHNjcmlwdCB0byB0ZXN0IGltcG9ydA=="
+data_encoding = "base64"
+ensure_parents = true
+mode = "0774"
+path = "/usr/local/sbin/custom-first-boot"
+
+[[customizations.filesystem]]
+mountpoint = "/var"
+minsize = 2147483648
+
+[customizations.installer]
+unattended = true
+sudo-nopasswd = ["user", "%wheel"]
+`;
+
 const uploadFile = async (filename: string, content: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
@@ -207,4 +260,79 @@ describe('Import modal', () => {
       ).toBeInTheDocument()
     );
   });
+
+  const getSourceDropdown = async () => {
+    const sourceDropdown = await screen.findByRole('textbox', {
+      name: /select source/i,
+    });
+    await waitFor(() => expect(sourceDropdown).toBeEnabled());
+
+    return sourceDropdown;
+  };
+
+  test('should enable button on toml blueprint and go to wizard', async () => {
+    await setUp();
+    await uploadFile(`blueprints.toml`, ONPREM_BLUEPRINT_TOML);
+    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
+
+    await waitFor(async () =>
+      expect(
+        await screen.findByText('Image output', { selector: 'h1' })
+      ).toBeInTheDocument()
+    );
+
+    // Image output
+    await waitFor(
+      async () => await user.click(await screen.findByTestId('upload-aws'))
+    );
+    await clickNext();
+
+    // Target environment aws
+    const radioButton = await screen.findByRole('radio', {
+      name: /use an account configured from sources\./i,
+    });
+    await waitFor(() => user.click(radioButton));
+    const awsSourceDropdown = await getSourceDropdown();
+    await waitFor(() => expect(awsSourceDropdown).toBeEnabled());
+    await waitFor(() => user.click(awsSourceDropdown));
+    const awsSource = await screen.findByRole('option', {
+      name: /my_source/i,
+    });
+    await waitFor(() => user.click(awsSource));
+
+    await clickNext();
+
+    // Registration
+    await screen.findByText(
+      'Automatically register and enable advanced capabilities'
+    );
+    const registrationCheckbox = await screen.findByTestId(
+      'automatically-register-checkbox'
+    );
+    expect(registrationCheckbox).toHaveFocus();
+    await screen.findByRole('textbox', {
+      name: 'Select activation key',
+    });
+    await clickNext();
+
+    // OpenScap
+    await clickNext();
+
+    //File system configuration
+    await clickNext();
+
+    // Custom Repos step
+    await clickNext();
+
+    // Packages step
+    await clickNext();
+    await waitFor(
+      async () =>
+        await user.click(await screen.findByTestId('packages-selected-toggle'))
+    );
+
+    await clickNext();
+  }, 20000);
 });
