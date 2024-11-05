@@ -41,7 +41,9 @@ const injectedRtkApi = api.injectEndpoints({
     getBlueprint: build.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}`,
-        params: { version: queryArg.version },
+        params: {
+          version: queryArg.version,
+        },
       }),
     }),
     deleteBlueprint: build.mutation<
@@ -112,7 +114,10 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/composes/${queryArg.composeId}/clones`,
-        params: { limit: queryArg.limit, offset: queryArg.offset },
+        params: {
+          limit: queryArg.limit,
+          offset: queryArg.offset,
+        },
       }),
     }),
     getCloneStatus: build.query<
@@ -212,8 +217,7 @@ export type GetBlueprintApiArg = {
      */
   version?: number;
 };
-export type DeleteBlueprintApiResponse =
-  /** status 204 Successfully deleted */ void;
+export type DeleteBlueprintApiResponse = unknown;
 export type DeleteBlueprintApiArg = {
   /** UUID of a blueprint */
   id: string;
@@ -689,6 +693,7 @@ export type Customizations = {
   subscription?: Subscription;
   packages?: string[];
   payload_repositories?: Repository[];
+  /** List of custom repositories. */
   custom_repositories?: CustomRepository[];
   openscap?: OpenScap;
   filesystem?: Filesystem[];
@@ -749,6 +754,10 @@ export type BlueprintExportResponse = {
   distribution: Distributions;
   customizations: Customizations;
   metadata: BlueprintMetadata;
+  /** List of custom repositories including all the repository details needed in order
+    to recreate the repositories.
+     */
+  content_sources?: object[];
 };
 export type ComposeResponse = {
   id: string;
