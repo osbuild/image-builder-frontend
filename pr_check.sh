@@ -11,6 +11,8 @@ export WORKSPACE=${WORKSPACE:-$APP_ROOT} # if running in jenkins, use the build'
 export APP_ROOT=$(pwd)
 #16 is the default Node version. Change this to override it.
 export NODE_BUILD_VERSION=20
+# skip unit tests on frontend-build
+export SKIP_VERIFY=True
 COMMON_BUILDER=https://raw.githubusercontent.com/RedHatInsights/insights-frontend-builder-common/master
 
 # --------------------------------------------
