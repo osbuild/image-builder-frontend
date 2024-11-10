@@ -18,6 +18,10 @@ import {
   selectUseLatest,
   selectActivationKey,
   selectRegistrationType,
+  selectUserName,
+  selectUserPassword,
+  selectConfirmUserPassword,
+  selectUserSshKey,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -25,6 +29,10 @@ import {
   isBlueprintDescriptionValid,
   isMountpointMinSizeValid,
   isSnapshotValid,
+  isPasswordValid,
+  isUserNameValid,
+  isConfirmPasswordValid,
+  isSshKeyValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -130,6 +138,57 @@ export function useFirstBootValidation(): StepValidation {
       script: valid ? '' : 'Missing shebang at first line, e.g. #!/bin/bash',
     },
     disabledNext: !valid,
+  };
+}
+
+export function useUserValidation(): StepValidation {
+  const userName = useAppSelector(selectUserName);
+  const userPassword = useAppSelector(selectUserPassword);
+  const userConfirmPassword = useAppSelector(selectConfirmUserPassword);
+  const userSshKey = useAppSelector(selectUserSshKey);
+  const userNameValid = isUserNameValid(userName);
+  const passwordValid = isPasswordValid(userPassword || '');
+
+  const passwordConfirmMatchValid = isConfirmPasswordValid(
+    userPassword || '',
+    userConfirmPassword || ''
+  );
+  const sshKeyValid = isSshKeyValid(userSshKey || '');
+  const isPasswordAndConfirmValid = passwordValid && passwordConfirmMatchValid;
+  const canProceed =
+    userNameValid &&
+    ((userSshKey && sshKeyValid) ||
+      (userPassword && isPasswordAndConfirmValid));
+
+  return {
+    errors: {
+      userName: !userNameValid
+        ? 'Invalid user name. Usernames may contain only lower and upper case letters, digits,\n' +
+          '       underscores, or dashes. They can end with a dollar sign. Dashes are not\n' +
+          '       allowed at the beginning of the username. Fully numeric usernames and\n' +
+          '       usernames . or .. are also disallowed. It is not recommended to use\n' +
+          '       usernames beginning with . character as their home directories will be\n' +
+          '       hidden in the ls output.\n' +
+          '\n' +
+          '       Usernames may only be up to 32 characters long.'
+        : '',
+      userPassword: !userPassword
+        ? ''
+        : !passwordValid
+        ? 'Invalid user password'
+        : '',
+      userConfirmPassword: !userPassword
+        ? ''
+        : !passwordConfirmMatchValid
+        ? 'password and confirm password should be the same'
+        : '',
+      userSshKey: !userSshKey
+        ? ''
+        : !sshKeyValid
+        ? "Value does not match pattern: /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521)) \\\\S+/.'"
+        : '',
+    },
+    disabledNext: !canProceed,
   };
 }
 
