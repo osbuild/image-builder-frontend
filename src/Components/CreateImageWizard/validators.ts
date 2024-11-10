@@ -58,6 +58,57 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
+export const isUserNameValid = (userName: string) => {
+  const isLengthValid =
+    userName !== undefined && userName.length >= 1 && userName.length <= 32;
+
+  // Check if the username follows the pattern:
+  // Starts and ends with a valid character (not a dot).
+  // Can contain alphanumeric characters, underscores, hyphens, and periods in the middle.
+  const isPatternValid = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_]$/.test(
+    userName
+  );
+  return isLengthValid && isPatternValid;
+};
+
+export const isPasswordValid = (password: string): boolean => {
+  const isLengthValid = password.length >= 6;
+  const containsUppercase = /[A-Z]/.test(password);
+  const containsLowercase = /[a-z]/.test(password);
+  const containsNumber = /\d/.test(password);
+
+  // Ensure no special characters for plaintext passwords
+  const isPlainText = /^[A-Za-z0-9]*$/.test(password);
+
+  // - At least 3 different character classes (uppercase letters, lowercase letters, digits)
+  //   This is defined by the security rule Minclass=3, meaning the password must include
+  //   at least three of these types to meet complexity standards.
+  // - Restricting to plain text characters (no special characters) for simplicity and compatibility.
+  // These criteria aim to reduce the risk of simple password guessing by enforcing a minimum level of complexity.
+  const classCount = [
+    containsUppercase,
+    containsLowercase,
+    containsNumber,
+  ].filter(Boolean).length;
+
+  const isClassValid = classCount >= 3;
+  return isClassValid && isPlainText && isLengthValid;
+};
+export const isConfirmPasswordValid = (
+  password: string,
+  confirmPassword: string
+): boolean => {
+  const passwordsMatch = password === confirmPassword;
+  return passwordsMatch;
+};
+
+export const isSshKeyValid = (sshKey: string) => {
+  const isLengthValid = sshKey !== undefined && sshKey.length >= 2;
+  const isPatternValid =
+    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521)) \S+/.test(sshKey);
+  return isLengthValid && isPatternValid;
+};
+
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;
 };
