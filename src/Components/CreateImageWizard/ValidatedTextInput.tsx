@@ -38,6 +38,7 @@ export const HookValidatedInput = ({
   onChange,
   stepValidation,
   fieldName,
+  type = 'text',
 }: HookValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
   // Do not surface validation on pristine state components
@@ -60,7 +61,7 @@ export const HookValidatedInput = ({
         value={value}
         data-testid={dataTestId}
         ouiaId={ouiaId}
-        type="text"
+        type={type}
         onChange={onChange}
         validated={validated}
         aria-label={ariaLabel}
