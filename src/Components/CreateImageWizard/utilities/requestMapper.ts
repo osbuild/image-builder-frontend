@@ -34,6 +34,7 @@ import {
   Services,
   Subscription,
   UploadTypes,
+  User,
 } from '../../../store/imageBuilderApi';
 import {
   selectActivationKey,
@@ -81,6 +82,7 @@ import {
   selectLanguages,
   selectKeyboard,
   selectHostname,
+  selectUsers,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -206,6 +208,15 @@ function commonRequestToState(
       blueprintName: request.name || '',
       blueprintDescription: request.description || '',
     },
+    users:
+      request.customizations.users?.map((user) => ({
+        name: user.name,
+        password: '', // The image-builder API does not return the password.
+        ssh_key: user.ssh_key || '',
+        confirmPassword: '',
+        groups: user.groups || [],
+        isAdministrator: user.groups?.includes('wheel') || false,
+      })) || [],
     compliance:
       compliancePolicyID !== undefined
         ? {
@@ -502,7 +513,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
     filesystem: getFileSystem(state),
-    users: undefined,
+    users: getUsers(state),
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: selectKernel(state).append
@@ -542,6 +553,30 @@ const getServices = (state: RootState): Services | undefined => {
     masked: services.masked.length ? services.masked : undefined,
     disabled: services.disabled.length ? services.disabled : undefined,
   };
+};
+
+const getUsers = (state: RootState): User[] | undefined => {
+  const users = selectUsers(state);
+
+  if (!users || users.length === 0) {
+    return undefined;
+  }
+
+  return users.map((user) => {
+    const result: User = {
+      name: user.name,
+    };
+    if (user.password !== undefined) {
+      result.password = user.password;
+    }
+    if (user.ssh_key !== undefined) {
+      result.ssh_key = user.ssh_key;
+    }
+    if (user.groups !== undefined) {
+      result.groups = user.groups;
+    }
+    return result as User;
+  });
 };
 
 const getOpenscap = (state: RootState): OpenScap | undefined => {
