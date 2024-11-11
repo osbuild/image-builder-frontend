@@ -27,6 +27,7 @@ import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
+import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
 import {
   useFilesystemValidation,
@@ -135,6 +136,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { isBeta } = useGetEnvironment();
 
   const isUsersEnabled = useFlag('image-builder.users.enabled');
+  const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
 
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
@@ -217,7 +219,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 16;
+    startIndex = 17;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -450,6 +452,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
               >
                 <UsersStep />
+              </WizardStep>,
+              <WizardStep
+                name="Timezone"
+                id="wizard-timezone"
+                key="wizard-timezone"
+                navItem={customStatusNavItem}
+                isHidden={!isTimezoneEnabled}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              >
+                <TimezoneStep />
               </WizardStep>,
               <WizardStep
                 name="First boot script configuration"
