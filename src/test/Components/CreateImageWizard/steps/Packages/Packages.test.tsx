@@ -53,6 +53,7 @@ const goToPackagesStep = async () => {
 
 const goToReviewStep = async () => {
   await clickNext(); // Users
+  await clickNext(); // Timezone
   await clickNext(); // First Boot
   await clickNext(); // Details
   await enterBlueprintName();
@@ -174,13 +175,12 @@ describe('Step Packages', () => {
 
   const user = userEvent.setup();
 
-  test('clicking Next loads First boot', async () => {
+  test('clicking Next loads Users', async () => {
     await renderCreateMode();
     await goToPackagesStep();
     await clickNext();
-    await clickNext();
     await screen.findByRole('heading', {
-      name: 'First boot configuration',
+      name: 'Users',
     });
   });
 

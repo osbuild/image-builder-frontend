@@ -45,6 +45,7 @@ const goToFirstBootStep = async (): Promise<void> => {
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users
+  await clickNext(); // Timezone
   await clickNext(); // Snapshot
   await clickNext(); // First Boot
 };
@@ -61,6 +62,7 @@ const selectSimplifiedOscapProfile = async () => {
 };
 
 const goFromOscapToFirstBoot = async () => {
+  await clickNext();
   await clickNext();
   await clickNext();
   await clickNext();
