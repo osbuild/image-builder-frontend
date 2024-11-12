@@ -9,6 +9,7 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   SCRIPT,
+  SCRIPT_DOS,
   SCRIPT_WITHOUT_SHEBANG,
   firstBootCreateBlueprintRequest,
   firstBootData,
@@ -177,6 +178,37 @@ describe('First boot request generated correctly', () => {
     await goFromOscapToFirstBoot();
     await openCodeEditor();
     await uploadFile(SCRIPT);
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    // request created with both OpenSCAP and first boot customization
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        filesystem: [{ min_size: 10737418240, mountpoint: '/' }],
+        openscap: {
+          profile_id: 'xccdf_org.ssgproject.content_profile_standard',
+        },
+        files: firstBootData,
+        // services need to contain both serviced included in the OpenSCAP profile
+        // and the first boot script
+        services: { enabled: ['crond', 'emacs-service', FIRST_BOOT_SERVICE] },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('dos2unix', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToOscapStep();
+    await selectSimplifiedOscapProfile();
+    await goFromOscapToFirstBoot();
+    await openCodeEditor();
+    await uploadFile(SCRIPT_DOS);
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

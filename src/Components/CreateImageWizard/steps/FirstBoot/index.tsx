@@ -73,7 +73,10 @@ const FirstBootStep = () => {
           isCopyEnabled
           isLanguageLabelVisible
           language={language}
-          onCodeChange={(code) => dispatch(setFirstBootScript(code))}
+          onCodeChange={(code) => {
+            // In case the user is on windows
+            dispatch(setFirstBootScript(code.replace('\r\n', '\n')));
+          }}
           code={selectedScript}
           height="35vh"
           emptyStateButton={<span data-testid="firstboot_browse">Browse</span>}
