@@ -69,6 +69,7 @@ const DetailsStep = () => {
           ariaLabel="blueprint name"
           dataTestId="blueprint"
           value={blueprintName}
+          isDisabled={false}
           onChange={handleNameChange}
           placeholder="Add blueprint name"
           stepValidation={stepValidation}
@@ -92,6 +93,7 @@ const DetailsStep = () => {
           ariaLabel="blueprint description"
           dataTestId="blueprint description"
           value={blueprintDescription || ''}
+          isDisabled={false}
           onChange={handleDescriptionChange}
           placeholder="Add description"
           stepValidation={stepValidation}

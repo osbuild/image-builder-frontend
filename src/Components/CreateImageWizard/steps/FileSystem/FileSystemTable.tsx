@@ -233,10 +233,12 @@ type MinimumSizePropTypes = {
   partition: Partition;
 };
 
-export type Units = 'KiB' | 'MiB' | 'GiB';
+export type Units = 'B' | 'KiB' | 'MiB' | 'GiB';
 
 export const getConversionFactor = (units: Units) => {
   switch (units) {
+    case 'B':
+      return 1;
     case 'KiB':
       return UNIT_KIB;
     case 'MiB':
@@ -254,6 +256,7 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
     <HookValidatedInput
       ariaLabel="minimum partition size"
       value={partition.min_size}
+      isDisabled={partition.unit === 'B'}
       type="text"
       ouiaId="size"
       stepValidation={stepValidation}
@@ -287,7 +290,17 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
     setIsOpen(isOpen);
   };
 
+  const initialValue = useRef(partition).current;
+
   const onSelect = (event: React.MouseEvent, selection: Units) => {
+    if (initialValue.unit === 'B' && selection === 'B') {
+      dispatch(
+        changePartitionMinSize({
+          id: partition.id,
+          min_size: initialValue.min_size,
+        })
+      );
+    }
     dispatch(changePartitionUnit({ id: partition.id, unit: selection }));
     setIsOpen(false);
   };
@@ -303,6 +316,7 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
       <SelectOption value={'KiB'} />
       <SelectOption value={'MiB'} />
       <SelectOption value={'GiB'} />
+      <>{initialValue.unit === 'B' && <SelectOption value={'B'} />}</>
     </Select>
   );
 };

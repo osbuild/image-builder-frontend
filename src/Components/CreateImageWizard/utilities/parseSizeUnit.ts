@@ -14,6 +14,12 @@ export const parseSizeUnit = (bytesize: string) => {
   } else if (parseInt(bytesize) % UNIT_KIB === 0) {
     size = parseInt(bytesize) / UNIT_KIB;
     unit = 'KiB';
+  } else if (parseInt(bytesize)) {
+    size = parseInt(bytesize);
+    unit = 'B';
+  } else {
+    size = 10;
+    unit = 'GiB';
   }
 
   return [String(size), unit];
