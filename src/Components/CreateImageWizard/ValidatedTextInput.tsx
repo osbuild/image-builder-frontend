@@ -34,6 +34,7 @@ export const HookValidatedInput = ({
   ouiaId,
   ariaLabel,
   value,
+  isDisabled,
   placeholder,
   onChange,
   stepValidation,
@@ -67,6 +68,7 @@ export const HookValidatedInput = ({
         aria-label={ariaLabel}
         onBlur={handleBlur}
         placeholder={placeholder}
+        isDisabled={isDisabled}
       />
       {validated === 'error' && (
         <HelperText>
