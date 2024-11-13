@@ -85,12 +85,6 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     display: flex
 }
 
-.repo-step .content-container {
-    flex-grow: 1;
-    overflow-y: auto;  /* Allow scrolling within the repo list area */
-    max-height: 600px;  /* Keeps the content within a limited height */
-}
-
 .pf-v5-c-wizard__main {
     /* TO DO: This part of the code is responsible for the Wizard footer being fixed
     at the bottom of the page. Unfortunately there's a new bug that's at least
@@ -100,19 +94,13 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     Temporarily commenting out this code, until we figure out how the handle
     this bug.
     */
-    // flex: 1 1 0
-    
-    // TO DO: Remove after the fix
+    flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    min-height: 800px;  /* Always go with pixels */
 }
 
 .pf-v5-c-wizard__footer {
     position: sticky;
     bottom: 0;
-    padding: 1rem;
-    background-color: white;  // Ensure background covers content below
-    z-index: 10;  // Ensure the footer is above the content
 }
