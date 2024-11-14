@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import {
   Button,
@@ -20,6 +20,7 @@ import {
   useGetArchitecturesQuery,
 } from '../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../store/provisioningApi';
+import { rhsmApi } from '../../../../store/rhsmApi';
 import {
   addImageType,
   reinitializeAws,
@@ -49,6 +50,11 @@ const TargetEnvironment = () => {
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
+  const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
+
+  useEffect(() => {
+    prefetchActivationKeys();
+  }, []);
 
   const supportedEnvironments = data?.find(
     (elem) => elem.arch === arch
