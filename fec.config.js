@@ -2,6 +2,7 @@
 const path = require('path');
 
 const CopyPlugin = require('copy-webpack-plugin');
+const { sentryWebpackPlugin } = require("@sentry/webpack-plugin");
 const webpack = require('webpack');
 
 const plugins = [];
@@ -54,6 +55,22 @@ if (process.env.NODE_ENV) {
   add_define('process.env.NODE_ENV', process.env.NODE_ENV);
 }
 
+if (process.env.SENTRY_AUTH_TOKEN) {
+  plugins.push(
+    sentryWebpackPlugin({
+      authToken: process.env.SENTRY_AUTH_TOKEN,
+      org: process.env.SENTRY_ORG,
+      project: proces.env.SENTRY_PROJECT,
+      _experiments: {
+        moduleMetadata: ({ release }) => ({
+          dsn: process.env.SENTRY_DSN,
+          release,
+        }),
+      },
+    })
+  );
+}
+
 module.exports = {
   sassPrefix: '.imageBuilder',
   debug: true,
@@ -72,6 +89,7 @@ module.exports = {
   devServer: process.env.MSW && {
     headers: { 'Service-Worker-Allowed': '/' },
   },
+  devtool: 'hidden-source-map',
   appUrl: '/insights/image-builder',
   useProxy: true,
   useAgent: true,
