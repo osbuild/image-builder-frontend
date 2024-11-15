@@ -60,7 +60,7 @@ if (process.env.SENTRY_AUTH_TOKEN) {
     sentryWebpackPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
-      project: proces.env.SENTRY_PROJECT,
+      project: process.env.SENTRY_PROJECT,
       _experiments: {
         moduleMetadata: ({ release }) => ({
           dsn: process.env.SENTRY_DSN,
