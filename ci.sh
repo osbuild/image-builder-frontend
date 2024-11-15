@@ -16,6 +16,8 @@ else
     source build_app_info.sh
     mv ${DIST_FOLDER} stable
     export BETA=true
+    # export sentry specific variables
+    export SENTRY_AUTH_TOKEN SENTRY_DSN SENTRY_ORG SENTRY_PROJECT
     build
     source build_app_info.sh
     mv ${DIST_FOLDER} preview
