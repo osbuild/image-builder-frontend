@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@patternfly/patternfly": "6.0.0",
-    "@patternfly/react-code-editor": "6.0.0",
+    "@patternfly/react-code-editor": "5.4.3",
     "@patternfly/react-core": "5.4.8",
     "@patternfly/react-table": "5.4.9",
     "@redhat-cloud-services/frontend-components": "4.2.22",
