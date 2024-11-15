@@ -61,6 +61,7 @@ if (process.env.SENTRY_AUTH_TOKEN) {
       authToken: process.env.SENTRY_AUTH_TOKEN,
       org: process.env.SENTRY_ORG,
       project: process.env.SENTRY_PROJECT,
+      urlPrefix: '~/apps/image-builder',
       _experiments: {
         moduleMetadata: ({ release }) => ({
           dsn: process.env.SENTRY_DSN,
