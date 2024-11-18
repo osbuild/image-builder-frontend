@@ -381,6 +381,7 @@ export type Distributions =
   | "rhel-93"
   | "rhel-94"
   | "rhel-10-nightly"
+  | "rhel-10-beta"
   | "centos-9"
   | "centos-10"
   | "fedora-37"
