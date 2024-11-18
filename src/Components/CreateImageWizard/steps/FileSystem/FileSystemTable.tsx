@@ -257,6 +257,11 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
       ariaLabel="minimum partition size"
       value={partition.min_size}
       isDisabled={partition.unit === 'B'}
+      warning={
+        partition.unit === 'B'
+          ? 'The Wizard only supports KiB, MiB, or GiB. Adjust or keep the current value.'
+          : undefined
+      }
       type="text"
       ouiaId="size"
       stepValidation={stepValidation}
