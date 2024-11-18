@@ -18,7 +18,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import OscapProfileInformation from './OscapProfileInformation';
 
-import { RHEL_9_BETA, RHEL_9 } from '../../../../constants';
+import {
+  RHEL_9_BETA,
+  RHEL_9,
+  RHEL_10_BETA,
+  RHEL_10,
+} from '../../../../constants';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -460,6 +465,8 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
 // so just use the ones from the major release.
 export const removeBetaFromRelease = (dist: Distributions): Distributions => {
   switch (dist) {
+    case RHEL_10_BETA:
+      return RHEL_10 as Distributions;
     case RHEL_9_BETA:
       return RHEL_9;
     default:

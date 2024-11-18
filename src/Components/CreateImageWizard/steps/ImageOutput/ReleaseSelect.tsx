@@ -16,6 +16,7 @@ import {
   RHEL_9_BETA,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
+  RHEL_10_BETA,
 } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { Distributions } from '../../../../store/imageBuilderApi';
@@ -45,7 +46,7 @@ const ReleaseSelect = () => {
   };
 
   const setDescription = (key: Distributions) => {
-    if (key === RHEL_9_BETA) {
+    if (key === RHEL_9_BETA || key === RHEL_10_BETA) {
       return '';
     }
 

@@ -10,6 +10,8 @@ import {
   RHEL_8,
   RHEL_9,
   RHEL_9_BETA,
+  RHEL_10,
+  RHEL_10_BETA,
 } from '../../../constants';
 import { RootState } from '../../../store';
 import {
@@ -133,7 +135,11 @@ const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
  * @param distribution blueprint distribution
  */
 const getLatestRelease = (distribution: Distributions) => {
-  return distribution === RHEL_9_BETA
+  return distribution === RHEL_10_BETA
+    ? (RHEL_10_BETA as Distributions)
+    : distribution.startsWith('rhel-10')
+    ? (RHEL_10 as Distributions)
+    : distribution === RHEL_9_BETA
     ? (RHEL_9_BETA as Distributions)
     : distribution.startsWith('rhel-9')
     ? RHEL_9
