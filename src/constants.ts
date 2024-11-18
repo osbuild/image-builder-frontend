@@ -51,6 +51,8 @@ export const OSBUILD_SERVICE_ARCHITECTURE_URL =
 export const RHEL_8 = 'rhel-8';
 export const RHEL_9 = 'rhel-9';
 export const RHEL_9_BETA = 'rhel-9-beta';
+export const RHEL_10 = 'rhel-10';
+export const RHEL_10_BETA = 'rhel-10-beta';
 export const CENTOS_9 = 'centos-9';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
@@ -82,6 +84,7 @@ export const RELEASES = new Map([
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
   [RHEL_9_BETA, 'Red Hat Enterprise Linux (RHEL) 9 Beta'],
+  [RHEL_10_BETA, 'Red Hat Enterprise Linux (RHEL) 10 Beta'],
   [CENTOS_9, 'CentOS Stream 9'],
 ]);
 
