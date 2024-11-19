@@ -185,6 +185,8 @@ export type ErrorsErrorResponse = {
   errors?: ErrorsHandlerError[];
 };
 export type ApiContentUnitSearchRequest = {
+  /** List of names to search using an exact match */
+  exact_names?: string[];
   /** Maximum number of records to return for the search */
   limit?: number;
   /** Search string to search content unit names */
@@ -274,6 +276,8 @@ export type ApiRepositoryResponse = {
   last_success_introspection_time?: string;
   /** Timestamp of last introspection that had updates */
   last_update_introspection_time?: string;
+  /** Latest URL for the snapshot distribution */
+  latest_snapshot_url?: string;
   /** Verify packages */
   metadata_verification?: boolean;
   /** Disable modularity filtering on this repository */
@@ -322,6 +326,8 @@ export type ApiRepositoryResponseRead = {
   last_success_introspection_time?: string;
   /** Timestamp of last introspection that had updates */
   last_update_introspection_time?: string;
+  /** Latest URL for the snapshot distribution */
+  latest_snapshot_url?: string;
   /** Verify packages */
   metadata_verification?: boolean;
   /** Disable modularity filtering on this repository */
@@ -385,7 +391,7 @@ export type ApiRepositoryRequest = {
   /** Disable modularity filtering on this repository */
   module_hotfixes?: boolean;
   /** Name of the remote yum repository */
-  name?: string;
+  name: string;
   /** Enable snapshotting and hosting of this repository */
   snapshot?: boolean;
   /** URL of the remote yum repository */
@@ -403,7 +409,7 @@ export type ApiRepositoryRequestRead = {
   /** Disable modularity filtering on this repository */
   module_hotfixes?: boolean;
   /** Name of the remote yum repository */
-  name?: string;
+  name: string;
   /** Origin of the repository */
   origin?: string;
   /** Enable snapshotting and hosting of this repository */
@@ -454,9 +460,9 @@ export type ApiListSnapshotByDateResponse = {
 };
 export type ApiListSnapshotByDateRequest = {
   /** Exact date to search by. */
-  date?: string;
+  date: string;
   /** Repository UUIDs to find snapshots for */
-  repository_uuids?: string[];
+  repository_uuids: string[];
 };
 export const {
   useListFeaturesQuery,
