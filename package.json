@@ -7,6 +7,7 @@
     "npm": ">=7.0.0"
   },
   "dependencies": {
+    "@ltd/j-toml": "1.38.0",
     "@patternfly/patternfly": "5.4.1",
     "@patternfly/react-code-editor": "5.4.1",
     "@patternfly/react-core": "5.4.1",
