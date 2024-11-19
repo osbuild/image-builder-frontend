@@ -16,6 +16,7 @@ const config = {
     },
     testTimeout: 10000,
     fileParallelism: false,
+    exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**'],
   },
   reporters: ['default', 'junit'],
   outputFile: {

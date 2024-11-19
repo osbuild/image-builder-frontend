@@ -27,7 +27,6 @@ module.exports = {
   mode,
   devtool,
   plugins,
-  externals: { cockpit: 'cockpit' },
   resolve: {
     modules: ['node_modules'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
@@ -36,7 +35,7 @@ module.exports = {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        include: [path.resolve('src')],
+        include: [path.resolve('src'), path.resolve(path.join('pkg', 'lib'))],
         use: {
           loader: 'babel-loader',
           options: {
