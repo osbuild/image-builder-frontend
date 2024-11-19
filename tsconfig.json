@@ -15,6 +15,11 @@
     ],
     "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "*": [
+        "./pkg/lib/*"
+      ]
+    }
   }
 }
