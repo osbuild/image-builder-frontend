@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -10,10 +10,11 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
-import { INSIGHTS_URL, RHC_URL } from '../../../../constants';
+import { INSIGHTS_URL, RHC_URL, RHEL_10_BETA } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeRegistrationType,
+  selectDistribution,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
 
@@ -98,11 +99,19 @@ const RhcPopover = () => {
 
 const Registration = () => {
   const dispatch = useAppDispatch();
+  const distribution = useAppSelector(selectDistribution);
   const registrationType = useAppSelector(selectRegistrationType);
 
   const [showOptions, setShowOptions] = useState(
     registrationType === 'register-later'
   );
+
+  // TO DO: Remove when rhc starts working for RHEL 10 Beta
+  useEffect(() => {
+    if (distribution === RHEL_10_BETA) {
+      dispatch(changeRegistrationType('register-now-insights'));
+    }
+  }, []);
 
   return (
     <FormGroup label="Registration method">
@@ -115,8 +124,11 @@ const Registration = () => {
           registrationType === 'register-now-rhc'
         }
         onChange={(_event, checked) => {
-          if (checked) {
+          // TO DO: Update when rhc starts working for RHEL 10 Beta
+          if (checked && distribution !== RHEL_10_BETA) {
             dispatch(changeRegistrationType('register-now-rhc'));
+          } else if (checked && distribution === RHEL_10_BETA) {
+            dispatch(changeRegistrationType('register-now-insights'));
           } else {
             dispatch(changeRegistrationType('register-later'));
             setShowOptions(false);
@@ -179,6 +191,8 @@ const Registration = () => {
                       dispatch(changeRegistrationType('register-now-insights'));
                     }
                   }}
+                  // TO DO: Remove when rhc starts working for RHEL 10 Beta
+                  isDisabled={distribution === RHEL_10_BETA}
                   id="register-system-now-rhc"
                   name="register-system-rhc"
                 />
