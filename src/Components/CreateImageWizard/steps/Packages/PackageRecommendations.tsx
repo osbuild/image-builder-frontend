@@ -21,11 +21,13 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
-import PackageRecommendationDescription from './components/PackageRecommendationDescription';
 import { RedHatRepository } from './Packages';
 
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
-import { useListRepositoriesQuery } from '../../../../store/contentSourcesApi';
+import {
+  useListRepositoriesQuery,
+  useSearchRpmMutation,
+} from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useRecommendPackageMutation } from '../../../../store/imageBuilderApi';
 import {
@@ -67,6 +69,15 @@ const PackageRecommendations = () => {
   const [fetchRecommendedPackages, { data, isSuccess, isLoading, isError }] =
     useRecommendPackageMutation();
 
+  const [
+    fetchRecommendationDescriptions,
+    {
+      data: dataDescriptions,
+      isSuccess: isSuccessDescriptions,
+      isLoading: isLoadingDescriptions,
+    },
+  ] = useSearchRpmMutation();
+
   useEffect(() => {
     if (isExpanded && packages.length > 0) {
       (async () => {
@@ -91,6 +102,17 @@ const PackageRecommendations = () => {
       })();
     }
   }, [fetchRecommendedPackages, packages, isExpanded]);
+
+  useEffect(() => {
+    if (isSuccess && data.packages.length > 0) {
+      fetchRecommendationDescriptions({
+        apiContentUnitSearchRequest: {
+          exact_names: data?.packages,
+          urls: distroRepoUrls,
+        },
+      });
+    }
+  }, [fetchRecommendationDescriptions, isSuccess, data?.packages]);
 
   const addAllPackages = () => {
     if (data?.packages?.length) {
@@ -213,14 +235,18 @@ const PackageRecommendations = () => {
                     {data.packages.map((pkg) => (
                       <Tr key={pkg}>
                         <Td>{pkg}</Td>
-                        <Td>
-                          {distroRepoUrls && (
-                            <PackageRecommendationDescription
-                              pkg={pkg}
-                              urls={distroRepoUrls}
-                            />
-                          )}
-                        </Td>
+                        {isLoadingDescriptions && (
+                          <Td>
+                            <Spinner size="md" />
+                          </Td>
+                        )}
+                        {isSuccessDescriptions && (
+                          <Td>
+                            {dataDescriptions
+                              .filter((p) => p.package_name === pkg)
+                              .map((p) => p.summary)}
+                          </Td>
+                        )}
                         <Td>
                           <RedHatRepository />
                         </Td>
