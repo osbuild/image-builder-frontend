@@ -43,7 +43,7 @@ import {
   isGcpEmailValid,
 } from './validators';
 
-import { RHEL_8, AARCH64 } from '../../constants';
+import { RHEL_8, RHEL_10_BETA, AARCH64 } from '../../constants';
 import { useListFeaturesQuery } from '../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
@@ -59,6 +59,7 @@ import {
   selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
+  selectDistribution,
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
@@ -184,6 +185,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   /*           *
    * Selectors *
    *           */
+
+  const distribution = useAppSelector(selectDistribution);
 
   // Image Output
   const targetEnvironments = useAppSelector(selectImageTypes);
@@ -367,6 +370,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
                 id="step-oscap"
                 key="step-oscap"
+                isHidden={distribution === RHEL_10_BETA}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
@@ -403,7 +407,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-repository-snapshot"
                 navItem={customStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!snapshottingEnabled}
+                isHidden={!snapshottingEnabled || distribution === RHEL_10_BETA}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
@@ -417,6 +421,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
+                isHidden={distribution === RHEL_10_BETA}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
