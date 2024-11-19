@@ -36,3 +36,6 @@ cockpit/public/main*
 
 # Sentry Config File
 .sentryclirc
+
+# cockpit lib dir
+pkg/lib
