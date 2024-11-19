@@ -26,6 +26,7 @@ import {
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../Utilities/time';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
@@ -35,6 +36,9 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
+
+  const isRHEL9BetaEnabled = useFlag('image-builder.rhel9.beta.enabled');
+  const isRHEL10BetaEnabled = useFlag('image-builder.rhel10.beta.enabled');
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
     dispatch(changeDistribution(selection));
@@ -72,6 +76,14 @@ const ReleaseSelect = () => {
     const options: ReactElement[] = [];
     const filteredRhel = new Map(
       [...RELEASES].filter(([key]) => {
+        if (key === RHEL_9_BETA) {
+          return isRHEL9BetaEnabled;
+        }
+
+        if (key === RHEL_10_BETA) {
+          return isRHEL10BetaEnabled;
+        }
+
         // Only show non-RHEL distros if expanded
         if (showDevelopmentOptions) {
           return true;
