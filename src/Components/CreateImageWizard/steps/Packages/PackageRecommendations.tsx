@@ -88,7 +88,12 @@ const PackageRecommendations = () => {
           },
         });
 
-        if (response && response.data && response.data.packages.length > 0) {
+        if (
+          response &&
+          response.data &&
+          response.data.packages &&
+          response.data.packages.length > 0
+        ) {
           analytics.track(
             `${AMPLITUDE_MODULE_NAME}-packageRecommendationsShown`,
             {
@@ -104,7 +109,7 @@ const PackageRecommendations = () => {
   }, [fetchRecommendedPackages, packages, isExpanded]);
 
   useEffect(() => {
-    if (isSuccess && data.packages.length > 0) {
+    if (isSuccess && data.packages && data.packages.length > 0) {
       fetchRecommendationDescriptions({
         apiContentUnitSearchRequest: {
           exact_names: data?.packages,
