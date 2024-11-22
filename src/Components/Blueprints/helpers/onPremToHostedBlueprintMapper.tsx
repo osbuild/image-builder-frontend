@@ -150,6 +150,7 @@ export const mapOnPremToHosted = (
     metadata: {
       parent_id: null,
       exported_at: '',
+      is_on_prem: true,
     },
   };
 };

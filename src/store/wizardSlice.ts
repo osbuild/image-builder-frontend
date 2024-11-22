@@ -112,6 +112,7 @@ export type wizardState = {
   metadata?: {
     parent_id: string | null;
     exported_at: string;
+    is_on_prem: boolean;
   };
 };
 
