@@ -50,7 +50,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
   const dispatch = useAppDispatch();
-
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
     file: File
@@ -66,29 +65,40 @@ export const ImportBlueprintModal: React.FunctionComponent<
         const isToml = filename.endsWith('.toml');
         const isJson = filename.endsWith('.json');
         if (isToml) {
-          setIsOnPrem(true);
           const tomlBlueprint = parse(fileContent);
           const blueprintFromFile = mapOnPremToHosted(tomlBlueprint);
           const importBlueprintState = mapExportRequestToState(
             blueprintFromFile,
             []
           );
+          setIsOnPrem(true);
           setImportedBlueprint(importBlueprintState);
         } else if (isJson) {
-          setIsOnPrem(false);
           const blueprintFromFile = JSON.parse(fileContent);
-          const blueprintExportedResponse: BlueprintExportResponse = {
-            name: blueprintFromFile.name,
-            description: blueprintFromFile.description,
-            distribution: blueprintFromFile.distribution,
-            customizations: blueprintFromFile.customizations,
-            metadata: blueprintFromFile.metadata,
-          };
-          const importBlueprintState = mapExportRequestToState(
-            blueprintExportedResponse,
-            blueprintFromFile.image_requests || []
-          );
-          setImportedBlueprint(importBlueprintState);
+          try {
+            const blueprintExportedResponse: BlueprintExportResponse = {
+              name: blueprintFromFile.name,
+              description: blueprintFromFile.description,
+              distribution: blueprintFromFile.distribution,
+              customizations: blueprintFromFile.customizations,
+              metadata: blueprintFromFile.metadata,
+            };
+            const importBlueprintState = mapExportRequestToState(
+              blueprintExportedResponse,
+              blueprintFromFile.image_requests || []
+            );
+            setIsOnPrem(false);
+            setImportedBlueprint(importBlueprintState);
+          } catch {
+            const blueprintFromFileMapped =
+              mapOnPremToHosted(blueprintFromFile);
+            const importBlueprintState = mapExportRequestToState(
+              blueprintFromFileMapped,
+              []
+            );
+            setIsOnPrem(true);
+            setImportedBlueprint(importBlueprintState);
+          }
         }
       } catch (error) {
         setIsInvalidFormat(true);
