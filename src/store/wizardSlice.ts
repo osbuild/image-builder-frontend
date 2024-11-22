@@ -9,6 +9,7 @@ import type {
   ImageTypes,
   Locale,
   Repository,
+  Timezone,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
@@ -112,6 +113,7 @@ export type wizardState = {
     blueprintName: string;
     blueprintDescription: string;
   };
+  timezone: Timezone;
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -186,6 +188,10 @@ export const initialState: wizardState = {
   details: {
     blueprintName: '',
     blueprintDescription: '',
+  },
+  timezone: {
+    timezone: '',
+    ntpservers: [],
   },
   firstBoot: { script: '' },
 };
@@ -355,6 +361,14 @@ export const selectBlueprintDescription = (state: RootState) => {
 
 export const selectFirstBootScript = (state: RootState) => {
   return state.wizard.firstBoot?.script;
+};
+
+export const selectTimezone = (state: RootState) => {
+  return state.wizard.timezone.timezone;
+};
+
+export const selectNtpServers = (state: RootState) => {
+  return state.wizard.timezone.ntpservers;
 };
 
 export const wizardSlice = createSlice({
@@ -717,6 +731,27 @@ export const wizardSlice = createSlice({
     changeKernelAppend: (state, action: PayloadAction<string>) => {
       state.kernel.append = action.payload;
     },
+    changeTimezone: (state, action: PayloadAction<string>) => {
+      state.timezone.timezone = action.payload;
+    },
+    addNtpServer: (state, action: PayloadAction<string>) => {
+      if (
+        !state.timezone.ntpservers?.some((server) => server === action.payload)
+      ) {
+        state.timezone.ntpservers?.push(action.payload);
+      }
+    },
+    removeNtpServer: (state, action: PayloadAction<string>) => {
+      state.timezone.ntpservers?.splice(
+        state.timezone.ntpservers.findIndex(
+          (server) => server === action.payload
+        ),
+        1
+      );
+    },
+    clearNtpServers: (state) => {
+      state.timezone.ntpservers = [];
+    },
   },
 });
 
@@ -780,5 +815,9 @@ export const {
   changeMaskedServices,
   changeDisabledServices,
   changeKernelAppend,
+  changeTimezone,
+  addNtpServer,
+  removeNtpServer,
+  clearNtpServers,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
