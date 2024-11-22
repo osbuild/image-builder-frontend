@@ -28,6 +28,7 @@ import {
   TargetEnvGCPList,
   TargetEnvOciList,
   TargetEnvOtherList,
+  TimezoneList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -66,7 +67,10 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(true);
   const [isExpandedComplianceDetail, setIsExpandedComplianceDetail] =
     useState(true);
+  const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
+
+  const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -84,6 +88,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedOscapDetail(isExpandedOscapDetail);
   const onToggleComplianceDetails = (isExpandedComplianceDetail: boolean) =>
     setIsExpandedComplianceDetail(isExpandedComplianceDetail);
+  const onToggleTimezone = (isExpandedTimezone: boolean) =>
+    setIsExpandedTimezone(isExpandedTimezone);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
@@ -298,6 +304,23 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
+      {isTimezoneEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Timezone',
+            'revisit-timezone',
+            'wizard-timezone'
+          )}
+          onToggle={(_event, isExpandedTimezone) =>
+            onToggleTimezone(isExpandedTimezone)
+          }
+          isExpanded={isExpandedTimezone}
+          isIndented
+          data-testid="timezone-expandable"
+        >
+          <TimezoneList />
+        </ExpandableSection>
+      )}
       {isFirstBootEnabled && (
         <ExpandableSection
           toggleContent={composeExpandable(
