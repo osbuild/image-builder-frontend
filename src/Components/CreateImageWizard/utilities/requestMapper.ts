@@ -348,6 +348,7 @@ export const mapExportRequestToState = (
     metadata: {
       parent_id: request.metadata?.parent_id || null,
       exported_at: request.metadata?.exported_at || '',
+      is_on_prem: request.metadata?.is_on_prem || false,
     },
     env: initialState.env,
     registration: initialState.registration,
