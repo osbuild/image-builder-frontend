@@ -63,6 +63,8 @@ import {
   selectUseLatest,
   selectPartitions,
   selectFirstBootScript,
+  selectTimezone,
+  selectNtpServers,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -737,6 +739,36 @@ export const DetailsList = () => {
 
 export const OscapList = () => {
   return <OscapProfileInformation allowChangingCompliancePolicy={true} />;
+};
+
+export const TimezoneList = () => {
+  const timezone = useAppSelector(selectTimezone);
+  const ntpServers = useAppSelector(selectNtpServers);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Timezone
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {timezone ? timezone : 'None'}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          NTP servers
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {ntpServers && ntpServers.length > 0 ? ntpServers.join(', ') : 'None'}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
 };
 
 export const FirstBootList = () => {
