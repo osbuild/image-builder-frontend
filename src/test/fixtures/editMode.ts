@@ -420,6 +420,24 @@ export const packagesBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['packages'],
 };
 
+export const timezoneCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['timezone'],
+  description: mockBlueprintDescriptions['timezone'],
+  customizations: {
+    timezone: {
+      timezone: 'Asia/Tokyo',
+      ntpservers: ['0.jp.pool.ntp.org', '1.jp.pool.ntp.org'],
+    },
+  },
+};
+
+export const timezoneBlueprintResponse: BlueprintResponse = {
+  ...timezoneCreateBlueprintRequest,
+  id: mockBlueprintIds['timezone'],
+  description: mockBlueprintDescriptions['timezone'],
+};
+
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['firstBoot'],
@@ -504,6 +522,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return repositoriesBlueprintResponse;
     case mockBlueprintIds['packages']:
       return packagesBlueprintResponse;
+    case mockBlueprintIds['timezone']:
+      return timezoneBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:
