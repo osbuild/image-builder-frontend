@@ -315,12 +315,19 @@ describe('Import modal', () => {
     await screen.findByRole('textbox', {
       name: 'Select activation key',
     });
-    await clickNext();
 
     // OpenScap
     await clickNext();
 
-    //File system configuration
+    // File system configuration
+    await clickNext();
+    const partition = await screen.findByText('/var');
+    expect(partition).toBeInTheDocument();
+    const sizeValue = screen.getByRole('cell', {
+      name: /2/i,
+    });
+    expect(sizeValue).toBeInTheDocument();
+
     await clickNext();
 
     // Custom Repos step
