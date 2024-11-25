@@ -484,6 +484,7 @@ const Row = ({
         <Td dataLabel="Image name">
           {compose.blueprint_id ? (
             <Button
+              component="a"
               variant="link"
               isInline
               onClick={() =>
