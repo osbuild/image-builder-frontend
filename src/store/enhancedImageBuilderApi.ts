@@ -5,7 +5,7 @@ import { imageBuilderApi } from './imageBuilderApi';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 const errorMessage = (err: any) => {
   let msg = err.error.statusText;
-  if (err.error.data?.errors[0]?.detail) {
+  if (err.error.data?.errors.length > 0 && err.error.data?.errors[0]?.detail) {
     msg = err.error.data?.errors[0]?.detail;
   }
   return msg;
