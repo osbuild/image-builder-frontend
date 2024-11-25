@@ -54,6 +54,7 @@ const goToPackagesStep = async () => {
 const goToReviewStep = async () => {
   await clickNext(); // Users
   await clickNext(); // Timezone
+  await clickNext(); // Locale
   await clickNext(); // First Boot
   await clickNext(); // Details
   await enterBlueprintName();

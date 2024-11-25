@@ -100,6 +100,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Additional packages
   await clickNext(); // Users
   await clickNext(); // Timezone
+  await clickNext(); // Locale
   await clickNext(); // FirstBoot
   await clickNext(); // Details
   await enterBlueprintName('Oscap test');

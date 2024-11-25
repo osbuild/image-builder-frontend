@@ -11,7 +11,7 @@ import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
-const goToTimezoneStep = async () => {
+const goToLocaleStep = async () => {
   const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
@@ -26,37 +26,38 @@ const goToTimezoneStep = async () => {
   await clickNext(); // Additional packages
   await clickNext(); // Users
   await clickNext(); // Timezone
+  await clickNext(); // Locale
 };
 
-describe('Step Timezone', () => {
+describe('Step Locale', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     router = undefined;
   });
 
-  test('clicking Next loads Locale', async () => {
+  test('clicking Next loads First Boot', async () => {
     await renderCreateMode();
-    await goToTimezoneStep();
+    await goToLocaleStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Locale',
+      name: 'First boot configuration',
     });
   });
 
-  test('clicking Back loads Users', async () => {
+  test('clicking Back loads Timezone', async () => {
     await renderCreateMode();
-    await goToTimezoneStep();
+    await goToLocaleStep();
     await clickBack();
-    await screen.findByRole('heading', { name: 'Users' });
+    await screen.findByRole('heading', { name: 'Timezone' });
   });
 
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
-    await goToTimezoneStep();
+    await goToLocaleStep();
     await verifyCancelButton(router);
   });
 });
 
-// TO DO 'Step Timezone' -> 'revisit step button on Review works'
-// TO DO 'Timezone request generated correctly'
-// TO DO 'Timezone edit mode'
+// TO DO 'Step Locale' -> 'revisit step button on Review works'
+// TO DO 'Locale request generated correctly'
+// TO DO 'Locale edit mode'
