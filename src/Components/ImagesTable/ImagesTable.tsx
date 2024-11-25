@@ -241,7 +241,6 @@ const ImagesTable = () => {
               onPerPageSelect={onPerPageSelect}
               widgetId="compose-pagination-bottom"
               data-testid="images-pagination-bottom"
-              isCompact
             />
           </ToolbarItem>
         </ToolbarContent>
