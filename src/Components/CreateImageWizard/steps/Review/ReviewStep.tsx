@@ -105,7 +105,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         data-testid={testId}
         component="span"
         onClick={() => revisitStep(stepId)}
-        className="pf-u-p-0 pf-u-font-weight-bold"
+        className="pf-v5-u-p-0 pf-v5-u-font-weight-bold"
         isInline
       >
         Revisit step <ArrowRightIcon />
@@ -123,7 +123,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         <TextList component={TextListVariants.dl}>
           <TextListItem
             component={TextListItemVariants.dt}
-            className="pf-u-min-width pf-v5-u-text-align-left"
+            className="pf-v5-u-min-width pf-v5-u-text-align-left"
           >
             <Button variant="link" component="span" isInline>
               {label}

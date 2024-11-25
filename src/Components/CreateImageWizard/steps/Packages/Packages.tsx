@@ -541,7 +541,7 @@ const Packages = () => {
                   </EmptyStateActions>
                   <EmptyStateActions>
                     <Button
-                      className="pf-u-pt-md"
+                      className="pf-v5-u-pt-md"
                       variant="link"
                       isInline
                       component="a"
@@ -1035,10 +1035,10 @@ const Packages = () => {
                     variant="plain"
                     aria-label="About included packages"
                     component="span"
-                    className="pf-u-p-0"
+                    className="pf-v5-u-p-0"
                     isInline
                   >
-                    <HelpIcon className="pf-u-ml-xs" />
+                    <HelpIcon className="pf-v5-u-ml-xs" />
                   </Button>
                 </Popover>
               </Td>
@@ -1308,7 +1308,7 @@ const Packages = () => {
                           variant="plain"
                           aria-label="About included repositories"
                           component="span"
-                          className="pf-u-p-0"
+                          className="pf-v5-u-p-0"
                           size="sm"
                           isInline
                         >
@@ -1339,7 +1339,7 @@ const Packages = () => {
                           variant="plain"
                           aria-label="About other repositories"
                           component="span"
-                          className="pf-u-p-0"
+                          className="pf-v5-u-p-0"
                           size="sm"
                           isInline
                         >

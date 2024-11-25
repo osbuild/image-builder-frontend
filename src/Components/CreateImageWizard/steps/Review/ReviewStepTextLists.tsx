@@ -76,7 +76,7 @@ import { PopoverActivation } from '../Registration/ActivationKeysList';
 
 const ExpirationWarning = () => {
   return (
-    <div className="pf-u-mr-sm pf-u-font-size-sm pf-v5-u-warning-color-200">
+    <div className="pf-v5-u-mr-sm pf-v5-u-font-size-sm pf-v5-u-warning-color-200">
       <ExclamationTriangleIcon /> Expires 14 days after creation
     </div>
   );
@@ -105,7 +105,7 @@ export const ImageOutputList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Release
         </TextListItem>
@@ -131,7 +131,7 @@ export const FSCList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Configuration type
         </TextListItem>
@@ -155,7 +155,7 @@ export const FSCList = () => {
                   variant="link"
                   aria-label="File system configuration info"
                   aria-describedby="file-system-configuration-info"
-                  className="pf-u-pt-0 pf-u-pb-0"
+                  className="pf-v5-u-pt-0 pf-v5-u-pb-0"
                 >
                   View partitions
                 </Button>
@@ -225,7 +225,7 @@ export const TargetEnvAWSList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Image type
         </TextListItem>
@@ -267,7 +267,7 @@ export const TargetEnvGCPList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Image type
         </TextListItem>
@@ -330,7 +330,7 @@ export const TargetEnvAzureList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Image type
         </TextListItem>
@@ -387,7 +387,7 @@ export const TargetEnvOciList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Object Storage URL
         </TextListItem>
@@ -405,7 +405,7 @@ export const TargetEnvOtherList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Image type
         </TextListItem>
@@ -485,7 +485,7 @@ export const ContentList = ({
             <>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Repository snapshot
               </TextListItem>
@@ -509,7 +509,7 @@ export const ContentList = ({
                   <Button
                     variant="link"
                     aria-label="Snapshot method"
-                    className="pf-u-p-0"
+                    className="pf-v5-u-p-0"
                     isDisabled={noRepositoriesSelected || isLoading || isError}
                     isLoading={isLoading}
                   >
@@ -552,7 +552,7 @@ export const ContentList = ({
                 <Button
                   variant="link"
                   aria-label="About custom repositories"
-                  className="pf-u-p-0"
+                  className="pf-v5-u-p-0"
                 >
                   {customRepositories?.length +
                     recommendedRepositories.length || 0}
@@ -564,7 +564,7 @@ export const ContentList = ({
           </TextListItem>
           <TextListItem
             component={TextListItemVariants.dt}
-            className="pf-u-min-width"
+            className="pf-v5-u-min-width"
           >
             Additional packages
           </TextListItem>
@@ -583,7 +583,7 @@ export const ContentList = ({
                 <Button
                   variant="link"
                   aria-label="About packages"
-                  className="pf-u-p-0"
+                  className="pf-v5-u-p-0"
                 >
                   {packages?.length + groups?.length}
                 </Button>
@@ -615,7 +615,7 @@ export const RegisterLaterList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Registration type
         </TextListItem>
@@ -644,7 +644,7 @@ export const RegisterNowList = () => {
         <TextList component={TextListVariants.dl}>
           <TextListItem
             component={TextListItemVariants.dt}
-            className="pf-u-min-width"
+            className="pf-v5-u-min-width"
           >
             Registration type
           </TextListItem>
@@ -708,7 +708,7 @@ export const DetailsList = () => {
           <>
             <TextListItem
               component={TextListItemVariants.dt}
-              className="pf-u-min-width"
+              className="pf-v5-u-min-width"
             >
               Blueprint name
             </TextListItem>
@@ -721,7 +721,7 @@ export const DetailsList = () => {
           <>
             <TextListItem
               component={TextListItemVariants.dt}
-              className="pf-u-min-width"
+              className="pf-v5-u-min-width"
             >
               Description
             </TextListItem>
@@ -747,7 +747,7 @@ export const FirstBootList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           First boot script
         </TextListItem>

@@ -80,7 +80,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                 <Button
                   variant="plain"
                   aria-label="About additional repositories"
-                  className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+                  className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                 >
                   <HelpIcon />
                 </Button>
@@ -88,7 +88,7 @@ const ActivationKeyInformation = (): JSX.Element => {
             </TextListItem>
             <TextListItem
               component={TextListItemVariants.dd}
-              className="pf-u-display-flex pf-u-align-items-flex-end"
+              className="pf-v5-u-display-flex pf-v5-u-align-items-flex-end"
             >
               {activationKeyInfo.body?.additionalRepositories &&
               activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
@@ -126,7 +126,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                     data-testid="repositories-popover-button"
                     variant="link"
                     aria-label="Show additional repositories"
-                    className="pf-u-pl-0 pf-u-pt-0 pf-u-pb-0"
+                    className="pf-v5-u-pl-0 pf-v5-u-pt-0 pf-v5-u-pb-0"
                   >
                     {activationKeyInfo.body?.additionalRepositories?.length}{' '}
                     repositories

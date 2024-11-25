@@ -23,7 +23,7 @@ const PackageInfoNotAvailablePopover = () => {
       <Button
         variant="plain"
         aria-label="Package description"
-        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+        className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
       >
         <HelpIcon />
       </Button>

@@ -15,11 +15,11 @@
 }
 
 .pf-c-form {
-    --pf-c-form--GridGap: var(--pf-global--spacer--md);
+    --pf-c-form--GridGap: var(--pf-v5-global--spacer--md);
 }
 
 .pf-c-form__group-label {
-    --pf-c-form__group-label--PaddingBottom: var(--pf-global--spacer--xs);
+    --pf-c-form__group-label--PaddingBottom: var(--pf-v5-global--spacer--xs);
 }
 
 .tiles {
@@ -33,9 +33,9 @@
 
 .pf-c-tile:focus {
     --pf-c-tile__title--Color: var(--pf-c-tile__title--Color);
-    --pf-c-tile__icon--Color: var(---pf-global--Color--100);
-    --pf-c-tile--before--BorderWidth: var(--pf-global--BorderWidth--sm);
-    --pf-c-tile--before--BorderColor: var(--pf-global--BorderColor--100);
+    --pf-c-tile__icon--Color: var(---pf-v5-global--Color--100);
+    --pf-c-tile--before--BorderWidth: var(--pf-v5-global--BorderWidth--sm);
+    --pf-c-tile--before--BorderColor: var(--pf-v5-global--BorderColor--100);
 }
 
 .pf-c-tile.pf-m-selected:focus {
@@ -48,12 +48,12 @@
     height: 1em;
 }
 
-.pf-u-min-width {
-    --pf-u-min-width--MinWidth: 18ch;
+.pf-v5-u-min-width {
+    --pf-v5-u-min-width--MinWidth: 18ch;
 }
 
-.pf-u-max-width {
-    --pf-u-max-width--MaxWidth: 26rem;
+.pf-v5-u-max-width {
+    --pf-v5-u-max-width--MaxWidth: 26rem;
 }
 
 ul.pf-m-plain {

@@ -65,7 +65,7 @@ const FileSystemConfiguration = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             href={FILE_SYSTEM_CUSTOMIZATION_URL}
-            className="pf-u-pl-0"
+            className="pf-v5-u-pl-0"
           >
             Read more about manual configuration here
           </Button>
@@ -83,7 +83,7 @@ const FileSystemConfiguration = () => {
         <Button
           ouiaId="add-partition"
           data-testid="file-system-add-partition"
-          className="pf-u-text-align-left"
+          className="pf-v5-u-text-align-left"
           variant="link"
           icon={<PlusCircleIcon />}
           onClick={handleAddPartition}

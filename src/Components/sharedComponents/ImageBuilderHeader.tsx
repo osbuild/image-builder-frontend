@@ -84,7 +84,7 @@ const AboutImageBuilderPopover = () => {
       <Button
         variant="plain"
         aria-label="About image builder"
-        className="pf-u-pl-sm header-button"
+        className="pf-v5-u-pl-sm header-button"
       >
         <HelpIcon />
       </Button>
