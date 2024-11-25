@@ -99,7 +99,7 @@ const EmptyImagesTable = () => {
                 iconPosition="right"
                 isInline
                 href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
-                className="pf-u-pt-md"
+                className="pf-v5-u-pt-md"
               >
                 Image builder for RPM-DNF documentation
               </Button>

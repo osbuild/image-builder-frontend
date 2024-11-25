@@ -42,7 +42,7 @@ export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
           component="a"
           target="_blank"
           href={CONTENT_URL}
-          className="pf-u-mr-sm"
+          className="pf-v5-u-mr-sm"
         >
           Go to repositories
         </Button>

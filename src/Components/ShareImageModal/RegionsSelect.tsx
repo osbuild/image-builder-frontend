@@ -224,7 +224,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
             <Button
               variant="plain"
               aria-label="About regions"
-              className="pf-u-pl-sm header-button"
+              className="pf-v5-u-pl-sm header-button"
               isInline
             >
               <HelpIcon />

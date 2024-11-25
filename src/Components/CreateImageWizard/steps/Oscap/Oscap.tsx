@@ -76,7 +76,7 @@ const OpenSCAPFGLabel = () => {
           variant="plain"
           aria-label="About OpenSCAP"
           isInline
-          className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0 pf-u-pr-0"
+          className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0 pf-v5-u-pr-0"
         >
           <HelpIcon />
         </Button>

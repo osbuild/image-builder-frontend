@@ -102,7 +102,7 @@ export const OscapProfileInformation = ({
             <TextList component={TextListVariants.dl}>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Profile description:
               </TextListItem>
@@ -111,7 +111,7 @@ export const OscapProfileInformation = ({
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Operating system:
               </TextListItem>
@@ -120,7 +120,7 @@ export const OscapProfileInformation = ({
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Reference ID:
               </TextListItem>
@@ -132,7 +132,7 @@ export const OscapProfileInformation = ({
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Kernel arguments:
               </TextListItem>
@@ -145,7 +145,7 @@ export const OscapProfileInformation = ({
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Disabled services:
               </TextListItem>
@@ -158,7 +158,7 @@ export const OscapProfileInformation = ({
               </TextListItem>
               <TextListItem
                 component={TextListItemVariants.dt}
-                className="pf-u-min-width"
+                className="pf-v5-u-min-width"
               >
                 Enabled services:
               </TextListItem>

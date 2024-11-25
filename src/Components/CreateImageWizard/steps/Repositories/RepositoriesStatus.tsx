@@ -74,11 +74,11 @@ const RepositoriesStatus = ({
               <Alert
                 variant={repoStatus === 'Invalid' ? 'danger' : 'warning'}
                 title={repoStatus}
-                className="pf-u-pb-sm"
+                className="pf-v5-u-pb-sm"
                 isInline
                 isPlain
               />
-              <p className="pf-u-pb-md">Cannot fetch {repoUrl}</p>
+              <p className="pf-v5-u-pb-md">Cannot fetch {repoUrl}</p>
               {(repoIntrospections || repoFailCount) && (
                 <>
                   <DescriptionList
@@ -124,7 +124,7 @@ const RepositoriesStatus = ({
             </>
           }
         >
-          <Button variant="link" className="pf-u-p-0 pf-u-font-size-sm">
+          <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
             {repoStatus === 'Invalid' && (
               <ExclamationCircleIcon className="error" />
             )}

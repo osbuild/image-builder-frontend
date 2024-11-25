@@ -276,8 +276,8 @@ type StatusPropTypes = {
 
 const Status = ({ icon, text }: StatusPropTypes) => {
   return (
-    <Flex className="pf-u-align-items-baseline pf-m-nowrap">
-      <div className="pf-u-mr-sm">{icon}</div>
+    <Flex className="pf-v5-u-align-items-baseline pf-m-nowrap">
+      <div className="pf-v5-u-mr-sm">{icon}</div>
       <p>{text}</p>
     </Flex>
   );
@@ -312,8 +312,8 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
   }
 
   return (
-    <Flex className="pf-u-align-items-baseline pf-m-nowrap">
-      <div className="pf-u-mr-sm">{icon}</div>
+    <Flex className="pf-v5-u-align-items-baseline pf-m-nowrap">
+      <div className="pf-v5-u-mr-sm">{icon}</div>
       <Popover
         data-testid="errorstatus-popover"
         position="bottom"
@@ -321,7 +321,7 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
         bodyContent={
           <>
             <Alert variant="danger" title={text} isInline isPlain />
-            <Text className="pf-u-pt-md pf-u-pb-md">{reason}</Text>
+            <Text className="pf-v5-u-pt-md pf-v5-u-pb-md">{reason}</Text>
             <Panel isScrollable>
               <PanelMain maxHeight="25rem">
                 <CodeBlock>
@@ -336,14 +336,14 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
                   reason + '\n\n' + detailsArray.join('\n')
                 )
               }
-              className="pf-u-pl-0 pf-u-mt-md"
+              className="pf-v5-u-pl-0 pf-v5-u-mt-md"
             >
               Copy error text to clipboard <CopyIcon />
             </Button>
           </>
         }
       >
-        <Button variant="link" className="pf-u-p-0 pf-u-font-size-sm">
+        <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
           <div className="failure-button">{text}</div>
         </Button>
       </Popover>

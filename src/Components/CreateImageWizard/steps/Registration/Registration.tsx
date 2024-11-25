@@ -48,7 +48,7 @@ const InsightsPopover = () => {
     >
       <Button
         variant="plain"
-        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+        className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
       >
@@ -87,7 +87,7 @@ const RhcPopover = () => {
     >
       <Button
         variant="plain"
-        className="pf-u-pl-sm pf-u-pt-0 pf-u-pb-0"
+        className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
       >
@@ -152,7 +152,7 @@ const Registration = () => {
         body={
           showOptions && (
             <Checkbox
-              className="pf-u-ml-lg"
+              className="pf-v5-u-ml-lg"
               label={
                 <>
                   Enable predictive analytics and management capabilities
