@@ -48,6 +48,16 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.apiRepositoryRequest,
       }),
     }),
+    bulkImportRepositories: build.mutation<
+      BulkImportRepositoriesApiResponse,
+      BulkImportRepositoriesApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/repositories/bulk_import/`,
+        method: "POST",
+        body: queryArg.body,
+      }),
+    }),
     listRepositoriesRpms: build.query<
       ListRepositoriesRpmsApiResponse,
       ListRepositoriesRpmsApiArg
@@ -128,6 +138,12 @@ export type CreateRepositoryApiResponse =
 export type CreateRepositoryApiArg = {
   /** request body */
   apiRepositoryRequest: ApiRepositoryRequest;
+};
+export type BulkImportRepositoriesApiResponse =
+  /** status 201 Created */ ApiRepositoryImportResponseRead[];
+export type BulkImportRepositoriesApiArg = {
+  /** request body */
+  body: ApiRepositoryRequest[];
 };
 export type ListRepositoriesRpmsApiResponse =
   /** status 200 OK */ ApiRepositoryRpmCollectionResponse;
@@ -423,6 +439,116 @@ export type ApiRepositoryRequestRead = {
   /** URL of the remote yum repository */
   url?: string | undefined;
 };
+export type ApiRepositoryImportResponse = {
+  /** Content Type (rpm) of the repository */
+  content_type?: string;
+  /** Architecture to restrict client usage to */
+  distribution_arch?: string;
+  /** Versions to restrict client usage to */
+  distribution_versions?: string[];
+  /** Number of consecutive failed introspections */
+  failed_introspections_count?: number;
+  /** GPG key for repository */
+  gpg_key?: string;
+  /** Label used to configure the yum repository on clients */
+  label?: string;
+  /** Error of last attempted introspection */
+  last_introspection_error?: string;
+  /** Status of last introspection */
+  last_introspection_status?: string;
+  /** Timestamp of last attempted introspection */
+  last_introspection_time?: string;
+  last_snapshot?: ApiSnapshotResponse;
+  last_snapshot_task?: ApiTaskInfoResponse;
+  /** UUID of the last snapshot task */
+  last_snapshot_task_uuid?: string;
+  /** UUID of the last dao.Snapshot */
+  last_snapshot_uuid?: string;
+  /** Timestamp of last successful introspection */
+  last_success_introspection_time?: string;
+  /** Timestamp of last introspection that had updates */
+  last_update_introspection_time?: string;
+  /** Latest URL for the snapshot distribution */
+  latest_snapshot_url?: string;
+  /** Verify packages */
+  metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
+  /** Name of the remote yum repository */
+  name?: string;
+  /** Origin of the repository */
+  origin?: string;
+  /** Number of packages last read in the repository */
+  package_count?: number;
+  /** Enable snapshotting and hosting of this repository */
+  snapshot?: boolean;
+  /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
+  status?: string;
+  /** URL of the remote yum repository */
+  url?: string;
+  /** Warnings to alert user of mismatched fields if there is an existing repo with the same URL */
+  warnings?: {
+    [key: string]: any;
+  }[];
+};
+export type ApiRepositoryImportResponseRead = {
+  /** Account ID of the owner */
+  account_id?: string;
+  /** Content Type (rpm) of the repository */
+  content_type?: string;
+  /** Architecture to restrict client usage to */
+  distribution_arch?: string;
+  /** Versions to restrict client usage to */
+  distribution_versions?: string[];
+  /** Number of consecutive failed introspections */
+  failed_introspections_count?: number;
+  /** GPG key for repository */
+  gpg_key?: string;
+  /** Label used to configure the yum repository on clients */
+  label?: string;
+  /** Error of last attempted introspection */
+  last_introspection_error?: string;
+  /** Status of last introspection */
+  last_introspection_status?: string;
+  /** Timestamp of last attempted introspection */
+  last_introspection_time?: string;
+  last_snapshot?: ApiSnapshotResponse;
+  last_snapshot_task?: ApiTaskInfoResponse;
+  /** UUID of the last snapshot task */
+  last_snapshot_task_uuid?: string;
+  /** UUID of the last dao.Snapshot */
+  last_snapshot_uuid?: string;
+  /** Timestamp of last successful introspection */
+  last_success_introspection_time?: string;
+  /** Timestamp of last introspection that had updates */
+  last_update_introspection_time?: string;
+  /** Latest URL for the snapshot distribution */
+  latest_snapshot_url?: string;
+  /** Verify packages */
+  metadata_verification?: boolean;
+  /** Disable modularity filtering on this repository */
+  module_hotfixes?: boolean;
+  /** Name of the remote yum repository */
+  name?: string;
+  /** Organization ID of the owner */
+  org_id?: string;
+  /** Origin of the repository */
+  origin?: string;
+  /** Number of packages last read in the repository */
+  package_count?: number;
+  /** Enable snapshotting and hosting of this repository */
+  snapshot?: boolean;
+  /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
+  status?: string;
+  /** URL of the remote yum repository */
+  url?: string;
+  /** UUID of the object */
+  uuid?: string;
+  /** Warnings to alert user of mismatched fields if there is an existing repo with the same URL */
+  warnings?: {
+    [key: string]: any;
+  }[];
+};
 export type ApiRepositoryRpm = {
   /** The architecture of the rpm */
   arch?: string | undefined;
@@ -475,6 +601,7 @@ export const {
   useSearchPackageGroupMutation,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
+  useBulkImportRepositoriesMutation,
   useListRepositoriesRpmsQuery,
   useSearchRpmMutation,
   useListSnapshotsByDateMutation,
