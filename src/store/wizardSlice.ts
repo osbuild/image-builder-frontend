@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { ApiRepositoryResponseRead } from './contentSourcesApi';
+import type { ApiRepositoryImportResponseRead, ApiRepositoryRequest, ApiRepositoryResponseRead } from './contentSourcesApi';
 import type {
   CustomRepository,
   Distributions,
@@ -577,6 +577,15 @@ export const wizardSlice = createSlice({
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       state.snapshotting.snapshotDate = action.payload;
     },
+    importCustomRepositories: (
+      state,
+      action: PayloadAction<CustomRepository[]>
+    ) => {
+      state.repositories.customRepositories = [
+        ...state.repositories.customRepositories,
+        ...action.payload
+      ]
+    },
     changeCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -711,6 +720,7 @@ export const {
   changeUseLatest,
   changeSnapshotDate,
   changeCustomRepositories,
+  importCustomRepositories,
   changePayloadRepositories,
   addRecommendedRepository,
   removeRecommendedRepository,

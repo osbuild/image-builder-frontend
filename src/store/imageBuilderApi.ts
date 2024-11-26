@@ -728,6 +728,7 @@ export type Customizations = {
 export type BlueprintMetadata = {
   parent_id: string | null;
   exported_at: string;
+  is_on_prem: boolean;
 };
 export type CreateBlueprintRequest = {
   name: string;

@@ -73,7 +73,6 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectFirstBootScript,
-  selectMetadata,
   initialState,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -108,7 +107,7 @@ export const mapRequestFromState = (
 
   return {
     name: selectBlueprintName(state),
-    metadata: selectMetadata(state),
+    // metadata: selectMetadata(state),
     description: selectBlueprintDescription(state),
     distribution: selectDistribution(state),
     image_requests: imageRequests,
@@ -343,6 +342,7 @@ export const mapExportRequestToState = (
     customizations: request.customizations,
     image_requests: image_requests,
   };
+
   return {
     wizardMode,
     metadata: {

@@ -21,9 +21,10 @@ import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import { useAppDispatch } from '../../store/hooks';
 import { BlueprintExportResponse } from '../../store/imageBuilderApi';
-import { wizardState } from '../../store/wizardSlice';
+import { importCustomRepositories, wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
+import { ApiRepositoryRequest, useBulkImportRepositoriesMutation } from '../../store/contentSourcesApi';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -50,6 +51,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
   const dispatch = useAppDispatch();
+  const [importRepositories, repositoriesResult] = useBulkImportRepositoriesMutation();
 
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
@@ -83,11 +85,22 @@ export const ImportBlueprintModal: React.FunctionComponent<
             distribution: blueprintFromFile.distribution,
             customizations: blueprintFromFile.customizations,
             metadata: blueprintFromFile.metadata,
+            content_sources: blueprintFromFile.content_sources,
           };
           const importBlueprintState = mapExportRequestToState(
             blueprintExportedResponse,
             blueprintFromFile.image_requests || []
           );
+          if (blueprintExportedResponse.content_sources) {
+            const customRepositories: ApiRepositoryRequest[] = blueprintExportedResponse.content_sources.map(item => item as ApiRepositoryRequest);
+            const result = importRepositories({
+              body: customRepositories,
+            });
+            dispatch(
+              importCustomRepositories(blueprintExportedResponse.customizations.custom_repositories || [])
+            );
+          };
+
           setImportedBlueprint(importBlueprintState);
         }
       } catch (error) {
