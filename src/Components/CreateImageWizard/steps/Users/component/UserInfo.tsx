@@ -10,7 +10,6 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { ActionCreatorWithPayload } from '@reduxjs/toolkit';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -48,15 +47,93 @@ const UserInfo = () => {
   const confirmUserPassword = useAppSelector(selectConfirmUserPassword);
   const userSshKey = useAppSelector(selectUserSshKey);
   const userAdministrator = useAppSelector(selectUserAdministrator);
-  const handleFieldChange = <K extends keyof UserWithAdditionalInfo>(
-    field: K,
-    value: UserWithAdditionalInfo[K],
-    setterAction?: ActionCreatorWithPayload<
-      string | boolean | undefined | number
-    >,
-    additionalLogic?: (updatedUser: UserWithAdditionalInfo) => void
+
+  const handleNameChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    name: string
   ) => {
-    // Create updated user object
+    dispatch(setUserName(userName));
+    const updatedUser: UserWithAdditionalInfo = {
+      index,
+      name: name,
+      password: userPassword,
+      confirmPassword: confirmUserPassword,
+      ssh_key: userSshKey,
+      administrator: userAdministrator,
+    };
+    const userExists = users.some((user) => user.index === index);
+    if (!userExists) {
+      dispatch(addUser(updatedUser));
+    } else {
+      dispatch(editUser(updatedUser));
+    }
+  };
+  const handlePasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    password: string
+  ) => {
+    dispatch(setUserPassword(password));
+    const updatedUser: UserWithAdditionalInfo = {
+      index,
+      name: userName,
+      password: password,
+      confirmPassword: confirmUserPassword,
+      ssh_key: userSshKey,
+      administrator: userAdministrator,
+    };
+    const userExists = users.some((user) => user.index === index);
+    if (!userExists) {
+      dispatch(addUser(updatedUser));
+    } else {
+      dispatch(editUser(updatedUser));
+    }
+  };
+  const handleConfirmPasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    confirm: string
+  ) => {
+    dispatch(setConfirmUserPassword(confirm));
+    const updatedUser: UserWithAdditionalInfo = {
+      index,
+      name: userName,
+      password: userPassword,
+      confirmPassword: confirm,
+      ssh_key: userSshKey,
+      administrator: userAdministrator,
+    };
+    const userExists = users.some((user) => user.index === index);
+    if (!userExists) {
+      dispatch(addUser(updatedUser));
+    } else {
+      dispatch(editUser(updatedUser));
+    }
+  };
+  const handleSshKeyChange = (
+    _event: React.ChangeEvent<HTMLTextAreaElement>,
+    sshKey: string
+  ) => {
+    dispatch(setUserSshKey(sshKey));
+    const updatedUser: UserWithAdditionalInfo = {
+      index,
+      name: userName,
+      password: userPassword,
+      confirmPassword: confirmUserPassword,
+      ssh_key: sshKey,
+      administrator: userAdministrator,
+    };
+    const userExists = users.some((user) => user.index === index);
+    if (!userExists) {
+      dispatch(addUser(updatedUser));
+    } else {
+      dispatch(editUser(updatedUser));
+    }
+  };
+
+  const handleCheckboxChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    userAdministrator: boolean
+  ) => {
+    dispatch(changeUserAdministrator(userAdministrator));
     const updatedUser: UserWithAdditionalInfo = {
       index,
       name: userName,
@@ -64,17 +141,7 @@ const UserInfo = () => {
       confirmPassword: confirmUserPassword,
       ssh_key: userSshKey,
       administrator: userAdministrator,
-      [field]: value,
     };
-    // Call specific setter action if provided
-    if (setterAction) {
-      dispatch(setterAction(value));
-    }
-    // Optional additional logic
-    if (additionalLogic) {
-      additionalLogic(updatedUser);
-    }
-    // Determine if user exists by index, not name
     const userExists = users.some((user) => user.index === index);
     if (!userExists) {
       dispatch(addUser(updatedUser));
@@ -86,7 +153,7 @@ const UserInfo = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
   const toggleConfirmPasswordVisibility = () =>
-    setIsConfirmPasswordVisible((prevState) => !prevState);
+    setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
 
   const stepValidation = useUserValidation();
   return (
@@ -95,9 +162,7 @@ const UserInfo = () => {
         <HookValidatedInput
           ariaLabel="blueprint user name"
           value={userName}
-          onChange={(event, userName) =>
-            handleFieldChange('name', userName, setUserName)
-          }
+          onChange={handleNameChange}
           placeholder="Enter username"
           stepValidation={stepValidation}
           fieldName="userName"
@@ -108,9 +173,7 @@ const UserInfo = () => {
           ariaLabel="blueprint user password"
           value={userPassword || ''}
           type={isPasswordVisible ? 'text' : 'password'}
-          onChange={(event, userPassword) =>
-            handleFieldChange('password', userPassword, setUserPassword)
-          }
+          onChange={handlePasswordChange}
           placeholder="Enter password"
           stepValidation={stepValidation}
           fieldName="userPassword"
@@ -136,13 +199,7 @@ const UserInfo = () => {
           ariaLabel="blueprint user confirm password"
           value={confirmUserPassword || ''}
           type={isConfirmPasswordVisible ? 'text' : 'password'}
-          onChange={(event, confirmPassword) =>
-            handleFieldChange(
-              'confirmPassword',
-              confirmPassword,
-              setConfirmUserPassword
-            )
-          }
+          onChange={handleConfirmPasswordChange}
           placeholder="Enter confirm password"
           stepValidation={stepValidation}
           fieldName="userConfirmPassword"
@@ -156,11 +213,7 @@ const UserInfo = () => {
           ariaLabel="Paste your public SSH key"
           value={userSshKey || ''}
           type={'text'}
-          onChange={(event, ssh_key) =>
-            handleFieldChange('ssh_key', ssh_key, setUserSshKey, () => {
-              // Additional logic for SSH key
-            })
-          }
+          onChange={handleSshKeyChange}
           placeholder="Paste your public SSH key"
           stepValidation={stepValidation}
           fieldName="userSshKey"
@@ -181,13 +234,7 @@ const UserInfo = () => {
         <Checkbox
           label="Administrator"
           isChecked={userAdministrator}
-          onChange={(event, administrator) =>
-            handleFieldChange(
-              'administrator',
-              administrator,
-              changeUserAdministrator
-            )
-          }
+          onChange={handleCheckboxChange}
           aria-label="Administrator"
           id="user Administrator"
           name="user Administrator"
