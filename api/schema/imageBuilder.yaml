@@ -1117,6 +1117,7 @@ components:
         - rhel-92
         - rhel-93
         - rhel-94
+        - rhel-95
         - rhel-10-nightly
         - rhel-10-beta
         - centos-9
@@ -1336,6 +1337,15 @@ components:
             Name of the created image.
             Must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens.
             The total length is limited to 60 characters.
+        hyper_v_generation:
+          type: string
+          enum:
+            - V1
+            - V2
+          default: V1
+          description: |
+            Choose the VM Image HyperV generation, different features on Azure are available
+            depending on the HyperV generation.
     OCIUploadRequestOptions:
       type: object
     OSTree:
@@ -1909,6 +1919,14 @@ components:
         name:
           type: string
           example: "user1"
+        groups:
+          type: array
+          items:
+            type: string
+          description: |
+            List of groups to add the user to. The 'wheel' group should be added explicitly, as the
+            default value is empty.
+          example: ['wheel']
         ssh_key:
           type: string
           example: "ssh-rsa AAAAB3NzaC1"

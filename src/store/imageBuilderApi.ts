@@ -380,6 +380,7 @@ export type Distributions =
   | "rhel-92"
   | "rhel-93"
   | "rhel-94"
+  | "rhel-95"
   | "rhel-10-nightly"
   | "rhel-10-beta"
   | "centos-9"
@@ -477,6 +478,10 @@ export type AzureUploadRequestOptions = {
     The total length is limited to 60 characters.
      */
   image_name?: string;
+  /** Choose the VM Image HyperV generation, different features on Azure are available
+    depending on the HyperV generation.
+     */
+  hyper_v_generation?: "V1" | "V2";
 };
 export type OciUploadRequestOptions = object;
 export type UploadRequest = {
@@ -609,6 +614,10 @@ export type Filesystem = {
 };
 export type User = {
   name: string;
+  /** List of groups to add the user to. The 'wheel' group should be added explicitly, as the
+    default value is empty.
+     */
+  groups?: string[];
   ssh_key?: string;
   /** Plaintext passwords are also supported, they will be hashed and stored using the SHA-512 algorithm.
     The password is never returned in the response.
