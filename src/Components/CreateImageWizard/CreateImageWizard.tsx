@@ -68,7 +68,6 @@ import {
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -133,7 +132,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-  const { isBeta } = useGetEnvironment();
 
   const isUsersEnabled = useFlag('image-builder.users.enabled');
   const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
@@ -161,8 +159,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Feature flags
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
-  const complianceEnabled =
-    useFlag('image-builder.compliance.enabled') && isBeta();
+  const complianceEnabled = useFlag('image-builder.compliance.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
