@@ -39,14 +39,15 @@ import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const OscapStep = () => {
   const dispatch = useAppDispatch();
-  const complianceEnabled = useFlag('image-builder.compliance.enabled');
+  const { isBeta, isProd } = useGetEnvironment();
+  const complianceEnabled =
+    useFlag('image-builder.compliance.enabled') && isBeta();
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const prefetchOscapProfile = imageBuilderApi.usePrefetch(
     'getOscapProfiles',
     {}
   );
-  const { isProd } = useGetEnvironment();
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
