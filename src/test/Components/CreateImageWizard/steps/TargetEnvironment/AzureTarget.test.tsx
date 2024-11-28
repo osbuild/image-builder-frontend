@@ -152,6 +152,19 @@ const enterSubscriptionId = async () => {
   );
 };
 
+const selectV1 = async () => {
+  const user = userEvent.setup();
+  const hypervMenu = screen.getAllByRole('button', {
+    name: /options menu/i,
+  })[0];
+
+  await waitFor(() => user.click(hypervMenu));
+  const v1 = await screen.findByRole('option', {
+    name: /v1/i,
+  });
+  await waitFor(() => user.click(v1));
+};
+
 const getResourceGroupInput = async () => {
   const resourceGroupInput = await screen.findByRole('textbox', {
     name: /resource group/i,
@@ -326,6 +339,7 @@ describe('Azure image type request generated correctly', () => {
         options: {
           source_id: '666',
           resource_group: 'myResourceGroup1',
+          hyper_v_generation: 'V2',
         },
         type: 'azure',
       },
@@ -359,6 +373,41 @@ describe('Azure image type request generated correctly', () => {
           tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
           subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
           resource_group: 'testResourceGroup',
+          hyper_v_generation: 'V2',
+        },
+      },
+    };
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      image_requests: [expectedImageRequest],
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('manually entering info V1', async () => {
+    await renderCreateMode();
+    await selectAzureTarget();
+    await goToAzureStep();
+    await selectManuallyEnterInformation();
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
+    await selectV1();
+    await goToReview();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedImageRequest: ImageRequest = {
+      architecture: 'x86_64',
+      image_type: 'azure',
+      upload_request: {
+        type: 'azure',
+        options: {
+          tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
+          subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
+          resource_group: 'testResourceGroup',
+          hyper_v_generation: 'V1',
         },
       },
     };
