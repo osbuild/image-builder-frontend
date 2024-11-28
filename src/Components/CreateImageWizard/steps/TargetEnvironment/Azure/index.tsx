@@ -14,6 +14,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { AzureAuthButton } from './AzureAuthButton';
+import { AzureHyperVSelect } from './AzureHyperVSelect';
 import { AzureResourceGroups } from './AzureResourceGroups';
 import { AzureSourcesSelect } from './AzureSourcesSelect';
 
@@ -91,6 +92,7 @@ const Azure = () => {
           Learn more about OAuth 2.0
         </Button>
       </Text>
+      <AzureHyperVSelect />
       <FormGroup label="Share method:">
         <Radio
           id="radio-with-description"
