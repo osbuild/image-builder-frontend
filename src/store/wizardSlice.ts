@@ -63,6 +63,7 @@ export type wizardState = {
     subscriptionId: string;
     source: string;
     resourceGroup: string;
+    hyperVGeneration: 'V1' | 'V2';
   };
   gcp: {
     shareMethod: GcpShareMethod;
@@ -136,6 +137,7 @@ export const initialState: wizardState = {
     subscriptionId: '',
     source: '',
     resourceGroup: '',
+    hyperVGeneration: 'V2',
   },
   gcp: {
     shareMethod: 'withGoogle',
@@ -240,6 +242,10 @@ export const selectAzureSource = (state: RootState) => {
 
 export const selectAzureResourceGroup = (state: RootState) => {
   return state.wizard.azure.resourceGroup;
+};
+
+export const selectAzureHyperVGeneration = (state: RootState) => {
+  return state.wizard.azure.hyperVGeneration;
 };
 
 export const selectGcpShareMethod = (state: RootState) => {
@@ -405,6 +411,12 @@ export const wizardSlice = createSlice({
     },
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
       state.azure.resourceGroup = action.payload;
+    },
+    changeAzureHyperVGeneration: (
+      state,
+      action: PayloadAction<'V1' | 'V2'>
+    ) => {
+      state.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
       state.azure.shareMethod = 'sources';
@@ -690,6 +702,7 @@ export const {
   changeAzureSubscriptionId,
   changeAzureSource,
   changeAzureResourceGroup,
+  changeAzureHyperVGeneration,
   reinitializeAzure,
   changeGcpShareMethod,
   changeGcpAccountType,

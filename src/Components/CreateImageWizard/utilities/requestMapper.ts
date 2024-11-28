@@ -46,6 +46,7 @@ import {
   selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
+  selectAzureHyperVGeneration,
   selectBaseUrl,
   selectBlueprintDescription,
   selectBlueprintName,
@@ -244,6 +245,7 @@ function commonRequestToState(
       tenantId: azureUploadOptions?.tenant_id || '',
       subscriptionId: azureUploadOptions?.subscription_id || '',
       resourceGroup: azureUploadOptions?.resource_group,
+      hyperVGeneration: azureUploadOptions?.hyper_v_generation || 'V1',
     },
     gcp: {
       shareMethod: (gcpUploadOptions?.share_with_accounts
@@ -423,12 +425,14 @@ const getImageOptions = (
         return {
           source_id: selectAzureSource(state),
           resource_group: selectAzureResourceGroup(state),
+          hyper_v_generation: selectAzureHyperVGeneration(state),
         };
       else
         return {
           tenant_id: selectAzureTenantId(state),
           subscription_id: selectAzureSubscriptionId(state),
           resource_group: selectAzureResourceGroup(state),
+          hyper_v_generation: selectAzureHyperVGeneration(state),
         };
     case 'gcp': {
       let googleAccount: string = '';
