@@ -76,6 +76,8 @@ import {
   selectFirstBootScript,
   selectMetadata,
   initialState,
+  selectLanguages,
+  selectKeyboard,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -290,6 +292,10 @@ function commonRequestToState(
           repository: '' as PackageRepository,
           package_list: [],
         })) || [],
+    locale: {
+      languages: request.customizations.locale?.languages || [],
+      keyboard: request.customizations.locale?.keyboard || '',
+    },
     services: {
       enabled: request.customizations?.services?.enabled || [],
       masked: request.customizations?.services?.masked || [],
@@ -496,7 +502,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
       : undefined,
     groups: undefined,
     timezone: undefined,
-    locale: undefined,
+    locale: getLocale(state),
     firewall: undefined,
     installation_device: undefined,
     fdo: undefined,
@@ -611,6 +617,20 @@ const getSubscription = (
       return { ...initialSubscription, insights: true, rhc: false };
     case 'register-now':
       return { ...initialSubscription, insights: false, rhc: false };
+  }
+};
+
+const getLocale = (state: RootState) => {
+  const languages = selectLanguages(state);
+  const keyboard = selectKeyboard(state);
+
+  if (languages?.length === 0 && !keyboard) {
+    return undefined;
+  } else {
+    return {
+      languages: languages && languages.length > 0 ? languages : undefined,
+      keyboard: keyboard ? keyboard : undefined,
+    };
   }
 };
 
