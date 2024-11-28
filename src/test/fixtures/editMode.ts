@@ -306,6 +306,7 @@ export const azureImageRequest: ImageRequest = {
     options: {
       source_id: '666',
       resource_group: 'myResourceGroup1',
+      hyper_v_generation: 'V2',
     },
     type: 'azure',
   },

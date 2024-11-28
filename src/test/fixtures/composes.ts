@@ -203,6 +203,7 @@ export const mockComposes: ComposesResponseItem[] = [
             type: 'azure',
             options: {
               resource_group: 'my_resource_group',
+              hyper_v_generation: 'V2',
             },
           },
         },
@@ -352,6 +353,7 @@ export const mockComposes: ComposesResponseItem[] = [
             type: 'azure',
             options: {
               resource_group: 'my_resource_group',
+              hyper_v_generation: 'V2',
             },
           },
         },
@@ -648,6 +650,7 @@ export const mockStatus = (composeId: string): ComposeStatus => {
               type: 'azure',
               options: {
                 resource_group: 'my_resource_group',
+                hyper_v_generation: 'V2',
               },
             },
           },
