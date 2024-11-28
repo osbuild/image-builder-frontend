@@ -146,6 +146,13 @@ export const mapOnPremToHosted = (
               enabled: blueprint.customizations?.fips,
             }
           : undefined,
+      timezone:
+        blueprint.customizations?.timezone !== undefined
+          ? {
+              timezone: blueprint.customizations.timezone.timezone,
+              ntpservers: blueprint.customizations.timezone.ntpservers,
+            }
+          : undefined,
     },
     metadata: {
       parent_id: null,
