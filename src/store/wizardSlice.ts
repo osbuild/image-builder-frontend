@@ -7,6 +7,7 @@ import type {
   Distributions,
   ImageRequest,
   ImageTypes,
+  Locale,
   Repository,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
@@ -106,6 +107,7 @@ export type wizardState = {
   kernel: {
     append: string;
   };
+  locale: Locale;
   details: {
     blueprintName: string;
     blueprintDescription: string;
@@ -176,6 +178,10 @@ export const initialState: wizardState = {
   },
   kernel: {
     append: '',
+  },
+  locale: {
+    languages: [],
+    keyboard: '',
   },
   details: {
     blueprintName: '',
@@ -325,6 +331,14 @@ export const selectServices = (state: RootState) => {
 
 export const selectKernel = (state: RootState) => {
   return state.wizard.kernel;
+};
+
+export const selectLanguages = (state: RootState) => {
+  return state.wizard.locale.languages;
+};
+
+export const selectKeyboard = (state: RootState) => {
+  return state.wizard.locale.keyboard;
 };
 
 export const selectBlueprintName = (state: RootState) => {
@@ -660,6 +674,28 @@ export const wizardSlice = createSlice({
         1
       );
     },
+    addLanguage: (state, action: PayloadAction<string>) => {
+      if (
+        state.locale.languages &&
+        !state.locale.languages.some((lang) => lang === action.payload)
+      ) {
+        state.locale.languages.push(action.payload);
+      }
+    },
+    removeLanguage: (state, action: PayloadAction<string>) => {
+      if (state.locale.languages) {
+        state.locale.languages.splice(
+          state.locale.languages.findIndex((lang) => lang === action.payload),
+          1
+        );
+      }
+    },
+    clearLanguages: (state) => {
+      state.locale.languages = [];
+    },
+    changeKeyboard: (state, action: PayloadAction<string>) => {
+      state.locale.keyboard = action.payload;
+    },
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
@@ -732,6 +768,10 @@ export const {
   removePackage,
   addGroup,
   removeGroup,
+  addLanguage,
+  removeLanguage,
+  clearLanguages,
+  changeKeyboard,
   changeBlueprintName,
   changeBlueprintDescription,
   loadWizardState,
