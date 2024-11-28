@@ -3,7 +3,7 @@
     "outDir": "./dist/",
     "noImplicitAny": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "es2021",
     "downlevelIteration": true, // Needed to allow iteration over some objects like Map() while target is es5
     "jsx": "react-jsx",
     "sourceMap": true,
