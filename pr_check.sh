@@ -24,6 +24,7 @@ export IQE_MARKER_EXPRESSION="fe_pr_check"
 export IQE_SELENIUM="true"
 export IQE_ENV="ephemeral"
 export IQE_IMAGE_TAG="image-builder"
+export IQE_PARALLEL_ENABLED="false"
 export RESERVE_DURATION="2h"
 
 # bootstrap bonfire and it's config
