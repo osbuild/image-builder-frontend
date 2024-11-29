@@ -102,7 +102,7 @@ export const CustomWizardFooter = ({
         ouiaId="wizard-back-btn"
         variant="secondary"
         onClick={goToPrevStep}
-        isDisabled={disableBack}
+        isDisabled={disableBack || false}
       >
         Back
       </Button>
@@ -252,7 +252,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           step.isDisabled ||
           (isVisitRequired && !step.isVisited && !hasVisitedNextStep)
         }
-        isVisited={step.isVisited}
+        isVisited={step.isVisited || false}
         stepIndex={step.index}
         onClick={() => goToStepByIndex(step.index)}
         status={status}

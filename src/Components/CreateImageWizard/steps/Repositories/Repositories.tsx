@@ -133,7 +133,7 @@ const Repositories = () => {
       url:
         toggleSelected === 'toggle-group-selected'
           ? [...selected].join(',')
-          : undefined,
+          : '',
     },
     { refetchOnMountOrArgChange: 60 }
   );
