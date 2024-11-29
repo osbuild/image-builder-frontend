@@ -20,11 +20,13 @@ import {
   removeNtpServer,
   selectNtpServers,
 } from '../../../../../store/wizardSlice';
+import { isNtpServerValid } from '../../../validators';
 
 const NtpServersInput = () => {
   const dispatch = useAppDispatch();
   const ntpServers = useAppSelector(selectNtpServers);
   const [inputValue, setInputValue] = useState('');
+  const [errorText, setErrorText] = useState('');
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -36,13 +38,33 @@ const NtpServersInput = () => {
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
     if (e.key === ' ' || e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      if (ntpServers?.includes(value)) {
-        // TO DO error
-      } else {
+
+      if (isNtpServerValid(value) && !ntpServers?.includes(value)) {
         dispatch(addNtpServer(value));
         setInputValue('');
+        setErrorText('');
+      }
+
+      if (ntpServers?.includes(value)) {
+        setErrorText('NTP server already exists.');
+      }
+
+      if (!isNtpServerValid(value)) {
+        setErrorText('Invalid format.');
       }
     }
+  };
+
+  const composeHelperText = () => {
+    const addServerHelperText =
+      'Confirm the NTP server by pressing space, comma or enter.';
+    return (
+      <HelperText>
+        <HelperTextItem variant={errorText ? 'error' : 'indeterminate'}>
+          {errorText ? errorText : addServerHelperText}
+        </HelperTextItem>
+      </HelperText>
+    );
   };
 
   return (
@@ -77,11 +99,7 @@ const NtpServersInput = () => {
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>
-      <HelperText>
-        <HelperTextItem variant="indeterminate">
-          Confirm the NTP server by pressing space, comma or enter.
-        </HelperTextItem>
-      </HelperText>
+      {composeHelperText()}
     </FormGroup>
   );
 };
