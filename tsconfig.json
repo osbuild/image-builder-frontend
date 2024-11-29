@@ -9,7 +9,11 @@
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": [
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
+    "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
     "allowSyntheticDefaultImports": true
   }
