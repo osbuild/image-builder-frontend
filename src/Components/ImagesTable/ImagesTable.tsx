@@ -44,6 +44,9 @@ import { AwsTarget, Target } from './Target';
 import {
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
+  PAGINATION_LIMIT,
+  PAGINATION_OFFSET,
+  SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
@@ -76,10 +79,11 @@ const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintSearchInput =
+    useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
+  const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     {

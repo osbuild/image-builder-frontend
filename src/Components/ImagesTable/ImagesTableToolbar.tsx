@@ -28,6 +28,7 @@ import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 import { EditBlueprintButton } from '../Blueprints/EditBlueprintButton';
+import { SEARCH_INPUT } from '../../constants';
 
 interface imagesTableToolbarProps {
   itemCount: number;
@@ -47,7 +48,8 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintSearchInput =
+    useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
 
   const {
     data: blueprintsComposes,

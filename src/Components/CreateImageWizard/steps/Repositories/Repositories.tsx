@@ -30,7 +30,7 @@ import {
 import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
-import { ContentOrigin } from '../../../../constants';
+import { ContentOrigin, PAGINATION_COUNT } from '../../../../constants';
 import {
   ApiRepositoryResponseRead,
   useListRepositoriesQuery,
@@ -580,7 +580,7 @@ const Repositories = () => {
         </PanelMain>
       </Panel>
       <Pagination
-        itemCount={count}
+        itemCount={count ?? PAGINATION_COUNT}
         perPage={perPage}
         page={page}
         onSetPage={(_, newPage) => setPage(newPage)}

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import { ContentOrigin } from '../../../constants';
+import { ContentOrigin, PAGINATION_LIMIT } from '../../../constants';
 import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../store/hooks';
 import {
@@ -41,7 +41,7 @@ export const useCheckRepositoriesAvailability = () => {
       availableForVersion: version,
       contentType: 'rpm',
       origin: ContentOrigin.EXTERNAL,
-      limit: firstRequest?.data?.meta?.count,
+      limit: firstRequest?.data?.meta?.count || PAGINATION_LIMIT,
       offset: 0,
     },
     {
