@@ -7,6 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/provisioningApi.ts',
   exportName: 'provisioningApi',
   hooks: true,
+  unionUndefined: true,
   filterEndpoints: ['getSourceList', 'getSourceUploadInfo'],
 };
 

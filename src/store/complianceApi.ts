@@ -29,11 +29,13 @@ const injectedRtkApi = api.injectEndpoints({
 });
 export { injectedRtkApi as complianceApi };
 export type PoliciesApiResponse = /** status 200 Lists Policies */ {
-  meta?: MetadataRead;
-  links?: LinksRead;
-  data?: {
-    schema?: PolicyRead;
-  }[];
+  meta?: MetadataRead | undefined;
+  links?: LinksRead | undefined;
+  data?:
+    | {
+        schema?: PolicyRead | undefined;
+      }[]
+    | undefined;
 };
 export type PoliciesApiArg = {
   /** For internal use only */
@@ -66,9 +68,11 @@ export type PoliciesApiArg = {
   filter?: string;
 };
 export type PolicyApiResponse = /** status 200 Returns a Policy */ {
-  data?: {
-    schema?: PolicyRead;
-  };
+  data?:
+    | {
+        schema?: PolicyRead | undefined;
+      }
+    | undefined;
 };
 export type PolicyApiArg = {
   /** For internal use only */
@@ -77,74 +81,74 @@ export type PolicyApiArg = {
 };
 export type Metadata = {
   /** Attribute and direction the items are sorted by */
-  sort_by?: string;
+  sort_by?: string | undefined;
   /** Query string used to filter items by their attributes */
-  filter?: string;
+  filter?: string | undefined;
 };
 export type MetadataRead = {
   /** Total number of items */
-  total?: number;
+  total?: number | undefined;
   /** Number of items returned per page */
-  limit?: number;
+  limit?: number | undefined;
   /** Offset of the first item of paginated response */
-  offset?: number;
+  offset?: number | undefined;
   /** Attribute and direction the items are sorted by */
-  sort_by?: string;
+  sort_by?: string | undefined;
   /** Query string used to filter items by their attributes */
-  filter?: string;
+  filter?: string | undefined;
 };
 export type Links = {};
 export type LinksRead = {
   /** Link to first page */
-  first?: string;
+  first?: string | undefined;
   /** Link to last page */
-  last?: string;
+  last?: string | undefined;
   /** Link to previous page */
-  previous?: string;
+  previous?: string | undefined;
   /** Link to next page */
-  next?: string;
+  next?: string | undefined;
 };
 export type Id = string;
 export type IdRead = string;
 export type Policy = {
-  id?: Id;
+  id?: Id | undefined;
   /** Short title of the Policy */
-  title?: string;
+  title?: string | undefined;
   /** Longer description of the Policy */
-  description?: string;
+  description?: string | undefined;
   /** The Business Objective associated to the Policy */
-  business_objective?: string;
+  business_objective?: string | undefined;
   /** The percentage above which the Policy meets compliance requirements */
   compliance_threshold: number;
 };
 export type PolicyRead = {
-  id?: IdRead;
-  type?: "policy";
+  id?: IdRead | undefined;
+  type?: "policy" | undefined;
   /** Short title of the Policy */
-  title?: string;
+  title?: string | undefined;
   /** Longer description of the Policy */
-  description?: string;
+  description?: string | undefined;
   /** The Business Objective associated to the Policy */
-  business_objective?: string;
+  business_objective?: string | undefined;
   /** The percentage above which the Policy meets compliance requirements */
   compliance_threshold: number;
   /** Major version of the Operating System that the Policy covers */
-  os_major_version?: number;
+  os_major_version?: number | undefined;
   /** Identificator of the Profile */
-  ref_id?: string;
+  ref_id?: string | undefined;
   /** Title of the associated Policy */
-  profile_title?: string;
+  profile_title?: string | undefined;
   /** The number of Systems assigned to this Policy */
-  total_system_count?: number;
+  total_system_count?: number | undefined;
 };
 export type PolicyWrite = {
-  id?: Id;
+  id?: Id | undefined;
   /** Short title of the Policy */
-  title?: string;
+  title?: string | undefined;
   /** Longer description of the Policy */
-  description?: string;
+  description?: string | undefined;
   /** The Business Objective associated to the Policy */
-  business_objective?: string;
+  business_objective?: string | undefined;
   /** The percentage above which the Policy meets compliance requirements */
   compliance_threshold: number;
   /** Identifier of the underlying Profile */

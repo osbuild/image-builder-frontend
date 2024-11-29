@@ -56,7 +56,7 @@ export type wizardState = {
     accountId: string;
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
-    sourceId?: string;
+    sourceId?: string | undefined;
   };
   azure: {
     shareMethod: AzureShareMethod;
