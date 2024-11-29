@@ -55,13 +55,12 @@ const selectTimezone = async () => {
   await waitFor(() => user.click(amsterdamTimezone));
 };
 
-const selectNtpServers = async () => {
+const addNtpServer = async (ntpServer: string) => {
   const user = userEvent.setup();
   const ntpServersInput = await screen.findByPlaceholderText(
     /add ntp servers/i
   );
-  await waitFor(() => user.type(ntpServersInput, '0.nl.pool.ntp.org,'));
-  await waitFor(() => user.type(ntpServersInput, '1.nl.pool.ntp.org,'));
+  await waitFor(() => user.type(ntpServersInput, ntpServer.concat(',')));
 };
 
 const clickRevisitButton = async () => {
@@ -101,6 +100,25 @@ describe('Step Timezone', () => {
     await verifyCancelButton(router);
   });
 
+  test('duplicate NTP server cannnot be added', async () => {
+    await renderCreateMode();
+    await goToTimezoneStep();
+    expect(
+      screen.queryByText('NTP server already exists.')
+    ).not.toBeInTheDocument();
+    await addNtpServer('0.nl.pool.ntp.org');
+    await addNtpServer('0.nl.pool.ntp.org');
+    await screen.findByText('NTP server already exists.');
+  });
+
+  test('NTP server in an invalid format cannot be added', async () => {
+    await renderCreateMode();
+    await goToTimezoneStep();
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addNtpServer('this is not NTP server');
+    await screen.findByText('Invalid format.');
+  });
+
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToTimezoneStep();
@@ -138,7 +156,8 @@ describe('Timezone request generated correctly', () => {
   test('with NTP servers', async () => {
     await renderCreateMode();
     await goToTimezoneStep();
-    await selectNtpServers();
+    await addNtpServer('0.nl.pool.ntp.org');
+    await addNtpServer('1.nl.pool.ntp.org');
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -160,7 +179,8 @@ describe('Timezone request generated correctly', () => {
     await renderCreateMode();
     await goToTimezoneStep();
     await selectTimezone();
-    await selectNtpServers();
+    await addNtpServer('0.nl.pool.ntp.org');
+    await addNtpServer('1.nl.pool.ntp.org');
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

@@ -5,6 +5,8 @@ import {
   Chip,
   ChipGroup,
   FormGroup,
+  HelperText,
+  HelperTextItem,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
@@ -17,11 +19,13 @@ import {
   removeNtpServer,
   selectNtpServers,
 } from '../../../../../store/wizardSlice';
+import { isNtpServerValid } from '../../../validators';
 
 const NtpServersInput = () => {
   const dispatch = useAppDispatch();
   const ntpServers = useAppSelector(selectNtpServers);
   const [inputValue, setInputValue] = useState('');
+  const [errorText, setErrorText] = useState('');
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -33,11 +37,19 @@ const NtpServersInput = () => {
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
     if (e.key === ' ' || e.key === 'Enter' || e.key === ',') {
       e.preventDefault();
-      if (ntpServers?.includes(value)) {
-        // TO DO error
-      } else {
+
+      if (isNtpServerValid(value) && !ntpServers?.includes(value)) {
         dispatch(addNtpServer(value));
         setInputValue('');
+        setErrorText('');
+      }
+
+      if (ntpServers?.includes(value)) {
+        setErrorText('NTP server already exists.');
+      }
+
+      if (!isNtpServerValid(value)) {
+        setErrorText('Invalid format.');
       }
     }
   };
@@ -75,6 +87,11 @@ const NtpServersInput = () => {
           </Button>
         </TextInputGroupUtilities>
       </TextInputGroup>
+      {errorText && (
+        <HelperText>
+          <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
+        </HelperText>
+      )}
       <ChipGroup numChips={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {ntpServers?.map((server) => (
           <Chip key={server} onClick={() => dispatch(removeNtpServer(server))}>
