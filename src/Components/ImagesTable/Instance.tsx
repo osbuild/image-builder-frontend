@@ -78,7 +78,7 @@ const DisabledProvisioningLink = () => {
 
 type ProvisioningLinkPropTypes = {
   compose: ComposesResponseItem;
-  composeStatus: ComposeStatus;
+  composeStatus: ComposeStatus | undefined;
 };
 
 const ProvisioningLink = ({

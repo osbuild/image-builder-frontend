@@ -29,48 +29,50 @@ const injectedRtkApi = api.injectEndpoints({
 export { injectedRtkApi as rhsmApi };
 export type ListActivationKeysApiResponse =
   /** status 200 Array of activation keys */ {
-    body?: ActivationKeys[];
+    body?: ActivationKeys[] | undefined;
   };
 export type ListActivationKeysApiArg = void;
 export type CreateActivationKeysApiResponse = /** status 200 Activation key */ {
-  body?: ActivationKeys;
+  body?: ActivationKeys | undefined;
 };
 export type CreateActivationKeysApiArg = {
   /** Create an activation key */
   body: {
-    additionalRepositories?: {
-      repositoryLabel?: string;
-    }[];
+    additionalRepositories?:
+      | {
+          repositoryLabel?: string | undefined;
+        }[]
+      | undefined;
     /** Name should be present, unique and can only contain letters, numbers, underscores, or hyphens */
     name: string;
-    releaseVersion?: string;
-    role?: string;
-    serviceLevel?: string;
-    usage?: string;
+    releaseVersion?: string | undefined;
+    role?: string | undefined;
+    serviceLevel?: string | undefined;
+    usage?: string | undefined;
   };
 };
 export type ShowActivationKeyApiResponse = /** status 200 Activation key */ {
-  body?: ActivationKeys;
+  body?: ActivationKeys | undefined;
 };
 export type ShowActivationKeyApiArg = {
   name: string;
 };
 export type AdditionalRepositories = {
-  repositoryLabel?: string;
-  repositoryName?: string;
+  repositoryLabel?: string | undefined;
+  repositoryName?: string | undefined;
 };
 export type ActivationKeys = {
-  additionalRepositories?: AdditionalRepositories[];
-  id?: string;
-  name?: string;
-  releaseVersion?: string;
-  role?: string;
-  serviceLevel?: string;
-  usage?: string;
+  additionalRepositories?: AdditionalRepositories[] | undefined;
+  id?: string | undefined;
+  name?: string | undefined;
+  releaseVersion?: string | undefined;
+  role?: string | undefined;
+  serviceLevel?: string | undefined;
+  usage?: string | undefined;
 };
 export type ErrorDetails = {
-  code?: number;
-  message?: string;
+  code?: number | undefined;
+  message?: string | undefined;
 };
 export const {
   useListActivationKeysQuery,

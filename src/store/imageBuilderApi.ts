@@ -235,7 +235,7 @@ export type ComposeBlueprintApiArg = {
   id: string;
   /** list of target image types that the user wants to build for this compose */
   body: {
-    image_types?: ImageTypes[];
+    image_types?: ImageTypes[] | undefined;
   };
 };
 export type GetBlueprintComposesApiResponse =
@@ -337,16 +337,16 @@ export type RecommendPackageApiArg = {
 };
 export type Repository = {
   rhsm: boolean;
-  baseurl?: string;
-  mirrorlist?: string;
-  metalink?: string;
-  gpgkey?: string;
-  check_gpg?: boolean;
+  baseurl?: string | undefined;
+  mirrorlist?: string | undefined;
+  metalink?: string | undefined;
+  gpgkey?: string | undefined;
+  check_gpg?: boolean | undefined;
   /** Enables gpg verification of the repository metadata
    */
-  check_repo_gpg?: boolean;
-  ignore_ssl?: boolean;
-  module_hotfixes?: boolean;
+  check_repo_gpg?: boolean | undefined;
+  ignore_ssl?: boolean | undefined;
+  module_hotfixes?: boolean | undefined;
 };
 export type ArchitectureItem = {
   arch: string;
@@ -435,8 +435,8 @@ export type UploadTypes =
   | "aws.s3"
   | "oci.objectstorage";
 export type AwsUploadRequestOptions = {
-  share_with_accounts?: string[];
-  share_with_sources?: string[];
+  share_with_accounts?: string[] | undefined;
+  share_with_sources?: string[] | undefined;
 };
 export type Awss3UploadRequestOptions = object;
 export type GcpUploadRequestOptions = {
@@ -453,23 +453,23 @@ export type GcpUploadRequestOptions = {
         If not specified, the imported Compute Node image is not shared with any
         account.
      */
-  share_with_accounts?: string[];
+  share_with_accounts?: string[] | undefined;
 };
 export type AzureUploadRequestOptions = {
   /** ID of the source that will be used to resolve the tenant and subscription IDs.
     Do not provide a tenant_id or subscription_id when providing a source_id.
      */
-  source_id?: string;
+  source_id?: string | undefined;
   /** ID of the tenant where the image should be uploaded. This link explains how
     to find it in the Azure Portal:
     https://docs.microsoft.com/en-us/azure/active-directory/fundamentals/active-directory-how-to-find-tenant
     When providing a tenant_id, also be sure to provide a subscription_id and do not include a source_id.
      */
-  tenant_id?: string;
+  tenant_id?: string | undefined;
   /** ID of subscription where the image should be uploaded.
     When providing a subscription_id, also be sure to provide a tenant_id and do not include a source_id.
      */
-  subscription_id?: string;
+  subscription_id?: string | undefined;
   /** Name of the resource group where the image should be uploaded.
    */
   resource_group: string;
@@ -477,11 +477,11 @@ export type AzureUploadRequestOptions = {
     Must begin with a letter or number, end with a letter, number or underscore, and may contain only letters, numbers, underscores, periods, or hyphens.
     The total length is limited to 60 characters.
      */
-  image_name?: string;
+  image_name?: string | undefined;
   /** Choose the VM Image HyperV generation, different features on Azure are available
     depending on the HyperV generation.
      */
-  hyper_v_generation?: "V1" | "V2";
+  hyper_v_generation?: ("V1" | "V2") | undefined;
 };
 export type OciUploadRequestOptions = object;
 export type UploadRequest = {
@@ -494,20 +494,20 @@ export type UploadRequest = {
     | OciUploadRequestOptions;
 };
 export type OsTree = {
-  url?: string;
+  url?: string | undefined;
   /** A URL which, if set, is used for fetching content. Implies that `url` is set as well,
     which will be used for metadata only.
      */
-  contenturl?: string;
-  ref?: string;
+  contenturl?: string | undefined;
+  ref?: string | undefined;
   /** Can be either a commit (example: 02604b2da6e954bd34b8b82a835e5a77d2b60ffa), or a branch-like reference (example: rhel/8/x86_64/edge)
    */
-  parent?: string;
+  parent?: string | undefined;
   /** Determines whether a valid subscription manager (candlepin) identity is required to
     access this repository. Consumer certificates will be used as client certificates when
     fetching metadata and content.
      */
-  rhsm?: boolean;
+  rhsm?: boolean | undefined;
 };
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
@@ -515,54 +515,54 @@ export type ImageRequest = {
   architecture: "x86_64" | "aarch64";
   image_type: ImageTypes;
   upload_request: UploadRequest;
-  ostree?: OsTree;
+  ostree?: OsTree | undefined;
   /** Size of image, in bytes. When set to 0 the image size is a minimum
     defined by the image type.
      */
-  size?: any;
+  size?: any | undefined;
   /** Snapshotted content will be used instead of the official repositories of the
     distribution. The snapshot that was made closest to, but before the specified date will
     be used. If no snapshots made before the specified date can be found, the snapshot
     closest to, but after the specified date will be used. If no snapshots can be found at
     all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
      */
-  snapshot_date?: string;
+  snapshot_date?: string | undefined;
 };
 export type Container = {
   /** Reference to the container to embed */
   source: string;
   /** Name to use for the container from the image */
-  name?: string;
+  name?: string | undefined;
   /** Control TLS verifification */
-  tls_verify?: boolean;
+  tls_verify?: boolean | undefined;
 };
 export type Directory = {
   /** Path to the directory */
   path: string;
   /** Permissions string for the directory in octal format */
-  mode?: string;
+  mode?: string | undefined;
   /** Owner of the directory as a user name or a uid */
-  user?: string | number;
+  user?: (string | number) | undefined;
   /** Group of the directory as a group name or a gid */
-  group?: string | number;
+  group?: (string | number) | undefined;
   /** Ensure that the parent directories exist */
-  ensure_parents?: boolean;
+  ensure_parents?: boolean | undefined;
 };
 export type File = {
   /** Path to the file */
   path: string;
   /** Permissions string for the file in octal format */
-  mode?: string;
+  mode?: string | undefined;
   /** Owner of the file as a uid or a user name */
-  user?: string | number;
+  user?: (string | number) | undefined;
   /** Group of the file as a gid or a group name */
-  group?: string | number;
+  group?: (string | number) | undefined;
   /** Contents of the file as plain text */
-  data?: string;
+  data?: string | undefined;
   /** When data is base64-encoded to prevent Akamai content filter false positives */
-  data_encoding?: "plain" | "base64";
+  data_encoding?: ("plain" | "base64") | undefined;
   /** Ensure that the parent directories exist */
-  ensure_parents?: boolean;
+  ensure_parents?: boolean | undefined;
 };
 export type Subscription = {
   organization: number;
@@ -572,32 +572,32 @@ export type Subscription = {
   insights: boolean;
   /** Optional flag to use rhc to register the system, which also always enables Insights.
    */
-  rhc?: boolean;
+  rhc?: boolean | undefined;
 };
 export type CustomRepository = {
   id: string;
-  name?: string;
-  filename?: string;
-  baseurl?: string[];
-  mirrorlist?: string;
-  metalink?: string;
+  name?: string | undefined;
+  filename?: string | undefined;
+  baseurl?: string[] | undefined;
+  mirrorlist?: string | undefined;
+  metalink?: string | undefined;
   /** GPG key used to sign packages in this repository. Can be a gpg key or a URL */
-  gpgkey?: string[];
-  check_gpg?: boolean;
-  check_repo_gpg?: boolean;
-  enabled?: boolean;
-  priority?: number;
-  ssl_verify?: boolean;
-  module_hotfixes?: boolean;
+  gpgkey?: string[] | undefined;
+  check_gpg?: boolean | undefined;
+  check_repo_gpg?: boolean | undefined;
+  enabled?: boolean | undefined;
+  priority?: number | undefined;
+  ssl_verify?: boolean | undefined;
+  module_hotfixes?: boolean | undefined;
 };
 export type OpenScapProfile = {
   /** Uses the OpenSCAP tooling directly to apply a pre-defined profile without tailorings.
    */
   profile_id: string;
   /** The profile type */
-  profile_name?: string;
+  profile_name?: string | undefined;
   /** The longform profile description */
-  profile_description?: string;
+  profile_description?: string | undefined;
 };
 export type OpenScapCompliance = {
   /** Apply a compliance policy which is defined in the Red Hat Insights Compliance
@@ -617,63 +617,65 @@ export type User = {
   /** List of groups to add the user to. The 'wheel' group should be added explicitly, as the
     default value is empty.
      */
-  groups?: string[];
-  ssh_key?: string;
+  groups?: string[] | undefined;
+  ssh_key?: string | undefined;
   /** Plaintext passwords are also supported, they will be hashed and stored using the SHA-512 algorithm.
     The password is never returned in the response.
     Empty string can be used to remove the password during update but only with ssh_key set.
      */
-  password?: string;
+  password?: string | undefined;
 };
 export type Services = {
   /** List of services to enable by default */
-  enabled?: string[];
+  enabled?: string[] | undefined;
   /** List of services to disable by default */
-  disabled?: string[];
+  disabled?: string[] | undefined;
   /** List of services to mask by default */
-  masked?: string[];
+  masked?: string[] | undefined;
 };
 export type Kernel = {
   /** Name of the kernel to use */
-  name?: string;
+  name?: string | undefined;
   /** Appends arguments to the bootloader kernel command line */
-  append?: string;
+  append?: string | undefined;
 };
 export type Group = {
   /** Name of the group to create */
   name: string;
   /** Group id of the group to create (optional) */
-  gid?: number;
+  gid?: number | undefined;
 };
 export type Timezone = {
   /** Name of the timezone, defaults to UTC */
-  timezone?: string;
+  timezone?: string | undefined;
   /** List of ntp servers */
-  ntpservers?: string[];
+  ntpservers?: string[] | undefined;
 };
 export type Locale = {
   /** List of locales to be installed, the first one becomes primary, subsequent ones are secondary
    */
-  languages?: string[];
+  languages?: string[] | undefined;
   /** Sets the keyboard layout */
-  keyboard?: string;
+  keyboard?: string | undefined;
 };
 export type FirewallCustomization = {
   /** List of ports (or port ranges) and protocols to open */
-  ports?: string[];
+  ports?: string[] | undefined;
   /** Firewalld services to enable or disable */
-  services?: {
-    /** List of services to enable */
-    enabled?: string[];
-    /** List of services to disable */
-    disabled?: string[];
-  };
+  services?:
+    | {
+        /** List of services to enable */
+        enabled?: string[] | undefined;
+        /** List of services to disable */
+        disabled?: string[] | undefined;
+      }
+    | undefined;
 };
 export type Fdo = {
-  manufacturing_server_url?: string;
-  diun_pub_key_insecure?: string;
-  diun_pub_key_hash?: string;
-  diun_pub_key_root_certs?: string;
+  manufacturing_server_url?: string | undefined;
+  diun_pub_key_insecure?: string | undefined;
+  diun_pub_key_hash?: string | undefined;
+  diun_pub_key_root_certs?: string | undefined;
 };
 export type IgnitionEmbedded = {
   config: string;
@@ -683,56 +685,56 @@ export type IgnitionFirstboot = {
   url: string;
 };
 export type Ignition = {
-  embedded?: IgnitionEmbedded;
-  firstboot?: IgnitionFirstboot;
+  embedded?: IgnitionEmbedded | undefined;
+  firstboot?: IgnitionFirstboot | undefined;
 };
 export type Fips = {
   /** Enables the system FIPS mode */
-  enabled?: boolean;
+  enabled?: boolean | undefined;
 };
 export type Installer = {
   /** Create a kickstart file for a fully automated installation
    */
-  unattended?: boolean;
-  "sudo-nopasswd"?: string[];
+  unattended?: boolean | undefined;
+  "sudo-nopasswd"?: string[] | undefined;
 };
 export type Customizations = {
-  containers?: Container[];
-  directories?: Directory[];
-  files?: File[];
-  subscription?: Subscription;
-  packages?: string[];
-  payload_repositories?: Repository[];
+  containers?: Container[] | undefined;
+  directories?: Directory[] | undefined;
+  files?: File[] | undefined;
+  subscription?: Subscription | undefined;
+  packages?: string[] | undefined;
+  payload_repositories?: Repository[] | undefined;
   /** List of custom repositories. */
-  custom_repositories?: CustomRepository[];
-  openscap?: OpenScap;
-  filesystem?: Filesystem[];
+  custom_repositories?: CustomRepository[] | undefined;
+  openscap?: OpenScap | undefined;
+  filesystem?: Filesystem[] | undefined;
   /** List of users that a customer can add,
     also specifying their respective groups and SSH keys and/or password
      */
-  users?: User[];
-  services?: Services;
+  users?: User[] | undefined;
+  services?: Services | undefined;
   /** Configures the hostname */
-  hostname?: string;
-  kernel?: Kernel;
+  hostname?: string | undefined;
+  kernel?: Kernel | undefined;
   /** List of groups to create */
-  groups?: Group[];
-  timezone?: Timezone;
-  locale?: Locale;
-  firewall?: FirewallCustomization;
+  groups?: Group[] | undefined;
+  timezone?: Timezone | undefined;
+  locale?: Locale | undefined;
+  firewall?: FirewallCustomization | undefined;
   /** Name of the installation device, currently only useful for the edge-simplified-installer type
    */
-  installation_device?: string;
-  fdo?: Fdo;
-  ignition?: Ignition;
+  installation_device?: string | undefined;
+  fdo?: Fdo | undefined;
+  ignition?: Ignition | undefined;
   /** Select how the disk image will be partitioned. 'auto-lvm' will use raw unless
     there are one or more mountpoints in which case it will use LVM. 'lvm' always
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
-  partitioning_mode?: "raw" | "lvm" | "auto-lvm";
-  fips?: Fips;
-  installer?: Installer;
+  partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
+  fips?: Fips | undefined;
+  installer?: Installer | undefined;
 };
 export type BlueprintMetadata = {
   parent_id: string | null;
@@ -741,13 +743,13 @@ export type BlueprintMetadata = {
 };
 export type CreateBlueprintRequest = {
   name: string;
-  description?: string;
+  description?: string | undefined;
   distribution: Distributions;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
   image_requests: ImageRequest[];
   customizations: Customizations;
-  metadata?: BlueprintMetadata;
+  metadata?: BlueprintMetadata | undefined;
 };
 export type BlueprintResponse = {
   id: string;
@@ -768,7 +770,7 @@ export type BlueprintExportResponse = {
   /** List of custom repositories including all the repository details needed in order
     to recreate the repositories.
      */
-  content_sources?: object[];
+  content_sources?: object[] | undefined;
 };
 export type ComposeResponse = {
   id: string;
@@ -776,22 +778,22 @@ export type ComposeResponse = {
 export type ClientId = "api" | "ui";
 export type ComposeRequest = {
   distribution: Distributions;
-  image_name?: string;
-  image_description?: string;
-  client_id?: ClientId;
+  image_name?: string | undefined;
+  image_description?: string | undefined;
+  client_id?: ClientId | undefined;
   /** Array of exactly one image request. Having more image requests in one compose is currently not supported.
    */
   image_requests: ImageRequest[];
-  customizations?: Customizations;
+  customizations?: Customizations | undefined;
 };
 export type ComposesResponseItem = {
   id: string;
   request: ComposeRequest;
   created_at: string;
-  image_name?: string;
-  client_id?: ClientId;
-  blueprint_id?: string | null;
-  blueprint_version?: number | null;
+  image_name?: string | undefined;
+  client_id?: ClientId | undefined;
+  blueprint_id?: (string | null) | undefined;
+  blueprint_version?: (number | null) | undefined;
 };
 export type ComposesResponse = {
   meta: ListResponseMeta;
@@ -828,7 +830,7 @@ export type UploadStatus = {
 export type ComposeStatusError = {
   id: number;
   reason: string;
-  details?: any;
+  details?: any | undefined;
 };
 export type ImageStatus = {
   status:
@@ -838,8 +840,8 @@ export type ImageStatus = {
     | "building"
     | "uploading"
     | "registering";
-  upload_status?: UploadStatus;
-  error?: ComposeStatusError;
+  upload_status?: UploadStatus | undefined;
+  error?: ComposeStatusError | undefined;
 };
 export type ComposeStatus = {
   image_status: ImageStatus;
@@ -856,8 +858,8 @@ export type Awsec2Clone = {
   /** An array of AWS account IDs as described in
     https://docs.aws.amazon.com/IAM/latest/UserGuide/console_account-alias.html
      */
-  share_with_accounts?: string[];
-  share_with_sources?: string[];
+  share_with_accounts?: string[] | undefined;
+  share_with_sources?: string[] | undefined;
 };
 export type CloneRequest = Awsec2Clone;
 export type ClonesResponseItem = {
@@ -873,7 +875,7 @@ export type ClonesResponse = {
   data: ClonesResponseItem[];
 };
 export type CloneStatusResponse = {
-  compose_id?: string;
+  compose_id?: string | undefined;
 } & UploadStatus;
 export type Package = {
   name: string;
