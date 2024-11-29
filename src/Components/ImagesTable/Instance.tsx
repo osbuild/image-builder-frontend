@@ -124,7 +124,7 @@ const ProvisioningLink = ({
   if (
     error ||
     !exposedScalprumModule ||
-    composeStatus.image_status.status !== 'success'
+    composeStatus?.image_status.status !== 'success'
   ) {
     return <DisabledProvisioningLink />;
   } else {
@@ -243,7 +243,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
     return <Skeleton />;
   }
 
-  const options = data.image_status.upload_status?.options;
+  const options = data?.image_status.upload_status?.options;
 
   if (options && !isOciUploadStatus(options)) {
     throw TypeError(
@@ -375,8 +375,8 @@ export const AwsS3Instance = ({
     oci: '',
   };
 
-  const status = composeStatus.image_status.status;
-  const options = composeStatus.image_status.upload_status?.options;
+  const status = composeStatus?.image_status.status;
+  const options = composeStatus?.image_status.upload_status?.options;
 
   if (options && !isAwss3UploadStatus(options)) {
     throw TypeError(

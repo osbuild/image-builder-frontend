@@ -142,7 +142,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
 
   const handleSubmit = async () => {
     setIsSaving(true);
-    const requests = generateRequests(composeId, composeStatus, selected);
+    const requests = generateRequests(composeId, composeStatus!, selected);
     await Promise.allSettled(requests.map((request) => cloneCompose(request)));
     navigate(resolveRelPath(''));
   };

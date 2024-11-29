@@ -78,7 +78,7 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
     return <></>;
   }
 
-  switch (data.image_status.status) {
+  switch (data?.image_status.status) {
     case 'failure':
       return (
         <ErrorStatus
@@ -90,8 +90,8 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
     default:
       return (
         <Status
-          icon={statuses[data.image_status.status].icon}
-          text={statuses[data.image_status.status].text}
+          icon={statuses[data!.image_status.status].icon}
+          text={statuses[data!.image_status.status].text}
         />
       );
   }
@@ -110,7 +110,7 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
     return <Skeleton />;
   }
 
-  switch (data.image_status.status) {
+  switch (data?.image_status.status) {
     case 'failure':
       return (
         <ErrorStatus
@@ -122,8 +122,8 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
     default:
       return (
         <Status
-          icon={statuses[data.image_status.status].icon}
-          text={statuses[data.image_status.status].text}
+          icon={statuses[data!.image_status.status].icon}
+          text={statuses[data!.image_status.status].text}
         />
       );
   }
@@ -172,7 +172,7 @@ export const ExpiringStatus = ({
     return <Skeleton />;
   }
 
-  const status = composeStatus.image_status.status;
+  const status = composeStatus!.image_status.status;
   const remainingHours = AWS_S3_EXPIRATION_TIME_IN_HOURS - timeToExpiration;
   const remainingDays = OCI_STORAGE_EXPIRATION_TIME_IN_DAYS - timeToExpiration;
 
@@ -205,7 +205,7 @@ export const ExpiringStatus = ({
       <ErrorStatus
         icon={statuses[status].icon}
         text={statuses[status].text}
-        error={composeStatus.image_status.error || ''}
+        error={composeStatus?.image_status.error || ''}
       />
     );
   } else {

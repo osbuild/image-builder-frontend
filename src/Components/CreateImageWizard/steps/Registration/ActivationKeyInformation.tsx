@@ -50,19 +50,19 @@ const ActivationKeyInformation = (): JSX.Element => {
               Role:
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
-              {activationKeyInfo.body?.role || 'Not defined'}
+              {activationKeyInfo?.body?.role || 'Not defined'}
             </TextListItem>
             <TextListItem component={TextListItemVariants.dt}>
               SLA:
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
-              {activationKeyInfo.body?.serviceLevel || 'Not defined'}
+              {activationKeyInfo?.body?.serviceLevel || 'Not defined'}
             </TextListItem>
             <TextListItem component={TextListItemVariants.dt}>
               Usage:
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
-              {activationKeyInfo.body?.usage || 'Not defined'}
+              {activationKeyInfo?.body?.usage || 'Not defined'}
             </TextListItem>
             <TextListItem component={TextListItemVariants.dt}>
               Additional repositories:
@@ -90,8 +90,8 @@ const ActivationKeyInformation = (): JSX.Element => {
               component={TextListItemVariants.dd}
               className="pf-v5-u-display-flex pf-v5-u-align-items-flex-end"
             >
-              {activationKeyInfo.body?.additionalRepositories &&
-              activationKeyInfo.body?.additionalRepositories?.length > 0 ? (
+              {activationKeyInfo?.body?.additionalRepositories &&
+              activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
                 <Popover
                   position="right"
                   minWidth="30rem"

@@ -346,7 +346,7 @@ export const TargetEnvAzureList = () => {
             </TextListItem>
             <TextListItem component={TextListItemVariants.dd}>
               {
-                rawAzureSources.data?.find(
+                rawAzureSources?.data?.find(
                   (source) => source.id === azureSource
                 )?.name
               }
