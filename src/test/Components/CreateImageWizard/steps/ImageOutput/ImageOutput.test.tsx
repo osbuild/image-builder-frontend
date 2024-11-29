@@ -512,6 +512,11 @@ describe('Set release using query parameter', () => {
     await renderCreateMode({ release: 'rhel8' });
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
   });
+
+  test('rhel 10 beta (query parameter provided)', async () => {
+    await renderCreateMode({ release: 'rhel10beta' });
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 10 Beta');
+  });
 });
 
 describe('Set architecture using query parameter', () => {

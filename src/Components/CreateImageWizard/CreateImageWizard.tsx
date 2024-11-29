@@ -167,6 +167,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     if (searchParams.get('release') === 'rhel8') {
       dispatch(changeDistribution(RHEL_8));
     }
+    if (searchParams.get('release') === 'rhel10beta') {
+      dispatch(changeDistribution(RHEL_10_BETA));
+    }
     if (searchParams.get('arch') === AARCH64) {
       dispatch(changeArchitecture(AARCH64));
     }
