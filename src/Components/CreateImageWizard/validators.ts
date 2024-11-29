@@ -61,10 +61,12 @@ export const isSnapshotValid = (dateString: string) => {
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;
 };
+
 export const isFileSystemConfigValid = (partitions: Partition[]) => {
   const duplicates = getDuplicateMountPoints(partitions);
   return duplicates.length === 0;
 };
+
 export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
@@ -80,4 +82,11 @@ export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
     }
   }
   return duplicates;
+};
+
+export const isNtpServerValid = (ntpServer: string) => {
+  return (
+    ntpServer !== undefined &&
+    /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer)
+  );
 };
