@@ -157,7 +157,7 @@ const ActivationKeysList = () => {
     const isActivationKeysEmpty =
       isSuccessActivationKeys &&
       !isLoadingActivationKey &&
-      activationKeys.body?.length === 0;
+      activationKeys?.body?.length === 0;
 
     const handleCreateActivationKey = async () => {
       try {
@@ -207,7 +207,7 @@ const ActivationKeysList = () => {
   const setSelectOptions = () => {
     const selectOptions = [];
     if (isSuccessActivationKeys) {
-      activationKeys.body?.map((key, index) =>
+      activationKeys?.body?.map((key, index) =>
         selectOptions.push(<SelectOption key={index} value={key.name} />)
       );
     }

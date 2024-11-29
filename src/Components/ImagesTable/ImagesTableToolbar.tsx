@@ -103,7 +103,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const isBlueprintDistroCentos8 = () => {
     if (isSuccessBlueprintsCompose) {
       return (
-        blueprintsComposes.data[0].request.distribution ===
+        blueprintsComposes?.data[0].request.distribution ===
         ('centos-8' as Distributions)
       );
     }

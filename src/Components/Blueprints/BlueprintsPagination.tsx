@@ -11,18 +11,27 @@ import {
   setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { useGetBlueprintsQuery } from '../../store/imageBuilderApi';
+import {
+  useGetBlueprintsQuery,
+  GetBlueprintsApiArg,
+} from '../../store/imageBuilderApi';
 
 const BlueprintsPagination = () => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || 0;
   const blueprintsLimit = useAppSelector(selectLimit) || 10;
   const currPage = Math.floor(blueprintsOffset / blueprintsLimit) + 1;
-  const { data: blueprintsData } = useGetBlueprintsQuery({
-    search: blueprintSearchInput,
+
+  const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
     offset: blueprintsOffset,
-  });
+  };
+
+  if (blueprintSearchInput) {
+    searchParams.search = blueprintSearchInput;
+  }
+
+  const { data: blueprintsData } = useGetBlueprintsQuery(searchParams);
   const dispatch = useAppDispatch();
 
   const blueprintsTotal = blueprintsData?.meta?.count || 0;
