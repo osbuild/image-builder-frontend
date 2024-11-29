@@ -24,7 +24,11 @@ import { Link } from 'react-router-dom';
 import BlueprintCard from './BlueprintCard';
 import BlueprintsPagination from './BlueprintsPagination';
 
-import { DEBOUNCED_SEARCH_WAIT_TIME } from '../../constants';
+import {
+  DEBOUNCED_SEARCH_WAIT_TIME,
+  PAGINATION_OFFSET,
+  PAGINATION_LIMIT,
+} from '../../constants';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -55,8 +59,8 @@ type emptyBlueprintStateProps = {
 const BlueprintsSidebar = () => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
+  const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
   const {
     data: blueprintsData,
     isLoading,

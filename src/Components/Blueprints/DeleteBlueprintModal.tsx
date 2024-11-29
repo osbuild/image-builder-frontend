@@ -20,6 +20,7 @@ import {
   useDeleteBlueprintMutation,
   useGetBlueprintsQuery,
 } from '../../store/imageBuilderApi';
+import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 
 interface DeleteBlueprintModalProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -31,8 +32,8 @@ export const DeleteBlueprintModal: React.FunctionComponent<
 > = ({ setShowDeleteModal, isOpen }: DeleteBlueprintModalProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
+  const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
   const dispatch = useAppDispatch();
   const { blueprintName } = useGetBlueprintsQuery(
     {

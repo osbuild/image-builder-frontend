@@ -21,7 +21,11 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import { useNavigate } from 'react-router-dom';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL, MODAL_ANCHOR } from '../../constants';
+import {
+  FILE_SYSTEM_CUSTOMIZATION_URL,
+  MODAL_ANCHOR,
+  SEARCH_INPUT,
+} from '../../constants';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -104,7 +108,8 @@ const ProvisioningLink = ({
   );
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintSearchInput =
+    useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     { search: blueprintSearchInput },
     {
