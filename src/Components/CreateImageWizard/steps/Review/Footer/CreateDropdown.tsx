@@ -69,7 +69,7 @@ export const CreateSaveAndBuildBtn = ({
       <DropdownItem
         onClick={onSaveAndBuild}
         ouiaId="wizard-create-build-btn"
-        isDisabled={isDisabled}
+        isDisabled={isDisabled || true}
       >
         Create blueprint and build image(s)
       </DropdownItem>

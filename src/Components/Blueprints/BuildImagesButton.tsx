@@ -179,7 +179,7 @@ export const BuildImagesButtonEmptyState = ({
       onClick={onBuildHandler}
       isDisabled={!selectedBlueprintId}
       isLoading={imageBuildLoading}
-      variant={variant}
+      variant={variant || 'primary'}
     >
       {children ? children : 'Build images'}
     </Button>

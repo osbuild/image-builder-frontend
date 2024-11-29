@@ -63,14 +63,14 @@ export const HookValidatedInput = ({
       <TextInput
         value={value}
         data-testid={dataTestId}
-        ouiaId={ouiaId}
+        ouiaId={ouiaId || ''}
         type={type}
-        onChange={onChange}
+        onChange={onChange!}
         validated={validated}
-        aria-label={ariaLabel}
+        aria-label={ariaLabel || ''}
         onBlur={handleBlur}
-        placeholder={placeholder}
-        isDisabled={isDisabled}
+        placeholder={placeholder || ''}
+        isDisabled={isDisabled || false}
       />
       {validated === 'error' && (
         <HelperText>
@@ -119,13 +119,13 @@ export const ValidatedTextInput = ({
       <TextInput
         value={value}
         data-testid={dataTestId}
-        ouiaId={ouiaId}
+        ouiaId={ouiaId || ''}
         type="text"
-        onChange={onChange}
+        onChange={onChange!}
         validated={handleValidation()}
-        aria-label={ariaLabel}
+        aria-label={ariaLabel || ''}
         onBlur={handleBlur}
-        placeholder={placeholder}
+        placeholder={placeholder || ''}
       />
       {!isPristine && !validator(value) && (
         <HelperText>

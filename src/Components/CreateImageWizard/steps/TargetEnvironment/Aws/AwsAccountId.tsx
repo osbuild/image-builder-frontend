@@ -37,7 +37,7 @@ export const AwsAccountId = () => {
           readOnlyVariant="default"
           isRequired
           id="aws-account-id"
-          value={sourceId && data ? data.aws?.account_id : ''}
+          value={sourceId && data ? data.aws?.account_id ?? '' : ''}
           aria-label="aws account id"
         />
       </FormGroup>
