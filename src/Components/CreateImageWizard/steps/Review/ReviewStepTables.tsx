@@ -64,8 +64,8 @@ const RepoName = ({ repoUrl }: repoPropType) => {
         - query finished and the repo was found -> render the name of the repo
         - query finished, but the repo was not found -> render an error
       */}
-      {isSuccess && data.data?.[0]?.name && <p>{data.data?.[0].name}</p>}
-      {isSuccess && !data.data?.[0]?.name && errorLoading()}
+      {isSuccess && data?.data?.[0]?.name && <p>{data.data?.[0].name}</p>}
+      {isSuccess && !data?.data?.[0]?.name && errorLoading()}
       {isFetching && <Spinner size="md" />}
       {isError && errorLoading()}
     </>

@@ -37,7 +37,10 @@ import {
 } from '../../store/BlueprintSlice';
 import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { BlueprintItem } from '../../store/imageBuilderApi';
+import {
+  BlueprintItem,
+  GetBlueprintsApiArg,
+} from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {
@@ -57,15 +60,21 @@ const BlueprintsSidebar = () => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || 0;
   const blueprintsLimit = useAppSelector(selectLimit) || 10;
+
+  const searchParams: GetBlueprintsApiArg = {
+    limit: blueprintsLimit,
+    offset: blueprintsOffset,
+  };
+
+  if (blueprintSearchInput) {
+    searchParams.search = blueprintSearchInput;
+  }
+
   const {
     data: blueprintsData,
     isLoading,
     isFetching,
-  } = useGetBlueprintsQuery({
-    search: blueprintSearchInput,
-    limit: blueprintsLimit,
-    offset: blueprintsOffset,
-  });
+  } = useGetBlueprintsQuery(searchParams);
   const dispatch = useAppDispatch();
   const blueprints = blueprintsData?.data;
 
@@ -185,7 +194,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
 
   return (
     <SearchInput
-      value={blueprintSearchInput}
+      value={blueprintSearchInput || ''}
       placeholder="Search by name or description"
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}

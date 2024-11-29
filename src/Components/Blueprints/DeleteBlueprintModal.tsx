@@ -17,6 +17,7 @@ import {
 import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
+  GetBlueprintsApiArg,
   useDeleteBlueprintMutation,
   useGetBlueprintsQuery,
 } from '../../store/imageBuilderApi';
@@ -34,21 +35,24 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const blueprintsOffset = useAppSelector(selectOffset) || 0;
   const blueprintsLimit = useAppSelector(selectLimit) || 10;
   const dispatch = useAppDispatch();
-  const { blueprintName } = useGetBlueprintsQuery(
-    {
-      search: blueprintSearchInput,
-      limit: blueprintsLimit,
-      offset: blueprintsOffset,
-    },
-    {
-      selectFromResult: ({ data }) => ({
-        blueprintName: data?.data?.find(
-          (blueprint: { id: string | undefined }) =>
-            blueprint.id === selectedBlueprintId
-        )?.name,
-      }),
-    }
-  );
+
+  const searchParams: GetBlueprintsApiArg = {
+    limit: blueprintsLimit,
+    offset: blueprintsOffset,
+  };
+
+  if (blueprintSearchInput) {
+    searchParams.search = blueprintSearchInput;
+  }
+
+  const { blueprintName } = useGetBlueprintsQuery(searchParams, {
+    selectFromResult: ({ data }) => ({
+      blueprintName: data?.data?.find(
+        (blueprint: { id: string | undefined }) =>
+          blueprint.id === selectedBlueprintId
+      )?.name,
+    }),
+  });
   const [deleteBlueprint] = useDeleteBlueprintMutation({
     fixedCacheKey: 'delete-blueprint',
   });

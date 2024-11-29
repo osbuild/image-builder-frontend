@@ -62,7 +62,7 @@ const PackageRecommendations = () => {
       offset: 0,
     });
 
-  if (isSuccessDistroRepositories && distroRepositories.data) {
+  if (isSuccessDistroRepositories && distroRepositories?.data) {
     distroRepoUrls = distroRepositories.data.map((repo) => repo.url || '');
   }
 

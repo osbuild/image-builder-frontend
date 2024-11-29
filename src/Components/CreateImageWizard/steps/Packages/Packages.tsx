@@ -267,7 +267,7 @@ const Packages = () => {
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm,
           urls: distroRepositories
-            .filter((archItem) => {
+            ?.filter((archItem) => {
               return archItem.arch === arch;
             })[0]
             .repositories.flatMap((repo) => {
@@ -329,7 +329,7 @@ const Packages = () => {
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substr(1),
           urls: distroRepositories
-            .filter((archItem) => {
+            ?.filter((archItem) => {
               return archItem.arch === arch;
             })[0]
             .repositories.flatMap((repo) => {
@@ -348,7 +348,7 @@ const Packages = () => {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substr(1),
-          urls: customRepositories.flatMap((repo) => {
+          urls: customRepositories?.flatMap((repo) => {
             if (!repo.baseurl) {
               throw new Error(
                 `Repository (id: ${repo.id}, name: ${repo?.name}) is missing baseurl`
@@ -824,7 +824,7 @@ const Packages = () => {
     if (isSelecting) {
       if (
         isSuccessEpelRepo &&
-        epelRepo.data &&
+        epelRepo?.data &&
         pkg.repository === 'recommended' &&
         !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
@@ -837,7 +837,7 @@ const Packages = () => {
       dispatch(removePackage(pkg.name));
       if (
         isSuccessEpelRepo &&
-        epelRepo.data &&
+        epelRepo?.data &&
         packages.filter((pkg) => pkg.repository === 'recommended').length ===
           1 &&
         groups.filter((grp) => grp.repository === 'recommended').length === 0
@@ -855,7 +855,7 @@ const Packages = () => {
     if (isSelecting) {
       if (
         isSuccessEpelRepo &&
-        epelRepo.data &&
+        epelRepo?.data &&
         grp.repository === 'recommended' &&
         !recommendedRepositories.some((repo) => repo.name?.startsWith('EPEL'))
       ) {
@@ -868,7 +868,7 @@ const Packages = () => {
       dispatch(removeGroup(grp.name));
       if (
         isSuccessEpelRepo &&
-        epelRepo.data &&
+        epelRepo?.data &&
         groups.filter((grp) => grp.repository === 'recommended').length === 1 &&
         packages.filter((pkg) => pkg.repository === 'recommended').length === 0
       ) {
