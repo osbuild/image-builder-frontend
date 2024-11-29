@@ -65,7 +65,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
 
   const { selectedBlueprintName, selectedBlueprintVersion } =
     useGetBlueprintsQuery(
-      { search: blueprintSearchInput },
+      { search: blueprintSearchInput ?? '' },
       {
         selectFromResult: ({ data }) => {
           const bp = data?.data?.find(

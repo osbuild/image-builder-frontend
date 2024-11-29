@@ -580,7 +580,7 @@ const Repositories = () => {
         </PanelMain>
       </Panel>
       <Pagination
-        itemCount={count}
+        itemCount={count ?? 0}
         perPage={perPage}
         page={page}
         onSetPage={(_, newPage) => setPage(newPage)}

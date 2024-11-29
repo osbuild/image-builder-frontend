@@ -41,7 +41,7 @@ export const useCheckRepositoriesAvailability = () => {
       availableForVersion: version,
       contentType: 'rpm',
       origin: ContentOrigin.EXTERNAL,
-      limit: firstRequest?.data?.meta?.count,
+      limit: firstRequest?.data?.meta?.count || 10,
       offset: 0,
     },
     {

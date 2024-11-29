@@ -31,8 +31,8 @@ export const DeleteBlueprintModal: React.FunctionComponent<
 > = ({ setShowDeleteModal, isOpen }: DeleteBlueprintModalProps) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || 0;
+  const blueprintsLimit = useAppSelector(selectLimit) || 10;
   const dispatch = useAppDispatch();
   const { blueprintName } = useGetBlueprintsQuery(
     {

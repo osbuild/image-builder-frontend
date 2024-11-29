@@ -76,10 +76,10 @@ const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput) || '';
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || 0;
+  const blueprintsLimit = useAppSelector(selectLimit) || 10;
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     {

@@ -106,7 +106,7 @@ const ProvisioningLink = ({
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
-    { search: blueprintSearchInput },
+    { search: blueprintSearchInput ?? '' },
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data?.find(
