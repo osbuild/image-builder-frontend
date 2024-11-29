@@ -87,6 +87,6 @@ export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
 export const isNtpServerValid = (ntpServer: string) => {
   return (
     ntpServer !== undefined &&
-    /^[a-z0-9-]+((\.[a-z0-9-]+)?){1,}$/.test(ntpServer)
+    /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer)
   );
 };
