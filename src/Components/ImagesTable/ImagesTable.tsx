@@ -116,7 +116,7 @@ const ImagesTable = () => {
       id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
     },
     { skip: !selectedBlueprintId }
   );
@@ -217,7 +217,9 @@ const ImagesTable = () => {
           <Tbody>
             <Tr>
               <Td colSpan={12}>
-                <ImagesEmptyState selectedBlueprint={selectedBlueprintId} />
+                <ImagesEmptyState
+                  selectedBlueprint={selectedBlueprintId || ''}
+                />
               </Td>
             </Tr>
           </Tbody>

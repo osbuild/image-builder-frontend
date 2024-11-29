@@ -60,7 +60,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
     },
     { skip: !selectedBlueprintId }
   );
