@@ -6,7 +6,7 @@ import { useFlag } from '@unleash/proxy-client-react';
 import PackageRecommendations from './PackageRecommendations';
 import Packages from './Packages';
 
-import { CENTOS_9 } from '../../../../constants';
+import { RHEL_8, RHEL_9 } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 
@@ -25,9 +25,10 @@ const PackagesStep = () => {
         package groups.
       </Alert>
       <Packages />
-      {packageRecommendationsFlag && distribution !== CENTOS_9 && (
-        <PackageRecommendations />
-      )}
+      {packageRecommendationsFlag &&
+        (distribution === RHEL_8 || distribution === RHEL_9) && (
+          <PackageRecommendations />
+        )}
     </Form>
   );
 };
