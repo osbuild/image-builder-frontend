@@ -749,9 +749,6 @@ export const wizardSlice = createSlice({
         1
       );
     },
-    clearNtpServers: (state) => {
-      state.timezone.ntpservers = [];
-    },
   },
 });
 
@@ -818,6 +815,5 @@ export const {
   changeTimezone,
   addNtpServer,
   removeNtpServer,
-  clearNtpServers,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
