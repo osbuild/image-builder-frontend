@@ -63,6 +63,10 @@ import {
   selectUseLatest,
   selectPartitions,
   selectFirstBootScript,
+  selectUsers,
+  selectUserName,
+  selectUserPassword,
+  selectUserSshKey,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -737,6 +741,50 @@ export const DetailsList = () => {
 
 export const OscapList = () => {
   return <OscapProfileInformation allowChangingCompliancePolicy={true} />;
+};
+
+export const UsersList = () => {
+  const users = useAppSelector(selectUsers);
+  const userName = useAppSelector(selectUserName);
+  const userPassword = useAppSelector(selectUserPassword);
+  const userSshKey = useAppSelector(selectUserSshKey);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-u-min-width"
+        >
+          Users
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {users.length > 0 && (
+            <>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                User name
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {userName}
+              </TextListItem>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                Passwords
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {userPassword}
+              </TextListItem>
+            </>
+          )}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
 };
 
 export const FirstBootList = () => {

@@ -34,6 +34,7 @@ import {
   Services,
   Subscription,
   UploadTypes,
+  User,
 } from '../../../store/imageBuilderApi';
 import {
   selectActivationKey,
@@ -76,6 +77,7 @@ import {
   selectFirstBootScript,
   selectMetadata,
   initialState,
+  selectUsers,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -201,6 +203,25 @@ function commonRequestToState(
       blueprintName: request.name || '',
       blueprintDescription: request.description || '',
     },
+    userState: {
+      users:
+        request.customizations?.users?.map((user, index) => ({
+          index,
+          name: user.name,
+          password: user?.password || '',
+          ssh_key: user?.ssh_key || '',
+          confirmPassword: undefined,
+          administrator: false,
+        })) || [],
+      userInfo: {
+        index: 0,
+        name: request.customizations?.users?.[0]?.name || '',
+        password: request.customizations?.users?.[0]?.password || undefined,
+        ssh_key: request.customizations?.users?.[0]?.ssh_key || undefined,
+        confirmPassword: undefined,
+        administrator: false,
+      },
+    },
     compliance:
       compliancePolicyID !== undefined
         ? {
@@ -233,6 +254,7 @@ function commonRequestToState(
           mode: 'automatic' as FileSystemConfigurationType,
           partitions: [],
         },
+
     architecture: arch,
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
@@ -488,7 +510,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
     filesystem: getFileSystem(state),
-    users: undefined,
+    users: getUsers(state),
     services: getServices(state),
     hostname: undefined,
     kernel: selectKernel(state).append
@@ -528,6 +550,18 @@ const getServices = (state: RootState): Services | undefined => {
     masked: services.masked.length ? services.masked : undefined,
     disabled: services.disabled.length ? services.disabled : undefined,
   };
+};
+
+const getUsers = (state: RootState): User[] | undefined => {
+  const users = selectUsers(state);
+  if (!users || users.length === 0) {
+    return undefined;
+  }
+  return users.map((user) => ({
+    name: user.name,
+    ...(user.password !== undefined && { password: user.password }),
+    ...(user.ssh_key !== undefined && { ssh_key: user.ssh_key }),
+  }));
 };
 
 const getOpenscap = (state: RootState): OpenScap | undefined => {

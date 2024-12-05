@@ -8,6 +8,7 @@ import type {
   ImageRequest,
   ImageTypes,
   Repository,
+  User,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
@@ -40,6 +41,12 @@ export type RegistrationType =
   | 'register-now-rhc';
 
 export type ComplianceType = 'openscap' | 'compliance';
+
+export interface UserWithAdditionalInfo extends User {
+  confirmPassword?: string;
+  administrator: boolean;
+  index: number;
+}
 
 export type wizardState = {
   env: {
@@ -87,6 +94,11 @@ export type wizardState = {
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;
+  };
+
+  userState: {
+    users: UserWithAdditionalInfo[];
+    userInfo: UserWithAdditionalInfo;
   };
   firstBoot: {
     script: string;
@@ -182,6 +194,17 @@ export const initialState: wizardState = {
     blueprintDescription: '',
   },
   firstBoot: { script: '' },
+  userState: {
+    users: [],
+    userInfo: {
+      index: 0,
+      name: '',
+      password: '',
+      confirmPassword: '',
+      ssh_key: '',
+      administrator: false,
+    },
+  },
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -341,6 +364,32 @@ export const selectBlueprintDescription = (state: RootState) => {
 
 export const selectFirstBootScript = (state: RootState) => {
   return state.wizard.firstBoot?.script;
+};
+
+export const selectUsers = (state: RootState) => {
+  return state.wizard.userState?.users;
+};
+export const selectUserName = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.name;
+};
+
+export const selectUserindex = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.index;
+};
+
+export const selectUserPassword = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.password;
+};
+
+export const selectConfirmUserPassword = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.confirmPassword;
+};
+export const selectUserSshKey = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.ssh_key;
+};
+
+export const selectUserAdministrator = (state: RootState) => {
+  return state.wizard.userState?.userInfo?.administrator;
 };
 
 export const wizardSlice = createSlice({
@@ -669,6 +718,70 @@ export const wizardSlice = createSlice({
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
+    addUser: (state, action: PayloadAction<UserWithAdditionalInfo>) => {
+      // Ensure unique index when adding a new user
+      const newIndex =
+        state.userState.users.length > 0
+          ? Math.max(...state.userState.users.map((user) => user.index)) + 1
+          : 0;
+
+      const newUser = {
+        ...action.payload,
+        index: newIndex,
+      };
+
+      if (!state.userState.users.some((user) => user.index === newUser.index)) {
+        state.userState.users.push(newUser);
+
+        // Update userInfo to match the newly added user
+        state.userState.userInfo = { ...newUser };
+      }
+    },
+    editUser: (state, action: PayloadAction<UserWithAdditionalInfo>) => {
+      const index = state.userState.users.findIndex(
+        (user) => user.index === action.payload.index
+      );
+
+      if (index !== -1) {
+        state.userState.users[index] = {
+          ...state.userState.users[index],
+          ...action.payload,
+        };
+
+        // If editing the current userInfo, update it
+        if (state.userState.userInfo.index === action.payload.index) {
+          state.userState.userInfo = {
+            ...state.userState.userInfo,
+            ...action.payload,
+          };
+        }
+      }
+    },
+    removeUser: (state, action: PayloadAction<number>) => {
+      state.userState.users = state.userState.users.filter(
+        (user) => user.index !== action.payload
+      );
+    },
+    setUserName: (state, action: PayloadAction<string>) => {
+      state.userState.userInfo.name = action.payload;
+    },
+    setUserIndex: (state, action: PayloadAction<number>) => {
+      state.userState.userInfo.index = action.payload;
+    },
+    setUserPassword: (state, action: PayloadAction<string>) => {
+      state.userState.userInfo.password = action.payload;
+    },
+
+    setConfirmUserPassword: (state, action: PayloadAction<string>) => {
+      state.userState.userInfo.confirmPassword = action.payload;
+    },
+    setUserSshKey: (state, action: PayloadAction<string>) => {
+      state.userState.userInfo.ssh_key = action.payload;
+    },
+    changeUserAdministrator: (state, action: PayloadAction<boolean>) => {
+      state.userState.userInfo.administrator = action.payload;
+    },
+
     changeEnabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.enabled = action.payload;
     },
@@ -736,6 +849,15 @@ export const {
   changeBlueprintDescription,
   loadWizardState,
   setFirstBootScript,
+  addUser,
+  editUser,
+  removeUser,
+  setUserName,
+  setUserPassword,
+  setUserIndex,
+  setConfirmUserPassword,
+  setUserSshKey,
+  changeUserAdministrator,
   changeEnabledServices,
   changeMaskedServices,
   changeDisabledServices,

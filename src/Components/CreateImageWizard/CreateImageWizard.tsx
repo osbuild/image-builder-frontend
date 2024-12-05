@@ -36,6 +36,7 @@ import {
   useFirstBootValidation,
   useDetailsValidation,
   useRegistrationValidation,
+  useUserValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -66,6 +67,9 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   addImageType,
+  selectUserName,
+  selectUserSshKey,
+  selectUserPassword,
 } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
@@ -207,6 +211,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const azureSource = useAppSelector(selectAzureSource);
+  const userName = useAppSelector(selectUserName);
+  const userPassword = useAppSelector(selectUserPassword);
+  const userSshKey = useAppSelector(selectUserSshKey);
   // Registration
   const registrationValidation = useRegistrationValidation();
   // Snapshots
@@ -218,6 +225,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const firstBootValidation = useFirstBootValidation();
   // Details
   const detailsValidation = useDetailsValidation();
+  // User
+  const userValidation = useUserValidation();
 
   let startIndex = 1; // default index
   if (isEdit) {
@@ -450,7 +459,16 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-users"
                 isHidden={!isUsersEnabled}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={
+                      !(
+                        userName === '' &&
+                        userPassword === '' &&
+                        userSshKey === ''
+                      ) && userValidation.disabledNext
+                    }
+                    optional={true}
+                  />
                 }
               >
                 <UsersStep />

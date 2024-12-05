@@ -21,6 +21,7 @@ import {
   DetailsList,
   ImageOutputList,
   OscapList,
+  UsersList,
   RegisterLaterList,
   RegisterNowList,
   TargetEnvAWSList,
@@ -66,8 +67,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedOscapDetail, setIsExpandedOscapDetail] = useState(true);
   const [isExpandedComplianceDetail, setIsExpandedComplianceDetail] =
     useState(true);
+  const [isExpandedUsers, setIsExpandedUsers] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
-
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
   const onToggleTargetEnvs = (isExpandedTargetEnvs: boolean) =>
@@ -84,6 +85,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedOscapDetail(isExpandedOscapDetail);
   const onToggleComplianceDetails = (isExpandedComplianceDetail: boolean) =>
     setIsExpandedComplianceDetail(isExpandedComplianceDetail);
+  const onToggleUsers = (isExpandedUsers: boolean) =>
+    setIsExpandedUsers(isExpandedUsers);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
@@ -140,7 +143,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
       </TextContent>
     );
   };
-
+  const isUsersEnabled = useFlag('image-builder.users.enabled');
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   return (
     <>
@@ -298,6 +301,21 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
+      {isUsersEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Users',
+            'revisit-users',
+            'wizard-users'
+          )}
+          onToggle={(_event, isExpandedUsers) => onToggleUsers(isExpandedUsers)}
+          isExpanded={isExpandedUsers}
+          isIndented
+          data-testid="timezone-expandable"
+        >
+          <UsersList />
+        </ExpandableSection>
+      )}
       {isFirstBootEnabled && (
         <ExpandableSection
           toggleContent={composeExpandable(
