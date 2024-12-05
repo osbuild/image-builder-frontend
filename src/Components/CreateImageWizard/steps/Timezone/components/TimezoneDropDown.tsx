@@ -19,8 +19,7 @@ import {
   changeTimezone,
   selectTimezone,
 } from '../../../../../store/wizardSlice';
-
-const defaultTimezones = Intl.supportedValuesOf('timeZone');
+import { timezones } from '../../../../../timezones';
 
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);
@@ -29,14 +28,13 @@ const TimezoneDropDown = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] =
-    useState<string[]>(defaultTimezones);
+  const [selectOptions, setSelectOptions] = useState<string[]>(timezones);
 
   useEffect(() => {
-    let filteredTimezones = defaultTimezones;
+    let filteredTimezones = timezones;
 
     if (filterValue) {
-      filteredTimezones = defaultTimezones.filter((timezone: string) =>
+      filteredTimezones = timezones.filter((timezone: string) =>
         String(timezone).toLowerCase().includes(filterValue.toLowerCase())
       );
       if (!filteredTimezones.length) {
