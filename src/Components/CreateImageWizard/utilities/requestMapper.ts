@@ -76,6 +76,8 @@ import {
   selectFirstBootScript,
   selectMetadata,
   initialState,
+  selectTimezone,
+  selectNtpServers,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -298,6 +300,10 @@ function commonRequestToState(
     kernel: {
       append: request.customizations?.kernel?.append || '',
     },
+    timezone: {
+      timezone: request.customizations.timezone?.timezone || '',
+      ntpservers: request.customizations.timezone?.ntpservers || [],
+    },
   };
 }
 
@@ -495,7 +501,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
       ? { append: selectKernel(state).append }
       : undefined,
     groups: undefined,
-    timezone: undefined,
+    timezone: getTimezone(state),
     locale: undefined,
     firewall: undefined,
     installation_device: undefined,
@@ -577,6 +583,20 @@ const getPackages = (state: RootState) => {
       .concat(groups.map((grp) => '@' + grp.name));
   } else {
     return undefined;
+  }
+};
+
+const getTimezone = (state: RootState) => {
+  const timezone = selectTimezone(state);
+  const ntpservers = selectNtpServers(state);
+
+  if (!timezone && ntpservers?.length === 0) {
+    return undefined;
+  } else {
+    return {
+      timezone: timezone ? timezone : undefined,
+      ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
+    };
   }
 };
 
