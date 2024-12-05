@@ -172,6 +172,10 @@ minsize = 2147483648
 [customizations.installer]
 unattended = true
 sudo-nopasswd = ["user", "%wheel"]
+
+[customizations.timezone]
+timezone = "US/Eastern"
+ntpservers = ["0.north-america.pool.ntp.org", "1.north-america.pool.ntp.org"]
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
@@ -339,6 +343,19 @@ describe('Import modal', () => {
       async () =>
         await user.click(await screen.findByTestId('packages-selected-toggle'))
     );
+
+    // Users
+    await clickNext();
+
+    // Timezone
+    await clickNext();
+    await screen.findByRole('heading', { name: /Timezone/ });
+    const timezoneDropDown = await screen.findByPlaceholderText(
+      /Select a timezone/i
+    );
+    expect(timezoneDropDown).toHaveValue('US/Eastern');
+    await screen.findByText(/0\.north-america\.pool\.ntp\.org/i);
+    await screen.findByText(/1\.north-america\.pool\.ntp\.org/i);
 
     await clickNext();
   }, 20000);
