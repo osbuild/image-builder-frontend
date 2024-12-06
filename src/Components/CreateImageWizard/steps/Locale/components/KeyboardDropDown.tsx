@@ -19,6 +19,7 @@ import {
   changeKeyboard,
   selectKeyboard,
 } from '../../../../../store/wizardSlice';
+import sortfn from '../../../../../Utilities/sortfn';
 import { keyboardsList } from '../keyboardsList';
 
 const KeyboardDropDown = () => {
@@ -44,46 +45,14 @@ const KeyboardDropDown = () => {
         setIsOpen(true);
       }
     }
-    setSelectOptions(filteredKeyboards.sort((a, b) => sortfn(a, b)));
+    setSelectOptions(
+      filteredKeyboards.sort((a, b) => sortfn(a, b, filterValue))
+    );
 
     // This useEffect hook should run *only* on when the filter value changes.
     // eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
-
-  const sortfn = (a: string, b: string) => {
-    const aKeyboard = a.toLowerCase();
-    const bKeyboard = b.toLowerCase();
-    // check exact match first
-    if (aKeyboard === filterValue) {
-      return -1;
-    }
-    if (bKeyboard === filterValue) {
-      return 1;
-    }
-    // check for keyboards that start with the search term
-    if (
-      aKeyboard.startsWith(filterValue) &&
-      !bKeyboard.startsWith(filterValue)
-    ) {
-      return -1;
-    }
-    if (
-      bKeyboard.startsWith(filterValue) &&
-      !aKeyboard.startsWith(filterValue)
-    ) {
-      return 1;
-    }
-    // if both (or neither) start with the search term
-    // sort alphabetically
-    if (aKeyboard < bKeyboard) {
-      return -1;
-    }
-    if (bKeyboard < aKeyboard) {
-      return 1;
-    }
-    return 0;
-  };
 
   const onToggle = (isOpen: boolean) => {
     setIsOpen(!isOpen);
