@@ -75,6 +75,7 @@ import {
   removeRecommendedRepository,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
+import sortfn from '../../../../Utilities/sortfn';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
@@ -223,40 +224,6 @@ const Packages = () => {
 
   const [createRepository, { isLoading: createLoading }] =
     useCreateRepositoryMutation();
-
-  const sortfn = (a: string, b: string) => {
-    const aPkg = a.toLowerCase();
-    const bPkg = b.toLowerCase();
-    // check exact match first
-    if (aPkg === debouncedSearchTerm) {
-      return -1;
-    }
-    if (bPkg === debouncedSearchTerm) {
-      return 1;
-    }
-    // check for packages that start with the search term
-    if (
-      aPkg.startsWith(debouncedSearchTerm) &&
-      !bPkg.startsWith(debouncedSearchTerm)
-    ) {
-      return -1;
-    }
-    if (
-      bPkg.startsWith(debouncedSearchTerm) &&
-      !aPkg.startsWith(debouncedSearchTerm)
-    ) {
-      return 1;
-    }
-    // if both (or neither) start with the search term
-    // sort alphabetically
-    if (aPkg < bPkg) {
-      return -1;
-    }
-    if (bPkg < aPkg) {
-      return 1;
-    }
-    return 0;
-  };
 
   useEffect(() => {
     if (debouncedSearchTermIsGroup) {
@@ -734,7 +701,7 @@ const Packages = () => {
     packages,
     toggleSelected,
     toggleSourceRepos,
-  ]).sort((a, b) => sortfn(a.name, b.name));
+  ]).sort((a, b) => sortfn(a.name, b.name, debouncedSearchTerm));
 
   const transformedGroups = useMemo(() => {
     let combinedGroupData: GroupWithRepositoryInfo[] = [];
@@ -801,7 +768,7 @@ const Packages = () => {
     groups,
     toggleSelected,
     toggleSourceRepos,
-  ]).sort((a, b) => sortfn(a.name, b.name));
+  ]).sort((a, b) => sortfn(a.name, b.name, debouncedSearchTerm));
 
   const handleSearch = async (
     event: React.FormEvent<HTMLInputElement>,
