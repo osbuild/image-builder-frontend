@@ -1,5 +1,7 @@
 import TOML from '@ltd/j-toml';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import cockpit from 'cockpit';
+import { fsinfo } from 'fsinfo';
 
 import {
   GetArchitecturesApiResponse,
@@ -8,13 +10,6 @@ import {
   GetBlueprintsApiResponse,
   BlueprintItem,
 } from './imageBuilderApi';
-
-// we could create an alias for this, something like
-// import cockpit from 'cockpit', but this feels like
-// a bit of magic and might make the code harder to
-// maintain.
-import cockpit from '../../pkg/lib/cockpit';
-import { fsinfo } from '../../pkg/lib/cockpit/fsinfo';
 
 const emptyCockpitApi = createApi({
   reducerPath: 'cockpitApi',

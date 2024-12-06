@@ -95,10 +95,8 @@ module.exports = {
   proxyVerbose: true,
   resolve: {
     alias: {
-      cockpit: false,
-      './pkg/lib/cockpit': false,
-      'cockpit/fsinfo': false,
-      './pkg/lib/cockpit/fsinfo': false,
+      cockpit: path.resolve(__dirname, 'src/mocks/cockpit'),
+      fsinfo: path.resolve(__dirname, 'src/mocks/cockpit'),
     },
   },
   routes: {
