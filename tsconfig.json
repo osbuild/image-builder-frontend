@@ -19,6 +19,14 @@
     "paths": {
       "*": [
         "./pkg/lib/*"
+      ],
+      "cockpit": [
+        "./src/mocks/cockpit.ts",
+        "./pkg/lib/cockpit.ts"
+      ],
+      "fsinfo": [
+        "./src/mocks/cockpit.ts",
+        "./pkg/lib/cockpit/fsinfo.ts"
       ]
     }
   }

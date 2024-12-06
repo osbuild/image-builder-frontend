@@ -79,7 +79,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 
-// @ts-ignore wip trying to get tests to go green for now
 vi.mock(import('cockpit'), async () => {
   return {
     user: () => {
@@ -92,7 +91,6 @@ vi.mock(import('cockpit'), async () => {
   };
 });
 
-// @ts-ignore wip trying to get tests to go green for now
 vi.mock(import('fsinfo'), async () => {
   return {
     fsinfo: () => {

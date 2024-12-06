@@ -1,8 +1,6 @@
 import TOML from '@ltd/j-toml';
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-// @ts-ignore wip trying to get tests to go green for now
 import cockpit from 'cockpit';
-// @ts-ignore wip trying to get tests to go green for now
 import { fsinfo } from 'fsinfo';
 
 import {
