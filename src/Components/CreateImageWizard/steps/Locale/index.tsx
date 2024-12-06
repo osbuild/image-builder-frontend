@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Text, Form, Title } from '@patternfly/react-core';
 
-import KeyboardInput from './components/KeyboardInput';
+import KeyboardDropDown from './components/KeyboardDropDown';
 import LanguagesDropDown from './components/LanguagesDropDown';
 
 const LocaleStep = () => {
@@ -13,7 +13,7 @@ const LocaleStep = () => {
       </Title>
       <Text>Select locale for your image.</Text>
       <LanguagesDropDown />
-      <KeyboardInput />
+      <KeyboardDropDown />
     </Form>
   );
 };
