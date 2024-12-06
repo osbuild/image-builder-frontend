@@ -750,7 +750,7 @@ export const TimezoneList = () => {
       <TextList component={TextListVariants.dl}>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           Timezone
         </TextListItem>
@@ -759,7 +759,7 @@ export const TimezoneList = () => {
         </TextListItem>
         <TextListItem
           component={TextListItemVariants.dt}
-          className="pf-u-min-width"
+          className="pf-v5-u-min-width"
         >
           NTP servers
         </TextListItem>
