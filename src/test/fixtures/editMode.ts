@@ -433,10 +433,28 @@ export const timezoneCreateBlueprintRequest: CreateBlueprintRequest = {
   },
 };
 
+export const localeCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['locale'],
+  description: mockBlueprintDescriptions['locale'],
+  customizations: {
+    locale: {
+      languages: ['en_US.UTF-8'],
+      keyboard: 'us',
+    },
+  },
+};
+
 export const timezoneBlueprintResponse: BlueprintResponse = {
   ...timezoneCreateBlueprintRequest,
   id: mockBlueprintIds['timezone'],
   description: mockBlueprintDescriptions['timezone'],
+};
+
+export const localeBlueprintResponse: BlueprintResponse = {
+  ...localeCreateBlueprintRequest,
+  id: mockBlueprintIds['locale'],
+  description: mockBlueprintDescriptions['locale'],
 };
 
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -525,6 +543,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return packagesBlueprintResponse;
     case mockBlueprintIds['timezone']:
       return timezoneBlueprintResponse;
+    case mockBlueprintIds['locale']:
+      return localeBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:
