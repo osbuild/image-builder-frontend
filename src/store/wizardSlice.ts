@@ -1,7 +1,7 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 
-import type { ApiRepositoryImportResponseRead, ApiRepositoryRequest, ApiRepositoryResponseRead } from './contentSourcesApi';
+import type { ApiRepositoryResponseRead } from './contentSourcesApi';
 import type {
   CustomRepository,
   Distributions,
@@ -671,8 +671,8 @@ export const wizardSlice = createSlice({
     ) => {
       state.repositories.customRepositories = [
         ...state.repositories.customRepositories,
-        ...action.payload
-      ]
+        ...action.payload,
+      ];
     },
     changeCustomRepositories: (
       state,

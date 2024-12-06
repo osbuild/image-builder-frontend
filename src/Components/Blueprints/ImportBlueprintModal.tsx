@@ -21,12 +21,15 @@ import { parse } from 'toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
+import {
+  ApiRepositoryRequest,
+  useBulkImportRepositoriesMutation,
+} from '../../store/contentSourcesApi';
 import { useAppDispatch } from '../../store/hooks';
 import { BlueprintExportResponse } from '../../store/imageBuilderApi';
 import { importCustomRepositories, wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
-import { ApiRepositoryRequest, useBulkImportRepositoriesMutation } from '../../store/contentSourcesApi';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -53,7 +56,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
   const dispatch = useAppDispatch();
-  const [importRepositories, repositoriesResult] = useBulkImportRepositoriesMutation();
+  const [importRepositories] = useBulkImportRepositoriesMutation();
 
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
@@ -64,6 +67,61 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
+
+  async function handleRepositoryImport(
+    blueprintExportedResponse: BlueprintExportResponse
+  ) {
+    if (blueprintExportedResponse.content_sources) {
+      const customRepositories: ApiRepositoryRequest[] =
+        blueprintExportedResponse.content_sources.map(
+          (item) => item as ApiRepositoryRequest
+        );
+
+      try {
+        const result = await importRepositories({
+          body: customRepositories,
+        }).unwrap();
+        dispatch(
+          importCustomRepositories(
+            blueprintExportedResponse.customizations.custom_repositories || []
+          )
+        );
+
+        if (Array.isArray(result)) {
+          const importedRepositoryNames: string[] = [];
+          result.forEach((repository) => {
+            if (repository.warnings?.length === 0 && repository.url) {
+              importedRepositoryNames.push(repository.url);
+              return;
+            }
+            dispatch(
+              addNotification({
+                variant: 'warning',
+                title: 'Failed to import custom repositories',
+                description: JSON.stringify(repository.warnings),
+              })
+            );
+          });
+          if (importedRepositoryNames.length !== 0) {
+            dispatch(
+              addNotification({
+                variant: 'info',
+                title: 'Successfully imported custom repositories',
+                description: importedRepositoryNames.join(', '),
+              })
+            );
+          }
+        }
+      } catch {
+        dispatch(
+          addNotification({
+            variant: 'danger',
+            title: 'Custom repositories import failed',
+          })
+        );
+      }
+    }
+  }
 
   React.useEffect(() => {
     if (filename && fileContent) {
@@ -96,14 +154,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
             );
 
             if (blueprintExportedResponse.content_sources) {
-              const customRepositories: ApiRepositoryRequest[] = blueprintExportedResponse.content_sources.map(item => item as ApiRepositoryRequest);
-              const result = importRepositories({
-                body: customRepositories,
-              });
-              dispatch(
-                importCustomRepositories(blueprintExportedResponse.customizations.custom_repositories || [])
-              );
-            };
+              handleRepositoryImport(blueprintExportedResponse);
+            }
             setIsOnPrem(false);
             setImportedBlueprint(importBlueprintState);
           } catch {
