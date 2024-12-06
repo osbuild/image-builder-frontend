@@ -7,6 +7,7 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 
+import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -20,7 +21,6 @@ import {
   useDeleteBlueprintMutation,
   useGetBlueprintsQuery,
 } from '../../store/imageBuilderApi';
-import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 
 interface DeleteBlueprintModalProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
