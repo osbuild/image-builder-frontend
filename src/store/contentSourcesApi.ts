@@ -156,307 +156,313 @@ export type ListSnapshotsByDateApiArg = {
 };
 export type ApiFeature = {
   /** Whether the current user can access the feature */
-  accessible?: boolean;
+  accessible?: boolean | undefined;
   /** Whether the feature is enabled on the running server */
-  enabled?: boolean;
+  enabled?: boolean | undefined;
 };
 export type ApiFeatureSet = {
   [key: string]: ApiFeature;
 };
 export type ApiSearchPackageGroupResponse = {
   /** Description of the package group found */
-  description?: string;
+  description?: string | undefined;
   /** Package group ID */
-  id?: string;
+  id?: string | undefined;
   /** Name of package group found */
-  package_group_name?: string;
+  package_group_name?: string | undefined;
   /** Package list of the package group found */
-  package_list?: string[];
+  package_list?: string[] | undefined;
 };
 export type ErrorsHandlerError = {
   /** An explanation specific to the problem */
-  detail?: string;
+  detail?: string | undefined;
   /** HTTP status code applicable to the error */
-  status?: number;
+  status?: number | undefined;
   /** A summary of the problem */
-  title?: string;
+  title?: string | undefined;
 };
 export type ErrorsErrorResponse = {
-  errors?: ErrorsHandlerError[];
+  errors?: ErrorsHandlerError[] | undefined;
 };
 export type ApiContentUnitSearchRequest = {
   /** List of names to search using an exact match */
-  exact_names?: string[];
+  exact_names?: string[] | undefined;
   /** Maximum number of records to return for the search */
-  limit?: number;
+  limit?: number | undefined;
   /** Search string to search content unit names */
-  search?: string;
+  search?: string | undefined;
   /** URLs of repositories to search */
-  urls?: string[];
+  urls?: string[] | undefined;
   /** List of repository UUIDs to search */
-  uuids?: string[];
+  uuids?: string[] | undefined;
 };
 export type ApiSnapshotResponse = {
   /** Count of each content type */
-  added_counts?: {
-    [key: string]: number;
-  };
+  added_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
   /** Count of each content type */
-  content_counts?: {
-    [key: string]: number;
-  };
+  content_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
   /** Datetime the snapshot was created */
-  created_at?: string;
+  created_at?: string | undefined;
   /** Count of each content type */
-  removed_counts?: {
-    [key: string]: number;
-  };
+  removed_counts?:
+    | {
+        [key: string]: number;
+      }
+    | undefined;
   /** Name of repository the snapshot belongs to */
-  repository_name?: string;
+  repository_name?: string | undefined;
   /** Path to repository snapshot contents */
-  repository_path?: string;
+  repository_path?: string | undefined;
   /** UUID of the repository the snapshot belongs to */
-  repository_uuid?: string;
+  repository_uuid?: string | undefined;
   /** URL to the snapshot's content */
-  url?: string;
-  uuid?: string;
+  url?: string | undefined;
+  uuid?: string | undefined;
 };
 export type ApiTaskInfoResponse = {
   /** Timestamp of task creation */
-  created_at?: string;
+  created_at?: string | undefined;
   /** UUIDs of parent tasks */
-  dependencies?: string[];
+  dependencies?: string[] | undefined;
   /** UUIDs of child tasks */
-  dependents?: string[];
+  dependents?: string[] | undefined;
   /** Timestamp task ended running at */
-  ended_at?: string;
+  ended_at?: string | undefined;
   /** Error thrown while running task */
-  error?: string;
+  error?: string | undefined;
   /** Name of the associated repository or template */
-  object_name?: string;
+  object_name?: string | undefined;
   /** Type of the associated object, either repository or template */
-  object_type?: string;
+  object_type?: string | undefined;
   /** UUID of the associated repository or template */
-  object_uuid?: string;
+  object_uuid?: string | undefined;
   /** Organization ID of the owner */
-  org_id?: string;
+  org_id?: string | undefined;
   /** Status of task (running, failed, completed, canceled, pending) */
-  status?: string;
+  status?: string | undefined;
   /** Type of task */
-  type?: string;
+  type?: string | undefined;
   /** UUID of the object */
-  uuid?: string;
+  uuid?: string | undefined;
 };
 export type ApiRepositoryResponse = {
   /** Content Type (rpm) of the repository */
-  content_type?: string;
+  content_type?: string | undefined;
   /** Architecture to restrict client usage to */
-  distribution_arch?: string;
+  distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
-  distribution_versions?: string[];
+  distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
-  failed_introspections_count?: number;
+  failed_introspections_count?: number | undefined;
   /** GPG key for repository */
-  gpg_key?: string;
+  gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */
-  label?: string;
+  label?: string | undefined;
   /** Error of last attempted introspection */
-  last_introspection_error?: string;
+  last_introspection_error?: string | undefined;
   /** Status of last introspection */
-  last_introspection_status?: string;
+  last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
-  last_introspection_time?: string;
-  last_snapshot?: ApiSnapshotResponse;
-  last_snapshot_task?: ApiTaskInfoResponse;
+  last_introspection_time?: string | undefined;
+  last_snapshot?: ApiSnapshotResponse | undefined;
+  last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
-  last_snapshot_task_uuid?: string;
+  last_snapshot_task_uuid?: string | undefined;
   /** UUID of the last dao.Snapshot */
-  last_snapshot_uuid?: string;
+  last_snapshot_uuid?: string | undefined;
   /** Timestamp of last successful introspection */
-  last_success_introspection_time?: string;
+  last_success_introspection_time?: string | undefined;
   /** Timestamp of last introspection that had updates */
-  last_update_introspection_time?: string;
+  last_update_introspection_time?: string | undefined;
   /** Latest URL for the snapshot distribution */
-  latest_snapshot_url?: string;
+  latest_snapshot_url?: string | undefined;
   /** Verify packages */
-  metadata_verification?: boolean;
+  metadata_verification?: boolean | undefined;
   /** Disable modularity filtering on this repository */
-  module_hotfixes?: boolean;
+  module_hotfixes?: boolean | undefined;
   /** Name of the remote yum repository */
-  name?: string;
+  name?: string | undefined;
   /** Origin of the repository */
-  origin?: string;
+  origin?: string | undefined;
   /** Number of packages last read in the repository */
-  package_count?: number;
+  package_count?: number | undefined;
   /** Enable snapshotting and hosting of this repository */
-  snapshot?: boolean;
+  snapshot?: boolean | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
-  status?: string;
+  status?: string | undefined;
   /** URL of the remote yum repository */
-  url?: string;
+  url?: string | undefined;
 };
 export type ApiRepositoryResponseRead = {
   /** Account ID of the owner */
-  account_id?: string;
+  account_id?: string | undefined;
   /** Content Type (rpm) of the repository */
-  content_type?: string;
+  content_type?: string | undefined;
   /** Architecture to restrict client usage to */
-  distribution_arch?: string;
+  distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
-  distribution_versions?: string[];
+  distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
-  failed_introspections_count?: number;
+  failed_introspections_count?: number | undefined;
   /** GPG key for repository */
-  gpg_key?: string;
+  gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */
-  label?: string;
+  label?: string | undefined;
   /** Error of last attempted introspection */
-  last_introspection_error?: string;
+  last_introspection_error?: string | undefined;
   /** Status of last introspection */
-  last_introspection_status?: string;
+  last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
-  last_introspection_time?: string;
-  last_snapshot?: ApiSnapshotResponse;
-  last_snapshot_task?: ApiTaskInfoResponse;
+  last_introspection_time?: string | undefined;
+  last_snapshot?: ApiSnapshotResponse | undefined;
+  last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
-  last_snapshot_task_uuid?: string;
+  last_snapshot_task_uuid?: string | undefined;
   /** UUID of the last dao.Snapshot */
-  last_snapshot_uuid?: string;
+  last_snapshot_uuid?: string | undefined;
   /** Timestamp of last successful introspection */
-  last_success_introspection_time?: string;
+  last_success_introspection_time?: string | undefined;
   /** Timestamp of last introspection that had updates */
-  last_update_introspection_time?: string;
+  last_update_introspection_time?: string | undefined;
   /** Latest URL for the snapshot distribution */
-  latest_snapshot_url?: string;
+  latest_snapshot_url?: string | undefined;
   /** Verify packages */
-  metadata_verification?: boolean;
+  metadata_verification?: boolean | undefined;
   /** Disable modularity filtering on this repository */
-  module_hotfixes?: boolean;
+  module_hotfixes?: boolean | undefined;
   /** Name of the remote yum repository */
-  name?: string;
+  name?: string | undefined;
   /** Organization ID of the owner */
-  org_id?: string;
+  org_id?: string | undefined;
   /** Origin of the repository */
-  origin?: string;
+  origin?: string | undefined;
   /** Number of packages last read in the repository */
-  package_count?: number;
+  package_count?: number | undefined;
   /** Enable snapshotting and hosting of this repository */
-  snapshot?: boolean;
+  snapshot?: boolean | undefined;
   /** Combined status of last introspection and snapshot of repository (Valid, Invalid, Unavailable, Pending) */
-  status?: string;
+  status?: string | undefined;
   /** URL of the remote yum repository */
-  url?: string;
+  url?: string | undefined;
   /** UUID of the object */
-  uuid?: string;
+  uuid?: string | undefined;
 };
 export type ApiLinks = {
   /** Path to first page of results */
-  first?: string;
+  first?: string | undefined;
   /** Path to last page of results */
-  last?: string;
+  last?: string | undefined;
   /** Path to next page of results */
-  next?: string;
+  next?: string | undefined;
   /** Path to previous page of results */
-  prev?: string;
+  prev?: string | undefined;
 };
 export type ApiResponseMetadata = {
   /** Total count of results */
-  count?: number;
+  count?: number | undefined;
   /** Limit of results used for the request */
-  limit?: number;
+  limit?: number | undefined;
   /** Offset into results used for the request */
-  offset?: number;
+  offset?: number | undefined;
 };
 export type ApiRepositoryCollectionResponse = {
   /** Requested Data */
-  data?: ApiRepositoryResponse[];
-  links?: ApiLinks;
-  meta?: ApiResponseMetadata;
+  data?: ApiRepositoryResponse[] | undefined;
+  links?: ApiLinks | undefined;
+  meta?: ApiResponseMetadata | undefined;
 };
 export type ApiRepositoryCollectionResponseRead = {
   /** Requested Data */
-  data?: ApiRepositoryResponseRead[];
-  links?: ApiLinks;
-  meta?: ApiResponseMetadata;
+  data?: ApiRepositoryResponseRead[] | undefined;
+  links?: ApiLinks | undefined;
+  meta?: ApiResponseMetadata | undefined;
 };
 export type ApiRepositoryRequest = {
   /** Architecture to restrict client usage to */
-  distribution_arch?: string;
+  distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
-  distribution_versions?: string[];
+  distribution_versions?: string[] | undefined;
   /** GPG key for repository */
-  gpg_key?: string;
+  gpg_key?: string | undefined;
   /** Verify packages */
-  metadata_verification?: boolean;
+  metadata_verification?: boolean | undefined;
   /** Disable modularity filtering on this repository */
-  module_hotfixes?: boolean;
+  module_hotfixes?: boolean | undefined;
   /** Name of the remote yum repository */
   name: string;
   /** Enable snapshotting and hosting of this repository */
-  snapshot?: boolean;
+  snapshot?: boolean | undefined;
   /** URL of the remote yum repository */
-  url?: string;
+  url?: string | undefined;
 };
 export type ApiRepositoryRequestRead = {
   /** Architecture to restrict client usage to */
-  distribution_arch?: string;
+  distribution_arch?: string | undefined;
   /** Versions to restrict client usage to */
-  distribution_versions?: string[];
+  distribution_versions?: string[] | undefined;
   /** GPG key for repository */
-  gpg_key?: string;
+  gpg_key?: string | undefined;
   /** Verify packages */
-  metadata_verification?: boolean;
+  metadata_verification?: boolean | undefined;
   /** Disable modularity filtering on this repository */
-  module_hotfixes?: boolean;
+  module_hotfixes?: boolean | undefined;
   /** Name of the remote yum repository */
   name: string;
   /** Origin of the repository */
-  origin?: string;
+  origin?: string | undefined;
   /** Enable snapshotting and hosting of this repository */
-  snapshot?: boolean;
+  snapshot?: boolean | undefined;
   /** URL of the remote yum repository */
-  url?: string;
+  url?: string | undefined;
 };
 export type ApiRepositoryRpm = {
   /** The architecture of the rpm */
-  arch?: string;
+  arch?: string | undefined;
   /** The checksum of the rpm */
-  checksum?: string;
+  checksum?: string | undefined;
   /** The epoch of the rpm */
-  epoch?: number;
+  epoch?: number | undefined;
   /** The rpm package name */
-  name?: string;
+  name?: string | undefined;
   /** The release of the rpm */
-  release?: string;
+  release?: string | undefined;
   /** The summary of the rpm */
-  summary?: string;
+  summary?: string | undefined;
   /** Identifier of the rpm */
-  uuid?: string;
+  uuid?: string | undefined;
   /** The version of the  rpm */
-  version?: string;
+  version?: string | undefined;
 };
 export type ApiRepositoryRpmCollectionResponse = {
   /** List of rpms */
-  data?: ApiRepositoryRpm[];
-  links?: ApiLinks;
-  meta?: ApiResponseMetadata;
+  data?: ApiRepositoryRpm[] | undefined;
+  links?: ApiLinks | undefined;
+  meta?: ApiResponseMetadata | undefined;
 };
 export type ApiSearchRpmResponse = {
   /** Package name found */
-  package_name?: string;
+  package_name?: string | undefined;
   /** Summary of the package found */
-  summary?: string;
+  summary?: string | undefined;
 };
 export type ApiSnapshotForDate = {
   /** Is the snapshot after the specified date */
-  is_after?: boolean;
-  match?: ApiSnapshotResponse;
+  is_after?: boolean | undefined;
+  match?: ApiSnapshotResponse | undefined;
   /** Repository uuid for associated snapshot */
-  repository_uuid?: string;
+  repository_uuid?: string | undefined;
 };
 export type ApiListSnapshotByDateResponse = {
   /** Requested Data */
-  data?: ApiSnapshotForDate[];
+  data?: ApiSnapshotForDate[] | undefined;
 };
 export type ApiListSnapshotByDateRequest = {
   /** Exact date to search by. */

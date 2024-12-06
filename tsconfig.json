@@ -3,14 +3,31 @@
     "outDir": "./dist/",
     "noImplicitAny": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "es2021",
     "downlevelIteration": true, // Needed to allow iteration over some objects like Map() while target is es5
     "jsx": "react-jsx",
     "sourceMap": true,
     "allowJs": true,
     "moduleResolution": "node",
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": [
+      "vitest/globals",
+      "@testing-library/jest-dom"
+    ],
+    "exactOptionalPropertyTypes": true,
     "strictNullChecks": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "paths": {
+      "*": [
+        "./pkg/lib/*"
+      ],
+      "cockpit": [
+        "./src/mocks/cockpit.ts",
+        "./pkg/lib/cockpit.ts"
+      ],
+      "fsinfo": [
+        "./src/mocks/cockpit.ts",
+        "./pkg/lib/cockpit/fsinfo.ts"
+      ]
+    }
   }
 }

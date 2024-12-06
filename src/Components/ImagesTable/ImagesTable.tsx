@@ -76,10 +76,10 @@ const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput) || '';
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
-  const blueprintsOffset = useAppSelector(selectOffset);
-  const blueprintsLimit = useAppSelector(selectLimit);
+  const blueprintsOffset = useAppSelector(selectOffset) || 0;
+  const blueprintsLimit = useAppSelector(selectLimit) || 10;
 
   const { selectedBlueprintVersion } = useGetBlueprintsQuery(
     {
@@ -112,7 +112,7 @@ const ImagesTable = () => {
       id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
     },
     { skip: !selectedBlueprintId }
   );
@@ -213,7 +213,9 @@ const ImagesTable = () => {
           <Tbody>
             <Tr>
               <Td colSpan={12}>
-                <ImagesEmptyState selectedBlueprint={selectedBlueprintId} />
+                <ImagesEmptyState
+                  selectedBlueprint={selectedBlueprintId || ''}
+                />
               </Td>
             </Tr>
           </Tbody>

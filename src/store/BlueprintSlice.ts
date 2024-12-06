@@ -6,7 +6,7 @@ export type versionFilterType = 'latest' | 'all';
 
 type blueprintsState = {
   selectedBlueprintId: string | undefined;
-  searchInput?: string;
+  searchInput?: string | undefined;
   offset?: number;
   limit?: number;
   versionFilter?: versionFilterType;

@@ -133,7 +133,7 @@ const Repositories = () => {
       url:
         toggleSelected === 'toggle-group-selected'
           ? [...selected].join(',')
-          : undefined,
+          : '',
     },
     { refetchOnMountOrArgChange: 60 }
   );
@@ -580,7 +580,7 @@ const Repositories = () => {
         </PanelMain>
       </Panel>
       <Pagination
-        itemCount={count}
+        itemCount={count ?? 0}
         perPage={perPage}
         page={page}
         onSetPage={(_, newPage) => setPage(newPage)}

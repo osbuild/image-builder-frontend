@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 const config = {
   plugins: [react()],
@@ -16,6 +17,7 @@ const config = {
     },
     testTimeout: 10000,
     fileParallelism: false,
+    exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**'],
   },
   reporters: ['default', 'junit'],
   outputFile: {
@@ -23,6 +25,10 @@ const config = {
   },
   resolve: {
     mainFields: ['module'],
+    alias: {
+      cockpit: path.resolve(__dirname, 'src/mocks/cockpit'),
+      fsinfo: path.resolve(__dirname, 'src/mocks/cockpit'),
+    },
   },
   esbuild: {
     loader: 'tsx',

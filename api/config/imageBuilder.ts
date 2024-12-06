@@ -7,6 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/imageBuilderApi.ts',
   exportName: 'imageBuilderApi',
   hooks: { queries: true, lazyQueries: true, mutations: true },
+  unionUndefined: true,
   filterEndpoints: [
     'cloneCompose',
     'composeImage',

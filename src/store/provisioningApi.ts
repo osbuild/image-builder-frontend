@@ -31,33 +31,39 @@ export type GetSourceUploadInfoApiArg = {
   id: number;
 };
 export type V1ListSourceResponse = {
-  data?: {
-    id?: string;
-    name?: string;
-    source_type_id?: string;
-    uid?: string;
-  }[];
+  data?:
+    | {
+        id?: string | undefined;
+        name?: string | undefined;
+        source_type_id?: string | undefined;
+        uid?: string | undefined;
+      }[]
+    | undefined;
 };
 export type V1ResponseError = {
-  build_time?: string;
-  edge_id?: string;
-  environment?: string;
-  error?: string;
-  msg?: string;
-  trace_id?: string;
-  version?: string;
+  build_time?: string | undefined;
+  edge_id?: string | undefined;
+  environment?: string | undefined;
+  error?: string | undefined;
+  msg?: string | undefined;
+  trace_id?: string | undefined;
+  version?: string | undefined;
 };
 export type V1SourceUploadInfoResponse = {
-  aws?: {
-    account_id?: string;
-  } | null;
-  azure?: {
-    resource_groups?: string[];
-    subscription_id?: string;
-    tenant_id?: string;
-  } | null;
-  gcp?: any | null;
-  provider?: string;
+  aws?:
+    | ({
+        account_id?: string | undefined;
+      } | null)
+    | undefined;
+  azure?:
+    | ({
+        resource_groups?: string[] | undefined;
+        subscription_id?: string | undefined;
+        tenant_id?: string | undefined;
+      } | null)
+    | undefined;
+  gcp?: (any | null) | undefined;
+  provider?: string | undefined;
 };
 export const { useGetSourceListQuery, useGetSourceUploadInfoQuery } =
   injectedRtkApi;

@@ -7,7 +7,12 @@ const config: ConfigFile = {
   outputFile: '../../src/store/rhsmApi.ts',
   exportName: 'rhsmApi',
   hooks: true,
-  filterEndpoints: ['listActivationKeys', 'showActivationKey', 'createActivationKeys'],
+  unionUndefined: true,
+  filterEndpoints: [
+    'listActivationKeys',
+    'showActivationKey',
+    'createActivationKeys',
+  ],
 };
 
 export default config;

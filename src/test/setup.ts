@@ -79,6 +79,28 @@ vi.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 
+vi.mock(import('cockpit'), async () => {
+  return {
+    user: () => {
+      new Promise((resolve) => {
+        resolve({
+          home: '/home/osbuild',
+        });
+      });
+    },
+  };
+});
+
+vi.mock(import('fsinfo'), async () => {
+  return {
+    fsinfo: () => {
+      new Promise((resolve) => {
+        resolve({});
+      });
+    },
+  };
+});
+
 // Remove DOM dump from the testing-library output
 configure({
   getElementError: (message: string) => {

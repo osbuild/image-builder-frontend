@@ -58,14 +58,14 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       id: selectedBlueprintId as string,
       limit: perPage,
       offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI),
+      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
     },
     { skip: !selectedBlueprintId }
   );
 
   const { selectedBlueprintName, selectedBlueprintVersion } =
     useGetBlueprintsQuery(
-      { search: blueprintSearchInput },
+      { search: blueprintSearchInput ?? '' },
       {
         selectFromResult: ({ data }) => {
           const bp = data?.data?.find(
@@ -101,7 +101,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const isBlueprintDistroCentos8 = () => {
     if (isSuccessBlueprintsCompose) {
       return (
-        blueprintsComposes.data[0].request.distribution ===
+        blueprintsComposes?.data[0].request.distribution ===
         ('centos-8' as Distributions)
       );
     }

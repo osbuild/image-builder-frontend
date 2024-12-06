@@ -107,7 +107,7 @@ const ComposeRow = ({ compose }: ComposeRowPropTypes) => {
   });
   return isSuccess ? (
     <Row
-      ami={<Ami status={data.image_status.upload_status} />}
+      ami={<Ami status={data?.image_status.upload_status} />}
       region={<ComposeRegion />}
       status={<AwsDetailsStatus compose={compose} />}
     />

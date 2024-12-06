@@ -7,6 +7,7 @@ const config: ConfigFile = {
   outputFile: '../../src/store/edgeApi.ts',
   exportName: 'edgeApi',
   hooks: true,
+  unionUndefined: true,
   filterEndpoints: [
     'createImage',
     'createImageUpdate',

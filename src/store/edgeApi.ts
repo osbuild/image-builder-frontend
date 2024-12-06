@@ -298,258 +298,258 @@ export type GetImageByOstreeApiArg = {
   ostreeCommitHash: string;
 };
 export type ModelsEdgeApiTime = {
-  time?: string;
+  time?: string | undefined;
   /** Valid is true if Time is not NULL */
-  valid?: boolean;
+  valid?: boolean | undefined;
 };
 export type GormDeletedAt = {
-  time?: string;
+  time?: string | undefined;
   /** Valid is true if Time is not NULL */
-  valid?: boolean;
+  valid?: boolean | undefined;
 };
 export type ModelsInstalledPackage = {
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
-  UpdatedAt?: ModelsEdgeApiTime;
-  arch?: string;
-  commits?: ModelsCommit[];
-  epoch?: string;
-  name?: string;
-  release?: string;
-  sigmd5?: string;
-  signature?: string;
-  type?: string;
-  version?: string;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  arch?: string | undefined;
+  commits?: ModelsCommit[] | undefined;
+  epoch?: string | undefined;
+  name?: string | undefined;
+  release?: string | undefined;
+  sigmd5?: string | undefined;
+  signature?: string | undefined;
+  type?: string | undefined;
+  version?: string | undefined;
 };
 export type ModelsRepo = {
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
-  RepoStatus?: string;
-  RepoURL?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
+  RepoStatus?: string | undefined;
+  RepoURL?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
 };
 export type ModelsCommit = {
-  Account?: string;
-  Arch?: string;
-  BlueprintToml?: string;
-  BuildDate?: string;
-  BuildNumber?: number;
-  ChangesRefs?: boolean;
-  ComposeJobID?: string;
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
-  ImageBuildHash?: string;
-  ImageBuildParentHash?: string;
-  ImageBuildTarURL?: string;
-  InstalledPackages?: ModelsInstalledPackage[];
-  OSTreeCommit?: string;
-  OSTreeParentCommit?: string;
-  OSTreeParentRef?: string;
-  OSTreeRef?: string;
-  Repo?: ModelsRepo;
-  RepoID?: number;
-  Status?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
-  external?: boolean;
-  name?: string;
-  org_id?: string;
+  Account?: string | undefined;
+  Arch?: string | undefined;
+  BlueprintToml?: string | undefined;
+  BuildDate?: string | undefined;
+  BuildNumber?: number | undefined;
+  ChangesRefs?: boolean | undefined;
+  ComposeJobID?: string | undefined;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
+  ImageBuildHash?: string | undefined;
+  ImageBuildParentHash?: string | undefined;
+  ImageBuildTarURL?: string | undefined;
+  InstalledPackages?: ModelsInstalledPackage[] | undefined;
+  OSTreeCommit?: string | undefined;
+  OSTreeParentCommit?: string | undefined;
+  OSTreeParentRef?: string | undefined;
+  OSTreeRef?: string | undefined;
+  Repo?: ModelsRepo | undefined;
+  RepoID?: number | undefined;
+  Status?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  external?: boolean | undefined;
+  name?: string | undefined;
+  org_id?: string | undefined;
 };
 export type ModelsPackage = {
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
-  Name?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
+  Name?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
 };
 export type ModelsInstaller = {
-  Account?: string;
-  Checksum?: string;
-  ComposeJobID?: string;
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
-  ImageBuildISOURL?: string;
-  SshKey?: string;
-  Status?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
-  Username?: string;
-  org_id?: string;
+  Account?: string | undefined;
+  Checksum?: string | undefined;
+  ComposeJobID?: string | undefined;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
+  ImageBuildISOURL?: string | undefined;
+  SshKey?: string | undefined;
+  Status?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  Username?: string | undefined;
+  org_id?: string | undefined;
 };
 export type ModelsThirdPartyRepo = {
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  Description?: string;
-  ID?: number;
-  Images?: ModelsImage[];
-  Name?: string;
-  URL?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
-  account?: string;
-  distribution_arch?: string;
-  distribution_version?: string[];
-  gpg_key?: string;
-  org_id?: string;
-  package_count?: number;
-  uuid?: string;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  Description?: string | undefined;
+  ID?: number | undefined;
+  Images?: ModelsImage[] | undefined;
+  Name?: string | undefined;
+  URL?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  account?: string | undefined;
+  distribution_arch?: string | undefined;
+  distribution_version?: string[] | undefined;
+  gpg_key?: string | undefined;
+  org_id?: string | undefined;
+  package_count?: number | undefined;
+  uuid?: string | undefined;
 };
 export type ModelsImage = {
-  Account?: string;
-  Commit?: ModelsCommit;
-  CommitID?: number;
-  CreatedAt?: ModelsEdgeApiTime;
-  CustomPackages?: ModelsPackage[];
-  DeletedAt?: GormDeletedAt;
-  Description?: string;
-  Distribution?: string;
-  ID?: number;
+  Account?: string | undefined;
+  Commit?: ModelsCommit | undefined;
+  CommitID?: number | undefined;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  CustomPackages?: ModelsPackage[] | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  Description?: string | undefined;
+  Distribution?: string | undefined;
+  ID?: number | undefined;
   /** TODO: Wipe staging database and set to not nullable */
-  ImageSetID?: number;
+  ImageSetID?: number | undefined;
   /** TODO: Remove as soon as the frontend stops using */
-  ImageType?: string;
-  Installer?: ModelsInstaller;
-  InstallerID?: number;
-  Name?: string;
-  OutputTypes?: string[];
-  Packages?: ModelsPackage[];
-  Status?: string;
+  ImageType?: string | undefined;
+  Installer?: ModelsInstaller | undefined;
+  InstallerID?: number | undefined;
+  Name?: string | undefined;
+  OutputTypes?: string[] | undefined;
+  Packages?: ModelsPackage[] | undefined;
+  Status?: string | undefined;
   /** only for forms */
-  SystemsRunning?: number;
-  ThirdPartyRepositories?: ModelsThirdPartyRepo[];
+  SystemsRunning?: number | undefined;
+  ThirdPartyRepositories?: ModelsThirdPartyRepo[] | undefined;
   /** only for forms */
-  TotalPackages?: number;
-  UpdatedAt?: ModelsEdgeApiTime;
-  Version?: number;
-  org_id?: string;
+  TotalPackages?: number | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  Version?: number | undefined;
+  org_id?: string | undefined;
   /** storing for logging reference on resume */
-  request_id?: string;
+  request_id?: string | undefined;
 };
 export type ModelsImageSetApi = {
-  CreatedAt?: ModelsEdgeApiTime;
-  DeletedAt?: GormDeletedAt;
-  ID?: number;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  ID?: number | undefined;
   /** images of image set */
-  Images?: ModelsImage[];
-  UpdatedAt?: ModelsEdgeApiTime;
+  Images?: ModelsImage[] | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
   /** the image set name */
-  name?: string;
+  name?: string | undefined;
   /** the image set version */
-  version?: number;
+  version?: number | undefined;
 };
 export type ModelsImageSetInstallerUrlapi = {
   /** The image-set latest available image ISO */
-  image_build_iso_url?: string;
+  image_build_iso_url?: string | undefined;
   /** image set data */
-  image_set?: ModelsImageSetApi;
+  image_set?: ModelsImageSetApi | undefined;
 };
 export type ModelsImageSetsResponseApi = {
   /** count of image-sets */
-  Count?: number;
+  Count?: number | undefined;
   /** all data of image-sets */
-  Data?: ModelsImageSetInstallerUrlapi[];
+  Data?: ModelsImageSetInstallerUrlapi[] | undefined;
 };
 export type ErrorsBadRequest = {
-  Code?: string;
-  Status?: number;
-  Title?: string;
+  Code?: string | undefined;
+  Status?: number | undefined;
+  Title?: string | undefined;
 };
 export type ErrorsNotFound = {
-  Code?: string;
-  Status?: number;
-  Title?: string;
+  Code?: string | undefined;
+  Status?: number | undefined;
+  Title?: string | undefined;
 };
 export type ErrorsInternalServerError = {
-  Code?: string;
-  Status?: number;
-  Title?: string;
+  Code?: string | undefined;
+  Status?: number | undefined;
+  Title?: string | undefined;
 };
 export type ModelsImageSetView = {
-  Distribution?: string;
-  ID?: number;
-  ImageBuildIsoURL?: string;
-  ImageID?: number;
-  Name?: string;
-  OutputTypes?: string[];
-  Status?: string;
-  UpdatedAt?: ModelsEdgeApiTime;
-  Version?: number;
+  Distribution?: string | undefined;
+  ID?: number | undefined;
+  ImageBuildIsoURL?: string | undefined;
+  ImageID?: number | undefined;
+  Name?: string | undefined;
+  OutputTypes?: string[] | undefined;
+  Status?: string | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  Version?: number | undefined;
 };
 export type ModelsImageSetsViewResponseApi = {
   /** count of image-sets */
-  count?: number;
+  count?: number | undefined;
   /** data of image set view */
-  data?: ModelsImageSetView[];
+  data?: ModelsImageSetView[] | undefined;
 };
 export type ModelsImageDetailApi = {
   /** Number of additional packages */
-  additional_packages?: number;
-  image?: ModelsImage;
+  additional_packages?: number | undefined;
+  image?: ModelsImage | undefined;
   /** Number of packages */
-  packages?: number;
+  packages?: number | undefined;
   /** Number of added update */
-  update_added?: number;
+  update_added?: number | undefined;
   /** Number of removed update */
-  update_removed?: number;
+  update_removed?: number | undefined;
   /** Number of updated update */
-  update_updated?: number;
+  update_updated?: number | undefined;
 };
 export type ModelsImageSetImageIdViewApi = {
   /** The image-set latest available image ISO */
-  ImageBuildIsoURL?: string;
+  ImageBuildIsoURL?: string | undefined;
   /** the requested image details */
-  ImageDetails?: ModelsImageDetailApi;
+  ImageDetails?: ModelsImageDetailApi | undefined;
   /** image set data */
-  ImageSet?: ModelsImageSetApi;
+  ImageSet?: ModelsImageSetApi | undefined;
 };
 export type ModelsImageView = {
-  CommitCheckSum?: string;
-  CreatedAt?: ModelsEdgeApiTime;
-  ID?: number;
-  ImageBuildIsoURL?: string;
-  ImageType?: string;
-  Name?: string;
-  OutputTypes?: string[];
-  Status?: string;
-  Version?: number;
+  CommitCheckSum?: string | undefined;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  ID?: number | undefined;
+  ImageBuildIsoURL?: string | undefined;
+  ImageType?: string | undefined;
+  Name?: string | undefined;
+  OutputTypes?: string[] | undefined;
+  Status?: string | undefined;
+  Version?: number | undefined;
 };
 export type ModelsImagesViewDataApi = {
   /** total number of image view data */
-  count?: number;
-  data?: ModelsImageView[];
+  count?: number | undefined;
+  data?: ModelsImageView[] | undefined;
 };
 export type ModelsSuccessPlaceholderResponse = object;
 export type ImageResponse = {
-  Account?: string;
-  Commit?: ModelsCommit;
-  CommitID?: number;
-  CreatedAt?: ModelsEdgeApiTime;
-  CustomPackages?: ModelsPackage[];
-  DeletedAt?: GormDeletedAt;
-  Description?: string;
-  Distribution?: string;
-  ID?: number;
+  Account?: string | undefined;
+  Commit?: ModelsCommit | undefined;
+  CommitID?: number | undefined;
+  CreatedAt?: ModelsEdgeApiTime | undefined;
+  CustomPackages?: ModelsPackage[] | undefined;
+  DeletedAt?: GormDeletedAt | undefined;
+  Description?: string | undefined;
+  Distribution?: string | undefined;
+  ID?: number | undefined;
   /** TODO: Wipe staging database and set to not nullable */
-  ImageSetID?: number;
+  ImageSetID?: number | undefined;
   /** TODO: Remove as soon as the frontend stops using */
-  ImageType?: string;
-  Installer?: ModelsInstaller;
-  InstallerID?: number;
-  Name?: string;
-  OutputTypes?: string[];
-  Packages?: ModelsPackage[];
-  Status?: string;
+  ImageType?: string | undefined;
+  Installer?: ModelsInstaller | undefined;
+  InstallerID?: number | undefined;
+  Name?: string | undefined;
+  OutputTypes?: string[] | undefined;
+  Packages?: ModelsPackage[] | undefined;
+  Status?: string | undefined;
   /** only for forms */
-  SystemsRunning?: number;
-  ThirdPartyRepositories?: ModelsThirdPartyRepo[];
+  SystemsRunning?: number | undefined;
+  ThirdPartyRepositories?: ModelsThirdPartyRepo[] | undefined;
   /** only for forms */
-  TotalPackages?: number;
-  UpdatedAt?: ModelsEdgeApiTime;
-  Version?: number;
-  org_id?: string;
+  TotalPackages?: number | undefined;
+  UpdatedAt?: ModelsEdgeApiTime | undefined;
+  Version?: number | undefined;
+  org_id?: string | undefined;
   /** storing for logging reference on resume */
-  request_id?: string;
+  request_id?: string | undefined;
 };
 export type CreateImage = object;
 export const {
