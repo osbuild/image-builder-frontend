@@ -28,8 +28,12 @@ module.exports = {
   devtool,
   plugins,
   resolve: {
-    modules: ['node_modules'],
+    modules: ['node_modules', 'pkg/lib'],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
+    alias: {
+      cockpit: path.resolve(__dirname, '../pkg/lib/cockpit'),
+      fsinfo: path.resolve(__dirname, '../pkg/lib/cockpit/fsinfo'),
+    },
   },
   module: {
     rules: [
