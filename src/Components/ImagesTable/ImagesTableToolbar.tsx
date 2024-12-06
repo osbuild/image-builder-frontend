@@ -10,6 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 
+import { SEARCH_INPUT } from '../../constants';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -28,7 +29,6 @@ import BlueprintVersionFilter from '../Blueprints/BlueprintVersionFilter';
 import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 import { EditBlueprintButton } from '../Blueprints/EditBlueprintButton';
-import { SEARCH_INPUT } from '../../constants';
 
 interface imagesTableToolbarProps {
   itemCount: number;
