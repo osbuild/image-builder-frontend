@@ -45,6 +45,33 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
+const clearLanguageSearch = async () => {
+  const user = userEvent.setup();
+  const languagesDropdown = await screen.findByPlaceholderText(
+    /select a language/i
+  );
+  await waitFor(() => user.clear(languagesDropdown));
+};
+
+const searchForLanguage = async (search: string) => {
+  const user = userEvent.setup();
+  const languagesDropdown = await screen.findByPlaceholderText(
+    /select a language/i
+  );
+  await waitFor(() => user.type(languagesDropdown, search));
+};
+
+const selectLanguages = async () => {
+  const user = userEvent.setup();
+  await searchForLanguage('nl');
+  const nlOption = await screen.findByRole('option', { name: 'nl_NL.UTF-8' });
+  await waitFor(() => user.click(nlOption));
+
+  await searchForLanguage('en');
+  const enOption = await screen.findByRole('option', { name: 'en_GB.UTF-8' });
+  await waitFor(() => user.click(enOption));
+};
+
 const searchForKeyboard = async () => {
   const user = userEvent.setup();
   const keyboardDropdown = await screen.findByPlaceholderText(
@@ -87,7 +114,24 @@ describe('Step Locale', () => {
     await verifyCancelButton(router);
   });
 
-  test('search results get sorted correctly', async () => {
+  test('language results get sorted correctly', async () => {
+    await renderCreateMode();
+    await goToLocaleStep();
+    await searchForLanguage('nl');
+    const nlOptions = await screen.findAllByRole('option');
+    expect(nlOptions[0]).toHaveTextContent('nl_AW.UTF-8');
+    expect(nlOptions[1]).toHaveTextContent('nl_BE.UTF-8');
+    expect(nlOptions[2]).toHaveTextContent('nl_NL.UTF-8');
+
+    await clearLanguageSearch();
+    await searchForLanguage('gb');
+    const gbOptions = await screen.findAllByRole('option');
+    expect(gbOptions[0]).toHaveTextContent('gbm_IN.UTF-8');
+    expect(gbOptions[1]).toHaveTextContent('cy_GB.UTF-8');
+    expect(gbOptions[2]).toHaveTextContent('en_GB.UTF-8');
+  });
+
+  test('keyboard search results get sorted correctly', async () => {
     await renderCreateMode();
     await goToLocaleStep();
     await searchForKeyboard();
@@ -99,11 +143,10 @@ describe('Step Locale', () => {
 });
 
 describe('Locale request generated correctly', () => {
-  test('with keyboard selected', async () => {
+  test('with languages selected', async () => {
     await renderCreateMode();
     await goToLocaleStep();
-    await searchForKeyboard();
-    await selectKeyboard();
+    await selectLanguages();
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -114,6 +157,52 @@ describe('Locale request generated correctly', () => {
       ...blueprintRequest,
       customizations: {
         locale: {
+          languages: ['nl_NL.UTF-8', 'en_GB.UTF-8'],
+        },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('with keyboard selected', async () => {
+    await renderCreateMode();
+    await goToLocaleStep();
+    await searchForKeyboard();
+    await selectKeyboard();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        locale: {
+          keyboard: 'us',
+        },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('with languages and keyboard selected', async () => {
+    await renderCreateMode();
+    await goToLocaleStep();
+    await selectLanguages();
+    await searchForKeyboard();
+    await selectKeyboard();
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        locale: {
+          languages: ['nl_NL.UTF-8', 'en_GB.UTF-8'],
           keyboard: 'us',
         },
       },
@@ -143,6 +232,4 @@ describe('Locale edit mode', () => {
   });
 });
 
-// TO DO 'with languages selected'
-// TO DO 'with languages and keyboard selected'
 // TO DO 'Step Locale' -> 'revisit step button on Review works'
