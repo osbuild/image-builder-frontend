@@ -33,57 +33,49 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetBlueprintsApiArg
       >({
         queryFn: async () => {
-          try {
-            if (!cockpit) {
-              throw new Error('Cockpit API is not available');
-            }
+          const user = await cockpit.user();
 
-            const user = await cockpit.user();
+          // we will use the user's `.local` directory
+          // to save blueprints used for on-prem
+          // TODO: remove the hardcode
+          const path = `${user.home}/.local/share/cockpit/image-builder-frontend/blueprints`;
 
-            // we will use the user's `.local` directory
-            // to save blueprints used for on-prem
-            // TODO: remove the hardcode
-            const path = `${user.home}/.local/share/cockpit/image-builder-frontend/blueprints`;
+          // we probably don't need any more information other
+          // than the entries from the directory
+          const info = await fsinfo(path, ['entries'], {
+            superuser: 'try',
+          });
 
-            // we probably don't need any more information other
-            // than the entries from the directory
-            const info = await fsinfo(path, ['entries'], {
-              superuser: 'try',
-            });
+          const entries = Object.entries(info?.entries || {});
+          const blueprints: BlueprintItem[] = await Promise.all(
+            entries.map(async ([filename]) => {
+              const file = cockpit.file(`${path}/${filename}`);
 
-            const entries = Object.entries(info?.entries || {});
-            const blueprints: BlueprintItem[] = await Promise.all(
-              entries.map(async ([filename]) => {
-                const file = cockpit.file(`${path}/${filename}`);
+              const contents = await file.read();
+              const parsed = TOML.parse(contents);
+              file.close();
 
-                const contents = await file.read();
-                const parsed = TOML.parse(contents);
-                file.close();
+              return {
+                name: parsed.name as string,
+                id: parsed.name as string, // TODO: duplicate name case
+                version: parsed.version as number,
+                description: parsed.description as string,
+                last_modified_at: Date.now().toString(),
+              };
+            })
+          );
 
-                return {
-                  name: parsed.name as string,
-                  id: parsed.name as string, // TODO: duplicate name case
-                  version: parsed.version as number,
-                  description: parsed.description as string,
-                  last_modified_at: Date.now().toString(),
-                };
-              })
-            );
-
-            return {
-              data: {
-                meta: { count: blueprints.length },
-                links: {
-                  // TODO: figure out the pagination
-                  first: '',
-                  last: '',
-                },
-                data: blueprints,
+          return {
+            data: {
+              meta: { count: blueprints.length },
+              links: {
+                // TODO: figure out the pagination
+                first: '',
+                last: '',
               },
-            };
-          } catch (error) {
-            return { error: error.message };
-          }
+              data: blueprints,
+            },
+          };
         },
       }),
     };
