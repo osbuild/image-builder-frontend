@@ -75,11 +75,7 @@ const NtpServersInput = () => {
           </Button>
         </TextInputGroupUtilities>
       </TextInputGroup>
-      <ChipGroup
-        categoryName="Added NTP servers"
-        numChips={5}
-        className="pf-v5-u-mt-sm pf-v5-u-w-100"
-      >
+      <ChipGroup numChips={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {ntpServers?.map((server) => (
           <Chip key={server} onClick={() => dispatch(removeNtpServer(server))}>
             {server}
