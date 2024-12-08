@@ -10,6 +10,7 @@ import type {
   Locale,
   Repository,
   Timezone,
+  User,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
@@ -42,6 +43,35 @@ export type RegistrationType =
   | 'register-now-rhc';
 
 export type ComplianceType = 'openscap' | 'compliance';
+
+export interface UserWithAdditionalInfo extends User {
+  confirmPassword?: string;
+  isAdministrator: boolean;
+}
+type UserPayload = {
+  index: number;
+  name: string;
+};
+
+type UserPasswordPayload = {
+  index: number;
+  password: string | undefined;
+};
+
+type UserConfirmPasswordPayload = {
+  index: number;
+  confirmPassword: string;
+};
+
+type UserSshKeyPayload = {
+  index: number;
+  sshKey: string;
+};
+
+type UserAdministratorPayload = {
+  index: number;
+  isAdministrator: boolean;
+};
 
 export type wizardState = {
   env: {
@@ -90,6 +120,7 @@ export type wizardState = {
     useLatest: boolean;
     snapshotDate: string;
   };
+  users: UserWithAdditionalInfo[];
   firstBoot: {
     script: string;
   };
@@ -194,6 +225,7 @@ export const initialState: wizardState = {
     ntpservers: [],
   },
   firstBoot: { script: '' },
+  users: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -370,6 +402,31 @@ export const selectTimezone = (state: RootState) => {
 export const selectNtpServers = (state: RootState) => {
   return state.wizard.timezone.ntpservers;
 };
+
+export const selectUsers = (state: RootState) => {
+  return state.wizard.users;
+};
+
+export const selectUserName = (userIndex: number) => (state: RootState) => {
+  return state.wizard.users[userIndex]?.name;
+};
+
+export const selectUserPassword = (userIndex: number) => (state: RootState) => {
+  return state.wizard.users[userIndex]?.password;
+};
+
+export const selectConfirmUserPassword =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.confirmPassword;
+  };
+export const selectUserSshKey = (userIndex: number) => (state: RootState) => {
+  return state.wizard.users[userIndex]?.ssh_key;
+};
+
+export const selectUserAdministrator =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.isAdministrator;
+  };
 
 export const wizardSlice = createSlice({
   name: 'wizard',
@@ -719,6 +776,60 @@ export const wizardSlice = createSlice({
     setFirstBootScript: (state, action: PayloadAction<string>) => {
       state.firstBoot.script = action.payload;
     },
+
+    addUser: (state) => {
+      const newUser = {
+        name: '',
+        password: '',
+        confirmPassword: '',
+        ssh_key: '',
+        isAdministrator: false,
+      };
+
+      state.users.push(newUser);
+    },
+    setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
+      state.users[action.payload.index].name = action.payload.name;
+    },
+    setUserPasswordByIndex: (
+      state,
+      action: PayloadAction<UserPasswordPayload>
+    ) => {
+      state.users[action.payload.index].password = action.payload.password;
+    },
+    setUserConfirmPasswordByIndex: (
+      state,
+      action: PayloadAction<UserConfirmPasswordPayload>
+    ) => {
+      state.users[action.payload.index].confirmPassword =
+        action.payload.confirmPassword;
+    },
+    setUserSshKedByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
+      state.users[action.payload.index].ssh_key = action.payload.sshKey;
+    },
+
+    setUserAdministratorByIndex: (
+      state,
+      action: PayloadAction<UserAdministratorPayload>
+    ) => {
+      state.users[action.payload.index].isAdministrator =
+        action.payload.isAdministrator;
+      if (action.payload.isAdministrator) {
+        if (!state.users[action.payload?.index].groups) {
+          state.users[action.payload.index].groups = [];
+        }
+        if (!state.users[action.payload.index].groups?.includes('wheel')) {
+          state.users?.[action.payload.index].groups?.push('wheel');
+        }
+      } else {
+        if (state.users[0].groups) {
+          state.users[0].groups = state.users[0].groups.filter(
+            (group) => group !== 'wheel'
+          );
+          state.users[0].groups = undefined;
+        }
+      }
+    },
     changeEnabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.enabled = action.payload;
     },
@@ -808,6 +919,12 @@ export const {
   changeBlueprintDescription,
   loadWizardState,
   setFirstBootScript,
+  addUser,
+  setUserNameByIndex,
+  setUserPasswordByIndex,
+  setUserConfirmPasswordByIndex,
+  setUserSshKedByIndex,
+  setUserAdministratorByIndex,
   changeEnabledServices,
   changeMaskedServices,
   changeDisabledServices,
