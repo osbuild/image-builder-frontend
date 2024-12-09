@@ -176,6 +176,10 @@ sudo-nopasswd = ["user", "%wheel"]
 [customizations.timezone]
 timezone = "US/Eastern"
 ntpservers = ["0.north-america.pool.ntp.org", "1.north-america.pool.ntp.org"]
+
+[customizations.locale]
+languages = ["en_US.UTF-8", "ja_JP.UTF-8"]
+keyboard = "us"
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
@@ -356,6 +360,16 @@ describe('Import modal', () => {
     expect(timezoneDropDown).toHaveValue('US/Eastern');
     await screen.findByText(/0\.north-america\.pool\.ntp\.org/i);
     await screen.findByText(/1\.north-america\.pool\.ntp\.org/i);
+
+    // Locale
+    await clickNext();
+    await screen.findByRole('heading', { name: /Locale/ });
+    await screen.findByText('en_US.UTF-8');
+    await screen.findByText('ja_JP.UTF-8');
+    const keyboardDropDown = await screen.findByPlaceholderText(
+      /Select a keyboard/i
+    );
+    expect(keyboardDropDown).toHaveValue('us');
 
     await clickNext();
   }, 20000);

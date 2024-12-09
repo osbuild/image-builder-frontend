@@ -153,6 +153,13 @@ export const mapOnPremToHosted = (
               ntpservers: blueprint.customizations.timezone.ntpservers,
             }
           : undefined,
+      locale:
+        blueprint.customizations?.locale !== undefined
+          ? {
+              languages: blueprint.customizations.locale.languages,
+              keyboard: blueprint.customizations.locale.keyboard,
+            }
+          : undefined,
     },
     metadata: {
       parent_id: null,
