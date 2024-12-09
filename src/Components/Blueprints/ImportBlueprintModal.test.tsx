@@ -172,6 +172,10 @@ minsize = 2147483648
 [customizations.installer]
 unattended = true
 sudo-nopasswd = ["user", "%wheel"]
+
+[customizations.locale]
+languages = ["en_US.UTF-8", "ja_JP.UTF-8"]
+keyboard = "us"
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
@@ -339,6 +343,22 @@ describe('Import modal', () => {
       async () =>
         await user.click(await screen.findByTestId('packages-selected-toggle'))
     );
+
+    // Users
+    await clickNext();
+
+    // Timezone
+    await clickNext();
+
+    // Locale
+    await clickNext();
+    await screen.findByRole('heading', { name: /Locale/ });
+    await screen.findByText('en_US.UTF-8');
+    await screen.findByText('ja_JP.UTF-8');
+    const keyboardDropDown = await screen.findByRole('textbox', {
+      name: /type to filter/i,
+    });
+    expect(keyboardDropDown).toHaveValue('us');
 
     await clickNext();
   }, 20000);

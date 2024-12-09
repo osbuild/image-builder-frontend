@@ -146,6 +146,13 @@ export const mapOnPremToHosted = (
               enabled: blueprint.customizations?.fips,
             }
           : undefined,
+      locale:
+        blueprint.customizations?.locale !== undefined
+          ? {
+              languages: blueprint.customizations.locale.languages,
+              keyboard: blueprint.customizations.locale.keyboard,
+            }
+          : undefined,
     },
     metadata: {
       parent_id: null,
