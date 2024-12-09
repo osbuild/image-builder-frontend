@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
@@ -86,6 +86,13 @@ const selectKeyboard = async () => {
   await waitFor(() => user.click(usKeyboard));
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('locale-expandable');
+  const revisitButton = await within(expandable).findByTestId('revisit-locale');
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Locale', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -139,6 +146,16 @@ describe('Step Locale', () => {
     expect(options[0]).toHaveTextContent('us');
     expect(options[1]).toHaveTextContent('us-acentos');
     expect(options[2]).toHaveTextContent('us-alt-intl');
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToLocaleStep();
+    await searchForKeyboard();
+    await selectKeyboard();
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Locale/ });
   });
 });
 
@@ -232,4 +249,5 @@ describe('Locale edit mode', () => {
   });
 });
 
-// TO DO 'Step Locale' -> 'revisit step button on Review works'
+// TO DO 'with languages selected'
+// TO DO 'with languages and keyboard selected'
