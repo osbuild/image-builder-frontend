@@ -22,6 +22,7 @@ import {
   removeLanguage,
   selectLanguages,
 } from '../../../../../store/wizardSlice';
+import sortfn from '../../../../../Utilities/sortfn';
 import { languagesList } from '../languagesList';
 
 const LanguagesDropDown = () => {
@@ -47,33 +48,14 @@ const LanguagesDropDown = () => {
         setIsOpen(true);
       }
     }
-    setSelectOptions(filteredLanguages.sort((a, b) => sortfn(a, b)));
+    setSelectOptions(
+      filteredLanguages.sort((a, b) => sortfn(a, b, filterValue))
+    );
 
     // This useEffect hook should run *only* on when the filter value changes.
     // eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
-
-  const sortfn = (a: string, b: string) => {
-    const aLang = a.toLowerCase();
-    const bLang = b.toLowerCase();
-    // check for languages that start with the search term
-    if (aLang.startsWith(filterValue) && !bLang.startsWith(filterValue)) {
-      return -1;
-    }
-    if (bLang.startsWith(filterValue) && !aLang.startsWith(filterValue)) {
-      return 1;
-    }
-    // if both (or neither) start with the search term
-    // sort alphabetically
-    if (aLang < bLang) {
-      return -1;
-    }
-    if (bLang < aLang) {
-      return 1;
-    }
-    return 0;
-  };
 
   const onToggle = (isOpen: boolean) => {
     setIsOpen(!isOpen);
