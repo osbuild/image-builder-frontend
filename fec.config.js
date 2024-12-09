@@ -93,6 +93,12 @@ module.exports = {
   useAgent: true,
   bounceProd: false,
   proxyVerbose: true,
+  resolve: {
+    alias: {
+      cockpit: path.resolve(__dirname, 'src/mocks/cockpit'),
+      fsinfo: path.resolve(__dirname, 'src/mocks/cockpit'),
+    },
+  },
   routes: {
     ...(process.env.CONFIG_PORT && {
       [`${process.env.BETA ? '/beta' : ''}/config`]: {

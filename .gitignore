@@ -33,3 +33,4 @@ deps.png
 cockpit/public/vendor*
 cockpit/public/src_*
 cockpit/public/main*
+pkg/lib
