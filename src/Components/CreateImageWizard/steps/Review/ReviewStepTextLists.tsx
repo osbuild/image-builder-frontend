@@ -65,6 +65,8 @@ import {
   selectFirstBootScript,
   selectTimezone,
   selectNtpServers,
+  selectLanguages,
+  selectKeyboard,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -765,6 +767,36 @@ export const TimezoneList = () => {
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {ntpServers && ntpServers.length > 0 ? ntpServers.join(', ') : 'None'}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const LocaleList = () => {
+  const languages = useAppSelector(selectLanguages);
+  const keyboard = useAppSelector(selectKeyboard);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Languages
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {languages && languages.length > 0 ? languages.join(', ') : 'None'}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Keyboard
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {keyboard ? keyboard : 'None'}
         </TextListItem>
       </TextList>
     </TextContent>
