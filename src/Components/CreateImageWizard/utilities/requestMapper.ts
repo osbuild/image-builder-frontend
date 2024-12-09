@@ -74,12 +74,12 @@ import {
   selectSnapshotDate,
   selectUseLatest,
   selectFirstBootScript,
-  selectMetadata,
   initialState,
   selectTimezone,
   selectNtpServers,
   selectLanguages,
   selectKeyboard,
+  selectMetadata,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -357,6 +357,7 @@ export const mapExportRequestToState = (
     customizations: request.customizations,
     image_requests: image_requests,
   };
+
   return {
     wizardMode,
     metadata: {

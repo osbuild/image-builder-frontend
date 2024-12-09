@@ -618,6 +618,15 @@ export const wizardSlice = createSlice({
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       state.snapshotting.snapshotDate = action.payload;
     },
+    importCustomRepositories: (
+      state,
+      action: PayloadAction<CustomRepository[]>
+    ) => {
+      state.repositories.customRepositories = [
+        ...state.repositories.customRepositories,
+        ...action.payload,
+      ];
+    },
     changeCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -793,6 +802,7 @@ export const {
   changeUseLatest,
   changeSnapshotDate,
   changeCustomRepositories,
+  importCustomRepositories,
   changePayloadRepositories,
   addRecommendedRepository,
   removeRecommendedRepository,
