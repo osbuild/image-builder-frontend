@@ -16,6 +16,7 @@
     "@redhat-cloud-services/frontend-components-utilities": "4.0.19",
     "@reduxjs/toolkit": "2.3.0",
     "@scalprum/react-core": "0.9.3",
+    "@sentry/cli": "2.39.1",
     "@sentry/webpack-plugin": "2.22.6",
     "@unleash/proxy-client-react": "4.3.1",
     "classnames": "2.5.1",
@@ -108,7 +109,8 @@
     "verify": "npm-run-all build lint test",
     "postinstall": "ts-patch install",
     "circular": "madge --circular ./src --extensions js,ts,tsx",
-    "circular:graph": "madge --circular ./src --extensions js,ts,tsx -i deps.png"
+    "circular:graph": "madge --circular ./src --extensions js,ts,tsx -i deps.png",
+    "sentry:inject": "sentry-cli sourcemaps inject --org red-hat-it --project image-builder-rhel ./dist"
   },
   "insights": {
     "appname": "image-builder"
