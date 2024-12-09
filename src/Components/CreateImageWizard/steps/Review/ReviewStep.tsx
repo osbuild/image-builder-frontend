@@ -29,6 +29,7 @@ import {
   TargetEnvOciList,
   TargetEnvOtherList,
   TimezoneList,
+  LocaleList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -68,9 +69,11 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedComplianceDetail, setIsExpandedComplianceDetail] =
     useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
+  const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
 
   const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
+  const isLocaleEnabled = useFlag('image-builder.locale.enabled');
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -90,6 +93,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedComplianceDetail(isExpandedComplianceDetail);
   const onToggleTimezone = (isExpandedTimezone: boolean) =>
     setIsExpandedTimezone(isExpandedTimezone);
+  const onToggleLocale = (isExpandedLocale: boolean) =>
+    setIsExpandedLocale(isExpandedLocale);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
@@ -319,6 +324,23 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           data-testid="timezone-expandable"
         >
           <TimezoneList />
+        </ExpandableSection>
+      )}
+      {isLocaleEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Locale',
+            'revisit-locale',
+            'wizard-locale'
+          )}
+          onToggle={(_event, isExpandedLocale) =>
+            onToggleLocale(isExpandedLocale)
+          }
+          isExpanded={isExpandedLocale}
+          isIndented
+          data-testid="locale-expandable"
+        >
+          <LocaleList />
         </ExpandableSection>
       )}
       {isFirstBootEnabled && (
