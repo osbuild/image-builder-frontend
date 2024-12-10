@@ -221,7 +221,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 18;
+    startIndex = 19;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -479,6 +479,15 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               >
                 <LocaleStep />
               </WizardStep>,
+              <WizardStep
+                name="Firewall"
+                id="wizard-firewall"
+                key="wizard-firewall"
+                isHidden={true}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              ></WizardStep>,
               <WizardStep
                 name="First boot script configuration"
                 id="wizard-first-boot"
