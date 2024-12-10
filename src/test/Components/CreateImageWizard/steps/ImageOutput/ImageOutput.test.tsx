@@ -128,16 +128,17 @@ const selectVMwareTarget = async () => {
 };
 
 const goToReviewStep = async () => {
-  await clickNext();
+  await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system customization
-  await clickNext(); // Snapshots
+  await clickNext(); // Repository snapshot
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users
   await clickNext(); // Timezone
   await clickNext(); // Locale
+  await clickNext(); // Hostname
   await clickNext(); // First boot
   await clickNext(); // Details
   await enterBlueprintName();

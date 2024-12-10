@@ -38,11 +38,12 @@ const goToTimezoneStep = async () => {
 };
 
 const goToReviewStep = async () => {
-  await clickNext();
-  await clickNext();
-  await clickNext();
+  await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // First boot script
+  await clickNext(); // Details
   await enterBlueprintName();
-  await clickNext();
+  await clickNext(); // Review
 };
 
 const selectTimezone = async () => {

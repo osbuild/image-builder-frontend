@@ -41,13 +41,14 @@ const goToFirstBootStep = async (): Promise<void> => {
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
-  await clickNext(); // File System
+  await clickNext(); // File system configuration
+  await clickNext(); // Repository snapshot
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users
   await clickNext(); // Timezone
   await clickNext(); // Locale
-  await clickNext(); // Snapshot
+  await clickNext(); // Hostname
   await clickNext(); // First Boot
 };
 
@@ -63,14 +64,15 @@ const selectSimplifiedOscapProfile = async () => {
 };
 
 const goFromOscapToFirstBoot = async () => {
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
+  await clickNext(); // File system configuration
+  await clickNext(); // Repository snapshot
+  await clickNext(); // Custom repositories
+  await clickNext(); // Additional packages
+  await clickNext(); // Users
+  await clickNext(); // Timezone
+  await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // First boot script
 };
 
 const openCodeEditor = async (): Promise<void> => {

@@ -46,19 +46,20 @@ const setupWithCentos = async () => {
 };
 
 const goToReviewStep = async () => {
-  await clickNext();
+  await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
+  await clickNext(); // OpenSCAP
+  await clickNext(); // File system configuration
+  await clickNext(); // Repository snapshot
+  await clickNext(); // Custom repositories
+  await clickNext(); // Additional packages
+  await clickNext(); // Users
+  await clickNext(); // Timezone
+  await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // First boot script
+  await clickNext(); // Details
+  await clickNext(); // Review
 };
 
 describe('Step Review', () => {
