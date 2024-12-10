@@ -69,6 +69,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.locale.enabled':
         return true;
+      case 'image-builder.hostname.enabled':
+        return true;
       case 'edgeParity.image-list':
         return true;
       case 'image-builder.edge.local-image-table':

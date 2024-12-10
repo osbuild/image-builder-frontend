@@ -89,18 +89,19 @@ const selectActivationKey = async (key: string) => {
 };
 
 const goToReviewStep = async () => {
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
+  await clickNext(); // Registration
+  await clickNext(); // OpenSCAP
+  await clickNext(); // File system configuration
+  await clickNext(); // Repository snapshot
+  await clickNext(); // Custom repositories
+  await clickNext(); // Additional packages
+  await clickNext(); // Users
+  await clickNext(); // Timezone
+  await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // Details
   await enterBlueprintName();
-  await clickNext();
+  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {

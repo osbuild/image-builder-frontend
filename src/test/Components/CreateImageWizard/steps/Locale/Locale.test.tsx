@@ -39,6 +39,7 @@ const goToLocaleStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // Hostname
   await clickNext(); // First boot
   await clickNext(); // Details
   await enterBlueprintName();
@@ -99,12 +100,12 @@ describe('Step Locale', () => {
     router = undefined;
   });
 
-  test('clicking Next loads First Boot', async () => {
+  test('clicking Next loads Hostname', async () => {
     await renderCreateMode();
     await goToLocaleStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'First boot configuration',
+      name: 'Hostname',
     });
   });
 

@@ -31,18 +31,19 @@ const goToSnapshotStep = async () => {
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File System
-  await clickNext();
+  await clickNext(); // Repositories snapshot
 };
 
 const goToReviewStep = async () => {
-  await clickNext(); // Repositories step
+  await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
-  await clickNext();
   await clickNext(); // Users
   await clickNext(); // Timezone
   await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // First boot script
   await enterBlueprintName();
-  await clickNext();
+  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {

@@ -45,8 +45,8 @@ const goToPackagesStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
-  await clickNext(); // File System
-  await clickNext(); // Snapshots
+  await clickNext(); // File system configuration
+  await clickNext(); // Repository snapshot
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
 };
@@ -55,6 +55,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Users
   await clickNext(); // Timezone
   await clickNext(); // Locale
+  await clickNext(); // Hostname
   await clickNext(); // First Boot
   await clickNext(); // Details
   await enterBlueprintName();
