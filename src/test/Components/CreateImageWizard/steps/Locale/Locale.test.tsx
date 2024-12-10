@@ -248,6 +248,3 @@ describe('Locale edit mode', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
-
-// TO DO 'with languages selected'
-// TO DO 'with languages and keyboard selected'
