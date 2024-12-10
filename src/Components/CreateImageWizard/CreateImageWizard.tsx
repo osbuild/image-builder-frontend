@@ -515,6 +515,15 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <KernelStep />
               </WizardStep>,
               <WizardStep
+                name="Firewall"
+                id="wizard-firewall"
+                key="wizard-firewall"
+                isHidden={true}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              ></WizardStep>,
+              <WizardStep
                 name="First boot script configuration"
                 id="wizard-first-boot"
                 key="wizard-first-boot"
