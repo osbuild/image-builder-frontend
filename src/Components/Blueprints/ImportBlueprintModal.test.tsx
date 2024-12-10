@@ -336,6 +336,7 @@ describe('Import modal', () => {
     });
     expect(sizeValue).toBeInTheDocument();
 
+    // Repository snapshot
     await clickNext();
 
     // Custom Repos step
@@ -343,10 +344,12 @@ describe('Import modal', () => {
 
     // Packages step
     await clickNext();
-    await waitFor(
-      async () =>
-        await user.click(await screen.findByTestId('packages-selected-toggle'))
-    );
+    const selectedToggle = await screen.findByRole('button', {
+      name: /selected/i,
+    });
+    await waitFor(() => user.click(selectedToggle));
+    await screen.findByText('tmux');
+    await screen.findByText('openssh-server');
 
     // Users
     await clickNext();
