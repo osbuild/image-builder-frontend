@@ -59,10 +59,22 @@ if (process.env.SENTRY_AUTH_TOKEN) {
   plugins.push(
     sentryWebpackPlugin({
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: process.env.SENTRY_ORG,
-      project: process.env.SENTRY_PROJECT,
+      org: 'red-hat-it',
+      project: 'image-builder-rhel',
       moduleMetadata: ({ release }) => ({
-        dsn: process.env.SENTRY_DSN,
+        dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
+        release,
+      }),
+    })
+  );
+} else {
+  // justs injects the debug ids
+  plugins.push(
+    sentryWebpackPlugin({
+      org: 'red-hat-it',
+      project: 'image-builder-rhel',
+      moduleMetadata: ({ release }) => ({
+        dsn: 'https://f4b4288bbb7cf6c0b2ac1a2b90a076bf@o490301.ingest.us.sentry.io/4508297557901312',
         release,
       }),
     })
