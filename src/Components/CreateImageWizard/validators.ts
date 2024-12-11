@@ -92,10 +92,14 @@ export const isNtpServerValid = (ntpServer: string) => {
 };
 
 export const isHostnameValid = (hostname: string) => {
-  if (hostname !== '') {
-    return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/.test(
-      hostname
-    );
+  switch (true) {
+    case hostname.length > 63:
+      return false;
+    case hostname !== '':
+      return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/.test(
+        hostname
+      );
+    default:
+      return true;
   }
-  return true;
 };
