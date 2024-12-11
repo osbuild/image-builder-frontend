@@ -37,6 +37,7 @@ import {
   useFirstBootValidation,
   useDetailsValidation,
   useRegistrationValidation,
+  useHostnameValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -216,6 +217,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Filesystem
   const [filesystemPristine, setFilesystemPristine] = useState(true);
   const fileSystemValidation = useFilesystemValidation();
+  // Hostname
+  const hostnameValidation = useHostnameValidation();
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
@@ -487,8 +490,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-hostname"
                 navItem={customStatusNavItem}
                 isHidden={!isHostnameEnabled}
+                status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={hostnameValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <HostnameStep />

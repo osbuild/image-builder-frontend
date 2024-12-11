@@ -114,6 +114,7 @@ export type wizardState = {
     blueprintDescription: string;
   };
   timezone: Timezone;
+  hostname: string;
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -193,6 +194,7 @@ export const initialState: wizardState = {
     timezone: '',
     ntpservers: [],
   },
+  hostname: '',
   firstBoot: { script: '' },
 };
 
@@ -369,6 +371,10 @@ export const selectTimezone = (state: RootState) => {
 
 export const selectNtpServers = (state: RootState) => {
   return state.wizard.timezone.ntpservers;
+};
+
+export const selectHostname = (state: RootState) => {
+  return state.wizard.hostname;
 };
 
 export const wizardSlice = createSlice({
@@ -749,6 +755,9 @@ export const wizardSlice = createSlice({
         1
       );
     },
+    changeHostname: (state, action: PayloadAction<string>) => {
+      state.hostname = action.payload;
+    },
   },
 });
 
@@ -815,5 +824,6 @@ export const {
   changeTimezone,
   addNtpServer,
   removeNtpServer,
+  changeHostname,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;

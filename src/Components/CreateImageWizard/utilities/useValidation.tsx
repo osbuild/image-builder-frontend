@@ -18,6 +18,7 @@ import {
   selectUseLatest,
   selectActivationKey,
   selectRegistrationType,
+  selectHostname,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -25,6 +26,7 @@ import {
   isBlueprintDescriptionValid,
   isMountpointMinSizeValid,
   isSnapshotValid,
+  isHostnameValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -38,12 +40,14 @@ export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
+  const hostname = useHostnameValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
+    !hostname.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext
   );
@@ -131,6 +135,20 @@ export function useFirstBootValidation(): StepValidation {
     },
     disabledNext: !valid,
   };
+}
+
+export function useHostnameValidation(): StepValidation {
+  const hostname = useAppSelector(selectHostname);
+
+  if (!isHostnameValid(hostname)) {
+    return {
+      errors: {
+        hostname: 'Invalid hostname',
+      },
+      disabledNext: true,
+    };
+  }
+  return { errors: {}, disabledNext: false };
 }
 
 export function useDetailsValidation(): StepValidation {
