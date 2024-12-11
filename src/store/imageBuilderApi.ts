@@ -771,6 +771,10 @@ export type BlueprintExportResponse = {
     to recreate the repositories.
      */
   content_sources?: object[] | undefined;
+  /** Importing the snapshot date will not yet be supported. It is exported for informative reasons.
+    The format is YYYY-MM-DD.
+     */
+  snapshot_date?: string | undefined;
 };
 export type ComposeResponse = {
   id: string;
