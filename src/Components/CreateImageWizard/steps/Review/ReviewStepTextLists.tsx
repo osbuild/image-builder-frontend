@@ -475,7 +475,7 @@ export const ContentList = ({
       case useLatest:
         return 'Use latest';
       case !!snapshotDate:
-        return `State as of ${snapshotDate}`;
+        return `State as of ${yyyyMMddFormat(new Date(snapshotDate))}`;
       default:
         return '';
     }
@@ -502,7 +502,9 @@ export const ContentList = ({
                   headerContent={
                     useLatest
                       ? 'Repositories as of today'
-                      : `Repositories as of ${snapshotDate}`
+                      : `Repositories as of ${yyyyMMddFormat(
+                          new Date(snapshotDate)
+                        )}`
                   }
                   hasAutoWidth
                   minWidth="60rem"
