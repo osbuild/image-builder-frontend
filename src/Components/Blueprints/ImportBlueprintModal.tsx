@@ -11,8 +11,10 @@ import {
   HelperTextItem,
   Modal,
   ModalVariant,
+  Popover,
 } from '@patternfly/react-core';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
+import { HelpIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useNavigate } from 'react-router-dom';
 import { parse } from 'toml';
@@ -140,7 +142,28 @@ export const ImportBlueprintModal: React.FunctionComponent<
     <Modal
       variant={ModalVariant.medium}
       isOpen={isOpen}
-      title={'Import pipeline'}
+      title={
+        <>
+          Import pipeline
+          <Popover
+            bodyContent={
+              <div>
+                You can import the blueprints you created by using the Red Hat
+                image builder into Insights images to create customized images.
+              </div>
+            }
+          >
+            <Button
+              variant="plain"
+              aria-label="About import"
+              className="pf-v5-u-pl-sm"
+              isInline
+            >
+              <HelpIcon />
+            </Button>
+          </Popover>
+        </>
+      }
       onClose={onImportClose}
       ouiaId="import-blueprint-modal"
     >
@@ -175,12 +198,12 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 }
               >
                 {isRejected
-                  ? 'Must be a valid Blueprint JSON file no larger than 25 KB'
+                  ? 'Must be a valid Blueprint JSON/TOML file no larger than 25 KB'
                   : isInvalidFormat
                   ? 'Not compatible with the blueprints format.'
                   : isOnPrem
                   ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
-                  : 'Upload a JSON file'}
+                  : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
