@@ -90,3 +90,12 @@ export const isNtpServerValid = (ntpServer: string) => {
     /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer)
   );
 };
+
+export const isHostnameValid = (hostname: string) => {
+  if (hostname !== '') {
+    return /^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9-]*[A-Za-z0-9])$/.test(
+      hostname
+    );
+  }
+  return true;
+};

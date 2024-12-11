@@ -80,6 +80,7 @@ import {
   selectNtpServers,
   selectLanguages,
   selectKeyboard,
+  selectHostname,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -310,6 +311,7 @@ function commonRequestToState(
       timezone: request.customizations.timezone?.timezone || '',
       ntpservers: request.customizations.timezone?.ntpservers || [],
     },
+    hostname: request.customizations.hostname || '',
   };
 }
 
@@ -502,7 +504,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     filesystem: getFileSystem(state),
     users: undefined,
     services: getServices(state),
-    hostname: undefined,
+    hostname: selectHostname(state) || undefined,
     kernel: selectKernel(state).append
       ? { append: selectKernel(state).append }
       : undefined,
