@@ -13,7 +13,6 @@ if [ "$IS_PR" == true ]; then
 else
     export BETA=false
     build
-    npm run sentry:inject
     source build_app_info.sh
     mv ${DIST_FOLDER} stable
     export BETA=true
@@ -22,9 +21,8 @@ else
     # both inject debug ids and upload the sourcemaps, in konflux only
     # the debug ids are injected.  As the debug ids are consistend
     # across builds, this works.
-    export SENTRY_AUTH_TOKEN SENTRY_DSN SENTRY_ORG SENTRY_PROJECT
+    export SENTRY_AUTH_TOKEN
     build
-    npm run sentry:inject
     source build_app_info.sh
     mv ${DIST_FOLDER} preview
     mkdir -p ${DIST_FOLDER}
