@@ -140,7 +140,7 @@ version = "*"
 name = "anaconda-tools"
 
 [customizations]
-hostname = "baseimage"
+hostname = "base-image"
 fips = true
 
 [[customizations.sshkey]]
@@ -374,6 +374,9 @@ describe('Import modal', () => {
     );
     expect(keyboardDropDown).toHaveValue('us');
 
+    // Hostname
     await clickNext();
+    const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
+    expect(hostnameInput).toHaveValue('base-image');
   }, 20000);
 });
