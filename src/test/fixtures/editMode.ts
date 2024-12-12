@@ -433,6 +433,12 @@ export const timezoneCreateBlueprintRequest: CreateBlueprintRequest = {
   },
 };
 
+export const timezoneBlueprintResponse: BlueprintResponse = {
+  ...timezoneCreateBlueprintRequest,
+  id: mockBlueprintIds['timezone'],
+  description: mockBlueprintDescriptions['timezone'],
+};
+
 export const localeCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['locale'],
@@ -445,16 +451,25 @@ export const localeCreateBlueprintRequest: CreateBlueprintRequest = {
   },
 };
 
-export const timezoneBlueprintResponse: BlueprintResponse = {
-  ...timezoneCreateBlueprintRequest,
-  id: mockBlueprintIds['timezone'],
-  description: mockBlueprintDescriptions['timezone'],
-};
-
 export const localeBlueprintResponse: BlueprintResponse = {
   ...localeCreateBlueprintRequest,
   id: mockBlueprintIds['locale'],
   description: mockBlueprintDescriptions['locale'],
+};
+
+export const hostnameCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['hostname'],
+  description: mockBlueprintDescriptions['hostname'],
+  customizations: {
+    hostname: 'base-image',
+  },
+};
+
+export const hostnameBlueprintResponse: BlueprintResponse = {
+  ...hostnameCreateBlueprintRequest,
+  id: mockBlueprintIds['hostname'],
+  description: mockBlueprintDescriptions['hostname'],
 };
 
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -545,6 +560,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return timezoneBlueprintResponse;
     case mockBlueprintIds['locale']:
       return localeBlueprintResponse;
+    case mockBlueprintIds['hostname']:
+      return hostnameBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:
