@@ -160,6 +160,7 @@ export const mapOnPremToHosted = (
               keyboard: blueprint.customizations.locale.keyboard,
             }
           : undefined,
+      hostname: blueprint.customizations?.hostname || undefined,
     },
     metadata: {
       parent_id: null,
