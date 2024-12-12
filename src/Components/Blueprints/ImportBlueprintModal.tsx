@@ -11,8 +11,10 @@ import {
   HelperTextItem,
   Modal,
   ModalVariant,
+  Popover,
 } from '@patternfly/react-core';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
+import { HelpIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useNavigate } from 'react-router-dom';
 import { parse } from 'toml';
@@ -140,7 +142,28 @@ export const ImportBlueprintModal: React.FunctionComponent<
     <Modal
       variant={ModalVariant.medium}
       isOpen={isOpen}
-      title={'Import pipeline'}
+      title={
+        <>
+          Import pipeline
+          <Popover
+            bodyContent={
+              <div>
+                You can import the blueprints you created by using the Red Hat
+                image builder into Insights images to create customized images.
+              </div>
+            }
+          >
+            <Button
+              variant="plain"
+              aria-label="About regions"
+              className="pf-v5-u-pl-sm header-button"
+              isInline
+            >
+              <HelpIcon />
+            </Button>
+          </Popover>
+        </>
+      }
       onClose={onImportClose}
       ouiaId="import-blueprint-modal"
     >
