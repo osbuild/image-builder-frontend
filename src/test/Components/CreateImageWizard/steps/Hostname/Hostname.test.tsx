@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT } from '../../../../../constants';
@@ -55,6 +55,15 @@ const clearHostname = async () => {
   await waitFor(() => user.clear(hostnameInput));
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('hostname-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-hostname'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Hostname', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -103,6 +112,15 @@ describe('Step Hostname', () => {
     expect(nextButton).toBeEnabled();
     expect(screen.queryByText(/Invalid hostname/)).not.toBeInTheDocument();
   });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToHostnameStep();
+    await enterHostname('hostname');
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Hostname/ });
+  });
 });
 
 describe('Hostname request generated correctly', () => {
@@ -133,5 +151,4 @@ describe('Hostname request generated correctly', () => {
   });
 });
 
-// TO DO 'Step Hostname' -> 'revisit step button on Review works'
 // TO DO 'Hostname edit mode'

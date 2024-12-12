@@ -67,6 +67,7 @@ import {
   selectNtpServers,
   selectLanguages,
   selectKeyboard,
+  selectHostname,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -797,6 +798,26 @@ export const LocaleList = () => {
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {keyboard ? keyboard : 'None'}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const HostnameList = () => {
+  const hostname = useAppSelector(selectHostname);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Hostname
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {hostname ? hostname : 'None'}
         </TextListItem>
       </TextList>
     </TextContent>

@@ -30,6 +30,7 @@ import {
   TargetEnvOtherList,
   TimezoneList,
   LocaleList,
+  HostnameList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -70,10 +71,12 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     useState(true);
   const [isExpandedTimezone, setIsExpandedTimezone] = useState(true);
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
+  const [isExpandedHostname, setIsExpandedHostname] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
 
   const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
   const isLocaleEnabled = useFlag('image-builder.locale.enabled');
+  const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -95,6 +98,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedTimezone(isExpandedTimezone);
   const onToggleLocale = (isExpandedLocale: boolean) =>
     setIsExpandedLocale(isExpandedLocale);
+  const onToggleHostname = (isExpandedHostname: boolean) =>
+    setIsExpandedHostname(isExpandedHostname);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
 
@@ -341,6 +346,23 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           data-testid="locale-expandable"
         >
           <LocaleList />
+        </ExpandableSection>
+      )}
+      {isHostnameEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Hostname',
+            'revisit-hostname',
+            'wizard-hostname'
+          )}
+          onToggle={(_event, isExpandedHostname) =>
+            onToggleHostname(isExpandedHostname)
+          }
+          isExpanded={isExpandedHostname}
+          isIndented
+          data-testid="hostname-expandable"
+        >
+          <HostnameList />
         </ExpandableSection>
       )}
       {isFirstBootEnabled && (
