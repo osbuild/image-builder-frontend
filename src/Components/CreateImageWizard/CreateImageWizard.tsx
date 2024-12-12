@@ -38,6 +38,7 @@ import {
   useDetailsValidation,
   useRegistrationValidation,
   useHostnameValidation,
+  useUserValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -223,6 +224,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const firstBootValidation = useFirstBootValidation();
   // Details
   const detailsValidation = useDetailsValidation();
+  // Users
+  const userValidation = useUserValidation();
 
   let startIndex = 1; // default index
   if (isEdit) {
@@ -453,9 +456,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Users"
                 id="wizard-users"
                 key="wizard-users"
+                status={userValidation.disabledNext ? 'error' : 'default'}
                 isHidden={!isUsersEnabled}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={userValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <UsersStep />

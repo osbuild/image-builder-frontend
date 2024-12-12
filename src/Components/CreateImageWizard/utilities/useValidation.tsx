@@ -19,6 +19,11 @@ import {
   selectActivationKey,
   selectRegistrationType,
   selectHostname,
+  selectUserName,
+  selectUserPassword,
+  selectConfirmUserPassword,
+  selectUserSshKey,
+  selectUsers,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -27,6 +32,10 @@ import {
   isMountpointMinSizeValid,
   isSnapshotValid,
   isHostnameValid,
+  isPasswordValid,
+  isUserNameValid,
+  isConfirmPasswordValid,
+  isSshKeyValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -43,13 +52,15 @@ export function useIsBlueprintValid(): boolean {
   const hostname = useHostnameValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
+  const users = useUserValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
     !hostname.disabledNext &&
     !firstBoot.disabledNext &&
-    !details.disabledNext
+    !details.disabledNext &&
+    !users.disabledNext
   );
 }
 
@@ -153,6 +164,67 @@ export function useHostnameValidation(): StepValidation {
     };
   }
   return { errors: {}, disabledNext: false };
+}
+
+export function useUserValidation(): StepValidation {
+  const userNameSelector = selectUserName(0);
+  const users = useAppSelector(selectUsers);
+  const userName = useAppSelector(userNameSelector);
+  const userPasswordSelector = selectUserPassword(0);
+  const userPassword = useAppSelector(userPasswordSelector);
+  const userConfirmPasswordSelector = selectConfirmUserPassword(0);
+  const userConfirmPassword = useAppSelector(userConfirmPasswordSelector);
+  const userSshKeySelector = selectUserSshKey(0);
+  const userSshKey = useAppSelector(userSshKeySelector);
+  const userNameValid = isUserNameValid(userName || '');
+  const passwordValid = isPasswordValid(userPassword || '');
+
+  const passwordConfirmMatchValid = isConfirmPasswordValid(
+    userPassword || '',
+    userConfirmPassword || ''
+  );
+  const sshKeyValid = isSshKeyValid(userSshKey || '');
+  const isPasswordAndConfirmValid = passwordValid && passwordConfirmMatchValid;
+  const canProceed =
+    users.length === 0 ||
+    (userConfirmPassword === '' &&
+      userSshKey === '' &&
+      userPassword === '' &&
+      userName === '') ||
+    (userName &&
+      userNameValid &&
+      ((userSshKey && sshKeyValid) ||
+        (userPassword && isPasswordAndConfirmValid)));
+  return {
+    errors: {
+      userName: !userNameValid
+        ? 'Invalid user name. Usernames may contain only lower and upper case letters, digits,\n' +
+          '       underscores, or dashes. They can end with a dollar sign. Dashes are not\n' +
+          '       allowed at the beginning of the username. Fully numeric usernames and\n' +
+          '       usernames . or .. are also disallowed. It is not recommended to use\n' +
+          '       usernames beginning with . character as their home directories will be\n' +
+          '       hidden in the ls output.\n' +
+          '\n' +
+          '       Usernames may only be up to 32 characters long.'
+        : '',
+      userPassword: !userPassword
+        ? ''
+        : !passwordValid
+        ? 'Invalid user password'
+        : '',
+      userConfirmPassword: !userPassword
+        ? ''
+        : !passwordConfirmMatchValid
+        ? 'password and confirm password should be the same'
+        : '',
+      userSshKey: !userSshKey
+        ? ''
+        : !sshKeyValid
+        ? "Value does not match pattern: /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521)) \\\\S+/.'"
+        : '',
+    },
+    disabledNext: !canProceed,
+  };
 }
 
 export function useDetailsValidation(): StepValidation {
