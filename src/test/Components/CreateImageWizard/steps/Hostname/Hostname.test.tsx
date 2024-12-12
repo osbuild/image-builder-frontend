@@ -44,7 +44,7 @@ const goToReviewStep = async () => {
 };
 
 const enterHostname = async (hostname: string) => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
   await waitFor(() => user.type(hostnameInput, hostname));
 };
@@ -111,6 +111,21 @@ describe('Step Hostname', () => {
     await enterHostname('valid-hostname');
     expect(nextButton).toBeEnabled();
     expect(screen.queryByText(/Invalid hostname/)).not.toBeInTheDocument();
+  });
+
+  test('hostname is invalid for more than 64 chars', async () => {
+    await renderCreateMode();
+    await goToHostnameStep();
+    const nextButton = await getNextButton();
+
+    // enter invalid hostname
+    const invalidHostname = 'a'.repeat(65);
+    await enterHostname(invalidHostname);
+    expect(nextButton).toBeDisabled();
+
+    // enter valid hostname
+    await clearHostname();
+    expect(nextButton).toBeEnabled();
   });
 
   test('revisit step button on Review works', async () => {
