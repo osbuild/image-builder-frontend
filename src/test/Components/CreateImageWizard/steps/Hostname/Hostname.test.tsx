@@ -41,6 +41,7 @@ const goToHostnameStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // Kernel
   await clickNext(); // First boot script
   await clickNext(); // Details
   await enterBlueprintName();
@@ -74,12 +75,12 @@ describe('Step Hostname', () => {
     router = undefined;
   });
 
-  test('clicking Next loads First boot script', async () => {
+  test('clicking Next loads Kernel', async () => {
     await renderCreateMode();
     await goToHostnameStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'First boot configuration',
+      name: 'Kernel',
     });
   });
 
