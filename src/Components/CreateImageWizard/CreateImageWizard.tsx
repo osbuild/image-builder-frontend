@@ -18,6 +18,7 @@ import { FileSystemContext } from './steps/FileSystem/FileSystemTable';
 import FirstBootStep from './steps/FirstBoot';
 import HostnameStep from './steps/Hostname';
 import ImageOutputStep from './steps/ImageOutput';
+import KernelStep from './steps/Kernel';
 import LocaleStep from './steps/Locale';
 import OscapStep from './steps/Oscap';
 import PackagesStep from './steps/Packages';
@@ -140,6 +141,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
   const isLocaleEnabled = useFlag('image-builder.locale.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
+  const isKernelEnabled = useFlag('image-builder.kernel.enabled');
 
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
@@ -226,7 +228,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 19;
+    startIndex = 20;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -499,6 +501,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
               >
                 <HostnameStep />
+              </WizardStep>,
+              <WizardStep
+                name="Kernel"
+                id="wizard-kernel"
+                key="wizard-kernel"
+                navItem={customStatusNavItem}
+                isHidden={!isKernelEnabled}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              >
+                <KernelStep />
               </WizardStep>,
               <WizardStep
                 name="First boot script configuration"

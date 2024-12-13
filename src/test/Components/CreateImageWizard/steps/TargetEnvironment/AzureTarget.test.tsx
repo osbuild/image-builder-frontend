@@ -48,6 +48,7 @@ const goToReview = async () => {
   await clickNext(); // Timezone
   await clickNext(); // Locale
   await clickNext(); // Hostname
+  await clickNext(); // Kernel
   await clickNext(); // FirstBoot
   await clickNext(); // Details
   await enterBlueprintName();

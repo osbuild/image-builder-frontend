@@ -57,6 +57,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Timezone
   await clickNext(); // Locale
   await clickNext(); // Hostname
+  await clickNext(); // Kernel
   await clickNext(); // First boot script
   await clickNext(); // Details
   await clickNext(); // Review
