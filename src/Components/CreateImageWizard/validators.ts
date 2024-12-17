@@ -91,6 +91,17 @@ export const isHostnameValid = (hostname: string) => {
   );
 };
 
+export const isKernelNameValid = (kernelName: string) => {
+  if (!kernelName) {
+    return true;
+  }
+
+  return (
+    kernelName.length < 65 &&
+    /^[a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(kernelName)
+  );
+};
+
 export const isPortValid = (port: string) => {
   return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?:[a-z]{1,6}$/.test(port);
 };
