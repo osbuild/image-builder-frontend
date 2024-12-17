@@ -1,17 +1,10 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-
+import { emptyCockpitApi } from './emptyCockpitApi';
 import {
   GetArchitecturesApiResponse,
   GetArchitecturesApiArg,
   GetBlueprintsApiArg,
   GetBlueprintsApiResponse,
 } from './imageBuilderApi';
-
-const emptyCockpitApi = createApi({
-  reducerPath: 'cockpitApi',
-  baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  endpoints: () => ({}),
-});
 
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
   endpoints: (builder) => {
