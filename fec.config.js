@@ -2,7 +2,7 @@
 const path = require('path');
 
 const CopyPlugin = require('copy-webpack-plugin');
-const { sentryWebpackPlugin } = require("@sentry/webpack-plugin");
+const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
 const webpack = require('webpack');
 
 const plugins = [];
@@ -105,6 +105,15 @@ module.exports = {
   useAgent: true,
   bounceProd: false,
   proxyVerbose: true,
+  resolve: {
+    alias: {
+      // we don't wan't these packages bundled with
+      // the service frontend, so we can set the aliases
+      // to false
+      cockpit: false,
+      'cockpit/fsinfo': false,
+    },
+  },
   routes: {
     ...(process.env.CONFIG_PORT && {
       [`${process.env.BETA ? '/beta' : ''}/config`]: {
