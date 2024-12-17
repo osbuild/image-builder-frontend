@@ -19,7 +19,7 @@ import {
   changeTimezone,
   selectTimezone,
 } from '../../../../../store/wizardSlice';
-import { timezones } from '../../../../../timezones';
+import { timezones } from '../timezonesList';
 
 const TimezoneDropDown = () => {
   const timezone = useAppSelector(selectTimezone);

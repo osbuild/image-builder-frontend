@@ -1,8 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { clickNext } from '../../test/Components/CreateImageWizard/wizardTestUtils';
-import { renderCustomRoutesWithReduxRouter } from '../../test/testUtils';
+import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { clickNext } from '../CreateImageWizard/wizardTestUtils';
 
 const BLUEPRINT_JSON = `{
   "customizations": {
