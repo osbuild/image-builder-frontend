@@ -1,3 +1,13 @@
+// Note: for the on-prem version of the frontend we have configured
+// this so that we check `node_modules` and `pkg/lib` for packages.
+// To get around this for the hosted service, we have configured
+// the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
+// modules. These stubs are in the `src/test/mocks/cockpit` directory.
+// We also needed to create an alias in vitest to make this work.
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import cockpit from 'cockpit';
+import { fsinfo } from 'cockpit/fsinfo';
+
 import { emptyCockpitApi } from './emptyCockpitApi';
 import {
   GetArchitecturesApiResponse,
