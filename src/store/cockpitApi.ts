@@ -4,9 +4,9 @@
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import toml from 'toml';
 
 import { emptyCockpitApi } from './emptyCockpitApi';
 import {
@@ -14,7 +14,18 @@ import {
   GetArchitecturesApiArg,
   GetBlueprintsApiArg,
   GetBlueprintsApiResponse,
+  BlueprintItem,
 } from './imageBuilderApi';
+
+import { BLUEPRINTS_DIR } from '../constants';
+
+const getBlueprintsPath = async () => {
+  const user = await cockpit.user();
+
+  // we will use the user's `.local` directory
+  // to save blueprints used for on-prem
+  return `${user.home}/${BLUEPRINTS_DIR}`;
+};
 
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
   endpoints: (builder) => {
@@ -31,22 +42,50 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetBlueprintsApiResponse,
         GetBlueprintsApiArg
       >({
-        queryFn: () => {
-          // TODO: Add cockpit file api support for reading in blueprints.
-          // For now we're just hardcoding a dummy response
-          // so we can render an empty table.
-          return new Promise((resolve) => {
-            resolve({
+        queryFn: async () => {
+          try {
+            const path = await getBlueprintsPath();
+
+            // we probably don't need any more information other
+            // than the entries from the directory
+            const info = await fsinfo(path, ['entries'], {
+              superuser: 'try',
+            });
+
+            const entries = Object.entries(info?.entries || {});
+            const blueprints: BlueprintItem[] = await Promise.all(
+              entries.map(async ([filename]) => {
+                const file = cockpit.file(`${path}/${filename}`);
+
+                const contents = await file.read();
+                const parsed = toml.parse(contents);
+                file.close();
+
+                // TODO: using the existing blueprint converter
+                return {
+                  name: parsed.name as string,
+                  id: filename as string,
+                  version: parsed.version as number,
+                  description: parsed.description as string,
+                  last_modified_at: Date.now().toString(),
+                };
+              })
+            );
+
+            return {
               data: {
-                meta: { count: 0 },
+                meta: { count: blueprints.length },
                 links: {
+                  // TODO: figure out the pagination
                   first: '',
                   last: '',
                 },
-                data: [],
+                data: blueprints,
               },
-            });
-          });
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
     };

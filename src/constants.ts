@@ -263,3 +263,6 @@ export const PAGINATION_OFFSET = 0;
 export const PAGINATION_LIMIT = 10;
 export const PAGINATION_COUNT = 0;
 export const SEARCH_INPUT = '';
+
+export const BLUEPRINTS_DIR =
+  '.local/share/cockpit/image-builder-frontend/blueprints';
