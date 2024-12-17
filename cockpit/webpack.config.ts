@@ -27,16 +27,24 @@ module.exports = {
   mode,
   devtool,
   plugins,
-  externals: { cockpit: 'cockpit' },
   resolve: {
-    modules: ['node_modules'],
+    modules: [
+      'node_modules',
+      // this tells webpack to check `node_modules`
+      // and `pkg/lib` for modules. This allows us
+      // to import `cockpit` and `cockpit/fsinfo`
+      path.resolve(__dirname, '../pkg/lib'),
+    ],
     extensions: ['.js', '.jsx', '.ts', '.tsx'],
   },
   module: {
     rules: [
       {
         test: /\.(ts|tsx)$/,
-        include: [path.resolve('src')],
+        include: [
+          path.resolve(__dirname, '../src'),
+          path.resolve(__dirname, '../pkg/lib'),
+        ],
         use: {
           loader: 'babel-loader',
           options: {
