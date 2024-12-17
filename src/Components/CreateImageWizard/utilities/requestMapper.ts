@@ -316,6 +316,7 @@ function commonRequestToState(
       disabled: request.customizations?.services?.disabled || [],
     },
     kernel: {
+      name: request.customizations.kernel?.name || '',
       append: request.customizations?.kernel?.append || '',
     },
     timezone: {
@@ -516,9 +517,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     users: getUsers(state),
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
-    kernel: selectKernel(state).append
-      ? { append: selectKernel(state).append }
-      : undefined,
+    kernel: getKernel(state),
     groups: undefined,
     timezone: getTimezone(state),
     locale: getLocale(state),
@@ -719,4 +718,17 @@ const getPayloadRepositories = (state: RootState) => {
     return undefined;
   }
   return payloadAndRecommendedRepositories;
+};
+
+const getKernel = (state: RootState) => {
+  const kernel = selectKernel(state);
+
+  if (!kernel.name && !kernel.append) {
+    return undefined;
+  }
+
+  return {
+    name: selectKernel(state).name || undefined,
+    append: selectKernel(state).append || undefined,
+  };
 };
