@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import path from 'path';
 
 const config = {
   plugins: [react()],
@@ -16,6 +17,7 @@ const config = {
     },
     testTimeout: 10000,
     fileParallelism: false,
+    exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**'],
   },
   reporters: ['default', 'junit'],
   outputFile: {
@@ -23,6 +25,16 @@ const config = {
   },
   resolve: {
     mainFields: ['module'],
+    alias: {
+      // we have to point vitest to the mocks for `cockpit` and `cockpit/fsinfo`
+      // by using aliases. This allows vitest to resolve these two packages
+      // and allows the tests to pass
+      cockpit: path.resolve(__dirname, 'src/test/mocks/cockpit'),
+      'cockpit/fsinfo': path.resolve(
+        __dirname,
+        'src/test/mocks/cockpit/fsinfo'
+      ),
+    },
   },
   esbuild: {
     loader: 'tsx',

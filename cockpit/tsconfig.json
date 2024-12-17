@@ -1,0 +1,14 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        // this allows us to pull in the `cockpit` and
+        // `cockpit/fsinfo` modules from the `pkg/lib`
+        // directory
+        "../pkg/lib/*"
+      ]
+    }
+  }
+}
