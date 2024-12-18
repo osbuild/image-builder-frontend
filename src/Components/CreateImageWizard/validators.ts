@@ -103,14 +103,3 @@ export const isHostnameValid = (hostname: string) => {
     )
   );
 };
-
-export const isKernelNameValid = (kernelName: string) => {
-  if (!kernelName) {
-    return true;
-  }
-
-  return (
-    kernelName.length < 65 &&
-    /^[a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9]$/.test(kernelName)
-  );
-};
