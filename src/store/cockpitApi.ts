@@ -17,6 +17,7 @@ import {
   BlueprintItem,
 } from './imageBuilderApi';
 
+import { mapOnPremToHosted } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR } from '../constants';
 
 const getBlueprintsPath = async () => {
@@ -61,12 +62,12 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                 const parsed = toml.parse(contents);
                 file.close();
 
-                // TODO: using the existing blueprint converter
+                const blueprint = mapOnPremToHosted(parsed);
+                const version = (parsed.version as number) ?? 1;
                 return {
-                  name: parsed.name as string,
+                  ...blueprint,
                   id: filename as string,
-                  version: parsed.version as number,
-                  description: parsed.description as string,
+                  version: Math.floor(version),
                   last_modified_at: Date.now().toString(),
                 };
               })
