@@ -40,7 +40,6 @@ import {
   useDetailsValidation,
   useRegistrationValidation,
   useHostnameValidation,
-  useKernelValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -224,8 +223,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const fileSystemValidation = useFilesystemValidation();
   // Hostname
   const hostnameValidation = useHostnameValidation();
-  // Kernel
-  const kernelValidation = useKernelValidation();
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
@@ -513,12 +510,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-kernel"
                 navItem={customStatusNavItem}
                 isHidden={!isKernelEnabled}
-                status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter
-                    disableNext={kernelValidation.disabledNext}
-                    optional={true}
-                  />
+                  <CustomWizardFooter disableNext={false} optional={true} />
                 }
               >
                 <KernelStep />

@@ -19,7 +19,6 @@ import {
   selectActivationKey,
   selectRegistrationType,
   selectHostname,
-  selectKernel,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -28,7 +27,6 @@ import {
   isMountpointMinSizeValid,
   isSnapshotValid,
   isHostnameValid,
-  isKernelNameValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -43,7 +41,6 @@ export function useIsBlueprintValid(): boolean {
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
   const hostname = useHostnameValidation();
-  const kernel = useKernelValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
@@ -51,7 +48,6 @@ export function useIsBlueprintValid(): boolean {
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
     !hostname.disabledNext &&
-    !kernel.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext
   );
@@ -152,20 +148,6 @@ export function useHostnameValidation(): StepValidation {
     return {
       errors: {
         hostname: errorMessage,
-      },
-      disabledNext: true,
-    };
-  }
-  return { errors: {}, disabledNext: false };
-}
-
-export function useKernelValidation(): StepValidation {
-  const kernel = useAppSelector(selectKernel);
-
-  if (!isKernelNameValid(kernel.name)) {
-    return {
-      errors: {
-        kernel: 'Invalid kernel name',
       },
       disabledNext: true,
     };
