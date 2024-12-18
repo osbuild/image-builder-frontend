@@ -8,7 +8,6 @@ import {
   clickBack,
   clickNext,
   enterBlueprintName,
-  getNextButton,
   interceptBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   verifyCancelButton,
@@ -38,26 +37,20 @@ const goToKernelStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // Firewall
   await clickNext(); // First boot script
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review
 };
 
-const enterKernelName = async (kernelName: string) => {
+const selectKernelName = async (kernelName: string) => {
   const user = userEvent.setup();
-  const kernelNameInput = await screen.findByPlaceholderText(
-    /Add a kernel name/i
-  );
-  await waitFor(() => user.type(kernelNameInput, kernelName));
-};
+  const kernelNameDropdown = await screen.findByTestId('kernel-name-dropdown');
+  await waitFor(() => user.click(kernelNameDropdown));
 
-const clearKernelName = async () => {
-  const user = userEvent.setup();
-  const kernelNameInput = await screen.findByPlaceholderText(
-    /Add a kernel name/i
-  );
-  await waitFor(() => user.clear(kernelNameInput));
+  const kernelOption = await screen.findByText(kernelName);
+  await waitFor(() => user.click(kernelOption));
 };
 
 describe('Step Kernel', () => {
@@ -87,27 +80,6 @@ describe('Step Kernel', () => {
     await goToKernelStep();
     await verifyCancelButton(router);
   });
-
-  test('validation works', async () => {
-    await renderCreateMode();
-    await goToKernelStep();
-
-    // with empty kernel name input
-    const nextButton = await getNextButton();
-    expect(nextButton).toBeEnabled();
-
-    // invalid name
-    await enterKernelName('INVALID/NAME');
-    expect(nextButton).toBeDisabled();
-    await clickNext(); // dummy click to blur and render error (doesn't render when pristine)
-    await screen.findByText(/Invalid kernel name/);
-
-    // valid name
-    await clearKernelName();
-    await enterKernelName('valid-kernel-name');
-    expect(nextButton).toBeEnabled();
-    expect(screen.queryByText(/Invalid kernel name/)).not.toBeInTheDocument();
-  });
 });
 
 describe('Kernel request generated correctly', () => {
@@ -115,10 +87,10 @@ describe('Kernel request generated correctly', () => {
     vi.clearAllMocks();
   });
 
-  test('with valid kernel name', async () => {
+  test('with kernel name', async () => {
     await renderCreateMode();
     await goToKernelStep();
-    await enterKernelName('kernel-name');
+    await selectKernelName('kernel-debug');
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -129,9 +101,26 @@ describe('Kernel request generated correctly', () => {
       ...blueprintRequest,
       customizations: {
         kernel: {
-          name: 'kernel-name',
+          name: 'kernel-debug',
         },
       },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('when unselecting kernel name', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+    await selectKernelName('kernel-debug');
+    await selectKernelName('Default kernel package');
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
     };
 
     await waitFor(() => {
