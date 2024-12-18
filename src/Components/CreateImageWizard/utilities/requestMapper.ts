@@ -34,6 +34,7 @@ import {
   Services,
   Subscription,
   UploadTypes,
+  User,
 } from '../../../store/imageBuilderApi';
 import {
   selectActivationKey,
@@ -81,6 +82,7 @@ import {
   selectLanguages,
   selectKeyboard,
   selectHostname,
+  selectUsers,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -206,6 +208,15 @@ function commonRequestToState(
       blueprintName: request.name || '',
       blueprintDescription: request.description || '',
     },
+    users:
+      request.customizations.users?.map((user) => ({
+        name: user.name,
+        password: '', // The image-builder API does not return the password.
+        ssh_key: user.ssh_key || '',
+        confirmPassword: '',
+        groups: user.groups || [],
+        isAdministrator: user.groups?.includes('wheel') || false,
+      })) || [],
     compliance:
       compliancePolicyID !== undefined
         ? {
@@ -502,7 +513,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
     filesystem: getFileSystem(state),
-    users: undefined,
+    users: getUsers(state),
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
     kernel: selectKernel(state).append
@@ -556,6 +567,24 @@ const getOpenscap = (state: RootState): OpenScap | undefined => {
     return { policy_id: policy };
   }
   return undefined;
+};
+
+const getUsers = (state: RootState): User[] | undefined => {
+  const users = selectUsers(state);
+
+  if (users.length === 0) {
+    return undefined;
+  }
+
+  return users.map((user) => {
+    const result: User = {
+      name: user.name,
+    };
+    if (user.password !== '') {
+      result.password = user.password;
+    }
+    return result as User;
+  });
 };
 
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
