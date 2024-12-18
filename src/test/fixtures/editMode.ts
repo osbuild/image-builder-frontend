@@ -439,6 +439,25 @@ export const timezoneBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['timezone'],
 };
 
+export const usersCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['users'],
+  description: mockBlueprintDescriptions['users'],
+  customizations: {
+    users: [
+      {
+        name: 'best',
+      },
+    ],
+  },
+};
+
+export const usersBlueprintResponse: BlueprintResponse = {
+  ...usersCreateBlueprintRequest,
+  id: mockBlueprintIds['users'],
+  description: mockBlueprintDescriptions['users'],
+};
+
 export const localeCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['locale'],
@@ -556,6 +575,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return repositoriesBlueprintResponse;
     case mockBlueprintIds['packages']:
       return packagesBlueprintResponse;
+    case mockBlueprintIds['users']:
+      return usersBlueprintResponse;
     case mockBlueprintIds['timezone']:
       return timezoneBlueprintResponse;
     case mockBlueprintIds['locale']:

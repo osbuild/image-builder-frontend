@@ -10,6 +10,7 @@ import type {
   Locale,
   Repository,
   Timezone,
+  User,
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
@@ -42,6 +43,20 @@ export type RegistrationType =
   | 'register-now-rhc';
 
 export type ComplianceType = 'openscap' | 'compliance';
+
+export type UserWithAdditionalInfo = {
+  [K in keyof User]-?: NonNullable<User[K]>;
+};
+
+type UserPayload = {
+  index: number;
+  name: string;
+};
+
+type UserPasswordPayload = {
+  index: number;
+  password: string;
+};
 
 export type wizardState = {
   env: {
@@ -90,6 +105,7 @@ export type wizardState = {
     useLatest: boolean;
     snapshotDate: string;
   };
+  users: UserWithAdditionalInfo[];
   firstBoot: {
     script: string;
   };
@@ -196,6 +212,7 @@ export const initialState: wizardState = {
   },
   hostname: '',
   firstBoot: { script: '' },
+  users: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -336,6 +353,20 @@ export const selectGroups = (state: RootState) => {
 export const selectServices = (state: RootState) => {
   return state.wizard.services;
 };
+
+export const selectUsers = (state: RootState) => {
+  return state.wizard.users;
+};
+
+export const selectUserNameByIndex =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.name;
+  };
+
+export const selectUserPasswordByIndex =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.password;
+  };
 
 export const selectKernel = (state: RootState) => {
   return state.wizard.kernel;
@@ -758,6 +789,27 @@ export const wizardSlice = createSlice({
     changeHostname: (state, action: PayloadAction<string>) => {
       state.hostname = action.payload;
     },
+    addUser: (state) => {
+      const newUser = {
+        name: '',
+        password: '',
+        confirmPassword: '',
+        ssh_key: '',
+        groups: [],
+        isAdministrator: false,
+      };
+
+      state.users.push(newUser);
+    },
+    setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
+      state.users[action.payload.index].name = action.payload.name;
+    },
+    setUserPasswordByIndex: (
+      state,
+      action: PayloadAction<UserPasswordPayload>
+    ) => {
+      state.users[action.payload.index].password = action.payload.password;
+    },
   },
 });
 
@@ -825,5 +877,8 @@ export const {
   addNtpServer,
   removeNtpServer,
   changeHostname,
+  addUser,
+  setUserNameByIndex,
+  setUserPasswordByIndex,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
