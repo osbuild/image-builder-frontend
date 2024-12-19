@@ -1,4 +1,5 @@
-INSTALL_DIR := ~/.local/share/cockpit/image-builder-frontend
+PACKAGE_NAME = image-builder-frontend
+INSTALL_DIR = /share/cockpit/$(PACKAGE_NAME)
 
 # TODO: figure out a strategy for keeping this updated
 COCKPIT_REPO_COMMIT = b0e82161b4afcb9f0a6fddd8ff94380e983b2238
@@ -15,17 +16,26 @@ COCKPIT_REPO_FILES = \
 help:
 	@cat Makefile
 
+#
+# Cockpit related targets
+#
+
 .PHONY: cockpit/clean
 cockpit/clean:
-	rm -rf $(INSTALL_DIR)
-	rm -rf pkg/lib
 	rm -f cockpit/public/*.css
 	rm -f cockpit/public/*.js
 
-.PHONY: cockpit/install
-cockpit/install:
-	mkdir -p ~/.local/share/cockpit
-	ln -s $(shell pwd)/cockpit/public $(INSTALL_DIR)
+.PHONY: cockpit/devel-uninstall
+cockpit/devel-uninstall: PREFIX=~/.local
+cockpit/devel-uninstall:
+	rm -rf $(PREFIX)$(INSTALL_DIR)
+
+.PHONY: cockpit/devel-install
+cockpit/devel-install: PREFIX=~/.local
+cockpit/devel-install:
+	PREFIX="~/.local"
+	mkdir -p $(PREFIX)$(INSTALL_DIR)
+	ln -s $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
 
 .PHONY: cockpit/download
 cockpit/download: Makefile
@@ -39,6 +49,4 @@ cockpit/build: cockpit/download
 	npm run build:cockpit
 
 .PHONY: cockpit/devel
-cockpit/devel: cockpit/clean cockpit/build cockpit/install
-
-
+cockpit/devel: cockpit/devel-uninstall cockpit/build cockpit/devel-install
