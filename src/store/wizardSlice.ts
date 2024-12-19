@@ -106,6 +106,7 @@ export type wizardState = {
     disabled: string[];
   };
   kernel: {
+    name: string;
     append: string;
   };
   locale: Locale;
@@ -180,6 +181,7 @@ export const initialState: wizardState = {
     disabled: [],
   },
   kernel: {
+    name: '',
     append: '',
   },
   locale: {
@@ -734,6 +736,9 @@ export const wizardSlice = createSlice({
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.disabled = action.payload;
     },
+    changeKernelName: (state, action: PayloadAction<string>) => {
+      state.kernel.name = action.payload;
+    },
     changeKernelAppend: (state, action: PayloadAction<string>) => {
       state.kernel.append = action.payload;
     },
@@ -820,6 +825,7 @@ export const {
   changeEnabledServices,
   changeMaskedServices,
   changeDisabledServices,
+  changeKernelName,
   changeKernelAppend,
   changeTimezone,
   addNtpServer,
