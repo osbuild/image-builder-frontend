@@ -2,8 +2,8 @@
 
 # Workaround needed for Konflux pipeline to pass
 
-find -name "cockpit" -type d
-find -name "cockpit" -type d | xargs rm -rf -
+find -name "cockpit" -type d -maxdepth 1
+find -name "cockpit" -type d -maxdepth 1 | xargs rm -rf -
 
 setNpmOrYarn
 install
