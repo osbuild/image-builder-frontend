@@ -39,3 +39,5 @@ cockpit/public/main*
 
 # cockpit lib dir
 pkg/lib
+
+rpmbuild
