@@ -225,7 +225,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const firstBootValidation = useFirstBootValidation();
   // Details
   const detailsValidation = useDetailsValidation();
-
   let startIndex = 1; // default index
   if (isEdit) {
     startIndex = 20;
