@@ -71,3 +71,36 @@ cockpit/build: cockpit/download
 
 .PHONY: cockpit/devel
 cockpit/devel: cockpit/devel-uninstall cockpit/build cockpit/devel-install
+
+#
+# Building packages
+#
+
+RPM_SPEC=cockpit/$(PACKAGE_NAME).spec
+RPM_TARBALL=rpmbuild/SOURCES/$(PACKAGE_NAME)-$(VERSION).tar.gz
+NODE_MODULES_TEST=package-lock.json
+
+$(RPM_SPEC): $(RPM_SPEC) $(NODE_MODULES_TEST)
+	provides=$$(npm ls --omit dev --package-lock-only --depth=Infinity | grep -Eo '[^[:space:]]+@[^[:space:]]+' | sort -u | sed 's/^/Provides: bundled(npm(/; s/\(.*\)@/\1)) = /'); \
+	awk -v p="$$provides" '{gsub(/%{VERSION}/, "$(VERSION)"); $(SUB_NODE_ENV) gsub(/%{NPM_PROVIDES}/, p)}1' $< > $@
+
+$(RPM_TARBALL): export NODE_ENV ?= production
+$(RPM_TARBALL): cockpit/build
+	touch -r package.json package-lock.json
+	touch cockpit/public/*
+	tar czf $(RPM_TARBALL) --transform 's,^,image-builder-frontend/,' \
+		--exclude node_modules \
+		$$(git ls-files) $(RPM_SPEC) $(NODE_MODULES_TEST) cockpit/public/ cockpit/README.md
+	realpath $(RPM_TARBALL)
+
+.PHONY: srpm
+srpm: $(RPM_TARBALL)
+	rpmbuild -bs \
+		--define "_topdir $(CURDIR)/rpmbuild" \
+		$(RPM_SPEC)
+
+.PHONY: rpm
+rpm: $(RPM_TARBALL)
+	rpmbuild -bb \
+		--define "_topdir $(CURDIR)/rpmbuild" \
+		$(RPM_SPEC)
