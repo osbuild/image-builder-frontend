@@ -1,5 +1,9 @@
 PACKAGE_NAME = image-builder-frontend
 INSTALL_DIR = /share/cockpit/$(PACKAGE_NAME)
+APPSTREAMFILE=org.image-builder.$(PACKAGE_NAME).metainfo.xml
+
+VERSION := $(shell (cd "$(SRCDIR)" && grep "^Version:" cockpit/$(PACKAGE_NAME).spec | sed 's/[^[:digit:]]*\([[:digit:]]\+\).*/\1/'))
+COMMIT = $(shell (cd "$(SRCDIR)" && git rev-parse HEAD))
 
 # TODO: figure out a strategy for keeping this updated
 COCKPIT_REPO_COMMIT = b0e82161b4afcb9f0a6fddd8ff94380e983b2238
@@ -17,6 +21,14 @@ help:
 	@cat Makefile
 
 #
+# Install target for specfile
+#
+
+.PHONY: install
+install:
+	$(MAKE) cockpit/install
+
+#
 # Cockpit related targets
 #
 
@@ -24,6 +36,15 @@ help:
 cockpit/clean:
 	rm -f cockpit/public/*.css
 	rm -f cockpit/public/*.js
+
+.PHONY: cockpit/install
+cockpit/install:
+	mkdir -p $(DESTDIR)$(PREFIX)$(INSTALL_DIR)
+	cp -a cockpit/public/* $(DESTDIR)$(PREFIX)$(INSTALL_DIR)
+	mkdir -p $(DESTDIR)$(PREFIX)/share/metainfo
+	msgfmt --xml -d po \
+		--template cockpit/public/$(APPSTREAMFILE) \
+		-o $(DESTDIR)$(PREFIX)/share/metainfo/$(APPSTREAMFILE)
 
 .PHONY: cockpit/devel-uninstall
 cockpit/devel-uninstall: PREFIX=~/.local
