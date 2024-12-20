@@ -3,6 +3,7 @@ import React from 'react';
 import { Pagination, PaginationVariant } from '@patternfly/react-core';
 import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -11,10 +12,7 @@ import {
   setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  useGetBlueprintsQuery,
-  GetBlueprintsApiArg,
-} from '../../store/imageBuilderApi';
+import { GetBlueprintsApiArg } from '../../store/imageBuilderApi';
 
 const BlueprintsPagination = () => {
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
