@@ -58,6 +58,38 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
+export const isUserNameValid = (userName: string) => {
+  const isLengthValid =
+    userName !== undefined && userName.length >= 1 && userName.length <= 32;
+
+  // Check if the username follows the pattern:
+  // Starts and ends with a valid character (not a dot).
+  // Can contain alphanumeric characters, underscores, hyphens, and periods in the middle.
+  const isPatternValid = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_]$/.test(
+    userName
+  );
+  return isLengthValid && isPatternValid;
+};
+
+export const isPasswordValid = (password: string): boolean => {
+  const isLengthValid = password.length >= 2;
+  return isLengthValid;
+};
+export const isConfirmPasswordValid = (
+  password: string,
+  confirmPassword: string
+): boolean => {
+  const passwordsMatch = password === confirmPassword;
+  return passwordsMatch;
+};
+
+export const isSshKeyValid = (sshKey: string) => {
+  const isLengthValid = sshKey !== undefined && sshKey.length >= 2;
+  const isPatternValid =
+    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521)) \S+/.test(sshKey);
+  return isLengthValid && isPatternValid;
+};
+
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
   return blueprintDescription.length <= 250;
 };
