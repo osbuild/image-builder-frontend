@@ -10,6 +10,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -18,7 +19,6 @@ import {
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
-  useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
   Distributions,
   GetBlueprintComposesApiArg,

@@ -26,6 +26,7 @@ import {
   MODAL_ANCHOR,
   SEARCH_INPUT,
 } from '../../constants';
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -33,7 +34,6 @@ import {
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
-  useGetBlueprintsQuery,
   ComposesResponseItem,
   ComposeStatus,
   ImageTypes,
