@@ -22,4 +22,9 @@ export default {
       close: () => {},
     };
   },
+  spawn: (args: string[], attributes: object): Promise<string | Uint8Array> => {
+    return new Promise((resolve) => {
+      resolve('');
+    });
+  },
 };

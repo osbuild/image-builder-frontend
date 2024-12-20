@@ -3,7 +3,7 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { imageBuilderApi } from './imageBuilderApi';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
-const errorMessage = (err: any) => {
+export const errorMessage = (err: any) => {
   let msg = err.error.statusText;
   if (
     err.error.data?.errors &&
