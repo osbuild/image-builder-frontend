@@ -14,6 +14,8 @@ import {
   GetArchitecturesApiArg,
   GetBlueprintsApiArg,
   GetBlueprintsApiResponse,
+  DeleteBlueprintApiResponse,
+  DeleteBlueprintApiArg,
   BlueprintItem,
 } from './imageBuilderApi';
 
@@ -45,18 +47,18 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
       >({
         queryFn: async () => {
           try {
-            const path = await getBlueprintsPath();
+            const blueprintsDir = await getBlueprintsPath();
 
             // we probably don't need any more information other
             // than the entries from the directory
-            const info = await fsinfo(path, ['entries'], {
+            const info = await fsinfo(blueprintsDir, ['entries'], {
               superuser: 'try',
             });
 
             const entries = Object.entries(info?.entries || {});
             const blueprints: BlueprintItem[] = await Promise.all(
               entries.map(async ([filename]) => {
-                const file = cockpit.file(`${path}/${filename}`);
+                const file = cockpit.file(path.join(path, filename));
 
                 const contents = await file.read();
                 const parsed = toml.parse(contents);
@@ -89,8 +91,33 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           }
         },
       }),
+      deleteBlueprint: builder.mutation<
+        DeleteBlueprintApiResponse,
+        DeleteBlueprintApiArg
+      >({
+        queryFn: async ({ id: filename }) => {
+          try {
+            const blueprintsDir = await getBlueprintsPath();
+            const filepath = path.join(blueprintsDir, filename);
+
+            await cockpit.spawn(['rm', filepath], {
+              superuser: 'try',
+            });
+
+            return {
+              data: {},
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
     };
   },
 });
 
-export const { useGetBlueprintsQuery, useGetArchitecturesQuery } = cockpitApi;
+export const {
+  useGetBlueprintsQuery,
+  useDeleteBlueprintMutation,
+  useGetArchitecturesQuery,
+} = cockpitApi;
