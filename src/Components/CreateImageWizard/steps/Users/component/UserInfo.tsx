@@ -6,9 +6,11 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { GENERATING_SSH_KEY_PAIRS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  selectUserConfirmPassword,
   selectUserNameByIndex,
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
+  setUserConfirmPasswordByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
@@ -21,6 +23,8 @@ const UserInfo = () => {
   const userName = useAppSelector(userNameSelector);
   const userPasswordSelector = selectUserPasswordByIndex(index);
   const userPassword = useAppSelector(userPasswordSelector);
+  const userConfirmPasswordSelector = selectUserConfirmPassword(index);
+  const userConfirmPassword = useAppSelector(userConfirmPasswordSelector);
   const userSshKeySelector = selectUserSshKeyByIndex(index);
   const userSshKey = useAppSelector(userSshKeySelector);
 
@@ -36,6 +40,15 @@ const UserInfo = () => {
     value: string
   ) => {
     dispatch(setUserPasswordByIndex({ index: index, password: value }));
+  };
+
+  const handleConfirmPasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
+    dispatch(
+      setUserConfirmPasswordByIndex({ index: index, confirmPassword: value })
+    );
   };
 
   const handleSshKeyChange = (
@@ -70,6 +83,16 @@ const UserInfo = () => {
           placeholder="Enter password"
           stepValidation={stepValidation}
           fieldName="userPassword"
+        />
+      </FormGroup>
+      <FormGroup isRequired label="Confirm Password">
+        <HookValidatedInput
+          ariaLabel="blueprint user confirm password"
+          value={userConfirmPassword || ''}
+          onChange={(_e, value) => handleConfirmPasswordChange(_e, value)}
+          placeholder="Confirm Password"
+          stepValidation={stepValidation}
+          fieldName="userConfirmPassword"
         />
       </FormGroup>
       <FormGroup isRequired label="SSH key">
