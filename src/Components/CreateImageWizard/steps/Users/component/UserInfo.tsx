@@ -4,8 +4,10 @@ import { Form, FormGroup } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  selectUserConfirmPassword,
   selectUserNameByIndex,
   selectUserPasswordByIndex,
+  setUserConfirmPasswordByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
 } from '../../../../../store/wizardSlice';
@@ -17,6 +19,8 @@ const UserInfo = () => {
   const userName = useAppSelector(userNameSelector);
   const userPasswordSelector = selectUserPasswordByIndex(index);
   const userPassword = useAppSelector(userPasswordSelector);
+  const userConfirmPasswordSelector = selectUserConfirmPassword(0);
+  const userConfirmPassword = useAppSelector(userConfirmPasswordSelector);
 
   const handleNameChange = (
     _e: React.FormEvent<HTMLInputElement>,
@@ -30,6 +34,16 @@ const UserInfo = () => {
     value: string
   ) => {
     dispatch(setUserPasswordByIndex({ index: index, password: value }));
+  };
+
+  const handleConfirmPasswordChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    value: string
+  ) => {
+    const index = 0;
+    dispatch(
+      setUserConfirmPasswordByIndex({ index: index, confirmPassword: value })
+    );
   };
 
   const stepValidation = {
@@ -57,6 +71,16 @@ const UserInfo = () => {
           placeholder="Enter password"
           stepValidation={stepValidation}
           fieldName="userPassword"
+        />
+      </FormGroup>
+      <FormGroup isRequired label="Cnofrim Password">
+        <HookValidatedInput
+          ariaLabel="blueprint user confirm password"
+          value={userConfirmPassword || ''}
+          onChange={(_e, value) => handleConfirmPasswordChange(_e, value)}
+          placeholder="Enter confirm password"
+          stepValidation={stepValidation}
+          fieldName="userCofirmPassword"
         />
       </FormGroup>
     </Form>
