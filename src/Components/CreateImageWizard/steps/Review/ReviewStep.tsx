@@ -28,6 +28,7 @@ import {
   TargetEnvGCPList,
   TargetEnvOciList,
   TargetEnvOtherList,
+  UsersList,
   TimezoneList,
   LocaleList,
   HostnameList,
@@ -73,6 +74,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandedHostname, setIsExpandedHostname] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
+  const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
   const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
   const isLocaleEnabled = useFlag('image-builder.locale.enabled');
@@ -102,6 +104,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedHostname(isExpandedHostname);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
+  const onToggleUsers = (isExpandedUsers: boolean) =>
+    setIsExpandedUsers(isExpandedUsers);
 
   type RevisitStepButtonProps = {
     ariaLabel: string;
@@ -158,6 +162,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   };
 
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
+  const isUsersEnabled = useFlag('image-builder.users.enabled');
   return (
     <>
       <ExpandableSection
@@ -314,6 +319,21 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
+      {isUsersEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Users',
+            'revisit-users',
+            'wizard-users'
+          )}
+          onToggle={(_event, isExpandedUsers) => onToggleUsers(isExpandedUsers)}
+          isExpanded={isExpandedUsers}
+          isIndented
+          data-testid="users-expandable"
+        >
+          <UsersList />
+        </ExpandableSection>
+      )}
       {isTimezoneEnabled && (
         <ExpandableSection
           toggleContent={composeExpandable(

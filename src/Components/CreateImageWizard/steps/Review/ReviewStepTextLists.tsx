@@ -68,6 +68,9 @@ import {
   selectLanguages,
   selectKeyboard,
   selectHostname,
+  selectUsers,
+  selectUserNameByIndex,
+  selectUserPasswordByIndex,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -769,6 +772,45 @@ export const TimezoneList = () => {
         <TextListItem component={TextListItemVariants.dd}>
           {ntpServers && ntpServers.length > 0 ? ntpServers.join(', ') : 'None'}
         </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const UsersList = () => {
+  const users = useAppSelector(selectUsers);
+
+  const index = 0;
+  const userNameSelector = selectUserNameByIndex(index);
+  const userName = useAppSelector(userNameSelector);
+  const userPasswordSelector = selectUserPasswordByIndex(index);
+  const userPassword = useAppSelector(userPasswordSelector);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        {users.length > 0 && (
+          <>
+            <TextListItem
+              component={TextListItemVariants.dt}
+              className="pf-v5-u-min-width"
+            >
+              User name
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {userName}
+            </TextListItem>
+            <TextListItem
+              component={TextListItemVariants.dt}
+              className="pf-v5-u-min-width"
+            >
+              Passwords
+            </TextListItem>
+            <TextListItem component={TextListItemVariants.dd}>
+              {userPassword}
+            </TextListItem>
+          </>
+        )}
       </TextList>
     </TextContent>
   );
