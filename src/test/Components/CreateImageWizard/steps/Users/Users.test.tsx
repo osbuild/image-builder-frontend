@@ -164,6 +164,38 @@ describe('Step Users', () => {
       });
     });
 
+    test('with valid name, ssh key and checked Administrator checkbox', async () => {
+      const user = userEvent.setup();
+      await renderCreateMode();
+      await goToRegistrationStep();
+      await clickRegisterLater();
+      await goToUsersStep();
+      await addValidUser();
+      const isAdmin = screen.getByRole('checkbox', {
+        name: /administrator/i,
+      });
+      user.click(isAdmin);
+      await goToReviewStep();
+      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+      const expectedRequest = {
+        ...blueprintRequest,
+        customizations: {
+          users: [
+            {
+              name: 'best',
+              ssh_key: 'ssh-rsa d',
+              groups: ['wheel'],
+            },
+          ],
+        },
+      };
+
+      await waitFor(() => {
+        expect(receivedRequest).toEqual(expectedRequest);
+      });
+    });
+
     test('with invalid name', async () => {
       await renderCreateMode();
       await goToRegistrationStep();
