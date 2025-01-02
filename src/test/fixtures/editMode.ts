@@ -447,6 +447,7 @@ export const usersCreateBlueprintRequest: CreateBlueprintRequest = {
     users: [
       {
         name: 'best',
+        ssh_key: 'ssh-rsa d',
       },
     ],
   },

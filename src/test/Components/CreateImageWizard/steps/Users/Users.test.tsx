@@ -56,6 +56,11 @@ const addValidUser = async () => {
   const nextButton = await getNextButton();
   await waitFor(() => user.type(enterUserName, 'best'));
   await waitFor(() => expect(enterUserName).toHaveValue('best'));
+  const enterSshKey = await screen.findByRole('textbox', {
+    name: /public SSH key/i,
+  });
+  await waitFor(() => user.type(enterSshKey, 'ssh-rsa d'));
+  await waitFor(() => expect(enterSshKey).toHaveValue('ssh-rsa d'));
   await waitFor(() => expect(nextButton).toBeEnabled());
 };
 
@@ -111,6 +116,7 @@ describe('Step Users', () => {
           users: [
             {
               name: 'best',
+              ssh_key: 'ssh-rsa d',
             },
           ],
         },
