@@ -46,6 +46,8 @@ export type ComplianceType = 'openscap' | 'compliance';
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
+} & {
+  confirmPassword: string;
 };
 
 type UserPayload = {
@@ -56,6 +58,11 @@ type UserPayload = {
 type UserPasswordPayload = {
   index: number;
   password: string;
+};
+
+type UserConfirmPasswordPayload = {
+  index: number;
+  confirmPassword: string;
 };
 
 export type wizardState = {
@@ -366,6 +373,11 @@ export const selectUserNameByIndex =
 export const selectUserPasswordByIndex =
   (userIndex: number) => (state: RootState) => {
     return state.wizard.users[userIndex]?.password;
+  };
+
+export const selectUserConfirmPassword =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.confirmPassword;
   };
 
 export const selectKernel = (state: RootState) => {
@@ -810,6 +822,13 @@ export const wizardSlice = createSlice({
     ) => {
       state.users[action.payload.index].password = action.payload.password;
     },
+    setUserConfirmPasswordByIndex: (
+      state,
+      action: PayloadAction<UserConfirmPasswordPayload>
+    ) => {
+      state.users[action.payload.index].confirmPassword =
+        action.payload.confirmPassword;
+    },
   },
 });
 
@@ -880,5 +899,6 @@ export const {
   addUser,
   setUserNameByIndex,
   setUserPasswordByIndex,
+  setUserConfirmPasswordByIndex,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
