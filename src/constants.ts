@@ -47,6 +47,8 @@ export const CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL =
   'https://docs.redhat.com/en/documentation/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index';
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
+export const GENERATING_SSH_KEY_PAIRS_URL =
+  'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/assembly_using-secure-communications-between-two-systems-with-openssh_configuring-basic-system-settings#generating-ssh-key-pairs_assembly_using-secure-communications-between-two-systems-with-openssh';
 
 export const RHEL_8 = 'rhel-8';
 export const RHEL_9 = 'rhel-9';

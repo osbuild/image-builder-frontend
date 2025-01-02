@@ -583,6 +583,9 @@ const getUsers = (state: RootState): User[] | undefined => {
     if (user.password !== '') {
       result.password = user.password;
     }
+    if (user.ssh_key !== '') {
+      result.ssh_key = user.ssh_key;
+    }
     return result as User;
   });
 };
