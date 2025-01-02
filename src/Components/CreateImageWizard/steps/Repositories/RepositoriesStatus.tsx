@@ -8,13 +8,13 @@ import {
   DescriptionListGroup,
   DescriptionListTerm,
   Popover,
+  Spinner,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
   ExternalLinkAltIcon,
-  InProgressIcon,
 } from '@patternfly/react-icons';
 
 import { CONTENT_URL } from '../../../../constants';
@@ -139,7 +139,7 @@ const RepositoriesStatus = ({
   } else if (repoStatus === 'Pending') {
     return (
       <>
-        <InProgressIcon className="pending" /> {repoStatus}
+        <Spinner isInline /> {repoStatus}
       </>
     );
   }
