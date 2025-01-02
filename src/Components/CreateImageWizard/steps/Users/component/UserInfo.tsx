@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, FormGroup } from '@patternfly/react-core';
+import { FormGroup } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -38,7 +38,7 @@ const UserInfo = () => {
   };
 
   return (
-    <Form>
+    <>
       <FormGroup isRequired label="Username">
         <HookValidatedInput
           ariaLabel="blueprint user name"
@@ -59,7 +59,7 @@ const UserInfo = () => {
           fieldName="userPassword"
         />
       </FormGroup>
-    </Form>
+    </>
   );
 };
 
