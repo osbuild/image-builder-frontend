@@ -58,6 +58,11 @@ type UserPasswordPayload = {
   password: string;
 };
 
+type UserSshKeyPayload = {
+  index: number;
+  sshKey: string;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -366,6 +371,11 @@ export const selectUserNameByIndex =
 export const selectUserPasswordByIndex =
   (userIndex: number) => (state: RootState) => {
     return state.wizard.users[userIndex]?.password;
+  };
+
+export const selectUserSshKeyByIndex =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.ssh_key;
   };
 
 export const selectKernel = (state: RootState) => {
@@ -810,6 +820,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.users[action.payload.index].password = action.payload.password;
     },
+    setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
+      state.users[action.payload.index].ssh_key = action.payload.sshKey;
+    },
   },
 });
 
@@ -880,5 +893,6 @@ export const {
   addUser,
   setUserNameByIndex,
   setUserPasswordByIndex,
+  setUserSshKeyByIndex,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
