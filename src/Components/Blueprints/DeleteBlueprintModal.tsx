@@ -9,19 +9,19 @@ import {
 
 import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 import {
+  backendApi,
+  useDeleteBlueprintMutation,
+  useGetBlueprintsQuery,
+} from '../../store/backendApi';
+import {
   selectBlueprintSearchInput,
   selectLimit,
   selectOffset,
   selectSelectedBlueprintId,
   setBlueprintId,
 } from '../../store/BlueprintSlice';
-import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import {
-  GetBlueprintsApiArg,
-  useDeleteBlueprintMutation,
-  useGetBlueprintsQuery,
-} from '../../store/imageBuilderApi';
+import { GetBlueprintsApiArg } from '../../store/imageBuilderApi';
 
 interface DeleteBlueprintModalProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -62,7 +62,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
       setShowDeleteModal(false);
       await deleteBlueprint({ id: selectedBlueprintId });
       dispatch(setBlueprintId(undefined));
-      dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
+      dispatch(backendApi.util.invalidateTags([{ type: 'Blueprints' }]));
     }
   };
   const onDeleteClose = () => {

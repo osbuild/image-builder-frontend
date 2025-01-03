@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 
 import { SEARCH_INPUT } from '../../constants';
+import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -19,7 +20,6 @@ import {
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
-  useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
   Distributions,
 } from '../../store/imageBuilderApi';
