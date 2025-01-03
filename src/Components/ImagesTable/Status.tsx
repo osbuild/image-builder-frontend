@@ -11,6 +11,7 @@ import {
   PanelMain,
   Popover,
   Skeleton,
+  Spinner,
   Text,
 } from '@patternfly/react-core';
 import {
@@ -18,7 +19,6 @@ import {
   CopyIcon,
   ExclamationCircleIcon,
   ExclamationTriangleIcon,
-  InProgressIcon,
   OffIcon,
   PendingIcon,
 } from '@patternfly/react-icons';
@@ -225,22 +225,22 @@ const statuses = {
   },
 
   building: {
-    icon: <InProgressIcon className="pending" />,
+    icon: <Spinner isInline />,
     text: 'Image build in progress',
   },
 
   uploading: {
-    icon: <InProgressIcon className="pending" />,
+    icon: <Spinner isInline />,
     text: 'Image upload in progress',
   },
 
   registering: {
-    icon: <InProgressIcon className="pending" />,
+    icon: <Spinner isInline />,
     text: 'Cloud registration in progress',
   },
 
   running: {
-    icon: <InProgressIcon className="pending" />,
+    icon: <Spinner isInline />,
     text: 'Running',
   },
 
