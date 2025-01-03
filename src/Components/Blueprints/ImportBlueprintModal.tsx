@@ -3,6 +3,7 @@ import React from 'react';
 import {
   ActionGroup,
   Button,
+  Checkbox,
   FileUpload,
   Form,
   FormGroup,
@@ -55,6 +56,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isLoading, setIsLoading] = React.useState(false);
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
+  const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
   const dispatch = useAppDispatch();
   const [importRepositories] = useBulkImportRepositoriesMutation();
 
@@ -71,7 +73,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   async function handleRepositoryImport(
     blueprintExportedResponse: BlueprintExportResponse
   ) {
-    if (blueprintExportedResponse.content_sources) {
+    if (isCheckedImportRepos && blueprintExportedResponse.content_sources) {
       const customRepositories: ApiRepositoryRequest[] =
         blueprintExportedResponse.content_sources.map(
           (item) => item as ApiRepositoryRequest
@@ -236,6 +238,17 @@ export const ImportBlueprintModal: React.FunctionComponent<
       ouiaId="import-blueprint-modal"
     >
       <Form>
+        <FormGroup fieldId="checkbox-import-custom-repositories">
+          <Checkbox
+            label="Import missing custom repositories after file upload."
+            isChecked={isCheckedImportRepos}
+            onChange={() => setIsCheckedImportRepos((prev) => !prev)}
+            aria-label="Import Custom Repositories checkbox"
+            id="checkbox-import-custom-repositories"
+            name="Import Repositories"
+            data-testid="checkbox-import-custom-repositories"
+          />
+        </FormGroup>
         <FormGroup fieldId="import-blueprint-file-upload">
           <FileUpload
             id="import-blueprint-file-upload"
