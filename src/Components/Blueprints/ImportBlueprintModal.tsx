@@ -3,6 +3,7 @@ import React from 'react';
 import {
   ActionGroup,
   Button,
+  Checkbox,
   FileUpload,
   Form,
   FormGroup,
@@ -21,9 +22,13 @@ import { parse } from 'toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
+import {
+  ApiRepositoryRequest,
+  useBulkImportRepositoriesMutation,
+} from '../../store/contentSourcesApi';
 import { useAppDispatch } from '../../store/hooks';
 import { BlueprintExportResponse } from '../../store/imageBuilderApi';
-import { wizardState } from '../../store/wizardSlice';
+import { importCustomRepositories, wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
 
@@ -51,7 +56,10 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isLoading, setIsLoading] = React.useState(false);
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
+  const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
   const dispatch = useAppDispatch();
+  const [importRepositories] = useBulkImportRepositoriesMutation();
+
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
     file: File
@@ -61,6 +69,60 @@ export const ImportBlueprintModal: React.FunctionComponent<
     setIsRejected(false);
     setIsInvalidFormat(false);
   };
+
+  async function handleRepositoryImport(
+    blueprintExportedResponse: BlueprintExportResponse
+  ) {
+    if (isCheckedImportRepos && blueprintExportedResponse.content_sources) {
+      const customRepositories: ApiRepositoryRequest[] =
+        blueprintExportedResponse.content_sources.map(
+          (item) => item as ApiRepositoryRequest
+        );
+
+      try {
+        const result = await importRepositories({
+          body: customRepositories,
+        }).unwrap();
+        dispatch(
+          importCustomRepositories(
+            blueprintExportedResponse.customizations.custom_repositories || []
+          )
+        );
+
+        if (Array.isArray(result)) {
+          const importedRepositoryNames: string[] = [];
+          result.forEach((repository) => {
+            if (repository.warnings?.length === 0 && repository.url) {
+              importedRepositoryNames.push(repository.url);
+              return;
+            }
+            dispatch(
+              addNotification({
+                variant: 'warning',
+                title: 'Failed to import custom repositories',
+                description: JSON.stringify(repository.warnings),
+              })
+            );
+          });
+          if (importedRepositoryNames.length !== 0) {
+            dispatch(
+              addNotification({
+                variant: 'info',
+                title: 'Successfully imported custom repositories',
+                description: importedRepositoryNames.join(', '),
+              })
+            );
+          }
+        }
+      } catch {
+        addNotification({
+          variant: 'danger',
+          title: 'Custom repositories import failed',
+        });
+      }
+    }
+  }
+
   React.useEffect(() => {
     if (filename && fileContent) {
       try {
@@ -84,11 +146,16 @@ export const ImportBlueprintModal: React.FunctionComponent<
               distribution: blueprintFromFile.distribution,
               customizations: blueprintFromFile.customizations,
               metadata: blueprintFromFile.metadata,
+              content_sources: blueprintFromFile.content_sources,
             };
             const importBlueprintState = mapExportRequestToState(
               blueprintExportedResponse,
               blueprintFromFile.image_requests || []
             );
+
+            if (blueprintExportedResponse.content_sources) {
+              handleRepositoryImport(blueprintExportedResponse);
+            }
             setIsOnPrem(false);
             setImportedBlueprint(importBlueprintState);
           } catch {
@@ -114,6 +181,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
       }
     }
   }, [filename, fileContent]);
+
   const handleClear = () => {
     setFilename('');
     setFileContent('');
@@ -168,6 +236,17 @@ export const ImportBlueprintModal: React.FunctionComponent<
       ouiaId="import-blueprint-modal"
     >
       <Form>
+        <FormGroup fieldId="checkbox-import-custom-repositories">
+          <Checkbox
+            label="Import missing custom repositories after file upload."
+            isChecked={isCheckedImportRepos}
+            onChange={() => setIsCheckedImportRepos((prev) => !prev)}
+            aria-label="Import Custom Repositories checkbox"
+            id="checkbox-import-custom-repositories"
+            name="Import Repositories"
+            data-testid="checkbox-import-custom-repositories"
+          />
+        </FormGroup>
         <FormGroup fieldId="import-blueprint-file-upload">
           <FileUpload
             id="import-blueprint-file-upload"
