@@ -109,12 +109,12 @@ describe('repository snapshot tab - ', () => {
     vi.clearAllMocks();
   });
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToSnapshotStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/i,
     });
   });
 

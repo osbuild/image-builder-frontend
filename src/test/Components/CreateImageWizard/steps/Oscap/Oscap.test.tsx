@@ -216,13 +216,13 @@ describe('Step OpenSCAP', () => {
     });
   });
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await goToOscapStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/i,
     });
   });
 });

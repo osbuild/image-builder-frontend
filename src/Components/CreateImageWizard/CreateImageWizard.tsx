@@ -114,7 +114,7 @@ export const CustomWizardFooter = ({
           ouiaId="wizard-review-and-finish-btn"
           variant="tertiary"
           onClick={() => {
-            if (!beforeNext || beforeNext()) goToStepById('step-details');
+            if (!beforeNext || beforeNext()) goToStepById('step-review');
           }}
           isDisabled={disableNext}
         >
