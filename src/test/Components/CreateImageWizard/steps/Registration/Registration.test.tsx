@@ -144,12 +144,12 @@ describe('Step Registration', () => {
     await verifyCancelButton(router);
   });
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/i,
     });
   });
 

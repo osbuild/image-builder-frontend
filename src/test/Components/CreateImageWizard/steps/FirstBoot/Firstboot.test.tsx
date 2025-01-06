@@ -123,12 +123,12 @@ describe('First Boot step', () => {
     await screen.findByText('First boot configuration');
   });
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/i,
     });
   });
 

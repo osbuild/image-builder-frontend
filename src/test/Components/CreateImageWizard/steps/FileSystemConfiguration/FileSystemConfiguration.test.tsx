@@ -140,13 +140,13 @@ describe('Step File system configuration', () => {
 
   const user = userEvent.setup();
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/i,
     });
   });
 

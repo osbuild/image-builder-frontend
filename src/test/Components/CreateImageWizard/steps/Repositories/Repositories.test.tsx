@@ -224,12 +224,12 @@ describe('Step Custom repositories', () => {
     await waitFor(() => expect(firstRepoCheckbox.checked).toEqual(false));
   });
 
-  test('clicking Review and finish leads to Details', async () => {
+  test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     await clickReviewAndFinish();
     await screen.findByRole('heading', {
-      name: 'Details',
+      name: /Review/,
     });
   });
 

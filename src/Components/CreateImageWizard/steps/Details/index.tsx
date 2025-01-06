@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import {
   Form,
@@ -14,12 +14,10 @@ import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   changeBlueprintDescription,
   changeBlueprintName,
-  selectArchitecture,
   selectBlueprintDescription,
   selectBlueprintName,
-  selectDistribution,
 } from '../../../../store/wizardSlice';
-import { generateDefaultName } from '../../utilities/generateDefaultName';
+import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { HookValidatedInput } from '../../ValidatedTextInput';
 
@@ -27,17 +25,9 @@ const DetailsStep = () => {
   const dispatch = useAppDispatch();
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
-  const distribution = useAppSelector(selectDistribution);
-  const arch = useAppSelector(selectArchitecture);
 
-  useEffect(() => {
-    if (!blueprintName) {
-      dispatch(changeBlueprintName(generateDefaultName(distribution, arch)));
-    }
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  useGenerateDefaultName();
+
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement>,
     name: string

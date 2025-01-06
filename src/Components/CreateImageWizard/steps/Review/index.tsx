@@ -9,6 +9,7 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '../../../../store/wizardSlice';
+import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ReviewStep = ({
   snapshottingEnabled,
@@ -17,6 +18,8 @@ const ReviewStep = ({
 }) => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
+
+  useGenerateDefaultName();
 
   return (
     <Form>
