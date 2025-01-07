@@ -1,0 +1,23 @@
+upstream_project_url: https://github.com/osbuild/image-builder-frontend
+specfile_path: cockpit/cockpit-image-builder.spec
+upstream_package_name: cockpit-image-builder
+downstream_package_name: cockpit-image-builder
+# use the nicely formatted release description from our upstream release, instead of git shortlog
+copy_upstream_release_description: true
+
+actions:
+  create-archive:
+    - npm ci
+    - make dist
+
+srpm_build_deps:
+  - make
+  - npm
+
+jobs:
+  - job: copr_build
+    trigger: pull_request
+    targets: &build_targets
+      - centos-stream-9
+      - centos-stream-10
+      - fedora-all
