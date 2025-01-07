@@ -64,7 +64,7 @@ const addNtpServerViaKeyDown = async (ntpServer: string) => {
   const ntpServersInput = await screen.findByPlaceholderText(
     /add ntp servers/i
   );
-  await waitFor(() => user.type(ntpServersInput, ntpServer.concat(',')));
+  await waitFor(() => user.type(ntpServersInput, ntpServer.concat(' ')));
 };
 
 const addNtpServerViaAddButton = async (ntpServer: string) => {

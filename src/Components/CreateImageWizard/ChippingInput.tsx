@@ -19,6 +19,7 @@ type ChippingInputProps = {
   ariaLabel: string;
   placeholder: string;
   validator: (value: string) => boolean;
+  requiredList?: string[] | undefined;
   list: string[] | undefined;
   item: string;
   addAction: (value: string) => UnknownAction;
@@ -30,6 +31,7 @@ const ChippingInput = ({
   placeholder,
   validator,
   list,
+  requiredList,
   item,
   addAction,
   removeAction,
@@ -64,7 +66,7 @@ const ChippingInput = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
-    if (e.key === ' ' || e.key === 'Enter' || e.key === ',') {
+    if (e.key === ' ' || e.key === 'Enter') {
       e.preventDefault();
       addItem(value);
     }
@@ -112,7 +114,24 @@ const ChippingInput = ({
           <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
         </HelperText>
       )}
-      <ChipGroup numChips={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
+      {requiredList && requiredList.length > 0 && (
+        <ChipGroup
+          categoryName="Required by OpenSCAP"
+          numChips={20}
+          className="pf-v5-u-mt-sm pf-v5-u-w-100"
+        >
+          {requiredList.map((item) => (
+            <Chip
+              key={item}
+              onClick={() => dispatch(removeAction(item))}
+              isReadOnly
+            >
+              {item}
+            </Chip>
+          ))}
+        </ChipGroup>
+      )}
+      <ChipGroup numChips={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {list?.map((item) => (
           <Chip key={item} onClick={() => dispatch(removeAction(item))}>
             {item}
