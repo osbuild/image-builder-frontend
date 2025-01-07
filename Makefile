@@ -66,7 +66,6 @@ cockpit/download: Makefile
 
 .PHONY: cockpit/build
 cockpit/build: cockpit/download
-	npm ci
 	npm run build:cockpit
 
 .PHONY: cockpit/devel
