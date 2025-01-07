@@ -336,7 +336,7 @@ function commonRequestToState(
     },
     kernel: {
       name: request.customizations.kernel?.name || '',
-      append: request.customizations?.kernel?.append || '',
+      append: request.customizations?.kernel?.append?.split(' ') || [],
     },
     timezone: {
       timezone: request.customizations.timezone?.timezone || '',
@@ -763,13 +763,25 @@ const getPayloadRepositories = (state: RootState) => {
 
 const getKernel = (state: RootState) => {
   const kernel = selectKernel(state);
+  const kernelAppendString = selectKernel(state).append.join(' ');
 
-  if (!kernel.name && !kernel.append) {
+  const kernelRequest = {};
+
+  if (!kernel.name && kernel.append.length === 0) {
     return undefined;
   }
 
-  return {
-    name: selectKernel(state).name || undefined,
-    append: selectKernel(state).append || undefined,
-  };
+  if (kernel.name) {
+    Object.assign(kernelRequest, {
+      name: kernel.name,
+    });
+  }
+
+  if (kernelAppendString !== '') {
+    Object.assign(kernelRequest, {
+      append: kernelAppendString,
+    });
+  }
+
+  return Object.keys(kernelRequest).length > 0 ? kernelRequest : undefined;
 };

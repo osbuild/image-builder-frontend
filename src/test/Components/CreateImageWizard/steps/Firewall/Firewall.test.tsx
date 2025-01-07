@@ -48,7 +48,7 @@ const goToReviewStep = async () => {
 const addPort = async (port: string) => {
   const user = userEvent.setup();
   const portsInput = await screen.findByPlaceholderText(/add port/i);
-  await waitFor(() => user.type(portsInput, port.concat(',')));
+  await waitFor(() => user.type(portsInput, port.concat(' ')));
 };
 
 describe('Step Firewall', () => {

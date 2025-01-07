@@ -124,6 +124,14 @@ export const isKernelNameValid = (kernelName: string) => {
   );
 };
 
+export const isKernelArgumentValid = (arg: string) => {
+  if (!arg) {
+    return true;
+  }
+
+  return /^[a-zA-Z0-9=-_,"']*$/.test(arg);
+};
+
 export const isPortValid = (port: string) => {
   return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?:[a-z]{1,6}$/.test(port);
 };

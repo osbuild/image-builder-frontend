@@ -135,7 +135,7 @@ export type wizardState = {
   };
   kernel: {
     name: string;
-    append: string;
+    append: string[];
   };
   locale: Locale;
   details: {
@@ -213,7 +213,7 @@ export const initialState: wizardState = {
   },
   kernel: {
     name: '',
-    append: '',
+    append: [],
   },
   locale: {
     languages: [],
@@ -817,8 +817,27 @@ export const wizardSlice = createSlice({
     changeKernelName: (state, action: PayloadAction<string>) => {
       state.kernel.name = action.payload;
     },
-    changeKernelAppend: (state, action: PayloadAction<string>) => {
-      state.kernel.append = action.payload;
+    addKernelArg: (state, action: PayloadAction<string>) => {
+      const existingArgIndex = state.kernel.append.findIndex(
+        (arg) => arg === action.payload
+      );
+
+      if (existingArgIndex !== -1) {
+        state.kernel.append[existingArgIndex] = action.payload;
+      } else {
+        state.kernel.append.push(action.payload);
+      }
+    },
+    removeKernelArg: (state, action: PayloadAction<string>) => {
+      if (state.kernel.append.length > 0) {
+        state.kernel.append.splice(
+          state.kernel.append.findIndex((arg) => arg === action.payload),
+          1
+        );
+      }
+    },
+    clearKernelAppend: (state) => {
+      state.kernel.append = [];
     },
     changeTimezone: (state, action: PayloadAction<string>) => {
       state.timezone.timezone = action.payload;
@@ -954,7 +973,9 @@ export const {
   changeMaskedServices,
   changeDisabledServices,
   changeKernelName,
-  changeKernelAppend,
+  addKernelArg,
+  removeKernelArg,
+  clearKernelAppend,
   changeTimezone,
   addNtpServer,
   removeNtpServer,
