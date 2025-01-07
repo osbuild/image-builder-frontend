@@ -63,6 +63,11 @@ type UserSshKeyPayload = {
   sshKey: string;
 };
 
+export type KernelAppendWithAdditionalInfo = {
+  name: string;
+  isRequiredByOpenSCAP: boolean;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -127,7 +132,7 @@ export type wizardState = {
     disabled: string[];
   };
   kernel: {
-    append: string;
+    append: KernelAppendWithAdditionalInfo[];
   };
   locale: Locale;
   details: {
@@ -204,7 +209,7 @@ export const initialState: wizardState = {
     disabled: [],
   },
   kernel: {
-    append: '',
+    append: [],
   },
   locale: {
     languages: [],
@@ -800,8 +805,31 @@ export const wizardSlice = createSlice({
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.disabled = action.payload;
     },
-    changeKernelAppend: (state, action: PayloadAction<string>) => {
-      state.kernel.append = action.payload;
+    addKernelArg: (
+      state,
+      action: PayloadAction<KernelAppendWithAdditionalInfo>
+    ) => {
+      const existingArgIndex = state.kernel.append.findIndex(
+        (arg) => arg.name === action.payload.name
+      );
+
+      if (existingArgIndex !== -1) {
+        state.kernel.append[existingArgIndex] = action.payload;
+      } else {
+        state.kernel.append.push(action.payload);
+      }
+    },
+    removeKernelArg: (
+      state,
+      action: PayloadAction<KernelAppendWithAdditionalInfo['name']>
+    ) => {
+      state.kernel.append.splice(
+        state.kernel.append.findIndex((arg) => arg.name === action.payload),
+        1
+      );
+    },
+    clearKernelAppend: (state) => {
+      state.kernel.append = [];
     },
     changeTimezone: (state, action: PayloadAction<string>) => {
       state.timezone.timezone = action.payload;
@@ -922,7 +950,9 @@ export const {
   changeEnabledServices,
   changeMaskedServices,
   changeDisabledServices,
-  changeKernelAppend,
+  addKernelArg,
+  removeKernelArg,
+  clearKernelAppend,
   changeTimezone,
   addNtpServer,
   removeNtpServer,
