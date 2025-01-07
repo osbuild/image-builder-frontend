@@ -173,9 +173,22 @@ function commonRequestToState(
     (image) => image.image_type === 'azure'
   );
 
-  const snapshot_date =
+  const snapshotDateFromRequest =
     request.image_requests.find((image) => !!image.snapshot_date)
       ?.snapshot_date || '';
+  let snapshot_date = '';
+
+  if (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/.test(
+      snapshotDateFromRequest
+    )
+  ) {
+    snapshot_date = snapshotDateFromRequest;
+  } else if (/^\d{4}-\d{2}-\d{2}$/.test(snapshotDateFromRequest)) {
+    snapshot_date = snapshotDateFromRequest + 'T00:00:00+00:00';
+  } else {
+    snapshot_date = '';
+  }
 
   const awsUploadOptions = aws?.upload_request
     .options as AwsUploadRequestOptions;
