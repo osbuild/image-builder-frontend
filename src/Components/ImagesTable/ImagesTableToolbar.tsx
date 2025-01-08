@@ -10,7 +10,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { SEARCH_INPUT } from '../../constants';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -22,6 +21,7 @@ import {
   useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
   Distributions,
+  GetBlueprintComposesApiArg,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
@@ -48,26 +48,32 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const blueprintSearchInput =
-    useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
+  const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
+  const blueprintVersionFilterAPI = useAppSelector(
+    selectBlueprintVersionFilterAPI
+  );
+
+  const searchParams: GetBlueprintComposesApiArg = {
+    id: selectedBlueprintId as string,
+    limit: perPage,
+    offset: perPage * (page - 1),
+  };
+
+  if (blueprintVersionFilterAPI) {
+    searchParams.blueprintVersion = blueprintVersionFilterAPI;
+  }
 
   const {
     data: blueprintsComposes,
     isFetching: isFetchingBlueprintsCompose,
     isSuccess: isSuccessBlueprintsCompose,
-  } = useGetBlueprintComposesQuery(
-    {
-      id: selectedBlueprintId as string,
-      limit: perPage,
-      offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
-    },
-    { skip: !selectedBlueprintId }
-  );
+  } = useGetBlueprintComposesQuery(searchParams, {
+    skip: !selectedBlueprintId,
+  });
 
   const { selectedBlueprintName, selectedBlueprintVersion } =
     useGetBlueprintsQuery(
-      { search: blueprintSearchInput },
+      { search: blueprintSearchInput as string },
       {
         selectFromResult: ({ data }) => {
           const bp = data?.data?.find(
@@ -80,6 +86,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
         },
       }
     );
+
   const latestImageVersion = blueprintsComposes?.data[0]?.blueprint_version;
 
   const isBlueprintOutSync =
