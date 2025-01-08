@@ -64,6 +64,7 @@ import {
   BlueprintItem,
   ComposesResponseItem,
   ComposeStatus,
+  GetBlueprintComposesApiArg,
   useGetBlueprintComposesQuery,
   useGetComposesQuery,
   useGetComposeStatusQuery,
@@ -82,6 +83,9 @@ const ImagesTable = () => {
   const blueprintSearchInput =
     useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
+  const blueprintVersionFilterAPI = useAppSelector(
+    selectBlueprintVersionFilterAPI
+  );
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
@@ -106,20 +110,24 @@ const ImagesTable = () => {
     setPerPage(perPage);
   };
 
+  const searchParams: GetBlueprintComposesApiArg = {
+    id: selectedBlueprintId as string,
+    limit: perPage,
+    offset: perPage * (page - 1),
+  };
+
+  if (blueprintVersionFilterAPI) {
+    searchParams.blueprintVersion = blueprintVersionFilterAPI;
+  }
+
   const {
     data: blueprintsComposes,
     isSuccess: isBlueprintsSuccess,
     isLoading: isLoadingBlueprintsCompose,
     isError: isBlueprintsError,
-  } = useGetBlueprintComposesQuery(
-    {
-      id: selectedBlueprintId as string,
-      limit: perPage,
-      offset: perPage * (page - 1),
-      blueprintVersion: useAppSelector(selectBlueprintVersionFilterAPI) ?? 1,
-    },
-    { skip: !selectedBlueprintId }
-  );
+  } = useGetBlueprintComposesQuery(searchParams, {
+    skip: !selectedBlueprintId,
+  });
 
   const {
     data: composesData,
