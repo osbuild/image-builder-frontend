@@ -46,8 +46,6 @@ export type ComplianceType = 'openscap' | 'compliance';
 
 export type UserWithAdditionalInfo = {
   [K in keyof User]-?: NonNullable<User[K]>;
-} & {
-  confirmPassword: string;
 };
 
 type UserPayload = {
@@ -63,11 +61,6 @@ type UserPasswordPayload = {
 type UserSshKeyPayload = {
   index: number;
   sshKey: string;
-};
-
-type UserConfirmPasswordPayload = {
-  index: number;
-  confirmPassword: string;
 };
 
 export type wizardState = {
@@ -378,11 +371,6 @@ export const selectUserNameByIndex =
 export const selectUserPasswordByIndex =
   (userIndex: number) => (state: RootState) => {
     return state.wizard.users[userIndex]?.password;
-  };
-
-export const selectUserConfirmPassword =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.confirmPassword;
   };
 
 export const selectUserSshKeyByIndex =
@@ -847,13 +835,6 @@ export const wizardSlice = createSlice({
     ) => {
       state.users[action.payload.index].password = action.payload.password;
     },
-    setUserConfirmPasswordByIndex: (
-      state,
-      action: PayloadAction<UserConfirmPasswordPayload>
-    ) => {
-      state.users[action.payload.index].confirmPassword =
-        action.payload.confirmPassword;
-    },
     setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
       state.users[action.payload.index].ssh_key = action.payload.sshKey;
     },
@@ -929,6 +910,5 @@ export const {
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
-  setUserConfirmPasswordByIndex,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
