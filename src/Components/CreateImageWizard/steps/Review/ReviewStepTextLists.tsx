@@ -70,6 +70,7 @@ import {
   selectHostname,
   selectUserNameByIndex,
   selectUserPasswordByIndex,
+  selectUserSshKeyByIndex,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -784,6 +785,8 @@ export const UsersList = () => {
   const userName = useAppSelector(userNameSelector);
   const userPasswordSelector = selectUserPasswordByIndex(index);
   const userPassword = useAppSelector(userPasswordSelector);
+  const userSshKeySelector = selectUserSshKeyByIndex(index);
+  const userSshKey = useAppSelector(userSshKeySelector);
 
   return (
     <TextContent>
@@ -806,6 +809,15 @@ export const UsersList = () => {
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
             {userPassword ? userPassword : 'None'}
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dt}
+            className="pf-v5-u-min-width"
+          >
+            SSH key
+          </TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>
+            {userSshKey ? userSshKey : 'None'}
           </TextListItem>
         </>
       </TextList>
