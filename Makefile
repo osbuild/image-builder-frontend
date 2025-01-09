@@ -55,7 +55,6 @@ cockpit/devel-uninstall:
 cockpit/devel-install: PREFIX=~/.local
 cockpit/devel-install:
 	PREFIX="~/.local"
-	mkdir -p $(PREFIX)$(INSTALL_DIR)
 	ln -s $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
 
 .PHONY: cockpit/download
