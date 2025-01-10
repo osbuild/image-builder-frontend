@@ -12,7 +12,6 @@ import {
   Tile,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
 import {
@@ -31,6 +30,7 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
