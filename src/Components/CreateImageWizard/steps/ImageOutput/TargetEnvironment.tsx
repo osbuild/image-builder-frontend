@@ -13,11 +13,9 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
+import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import {
-  ImageTypes,
-  useGetArchitecturesQuery,
-} from '../../../../store/imageBuilderApi';
+import { ImageTypes } from '../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../store/provisioningApi';
 import { rhsmApi } from '../../../../store/rhsmApi';
 import {
