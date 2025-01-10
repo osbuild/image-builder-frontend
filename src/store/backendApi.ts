@@ -41,6 +41,10 @@ export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
   ? useCockpitGetOscapProfilesQuery
   : useImageBuilderGetOscapProfilesQuery;
 
+export const useBackendPrefetch = process.env.IS_ON_PREMISE
+  ? cockpitApi.usePrefetch
+  : imageBuilderApi.usePrefetch;
+
 export const backendApi = process.env.IS_ON_PREMISE
   ? cockpitApi
   : imageBuilderApi;
