@@ -19,6 +19,8 @@ import {
   DeleteBlueprintApiResponse,
   DeleteBlueprintApiArg,
   BlueprintItem,
+  GetBlueprintApiResponse,
+  GetBlueprintApiArg,
 } from './imageBuilderApi';
 
 import { mapOnPremToHosted } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
@@ -90,6 +92,34 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
               },
             ],
           };
+        },
+      }),
+      getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
+        queryFn: async ({ id, version }) => {
+          try {
+            const blueprintsDir = await getBlueprintsPath();
+            const file = cockpit.file(path.join(blueprintsDir, id));
+
+            const contents = await file.read();
+            const parsed = toml.parse(contents);
+            file.close();
+
+            const blueprint = mapOnPremToHosted(parsed);
+
+            return {
+              data: {
+                ...blueprint,
+                id,
+                version,
+                last_modified_at: Date.now().toString(),
+                // TODO: get image requests. Will probably need
+                // to query cloudapi on composer socket.
+                image_requests: [],
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
       getBlueprints: builder.query<
@@ -197,7 +227,9 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
 });
 
 export const {
-  useGetBlueprintsQuery,
-  useDeleteBlueprintMutation,
   useGetArchitecturesQuery,
+  useGetBlueprintQuery,
+  useGetBlueprintsQuery,
+  useLazyGetBlueprintsQuery,
+  useDeleteBlueprintMutation,
 } = cockpitApi;
