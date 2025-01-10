@@ -4,6 +4,7 @@ import {
   useGetBlueprintsQuery as useCockpitGetBlueprintsQuery,
   useLazyGetBlueprintsQuery as useCockpitLazyGetBlueprintsQuery,
   useDeleteBlueprintMutation as useCockpitDeleteMutation,
+  useGetOscapProfilesQuery as useCockpitGetOscapProfilesQuery,
 } from './cockpitApi';
 import { cockpitApi } from './enhancedCockpitApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
@@ -35,6 +36,10 @@ export const useLazyGetBlueprintsQuery = process.env.IS_ON_PREMISE
 export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
   ? useCockpitDeleteMutation
   : useImageBuilderDeleteMutation;
+
+export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
+  ? useCockpitGetOscapProfilesQuery
+  : useImageBuilderGetOscapProfilesQuery;
 
 export const backendApi = process.env.IS_ON_PREMISE
   ? cockpitApi
