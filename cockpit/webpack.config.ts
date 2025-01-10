@@ -27,6 +27,9 @@ module.exports = {
   mode,
   devtool,
   plugins,
+  devServer: {
+    historyApiFallback: true, // Ensures all routes are served with `index.html`
+  },
   resolve: {
     fallback: {
       path: require.resolve('path-browserify'),
