@@ -17,7 +17,7 @@ import {
   COMPLIANCE_PROD_URL,
   COMPLIANCE_STAGE_URL,
 } from '../../../../constants';
-import { imageBuilderApi } from '../../../../store/enhancedImageBuilderApi';
+import { useBackendPrefetch } from '../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
 import {
@@ -44,10 +44,7 @@ const OscapStep = () => {
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
-  const prefetchOscapProfile = imageBuilderApi.usePrefetch(
-    'getOscapProfiles',
-    {}
-  );
+  const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const { isProd } = useGetEnvironment();
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
