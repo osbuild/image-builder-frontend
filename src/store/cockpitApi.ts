@@ -39,9 +39,58 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        query: (queryArg) => ({
-          url: `/architectures/${queryArg.distribution}`,
-        }),
+        queryFn: () => {
+          // TODO: this is hardcoded for now, but we may need to query
+          // the cloudapi endpoint on the composer socket to get the
+          // available information
+          return {
+            data: [
+              {
+                arch: 'aarch64',
+                image_types: ['aws', 'guest-image', 'image-installer'],
+                repositories: [
+                  {
+                    baseurl:
+                      'https://cdn.redhat.com/content/dist/rhel9/9/aarch64/baseos/os',
+                    rhsm: true,
+                  },
+                  {
+                    baseurl:
+                      'https://cdn.redhat.com/content/dist/rhel9/9/aarch64/appstream/os',
+                    rhsm: true,
+                  },
+                ],
+              },
+              {
+                arch: 'x86_64',
+                image_types: [
+                  'aws',
+                  'gcp',
+                  'azure',
+                  'rhel-edge-commit',
+                  'rhel-edge-installer',
+                  'edge-commit',
+                  'edge-installer',
+                  'guest-image',
+                  'image-installer',
+                  'vsphere',
+                ],
+                repositories: [
+                  {
+                    baseurl:
+                      'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/baseos/os',
+                    rhsm: true,
+                  },
+                  {
+                    baseurl:
+                      'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/appstream/os',
+                    rhsm: true,
+                  },
+                ],
+              },
+            ],
+          };
+        },
       }),
       getBlueprints: builder.query<
         GetBlueprintsApiResponse,

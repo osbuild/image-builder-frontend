@@ -14,11 +14,9 @@ import {
 import { HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
 
+import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import {
-  ImageTypes,
-  useGetArchitecturesQuery,
-} from '../../../../store/imageBuilderApi';
+import { ImageTypes } from '../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../store/provisioningApi';
 import { rhsmApi } from '../../../../store/rhsmApi';
 import {
