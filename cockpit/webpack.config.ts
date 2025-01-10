@@ -28,6 +28,9 @@ module.exports = {
   devtool,
   plugins,
   resolve: {
+    fallback: {
+      path: require.resolve('path-browserify'),
+    },
     modules: [
       'node_modules',
       // this tells webpack to check `node_modules`
