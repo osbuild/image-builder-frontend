@@ -39,9 +39,36 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        query: (queryArg) => ({
-          url: `/architectures/${queryArg.distribution}`,
-        }),
+        queryFn: () => {
+          // TODO: this is hardcoded for now, but we may need to query
+          // the cloudapi endpoint on the composer socket to get the
+          // available information
+          return {
+            data: [
+              {
+                arch: 'aarch64',
+                image_types: ['aws', 'guest-image', 'image-installer'],
+                repositories: [],
+              },
+              {
+                arch: 'x86_64',
+                image_types: [
+                  'aws',
+                  'gcp',
+                  'azure',
+                  'rhel-edge-commit',
+                  'rhel-edge-installer',
+                  'edge-commit',
+                  'edge-installer',
+                  'guest-image',
+                  'image-installer',
+                  'vsphere',
+                ],
+                repositories: [],
+              },
+            ],
+          };
+        },
       }),
       getBlueprints: builder.query<
         GetBlueprintsApiResponse,
