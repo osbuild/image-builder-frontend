@@ -19,6 +19,8 @@ import {
   DeleteBlueprintApiResponse,
   DeleteBlueprintApiArg,
   BlueprintItem,
+  GetOscapProfilesApiArg,
+  GetOscapProfilesApiResponse,
   GetBlueprintApiResponse,
   GetBlueprintApiArg,
 } from './imageBuilderApi';
@@ -198,6 +200,19 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           }
         },
       }),
+      getOscapProfiles: builder.query<
+        GetOscapProfilesApiResponse,
+        GetOscapProfilesApiArg
+      >({
+        queryFn: async () => {
+          // TODO: make a call to get the openscap profiles
+          // For now, just return an empty list so we can
+          // step through the wizard.
+          return {
+            data: [],
+          };
+        },
+      }),
     };
   },
 });
@@ -208,4 +223,5 @@ export const {
   useGetBlueprintsQuery,
   useLazyGetBlueprintsQuery,
   useDeleteBlueprintMutation,
+  useGetOscapProfilesQuery,
 } = cockpitApi;
