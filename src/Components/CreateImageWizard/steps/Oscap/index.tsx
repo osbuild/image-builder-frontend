@@ -9,7 +9,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { Oscap, removeBetaFromRelease } from './Oscap';
 
@@ -35,7 +34,10 @@ import {
   selectComplianceType,
   clearKernelAppend,
 } from '../../../../store/wizardSlice';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import {
+  useFlag,
+  useGetEnvironment,
+} from '../../../../Utilities/useGetEnvironment';
 
 const OscapStep = () => {
   const dispatch = useAppDispatch();
