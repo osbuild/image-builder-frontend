@@ -16,7 +16,7 @@ import {
   setUserAdministratorByIndex,
 } from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
-import { HookValidatedInput } from '../../../ValidatedTextInput';
+import { HookValidatedInput } from '../../../ValidatedInput';
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const index = 0;
@@ -30,21 +30,21 @@ const UserInfo = () => {
   const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
 
   const handleNameChange = (
-    _e: React.FormEvent<HTMLInputElement>,
+    _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     value: string
   ) => {
     dispatch(setUserNameByIndex({ index: index, name: value }));
   };
 
   const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement>,
+    _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     value: string
   ) => {
     dispatch(setUserPasswordByIndex({ index: index, password: value }));
   };
 
   const handleSshKeyChange = (
-    _event: React.FormEvent<HTMLInputElement>,
+    _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     value: string
   ) => {
     dispatch(setUserSshKeyByIndex({ index: index, sshKey: value }));
@@ -85,6 +85,7 @@ const UserInfo = () => {
       </FormGroup>
       <FormGroup isRequired label="SSH key">
         <HookValidatedInput
+          inputType={'textArea'}
           ariaLabel="public SSH key"
           value={userSshKey || ''}
           type={'text'}
