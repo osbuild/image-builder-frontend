@@ -47,8 +47,10 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetBlueprintsApiResponse,
         GetBlueprintsApiArg
       >({
-        queryFn: async () => {
+        queryFn: async (queryArgs) => {
           try {
+            const { name, search } = queryArgs;
+
             const blueprintsDir = await getBlueprintsPath();
 
             // we probably don't need any more information other
@@ -58,7 +60,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
             });
 
             const entries = Object.entries(info?.entries || {});
-            const blueprints: BlueprintItem[] = await Promise.all(
+            let blueprints: BlueprintItem[] = await Promise.all(
               entries.map(async ([filename]) => {
                 const file = cockpit.file(path.join(blueprintsDir, filename));
 
@@ -76,6 +78,19 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                 };
               })
             );
+
+            blueprints = blueprints.filter((blueprint) => {
+              if (name) {
+                return blueprint.name === name;
+              }
+
+              if (search) {
+                // TODO: maybe add other params to the search filter
+                return blueprint.name.includes(search);
+              }
+
+              return true;
+            });
 
             return {
               data: {
