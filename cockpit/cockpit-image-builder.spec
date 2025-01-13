@@ -33,6 +33,8 @@ the cloud. It integrates into Cockpit as a frontend for osbuild.
 %make_install PREFIX=/usr
 # drop source maps, they are large and just for debugging
 find %{buildroot}%{_datadir}/cockpit/ -name '*.map' | xargs --no-run-if-empty rm --verbose
+
+%check
 appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 
 %files
