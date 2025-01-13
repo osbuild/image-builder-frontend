@@ -42,3 +42,10 @@ appstream-util validate-relax --nonet %{buildroot}/%{_datadir}/metainfo/*
 %license LICENSE
 %{_datadir}/cockpit/cockpit-image-builder
 %{_datadir}/metainfo/*
+
+%changelog
+# the changelog is distribution-specific, therefore there's just one entry
+# to make rpmlint happy.
+
+* Mon Jan 13 2025 Image Builder team <osbuilders@redhat.com> - 0-1
+- The changelog was added to the rpm spec file.
