@@ -49,7 +49,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
       >({
         queryFn: async (queryArgs) => {
           try {
-            const { name, search } = queryArgs;
+            const { name, search, offset, limit } = queryArgs;
 
             const blueprintsDir = await getBlueprintsPath();
 
@@ -92,6 +92,11 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
               return true;
             });
 
+            let paginatedBlueprints = blueprints;
+            if (offset !== undefined && limit !== undefined) {
+              paginatedBlueprints = blueprints.slice(offset, offset + limit);
+            }
+
             let first = '';
             let last = '';
 
@@ -109,7 +114,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                   first: first,
                   last: last,
                 },
-                data: blueprints,
+                data: paginatedBlueprints,
               },
             };
           } catch (error) {
