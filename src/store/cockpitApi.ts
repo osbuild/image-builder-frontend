@@ -73,7 +73,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                 return {
                   ...blueprint,
                   id: filename as string,
-                  version: Math.floor(version),
+                  version: version,
                   last_modified_at: Date.now().toString(),
                 };
               })
