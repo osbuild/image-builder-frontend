@@ -92,13 +92,22 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
               return true;
             });
 
+            let first = '';
+            let last = '';
+
+            if (blueprints.length > 0) {
+              first = blueprints[0].id;
+              last = blueprints[blueprints.length - 1].id;
+            }
+
             return {
               data: {
                 meta: { count: blueprints.length },
                 links: {
-                  // TODO: figure out the pagination
-                  first: '',
-                  last: '',
+                  // These are kind of meaningless for the on-prem
+                  // version
+                  first: first,
+                  last: last,
                 },
                 data: blueprints,
               },
