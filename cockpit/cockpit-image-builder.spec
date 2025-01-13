@@ -3,7 +3,7 @@ Version:        1
 Release:        1%{?dist}
 Summary:        image builder frontend for use with Cockpit
 
-License:        Apache
+License:        Apache-2.0
 URL:            http://osbuild.org/
 Source0:        %{name}-%{version}.tar.gz
 
