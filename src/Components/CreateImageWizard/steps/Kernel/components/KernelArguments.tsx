@@ -14,9 +14,12 @@ import {
 import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilderApi';
 import {
   addKernelArg,
   removeKernelArg,
+  selectComplianceProfileID,
+  selectDistribution,
   selectKernel,
 } from '../../../../../store/wizardSlice';
 import { isKernelArgumentValid } from '../../../validators';
@@ -25,8 +28,29 @@ const KernelArguments = () => {
   const dispatch = useAppDispatch();
   const kernelAppend = useAppSelector(selectKernel).append;
 
+  const release = useAppSelector(selectDistribution);
+  const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const { data: oscapProfileInfo } = useGetOscapCustomizationsQuery(
+    {
+      distribution: release,
+      // @ts-ignore if complianceProfileID is undefined the query is going to get skipped, so it's safe here to ignore the linter here
+      profile: complianceProfileID,
+    },
+    {
+      skip: !complianceProfileID,
+    }
+  );
+
   const [inputValue, setInputValue] = useState('');
   const [errorText, setErrorText] = useState('');
+
+  const requiredByOpenSCAP = kernelAppend.filter((arg) =>
+    oscapProfileInfo?.kernel?.append?.split(' ').includes(arg.name)
+  );
+  const notRequiredByOpenSCAP = kernelAppend.filter(
+    (arg) => !oscapProfileInfo?.kernel?.append?.split(' ').includes(arg.name)
+  );
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -43,7 +67,7 @@ const KernelArguments = () => {
         isKernelArgumentValid(value) &&
         !kernelAppend.some((arg) => arg.name === value)
       ) {
-        dispatch(addKernelArg({ name: value, isRequiredByOpenSCAP: false }));
+        dispatch(addKernelArg({ name: value }));
         setInputValue('');
         setErrorText('');
       }
@@ -59,7 +83,7 @@ const KernelArguments = () => {
   };
 
   const handleAddItem = (e: React.MouseEvent, value: string) => {
-    dispatch(addKernelArg({ name: value, isRequiredByOpenSCAP: false }));
+    dispatch(addKernelArg({ name: value }));
     setInputValue('');
   };
   return (
@@ -95,36 +119,31 @@ const KernelArguments = () => {
           <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
         </HelperText>
       )}
-      {kernelAppend.some((arg) => arg.isRequiredByOpenSCAP) && (
-        <ChipGroup
-          categoryName="Required by OpenSCAP"
-          numChips={20}
-          className="pf-v5-u-mt-sm pf-v5-u-w-100"
-        >
-          {kernelAppend
-            .filter((arg) => arg.isRequiredByOpenSCAP)
-            .map((arg) => (
-              <Chip
-                key={arg.name}
-                onClick={() => dispatch(removeKernelArg(arg.name))}
-                isReadOnly
-              >
-                {arg.name}
-              </Chip>
-            ))}
-        </ChipGroup>
-      )}
+      <ChipGroup
+        categoryName="Required by OpenSCAP"
+        numChips={20}
+        className="pf-v5-u-mt-sm pf-v5-u-w-100"
+      >
+        {requiredByOpenSCAP.map((arg) => (
+          <Chip
+            key={arg.name}
+            onClick={() => dispatch(removeKernelArg(arg.name))}
+            isReadOnly
+          >
+            {arg.name}
+          </Chip>
+        ))}
+      </ChipGroup>
+
       <ChipGroup numChips={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
-        {kernelAppend
-          .filter((arg) => !arg.isRequiredByOpenSCAP)
-          .map((arg) => (
-            <Chip
-              key={arg.name}
-              onClick={() => dispatch(removeKernelArg(arg.name))}
-            >
-              {arg.name}
-            </Chip>
-          ))}
+        {notRequiredByOpenSCAP.map((arg) => (
+          <Chip
+            key={arg.name}
+            onClick={() => dispatch(removeKernelArg(arg.name))}
+          >
+            {arg.name}
+          </Chip>
+        ))}
       </ChipGroup>
     </FormGroup>
   );

@@ -63,9 +63,8 @@ type UserSshKeyPayload = {
   sshKey: string;
 };
 
-export type KernelAppendWithAdditionalInfo = {
+export type KernelArgument = {
   name: string;
-  isRequiredByOpenSCAP: boolean;
 };
 
 export type wizardState = {
@@ -132,7 +131,7 @@ export type wizardState = {
     disabled: string[];
   };
   kernel: {
-    append: KernelAppendWithAdditionalInfo[];
+    append: KernelArgument[];
   };
   locale: Locale;
   details: {
@@ -805,10 +804,7 @@ export const wizardSlice = createSlice({
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.disabled = action.payload;
     },
-    addKernelArg: (
-      state,
-      action: PayloadAction<KernelAppendWithAdditionalInfo>
-    ) => {
+    addKernelArg: (state, action: PayloadAction<KernelArgument>) => {
       const existingArgIndex = state.kernel.append.findIndex(
         (arg) => arg.name === action.payload.name
       );
@@ -819,10 +815,7 @@ export const wizardSlice = createSlice({
         state.kernel.append.push(action.payload);
       }
     },
-    removeKernelArg: (
-      state,
-      action: PayloadAction<KernelAppendWithAdditionalInfo['name']>
-    ) => {
+    removeKernelArg: (state, action: PayloadAction<KernelArgument['name']>) => {
       state.kernel.append.splice(
         state.kernel.append.findIndex((arg) => arg.name === action.payload),
         1

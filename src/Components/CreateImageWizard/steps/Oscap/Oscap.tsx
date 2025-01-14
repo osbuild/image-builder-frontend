@@ -238,7 +238,6 @@ const ProfileSelector = () => {
         dispatch(
           addKernelArg({
             name: kernelArgsArray[arg],
-            isRequiredByOpenSCAP: true,
           })
         );
       }

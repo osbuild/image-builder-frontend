@@ -321,7 +321,7 @@ function commonRequestToState(
       append:
         request.customizations?.kernel?.append
           ?.split(' ')
-          .map((arg) => ({ name: arg, isRequiredByOpenSCAP: false })) || [],
+          .map((arg) => ({ name: arg })) || [],
     },
     timezone: {
       timezone: request.customizations.timezone?.timezone || '',
