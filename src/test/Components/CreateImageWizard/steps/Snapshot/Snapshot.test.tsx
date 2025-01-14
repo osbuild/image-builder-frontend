@@ -42,6 +42,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Locale
   await clickNext(); // Hostname
   await clickNext(); // Kernel
+  await clickNext(); // Firewall
   await clickNext(); // First boot script
   await enterBlueprintName();
   await clickNext(); // Review

@@ -15,6 +15,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
 import { FileSystemContext } from './steps/FileSystem/FileSystemTable';
+import FirewallStep from './steps/Firewall';
 import FirstBootStep from './steps/FirstBoot';
 import HostnameStep from './steps/Hostname';
 import ImageOutputStep from './steps/ImageOutput';
@@ -142,6 +143,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isLocaleEnabled = useFlag('image-builder.locale.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
+  const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
 
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
@@ -228,7 +230,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 20;
+    startIndex = 21;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -518,11 +520,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Firewall"
                 id="wizard-firewall"
                 key="wizard-firewall"
-                isHidden={true}
+                navItem={customStatusNavItem}
+                isHidden={!isFirewallEnabled}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
-              ></WizardStep>,
+              >
+                <FirewallStep />
+              </WizardStep>,
               <WizardStep
                 name="First boot script configuration"
                 id="wizard-first-boot"

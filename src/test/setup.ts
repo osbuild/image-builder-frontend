@@ -73,6 +73,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.kernel.enabled':
         return true;
+      case 'image-builder.firewall.enabled':
+        return true;
       case 'edgeParity.image-list':
         return true;
       case 'image-builder.edge.local-image-table':
