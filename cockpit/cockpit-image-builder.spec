@@ -20,8 +20,9 @@ Requires:       cockpit
 Requires:       osbuild-composer >= 103
 
 %description
-The image-builder-frontend generates custom images suitable for deploying systems or uploading to
-the cloud. It integrates into Cockpit as a frontend for osbuild.
+The image-builder-frontend generates custom images suitable for
+deploying systems or uploading to the cloud. It integrates into Cockpit
+as a frontend for osbuild.
 
 %prep
 %setup -q -n %{name}
