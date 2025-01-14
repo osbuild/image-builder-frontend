@@ -1,7 +1,7 @@
 Name:           cockpit-image-builder
 Version:        1
 Release:        1%{?dist}
-Summary:        image builder frontend for use with Cockpit
+Summary:        Image builder plugin for Cockpit
 
 License:        Apache-2.0
 URL:            http://osbuild.org/
