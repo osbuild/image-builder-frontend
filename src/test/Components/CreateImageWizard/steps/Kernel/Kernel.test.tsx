@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT } from '../../../../../constants';
@@ -140,6 +140,13 @@ const selectProfile = async () => {
   await waitFor(() => user.click(cis1Profile));
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('kernel-expandable');
+  const revisitButton = await within(expandable).findByTestId('revisit-kernel');
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Kernel', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -218,6 +225,15 @@ describe('Step Kernel', () => {
     expect(
       screen.queryByRole('button', { name: /close audit=1/i })
     ).not.toBeInTheDocument();
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+    await selectKernelName('kernel');
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Kernel/ });
   });
 });
 
@@ -333,5 +349,4 @@ describe('Kernel request generated correctly', () => {
   });
 });
 
-// TO DO 'Kernel step' -> 'revisit step button on Review works'
 // TO DO 'Kernel edit mode'
