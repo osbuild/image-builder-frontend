@@ -57,35 +57,44 @@ const KernelArguments = () => {
     value: string
   ) => {
     setInputValue(value);
+    setErrorText('');
+  };
+
+  const addArgument = (value: string) => {
+    if (
+      isKernelArgumentValid(value) &&
+      !kernelAppend.some((arg) => arg.name === value)
+    ) {
+      dispatch(addKernelArg({ name: value }));
+      setInputValue('');
+      setErrorText('');
+    }
+
+    if (kernelAppend.some((arg) => arg.name === value)) {
+      setErrorText(`Kernel argument already exists.`);
+    }
+
+    if (!isKernelArgumentValid(value)) {
+      setErrorText('Invalid format.');
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-
-      if (
-        isKernelArgumentValid(value) &&
-        !kernelAppend.some((arg) => arg.name === value)
-      ) {
-        dispatch(addKernelArg({ name: value }));
-        setInputValue('');
-        setErrorText('');
-      }
-
-      if (kernelAppend.some((arg) => arg.name === value)) {
-        setErrorText(`Kernel argument already exists.`);
-      }
-
-      if (!isKernelArgumentValid(value)) {
-        setErrorText('Invalid format.');
-      }
+      addArgument(value);
     }
   };
 
   const handleAddItem = (e: React.MouseEvent, value: string) => {
-    dispatch(addKernelArg({ name: value }));
-    setInputValue('');
+    addArgument(value);
   };
+
+  const handleClear = () => {
+    setInputValue('');
+    setErrorText('');
+  };
+
   return (
     <FormGroup isRequired={false} label="Append">
       <TextInputGroup>
@@ -106,7 +115,7 @@ const KernelArguments = () => {
           </Button>
           <Button
             variant="plain"
-            onClick={() => setInputValue('')}
+            onClick={handleClear}
             isDisabled={!inputValue}
             aria-label="Clear input"
           >
