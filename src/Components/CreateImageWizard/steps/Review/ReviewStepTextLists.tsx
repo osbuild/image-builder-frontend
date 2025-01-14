@@ -12,6 +12,8 @@ import {
   TextListItemVariants,
   TextVariants,
   FormGroup,
+  CodeBlock,
+  CodeBlockCode,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
@@ -72,6 +74,7 @@ import {
   selectUserNameByIndex,
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
+  selectKernel,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -871,6 +874,39 @@ export const HostnameList = () => {
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {hostname ? hostname : 'None'}
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const KernelList = () => {
+  const kernel = useAppSelector(selectKernel);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Name
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {kernel.name ? kernel.name : 'None'}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Append
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {kernel.append.length > 0 ? kernel.append.join(' ') : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
         </TextListItem>
       </TextList>
     </TextContent>
