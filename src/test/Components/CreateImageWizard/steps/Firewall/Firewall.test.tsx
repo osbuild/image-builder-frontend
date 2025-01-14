@@ -11,7 +11,7 @@ import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
-const goToKernelStep = async () => {
+const goToFirewallStep = async () => {
   const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
@@ -29,37 +29,38 @@ const goToKernelStep = async () => {
   await clickNext(); // Locale
   await clickNext(); // Hostname
   await clickNext(); // Kernel
+  await clickNext(); // Firewall
 };
 
-describe('Step Kernel', () => {
+describe('Step Firewall', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     router = undefined;
   });
 
-  test('clicking Next loads Firewall', async () => {
+  test('clicking Next loads First boot', async () => {
     await renderCreateMode();
-    await goToKernelStep();
+    await goToFirewallStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Firewall',
+      name: 'First boot configuration',
     });
   });
 
-  test('clicking Back loads Hostname', async () => {
+  test('clicking Back loads Kernel', async () => {
     await renderCreateMode();
-    await goToKernelStep();
+    await goToFirewallStep();
     await clickBack();
-    await screen.findByRole('heading', { name: 'Hostname' });
+    await screen.findByRole('heading', { name: 'Kernel' });
   });
 
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
-    await goToKernelStep();
+    await goToFirewallStep();
     await verifyCancelButton(router);
   });
 });
 
-// TO DO 'Kernel step' -> 'revisit step button on Review works'
-// TO DO 'Kernel request generated correctly'
-// TO DO 'Kernel edit mode'
+// TO DO Step Firewall -> revisit step button on Review works
+// TO DO Firewall request generated correctly
+// TO DO Firewall edit mode
