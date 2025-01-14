@@ -79,7 +79,7 @@ export const HookValidatedInput = ({
           </HelperTextItem>
         </HelperText>
       )}
-      {warning !== undefined && (
+      {warning !== undefined && warning !== '' && (
         <HelperText>
           <HelperTextItem variant="warning" hasIcon>
             {warning}
