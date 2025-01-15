@@ -136,6 +136,9 @@ export type wizardState = {
   };
   timezone: Timezone;
   hostname: string;
+  firewall: {
+    ports: string[];
+  };
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -216,6 +219,9 @@ export const initialState: wizardState = {
     ntpservers: [],
   },
   hostname: '',
+  firewall: {
+    ports: [],
+  },
   firstBoot: { script: '' },
   users: [],
 };
@@ -416,6 +422,10 @@ export const selectNtpServers = (state: RootState) => {
 
 export const selectHostname = (state: RootState) => {
   return state.wizard.hostname;
+};
+
+export const selectPorts = (state: RootState) => {
+  return state.wizard.firewall.ports;
 };
 
 export const wizardSlice = createSlice({
@@ -838,6 +848,17 @@ export const wizardSlice = createSlice({
     setUserSshKeyByIndex: (state, action: PayloadAction<UserSshKeyPayload>) => {
       state.users[action.payload.index].ssh_key = action.payload.sshKey;
     },
+    addPort: (state, action: PayloadAction<string>) => {
+      if (!state.firewall.ports.some((port) => port === action.payload)) {
+        state.firewall.ports.push(action.payload);
+      }
+    },
+    removePort: (state, action: PayloadAction<string>) => {
+      state.firewall.ports.splice(
+        state.firewall.ports.findIndex((port) => port === action.payload),
+        1
+      );
+    },
   },
 });
 
@@ -906,6 +927,8 @@ export const {
   addNtpServer,
   removeNtpServer,
   changeHostname,
+  addPort,
+  removePort,
   addUser,
   setUserNameByIndex,
   setUserPasswordByIndex,
