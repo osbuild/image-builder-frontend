@@ -83,6 +83,7 @@ import {
   selectHostname,
   selectUsers,
   selectMetadata,
+  selectPorts,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -323,6 +324,9 @@ function commonRequestToState(
       ntpservers: request.customizations.timezone?.ntpservers || [],
     },
     hostname: request.customizations.hostname || '',
+    firewall: {
+      ports: request.customizations.firewall?.ports || [],
+    },
   };
 }
 
@@ -523,7 +527,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     groups: undefined,
     timezone: getTimezone(state),
     locale: getLocale(state),
-    firewall: undefined,
+    firewall: getFirewall(state),
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
@@ -685,6 +689,18 @@ const getLocale = (state: RootState) => {
     return {
       languages: languages && languages.length > 0 ? languages : undefined,
       keyboard: keyboard ? keyboard : undefined,
+    };
+  }
+};
+
+const getFirewall = (state: RootState) => {
+  const ports = selectPorts(state);
+
+  if (ports.length === 0) {
+    return undefined;
+  } else {
+    return {
+      ports: ports,
     };
   }
 };
