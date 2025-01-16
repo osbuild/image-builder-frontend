@@ -13,6 +13,8 @@ globals:
   render: 'readonly'
   mount: 'readonly'
 parser: "@typescript-eslint/parser"
+parserOptions:
+  project: ["tsconfig.json"]
 plugins:
   - import
 rules:
@@ -49,6 +51,7 @@ rules:
       ts-check: true
       minimumDescriptionLength: 5
   "@typescript-eslint/ban-types": off
+  "@typescript-eslint/no-unnecessary-condition": warn
   # Temporarily disabled
   jsx-a11y/no-autofocus: off
   rulesdir/forbid-pf-relative-imports: off
