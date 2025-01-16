@@ -9,28 +9,19 @@ export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
 };
 
 export const isAzureTenantGUIDValid = (azureTenantGUID: string) => {
-  return (
-    azureTenantGUID !== undefined &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      azureTenantGUID
-    )
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    azureTenantGUID
   );
 };
 
 export const isAzureSubscriptionIdValid = (azureSubscriptionId: string) => {
-  return (
-    azureSubscriptionId !== undefined &&
-    /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-      azureSubscriptionId
-    )
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    azureSubscriptionId
   );
 };
 
 export const isAzureResourceGroupValid = (azureResourceGroup: string) => {
-  return (
-    azureResourceGroup !== undefined &&
-    /^[-\w._()]+[-\w_()]$/.test(azureResourceGroup)
-  );
+  return /^[-\w._()]+[-\w_()]$/.test(azureResourceGroup);
 };
 
 export const isGcpEmailValid = (gcpShareWithAccount: string | undefined) => {
@@ -46,7 +37,6 @@ export const isMountpointMinSizeValid = (minSize: string) => {
 };
 
 export const isBlueprintNameValid = (blueprintName: string) =>
-  blueprintName !== undefined &&
   blueprintName.length >= 2 &&
   blueprintName.length <= 100 &&
   /\w+/.test(blueprintName);
@@ -85,10 +75,7 @@ export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
 };
 
 export const isNtpServerValid = (ntpServer: string) => {
-  return (
-    ntpServer !== undefined &&
-    /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer)
-  );
+  return /^([a-z0-9-]+)?(([.:/]{1,3}[a-z0-9-]+)){1,}$/.test(ntpServer);
 };
 
 export const isHostnameValid = (hostname: string) => {
