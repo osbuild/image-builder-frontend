@@ -32,6 +32,24 @@ const getBlueprintsPath = async () => {
   return `${user.home}/${BLUEPRINTS_DIR}`;
 };
 
+// @ts-ignore TODO: add this type and stub out the result
+const api = cockpit.http('/run/cloudapi/api.socket', {
+  superuser: 'try',
+});
+
+// TODO: we can generalise this a little bit
+// and make it re-usable
+const request = api
+  .request({
+    path: '/api/image-builder-composer/v2/distributions',
+    body: '',
+    headers: { 'Content-Type': 'application/json' },
+  })
+  .then(JSON.parse)
+  .catch((e: any) => {
+    return { error: e };
+  });
+
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
   endpoints: (builder) => {
     return {
