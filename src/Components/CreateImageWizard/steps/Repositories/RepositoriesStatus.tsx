@@ -7,6 +7,7 @@ import {
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
+  Icon,
   Popover,
   Spinner,
 } from '@patternfly/react-core';
@@ -23,6 +24,8 @@ import {
   convertStringToDate,
   timestampToDisplayString,
 } from '../../../../Utilities/time';
+
+import '../../../ImagesTable/ImageBuildStatus.scss';
 
 const getLastIntrospection = (
   repoIntrospections: RepositoryStatusProps['repoIntrospections']
@@ -60,7 +63,12 @@ const RepositoriesStatus = ({
   if (repoStatus === 'Valid') {
     return (
       <>
-        <CheckCircleIcon className="success" /> {repoStatus}
+        <Icon status="success">
+          <CheckCircleIcon />
+        </Icon>{' '}
+        <span className="pf-v5-u-font-weight-bold pf-v5-u-success-color-200">
+          {repoStatus}
+        </span>
       </>
     );
   } else if (repoStatus === 'Invalid' || repoStatus === 'Unavailable') {
@@ -126,12 +134,25 @@ const RepositoriesStatus = ({
         >
           <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
             {repoStatus === 'Invalid' && (
-              <ExclamationCircleIcon className="error" />
+              <>
+                <Icon status="danger">
+                  <ExclamationCircleIcon />
+                </Icon>{' '}
+                <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200 failure-button">
+                  {repoStatus}
+                </span>
+              </>
             )}
             {repoStatus === 'Unavailable' && (
-              <ExclamationTriangleIcon className="expiring" />
-            )}{' '}
-            <span className="failure-button">{repoStatus}</span>
+              <>
+                <Icon status="warning">
+                  <ExclamationTriangleIcon />
+                </Icon>{' '}
+                <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200 failure-button">
+                  {repoStatus}
+                </span>
+              </>
+            )}
           </Button>
         </Popover>
       </>
@@ -139,7 +160,10 @@ const RepositoriesStatus = ({
   } else if (repoStatus === 'Pending') {
     return (
       <>
-        <Spinner isInline /> {repoStatus}
+        <Spinner isInline />{' '}
+        <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+          {repoStatus}
+        </span>
       </>
     );
   }
