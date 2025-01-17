@@ -35,7 +35,7 @@
     "@babel/preset-typescript": "7.26.0",
     "@patternfly/react-icons": "5.4.2",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.10",
-    "@redhat-cloud-services/frontend-components-config": "6.3.5",
+    "@redhat-cloud-services/frontend-components-config": "6.3.8",
     "@redhat-cloud-services/tsc-transform-imports": "1.0.21",
     "@rtk-query/codegen-openapi": "2.0.0",
     "@testing-library/dom": "10.4.0",
