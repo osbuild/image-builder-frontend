@@ -32,6 +32,7 @@ import {
   isSnapshotValid,
   isHostnameValid,
   isUserNameValid,
+  isSshKeyValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -169,14 +170,15 @@ export function useUsersValidation(): StepValidation {
   const userPassword = useAppSelector(userPasswordSelector);
   const userSshKeySelector = selectUserSshKeyByIndex(index);
   const userSshKey = useAppSelector(userSshKeySelector);
+  const userSshKeyValid = isSshKeyValid(userSshKey);
   const users = useAppSelector(selectUsers);
   const canProceed =
     // Case 1: there is no users
     users.length === 0 ||
     // Case 2: All fields are empty
     (userName === '' && userPassword === '' && userSshKey === '') ||
-    // Case 3: userName is valid
-    (userName && userNameValid);
+    // Case 3: userName is valid and SshKey is valid
+    (userName && userNameValid && userSshKey && userSshKeyValid);
 
   return {
     errors: {
