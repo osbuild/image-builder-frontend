@@ -46,6 +46,12 @@ import {
   selectDistribution,
   selectImageTypes,
   selectRegistrationType,
+  selectHostname,
+  selectLanguages,
+  selectKeyboard,
+  selectTimezone,
+  selectNtpServers,
+  selectUsers,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
@@ -60,6 +66,12 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const complianceProfile = useAppSelector(selectComplianceProfileID);
   const compliancePolicy = useAppSelector(selectCompliancePolicyID);
   const registrationType = useAppSelector(selectRegistrationType);
+  const hostname = useAppSelector(selectHostname);
+  const languages = useAppSelector(selectLanguages);
+  const keyboard = useAppSelector(selectKeyboard);
+  const timezone = useAppSelector(selectTimezone);
+  const ntpServers = useAppSelector(selectNtpServers);
+  const users = useAppSelector(selectUsers);
 
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
@@ -319,7 +331,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
-      {isUsersEnabled && (
+      {isUsersEnabled && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
@@ -334,7 +346,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           <UsersList />
         </ExpandableSection>
       )}
-      {isTimezoneEnabled && (
+      {((isTimezoneEnabled && timezone) ||
+        (isTimezoneEnabled && ntpServers && ntpServers.length > 0)) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Timezone',
@@ -351,7 +364,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           <TimezoneList />
         </ExpandableSection>
       )}
-      {isLocaleEnabled && (
+      {((isLocaleEnabled && languages && languages.length > 0) ||
+        (isLocaleEnabled && keyboard && keyboard.length > 0)) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Locale',
@@ -368,7 +382,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           <LocaleList />
         </ExpandableSection>
       )}
-      {isHostnameEnabled && (
+      {isHostnameEnabled && hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Hostname',
