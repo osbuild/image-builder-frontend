@@ -75,57 +75,38 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        queryFn: () => {
-          // TODO: this is hardcoded for now, but we may need to query
-          // the cloudapi endpoint on the composer socket to get the
-          // available information
-          return {
-            data: [
-              {
-                arch: 'aarch64',
-                image_types: ['aws', 'guest-image', 'image-installer'],
-                repositories: [
-                  {
-                    baseurl:
-                      'https://cdn.redhat.com/content/dist/rhel9/9/aarch64/baseos/os',
-                    rhsm: true,
-                  },
-                  {
-                    baseurl:
-                      'https://cdn.redhat.com/content/dist/rhel9/9/aarch64/appstream/os',
-                    rhsm: true,
-                  },
-                ],
-              },
-              {
-                arch: 'x86_64',
-                image_types: [
-                  'aws',
-                  'gcp',
-                  'azure',
-                  'rhel-edge-commit',
-                  'rhel-edge-installer',
-                  'edge-commit',
-                  'edge-installer',
-                  'guest-image',
-                  'image-installer',
-                  'vsphere',
-                ],
-                repositories: [
-                  {
-                    baseurl:
-                      'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/baseos/os',
-                    rhsm: true,
-                  },
-                  {
-                    baseurl:
-                      'https://cdn.redhat.com/content/dist/rhel9/9.0/x86_64/appstream/os',
-                    rhsm: true,
-                  },
-                ],
-              },
-            ],
-          };
+        query: () => ({
+          url: '/distributions',
+          body: '',
+          method: 'GET',
+        }),
+        transformResponse: (
+          response: ArchitecturesRawResponse,
+          _,
+          { distribution }: { distribution: string }
+        ) => {
+          const distroArches = response[distribution as keyof Distributions];
+          if (!distroArches) {
+            return [];
+          }
+
+          return Object.keys(distroArches)
+            .map((arch) => {
+              const imageTypes = Object.keys(distroArches[arch]).map(
+                translateImageTypes
+              );
+              return {
+                arch,
+                image_types: imageTypes,
+                // TODO: we need to get a Set of repositories here
+                // the endpoint returns repositories for each image
+                // type
+                repositories: [],
+              };
+            })
+            .filter((result) => {
+              return result.arch === 'aarch64' || result.arch === 'x86_64';
+            });
         },
       }),
       getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
