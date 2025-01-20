@@ -23,6 +23,7 @@ jobs:
         run: npm ci
 
       - name: Make dist
+        run: make dist
 
       # crate release, which will bump the version
       - name: Upstream release
