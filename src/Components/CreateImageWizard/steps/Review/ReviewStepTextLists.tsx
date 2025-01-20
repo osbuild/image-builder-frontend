@@ -76,6 +76,7 @@ import {
   selectUserSshKeyByIndex,
   selectKernel,
   selectUserAdministrator,
+  selectFirewall,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -917,6 +918,60 @@ export const KernelList = () => {
           <CodeBlock>
             <CodeBlockCode>
               {kernel.append.length > 0 ? kernel.append.join(' ') : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const FirewallList = () => {
+  const firewall = useAppSelector(selectFirewall);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Ports
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {firewall.ports.length > 0 ? firewall.ports.join(' ') : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Disabled services
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {firewall.services.disabled.length > 0
+                ? firewall.services.disabled.join(' ')
+                : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Enabled services
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {firewall.services.enabled.length > 0
+                ? firewall.services.enabled.join(' ')
+                : 'None'}
             </CodeBlockCode>
           </CodeBlock>
         </TextListItem>
