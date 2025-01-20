@@ -135,3 +135,14 @@ export const isKernelArgumentValid = (arg: string) => {
 export const isPortValid = (port: string) => {
   return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?:[a-z]{1,6}$/.test(port);
 };
+
+export const isServiceValid = (service: string) => {
+  // Restraints taken from service name syntax reference
+  // https://www.rfc-editor.org/rfc/rfc6335#section-5.1
+  return (
+    service.length <= 15 &&
+    /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(service) &&
+    !/--/.test(service) && // does not contain more hyphens in a row
+    /[a-zA-Z]+/.test(service) // contains at least one letter
+  );
+};
