@@ -1,7 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import type { Method, Headers, Params } from '../../../store/cockpit/types';
 
 type userinfo = {
   home: string;
+};
+
+type requestOptions = {
+  path: string;
+  method: Method;
+  body: unknown;
+  headers: Headers | undefined;
+  params: Params | undefined;
 };
 
 export default {
@@ -39,6 +48,11 @@ export default {
       },
       post: (path: string, data: object, headers?: object): string => {
         return '';
+      },
+      request: (request: requestOptions): Promise<string> => {
+        return new Promise((resolve) => {
+          resolve('');
+        });
       },
     };
   },
