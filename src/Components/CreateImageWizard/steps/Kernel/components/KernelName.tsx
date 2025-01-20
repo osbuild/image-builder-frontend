@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { FormGroup } from '@patternfly/react-core';
 import {
+  Alert,
   Button,
   MenuToggle,
   MenuToggleElement,
@@ -20,7 +21,8 @@ import {
   selectKernel,
 } from '../../../../../store/wizardSlice';
 
-let kernelOptions = ['kernel', 'kernel-debug'];
+const initialOptions = ['kernel', 'kernel-debug'];
+let kernelOptions = initialOptions;
 
 const KernelName = () => {
   const dispatch = useAppDispatch();
@@ -138,25 +140,34 @@ const KernelName = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label="Name">
-      <Select
-        isScrollable
-        isOpen={isOpen}
-        selected={kernel}
-        onSelect={onSelect}
-        onOpenChange={onToggle}
-        toggle={toggle}
-        shouldFocusFirstItemOnOpen={false}
-      >
-        <SelectList>
-          {selectOptions.map((option) => (
-            <SelectOption key={option} value={option}>
-              {option}
-            </SelectOption>
-          ))}
-        </SelectList>
-      </Select>
-    </FormGroup>
+    <>
+      {kernel && !initialOptions.includes(kernel) && (
+        <Alert
+          title="Custom kernel packages cannot be validated and can cause build issues."
+          isInline
+          variant="warning"
+        />
+      )}
+      <FormGroup isRequired={false} label="Name">
+        <Select
+          isScrollable
+          isOpen={isOpen}
+          selected={kernel}
+          onSelect={onSelect}
+          onOpenChange={onToggle}
+          toggle={toggle}
+          shouldFocusFirstItemOnOpen={false}
+        >
+          <SelectList>
+            {selectOptions.map((option) => (
+              <SelectOption key={option} value={option}>
+                {option}
+              </SelectOption>
+            ))}
+          </SelectList>
+        </Select>
+      </FormGroup>
+    </>
   );
 };
 
