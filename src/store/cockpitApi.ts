@@ -23,6 +23,7 @@ import {
   GetOscapProfilesApiResponse,
   GetBlueprintApiResponse,
   GetBlueprintApiArg,
+  Distributions,
 } from './imageBuilderApi';
 
 import { mapOnPremToHosted } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
@@ -59,6 +60,13 @@ const translateImageTypes = (imageType: string) => {
       return imageType;
   }
 };
+
+type ArchitecturesRawResponse = Partial<
+  Record<
+    keyof Distributions,
+    Record<string, { name: string; baseurls: string[]; gpgkeys: string[] }>
+  >
+>;
 
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
   endpoints: (builder) => {
