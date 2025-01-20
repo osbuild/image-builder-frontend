@@ -8,6 +8,7 @@ import {
   clickBack,
   clickNext,
   enterBlueprintName,
+  getNextButton,
   interceptBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   verifyCancelButton,
@@ -120,6 +121,20 @@ describe('Step Kernel', () => {
     await selectCustomKernelName(CUSTOM_NAME);
     await openKernelNameOptions(kernelNameDropdown);
     await screen.findByText(CUSTOM_NAME);
+  });
+
+  test('disable Next with invalid custom kernel name', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+
+    await selectCustomKernelName('-----------');
+    await screen.findByText(/Invalid format/);
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeDisabled();
+
+    await clearKernelName();
+    expect(screen.queryByText(/Invalid format/)).not.toBeInTheDocument();
+    expect(nextButton).toBeEnabled();
   });
 });
 
