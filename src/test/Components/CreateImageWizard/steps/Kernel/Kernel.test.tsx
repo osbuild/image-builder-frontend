@@ -2,9 +2,14 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
+import { CREATE_BLUEPRINT } from '../../../../../constants';
 import {
+  blueprintRequest,
   clickBack,
   clickNext,
+  enterBlueprintName,
+  interceptBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
@@ -29,6 +34,23 @@ const goToKernelStep = async () => {
   await clickNext(); // Locale
   await clickNext(); // Hostname
   await clickNext(); // Kernel
+};
+
+const goToReviewStep = async () => {
+  await clickNext(); // Firewall
+  await clickNext(); // First boot script
+  await clickNext(); // Details
+  await enterBlueprintName();
+  await clickNext(); // Review
+};
+
+const selectKernelName = async (kernelName: string) => {
+  const user = userEvent.setup();
+  const kernelNameDropdown = await screen.findByTestId('kernel-name-dropdown');
+  await waitFor(() => user.click(kernelNameDropdown));
+
+  const kernelOption = await screen.findByText(kernelName);
+  await waitFor(() => user.click(kernelOption));
 };
 
 describe('Step Kernel', () => {
@@ -60,6 +82,54 @@ describe('Step Kernel', () => {
   });
 });
 
+describe('Kernel request generated correctly', () => {
+  beforeEach(async () => {
+    vi.clearAllMocks();
+  });
+
+  test('with kernel name', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+    await selectKernelName('kernel-debug');
+    await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        kernel: {
+          name: 'kernel-debug',
+        },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('when unselecting kernel name', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+    await selectKernelName('kernel-debug');
+    await selectKernelName('Default kernel package');
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
 // TO DO 'Kernel step' -> 'revisit step button on Review works'
-// TO DO 'Kernel request generated correctly'
+// TO DO 'Kernel request generated correctly' -> 'with valid kernel append'
+// TO DO 'Kernel request generated correctly' -> 'with valid kernel name and kernel append'
 // TO DO 'Kernel edit mode'
