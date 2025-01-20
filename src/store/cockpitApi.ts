@@ -36,6 +36,30 @@ const getBlueprintsPath = async () => {
   return `${user.home}/${BLUEPRINTS_DIR}`;
 };
 
+// TODO: this is by no means complete (or completely correct).
+// This is just an attempt to get some results. We will need to
+// be able to translate these back again in the future when we
+// are making image-requests. This may need to be extracted out
+// of this file into a general helper
+const translateImageTypes = (imageType: string) => {
+  switch (imageType) {
+    case 'ami':
+      return 'aws';
+    case 'azure-rhui':
+      return 'azure';
+    case 'azure-sap-rhui':
+      return 'azure';
+    case 'ec2':
+      return 'aws';
+    case 'gce':
+      return 'gcp';
+    case 'qcow2':
+      return 'guest-image';
+    default:
+      return imageType;
+  }
+};
+
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
   endpoints: (builder) => {
     return {
