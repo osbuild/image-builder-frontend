@@ -4,6 +4,8 @@ import { FormGroup } from '@patternfly/react-core';
 import {
   Alert,
   Button,
+  HelperText,
+  HelperTextItem,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -20,6 +22,7 @@ import {
   changeKernelName,
   selectKernel,
 } from '../../../../../store/wizardSlice';
+import { useKernelValidation } from '../../../utilities/useValidation';
 
 const initialOptions = ['kernel', 'kernel-debug'];
 let kernelOptions = initialOptions;
@@ -27,6 +30,8 @@ let kernelOptions = initialOptions;
 const KernelName = () => {
   const dispatch = useAppDispatch();
   const kernel = useAppSelector(selectKernel).name;
+
+  const stepValidation = useKernelValidation();
 
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
@@ -166,6 +171,13 @@ const KernelName = () => {
             ))}
           </SelectList>
         </Select>
+        {stepValidation.errors.kernel && (
+          <HelperText>
+            <HelperTextItem variant={'error'}>
+              {stepValidation.errors.kernel}
+            </HelperTextItem>
+          </HelperText>
+        )}
       </FormGroup>
     </>
   );
