@@ -28,6 +28,7 @@ import {
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
+  Kernel,
   OpenScap,
   OpenScapCompliance,
   OpenScapProfile,
@@ -317,7 +318,10 @@ function commonRequestToState(
       disabled: request.customizations?.services?.disabled || [],
     },
     kernel: {
-      append: request.customizations?.kernel?.append || '',
+      append:
+        request.customizations?.kernel?.append
+          ?.split(' ')
+          .map((arg) => ({ name: arg })) || [],
     },
     timezone: {
       timezone: request.customizations.timezone?.timezone || '',
@@ -521,9 +525,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     users: getUsers(state),
     services: getServices(state),
     hostname: selectHostname(state) || undefined,
-    kernel: selectKernel(state).append
-      ? { append: selectKernel(state).append }
-      : undefined,
+    kernel: getKernel(state),
     groups: undefined,
     timezone: getTimezone(state),
     locale: getLocale(state),
@@ -558,6 +560,20 @@ const getServices = (state: RootState): Services | undefined => {
     masked: services.masked.length ? services.masked : undefined,
     disabled: services.disabled.length ? services.disabled : undefined,
   };
+};
+
+const getKernel = (state: RootState): Kernel | undefined => {
+  const kernelAppend = selectKernel(state).append;
+
+  if (kernelAppend && kernelAppend.length > 0) {
+    return {
+      append: selectKernel(state)
+        .append.map((arg) => arg.name)
+        .join(' '),
+    };
+  }
+
+  return undefined;
 };
 
 const getOpenscap = (state: RootState): OpenScap | undefined => {
