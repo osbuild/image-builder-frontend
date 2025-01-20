@@ -16,6 +16,8 @@ import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
+const CUSTOM_NAME = 'custom-kernel-name';
+
 const goToKernelStep = async () => {
   const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
@@ -44,13 +46,39 @@ const goToReviewStep = async () => {
   await clickNext(); // Review
 };
 
+const getKernelNameOptions = async () => {
+  return await screen.findByPlaceholderText(/Select kernel package/i);
+};
+
+const openKernelNameOptions = async (dropdown: Element) => {
+  const user = userEvent.setup();
+  await waitFor(() => user.click(dropdown));
+};
+
 const selectKernelName = async (kernelName: string) => {
   const user = userEvent.setup();
-  const kernelNameDropdown = await screen.findByTestId('kernel-name-dropdown');
-  await waitFor(() => user.click(kernelNameDropdown));
+  const kernelNameDropdown = await getKernelNameOptions();
+  await openKernelNameOptions(kernelNameDropdown);
 
   const kernelOption = await screen.findByText(kernelName);
   await waitFor(() => user.click(kernelOption));
+};
+
+const selectCustomKernelName = async (kernelName: string) => {
+  const user = userEvent.setup();
+  const kernelNameDropdown = await getKernelNameOptions();
+  await waitFor(() => user.type(kernelNameDropdown, kernelName));
+
+  const customOption = await screen.findByText(/custom kernel package/i);
+  await waitFor(() => user.click(customOption));
+};
+
+const clearKernelName = async () => {
+  const user = userEvent.setup();
+  const kernelNameClearBtn = await screen.findByRole('button', {
+    name: /clear input/i,
+  });
+  await waitFor(() => user.click(kernelNameClearBtn));
 };
 
 describe('Step Kernel', () => {
@@ -79,6 +107,19 @@ describe('Step Kernel', () => {
     await renderCreateMode();
     await goToKernelStep();
     await verifyCancelButton(router);
+  });
+
+  test('adds custom kernel package to options', async () => {
+    await renderCreateMode();
+    await goToKernelStep();
+
+    const kernelNameDropdown = await getKernelNameOptions();
+    await openKernelNameOptions(kernelNameDropdown);
+    expect(screen.queryByText(CUSTOM_NAME)).not.toBeInTheDocument();
+
+    await selectCustomKernelName(CUSTOM_NAME);
+    await openKernelNameOptions(kernelNameDropdown);
+    await screen.findByText(CUSTOM_NAME);
   });
 });
 
@@ -115,7 +156,7 @@ describe('Kernel request generated correctly', () => {
     await renderCreateMode();
     await goToKernelStep();
     await selectKernelName('kernel-debug');
-    await selectKernelName('Default kernel package');
+    await clearKernelName();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
