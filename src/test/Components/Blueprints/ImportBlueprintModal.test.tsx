@@ -184,6 +184,12 @@ keyboard = "us"
 [customizations.kernel]
 name = "kernel-debug"
 append = "nosmt=force"
+
+[customizations.firewall]
+ports = ["22:tcp", "80:tcp", "imap:tcp"]
+[customizations.firewall.services]
+enabled = ["ftp", "ntp"]
+disabled = ["telnet"]
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
@@ -390,5 +396,17 @@ describe('Import modal', () => {
     );
     expect(kernelNameInput).toHaveValue('kernel-debug');
     await screen.findByText('nosmt=force');
+
+    // Firewall
+    await clickNext();
+    // check ports
+    await screen.findByText('22:tcp');
+    await screen.findByText('80:tcp');
+    await screen.findByText('imap:tcp');
+    // check disabled services
+    await screen.findByText('telnet');
+    // check enabled services
+    await screen.findByText('ftp');
+    await screen.findByText('ntp');
   }, 20000);
 });
