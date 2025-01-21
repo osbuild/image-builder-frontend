@@ -36,6 +36,10 @@ export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useListSnapshotsByDateMutation
   : useContentSourcesListSnapshotsByDateMutation;
 
+export const useComposeBlueprintMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useComposeBlueprintMutation
+  : imageBuilderQueries.useComposeBlueprintMutation;
+
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? cockpitApi.usePrefetch
   : imageBuilderApi.usePrefetch;
