@@ -26,15 +26,17 @@ const RegistrationStep = () => {
         system during initial boot.
       </Text>
       <Registration />
-      <ActivationKeysList />
-      {activationKey && registrationType !== 'register-later' && (
-        <FormGroup
-          label={'Selected activation key'}
-          data-testid="selected-activation-key"
-        >
-          <ActivationKeyInformation />
-        </FormGroup>
-      )}
+      {!process.env.IS_ON_PREMISE && <ActivationKeysList />}
+      {!process.env.IS_ON_PREMISE &&
+        activationKey &&
+        registrationType !== 'register-later' && (
+          <FormGroup
+            label={'Selected activation key'}
+            data-testid="selected-activation-key"
+          >
+            <ActivationKeyInformation />
+          </FormGroup>
+        )}
     </Form>
   );
 };
