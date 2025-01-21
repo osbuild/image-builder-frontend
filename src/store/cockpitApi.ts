@@ -8,10 +8,13 @@ import path from 'path';
 // We also needed to create an alias in vitest to make this work.
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
-import toml from 'toml';
+import { read_os_release } from 'os-release';
 
 import { emptyCockpitApi } from './emptyCockpitApi';
 import {
+  ComposeBlueprintApiResponse,
+  ComposeBlueprintApiArg,
+  CreateBlueprintRequest,
   GetArchitecturesApiResponse,
   GetArchitecturesApiArg,
   GetBlueprintsApiArg,
@@ -19,9 +22,10 @@ import {
   DeleteBlueprintApiResponse,
   DeleteBlueprintApiArg,
   BlueprintItem,
+  ComposeResponse,
 } from './imageBuilderApi';
 
-import { mapOnPremToHosted } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import { mapHostedToOnPrem } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR } from '../constants';
 
 const getBlueprintsPath = async () => {
@@ -62,16 +66,17 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
             const entries = Object.entries(info?.entries || {});
             let blueprints: BlueprintItem[] = await Promise.all(
               entries.map(async ([filename]) => {
-                const file = cockpit.file(path.join(blueprintsDir, filename));
+                const file = cockpit.file(
+                  path.join(blueprintsDir, filename, `${filename}.json`)
+                );
 
                 const contents = await file.read();
-                const parsed = toml.parse(contents);
+                const parsed = JSON.parse(contents);
                 file.close();
 
-                const blueprint = mapOnPremToHosted(parsed);
                 const version = (parsed.version as number) ?? 1;
                 return {
-                  ...blueprint,
+                  ...parsed,
                   id: filename as string,
                   version: version,
                   last_modified_at: Date.now().toString(),
@@ -143,6 +148,79 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           }
         },
       }),
+      composeBlueprint: builder.mutation<
+        ComposeBlueprintApiResponse,
+        ComposeBlueprintApiArg
+      >({
+        queryFn: async ({ id: filename }) => {
+          const blueprintsDir = await getBlueprintsPath();
+          const file = cockpit.file(
+            path.join(blueprintsDir, filename, `${filename}.json`)
+          );
+          const contents = await file.read();
+          file.close();
+          const parsed = JSON.parse(contents);
+
+          const cloudapi = cockpit.http('/run/cloudapi/api.socket', {
+            superuser: 'try',
+          });
+
+          const blueprint = mapHostedToOnPrem(parsed as CreateBlueprintRequest);
+
+          const osRel = await read_os_release();
+          const distro = `${osRel.ID}-${osRel.VERSION_ID}`;
+          const composes: ComposeResponse[] = [];
+          for (const ir of parsed.image_requests) {
+            const composeReq = {
+              distribution: distro,
+              blueprint: blueprint,
+              image_requests: [
+                {
+                  architecture: ir.architecture,
+                  image_type: ir.image_type,
+                  repositories: [],
+                  upload_targets: [
+                    {
+                      type: 'local',
+                      upload_options: {},
+                    },
+                  ],
+                },
+              ],
+            };
+            const saveReq = {
+              distribution: distro,
+              blueprint: parsed,
+              image_requests: [
+                {
+                  architecture: 'x86_64',
+                  image_type: 'guest-image',
+                  repositories: [],
+                  upload_request: {
+                    type: 'local',
+                    options: {},
+                  },
+                },
+              ],
+            };
+            const resp = await cloudapi.post(
+              '/api/image-builder-composer/v2/compose',
+              composeReq,
+              {
+                'content-type': 'application/json',
+              }
+            );
+            const composeResp = JSON.parse(resp);
+            await cockpit
+              .file(path.join(blueprintsDir, filename, composeResp.id))
+              .replace(JSON.stringify(saveReq));
+            composes.push({ id: composeResp.id });
+          }
+          return {
+            data: composes,
+          };
+        },
+      }),
     };
   },
 });
@@ -151,4 +229,5 @@ export const {
   useGetBlueprintsQuery,
   useDeleteBlueprintMutation,
   useGetArchitecturesQuery,
+  useComposeBlueprintMutation,
 } = cockpitApi;
