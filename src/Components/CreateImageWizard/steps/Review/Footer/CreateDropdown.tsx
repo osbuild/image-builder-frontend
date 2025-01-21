@@ -45,12 +45,14 @@ export const CreateSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-      module: AMPLITUDE_MODULE_NAME,
-      isPreview: isBeta(),
-      type: 'createBlueprintAndBuildImages',
-      packages: packages.map((pkg) => pkg.name),
-    });
+    if (!process.env.IS_ON_PREMISE) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
+        module: AMPLITUDE_MODULE_NAME,
+        isPreview: isBeta(),
+        type: 'createBlueprintAndBuildImages',
+        packages: packages.map((pkg) => pkg.name),
+      });
+    }
 
     const blueprint =
       requestBody &&
@@ -136,12 +138,14 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-      module: AMPLITUDE_MODULE_NAME,
-      isPreview: isBeta(),
-      type: 'createBlueprint',
-      packages: packages.map((pkg) => pkg.name),
-    });
+    if (!process.env.IS_ON_PREMISE) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
+        module: AMPLITUDE_MODULE_NAME,
+        isPreview: isBeta(),
+        type: 'createBlueprint',
+        packages: packages.map((pkg) => pkg.name),
+      });
+    }
 
     const blueprint =
       requestBody &&
