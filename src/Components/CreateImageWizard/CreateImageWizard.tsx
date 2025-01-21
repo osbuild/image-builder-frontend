@@ -391,7 +391,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
                 id="step-oscap"
                 key="step-oscap"
-                isHidden={distribution === RHEL_10_BETA}
+                isHidden={
+                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
+                }
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
@@ -442,7 +444,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
-                isHidden={distribution === RHEL_10_BETA}
+                isHidden={
+                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
+                }
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
