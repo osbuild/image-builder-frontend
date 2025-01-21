@@ -25,7 +25,7 @@ import { selectPackages } from '../../../../../store/wizardSlice';
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
-  isDisabled?: boolean;
+  isDisabled: boolean;
 };
 
 export const CreateSaveAndBuildBtn = ({
@@ -69,7 +69,7 @@ export const CreateSaveAndBuildBtn = ({
       <DropdownItem
         onClick={onSaveAndBuild}
         ouiaId="wizard-create-build-btn"
-        isDisabled={isDisabled || true}
+        isDisabled={isDisabled}
       >
         Create blueprint and build image(s)
       </DropdownItem>
