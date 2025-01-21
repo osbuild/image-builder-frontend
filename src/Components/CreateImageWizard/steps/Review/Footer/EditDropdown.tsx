@@ -19,7 +19,7 @@ type EditDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
-  isDisabled?: boolean;
+  isDisabled: boolean;
 };
 
 export const EditSaveAndBuildBtn = ({
@@ -50,7 +50,7 @@ export const EditSaveAndBuildBtn = ({
       <DropdownItem
         onClick={onSaveAndBuild}
         ouiaId="wizard-edit-build-btn"
-        isDisabled={isDisabled || true}
+        isDisabled={isDisabled}
       >
         Save changes and build image(s)
       </DropdownItem>
