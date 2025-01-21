@@ -50,10 +50,16 @@ const ReviewWizardFooter = () => {
   }, [isUpdateSuccess, isCreateSuccess, resetCreate, resetUpdate, navigate]);
 
   const getBlueprintPayload = async () => {
-    const userData = await auth?.getUser();
-    const orgId = userData?.identity?.internal?.org_id;
-    const requestBody = orgId && mapRequestFromState(store, orgId);
-    return requestBody;
+    if (!process.env.IS_ON_PREMISE) {
+      const userData = await auth?.getUser();
+      const orgId = userData?.identity?.internal?.org_id;
+      const requestBody = orgId && mapRequestFromState(store, orgId);
+      return requestBody;
+    }
+
+    // NOTE: This should be fine on-prem, we should
+    // be able to ignore the `org-id`
+    return mapRequestFromState(store, '');
   };
 
   return (
