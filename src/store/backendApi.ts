@@ -20,6 +20,10 @@ export const useLazyGetBlueprintsQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useLazyGetBlueprintsQuery
   : imageBuilderQueries.useLazyGetBlueprintsQuery;
 
+export const useCreateBlueprintMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useCreateBlueprintMutation
+  : imageBuilderQueries.useCreateBlueprintMutation;
+
 export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useDeleteBlueprintMutation
   : imageBuilderQueries.useDeleteBlueprintMutation;

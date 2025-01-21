@@ -27,6 +27,8 @@ import {
   GetOscapProfilesApiResponse,
   GetBlueprintApiResponse,
   GetBlueprintApiArg,
+  CreateBlueprintApiResponse,
+  CreateBlueprintApiArg,
 } from './imageBuilderApi';
 
 import { mapOnPremToHosted } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
@@ -183,6 +185,23 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           }
         },
       }),
+      createBlueprint: builder.mutation<
+        CreateBlueprintApiResponse,
+        CreateBlueprintApiArg
+      >({
+        queryFn: async () => {
+          // TODO: actually save the result to file
+          try {
+            return {
+              data: {
+                id: '',
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
       deleteBlueprint: builder.mutation<
         DeleteBlueprintApiResponse,
         DeleteBlueprintApiArg
@@ -239,6 +258,7 @@ export const {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
   useLazyGetBlueprintsQuery,
+  useCreateBlueprintMutation,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
   useListSnapshotsByDateMutation,

@@ -13,12 +13,12 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
+import { useCreateBlueprintMutation } from '../../../../../store/backendApi';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
   useComposeBlueprintMutation,
-  useCreateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 
