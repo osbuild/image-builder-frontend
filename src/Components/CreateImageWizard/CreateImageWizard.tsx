@@ -27,6 +27,7 @@ import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
 import ReviewStep from './steps/Review';
 import ReviewWizardFooter from './steps/Review/Footer/Footer';
+import ServicesStep from './steps/Services';
 import SnapshotStep from './steps/Snapshot';
 import Aws from './steps/TargetEnvironment/Aws';
 import Azure from './steps/TargetEnvironment/Azure';
@@ -146,6 +147,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
   const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
+  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   // Remove this and all fallthrough logic when snapshotting is enabled in Prod-stable
   // =========================TO REMOVE=======================
@@ -236,7 +238,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 21;
+    startIndex = 22;
   }
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
@@ -540,6 +542,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 }
               >
                 <FirewallStep />
+              </WizardStep>,
+              <WizardStep
+                name="Systemd services"
+                id="wizard-services"
+                key="wizard-services"
+                navItem={customStatusNavItem}
+                isHidden={!isServicesStepEnabled}
+                footer={
+                  <CustomWizardFooter disableNext={false} optional={true} />
+                }
+              >
+                <ServicesStep />
               </WizardStep>,
               <WizardStep
                 name="First boot script configuration"
