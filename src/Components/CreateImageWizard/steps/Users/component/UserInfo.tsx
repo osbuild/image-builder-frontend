@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { Button, FormGroup, Checkbox } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Button, FormGroup, Checkbox, Tooltip } from '@patternfly/react-core';
+import { ExternalLinkAltIcon, TrashIcon } from '@patternfly/react-icons';
 
 import { GENERATING_SSH_KEY_PAIRS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -14,6 +14,7 @@ import {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
+  removeUser,
 } from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
 import {
@@ -62,6 +63,10 @@ const UserInfo = () => {
     dispatch(
       setUserAdministratorByIndex({ index: index, isAdministrator: value })
     );
+  };
+
+  const onRemoveUserClick = () => {
+    dispatch(removeUser(index));
   };
 
   return (
@@ -119,6 +124,16 @@ const UserInfo = () => {
           name="user Administrator"
         />
       </FormGroup>
+      <Tooltip position="top-start" content={'Remove user'}>
+        <FormGroup>
+          <Button
+            aria-label="remove user"
+            onClick={onRemoveUserClick}
+            variant="tertiary"
+            icon={<TrashIcon />}
+          ></Button>
+        </FormGroup>
+      </Tooltip>
     </>
   );
 };

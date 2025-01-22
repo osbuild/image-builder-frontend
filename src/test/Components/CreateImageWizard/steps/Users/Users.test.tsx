@@ -62,6 +62,14 @@ const clickAddUser = async () => {
   expect(addUser).toBeEnabled();
   await waitFor(() => user.click(addUser));
 };
+
+const clickRemoveUser = async () => {
+  const user = userEvent.setup();
+  const addUser = await screen.findByRole('button', { name: /remove user/i });
+  expect(addUser).toBeEnabled();
+  await waitFor(() => user.click(addUser));
+};
+
 const addSshKey = async (sshKey: string) => {
   const user = userEvent.setup();
   const enterSshKey = await screen.findByRole('textbox', {
@@ -70,6 +78,7 @@ const addSshKey = async (sshKey: string) => {
   await waitFor(() => user.type(enterSshKey, sshKey));
   await waitFor(() => expect(enterSshKey).toHaveValue(sshKey));
 };
+
 const addUserName = async (userName: string) => {
   const user = userEvent.setup();
   const enterUserName = screen.getByRole('textbox', {
@@ -184,6 +193,27 @@ describe('User request generated correctly', () => {
           },
         ],
       },
+    };
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('remove a user', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName('test');
+    await addSshKey('ssh-rsa');
+    await clickRemoveUser();
+    await waitFor(() => expect('add a user to your image'));
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {},
     };
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
