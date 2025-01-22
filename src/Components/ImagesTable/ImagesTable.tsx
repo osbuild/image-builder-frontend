@@ -49,7 +49,11 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useGetBlueprintsQuery } from '../../store/backendApi';
+import {
+  useGetComposesQuery,
+  useGetBlueprintsQuery,
+  useGetBlueprintComposesQuery,
+} from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
@@ -66,8 +70,6 @@ import {
   ComposeStatus,
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
-  useGetBlueprintComposesQuery,
-  useGetComposesQuery,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
@@ -298,7 +300,8 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
     }
   }, [setPollingInterval, composeStatus]);
 
-  const type = compose.request.image_requests[0].upload_request.type;
+  const type =
+    compose.request?.image_requests[0]?.upload_request?.type || 'local';
 
   switch (type) {
     case 'aws':
@@ -317,6 +320,8 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
       return <OciRow compose={compose} rowIndex={rowIndex} />;
     case 'aws.s3':
       return <AwsS3Row compose={compose} rowIndex={rowIndex} />;
+    case 'local':
+      return <Row compose={compose} rowIndex={rowIndex} />;
   }
 };
 
