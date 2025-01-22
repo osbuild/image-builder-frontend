@@ -38,6 +38,7 @@ const goToFirewallStep = async () => {
 };
 
 const goToReviewStep = async () => {
+  await clickNext(); // Services
   await clickNext(); // First boot script
   await clickNext(); // Details
   await enterBlueprintName();
@@ -56,12 +57,12 @@ describe('Step Firewall', () => {
     router = undefined;
   });
 
-  test('clicking Next loads First boot', async () => {
+  test('clicking Next loads Services', async () => {
     await renderCreateMode();
     await goToFirewallStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'First boot configuration',
+      name: 'Systemd services',
     });
   });
 

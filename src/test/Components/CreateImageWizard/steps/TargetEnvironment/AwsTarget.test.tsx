@@ -50,6 +50,7 @@ const goToReview = async () => {
   await clickNext(); // Hostname
   await clickNext(); // Kernel
   await clickNext(); // Firewall
+  await clickNext(); // Services
   await clickNext(); // FirstBoot
   await clickNext(); // Details
   await enterBlueprintName();
