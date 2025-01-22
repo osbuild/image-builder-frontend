@@ -237,7 +237,7 @@ export const EPEL_9_REPO_DEFINITION = {
 };
 
 export const DEBOUNCED_SEARCH_WAIT_TIME = 500;
-export const UNIQUE_VALIDATION_DELAY = 300;
+export const UNIQUE_VALIDATION_DELAY: number = 300;
 
 export const FIRST_BOOT_SERVICE_DATA = btoa(`[Unit]
 Description=Custom first boot script
