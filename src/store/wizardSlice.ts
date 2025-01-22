@@ -872,6 +872,9 @@ export const wizardSlice = createSlice({
 
       state.users.push(newUser);
     },
+    removeUser: (state, action: PayloadAction<number>) => {
+      state.users = state.users.filter((_, index) => index !== action.payload);
+    },
     setUserNameByIndex: (state, action: PayloadAction<UserPayload>) => {
       state.users[action.payload.index].name = action.payload.name;
     },
@@ -983,6 +986,7 @@ export const {
   addPort,
   removePort,
   addUser,
+  removeUser,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
