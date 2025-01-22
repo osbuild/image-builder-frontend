@@ -15,10 +15,15 @@ import {
   ComposeBlueprintApiResponse,
   ComposeBlueprintApiArg,
   CreateBlueprintRequest,
+  ComposesResponseItem,
   GetArchitecturesApiResponse,
   GetArchitecturesApiArg,
   GetBlueprintsApiArg,
   GetBlueprintsApiResponse,
+  GetBlueprintComposesApiArg,
+  GetBlueprintComposesApiResponse,
+  GetComposesApiArg,
+  GetComposesApiResponse,
   DeleteBlueprintApiResponse,
   DeleteBlueprintApiArg,
   BlueprintItem,
@@ -34,6 +39,37 @@ const getBlueprintsPath = async () => {
   // we will use the user's `.local` directory
   // to save blueprints used for on-prem
   return `${user.home}/${BLUEPRINTS_DIR}`;
+};
+
+const readComposes = async (bpID: string) => {
+  const blueprintsDir = await getBlueprintsPath();
+  let composes: ComposesResponseItem[] = [];
+  const bpInfo = await fsinfo(
+    path.join(blueprintsDir, bpID),
+    ['entries', 'mtime'],
+    {
+      superuser: 'try',
+    }
+  );
+  const bpEntries = Object.entries(bpInfo?.entries || {});
+  for (const entry of bpEntries) {
+    if (entry[0] === `${bpID}.json`) {
+      continue;
+    }
+    const composeReq = await cockpit
+      .file(path.join(blueprintsDir, bpID, entry[0]))
+      .read();
+    composes = [
+      ...composes,
+      {
+        id: entry[0],
+        request: JSON.parse(composeReq),
+        created_at: new Date(entry[1]!.mtime * 1000).toString(),
+        blueprint_id: bpID,
+      },
+    ];
+  }
+  return composes;
 };
 
 export const cockpitApi = emptyCockpitApi.injectEndpoints({
@@ -221,6 +257,55 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           };
         },
       }),
+      getComposes: builder.query<GetComposesApiResponse, GetComposesApiArg>({
+        queryFn: async () => {
+          const blueprintsDir = await getBlueprintsPath();
+          const info = await fsinfo(blueprintsDir, ['entries'], {
+            superuser: 'try',
+          });
+          let composes: ComposesResponseItem[] = [];
+          const entries = Object.entries(info?.entries || {});
+          await Promise.all(
+            entries.map(async ([bpID]) => {
+              composes = composes.concat(await readComposes(bpID));
+            })
+          );
+          return {
+            data: {
+              meta: {
+                count: composes.length,
+              },
+              links: {
+                first: composes.length > 0 ? composes[0].id : '',
+                last:
+                  composes.length > 0 ? composes[composes.length - 1].id : '',
+              },
+              data: composes,
+            },
+          };
+        },
+      }),
+      getBlueprintComposes: builder.query<
+        GetBlueprintComposesApiResponse,
+        GetBlueprintComposesApiArg
+      >({
+        queryFn: async (queryArgs) => {
+          const composes = await readComposes(queryArgs.id);
+          return {
+            data: {
+              meta: {
+                count: composes.length,
+              },
+              links: {
+                first: composes.length > 0 ? composes[0].id : '',
+                last:
+                  composes.length > 0 ? composes[composes.length - 1].id : '',
+              },
+              data: composes,
+            },
+          };
+        },
+      }),
     };
   },
 });
@@ -230,4 +315,6 @@ export const {
   useDeleteBlueprintMutation,
   useGetArchitecturesQuery,
   useComposeBlueprintMutation,
+  useGetComposesQuery,
+  useGetBlueprintComposesQuery,
 } = cockpitApi;
