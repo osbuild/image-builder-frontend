@@ -34,6 +34,7 @@ const config = {
         __dirname,
         'src/test/mocks/cockpit/fsinfo'
       ),
+      'os-release': path.resolve(__dirname, 'src/test/mocks/os-release'),
     },
   },
   esbuild: {
