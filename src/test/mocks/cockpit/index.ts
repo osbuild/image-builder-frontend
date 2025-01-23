@@ -20,11 +20,22 @@ export default {
         });
       },
       close: () => {},
+      replace: (contents: string) => {},
     };
   },
   spawn: (args: string[], attributes: object): Promise<string | Uint8Array> => {
     return new Promise((resolve) => {
       resolve('');
     });
+  },
+  http: (address: string, options: object) => {
+    return {
+      get: (path?: string, headers?: object): string => {
+        return '';
+      },
+      post: (path: string, data: object, headers?: object): string => {
+        return '';
+      },
+    };
   },
 };
