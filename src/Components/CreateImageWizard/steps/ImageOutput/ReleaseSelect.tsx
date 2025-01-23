@@ -17,6 +17,7 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
   RHEL_10_BETA,
+  ON_PREM_RELEASES,
 } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { Distributions } from '../../../../store/imageBuilderApi';
@@ -39,6 +40,8 @@ const ReleaseSelect = () => {
 
   const isRHEL9BetaEnabled = useFlag('image-builder.rhel9.beta.enabled');
   const isRHEL10BetaEnabled = useFlag('image-builder.rhel10.beta.enabled');
+
+  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
     dispatch(changeDistribution(selection));
@@ -75,7 +78,11 @@ const ReleaseSelect = () => {
   const setSelectOptions = () => {
     const options: ReactElement[] = [];
     const filteredRhel = new Map(
-      [...RELEASES].filter(([key]) => {
+      [...releases].filter(([key]) => {
+        if (process.env.IS_ON_PREMISE) {
+          return key === distribution;
+        }
+
         if (key === RHEL_9_BETA) {
           return isRHEL9BetaEnabled;
         }
@@ -99,7 +106,7 @@ const ReleaseSelect = () => {
           value={key}
           description={setDescription(key as Distributions)}
         >
-          {RELEASES.get(key)}
+          {releases.get(key)}
         </SelectOption>
       );
     });
@@ -114,14 +121,17 @@ const ReleaseSelect = () => {
         variant={SelectVariant.single}
         onToggle={() => setIsOpen(!isOpen)}
         onSelect={handleSelect}
-        selections={RELEASES.get(distribution)}
+        selections={releases.get(distribution)}
         isOpen={isOpen}
-        {...(!showDevelopmentOptions && {
-          loadingVariant: {
-            text: 'Show options for further development of RHEL',
-            onClick: handleExpand,
-          },
-        })}
+        {...(!showDevelopmentOptions &&
+          // Hide this for on-prem since the host
+          // could be centos or fedora
+          !process.env.IS_ON_PREMISE && {
+            loadingVariant: {
+              text: 'Show options for further development of RHEL',
+              onClick: handleExpand,
+            },
+          })}
       >
         {setSelectOptions()}
       </Select>
