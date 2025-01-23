@@ -27,6 +27,8 @@ import {
   GetBlueprintComposesApiResponse,
   GetComposesApiArg,
   GetComposesApiResponse,
+  GetComposeStatusApiArg,
+  GetComposeStatusApiResponse,
   DeleteBlueprintApiResponse,
   DeleteBlueprintApiArg,
   BlueprintItem,
@@ -418,6 +420,47 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           }
         },
       }),
+      getComposeStatus: builder.query<
+        GetComposeStatusApiResponse,
+        GetComposeStatusApiArg
+      >({
+        queryFn: async (queryArg) => {
+          try {
+            const cloudapi = cockpit.http('/run/cloudapi/api.socket', {
+              superuser: 'require',
+            });
+            const resp = JSON.parse(
+              await cloudapi.get(
+                `/api/image-builder-composer/v2/composes/${queryArg.composeId}`
+              )
+            );
+            const blueprintsDir = await getBlueprintsPath();
+            const info = await fsinfo(blueprintsDir, ['entries'], {
+              superuser: 'try',
+            });
+            const entries = Object.entries(info?.entries || {});
+            for (const bpEntry of entries) {
+              const request = await cockpit
+                .file(path.join(blueprintsDir, bpEntry[0], queryArg.composeId))
+                .read();
+              return {
+                data: {
+                  image_status: resp.image_status,
+                  request: JSON.parse(request),
+                },
+              };
+            }
+            return {
+              data: {
+                image_status: '',
+                request: {},
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
     };
   },
 });
@@ -434,4 +477,5 @@ export const {
   useComposeBlueprintMutation,
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
+  useGetComposeStatusQuery,
 } = cockpitApi;

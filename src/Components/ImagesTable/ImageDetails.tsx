@@ -15,11 +15,11 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import ClonesTable from './ClonesTable';
 
+import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { extractProvisioningList } from '../../store/helpers';
 import {
   ComposesResponseItem,
   GcpUploadRequestOptions,
-  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import { useGetSourceListQuery } from '../../store/provisioningApi';
 import {
@@ -451,6 +451,39 @@ type AwsS3DetailsPropTypes = {
 };
 
 export const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
+  return (
+    <>
+      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+        Build Information
+      </div>
+      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+        <DescriptionListGroup>
+          <DescriptionListTerm>UUID</DescriptionListTerm>
+          <DescriptionListDescription>
+            <ClipboardCopy
+              hoverTip="Copy"
+              clickTip="Copied"
+              variant="inline-compact"
+              ouiaId="other-targets-uuid"
+            >
+              {compose.id}
+            </ClipboardCopy>
+          </DescriptionListDescription>
+          <DescriptionListTerm>Architecture</DescriptionListTerm>
+          <DescriptionListDescription>
+            {compose.request.image_requests[0].architecture}
+          </DescriptionListDescription>
+        </DescriptionListGroup>
+      </DescriptionList>
+    </>
+  );
+};
+
+type LocalDetailsPropTypes = {
+  compose: ComposesResponseItem;
+};
+
+export const LocalDetails = ({ compose }: LocalDetailsPropTypes) => {
   return (
     <>
       <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
