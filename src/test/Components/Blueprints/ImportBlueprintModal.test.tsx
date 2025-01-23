@@ -180,6 +180,10 @@ ntpservers = ["0.north-america.pool.ntp.org", "1.north-america.pool.ntp.org"]
 [customizations.locale]
 languages = ["en_US.UTF-8", "ja_JP.UTF-8"]
 keyboard = "us"
+
+[customizations.kernel]
+name = "kernel-debug"
+append = "nosmt=force"
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
@@ -378,5 +382,13 @@ describe('Import modal', () => {
     await clickNext();
     const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
     expect(hostnameInput).toHaveValue('base-image');
+
+    // Kernel
+    await clickNext();
+    const kernelNameInput = await screen.findByPlaceholderText(
+      /Select kernel package/i
+    );
+    expect(kernelNameInput).toHaveValue('kernel-debug');
+    await screen.findByText('nosmt=force');
   }, 20000);
 });
