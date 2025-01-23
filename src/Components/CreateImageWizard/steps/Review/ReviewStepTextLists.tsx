@@ -24,6 +24,7 @@ import {
 import { FSReviewTable } from './ReviewStepTables';
 
 import {
+  ON_PREM_RELEASES,
   RELEASES,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
@@ -93,6 +94,7 @@ const ExpirationWarning = () => {
 export const ImageOutputList = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
+  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
   return (
     <TextContent>
       {distribution === RHEL_8 && (
@@ -118,7 +120,7 @@ export const ImageOutputList = () => {
           Release
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          {RELEASES.get(distribution)}
+          {releases.get(distribution)}
         </TextListItem>
         <TextListItem component={TextListItemVariants.dt}>
           Architecture
