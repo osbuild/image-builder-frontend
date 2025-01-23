@@ -27,13 +27,13 @@ import {
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
 } from '../../constants';
+import { useGetComposeStatusQuery } from '../../store/backendApi';
 import {
   ClonesResponseItem,
   ComposeStatus,
   ComposeStatusError,
   ComposesResponseItem,
   UploadStatus,
-  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 
 type StatusClonePropTypes = {
@@ -211,6 +211,33 @@ export const ExpiringStatus = ({
   } else {
     return <Status icon={statuses[status].icon} text={statuses[status].text} />;
   }
+};
+
+type LocalStatusPropTypes = {
+  compose: ComposesResponseItem;
+};
+
+export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
+  const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
+
+  if (!isSuccess) {
+    return <Skeleton />;
+  }
+
+  const status = composeStatus?.image_status.status || 'failure';
+
+  if (status === 'failure') {
+    return (
+      <ErrorStatus
+        icon={statuses[status].icon}
+        text={statuses[status].text}
+        error={composeStatus?.image_status.error || ''}
+      />
+    );
+  }
+  return <Status icon={statuses[status].icon} text={statuses[status].text} />;
 };
 
 const statuses = {

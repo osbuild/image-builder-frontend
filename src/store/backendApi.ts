@@ -48,6 +48,10 @@ export const useGetBlueprintComposesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetBlueprintComposesQuery
   : imageBuilderQueries.useGetBlueprintComposesQuery;
 
+export const useGetComposeStatusQuery = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useGetComposeStatusQuery
+  : imageBuilderQueries.useGetComposeStatusQuery;
+
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? cockpitApi.usePrefetch
   : imageBuilderApi.usePrefetch;
