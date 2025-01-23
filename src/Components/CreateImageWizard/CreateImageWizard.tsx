@@ -34,7 +34,7 @@ import Azure from './steps/TargetEnvironment/Azure';
 import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
-import { getHostDistro } from './utilities/getHostInfo';
+import { getHostArch, getHostDistro } from './utilities/getHostInfo';
 import {
   useFilesystemValidation,
   useSnapshotValidation,
@@ -199,10 +199,17 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       dispatch(changeDistribution(distro));
     };
 
+    const initializeHostArch = async () => {
+      const arch = await getHostArch();
+      dispatch(changeArchitecture(arch));
+    };
+
     if (process.env.IS_ON_PREMISE) {
       if (!searchParams.get('release')) {
         initializeHostDistro();
       }
+
+      initializeHostArch();
     }
     // This useEffect hook should run *only* on mount and therefore has an empty
     // dependency array. eslint's exhaustive-deps rule does not support this use.

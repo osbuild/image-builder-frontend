@@ -7,7 +7,7 @@ import {
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
 
-import { ARCHS } from '../../../../constants';
+import { ARCHES } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import { ImageRequest } from '../../../../store/imageBuilderApi';
 import {
@@ -30,7 +30,15 @@ const ArchSelect = () => {
 
   const setSelectOptions = () => {
     const options: ReactElement[] = [];
-    ARCHS.forEach((arch) => {
+    const arches = ARCHES.filter((a) => {
+      // we don't want to support cross-arch
+      // builds for on-prem for now
+      if (process.env.IS_ON_PREMISE) {
+        return a === arch;
+      }
+      return true;
+    });
+    arches.forEach((arch) => {
       options.push(
         <SelectOption key={arch} value={arch}>
           {arch}

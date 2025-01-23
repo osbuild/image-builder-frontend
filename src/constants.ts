@@ -106,7 +106,7 @@ export const RHEL_8_FULL_SUPPORT = ['2019-05-07', '2024-05-31'];
 export const RHEL_9_MAINTENANCE_SUPPORT = ['2027-05-31', '2032-05-31'];
 export const RHEL_8_MAINTENANCE_SUPPORT = ['2024-05-31', '2029-05-31'];
 
-export const ARCHS = [X86_64, AARCH64];
+export const ARCHES = [X86_64, AARCH64];
 
 export const DEFAULT_AWS_REGION = 'us-east-1';
 
