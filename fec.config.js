@@ -112,6 +112,7 @@ module.exports = {
       // to false
       cockpit: false,
       'cockpit/fsinfo': false,
+      'os-release': false,
     },
   },
   routes: {

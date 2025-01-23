@@ -14,7 +14,6 @@ import { emptyCockpitApi } from './emptyCockpitApi';
 import {
   ComposeBlueprintApiResponse,
   ComposeBlueprintApiArg,
-  ComposeRequest,
   CreateBlueprintRequest,
   ComposesResponseItem,
   GetArchitecturesApiResponse,
@@ -328,13 +327,6 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           });
           const entries = Object.entries(info?.entries || {});
           for (const bpEntry of entries) {
-            const bpInfo = await fsinfo(
-              path.join(blueprintsDir, bpEntry[0]),
-              ['entries'],
-              {
-                superuser: 'try',
-              }
-            );
             const request = await cockpit
               .file(path.join(blueprintsDir, bpEntry[0], queryArg.composeId))
               .read();
