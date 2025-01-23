@@ -34,6 +34,7 @@ import {
   isHostnameValid,
   isKernelNameValid,
   isUserNameValid,
+  isSshKeyValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -192,12 +193,20 @@ export function useUsersValidation(): StepValidation {
     users.length === 0 ||
     // Case 2: All fields are empty
     (userName === '' && userPassword === '' && userSshKey === '') ||
-    // Case 3: userName is valid
-    (userName && isUserNameValid(userName));
+    // Case 3: userName is valid and SshKey is valid
+    (userName &&
+      isUserNameValid(userName) &&
+      userSshKey &&
+      isSshKeyValid(userSshKey));
 
   return {
     errors: {
       userName: !isUserNameValid(userName) ? 'Invalid user name' : '',
+      userSshKey: !userSshKey
+        ? ''
+        : !isSshKeyValid(userSshKey)
+        ? 'Invalid SSH key'
+        : '',
     },
     disabledNext: !canProceed,
   };

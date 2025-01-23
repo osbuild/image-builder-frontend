@@ -24,6 +24,8 @@ import {
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
+const validUserName = 'best';
+const validSshKey = 'ssh-rsa d';
 
 const goToUsersStep = async () => {
   await clickNext();
@@ -54,41 +56,27 @@ const clickRevisitButton = async () => {
   await waitFor(() => user.click(revisitButton));
 };
 
-const addValidUser = async () => {
+const clickAddUser = async () => {
   const user = userEvent.setup();
   const addUser = await screen.findByRole('button', { name: /add a user/i });
   expect(addUser).toBeEnabled();
   await waitFor(() => user.click(addUser));
-  const enterUserName = screen.getByRole('textbox', {
-    name: /blueprint user name/i,
-  });
-  const nextButton = await getNextButton();
-  await waitFor(() => user.type(enterUserName, 'best'));
-  await waitFor(() => expect(enterUserName).toHaveValue('best'));
-  const enterSshKey = await screen.findByRole('textbox', {
-    name: /public SSH key/i,
-  });
-  await waitFor(() => user.type(enterSshKey, 'ssh-rsa d'));
-  await waitFor(() => expect(enterSshKey).toHaveValue('ssh-rsa d'));
-  await waitFor(() => expect(nextButton).toBeEnabled());
 };
-
-const addInvalidUser = async () => {
+const addSshKey = async (sshKey: string) => {
   const user = userEvent.setup();
-  const addUser = await screen.findByRole('button', { name: /add a user/i });
-  expect(addUser).toBeEnabled();
-  await waitFor(() => user.click(addUser));
-  const enterUserName = screen.getByRole('textbox', {
-    name: /blueprint user name/i,
-  });
-  const nextButton = await getNextButton();
-  await waitFor(() => user.type(enterUserName, '..'));
-  await waitFor(() => expect(enterUserName).toHaveValue('..'));
   const enterSshKey = await screen.findByRole('textbox', {
     name: /public SSH key/i,
   });
-  await waitFor(() => user.type(enterSshKey, 'ssh-rsa d'));
-  await waitFor(() => expect(nextButton).toBeDisabled());
+  await waitFor(() => user.type(enterSshKey, sshKey));
+  await waitFor(() => expect(enterSshKey).toHaveValue(sshKey));
+};
+const addUserName = async (userName: string) => {
+  const user = userEvent.setup();
+  const enterUserName = screen.getByRole('textbox', {
+    name: /blueprint user name/i,
+  });
+  await waitFor(() => user.type(enterUserName, userName));
+  await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
 describe('Step Users', () => {
@@ -129,100 +117,94 @@ describe('Step Users', () => {
     await goToRegistrationStep();
     await clickRegisterLater();
     await goToUsersStep();
-    await addValidUser();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addSshKey(validSshKey);
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeEnabled());
     await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Users/ });
   });
 
-  describe('User request generated correctly', () => {
-    test('with valid name and password', async () => {
-      await renderCreateMode();
-      await goToRegistrationStep();
-      await clickRegisterLater();
-      await goToUsersStep();
-      await addValidUser();
-      await goToReviewStep();
-      // informational modal pops up in the first test only as it's tied
-      // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-      await openAndDismissSaveAndBuildModal();
-      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-      const expectedRequest = {
-        ...blueprintRequest,
-        customizations: {
-          users: [
-            {
-              name: 'best',
-              ssh_key: 'ssh-rsa d',
-            },
-          ],
-        },
-      };
-
-      await waitFor(() => {
-        expect(receivedRequest).toEqual(expectedRequest);
-      });
-    });
-
-    test('with valid name, ssh key and checked Administrator checkbox', async () => {
-      const user = userEvent.setup();
-      await renderCreateMode();
-      await goToRegistrationStep();
-      await clickRegisterLater();
-      await goToUsersStep();
-      await addValidUser();
-      const isAdmin = screen.getByRole('checkbox', {
-        name: /administrator/i,
-      });
-      user.click(isAdmin);
-      await goToReviewStep();
-      const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-      const expectedRequest = {
-        ...blueprintRequest,
-        customizations: {
-          users: [
-            {
-              name: 'best',
-              ssh_key: 'ssh-rsa d',
-              groups: ['wheel'],
-            },
-          ],
-        },
-      };
-
-      await waitFor(() => {
-        expect(receivedRequest).toEqual(expectedRequest);
-      });
-    });
-
-    test('with invalid name', async () => {
-      await renderCreateMode();
-      await goToRegistrationStep();
-      await clickRegisterLater();
-      await goToUsersStep();
-      await addInvalidUser();
-      const invalidUserMessage = screen.getByText(/invalid user name/i);
-      await waitFor(() => expect(invalidUserMessage));
-    });
+  test('with invalid name', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName('ss.');
+    await addSshKey('ssh');
+    const invalidUserMessage = screen.getByText(/invalid user name/i);
+    await waitFor(() => expect(invalidUserMessage));
   });
 
-  describe('Users edit mode', () => {
-    beforeEach(() => {
-      vi.clearAllMocks();
+  test('with invalid ssh key', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addSshKey('ssh');
+    await addUserName('bestUser');
+    const invalidUserMessage = screen.getByText(/invalid ssh key/i);
+    await waitFor(() => expect(invalidUserMessage));
+  });
+});
+
+describe('User request generated correctly', () => {
+  test('with valid name, ssh key and checked Administrator checkbox', async () => {
+    const user = userEvent.setup();
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addSshKey(validSshKey);
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeEnabled());
+    const isAdmin = screen.getByRole('checkbox', {
+      name: /administrator/i,
     });
-
-    test('edit mode works', async () => {
-      const id = mockBlueprintIds['users'];
-      await renderEditMode(id);
-
-      // starts on review step
-      const receivedRequest = await interceptEditBlueprintRequest(
-        `${EDIT_BLUEPRINT}/${id}`
-      );
-      const expectedRequest = usersCreateBlueprintRequest;
+    user.click(isAdmin);
+    await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        users: [
+          {
+            name: 'best',
+            ssh_key: 'ssh-rsa d',
+            groups: ['wheel'],
+          },
+        ],
+      },
+    };
+    await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
+  });
+});
+
+describe('Users edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['users'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = usersCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });

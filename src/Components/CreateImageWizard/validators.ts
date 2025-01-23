@@ -68,6 +68,17 @@ export const isUserNameValid = (userName: string) => {
   return isLengthValid && isNotNumericOnly && isPatternValid;
 };
 
+export const isSshKeyValid = (sshKey: string) => {
+  // 1. Key types: ssh-rsa, ssh-dss, ssh-ed25519, or ecdsa-sha2-nistp(256|384|521).
+  // 2. Base64-encoded key material.
+  // 3. Optional comment at the end.
+  const isPatternValid =
+    /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+(\s+\S+)?$/.test(
+      sshKey
+    );
+  return isPatternValid;
+};
+
 export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
