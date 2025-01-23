@@ -2,6 +2,7 @@
 
 type fileinfo = {
   entries?: Record<string, fileinfo>;
+  mtime: number;
 };
 
 export const fsinfo = (
@@ -12,6 +13,7 @@ export const fsinfo = (
   return new Promise((resolve) => {
     resolve({
       entries: {},
+      mtime: 1,
     });
   });
 };
