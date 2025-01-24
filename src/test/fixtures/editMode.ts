@@ -493,6 +493,24 @@ export const hostnameBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['hostname'],
 };
 
+export const kernelCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['kernel'],
+  description: mockBlueprintDescriptions['kernel'],
+  customizations: {
+    kernel: {
+      name: 'kernel-debug',
+      append: 'nosmt=force',
+    },
+  },
+};
+
+export const kernelBlueprintResponse: BlueprintResponse = {
+  ...kernelCreateBlueprintRequest,
+  id: mockBlueprintIds['kernel'],
+  description: mockBlueprintDescriptions['kernel'],
+};
+
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['firstBoot'],
@@ -585,6 +603,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return localeBlueprintResponse;
     case mockBlueprintIds['hostname']:
       return hostnameBlueprintResponse;
+    case mockBlueprintIds['kernel']:
+      return kernelBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:

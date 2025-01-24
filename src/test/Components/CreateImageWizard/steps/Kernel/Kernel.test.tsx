@@ -2,7 +2,9 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { kernelCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
   clickBack,
@@ -10,7 +12,9 @@ import {
   enterBlueprintName,
   getNextButton,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
+  renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
@@ -349,4 +353,20 @@ describe('Kernel request generated correctly', () => {
   });
 });
 
-// TO DO 'Kernel edit mode'
+describe('Kernel edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['kernel'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = kernelCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
