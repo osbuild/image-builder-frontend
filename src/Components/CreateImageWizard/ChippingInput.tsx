@@ -50,19 +50,19 @@ const ChippingInput = ({
   };
 
   const addItem = (value: string) => {
-    if (validator(value) && !list?.includes(value)) {
-      dispatch(addAction(value));
-      setInputValue('');
-      setErrorText('');
-    }
-
-    if (list?.includes(value)) {
+    if (list?.includes(value) || requiredList?.includes(value)) {
       setErrorText(`${item} already exists.`);
+      return;
     }
 
     if (!validator(value)) {
       setErrorText('Invalid format.');
+      return;
     }
+
+    dispatch(addAction(value));
+    setInputValue('');
+    setErrorText('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {

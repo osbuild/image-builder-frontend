@@ -35,17 +35,13 @@ const KernelArguments = () => {
     oscapProfileInfo?.kernel?.append?.split(' ').includes(arg)
   );
 
-  const notRequiredByOpenSCAP = kernelAppend.filter(
-    (arg) => !oscapProfileInfo?.kernel?.append?.split(' ').includes(arg)
-  );
-
   return (
     <FormGroup isRequired={false} label="Append">
       <ChippingInput
         ariaLabel="Add kernel argument"
         placeholder="Add kernel argument"
         validator={isKernelArgumentValid}
-        list={notRequiredByOpenSCAP}
+        list={kernelAppend.filter((arg) => !requiredByOpenSCAP.includes(arg))}
         requiredList={requiredByOpenSCAP}
         item="Kernel argument"
         addAction={addKernelArg}
