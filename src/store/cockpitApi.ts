@@ -190,6 +190,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
       >({
+        invalidatesTags: ['Composes'],
         queryFn: async ({ id: filename }) => {
           const blueprintsDir = await getBlueprintsPath();
           const file = cockpit.file(
@@ -260,6 +261,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         },
       }),
       getComposes: builder.query<GetComposesApiResponse, GetComposesApiArg>({
+        providesTags: ['Composes'],
         queryFn: async () => {
           const blueprintsDir = await getBlueprintsPath();
           const info = await fsinfo(blueprintsDir, ['entries'], {
@@ -291,6 +293,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetBlueprintComposesApiResponse,
         GetBlueprintComposesApiArg
       >({
+        providesTags: ['Composes'],
         queryFn: async (queryArgs) => {
           const composes = await readComposes(queryArgs.id);
           return {
