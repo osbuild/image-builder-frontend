@@ -1,45 +1,31 @@
-import {
-  useGetArchitecturesQuery as useCockpitGetArchitecturesQuery,
-  useGetBlueprintQuery as useCockpitGetBlueprintQuery,
-  useGetBlueprintsQuery as useCockpitGetBlueprintsQuery,
-  useLazyGetBlueprintsQuery as useCockpitLazyGetBlueprintsQuery,
-  useDeleteBlueprintMutation as useCockpitDeleteMutation,
-  useGetOscapProfilesQuery as useCockpitGetOscapProfilesQuery,
-} from './cockpitApi';
+import * as cockpitQueries from './cockpitApi';
 import { cockpitApi } from './enhancedCockpitApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
-import {
-  useGetArchitecturesQuery as useImageBuilderGetArchitecturesQuery,
-  useGetBlueprintQuery as useImageBuilderGetBlueprintQuery,
-  useGetBlueprintsQuery as useImageBuilderGetBlueprintsQuery,
-  useLazyGetBlueprintsQuery as useImageBuilderLazyGetBlueprintsQuery,
-  useDeleteBlueprintMutation as useImageBuilderDeleteMutation,
-  useGetOscapProfilesQuery as useImageBuilderGetOscapProfilesQuery,
-} from './imageBuilderApi';
+import * as imageBuilderQueries from './imageBuilderApi';
 
 export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
-  ? useCockpitGetArchitecturesQuery
-  : useImageBuilderGetArchitecturesQuery;
+  ? cockpitQueries.useGetArchitecturesQuery
+  : imageBuilderQueries.useGetArchitecturesQuery;
 
 export const useGetBlueprintQuery = process.env.IS_ON_PREMISE
-  ? useCockpitGetBlueprintQuery
-  : useImageBuilderGetBlueprintQuery;
+  ? cockpitQueries.useGetBlueprintQuery
+  : imageBuilderQueries.useGetBlueprintQuery;
 
 export const useGetBlueprintsQuery = process.env.IS_ON_PREMISE
-  ? useCockpitGetBlueprintsQuery
-  : useImageBuilderGetBlueprintsQuery;
+  ? cockpitQueries.useGetBlueprintsQuery
+  : imageBuilderQueries.useGetBlueprintsQuery;
 
 export const useLazyGetBlueprintsQuery = process.env.IS_ON_PREMISE
-  ? useCockpitLazyGetBlueprintsQuery
-  : useImageBuilderLazyGetBlueprintsQuery;
+  ? cockpitQueries.useLazyGetBlueprintsQuery
+  : imageBuilderQueries.useLazyGetBlueprintsQuery;
 
 export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
-  ? useCockpitDeleteMutation
-  : useImageBuilderDeleteMutation;
+  ? cockpitQueries.useDeleteBlueprintMutation
+  : imageBuilderQueries.useDeleteBlueprintMutation;
 
 export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
-  ? useCockpitGetOscapProfilesQuery
-  : useImageBuilderGetOscapProfilesQuery;
+  ? cockpitQueries.useGetOscapProfilesQuery
+  : imageBuilderQueries.useGetOscapProfilesQuery;
 
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? cockpitApi.usePrefetch
