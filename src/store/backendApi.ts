@@ -1,4 +1,5 @@
 import * as cockpitQueries from './cockpitApi';
+import { useListSnapshotsByDateMutation as useContentSourcesListSnapshotsByDateMutation } from './contentSourcesApi';
 import { cockpitApi } from './enhancedCockpitApi';
 import { imageBuilderApi } from './enhancedImageBuilderApi';
 import * as imageBuilderQueries from './imageBuilderApi';
@@ -26,6 +27,10 @@ export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
 export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetOscapProfilesQuery
   : imageBuilderQueries.useGetOscapProfilesQuery;
+
+export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useListSnapshotsByDateMutation
+  : useContentSourcesListSnapshotsByDateMutation;
 
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? cockpitApi.usePrefetch
