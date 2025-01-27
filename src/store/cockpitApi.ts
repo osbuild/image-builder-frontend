@@ -10,6 +10,10 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import toml from 'toml';
 
+import {
+  ListSnapshotsByDateApiArg,
+  ListSnapshotsByDateApiResponse,
+} from './contentSourcesApi';
 import { emptyCockpitApi } from './emptyCockpitApi';
 import {
   GetArchitecturesApiResponse,
@@ -213,6 +217,19 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           };
         },
       }),
+      // add an empty response for now
+      // just so we can step through the create
+      // image wizard for on prem
+      listSnapshotsByDate: builder.mutation<
+        ListSnapshotsByDateApiResponse,
+        ListSnapshotsByDateApiArg
+      >({
+        queryFn: () => ({
+          data: {
+            data: [],
+          },
+        }),
+      }),
     };
   },
 });
@@ -224,4 +241,5 @@ export const {
   useLazyGetBlueprintsQuery,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
+  useListSnapshotsByDateMutation,
 } = cockpitApi;
