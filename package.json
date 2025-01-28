@@ -99,6 +99,7 @@
     "start:stage": "fec dev --clouddotEnv=stage",
     "start:prod": "fec dev --clouddotEnv=prod",
     "start:msw:stage": "NODE_ENV=development MSW=TRUE fec dev --clouddotEnv=stage",
+    "start:federated": "fec static",
     "test": "TZ=UTC vitest run",
     "test:watch": "TZ=UTC vitest",
     "test:coverage": "TZ=UTC vitest run --coverage",
