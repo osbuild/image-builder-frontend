@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 
 import {
-  CodeBlock,
-  CodeBlockCode,
   Spinner,
   TextContent,
   TextList,
@@ -80,15 +78,6 @@ export const OscapProfileInformation = ({
     );
   }, [isSuccessPolicyInfo]);
 
-  const enabledServicesDisplayString =
-    oscapProfileInfo?.services?.enabled?.join(' ');
-  const disabledAndMaskedServices = [
-    ...(oscapProfileInfo?.services?.disabled ?? []),
-    ...(oscapProfileInfo?.services?.masked ?? []),
-  ];
-  const disabledAndMaskedServicesDisplayString =
-    disabledAndMaskedServices.join(' ');
-
   const oscapProfile = oscapProfileInfo?.openscap as OpenScapProfile;
 
   return (
@@ -129,30 +118,6 @@ export const OscapProfileInformation = ({
                 component={TextListItemVariants.dd}
               >
                 {oscapProfile?.profile_id}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
-              >
-                Disabled services:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                <CodeBlock>
-                  <CodeBlockCode>
-                    {disabledAndMaskedServicesDisplayString}
-                  </CodeBlockCode>
-                </CodeBlock>
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
-              >
-                Enabled services:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                <CodeBlock>
-                  <CodeBlockCode>{enabledServicesDisplayString}</CodeBlockCode>
-                </CodeBlock>
               </TextListItem>
             </TextList>
           </TextContent>
