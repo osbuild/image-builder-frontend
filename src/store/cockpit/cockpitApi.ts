@@ -10,14 +10,16 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
-import { emptyCockpitApi } from './emptyCockpitApi';
+// We have to work around RTK query here, since it doesn't like splitting
+// out the same api into two separate apis. So, instead, we can just
+// inherit/import the `contentSourcesApi` and build on top of that.
+// This is fine since all the api endpoints for on-prem should query
+// the same unix socket. This allows us to split out the code a little
+// bit so that the `cockpitApi` doesn't become a monolith.
+import { contentSourcesApi } from './contentSourcesApi';
 
 import { mapHostedToOnPrem } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR } from '../../constants';
-import {
-  ListSnapshotsByDateApiArg,
-  ListSnapshotsByDateApiResponse,
-} from '../service/contentSourcesApi';
 import {
   ComposeBlueprintApiResponse,
   ComposeBlueprintApiArg,
@@ -84,7 +86,7 @@ const readComposes = async (bpID: string) => {
   return composes;
 };
 
-export const cockpitApi = emptyCockpitApi.injectEndpoints({
+export const cockpitApi = contentSourcesApi.injectEndpoints({
   endpoints: (builder) => {
     return {
       getArchitectures: builder.query<
@@ -278,19 +280,6 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           };
         },
       }),
-      // add an empty response for now
-      // just so we can step through the create
-      // image wizard for on prem
-      listSnapshotsByDate: builder.mutation<
-        ListSnapshotsByDateApiResponse,
-        ListSnapshotsByDateApiArg
-      >({
-        queryFn: () => ({
-          data: {
-            data: [],
-          },
-        }),
-      }),
       composeBlueprint: builder.mutation<
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
@@ -455,6 +444,10 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
       }),
     };
   },
+  // since we are inheriting some endpoints,
+  // we want to make sure that we don't override
+  // any existing endpoints.
+  overrideExisting: 'throw',
 });
 
 export const {
@@ -465,7 +458,6 @@ export const {
   useCreateBlueprintMutation,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
-  useListSnapshotsByDateMutation,
   useComposeBlueprintMutation,
   useGetComposesQuery,
   useGetBlueprintComposesQuery,

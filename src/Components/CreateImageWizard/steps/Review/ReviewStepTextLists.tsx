@@ -35,7 +35,7 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
-import { useListSnapshotsByDateMutation } from '../../../../store/backendApi';
+import { useListSnapshotsByDateMutation } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
