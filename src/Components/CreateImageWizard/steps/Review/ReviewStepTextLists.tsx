@@ -75,6 +75,7 @@ import {
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
   selectKernel,
+  selectServices,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -905,6 +906,47 @@ export const KernelList = () => {
           <CodeBlock>
             <CodeBlockCode>
               {kernel.append.length > 0 ? kernel.append.join(' ') : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const ServicesList = () => {
+  const services = useAppSelector(selectServices);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Disabled
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {services.disabled.length > 0 || services.masked.length > 0
+                ? services.disabled.concat(services.masked).join(' ')
+                : 'None'}
+            </CodeBlockCode>
+          </CodeBlock>
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Enabled
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          <CodeBlock>
+            <CodeBlockCode>
+              {services.enabled.length > 0
+                ? services.enabled.join(' ')
+                : 'None'}
             </CodeBlockCode>
           </CodeBlock>
         </TextListItem>
