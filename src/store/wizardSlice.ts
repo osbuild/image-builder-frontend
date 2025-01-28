@@ -816,11 +816,56 @@ export const wizardSlice = createSlice({
     changeEnabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.enabled = action.payload;
     },
+    addEnabledService: (state, action: PayloadAction<string>) => {
+      if (
+        !state.services.enabled.some((service) => service === action.payload)
+      ) {
+        state.services.enabled.push(action.payload);
+      }
+    },
+    removeEnabledService: (state, action: PayloadAction<string>) => {
+      state.services.enabled.splice(
+        state.services.enabled.findIndex(
+          (service) => service === action.payload
+        ),
+        1
+      );
+    },
     changeMaskedServices: (state, action: PayloadAction<string[]>) => {
       state.services.masked = action.payload;
     },
+    addMaskedService: (state, action: PayloadAction<string>) => {
+      if (
+        !state.services.masked.some((service) => service === action.payload)
+      ) {
+        state.services.masked.push(action.payload);
+      }
+    },
+    removeMaskedService: (state, action: PayloadAction<string>) => {
+      state.services.masked.splice(
+        state.services.masked.findIndex(
+          (service) => service === action.payload
+        ),
+        1
+      );
+    },
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.disabled = action.payload;
+    },
+    addDisabledService: (state, action: PayloadAction<string>) => {
+      if (
+        !state.services.disabled.some((service) => service === action.payload)
+      ) {
+        state.services.disabled.push(action.payload);
+      }
+    },
+    removeDisabledService: (state, action: PayloadAction<string>) => {
+      state.services.disabled.splice(
+        state.services.disabled.findIndex(
+          (service) => service === action.payload
+        ),
+        1
+      );
     },
     changeKernelName: (state, action: PayloadAction<string>) => {
       state.kernel.name = action.payload;
@@ -1014,8 +1059,14 @@ export const {
   loadWizardState,
   setFirstBootScript,
   changeEnabledServices,
+  addEnabledService,
+  removeEnabledService,
   changeMaskedServices,
+  addMaskedService,
+  removeMaskedService,
   changeDisabledServices,
+  addDisabledService,
+  removeDisabledService,
   changeKernelName,
   addKernelArg,
   removeKernelArg,

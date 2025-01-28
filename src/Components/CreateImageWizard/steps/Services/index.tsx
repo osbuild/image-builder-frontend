@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Text, Form, Title } from '@patternfly/react-core';
 
+import ServicesInput from './components/ServicesInputs';
+
 const ServicesStep = () => {
   return (
     <Form>
@@ -9,6 +11,7 @@ const ServicesStep = () => {
         Systemd services
       </Title>
       <Text>Enable and disable systemd services.</Text>
+      <ServicesInput />
     </Form>
   );
 };
