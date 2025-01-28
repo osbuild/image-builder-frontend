@@ -427,5 +427,14 @@ describe('Import modal', () => {
     // check enabled services
     await screen.findByText('ftp');
     await screen.findByText('ntp');
+
+    // Services
+    await clickNext();
+    await screen.findByText('sshd');
+    await screen.findByText('cockpit.socket');
+    await screen.findByText('httpd');
+    await screen.findByText('postfix');
+    await screen.findByText('telnetd');
+    await screen.findByText('rpcbind');
   }, 20000);
 });
