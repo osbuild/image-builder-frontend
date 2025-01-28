@@ -33,6 +33,7 @@ import {
   LocaleList,
   HostnameList,
   KernelList,
+  ServicesList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -85,6 +86,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const [isExpandedLocale, setIsExpandedLocale] = useState(true);
   const [isExpandedHostname, setIsExpandedHostname] = useState(true);
   const [isExpandedKernel, setIsExpandedKernel] = useState(true);
+  const [isExpandedServices, setIsExpandedServices] = useState(true);
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
@@ -92,6 +94,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const isLocaleEnabled = useFlag('image-builder.locale.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
+  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
@@ -117,6 +120,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
     setIsExpandedHostname(isExpandedHostname);
   const onToggleKernel = (isExpandedKernel: boolean) =>
     setIsExpandedKernel(isExpandedKernel);
+  const onToggleServices = (isExpandedServices: boolean) =>
+    setIsExpandedServices(isExpandedServices);
   const onToggleFirstBoot = (isExpandableFirstBoot: boolean) =>
     setIsExpandedFirstBoot(isExpandableFirstBoot);
   const onToggleUsers = (isExpandedUsers: boolean) =>
@@ -418,6 +423,23 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           data-testid="kernel-expandable"
         >
           <KernelList />
+        </ExpandableSection>
+      )}
+      {isServicesStepEnabled && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Systemd services',
+            'revisit-services',
+            'wizard-services'
+          )}
+          onToggle={(_event, isExpandedServices) =>
+            onToggleServices(isExpandedServices)
+          }
+          isExpanded={isExpandedServices}
+          isIndented
+          data-testid="services-expandable"
+        >
+          <ServicesList />
         </ExpandableSection>
       )}
       {isFirstBootEnabled && (

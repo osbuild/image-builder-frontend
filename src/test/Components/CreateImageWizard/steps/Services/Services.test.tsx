@@ -1,5 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT } from '../../../../../constants';
@@ -107,6 +107,15 @@ const selectProfile = async () => {
   await waitFor(() => user.click(cis1Profile));
 };
 
+const clickRevisitButton = async () => {
+  const user = userEvent.setup();
+  const expandable = await screen.findByTestId('services-expandable');
+  const revisitButton = await within(expandable).findByTestId(
+    'revisit-services'
+  );
+  await waitFor(() => user.click(revisitButton));
+};
+
 describe('Step Services', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -168,6 +177,15 @@ describe('Step Services', () => {
     expect(
       screen.queryByRole('button', { name: /close neovim-service/i })
     ).not.toBeInTheDocument();
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await goToServicesStep();
+    await addDisabledService('telnet');
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Systemd services/ });
   });
 });
 
