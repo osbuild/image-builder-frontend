@@ -378,5 +378,20 @@ describe('Import modal', () => {
     await clickNext();
     const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
     expect(hostnameInput).toHaveValue('base-image');
+
+    // Kernel
+    await clickNext();
+
+    // Firewall
+    await clickNext();
+
+    // Services
+    await clickNext();
+    await screen.findByText('sshd');
+    await screen.findByText('cockpit.socket');
+    await screen.findByText('httpd');
+    await screen.findByText('postfix');
+    await screen.findByText('telnetd');
+    await screen.findByText('rpcbind');
   }, 20000);
 });
