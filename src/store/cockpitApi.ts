@@ -99,15 +99,12 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
             data: [
               {
                 arch: 'aarch64',
-                image_types: ['aws', 'guest-image', 'image-installer'],
+                image_types: ['guest-image', 'image-installer'],
                 repositories: [],
               },
               {
                 arch: 'x86_64',
                 image_types: [
-                  'aws',
-                  'gcp',
-                  'azure',
                   'rhel-edge-commit',
                   'rhel-edge-installer',
                   'edge-commit',
@@ -115,6 +112,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                   'guest-image',
                   'image-installer',
                   'vsphere',
+                  'vsphere-ova',
                 ],
                 repositories: [],
               },
