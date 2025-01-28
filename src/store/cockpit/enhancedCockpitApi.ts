@@ -1,7 +1,8 @@
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import { cockpitApi } from './cockpitApi';
-import { errorMessage } from './enhancedImageBuilderApi';
+
+import { errorMessage } from '../service/enhancedImageBuilderApi';
 
 const enhancedApi = cockpitApi.enhanceEndpoints({
   addTagTypes: ['Blueprints', 'Composes'],

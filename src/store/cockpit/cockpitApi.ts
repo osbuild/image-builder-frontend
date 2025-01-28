@@ -10,11 +10,14 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
+import { emptyCockpitApi } from './emptyCockpitApi';
+
+import { mapHostedToOnPrem } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import { BLUEPRINTS_DIR } from '../../constants';
 import {
   ListSnapshotsByDateApiArg,
   ListSnapshotsByDateApiResponse,
-} from './contentSourcesApi';
-import { emptyCockpitApi } from './emptyCockpitApi';
+} from '../service/contentSourcesApi';
 import {
   ComposeBlueprintApiResponse,
   ComposeBlueprintApiArg,
@@ -40,10 +43,7 @@ import {
   CreateBlueprintApiResponse,
   CreateBlueprintApiArg,
   ComposeResponse,
-} from './imageBuilderApi';
-
-import { mapHostedToOnPrem } from '../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
-import { BLUEPRINTS_DIR } from '../constants';
+} from '../service/imageBuilderApi';
 
 const getBlueprintsPath = async () => {
   const user = await cockpit.user();

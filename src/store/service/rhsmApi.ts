@@ -1,4 +1,4 @@
-import { emptyRhsmApi as api } from './service/emptyRhsmApi';
+import { emptyRhsmApi as api } from "./emptyRhsmApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     listActivationKeys: build.query<
@@ -13,7 +13,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/activation_keys`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.body,
       }),
     }),

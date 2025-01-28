@@ -1,4 +1,4 @@
-import { emptyProvisioningApi as api } from './service/emptyProvisioningApi';
+import { emptyProvisioningApi as api } from "./emptyProvisioningApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getSourceList: build.query<GetSourceListApiResponse, GetSourceListApiArg>({
@@ -22,7 +22,7 @@ export { injectedRtkApi as provisioningApi };
 export type GetSourceListApiResponse =
   /** status 200 Returned on success. */ V1ListSourceResponse;
 export type GetSourceListApiArg = {
-  provider?: 'aws' | 'azure' | 'gcp';
+  provider?: "aws" | "azure" | "gcp";
 };
 export type GetSourceUploadInfoApiResponse =
   /** status 200 Return on success. */ V1SourceUploadInfoResponse;

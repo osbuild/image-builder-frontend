@@ -1,8 +1,8 @@
-import * as cockpitQueries from './cockpitApi';
+import * as cockpitQueries from './cockpit/cockpitApi';
+import { cockpitApi } from './cockpit/enhancedCockpitApi';
 import { useListSnapshotsByDateMutation as useContentSourcesListSnapshotsByDateMutation } from './contentSourcesApi';
-import { cockpitApi } from './enhancedCockpitApi';
-import { imageBuilderApi } from './enhancedImageBuilderApi';
-import * as imageBuilderQueries from './imageBuilderApi';
+import { imageBuilderApi } from './service/enhancedImageBuilderApi';
+import * as imageBuilderQueries from './service/imageBuilderApi';
 
 export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetArchitecturesQuery

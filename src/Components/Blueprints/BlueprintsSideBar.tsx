@@ -39,12 +39,12 @@ import {
   setBlueprintSearchInput,
   setBlueprintsOffset,
 } from '../../store/BlueprintSlice';
-import { imageBuilderApi } from '../../store/enhancedImageBuilderApi';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
   GetBlueprintsApiArg,
 } from '../../store/imageBuilderApi';
+import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {

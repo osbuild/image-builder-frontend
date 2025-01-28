@@ -3,14 +3,14 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import { blueprintsSlice } from './BlueprintSlice';
-import { cockpitApi } from './cockpitApi';
+import { cockpitApi } from './cockpit/cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
 import { edgeApi } from './edgeApi';
-import { imageBuilderApi } from './enhancedImageBuilderApi';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
+import { imageBuilderApi } from './service/enhancedImageBuilderApi';
 import wizardSlice, {
   changeArchitecture,
   changeDistribution,

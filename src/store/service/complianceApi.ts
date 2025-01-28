@@ -1,11 +1,11 @@
-import { emptyComplianceApi as api } from './service/emptyComplianceApi';
+import { emptyComplianceApi as api } from "./emptyComplianceApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     policies: build.query<PoliciesApiResponse, PoliciesApiArg>({
       query: (queryArg) => ({
         url: `/policies`,
         headers: {
-          'X-RH-IDENTITY': queryArg['X-RH-IDENTITY'],
+          "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"],
         },
         params: {
           limit: queryArg.limit,
@@ -20,7 +20,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/policies/${queryArg.policyId}`,
         headers: {
-          'X-RH-IDENTITY': queryArg['X-RH-IDENTITY'],
+          "X-RH-IDENTITY": queryArg["X-RH-IDENTITY"],
         },
       }),
     }),
@@ -39,7 +39,7 @@ export type PoliciesApiResponse = /** status 200 Lists Policies */ {
 };
 export type PoliciesApiArg = {
   /** For internal use only */
-  'X-RH-IDENTITY'?: string;
+  "X-RH-IDENTITY"?: string;
   /** Number of items to return per page */
   limit?: number;
   /** Offset of first item of paginated response */
@@ -48,21 +48,21 @@ export type PoliciesApiArg = {
   idsOnly?: boolean;
   /** Attribute and direction to sort the items by. Represented by an array of fields with an optional direction (`<key>:asc` or `<key>:desc`).<br><br>If no direction is selected, `<key>:asc` is used by default. */
   sortBy?: (
-    | 'title'
-    | 'os_major_version'
-    | 'total_system_count'
-    | 'business_objective'
-    | 'compliance_threshold'
-    | 'title:asc'
-    | 'title:desc'
-    | 'os_major_version:asc'
-    | 'os_major_version:desc'
-    | 'total_system_count:asc'
-    | 'total_system_count:desc'
-    | 'business_objective:asc'
-    | 'business_objective:desc'
-    | 'compliance_threshold:asc'
-    | 'compliance_threshold:desc'
+    | "title"
+    | "os_major_version"
+    | "total_system_count"
+    | "business_objective"
+    | "compliance_threshold"
+    | "title:asc"
+    | "title:desc"
+    | "os_major_version:asc"
+    | "os_major_version:desc"
+    | "total_system_count:asc"
+    | "total_system_count:desc"
+    | "business_objective:asc"
+    | "business_objective:desc"
+    | "compliance_threshold:asc"
+    | "compliance_threshold:desc"
   )[];
   /** Query string to filter items by their attributes. Compliant with <a href="https://github.com/wvanbergen/scoped_search/wiki/Query-language" target="_blank" title="github.com/wvanbergen/scoped_search">scoped_search query language</a>. However, only `=` or `!=` (resp. `<>`) operators are supported.<br><br>Policies are searchable using attributes `title`, `os_major_version`, and `os_minor_version`<br><br>(e.g.: `(field_1=something AND field_2!="something else") OR field_3>40`) */
   filter?: string;
@@ -76,7 +76,7 @@ export type PolicyApiResponse = /** status 200 Returns a Policy */ {
 };
 export type PolicyApiArg = {
   /** For internal use only */
-  'X-RH-IDENTITY'?: string;
+  "X-RH-IDENTITY"?: string;
   policyId: string;
 };
 export type Metadata = {
@@ -123,7 +123,7 @@ export type Policy = {
 };
 export type PolicyRead = {
   id?: IdRead | undefined;
-  type?: 'policy' | undefined;
+  type?: "policy" | undefined;
   /** Short title of the Policy */
   title?: string | undefined;
   /** Longer description of the Policy */

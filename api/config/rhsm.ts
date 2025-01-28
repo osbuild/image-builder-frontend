@@ -2,9 +2,9 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile: '../schema/rhsm.json',
-  apiFile: '../../src/store/emptyRhsmApi.ts',
+  apiFile: '../../src/store/service/emptyRhsmApi.ts',
   apiImport: 'emptyRhsmApi',
-  outputFile: '../../src/store/rhsmApi.ts',
+  outputFile: '../../src/store/service/rhsmApi.ts',
   exportName: 'rhsmApi',
   hooks: true,
   unionUndefined: true,
