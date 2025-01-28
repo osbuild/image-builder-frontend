@@ -511,6 +511,21 @@ export const kernelBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['kernel'],
 };
 
+export const servicesCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['services'],
+  description: mockBlueprintDescriptions['services'],
+  customizations: {
+    services: expectedServicesCisL1,
+  },
+};
+
+export const servicesBlueprintResponse: BlueprintResponse = {
+  ...servicesCreateBlueprintRequest,
+  id: mockBlueprintIds['services'],
+  description: mockBlueprintDescriptions['services'],
+};
+
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['firstBoot'],
@@ -605,6 +620,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return hostnameBlueprintResponse;
     case mockBlueprintIds['kernel']:
       return kernelBlueprintResponse;
+    case mockBlueprintIds['services']:
+      return servicesBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:
