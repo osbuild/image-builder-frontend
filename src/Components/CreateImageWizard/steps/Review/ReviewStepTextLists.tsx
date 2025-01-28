@@ -74,7 +74,11 @@ import {
   selectUserNameByIndex,
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
+<<<<<<< HEAD
   selectKernel,
+=======
+  selectFirewall,
+>>>>>>> ee797cbd (Wizard: Add firewall to Review step)
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -880,8 +884,13 @@ export const HostnameList = () => {
   );
 };
 
+<<<<<<< HEAD
 export const KernelList = () => {
   const kernel = useAppSelector(selectKernel);
+=======
+export const FirewallList = () => {
+  const firewall = useAppSelector(selectFirewall);
+>>>>>>> ee797cbd (Wizard: Add firewall to Review step)
 
   return (
     <TextContent>
@@ -890,15 +899,23 @@ export const KernelList = () => {
           component={TextListItemVariants.dt}
           className="pf-v5-u-min-width"
         >
+<<<<<<< HEAD
           Name
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
           {kernel.name ? kernel.name : 'None'}
+=======
+          Ports
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {firewall.ports ? firewall.ports : 'None'}
+>>>>>>> ee797cbd (Wizard: Add firewall to Review step)
         </TextListItem>
         <TextListItem
           component={TextListItemVariants.dt}
           className="pf-v5-u-min-width"
         >
+<<<<<<< HEAD
           Append
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
@@ -907,6 +924,25 @@ export const KernelList = () => {
               {kernel.append.length > 0 ? kernel.append.join(' ') : 'None'}
             </CodeBlockCode>
           </CodeBlock>
+=======
+          Disabled services
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {firewall.services.disabled.length > 0
+            ? firewall.services.disabled
+            : 'None'}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Enabled services
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {firewall.services.enabled.length > 0
+            ? firewall.services.enabled
+            : 'None'}
+>>>>>>> ee797cbd (Wizard: Add firewall to Review step)
         </TextListItem>
       </TextList>
     </TextContent>
