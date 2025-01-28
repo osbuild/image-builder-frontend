@@ -2,14 +2,18 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { firewallCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
   clickBack,
   clickNext,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
+  renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
@@ -205,5 +209,22 @@ describe('Firewall request generated correctly', () => {
   });
 });
 
+describe('Firewall edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['firewall'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = firewallCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+});
+
 // TO DO Step Firewall -> revisit step button on Review works
-// TO DO Firewall edit mode
