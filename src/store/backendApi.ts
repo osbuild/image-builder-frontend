@@ -1,56 +1,56 @@
 import * as cockpitQueries from './cockpit/cockpitApi';
 import { cockpitApi } from './cockpit/enhancedCockpitApi';
-import { useListSnapshotsByDateMutation as useContentSourcesListSnapshotsByDateMutation } from './contentSourcesApi';
+import * as sourcesQueries from './service/contentSourcesApi';
 import { imageBuilderApi } from './service/enhancedImageBuilderApi';
-import * as imageBuilderQueries from './service/imageBuilderApi';
+import * as serviceQueries from './service/imageBuilderApi';
 
 export const useGetArchitecturesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetArchitecturesQuery
-  : imageBuilderQueries.useGetArchitecturesQuery;
+  : serviceQueries.useGetArchitecturesQuery;
 
 export const useGetBlueprintQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetBlueprintQuery
-  : imageBuilderQueries.useGetBlueprintQuery;
+  : serviceQueries.useGetBlueprintQuery;
 
 export const useGetBlueprintsQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetBlueprintsQuery
-  : imageBuilderQueries.useGetBlueprintsQuery;
+  : serviceQueries.useGetBlueprintsQuery;
 
 export const useLazyGetBlueprintsQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useLazyGetBlueprintsQuery
-  : imageBuilderQueries.useLazyGetBlueprintsQuery;
+  : serviceQueries.useLazyGetBlueprintsQuery;
 
 export const useCreateBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useCreateBlueprintMutation
-  : imageBuilderQueries.useCreateBlueprintMutation;
+  : serviceQueries.useCreateBlueprintMutation;
 
 export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useDeleteBlueprintMutation
-  : imageBuilderQueries.useDeleteBlueprintMutation;
+  : serviceQueries.useDeleteBlueprintMutation;
 
 export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetOscapProfilesQuery
-  : imageBuilderQueries.useGetOscapProfilesQuery;
+  : serviceQueries.useGetOscapProfilesQuery;
 
 export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useListSnapshotsByDateMutation
-  : useContentSourcesListSnapshotsByDateMutation;
+  : sourcesQueries.useListSnapshotsByDateMutation;
 
 export const useComposeBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useComposeBlueprintMutation
-  : imageBuilderQueries.useComposeBlueprintMutation;
+  : serviceQueries.useComposeBlueprintMutation;
 
 export const useGetComposesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetComposesQuery
-  : imageBuilderQueries.useGetComposesQuery;
+  : serviceQueries.useGetComposesQuery;
 
 export const useGetBlueprintComposesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetBlueprintComposesQuery
-  : imageBuilderQueries.useGetBlueprintComposesQuery;
+  : serviceQueries.useGetBlueprintComposesQuery;
 
 export const useGetComposeStatusQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetComposeStatusQuery
-  : imageBuilderQueries.useGetComposeStatusQuery;
+  : serviceQueries.useGetComposeStatusQuery;
 
 export const useBackendPrefetch = process.env.IS_ON_PREMISE
   ? cockpitApi.usePrefetch
