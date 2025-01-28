@@ -8,6 +8,7 @@ import path from 'path';
 // We also needed to create an alias in vitest to make this work.
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import { v4 as uuidv4 } from 'uuid';
 
 import {
   ListSnapshotsByDateApiArg,
@@ -125,21 +126,18 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         queryFn: async ({ id, version }) => {
           try {
             const blueprintsDir = await getBlueprintsPath();
-            const file = cockpit.file(path.join(blueprintsDir, id));
-
-            const contents = await file.read();
-            const parsed = toml.parse(contents);
-            file.close();
-
-            const blueprint = mapOnPremToHosted(parsed);
-
+            const bpPath = path.join(blueprintsDir, id, `${id}.json`);
+            const bpInfo = await fsinfo(bpPath, ['mtime'], {
+              superuser: 'try',
+            });
+            const contents = await cockpit.file(bpPath).read();
+            const parsed = JSON.parse(contents);
             return {
               data: {
-                ...blueprint,
+                ...parsed,
                 id,
-                version,
-                last_modified_at: Date.now().toString(),
-                image_requests: [],
+                version: version,
+                last_modified_at: new Date(bpInfo!.mtime * 1000).toString(),
               },
             };
           } catch (error) {
@@ -169,16 +167,12 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                 const file = cockpit.file(
                   path.join(blueprintsDir, filename, `${filename}.json`)
                 );
-
                 const contents = await file.read();
                 const parsed = JSON.parse(contents);
-                file.close();
-
-                const version = (parsed.version as number) ?? 1;
                 return {
                   ...parsed,
                   id: filename as string,
-                  version: version,
+                  version: 1,
                   last_modified_at: Date.now().toString(),
                 };
               })
@@ -231,12 +225,19 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         CreateBlueprintApiResponse,
         CreateBlueprintApiArg
       >({
-        queryFn: async () => {
-          // TODO: actually save the result to file
+        queryFn: async ({ createBlueprintRequest: blueprintReq }) => {
           try {
+            const id = uuidv4();
+            const blueprintsDir = await getBlueprintsPath();
+            await cockpit.spawn(['mkdir', id], {
+              directory: blueprintsDir,
+            });
+            await cockpit
+              .file(path.join(blueprintsDir, id, `${id}.json`))
+              .replace(JSON.stringify(blueprintReq));
             return {
               data: {
-                id: '',
+                id: id,
               },
             };
           } catch (error) {
