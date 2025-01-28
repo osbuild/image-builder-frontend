@@ -1,4 +1,4 @@
-import { emptyEdgeApi as api } from './service/emptyEdgeApi';
+import { emptyEdgeApi as api } from "./emptyEdgeApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     listAllImageSets: build.query<
@@ -61,7 +61,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/image-sets/${queryArg.imageSetId}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     getAllImages: build.query<GetAllImagesApiResponse, GetAllImagesApiArg>({
@@ -81,7 +81,7 @@ const injectedRtkApi = api.injectEndpoints({
     createImage: build.mutation<CreateImageApiResponse, CreateImageApiArg>({
       query: (queryArg) => ({
         url: `/images`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),
@@ -91,7 +91,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/images/checkImageName`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),
@@ -101,7 +101,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/installer`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),
@@ -111,7 +111,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/kickstart`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),
@@ -133,7 +133,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/retry`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),
@@ -143,7 +143,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/update`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createImage,
       }),
     }),

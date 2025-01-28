@@ -2,9 +2,9 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile: '../schema/edge.json',
-  apiFile: '../../src/store/emptyEdgeApi.ts',
+  apiFile: '../../src/store/service/emptyEdgeApi.ts',
   apiImport: 'emptyEdgeApi',
-  outputFile: '../../src/store/edgeApi.ts',
+  outputFile: '../../src/store/service/edgeApi.ts',
   exportName: 'edgeApi',
   hooks: true,
   unionUndefined: true,

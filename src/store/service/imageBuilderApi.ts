@@ -1,4 +1,4 @@
-import { emptyImageBuilderApi as api } from './service/emptyImageBuilderApi';
+import { emptyImageBuilderApi as api } from "./emptyImageBuilderApi";
 const injectedRtkApi = api.injectEndpoints({
   endpoints: (build) => ({
     getArchitectures: build.query<
@@ -24,7 +24,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.createBlueprintRequest,
       }),
     }),
@@ -34,7 +34,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}`,
-        method: 'PUT',
+        method: "PUT",
         body: queryArg.createBlueprintRequest,
       }),
     }),
@@ -52,7 +52,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}`,
-        method: 'DELETE',
+        method: "DELETE",
       }),
     }),
     exportBlueprint: build.query<
@@ -67,7 +67,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/blueprints/${queryArg.id}/compose`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.body,
       }),
     }),
@@ -104,7 +104,7 @@ const injectedRtkApi = api.injectEndpoints({
     cloneCompose: build.mutation<CloneComposeApiResponse, CloneComposeApiArg>({
       query: (queryArg) => ({
         url: `/composes/${queryArg.composeId}/clone`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.cloneRequest,
       }),
     }),
@@ -129,7 +129,7 @@ const injectedRtkApi = api.injectEndpoints({
     composeImage: build.mutation<ComposeImageApiResponse, ComposeImageApiArg>({
       query: (queryArg) => ({
         url: `/compose`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.composeRequest,
       }),
     }),
@@ -167,7 +167,7 @@ const injectedRtkApi = api.injectEndpoints({
     >({
       query: (queryArg) => ({
         url: `/experimental/recommendations`,
-        method: 'POST',
+        method: "POST",
         body: queryArg.recommendPackageRequest,
       }),
     }),
@@ -308,7 +308,7 @@ export type GetPackagesApiArg = {
   /** distribution to look up packages for */
   distribution: Distributions;
   /** architecture to look up packages for */
-  architecture: 'x86_64' | 'aarch64';
+  architecture: "x86_64" | "aarch64";
   /** packages to look for */
   search: string;
   /** max amount of packages, default 100 */
@@ -336,6 +336,10 @@ export type RecommendPackageApiArg = {
   recommendPackageRequest: RecommendPackageRequest;
 };
 export type Repository = {
+  /** An ID referring to a repository defined in content sources can be used instead of
+    'baseurl', 'mirrorlist' or 'metalink'.
+     */
+  id?: string | undefined;
   rhsm: boolean;
   baseurl?: string | undefined;
   mirrorlist?: string | undefined;
@@ -363,33 +367,33 @@ export type HttpErrorList = {
   errors: HttpError[];
 };
 export type Distributions =
-  | 'rhel-8'
-  | 'rhel-8-nightly'
-  | 'rhel-84'
-  | 'rhel-85'
-  | 'rhel-86'
-  | 'rhel-87'
-  | 'rhel-88'
-  | 'rhel-89'
-  | 'rhel-8.10'
-  | 'rhel-9'
-  | 'rhel-9-nightly'
-  | 'rhel-9-beta'
-  | 'rhel-90'
-  | 'rhel-91'
-  | 'rhel-92'
-  | 'rhel-93'
-  | 'rhel-94'
-  | 'rhel-95'
-  | 'rhel-10-nightly'
-  | 'rhel-10-beta'
-  | 'centos-9'
-  | 'centos-10'
-  | 'fedora-37'
-  | 'fedora-38'
-  | 'fedora-39'
-  | 'fedora-40'
-  | 'fedora-41';
+  | "rhel-8"
+  | "rhel-8-nightly"
+  | "rhel-84"
+  | "rhel-85"
+  | "rhel-86"
+  | "rhel-87"
+  | "rhel-88"
+  | "rhel-89"
+  | "rhel-8.10"
+  | "rhel-9"
+  | "rhel-9-nightly"
+  | "rhel-9-beta"
+  | "rhel-90"
+  | "rhel-91"
+  | "rhel-92"
+  | "rhel-93"
+  | "rhel-94"
+  | "rhel-95"
+  | "rhel-10-nightly"
+  | "rhel-10-beta"
+  | "centos-9"
+  | "centos-10"
+  | "fedora-37"
+  | "fedora-38"
+  | "fedora-39"
+  | "fedora-40"
+  | "fedora-41";
 export type ListResponseMeta = {
   count: number;
 };
@@ -413,27 +417,27 @@ export type CreateBlueprintResponse = {
   id: string;
 };
 export type ImageTypes =
-  | 'aws'
-  | 'azure'
-  | 'edge-commit'
-  | 'edge-installer'
-  | 'gcp'
-  | 'guest-image'
-  | 'image-installer'
-  | 'oci'
-  | 'vsphere'
-  | 'vsphere-ova'
-  | 'wsl'
-  | 'ami'
-  | 'rhel-edge-commit'
-  | 'rhel-edge-installer'
-  | 'vhd';
+  | "aws"
+  | "azure"
+  | "edge-commit"
+  | "edge-installer"
+  | "gcp"
+  | "guest-image"
+  | "image-installer"
+  | "oci"
+  | "vsphere"
+  | "vsphere-ova"
+  | "wsl"
+  | "ami"
+  | "rhel-edge-commit"
+  | "rhel-edge-installer"
+  | "vhd";
 export type UploadTypes =
-  | 'aws'
-  | 'gcp'
-  | 'azure'
-  | 'aws.s3'
-  | 'oci.objectstorage';
+  | "aws"
+  | "gcp"
+  | "azure"
+  | "aws.s3"
+  | "oci.objectstorage";
 export type AwsUploadRequestOptions = {
   share_with_accounts?: string[] | undefined;
   share_with_sources?: string[] | undefined;
@@ -481,7 +485,7 @@ export type AzureUploadRequestOptions = {
   /** Choose the VM Image HyperV generation, different features on Azure are available
     depending on the HyperV generation.
      */
-  hyper_v_generation?: ('V1' | 'V2') | undefined;
+  hyper_v_generation?: ("V1" | "V2") | undefined;
 };
 export type OciUploadRequestOptions = object;
 export type UploadRequest = {
@@ -512,7 +516,7 @@ export type OsTree = {
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
    */
-  architecture: 'x86_64' | 'aarch64';
+  architecture: "x86_64" | "aarch64";
   image_type: ImageTypes;
   upload_request: UploadRequest;
   ostree?: OsTree | undefined;
@@ -560,15 +564,15 @@ export type File = {
   /** Contents of the file as plain text */
   data?: string | undefined;
   /** When data is base64-encoded to prevent Akamai content filter false positives */
-  data_encoding?: ('plain' | 'base64') | undefined;
+  data_encoding?: ("plain" | "base64") | undefined;
   /** Ensure that the parent directories exist */
   ensure_parents?: boolean | undefined;
 };
 export type Subscription = {
   organization: number;
-  'activation-key': string;
-  'server-url': string;
-  'base-url': string;
+  "activation-key": string;
+  "server-url": string;
+  "base-url": string;
   insights: boolean;
   /** Optional flag to use rhc to register the system, which also always enables Insights.
    */
@@ -696,7 +700,7 @@ export type Installer = {
   /** Create a kickstart file for a fully automated installation
    */
   unattended?: boolean | undefined;
-  'sudo-nopasswd'?: string[] | undefined;
+  "sudo-nopasswd"?: string[] | undefined;
 };
 export type Customizations = {
   containers?: Container[] | undefined;
@@ -732,7 +736,7 @@ export type Customizations = {
     uses LVM, even when there are no extra mountpoints. 'raw' uses raw partitions
     even when there are one or more mountpoints.
      */
-  partitioning_mode?: ('raw' | 'lvm' | 'auto-lvm') | undefined;
+  partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
   fips?: Fips | undefined;
   installer?: Installer | undefined;
 };
@@ -779,7 +783,7 @@ export type BlueprintExportResponse = {
 export type ComposeResponse = {
   id: string;
 };
-export type ClientId = 'api' | 'ui';
+export type ClientId = "api" | "ui";
 export type ComposeRequest = {
   distribution: Distributions;
   image_name?: string | undefined;
@@ -822,7 +826,7 @@ export type OciUploadStatus = {
   url: string;
 };
 export type UploadStatus = {
-  status: 'success' | 'failure' | 'pending' | 'running';
+  status: "success" | "failure" | "pending" | "running";
   type: UploadTypes;
   options:
     | AwsUploadStatus
@@ -838,12 +842,12 @@ export type ComposeStatusError = {
 };
 export type ImageStatus = {
   status:
-    | 'success'
-    | 'failure'
-    | 'pending'
-    | 'building'
-    | 'uploading'
-    | 'registering';
+    | "success"
+    | "failure"
+    | "pending"
+    | "building"
+    | "uploading"
+    | "registering";
   upload_status?: UploadStatus | undefined;
   error?: ComposeStatusError | undefined;
 };
@@ -891,26 +895,26 @@ export type PackagesResponse = {
   data: Package[];
 };
 export type DistributionProfileItem =
-  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced'
-  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_high'
-  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary'
-  | 'xccdf_org.ssgproject.content_profile_anssi_bp28_minimal'
-  | 'xccdf_org.ssgproject.content_profile_ccn_advanced'
-  | 'xccdf_org.ssgproject.content_profile_ccn_basic'
-  | 'xccdf_org.ssgproject.content_profile_ccn_intermediate'
-  | 'xccdf_org.ssgproject.content_profile_cis'
-  | 'xccdf_org.ssgproject.content_profile_cis_server_l1'
-  | 'xccdf_org.ssgproject.content_profile_cis_workstation_l1'
-  | 'xccdf_org.ssgproject.content_profile_cis_workstation_l2'
-  | 'xccdf_org.ssgproject.content_profile_cui'
-  | 'xccdf_org.ssgproject.content_profile_e8'
-  | 'xccdf_org.ssgproject.content_profile_hipaa'
-  | 'xccdf_org.ssgproject.content_profile_ism_o'
-  | 'xccdf_org.ssgproject.content_profile_ospp'
-  | 'xccdf_org.ssgproject.content_profile_pci-dss'
-  | 'xccdf_org.ssgproject.content_profile_standard'
-  | 'xccdf_org.ssgproject.content_profile_stig'
-  | 'xccdf_org.ssgproject.content_profile_stig_gui';
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_enhanced"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_high"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_intermediary"
+  | "xccdf_org.ssgproject.content_profile_anssi_bp28_minimal"
+  | "xccdf_org.ssgproject.content_profile_ccn_advanced"
+  | "xccdf_org.ssgproject.content_profile_ccn_basic"
+  | "xccdf_org.ssgproject.content_profile_ccn_intermediate"
+  | "xccdf_org.ssgproject.content_profile_cis"
+  | "xccdf_org.ssgproject.content_profile_cis_server_l1"
+  | "xccdf_org.ssgproject.content_profile_cis_workstation_l1"
+  | "xccdf_org.ssgproject.content_profile_cis_workstation_l2"
+  | "xccdf_org.ssgproject.content_profile_cui"
+  | "xccdf_org.ssgproject.content_profile_e8"
+  | "xccdf_org.ssgproject.content_profile_hipaa"
+  | "xccdf_org.ssgproject.content_profile_ism_o"
+  | "xccdf_org.ssgproject.content_profile_ospp"
+  | "xccdf_org.ssgproject.content_profile_pci-dss"
+  | "xccdf_org.ssgproject.content_profile_standard"
+  | "xccdf_org.ssgproject.content_profile_stig"
+  | "xccdf_org.ssgproject.content_profile_stig_gui";
 export type DistributionProfileResponse = DistributionProfileItem[];
 export type RecommendationsResponse = {
   packages: string[];
