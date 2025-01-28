@@ -493,6 +493,35 @@ export const hostnameBlueprintResponse: BlueprintResponse = {
   description: mockBlueprintDescriptions['hostname'],
 };
 
+export const firewallCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['firewall'],
+  description: mockBlueprintDescriptions['firewall'],
+  customizations: {
+    firewall: {
+      ports: [
+        '22:tcp',
+        '80:tcp',
+        'imap:tcp',
+        '53:tcp',
+        '53:udp',
+        '30000-32767:tcp',
+        '30000-32767:udp',
+      ],
+      services: {
+        disabled: ['telnet'],
+        enabled: ['ftp', 'ntp', 'dhcp'],
+      },
+    },
+  },
+};
+
+export const firewallBlueprintResponse: BlueprintResponse = {
+  ...firewallCreateBlueprintRequest,
+  id: mockBlueprintIds['firewall'],
+  description: mockBlueprintDescriptions['firewall'],
+};
+
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['firstBoot'],
@@ -585,6 +614,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return localeBlueprintResponse;
     case mockBlueprintIds['hostname']:
       return hostnameBlueprintResponse;
+    case mockBlueprintIds['firewall']:
+      return firewallBlueprintResponse;
     case mockBlueprintIds['firstBoot']:
       return firstBootBlueprintResponse;
     case mockBlueprintIds['details']:

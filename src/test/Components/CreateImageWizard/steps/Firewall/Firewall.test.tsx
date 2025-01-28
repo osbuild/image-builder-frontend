@@ -2,14 +2,18 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT } from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import { firewallCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
   clickBack,
   clickNext,
   enterBlueprintName,
   interceptBlueprintRequest,
+  interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
+  renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
@@ -49,6 +53,22 @@ const addPort = async (port: string) => {
   const user = userEvent.setup();
   const portsInput = await screen.findByPlaceholderText(/add port/i);
   await waitFor(() => user.type(portsInput, port.concat(' ')));
+};
+
+const addEnabledFirewallService = async (service: string) => {
+  const user = userEvent.setup();
+  const enabledServicesInput = await screen.findByPlaceholderText(
+    /add enabled service/i
+  );
+  await waitFor(() => user.type(enabledServicesInput, service.concat(',')));
+};
+
+const addDisabledFirewallService = async (service: string) => {
+  const user = userEvent.setup();
+  const disabledServiceInput = await screen.findByPlaceholderText(
+    /add disabled service/i
+  );
+  await waitFor(() => user.type(disabledServiceInput, service.concat(',')));
 };
 
 describe('Step Firewall', () => {
@@ -95,6 +115,14 @@ describe('Step Firewall', () => {
     await addPort('00:wrongFormat');
     await screen.findByText('Invalid format.');
   });
+
+  test('service in an invalid format cannot be added', async () => {
+    await renderCreateMode();
+    await goToFirewallStep();
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addPort('wrong--service');
+    await screen.findByText('Invalid format.');
+  });
 });
 
 describe('Firewall request generated correctly', () => {
@@ -122,8 +150,81 @@ describe('Firewall request generated correctly', () => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
   });
+
+  test('with services added', async () => {
+    await renderCreateMode();
+    await goToFirewallStep();
+    await addEnabledFirewallService('ftp');
+    await addEnabledFirewallService('ntp');
+    await addEnabledFirewallService('dhcp');
+    await addDisabledFirewallService('telnet');
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        firewall: {
+          services: {
+            enabled: ['ftp', 'ntp', 'dhcp'],
+            disabled: ['telnet'],
+          },
+        },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('with ports and services added', async () => {
+    await renderCreateMode();
+    await goToFirewallStep();
+    await addPort('22:tcp');
+    await addPort('imap:tcp');
+    await addEnabledFirewallService('ftp');
+    await addEnabledFirewallService('ntp');
+    await addEnabledFirewallService('dhcp');
+    await addDisabledFirewallService('telnet');
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        firewall: {
+          ports: ['22:tcp', 'imap:tcp'],
+          services: {
+            enabled: ['ftp', 'ntp', 'dhcp'],
+            disabled: ['telnet'],
+          },
+        },
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+});
+
+describe('Firewall edit mode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('edit mode works', async () => {
+    const id = mockBlueprintIds['firewall'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`
+    );
+    const expectedRequest = firewallCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
 });
 
 // TO DO Step Firewall -> revisit step button on Review works
-// TO DO Firewall request generated correctly
-// TO DO Firewall edit mode
