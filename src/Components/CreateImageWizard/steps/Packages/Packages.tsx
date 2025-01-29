@@ -228,21 +228,31 @@ const Packages = () => {
       return;
     }
     if (debouncedSearchTerm.length > 1 && isSuccessDistroRepositories) {
-      searchDistroRpms({
-        apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm,
-          urls: distroRepositories
-            ?.filter((archItem) => {
-              return archItem.arch === arch;
-            })[0]
-            .repositories.flatMap((repo) => {
-              if (!repo.baseurl) {
-                throw new Error(`Repository ${repo} missing baseurl`);
-              }
-              return repo.baseurl;
-            }),
-        },
-      });
+      if (process.env.IS_ON_PREMISE) {
+        searchDistroRpms({
+          apiContentUnitSearchRequest: {
+            packages: [debouncedSearchTerm],
+            architecture: arch,
+            distribution,
+          },
+        });
+      } else {
+        searchDistroRpms({
+          apiContentUnitSearchRequest: {
+            search: debouncedSearchTerm,
+            urls: distroRepositories
+              ?.filter((archItem) => {
+                return archItem.arch === arch;
+              })[0]
+              .repositories.flatMap((repo) => {
+                if (!repo.baseurl) {
+                  throw new Error(`Repository ${repo} missing baseurl`);
+                }
+                return repo.baseurl;
+              }),
+          },
+        });
+      }
     }
     if (debouncedSearchTerm.length > 2) {
       if (
