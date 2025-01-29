@@ -1,13 +1,16 @@
 import * as cockpitQueries from './cockpit/contentSourcesApi';
 import * as serviceQueries from './service/contentSourcesApi';
 
+export const useSearchRpmMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useSearchRpmMutation
+  : serviceQueries.useSearchRpmMutation;
+
 export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useListSnapshotsByDateMutation
   : serviceQueries.useListSnapshotsByDateMutation;
 
 export const {
   useListFeaturesQuery,
-  useSearchRpmMutation,
   useSearchPackageGroupMutation,
   useListRepositoriesQuery,
   useCreateRepositoryMutation,
