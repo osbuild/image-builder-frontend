@@ -46,7 +46,12 @@ describe('Images Table', () => {
     expect(rows).toHaveLength(10);
     rows.forEach(async (row, index) => {
       const cells = await within(row).findAllByRole('cell');
-      expect(cells[1]).toHaveTextContent(imageNameValues[index]);
+      // on prem the image_name gets lost
+      if (process.env.IS_ON_PREMISE) {
+        expect(cells[1]).toHaveTextContent(mockComposes[index].id);
+      } else {
+        expect(cells[1]).toHaveTextContent(imageNameValues[index]);
+      }
       expect(cells[2]).toHaveTextContent('Apr 27, 2021');
       expect(cells[3]).toHaveTextContent('RHEL 8');
     });
