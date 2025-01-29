@@ -11,6 +11,8 @@ import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import {
   serviceMiddleware as middleware,
   serviceReducer as reducer,
+  onPremMiddleware as onPremMiddleware,
+  onPremReducer as onPremReducer,
 } from '../store';
 import { resolveRelPath } from '../Utilities/path';
 
@@ -29,12 +31,25 @@ const defaultRoutes = [
   },
 ];
 
+const cockpitRoutes = [
+  {
+    path: '/*',
+    element: <LandingPage />,
+  },
+];
+
 export const renderCustomRoutesWithReduxRouter = async (
   route = '/',
   preloadedState = {},
-  routes = defaultRoutes
+  routes = process.env.IS_ON_PREMISE ? cockpitRoutes : defaultRoutes
 ) => {
-  const store = configureStore({ reducer, middleware, preloadedState });
+  const mw = process.env.IS_ON_PREMISE ? onPremMiddleware : middleware;
+  const red = process.env.IS_ON_PREMISE ? onPremReducer : reducer;
+  const store = configureStore({
+    reducer: red,
+    middleware: mw,
+    preloadedState,
+  });
 
   const router = createMemoryRouter(routes, {
     initialEntries: [resolveRelPath(route)],
