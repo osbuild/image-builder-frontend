@@ -29,6 +29,8 @@ jobs:
       run: npm run lint
     - name: Run unit tests
       run: npm run test:coverage
+    - name: Run unit tests with cockpit
+      run: npm run test:cockpit
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
