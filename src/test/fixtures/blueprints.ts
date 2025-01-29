@@ -42,6 +42,11 @@ export const mockBlueprintIds = {
   firstBoot: 'd0a8376e-e44e-47b3-845d-30f5199a35b6',
   details: '58991b91-4b98-47e0-b26d-8d908678ddb3',
   compliance: '21571945-fe23-45e9-8afb-4aa073b8d735',
+  // When the cockpit mocks encounter thisblueprint, the cockpit mocks
+  // will return all composes. This is to get around the fact that in
+  // cockpit, there are no images without blueprints, while that's
+  // possible in the service.
+  cockpithack: 'b3ff8307-18bd-418a-9a91-836ce039b035',
 };
 
 export const mockBlueprintNames = {
@@ -69,6 +74,7 @@ export const mockBlueprintNames = {
   firstBoot: 'firstBoot',
   details: 'details',
   compliance: 'compliance',
+  cockpithack: 'cockpithack',
 };
 
 export const mockBlueprintDescriptions = {
@@ -96,6 +102,7 @@ export const mockBlueprintDescriptions = {
   firstBoot: '',
   details: 'This is a test description for the Details step.',
   compliance: '',
+  cockpithack: 'hacky blueprint for cockpit composes, see fsinfo mock',
 };
 
 export const mockGetBlueprints: GetBlueprintsApiResponse = {
@@ -344,6 +351,13 @@ export const mockGetBlueprints: GetBlueprintsApiResponse = {
       id: mockBlueprintIds['compliance'],
       name: mockBlueprintNames['compliance'],
       description: mockBlueprintDescriptions['compliance'],
+      version: 1,
+      last_modified_at: '2021-09-08T21:00:00.000Z',
+    },
+    {
+      id: mockBlueprintIds['cockpithack'],
+      name: mockBlueprintNames['cockpithack'],
+      description: mockBlueprintDescriptions['cockpithack'],
       version: 1,
       last_modified_at: '2021-09-08T21:00:00.000Z',
     },
