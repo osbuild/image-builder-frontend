@@ -1,5 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+import path from 'path';
+
+import { cockpitFile } from './cockpitFile';
+
+import { mockStatus } from '../../fixtures/composes';
+
 type userinfo = {
   home: string;
 };
@@ -8,21 +14,11 @@ export default {
   user: (): Promise<userinfo> => {
     return new Promise((resolve) => {
       resolve({
-        home: '',
+        home: '/default',
       });
     });
   },
-  file: (path: string) => {
-    return {
-      read: (): Promise<string> => {
-        return new Promise((resolve) => {
-          resolve('');
-        });
-      },
-      close: () => {},
-      replace: (contents: string) => {},
-    };
-  },
+  file: cockpitFile,
   spawn: (args: string[], attributes: object): Promise<string | Uint8Array> => {
     return new Promise((resolve) => {
       resolve('');
@@ -30,8 +26,8 @@ export default {
   },
   http: (address: string, options: object) => {
     return {
-      get: (path?: string, headers?: object): string => {
-        return '';
+      get: (urlpath: string, headers?: object): string => {
+        return JSON.stringify(mockStatus(path.parse(urlpath).name));
       },
       post: (path: string, data: object, headers?: object): string => {
         return '';
