@@ -295,7 +295,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
       >({
-        queryFn: async ({ id: filename }) => {
+        queryFn: async ({ id: filename }, _, __, baseQuery) => {
           try {
             const blueprintsDir = await getBlueprintsPath();
             const file = cockpit.file(
@@ -303,10 +303,6 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
             );
             const contents = await file.read();
             const parsed = JSON.parse(contents);
-
-            const cloudapi = cockpit.http('/run/cloudapi/api.socket', {
-              superuser: 'try',
-            });
 
             const createBPReq = parsed as CreateBlueprintRequest;
             const blueprint = mapHostedToOnPrem(createBPReq);
@@ -344,18 +340,18 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                   },
                 ],
               };
-              const resp = await cloudapi.post(
-                '/api/image-builder-composer/v2/compose',
-                composeReq,
-                {
+              const composeResp = await baseQuery({
+                url: '/api/image-builder-composer/v2/compose',
+                method: 'POST',
+                body: composeReq,
+                headers: {
                   'content-type': 'application/json',
-                }
-              );
-              const composeResp = JSON.parse(resp);
+                },
+              });
               await cockpit
-                .file(path.join(blueprintsDir, filename, composeResp.id))
+                .file(path.join(blueprintsDir, filename, composeResp.data?.id))
                 .replace(JSON.stringify(saveReq));
-              composes.push({ id: composeResp.id });
+              composes.push({ id: composeResp.data?.id });
             }
             return {
               data: composes,
@@ -424,16 +420,12 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
         GetComposeStatusApiResponse,
         GetComposeStatusApiArg
       >({
-        queryFn: async (queryArg) => {
+        queryFn: async (queryArg, _, __, baseQuery) => {
           try {
-            const cloudapi = cockpit.http('/run/cloudapi/api.socket', {
-              superuser: 'require',
+            const resp = await baseQuery({
+              url: `/api/image-builder-composer/v2/composes/${queryArg.composeId}`,
+              method: 'GET',
             });
-            const resp = JSON.parse(
-              await cloudapi.get(
-                `/api/image-builder-composer/v2/composes/${queryArg.composeId}`
-              )
-            );
             const blueprintsDir = await getBlueprintsPath();
             const info = await fsinfo(blueprintsDir, ['entries'], {
               superuser: 'try',
@@ -445,7 +437,7 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
                 .read();
               return {
                 data: {
-                  image_status: resp.image_status,
+                  image_status: resp.data?.image_status,
                   request: JSON.parse(request),
                 },
               };
