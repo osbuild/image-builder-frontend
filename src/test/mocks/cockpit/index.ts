@@ -33,7 +33,11 @@ export default {
         });
       },
       close: () => {},
-      replace: (contents: string) => {},
+      replace: (contents: string): Promise<void> => {
+        return new Promise((resolve) => {
+          resolve();
+        });
+      },
     };
   },
   spawn: (args: string[], attributes: object): Promise<string | Uint8Array> => {
