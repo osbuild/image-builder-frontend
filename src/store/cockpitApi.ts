@@ -227,9 +227,10 @@ export const cockpitApi = emptyCockpitApi.injectEndpoints({
           try {
             const id = uuidv4();
             const blueprintsDir = await getBlueprintsPath();
-            await cockpit.spawn(['mkdir', id], {
-              directory: blueprintsDir,
-            });
+            await cockpit.spawn(
+              ['mkdir', '-p', path.join(blueprintsDir, id)],
+              {}
+            );
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
               .replace(JSON.stringify(blueprintReq));
