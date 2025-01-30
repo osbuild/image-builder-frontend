@@ -18,6 +18,7 @@ BuildRequires:  make
 BuildRequires:  nodejs
 
 Requires:       cockpit
+Requires:       cockpit-files
 Requires:       osbuild-composer >= 103
 
 %description
