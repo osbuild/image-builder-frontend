@@ -1,5 +1,7 @@
 import React, { Suspense, useState } from 'react';
 
+import path from 'path';
+
 import {
   Alert,
   Button,
@@ -19,6 +21,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import cockpit from 'cockpit';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -429,5 +432,21 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
-  return <div>Filepath to disk: {options.filename}</div>;
+  const href =
+    '/files#/?path=' + encodeURIComponent(path.parse(options?.filename).dir);
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      onClick={(ev) => {
+        ev.preventDefault();
+        cockpit.jump(href, cockpit.transport.host);
+      }}
+      href={href}
+      isInline
+    >
+      Open in file browser
+    </Button>
+  );
 };

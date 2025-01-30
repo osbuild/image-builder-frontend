@@ -5,6 +5,10 @@ type userinfo = {
 };
 
 export default {
+  transport: {
+    host: '',
+  },
+  jump: (url: string, host: string) => {},
   user: (): Promise<userinfo> => {
     return new Promise((resolve) => {
       resolve({
