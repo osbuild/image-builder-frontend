@@ -37,7 +37,7 @@ jobs:
       # so the v needs to be in the tarball when we upload it as a release artefact.
       - name: Upload release artefact
         run: |
-          RELEASE_NO=$(echo ${{github.event.release.tag_name}} | tr -d 'v')
-          mv "cockpit-image-builder-$RELEASE_NO.tar.gz" cockpit-image-builder-${{github.event.release.tag_name}}.tar.gz
-          gh release upload ${{github.event.release.tag_name}} \
-            cockpit-image-builder-${{github.event.release.tag_name}}.tar.gz
+          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
+          mv "cockpit-image-builder-$RELEASE_NO.tar.gz" cockpit-image-builder-${{github.ref_name}}.tar.gz
+          gh release upload ${{github.ref_name}} \
+            cockpit-image-builder-${{github.ref_name}}.tar.gz
