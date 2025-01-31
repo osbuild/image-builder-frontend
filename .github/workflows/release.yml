@@ -23,7 +23,10 @@ jobs:
         run: npm ci
 
       - name: Make dist
-        run: make dist
+        run: |
+          make dist
+          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
+          mv "cockpit-image-builder-$RELEASE_NO.tar.gz" ../cockpit-image-builder-${{github.ref_name}}.tar.gz
 
       # create release, which will bump the version
       - name: Upstream release
@@ -37,7 +40,5 @@ jobs:
       # so the v needs to be in the tarball when we upload it as a release artefact.
       - name: Upload release artefact
         run: |
-          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
-          mv "cockpit-image-builder-$RELEASE_NO.tar.gz" cockpit-image-builder-${{github.ref_name}}.tar.gz
           gh release upload ${{github.ref_name}} \
-            cockpit-image-builder-${{github.ref_name}}.tar.gz
+            ../cockpit-image-builder-${{github.ref_name}}.tar.gz
