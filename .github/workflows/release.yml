@@ -25,7 +25,7 @@ jobs:
       - name: Make dist
         run: make dist
 
-      # crate release, which will bump the version
+      # create release, which will bump the version
       - name: Upstream release
         uses: osbuild/release-action@main
         with:
@@ -37,7 +37,7 @@ jobs:
       # so the v needs to be in the tarball when we upload it as a release artefact.
       - name: Upload release artefact
         run: |
-          RELEASE_NO = $(echo ${{github.event.release.tag_name}} | tr -d 'v')
+          RELEASE_NO=$(echo ${{github.event.release.tag_name}} | tr -d 'v')
           mv "cockpit-image-builder-$RELEASE_NO.tar.gz" cockpit-image-builder-${{github.event.release.tag_name}}.tar.gz
           gh release upload ${{github.event.release.tag_name}} \
             cockpit-image-builder-${{github.event.release.tag_name}}.tar.gz
