@@ -75,6 +75,7 @@ import {
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
   selectKernel,
+  selectUserAdministrator,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -792,6 +793,8 @@ export const UsersList = () => {
   const userPassword = useAppSelector(userPasswordSelector);
   const userSshKeySelector = selectUserSshKeyByIndex(index);
   const userSshKey = useAppSelector(userSshKeySelector);
+  const userIsAdministratorSelector = selectUserAdministrator(index);
+  const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
 
   return (
     <TextContent>
@@ -823,6 +826,15 @@ export const UsersList = () => {
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
             {userSshKey ? userSshKey : 'None'}
+          </TextListItem>
+          <TextListItem
+            component={TextListItemVariants.dt}
+            className="pf-v5-u-min-width"
+          >
+            Administrator
+          </TextListItem>
+          <TextListItem component={TextListItemVariants.dd}>
+            {userIsAdministrator ? 'True' : 'False'}
           </TextListItem>
         </>
       </TextList>

@@ -403,7 +403,7 @@ export const selectUserSshKeyByIndex =
 
 export const selectUserAdministrator =
   (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex].isAdministrator;
+    return state.wizard.users[userIndex]?.isAdministrator;
   };
 
 export const selectKernel = (state: RootState) => {
