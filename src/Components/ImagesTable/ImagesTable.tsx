@@ -33,12 +33,18 @@ import {
   AwsS3Details,
   AzureDetails,
   GcpDetails,
+  LocalDetails,
   OciDetails,
 } from './ImageDetails';
 import ImagesTableToolbar from './ImagesTableToolbar';
-import { AwsS3Instance, CloudInstance, OciInstance } from './Instance';
+import {
+  AwsS3Instance,
+  CloudInstance,
+  OciInstance,
+  LocalInstance,
+} from './Instance';
 import Release from './Release';
-import { ExpiringStatus, CloudStatus } from './Status';
+import { ExpiringStatus, CloudStatus, LocalStatus } from './Status';
 import { AwsTarget, Target } from './Target';
 
 import {
@@ -49,7 +55,12 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
-import { useGetBlueprintsQuery } from '../../store/backendApi';
+import {
+  useGetComposeStatusQuery,
+  useGetComposesQuery,
+  useGetBlueprintsQuery,
+  useGetBlueprintComposesQuery,
+} from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectBlueprintVersionFilter,
@@ -66,9 +77,6 @@ import {
   ComposeStatus,
   GetBlueprintComposesApiArg,
   GetBlueprintsApiArg,
-  useGetBlueprintComposesQuery,
-  useGetComposesQuery,
-  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 import {
@@ -298,9 +306,9 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
     }
   }, [setPollingInterval, composeStatus]);
 
-  const type = compose.request.image_requests[0].upload_request.type;
+  const type = compose.request?.image_requests[0]?.upload_request?.type;
 
-  switch (type) {
+  switch (type as string) {
     case 'aws':
       return (
         <AwsRow
@@ -317,6 +325,8 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
       return <OciRow compose={compose} rowIndex={rowIndex} />;
     case 'aws.s3':
       return <AwsS3Row compose={compose} rowIndex={rowIndex} />;
+    case 'local':
+      return <LocalRow compose={compose} rowIndex={rowIndex} />;
   }
 };
 
@@ -454,6 +464,26 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
       actions={actions}
       instance={instance}
       details={details}
+    />
+  );
+};
+
+type LocalRowPropTypes = {
+  compose: ComposesResponseItem;
+  rowIndex: number;
+};
+
+const LocalRow = ({ compose, rowIndex }: LocalRowPropTypes) => {
+  const details = <LocalDetails compose={compose} />;
+  const instance = <LocalInstance compose={compose} />;
+  const status = <LocalStatus compose={compose} />;
+  return (
+    <Row
+      compose={compose}
+      rowIndex={rowIndex}
+      details={details}
+      instance={instance}
+      status={status}
     />
   );
 };

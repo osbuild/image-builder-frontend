@@ -1,6 +1,7 @@
 import {
   BlueprintExportResponse,
   Container,
+  CreateBlueprintRequest,
   Directory,
   Distributions,
   Fdo,
@@ -20,7 +21,7 @@ export type BlueprintOnPrem = {
   description?: string;
   packages?: PackagesOnPrem[];
   groups?: GroupsPackagesOnPrem[];
-  distro: Distributions;
+  distro?: Distributions;
   customizations?: CustomizationsOnPrem;
   containers?: Container[];
 };
@@ -85,7 +86,7 @@ export type UserOnPrem = {
 
 export type GroupOnPrem = {
   name: string;
-  gid: number;
+  gid: number | undefined;
 };
 
 export type SshKeyOnPrem = {
@@ -115,7 +116,7 @@ export const mapOnPremToHosted = (
   return {
     name: blueprint.name,
     description: blueprint.description || '',
-    distribution: blueprint.distro,
+    distribution: blueprint.distro!,
     customizations: {
       ...blueprint.customizations,
       containers: blueprint.containers,
@@ -175,4 +176,120 @@ export const mapOnPremToHosted = (
       is_on_prem: true,
     },
   };
+};
+
+export const mapHostedToOnPrem = (
+  blueprint: CreateBlueprintRequest
+): BlueprintOnPrem => {
+  const result: BlueprintOnPrem = {
+    name: blueprint.name,
+    customizations: {},
+  };
+
+  if (blueprint.customizations?.packages) {
+    result.packages = blueprint.customizations.packages.map((pkg) => {
+      return {
+        name: pkg,
+        version: '*',
+      };
+    });
+  }
+
+  if (blueprint.customizations?.containers) {
+    result.containers = blueprint.customizations.containers;
+  }
+
+  if (blueprint.customizations?.directories) {
+    result.customizations!.directories = blueprint.customizations.directories;
+  }
+
+  if (blueprint.customizations?.files) {
+    result.customizations!.files = blueprint.customizations.files;
+  }
+
+  if (blueprint.customizations?.openscap) {
+    result.customizations!.openscap = blueprint.customizations.openscap;
+  }
+
+  if (blueprint.customizations?.filesystem) {
+    result.customizations!.filesystem = blueprint.customizations.filesystem.map(
+      (fs) => {
+        return {
+          mountpoint: fs.mountpoint,
+          minsize: fs.min_size,
+        };
+      }
+    );
+  }
+
+  if (blueprint.customizations?.users) {
+    result.customizations!.user = blueprint.customizations.users.map((u) => {
+      return {
+        name: u.name,
+        key: u.ssh_key || '',
+      };
+    });
+  }
+
+  if (blueprint.customizations?.services) {
+    result.customizations!.services = blueprint.customizations.services;
+  }
+
+  if (blueprint.customizations?.hostname) {
+    result.customizations!.hostname = blueprint.customizations.hostname;
+  }
+
+  if (blueprint.customizations?.kernel) {
+    result.customizations!.kernel = blueprint.customizations.kernel;
+  }
+
+  if (blueprint.customizations?.groups) {
+    result.customizations!.groups = blueprint.customizations.groups.map((g) => {
+      return {
+        name: g.name,
+        gid: g.gid,
+      };
+    });
+  }
+
+  if (blueprint.customizations?.timezone) {
+    result.customizations!.timezone = blueprint.customizations.timezone;
+  }
+
+  if (blueprint.customizations?.locale) {
+    result.customizations!.locale = blueprint.customizations.locale;
+  }
+
+  if (blueprint.customizations?.firewall) {
+    result.customizations!.firewall = blueprint.customizations.firewall;
+  }
+
+  if (blueprint.customizations?.installation_device) {
+    result.customizations!.installation_device =
+      blueprint.customizations.installation_device;
+  }
+
+  if (blueprint.customizations?.fdo) {
+    result.customizations!.fdo = blueprint.customizations.fdo;
+  }
+
+  if (blueprint.customizations?.ignition) {
+    result.customizations!.ignition = blueprint.customizations.ignition;
+  }
+
+  if (blueprint.customizations?.partitioning_mode) {
+    result.customizations!.partitioning_mode =
+      blueprint.customizations.partitioning_mode;
+  }
+
+  if (blueprint.customizations?.fips) {
+    result.customizations!.fips =
+      blueprint.customizations.fips?.enabled || false;
+  }
+
+  if (blueprint.customizations?.installer) {
+    result.customizations!.installer = blueprint.customizations.installer;
+  }
+
+  return result;
 };

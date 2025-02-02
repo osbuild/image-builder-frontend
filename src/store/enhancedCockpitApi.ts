@@ -4,12 +4,15 @@ import { cockpitApi } from './cockpitApi';
 import { errorMessage } from './enhancedImageBuilderApi';
 
 const enhancedApi = cockpitApi.enhanceEndpoints({
-  addTagTypes: ['Blueprints'],
+  addTagTypes: ['Blueprints', 'Composes'],
   endpoints: {
     getBlueprints: {
       providesTags: () => {
         return [{ type: 'Blueprints' }];
       },
+    },
+    createBlueprint: {
+      invalidatesTags: [{ type: 'Blueprints' }],
     },
     deleteBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }],
@@ -35,6 +38,15 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
             );
           });
       },
+    },
+    composeBlueprint: {
+      invalidatesTags: [{ type: 'Composes' }],
+    },
+    getComposes: {
+      providesTags: [{ type: 'Composes' }],
+    },
+    getBlueprintComposes: {
+      providesTags: [{ type: 'Composes' }],
     },
   },
 });

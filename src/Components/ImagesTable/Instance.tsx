@@ -1,5 +1,7 @@
 import React, { Suspense, useState } from 'react';
 
+import path from 'path';
+
 import {
   Alert,
   Button,
@@ -19,6 +21,7 @@ import {
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
+import cockpit from 'cockpit';
 import { useNavigate } from 'react-router-dom';
 
 import {
@@ -27,6 +30,7 @@ import {
   SEARCH_INPUT,
 } from '../../constants';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
+import { useGetComposeStatusQuery } from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -37,7 +41,6 @@ import {
   ComposesResponseItem,
   ComposeStatus,
   ImageTypes,
-  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import {
   isAwsUploadRequestOptions,
@@ -402,4 +405,48 @@ export const AwsS3Instance = ({
       </Button>
     );
   }
+};
+
+type LocalInstancePropTypes = {
+  compose: ComposesResponseItem;
+};
+
+export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
+  const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
+  if (!isSuccess) {
+    return <Skeleton />;
+  }
+
+  // Hacky to define the type here, but local upload is not available in
+  // the image builder api, only in the composer api.
+  type LocalUploadStatusOptions = {
+    filename: string;
+  };
+  const status = composeStatus?.image_status.status;
+  const options = composeStatus?.image_status.upload_status
+    ?.options as unknown as LocalUploadStatusOptions;
+
+  if (status !== 'success') {
+    return <></>;
+  }
+
+  const href =
+    '/files#/?path=' + encodeURIComponent(path.parse(options?.filename).dir);
+  return (
+    <Button
+      component="a"
+      target="_blank"
+      variant="link"
+      onClick={(ev) => {
+        ev.preventDefault();
+        cockpit.jump(href, cockpit.transport.host);
+      }}
+      href={href}
+      isInline
+    >
+      Open in file browser
+    </Button>
+  );
 };
