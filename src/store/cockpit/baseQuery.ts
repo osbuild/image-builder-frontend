@@ -3,10 +3,6 @@ import cockpit from 'cockpit';
 
 import type { Method, Params, Headers } from './types.js';
 
-const cockpitApi = cockpit.http('/run/cloudapi/api.socket', {
-  superuser: 'try',
-});
-
 export const baseQuery =
   (
     { baseUrl }: { baseUrl: string } = { baseUrl: '' }
@@ -32,7 +28,10 @@ export const baseQuery =
     // async/await because cockpit rejects the http request
     // with two arguments (error & data/body)
     return new Promise((resolve, reject) => {
-      return cockpitApi
+      const cloudApi = cockpit.http('/run/cloudapi/api.socket', {
+        superuser: 'try',
+      });
+      return cloudApi
         .request({
           path: baseUrl + options.url,
           body: options.body ?? '',
