@@ -332,7 +332,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               const composeResp = await baseQuery({
                 url: '/compose',
                 method: 'POST',
-                body: composeReq,
+                body: JSON.stringify(composeReq),
                 headers: {
                   'content-type': 'application/json',
                 },
