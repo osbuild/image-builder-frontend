@@ -26,7 +26,6 @@ import {
 import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
-import './ImagesTable.scss';
 import ImagesEmptyState from './EmptyState';
 import {
   AwsDetails,
