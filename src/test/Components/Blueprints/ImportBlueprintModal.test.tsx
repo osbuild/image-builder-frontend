@@ -147,6 +147,12 @@ fips = true
 user = "root"
 key = "PUBLIC SSH KEY"
 
+[[customizations.user]]
+name = "admin"
+password = "$6$CHO2$3rN8eviE2t50lmVyBYihTgVRHcaecmeCk31L..."
+key = "ssh-rsa d"
+groups = ["widget", "users", "wheel"]
+
 [customizations.services]
 enabled = ["sshd", "cockpit.socket", "httpd"]
 disabled = ["postfix", "telnetd"]
@@ -363,6 +369,19 @@ describe('Import modal', () => {
 
     // Users
     await clickNext();
+    await screen.findByRole('heading', { name: /Users/ });
+    const userName = screen.getByRole('textbox', {
+      name: /blueprint user name/i,
+    });
+    expect(userName).toHaveValue('admin');
+    const sshKey = await screen.findByRole('textbox', {
+      name: /public SSH key/i,
+    });
+    expect(sshKey).toHaveValue('ssh-rsa d');
+    const adminCheckBox = screen.getByRole('checkbox', {
+      name: /administrator/i,
+    });
+    expect(adminCheckBox).toBeChecked();
 
     // Timezone
     await clickNext();
