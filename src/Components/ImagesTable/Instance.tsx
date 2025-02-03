@@ -432,15 +432,20 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
-  const href =
-    '/files#/?path=' + encodeURIComponent(path.parse(options?.filename).dir);
+  const parsedPath = path.parse(options?.filename);
+  const href = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
   return (
     <Button
       component="a"
       target="_blank"
       variant="link"
-      onClick={(ev) => {
+      onClick={async (ev) => {
         ev.preventDefault();
+        // Make sure the file is readable for the user, the artefact
+        // directory is created as 700 by default.
+        await cockpit.spawn(['chmod', '755', parsedPath.dir], {
+          superuser: 'try',
+        });
         cockpit.jump(href, cockpit.transport.host);
       }}
       href={href}
