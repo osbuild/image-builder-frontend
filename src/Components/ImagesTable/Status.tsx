@@ -7,6 +7,7 @@ import {
   CodeBlock,
   CodeBlockCode,
   Flex,
+  Icon,
   Panel,
   PanelMain,
   Popover,
@@ -183,21 +184,31 @@ export const ExpiringStatus = ({
       <Status icon={statuses['expired'].icon} text={statuses['expired'].text} />
     );
   } else if (imageType === 'aws.s3' && status === 'success') {
+    const text = `Expires in ${remainingHours} ${
+      remainingHours > 1 ? 'hours' : 'hour'
+    }`;
     return (
       <Status
         icon={statuses['expiring'].icon}
-        text={`Expires in ${remainingHours} ${
-          remainingHours > 1 ? 'hours' : 'hour'
-        }`}
+        text={
+          <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200">
+            {text}
+          </span>
+        }
       />
     );
   } else if (imageType === 'oci.objectstorage' && status === 'success') {
+    const text = `Expires in ${remainingDays} ${
+      remainingDays > 1 ? 'days' : 'day'
+    }`;
     return (
       <Status
         icon={statuses['expiring'].icon}
-        text={`Expires in ${remainingDays} ${
-          remainingDays > 1 ? 'days' : 'day'
-        }`}
+        text={
+          <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200">
+            {text}
+          </span>
+        }
       />
     );
   } else if (status === 'failure') {
@@ -242,63 +253,117 @@ export const LocalStatus = ({ compose }: LocalStatusPropTypes) => {
 
 const statuses = {
   failure: {
-    icon: <ExclamationCircleIcon className="error" />,
-    text: 'Image build failed',
+    icon: (
+      <Icon status="danger">
+        <ExclamationCircleIcon />
+      </Icon>
+    ),
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+        Image build failed
+      </span>
+    ),
   },
 
   pending: {
     icon: <PendingIcon />,
-    text: 'Image build is pending',
+    text: (
+      <span className="pf-v5-u-font-weight-bold">Image build is pending</span>
+    ),
   },
 
   building: {
     icon: <Spinner isInline />,
-    text: 'Image build in progress',
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+        Image build in progress
+      </span>
+    ),
   },
 
   uploading: {
     icon: <Spinner isInline />,
-    text: 'Image upload in progress',
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+        Image upload in progress
+      </span>
+    ),
   },
 
   registering: {
     icon: <Spinner isInline />,
-    text: 'Cloud registration in progress',
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+        Cloud registration in progress
+      </span>
+    ),
   },
 
   running: {
     icon: <Spinner isInline />,
-    text: 'Running',
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+        Running
+      </span>
+    ),
   },
 
   success: {
-    icon: <CheckCircleIcon className="success" />,
-    text: 'Ready',
+    icon: (
+      <Icon status="success">
+        <CheckCircleIcon />
+      </Icon>
+    ),
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-success-color-200">
+        Ready
+      </span>
+    ),
   },
 
   expired: {
     icon: <OffIcon />,
-    text: 'Expired',
+    text: <span className="pf-v5-u-font-weight-bold">Expired</span>,
   },
 
   expiring: {
-    icon: <ExclamationTriangleIcon className="expiring" />,
+    icon: (
+      <Icon status="warning">
+        <ExclamationTriangleIcon />
+      </Icon>
+    ),
   },
 
   failureSharing: {
-    icon: <ExclamationCircleIcon className="error" />,
-    text: 'Sharing image failed',
+    icon: (
+      <Icon status="danger">
+        <ExclamationCircleIcon />
+      </Icon>
+    ),
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+        Sharing image failed
+      </span>
+    ),
   },
 
   failedClone: {
-    icon: <ExclamationCircleIcon className="error" />,
-    text: 'Failure sharing',
+    icon: (
+      <Icon status="danger">
+        <ExclamationCircleIcon />
+      </Icon>
+    ),
+    text: (
+      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+        Failure sharing
+      </span>
+    ),
   },
 };
 
 type StatusPropTypes = {
   icon: JSX.Element;
-  text: string;
+  text: JSX.Element;
 };
 
 const Status = ({ icon, text }: StatusPropTypes) => {
@@ -312,7 +377,7 @@ const Status = ({ icon, text }: StatusPropTypes) => {
 
 type ErrorStatusPropTypes = {
   icon: JSX.Element;
-  text: string;
+  text: JSX.Element;
   error: ComposeStatusError | string;
 };
 
