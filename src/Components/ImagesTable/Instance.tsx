@@ -422,7 +422,7 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   // Hacky to define the type here, but local upload is not available in
   // the image builder api, only in the composer api.
   type LocalUploadStatusOptions = {
-    filename: string;
+    artifact_path: string;
   };
   const status = composeStatus?.image_status.status;
   const options = composeStatus?.image_status.upload_status
@@ -432,7 +432,7 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
-  const parsedPath = path.parse(options?.filename);
+  const parsedPath = path.parse(options?.artifact_path);
   const href = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
   return (
     <Button
