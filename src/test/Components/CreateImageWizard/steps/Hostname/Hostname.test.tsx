@@ -17,7 +17,7 @@ import {
   renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
-import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
+import { renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
@@ -27,10 +27,8 @@ const goToHostnameStep = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
-
   if (!process.env.IS_ON_PREMISE) {
     await clickNext(); // Registration
-    await clickRegisterLater();
     await clickNext(); // OpenSCAP
   }
   await clickNext(); // File system configuration

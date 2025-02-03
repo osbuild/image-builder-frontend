@@ -17,11 +17,7 @@ import {
   renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
-import {
-  clickRegisterLater,
-  goToRegistrationStep,
-  renderCreateMode,
-} from '../../wizardTestUtils';
+import { goToRegistrationStep, renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 const validUserName = 'best';
@@ -107,7 +103,6 @@ describe('Step Users', () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     const nextButton = await getNextButton();
     expect(nextButton).toBeEnabled();
@@ -118,7 +113,6 @@ describe('Step Users', () => {
   test('clicking Back loads Additional packages', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickBack();
     await screen.findByRole('heading', { name: 'Additional packages' });
@@ -133,7 +127,6 @@ describe('Step Users', () => {
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
@@ -148,7 +141,6 @@ describe('Step Users', () => {
   test('with invalid name', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName('ss.');
@@ -160,7 +152,6 @@ describe('Step Users', () => {
   test('with invalid ssh key', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addSshKey('ssh');
@@ -175,7 +166,6 @@ describe('Step Users', () => {
     await waitFor(() => user.click(screen.getByTestId('upload-azure')));
     await clickNext();
     await addTargetEnvAzure();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
@@ -196,7 +186,6 @@ describe('Step Users', () => {
   test('with invalid password', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
@@ -216,7 +205,6 @@ describe('User request generated correctly', () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
@@ -251,7 +239,6 @@ describe('User request generated correctly', () => {
   test('remove a user', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickRegisterLater();
     await goToUsersStep();
     await clickAddUser();
     await addUserName('test');
