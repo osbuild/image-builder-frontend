@@ -330,7 +330,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 ],
               };
               const composeResp = await baseQuery({
-                url: '/api/image-builder-composer/v2/compose',
+                url: '/compose',
                 method: 'POST',
                 body: composeReq,
                 headers: {
@@ -412,7 +412,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         queryFn: async (queryArg, _, __, baseQuery) => {
           try {
             const resp = await baseQuery({
-              url: `/api/image-builder-composer/v2/composes/${queryArg.composeId}`,
+              url: `/composes/${queryArg.composeId}`,
               method: 'GET',
             });
             const blueprintsDir = await getBlueprintsPath();
