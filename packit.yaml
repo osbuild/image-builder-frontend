@@ -4,6 +4,7 @@ upstream_package_name: cockpit-image-builder
 downstream_package_name: cockpit-image-builder
 # use the nicely formatted release description from our upstream release, instead of git shortlog
 copy_upstream_release_description: true
+upstream_tag_template: v{version}
 
 actions:
   create-archive:
