@@ -23,6 +23,10 @@ export const useCreateBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useCreateBlueprintMutation
   : serviceQueries.useCreateBlueprintMutation;
 
+export const useUpdateBlueprintMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useUpdateBlueprintMutation
+  : serviceQueries.useUpdateBlueprintMutation;
+
 export const useDeleteBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useDeleteBlueprintMutation
   : serviceQueries.useDeleteBlueprintMutation;

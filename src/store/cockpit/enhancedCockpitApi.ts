@@ -15,8 +15,11 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     createBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }],
     },
-    deleteBlueprint: {
+    updateBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }],
+    },
+    deleteBlueprint: {
+      invalidatesTags: [{ type: 'Blueprints' }, { type: 'Composes' }],
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {

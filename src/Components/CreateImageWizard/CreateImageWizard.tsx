@@ -207,11 +207,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       dispatch(changeArchitecture(arch));
     };
 
-    if (process.env.IS_ON_PREMISE) {
+    if (process.env.IS_ON_PREMISE && !isEdit) {
       if (!searchParams.get('release')) {
         initializeHostDistro();
       }
-
       initializeHostArch();
     }
     // This useEffect hook should run *only* on mount and therefore has an empty
