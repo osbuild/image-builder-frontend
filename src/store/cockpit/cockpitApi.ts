@@ -45,6 +45,8 @@ import {
   CreateBlueprintApiResponse,
   CreateBlueprintApiArg,
   ComposeResponse,
+  UpdateBlueprintApiResponse,
+  UpdateBlueprintApiArg,
 } from '../service/imageBuilderApi';
 
 const getBlueprintsPath = async () => {
@@ -233,6 +235,26 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ['mkdir', '-p', path.join(blueprintsDir, id)],
               {}
             );
+            await cockpit
+              .file(path.join(blueprintsDir, id, `${id}.json`))
+              .replace(JSON.stringify(blueprintReq));
+            return {
+              data: {
+                id: id,
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
+      updateBlueprint: builder.mutation<
+        UpdateBlueprintApiResponse,
+        UpdateBlueprintApiArg
+      >({
+        queryFn: async ({ id: id, createBlueprintRequest: blueprintReq }) => {
+          try {
+            const blueprintsDir = await getBlueprintsPath();
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
               .replace(JSON.stringify(blueprintReq));
@@ -456,6 +478,7 @@ export const {
   useGetBlueprintsQuery,
   useLazyGetBlueprintsQuery,
   useCreateBlueprintMutation,
+  useUpdateBlueprintMutation,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
   useComposeBlueprintMutation,
