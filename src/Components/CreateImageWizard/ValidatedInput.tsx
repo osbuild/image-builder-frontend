@@ -7,11 +7,7 @@ import {
   TextAreaProps,
   TextInput,
   TextInputProps,
-  Button,
-  InputGroup,
-  InputGroupItem,
 } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
 
@@ -59,57 +55,6 @@ type ErrorMessageProps = {
 };
 
 type ValidationResult = 'default' | 'success' | 'error';
-
-export const HookPasswordValidatedInput = ({
-  ariaLabel,
-  placeholder,
-  dataTestId,
-  value,
-  ouiaId,
-  stepValidation,
-  fieldName,
-  onChange,
-  warning = undefined,
-  inputType,
-  isDisabled,
-}: HookValidatedInputPropTypes) => {
-  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  return (
-    <>
-      <InputGroup>
-        <InputGroupItem isFill>
-          <HookValidatedInput
-            type={isPasswordVisible ? 'text' : 'password'}
-            ouiaId={ouiaId || ''}
-            data-testid={dataTestId}
-            value={value}
-            onChange={onChange!}
-            stepValidation={stepValidation}
-            ariaLabel={ariaLabel || ''}
-            fieldName={fieldName}
-            placeholder={placeholder || ''}
-            inputType={inputType || 'textInput'}
-            warning={warning || ''}
-            isDisabled={isDisabled || false}
-          />
-        </InputGroupItem>
-        <InputGroupItem>
-          <Button
-            variant="control"
-            onClick={togglePasswordVisibility}
-            aria-label={isPasswordVisible ? 'Show password' : 'Hide password'}
-          >
-            {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
-          </Button>
-        </InputGroupItem>
-      </InputGroup>
-    </>
-  );
-};
 
 export const ValidatedInputAndTextArea = ({
   value,
