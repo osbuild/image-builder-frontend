@@ -14,12 +14,15 @@ import {
   selectServices,
 } from '../../../../../store/wizardSlice';
 import ChippingInput from '../../../ChippingInput';
+import { useServicesValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';
 
 const ServicesInput = () => {
   const disabledServices = useAppSelector(selectServices).disabled;
   const maskedServices = useAppSelector(selectServices).masked;
   const enabledServices = useAppSelector(selectServices).enabled;
+
+  const stepValidation = useServicesValidation();
 
   const release = useAppSelector(selectDistribution);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
@@ -64,6 +67,8 @@ const ServicesInput = () => {
           item="Disabled service"
           addAction={addDisabledService}
           removeAction={removeDisabledService}
+          stepValidation={stepValidation}
+          fieldName="disabledSystemdServices"
         />
       </FormGroup>
       <FormGroup isRequired={false} label="Enabled services">
@@ -78,6 +83,8 @@ const ServicesInput = () => {
           item="Enabled service"
           addAction={addEnabledService}
           removeAction={removeEnabledService}
+          stepValidation={stepValidation}
+          fieldName="enabledSystemdServices"
         />
       </FormGroup>
     </>
