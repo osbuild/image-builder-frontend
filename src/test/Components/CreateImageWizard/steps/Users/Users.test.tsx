@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { usersCreateBlueprintRequest } from '../../../../fixtures/editMode';
+import { addTargetEnvAzure } from '../../CreateImageWizard.test';
 import {
   blueprintRequest,
   clickBack,
@@ -13,7 +14,6 @@ import {
   getNextButton,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
-  openAndDismissSaveAndBuildModal,
   renderEditMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
@@ -26,6 +26,8 @@ import {
 let router: RemixRouter | undefined = undefined;
 const validUserName = 'best';
 const validSshKey = 'ssh-rsa d';
+const validPassword = 'validPassword';
+const invalidPassword = 'inval';
 
 const goToUsersStep = async () => {
   await clickNext();
@@ -86,6 +88,13 @@ const addUserName = async (userName: string) => {
   });
   await waitFor(() => user.type(enterUserName, userName));
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
+};
+
+const addPassword = async (mockPassword: string) => {
+  const user = userEvent.setup();
+  const enterPassword = screen.getByPlaceholderText(/enter password/i);
+  await waitFor(() => user.type(enterPassword, mockPassword));
+  await waitFor(() => expect(enterPassword).toHaveValue(mockPassword));
 };
 
 describe('Step Users', () => {
@@ -159,10 +168,51 @@ describe('Step Users', () => {
     const invalidUserMessage = screen.getByText(/invalid ssh key/i);
     await waitFor(() => expect(invalidUserMessage));
   });
+
+  test('try to create Azure image with invalid password', async () => {
+    const user = userEvent.setup();
+    await renderCreateMode();
+    await waitFor(() => user.click(screen.getByTestId('upload-azure')));
+    await clickNext();
+    await addTargetEnvAzure();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addPassword(invalidPassword);
+
+    const invalidUserMessage = screen.getByText(
+      /Password must be at least 6 characters long./i
+    );
+    const warningUserMessage = screen.getByText(
+      /Must include at least 3 of the following: lowercase letters, uppercase letters, numbers, symbols./i
+    );
+    await waitFor(() => expect(invalidUserMessage));
+    await waitFor(() => expect(warningUserMessage));
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('with invalid password', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addPassword(invalidPassword);
+
+    const invalidUserMessage = screen.getByText(
+      /Password must be at least 6 characters long./i
+    );
+    await waitFor(() => expect(invalidUserMessage));
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
 });
 
 describe('User request generated correctly', () => {
-  test('with valid name, ssh key and checked Administrator checkbox', async () => {
+  test('create image with valid name, password, ssh key and checked Administrator checkbox', async () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await goToRegistrationStep();
@@ -171,16 +221,14 @@ describe('User request generated correctly', () => {
     await clickAddUser();
     await addUserName(validUserName);
     await addSshKey(validSshKey);
+    await addPassword(validPassword);
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeEnabled());
     const isAdmin = screen.getByRole('checkbox', {
       name: /administrator/i,
     });
-    user.click(isAdmin);
+    await waitFor(() => user.click(isAdmin));
     await goToReviewStep();
-    // informational modal pops up in the first test only as it's tied
-    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedRequest = {
       ...blueprintRequest,
@@ -189,6 +237,7 @@ describe('User request generated correctly', () => {
           {
             name: 'best',
             ssh_key: 'ssh-rsa d',
+            password: validPassword,
             groups: ['wheel'],
           },
         ],
@@ -234,7 +283,6 @@ describe('Users edit mode', () => {
     const receivedRequest = await interceptEditBlueprintRequest(
       `${EDIT_BLUEPRINT}/${id}`
     );
-    const expectedRequest = usersCreateBlueprintRequest;
-    expect(receivedRequest).toEqual(expectedRequest);
+    expect(receivedRequest).toEqual(usersCreateBlueprintRequest);
   });
 });
