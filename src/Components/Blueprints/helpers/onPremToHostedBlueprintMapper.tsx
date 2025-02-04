@@ -82,6 +82,7 @@ export type CustomizationsOnPrem = {
 export type UserOnPrem = {
   name: string;
   key: string;
+  groups: string[];
 };
 
 export type GroupOnPrem = {
@@ -100,6 +101,8 @@ export const mapOnPremToHosted = (
   const users = blueprint.customizations?.user?.map((u) => ({
     name: u.name,
     ssh_key: u.key,
+    groups: u.groups,
+    isAdministrator: u.groups?.includes('wheel') || false,
   }));
   const user_keys = blueprint.customizations?.ssh_key?.map((k) => ({
     name: k.user,
@@ -228,6 +231,8 @@ export const mapHostedToOnPrem = (
       return {
         name: u.name,
         key: u.ssh_key || '',
+        groups: u.groups || [],
+        isAdministrator: u.groups?.includes('wheel') || false,
       };
     });
   }
