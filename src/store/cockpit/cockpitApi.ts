@@ -277,7 +277,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprintsDir = await getBlueprintsPath();
             const filepath = path.join(blueprintsDir, filename);
 
-            await cockpit.spawn(['rm', filepath], {
+            await cockpit.spawn(['rm', '-r', filepath], {
               superuser: 'try',
             });
 
