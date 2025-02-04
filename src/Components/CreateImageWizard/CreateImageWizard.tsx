@@ -307,7 +307,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   return (
     <>
       <ImageBuilderHeader inWizard />
-      <PageSection isWidthLimited>
+      <PageSection isWidthLimited isCenterAligned>
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}
