@@ -88,6 +88,13 @@ const addUserName = async (userName: string) => {
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
+const addPassword = async (password: string) => {
+  const user = userEvent.setup();
+  const enterPassword = screen.getByPlaceholderText(/enter password/i);
+  await waitFor(() => user.type(enterPassword, password));
+  await waitFor(() => expect(enterPassword).toHaveValue(password));
+};
+
 describe('Step Users', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -155,14 +162,64 @@ describe('Step Users', () => {
     await goToUsersStep();
     await clickAddUser();
     await addSshKey('ssh');
+    await addPassword('inval');
     await addUserName('bestUser');
     const invalidUserMessage = screen.getByText(/invalid ssh key/i);
     await waitFor(() => expect(invalidUserMessage));
   });
+
+  test('try to create Azure image with invalid password', async () => {
+    const user = userEvent.setup();
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    const imageOutput = screen.getByRole('button', {
+      name: /image output/i,
+    });
+    await user.click(imageOutput);
+    const azureTarget = screen.getByText(/microsoft azure/i);
+    await user.click(azureTarget);
+    const users = screen.getByRole('button', {
+      name: /users/i,
+    });
+    await user.click(users);
+    await addUserName(validUserName);
+    await addPassword('inval');
+
+    const invalidUserMessage = screen.getByText(
+      /a password for the target environment azure must be at least 6 characters long\. please enter a longer password\./i
+    );
+    const warningUserMessage = screen.getByText(
+      /warning: this password seems weak, please use with caution or include at least 3 of the following: lowercase letter, uppercase letters, numbers, symbols/i
+    );
+    await waitFor(() => expect(invalidUserMessage));
+    await waitFor(() => expect(warningUserMessage));
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
+
+  test('with invalid password', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addPassword('inval');
+
+    const invalidUserMessage = screen.getByText(
+      /Password helps protect your account, we recommend a password of at least 6 characters./i
+    );
+    await waitFor(() => expect(invalidUserMessage));
+    const nextButton = await getNextButton();
+    await waitFor(() => expect(nextButton).toBeDisabled());
+  });
 });
 
 describe('User request generated correctly', () => {
-  test('with valid name, ssh key and checked Administrator checkbox', async () => {
+  test('create Guest-Image with valid name, password, ssh key and checked Administrator checkbox', async () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await goToRegistrationStep();
@@ -171,12 +228,13 @@ describe('User request generated correctly', () => {
     await clickAddUser();
     await addUserName(validUserName);
     await addSshKey(validSshKey);
+    await addPassword('thisIsValid');
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeEnabled());
     const isAdmin = screen.getByRole('checkbox', {
       name: /administrator/i,
     });
-    user.click(isAdmin);
+    await user.click(isAdmin);
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -189,6 +247,7 @@ describe('User request generated correctly', () => {
           {
             name: 'best',
             ssh_key: 'ssh-rsa d',
+            password: 'thisIsValid',
             groups: ['wheel'],
           },
         ],

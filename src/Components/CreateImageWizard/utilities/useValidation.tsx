@@ -1,4 +1,10 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
+} from '@patternfly/react-icons';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
@@ -34,6 +40,7 @@ import {
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
+import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText';
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
@@ -70,6 +77,7 @@ export function useIsBlueprintValid(): boolean {
   const services = useServicesValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
+  const users = useUsersValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
@@ -81,9 +89,31 @@ export function useIsBlueprintValid(): boolean {
     !firewall.disabledNext &&
     !services.disabledNext &&
     !firstBoot.disabledNext &&
-    !details.disabledNext
+    !details.disabledNext &&
+    !users.disabledNext
   );
 }
+
+type ValidationFlags = {
+  isUserNameValidValue: boolean;
+  isSshKeyValidValue: boolean;
+  isPasswordValidValue: boolean;
+};
+
+type PasswordValidationResult = {
+  isValid: boolean;
+  strength: {
+    variant: HelperTextVariant;
+    icon: JSX.Element;
+    text: string;
+  };
+  validationState: ValidationState;
+};
+
+type ValidationState = {
+  ruleLength: HelperTextVariant;
+  ruleCharacters: HelperTextVariant;
+};
 
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
@@ -403,6 +433,20 @@ export function useServicesValidation(): StepValidation {
   };
 }
 
+const getUserNameErrorMsg = (userName: string): string => {
+  if (userName && !isUserNameValid(userName)) {
+    return 'Invalid user name';
+  }
+  return '';
+};
+
+const getSshKeyErrorMsg = (userSshKey: string): string => {
+  if (userSshKey && !isSshKeyValid(userSshKey)) {
+    return 'Invalid SSH key';
+  }
+  return '';
+};
+
 export function useUsersValidation(): StepValidation {
   const index = 0;
   const userNameSelector = selectUserNameByIndex(index);
@@ -412,27 +456,107 @@ export function useUsersValidation(): StepValidation {
   const userSshKeySelector = selectUserSshKeyByIndex(index);
   const userSshKey = useAppSelector(userSshKeySelector);
   const users = useAppSelector(selectUsers);
+
+  const userNameError = getUserNameErrorMsg(userName);
+  const sshKeyError = getSshKeyErrorMsg(userSshKey);
+
+  const { isUserNameValidValue, isSshKeyValidValue, isPasswordValidValue } =
+    calculateValidationFlags(userName, userPassword, userSshKey);
+
   const canProceed =
     // Case 1: there is no users
     users.length === 0 ||
-    // Case 2: All fields are empty
-    (userName === '' && userPassword === '' && userSshKey === '') ||
-    // Case 3: userName is valid and SshKey is valid
-    (userName &&
-      isUserNameValid(userName) &&
-      userSshKey &&
-      isSshKeyValid(userSshKey));
+    // Case 2: userName is valid and SshKey or Password is valid
+    (isUserNameValidValue && (isSshKeyValidValue || isPasswordValidValue));
 
   return {
     errors: {
-      userName:
-        userName && !isUserNameValid(userName) ? 'Invalid user name' : '',
-      userSshKey:
-        userSshKey && !isSshKeyValid(userSshKey) ? 'Invalid SSH key' : '',
+      userName: userNameError,
+      userSshKey: sshKeyError,
     },
     disabledNext: !canProceed,
   };
 }
+
+const calculateValidationFlags = (
+  userName: string,
+  userPassword: string,
+  userSshKey: string
+): ValidationFlags => {
+  const isUserNameValidValue = !!userName && isUserNameValid(userName);
+  const isSshKeyValidValue = !!userSshKey && isSshKeyValid(userSshKey);
+  const isPasswordValidValue =
+    !!userPassword && checkPasswordValidity(userPassword).isValid;
+  return { isUserNameValidValue, isSshKeyValidValue, isPasswordValidValue };
+};
+
+export const checkPasswordValidity = (
+  value: string
+): PasswordValidationResult => {
+  if (!value) {
+    return {
+      isValid: false,
+      strength: getStrength(0),
+      validationState: {
+        ruleLength: 'indeterminate',
+        ruleCharacters: 'indeterminate',
+      },
+    };
+  }
+  const isEncrypted = /^\$([^$]+)\$/.test(value);
+  if (isEncrypted) {
+    return {
+      isValid: true,
+      strength: getStrength(0),
+      validationState: {
+        ruleLength: 'success',
+        ruleCharacters: 'success',
+      },
+    };
+  }
+
+  const trimmedValue = value.trim();
+  const isLengthValid = trimmedValue.length >= 6 && trimmedValue.length <= 128;
+  const { rulesCount, strCount } = countCharacterTypes(value);
+
+  const validationState: ValidationState = {
+    ruleLength: isLengthValid ? 'success' : 'error',
+    ruleCharacters: rulesCount >= 3 ? 'success' : 'error',
+  };
+
+  return {
+    isValid: isLengthValid && (rulesCount >= 3 || isLengthValid),
+    strength: getStrength(strCount),
+    validationState: validationState,
+  };
+};
+
+const getStrength = (
+  strCount: number
+): PasswordValidationResult['strength'] => {
+  if (strCount < 3)
+    return { variant: 'error', icon: <ExclamationCircleIcon />, text: 'Weak' };
+  if (strCount < 5)
+    return {
+      variant: 'warning',
+      icon: <ExclamationTriangleIcon />,
+      text: 'Medium',
+    };
+  return { variant: 'success', icon: <CheckCircleIcon />, text: 'Strong' };
+};
+
+const countCharacterTypes = (value: string) => {
+  const counts = {
+    lowercase: (value.match(/[a-z]/g) || []).length,
+    uppercase: (value.match(/[A-Z]/g) || []).length,
+    digits: (value.match(/\d/g) || []).length,
+    special: (value.match(/\W/g) || []).length,
+  };
+  return {
+    rulesCount: Object.values(counts).filter((count) => count > 0).length,
+    strCount: Object.values(counts).reduce((a, b) => a + b, 0),
+  };
+};
 
 export function useDetailsValidation(): StepValidation {
   const name = useAppSelector(selectBlueprintName);
