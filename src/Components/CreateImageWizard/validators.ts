@@ -1,5 +1,7 @@
 import type { Partition } from './steps/FileSystem/FileSystemTable';
 
+import { FIRST_BOOT_SERVICE } from '../../constants';
+
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
     awsAccountId !== undefined &&
@@ -137,11 +139,15 @@ export const isPortValid = (port: string) => {
 };
 
 export const isServiceValid = (service: string) => {
+  if (service === FIRST_BOOT_SERVICE) {
+    return true;
+  }
+
   // Restraints taken from service name syntax reference
   // https://www.rfc-editor.org/rfc/rfc6335#section-5.1
   return (
     service.length <= 15 &&
-    /^[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?$/.test(service) &&
+    /^[a-zA-Z0-9]([a-zA-Z0-9-.]*[a-zA-Z0-9])?$/.test(service) &&
     !/--/.test(service) && // does not contain more hyphens in a row
     /[a-zA-Z]+/.test(service) // contains at least one letter
   );

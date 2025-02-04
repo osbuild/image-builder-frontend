@@ -24,6 +24,7 @@ import {
   selectUserSshKeyByIndex,
   selectNtpServers,
   selectFirewall,
+  selectServices,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -56,6 +57,7 @@ export function useIsBlueprintValid(): boolean {
   const hostname = useHostnameValidation();
   const kernel = useKernelValidation();
   const firewall = useFirewallValidation();
+  const services = useServicesValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
@@ -66,6 +68,7 @@ export function useIsBlueprintValid(): boolean {
     !hostname.disabledNext &&
     !kernel.disabledNext &&
     !firewall.disabledNext &&
+    !services.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext
   );
@@ -281,6 +284,46 @@ export function useFirewallValidation(): StepValidation {
       invalidPorts.length > 0 ||
       invalidDisabled.length > 0 ||
       invalidEnabled.length > 0,
+  };
+}
+
+export function useServicesValidation(): StepValidation {
+  const services = useAppSelector(selectServices);
+  const errors = {};
+  const invalidDisabled = [];
+  const invalidEnabled = [];
+
+  if (services.disabled.length > 0) {
+    for (const s of services.disabled) {
+      if (!isServiceValid(s)) {
+        invalidDisabled.push(s);
+      }
+    }
+
+    if (invalidDisabled.length > 0) {
+      Object.assign(errors, {
+        disabledSystemdServices: `Invalid disabled services: ${invalidDisabled}`,
+      });
+    }
+  }
+
+  if (services.enabled.length > 0) {
+    for (const s of services.enabled) {
+      if (!isServiceValid(s)) {
+        invalidEnabled.push(s);
+      }
+    }
+
+    if (invalidEnabled.length > 0) {
+      Object.assign(errors, {
+        enabledSystemdServices: `Invalid enabled services: ${invalidEnabled}`,
+      });
+    }
+  }
+
+  return {
+    errors,
+    disabledNext: invalidDisabled.length > 0 || invalidEnabled.length > 0,
   };
 }
 

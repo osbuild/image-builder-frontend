@@ -46,6 +46,7 @@ import {
   useUsersValidation,
   useTimezoneValidation,
   useFirewallValidation,
+  useServicesValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -254,6 +255,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const kernelValidation = useKernelValidation();
   // Firewall
   const firewallValidation = useFirewallValidation();
+  // Services
+  const servicesValidation = useServicesValidation();
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
@@ -587,8 +590,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-services"
                 navItem={customStatusNavItem}
                 isHidden={!isServicesStepEnabled}
+                status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={servicesValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <ServicesStep />
