@@ -32,8 +32,20 @@ export const useFlagWithEphemDefault = (
   return (getEnvironment() === 'qa' && ephemDefault) || getFlag;
 };
 
+const onPremFlag = (flag: string): boolean => {
+  switch (flag) {
+    case 'image-builder.users.enabled':
+    case 'image-builder.timezone.enabled':
+    case 'image-builder.hostname.enabled':
+    case 'image-builder.kernel.enabled':
+    case 'image-builder.firewall.enabled':
+    case 'image-builder.services.enabled':
+      return true;
+    default:
+      return false;
+  }
+};
+
 // Since some of these flags are only relevant to
 // the service, we need a way of bypassing this for on-prem
-export const useFlag = !process.env.IS_ON_PREMISE
-  ? useUnleashFlag
-  : () => false;
+export const useFlag = !process.env.IS_ON_PREMISE ? useUnleashFlag : onPremFlag;
