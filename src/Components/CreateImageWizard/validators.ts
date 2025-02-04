@@ -129,7 +129,7 @@ export const isKernelArgumentValid = (arg: string) => {
     return true;
   }
 
-  return /^[a-zA-Z0-9=-_,"']*$/.test(arg);
+  return /^[a-zA-Z0-9=-_,."']*$/.test(arg);
 };
 
 export const isPortValid = (port: string) => {

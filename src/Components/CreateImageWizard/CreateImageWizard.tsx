@@ -44,6 +44,8 @@ import {
   useHostnameValidation,
   useKernelValidation,
   useUsersValidation,
+  useTimezoneValidation,
+  useFirewallValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -244,10 +246,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Filesystem
   const [filesystemPristine, setFilesystemPristine] = useState(true);
   const fileSystemValidation = useFilesystemValidation();
+  // Timezone
+  const timezoneValidation = useTimezoneValidation();
   // Hostname
   const hostnameValidation = useHostnameValidation();
   // Kernel
   const kernelValidation = useKernelValidation();
+  // Firewall
+  const firewallValidation = useFirewallValidation();
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
@@ -505,8 +511,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-timezone"
                 navItem={customStatusNavItem}
                 isHidden={!isTimezoneEnabled}
+                status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={timezoneValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <TimezoneStep />
@@ -561,8 +571,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-firewall"
                 navItem={customStatusNavItem}
                 isHidden={!isFirewallEnabled}
+                status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={firewallValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <FirewallStep />

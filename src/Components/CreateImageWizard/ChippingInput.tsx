@@ -13,6 +13,8 @@ import {
 import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { UnknownAction } from 'redux';
 
+import { StepValidation } from './utilities/useValidation';
+
 import { useAppDispatch } from '../../store/hooks';
 
 type ChippingInputProps = {
@@ -24,6 +26,8 @@ type ChippingInputProps = {
   item: string;
   addAction: (value: string) => UnknownAction;
   removeAction: (value: string) => UnknownAction;
+  stepValidation: StepValidation;
+  fieldName: string;
 };
 
 const ChippingInput = ({
@@ -35,11 +39,13 @@ const ChippingInput = ({
   item,
   addAction,
   removeAction,
+  stepValidation,
+  fieldName,
 }: ChippingInputProps) => {
   const dispatch = useAppDispatch();
 
   const [inputValue, setInputValue] = useState('');
-  const [errorText, setErrorText] = useState('');
+  const [errorText, setErrorText] = useState(stepValidation.errors[fieldName]);
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
@@ -74,6 +80,11 @@ const ChippingInput = ({
 
   const handleAddItem = (e: React.MouseEvent, value: string) => {
     addItem(value);
+  };
+
+  const handleRemoveItem = (e: React.MouseEvent, value: string) => {
+    dispatch(removeAction(value));
+    setErrorText('');
   };
 
   const handleClear = () => {
@@ -121,11 +132,7 @@ const ChippingInput = ({
           className="pf-v5-u-mt-sm pf-v5-u-w-100"
         >
           {requiredList.map((item) => (
-            <Chip
-              key={item}
-              onClick={() => dispatch(removeAction(item))}
-              isReadOnly
-            >
+            <Chip key={item} isReadOnly>
               {item}
             </Chip>
           ))}
@@ -133,7 +140,7 @@ const ChippingInput = ({
       )}
       <ChipGroup numChips={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {list?.map((item) => (
-          <Chip key={item} onClick={() => dispatch(removeAction(item))}>
+          <Chip key={item} onClick={(e) => handleRemoveItem(e, item)}>
             {item}
           </Chip>
         ))}
