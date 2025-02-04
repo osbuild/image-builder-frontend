@@ -63,7 +63,7 @@ export type CustomizationsOnPrem = {
   openscap?: OpenScap;
   filesystem?: FileSystemOnPrem[];
   services?: Services;
-  ssh_key?: SshKeyOnPrem[];
+  sshkey?: SshKeyOnPrem[];
   hostname?: string;
   kernel?: Kernel;
   user?: UserOnPrem[];
@@ -105,7 +105,7 @@ export const mapOnPremToHosted = (
     groups: u.groups,
     isAdministrator: u.groups?.includes('wheel') || false,
   }));
-  const user_keys = blueprint.customizations?.ssh_key?.map((k) => ({
+  const user_keys = blueprint.customizations?.sshkey?.map((k) => ({
     name: k.user,
     ssh_key: k.key,
   }));

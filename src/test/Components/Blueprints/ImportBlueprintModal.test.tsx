@@ -145,7 +145,7 @@ fips = true
 
 [[customizations.sshkey]]
 user = "root"
-key = "PUBLIC SSH KEY"
+key = "ssh-rsa d"
 
 [[customizations.user]]
 name = "admin"
