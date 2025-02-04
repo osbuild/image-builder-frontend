@@ -906,7 +906,6 @@ export const wizardSlice = createSlice({
       const newUser = {
         name: '',
         password: '',
-        confirmPassword: '',
         ssh_key: '',
         groups: [],
         isAdministrator: false,

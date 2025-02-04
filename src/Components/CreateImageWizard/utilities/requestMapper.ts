@@ -232,7 +232,6 @@ function commonRequestToState(
         name: user.name,
         password: '', // The image-builder API does not return the password.
         ssh_key: user.ssh_key || '',
-        confirmPassword: '',
         groups: user.groups || [],
         isAdministrator: user.groups?.includes('wheel') || false,
       })) || [],
