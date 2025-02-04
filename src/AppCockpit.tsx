@@ -8,10 +8,18 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
+import { NotReady } from './Components/Cockpit/NotReady';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
+import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
 
 const Application = () => {
+  const { enabled, started } = useGetComposerSocketStatus();
+
+  if (!started || !enabled) {
+    return <NotReady enabled={enabled} />;
+  }
+
   return (
     <React.Fragment>
       <NotificationsPortal />
