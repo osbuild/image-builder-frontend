@@ -186,7 +186,9 @@ export const initialState: wizardState = {
     email: '',
   },
   registration: {
-    registrationType: 'register-now-rhc',
+    registrationType: process.env.IS_ON_PREMISE
+      ? 'register-later'
+      : 'register-now-rhc',
     activationKey: undefined,
   },
   compliance: {
