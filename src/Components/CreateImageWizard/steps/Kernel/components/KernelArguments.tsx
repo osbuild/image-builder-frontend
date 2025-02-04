@@ -12,10 +12,13 @@ import {
   selectKernel,
 } from '../../../../../store/wizardSlice';
 import ChippingInput from '../../../ChippingInput';
+import { useKernelValidation } from '../../../utilities/useValidation';
 import { isKernelArgumentValid } from '../../../validators';
 
 const KernelArguments = () => {
   const kernelAppend = useAppSelector(selectKernel).append;
+
+  const stepValidation = useKernelValidation();
 
   const release = useAppSelector(selectDistribution);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
@@ -46,6 +49,8 @@ const KernelArguments = () => {
         item="Kernel argument"
         addAction={addKernelArg}
         removeAction={removeKernelArg}
+        stepValidation={stepValidation}
+        fieldName="kernelAppend"
       />
     </FormGroup>
   );

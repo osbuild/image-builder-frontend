@@ -22,6 +22,8 @@ import {
   selectUsers,
   selectUserPasswordByIndex,
   selectUserSshKeyByIndex,
+  selectNtpServers,
+  selectFirewall,
 } from '../../../store/wizardSlice';
 import {
   getDuplicateMountPoints,
@@ -33,6 +35,10 @@ import {
   isKernelNameValid,
   isUserNameValid,
   isSshKeyValid,
+  isNtpServerValid,
+  isKernelArgumentValid,
+  isPortValid,
+  isServiceValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -46,16 +52,20 @@ export function useIsBlueprintValid(): boolean {
   const registration = useRegistrationValidation();
   const filesystem = useFilesystemValidation();
   const snapshot = useSnapshotValidation();
+  const timezone = useTimezoneValidation();
   const hostname = useHostnameValidation();
   const kernel = useKernelValidation();
+  const firewall = useFirewallValidation();
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
     !snapshot.disabledNext &&
+    !timezone.disabledNext &&
     !hostname.disabledNext &&
     !kernel.disabledNext &&
+    !firewall.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext
   );
@@ -130,6 +140,29 @@ export function useSnapshotValidation(): StepValidation {
   return { errors: {}, disabledNext: false };
 }
 
+export function useTimezoneValidation(): StepValidation {
+  const ntpServers = useAppSelector(selectNtpServers);
+
+  if (ntpServers) {
+    const invalidServers = [];
+
+    for (const server of ntpServers) {
+      if (!isNtpServerValid(server)) {
+        invalidServers.push(server);
+      }
+    }
+
+    if (invalidServers.length > 0) {
+      return {
+        errors: { ntpServers: `Invalid ntpServers: ${invalidServers}` },
+        disabledNext: true,
+      };
+    }
+  }
+
+  return { errors: {}, disabledNext: false };
+}
+
 export function useFirstBootValidation(): StepValidation {
   const script = useAppSelector(selectFirstBootScript);
   let hasShebang = false;
@@ -174,7 +207,81 @@ export function useKernelValidation(): StepValidation {
       disabledNext: true,
     };
   }
+
+  if (kernel.append.length > 0) {
+    const invalidArgs = [];
+
+    for (const arg of kernel.append) {
+      if (!isKernelArgumentValid(arg)) {
+        invalidArgs.push(arg);
+      }
+    }
+
+    if (invalidArgs.length > 0) {
+      return {
+        errors: { kernelAppend: `Invalid kernel arguments: ${invalidArgs}` },
+        disabledNext: true,
+      };
+    }
+  }
+
   return { errors: {}, disabledNext: false };
+}
+
+export function useFirewallValidation(): StepValidation {
+  const firewall = useAppSelector(selectFirewall);
+  const errors = {};
+  const invalidPorts = [];
+  const invalidDisabled = [];
+  const invalidEnabled = [];
+
+  if (firewall.ports.length > 0) {
+    for (const port of firewall.ports) {
+      if (!isPortValid(port)) {
+        invalidPorts.push(port);
+      }
+    }
+
+    if (invalidPorts.length > 0) {
+      Object.assign(errors, { ports: `Invalid ports: ${invalidPorts}` });
+    }
+  }
+
+  if (firewall.services.disabled.length > 0) {
+    for (const s of firewall.services.disabled) {
+      if (!isServiceValid(s)) {
+        invalidDisabled.push(s);
+      }
+    }
+
+    if (invalidDisabled.length > 0) {
+      Object.assign(errors, {
+        disabledServices: `Invalid disabled services: ${invalidDisabled}`,
+      });
+    }
+  }
+
+  if (firewall.services.enabled.length > 0) {
+    for (const s of firewall.services.enabled) {
+      if (!isServiceValid(s)) {
+        invalidEnabled.push(s);
+      }
+    }
+
+    if (invalidEnabled.length > 0) {
+      Object.assign(errors, {
+        enabledServices: `Invalid enabled services: ${invalidEnabled}`,
+      });
+    }
+  }
+
+  return {
+    errors,
+    disabledNext:
+      invalidPorts.length > 0 ||
+      invalidDisabled.length > 0 ||
+      invalidEnabled.length > 0,
+  };
 }
 
 export function useUsersValidation(): StepValidation {

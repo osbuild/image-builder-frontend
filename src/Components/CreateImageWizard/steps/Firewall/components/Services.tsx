@@ -11,11 +11,14 @@ import {
   selectFirewall,
 } from '../../../../../store/wizardSlice';
 import ChippingInput from '../../../ChippingInput';
+import { useFirewallValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';
 
 const Services = () => {
   const disabledServices = useAppSelector(selectFirewall).services.disabled;
   const enabledServices = useAppSelector(selectFirewall).services.enabled;
+
+  const stepValidation = useFirewallValidation();
 
   return (
     <>
@@ -28,6 +31,8 @@ const Services = () => {
           item="Disabled service"
           addAction={addDisabledFirewallService}
           removeAction={removeDisabledFirewallService}
+          stepValidation={stepValidation}
+          fieldName="disabledServices"
         />
       </FormGroup>
       <FormGroup label="Enabled services">
@@ -39,6 +44,8 @@ const Services = () => {
           item="Enabled service"
           addAction={addEnabledFirewallService}
           removeAction={removeEnabledFirewallService}
+          stepValidation={stepValidation}
+          fieldName="enabledServices"
         />
       </FormGroup>
     </>
