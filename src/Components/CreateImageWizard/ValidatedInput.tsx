@@ -36,6 +36,7 @@ type HookValidatedInputPropTypes = TextInputProps &
     fieldName: string;
     warning?: string;
     inputType?: 'textInput' | 'textArea';
+    isEmpty?: boolean;
   };
 
 export const HookPasswordValidatedInput = ({
@@ -50,7 +51,15 @@ export const HookPasswordValidatedInput = ({
   warning = undefined,
   inputType,
   isDisabled,
+  isEmpty,
 }: HookValidatedInputPropTypes) => {
+  const validated = isEmpty
+    ? 'default'
+    : stepValidation.errors[fieldName] === 'default'
+    ? 'default'
+    : stepValidation.errors[fieldName]
+    ? 'error'
+    : 'success';
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -58,20 +67,18 @@ export const HookPasswordValidatedInput = ({
 
   return (
     <>
+      {inputType === 'textInput'}
       <InputGroup>
         <InputGroupItem isFill>
-          <HookValidatedInput
+          <TextInput
             type={isPasswordVisible ? 'text' : 'password'}
             ouiaId={ouiaId || ''}
             data-testid={dataTestId}
             value={value}
             onChange={onChange!}
-            stepValidation={stepValidation}
-            ariaLabel={ariaLabel || ''}
-            fieldName={fieldName}
+            aria-label={ariaLabel || ''}
+            validated={validated}
             placeholder={placeholder || ''}
-            inputType={inputType || 'textInput'}
-            warning={warning || ''}
             isDisabled={isDisabled || false}
           />
         </InputGroupItem>
@@ -85,6 +92,20 @@ export const HookPasswordValidatedInput = ({
           </Button>
         </InputGroupItem>
       </InputGroup>
+      {validated === 'error' && (
+        <HelperText>
+          <HelperTextItem variant="error" hasIcon>
+            {stepValidation.errors[fieldName]}
+          </HelperTextItem>
+        </HelperText>
+      )}
+      {warning !== undefined && warning !== '' && (
+        <HelperText>
+          <HelperTextItem variant="warning" hasIcon>
+            {warning}
+          </HelperTextItem>
+        </HelperText>
+      )}
     </>
   );
 };
@@ -102,11 +123,14 @@ export const HookValidatedInput = ({
   type = 'text',
   inputType,
   warning = undefined,
+  isEmpty,
 }: HookValidatedInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
   // Do not surface validation on pristine state components
   // Allow step validation to be set on pristine state, when needed
-  const validated = isPristine
+  const validated = isEmpty
+    ? 'default'
+    : isPristine
     ? 'default'
     : stepValidation.errors[fieldName] === 'default'
     ? 'default'

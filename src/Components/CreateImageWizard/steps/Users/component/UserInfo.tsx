@@ -79,6 +79,7 @@ const UserInfo = () => {
           onChange={(_e, value) => handleNameChange(_e, value)}
           stepValidation={stepValidation}
           fieldName="userName"
+          isEmpty={userName === ''}
         />
       </FormGroup>
       <FormGroup isRequired label="Password">
@@ -89,6 +90,7 @@ const UserInfo = () => {
           placeholder="Enter password"
           stepValidation={stepValidation}
           fieldName="userPassword"
+          isEmpty={userPassword === ''}
         />
       </FormGroup>
       <FormGroup isRequired label="SSH key">
@@ -101,6 +103,7 @@ const UserInfo = () => {
           placeholder="Paste your public SSH key"
           stepValidation={stepValidation}
           fieldName="userSshKey"
+          isEmpty={userSshKey === ''}
         />
         <Button
           component="a"

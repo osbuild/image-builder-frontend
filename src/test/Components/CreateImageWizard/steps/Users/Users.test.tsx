@@ -88,6 +88,13 @@ const addUserName = async (userName: string) => {
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
+const addPassword = async (password: string) => {
+  const user = userEvent.setup();
+  const enterPassword = screen.getByPlaceholderText(/enter password/i);
+  await waitFor(() => user.type(enterPassword, password));
+  await waitFor(() => expect(enterPassword).toHaveValue(password));
+};
+
 describe('Step Users', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -157,6 +164,20 @@ describe('Step Users', () => {
     await addSshKey('ssh');
     await addUserName('bestUser');
     const invalidUserMessage = screen.getByText(/invalid ssh key/i);
+    await waitFor(() => expect(invalidUserMessage));
+  });
+
+  test('with invalid password', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await addPassword('invalidPassword');
+    const invalidUserMessage = screen.getByText(
+      /Password must be between 8 and 128 characters, contain at least one uppercase letter, one lowercase letter,and one special character/i
+    );
     await waitFor(() => expect(invalidUserMessage));
   });
 });

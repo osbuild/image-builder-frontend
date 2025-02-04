@@ -79,6 +79,19 @@ export const isSshKeyValid = (sshKey: string) => {
   return isPatternValid;
 };
 
+export const isPasswordValid = (password: string) => {
+  if (password === undefined) return false;
+
+  const isEncrypted = /^\$(6|5|2b)\$/.test(password);
+  const isLengthValid = password.length >= 8 && password.length <= 128;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasSpecialChar = /[^A-Za-z0-9]/.test(password);
+
+  if (isEncrypted) return true;
+  return isLengthValid && hasUpperCase && hasLowerCase && hasSpecialChar;
+};
+
 export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
