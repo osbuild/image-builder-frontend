@@ -15,8 +15,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
-import { useCreateBlueprintMutation } from '../../../../../store/backendApi';
-import { useUpdateBlueprintMutation } from '../../../../../store/imageBuilderApi';
+import {
+  useCreateBlueprintMutation,
+  useUpdateBlueprintMutation,
+} from '../../../../../store/backendApi';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
