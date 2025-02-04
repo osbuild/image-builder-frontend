@@ -41,6 +41,20 @@ export const NotReady = ({ enabled }: { enabled: boolean }) => {
             Start socket
           </Button>
         </EmptyStateActions>
+        <EmptyStateActions>
+          <Button
+            variant="link"
+            onClick={(event) => {
+              event.preventDefault();
+              cockpit.jump(
+                '/system/services#/osbuild-composer.socket',
+                cockpit.transport.host
+              );
+            }}
+          >
+            More Info
+          </Button>
+        </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
   );
