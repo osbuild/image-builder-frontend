@@ -9,10 +9,10 @@ import {
   FlexItem,
 } from '@patternfly/react-core';
 
+import { useUpdateBlueprintMutation } from '../../../../../store/backendApi';
 import {
   CreateBlueprintRequest,
   useComposeBlueprintMutation,
-  useUpdateBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 
 type EditDropdownProps = {
