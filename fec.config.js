@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 const path = require('path');
 
-const CopyPlugin = require('copy-webpack-plugin');
 const { sentryWebpackPlugin } = require('@sentry/webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const webpack = require('webpack');
 
 const plugins = [];
@@ -84,7 +84,7 @@ if (process.env.SENTRY_AUTH_TOKEN) {
 module.exports = {
   sassPrefix: '.imageBuilder',
   debug: true,
-  useFileHash: false,
+  useFileHash: true,
   /*
   mockServiceWorker.js will be served from /beta/apps/image-builder, which
   will become its default scope. Setting the Service-Worker-Allowed header to
