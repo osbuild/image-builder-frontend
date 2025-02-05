@@ -45,6 +45,26 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     },
     composeBlueprint: {
       invalidatesTags: [{ type: 'Composes' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Build was queued',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Unable to build blueprint',
+                description: `Error message ${err.error.message}: ${err.error.body.details}`,
+              })
+            );
+          });
+      },
     },
     getComposes: {
       providesTags: [{ type: 'Composes' }],
