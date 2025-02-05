@@ -183,14 +183,10 @@ function commonRequestToState(
   // Currently used format is RFC3339 (YYYY-MM-DDTHH:MM:SSZ), this condition
   // checks which format is getting parsed and converts DateOnly to RFC3339
   // when necessary.
-  if (
-    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\+\d{2}:\d{2}$/.test(
-      snapshotDateFromRequest
-    )
-  ) {
+  if (/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/.test(snapshotDateFromRequest)) {
     snapshot_date = snapshotDateFromRequest;
   } else if (/^\d{4}-\d{2}-\d{2}$/.test(snapshotDateFromRequest)) {
-    snapshot_date = snapshotDateFromRequest + 'T00:00:00+00:00';
+    snapshot_date = snapshotDateFromRequest + 'T00:00:00Z';
   } else {
     snapshot_date = '';
   }
