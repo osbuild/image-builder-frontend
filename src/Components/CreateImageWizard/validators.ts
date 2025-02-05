@@ -1,7 +1,5 @@
 import type { Partition } from './steps/FileSystem/FileSystemTable';
 
-import { FIRST_BOOT_SERVICE } from '../../constants';
-
 export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   return (
     awsAccountId !== undefined &&
@@ -139,10 +137,6 @@ export const isPortValid = (port: string) => {
 };
 
 export const isServiceValid = (service: string) => {
-  if (service === FIRST_BOOT_SERVICE) {
-    return true;
-  }
-
   // see `man systemd.unit` for the exact specification
   return (
     service.length <= 256 &&
