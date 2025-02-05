@@ -44,9 +44,9 @@ Make sure you have npm@10 and node 18+ installed. If you need multiple versions 
 
 1. run `npm ci`
 
-2. run `npm run start`, select prod environment and choose beta or stable.
+2. run `npm run start:prod`
 
-3. redirect `prod.foo.redhat.com` to localhost, if this has not been done already.
+3. redirect `prod.foo.redhat.com` to localhost, if this has not been done already
 
 ```bash
 echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
@@ -58,9 +58,9 @@ echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 
 1. run `npm ci`
 
-2. run `npm run start`, select stage environment and choose beta or stable.
+2. run `npm run start:stage`
 
-3. redirect `stage.foo.redhat.com` to localhost, if this has not been done already.
+3. redirect `stage.foo.redhat.com` to localhost, if this has not been done already
 
 ```bash
 echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
