@@ -1,3 +1,4 @@
+import { Blueprint as CloudApiBlueprint } from '../../../store/cockpit/composerCloudApi';
 import {
   BlueprintExportResponse,
   Container,
@@ -15,6 +16,9 @@ import {
   Services,
   Timezone,
 } from '../../../store/imageBuilderApi';
+
+// Blueprint as defined by the osbuild-composer cloudapi's /compose
+// endpoint.
 
 export type BlueprintOnPrem = {
   name: string;
@@ -186,8 +190,8 @@ export const mapOnPremToHosted = (
 
 export const mapHostedToOnPrem = (
   blueprint: CreateBlueprintRequest
-): BlueprintOnPrem => {
-  const result: BlueprintOnPrem = {
+): CloudApiBlueprint => {
+  const result: CloudApiBlueprint = {
     name: blueprint.name,
     customizations: {},
   };
@@ -211,10 +215,6 @@ export const mapHostedToOnPrem = (
 
   if (blueprint.customizations?.files) {
     result.customizations!.files = blueprint.customizations.files;
-  }
-
-  if (blueprint.customizations?.openscap) {
-    result.customizations!.openscap = blueprint.customizations.openscap;
   }
 
   if (blueprint.customizations?.filesystem) {
@@ -249,15 +249,6 @@ export const mapHostedToOnPrem = (
 
   if (blueprint.customizations?.kernel) {
     result.customizations!.kernel = blueprint.customizations.kernel;
-  }
-
-  if (blueprint.customizations?.groups) {
-    result.customizations!.groups = blueprint.customizations.groups.map((g) => {
-      return {
-        name: g.name,
-        gid: g.gid,
-      };
-    });
   }
 
   if (blueprint.customizations?.timezone) {
