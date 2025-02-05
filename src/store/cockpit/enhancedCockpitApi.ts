@@ -2,8 +2,6 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 
 import { cockpitApi } from './cockpitApi';
 
-import { errorMessage } from '../service/enhancedImageBuilderApi';
-
 const enhancedApi = cockpitApi.enhanceEndpoints({
   addTagTypes: ['Blueprints', 'Composes'],
   endpoints: {
@@ -14,9 +12,49 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     },
     createBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Blueprint was created',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Unable to create blueprint',
+                description: `Error: ${JSON.stringify(err)}`,
+              })
+            );
+          });
+      },
     },
     updateBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Blueprint was created',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Unable to update blueprint',
+                description: `Error: ${JSON.stringify(err)}`,
+              })
+            );
+          });
+      },
     },
     deleteBlueprint: {
       invalidatesTags: [{ type: 'Blueprints' }, { type: 'Composes' }],
@@ -35,9 +73,7 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
               addNotification({
                 variant: 'danger',
                 title: 'Blueprint could not be deleted',
-                description: `Status code ${err.error.status}: ${errorMessage(
-                  err
-                )}`,
+                description: `Error: ${JSON.stringify(err)}`,
               })
             );
           });
@@ -60,7 +96,10 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
               addNotification({
                 variant: 'danger',
                 title: 'Unable to build blueprint',
-                description: `Error message ${err.error.message}: ${err.error.body.details}`,
+                // If details are present, assume it's coming from composer
+                description: err.error?.body?.details
+                  ? `${err.error.message}: ${err.error.body.details}`
+                  : `Error: ${JSON.stringify(err)}`,
               })
             );
           });
