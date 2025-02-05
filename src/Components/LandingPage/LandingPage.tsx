@@ -59,7 +59,7 @@ export const LandingPage = () => {
 
   const imageList = (
     <>
-      <PageSection isWidthLimited>
+      <PageSection isWidthLimited isCenterAligned>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel
