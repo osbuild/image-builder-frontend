@@ -234,8 +234,7 @@ export const mapHostedToOnPrem = (
         name: u.name,
         key: u.ssh_key || '',
         groups: u.groups || [],
-        password: '',
-        isAdministrator: u.groups?.includes('wheel') || false,
+        password: u.password || '',
       };
     });
   }
