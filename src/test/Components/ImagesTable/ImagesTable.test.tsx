@@ -118,7 +118,7 @@ describe('Images Table', () => {
     expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
   });
 
-  test('check error details', { retry: 3 }, async () => {
+  test('check error details', async () => {
     await renderCustomRoutesWithReduxRouter();
 
     let table = await screen.findByTestId('images-table');

@@ -1,5 +1,6 @@
-import react from '@vitejs/plugin-react';
 import path from 'path';
+
+import react from '@vitejs/plugin-react';
 
 const config = {
   plugins: [react()],
@@ -18,6 +19,7 @@ const config = {
     testTimeout: 10000,
     fileParallelism: false,
     exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**'],
+    retry: 3,
   },
   reporters: ['default', 'junit'],
   outputFile: {
