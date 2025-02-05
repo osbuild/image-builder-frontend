@@ -246,7 +246,7 @@ describe('OpenSCAP request generated correctly', () => {
     });
   });
 
-  test('remove a profile', { retry: 3, timeout: 20000 }, async () => {
+  test('remove a profile', { timeout: 20000 }, async () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await goToOscapStep();
@@ -265,7 +265,7 @@ describe('OpenSCAP request generated correctly', () => {
     });
   });
 
-  test('change profile', { retry: 3, timeout: 20000 }, async () => {
+  test('change profile', { timeout: 20000 }, async () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await goToOscapStep();
