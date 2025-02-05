@@ -77,6 +77,7 @@ import {
   selectKernel,
   selectUserAdministrator,
   selectFirewall,
+  selectServices,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -974,6 +975,49 @@ export const FirewallList = () => {
                 : 'None'}
             </CodeBlockCode>
           </CodeBlock>
+        </TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
+export const ServicesList = () => {
+  const services = useAppSelector(selectServices);
+
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Disabled
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {services.disabled.length > 0 || services.masked.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>
+                {services.disabled.concat(services.masked).join(' ')}
+              </CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
+        </TextListItem>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Enabled
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>
+          {services.enabled.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>{services.enabled.join(' ')}</CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
         </TextListItem>
       </TextList>
     </TextContent>
