@@ -143,11 +143,10 @@ export const isServiceValid = (service: string) => {
     return true;
   }
 
-  // Restraints taken from service name syntax reference
-  // https://www.rfc-editor.org/rfc/rfc6335#section-5.1
+  // see `man systemd.unit` for the exact specification
   return (
-    service.length <= 15 &&
-    /^[a-zA-Z0-9]([a-zA-Z0-9-.]*[a-zA-Z0-9])?$/.test(service) &&
+    service.length <= 256 &&
+    /^[a-zA-Z0-9]([a-zA-Z0-9.\-_:@]*[a-zA-Z0-9])?$/.test(service) &&
     !/--/.test(service) && // does not contain more hyphens in a row
     /[a-zA-Z]+/.test(service) // contains at least one letter
   );
