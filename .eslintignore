@@ -5,3 +5,4 @@ rhsmApi.ts
 provisioningApi.ts
 edgeApi.ts
 complianceApi.ts
+composerCloudApi.ts
