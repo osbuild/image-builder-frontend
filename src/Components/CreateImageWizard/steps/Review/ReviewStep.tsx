@@ -56,6 +56,8 @@ import {
   selectNtpServers,
   selectFirewall,
   selectServices,
+  selectUsers,
+  selectKernel,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
@@ -77,6 +79,8 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
   const ntpServers = useAppSelector(selectNtpServers);
   const firewall = useAppSelector(selectFirewall);
   const services = useAppSelector(selectServices);
+  const users = useAppSelector(selectUsers);
+  const kernel = useAppSelector(selectKernel);
 
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
@@ -348,7 +352,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
         {/* Intentional prop drilling for simplicity - To be removed */}
         <ContentList snapshottingEnabled={snapshottingEnabled} />
       </ExpandableSection>
-      {isUsersEnabled && (
+      {isUsersEnabled && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
@@ -417,7 +421,7 @@ const Review = ({ snapshottingEnabled }: { snapshottingEnabled: boolean }) => {
           <HostnameList />
         </ExpandableSection>
       )}
-      {isKernelEnabled && (
+      {isKernelEnabled && (kernel.name || kernel.append.length > 0) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Kernel',
