@@ -915,11 +915,13 @@ export const KernelList = () => {
           Append
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          <CodeBlock>
-            <CodeBlockCode>
-              {kernel.append.length > 0 ? kernel.append.join(' ') : 'None'}
-            </CodeBlockCode>
-          </CodeBlock>
+          {kernel.append.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>{kernel.append.join(' ')}</CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
         </TextListItem>
       </TextList>
     </TextContent>
@@ -939,11 +941,13 @@ export const FirewallList = () => {
           Ports
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          <CodeBlock>
-            <CodeBlockCode>
-              {firewall.ports.length > 0 ? firewall.ports.join(' ') : 'None'}
-            </CodeBlockCode>
-          </CodeBlock>
+          {firewall.ports.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>{firewall.ports.join(' ')}</CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
         </TextListItem>
         <TextListItem
           component={TextListItemVariants.dt}
@@ -952,13 +956,15 @@ export const FirewallList = () => {
           Disabled services
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          <CodeBlock>
-            <CodeBlockCode>
-              {firewall.services.disabled.length > 0
-                ? firewall.services.disabled.join(' ')
-                : 'None'}
-            </CodeBlockCode>
-          </CodeBlock>
+          {firewall.services.disabled.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>
+                {firewall.services.disabled.join(' ')}
+              </CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
         </TextListItem>
         <TextListItem
           component={TextListItemVariants.dt}
@@ -967,13 +973,15 @@ export const FirewallList = () => {
           Enabled services
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          <CodeBlock>
-            <CodeBlockCode>
-              {firewall.services.enabled.length > 0
-                ? firewall.services.enabled.join(' ')
-                : 'None'}
-            </CodeBlockCode>
-          </CodeBlock>
+          {firewall.services.enabled.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>
+                {firewall.services.enabled.join(' ')}
+              </CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
         </TextListItem>
       </TextList>
     </TextContent>
