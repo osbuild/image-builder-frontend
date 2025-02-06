@@ -45,17 +45,25 @@ describe('Create Image Wizard', () => {
     // check navigation
     await screen.findByRole('button', { name: 'Image output' });
     await screen.findByRole('button', { name: 'Optional steps' });
-    await screen.findByRole('button', { name: 'Register' });
-    await screen.findByRole('button', { name: 'OpenSCAP' });
     await screen.findByRole('button', { name: 'File system configuration' });
-    await screen.findByRole('button', { name: 'Repository snapshot' });
-    await screen.findByRole('button', { name: 'Custom repositories' });
     await screen.findByRole('button', { name: 'Additional packages' });
-    await screen.findByRole('button', {
-      name: 'First boot script configuration',
-    });
+    await screen.findByRole('button', { name: 'Users' });
+    await screen.findByRole('button', { name: 'Timezone' });
+    await screen.findByRole('button', { name: 'Hostname' });
+    await screen.findByRole('button', { name: 'Kernel' });
+    await screen.findByRole('button', { name: 'Firewall' });
+    await screen.findByRole('button', { name: 'Systemd services' });
     await screen.findByRole('button', { name: 'Details' });
     await screen.findByRole('button', { name: 'Review' });
+    if (!process.env.IS_ON_PREMISE) {
+      await screen.findByRole('button', { name: 'Register' });
+      await screen.findByRole('button', { name: 'OpenSCAP' });
+      await screen.findByRole('button', { name: 'Repository snapshot' });
+      await screen.findByRole('button', { name: 'Custom repositories' });
+      await screen.findByRole('button', {
+        name: 'First boot script configuration',
+      });
+    }
   });
 });
 

@@ -40,6 +40,10 @@ const routes = [
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <ImageWizard />,
   },
+  {
+    path: '/imageWizard',
+    element: <ImageWizard />,
+  },
 ];
 
 export const imageRequest: ImageRequest = {
@@ -64,11 +68,11 @@ export const blueprintRequest: CreateBlueprintRequest = {
  * // returns 'imageWizard?release=rhel8&architecture=aarch64'
  * preparePathname({ release: 'rhel8', architecture: 'aarch64' });
  * @example
- * // returns 'imageWizard'
+ * // returns '(/)imageWizard'
  * preparePathname({});
  */
 function preparePathname(searchParams: { [key: string]: string } = {}): string {
-  let pathName = 'imageWizard';
+  let pathName = process.env.IS_ON_PREMISE ? '/imageWizard' : 'imageWizard';
   const params = Object.entries(searchParams).map(
     ([param, value]) => `${param}=${value}`
   );
