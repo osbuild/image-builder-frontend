@@ -40,6 +40,7 @@ import {
   isKernelArgumentValid,
   isPortValid,
   isServiceValid,
+  isPasswordValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -344,12 +345,17 @@ export function useUsersValidation(): StepValidation {
     // Case 3: userName is valid and SshKey is valid
     (userName &&
       isUserNameValid(userName) &&
-      userSshKey &&
-      isSshKeyValid(userSshKey));
+      ((userSshKey && isSshKeyValid(userSshKey)) ||
+        (userPassword && isPasswordValid(userPassword))));
 
   return {
     errors: {
       userName: !isUserNameValid(userName) ? 'Invalid user name' : '',
+      userPassword: !userPassword
+        ? ''
+        : !isPasswordValid(userPassword)
+        ? 'Password must be between 8 and 128 characters, contain at least one uppercase letter, one lowercase letter,and one special character.'
+        : '',
       userSshKey: !userSshKey
         ? ''
         : !isSshKeyValid(userSshKey)
