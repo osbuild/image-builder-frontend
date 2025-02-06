@@ -220,7 +220,7 @@ describe('Step Upload to Azure', () => {
     await verifyCancelButton(router);
   });
 
-  test('basics work', { retry: 3 }, async () => {
+  test('basics work', async () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
