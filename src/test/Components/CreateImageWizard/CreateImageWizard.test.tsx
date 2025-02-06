@@ -49,6 +49,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Additional packages' });
     await screen.findByRole('button', { name: 'Users' });
     await screen.findByRole('button', { name: 'Timezone' });
+    await screen.findByRole('button', { name: 'Locale' });
     await screen.findByRole('button', { name: 'Hostname' });
     await screen.findByRole('button', { name: 'Kernel' });
     await screen.findByRole('button', { name: 'Firewall' });
