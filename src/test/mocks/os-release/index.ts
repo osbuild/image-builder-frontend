@@ -6,8 +6,8 @@ type osRelease = {
 export const read_os_release = (): Promise<osRelease> => {
   return new Promise((resolve) => {
     resolve({
-      ID: '',
-      VERSION_ID: '',
+      ID: 'rhel',
+      VERSION_ID: '9',
     });
   });
 };

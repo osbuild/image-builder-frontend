@@ -7,3 +7,5 @@ vitest run -t 'Images Table render ImagesTable' \
 
 vitest run -t 'Create Image Wizard renders component' \
        src/test/Components/CreateImageWizard/CreateImageWizard.test.tsx
+
+vitest run src/test/Components/CreateImageWizard/steps/Hostname/Hostname.test.tsx

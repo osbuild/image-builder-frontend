@@ -10,6 +10,7 @@ import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../store/imageBuilderApi';
+import { getLastBlueprintReq } from '../../mocks/cockpit/cockpitFile';
 import { server } from '../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
@@ -40,9 +41,14 @@ const routes = [
     path: 'insights/image-builder/imagewizard/:composeId?',
     element: <ImageWizard />,
   },
+  // cockpit routes
   {
-    path: '/imageWizard',
+    path: '/imageWizard/:composeId?',
     element: <ImageWizard />,
+  },
+  {
+    path: '/',
+    element: <div />,
   },
 ];
 
@@ -88,7 +94,10 @@ export const renderCreateMode = async (searchParams = {}) => {
 };
 
 export const renderEditMode = async (id: string) => {
-  await renderCustomRoutesWithReduxRouter(`imagewizard/${id}`, {}, routes);
+  const pathName = process.env.IS_ON_PREMISE
+    ? `/imagewizard/${id}`
+    : `imagewizard/${id}`;
+  await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
 };
 
 export const selectGuestImageTarget = async () => {
@@ -162,6 +171,10 @@ export const interceptBlueprintRequest = async (requestPathname: string) => {
   });
   await waitFor(() => user.click(saveButton));
 
+  if (process.env.IS_ON_PREMISE) {
+    return JSON.parse(getLastBlueprintReq());
+  }
+
   return await receivedRequestPromise;
 };
 
@@ -175,6 +188,10 @@ export const interceptEditBlueprintRequest = async (
     name: 'Save changes to blueprint',
   });
   await waitFor(() => user.click(saveButton));
+
+  if (process.env.IS_ON_PREMISE) {
+    return JSON.parse(getLastBlueprintReq());
+  }
 
   return await receivedRequestPromise;
 };
