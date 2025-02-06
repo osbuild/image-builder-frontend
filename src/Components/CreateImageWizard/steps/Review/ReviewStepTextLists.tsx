@@ -818,7 +818,7 @@ export const UsersList = () => {
             Password
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
-            {userPassword ? userPassword : 'None'}
+            {userPassword ? '●'.repeat(8) : 'None'}
           </TextListItem>
           <TextListItem
             component={TextListItemVariants.dt}
