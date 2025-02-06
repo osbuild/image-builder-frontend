@@ -24,6 +24,9 @@ export default {
   file: cockpitFile,
   spawn: (args: string[], attributes: object): Promise<string | Uint8Array> => {
     return new Promise((resolve) => {
+      if (args.length && args[0] === 'uname') {
+        resolve('x86_64');
+      }
       resolve('');
     });
   },

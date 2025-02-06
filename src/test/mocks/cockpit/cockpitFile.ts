@@ -1,19 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import path from 'path';
 
-import { mockGetBlueprints } from '../../fixtures/blueprints';
 import { mockComposes } from '../../fixtures/composes';
+import { getMockBlueprintResponse } from '../../fixtures/editMode';
 
 const readBlueprint = (id: string): Promise<string> => {
-  for (const bp of mockGetBlueprints.data) {
-    if (bp.id === id) {
-      return new Promise((resolve) => {
-        resolve(JSON.stringify(bp));
-      });
-    }
-  }
   return new Promise((resolve) => {
-    resolve('{}');
+    resolve(JSON.stringify(getMockBlueprintResponse(id) || {}));
   });
 };
 
@@ -30,6 +23,15 @@ const readCompose = (id: string): Promise<string> => {
   });
 };
 
+// Contains a list of all blueprint create or edit requests
+const lastRequest = {
+  blueprints: [] as string[],
+};
+
+export const getLastBlueprintReq = () => {
+  return lastRequest.blueprints[lastRequest.blueprints.length - 1];
+};
+
 export const cockpitFile = (filepath: string) => {
   return {
     read: (): Promise<string> => {
@@ -43,6 +45,12 @@ export const cockpitFile = (filepath: string) => {
       return readCompose(file.name);
     },
     close: () => {},
-    replace: (contents: string) => {},
+    replace: (contents: string) => {
+      const file = path.parse(filepath);
+      const dir = path.parse(file.dir);
+      if (file.name === dir.name) {
+        lastRequest.blueprints.push(contents);
+      }
+    },
   };
 };

@@ -103,7 +103,7 @@
     "test": "TZ=UTC vitest run",
     "test:watch": "TZ=UTC vitest",
     "test:coverage": "TZ=UTC vitest run --coverage",
-    "test:cockpit": "TZ=UTC IS_ON_PREMISE=true vitest run -t 'Images Table render ImagesTable'",
+    "test:cockpit": "src/test/cockpit-tests.sh",
     "build": "fec build",
     "build:cockpit": "webpack --config cockpit/webpack.config.ts",
     "api": "npm-run-all api:pull api:generate",

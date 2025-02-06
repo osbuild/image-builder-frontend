@@ -27,12 +27,17 @@ const goToHostnameStep = async () => {
     name: /virtualization guest image checkbox/i,
   });
   await waitFor(() => user.click(guestImageCheckBox));
-  await clickNext(); // Registration
-  await clickRegisterLater();
-  await clickNext(); // OpenSCAP
+
+  if (!process.env.IS_ON_PREMISE) {
+    await clickNext(); // Registration
+    await clickRegisterLater();
+    await clickNext(); // OpenSCAP
+  }
   await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
+  if (!process.env.IS_ON_PREMISE) {
+    await clickNext(); // Snapshots
+    await clickNext(); // Custom repositories
+  }
   await clickNext(); // Additional packages
   await clickNext(); // Users
   await clickNext(); // Timezone
@@ -44,7 +49,9 @@ const goToReviewStep = async () => {
   await clickNext(); // Kernel
   await clickNext(); // Firewall
   await clickNext(); // Services
-  await clickNext(); // First boot script
+  if (!process.env.IS_ON_PREMISE) {
+    await clickNext(); // First boot script
+  }
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review
