@@ -25,6 +25,8 @@ jobs:
       - name: Make dist
         run: |
           make dist
+          RELEASE_NO=$(echo ${{github.ref_name}} | tr -d 'v')
+          mv "cockpit-image-builder-$RELEASE_NO.tar.gz" ../cockpit-image-builder-$RELEASE_NO.tar.gz
 
       # create release, which will bump the version
       - name: Upstream release
