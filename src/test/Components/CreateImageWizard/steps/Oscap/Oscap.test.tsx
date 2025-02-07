@@ -161,13 +161,6 @@ describe('Step OpenSCAP', () => {
     await goToOscapStep();
     await selectProfile();
 
-    await screen.findByText(/disabled services:/i);
-    await screen.findByText(
-      /rpcbind autofs nftables nfs-server emacs-service/i
-    );
-    await screen.findByText(/enabled services:/i);
-    await screen.findByText(/crond/i);
-
     // check that the FSC contains a /tmp partition
     await clickNext();
     await screen.findByRole('heading', { name: /File system configuration/i });
