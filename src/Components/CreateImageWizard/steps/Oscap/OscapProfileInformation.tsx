@@ -10,6 +10,7 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { RELEASES } from '../../../../constants';
 import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
@@ -36,6 +37,8 @@ export const OscapProfileInformation = ({
   const release = useAppSelector(selectDistribution);
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
+
+  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   const {
     data: oscapProfileInfo,
@@ -130,30 +133,36 @@ export const OscapProfileInformation = ({
               >
                 {oscapProfile?.profile_id}
               </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
-              >
-                Disabled services:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                <CodeBlock>
-                  <CodeBlockCode>
-                    {disabledAndMaskedServicesDisplayString}
-                  </CodeBlockCode>
-                </CodeBlock>
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
-              >
-                Enabled services:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                <CodeBlock>
-                  <CodeBlockCode>{enabledServicesDisplayString}</CodeBlockCode>
-                </CodeBlock>
-              </TextListItem>
+              {!isServicesStepEnabled && (
+                <>
+                  <TextListItem
+                    component={TextListItemVariants.dt}
+                    className="pf-v5-u-min-width"
+                  >
+                    Disabled services:
+                  </TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>
+                    <CodeBlock>
+                      <CodeBlockCode>
+                        {disabledAndMaskedServicesDisplayString}
+                      </CodeBlockCode>
+                    </CodeBlock>
+                  </TextListItem>
+                  <TextListItem
+                    component={TextListItemVariants.dt}
+                    className="pf-v5-u-min-width"
+                  >
+                    Enabled services:
+                  </TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>
+                    <CodeBlock>
+                      <CodeBlockCode>
+                        {enabledServicesDisplayString}
+                      </CodeBlockCode>
+                    </CodeBlock>
+                  </TextListItem>
+                </>
+              )}
             </TextList>
           </TextContent>
         </>
