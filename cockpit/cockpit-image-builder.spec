@@ -18,7 +18,7 @@ BuildRequires:  nodejs
 
 Requires:       cockpit
 Requires:       cockpit-files
-Requires:       osbuild-composer >= 103
+Requires:       osbuild-composer >= 131
 
 %description
 The image-builder-frontend generates custom images suitable for
