@@ -38,6 +38,7 @@ export const OscapProfileInformation = ({
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
 
+  const isKernelEnabled = useFlag('image-builder.kernel.enabled');
   const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   const {
@@ -133,6 +134,23 @@ export const OscapProfileInformation = ({
               >
                 {oscapProfile?.profile_id}
               </TextListItem>
+              {!isKernelEnabled && (
+                <>
+                  <TextListItem
+                    component={TextListItemVariants.dt}
+                    className="pf-v5-u-min-width"
+                  >
+                    Kernel arguments:
+                  </TextListItem>
+                  <TextListItem component={TextListItemVariants.dd}>
+                    <CodeBlock>
+                      <CodeBlockCode>
+                        {oscapProfileInfo?.kernel?.append}
+                      </CodeBlockCode>
+                    </CodeBlock>
+                  </TextListItem>
+                </>
+              )}
               {!isServicesStepEnabled && (
                 <>
                   <TextListItem
