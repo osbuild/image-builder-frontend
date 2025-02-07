@@ -7,9 +7,8 @@ License:        Apache-2.0
 URL:            http://osbuild.org/
 Source0:        https://github.com/osbuild/image-builder-frontend/releases/download/v%{version}/%{name}-%{version}.tar.gz
 
-# Drop obsoletes until functional enough compared to cockpit-composer
-# Obsoletes:      cockpit-composer < 54
-# Provides:       cockpit-composer = %{version}-%{release}
+Obsoletes:      cockpit-composer < 54
+Provides:       cockpit-composer = %{version}-%{release}
 
 BuildArch:      noarch
 BuildRequires:  gettext
