@@ -322,14 +322,14 @@ describe('Step Packages', () => {
 
     user.click(checkboxes[0]);
     user.click(checkboxes[1]);
-
     await toggleSelected();
     await clearSearchInput();
     await typeIntoSearchBox('test');
+    await toggleSelected();
 
-    const availablePackages = await getRows();
-    expect(availablePackages[0]).toHaveTextContent('test');
-    expect(availablePackages[1]).toHaveTextContent('test-sources');
+    const selectedPackages = await getRows();
+    expect(selectedPackages[0]).toHaveTextContent('test');
+    expect(selectedPackages[1]).toHaveTextContent('test-sources');
   });
 
   test('should display recommendations', async () => {
