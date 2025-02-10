@@ -250,15 +250,14 @@ export function useHostnameValidation(): StepValidation {
   const errorMessage =
     'Invalid hostname. The hostname should be composed of up to 64 7-bit ASCII lower-case alphanumeric characters or hyphens forming a valid DNS domain name. It is recommended that this name contains only a single label, i.e. without any dots.';
 
-  if (!isHostnameValid(hostname)) {
-    return {
-      errors: {
-        hostname: errorMessage,
-      },
-      disabledNext: true,
-    };
-  }
-  return { errors: {}, disabledNext: false };
+  const hostnameError = !isHostnameValid(hostname) ? errorMessage : '';
+
+  return {
+    errors: {
+      hostname: hostnameError,
+    },
+    disabledNext: !!hostnameError,
+  };
 }
 
 export function useKernelValidation(): StepValidation {
@@ -479,6 +478,9 @@ export function useDetailsValidation(): StepValidation {
   }, [blueprintId, name, setUniqueName, trigger, nameValid]);
 
   let nameError = '';
+  if (!name) {
+    nameError = 'Blueprint name is required';
+  }
   if (name && !nameValid) {
     nameError = 'Invalid blueprint name';
   } else if (uniqueName === false) {
