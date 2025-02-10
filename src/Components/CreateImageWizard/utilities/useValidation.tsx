@@ -37,7 +37,6 @@ import {
   getDuplicateMountPoints,
   isBlueprintNameValid,
   isBlueprintDescriptionValid,
-  isMountpointMinSizeValid,
   isSnapshotValid,
   isHostnameValid,
   isKernelNameValid,
@@ -47,6 +46,7 @@ import {
   isKernelArgumentValid,
   isPortValid,
   isServiceValid,
+  isMountpointMinSizeValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -137,7 +137,10 @@ export function useFilesystemValidation(): StepValidation {
 
   const duplicates = getDuplicateMountPoints(partitions);
   for (const partition of partitions) {
-    if (!isMountpointMinSizeValid(partition.min_size)) {
+    if (partition.min_size === '') {
+      errors[`min-size-${partition.id}`] = 'partition size is required';
+      disabledNext = true;
+    } else if (!isMountpointMinSizeValid(partition.min_size)) {
       errors[`min-size-${partition.id}`] = 'Must be larger than 0';
       disabledNext = true;
     }
@@ -469,6 +472,9 @@ export function useDetailsValidation(): StepValidation {
   }, [blueprintId, name, setUniqueName, trigger, nameValid]);
 
   let nameError = '';
+  if (!name) {
+    nameError = 'Blueprint name is required';
+  }
   if (name && !nameValid) {
     nameError = 'Invalid blueprint name';
   } else if (uniqueName === false) {
