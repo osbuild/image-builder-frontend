@@ -8,7 +8,7 @@ import {
   selectHostname,
 } from '../../../../../store/wizardSlice';
 import { useHostnameValidation } from '../../../utilities/useValidation';
-import { HookValidatedInput } from '../../../ValidatedInput';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 const HostnameInput = () => {
   const dispatch = useAppDispatch();
@@ -22,7 +22,7 @@ const HostnameInput = () => {
 
   return (
     <FormGroup label="Hostname">
-      <HookValidatedInput
+      <ValidatedInputAndTextArea
         ariaLabel="hostname input"
         value={hostname}
         onChange={handleChange}
