@@ -28,7 +28,9 @@ import {
   selectNtpServers,
   selectFirewall,
   selectServices,
+  selectTimezone,
 } from '../../../store/wizardSlice';
+import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
   isBlueprintNameValid,
@@ -157,7 +159,17 @@ export function useSnapshotValidation(): StepValidation {
 }
 
 export function useTimezoneValidation(): StepValidation {
+  const timezone = useAppSelector(selectTimezone);
   const ntpServers = useAppSelector(selectNtpServers);
+
+  if (timezone) {
+    if (!timezones.includes(timezone)) {
+      return {
+        errors: { timezone: 'Unknown timezone' },
+        disabledNext: true,
+      };
+    }
+  }
 
   if (ntpServers) {
     const invalidServers = [];
