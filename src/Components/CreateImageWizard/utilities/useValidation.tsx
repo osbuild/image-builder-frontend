@@ -30,9 +30,11 @@ import {
   selectServices,
   selectLanguages,
   selectKeyboard,
+  selectTimezone,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
+import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
   isBlueprintNameValid,
@@ -163,7 +165,15 @@ export function useSnapshotValidation(): StepValidation {
 }
 
 export function useTimezoneValidation(): StepValidation {
+  const timezone = useAppSelector(selectTimezone);
   const ntpServers = useAppSelector(selectNtpServers);
+  const errors = {};
+
+  if (timezone) {
+    if (!timezones.includes(timezone)) {
+      Object.assign(errors, { timezone: 'Unknown timezone' });
+    }
+  }
 
   if (ntpServers) {
     const invalidServers = [];
@@ -175,14 +185,16 @@ export function useTimezoneValidation(): StepValidation {
     }
 
     if (invalidServers.length > 0) {
-      return {
-        errors: { ntpServers: `Invalid ntpServers: ${invalidServers}` },
-        disabledNext: true,
-      };
+      Object.assign(errors, {
+        ntpServers: `Invalid NTP servers: ${invalidServers}`,
+      });
     }
   }
 
-  return { errors: {}, disabledNext: false };
+  return {
+    errors: errors,
+    disabledNext: 'timezone' in errors || 'ntpServers' in errors,
+  };
 }
 
 export function useLocaleValidation(): StepValidation {
