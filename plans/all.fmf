@@ -1,0 +1,11 @@
+summary:
+    Run all tests
+discover:
+    how: fmf
+execute:
+    how: tmt
+
+/main:
+    summary: Unit tests
+    discover+:
+        test: /src/test/tmt/main

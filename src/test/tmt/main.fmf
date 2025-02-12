@@ -1,0 +1,10 @@
+/main:
+  summary: Unit tests for cockpit
+  require:
+    # ourself
+    - cockpit-image-builder
+    # test requirements
+    - node
+    - npm
+  test: ./main.sh
+  duration: 10m
