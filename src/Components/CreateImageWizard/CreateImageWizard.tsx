@@ -47,6 +47,7 @@ import {
   useTimezoneValidation,
   useFirewallValidation,
   useServicesValidation,
+  useLocaleValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
@@ -225,6 +226,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const fileSystemValidation = useFilesystemValidation();
   // Timezone
   const timezoneValidation = useTimezoneValidation();
+  // Locale
+  const localeValidation = useLocaleValidation();
   // Hostname
   const hostnameValidation = useHostnameValidation();
   // Kernel
@@ -506,8 +509,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-locale"
                 navItem={customStatusNavItem}
                 isHidden={!isLocaleEnabled}
+                status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
-                  <CustomWizardFooter disableNext={false} optional={true} />
+                  <CustomWizardFooter
+                    disableNext={localeValidation.disabledNext}
+                    optional={true}
+                  />
                 }
               >
                 <LocaleStep />
