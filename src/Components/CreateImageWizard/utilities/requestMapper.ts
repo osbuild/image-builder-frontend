@@ -2,6 +2,7 @@ import { Store } from 'redux';
 import { v4 as uuidv4 } from 'uuid';
 
 import { parseSizeUnit } from './parseSizeUnit';
+import { getHashedCertName } from './hashedCertificateName';
 
 import {
   CENTOS_9,
@@ -84,6 +85,8 @@ import {
   selectUsers,
   selectMetadata,
   selectFirewall,
+  selectCACerts,
+  CaCertFile,
 } from '../../../store/wizardSlice';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
 import {
@@ -99,6 +102,7 @@ import {
 import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
 import { AzureShareMethod } from '../steps/TargetEnvironment/Azure';
 import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
+import { createHash } from 'crypto';
 
 /**
  * This function maps the wizard state to a valid CreateBlueprint request object
@@ -345,6 +349,9 @@ function commonRequestToState(
         disabled: request.customizations.firewall?.services?.disabled || [],
       },
     },
+    caCerts: request.customizations
+      ? getCertificates(request.customizations.files)
+      : initialState.caCerts,
   };
 }
 
@@ -411,6 +418,17 @@ const getFirstBootScript = (files?: File[]): string => {
     (file) => file.path === '/usr/local/sbin/custom-first-boot'
   );
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
+};
+
+const getCertificates = (files?: File[]): CaCertFile[] => {
+  const certificates = files?.filter(
+    (file) => file.path.startsWith('/etc/pki/ca-trust/source/anchors/')
+  ) || [];
+
+  return certificates?.map((file) => ({
+    content: file.data || '',
+    name: file.path.split('/').pop() || '',
+  })) || [];
 };
 
 const getImageRequests = (state: RootState): ImageRequest[] => {
@@ -509,27 +527,46 @@ const getImageOptions = (
   return {};
 };
 
+const filesFromCerts = (certificates: CaCertFile[]): File[] => {
+  const files =
+    certificates.map((cert) => ({
+      path: `/etc/pki/ca-trust/source/anchors/${getHashedCertName(cert)}`,
+      data: btoa(cert.content),
+      data_encoding: 'base64' as 'base64',
+      ensure_parents: true,
+    }))
+  return files;
+}
+
 const getCustomizations = (state: RootState, orgID: string): Customizations => {
+  const certificates = selectCACerts(state);
+  const firstBootScript = selectFirstBootScript(state);
+  const files: File[] | undefined = certificates || firstBootScript ? [] : undefined;
+  if (firstBootScript) {
+    files?.push(
+      {
+        path: '/etc/systemd/system/custom-first-boot.service',
+        data: FIRST_BOOT_SERVICE_DATA,
+        data_encoding: 'base64',
+        ensure_parents: true,
+      },
+      {
+        path: '/usr/local/sbin/custom-first-boot',
+        data: btoa(selectFirstBootScript(state)),
+        data_encoding: 'base64',
+        mode: '0774',
+        ensure_parents: true,
+      }
+    )
+  }
+  if (certificates) {
+    files?.push(...filesFromCerts(certificates));
+  }
+
   return {
     containers: undefined,
     directories: undefined,
-    files: selectFirstBootScript(state)
-      ? [
-          {
-            path: '/etc/systemd/system/custom-first-boot.service',
-            data: FIRST_BOOT_SERVICE_DATA,
-            data_encoding: 'base64',
-            ensure_parents: true,
-          },
-          {
-            path: '/usr/local/sbin/custom-first-boot',
-            data: btoa(selectFirstBootScript(state)),
-            data_encoding: 'base64',
-            mode: '0774',
-            ensure_parents: true,
-          },
-        ]
-      : undefined,
+    files: files,
     subscription: getSubscription(state, orgID),
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
