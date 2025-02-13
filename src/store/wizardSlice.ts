@@ -50,6 +50,11 @@ export type UserWithAdditionalInfo = {
   isAdministrator: boolean;
 };
 
+export type CaCertFile = {
+  name: string;
+  content: string;
+};
+
 type UserPayload = {
   index: number;
   name: string;
@@ -151,6 +156,7 @@ export type wizardState = {
       disabled: string[];
     };
   };
+  caCerts: CaCertFile[];
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -243,6 +249,7 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
+  caCerts: [],
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -450,6 +457,10 @@ export const selectHostname = (state: RootState) => {
 
 export const selectFirewall = (state: RootState) => {
   return state.wizard.firewall;
+};
+
+export const selectCACerts = (state: RootState) => {
+  return state.wizard.caCerts;
 };
 
 export const wizardSlice = createSlice({
@@ -1000,6 +1011,27 @@ export const wizardSlice = createSlice({
         user.groups = user.groups.filter((group) => group !== 'wheel');
       }
     },
+    addCaCerts: (state, action: PayloadAction<CaCertFile[]>) => {
+      const existingFileNames = new Set(state.caCerts.map((file) => file.name));
+
+      const newFiles = action.payload.filter(
+        (file) => !existingFileNames.has(file.name)
+      );
+
+      if (newFiles.length === 0) {
+        return;
+      }
+
+      state.caCerts = [...state.caCerts, ...action.payload];
+    },
+    removeCaCerts: (state, action: PayloadAction<string[]>) => {
+      if (state.caCerts.length > 0) {
+        state.caCerts.filter(
+          (currentFile) =>
+            !action.payload.some((fileName) => fileName === currentFile.name)
+        );
+      }
+    },
   },
 });
 
@@ -1089,5 +1121,7 @@ export const {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
+  addCaCerts,
+  removeCaCerts,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
