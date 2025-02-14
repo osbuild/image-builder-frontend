@@ -89,10 +89,8 @@ const selectCentos9 = async () => {
 
 const openArchitectureMenu = async () => {
   const user = userEvent.setup();
-  const releaseMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[1];
-  await waitFor(() => user.click(releaseMenu));
+  const archMenu = screen.getByTestId('arch_select');
+  await waitFor(() => user.click(archMenu));
 };
 
 const selectX86_64 = async () => {
