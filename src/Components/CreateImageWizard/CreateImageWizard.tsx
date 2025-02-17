@@ -78,6 +78,7 @@ import {
   selectImageTypes,
   addImageType,
 } from '../../store/wizardSlice';
+import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
@@ -379,7 +380,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Register"
                 id="step-register"
                 key="step-register"
-                isHidden={!!process.env.IS_ON_PREMISE}
+                isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
                 navItem={customStatusNavItem}
                 status={
                   registrationValidation.disabledNext ? 'error' : 'default'
