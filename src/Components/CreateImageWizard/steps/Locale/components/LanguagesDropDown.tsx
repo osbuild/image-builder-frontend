@@ -152,7 +152,14 @@ const LanguagesDropDown = () => {
       >
         <SelectList>
           {selectOptions.map((option) => (
-            <SelectOption key={option} value={option}>
+            <SelectOption
+              key={option}
+              value={option}
+              isDisabled={languages?.includes(option) || false}
+              description={
+                languages?.includes(option) && 'Language already added'
+              }
+            >
               {option}
             </SelectOption>
           ))}
