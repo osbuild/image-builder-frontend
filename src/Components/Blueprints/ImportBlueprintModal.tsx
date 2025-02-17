@@ -266,7 +266,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
             browseButtonText="Upload"
             dropzoneProps={{
               accept: { 'text/json': ['.json'], 'text/plain': ['.toml'] },
-              maxSize: 25000,
+              maxSize: 512000,
               onDropRejected: handleFileRejected,
             }}
             validated={isRejected || isInvalidFormat ? 'error' : 'default'}
@@ -279,7 +279,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 }
               >
                 {isRejected
-                  ? 'Must be a valid Blueprint JSON/TOML file no larger than 25 KB'
+                  ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
                   : isInvalidFormat
                   ? 'Not compatible with the blueprints format.'
                   : isOnPrem
