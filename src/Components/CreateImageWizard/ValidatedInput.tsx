@@ -25,6 +25,16 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   placeholder?: string;
 }
 
+type ValidationResult = {
+  validated: 'default' | 'success' | 'error';
+};
+
+type ValidationStateProps = {
+  stepValidation: StepValidation;
+  fieldName: string;
+  isPristine: boolean;
+};
+
 type HookValidatedInputPropTypes = TextInputProps &
   TextAreaProps & {
     dataTestId?: string | undefined;
@@ -38,38 +48,29 @@ type HookValidatedInputPropTypes = TextInputProps &
     inputType?: 'textInput' | 'textArea';
   };
 
-interface PasswordInputProps extends TextInputProps {
+type PasswordInputProps = TextInputProps & {
   value: string;
   stepValidation: StepValidation;
   fieldName: string;
-}
+};
 
-interface ErrorMessageProps {
+type ErrorMessageProps = {
   stepValidation: StepValidation;
   fieldName: string;
-}
+};
 
-export const ValidatedPasswordInput = ({
-  value,
+const useValidationState = ({
   stepValidation,
   fieldName,
-  onChange,
-  onBlur,
-  placeholder,
-}: PasswordInputProps) => {
-  return (
-    <>
-      <PasswordInput
-        value={value}
-        placeholder={placeholder || ''}
-        stepValidation={stepValidation}
-        fieldName={fieldName}
-        onChange={onChange!}
-        onBlur={onBlur!}
-      />
-      <ErrorMessage stepValidation={stepValidation} fieldName={fieldName} />
-    </>
-  );
+  isPristine,
+}: ValidationStateProps): ValidationResult => {
+  const validated = isPristine
+    ? 'default'
+    : stepValidation.errors[fieldName]
+    ? 'error'
+    : 'success';
+
+  return { validated };
 };
 
 export const PasswordInput = ({
@@ -79,24 +80,19 @@ export const PasswordInput = ({
   value,
   fieldName,
 }: PasswordInputProps) => {
-  const isEmpty = value === undefined || value === null || value === '';
-  const [isPristine, setIsPristine] = useState(isEmpty);
+  const [isPristine, setIsPristine] = useState(!value);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
-  // Do not surface validation on pristine state components
-  // Allow step validation to be set on pristine state, when needed
-  const validated = isPristine
-    ? 'default'
-    : stepValidation.errors[fieldName] === 'default'
-    ? 'default'
-    : stepValidation.errors[fieldName]
-    ? 'error'
-    : 'success';
+  const { validated } = useValidationState({
+    isPristine,
+    stepValidation,
+    fieldName,
+  });
 
   const handleBlur = () => {
-    if (isEmpty) {
+    if (!value) {
       setIsPristine(true);
     } else {
       setIsPristine(false);
@@ -104,7 +100,7 @@ export const PasswordInput = ({
   };
 
   useEffect(() => {
-    if (isEmpty) {
+    if (!value) {
       setIsPristine(true);
     }
   }, [value, setIsPristine]);
@@ -154,6 +150,29 @@ export const ErrorMessage = ({
   );
 };
 
+export const ValidatedPasswordInput = ({
+  value,
+  stepValidation,
+  fieldName,
+  onChange,
+  onBlur,
+  placeholder,
+}: PasswordInputProps) => {
+  return (
+    <>
+      <PasswordInput
+        value={value}
+        placeholder={placeholder || ''}
+        stepValidation={stepValidation}
+        fieldName={fieldName}
+        onChange={onChange!}
+        onBlur={onBlur!}
+      />
+      <ErrorMessage stepValidation={stepValidation} fieldName={fieldName} />
+    </>
+  );
+};
+
 export const HookValidatedInput = ({
   dataTestId,
   ouiaId,
@@ -168,7 +187,8 @@ export const HookValidatedInput = ({
   inputType,
   warning = undefined,
 }: HookValidatedInputPropTypes) => {
-  const [isPristine, setIsPristine] = useState(!value ? true : false);
+  const isEmpty = value === undefined || value === null || value === '';
+  const [isPristine, setIsPristine] = useState(isEmpty);
   // Do not surface validation on pristine state components
   // Allow step validation to be set on pristine state, when needed
   const validated = isPristine
@@ -180,9 +200,18 @@ export const HookValidatedInput = ({
     : 'success';
 
   const handleBlur = () => {
-    setIsPristine(false);
+    if (isEmpty) {
+      setIsPristine(true);
+    } else {
+      setIsPristine(false);
+    }
   };
 
+  useEffect(() => {
+    if (isEmpty) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
   return (
     <>
       {inputType === 'textArea' ? (
