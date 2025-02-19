@@ -66,8 +66,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
   ) => {
     setFileContent('');
     setFilename(file.name);
-    setIsRejected(false);
-    setIsInvalidFormat(false);
   };
 
   async function handleRepositoryImport(
