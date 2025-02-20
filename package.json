@@ -16,7 +16,7 @@
     "@redhat-cloud-services/frontend-components-utilities": "5.0.11",
     "@reduxjs/toolkit": "2.5.1",
     "@scalprum/react-core": "0.9.3",
-    "@sentry/webpack-plugin": "3.1.2",
+    "@sentry/webpack-plugin": "3.2.0",
     "@unleash/proxy-client-react": "4.5.1",
     "classnames": "2.5.1",
     "lodash": "4.17.21",
