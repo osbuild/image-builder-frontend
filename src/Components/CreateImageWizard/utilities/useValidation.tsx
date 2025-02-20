@@ -414,12 +414,10 @@ export function useUsersValidation(): StepValidation {
 
   return {
     errors: {
-      userName: !isUserNameValid(userName) ? 'Invalid user name' : '',
-      userSshKey: !userSshKey
-        ? ''
-        : !isSshKeyValid(userSshKey)
-        ? 'Invalid SSH key'
-        : '',
+      userName:
+        userName && !isUserNameValid(userName) ? 'Invalid user name' : '',
+      userSshKey:
+        userSshKey && !isSshKeyValid(userSshKey) ? 'Invalid SSH key' : '',
     },
     disabledNext: !canProceed,
   };
