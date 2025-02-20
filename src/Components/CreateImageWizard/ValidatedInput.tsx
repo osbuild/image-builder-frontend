@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HelperText,
@@ -15,7 +15,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
 
-interface ValidatedTextInputPropTypes extends TextInputProps {
+type ValidatedTextInputPropTypes = TextInputProps & {
   dataTestId?: string | undefined;
   ouiaId?: string;
   ariaLabel: string | undefined;
@@ -23,7 +23,7 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   validator: (value: string | undefined) => boolean;
   value: string;
   placeholder?: string;
-}
+};
 
 type HookValidatedInputPropTypes = TextInputProps &
   TextAreaProps & {
@@ -37,6 +37,20 @@ type HookValidatedInputPropTypes = TextInputProps &
     warning?: string;
     inputType?: 'textInput' | 'textArea';
   };
+
+type ValidationInputPropTypes = TextInputProps &
+  TextAreaProps & {
+    value: string;
+    placeholder?: string;
+    stepValidation: StepValidation;
+    fieldName: string;
+    inputType?: 'textInput' | 'textArea';
+    ariaLabel: string | undefined;
+  };
+
+type ErrorMessageProps = {
+  errorMessage: string;
+};
 
 export const HookPasswordValidatedInput = ({
   ariaLabel,
@@ -85,6 +99,103 @@ export const HookPasswordValidatedInput = ({
           </Button>
         </InputGroupItem>
       </InputGroup>
+    </>
+  );
+};
+
+export const TextAndTextAreaInput = ({
+  inputType,
+  placeholder,
+  stepValidation,
+  value,
+  onChange,
+  fieldName,
+  ariaLabel,
+}: ValidationInputPropTypes) => {
+  const [isPristine, setIsPristine] = useState(!value);
+  const validated = isPristine
+    ? 'default'
+    : stepValidation.errors[fieldName]
+    ? 'error'
+    : 'success';
+
+  const handleBlur = () => {
+    if (value) {
+      setIsPristine(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!value) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
+
+  return (
+    <>
+      {inputType === 'textArea' ? (
+        <TextArea
+          value={value}
+          onChange={onChange!}
+          validated={validated}
+          onBlur={handleBlur}
+          placeholder={placeholder || ''}
+          aria-label={ariaLabel || ''}
+        />
+      ) : (
+        <TextInput
+          value={value}
+          onChange={onChange!}
+          validated={validated}
+          onBlur={handleBlur}
+          placeholder={placeholder || ''}
+          aria-label={ariaLabel || ''}
+        />
+      )}
+    </>
+  );
+};
+
+export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
+  if (!errorMessage) {
+    return null;
+  }
+
+  return (
+    <HelperText>
+      <HelperTextItem variant="error" hasIcon>
+        {errorMessage}
+      </HelperTextItem>
+    </HelperText>
+  );
+};
+
+export const ValidatedInputAndTextArea = ({
+  value,
+  stepValidation,
+  fieldName,
+  onBlur,
+  placeholder,
+  onChange,
+  ariaLabel,
+  inputType = 'textInput',
+}: ValidationInputPropTypes) => {
+  const errorMessage = stepValidation.errors[fieldName];
+  const hasError = errorMessage !== undefined;
+
+  return (
+    <>
+      <TextAndTextAreaInput
+        inputType={inputType}
+        ariaLabel={ariaLabel || ''}
+        value={value}
+        placeholder={placeholder || ''}
+        stepValidation={stepValidation}
+        fieldName={fieldName}
+        onChange={onChange!}
+        onBlur={onBlur!}
+      />
+      {hasError && <ErrorMessage errorMessage={errorMessage} />}
     </>
   );
 };
