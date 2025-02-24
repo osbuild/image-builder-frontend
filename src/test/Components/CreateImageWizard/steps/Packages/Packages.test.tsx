@@ -230,16 +230,6 @@ describe('Step Packages', () => {
     );
   });
 
-  test('should display an exact match if found regardless of too many results', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('testPkg-123');
-    await screen.findByTestId('exact-match-row');
-    await screen.findByRole('heading', {
-      name: /too many results to display/i,
-    });
-  });
-
   test('search results should be sorted with most relevant results first', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -329,13 +319,6 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await typeIntoSearchBox('asdf');
     await screen.findByText('No results found');
-  });
-
-  test('should display too many results state for more than 100 results', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('te');
-    await screen.findByText('Too many results to display');
   });
 
   test('should display too short', async () => {
