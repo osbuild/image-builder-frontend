@@ -63,23 +63,5 @@ jobs:
           touch ~/.ssh/known_hosts
           ssh-keyscan -t rsa gitlab.com >> ~/.ssh/known_hosts
           git remote add ci git@gitlab.com:redhat/services/products/image-builder/ci/image-builder-frontend.git
-          SKIP_CI=$(cat SKIP_CI.txt)
-          if [[ "${SKIP_CI}" == true ]];then
-            git push -f -o ci.variable="SKIP_CI=true" ci
-          else
-            git push -f ci
-          fi
-
-      - name: Trigger GitLab nightly pipeline against this PR
-        if: env.GITLAB_TOKEN && steps.pr_data.outputs.pr_branch
-        run: |
-            # image-builder-frontend
-            PROJECT_ID=38992397
-
-            # Simulate a nightly CI pipeline against this PR
-            curl --request POST --fail --form "token=$GITLAB_TOKEN" \
-                --form ref=${{ steps.pr_data.outputs.pr_branch }} \
-                --form "variables[CI_PIPELINE_SOURCE]=schedule" \
-                --form "variables[NIGHTLY]=true" \
-                --form "variables[RHEL_MAJOR]=9" \
-                "https://gitlab.com/api/v4/projects/$PROJECT_ID/trigger/pipeline"
+          [[ "${SKIP_CI}" == true ]] && PUSH_OPTION='-o ci.variable="SKIP_CI=true"' || PUSH_OPTION=""
+          git push -f ${PUSH_OPTION} ci
