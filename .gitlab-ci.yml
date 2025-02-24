@@ -30,9 +30,9 @@ test:
   parallel:
     matrix:
       - RUNNER:
+          - aws/rhel-9.6-nightly-x86_64
+          - aws/rhel-10.0-nightly-x86_64
         INTERNAL_NETWORK: ["true"]
-        - aws/rhel-9.6-nightly-x86_64
-        - aws/rhel-10.0-nightly-x86_64
 
 finish:
   stage: finish
