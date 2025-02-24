@@ -273,7 +273,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
             <HelperText>
               <HelperTextItem
                 variant={
-                  isRejected ? 'error' : isOnPrem ? 'warning' : 'default'
+                  isRejected ? 'error' : isInvalidFormat ? 'error' : isOnPrem ? 'warning' : 'default'
                 }
               >
                 {isRejected
