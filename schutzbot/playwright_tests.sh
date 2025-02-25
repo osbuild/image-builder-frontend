@@ -12,6 +12,8 @@ sudo dnf install -y \
      cups \
      atk
 
+sudo systemctl enable --now cockpit.socket
+
 sudo useradd admin -p "$(openssl passwd foobar)"
 
 sudo podman run \
