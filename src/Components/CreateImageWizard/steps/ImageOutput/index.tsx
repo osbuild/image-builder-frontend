@@ -11,9 +11,12 @@ import TargetEnvironment from './TargetEnvironment';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
+import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
   const distribution = useAppSelector(selectDistribution);
+
+  useGenerateDefaultName();
 
   return (
     <Form>

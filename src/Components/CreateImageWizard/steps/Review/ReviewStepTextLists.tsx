@@ -80,6 +80,7 @@ import {
   selectServices,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
+import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import {
   getConversionFactor,
   MinimumSizePopover,
@@ -101,6 +102,9 @@ export const ImageOutputList = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
+
+  useGenerateDefaultName();
+
   return (
     <TextContent>
       {distribution === RHEL_8 && (
