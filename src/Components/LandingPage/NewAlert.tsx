@@ -16,16 +16,15 @@ type NewAlertPropTypes = {
 };
 
 export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
-  // Hide the alert until needed again
-  // const isAlertDismissed = window.localStorage.getItem(
-  //   'imageBuilder.newFeatureAlertDismissed'
-  // );
-  const [displayAlert, setDisplayAlert] = useState(false); // when needed switch for !isAlertDismissed);
+  const isAlertDismissed = window.localStorage.getItem(
+    'imageBuilder.newFeatureAdvancedCustomizationsAlertDismissed'
+  );
+  const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
 
   const dismissAlert = () => {
     setDisplayAlert(false);
     window.localStorage.setItem(
-      'imageBuilder.newFeatureNewStepsAlertDismissed',
+      'imageBuilder.newFeatureAdvancedCustomizationsAlertDismissed',
       'true'
     );
   };
@@ -39,7 +38,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
     return (
       <Alert
         style={{ margin: '0 0 16px 0' }}
-        title="New in Images: TITLE PLACEHOLDER"
+        title="New in Images: Advanced customizations"
         actionClose={<AlertActionCloseButton onClose={dismissAlert} />}
         actionLinks={
           <>
@@ -70,7 +69,10 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           </>
         }
       >
-        <Text>Placeholder</Text>
+        <Text>
+          New customization options for blueprints are now available: Timezone,
+          Locale, Hostname
+        </Text>
       </Alert>
     );
   } else {
