@@ -36,10 +36,10 @@ import {
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
-  openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
+import { goToDetailsStep } from '../Details/Details.test';
 
 let router: RemixRouter | undefined = undefined;
 
@@ -117,6 +117,14 @@ const selectGuestImageTarget = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
 };
 
+const verifyNameInReviewStep = async (name: string) => {
+  const region = screen.getByRole('region', {
+    name: /details revisit step/i,
+  });
+  const definition = within(region).getByRole('definition');
+  expect(definition).toHaveTextContent(name);
+};
+
 const selectVMwareTarget = async () => {
   const user = userEvent.setup();
   const vmwareImageCheckBox = await screen.findByTestId('checkbox-vmware');
@@ -128,21 +136,7 @@ const handleRegistration = async () => {
   await clickRegisterLater();
 };
 
-const goToReviewStep = async () => {
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system customization
-  await clickNext(); // Repository snapshot
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot
-  await clickNext(); // Details
+const enterNameAndGoToReviewStep = async () => {
   await enterBlueprintName();
   await clickNext(); // Review
 };
@@ -308,9 +302,42 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
+  });
+
+  test('change image type and check the update in Review step', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await handleRegistration();
+    await goToDetailsStep();
+    await clickNext(); // Review
+    await clickRevisitButton();
+    await selectRhel8();
+    await selectAarch64();
+    await selectGuestImageTarget();
+    await handleRegistration();
+    await goToDetailsStep();
+    await clickNext(); // Review
+    await verifyNameInReviewStep('rhel-8-aarch64');
+  });
+
+  test('change blueprint name and image type, then verify the updated blueprint name in the Review step', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await handleRegistration();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
+    await clickRevisitButton();
+    await selectRhel8();
+    await selectAarch64();
+    await selectGuestImageTarget();
+    await handleRegistration();
+    await goToDetailsStep();
+    await clickNext(); // Review
+    await verifyNameInReviewStep('Red Velvet');
   });
 });
 
@@ -568,7 +595,8 @@ describe('Set target using query parameter', () => {
     await renderCreateMode({ target: 'iso' });
     expect(await screen.findByTestId('checkbox-image-installer')).toBeChecked();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
@@ -580,7 +608,8 @@ describe('Set target using query parameter', () => {
     await renderCreateMode({ target: 'qcow2' });
     expect(await screen.findByTestId('checkbox-guest-image')).toBeChecked();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable'
     );
@@ -599,10 +628,8 @@ describe('Distribution request generated correctly', () => {
     await selectRhel8();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToReviewStep();
-    // informational modal pops up in the first test only as it's tied
-    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-    await openAndDismissSaveAndBuildModal();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
@@ -618,7 +645,8 @@ describe('Distribution request generated correctly', () => {
     await selectRhel9();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
@@ -633,7 +661,8 @@ describe('Distribution request generated correctly', () => {
     await renderCreateMode();
     await selectCentos9();
     await selectGuestImageTarget();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
@@ -655,7 +684,8 @@ describe('Architecture request generated correctly', () => {
     await selectX86_64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -675,7 +705,8 @@ describe('Architecture request generated correctly', () => {
     await selectAarch64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToReviewStep();
+    await goToDetailsStep();
+    await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {

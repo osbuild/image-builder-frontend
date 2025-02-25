@@ -30,6 +30,7 @@ import type {
   GcpShareMethod,
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
+import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
 import { RHEL_9, X86_64 } from '../constants';
 
 import type { RootState } from '.';
@@ -140,6 +141,7 @@ export type wizardState = {
   locale: Locale;
   details: {
     blueprintName: string;
+    isCustomName: boolean;
     blueprintDescription: string;
   };
   timezone: Timezone;
@@ -226,7 +228,8 @@ export const initialState: wizardState = {
     keyboard: '',
   },
   details: {
-    blueprintName: '',
+    blueprintName: generateDefaultName(RHEL_9, X86_64),
+    isCustomName: false,
     blueprintDescription: '',
   },
   timezone: {
@@ -422,6 +425,10 @@ export const selectKeyboard = (state: RootState) => {
 
 export const selectBlueprintName = (state: RootState) => {
   return state.wizard.details.blueprintName;
+};
+
+export const selectIsCustomName = (state: RootState) => {
+  return state.wizard.details.isCustomName;
 };
 
 export const selectMetadata = (state: RootState) => {
@@ -815,6 +822,9 @@ export const wizardSlice = createSlice({
     changeBlueprintName: (state, action: PayloadAction<string>) => {
       state.details.blueprintName = action.payload;
     },
+    setIsCustomName: (state) => {
+      state.details.isCustomName = true;
+    },
     changeBlueprintDescription: (state, action: PayloadAction<string>) => {
       state.details.blueprintDescription = action.payload;
     },
@@ -1069,6 +1079,7 @@ export const {
   clearLanguages,
   changeKeyboard,
   changeBlueprintName,
+  setIsCustomName,
   changeBlueprintDescription,
   loadWizardState,
   setFirstBootScript,

@@ -17,7 +17,7 @@ import {
   renderEditMode,
 } from '../../wizardTestUtils';
 
-const goToDetailsStep = async () => {
+export const goToDetailsStep = async () => {
   await clickNext(); // OpenSCAP
   await clickNext(); // File system configuration
   await clickNext(); // Repository snapshot

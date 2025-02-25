@@ -222,6 +222,7 @@ function commonRequestToState(
   return {
     details: {
       blueprintName: request.name || '',
+      isCustomName: true,
       blueprintDescription: request.description || '',
     },
     users:
