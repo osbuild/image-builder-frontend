@@ -16,6 +16,13 @@ sudo systemctl enable --now cockpit.socket
 
 sudo useradd admin -p "$(openssl passwd foobar)"
 
+function upload_artifacts {
+    mkdir -p /tmp/artifacts/extra-screenshots
+    mv *.png /tmp/artifacts/extra-screenshots/
+    mv playwright-report /tmp/artifacts/
+}
+trap upload_artifacts EXIT
+
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
@@ -27,6 +34,3 @@ sudo podman run \
      mcr.microsoft.com/playwright:v1.50.1-noble \
      /bin/sh -c "cd tests && npx -y playwright@1.50.1 test"
 
-mkdir -p /tmp/artifacts/extra-screenshots
-mv *.png /tmp/artifacts/extra-screenshots/
-mv playwright-report /tmp/artifacts/
