@@ -16,8 +16,8 @@ import {
   changeBlueprintName,
   selectBlueprintDescription,
   selectBlueprintName,
+  setIsCustomName,
 } from '../../../../store/wizardSlice';
-import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 
@@ -26,13 +26,12 @@ const DetailsStep = () => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
-  useGenerateDefaultName();
-
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     name: string
   ) => {
     dispatch(changeBlueprintName(name));
+    dispatch(setIsCustomName());
   };
 
   const handleDescriptionChange = (
