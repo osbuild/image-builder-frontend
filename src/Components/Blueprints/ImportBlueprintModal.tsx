@@ -206,6 +206,16 @@ export const ImportBlueprintModal: React.FunctionComponent<
   };
   const navigate = useNavigate();
 
+  const variantSwitch = () => {
+    switch (true) {
+      case isRejected || isInvalidFormat:
+        return 'error';
+      case isOnPrem:
+        return 'warning';
+      default:
+        return 'default';
+    }
+  };
   return (
     <Modal
       variant={ModalVariant.medium}
@@ -271,11 +281,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           />
           <FormHelperText>
             <HelperText>
-              <HelperTextItem
-                variant={
-                  isRejected ? 'error' : isInvalidFormat ? 'error' : isOnPrem ? 'warning' : 'default'
-                }
-              >
+              <HelperTextItem variant={variantSwitch()}>
                 {isRejected
                   ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
                   : isInvalidFormat
