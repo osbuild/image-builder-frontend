@@ -458,7 +458,9 @@ const Review = () => {
           </ExpandableSection>
         )}
       {isServicesStepEnabled &&
-        (services.enabled.length > 0 || services.disabled.length > 0) && (
+        (services.enabled.length > 0 ||
+          services.disabled.length > 0 ||
+          services.masked.length > 0) && (
           <ExpandableSection
             toggleContent={composeExpandable(
               'Systemd services',

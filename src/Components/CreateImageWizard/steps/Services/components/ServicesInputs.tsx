@@ -5,10 +5,10 @@ import { FormGroup } from '@patternfly/react-core';
 import { useAppSelector } from '../../../../../store/hooks';
 import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilderApi';
 import {
-  addDisabledService,
   addEnabledService,
-  removeDisabledService,
+  addMaskedService,
   removeEnabledService,
+  removeMaskedService,
   selectComplianceProfileID,
   selectDistribution,
   selectServices,
@@ -65,8 +65,8 @@ const ServicesInput = () => {
             )}
           requiredList={disabledAndMaskedRequiredByOpenSCAP}
           item="Disabled service"
-          addAction={addDisabledService}
-          removeAction={removeDisabledService}
+          addAction={addMaskedService}
+          removeAction={removeMaskedService}
           stepValidation={stepValidation}
           fieldName="disabledSystemdServices"
         />
