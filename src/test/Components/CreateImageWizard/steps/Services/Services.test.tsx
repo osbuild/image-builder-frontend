@@ -213,7 +213,7 @@ describe('Services request generated correctly', () => {
       ...blueprintRequest,
       customizations: {
         services: {
-          disabled: ['telnet'],
+          masked: ['telnet'],
           enabled: ['httpd'],
         },
       },
