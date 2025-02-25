@@ -29,6 +29,6 @@ greenprint "Job artifacts will be uploaded to: $S3_URL"
 
 AWS_SECRET_ACCESS_KEY="$V2_AWS_SECRET_ACCESS_KEY" \
 AWS_ACCESS_KEY_ID="$V2_AWS_ACCESS_KEY_ID" \
-s3cmd --acl-private put "$ARTIFACTS"/* "$S3_URL"
+s3cmd --acl-private --recursive put "$ARTIFACTS"/* "$S3_URL"
 
 greenprint "Please login to 438669297788 AWS account and visit $BROWSER_URL to access job artifacts."
