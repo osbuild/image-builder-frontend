@@ -2,8 +2,8 @@
 
 # This script uploads all files from ARTIFACTS folder to S3
 
-S3_URL="s3://image-builder-ci-artifacts/osbuild-composer/$CI_COMMIT_BRANCH/$CI_JOB_ID/"
-BROWSER_URL="https://s3.console.aws.amazon.com/s3/buckets/image-builder-ci-artifacts?region=us-east-1&prefix=osbuild-composer/$CI_COMMIT_BRANCH/$CI_JOB_ID/&showversions=false"
+S3_URL="s3://image-builder-ci-artifacts/image-builder-frontend/$CI_COMMIT_BRANCH/$CI_JOB_ID/"
+BROWSER_URL="https://s3.console.aws.amazon.com/s3/buckets/image-builder-ci-artifacts?region=us-east-1&prefix=image-builder-frontend/$CI_COMMIT_BRANCH/$CI_JOB_ID/&showversions=false"
 ARTIFACTS=${ARTIFACTS:-/tmp/artifacts}
 
 # Colorful output.
