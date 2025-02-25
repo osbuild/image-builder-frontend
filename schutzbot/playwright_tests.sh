@@ -3,7 +3,7 @@ set -euo pipefail
 
 # As playwright isn't supported on fedora/el, install dependencies
 # beforehand.
-sudo dnf install \
+sudo dnf install -y \
      alsa-lib \
      libXrandr-devel \
      libXdamage-devel \
