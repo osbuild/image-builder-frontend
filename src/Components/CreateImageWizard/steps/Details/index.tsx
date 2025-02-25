@@ -17,7 +17,6 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '../../../../store/wizardSlice';
-import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { HookValidatedInput } from '../../ValidatedInput';
 
@@ -26,7 +25,9 @@ const DetailsStep = () => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
-  useGenerateDefaultName();
+  if (!blueprintName) {
+    dispatch(changeBlueprintName(''));
+  }
 
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,

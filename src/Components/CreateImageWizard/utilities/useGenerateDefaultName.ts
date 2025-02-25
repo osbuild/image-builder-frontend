@@ -35,8 +35,5 @@ export const useGenerateDefaultName = () => {
     if (!blueprintName) {
       dispatch(changeBlueprintName(generateDefaultName(distribution, arch)));
     }
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, arch, distribution]);
 };
