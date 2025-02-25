@@ -8,6 +8,11 @@ import {
   FlexItem,
   Text,
 } from '@patternfly/react-core';
+import {
+  TextContent,
+  TextList,
+  TextListItem,
+} from '@patternfly/react-core/dist/esm';
 // Import for optional quickstarts functionality
 // import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
@@ -16,16 +21,15 @@ type NewAlertPropTypes = {
 };
 
 export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
-  // Hide the alert until needed again
-  // const isAlertDismissed = window.localStorage.getItem(
-  //   'imageBuilder.newFeatureAlertDismissed'
-  // );
-  const [displayAlert, setDisplayAlert] = useState(false); // when needed switch for !isAlertDismissed);
+  const isAlertDismissed = window.localStorage.getItem(
+    'imageBuilder.newFeatureNewCustomizationsAlertDismissed'
+  );
+  const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
 
   const dismissAlert = () => {
     setDisplayAlert(false);
     window.localStorage.setItem(
-      'imageBuilder.newFeatureNewStepsAlertDismissed',
+      'imageBuilder.newFeatureNewCustomizationsAlertDismissed',
       'true'
     );
   };
@@ -38,14 +42,16 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
   if (displayAlert) {
     return (
       <Alert
+        isExpandable
         style={{ margin: '0 0 16px 0' }}
-        title="New in Images: TITLE PLACEHOLDER"
+        title="New in Images: more customizations"
         actionClose={<AlertActionCloseButton onClose={dismissAlert} />}
         actionLinks={
           <>
             <Flex>
+              {/*
               <FlexItem>
-                {/* Optional quickstarts link
+                Optional quickstarts link
                   <AlertActionLink
                     onClick={activateQuickstart(
                       'insights-creating-blueprint-images'
@@ -53,8 +59,8 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
                   >
                     Get started with blueprints
                   </AlertActionLink>
-                */}
               </FlexItem>
+              */}
               <FlexItem>
                 <AlertActionLink onClick={() => setShowAlert(false)}>
                   Not now
@@ -70,7 +76,15 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           </>
         }
       >
-        <Text>Placeholder</Text>
+        <TextContent>
+          <Text>
+            New options for blueprint customization are now available:
+          </Text>
+          <TextList>
+            <TextListItem>Timezone</TextListItem>
+            <TextListItem>Locale</TextListItem>
+          </TextList>
+        </TextContent>
       </Alert>
     );
   } else {
