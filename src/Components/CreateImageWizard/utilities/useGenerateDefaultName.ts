@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
@@ -30,13 +30,13 @@ export const useGenerateDefaultName = () => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-
+  const defaultNameRef = useRef(generateDefaultName(distribution, arch));
   useEffect(() => {
-    if (!blueprintName) {
-      dispatch(changeBlueprintName(generateDefaultName(distribution, arch)));
+    const defaultName = generateDefaultName(distribution, arch);
+
+    if (!blueprintName || blueprintName === defaultNameRef.current) {
+      dispatch(changeBlueprintName(defaultName));
+      defaultNameRef.current = defaultName;
     }
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [dispatch, distribution, arch]);
 };

@@ -26,8 +26,6 @@ const DetailsStep = () => {
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
-  useGenerateDefaultName();
-
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
     name: string
