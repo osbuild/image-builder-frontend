@@ -18,7 +18,8 @@ sudo useradd admin -p "$(openssl passwd foobar)"
 
 function upload_artifacts {
     mkdir -p /tmp/artifacts/extra-screenshots
-    mv *.png /tmp/artifacts/extra-screenshots/
+    USER="$(whoami)"
+    sudo chown -R "$USER:$USER" playwright-report
     mv playwright-report /tmp/artifacts/
 }
 trap upload_artifacts EXIT
