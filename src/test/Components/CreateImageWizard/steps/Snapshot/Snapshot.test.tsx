@@ -10,7 +10,11 @@ import {
   expectedPayloadRepositories,
   snapshotCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
-import { clickNext, clickReviewAndFinish } from '../../wizardTestUtils';
+import {
+  clickNext,
+  clickReviewAndFinish,
+  getNextButton,
+} from '../../wizardTestUtils';
 import {
   blueprintRequest,
   clickRegisterLater,
@@ -121,6 +125,22 @@ const clickReset = async () => {
     name: /Reset/i,
   });
   await waitFor(async () => user.click(resetButton));
+};
+
+const selectUseTemplate = async () => {
+  const user = userEvent.setup();
+  const templateRadio = await screen.findByRole('radio', {
+    name: /Use a content template/i,
+  });
+  await waitFor(async () => user.click(templateRadio));
+};
+
+const selectFirstTemplate = async () => {
+  const user = userEvent.setup();
+  const row0Radio = await screen.findByRole('radio', {
+    name: /select row 0/i,
+  });
+  await waitFor(async () => user.click(row0Radio));
 };
 
 describe('repository snapshot tab - ', () => {
@@ -285,6 +305,23 @@ describe('repository snapshot tab - ', () => {
     await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Custom repositories/i });
+  });
+
+  test('select use a content template', async () => {
+    await renderCreateMode();
+    await goToSnapshotStep();
+    await selectUseTemplate();
+    const nextBtn = await getNextButton();
+    await waitFor(() => {
+      expect(nextBtn).toHaveAttribute('aria-disabled', 'true');
+    });
+    await selectFirstTemplate();
+    await waitFor(() => {
+      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
+    });
+    await clickNext();
+    await goToReviewStep();
+    await screen.findByText(/Use a content template/);
   });
 });
 

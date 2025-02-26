@@ -79,6 +79,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.satellite.enabled':
         return true;
+      case 'image-builder.templates.enabled':
+        return true;
       default:
         return false;
     }
