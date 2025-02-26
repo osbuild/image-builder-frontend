@@ -84,6 +84,7 @@ import {
   selectUsers,
   selectMetadata,
   selectFirewall,
+  selectTemplate,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -298,11 +299,13 @@ function commonRequestToState(
     snapshotting: {
       useLatest: !snapshot_date,
       snapshotDate: snapshot_date,
+      template: request.customizations?.template || '',
     },
     repositories: {
       customRepositories: request.customizations?.custom_repositories || [],
       payloadRepositories: request.customizations?.payload_repositories || [],
       recommendedRepositories: [],
+      redHatRepositories: [],
     },
     packages:
       request.customizations?.packages
@@ -538,6 +541,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
+    template: selectTemplate(state) || undefined,
     openscap: getOpenscap(state),
     filesystem: getFileSystem(state),
     users: getUsers(state),

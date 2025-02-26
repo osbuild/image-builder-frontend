@@ -711,6 +711,8 @@ export type Customizations = {
   payload_repositories?: Repository[] | undefined;
   /** List of custom repositories. */
   custom_repositories?: CustomRepository[] | undefined;
+  /** ID of template. */
+  template?: string | undefined;
   openscap?: OpenScap | undefined;
   filesystem?: Filesystem[] | undefined;
   /** List of users that a customer can add,

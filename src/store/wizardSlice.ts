@@ -116,6 +116,7 @@ export type wizardState = {
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;
+    template: string;
   };
   users: UserWithAdditionalInfo[];
   firstBoot: {
@@ -125,6 +126,7 @@ export type wizardState = {
     customRepositories: CustomRepository[];
     payloadRepositories: Repository[];
     recommendedRepositories: ApiRepositoryResponseRead[];
+    redHatRepositories: CustomRepository[];
   };
   packages: IBPackageWithRepositoryInfo[];
   groups: GroupWithRepositoryInfo[];
@@ -204,11 +206,13 @@ export const initialState: wizardState = {
   snapshotting: {
     useLatest: true,
     snapshotDate: '',
+    template: '',
   },
   repositories: {
     customRepositories: [],
     payloadRepositories: [],
     recommendedRepositories: [],
+    redHatRepositories: [],
   },
   packages: [],
   groups: [],
@@ -356,8 +360,13 @@ export const selectPartitions = (state: RootState) => {
 export const selectUseLatest = (state: RootState) => {
   return state.wizard.snapshotting.useLatest;
 };
+
 export const selectSnapshotDate = (state: RootState) => {
   return state.wizard.snapshotting.snapshotDate;
+};
+
+export const selectTemplate = (state: RootState) => {
+  return state.wizard.snapshotting.template;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
@@ -370,6 +379,10 @@ export const selectPayloadRepositories = (state: RootState) => {
 
 export const selectRecommendedRepositories = (state: RootState) => {
   return state.wizard.repositories.recommendedRepositories;
+};
+
+export const selectRedHatRepositories = (state: RootState) => {
+  return state.wizard.repositories.redHatRepositories;
 };
 
 export const selectPackages = (state: RootState) => {
@@ -705,6 +718,9 @@ export const wizardSlice = createSlice({
         state.snapshotting.snapshotDate = date.toISOString();
       }
     },
+    changeTemplate: (state, action: PayloadAction<string>) => {
+      state.snapshotting.template = action.payload;
+    },
     importCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -722,6 +738,12 @@ export const wizardSlice = createSlice({
     },
     changePayloadRepositories: (state, action: PayloadAction<Repository[]>) => {
       state.repositories.payloadRepositories = action.payload;
+    },
+    changeRedHatRepositories: (
+      state,
+      action: PayloadAction<CustomRepository[]>
+    ) => {
+      state.repositories.redHatRepositories = action.payload;
     },
     addRecommendedRepository: (
       state,
@@ -1043,6 +1065,7 @@ export const {
   changePartitionOrder,
   changeUseLatest,
   changeSnapshotDate,
+  changeTemplate,
   changeCustomRepositories,
   importCustomRepositories,
   changePayloadRepositories,
@@ -1089,5 +1112,6 @@ export const {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
+  changeRedHatRepositories,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
