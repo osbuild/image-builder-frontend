@@ -500,7 +500,7 @@ export const Oscap = () => {
         />
       )}
       <ProfileSelector />
-      <OscapProfileInformation />
+      {oscapProfile && <OscapProfileInformation />}
       {oscapProfile && (
         <Alert
           variant="info"
