@@ -7,8 +7,10 @@ import { useGetOscapCustomizationsQuery } from '../../../../../store/imageBuilde
 import {
   addDisabledService,
   addEnabledService,
+  addMaskedService,
   removeDisabledService,
   removeEnabledService,
+  removeMaskedService,
   selectComplianceProfileID,
   selectDistribution,
   selectServices,
@@ -38,13 +40,13 @@ const ServicesInput = () => {
     }
   );
 
-  const disabledAndMaskedRequiredByOpenSCAP = disabledServices
-    .concat(maskedServices)
-    .filter(
-      (service) =>
-        oscapProfileInfo?.services?.disabled?.includes(service) ||
-        oscapProfileInfo?.services?.masked?.includes(service)
-    );
+  const disabledRequiredByOpenSCAP = disabledServices.filter((service) =>
+    oscapProfileInfo?.services?.disabled?.includes(service)
+  );
+
+  const maskedRequiredByOpenSCAP = maskedServices.filter((service) =>
+    oscapProfileInfo?.services?.masked?.includes(service)
+  );
 
   const enabledRequiredByOpenSCAP = enabledServices.filter((service) =>
     oscapProfileInfo?.services?.enabled?.includes(service)
@@ -57,18 +59,32 @@ const ServicesInput = () => {
           ariaLabel="Add disabled service"
           placeholder="Add disabled service"
           validator={isServiceValid}
-          list={disabledServices
-            .concat(maskedServices)
-            .filter(
-              (service) =>
-                !disabledAndMaskedRequiredByOpenSCAP.includes(service)
-            )}
-          requiredList={disabledAndMaskedRequiredByOpenSCAP}
+          list={disabledServices.filter(
+            (service) =>
+              !oscapProfileInfo?.services?.disabled?.includes(service)
+          )}
+          requiredList={disabledRequiredByOpenSCAP}
           item="Disabled service"
           addAction={addDisabledService}
           removeAction={removeDisabledService}
           stepValidation={stepValidation}
           fieldName="disabledSystemdServices"
+        />
+      </FormGroup>
+      <FormGroup isRequired={false} label="Masked services">
+        <ChippingInput
+          ariaLabel="Add masked service"
+          placeholder="Add masked service"
+          validator={isServiceValid}
+          list={maskedServices.filter(
+            (service) => !oscapProfileInfo?.services?.masked?.includes(service)
+          )}
+          requiredList={maskedRequiredByOpenSCAP}
+          item="Masked service"
+          addAction={addMaskedService}
+          removeAction={removeMaskedService}
+          stepValidation={stepValidation}
+          fieldName="maskedSystemdServices"
         />
       </FormGroup>
       <FormGroup isRequired={false} label="Enabled services">
