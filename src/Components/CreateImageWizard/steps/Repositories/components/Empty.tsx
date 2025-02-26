@@ -18,14 +18,14 @@ type EmptyProps = {
   hasFilterValue: boolean;
 };
 
-export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
+const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
   return (
     <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
       <EmptyStateHeader
         titleText={
           hasFilterValue
             ? 'No matching repositories found'
-            : 'No Custom Repositories'
+            : 'No custom repositories'
         }
         icon={<EmptyStateIcon icon={RepositoryIcon} />}
         headingLevel="h4"
@@ -52,4 +52,6 @@ export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
       </EmptyStateFooter>
     </EmptyState>
   );
-}
+};
+
+export default Empty;

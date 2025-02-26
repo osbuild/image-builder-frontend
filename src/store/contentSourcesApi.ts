@@ -16,6 +16,8 @@ export const {
   useCreateRepositoryMutation,
   useBulkImportRepositoriesMutation,
   useListRepositoriesRpmsQuery,
+  useListTemplatesQuery,
+  useGetTemplateQuery,
   contentSourcesApi,
 } = serviceQueries;
 

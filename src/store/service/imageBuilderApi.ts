@@ -549,6 +549,10 @@ export type ImageRequest = {
     all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
      */
   snapshot_date?: string | undefined;
+  /** ID of the content template. A content template and snapshot date cannot both be specified.
+    If a content template is specified, the snapshot date used will be the one from the content template.
+     */
+  content_template?: string | undefined;
 };
 export type Container = {
   /** Reference to the container to embed */
