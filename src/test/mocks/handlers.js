@@ -43,6 +43,7 @@ import {
   mockRepositoryResults,
 } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
+import { mockTemplateResults } from '../fixtures/templates';
 
 export const handlers = [
   http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
@@ -101,14 +102,30 @@ export const handlers = [
     const limit = url.searchParams.get('limit');
     const offset = url.searchParams.get('offset');
     const search = url.searchParams.get('search');
+    const uuid = url.searchParams.get('uuid');
     const args = {
       available_for_arch,
       available_for_version,
       limit,
       offset,
       search,
+      uuid,
     };
     return HttpResponse.json(mockRepositoryResults(args));
+  }),
+  http.get(`${CONTENT_SOURCES_API}/templates/`, ({ request }) => {
+    const url = new URL(request.url);
+    const arch = url.searchParams.get('arch');
+    const version = url.searchParams.get('version');
+    const limit = url.searchParams.get('limit');
+    const offset = url.searchParams.get('offset');
+    const args = {
+      arch,
+      version,
+      limit,
+      offset,
+    };
+    return HttpResponse.json(mockTemplateResults(args));
   }),
   http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
     const { repo_id } = params;

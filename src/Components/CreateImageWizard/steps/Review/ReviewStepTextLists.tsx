@@ -36,7 +36,10 @@ import {
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
-import { useListSnapshotsByDateMutation } from '../../../../store/contentSourcesApi';
+import {
+  useListSnapshotsByDateMutation,
+  useGetTemplateQuery,
+} from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { useGetSourceListQuery } from '../../../../store/provisioningApi';
 import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
@@ -79,6 +82,8 @@ import {
   selectUserAdministrator,
   selectFirewall,
   selectServices,
+  selectTemplate,
+  selectRedHatRepositories,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
@@ -447,6 +452,8 @@ export const ContentList = () => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
+  const template = useAppSelector(selectTemplate);
+  const redHatRepositories = useAppSelector(selectRedHatRepositories);
 
   const customAndRecommendedRepositoryUUIDS = useMemo(
     () =>
@@ -461,10 +468,14 @@ export const ContentList = () => {
     useListSnapshotsByDateMutation();
 
   useEffect(() => {
+    if (!snapshotDate && !useLatest) return;
+
     listSnapshotsByDate({
       apiListSnapshotByDateRequest: {
         repository_uuids: customAndRecommendedRepositoryUUIDS,
-        date: useLatest ? yyyyMMddFormat(new Date()) : snapshotDate,
+        date: useLatest
+          ? yyyyMMddFormat(new Date()) + 'T00:00:00Z'
+          : snapshotDate,
       },
     });
   }, [
@@ -479,22 +490,33 @@ export const ContentList = () => {
   );
 
   const noRepositoriesSelected =
-    customAndRecommendedRepositoryUUIDS.length === 0;
+    customAndRecommendedRepositoryUUIDS.length === 0 &&
+    redHatRepositories.length === 0;
 
   const hasSnapshotDateAfter = data?.data?.some(({ is_after }) => is_after);
 
+  const { data: templateData, isLoading: isTemplateLoading } =
+    useGetTemplateQuery(
+      {
+        uuid: template,
+      },
+      { refetchOnMountOrArgChange: true, skip: template === '' }
+    );
+
   const snapshottingText = useMemo(() => {
     switch (true) {
-      case isLoading:
+      case isLoading || isTemplateLoading:
         return '';
       case useLatest:
         return 'Use latest';
       case !!snapshotDate:
         return `State as of ${yyyyMMddFormat(new Date(snapshotDate))}`;
+      case !!template:
+        return `Use a content template: ${templateData?.name}`;
       default:
         return '';
     }
-  }, [isLoading, useLatest, snapshotDate]);
+  }, [isLoading, isTemplateLoading, useLatest, snapshotDate, template]);
 
   return (
     <>
@@ -516,6 +538,8 @@ export const ContentList = () => {
                 headerContent={
                   useLatest
                     ? 'Use the latest repository content'
+                    : template
+                    ? 'Use content from the content template'
                     : `Repositories as of ${yyyyMMddFormat(
                         new Date(snapshotDate)
                       )}`

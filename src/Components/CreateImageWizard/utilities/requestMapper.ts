@@ -85,6 +85,7 @@ import {
   selectUsers,
   selectMetadata,
   selectFirewall,
+  selectTemplate,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
 } from '../../../store/wizardSlice';
@@ -300,13 +301,15 @@ function commonRequestToState(
       sourceId: awsUploadOptions?.share_with_sources?.[0],
     },
     snapshotting: {
-      useLatest: !snapshot_date,
+      useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
       snapshotDate: snapshot_date,
+      template: request.image_requests[0]?.content_template || '',
     },
     repositories: {
       customRepositories: request.customizations?.custom_repositories || [],
       payloadRepositories: request.customizations?.payload_repositories || [],
       recommendedRepositories: [],
+      redHatRepositories: [],
     },
     packages:
       request.customizations?.packages
@@ -431,6 +434,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
   const imageTypes = selectImageTypes(state);
   const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
+  const template = selectTemplate(state);
   return imageTypes.map((type) => ({
     architecture: selectArchitecture(state),
     image_type: type,
@@ -438,7 +442,8 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
       type: uploadTypeByTargetEnv(type),
       options: getImageOptions(type, state),
     },
-    snapshot_date: useLatest ? undefined : snapshotDate,
+    snapshot_date: !useLatest && !template ? snapshotDate : undefined,
+    content_template: template || undefined,
   }));
 };
 
