@@ -12,6 +12,7 @@ export const EDIT_BLUEPRINT = `${IMAGE_BUILDER_API}/blueprints`;
 export const CDN_PROD_URL = 'https://cdn.redhat.com/';
 export const CDN_STAGE_URL = 'https://cdn.stage.redhat.com/';
 export const CONTENT_URL = '/insights/content/repositories';
+export const TEMPLATES_URL = '/insights/content/templates';
 export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
 export const FILE_SYSTEM_CUSTOMIZATION_URL =
   'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index#creating-a-blueprint_creating-blueprints-and-blueprint-images';

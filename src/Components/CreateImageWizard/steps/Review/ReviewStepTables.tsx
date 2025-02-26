@@ -14,6 +14,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import { ContentOrigin } from '../../../../constants';
 import {
   ApiSnapshotForDate,
+  useGetTemplateQuery,
   useListRepositoriesQuery,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
@@ -24,6 +25,7 @@ import {
   selectGroups,
   selectPartitions,
   selectRecommendedRepositories,
+  selectTemplate,
 } from '../../../../store/wizardSlice';
 import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
 
@@ -37,7 +39,7 @@ const RepoName = ({ repoUuid }: repoPropType) => {
       // @ts-ignore if repoUrl is undefined the query is going to get skipped, so it's safe to ignore the linter here
       uuid: repoUuid ?? '',
       contentType: 'rpm',
-      origin: ContentOrigin.CUSTOM,
+      origin: ContentOrigin.ALL,
     },
     { skip: !repoUuid }
   );
@@ -127,8 +129,22 @@ export const SnapshotTable = ({
 }: {
   snapshotForDate: ApiSnapshotForDate[];
 }) => {
+  const template = useAppSelector(selectTemplate);
+
+  const { data: templateData } = useGetTemplateQuery(
+    {
+      uuid: template,
+    },
+    { refetchOnMountOrArgChange: true, skip: template === '' }
+  );
+
   const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
-    uuid: snapshotForDate.map(({ repository_uuid }) => repository_uuid).join(),
+    uuid:
+      snapshotForDate.length > 0
+        ? snapshotForDate.map(({ repository_uuid }) => repository_uuid).join()
+        : template && templateData && templateData.repository_uuids
+        ? templateData.repository_uuids.join(',')
+        : '',
     origin: ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM, // Make sure to show both redhat and external
   });
 
