@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import {
   Button,
   ExpandableSection,
+  Stack,
+  StackItem,
   Text,
   TextContent,
   TextList,
@@ -226,10 +228,29 @@ const Review = () => {
         isIndented
         data-testid="target-environments-expandable"
       >
-        {environments.includes('aws') && <TargetEnvAWSList />}
-        {environments.includes('gcp') && <TargetEnvGCPList />}
-        {environments.includes('azure') && <TargetEnvAzureList />}
-        {environments.includes('oci') && <TargetEnvOciList />}
+        <Stack hasGutter>
+          {environments.includes('aws') && (
+            <StackItem>
+              <TargetEnvAWSList />
+            </StackItem>
+          )}
+          {environments.includes('gcp') && (
+            <StackItem>
+              <TargetEnvGCPList />
+            </StackItem>
+          )}
+          {environments.includes('azure') && (
+            <StackItem>
+              <TargetEnvAzureList />
+            </StackItem>
+          )}
+          {environments.includes('oci') && (
+            <StackItem>
+              <TargetEnvOciList />
+            </StackItem>
+          )}
+        </Stack>
+
         {environments.includes('vsphere') && (
           <TextContent>
             <Text component={TextVariants.h3}>
