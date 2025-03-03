@@ -82,6 +82,14 @@ const addDisabledService = async (service: string) => {
   await waitFor(() => user.type(disabledServiceInput, service.concat(' ')));
 };
 
+const addMaskedService = async (service: string) => {
+  const user = userEvent.setup();
+  const maskedServiceInput = await screen.findByPlaceholderText(
+    'Add masked service'
+  );
+  await waitFor(() => user.type(maskedServiceInput, service.concat(' ')));
+};
+
 const addEnabledService = async (service: string) => {
   const user = userEvent.setup();
   const enabledServiceInput = await screen.findByPlaceholderText(
@@ -157,6 +165,33 @@ describe('Step Services', () => {
     expect(screen.queryByText('telnet')).not.toBeInTheDocument();
   });
 
+  test('validation works', async () => {
+    const user = userEvent.setup();
+    await renderCreateMode();
+    await goToServicesStep();
+    const clearInputButtons = await screen.findAllByRole('button', {
+      name: /clear input/i,
+    });
+
+    // Disabled services input
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addDisabledService('-------');
+    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    await waitFor(() => user.click(clearInputButtons[0]));
+
+    // Masked services input
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addMaskedService('-------');
+    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    await waitFor(() => user.click(clearInputButtons[1]));
+
+    // Enabled services input
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addEnabledService('-------');
+    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    await waitFor(() => user.click(clearInputButtons[2]));
+  });
+
   test('services from OpenSCAP get added correctly and cannot be removed', async () => {
     await renderCreateMode();
     await goToOpenSCAPStep();
@@ -202,6 +237,7 @@ describe('Services request generated correctly', () => {
     await renderCreateMode();
     await goToServicesStep();
     await addDisabledService('telnet');
+    await addMaskedService('nfs-server');
     await addEnabledService('httpd');
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
@@ -214,6 +250,7 @@ describe('Services request generated correctly', () => {
       customizations: {
         services: {
           disabled: ['telnet'],
+          masked: ['nfs-server'],
           enabled: ['httpd'],
         },
       },
@@ -228,8 +265,10 @@ describe('Services request generated correctly', () => {
     await renderCreateMode();
     await goToServicesStep();
     await addDisabledService('telnet');
+    await addMaskedService('nfs-server');
     await addEnabledService('httpd');
     await removeService('telnet');
+    await removeService('nfs-server');
     await removeService('httpd');
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);

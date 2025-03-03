@@ -341,6 +341,7 @@ export function useServicesValidation(): StepValidation {
   const services = useAppSelector(selectServices);
   const errors = {};
   const invalidDisabled = [];
+  const invalidMasked = [];
   const invalidEnabled = [];
 
   if (services.disabled.length > 0) {
@@ -353,6 +354,20 @@ export function useServicesValidation(): StepValidation {
     if (invalidDisabled.length > 0) {
       Object.assign(errors, {
         disabledSystemdServices: `Invalid disabled services: ${invalidDisabled}`,
+      });
+    }
+  }
+
+  if (services.masked.length > 0) {
+    for (const s of services.masked) {
+      if (!isServiceValid(s)) {
+        invalidMasked.push(s);
+      }
+    }
+
+    if (invalidMasked.length > 0) {
+      Object.assign(errors, {
+        maskedSystemdServices: `Invalid masked services: ${invalidMasked}`,
       });
     }
   }
