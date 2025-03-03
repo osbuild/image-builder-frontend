@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 
 import {
   Button,
-  Chip,
-  ChipGroup,
   HelperText,
   HelperTextItem,
+  Label,
+  LabelGroup,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
@@ -126,25 +126,29 @@ const ChippingInput = ({
         </HelperText>
       )}
       {requiredList && requiredList.length > 0 && (
-        <ChipGroup
+        <LabelGroup
           categoryName="Required by OpenSCAP"
-          numChips={20}
+          numLabels={20}
           className="pf-v5-u-mt-sm pf-v5-u-w-100"
         >
           {requiredList.map((item) => (
-            <Chip key={item} isReadOnly>
+            <Label key={item} isCompact>
               {item}
-            </Chip>
+            </Label>
           ))}
-        </ChipGroup>
+        </LabelGroup>
       )}
-      <ChipGroup numChips={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
+      <LabelGroup numLabels={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {list?.map((item) => (
-          <Chip key={item} onClick={(e) => handleRemoveItem(e, item)}>
+          <Label
+            key={item}
+            isCompact
+            onClose={(e) => handleRemoveItem(e, item)}
+          >
             {item}
-          </Chip>
+          </Label>
         ))}
-      </ChipGroup>
+      </LabelGroup>
     </>
   );
 };
