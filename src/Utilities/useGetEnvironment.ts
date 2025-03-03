@@ -35,8 +35,6 @@ export const useFlagWithEphemDefault = (
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
     case 'image-builder.users.enabled':
-    case 'image-builder.timezone.enabled':
-    case 'image-builder.locale.enabled':
     case 'image-builder.hostname.enabled':
     case 'image-builder.kernel.enabled':
     case 'image-builder.firewall.enabled':

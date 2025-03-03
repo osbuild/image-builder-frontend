@@ -150,8 +150,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const isUsersEnabled = useFlag('image-builder.users.enabled');
-  const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
-  const isLocaleEnabled = useFlag('image-builder.locale.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
   const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
@@ -493,7 +491,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-timezone"
                 key="wizard-timezone"
                 navItem={customStatusNavItem}
-                isHidden={!isTimezoneEnabled}
                 status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -509,7 +506,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-locale"
                 key="wizard-locale"
                 navItem={customStatusNavItem}
-                isHidden={!isLocaleEnabled}
                 status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
