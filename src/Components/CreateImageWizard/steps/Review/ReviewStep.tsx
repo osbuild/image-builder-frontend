@@ -102,8 +102,6 @@ const Review = () => {
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
-  const isTimezoneEnabled = useFlag('image-builder.timezone.enabled');
-  const isLocaleEnabled = useFlag('image-builder.locale.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
   const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
@@ -387,43 +385,41 @@ const Review = () => {
           <UsersList />
         </ExpandableSection>
       )}
-      {isTimezoneEnabled &&
-        (timezone || (ntpServers && ntpServers.length > 0)) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Timezone',
-              'revisit-timezone',
-              'wizard-timezone'
-            )}
-            onToggle={(_event, isExpandedTimezone) =>
-              onToggleTimezone(isExpandedTimezone)
-            }
-            isExpanded={isExpandedTimezone}
-            isIndented
-            data-testid="timezone-expandable"
-          >
-            <TimezoneList />
-          </ExpandableSection>
-        )}
-      {isLocaleEnabled &&
-        ((languages && languages.length > 0) ||
-          (keyboard && keyboard.length > 0)) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Locale',
-              'revisit-locale',
-              'wizard-locale'
-            )}
-            onToggle={(_event, isExpandedLocale) =>
-              onToggleLocale(isExpandedLocale)
-            }
-            isExpanded={isExpandedLocale}
-            isIndented
-            data-testid="locale-expandable"
-          >
-            <LocaleList />
-          </ExpandableSection>
-        )}
+      {(timezone || (ntpServers && ntpServers.length > 0)) && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Timezone',
+            'revisit-timezone',
+            'wizard-timezone'
+          )}
+          onToggle={(_event, isExpandedTimezone) =>
+            onToggleTimezone(isExpandedTimezone)
+          }
+          isExpanded={isExpandedTimezone}
+          isIndented
+          data-testid="timezone-expandable"
+        >
+          <TimezoneList />
+        </ExpandableSection>
+      )}
+      {((languages && languages.length > 0) ||
+        (keyboard && keyboard.length > 0)) && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Locale',
+            'revisit-locale',
+            'wizard-locale'
+          )}
+          onToggle={(_event, isExpandedLocale) =>
+            onToggleLocale(isExpandedLocale)
+          }
+          isExpanded={isExpandedLocale}
+          isIndented
+          data-testid="locale-expandable"
+        >
+          <LocaleList />
+        </ExpandableSection>
+      )}
       {isHostnameEnabled && hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
