@@ -262,14 +262,10 @@ export function useHostnameValidation(): StepValidation {
 
 export function useKernelValidation(): StepValidation {
   const kernel = useAppSelector(selectKernel);
+  const errors = {};
 
   if (!isKernelNameValid(kernel.name)) {
-    return {
-      errors: {
-        kernel: 'Invalid format.',
-      },
-      disabledNext: true,
-    };
+    Object.assign(errors, { kernel: 'Invalid format.' });
   }
 
   if (kernel.append.length > 0) {
@@ -282,14 +278,16 @@ export function useKernelValidation(): StepValidation {
     }
 
     if (invalidArgs.length > 0) {
-      return {
-        errors: { kernelAppend: `Invalid kernel arguments: ${invalidArgs}` },
-        disabledNext: true,
-      };
+      Object.assign(errors, {
+        kernelAppend: `Invalid kernel arguments: ${invalidArgs}`,
+      });
     }
   }
 
-  return { errors: {}, disabledNext: false };
+  return {
+    errors: errors,
+    disabledNext: 'kernel' in errors || 'kernelAppend' in errors,
+  };
 }
 
 export function useFirewallValidation(): StepValidation {
