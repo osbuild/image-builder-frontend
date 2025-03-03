@@ -247,6 +247,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     startIndex = 22;
   }
 
+  const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
+
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
   // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128
   const customStatusNavItem = (
@@ -255,7 +257,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     steps: WizardStepType[],
     goToStepByIndex: (index: number) => void
   ) => {
-    const isVisitRequired = true;
+    const isVisitOptional =
+      'parentId' in step && step.parentId === 'step-optional-steps';
+
+    if (step.id === 'step-register' && step.isVisited) {
+      setWasRegisterVisited(true);
+    }
+
     const hasVisitedNextStep = steps.some(
       (s) => s.index > step.index && s.isVisited
     );
@@ -271,7 +279,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         isCurrent={activeStep.id === step.id}
         isDisabled={
           step.isDisabled ||
-          (isVisitRequired && !step.isVisited && !hasVisitedNextStep)
+          (!step.isVisited &&
+            !hasVisitedNextStep &&
+            !(isVisitOptional && wasRegisterVisited))
         }
         isVisited={step.isVisited || false}
         stepIndex={step.index}
@@ -399,6 +409,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 isHidden={
                   distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
                 }
+                navItem={customStatusNavItem}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
@@ -409,6 +420,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="File system configuration"
                 id="step-file-system"
                 key="step-file-system"
+                navItem={customStatusNavItem}
                 footer={
                   <CustomWizardFooter
                     beforeNext={() => {
@@ -451,6 +463,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
+                navItem={customStatusNavItem}
                 isHidden={
                   distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
                 }
@@ -465,6 +478,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Additional packages"
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
+                navItem={customStatusNavItem}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
@@ -476,6 +490,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Users"
                 id="wizard-users"
                 key="wizard-users"
+                navItem={customStatusNavItem}
                 isHidden={!isUsersEnabled}
                 footer={
                   <CustomWizardFooter
