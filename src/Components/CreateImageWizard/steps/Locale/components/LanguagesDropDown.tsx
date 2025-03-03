@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Button,
-  Chip,
-  ChipGroup,
   FormGroup,
   HelperText,
   HelperTextItem,
+  Label,
+  LabelGroup,
   MenuToggle,
   MenuToggleElement,
   Select,
@@ -174,13 +174,13 @@ const LanguagesDropDown = () => {
           )}`}</HelperTextItem>
         </HelperText>
       )}
-      <ChipGroup numChips={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
+      <LabelGroup numLabels={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
         {languages?.map((lang) => (
-          <Chip key={lang} onClick={(e) => handleRemoveLang(e, lang)}>
+          <Label key={lang} onClose={(e) => handleRemoveLang(e, lang)}>
             {lang}
-          </Chip>
+          </Label>
         ))}
-      </ChipGroup>
+      </LabelGroup>
     </FormGroup>
   );
 };
