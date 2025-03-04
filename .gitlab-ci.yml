@@ -18,6 +18,7 @@ test:
     - cat schutzbot/team_ssh_keys.txt | tee -a ~/.ssh/authorized_keys > /dev/null
   script:
     - schutzbot/make_rpm_and_install.sh
+    - schutzbot/playwright_tests.sh
   after_script:
     - schutzbot/ci_details.sh > /tmp/artifacts/ci-details-after-run.txt || true
     - schutzbot/unregister.sh || true
@@ -29,9 +30,9 @@ test:
   parallel:
     matrix:
       - RUNNER:
+          - aws/rhel-9.6-nightly-x86_64
+          - aws/rhel-10.0-nightly-x86_64
         INTERNAL_NETWORK: ["true"]
-        - aws/rhel-9.6-nightly-x86_64
-        - aws/rhel-10.0-nightly-x86_64
 
 finish:
   stage: finish
