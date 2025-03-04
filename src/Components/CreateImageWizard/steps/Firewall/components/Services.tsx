@@ -10,7 +10,7 @@ import {
   removeEnabledFirewallService,
   selectFirewall,
 } from '../../../../../store/wizardSlice';
-import ChippingInput from '../../../ChippingInput';
+import LabelInput from '../../../LabelInput';
 import { useFirewallValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';
 
@@ -23,7 +23,7 @@ const Services = () => {
   return (
     <>
       <FormGroup label="Disabled services">
-        <ChippingInput
+        <LabelInput
           ariaLabel="Add disabled service"
           placeholder="Add disabled service"
           validator={isServiceValid}
@@ -36,7 +36,7 @@ const Services = () => {
         />
       </FormGroup>
       <FormGroup label="Enabled services">
-        <ChippingInput
+        <LabelInput
           ariaLabel="Add enabled service"
           placeholder="Add enabled service"
           validator={isServiceValid}

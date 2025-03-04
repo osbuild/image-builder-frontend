@@ -17,7 +17,7 @@ import { StepValidation } from './utilities/useValidation';
 
 import { useAppDispatch } from '../../store/hooks';
 
-type ChippingInputProps = {
+type LabelInputProps = {
   ariaLabel: string;
   placeholder: string;
   validator: (value: string) => boolean;
@@ -30,7 +30,7 @@ type ChippingInputProps = {
   fieldName: string;
 };
 
-const ChippingInput = ({
+const LabelInput = ({
   ariaLabel,
   placeholder,
   validator,
@@ -41,7 +41,7 @@ const ChippingInput = ({
   removeAction,
   stepValidation,
   fieldName,
-}: ChippingInputProps) => {
+}: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
   const [inputValue, setInputValue] = useState('');
@@ -153,4 +153,4 @@ const ChippingInput = ({
   );
 };
 
-export default ChippingInput;
+export default LabelInput;
