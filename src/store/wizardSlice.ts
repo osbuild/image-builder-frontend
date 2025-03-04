@@ -116,6 +116,7 @@ export type wizardState = {
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;
+    template: string;
   };
   users: UserWithAdditionalInfo[];
   firstBoot: {
@@ -204,6 +205,7 @@ export const initialState: wizardState = {
   snapshotting: {
     useLatest: true,
     snapshotDate: '',
+    template: '',
   },
   repositories: {
     customRepositories: [],
@@ -356,8 +358,13 @@ export const selectPartitions = (state: RootState) => {
 export const selectUseLatest = (state: RootState) => {
   return state.wizard.snapshotting.useLatest;
 };
+
 export const selectSnapshotDate = (state: RootState) => {
   return state.wizard.snapshotting.snapshotDate;
+};
+
+export const selectTemplate = (state: RootState) => {
+  return state.wizard.snapshotting.template;
 };
 
 export const selectCustomRepositories = (state: RootState) => {
@@ -705,6 +712,9 @@ export const wizardSlice = createSlice({
         state.snapshotting.snapshotDate = date.toISOString();
       }
     },
+    changeTemplate: (state, action: PayloadAction<string>) => {
+      state.snapshotting.template = action.payload;
+    },
     importCustomRepositories: (
       state,
       action: PayloadAction<CustomRepository[]>
@@ -1043,6 +1053,7 @@ export const {
   changePartitionOrder,
   changeUseLatest,
   changeSnapshotDate,
+  changeTemplate,
   changeCustomRepositories,
   importCustomRepositories,
   changePayloadRepositories,

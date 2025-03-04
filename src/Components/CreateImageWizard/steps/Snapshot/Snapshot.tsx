@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -11,19 +11,52 @@ import {
   Title,
 } from '@patternfly/react-core';
 
+import Templates from './components/Templates';
+
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   selectSnapshotDate,
-  selectUseLatest,
   changeUseLatest,
   changeSnapshotDate,
+  changeTemplate,
+  selectUseLatest,
+  selectTemplate,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { isSnapshotDateValid } from '../../validators';
 
 export default function Snapshot() {
   const dispatch = useAppDispatch();
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
+  const templateUuid = useAppSelector(selectTemplate);
+  const [selectedOption, setSelectedOption] = useState<
+    'latest' | 'snapshotDate' | 'template'
+  >(useLatest ? 'latest' : templateUuid ? 'template' : 'snapshotDate');
+
+  const isTemplatesEnabled = useFlag('image-builder.templates.enabled');
+
+  const handleOptionChange = (
+    option: 'latest' | 'snapshotDate' | 'template'
+  ): void => {
+    setSelectedOption(option);
+    switch (option) {
+      case 'latest':
+        dispatch(changeUseLatest(true));
+        dispatch(changeTemplate(''));
+        dispatch(changeSnapshotDate(''));
+        break;
+      case 'snapshotDate':
+        dispatch(changeUseLatest(false));
+        dispatch(changeTemplate(''));
+        break;
+      case 'template':
+        dispatch(changeUseLatest(false));
+        dispatch(changeSnapshotDate(''));
+        break;
+    }
+  };
+
   return (
     <>
       <FormGroup>
@@ -33,8 +66,8 @@ export default function Snapshot() {
           name="use-latest-snapshot"
           label="Use latest content"
           description="Use the newest repository state available when building this image."
-          isChecked={useLatest}
-          onChange={() => !useLatest && dispatch(changeUseLatest(true))}
+          isChecked={selectedOption === 'latest'}
+          onChange={() => handleOptionChange('latest')}
         />
         <Radio
           id="use snapshot date radio"
@@ -42,11 +75,25 @@ export default function Snapshot() {
           name="use-snapshot-date"
           label="Use a snapshot"
           description="Target a date and build images with repository information from this date."
-          isChecked={!useLatest}
-          onChange={() => useLatest && dispatch(changeUseLatest(false))}
+          isChecked={selectedOption === 'snapshotDate'}
+          onChange={() => handleOptionChange('snapshotDate')}
         />
+        {isTemplatesEnabled ? (
+          <Radio
+            id="use content template radio"
+            ouiaId="use-content-template-radio"
+            name="use-content-template"
+            label="Use a content template"
+            description="Select a content template and build images with repository snapshots included in that template."
+            isChecked={selectedOption === 'template'}
+            onChange={() => handleOptionChange('template')}
+          />
+        ) : (
+          <></>
+        )}
       </FormGroup>
-      {useLatest ? (
+
+      {selectedOption === 'latest' ? (
         <>
           <Title headingLevel="h1" size="xl">
             Use latest content
@@ -58,7 +105,7 @@ export default function Snapshot() {
             </Text>
           </Grid>
         </>
-      ) : (
+      ) : selectedOption === 'snapshotDate' ? (
         <>
           <Title headingLevel="h1" size="xl">
             Use a snapshot
@@ -99,6 +146,13 @@ export default function Snapshot() {
               selected date when building this image.
             </Text>
           </Grid>
+        </>
+      ) : (
+        <>
+          <Title headingLevel="h1" size="xl">
+            Use a content template
+          </Title>
+          <Templates />
         </>
       )}
     </>

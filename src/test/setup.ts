@@ -75,6 +75,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.edge.local-image-table':
         return true;
+      case 'image-builder.templates.enabled':
+        return true;
       default:
         return false;
     }
