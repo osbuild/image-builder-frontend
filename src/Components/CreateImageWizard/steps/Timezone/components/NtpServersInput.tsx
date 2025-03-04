@@ -8,7 +8,7 @@ import {
   removeNtpServer,
   selectNtpServers,
 } from '../../../../../store/wizardSlice';
-import ChippingInput from '../../../ChippingInput';
+import LabelInput from '../../../LabelInput';
 import { useTimezoneValidation } from '../../../utilities/useValidation';
 import { isNtpServerValid } from '../../../validators';
 
@@ -19,7 +19,7 @@ const NtpServersInput = () => {
 
   return (
     <FormGroup isRequired={false} label="NTP servers">
-      <ChippingInput
+      <LabelInput
         ariaLabel="Add NTP server"
         placeholder="Add NTP servers"
         validator={isNtpServerValid}

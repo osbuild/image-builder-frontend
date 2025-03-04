@@ -11,7 +11,7 @@ import {
   selectDistribution,
   selectKernel,
 } from '../../../../../store/wizardSlice';
-import ChippingInput from '../../../ChippingInput';
+import LabelInput from '../../../LabelInput';
 import { useKernelValidation } from '../../../utilities/useValidation';
 import { isKernelArgumentValid } from '../../../validators';
 
@@ -40,7 +40,7 @@ const KernelArguments = () => {
 
   return (
     <FormGroup isRequired={false} label="Append">
-      <ChippingInput
+      <LabelInput
         ariaLabel="Add kernel argument"
         placeholder="Add kernel argument"
         validator={isKernelArgumentValid}

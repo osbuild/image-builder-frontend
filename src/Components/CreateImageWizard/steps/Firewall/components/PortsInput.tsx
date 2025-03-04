@@ -8,7 +8,7 @@ import {
   removePort,
   selectFirewall,
 } from '../../../../../store/wizardSlice';
-import ChippingInput from '../../../ChippingInput';
+import LabelInput from '../../../LabelInput';
 import { useFirewallValidation } from '../../../utilities/useValidation';
 import { isPortValid } from '../../../validators';
 
@@ -19,7 +19,7 @@ const PortsInput = () => {
 
   return (
     <FormGroup label="Ports">
-      <ChippingInput
+      <LabelInput
         ariaLabel="Add ports"
         placeholder="Add ports"
         validator={isPortValid}

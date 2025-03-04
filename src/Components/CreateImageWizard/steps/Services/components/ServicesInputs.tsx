@@ -15,7 +15,7 @@ import {
   selectDistribution,
   selectServices,
 } from '../../../../../store/wizardSlice';
-import ChippingInput from '../../../ChippingInput';
+import LabelInput from '../../../LabelInput';
 import { useServicesValidation } from '../../../utilities/useValidation';
 import { isServiceValid } from '../../../validators';
 
@@ -55,7 +55,7 @@ const ServicesInput = () => {
   return (
     <>
       <FormGroup isRequired={false} label="Disabled services">
-        <ChippingInput
+        <LabelInput
           ariaLabel="Add disabled service"
           placeholder="Add disabled service"
           validator={isServiceValid}
@@ -72,7 +72,7 @@ const ServicesInput = () => {
         />
       </FormGroup>
       <FormGroup isRequired={false} label="Masked services">
-        <ChippingInput
+        <LabelInput
           ariaLabel="Add masked service"
           placeholder="Add masked service"
           validator={isServiceValid}
@@ -88,7 +88,7 @@ const ServicesInput = () => {
         />
       </FormGroup>
       <FormGroup isRequired={false} label="Enabled services">
-        <ChippingInput
+        <LabelInput
           ariaLabel="Add enabled service"
           placeholder="Add enabled service"
           validator={isServiceValid}
