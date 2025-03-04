@@ -250,6 +250,7 @@ const Packages = () => {
                 }
                 return repo.baseurl;
               }),
+            limit: 500,
           },
         });
       }
@@ -270,6 +271,7 @@ const Packages = () => {
               }
               return repo.baseurl;
             }),
+            limit: 500,
           },
         });
       } else {
@@ -397,27 +399,6 @@ const Packages = () => {
     );
   };
 
-  const TooManyResults = () => {
-    return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                icon={<EmptyStateIcon icon={SearchIcon} />}
-                titleText="Too many results to display"
-                headingLevel="h4"
-              />
-              <EmptyStateBody>
-                Please make the search more specific and try again.
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
-    );
-  };
-
   const TooShort = () => {
     return (
       <Tr>
@@ -431,27 +412,6 @@ const Packages = () => {
               />
               <EmptyStateBody>
                 Please make the search more specific and try again.
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
-    );
-  };
-
-  const TooManyResultsWithExactMatch = () => {
-    return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                titleText="Too many results to display"
-                headingLevel="h4"
-              />
-              <EmptyStateBody>
-                To see more results, please make the search more specific and
-                try again.
               </EmptyStateBody>
             </EmptyState>
           </Bullseye>
@@ -882,47 +842,6 @@ const Packages = () => {
   const computeStart = () => perPage * (page - 1);
   const computeEnd = () => perPage * page;
 
-  const handleExactMatch = () => {
-    const exactMatch = transformedPackages.find(
-      (pkg) => pkg.name === debouncedSearchTerm
-    );
-
-    if (exactMatch) {
-      return (
-        <>
-          <Tr key={`${exactMatch.name}`} data-testid="exact-match-row">
-            <Td
-              select={{
-                isSelected: packages.some((p) => p.name === exactMatch.name),
-                rowIndex: 0,
-                onSelect: (event, isSelecting) =>
-                  handleSelect(exactMatch, 0, isSelecting),
-              }}
-            />
-            <Td>{exactMatch.name}</Td>
-            <Td>{exactMatch.summary}</Td>
-            {exactMatch.repository === 'distro' ? (
-              <>
-                <Td>
-                  <RedHatRepository />
-                </Td>
-                <Td>Supported</Td>
-              </>
-            ) : (
-              <>
-                <Td>Third party repository</Td>
-                <Td>Not supported</Td>
-              </>
-            )}
-          </Tr>
-          <TooManyResultsWithExactMatch />
-        </>
-      );
-    } else {
-      return <TooManyResults />;
-    }
-  };
-
   const handleCloseModalToggle = () => {
     setIsRepoModalOpen(!isRepoModalOpen);
     setIsSelectingPackage(undefined);
@@ -1166,14 +1085,8 @@ const Packages = () => {
         packages.length > 0 &&
         groups.length > 0:
         return <TryLookingUnderIncluded />;
-      case debouncedSearchTerm && transformedPackages.length >= 100:
-        return handleExactMatch();
-      case (debouncedSearchTerm || toggleSelected === 'toggle-selected') &&
-        transformedPackages.length < 100 &&
-        transformedGroups.length < 100:
-        return composePkgTable();
       default:
-        return <></>;
+        return composePkgTable();
     }
     // Would need significant rewrite to fix this
     // eslint-disable-next-line react-hooks/exhaustive-deps
