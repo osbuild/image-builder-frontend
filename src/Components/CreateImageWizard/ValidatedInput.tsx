@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HelperText,
@@ -15,7 +15,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
 
-interface ValidatedTextInputPropTypes extends TextInputProps {
+type ValidatedTextInputPropTypes = TextInputProps & {
   dataTestId?: string | undefined;
   ouiaId?: string;
   ariaLabel: string | undefined;
@@ -23,7 +23,16 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   validator: (value: string | undefined) => boolean;
   value: string;
   placeholder?: string;
-}
+};
+
+type ValidationResult = {
+  validated: 'default' | 'success' | 'error';
+};
+
+type ValidationStateProps = {
+  errorMessage: string;
+  isPristine: boolean;
+};
 
 type HookValidatedInputPropTypes = TextInputProps &
   TextAreaProps & {
@@ -38,54 +47,114 @@ type HookValidatedInputPropTypes = TextInputProps &
     inputType?: 'textInput' | 'textArea';
   };
 
-export const HookPasswordValidatedInput = ({
-  ariaLabel,
-  placeholder,
-  dataTestId,
+type ValidatedPasswordInput = TextInputProps & {
+  value: string;
+  stepValidation: StepValidation;
+  fieldName: string;
+};
+
+type PasswordInputProps = TextInputProps & {
+  value: string;
+  errorMessage: string;
+};
+
+type ErrorMessageProps = {
+  errorMessage: string;
+};
+
+export const ValidatedPasswordInput = ({
   value,
-  ouiaId,
   stepValidation,
   fieldName,
   onChange,
-  warning = undefined,
-  inputType,
-  isDisabled,
-}: HookValidatedInputPropTypes) => {
+  onBlur,
+  placeholder,
+}: ValidatedPasswordInput) => {
+  const errorMessage = stepValidation.errors[fieldName];
+  const hasError = errorMessage !== '';
+
+  return (
+    <>
+      <PasswordInput
+        value={value}
+        placeholder={placeholder || ''}
+        errorMessage={errorMessage}
+        onChange={onChange!}
+        onBlur={onBlur!}
+      />
+      {hasError && <ErrorMessage errorMessage={errorMessage} />}
+    </>
+  );
+};
+
+export const PasswordInput = ({
+  onChange,
+  placeholder,
+  value,
+  errorMessage,
+}: PasswordInputProps) => {
+  const [isPristine, setIsPristine] = useState(!value);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+  const { validated } = getValidationState({ errorMessage, isPristine });
+
+  const handleBlur = () => {
+    if (value) {
+      setIsPristine(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!value) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
 
   return (
     <>
       <InputGroup>
         <InputGroupItem isFill>
-          <HookValidatedInput
-            type={isPasswordVisible ? 'text' : 'password'}
-            ouiaId={ouiaId || ''}
-            data-testid={dataTestId}
+          <TextInput
             value={value}
-            onChange={onChange!}
-            stepValidation={stepValidation}
-            ariaLabel={ariaLabel || ''}
-            fieldName={fieldName}
+            validated={validated}
             placeholder={placeholder || ''}
-            inputType={inputType || 'textInput'}
-            warning={warning || ''}
-            isDisabled={isDisabled || false}
+            type={isPasswordVisible ? 'text' : 'password'}
+            onChange={onChange!}
+            onBlur={handleBlur}
           />
         </InputGroupItem>
         <InputGroupItem>
           <Button
             variant="control"
             onClick={togglePasswordVisibility}
-            aria-label={isPasswordVisible ? 'Show password' : 'Hide password'}
+            aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
           >
             {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
           </Button>
         </InputGroupItem>
       </InputGroup>
     </>
+  );
+};
+
+const getValidationState = ({
+  isPristine,
+  errorMessage,
+}: ValidationStateProps): ValidationResult => {
+  const validated = isPristine ? 'default' : errorMessage ? 'error' : 'success';
+
+  return { validated };
+};
+
+export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
+  return (
+    <HelperText>
+      <HelperTextItem variant="error" hasIcon>
+        {errorMessage}
+      </HelperTextItem>
+    </HelperText>
   );
 };
 
