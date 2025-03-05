@@ -33,6 +33,7 @@ import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/t
 import { RHEL_9, X86_64 } from '../constants';
 
 import type { RootState } from '.';
+import { yyyyMMddFormat } from '../Utilities/time';
 
 type WizardModeOptions = 'create' | 'edit';
 
@@ -243,14 +244,6 @@ export const initialState: wizardState = {
   },
   firstBoot: { script: '' },
   users: [],
-};
-
-const currentDateString = () => {
-  const today = new Date();
-  const dd = String(today.getDate()).padStart(2, '0');
-  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-  const yyyy = today.getFullYear();
-  return yyyy + '-' + mm + '-' + dd;
 };
 
 export const selectServerUrl = (state: RootState) => {
@@ -703,7 +696,7 @@ export const wizardSlice = createSlice({
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.snapshotting.snapshotDate === '') {
-        state.snapshotting.snapshotDate = currentDateString();
+        state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
       }
 
       state.snapshotting.useLatest = action.payload;
@@ -712,7 +705,7 @@ export const wizardSlice = createSlice({
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (action.payload === '') {
-        state.snapshotting.snapshotDate = currentDateString();
+        state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
       } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
       }
