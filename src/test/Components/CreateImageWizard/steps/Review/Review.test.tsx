@@ -53,7 +53,7 @@ const handleRegistration = async () => {
 const goToReviewStep = async () => {
   await clickNext(); // OpenSCAP
   await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot
+  await clickNext(); // Repository snapshot/Reproducible builds
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users

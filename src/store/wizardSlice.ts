@@ -245,6 +245,14 @@ export const initialState: wizardState = {
   users: [],
 };
 
+const currentDateString = () => {
+  const today = new Date();
+  const dd = String(today.getDate()).padStart(2, '0');
+  const mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  const yyyy = today.getFullYear();
+  return yyyy + '-' + mm + '-' + dd;
+};
+
 export const selectServerUrl = (state: RootState) => {
   return state.wizard.env.serverUrl;
 };
@@ -694,13 +702,17 @@ export const wizardSlice = createSlice({
       }
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
+      if (!action.payload && state.snapshotting.snapshotDate === '') {
+        state.snapshotting.snapshotDate = currentDateString();
+      }
+
       state.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (action.payload === '') {
-        state.snapshotting.snapshotDate = action.payload;
+        state.snapshotting.snapshotDate = currentDateString();
       } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
       }
