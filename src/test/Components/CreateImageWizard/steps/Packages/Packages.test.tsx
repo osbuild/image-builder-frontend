@@ -46,7 +46,7 @@ const goToPackagesStep = async () => {
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot
+  await clickNext(); // Repository snapshot/Repeatable builds
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
 };
