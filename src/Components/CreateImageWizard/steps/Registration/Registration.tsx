@@ -5,10 +5,12 @@ import {
   Checkbox,
   FormGroup,
   Popover,
+  Radio,
   Text,
   TextContent,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { INSIGHTS_URL, RHC_URL, RHEL_10_BETA } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -106,6 +108,10 @@ const Registration = () => {
     registrationType === 'register-later'
   );
 
+  const isSatelliteRegistrationEnabled = useFlag(
+    'image-builder.satellite.enabled'
+  );
+
   // TO DO: Remove when rhc starts working for RHEL 10 Beta
   useEffect(() => {
     if (distribution === RHEL_10_BETA) {
@@ -115,9 +121,9 @@ const Registration = () => {
 
   return (
     <FormGroup label="Registration method">
-      <Checkbox
+      <Radio
         label="Automatically register and enable advanced capabilities"
-        data-testid="automatically-register-checkbox"
+        data-testid="automatically-register-radio"
         isChecked={
           registrationType === 'register-now' ||
           registrationType === 'register-now-insights' ||
@@ -129,9 +135,6 @@ const Registration = () => {
             dispatch(changeRegistrationType('register-now-rhc'));
           } else if (checked && distribution === RHEL_10_BETA) {
             dispatch(changeRegistrationType('register-now-insights'));
-          } else {
-            dispatch(changeRegistrationType('register-later'));
-            setShowOptions(false);
           }
         }}
         id="register-system-now"
@@ -201,6 +204,30 @@ const Registration = () => {
           )
         }
       />
+      <Radio
+        label="Register later"
+        data-testid="register-later-radio"
+        isChecked={registrationType === 'register-later'}
+        onChange={() => {
+          dispatch(changeRegistrationType('register-later'));
+          setShowOptions(false);
+        }}
+        id="register-later"
+        name="register-later"
+      />
+      {isSatelliteRegistrationEnabled && (
+        <Radio
+          label="Register with Satellite"
+          data-testid="register-satellite-radio"
+          isChecked={registrationType === 'register-satellite'}
+          onChange={() => {
+            dispatch(changeRegistrationType('register-satellite'));
+            setShowOptions(false);
+          }}
+          id="register-satellite"
+          name="register-satellite"
+        />
+      )}
     </FormGroup>
   );
 };

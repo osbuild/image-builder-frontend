@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
+import { jwtDecode } from 'jwt-decode';
+
+import { isValidPEM } from './certificates';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
@@ -34,6 +37,8 @@ import {
   selectKeyboard,
   selectTimezone,
   selectImageTypes,
+  selectSatelliteCaCertificate,
+  selectSatelliteRegistrationCommand,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -114,6 +119,10 @@ type ValidationState = {
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
+  const registrationCommand = useAppSelector(
+    selectSatelliteRegistrationCommand
+  );
+  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
 
   const {
     isUninitialized,
@@ -147,6 +156,57 @@ export function useRegistrationValidation(): StepValidation {
     return {
       errors: { activationKey: 'Invalid activation key' },
       disabledNext: true,
+    };
+  }
+
+  if (registrationType === 'register-satellite') {
+    const errors = {};
+    if (caCertificate && (caCertificate === '' || !isValidPEM(caCertificate))) {
+      Object.assign(errors, {
+        certificate:
+          'Valid certificate must be present if you are registering Satellite.',
+      });
+    }
+    if (registrationCommand === '' || !registrationCommand) {
+      Object.assign(errors, {
+        command: 'No registration command for Satellite registration',
+      });
+    }
+    try {
+      const match = registrationCommand?.match(
+        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/
+      );
+      if (!match) {
+        Object.assign(errors, { command: 'Invalid or missing token' });
+      } else {
+        const token = match[1];
+        const decoded = jwtDecode(token);
+        if (decoded.exp) {
+          const currentTime = Date.now() / 1000;
+          if (decoded.exp < currentTime) {
+            const expirationDate = new Date(decoded.exp * 1000);
+            Object.assign(errors, {
+              command:
+                'The token is already expired. Expiration date: ' +
+                expirationDate,
+            });
+            return {
+              errors: errors,
+              disabledNext:
+                caCertificate === undefined || !isValidPEM(caCertificate),
+            };
+          }
+        }
+      }
+    } catch {
+      Object.assign(errors, { command: 'Invalid or missing token' });
+    }
+    return {
+      errors: errors,
+      disabledNext:
+        Object.keys(errors).length > 0 ||
+        caCertificate === undefined ||
+        !isValidPEM(caCertificate),
     };
   }
 

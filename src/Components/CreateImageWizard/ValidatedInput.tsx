@@ -104,7 +104,9 @@ export const ValidatedInputAndTextArea = ({
           </HelperTextItem>
         </HelperText>
       )}
-      {hasError && <ErrorMessage errorMessage={errorMessage} />}
+      {validated === 'error' && hasError && (
+        <ErrorMessage errorMessage={errorMessage} />
+      )}
     </>
   );
 };

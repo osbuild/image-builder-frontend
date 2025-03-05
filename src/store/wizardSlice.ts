@@ -41,7 +41,8 @@ export type RegistrationType =
   | 'register-later'
   | 'register-now'
   | 'register-now-insights'
-  | 'register-now-rhc';
+  | 'register-now-rhc'
+  | 'register-satellite';
 
 export type ComplianceType = 'openscap' | 'compliance';
 
@@ -108,6 +109,10 @@ export type wizardState = {
   registration: {
     registrationType: RegistrationType;
     activationKey: ActivationKeys['name'];
+    satelliteRegistration: {
+      command: string | undefined;
+      caCert: string | undefined;
+    };
   };
   compliance: {
     complianceType: ComplianceType;
@@ -197,6 +202,10 @@ export const initialState: wizardState = {
       ? 'register-later'
       : 'register-now-rhc',
     activationKey: undefined,
+    satelliteRegistration: {
+      command: undefined,
+      caCert: undefined,
+    },
   },
   compliance: {
     complianceType: 'openscap',
@@ -335,6 +344,14 @@ export const selectRegistrationType = (state: RootState) => {
 
 export const selectActivationKey = (state: RootState) => {
   return state.wizard.registration.activationKey;
+};
+
+export const selectSatelliteRegistrationCommand = (state: RootState) => {
+  return state.wizard.registration.satelliteRegistration.command;
+};
+
+export const selectSatelliteCaCertificate = (state: RootState) => {
+  return state.wizard.registration.satelliteRegistration.caCert;
 };
 
 export const selectComplianceProfileID = (state: RootState) => {
@@ -578,6 +595,15 @@ export const wizardSlice = createSlice({
       action: PayloadAction<RegistrationType>
     ) => {
       state.registration.registrationType = action.payload;
+    },
+    changeSatelliteRegistrationCommand: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      state.registration.satelliteRegistration.command = action.payload;
+    },
+    changeSatelliteCaCertificate: (state, action: PayloadAction<string>) => {
+      state.registration.satelliteRegistration.caCert = action.payload;
     },
     changeActivationKey: (
       state,
@@ -1131,6 +1157,8 @@ export const {
   addEnabledFirewallService,
   removeEnabledFirewallService,
   changeTimezone,
+  changeSatelliteRegistrationCommand,
+  changeSatelliteCaCertificate,
   addNtpServer,
   removeNtpServer,
   changeHostname,
