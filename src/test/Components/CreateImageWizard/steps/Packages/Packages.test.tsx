@@ -284,6 +284,44 @@ describe('Step Packages', () => {
     expect(firstPkgCheckbox.checked).toEqual(true);
   });
 
+  test('Removing packages should not immediately remove them, only uncheck checkboxes', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await typeIntoSearchBox('test');
+
+    const checkboxes = await getAllCheckboxes();
+    let firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
+    let secondPkgCheckbox = checkboxes[1] as HTMLInputElement;
+
+    // Select multiple packages
+    expect(firstPkgCheckbox.checked).toBe(false);
+    expect(secondPkgCheckbox.checked).toBe(false);
+    user.click(firstPkgCheckbox);
+    user.click(secondPkgCheckbox);
+    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(true));
+    await waitFor(() => expect(secondPkgCheckbox.checked).toBe(true));
+
+    await toggleSelected();
+
+    // Deselect packages
+    user.click(firstPkgCheckbox);
+    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(false));
+
+    // Ensure packages remain but are unchecked
+    const packageRows = await getRows();
+    expect(packageRows.length).toBeGreaterThan(1);
+
+    // Toggle next and back
+    await clickNext();
+    await clickBack();
+    await toggleSelected();
+
+    // Ensure packages are removed
+    const updatedRows = await getRows();
+    expect(updatedRows.length).toBe(1);
+  });
+
+
   test('should display empty available state on failed search', async () => {
     await renderCreateMode();
     await goToPackagesStep();
