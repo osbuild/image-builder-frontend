@@ -1,11 +1,13 @@
 import React, { ReactElement, useState } from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
 import {
+  FormGroup,
+  MenuToggle,
+  MenuToggleElement,
   Select,
+  SelectList,
   SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+} from '@patternfly/react-core';
 
 import {
   RELEASES,
@@ -45,13 +47,15 @@ const ReleaseSelect = () => {
   const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
-    if (!isRhel(selection)) {
-      dispatch(changeRegistrationType('register-later'));
-    } else {
-      dispatch(changeRegistrationType('register-now-rhc'));
+    if (selection !== ('loader' as Distributions)) {
+      if (!isRhel(selection)) {
+        dispatch(changeRegistrationType('register-later'));
+      } else {
+        dispatch(changeRegistrationType('register-now-rhc'));
+      }
+      dispatch(changeDistribution(selection));
+      setIsOpen(false);
     }
-    dispatch(changeDistribution(selection));
-    setIsOpen(false);
   };
 
   const handleExpand = () => {
@@ -124,26 +128,43 @@ const ReleaseSelect = () => {
     return options;
   };
 
+  const onToggleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={onToggleClick}
+      isExpanded={isOpen}
+      isFullWidth
+      data-testid="release_select"
+    >
+      {releases.get(distribution)}
+    </MenuToggle>
+  );
+
   return (
     <FormGroup isRequired={true} label="Release">
       <Select
         ouiaId="release_select"
-        variant={SelectVariant.single}
-        onToggle={() => setIsOpen(!isOpen)}
-        onSelect={handleSelect}
-        selections={releases.get(distribution)}
         isOpen={isOpen}
-        {...(!showDevelopmentOptions &&
-          // Hide this for on-prem since the host
-          // could be centos or fedora
-          !process.env.IS_ON_PREMISE && {
-            loadingVariant: {
-              text: 'Show options for further development of RHEL',
-              onClick: handleExpand,
-            },
-          })}
+        selected={releases.get(distribution)}
+        onSelect={handleSelect}
+        toggle={toggle}
+        shouldFocusToggleOnSelect
       >
-        {setSelectOptions()}
+        <SelectList>
+          {setSelectOptions()}
+          {!showDevelopmentOptions &&
+            // Hide this for on-prem since the host
+            // could be centos or fedora
+            !process.env.IS_ON_PREMISE && (
+              <SelectOption onClick={handleExpand} value="loader" isLoadButton>
+                Show options for further development of RHEL
+              </SelectOption>
+            )}
+        </SelectList>
       </Select>
     </FormGroup>
   );
