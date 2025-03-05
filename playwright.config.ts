@@ -12,7 +12,7 @@ export default defineConfig({
   ],
   use: {
     headless: true,
-    baseURL: 'http://127.0.0.1:9090',
+    baseURL: process.env.BASE_URL ? process.env.BASE_URL : 'http://127.0.0.1:9090',
     video: 'retain-on-failure',
     trace: 'on-first-retry',
 

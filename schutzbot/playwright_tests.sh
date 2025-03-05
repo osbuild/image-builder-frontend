@@ -71,6 +71,8 @@ sudo systemctl start osbuild-worker@1
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
+     -e "USER=admin" \
+     -e "PASSWORD=foobar" \
      --net=host \
      -v "$PWD:/tests" \
      --privileged  \
