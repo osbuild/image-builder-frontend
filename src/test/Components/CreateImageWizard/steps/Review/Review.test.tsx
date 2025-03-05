@@ -28,12 +28,10 @@ const setupWithRhel = async () => {
 const setupWithCentos = async () => {
   const user = userEvent.setup();
   await renderCreateMode();
-  const releaseMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[0];
+  const releaseMenu = screen.getByTestId('release_select');
 
   await waitFor(() => user.click(releaseMenu));
-  const showOptionsButton = await screen.findByRole('button', {
+  const showOptionsButton = await screen.findByRole('option', {
     name: 'Show options for further development of RHEL',
   });
   await waitFor(() => user.click(showOptionsButton));
