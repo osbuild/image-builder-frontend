@@ -3,8 +3,13 @@ import { addNotification } from '@redhat-cloud-services/frontend-components-noti
 import { cockpitApi } from './cockpitApi';
 
 const enhancedApi = cockpitApi.enhanceEndpoints({
-  addTagTypes: ['Blueprints', 'Composes'],
+  addTagTypes: ['Blueprint', 'Blueprints', 'Composes'],
   endpoints: {
+    getBlueprint: {
+      providesTags: () => {
+        return [{ type: 'Blueprint' }];
+      },
+    },
     getBlueprints: {
       providesTags: () => {
         return [{ type: 'Blueprints' }];
@@ -34,7 +39,7 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
       },
     },
     updateBlueprint: {
-      invalidatesTags: [{ type: 'Blueprints' }],
+      invalidatesTags: [{ type: 'Blueprint' }, { type: 'Blueprints' }],
       onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
         queryFulfilled
           .then(() => {
