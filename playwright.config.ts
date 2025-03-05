@@ -6,7 +6,10 @@ export default defineConfig({
   workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['list'],
+  ],
   use: {
     headless: true,
     baseURL: 'http://127.0.0.1:9090',
