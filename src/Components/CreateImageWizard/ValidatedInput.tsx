@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   HelperText,
@@ -15,7 +15,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import type { StepValidation } from './utilities/useValidation';
 
-interface ValidatedTextInputPropTypes extends TextInputProps {
+type ValidatedTextInputPropTypes = TextInputProps & {
   dataTestId?: string | undefined;
   ouiaId?: string;
   ariaLabel: string | undefined;
@@ -23,7 +23,7 @@ interface ValidatedTextInputPropTypes extends TextInputProps {
   validator: (value: string | undefined) => boolean;
   value: string;
   placeholder?: string;
-}
+};
 
 type HookValidatedInputPropTypes = TextInputProps &
   TextAreaProps & {
@@ -38,6 +38,27 @@ type HookValidatedInputPropTypes = TextInputProps &
     inputType?: 'textInput' | 'textArea';
   };
 
+type ValidationInputProp = TextInputProps &
+  TextAreaProps & {
+    value: string;
+    placeholder: string;
+    stepValidation: StepValidation;
+    fieldName: string;
+    inputType?: 'textInput' | 'textArea';
+    ariaLabel: string;
+    onChange: (
+      event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+      value: string
+    ) => void;
+    isRequired?: boolean;
+  };
+
+type ErrorMessageProps = {
+  errorMessage: string;
+};
+
+type ValidationResult = 'default' | 'success' | 'error';
+
 export const HookPasswordValidatedInput = ({
   ariaLabel,
   placeholder,
@@ -50,6 +71,7 @@ export const HookPasswordValidatedInput = ({
   warning = undefined,
   inputType,
   isDisabled,
+  isRequired,
 }: HookValidatedInputPropTypes) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
@@ -67,12 +89,13 @@ export const HookPasswordValidatedInput = ({
             value={value}
             onChange={onChange!}
             stepValidation={stepValidation}
-            ariaLabel={ariaLabel || ''}
+            ariaLabel={ariaLabel}
             fieldName={fieldName}
             placeholder={placeholder || ''}
             inputType={inputType || 'textInput'}
             warning={warning || ''}
             isDisabled={isDisabled || false}
+            isRequired={isRequired || false}
           />
         </InputGroupItem>
         <InputGroupItem>
@@ -89,6 +112,80 @@ export const HookPasswordValidatedInput = ({
   );
 };
 
+export const ValidatedInputAndTextArea = ({
+  value,
+  stepValidation,
+  fieldName,
+  placeholder,
+  onChange,
+  ariaLabel,
+  inputType = 'textInput',
+  isRequired,
+}: ValidationInputProp) => {
+  const errorMessage = stepValidation.errors[fieldName];
+  const hasError = errorMessage !== '';
+
+  const [isPristine, setIsPristine] = useState(!value);
+  const validated = getValidationState(isPristine, errorMessage);
+
+  const handleBlur = () => {
+    if (value && isRequired) {
+      setIsPristine(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!value && !isRequired) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
+
+  return (
+    <>
+      {inputType === 'textArea' ? (
+        <TextArea
+          value={value}
+          onChange={onChange}
+          validated={validated}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+        />
+      ) : (
+        <TextInput
+          value={value}
+          onChange={onChange}
+          validated={validated}
+          onBlur={handleBlur}
+          placeholder={placeholder}
+          aria-label={ariaLabel}
+          isRequired={isRequired || false}
+        />
+      )}
+      {hasError && <ErrorMessage errorMessage={errorMessage} />}
+    </>
+  );
+};
+
+const getValidationState = (
+  isPristine: boolean,
+  errorMessage: string
+): ValidationResult => {
+  const validated = isPristine ? 'default' : errorMessage ? 'error' : 'success';
+
+  return validated;
+};
+
+export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
+  return (
+    <HelperText>
+      <HelperTextItem variant="error" hasIcon>
+        {errorMessage}
+      </HelperTextItem>
+    </HelperText>
+  );
+};
+
 export const HookValidatedInput = ({
   dataTestId,
   ouiaId,
@@ -102,8 +199,9 @@ export const HookValidatedInput = ({
   type = 'text',
   inputType,
   warning = undefined,
+  isRequired = false,
 }: HookValidatedInputPropTypes) => {
-  const [isPristine, setIsPristine] = useState(!value ? true : false);
+  const [isPristine, setIsPristine] = useState(!value);
   // Do not surface validation on pristine state components
   // Allow step validation to be set on pristine state, when needed
   const validated = isPristine
@@ -115,8 +213,17 @@ export const HookValidatedInput = ({
     : 'success';
 
   const handleBlur = () => {
-    setIsPristine(false);
+    if (!value && !isRequired) {
+      setIsPristine(true);
+    } else {
+      setIsPristine(false);
+    }
   };
+  useEffect(() => {
+    if (!value && !isRequired) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
 
   return (
     <>

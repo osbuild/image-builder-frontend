@@ -19,7 +19,10 @@ import {
 } from '../../../../store/wizardSlice';
 import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
-import { HookValidatedInput } from '../../ValidatedInput';
+import {
+  HookValidatedInput,
+  ValidatedInputAndTextArea,
+} from '../../ValidatedInput';
 
 const DetailsStep = () => {
   const dispatch = useAppDispatch();
@@ -55,15 +58,15 @@ const DetailsStep = () => {
         blueprint.
       </Text>
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
-        <HookValidatedInput
+        <ValidatedInputAndTextArea
           ariaLabel="blueprint name"
-          dataTestId="blueprint"
           value={blueprintName}
           isDisabled={false}
           onChange={handleNameChange}
           placeholder="Add blueprint name"
           stepValidation={stepValidation}
           fieldName="name"
+          isRequired={true}
         />
         <FormHelperText>
           <HelperText>
