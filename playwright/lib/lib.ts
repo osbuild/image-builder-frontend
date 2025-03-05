@@ -1,21 +1,40 @@
 import { expect, type Page, type FrameLocator } from '@playwright/test';
 
-export const ibFrame = (page: Page): FrameLocator => {
+export const ibFrame = (page: Page): FrameLocator | Page => {
+  if (isHosted()) {
+    return page
+  }
   return page.locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]').contentFrame();
 }
 
-export const loginCockpit = async (
-  page: Page,
-  username?: string,
-  password?: string
+export const login = async (
+  page: Page
 ) => {
-  if (!username || !password) {
-    throw new Error('Username or password not found');
+  if (!process.env.USER || !process.env.PASSWORD) {
+    throw new Error('user or password not set in environment');
   }
 
+  const user = process.env.USER;
+  const password = process.env.PASSWORD;
+
+  if (isHosted()) {
+    return loginConsole(page, user, password);
+  }
+  return loginCockpit(page, user, password);
+}
+
+export const isHosted = (): Boolean => {
+  return process.env.BASE_URL?.includes('redhat.com') || false;
+}
+
+const loginCockpit = async (
+  page: Page,
+  user: string,
+  password: string
+) => {
   await page.goto('/cockpit-image-builder');
 
-  await page.getByRole('textbox', { name: 'User name' }).fill(username);
+  await page.getByRole('textbox', { name: 'User name' }).fill(user);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
 
   // cockpit-image-builder needs superuser
@@ -23,4 +42,34 @@ export const loginCockpit = async (
   await page.getByRole('button', { name: 'Limited access' }).click();
   await page.getByText('Close').click();
   await page.getByRole('button', { name: 'Administrative access' });
+};
+
+const loginConsole = async (
+  page: Page,
+  user: string,
+  password: string
+) => {
+  await page.goto('/insights/image-builder/landing');
+  await page.getByRole('textbox', { name: 'Red Hat login or email' }).fill(user);
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill(password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await closePopupsIfExist(page);
+  await page.locator('#preview-toggle').check();
+  await page.getByRole('heading', { name: 'All images' });
+}
+
+const closePopupsIfExist = async (page: Page) => {
+  const locatorsToCheck = [
+    page.locator('.pf-v5-c-alert.notification-item button'), // This closes all toast pop-ups
+    page.locator(`button[id^="pendo-close-guide-"]`), // This closes the pendo guide pop-up
+    page.locator(`button[id="truste-consent-button"]`), // This closes the trusted consent pop-up
+    page.getByLabel('close-notification'), // This closes a one off info notification (May be covered by the toast above, needs recheck.)
+  ];
+
+  for (const locator of locatorsToCheck) {
+    await page.addLocatorHandler(locator, async () => {
+      await locator.first().click(); // There can be multiple toast pop-ups
+    });
+  }
 };
