@@ -370,10 +370,16 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           ? request.customizations.subscription.rhc
             ? 'register-now-rhc'
             : 'register-now-insights'
+          : request.customizations.cacerts
+          ? 'register-satellite'
           : 'register-later',
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
+      satelliteRegistration: {
+        command: getSatelliteCommand(request.customizations.files),
+        caCert: request.customizations.cacerts?.pem_certs[0],
+      },
     },
     ...commonRequestToState(request),
   };
@@ -430,6 +436,13 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
     },
     snapshot_date: useLatest ? undefined : snapshotDate,
   }));
+};
+
+const getSatelliteCommand = (files?: File[]): string => {
+  const satelliteCommandFile = files?.find(
+    (file) => file.path === '/usr/local/sbin/register-satellite-cmd'
+  );
+  return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
 
 const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
