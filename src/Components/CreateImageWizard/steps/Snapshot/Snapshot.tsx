@@ -31,8 +31,8 @@ export default function Snapshot() {
           id="use latest snapshot radio"
           ouiaId="use-latest-snapshot-radio"
           name="use-latest-snapshot"
-          label="Use latest content"
-          description="Use the newest repository state available when building this image."
+          label="Disable reproducible builds."
+          description="Use the newest repository content state available when building this image."
           isChecked={useLatest}
           onChange={() => !useLatest && dispatch(changeUseLatest(true))}
         />
@@ -40,8 +40,8 @@ export default function Snapshot() {
           id="use snapshot date radio"
           ouiaId="use-snapshot-date-radio"
           name="use-snapshot-date"
-          label="Use a snapshot"
-          description="Target a date and build images with repository information from this date."
+          label="Enable reproducible builds"
+          description="Target a date and build images with repository content from this date."
           isChecked={!useLatest}
           onChange={() => useLatest && dispatch(changeUseLatest(false))}
         />
