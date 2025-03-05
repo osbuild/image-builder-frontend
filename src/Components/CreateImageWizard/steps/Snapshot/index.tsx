@@ -11,7 +11,7 @@ export default function SnapshotStep() {
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
-        Repository snapshot
+        Repeatable build
       </Title>
       <Grid>
         <Text>

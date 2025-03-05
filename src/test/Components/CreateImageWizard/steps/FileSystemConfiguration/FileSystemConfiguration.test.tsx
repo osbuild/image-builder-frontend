@@ -105,7 +105,7 @@ const changePartitionUnitsToMiB = async () => {
 
 const goToReviewStep = async () => {
   await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot
+  await clickNext(); // Repository snapshot/Repeatable builds
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users

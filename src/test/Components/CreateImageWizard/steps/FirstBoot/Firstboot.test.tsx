@@ -43,7 +43,7 @@ const goToFirstBootStep = async (): Promise<void> => {
   await clickRegisterLater();
   await clickNext(); // OpenSCAP
   await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot
+  await clickNext(); // Repository snapshot/Repeatable builds
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users
@@ -69,7 +69,7 @@ const selectSimplifiedOscapProfile = async () => {
 
 const goFromOscapToFirstBoot = async () => {
   await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot
+  await clickNext(); // Repository snapshot/Repeatable builds
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
   await clickNext(); // Users

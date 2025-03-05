@@ -18,11 +18,13 @@ import {
   changeUseLatest,
   changeSnapshotDate,
 } from '../../../../store/wizardSlice';
+import { yyyyMMddFormat } from '../../../../Utilities/time';
 import { isSnapshotDateValid } from '../../validators';
 
 export default function Snapshot() {
   const dispatch = useAppDispatch();
   const snapshotDate = useAppSelector(selectSnapshotDate);
+
   const useLatest = useAppSelector(selectUseLatest);
   return (
     <>
@@ -31,8 +33,8 @@ export default function Snapshot() {
           id="use latest snapshot radio"
           ouiaId="use-latest-snapshot-radio"
           name="use-latest-snapshot"
-          label="Use latest content"
-          description="Use the newest repository state available when building this image."
+          label="Disable repeatable build."
+          description="Use the newest repository content available when building this image."
           isChecked={useLatest}
           onChange={() => !useLatest && dispatch(changeUseLatest(true))}
         />
@@ -40,8 +42,8 @@ export default function Snapshot() {
           id="use snapshot date radio"
           ouiaId="use-snapshot-date-radio"
           name="use-snapshot-date"
-          label="Use a snapshot"
-          description="Target a date and build images with repository information from this date."
+          label="Enable repeatable build"
+          description="Build this image with the repository content of a selected date."
           isChecked={!useLatest}
           onChange={() => useLatest && dispatch(changeUseLatest(false))}
         />
@@ -85,9 +87,17 @@ export default function Snapshot() {
                 ]}
                 onChange={(_, val) => dispatch(changeSnapshotDate(val))}
               />
+
               <Button
                 variant="link"
-                onClick={() => dispatch(changeSnapshotDate(''))}
+                onClick={async () => {
+                  //Patternfly DatePicker seems to only clear error text if value is reset to '',
+                  // if you have an invalid date (2000-01-010000) and try to reset it, it must be set to '' first
+                  dispatch(changeSnapshotDate(''));
+                  setTimeout(() => {
+                    dispatch(changeSnapshotDate(yyyyMMddFormat(new Date())));
+                  }, 1);
+                }}
               >
                 Reset
               </Button>

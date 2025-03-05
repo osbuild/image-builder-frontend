@@ -498,7 +498,7 @@ export const ContentList = () => {
               component={TextListItemVariants.dt}
               className="pf-v5-u-min-width"
             >
-              Repository snapshot
+              Repeatable build
             </TextListItem>
             <TextListItem
               component={TextListItemVariants.dd}
@@ -508,7 +508,7 @@ export const ContentList = () => {
                 position="bottom"
                 headerContent={
                   useLatest
-                    ? 'Repositories as of today'
+                    ? 'Use the latest repository content'
                     : `Repositories as of ${yyyyMMddFormat(
                         new Date(snapshotDate)
                       )}`

@@ -3,6 +3,7 @@ import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
+import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
   expectedCustomRepositories,
@@ -84,7 +85,7 @@ const clickBulkSelect = async () => {
 const selectUseSnapshot = async () => {
   const user = userEvent.setup();
   const snapshotRadio = await screen.findByRole('radio', {
-    name: /Use a snapshot/i,
+    name: /Enable repeatable build/i,
   });
   await waitFor(async () => user.click(snapshotRadio));
 };
@@ -94,7 +95,15 @@ const updateDatePickerWithValue = async (date: string) => {
   const dateTextbox = await screen.findByRole('textbox', {
     name: /Date picker/i,
   });
+  await waitFor(async () => user.clear(dateTextbox));
   await waitFor(async () => user.type(dateTextbox, date));
+};
+
+const datePickerValue = async () => {
+  const dateTextbox = await screen.findByRole('textbox', {
+    name: /Date picker/i,
+  });
+  return (dateTextbox as HTMLInputElement).value;
 };
 
 const clickContentDropdown = async () => {
@@ -143,6 +152,7 @@ describe('repository snapshot tab - ', () => {
     await goToSnapshotStep();
     await selectUseSnapshot();
     await updateDatePickerWithValue('2024-04-22');
+
     await clickNext(); // To repositories step
     await selectFirstRepository();
     await goToReviewStep();
@@ -222,12 +232,14 @@ describe('repository snapshot tab - ', () => {
     await waitFor(() => {
       expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
     });
-    // Check the Next button is disabled after resetting the date
+    // reset fills in the current date, so it should not be disabled
     await clickReset();
     await waitFor(() => {
-      expect(nextBtn).toHaveAttribute('aria-disabled', 'true');
+      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
     });
-    await screen.findByText(/Date cannot be blank/i);
+
+    const dateStr = yyyyMMddFormat(new Date());
+    expect(await datePickerValue()).toBe(dateStr);
   });
 
   test('select using bulk select works ', async () => {
