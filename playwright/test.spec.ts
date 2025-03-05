@@ -21,7 +21,7 @@ test.describe.serial('test', () => {
       await frame.getByRole('heading', {
         name: 'Register systems using this image',
       });
-      await page.getByTestId('automatically-register-checkbox').uncheck();
+      await page.getByTestId('register-later-radio').click();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
 

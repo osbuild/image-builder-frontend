@@ -141,7 +141,7 @@ describe('Keyboard accessibility', () => {
       'Automatically register and enable advanced capabilities'
     );
     const registrationCheckbox = await screen.findByTestId(
-      'automatically-register-checkbox'
+      'automatically-register-radio'
     );
     expect(registrationCheckbox).toHaveFocus();
     await screen.findByRole('textbox', {

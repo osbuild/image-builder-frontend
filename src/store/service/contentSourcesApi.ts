@@ -278,6 +278,10 @@ export type ApiRepositoryResponse = {
   distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
+  /** Number of consecutive failed snapshots */
+  failed_snapshot_count?: number | undefined;
+  /** The feature name this repo requires */
+  feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */
@@ -328,6 +332,10 @@ export type ApiRepositoryResponseRead = {
   distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
+  /** Number of consecutive failed snapshots */
+  failed_snapshot_count?: number | undefined;
+  /** The feature name this repo requires */
+  feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */
@@ -448,6 +456,10 @@ export type ApiRepositoryImportResponse = {
   distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
+  /** Number of consecutive failed snapshots */
+  failed_snapshot_count?: number | undefined;
+  /** The feature name this repo requires */
+  feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */
@@ -504,6 +516,10 @@ export type ApiRepositoryImportResponseRead = {
   distribution_versions?: string[] | undefined;
   /** Number of consecutive failed introspections */
   failed_introspections_count?: number | undefined;
+  /** Number of consecutive failed snapshots */
+  failed_snapshot_count?: number | undefined;
+  /** The feature name this repo requires */
+  feature_name?: string | undefined;
   /** GPG key for repository */
   gpg_key?: string | undefined;
   /** Label used to configure the yum repository on clients */

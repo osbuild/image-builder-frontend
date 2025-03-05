@@ -5,6 +5,7 @@ import { Text, Form, Title, FormGroup } from '@patternfly/react-core';
 import ActivationKeyInformation from './ActivationKeyInformation';
 import ActivationKeysList from './ActivationKeysList';
 import Registration from './Registration';
+import SatelliteRegistration from './SatelliteRegistration';
 
 import { useAppSelector } from '../../../../store/hooks';
 import {
@@ -26,10 +27,13 @@ const RegistrationStep = () => {
         system during initial boot.
       </Text>
       <Registration />
-      {!process.env.IS_ON_PREMISE && <ActivationKeysList />}
+      {registrationType === 'register-satellite' && <SatelliteRegistration />}
+      {!process.env.IS_ON_PREMISE &&
+        registrationType !== 'register-satellite' && <ActivationKeysList />}
       {!process.env.IS_ON_PREMISE &&
         activationKey &&
-        registrationType !== 'register-later' && (
+        registrationType !== 'register-later' &&
+        registrationType !== 'register-satellite' && (
           <FormGroup
             label={'Selected activation key'}
             data-testid="selected-activation-key"
