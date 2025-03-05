@@ -352,7 +352,7 @@ describe('Import modal', () => {
     });
     expect(sizeValue).toBeInTheDocument();
 
-    // Repository snapshot
+    // Repository snapshot/Reproducible builds
     await clickNext();
 
     // Custom Repos step
