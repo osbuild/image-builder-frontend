@@ -78,6 +78,7 @@ import {
   selectUserAdministrator,
   selectFirewall,
   selectServices,
+  selectTemplate,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -440,6 +441,7 @@ export const ContentList = () => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
+  const template = useAppSelector(selectTemplate);
 
   const customAndRecommendedRepositoryUUIDS = useMemo(
     () =>
@@ -484,6 +486,8 @@ export const ContentList = () => {
         return 'Use latest';
       case !!snapshotDate:
         return `State as of ${yyyyMMddFormat(new Date(snapshotDate))}`;
+      case !!template:
+        return 'Use a content template';
       default:
         return '';
     }
