@@ -14,7 +14,6 @@ BuildArch:      noarch
 BuildRequires:  gettext
 BuildRequires:  libappstream-glib
 BuildRequires:  make
-BuildRequires:  nodejs
 
 Requires:       cockpit
 Requires:       cockpit-files
