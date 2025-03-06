@@ -99,11 +99,12 @@ const getRows = async () => {
 
 const comparePackageSearchResults = async () => {
   const availablePackages = await getRows();
+
   await waitFor(() => expect(availablePackages).toHaveLength(3));
 
   expect(availablePackages[0]).toHaveTextContent('test');
-  expect(availablePackages[1]).toHaveTextContent('testPkg');
-  expect(availablePackages[2]).toHaveTextContent('lib-test');
+  expect(availablePackages[1]).toHaveTextContent('test-lib');
+  expect(availablePackages[2]).toHaveTextContent('testPkg');
 };
 
 const clickFirstPackageCheckbox = async () => {
@@ -341,7 +342,7 @@ describe('Step Packages', () => {
 
     await clearSearchInput();
     await typeIntoSearchBox('mock');
-    await screen.findByText(/mockPkg/);
+    await screen.findByText(/mock-lib/);
 
     user.click(checkboxes[0]);
     user.click(checkboxes[1]);
@@ -353,7 +354,7 @@ describe('Step Packages', () => {
     await toggleSelected();
     const availablePackages = await getRows();
     expect(availablePackages[0]).toHaveTextContent('test');
-    expect(availablePackages[1]).toHaveTextContent('testPkg');
+    expect(availablePackages[1]).toHaveTextContent('test-lib');
   });
 
   test('should display recommendations', async () => {

@@ -18,16 +18,16 @@ export const mockSourcesPackagesResults = (
   if (!isDistroPkgSearch) {
     return [
       {
-        package_name: 'testPkg-sources',
-        summary: 'test package summary',
-      },
-      {
-        package_name: 'lib-test-sources',
-        summary: 'lib-test package summary',
-      },
-      {
         package_name: 'test-sources',
         summary: 'summary for test package',
+      },
+      {
+        package_name: 'test-sources-lib',
+        summary: 'test-lib package summary',
+      },
+      {
+        package_name: 'testPkg-sources',
+        summary: 'test package summary',
       },
     ];
   }
@@ -35,32 +35,32 @@ export const mockSourcesPackagesResults = (
   if (search === 'test') {
     return [
       {
-        package_name: 'testPkg',
-        summary: 'test package summary',
-      },
-      {
-        package_name: 'lib-test',
-        summary: 'lib-test package summary',
-      },
-      {
         package_name: 'test',
         summary: 'summary for test package',
+      },
+      {
+        package_name: 'test-lib',
+        summary: 'test-lib package summary',
+      },
+      {
+        package_name: 'testPkg',
+        summary: 'test package summary',
       },
     ];
   }
   if (search === 'mock') {
     return [
       {
-        package_name: 'mockPkg',
-        summary: 'test package summary',
-      },
-      {
-        package_name: 'lib-mock',
-        summary: 'lib-test package summary',
-      },
-      {
         package_name: 'mock',
         summary: 'summary for test package',
+      },
+      {
+        package_name: 'mock-lib',
+        summary: 'test-lib package summary',
+      },
+      {
+        package_name: 'mockPkg',
+        summary: 'test package summary',
       },
     ];
   }
@@ -88,8 +88,8 @@ export const mockSourcesGroupsResults = (
 
 export const mockPkgResultAlphaContentSources: ApiRepositoryRpm[] = [
   {
-    name: 'lib-test',
-    summary: 'lib-test package summary',
+    name: 'test-lib',
+    summary: 'test-lib package summary',
     version: '1.0',
   },
   {

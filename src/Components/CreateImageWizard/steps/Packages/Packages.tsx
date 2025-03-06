@@ -649,7 +649,9 @@ const Packages = () => {
         selectedPackages.push(...currentlyRemovedPackages);
       }
       if (toggleSourceRepos === RepoToggle.INCLUDED) {
-        return selectedPackages;
+        return selectedPackages.sort((a, b) =>
+          sortfn(a.name, b.name, debouncedSearchTerm)
+        );
       } else {
         return [];
       }
@@ -666,7 +668,7 @@ const Packages = () => {
     packages,
     toggleSelected,
     toggleSourceRepos,
-  ]).sort((a, b) => sortfn(a.name, b.name, debouncedSearchTerm));
+  ]);
 
   const transformedGroups = useMemo(() => {
     let combinedGroupData: GroupWithRepositoryInfo[] = [];
@@ -733,7 +735,7 @@ const Packages = () => {
     groups,
     toggleSelected,
     toggleSourceRepos,
-  ]).sort((a, b) => sortfn(a.name, b.name, debouncedSearchTerm));
+  ]);
 
   const handleSearch = async (
     event: React.FormEvent<HTMLInputElement>,
