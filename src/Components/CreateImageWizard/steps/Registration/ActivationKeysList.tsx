@@ -4,25 +4,20 @@ import {
   Alert,
   FormGroup,
   Spinner,
-  Button,
   Text,
   TextContent,
-  Popover,
 } from '@patternfly/react-core';
 import {
   Select,
   SelectOption,
   SelectVariant,
 } from '@patternfly/react-core/deprecated';
-import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import {
-  ACTIVATION_KEYS_URL,
-  CDN_PROD_URL,
-  CDN_STAGE_URL,
-} from '../../../../constants';
+import ManageKeysButton from './components/ManageKeysButton';
+import PopoverActivation from './components/PopoverActivation';
+
+import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   useListActivationKeysQuery,
@@ -37,67 +32,6 @@ import {
 } from '../../../../store/wizardSlice';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 import { generateRandomId } from '../../utilities/generateRandomId';
-
-export const PopoverActivation = () => {
-  const [orgId, setOrgId] = useState<string | undefined>(undefined);
-  const { auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const userData = await auth?.getUser();
-      const id = userData?.identity?.internal?.org_id;
-      setOrgId(id);
-    })();
-  });
-  return (
-    <Popover
-      hasAutoWidth
-      maxWidth="35rem"
-      bodyContent={
-        <TextContent>
-          <Text>
-            Activation keys enable you to register a system with appropriate
-            subscriptions, system purpose, and repositories attached.
-          </Text>
-          <Text>
-            If using an activation key with command line registration, you must
-            provide your organization&apos;s ID.
-          </Text>
-          {orgId ? (
-            <Text>Your organization&apos;s ID is {orgId}</Text>
-          ) : (
-            <Spinner size="md" />
-          )}
-        </TextContent>
-      }
-    >
-      <Button
-        variant="plain"
-        aria-label="Activation key popover"
-        aria-describedby="subscription-activation-key"
-        className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0 pf-v5-u-pr-0"
-      >
-        <HelpIcon />
-      </Button>
-    </Popover>
-  );
-};
-
-const ManageKeysButton = () => {
-  return (
-    <Button
-      component="a"
-      target="_blank"
-      variant="link"
-      icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
-      isInline
-      href={ACTIVATION_KEYS_URL}
-    >
-      Activation keys page
-    </Button>
-  );
-};
 
 const ActivationKeysList = () => {
   const dispatch = useAppDispatch();
