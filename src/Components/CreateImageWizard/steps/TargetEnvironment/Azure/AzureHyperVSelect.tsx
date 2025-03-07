@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 
-import { FormGroup } from '@patternfly/react-core';
 import {
+  FormGroup,
+  MenuToggle,
+  MenuToggleElement,
   Select,
+  SelectList,
   SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+} from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -42,25 +44,32 @@ export const AzureHyperVSelect = () => {
     />,
   ];
 
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      data-testid="azure-hyper-v-generation-select"
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      isFullWidth
+    >
+      {hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
+    </MenuToggle>
+  );
+
   return (
     <>
-      <FormGroup
-        isRequired
-        label="HyperV Generation"
-        data-testid="azure-hyper-v-generation-select"
-      >
+      <FormGroup isRequired label="HyperV Generation">
         <Select
           ouiaId="hyperv_gen_select"
-          variant={SelectVariant.single}
-          onToggle={handleToggle}
-          onSelect={handleSelect}
+          isScrollable
           isOpen={isOpen}
-          selections={
-            hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'
-          }
-          value={hyperVGeneration}
+          selected={hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
+          onSelect={handleSelect}
+          onOpenChange={handleToggle}
+          toggle={toggle}
+          shouldFocusFirstItemOnOpen={false}
         >
-          {selectOptions}
+          <SelectList>{selectOptions}</SelectList>
         </Select>
       </FormGroup>
     </>
