@@ -3,9 +3,11 @@ import React, { useState } from 'react';
 import {
   Dropdown,
   DropdownItem,
-  DropdownToggle,
-  DropdownToggleCheckbox,
-} from '@patternfly/react-core/deprecated';
+  DropdownList,
+  MenuToggle,
+  MenuToggleCheckbox,
+  MenuToggleElement,
+} from '@patternfly/react-core';
 
 import { ApiRepositoryResponseRead } from '../../../../../store/contentSourcesApi';
 
@@ -42,26 +44,31 @@ export function BulkSelect({
 
   return (
     <Dropdown
-      toggle={
-        <DropdownToggle
-          id="stacked-example-toggle"
+      toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+        <MenuToggle
+          id="bulk-select-toggle"
+          data-testid="bulk-select-toggle"
+          ref={toggleRef}
           isDisabled={isDisabled}
-          splitButtonItems={[
-            <DropdownToggleCheckbox
-              id="example-checkbox-1"
-              key="split-checkbox"
-              aria-label="Select all"
-              isChecked={allChecked || someChecked ? null : false}
-              onClick={handleSelectPage}
-            />,
-          ]}
-          onToggle={toggleDropdown}
+          splitButtonOptions={{
+            items: [
+              <MenuToggleCheckbox
+                id="bulk-select-checkbox"
+                key="split-checkbox"
+                aria-label="Select all"
+                isChecked={allChecked || someChecked ? null : false}
+                onClick={handleSelectPage}
+              />,
+            ],
+          }}
+          onClick={toggleDropdown}
         >
           {someChecked ? `${selected.size} selected` : null}
-        </DropdownToggle>
-      }
+        </MenuToggle>
+      )}
       isOpen={dropdownIsOpen}
-      dropdownItems={[
+    >
+      <DropdownList>
         <DropdownItem
           key="none"
           isDisabled={!selected.size}
@@ -69,7 +76,7 @@ export function BulkSelect({
             deselectAll();
             toggleDropdown();
           }}
-        >{`Clear all (${selected.size} items)`}</DropdownItem>,
+        >{`Clear all (${selected.size} items)`}</DropdownItem>
         <DropdownItem
           key="page"
           isDisabled={!contentList.length}
@@ -79,8 +86,8 @@ export function BulkSelect({
           }}
         >{`${allChecked ? 'Remove' : 'Select'} page (${
           perPage > contentList.length ? contentList.length : perPage
-        } items)`}</DropdownItem>,
-      ]}
-    />
+        } items)`}</DropdownItem>
+      </DropdownList>
+    </Dropdown>
   );
 }
