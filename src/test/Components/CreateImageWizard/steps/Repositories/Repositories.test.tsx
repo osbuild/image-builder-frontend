@@ -148,10 +148,7 @@ describe('Step Custom repositories', () => {
   test('correct number of repositories is fetched', async () => {
     await renderCreateMode();
     await goToRepositoriesStep();
-
-    const select = await screen.findByRole('button', {
-      name: /^select$/i,
-    });
+    const select = await screen.findByTestId('bulk-select-toggle');
     user.click(select);
     await screen.findByText(/select page \(10 items\)/i);
   });
