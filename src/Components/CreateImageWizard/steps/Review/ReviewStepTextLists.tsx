@@ -89,7 +89,7 @@ import {
 } from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
-import { PopoverActivation } from '../Registration/ActivationKeysList';
+import PopoverActivation from '../Registration/components/PopoverActivation';
 
 const ExpirationWarning = () => {
   return (
