@@ -1,0 +1,68 @@
+name: Hosted playwright tests
+
+on:
+  workflow_run:
+    workflows: ["Development checks"]
+    types: [completed]
+  workflow_dispatch:
+
+jobs:
+  playwright-tests:
+    runs-on:
+      - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
+      - instance-size:medium
+      - buildspec-override:true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get current PR URL
+        id: get-pr-url
+        run: |
+          # Extract the pull request URL from the event payload
+          pr_url=$(jq -r '.pull_request.html_url' < "$GITHUB_EVENT_PATH")
+          echo "Pull Request URL: $pr_url"
+          # Set the PR URL as an output using the environment file
+          echo "pr_url=$pr_url" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install front-end dependencies
+        run: npm ci
+
+      - name: Install playwright
+        run: npx playwright install --with-deps
+
+      # This prevents an error related to minimum watchers when running the front-end and playwright
+      - name: Increase file watchers limit
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+      - name: Update /etc/hosts
+        run: sudo npm run patch:hosts
+
+      - name: Start front-end server
+        run: |
+          npm run start:stage &
+          npx wait-on https://localhost:1337
+
+      - name: Run front-end Playwright tests
+        env:
+          USER: ${{ secrets.HOSTED_STAGE_USER }}
+          PASSWORD: ${{ secrets.HOSTED_STAGE_PASSWORD }}
+          BASE_URL: https://stage.foo.redhat.com:1337
+        run: npx playwright test
+
+      - name: Store front-end Test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 10

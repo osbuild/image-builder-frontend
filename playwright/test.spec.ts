@@ -1,27 +1,44 @@
 import { expect, test } from '@playwright/test';
 
+import { v4 as uuidv4 } from 'uuid';
+
 import {
-  loginCockpit,
+  login,
   ibFrame,
+  isHosted,
 } from './lib/lib';
 
-test.describe('test', () => {
+test.describe.serial('test', () => {
+  let blueprintName = uuidv4();
   test('create blueprint', async ({ page }) => {
-    await loginCockpit(page, 'admin', 'foobar');
-    // await enableComposer(page);
+    await login(page)
     const frame = await ibFrame(page);
 
-    // image output
     await frame.getByRole('heading', { name: 'Images About image builder' });
     await frame.getByRole('heading', { name: 'Blueprints' });
-    await frame.getByRole('heading', { name: 'No blueprints yet' });
-    await frame.getByTestId('create-blueprint-action-emptystate').click();
+    await frame.getByTestId('blueprints-create-button').click();
+
     await frame.getByRole('heading', { name: 'Image output' });
     await frame.getByTestId('checkbox-guest-image').click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
+    if (isHosted()) {
+      await frame.getByRole('heading', { name: 'Register systems using this image' });
+      await page.getByTestId('automatically-register-checkbox').uncheck();
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+      await frame.getByRole('heading', { name: 'Compliance' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    }
+
     await frame.getByRole('heading', { name: 'File system configuration' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    if (isHosted()) {
+      await frame.getByRole('heading', { name: 'Repository snapshot' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+      await frame.getByRole('heading', { name: 'Custom repositories' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    }
 
     await frame.getByRole('heading', { name: 'Additional packages' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
@@ -47,25 +64,33 @@ test.describe('test', () => {
     await frame.getByRole('heading', { name: 'Systemd services' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
+    if (isHosted()) {
+      await frame.getByRole('heading', { name: 'First boot configuration' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    }
+
     await frame.getByRole('heading', { name: 'Details' });
-    await frame.getByTestId('blueprint').fill('test-blueprint');
-    await expect(frame.getByTestId('blueprint')).toHaveValue('test-blueprint');
+    await frame.getByTestId('blueprint').fill(blueprintName);
+    await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
     await frame.getByTestId('close-button-saveandbuild-modal').click();
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
-    await frame.getByText('test-blueprint');
+    await frame.getByText(blueprintName);
   });
 
   test('edit blueprint', async ({ page }) => {
-    // package searching is really slow the first time
-    test.setTimeout(300000)
+    // package searching is really slow the first time in cockpit
+    if (!isHosted()) {
+      test.setTimeout(300000);
+    }
 
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
-    await frame.getByText('test-blueprint').click();
+    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame.getByText(blueprintName, { exact: true }).first().click();
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
@@ -86,21 +111,22 @@ test.describe('test', () => {
   });
 
   test('build blueprint', async ({ page }) => {
-    // add time enough for depsolving
-    test.setTimeout(60 * 1000);
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
-    await frame.getByText('test-blueprint').click();
+    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame.getByText(blueprintName, { exact: true }).first().click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
 
     // make sure the image is present
-    await frame.getByTestId('images-table').getByText('Fedora');
+    await frame.getByTestId('images-table').getByRole('button', { name: 'Details' }).click();
+    await frame.getByText('Build Information');
   });
 
   test('delete blueprint', async ({ page }) => {
-    await loginCockpit(page, 'admin', 'foobar');
+    await login(page);
     const frame = await ibFrame(page);
-    await frame.getByText('test-blueprint').click();
+    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame.getByText(blueprintName, { exact: true }).first().click();
     await frame.getByTestId('blueprint-action-menu-toggle').click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
     await frame.getByRole('button', { name: 'Delete' }).click();

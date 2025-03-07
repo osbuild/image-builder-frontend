@@ -1,0 +1,32 @@
+# codebuild buildspec
+version: 0.2
+run-as: root
+
+phases:
+  install:
+    commands:
+      - echo Entered the install phase...
+      - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
+      - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+
+  pre_build:
+    commands:
+      - echo Entered the pre_build phase...
+
+  build:
+    commands:
+      - echo Entered the build phase...
+
+  post_build:
+    commands:
+      - echo Entered the post_build phase...
+
+cache:
+  paths:
+    - "/root/.cache/ms-playwright"
+    - "/root/.docker"
+    - "/root/.npm"
+    - "/root/.yarn"
+    - "/root/.cache/go-build"
+    - "/root/go"
+    - "/root/.composer/cache"
