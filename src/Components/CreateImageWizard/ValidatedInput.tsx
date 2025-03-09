@@ -50,6 +50,7 @@ type ValidationInputProp = TextInputProps &
       event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
       value: string
     ) => void;
+    isRequired?: boolean;
   };
 
 type ErrorMessageProps = {
@@ -117,12 +118,13 @@ export const ValidatedInputAndTextArea = ({
   onChange,
   ariaLabel,
   inputType = 'textInput',
+  isRequired,
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName];
   const hasError = errorMessage !== '';
 
   const [isPristine, setIsPristine] = useState(!value);
-  const validated = getValidationState(isPristine, errorMessage);
+  const validated = getValidationState(isPristine, errorMessage, isRequired);
 
   const handleBlur = () => {
     if (value) {
@@ -164,9 +166,14 @@ export const ValidatedInputAndTextArea = ({
 
 const getValidationState = (
   isPristine: boolean,
-  errorMessage: string
+  errorMessage: string,
+  isRequired: boolean | undefined
 ): ValidationResult => {
-  const validated = isPristine ? 'default' : errorMessage ? 'error' : 'success';
+  const validated = isPristine
+    ? 'default'
+    : (isRequired && errorMessage) || errorMessage
+    ? 'error'
+    : 'success';
 
   return validated;
 };
