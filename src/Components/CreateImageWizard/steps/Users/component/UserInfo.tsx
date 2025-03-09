@@ -18,9 +18,9 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useUsersValidation } from '../../../utilities/useValidation';
 import {
-  HookPasswordValidatedInput,
   HookValidatedInput,
   ValidatedInputAndTextArea,
+  ValidatedPasswordInput,
 } from '../../../ValidatedInput';
 const UserInfo = () => {
   const dispatch = useAppDispatch();
@@ -83,9 +83,9 @@ const UserInfo = () => {
         />
       </FormGroup>
       <FormGroup isRequired label="Password">
-        <HookPasswordValidatedInput
-          ariaLabel="blueprint user password"
+        <ValidatedPasswordInput
           value={userPassword || ''}
+          ariaLabel="blueprint user password"
           onChange={(_e, value) => handlePasswordChange(_e, value)}
           placeholder="Enter password"
           stepValidation={stepValidation}

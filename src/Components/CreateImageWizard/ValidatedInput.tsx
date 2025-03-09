@@ -25,6 +25,8 @@ type ValidatedTextInputPropTypes = TextInputProps & {
   placeholder?: string;
 };
 
+type ValidationResult = 'default' | 'success' | 'error';
+
 type HookValidatedInputPropTypes = TextInputProps &
   TextAreaProps & {
     dataTestId?: string | undefined;
@@ -52,47 +54,61 @@ type ValidationInputProp = TextInputProps &
     ) => void;
   };
 
+type ValidatedPasswordInput = TextInputProps & {
+  value: string;
+  stepValidation: StepValidation;
+  fieldName: string;
+  placeholder: string;
+  ariaLabel: string;
+  onChange: (event: React.FormEvent<HTMLInputElement>, value: string) => void;
+};
+
 type ErrorMessageProps = {
   errorMessage: string;
 };
 
-type ValidationResult = 'default' | 'success' | 'error';
-
-export const HookPasswordValidatedInput = ({
-  ariaLabel,
-  placeholder,
-  dataTestId,
+export const ValidatedPasswordInput = ({
   value,
-  ouiaId,
   stepValidation,
   fieldName,
   onChange,
-  warning = undefined,
-  inputType,
-  isDisabled,
-}: HookValidatedInputPropTypes) => {
+  placeholder,
+  ariaLabel,
+}: ValidatedPasswordInput) => {
+  const errorMessage = stepValidation.errors[fieldName];
+  const hasError = errorMessage !== '';
+
+  const [isPristine, setIsPristine] = useState(!value);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
   };
+  const validated = getValidationState(isPristine, errorMessage);
+
+  const handleBlur = () => {
+    if (value) {
+      setIsPristine(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!value) {
+      setIsPristine(true);
+    }
+  }, [value, setIsPristine]);
 
   return (
     <>
       <InputGroup>
         <InputGroupItem isFill>
-          <HookValidatedInput
-            type={isPasswordVisible ? 'text' : 'password'}
-            ouiaId={ouiaId || ''}
-            data-testid={dataTestId}
+          <TextInput
             value={value}
-            onChange={onChange!}
-            stepValidation={stepValidation}
-            ariaLabel={ariaLabel || ''}
-            fieldName={fieldName}
-            placeholder={placeholder || ''}
-            inputType={inputType || 'textInput'}
-            warning={warning || ''}
-            isDisabled={isDisabled || false}
+            aria-label={ariaLabel}
+            validated={validated}
+            placeholder={placeholder}
+            type={isPasswordVisible ? 'text' : 'password'}
+            onChange={onChange}
+            onBlur={handleBlur}
           />
         </InputGroupItem>
         <InputGroupItem>
@@ -105,6 +121,7 @@ export const HookPasswordValidatedInput = ({
           </Button>
         </InputGroupItem>
       </InputGroup>
+      {hasError && <ErrorMessage errorMessage={errorMessage} />}
     </>
   );
 };
