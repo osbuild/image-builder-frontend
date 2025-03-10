@@ -16,9 +16,11 @@ import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
   COMPLIANCE_URL,
 } from '../../../../constants';
-import { useBackendPrefetch } from '../../../../store/backendApi';
+import {
+  useBackendPrefetch,
+  useGetOscapCustomizationsQuery,
+} from '../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
 import {
   ComplianceType,
   selectComplianceProfileID,

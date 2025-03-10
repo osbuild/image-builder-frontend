@@ -8,6 +8,7 @@ import path from 'path';
 // We also needed to create an alias in vitest to make this work.
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import TOML from 'toml';
 import { v4 as uuidv4 } from 'uuid';
 
 // We have to work around RTK query here, since it doesn't like splitting
@@ -18,7 +19,10 @@ import { v4 as uuidv4 } from 'uuid';
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
 
-import { mapHostedToOnPrem } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import {
+  mapHostedToOnPrem,
+  mapOnPremToHosted,
+} from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR } from '../../constants';
 import {
   ComposeBlueprintApiResponse,
@@ -48,6 +52,8 @@ import {
   UpdateBlueprintApiResponse,
   UpdateBlueprintApiArg,
   DistributionProfileItem,
+  GetOscapCustomizationsApiResponse,
+  GetOscapCustomizationsApiArg,
 } from '../service/imageBuilderApi';
 
 const lookupDatastreamDistro = (distribution: string) => {
@@ -347,6 +353,71 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      getOscapCustomizations: builder.query<
+        GetOscapCustomizationsApiResponse,
+        GetOscapCustomizationsApiArg
+      >({
+        queryFn: async ({ distribution, profile }) => {
+          try {
+            const dsDistro = lookupDatastreamDistro(distribution);
+            let result = (await cockpit.spawn(
+              [
+                'oscap',
+                'xccdf',
+                'generate',
+                'fix',
+                '--fix-type',
+                'blueprint',
+                '--profile',
+                profile,
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const parsed = TOML.parse(result);
+            const blueprint = mapOnPremToHosted(parsed);
+
+            result = (await cockpit.spawn(
+              [
+                'oscap',
+                'info',
+                '--profile',
+                profile,
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const descriptionLine = result
+              .split('\n')
+              .filter((s) => s.includes('Description: '));
+
+            const description =
+              descriptionLine.length > 0
+                ? descriptionLine[0].split('Description: ')[1]
+                : '';
+
+            return {
+              data: {
+                ...blueprint.customizations,
+                openscap: {
+                  profile_id: profile,
+                  // the profile name is stored in the description
+                  profile_name: blueprint.description,
+                  profile_description: description,
+                },
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
       composeBlueprint: builder.mutation<
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
@@ -526,6 +597,8 @@ export const {
   useUpdateBlueprintMutation,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
   useComposeBlueprintMutation,
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
