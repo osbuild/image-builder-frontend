@@ -30,6 +30,7 @@ import type {
   GcpShareMethod,
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
+import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
 import { RHEL_9, X86_64 } from '../constants';
 
 import type { RootState } from '.';
@@ -226,7 +227,7 @@ export const initialState: wizardState = {
     keyboard: '',
   },
   details: {
-    blueprintName: '',
+    blueprintName: generateDefaultName(RHEL_9, X86_64),
     blueprintDescription: '',
   },
   timezone: {
