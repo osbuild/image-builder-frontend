@@ -24,7 +24,11 @@ import {
   RHEL_10_BETA,
   RHEL_10,
 } from '../../../../constants';
-import { useGetOscapProfilesQuery } from '../../../../store/backendApi';
+import {
+  useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
+} from '../../../../store/backendApi';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -32,8 +36,6 @@ import {
   DistributionProfileItem,
   Filesystem,
   OpenScapProfile,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
   Services,
 } from '../../../../store/imageBuilderApi';
 import {

@@ -35,6 +35,14 @@ export const useGetOscapProfilesQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useGetOscapProfilesQuery
   : serviceQueries.useGetOscapProfilesQuery;
 
+export const useGetOscapCustomizationsQuery = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useGetOscapCustomizationsQuery
+  : serviceQueries.useGetOscapCustomizationsQuery;
+
+export const useLazyGetOscapCustomizationsQuery = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useLazyGetOscapCustomizationsQuery
+  : serviceQueries.useLazyGetOscapCustomizationsQuery;
+
 export const useComposeBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useComposeBlueprintMutation
   : serviceQueries.useComposeBlueprintMutation;
