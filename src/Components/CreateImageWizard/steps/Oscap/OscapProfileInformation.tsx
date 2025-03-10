@@ -10,21 +10,19 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { RELEASES } from '../../../../constants';
+import { useGetOscapCustomizationsQuery } from '../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import {
-  OpenScapProfile,
-  useGetOscapCustomizationsQuery,
-} from '../../../../store/imageBuilderApi';
+import { OpenScapProfile } from '../../../../store/imageBuilderApi';
 import {
   changeCompliance,
   selectCompliancePolicyID,
   selectComplianceProfileID,
   selectDistribution,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 type OscapProfileInformationOptionPropType = {
   allowChangingCompliancePolicy?: boolean;

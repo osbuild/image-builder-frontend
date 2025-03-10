@@ -7,6 +7,7 @@ import {
   TextContent,
   Text,
   Button,
+  Spinner,
 } from '@patternfly/react-core';
 import {
   Select,
@@ -24,7 +25,11 @@ import {
   RHEL_10_BETA,
   RHEL_10,
 } from '../../../../constants';
-import { useGetOscapProfilesQuery } from '../../../../store/backendApi';
+import {
+  useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
+} from '../../../../store/backendApi';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -32,8 +37,6 @@ import {
   DistributionProfileItem,
   Filesystem,
   OpenScapProfile,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
   Services,
 } from '../../../../store/imageBuilderApi';
 import {
@@ -288,6 +291,10 @@ const ProfileSelector = () => {
   };
 
   const options = () => {
+    if (isFetching) {
+      return [<OScapLoadingOption key="oscap-loading-option" />];
+    }
+
     if (profiles) {
       return [<OScapNoneOption key="oscap-none-option" />].concat(
         profiles.map((profile_id, index) => {
@@ -320,7 +327,6 @@ const ProfileSelector = () => {
     >
       {complianceType === 'openscap' && (
         <Select
-          loadingVariant={isFetching ? 'spinner' : undefined}
           ouiaId="profileSelect"
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
@@ -333,6 +339,9 @@ const ProfileSelector = () => {
           typeAheadAriaLabel="Select a profile"
           isDisabled={!isSuccess || hasWslTargetOnly}
           onFilter={(_event, value) => {
+            if (isFetching) {
+              return [<OScapLoadingOption key="oscap-loading-option" />];
+            }
             if (profiles) {
               return [<OScapNoneOption key="oscap-none-option" />].concat(
                 profiles.map((profile_id, index) => {
@@ -384,6 +393,16 @@ const ProfileSelector = () => {
 const OScapNoneOption = () => {
   return (
     <SelectOption value={{ toString: () => 'None', compareTo: () => false }} />
+  );
+};
+
+const OScapLoadingOption = () => {
+  return (
+    <SelectOption
+      value={{ toString: () => 'Loading...', compareTo: () => false }}
+    >
+      <Spinner size="lg" />
+    </SelectOption>
   );
 };
 
