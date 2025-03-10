@@ -164,7 +164,6 @@ const ActivationKeysList = () => {
         await createActivationKey({
           body: {
             name: defaultActivationKeyName,
-            serviceLevel: 'Self-Support',
           },
         });
         window.localStorage.setItem(
