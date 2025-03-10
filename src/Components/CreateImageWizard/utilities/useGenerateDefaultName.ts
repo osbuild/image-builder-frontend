@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import { blurElement } from '@testing-library/user-event/event/focus';
+
 import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
 import {
@@ -9,7 +11,7 @@ import {
   selectDistribution,
 } from '../../../store/wizardSlice';
 
-const generateDefaultName = (
+export const generateDefaultName = (
   distribution: Distributions,
   arch: ImageRequest['architecture']
 ) => {
@@ -31,10 +33,10 @@ export const useGenerateDefaultName = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
   const defaultNameRef = useRef(generateDefaultName(distribution, arch));
+
   useEffect(() => {
     const defaultName = generateDefaultName(distribution, arch);
-
-    if (!blueprintName || blueprintName === defaultNameRef.current) {
+    if (blueprintName === defaultNameRef.current) {
       dispatch(changeBlueprintName(defaultName));
       defaultNameRef.current = defaultName;
     }

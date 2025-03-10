@@ -17,7 +17,6 @@ import {
   selectBlueprintDescription,
   selectBlueprintName,
 } from '../../../../store/wizardSlice';
-import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
 import { HookValidatedInput } from '../../ValidatedInput';
 
