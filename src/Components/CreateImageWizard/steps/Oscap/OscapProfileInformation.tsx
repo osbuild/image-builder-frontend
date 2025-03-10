@@ -10,7 +10,6 @@ import {
   TextListItemVariants,
   TextListVariants,
 } from '@patternfly/react-core';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { RELEASES } from '../../../../constants';
 import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
@@ -25,6 +24,7 @@ import {
   selectComplianceProfileID,
   selectDistribution,
 } from '../../../../store/wizardSlice';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 type OscapProfileInformationOptionPropType = {
   allowChangingCompliancePolicy?: boolean;
