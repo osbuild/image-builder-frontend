@@ -31,8 +31,8 @@ const goToHostnameStep = async () => {
   if (!process.env.IS_ON_PREMISE) {
     await clickNext(); // Registration
     await clickRegisterLater();
-    await clickNext(); // OpenSCAP
   }
+  await clickNext(); // OpenSCAP
   await clickNext(); // File system configuration
   if (!process.env.IS_ON_PREMISE) {
     await clickNext(); // Snapshots
