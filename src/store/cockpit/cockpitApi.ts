@@ -47,7 +47,32 @@ import {
   ComposeResponse,
   UpdateBlueprintApiResponse,
   UpdateBlueprintApiArg,
+  DistributionProfileItem,
 } from '../service/imageBuilderApi';
+
+const lookupDatastreamDistro = (distribution: string) => {
+  if (distribution.startsWith('fedora')) {
+    return 'fedora';
+  }
+
+  if (distribution === 'centos-9') {
+    return 'cs9';
+  }
+
+  if (distribution === 'centos-10') {
+    return 'cs10';
+  }
+
+  if (distribution === 'rhel-9') {
+    return 'rhel9';
+  }
+
+  if (distribution === 'rhel-10') {
+    return 'rhel10';
+  }
+
+  throw 'Unknown distribution';
+};
 
 const getBlueprintsPath = async () => {
   const user = await cockpit.user();
@@ -293,13 +318,33 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetOscapProfilesApiResponse,
         GetOscapProfilesApiArg
       >({
-        queryFn: async () => {
-          // TODO: make a call to get the openscap profiles
-          // For now, just return an empty list so we can
-          // step through the wizard.
-          return {
-            data: [],
-          };
+        queryFn: async ({ distribution }) => {
+          try {
+            const dsDistro = lookupDatastreamDistro(distribution);
+            const result = (await cockpit.spawn(
+              [
+                'oscap',
+                'info',
+                '--profiles',
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const profiles = result
+              .split('\n')
+              .filter((profile) => profile !== '')
+              .map((profile) => profile.split(':')[0])
+              .map((profile) => profile as DistributionProfileItem);
+
+            return {
+              data: profiles,
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
       composeBlueprint: builder.mutation<
