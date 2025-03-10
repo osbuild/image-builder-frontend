@@ -128,7 +128,7 @@ const removeKernelArg = async (kernelArg: string) => {
   const user = userEvent.setup();
 
   const removeNosmtArgButton = await screen.findByRole('button', {
-    name: `close ${kernelArg}`,
+    name: `Close ${kernelArg}`,
   });
   await waitFor(() => user.click(removeNosmtArgButton));
 };

@@ -50,6 +50,8 @@ const goToReviewStep = async () => {
   await clickNext(); // Snapshots
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
+  await clickNext(); // Timezone
+  await clickNext(); // Locale
   await clickNext(); // Details
   await enterBlueprintName('Compliance test');
   await clickNext(); // Review

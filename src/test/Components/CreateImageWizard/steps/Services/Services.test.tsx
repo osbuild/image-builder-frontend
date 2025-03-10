@@ -101,7 +101,7 @@ const addEnabledService = async (service: string) => {
 const removeService = async (service: string) => {
   const user = userEvent.setup();
   const removeServiceButton = await screen.findByRole('button', {
-    name: `close ${service}`,
+    name: `Close ${service}`,
   });
   await waitFor(() => user.click(removeServiceButton));
 };

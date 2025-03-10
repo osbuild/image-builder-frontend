@@ -8,6 +8,8 @@ import {
   HelperText,
   HelperTextItem,
   FormHelperText,
+  Label,
+  LabelGroup,
   Popover,
   Select,
   SelectOption,
@@ -17,8 +19,6 @@ import {
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  ChipGroup,
-  Chip,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import {
@@ -168,19 +168,19 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
           placeholder="Select region"
           isExpanded={isOpen}
         >
-          <ChipGroup aria-label="Selected regions">
+          <LabelGroup aria-label="Selected regions">
             {selected.map((selection, index) => (
-              <Chip
+              <Label
                 key={index}
-                onClick={(ev) => {
+                onClose={(ev) => {
                   ev.stopPropagation();
                   onSelect(selection);
                 }}
               >
                 {selection}
-              </Chip>
+              </Label>
             ))}
-          </ChipGroup>
+          </LabelGroup>
         </TextInputGroupMain>
         <TextInputGroupUtilities>
           {selected.length > 0 && (

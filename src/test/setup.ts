@@ -63,10 +63,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.pkgrecs.enabled':
         return true;
-      case 'image-builder.timezone.enabled':
-        return true;
-      case 'image-builder.locale.enabled':
-        return true;
       case 'image-builder.hostname.enabled':
         return true;
       case 'image-builder.kernel.enabled':

@@ -138,6 +138,9 @@ const Packages = () => {
       origin: ContentOrigin.EXTERNAL,
     });
 
+  const [currentlyRemovedPackages, setCurrentlyRemovedPackages] = useState<
+    IBPackageWithRepositoryInfo[]
+  >([]);
   const [isRepoModalOpen, setIsRepoModalOpen] = useState(false);
   const [isSelectingPackage, setIsSelectingPackage] = useState<
     IBPackageWithRepositoryInfo | undefined
@@ -692,6 +695,9 @@ const Packages = () => {
       }
     } else {
       const selectedPackages = [...packages];
+      if (currentlyRemovedPackages.length > 0) {
+        selectedPackages.push(...currentlyRemovedPackages);
+      }
       if (toggleSourceRepos === RepoToggle.INCLUDED) {
         return selectedPackages;
       } else {
@@ -699,6 +705,7 @@ const Packages = () => {
       }
     }
   }, [
+    currentlyRemovedPackages,
     dataCustomPackages,
     dataDistroPackages,
     dataRecommendedPackages,
@@ -808,9 +815,13 @@ const Packages = () => {
         setIsSelectingPackage(pkg);
       } else {
         dispatch(addPackage(pkg));
+        setCurrentlyRemovedPackages((prev) =>
+          prev.filter((curr) => curr.name !== pkg.name)
+        );
       }
     } else {
       dispatch(removePackage(pkg.name));
+      setCurrentlyRemovedPackages((last) => [...last, pkg]);
       if (
         isSuccessEpelRepo &&
         epelRepo?.data &&
@@ -855,12 +866,14 @@ const Packages = () => {
 
   const handleFilterToggleClick = (event: React.MouseEvent) => {
     const id = event.currentTarget.id;
+    setCurrentlyRemovedPackages([]);
     setPage(1);
     setToggleSelected(id);
   };
 
   const handleRepoToggleClick = (type: RepoToggle) => {
     if (toggleSourceRepos !== type) {
+      setCurrentlyRemovedPackages([]);
       setPage(1);
       setToggleSourceRepos(type);
     }

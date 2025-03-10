@@ -284,6 +284,49 @@ describe('Step Packages', () => {
     expect(firstPkgCheckbox.checked).toEqual(true);
   });
 
+  test('Removing packages should not immediately remove them, only uncheck checkboxes', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await typeIntoSearchBox('test');
+
+    const checkboxes = await getAllCheckboxes();
+    const firstPkgCheckbox = checkboxes[0] as HTMLInputElement;
+    const secondPkgCheckbox = checkboxes[1] as HTMLInputElement;
+    const thirdPkgCheckbox = checkboxes[2] as HTMLInputElement;
+
+    // Select multiple packages
+    expect(firstPkgCheckbox.checked).toBe(false);
+    expect(secondPkgCheckbox.checked).toBe(false);
+    expect(thirdPkgCheckbox.checked).toBe(false);
+    user.click(firstPkgCheckbox);
+    user.click(secondPkgCheckbox);
+    user.click(thirdPkgCheckbox);
+    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(true));
+    await waitFor(() => expect(secondPkgCheckbox.checked).toBe(true));
+    await waitFor(() => expect(thirdPkgCheckbox.checked).toBe(true));
+
+    await toggleSelected();
+
+    // Deselect packages
+    user.click(firstPkgCheckbox);
+    await waitFor(() => expect(firstPkgCheckbox.checked).toBe(false));
+    user.click(secondPkgCheckbox);
+    await waitFor(() => expect(secondPkgCheckbox.checked).toBe(false));
+
+    // Ensure packages remain but are unchecked
+    const packageRows = await getRows();
+    expect(packageRows.length).toBeGreaterThan(2);
+
+    // Toggle next and back
+    await clickNext();
+    await clickBack();
+    await toggleSelected();
+
+    // Ensure packages are removed
+    const updatedRows = await getRows();
+    expect(updatedRows.length).toBe(1);
+  });
+
   test('should display empty available state on failed search', async () => {
     await renderCreateMode();
     await goToPackagesStep();
