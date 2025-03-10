@@ -3,7 +3,14 @@ import userEvent from '@testing-library/user-event';
 
 import { clickNext, renderCreateMode } from './wizardTestUtils';
 
-const getSourceDropdown = async () => {
+const getAwsSourceDropdown = async () => {
+  const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
+  await waitFor(() => expect(sourceDropdown).toBeEnabled());
+
+  return sourceDropdown;
+};
+
+const getAzureSourceDropdown = async () => {
   const sourceDropdown = await screen.findByRole('textbox', {
     name: /select source/i,
   });
@@ -88,7 +95,7 @@ describe('Keyboard accessibility', () => {
         name: /use an account configured from sources\./i,
       })
     ).toHaveFocus();
-    const awsSourceDropdown = await getSourceDropdown();
+    const awsSourceDropdown = await getAwsSourceDropdown();
     await waitFor(() => user.click(awsSourceDropdown));
     const awsSource = await screen.findByRole('option', {
       name: /my_source/i,
@@ -117,7 +124,7 @@ describe('Keyboard accessibility', () => {
         name: /use an account configured from sources\./i,
       })
     ).toHaveFocus();
-    const azureSourceDropdown = await getSourceDropdown();
+    const azureSourceDropdown = await getAzureSourceDropdown();
     await waitFor(() => user.click(azureSourceDropdown));
     const azureSource = await screen.findByRole('option', {
       name: /azureSource1/i,
