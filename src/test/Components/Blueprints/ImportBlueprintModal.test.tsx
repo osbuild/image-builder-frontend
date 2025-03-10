@@ -286,9 +286,7 @@ describe('Import modal', () => {
   });
 
   const getSourceDropdown = async () => {
-    const sourceDropdown = await screen.findByRole('textbox', {
-      name: /select source/i,
-    });
+    const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
     await waitFor(() => expect(sourceDropdown).toBeEnabled());
 
     return sourceDropdown;
