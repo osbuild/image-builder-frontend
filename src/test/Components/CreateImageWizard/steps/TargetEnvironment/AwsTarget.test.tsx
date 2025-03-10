@@ -110,9 +110,7 @@ const chooseSourcesOption = async () => {
 };
 
 const getSourceDropdown = async () => {
-  const sourceDropdown = await screen.findByRole('textbox', {
-    name: /select source/i,
-  });
+  const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
   await waitFor(() => expect(sourceDropdown).toBeEnabled());
 
   return sourceDropdown;
@@ -120,9 +118,7 @@ const getSourceDropdown = async () => {
 
 const selectSource = async () => {
   const user = userEvent.setup();
-  const sourceTexbox = await screen.findByRole('textbox', {
-    name: /select source/i,
-  });
+  const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
   await waitFor(async () => user.click(sourceTexbox));
 
   const sourceOption = await screen.findByRole('option', {
