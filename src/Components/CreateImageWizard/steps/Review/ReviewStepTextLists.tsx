@@ -498,7 +498,7 @@ export const ContentList = () => {
               component={TextListItemVariants.dt}
               className="pf-v5-u-min-width"
             >
-              Reproducible builds
+              Reproducible build
             </TextListItem>
             <TextListItem
               component={TextListItemVariants.dd}
