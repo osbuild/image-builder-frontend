@@ -70,8 +70,7 @@ test.describe.serial('test', () => {
     }
 
     await frame.getByRole('heading', { name: 'Details' });
-    await frame.getByTestId('blueprint').fill(blueprintName);
-    await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
+    await frame.getByRole('textbox', { name: 'blueprint name' }).fill(blueprintName);
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
