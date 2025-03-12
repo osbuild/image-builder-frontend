@@ -164,12 +164,12 @@ const ActivationKeysList = () => {
             name: defaultActivationKeyName,
             serviceLevel: 'Self-Support',
           },
-        });
+        }).unwrap();
+
         window.localStorage.setItem(
           'imageBuilder.recentActivationKey',
           defaultActivationKeyName
         );
-        refetch();
         dispatch(changeActivationKey(defaultActivationKeyName));
       } catch (error) {
         dispatch(
