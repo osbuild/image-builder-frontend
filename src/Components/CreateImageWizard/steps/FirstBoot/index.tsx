@@ -12,8 +12,11 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import { FIRST_BOOT_SERVICE } from '../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
+  addEnabledService,
+  removeEnabledService,
   selectFirstBootScript,
   setFirstBootScript,
 } from '../../../../store/wizardSlice';
@@ -74,6 +77,11 @@ const FirstBootStep = () => {
           isLanguageLabelVisible
           language={language}
           onCodeChange={(code) => {
+            if (!selectedScript && !!code) {
+              dispatch(addEnabledService(FIRST_BOOT_SERVICE));
+            } else if (!!selectedScript && !code) {
+              dispatch(removeEnabledService(FIRST_BOOT_SERVICE));
+            }
             // In case the user is on windows
             dispatch(setFirstBootScript(code.replace('\r\n', '\n')));
           }}
