@@ -28,18 +28,25 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
+import isRhel from '../../../../Utilities/isRhel';
+import {
+  useFlag,
+  useGetEnvironment,
+} from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
-
+  const { isFedoraEnv } = useGetEnvironment();
   const wslFlag = useFlag('image-builder.wsl.enabled');
 
-  const { data } = useGetArchitecturesQuery({
-    distribution: distribution,
-  });
+  const { data } = useGetArchitecturesQuery(
+    {
+      distribution: distribution,
+    },
+    { skip: isFedoraEnv && isRhel(distribution) }
+  );
   // TODO: Handle isFetching state (add skeletons)
   // TODO: Handle isError state (very unlikely...)
 
@@ -51,7 +58,7 @@ const TargetEnvironment = () => {
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
 
   useEffect(() => {
-    prefetchActivationKeys();
+    if (!isFedoraEnv) prefetchActivationKeys();
   }, []);
 
   const supportedEnvironments = data?.find(
