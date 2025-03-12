@@ -442,7 +442,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 </FileSystemContext.Provider>
               </WizardStep>,
               <WizardStep
-                name="Reproducible builds"
+                name="Reproducible build"
                 id="wizard-repository-snapshot"
                 key="wizard-repository-snapshot"
                 navItem={customStatusNavItem}

@@ -705,7 +705,7 @@ export const wizardSlice = createSlice({
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (action.payload === '') {
-        state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
+        state.snapshotting.snapshotDate = '';
       } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
       }
