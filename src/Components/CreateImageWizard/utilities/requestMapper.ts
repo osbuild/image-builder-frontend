@@ -6,6 +6,7 @@ import { parseSizeUnit } from './parseSizeUnit';
 import {
   CENTOS_9,
   FIRST_BOOT_SERVICE_DATA,
+  SATELLITE_SERVICE_DATA,
   RHEL_8,
   RHEL_9,
   RHEL_9_BETA,
@@ -84,6 +85,8 @@ import {
   selectUsers,
   selectMetadata,
   selectFirewall,
+  selectSatelliteCaCertificate,
+  selectSatelliteRegistrationCommand,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -443,7 +446,9 @@ const getSatelliteCommand = (files?: File[]): string => {
   const satelliteCommandFile = files?.find(
     (file) => file.path === '/usr/local/sbin/register-satellite-cmd'
   );
-  return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
+  return satelliteCommandFile?.data
+    ? decodeURIComponent(atob(satelliteCommandFile.data))
+    : '';
 };
 
 const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
@@ -528,26 +533,42 @@ const getImageOptions = (
 };
 
 const getCustomizations = (state: RootState, orgID: string): Customizations => {
+  const satCert = selectSatelliteCaCertificate(state);
+  const files: File[] = [];
+  if (selectFirstBootScript(state)) {
+    files.push({
+      path: '/etc/systemd/system/custom-first-boot.service',
+      data: FIRST_BOOT_SERVICE_DATA,
+      data_encoding: 'base64',
+      ensure_parents: true,
+    });
+    files.push({
+      path: '/usr/local/sbin/custom-first-boot',
+      data: btoa(selectFirstBootScript(state)),
+      data_encoding: 'base64',
+      mode: '0774',
+      ensure_parents: true,
+    });
+  }
+  const satCmd = selectSatelliteRegistrationCommand(state);
+  if (satCmd && selectRegistrationType(state) === 'register-satellite') {
+    files.push({
+      path: '/etc/systemd/system/register-satellite.service',
+      data: SATELLITE_SERVICE_DATA,
+      data_encoding: 'base64',
+      ensure_parents: true,
+    });
+    files.push({
+      path: '/usr/local/sbin/register-satellite',
+      data: btoa(encodeURIComponent(satCmd)),
+      data_encoding: 'base64',
+      ensure_parents: true,
+    });
+  }
   return {
     containers: undefined,
     directories: undefined,
-    files: selectFirstBootScript(state)
-      ? [
-          {
-            path: '/etc/systemd/system/custom-first-boot.service',
-            data: FIRST_BOOT_SERVICE_DATA,
-            data_encoding: 'base64',
-            ensure_parents: true,
-          },
-          {
-            path: '/usr/local/sbin/custom-first-boot',
-            data: btoa(selectFirstBootScript(state)),
-            data_encoding: 'base64',
-            mode: '0774',
-            ensure_parents: true,
-          },
-        ]
-      : undefined,
+    files: files.length > 0 ? files : undefined,
     subscription: getSubscription(state, orgID),
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
@@ -567,6 +588,12 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     ignition: undefined,
     partitioning_mode: undefined,
     fips: undefined,
+    cacerts:
+      satCert && selectRegistrationType(state) === 'register-satellite'
+        ? {
+            pem_certs: [satCert],
+          }
+        : undefined,
   };
 };
 

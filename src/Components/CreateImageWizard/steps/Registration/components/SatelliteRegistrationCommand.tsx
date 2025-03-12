@@ -7,9 +7,12 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import { SATELLITE_SERVICE } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  addEnabledService,
   changeSatelliteRegistrationCommand,
+  removeEnabledService,
   selectSatelliteRegistrationCommand,
 } from '../../../../../store/wizardSlice';
 import { useRegistrationValidation } from '../../../utilities/useValidation';
@@ -25,6 +28,11 @@ const SatelliteRegistrationCommand = () => {
     'https://docs.redhat.com/en/documentation/red_hat_satellite/6.16/html-single/managing_hosts/index#Customizing_the_Registration_Templates_managing-hosts';
 
   const handleChange = (e: React.FormEvent, value: string) => {
+    if (!registrationCommand && !!value) {
+      dispatch(addEnabledService(SATELLITE_SERVICE));
+    } else if (!!registrationCommand && !value) {
+      dispatch(removeEnabledService(SATELLITE_SERVICE));
+    }
     dispatch(changeSatelliteRegistrationCommand(value));
   };
 

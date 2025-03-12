@@ -348,7 +348,7 @@ export const selectActivationKey = (state: RootState) => {
 };
 
 export const selectSatelliteRegistrationCommand = (state: RootState) => {
-  return state.wizard.registration.satelliteRegistration.command;
+  return state.wizard.registration.satelliteRegistration?.command;
 };
 
 export const selectSatelliteCaCertificate = (state: RootState) => {
