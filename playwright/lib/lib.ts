@@ -10,6 +10,11 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
 export const login = async (
   page: Page
 ) => {
+  page.setViewportSize({
+    width: 1920,
+    height: 1080,
+  })
+
   if (!process.env.USER || !process.env.PASSWORD) {
     throw new Error('user or password not set in environment');
   }
