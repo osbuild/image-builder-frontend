@@ -90,7 +90,7 @@ describe('Create Image Wizard', () => {
     if (!process.env.IS_ON_PREMISE) {
       await screen.findByRole('button', { name: 'Register' });
       await screen.findByRole('button', { name: 'OpenSCAP' });
-      await screen.findByRole('button', { name: 'Reproducible builds' });
+      await screen.findByRole('button', { name: 'Reproducible build' });
       await screen.findByRole('button', { name: 'Custom repositories' });
       await screen.findByRole('button', {
         name: 'First boot script configuration',
