@@ -16,7 +16,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import type { StepValidation } from './utilities/useValidation';
 
 type ValidatedTextInputPropTypes = TextInputProps & {
-  dataTestId?: string | undefined;
+  dataTestId?: string;
   ouiaId?: string;
   ariaLabel: string | undefined;
   helperText: string | undefined;
@@ -43,6 +43,7 @@ type ValidationInputProp = TextInputProps &
     value: string;
     placeholder: string;
     stepValidation: StepValidation;
+    dataTestId?: string;
     fieldName: string;
     inputType?: 'textInput' | 'textArea';
     ariaLabel: string;
@@ -115,6 +116,7 @@ export const ValidatedInputAndTextArea = ({
   stepValidation,
   fieldName,
   placeholder,
+  dataTestId,
   onChange,
   ariaLabel,
   inputType = 'textInput',
@@ -148,6 +150,7 @@ export const ValidatedInputAndTextArea = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           aria-label={ariaLabel}
+          data-testid={dataTestId}
         />
       ) : (
         <TextInput
@@ -157,6 +160,7 @@ export const ValidatedInputAndTextArea = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           aria-label={ariaLabel}
+          data-testid={dataTestId}
         />
       )}
       {hasError && <ErrorMessage errorMessage={errorMessage} />}
