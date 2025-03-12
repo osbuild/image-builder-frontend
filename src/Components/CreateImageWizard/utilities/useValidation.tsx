@@ -174,12 +174,13 @@ export function useRegistrationValidation(): StepValidation {
         const token = match[1];
         const decoded = jwtDecode(token);
         if (decoded.exp) {
-          const currentTime = Date.now() / 1000;
-          if (decoded.exp < currentTime) {
+          const currentTimeSeconds = Date.now() / 1000;
+          const dayInSeconds = 86400;
+          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
             const expirationDate = new Date(decoded.exp * 1000);
             Object.assign(errors, {
               command:
-                'The token is already expired. Expiration date: ' +
+                'The token is already expired or will expire by next day. Expiration date: ' +
                 expirationDate,
             });
             return {

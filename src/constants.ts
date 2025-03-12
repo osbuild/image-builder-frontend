@@ -261,6 +261,28 @@ WantedBy=graphical.target
 
 export const FIRST_BOOT_SERVICE = 'custom-first-boot';
 
+export const SATELLITE_SERVICE_DATA = btoa(`[Unit]
+  Description=Custom first boot script
+  ConditionFileIsExecutable=/usr/local/sbin/register-satellite
+  ConditionPathExists=!/var/local/.register-satellite-done
+  Wants=network-online.target
+  After=network-online.target
+  After=osbuild-first-boot.service
+
+  [Service]
+  Type=oneshot
+  ExecStart=/usr/local/sbin/register-satellite
+  ExecStartPost=/usr/bin/touch /var/local/.register-satellite-done
+  RemainAfterExit=yes
+
+  [Install]
+  WantedBy=basic.target
+  WantedBy=multi-user.target
+  WantedBy=graphical.target
+`);
+
+export const SATELLITE_SERVICE = 'register-satellite';
+
 // For use when calling content API (now required)
 export enum ContentOrigin {
   'REDHAT' = 'red_hat',
