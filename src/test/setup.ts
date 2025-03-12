@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 import { configure } from '@testing-library/react';
 
 import { server } from './mocks/server';
+
 import 'vitest-canvas-mock';
 
 // scrollTo is not defined in jsdom - needed for the navigation to the wizard
@@ -31,6 +32,9 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
     isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
+    getEnvironmentDetails: () => ({
+      url: ['https://console.redhat.com'],
+    }),
   }),
   default: () => ({
     analytics: {
