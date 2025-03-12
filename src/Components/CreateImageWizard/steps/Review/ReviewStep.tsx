@@ -37,6 +37,7 @@ import {
   KernelList,
   FirewallList,
   ServicesList,
+  RegisterSatelliteList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -309,6 +310,9 @@ const Review = () => {
           data-testid="registration-expandable"
         >
           {registrationType === 'register-later' && <RegisterLaterList />}
+          {registrationType === 'register-satellite' && (
+            <RegisterSatelliteList />
+          )}
           {registrationType.startsWith('register-now') && <RegisterNowList />}
         </ExpandableSection>
       )}
