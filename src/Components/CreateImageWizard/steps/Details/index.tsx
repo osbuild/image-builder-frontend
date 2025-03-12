@@ -60,6 +60,7 @@ const DetailsStep = () => {
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
         <ValidatedInputAndTextArea
           ariaLabel="blueprint name"
+          dataTestId="blueprint"
           value={blueprintName}
           isDisabled={false}
           onChange={handleNameChange}
