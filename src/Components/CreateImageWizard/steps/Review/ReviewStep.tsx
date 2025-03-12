@@ -61,7 +61,10 @@ import {
   selectUsers,
   selectKernel,
 } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
+import {
+  useFlag,
+  useGetEnvironment,
+} from '../../../../Utilities/useGetEnvironment';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -196,6 +199,7 @@ const Review = () => {
 
   const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   const isUsersEnabled = useFlag('image-builder.users.enabled');
+  const { isFedoraEnv } = useGetEnvironment();
   return (
     <>
       <ExpandableSection
@@ -355,21 +359,23 @@ const Review = () => {
       >
         <FSCList />
       </ExpandableSection>
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'Content',
-          'revisit-custom-repositories',
-          'wizard-custom-repositories'
-        )}
-        onToggle={(_event, isExpandedContent) =>
-          onToggleContent(isExpandedContent)
-        }
-        isExpanded={isExpandedContent}
-        isIndented
-        data-testid="content-expandable"
-      >
-        <ContentList />
-      </ExpandableSection>
+      {!isFedoraEnv && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Content',
+            'revisit-custom-repositories',
+            'wizard-custom-repositories'
+          )}
+          onToggle={(_event, isExpandedContent) =>
+            onToggleContent(isExpandedContent)
+          }
+          isExpanded={isExpandedContent}
+          isIndented
+          data-testid="content-expandable"
+        >
+          <ContentList />
+        </ExpandableSection>
+      )}
       {isUsersEnabled && users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(

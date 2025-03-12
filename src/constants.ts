@@ -95,6 +95,12 @@ export const ON_PREM_RELEASES = new Map([
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
+export const FEDORA_RELEASES = new Map([
+  [FEDORA_40, 'Fedora Linux 40'],
+  [FEDORA_41, 'Fedora Linux 41'],
+  [CENTOS_9, 'CentOS Stream 9'],
+]);
+
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];
 export const RHEL_8_FULL_SUPPORT = ['2019-05-07', '2024-05-31'];
 export const RHEL_9_MAINTENANCE_SUPPORT = ['2027-05-31', '2032-05-31'];
