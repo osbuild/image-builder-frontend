@@ -46,6 +46,7 @@ const SatelliteRegistrationCommand = () => {
         placeholder="Registration command"
         stepValidation={stepValidation}
         fieldName="command"
+        warning={stepValidation.errors.expired}
       />
       <FormHelperText>
         <HelperText>
