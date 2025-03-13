@@ -19,7 +19,6 @@ import {
 import { useUsersValidation } from '../../../utilities/useValidation';
 import {
   HookPasswordValidatedInput,
-  HookValidatedInput,
   ValidatedInputAndTextArea,
 } from '../../../ValidatedInput';
 const UserInfo = () => {
@@ -93,7 +92,7 @@ const UserInfo = () => {
         />
       </FormGroup>
       <FormGroup isRequired label="SSH key">
-        <HookValidatedInput
+        <ValidatedInputAndTextArea
           inputType={'textArea'}
           ariaLabel="public SSH key"
           value={userSshKey || ''}
