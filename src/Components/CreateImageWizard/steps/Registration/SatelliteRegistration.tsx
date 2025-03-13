@@ -88,7 +88,7 @@ const SatelliteRegistration = () => {
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
                 : validated === 'error'
                 ? stepValidation.errors['certificate']
-                : 'Drag and drop a file or upload one'}
+                : 'Drag and drop a valid certificate file or upload one'}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>

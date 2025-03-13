@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { jwtDecode } from 'jwt-decode';
-
-import { isValidPEM } from './certificates';
 
 import { jwtDecode } from 'jwt-decode';
-
-import { isValidPEM } from './certificates';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
@@ -153,7 +148,7 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-satellite') {
     const errors = {};
-    if (caCertificate && (caCertificate === '' || !isValidPEM(caCertificate))) {
+    if (caCertificate === '') {
       Object.assign(errors, {
         certificate:
           'Valid certificate must be present if you are registering Satellite.',
@@ -179,14 +174,13 @@ export function useRegistrationValidation(): StepValidation {
           if (decoded.exp < currentTimeSeconds + dayInSeconds) {
             const expirationDate = new Date(decoded.exp * 1000);
             Object.assign(errors, {
-              command:
+              expired:
                 'The token is already expired or will expire by next day. Expiration date: ' +
                 expirationDate,
             });
             return {
               errors: errors,
-              disabledNext:
-                caCertificate === undefined || !isValidPEM(caCertificate),
+              disabledNext: caCertificate === undefined,
             };
           }
         }
@@ -197,9 +191,7 @@ export function useRegistrationValidation(): StepValidation {
     return {
       errors: errors,
       disabledNext:
-        Object.keys(errors).length > 0 ||
-        caCertificate === undefined ||
-        !isValidPEM(caCertificate),
+        Object.keys(errors).length > 0 || caCertificate === undefined,
     };
   }
 
