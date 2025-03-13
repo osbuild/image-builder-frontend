@@ -193,6 +193,7 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      ouiaId="mount-point"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -206,7 +207,6 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
   return (
     <Select
-      ouiaId="mount-point"
       isOpen={isOpen}
       selected={prefix}
       onSelect={onSelect}
@@ -338,6 +338,7 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      ouiaId="unit"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -349,7 +350,6 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 
   return (
     <Select
-      ouiaId="unit"
       isOpen={isOpen}
       selected={partition.unit}
       onSelect={onSelect}
