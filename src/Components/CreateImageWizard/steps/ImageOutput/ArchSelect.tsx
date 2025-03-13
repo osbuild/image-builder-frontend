@@ -57,6 +57,7 @@ const ArchSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      ouiaId="arch_select"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -70,7 +71,6 @@ const ArchSelect = () => {
   return (
     <FormGroup isRequired={true} label="Architecture">
       <Select
-        ouiaId="arch_select"
         isOpen={isOpen}
         selected={arch}
         onSelect={setArch}
