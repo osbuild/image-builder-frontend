@@ -167,33 +167,24 @@ export function useSnapshotValidation(): StepValidation {
 export function useTimezoneValidation(): StepValidation {
   const timezone = useAppSelector(selectTimezone);
   const ntpServers = useAppSelector(selectNtpServers);
-  const errors = {};
-
-  if (timezone) {
-    if (!timezones.includes(timezone)) {
-      Object.assign(errors, { timezone: 'Unknown timezone' });
-    }
-  }
+  const invalidServers = [];
 
   if (ntpServers) {
-    const invalidServers = [];
-
     for (const server of ntpServers) {
       if (!isNtpServerValid(server)) {
         invalidServers.push(server);
       }
     }
-
-    if (invalidServers.length > 0) {
-      Object.assign(errors, {
-        ntpServers: `Invalid NTP servers: ${invalidServers}`,
-      });
-    }
   }
 
+  const timezoneError =
+    timezone && !timezones.includes(timezone) ? 'Unknown timezone' : '';
+  const ntpServersError =
+    invalidServers.length > 0 ? `Invalid NTP servers: ${invalidServers}` : '';
+
   return {
-    errors: errors,
-    disabledNext: 'timezone' in errors || 'ntpServers' in errors,
+    errors: { timezone: timezoneError, ntpServers: ntpServersError },
+    disabledNext: timezoneError !== '' || invalidServers.length > 0,
   };
 }
 
@@ -210,20 +201,15 @@ export function useLocaleValidation(): StepValidation {
         unknownLanguages.push(lang);
       }
     }
-
-    if (unknownLanguages.length > 0) {
-      Object.assign(errors, {
-        languages: unknownLanguages.join(' '),
-      });
-    }
   }
 
-  if (keyboard && !keyboardsList.includes(keyboard)) {
-    Object.assign(errors, { keyboard: 'Unknown keyboard' });
-  }
+  const languagesError =
+    unknownLanguages.length > 0 ? unknownLanguages.join(' ') : '';
+  const keyboardError =
+    keyboard && !keyboardsList.includes(keyboard) ? 'Unknown keyboard' : '';
 
   return {
-    errors,
+    errors: { languages: languagesError, keyboard: keyboardError },
     disabledNext: unknownLanguages.length > 0 || 'keyboard' in errors,
   };
 }
@@ -262,37 +248,31 @@ export function useHostnameValidation(): StepValidation {
 
 export function useKernelValidation(): StepValidation {
   const kernel = useAppSelector(selectKernel);
-  const errors = {};
 
-  if (!isKernelNameValid(kernel.name)) {
-    Object.assign(errors, { kernel: 'Invalid format.' });
-  }
-
+  const invalidArgs = [];
   if (kernel.append.length > 0) {
-    const invalidArgs = [];
-
     for (const arg of kernel.append) {
       if (!isKernelArgumentValid(arg)) {
         invalidArgs.push(arg);
       }
     }
-
-    if (invalidArgs.length > 0) {
-      Object.assign(errors, {
-        kernelAppend: `Invalid kernel arguments: ${invalidArgs}`,
-      });
-    }
   }
 
+  const kernelNameError = !isKernelNameValid(kernel.name)
+    ? 'Invalid format.'
+    : '';
+
+  const kernelAppendError =
+    invalidArgs.length > 0 ? `Invalid kernel arguments: ${invalidArgs}` : '';
+
   return {
-    errors: errors,
-    disabledNext: 'kernel' in errors || 'kernelAppend' in errors,
+    errors: { kernel: kernelNameError, kernelAppend: kernelAppendError },
+    disabledNext: kernelNameError !== '' || kernelAppendError !== '',
   };
 }
 
 export function useFirewallValidation(): StepValidation {
   const firewall = useAppSelector(selectFirewall);
-  const errors = {};
   const invalidPorts = [];
   const invalidDisabled = [];
   const invalidEnabled = [];
@@ -303,10 +283,6 @@ export function useFirewallValidation(): StepValidation {
         invalidPorts.push(port);
       }
     }
-
-    if (invalidPorts.length > 0) {
-      Object.assign(errors, { ports: `Invalid ports: ${invalidPorts}` });
-    }
   }
 
   if (firewall.services.disabled.length > 0) {
@@ -314,12 +290,6 @@ export function useFirewallValidation(): StepValidation {
       if (!isServiceValid(s)) {
         invalidDisabled.push(s);
       }
-    }
-
-    if (invalidDisabled.length > 0) {
-      Object.assign(errors, {
-        disabledServices: `Invalid disabled services: ${invalidDisabled}`,
-      });
     }
   }
 
@@ -329,16 +299,25 @@ export function useFirewallValidation(): StepValidation {
         invalidEnabled.push(s);
       }
     }
-
-    if (invalidEnabled.length > 0) {
-      Object.assign(errors, {
-        enabledServices: `Invalid enabled services: ${invalidEnabled}`,
-      });
-    }
   }
 
+  const portsError =
+    invalidPorts.length > 0 ? `Invalid ports: ${invalidPorts}` : '';
+  const disabledServicesError =
+    invalidDisabled.length > 0
+      ? `Invalid disabled services: ${invalidDisabled}`
+      : '';
+  const enabledServicesError =
+    invalidEnabled.length > 0
+      ? `Invalid enabled services: ${invalidEnabled}`
+      : '';
+
   return {
-    errors,
+    errors: {
+      ports: portsError,
+      disabledServices: disabledServicesError,
+      enabledServices: enabledServicesError,
+    },
     disabledNext:
       invalidPorts.length > 0 ||
       invalidDisabled.length > 0 ||
@@ -348,7 +327,7 @@ export function useFirewallValidation(): StepValidation {
 
 export function useServicesValidation(): StepValidation {
   const services = useAppSelector(selectServices);
-  const errors = {};
+
   const invalidDisabled = [];
   const invalidMasked = [];
   const invalidEnabled = [];
@@ -359,12 +338,6 @@ export function useServicesValidation(): StepValidation {
         invalidDisabled.push(s);
       }
     }
-
-    if (invalidDisabled.length > 0) {
-      Object.assign(errors, {
-        disabledSystemdServices: `Invalid disabled services: ${invalidDisabled}`,
-      });
-    }
   }
 
   if (services.masked.length > 0) {
@@ -372,12 +345,6 @@ export function useServicesValidation(): StepValidation {
       if (!isServiceValid(s)) {
         invalidMasked.push(s);
       }
-    }
-
-    if (invalidMasked.length > 0) {
-      Object.assign(errors, {
-        maskedSystemdServices: `Invalid masked services: ${invalidMasked}`,
-      });
     }
   }
 
@@ -387,17 +354,29 @@ export function useServicesValidation(): StepValidation {
         invalidEnabled.push(s);
       }
     }
-
-    if (invalidEnabled.length > 0) {
-      Object.assign(errors, {
-        enabledSystemdServices: `Invalid enabled services: ${invalidEnabled}`,
-      });
-    }
   }
 
+  const disabledSystemdServicesError =
+    invalidDisabled.length > 0
+      ? `Invalid disabled services: ${invalidDisabled}`
+      : '';
+  const maskedSystemdServicesError =
+    invalidMasked.length > 0 ? `Invalid masked services: ${invalidMasked}` : '';
+  const enabledSystemdServicesError =
+    invalidEnabled.length > 0
+      ? `Invalid enabled services: ${invalidEnabled}`
+      : '';
+
   return {
-    errors,
-    disabledNext: invalidDisabled.length > 0 || invalidEnabled.length > 0,
+    errors: {
+      disabledSystemdServices: disabledSystemdServicesError,
+      maskedSystemdServices: maskedSystemdServicesError,
+      enabledSystemdServices: enabledSystemdServicesError,
+    },
+    disabledNext:
+      invalidDisabled.length > 0 ||
+      invalidMasked.length > 0 ||
+      invalidEnabled.length > 0,
   };
 }
 
