@@ -46,6 +46,7 @@ export const AzureHyperVSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      ouiaId="hyperv_gen_select"
       ref={toggleRef}
       data-testid="azure-hyper-v-generation-select"
       onClick={() => setIsOpen(!isOpen)}
@@ -60,7 +61,6 @@ export const AzureHyperVSelect = () => {
     <>
       <FormGroup isRequired label="HyperV Generation">
         <Select
-          ouiaId="hyperv_gen_select"
           isScrollable
           isOpen={isOpen}
           selected={hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
