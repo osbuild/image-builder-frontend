@@ -1,17 +1,12 @@
 import { expect, test } from '@playwright/test';
-
 import { v4 as uuidv4 } from 'uuid';
 
-import {
-  login,
-  ibFrame,
-  isHosted,
-} from './lib/lib';
+import { login, ibFrame, isHosted } from './lib/lib';
 
 test.describe.serial('test', () => {
-  let blueprintName = uuidv4();
+  const blueprintName = uuidv4();
   test('create blueprint', async ({ page }) => {
-    await login(page)
+    await login(page);
     const frame = await ibFrame(page);
 
     await frame.getByRole('heading', { name: 'Images About image builder' });
@@ -23,7 +18,9 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     if (isHosted()) {
-      await frame.getByRole('heading', { name: 'Register systems using this image' });
+      await frame.getByRole('heading', {
+        name: 'Register systems using this image',
+      });
       await page.getByTestId('automatically-register-checkbox').uncheck();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
       await frame.getByRole('heading', { name: 'Compliance' });
@@ -89,7 +86,9 @@ test.describe.serial('test', () => {
 
     await login(page);
     const frame = await ibFrame(page);
-    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame
+      .getByRole('textbox', { name: 'Search input' })
+      .fill(blueprintName);
     await frame.getByText(blueprintName, { exact: true }).first().click();
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
@@ -101,7 +100,9 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
     await frame.getByRole('gridcell', { name: 'osbuild-composer' });
-    await frame.getByRole('button', { name: 'Save changes to blueprint' }).click();
+    await frame
+      .getByRole('button', { name: 'Save changes to blueprint' })
+      .click();
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
@@ -113,19 +114,26 @@ test.describe.serial('test', () => {
   test('build blueprint', async ({ page }) => {
     await login(page);
     const frame = await ibFrame(page);
-    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame
+      .getByRole('textbox', { name: 'Search input' })
+      .fill(blueprintName);
     await frame.getByText(blueprintName, { exact: true }).first().click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
 
     // make sure the image is present
-    await frame.getByTestId('images-table').getByRole('button', { name: 'Details' }).click();
+    await frame
+      .getByTestId('images-table')
+      .getByRole('button', { name: 'Details' })
+      .click();
     await frame.getByText('Build Information');
   });
 
   test('delete blueprint', async ({ page }) => {
     await login(page);
     const frame = await ibFrame(page);
-    await frame.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
+    await frame
+      .getByRole('textbox', { name: 'Search input' })
+      .fill(blueprintName);
     await frame.getByText(blueprintName, { exact: true }).first().click();
     await frame.getByTestId('blueprint-action-menu-toggle').click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
