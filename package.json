@@ -96,8 +96,8 @@
   },
   "scripts": {
     "lint": "npm-run-all lint:*",
-    "lint:js": "eslint src",
-    "lint:js:fix": "eslint src --fix",
+    "lint:js": "eslint src playwright",
+    "lint:js:fix": "eslint src playwright --fix",
     "start": "fec dev",
     "start:stage": "fec dev --clouddotEnv=stage",
     "start:prod": "fec dev --clouddotEnv=prod",

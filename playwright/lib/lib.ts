@@ -1,15 +1,15 @@
-import { expect, type Page, type FrameLocator } from '@playwright/test';
+import { type Page, type FrameLocator } from '@playwright/test';
 
 export const ibFrame = (page: Page): FrameLocator | Page => {
   if (isHosted()) {
-    return page
+    return page;
   }
-  return page.locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]').contentFrame();
-}
+  return page
+    .locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]')
+    .contentFrame();
+};
 
-export const login = async (
-  page: Page
-) => {
+export const login = async (page: Page) => {
   if (!process.env.USER || !process.env.PASSWORD) {
     throw new Error('user or password not set in environment');
   }
@@ -21,17 +21,13 @@ export const login = async (
     return loginConsole(page, user, password);
   }
   return loginCockpit(page, user, password);
-}
+};
 
-export const isHosted = (): Boolean => {
+export const isHosted = (): boolean => {
   return process.env.BASE_URL?.includes('redhat.com') || false;
-}
+};
 
-const loginCockpit = async (
-  page: Page,
-  user: string,
-  password: string
-) => {
+const loginCockpit = async (page: Page, user: string, password: string) => {
   await page.goto('/cockpit-image-builder');
 
   await page.getByRole('textbox', { name: 'User name' }).fill(user);
@@ -44,20 +40,18 @@ const loginCockpit = async (
   await page.getByRole('button', { name: 'Administrative access' });
 };
 
-const loginConsole = async (
-  page: Page,
-  user: string,
-  password: string
-) => {
+const loginConsole = async (page: Page, user: string, password: string) => {
   await page.goto('/insights/image-builder/landing');
-  await page.getByRole('textbox', { name: 'Red Hat login or email' }).fill(user);
+  await page
+    .getByRole('textbox', { name: 'Red Hat login or email' })
+    .fill(user);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await closePopupsIfExist(page);
   await page.locator('#preview-toggle').check();
   await page.getByRole('heading', { name: 'All images' });
-}
+};
 
 const closePopupsIfExist = async (page: Page) => {
   const locatorsToCheck = [
