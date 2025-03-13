@@ -7,6 +7,20 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
   return page.locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]').contentFrame();
 }
 
+export const togglePreview = async (page: Page) => {
+  const toggleSwitch = page.locator('.pf-v6-c-switch__toggle');
+
+  if (!(await toggleSwitch.isChecked())) {
+    await toggleSwitch.click();
+  }
+  const turnOnButton = page.getByRole('button', { name: 'Turn on' });
+  if (await turnOnButton.isVisible()) {
+    await turnOnButton.click();
+  }
+
+  await expect(toggleSwitch).toBeChecked();
+};
+
 export const login = async (
   page: Page
 ) => {
@@ -55,7 +69,7 @@ const loginConsole = async (
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await closePopupsIfExist(page);
-  await page.locator('#preview-toggle').check();
+  await togglePreview(page);
   await page.getByRole('heading', { name: 'All images' });
 }
 
