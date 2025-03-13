@@ -134,6 +134,7 @@ const ReleaseSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
+      ouiaId="release_select"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -147,7 +148,6 @@ const ReleaseSelect = () => {
   return (
     <FormGroup isRequired={true} label="Release">
       <Select
-        ouiaId="release_select"
         isOpen={isOpen}
         selected={releases.get(distribution)}
         onSelect={handleSelect}
