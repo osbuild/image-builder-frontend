@@ -1,4 +1,4 @@
-import { type Page, type FrameLocator } from '@playwright/test';
+import { type Page, type FrameLocator, expect } from '@playwright/test';
 
 export const ibFrame = (page: Page): FrameLocator | Page => {
   if (isHosted()) {
@@ -7,6 +7,21 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
   return page
     .locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]')
     .contentFrame();
+};
+
+export const togglePreview = async (page: Page) => {
+  const toggleSwitch = page.locator('#preview-toggle');
+
+  if (!(await toggleSwitch.isChecked())) {
+    await toggleSwitch.click();
+  }
+
+  const turnOnButton = page.getByRole('button', { name: 'Turn on' });
+  if (await turnOnButton.isVisible()) {
+    await turnOnButton.click();
+  }
+
+  await expect(toggleSwitch).toBeChecked();
 };
 
 export const login = async (page: Page) => {
@@ -49,7 +64,7 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
   await closePopupsIfExist(page);
-  await page.locator('#preview-toggle').check();
+  await togglePreview(page);
   await page.getByRole('heading', { name: 'All images' });
 };
 
