@@ -59,6 +59,14 @@ const selectTimezone = async () => {
   await waitFor(() => user.click(amsterdamTimezone));
 };
 
+const searchForUnknownTimezone = async () => {
+  const user = userEvent.setup();
+  const timezoneDropdown = await screen.findByPlaceholderText(
+    /select a timezone/i
+  );
+  await waitFor(() => user.type(timezoneDropdown, 'foo'));
+};
+
 const addNtpServerViaKeyDown = async (ntpServer: string) => {
   const user = userEvent.setup();
   const ntpServersInput = await screen.findByPlaceholderText(
@@ -122,6 +130,16 @@ describe('Step Timezone', () => {
     await renderCreateMode();
     await goToTimezoneStep();
     await verifyCancelButton(router);
+  });
+
+  test('unknown option is disabled', async () => {
+    await renderCreateMode();
+    await goToTimezoneStep();
+    await searchForUnknownTimezone();
+    await screen.findByText(/no results found/i);
+    expect(
+      await screen.findByRole('option', { name: /no results found/i })
+    ).toBeDisabled();
   });
 
   test('duplicate NTP server cannnot be added', async () => {
