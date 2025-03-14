@@ -76,12 +76,12 @@ const selectLanguages = async () => {
   await waitFor(() => user.click(enOption));
 };
 
-const searchForKeyboard = async () => {
+const searchForKeyboard = async (keyboard: string) => {
   const user = userEvent.setup();
   const keyboardDropdown = await screen.findByPlaceholderText(
     /select a keyboard/i
   );
-  await waitFor(() => user.type(keyboardDropdown, 'us'));
+  await waitFor(() => user.type(keyboardDropdown, keyboard));
 };
 
 const selectKeyboard = async () => {
@@ -145,17 +145,35 @@ describe('Step Locale', () => {
   test('keyboard search results get sorted correctly', async () => {
     await renderCreateMode();
     await goToLocaleStep();
-    await searchForKeyboard();
+    await searchForKeyboard('us');
     const options = await screen.findAllByRole('option');
     expect(options[0]).toHaveTextContent('us');
     expect(options[1]).toHaveTextContent('us-acentos');
     expect(options[2]).toHaveTextContent('us-alt-intl');
   });
 
+  test('unknown option is disabled', async () => {
+    await renderCreateMode();
+    await goToLocaleStep();
+
+    await searchForLanguage('foo');
+    await screen.findByText(/no results found/i);
+    expect(
+      await screen.findByRole('option', { name: /no results found/i })
+    ).toBeDisabled();
+    await clearLanguageSearch();
+
+    await searchForKeyboard('foo');
+    await screen.findByText(/no results found/i);
+    expect(
+      await screen.findByRole('option', { name: /no results found/i })
+    ).toBeDisabled();
+  });
+
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToLocaleStep();
-    await searchForKeyboard();
+    await searchForKeyboard('us');
     await selectKeyboard();
     await goToReviewStep();
     await clickRevisitButton();
@@ -191,7 +209,7 @@ describe('Locale request generated correctly', () => {
   test('with keyboard selected', async () => {
     await renderCreateMode();
     await goToLocaleStep();
-    await searchForKeyboard();
+    await searchForKeyboard('us');
     await selectKeyboard();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -214,7 +232,7 @@ describe('Locale request generated correctly', () => {
     await renderCreateMode();
     await goToLocaleStep();
     await selectLanguages();
-    await searchForKeyboard();
+    await searchForKeyboard('us');
     await selectKeyboard();
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);

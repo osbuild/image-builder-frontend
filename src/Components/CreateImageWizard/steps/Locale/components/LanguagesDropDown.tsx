@@ -49,9 +49,6 @@ const LanguagesDropDown = () => {
       filteredLanguages = languagesList.filter((language: string) =>
         String(language).toLowerCase().includes(filterValue.toLowerCase())
       );
-      if (!filteredLanguages.length) {
-        filteredLanguages = [`No results found for "${filterValue}"`];
-      }
       if (!isOpen) {
         setIsOpen(true);
       }
@@ -78,7 +75,7 @@ const LanguagesDropDown = () => {
   };
 
   const onSelect = (_event: React.MouseEvent, value: string) => {
-    if (value && !value.includes('No results')) {
+    if (value) {
       setInputValue('');
       setFilterValue('');
       dispatch(addLanguage(value));
@@ -151,18 +148,24 @@ const LanguagesDropDown = () => {
         shouldFocusFirstItemOnOpen={false}
       >
         <SelectList>
-          {selectOptions.map((option) => (
-            <SelectOption
-              key={option}
-              value={option}
-              isDisabled={languages?.includes(option) || false}
-              description={
-                languages?.includes(option) && 'Language already added'
-              }
-            >
-              {option}
+          {selectOptions.length > 0 ? (
+            selectOptions.map((option) => (
+              <SelectOption
+                key={option}
+                value={option}
+                isDisabled={languages?.includes(option) || false}
+                description={
+                  languages?.includes(option) && 'Language already added'
+                }
+              >
+                {option}
+              </SelectOption>
+            ))
+          ) : (
+            <SelectOption isDisabled>
+              {`No results found for "${filterValue}"`}
             </SelectOption>
-          ))}
+          )}
         </SelectList>
       </Select>
       {unknownLanguages.length > 0 && (
