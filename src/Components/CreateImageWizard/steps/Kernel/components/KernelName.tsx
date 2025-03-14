@@ -23,6 +23,7 @@ import {
   selectKernel,
 } from '../../../../../store/wizardSlice';
 import { useKernelValidation } from '../../../utilities/useValidation';
+import { isKernelNameValid } from '../../../validators';
 
 const initialOptions = ['kernel', 'kernel-debug'];
 let kernelOptions = initialOptions;
@@ -48,7 +49,9 @@ const KernelName = () => {
       if (!filteredKernelPkgs.some((kernel) => kernel === filterValue)) {
         filteredKernelPkgs = [
           ...filteredKernelPkgs,
-          `Custom kernel package "${filterValue}"`,
+          isKernelNameValid(filterValue)
+            ? `Custom kernel package "${filterValue}"`
+            : `"${filterValue}" is not a valid kernel package name`,
         ];
       }
       if (!isOpen) {
@@ -165,7 +168,11 @@ const KernelName = () => {
         >
           <SelectList>
             {selectOptions.map((option) => (
-              <SelectOption key={option} value={option}>
+              <SelectOption
+                key={option}
+                value={option}
+                isDisabled={/not a valid kernel package name/i.test(option)}
+              >
                 {option}
               </SelectOption>
             ))}

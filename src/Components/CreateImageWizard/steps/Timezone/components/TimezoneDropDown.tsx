@@ -43,9 +43,6 @@ const TimezoneDropDown = () => {
       filteredTimezones = timezones.filter((timezone: string) =>
         String(timezone).toLowerCase().includes(filterValue.toLowerCase())
       );
-      if (!filteredTimezones.length) {
-        filteredTimezones = [`No results found for "${filterValue}"`];
-      }
       if (!isOpen) {
         setIsOpen(true);
       }
@@ -70,7 +67,7 @@ const TimezoneDropDown = () => {
   };
 
   const onSelect = (_event: React.MouseEvent, value: string) => {
-    if (value && !value.includes('No results')) {
+    if (value) {
       setInputValue(value);
       setFilterValue('');
       setErrorText('');
@@ -144,11 +141,17 @@ const TimezoneDropDown = () => {
         shouldFocusFirstItemOnOpen={false}
       >
         <SelectList>
-          {selectOptions.map((option) => (
-            <SelectOption key={option} value={option}>
-              {option}
+          {selectOptions.length > 0 ? (
+            selectOptions.map((option) => (
+              <SelectOption key={option} value={option}>
+                {option}
+              </SelectOption>
+            ))
+          ) : (
+            <SelectOption isDisabled>
+              {`No results found for "${filterValue}"`}
             </SelectOption>
-          ))}
+          )}
         </SelectList>
       </Select>
       {errorText && (

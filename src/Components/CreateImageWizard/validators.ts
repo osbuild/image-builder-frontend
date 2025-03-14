@@ -119,7 +119,8 @@ export const isKernelNameValid = (kernelName: string) => {
 
   return (
     kernelName.length < 65 &&
-    /^[a-z0-9]|[a-z0-9][a-z0-9-_.+]*[a-z0-9]$/.test(kernelName)
+    /^([a-z0-9]|[a-z0-9][a-z0-9-_.+]*)[a-z0-9]$/.test(kernelName) &&
+    /[a-zA-Z]+/.test(kernelName) // contains at least one letter
   );
 };
 

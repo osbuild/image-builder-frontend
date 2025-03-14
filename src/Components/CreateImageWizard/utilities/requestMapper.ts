@@ -5,7 +5,6 @@ import { parseSizeUnit } from './parseSizeUnit';
 
 import {
   CENTOS_9,
-  FIRST_BOOT_SERVICE,
   FIRST_BOOT_SERVICE_DATA,
   RHEL_8,
   RHEL_9,
@@ -21,6 +20,7 @@ import {
   BlueprintResponse,
   CreateBlueprintRequest,
   Customizations,
+  CustomRepository,
   DistributionProfileItem,
   Distributions,
   File,
@@ -558,20 +558,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
 
 const getServices = (state: RootState): Services | undefined => {
   const services = selectServices(state);
-  let enabledSvcs = services.enabled || [];
-  const includeFBSvc: boolean =
-    !!selectFirstBootScript(state) &&
-    !services.enabled?.includes(FIRST_BOOT_SERVICE);
-  if (includeFBSvc) {
-    enabledSvcs = [...enabledSvcs, FIRST_BOOT_SERVICE];
-  }
-  if (
-    (!selectFirstBootScript(state) ||
-      selectFirstBootScript(state).length === 0) &&
-    enabledSvcs.includes(FIRST_BOOT_SERVICE)
-  ) {
-    enabledSvcs = enabledSvcs.filter((s) => s !== FIRST_BOOT_SERVICE);
-  }
+  const enabledSvcs = services.enabled || [];
   if (
     enabledSvcs.length === 0 &&
     services.masked.length === 0 &&
@@ -746,7 +733,13 @@ const getFirewall = (state: RootState) => {
 };
 
 const getCustomRepositories = (state: RootState) => {
-  const customRepositories = selectCustomRepositories(state);
+  const customRepositories = selectCustomRepositories(state).map((cr) => {
+    return {
+      ...cr,
+      baseurl: cr.baseurl && cr.baseurl.length !== 0 ? cr.baseurl : undefined,
+    } as CustomRepository;
+  });
+
   const recommendedRepositories = selectRecommendedRepositories(state);
 
   const customAndRecommendedRepositories = [...customRepositories];

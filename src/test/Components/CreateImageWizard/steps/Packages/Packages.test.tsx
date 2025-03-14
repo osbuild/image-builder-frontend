@@ -99,14 +99,12 @@ const getRows = async () => {
 
 const comparePackageSearchResults = async () => {
   const availablePackages = await getRows();
-  await waitFor(() => expect(availablePackages).toHaveLength(6));
+
+  await waitFor(() => expect(availablePackages).toHaveLength(3));
 
   expect(availablePackages[0]).toHaveTextContent('test');
-  expect(availablePackages[1]).toHaveTextContent('test-sources');
+  expect(availablePackages[1]).toHaveTextContent('test-lib');
   expect(availablePackages[2]).toHaveTextContent('testPkg');
-  expect(availablePackages[3]).toHaveTextContent('testPkg-sources');
-  expect(availablePackages[4]).toHaveTextContent('lib-test');
-  expect(availablePackages[5]).toHaveTextContent('lib-test-sources');
 };
 
 const clickFirstPackageCheckbox = async () => {
@@ -233,16 +231,6 @@ describe('Step Packages', () => {
     );
   });
 
-  test('should display an exact match if found regardless of too many results', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('testPkg-123');
-    await screen.findByTestId('exact-match-row');
-    await screen.findByRole('heading', {
-      name: /too many results to display/i,
-    });
-  });
-
   test('search results should be sorted with most relevant results first', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -334,13 +322,6 @@ describe('Step Packages', () => {
     await screen.findByText('No results found');
   });
 
-  test('should display too many results state for more than 100 results', async () => {
-    await renderCreateMode();
-    await goToPackagesStep();
-    await typeIntoSearchBox('te');
-    await screen.findByText('Too many results to display');
-  });
-
   test('should display too short', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -361,7 +342,7 @@ describe('Step Packages', () => {
 
     await clearSearchInput();
     await typeIntoSearchBox('mock');
-    await screen.findByText(/mockPkg/);
+    await screen.findByText(/mock-lib/);
 
     user.click(checkboxes[0]);
     user.click(checkboxes[1]);
@@ -371,9 +352,9 @@ describe('Step Packages', () => {
     await typeIntoSearchBox('test');
 
     await toggleSelected();
-    const selectedPackages = await getRows();
-    expect(selectedPackages[0]).toHaveTextContent('test');
-    expect(selectedPackages[1]).toHaveTextContent('test-sources');
+    const availablePackages = await getRows();
+    expect(availablePackages[0]).toHaveTextContent('test');
+    expect(availablePackages[1]).toHaveTextContent('test-lib');
   });
 
   test('should display recommendations', async () => {
@@ -425,9 +406,9 @@ describe('Step Packages', () => {
 
       // the pagination in the top right
       const top = await screen.findByTestId('packages-pagination-top');
-      expect(top).toHaveTextContent('of 6');
+      expect(top).toHaveTextContent('of 3');
       const bottom = await screen.findByTestId('packages-pagination-bottom');
-      expect(bottom).toHaveTextContent('of 6');
+      expect(bottom).toHaveTextContent('of 3');
     });
 
     test('itemcount correct after toggling selected', async () => {

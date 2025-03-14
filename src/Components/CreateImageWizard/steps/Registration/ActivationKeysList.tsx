@@ -241,7 +241,9 @@ const ActivationKeysList = () => {
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
           onSelect={setActivationKey}
-          selections={activationKey}
+          selections={
+            registrationType === 'register-later' ? '' : activationKey
+          }
           isOpen={isOpen}
           placeholderText="Select activation key"
           typeAheadAriaLabel="Select activation key"

@@ -198,6 +198,83 @@ enabled = ["ftp", "ntp"]
 disabled = ["telnet"]
 `;
 
+const ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES = `
+name = "tmux"
+description = "tmux image with openssh"
+version = "1.2.16"
+distro = "rhel-93"
+
+[[packages]]
+name = "tmux"
+version = "*"
+
+[[packages]]
+name = "openssh-server"
+version = "*"
+
+[[groups]]
+name = "anaconda-tools"
+
+[customizations]
+hostname = "--invalid-hostname--"
+fips = true
+
+[[customizations.sshkey]]
+user = "root"
+key = "ssh-rsa d"
+
+[[customizations.user]]
+name = "admin"
+password = "$6$CHO2$3rN8eviE2t50lmVyBYihTgVRHcaecmeCk31L..."
+key = "ssh-rsa d"
+groups = ["widget", "users", "wheel"]
+
+[customizations.services]
+enabled = ["--invalid-enabled-service"]
+disabled = ["--invalid-disabled-service"]
+masked = ["--invalid-masked-service"]
+
+[[customizations.files]]
+data = "W1VuaXRdCkRlc2NyaXB0aW9uPVJ1biBmaXJzdCBib290IHNjcmlwdApDb25kaXRpb25QYXRoRXhpc3RzPS91c3IvbG9jYWwvc2Jpbi9jdXN0b20tZmlyc3QtYm9vdApXYW50cz1uZXR3b3JrLW9ubGluZS50YXJnZXQKQWZ0ZXI9bmV0d29yay1vbmxpbmUudGFyZ2V0CkFmdGVyPW9zYnVpbGQtZmlyc3QtYm9vdC5zZXJ2aWNlCgpbU2VydmljZV0KVHlwZT1vbmVzaG90CkV4ZWNTdGFydD0vdXNyL2xvY2FsL3NiaW4vY3VzdG9tLWZpcnN0LWJvb3QKRXhlY1N0YXJ0UG9zdD1tdiAvdXNyL2xvY2FsL3NiaW4vY3VzdG9tLWZpcnN0LWJvb3QgL3Vzci9sb2NhbC9zYmluL2N1c3RvbS1maXJzdC1ib290LmRvbmUKCltJbnN0YWxsXQpXYW50ZWRCeT1tdWx0aS11c2VyLnRhcmdldAo="
+data_encoding = "base64"
+ensure_parents = true
+path = "/etc/systemd/system/custom-first-boot.service"
+
+[[customizations.files]]
+data = "IyEvYmluL2Jhc2gKZmlyc3Rib290IHNjcmlwdCB0byB0ZXN0IGltcG9ydA=="
+data_encoding = "base64"
+ensure_parents = true
+mode = "0774"
+path = "/usr/local/sbin/custom-first-boot"
+
+[[customizations.filesystem]]
+mountpoint = "/var"
+minsize = 1000000
+
+[customizations.installer]
+unattended = true
+sudo-nopasswd = ["user", "%wheel"]
+
+[customizations.timezone]
+timezone = "invalid-timezone"
+ntpservers = ["0.north-america.pool.ntp.org", "1.north-america.pool.ntp.org", "invalid-ntp-server"]
+
+[customizations.locale]
+languages = ["invalid-language"]
+keyboard = "invalid-keyboard"
+
+[customizations.kernel]
+name = "--invalid-kernel-name--"
+append = "invalid-kernel-argument"
+
+[customizations.firewall]
+ports = ["invalid-port"]
+
+[customizations.firewall.services]
+enabled = ["--invalid-enabled-service"]
+disabled = ["--invalid-disabled-service"]
+`;
+
 const uploadFile = async (filename: string, content: string): Promise<void> => {
   const user = userEvent.setup();
   const fileInput: HTMLElement | null =
@@ -436,5 +513,173 @@ describe('Import modal', () => {
     await screen.findByText('postfix');
     await screen.findByText('telnetd');
     await screen.findByText('rpcbind');
+  }, 20000);
+
+  test('should render errors for invalid values', async () => {
+    await setUp();
+    await uploadFile(
+      `blueprints.toml`,
+      ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES
+    );
+    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    user.click(reviewButton);
+
+    // Image output
+    const guestImageCheckBox = await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    });
+    await waitFor(() => user.click(guestImageCheckBox));
+
+    await clickNext(); // Registration
+    await clickNext(); // OpenScap
+
+    // File system configuration
+    await clickNext();
+    expect(
+      await screen.findByText(/The Wizard only supports KiB, MiB, or GiB/)
+    ).toBeInTheDocument();
+
+    await clickNext(); // Repository snapshot
+    await clickNext(); // Custom Repos step
+    await clickNext(); // Packages step
+    await clickNext(); // Users
+
+    // Timezone
+    await clickNext();
+    expect(await screen.findByText('Unknown timezone')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Invalid NTP servers: invalid-ntp-server')
+    ).toBeInTheDocument();
+    const clearButtons = await screen.findAllByRole('button', {
+      name: /clear input/i,
+    });
+    await waitFor(async () => user.click(clearButtons[0]));
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', {
+          name: /close invalid-ntp-server/i,
+        })
+      )
+    );
+
+    // Locale
+    await clickNext();
+    expect(
+      await screen.findByText('Unknown languages: invalid-language')
+    ).toBeInTheDocument();
+    expect(await screen.findByText('Unknown keyboard')).toBeInTheDocument();
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', {
+          name: /close invalid-language/i,
+        })
+      )
+    );
+    await waitFor(async () =>
+      user.click(
+        await screen.findByRole('button', {
+          name: /clear input/i,
+        })
+      )
+    );
+
+    // Hostname
+    await clickNext();
+    expect(await screen.findByText(/Invalid hostname/)).toBeInTheDocument();
+    await waitFor(() =>
+      user.clear(
+        screen.getByRole('textbox', {
+          name: /hostname input/i,
+        })
+      )
+    );
+
+    // Kernel
+    await clickNext();
+    expect(await screen.findByText(/Invalid format/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Invalid kernel arguments/)
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      user.click(screen.getAllByRole('button', { name: /clear input/i })[0])
+    );
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', { name: /close invalid-kernel-argument/i })
+      )
+    );
+
+    // Firewall
+    await clickNext();
+    expect(
+      await screen.findByText(/Invalid ports: invalid-port/)
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Invalid disabled services: --invalid-disabled-service/
+      )
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Invalid enabled services: --invalid-enabled-service/
+      )
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      user.click(screen.getByRole('button', { name: /close invalid-port/i }))
+    );
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', {
+          name: /close --invalid-disabled-service/i,
+        })
+      )
+    );
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', { name: /close --invalid-enabled-service/i })
+      )
+    );
+
+    // Services
+    await clickNext();
+    expect(
+      await screen.findByText(
+        /Invalid enabled services: --invalid-enabled-service/
+      )
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Invalid disabled services: --invalid-disabled-service/
+      )
+    ).toBeInTheDocument();
+    expect(
+      await screen.findByText(
+        /Invalid masked services: --invalid-masked-service/
+      )
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', { name: /close --invalid-enabled-service/i })
+      )
+    );
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', {
+          name: /close --invalid-disabled-service/i,
+        })
+      )
+    );
+    await waitFor(() =>
+      user.click(
+        screen.getByRole('button', { name: /close --invalid-masked-service/i })
+      )
+    );
+
+    // Firstboot
+    await clickNext();
+    expect(
+      await screen.findByRole('heading', { name: /First boot configuration/i })
+    ).toBeInTheDocument();
   }, 20000);
 });

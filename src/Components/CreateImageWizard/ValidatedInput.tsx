@@ -16,7 +16,7 @@ import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 import type { StepValidation } from './utilities/useValidation';
 
 type ValidatedTextInputPropTypes = TextInputProps & {
-  dataTestId?: string | undefined;
+  dataTestId?: string;
   ouiaId?: string;
   ariaLabel: string | undefined;
   helperText: string | undefined;
@@ -43,6 +43,7 @@ type ValidationInputProp = TextInputProps &
     value: string;
     placeholder: string;
     stepValidation: StepValidation;
+    dataTestId?: string;
     fieldName: string;
     inputType?: 'textInput' | 'textArea';
     ariaLabel: string;
@@ -50,6 +51,7 @@ type ValidationInputProp = TextInputProps &
       event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
       value: string
     ) => void;
+    isRequired?: boolean;
   };
 
 type ErrorMessageProps = {
@@ -114,15 +116,17 @@ export const ValidatedInputAndTextArea = ({
   stepValidation,
   fieldName,
   placeholder,
+  dataTestId,
   onChange,
   ariaLabel,
   inputType = 'textInput',
+  isRequired,
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName];
   const hasError = errorMessage !== '';
 
   const [isPristine, setIsPristine] = useState(!value);
-  const validated = getValidationState(isPristine, errorMessage);
+  const validated = getValidationState(isPristine, errorMessage, isRequired);
 
   const handleBlur = () => {
     if (value) {
@@ -146,6 +150,7 @@ export const ValidatedInputAndTextArea = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           aria-label={ariaLabel}
+          data-testid={dataTestId}
         />
       ) : (
         <TextInput
@@ -155,6 +160,7 @@ export const ValidatedInputAndTextArea = ({
           onBlur={handleBlur}
           placeholder={placeholder}
           aria-label={ariaLabel}
+          data-testid={dataTestId}
         />
       )}
       {hasError && <ErrorMessage errorMessage={errorMessage} />}
@@ -164,9 +170,14 @@ export const ValidatedInputAndTextArea = ({
 
 const getValidationState = (
   isPristine: boolean,
-  errorMessage: string
+  errorMessage: string,
+  isRequired: boolean | undefined
 ): ValidationResult => {
-  const validated = isPristine ? 'default' : errorMessage ? 'error' : 'success';
+  const validated = isPristine
+    ? 'default'
+    : (isRequired && errorMessage) || errorMessage
+    ? 'error'
+    : 'success';
 
   return validated;
 };
