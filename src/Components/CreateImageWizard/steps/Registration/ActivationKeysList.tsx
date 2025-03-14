@@ -19,8 +19,7 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
 import {
-  ACTIVATION_KEYS_PROD_URL,
-  ACTIVATION_KEYS_STAGE_URL,
+  ACTIVATION_KEYS_URL,
   CDN_PROD_URL,
   CDN_STAGE_URL,
 } from '../../../../constants';
@@ -85,7 +84,6 @@ export const PopoverActivation = () => {
 };
 
 const ManageKeysButton = () => {
-  const { isProd } = useGetEnvironment();
   return (
     <Button
       component="a"
@@ -94,7 +92,7 @@ const ManageKeysButton = () => {
       icon={<ExternalLinkAltIcon />}
       iconPosition="right"
       isInline
-      href={isProd() ? ACTIVATION_KEYS_PROD_URL : ACTIVATION_KEYS_STAGE_URL}
+      href={ACTIVATION_KEYS_URL}
     >
       Activation keys page
     </Button>
