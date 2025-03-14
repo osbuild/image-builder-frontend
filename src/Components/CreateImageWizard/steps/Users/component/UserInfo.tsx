@@ -16,9 +16,9 @@ import {
   setUserAdministratorByIndex,
   removeUser,
 } from '../../../../../store/wizardSlice';
+import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
 import { useUsersValidation } from '../../../utilities/useValidation';
 import {
-  HookPasswordValidatedInput,
   HookValidatedInput,
   ValidatedInputAndTextArea,
 } from '../../../ValidatedInput';
@@ -42,7 +42,7 @@ const UserInfo = () => {
   };
 
   const handlePasswordChange = (
-    _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
+    _event: React.FormEvent<HTMLInputElement>,
     value: string
   ) => {
     dispatch(setUserPasswordByIndex({ index: index, password: value }));
@@ -82,16 +82,12 @@ const UserInfo = () => {
           fieldName="userName"
         />
       </FormGroup>
-      <FormGroup isRequired label="Password">
-        <HookPasswordValidatedInput
-          ariaLabel="blueprint user password"
-          value={userPassword || ''}
-          onChange={(_e, value) => handlePasswordChange(_e, value)}
-          placeholder="Enter password"
-          stepValidation={stepValidation}
-          fieldName="userPassword"
-        />
-      </FormGroup>
+      <PasswordValidatedInput
+        value={userPassword || ''}
+        ariaLabel="blueprint user password"
+        placeholder="Enter password"
+        onChange={(_e, value) => handlePasswordChange(_e, value)}
+      />
       <FormGroup isRequired label="SSH key">
         <HookValidatedInput
           inputType={'textArea'}
