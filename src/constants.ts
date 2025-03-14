@@ -28,10 +28,7 @@ export const COMPLIANCE_PROD_URL =
   'https://console.redhat.com/insights/compliance/scappolicies';
 export const COMPLIANCE_STAGE_URL =
   'https://console.stage.redhat.com/insights/compliance/scappolicies';
-export const ACTIVATION_KEYS_PROD_URL =
-  'https://console.redhat.com/insights/connector/activation-keys';
-export const ACTIVATION_KEYS_STAGE_URL =
-  'https://console.stage.redhat.com/insights/connector/activation-keys';
+export const ACTIVATION_KEYS_URL = '/insights/connector/activation-keys';
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
 export const CREATING_IMAGES_WITH_IB_URL =
