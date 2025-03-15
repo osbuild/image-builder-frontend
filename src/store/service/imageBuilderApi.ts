@@ -702,6 +702,9 @@ export type Installer = {
   unattended?: boolean | undefined;
   "sudo-nopasswd"?: string[] | undefined;
 };
+export type CaCertsCustomization = {
+  pem_certs: string[];
+};
 export type Customizations = {
   containers?: Container[] | undefined;
   directories?: Directory[] | undefined;
@@ -739,6 +742,7 @@ export type Customizations = {
   partitioning_mode?: ("raw" | "lvm" | "auto-lvm") | undefined;
   fips?: Fips | undefined;
   installer?: Installer | undefined;
+  cacerts?: CaCertsCustomization | undefined;
 };
 export type BlueprintMetadata = {
   parent_id: string | null;
