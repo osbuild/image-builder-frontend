@@ -30,13 +30,7 @@ import {
 
 const selectRhel8 = async () => {
   const user = userEvent.setup();
-  await waitFor(async () =>
-    user.click(
-      screen.getAllByRole('button', {
-        name: /options menu/i,
-      })[0]
-    )
-  );
+  await waitFor(async () => user.click(screen.getByTestId('release_select')));
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8/i,
   });
