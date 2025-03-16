@@ -48,6 +48,7 @@ type ValidationInputProp = TextInputProps &
       value: string
     ) => void;
     isRequired?: boolean;
+    warning?: string;
   };
 
 type ErrorMessageProps = {
@@ -66,6 +67,7 @@ export const ValidatedInputAndTextArea = ({
   ariaLabel,
   inputType = 'textInput',
   isRequired,
+  warning = undefined,
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName] || '';
   const hasError = errorMessage !== '';
@@ -107,6 +109,13 @@ export const ValidatedInputAndTextArea = ({
           aria-label={ariaLabel}
           data-testid={dataTestId}
         />
+      )}
+      {warning !== undefined && warning !== '' && (
+        <HelperText>
+          <HelperTextItem variant="warning" hasIcon>
+            {warning}
+          </HelperTextItem>
+        </HelperText>
       )}
       {hasError && <ErrorMessage errorMessage={errorMessage} />}
     </>
