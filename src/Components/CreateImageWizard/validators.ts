@@ -49,6 +49,10 @@ export const isSnapshotValid = (dateString: string) => {
 };
 
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
+  if (!blueprintDescription) {
+    return true;
+  }
+
   return blueprintDescription.length <= 250;
 };
 

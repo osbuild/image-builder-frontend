@@ -19,10 +19,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { useGenerateDefaultName } from '../../utilities/useGenerateDefaultName';
 import { useDetailsValidation } from '../../utilities/useValidation';
-import {
-  HookValidatedInput,
-  ValidatedInputAndTextArea,
-} from '../../ValidatedInput';
+import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 
 const DetailsStep = () => {
   const dispatch = useAppDispatch();
@@ -62,7 +59,6 @@ const DetailsStep = () => {
           ariaLabel="blueprint name"
           dataTestId="blueprint"
           value={blueprintName}
-          isDisabled={false}
           onChange={handleNameChange}
           placeholder="Add blueprint name"
           stepValidation={stepValidation}
@@ -83,11 +79,10 @@ const DetailsStep = () => {
         label="Blueprint description"
         fieldId="blueprint-description-name"
       >
-        <HookValidatedInput
+        <ValidatedInputAndTextArea
           ariaLabel="blueprint description"
           dataTestId="blueprint description"
-          value={blueprintDescription || ''}
-          isDisabled={false}
+          value={blueprintDescription}
           onChange={handleDescriptionChange}
           placeholder="Add description"
           stepValidation={stepValidation}

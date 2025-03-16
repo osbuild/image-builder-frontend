@@ -122,7 +122,7 @@ export const ValidatedInputAndTextArea = ({
   inputType = 'textInput',
   isRequired,
 }: ValidationInputProp) => {
-  const errorMessage = stepValidation.errors[fieldName];
+  const errorMessage = stepValidation.errors[fieldName] || '';
   const hasError = errorMessage !== '';
 
   const [isPristine, setIsPristine] = useState(!value);
