@@ -417,7 +417,6 @@ export function useDetailsValidation(): StepValidation {
   const blueprintId = useAppSelector(selectBlueprintId);
 
   const nameValid = isBlueprintNameValid(name);
-  const descriptionValid = isBlueprintDescriptionValid(description);
   const [uniqueName, setUniqueName] = useState<boolean | null>(null);
 
   const [trigger] = useLazyGetBlueprintsQuery();
@@ -467,12 +466,16 @@ export function useDetailsValidation(): StepValidation {
     return { errors: { name: '' }, disabledNext: false };
   }
 
+  const descriptionError = !isBlueprintDescriptionValid(description)
+    ? 'Invalid description'
+    : '';
+
   return {
     errors: {
       name: nameError,
-      description: descriptionValid ? '' : 'Invalid description',
+      description: descriptionError,
     },
     // if uniqueName is null, we are still waiting for the API response
-    disabledNext: !!nameError || !descriptionValid || uniqueName !== true,
+    disabledNext: !!nameError || !!descriptionError || uniqueName !== true,
   };
 }
