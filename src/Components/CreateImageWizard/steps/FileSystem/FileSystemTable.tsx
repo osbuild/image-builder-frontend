@@ -33,7 +33,7 @@ import {
   selectPartitions,
 } from '../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../utilities/useValidation';
-import { HookValidatedInput } from '../../ValidatedInput';
+import { ValidatedInputAndTextArea } from '../../ValidatedInput';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
@@ -253,7 +253,7 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
   const stepValidation = useFilesystemValidation();
 
   return (
-    <HookValidatedInput
+    <ValidatedInputAndTextArea
       ariaLabel="minimum partition size"
       value={partition.min_size}
       isDisabled={partition.unit === 'B'}
@@ -266,6 +266,7 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
       ouiaId="size"
       stepValidation={stepValidation}
       fieldName={`min-size-${partition.id}`}
+      placeholder="File system"
       onChange={(event, minSize) => {
         if (minSize === '' || /^\d+$/.test(minSize)) {
           dispatch(
