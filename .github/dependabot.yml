@@ -7,3 +7,9 @@ updates:
       time: "04:00"
     open-pull-requests-limit: 3
     rebase-strategy: "auto"
+    ignore:
+      - dependency-name: "@playwright/test"
+        update-types:
+          - "version-update:semver-major"
+          - "version-update:semver-minor"
+          - "version-update:semver-patch"
