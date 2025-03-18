@@ -54,7 +54,7 @@ jobs:
       - name: Run front-end Playwright tests
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
-        run: npx playwright test
+        run: CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v4
