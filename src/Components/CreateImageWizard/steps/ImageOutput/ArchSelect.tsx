@@ -61,7 +61,6 @@ const ArchSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isFullWidth
       data-testid="arch_select"
     >
       {arch}
