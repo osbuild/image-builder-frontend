@@ -9,6 +9,7 @@ export default defineConfig({
   reporter: [
     ['html'],
     ['list'],
+    ['@currents/playwright'],
   ],
   use: {
     headless: true,
