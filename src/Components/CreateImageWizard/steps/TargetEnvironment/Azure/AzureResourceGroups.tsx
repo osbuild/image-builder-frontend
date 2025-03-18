@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
+  FormGroup,
+  Spinner,
   Select,
+  SelectList,
   SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+  MenuToggleElement,
+  MenuToggle,
+  TextInputGroup,
+  TextInputGroupMain,
+  TextInputGroupUtilities,
+  Button,
+} from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { useGetSourceUploadInfoQuery } from '../../../../../store/provisioningApi';
@@ -20,42 +28,108 @@ export const AzureResourceGroups = () => {
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<string>('');
+  const [selectOptions, setSelectOptions] = useState<string[]>([]);
 
-  const { data: sourceDetails, isFetching } = useGetSourceUploadInfoQuery(
+  const {
+    data: sourceDetails,
+    isFetching,
+    isSuccess,
+  } = useGetSourceUploadInfoQuery(
     { id: parseInt(azureSource as string) },
     {
       skip: !azureSource,
     }
   );
 
-  const resourceGroups =
-    (azureSource && sourceDetails?.azure?.resource_groups) || [];
+  const resourceGroups = sourceDetails?.azure?.resource_groups || [];
+
+  useEffect(() => {
+    let filteredGroups = resourceGroups;
+
+    if (filterValue) {
+      filteredGroups = resourceGroups.filter((group: string) =>
+        String(group).toLowerCase().includes(filterValue.toLowerCase())
+      );
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+    }
+    setSelectOptions(filteredGroups);
+
+    // This useEffect hook should run *only* on when the filter value changes.
+    // eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterValue, resourceGroups]);
+
+  const onInputClick = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+    } else if (!inputValue) {
+      setIsOpen(false);
+    }
+  };
+
+  const onTextInputChange = (_event: React.FormEvent, value: string) => {
+    setInputValue(value);
+    setFilterValue(value);
+
+    if (value !== azureResourceGroup) {
+      dispatch(changeAzureResourceGroup(''));
+    }
+  };
 
   const setResourceGroup = (
     _event: React.MouseEvent<Element, MouseEvent>,
     selection: string
   ) => {
     const resource =
-      resourceGroups?.find((resource) => resource === selection) || '';
+      resourceGroups.find((resource) => resource === selection) || '';
     setIsOpen(false);
     dispatch(changeAzureResourceGroup(resource));
   };
 
   const handleClear = () => {
     dispatch(changeAzureResourceGroup(''));
+    setInputValue('');
+    setFilterValue('');
   };
-  const options: JSX.Element[] = [];
 
-  if (isFetching) {
-    options.push(
-      <SelectOption
-        isNoResultsOption={true}
-        data-testid="azure-resource-groups-loading"
-      >
-        <Spinner size="lg" />
-      </SelectOption>
-    );
-  }
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ouiaId="resource_group_select"
+      ref={toggleRef}
+      variant="typeahead"
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      isFullWidth
+      isDisabled={!azureSource}
+    >
+      <TextInputGroup isPlain>
+        <TextInputGroupMain
+          value={azureResourceGroup ? azureResourceGroup : inputValue}
+          onClick={onInputClick}
+          onChange={onTextInputChange}
+          autoComplete="off"
+          placeholder="Select resource group"
+          isExpanded={isOpen}
+        />
+
+        {azureResourceGroup && (
+          <TextInputGroupUtilities>
+            <Button
+              variant="plain"
+              onClick={handleClear}
+              aria-label="Clear input"
+            >
+              <TimesIcon />
+            </Button>
+          </TextInputGroupUtilities>
+        )}
+      </TextInputGroup>
+    </MenuToggle>
+  );
 
   return (
     <FormGroup
@@ -64,23 +138,40 @@ export const AzureResourceGroups = () => {
       data-testid="azure-resource-groups"
     >
       <Select
-        ouiaId="resource_group_select"
-        variant={SelectVariant.typeahead}
-        onToggle={() => setIsOpen(!isOpen)}
-        onSelect={setResourceGroup}
-        onClear={handleClear}
-        selections={azureResourceGroup}
+        isScrollable
         isOpen={isOpen}
-        placeholderText="Select resource group"
-        typeAheadAriaLabel="Select resource group"
+        selected={azureResourceGroup}
+        onSelect={setResourceGroup}
+        onOpenChange={() => setIsOpen(!isOpen)}
+        toggle={toggle}
+        shouldFocusFirstItemOnOpen={false}
+        popperProps={{ direction: 'up' }}
       >
-        {resourceGroups.map((name: string, index: number) => (
-          <SelectOption
-            key={index}
-            value={name}
-            aria-label={`Resource group ${name}`}
-          />
-        ))}
+        <SelectList>
+          {isFetching && (
+            <SelectOption
+              value="loader"
+              data-testid="azure-resource-groups-loading"
+            >
+              <Spinner size="lg" />
+            </SelectOption>
+          )}
+          {selectOptions.length > 0 &&
+            selectOptions.map((name: string, index: number) => (
+              <SelectOption
+                key={index}
+                value={name}
+                aria-label={`Resource group ${name}`}
+              >
+                {name}
+              </SelectOption>
+            ))}
+          {isSuccess && selectOptions.length === 0 && (
+            <SelectOption isDisabled>
+              {`No results found for "${filterValue}"`}
+            </SelectOption>
+          )}
+        </SelectList>
       </Select>
     </FormGroup>
   );

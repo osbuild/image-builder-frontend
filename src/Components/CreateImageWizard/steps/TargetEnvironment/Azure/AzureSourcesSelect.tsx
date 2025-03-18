@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 
-import { Alert } from '@patternfly/react-core';
-import { FormGroup, Spinner } from '@patternfly/react-core';
 import {
+  Alert,
+  Button,
+  MenuToggle,
+  MenuToggleElement,
+  TextInputGroup,
+  TextInputGroupMain,
+  TextInputGroupUtilities,
+  FormGroup,
+  Spinner,
   Select,
+  SelectList,
   SelectOption,
-  SelectVariant,
-} from '@patternfly/react-core/deprecated';
+} from '@patternfly/react-core';
+import { TimesIcon } from '@patternfly/react-icons';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -25,6 +33,8 @@ export const AzureSourcesSelect = () => {
   const azureSource = useAppSelector(selectAzureSource);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [filterValue, setFilterValue] = useState<string>('');
 
   const {
     data: rawSources,
@@ -46,6 +56,10 @@ export const AzureSourcesSelect = () => {
     }
   );
 
+  const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
+    rawSources?.data?.map((source) => source.name) || []
+  );
+
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
     dispatch(changeAzureTenantId(sourceDetails?.azure?.tenant_id || ''));
@@ -60,12 +74,52 @@ export const AzureSourcesSelect = () => {
     dispatch,
   ]);
 
+  useEffect(() => {
+    let filteredSources = rawSources?.data?.map((source) => source.name);
+
+    if (filterValue) {
+      filteredSources = rawSources?.data
+        ?.map((source) => source.name)
+        .filter((source: string) =>
+          String(source).toLowerCase().includes(filterValue.toLowerCase())
+        );
+      if (!isOpen) {
+        setIsOpen(true);
+      }
+    }
+
+    if (filteredSources) {
+      setSelectOptions(filteredSources);
+    }
+
+    // This useEffect hook should run *only* on when the filter value changes.
+    // eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterValue, rawSources?.data]);
+
+  const onInputClick = () => {
+    if (!isOpen) {
+      setIsOpen(true);
+    } else if (!inputValue) {
+      setIsOpen(false);
+    }
+  };
+
+  const onTextInputChange = (_event: React.FormEvent, value: string) => {
+    setInputValue(value);
+    setFilterValue(value);
+
+    if (value !== selectedSource) {
+      dispatch(changeAzureSource(''));
+    }
+  };
+
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
     sourceName: string
   ) => {
     const sourceId = rawSources?.data?.find(
-      (source) => source?.name === sourceName
+      (source) => source.name === sourceName
     )?.id;
     dispatch(changeAzureSource(sourceId || ''));
     dispatch(changeAzureResourceGroup(''));
@@ -77,6 +131,8 @@ export const AzureSourcesSelect = () => {
     dispatch(changeAzureTenantId(''));
     dispatch(changeAzureSubscriptionId(''));
     dispatch(changeAzureResourceGroup(''));
+    setInputValue('');
+    setFilterValue('');
   };
 
   const handleToggle = () => {
@@ -87,43 +143,76 @@ export const AzureSourcesSelect = () => {
 
     setIsOpen(!isOpen);
   };
-  const selectOptions = rawSources?.data?.map((source) => (
-    <SelectOption key={source.id} value={source.name} />
-  ));
 
-  if (isSuccess) {
-    if (isFetching) {
-      selectOptions?.push(
-        <SelectOption key="loading" isNoResultsOption={true}>
-          <Spinner size="lg" />
-        </SelectOption>
-      );
-    }
-  }
+  const selectedSource = azureSource
+    ? rawSources?.data?.find((source) => source.id === azureSource)?.name
+    : undefined;
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ouiaId="source_select"
+      ref={toggleRef}
+      variant="typeahead"
+      onClick={handleToggle}
+      isExpanded={isOpen}
+      isFullWidth
+      isDisabled={!isSuccess}
+    >
+      <TextInputGroup isPlain>
+        <TextInputGroupMain
+          value={selectedSource ? selectedSource : inputValue}
+          onClick={onInputClick}
+          onChange={onTextInputChange}
+          autoComplete="off"
+          placeholder="Select source"
+          isExpanded={isOpen}
+        />
+
+        {selectedSource && (
+          <TextInputGroupUtilities>
+            <Button
+              variant="plain"
+              onClick={handleClear}
+              aria-label="Clear input"
+            >
+              <TimesIcon />
+            </Button>
+          </TextInputGroupUtilities>
+        )}
+      </TextInputGroup>
+    </MenuToggle>
+  );
 
   return (
     <>
       <FormGroup isRequired label={'Source name'} data-testid="azure-sources">
         <Select
-          ouiaId="source_select"
-          variant={SelectVariant.typeahead}
-          onToggle={handleToggle}
-          onSelect={handleSelect}
-          onClear={handleClear}
-          selections={
-            azureSource
-              ? rawSources?.data?.find((source) => source.id === azureSource)
-                  ?.name
-              : undefined
-          }
+          isScrollable
           isOpen={isOpen}
-          placeholderText="Select source"
-          typeAheadAriaLabel="Select source"
-          menuAppendTo="parent"
-          maxHeight="25rem"
-          isDisabled={!isSuccess}
+          selected={selectedSource}
+          onSelect={handleSelect}
+          onOpenChange={handleToggle}
+          toggle={toggle}
+          shouldFocusFirstItemOnOpen={false}
         >
-          {selectOptions}
+          <SelectList>
+            {isFetching && (
+              <SelectOption key="loading" value="loader">
+                <Spinner size="lg" />
+              </SelectOption>
+            )}
+            {selectOptions.length > 0 &&
+              selectOptions.map((source, index) => (
+                <SelectOption key={index} value={source}>
+                  {source}
+                </SelectOption>
+              ))}
+            {isSuccess && selectOptions.length === 0 && (
+              <SelectOption isDisabled>
+                {`No results found for "${filterValue}"`}
+              </SelectOption>
+            )}
+          </SelectList>
         </Select>
       </FormGroup>
       {isError && (

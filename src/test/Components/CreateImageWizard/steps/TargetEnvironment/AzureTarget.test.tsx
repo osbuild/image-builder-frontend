@@ -87,9 +87,7 @@ const deselectAzureAndSelectGuestImage = async () => {
 
 const selectSource = async (sourceName: string) => {
   const user = userEvent.setup();
-  const sourceTexbox = await screen.findByRole('textbox', {
-    name: /select source/i,
-  });
+  const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
   await waitFor(async () => user.click(sourceTexbox));
 
   const azureSource = await screen.findByRole('option', {
@@ -100,9 +98,9 @@ const selectSource = async (sourceName: string) => {
 
 const selectResourceGroup = async () => {
   const user = userEvent.setup();
-  const resourceGrpTextbox = await screen.findByRole('textbox', {
-    name: /select resource group/i,
-  });
+  const resourceGrpTextbox = await screen.findByPlaceholderText(
+    /select resource group/i
+  );
   await waitFor(async () => user.click(resourceGrpTextbox));
 
   const myResourceGroup1 = await screen.findByRole('option', {
@@ -170,16 +168,23 @@ const selectV1 = async () => {
   await waitFor(() => user.click(v1));
 };
 
-const getResourceGroupInput = async () => {
+const getResourceGroupTextInput = async () => {
   const resourceGroupInput = await screen.findByRole('textbox', {
     name: /resource group/i,
   });
   return resourceGroupInput;
 };
 
+const getResourceGroupSelect = async () => {
+  const resourceGroupInput = await screen.findByPlaceholderText(
+    /select resource group/i
+  );
+  return resourceGroupInput;
+};
+
 const enterResourceGroup = async () => {
   const user = userEvent.setup();
-  const resourceGroup = await getResourceGroupInput();
+  const resourceGroup = await getResourceGroupTextInput();
   await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
 };
 
@@ -238,7 +243,7 @@ describe('Step Upload to Azure', () => {
     expect(subscription).toBeEnabled();
     await enterSubscriptionId();
 
-    const resourceGroup = await getResourceGroupInput();
+    const resourceGroup = await getResourceGroupTextInput();
     expect(resourceGroup).toHaveValue('');
     expect(resourceGroup).toBeEnabled();
     await enterResourceGroup();
@@ -251,7 +256,7 @@ describe('Step Upload to Azure', () => {
     // manual values should be cleared out
     expect(await getTenantGuidInput()).toHaveValue('');
     expect(await getSubscriptionIdInput()).toHaveValue('');
-    expect(await getResourceGroupInput()).toHaveValue('');
+    expect(await getResourceGroupSelect()).toHaveValue('');
 
     expect(nextButton).toBeDisabled();
 
@@ -285,7 +290,7 @@ describe('Step Upload to Azure', () => {
       );
     });
 
-    user.click(await getResourceGroupInput());
+    user.click(await getResourceGroupSelect());
     const groups = await screen.findByLabelText(/Resource group/);
     expect(groups).toBeInTheDocument();
     expect(
