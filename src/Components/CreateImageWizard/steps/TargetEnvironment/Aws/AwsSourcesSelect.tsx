@@ -143,7 +143,6 @@ export const AwsSourcesSelect = () => {
       variant="typeahead"
       onClick={handleToggle}
       isExpanded={isOpen}
-      isFullWidth
       isDisabled={!isSuccess || isLoading}
       ouiaId="source_select"
     >
