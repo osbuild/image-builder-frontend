@@ -155,7 +155,6 @@ export const AzureSourcesSelect = () => {
       variant="typeahead"
       onClick={handleToggle}
       isExpanded={isOpen}
-      isFullWidth
       isDisabled={!isSuccess}
     >
       <TextInputGroup isPlain>
