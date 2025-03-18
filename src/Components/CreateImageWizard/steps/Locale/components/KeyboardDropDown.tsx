@@ -105,7 +105,6 @@ const KeyboardDropDown = () => {
       variant="typeahead"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain

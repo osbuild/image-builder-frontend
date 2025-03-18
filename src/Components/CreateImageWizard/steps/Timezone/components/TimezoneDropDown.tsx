@@ -102,7 +102,6 @@ const TimezoneDropDown = () => {
       variant="typeahead"
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain

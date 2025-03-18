@@ -158,7 +158,6 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
       onClick={handleToggle}
       innerRef={toggleRef}
       isExpanded={isOpen}
-      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
