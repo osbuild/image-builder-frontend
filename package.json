@@ -83,7 +83,7 @@
     "redux-mock-store": "1.5.5",
     "sass": "1.85.1",
     "sass-loader": "16.0.5",
-    "stylelint": "16.14.1",
+    "stylelint": "16.16.0",
     "stylelint-config-recommended-scss": "14.1.0",
     "ts-node": "10.9.2",
     "ts-patch": "3.3.0",
