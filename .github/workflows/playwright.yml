@@ -1,9 +1,8 @@
 name: Hosted playwright tests
 
 on:
-  workflow_run:
-    workflows: ["Development checks"]
-    types: [completed]
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
   workflow_dispatch:
 
 jobs:
@@ -54,8 +53,6 @@ jobs:
 
       - name: Run front-end Playwright tests
         env:
-          USER: ${{ secrets.HOSTED_STAGE_USER }}
-          PASSWORD: ${{ secrets.HOSTED_STAGE_PASSWORD }}
           BASE_URL: https://stage.foo.redhat.com:1337
         run: npx playwright test
 
