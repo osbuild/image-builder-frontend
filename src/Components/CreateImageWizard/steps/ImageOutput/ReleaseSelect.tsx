@@ -138,7 +138,6 @@ const ReleaseSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      isFullWidth
       data-testid="release_select"
     >
       {releases.get(distribution)}
