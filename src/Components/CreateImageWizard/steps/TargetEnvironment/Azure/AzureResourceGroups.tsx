@@ -103,7 +103,6 @@ export const AzureResourceGroups = () => {
       variant="typeahead"
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isFullWidth
       isDisabled={!azureSource}
     >
       <TextInputGroup isPlain>
