@@ -51,7 +51,6 @@ export const AzureHyperVSelect = () => {
       data-testid="azure-hyper-v-generation-select"
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isFullWidth
     >
       {hyperVGeneration === 'V1' ? 'Generation 1' : 'Generation 2'}
     </MenuToggle>
