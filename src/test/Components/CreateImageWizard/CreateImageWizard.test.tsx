@@ -144,9 +144,7 @@ describe('Keyboard accessibility', () => {
       'automatically-register-radio'
     );
     expect(registrationCheckbox).toHaveFocus();
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
+    await screen.findByPlaceholderText('Select activation key');
     await clickNext();
 
     // TODO: Focus on textbox on OpenSCAP step
