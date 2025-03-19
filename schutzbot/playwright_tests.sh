@@ -73,6 +73,8 @@ sudo podman run \
      -e "CI=true" \
      -e "USER=admin" \
      -e "PASSWORD=foobar" \
+     -e "CURRENTS_PROJECT_ID=$CURRENTS_PROJECT_ID" \
+     -e "CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY" \
      --net=host \
      -v "$PWD:/tests" \
      --privileged  \
