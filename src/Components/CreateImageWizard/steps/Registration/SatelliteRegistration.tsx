@@ -3,7 +3,6 @@ import React from 'react';
 import {
   DropEvent,
   FileUpload,
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -51,7 +50,7 @@ const SatelliteRegistration = () => {
     setIsRejected(true);
   };
   return (
-    <Form>
+    <>
       <SatelliteRegistrationCommand />
       <FormGroup label="Certificate authority (CA)" isRequired>
         <FileUpload
@@ -93,7 +92,7 @@ const SatelliteRegistration = () => {
           </HelperText>
         </FormHelperText>
       </FormGroup>
-    </Form>
+    </>
   );
 };
 

@@ -122,6 +122,17 @@ export const clickRegisterLater = async () => {
   await waitFor(() => user.click(registerLaterRadio));
 };
 
+export const clickRegisterSatellite = async () => {
+  const user = userEvent.setup();
+  await screen.findByRole('heading', {
+    name: /Register systems using this image/,
+  });
+  const registerLaterRadio = await screen.findByRole('radio', {
+    name: /register with satellite/i,
+  });
+  await waitFor(() => user.click(registerLaterRadio));
+};
+
 export const goToOscapStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
