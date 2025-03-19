@@ -73,9 +73,9 @@ const deselectPredictiveAnalytics = async () => {
 
 const openActivationKeyDropdown = async () => {
   const user = userEvent.setup();
-  const activationKeyDropdown = await screen.findByRole('textbox', {
-    name: 'Select activation key',
-  });
+  const activationKeyDropdown = await screen.findByPlaceholderText(
+    'Select activation key'
+  );
   user.click(activationKeyDropdown);
 };
 
@@ -197,9 +197,9 @@ describe('Step Registration', () => {
       ).not.toBeInTheDocument()
     );
     await waitFor(async () =>
-      expect(
-        await screen.findByRole('button', { name: /options menu/i })
-      ).toBeDisabled()
+      expect(await screen.findByTestId('activation-key-select')).toHaveClass(
+        'pf-m-disabled'
+      )
     );
     await goToReviewStep();
     await screen.findByText('Register the system later');
