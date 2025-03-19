@@ -8,7 +8,7 @@ import {
   TextContent,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
 const PopoverActivation = () => {
   const { auth } = useChrome();
