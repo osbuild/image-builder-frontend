@@ -116,10 +116,10 @@ export const clickRegisterLater = async () => {
   await screen.findByRole('heading', {
     name: /Register systems using this image/,
   });
-  const registrationCheckbox = await screen.findByRole('checkbox', {
-    name: /automatically register and enable advanced capabilities/i,
+  const registerLaterRadio = await screen.findByRole('radio', {
+    name: /register later/i,
   });
-  await waitFor(() => user.click(registrationCheckbox));
+  await waitFor(() => user.click(registerLaterRadio));
 };
 
 export const goToOscapStep = async () => {
