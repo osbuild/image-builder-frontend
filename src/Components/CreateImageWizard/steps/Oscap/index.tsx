@@ -14,8 +14,7 @@ import { Oscap, removeBetaFromRelease } from './Oscap';
 
 import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
-  COMPLIANCE_PROD_URL,
-  COMPLIANCE_STAGE_URL,
+  COMPLIANCE_URL,
 } from '../../../../constants';
 import { useBackendPrefetch } from '../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -34,10 +33,7 @@ import {
   selectComplianceType,
   clearKernelAppend,
 } from '../../../../store/wizardSlice';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const OscapStep = () => {
   const dispatch = useAppDispatch();
@@ -45,7 +41,6 @@ const OscapStep = () => {
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
-  const { isProd } = useGetEnvironment();
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
@@ -139,7 +134,7 @@ const OscapStep = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             isInline
-            href={isProd() ? COMPLIANCE_PROD_URL : COMPLIANCE_STAGE_URL}
+            href={COMPLIANCE_URL}
           >
             Define new policies in Insights Compliance
           </Button>

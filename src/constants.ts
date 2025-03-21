@@ -24,10 +24,7 @@ export const RELEASE_LIFECYCLE_URL =
   'https://access.redhat.com/support/policy/updates/errata';
 export const AZURE_AUTH_URL =
   'https://docs.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow';
-export const COMPLIANCE_PROD_URL =
-  'https://console.redhat.com/insights/compliance/scappolicies';
-export const COMPLIANCE_STAGE_URL =
-  'https://console.stage.redhat.com/insights/compliance/scappolicies';
+export const COMPLIANCE_URL = '/insights/compliance/scappolicies';
 export const ACTIVATION_KEYS_URL = '/insights/connector/activation-keys';
 export const COMPLIANCE_AND_VULN_SCANNING_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/6/html/security_guide/chap-compliance_and_vulnerability_scanning';
