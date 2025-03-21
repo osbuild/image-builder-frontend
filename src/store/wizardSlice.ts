@@ -31,6 +31,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { RHEL_9, X86_64 } from '../constants';
+import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
 
@@ -694,13 +695,17 @@ export const wizardSlice = createSlice({
       }
     },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
+      if (!action.payload && state.snapshotting.snapshotDate === '') {
+        state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
+      }
+
       state.snapshotting.useLatest = action.payload;
     },
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
       if (action.payload === '') {
-        state.snapshotting.snapshotDate = action.payload;
+        state.snapshotting.snapshotDate = '';
       } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
       }
