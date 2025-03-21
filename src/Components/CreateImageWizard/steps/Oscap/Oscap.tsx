@@ -29,6 +29,7 @@ import {
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
+  useBackendPrefetch,
 } from '../../../../store/backendApi';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
@@ -99,6 +100,7 @@ const ProfileSelector = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const complianceType = useAppSelector(selectComplianceType);
+  const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
 
   const {
     data: profiles,
@@ -138,6 +140,18 @@ const ProfileSelector = () => {
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
+
+  // prefetch the profiles customizations for on-prem
+  // and save the results to the cache, since the request
+  // is quite slow
+  if (process.env.IS_ON_PREMISE) {
+    profiles?.forEach((profile) => {
+      prefetchProfile({
+        distribution: release,
+        profile: profile,
+      });
+    });
+  }
 
   useEffect(() => {
     if (!policies || policies.data === undefined) {
