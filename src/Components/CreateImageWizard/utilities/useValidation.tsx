@@ -518,11 +518,7 @@ const getStrength = (
   rulesCount: number,
   isAzure: boolean
 ): PasswordValidationResult['strength'] => {
-  const isValidStrength = isAzure
-    ? strCount >= 6 && rulesCount >= 3
-    : strCount >= 6;
-
-  return isValidStrength
+  return isAzure && strCount >= 6 && rulesCount >= 3
     ? { variant: 'success', icon: <CheckCircleIcon />, text: 'Strong' }
     : { variant: 'default', icon: null, text: '' };
 };
