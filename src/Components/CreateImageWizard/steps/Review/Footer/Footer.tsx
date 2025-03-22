@@ -20,6 +20,7 @@ import {
   useUpdateBlueprintMutation,
 } from '../../../../../store/backendApi';
 import { resolveRelPath } from '../../../../../Utilities/path';
+import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
 
@@ -33,6 +34,7 @@ const ReviewWizardFooter = () => {
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
   const { composeId } = useParams();
+  const { isFedoraEnv } = useGetEnvironment();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
   const onToggleClick = () => {
@@ -52,7 +54,9 @@ const ReviewWizardFooter = () => {
   const getBlueprintPayload = async () => {
     if (!process.env.IS_ON_PREMISE) {
       const userData = await auth?.getUser();
-      const orgId = userData?.identity?.internal?.org_id;
+      const orgId = isFedoraEnv
+        ? userData?.identity?.user?.username
+        : userData?.identity?.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);
       return requestBody;
     }
