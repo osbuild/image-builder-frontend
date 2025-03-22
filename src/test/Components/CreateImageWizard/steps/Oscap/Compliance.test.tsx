@@ -60,9 +60,7 @@ const goToReviewStep = async () => {
 const selectPolicy = async () => {
   const user = userEvent.setup();
 
-  const policyMenu = await screen.findByRole('button', {
-    name: /options menu/i,
-  });
+  const policyMenu = await screen.findByText('None');
   await waitFor(() => user.click(policyMenu));
 
   const cisl2 = await screen.findByRole('option', {

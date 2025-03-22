@@ -58,9 +58,9 @@ const goToFirstBootStep = async (): Promise<void> => {
 
 const selectSimplifiedOscapProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
+  const selectProfileDropdown = await screen.findByPlaceholderText(
+    /select a profile/i
+  );
   await waitFor(() => user.click(selectProfileDropdown));
 
   const simplifiedProfile = await screen.findByText(/Simplified profile/i);
