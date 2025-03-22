@@ -45,15 +45,13 @@ let router: RemixRouter | undefined = undefined;
 
 const openReleaseMenu = async () => {
   const user = userEvent.setup();
-  const releaseMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[0];
+  const releaseMenu = screen.getByTestId('release_select');
   await waitFor(() => user.click(releaseMenu));
 };
 
 const clickShowOptions = async () => {
   const user = userEvent.setup();
-  const showOptions = await screen.findByRole('button', {
+  const showOptions = await screen.findByRole('option', {
     name: /show options for further development of rhel/i,
   });
   await waitFor(() => user.click(showOptions));
@@ -89,10 +87,8 @@ const selectCentos9 = async () => {
 
 const openArchitectureMenu = async () => {
   const user = userEvent.setup();
-  const releaseMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[1];
-  await waitFor(() => user.click(releaseMenu));
+  const archMenu = screen.getByTestId('arch_select');
+  await waitFor(() => user.click(archMenu));
 };
 
 const selectX86_64 = async () => {
@@ -222,7 +218,7 @@ describe('Step Image output', () => {
     await screen.findAllByRole('option', {
       name: /Red Hat Enterprise Linux \(RHEL\) 9/,
     });
-    await screen.findByRole('button', {
+    await screen.findByRole('option', {
       name: 'Show options for further development of RHEL',
     });
   });
@@ -231,7 +227,7 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await openReleaseMenu();
 
-    const showOptionsButton = await screen.findByRole('button', {
+    const showOptionsButton = await screen.findByRole('option', {
       name: 'Show options for further development of RHEL',
     });
     user.click(showOptionsButton);

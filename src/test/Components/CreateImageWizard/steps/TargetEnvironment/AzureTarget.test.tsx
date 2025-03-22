@@ -157,13 +157,11 @@ const enterSubscriptionId = async () => {
 
 const selectV1 = async () => {
   const user = userEvent.setup();
-  const hypervMenu = screen.getAllByRole('button', {
-    name: /options menu/i,
-  })[0];
+  const hypervMenu = screen.getByTestId('azure-hyper-v-generation-select');
 
   await waitFor(() => user.click(hypervMenu));
   const v1 = await screen.findByRole('option', {
-    name: /v1/i,
+    name: /generation 1/i,
   });
   await waitFor(() => user.click(v1));
 };
