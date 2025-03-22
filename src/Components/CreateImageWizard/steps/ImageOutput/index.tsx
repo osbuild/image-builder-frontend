@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Text, Form, Title } from '@patternfly/react-core';
 
@@ -8,12 +8,30 @@ import ReleaseLifecycle from './ReleaseLifecycle';
 import ReleaseSelect from './ReleaseSelect';
 import TargetEnvironment from './TargetEnvironment';
 
-import { useAppSelector } from '../../../../store/hooks';
-import { selectDistribution } from '../../../../store/wizardSlice';
+import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import {
+  changeBlueprintName,
+  selectArchitecture,
+  selectBlueprintName,
+  selectDistribution,
+  selectIsCustomName,
+} from '../../../../store/wizardSlice';
 import DocumentationButton from '../../../sharedComponents/DocumentationButton';
+import { generateDefaultName } from '../../utilities/useGenerateDefaultName';
 
 const ImageOutputStep = () => {
+  const dispatch = useAppDispatch();
+  const blueprintName = useAppSelector(selectBlueprintName);
   const distribution = useAppSelector(selectDistribution);
+  const arch = useAppSelector(selectArchitecture);
+  const isCustomName = useAppSelector(selectIsCustomName);
+
+  useEffect(() => {
+    const defaultName = generateDefaultName(distribution, arch);
+    if (!isCustomName && blueprintName !== defaultName) {
+      dispatch(changeBlueprintName(defaultName));
+    }
+  }, [dispatch, distribution, arch, isCustomName]);
 
   return (
     <Form>
