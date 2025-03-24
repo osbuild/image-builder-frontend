@@ -15,10 +15,16 @@ import {
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
   removeUser,
+  selectUserGroupsByIndex,
+  addUserGroupByIndex,
+  removeUserGroupByIndex,
 } from '../../../../../store/wizardSlice';
+import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
 import { useUsersValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
+import { isUserGroupValid } from '../../../validators';
+
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const index = 0;
@@ -30,6 +36,8 @@ const UserInfo = () => {
   const userSshKey = useAppSelector(userSshKeySelector);
   const userIsAdministratorSelector = selectUserAdministrator(index);
   const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
+  const userGroupsSelector = selectUserGroupsByIndex(index);
+  const userGroups = useAppSelector(userGroupsSelector);
 
   const handleNameChange = (
     _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -111,11 +119,28 @@ const UserInfo = () => {
       <FormGroup>
         <Checkbox
           label="Administrator"
-          isChecked={userIsAdministrator}
+          isChecked={userIsAdministrator || userGroups.includes('wheel')}
           onChange={(_e, value) => handleCheckboxChange(_e, value)}
           aria-label="Administrator"
           id="user Administrator"
           name="user Administrator"
+        />
+      </FormGroup>
+      <FormGroup label="Groups">
+        <LabelInput
+          ariaLabel="Add user group"
+          placeholder="Add user group"
+          validator={isUserGroupValid}
+          list={userGroups}
+          item="Group"
+          addAction={(value) =>
+            addUserGroupByIndex({ index: index, group: value })
+          }
+          removeAction={(value) =>
+            removeUserGroupByIndex({ index: index, group: value })
+          }
+          stepValidation={stepValidation}
+          fieldName="groups"
         />
       </FormGroup>
       <Tooltip position="top-start" content={'Remove user'}>

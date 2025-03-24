@@ -67,6 +67,15 @@ export const isUserNameValid = (userName: string) => {
   return isLengthValid && isNotNumericOnly && isPatternValid;
 };
 
+export const isUserGroupValid = (group: string) => {
+  // see `man groupadd` for the exact specification
+  return (
+    group.length <= 32 &&
+    /^[a-zA-Z0-9_][a-zA-Z0-9_-]*(\$)?$/.test(group) &&
+    /[a-zA-Z]+/.test(group) // contains at least one letter
+  );
+};
+
 export const isSshKeyValid = (sshKey: string) => {
   // 1. Key types: ssh-rsa, ssh-dss, ssh-ed25519, or ecdsa-sha2-nistp(256|384|521).
   // 2. Base64-encoded key material.
