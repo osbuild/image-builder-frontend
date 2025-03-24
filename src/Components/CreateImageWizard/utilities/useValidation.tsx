@@ -167,7 +167,7 @@ export function useFilesystemValidation(): StepValidation {
   const duplicates = getDuplicateMountPoints(partitions);
   for (const partition of partitions) {
     if (partition.min_size === '') {
-      errors[`min-size-${partition.id}`] = 'partition size is required';
+      errors[`min-size-${partition.id}`] = 'Partition size is required';
       disabledNext = true;
     } else if (!isMountpointMinSizeValid(partition.min_size)) {
       errors[`min-size-${partition.id}`] = 'Must be larger than 0';
