@@ -22,6 +22,7 @@ type LabelInputProps = {
   placeholder: string;
   validator: (value: string) => boolean;
   requiredList?: string[] | undefined;
+  requiredCategoryName?: string;
   list: string[] | undefined;
   item: string;
   addAction: (value: string) => UnknownAction;
@@ -36,6 +37,7 @@ const LabelInput = ({
   validator,
   list,
   requiredList,
+  requiredCategoryName,
   item,
   addAction,
   removeAction,
@@ -127,7 +129,7 @@ const LabelInput = ({
       )}
       {requiredList && requiredList.length > 0 && (
         <LabelGroup
-          categoryName="Required by OpenSCAP"
+          categoryName={requiredCategoryName}
           numLabels={20}
           className="pf-v5-u-mt-sm pf-v5-u-w-100"
         >
