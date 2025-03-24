@@ -71,6 +71,11 @@ type UserAdministratorPayload = {
   isAdministrator: boolean;
 };
 
+type UserGroupPayload = {
+  index: number;
+  group: string;
+};
+
 export type wizardState = {
   env: {
     serverUrl: string;
@@ -409,6 +414,11 @@ export const selectUserSshKeyByIndex =
 export const selectUserAdministrator =
   (userIndex: number) => (state: RootState) => {
     return state.wizard.users[userIndex]?.isAdministrator;
+  };
+
+export const selectUserGroupsByIndex =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.groups;
   };
 
 export const selectKernel = (state: RootState) => {
@@ -1022,6 +1032,26 @@ export const wizardSlice = createSlice({
         user.groups = user.groups.filter((group) => group !== 'wheel');
       }
     },
+    addUserGroupByIndex: (state, action: PayloadAction<UserGroupPayload>) => {
+      if (
+        !state.users[action.payload.index].groups.some(
+          (group) => group === action.payload.group
+        )
+      ) {
+        state.users[action.payload.index].groups.push(action.payload.group);
+      }
+    },
+    removeUserGroupByIndex: (
+      state,
+      action: PayloadAction<UserGroupPayload>
+    ) => {
+      const groupIndex = state.users[action.payload.index].groups.findIndex(
+        (group) => group === action.payload.group
+      );
+      if (groupIndex !== -1) {
+        state.users[action.payload.index].groups.splice(groupIndex, 1);
+      }
+    },
   },
 });
 
@@ -1112,5 +1142,7 @@ export const {
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
   setUserAdministratorByIndex,
+  addUserGroupByIndex,
+  removeUserGroupByIndex,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
