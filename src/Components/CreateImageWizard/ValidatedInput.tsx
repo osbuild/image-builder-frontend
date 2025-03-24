@@ -21,19 +21,6 @@ type ValidatedTextInputPropTypes = TextInputProps & {
   placeholder?: string;
 };
 
-type HookValidatedInputPropTypes = TextInputProps &
-  TextAreaProps & {
-    dataTestId?: string | undefined;
-    ouiaId?: string;
-    ariaLabel: string | undefined;
-    value: string;
-    placeholder?: string;
-    stepValidation: StepValidation;
-    fieldName: string;
-    warning?: string;
-    inputType?: 'textInput' | 'textArea';
-  };
-
 type ValidationInputProp = TextInputProps &
   TextAreaProps & {
     value: string;
@@ -143,80 +130,6 @@ export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
         {errorMessage}
       </HelperTextItem>
     </HelperText>
-  );
-};
-
-export const HookValidatedInput = ({
-  dataTestId,
-  ouiaId,
-  ariaLabel,
-  value,
-  isDisabled,
-  placeholder,
-  onChange,
-  stepValidation,
-  fieldName,
-  type = 'text',
-  inputType,
-  warning = undefined,
-}: HookValidatedInputPropTypes) => {
-  const [isPristine, setIsPristine] = useState(!value ? true : false);
-  // Do not surface validation on pristine state components
-  // Allow step validation to be set on pristine state, when needed
-  const validated = isPristine
-    ? 'default'
-    : stepValidation.errors[fieldName] === 'default'
-    ? 'default'
-    : stepValidation.errors[fieldName]
-    ? 'error'
-    : 'success';
-
-  const handleBlur = () => {
-    setIsPristine(false);
-  };
-
-  return (
-    <>
-      {inputType === 'textArea' ? (
-        <TextArea
-          value={value}
-          data-testid={dataTestId}
-          onChange={onChange!}
-          validated={validated}
-          aria-label={ariaLabel || ''}
-          onBlur={handleBlur}
-          placeholder={placeholder || ''}
-          isDisabled={isDisabled || false}
-        />
-      ) : (
-        <TextInput
-          value={value}
-          data-testid={dataTestId}
-          ouiaId={ouiaId || ''}
-          type={type}
-          onChange={onChange!}
-          validated={validated}
-          aria-label={ariaLabel || ''}
-          onBlur={handleBlur}
-          placeholder={placeholder || ''}
-          isDisabled={isDisabled || false}
-        />
-      )}
-      {validated === 'error' && (
-        <HelperText>
-          <HelperTextItem variant="error" hasIcon>
-            {stepValidation.errors[fieldName]}
-          </HelperTextItem>
-        </HelperText>
-      )}
-      {warning !== undefined && warning !== '' && (
-        <HelperText>
-          <HelperTextItem variant="warning" hasIcon>
-            {warning}
-          </HelperTextItem>
-        </HelperText>
-      )}
-    </>
   );
 };
 
