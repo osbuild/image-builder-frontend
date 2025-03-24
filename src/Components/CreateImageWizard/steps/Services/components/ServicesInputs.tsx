@@ -64,6 +64,7 @@ const ServicesInput = () => {
               !oscapProfileInfo?.services?.disabled?.includes(service)
           )}
           requiredList={disabledRequiredByOpenSCAP}
+          requiredCategoryName="Required by OpenSCAP"
           item="Disabled service"
           addAction={addDisabledService}
           removeAction={removeDisabledService}
@@ -80,6 +81,7 @@ const ServicesInput = () => {
             (service) => !oscapProfileInfo?.services?.masked?.includes(service)
           )}
           requiredList={maskedRequiredByOpenSCAP}
+          requiredCategoryName="Required by OpenSCAP"
           item="Masked service"
           addAction={addMaskedService}
           removeAction={removeMaskedService}
@@ -96,6 +98,7 @@ const ServicesInput = () => {
             (service) => !enabledRequiredByOpenSCAP.includes(service)
           )}
           requiredList={enabledRequiredByOpenSCAP}
+          requiredCategoryName="Required by OpenSCAP"
           item="Enabled service"
           addAction={addEnabledService}
           removeAction={removeEnabledService}
