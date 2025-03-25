@@ -3,34 +3,30 @@ import { useEffect, useState } from 'react';
 import cockpit from 'cockpit';
 
 export const useOnPremOpenSCAPAvailable = () => {
+  // this can default to false in the service, since we will only render
+  // a loading spinner for on-prem
+  const [isLoading, setIsLoading] = useState(true);
   const [packagesAvailable, setPackagesAvailable] = useState(false);
 
   useEffect(() => {
-    const checkPackages = async () => {
-      try {
-        const openSCAPAvailable = await cockpit.spawn(
-          ['rpm', '-qa', 'openscap-scanner'],
-          {}
-        );
-
-        const ssgAvailable = await cockpit.spawn(
-          ['rpm', '-qa', 'scap-security-guide'],
-          {}
-        );
-
-        setPackagesAvailable(openSCAPAvailable !== '' && ssgAvailable !== '');
-      } catch {
-        // this doesn't change the value,
-        // but we need to handle the error
-        // so just set the value to false
-        setPackagesAvailable(false);
-      }
+    const checkPackages = () => {
+      cockpit
+        .spawn(['rpm', '-qa', 'openscap-scanner', 'scap-security-guide'], {})
+        .then((res: string) => {
+          setPackagesAvailable(
+            res.includes('openscap-scanner') &&
+              res.includes('scap-security-guide')
+          );
+          setIsLoading(false);
+        })
+        .catch(() => {
+          setPackagesAvailable(false);
+          setIsLoading(false);
+        });
     };
 
-    if (process.env.IS_ON_PREMISE) {
-      checkPackages();
-    }
+    checkPackages();
   }, []);
 
-  return packagesAvailable;
+  return [packagesAvailable, isLoading];
 };
