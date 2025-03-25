@@ -49,10 +49,6 @@ export const isSnapshotValid = (dateString: string) => {
 };
 
 export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
-  if (!blueprintDescription) {
-    return true;
-  }
-
   return blueprintDescription.length <= 250;
 };
 
@@ -104,10 +100,6 @@ export const isNtpServerValid = (ntpServer: string) => {
 };
 
 export const isHostnameValid = (hostname: string) => {
-  if (!hostname) {
-    return true;
-  }
-
   return (
     hostname.length < 65 &&
     /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/.test(
@@ -117,10 +109,6 @@ export const isHostnameValid = (hostname: string) => {
 };
 
 export const isKernelNameValid = (kernelName: string) => {
-  if (!kernelName) {
-    return true;
-  }
-
   return (
     kernelName.length < 65 &&
     /^([a-z0-9]|[a-z0-9][a-z0-9-_.+]*)[a-z0-9]$/.test(kernelName) &&
@@ -129,10 +117,6 @@ export const isKernelNameValid = (kernelName: string) => {
 };
 
 export const isKernelArgumentValid = (arg: string) => {
-  if (!arg) {
-    return true;
-  }
-
   return /^[a-zA-Z0-9=-_,."']*$/.test(arg);
 };
 
