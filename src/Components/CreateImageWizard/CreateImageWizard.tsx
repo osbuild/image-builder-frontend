@@ -22,7 +22,6 @@ import ImageOutputStep from './steps/ImageOutput';
 import KernelStep from './steps/Kernel';
 import LocaleStep from './steps/Locale';
 import OscapStep from './steps/Oscap';
-import OscapOnPremWarning from './steps/Oscap/OnPremWarning';
 import PackagesStep from './steps/Packages';
 import RegistrationStep from './steps/Registration';
 import RepositoriesStep from './steps/Repositories';
@@ -82,7 +81,6 @@ import {
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
-import { useOnPremOpenSCAPAvailable } from '../../Utilities/useOnPremOpenSCAP';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -156,8 +154,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const isKernelEnabled = useFlag('image-builder.kernel.enabled');
   const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
   const isServicesStepEnabled = useFlag('image-builder.services.enabled');
-
-  const onPremOpenSCAPAvailable = useOnPremOpenSCAPAvailable();
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -416,11 +412,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
               >
-                {process.env.IS_ON_PREMISE && !onPremOpenSCAPAvailable ? (
-                  <OscapOnPremWarning />
-                ) : (
-                  <OscapStep />
-                )}
+                <OscapStep />
               </WizardStep>,
               <WizardStep
                 name="File system configuration"
