@@ -15,10 +15,11 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { targetOptions } from '../../constants';
+import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
 import {
   useGetBlueprintQuery,
   useComposeBlueprintMutation,
@@ -38,6 +39,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
   const dispatch = useAppDispatch();
+  const { analytics } = useChrome();
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
@@ -49,6 +51,9 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
               (target) => !deselectedTargets.includes(target)
             ),
           },
+        });
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+          trigger: 'synchronize images',
         });
       } catch (imageBuildError) {
         dispatch(

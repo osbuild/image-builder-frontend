@@ -6,8 +6,13 @@ import {
   Modal,
   ModalVariant,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
+import {
+  AMPLITUDE_MODULE_NAME,
+  PAGINATION_LIMIT,
+  PAGINATION_OFFSET,
+} from '../../constants';
 import {
   backendApi,
   useDeleteBlueprintMutation,
@@ -36,6 +41,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
   const dispatch = useAppDispatch();
+  const { analytics } = useChrome();
 
   const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -59,6 +65,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   });
   const handleDelete = async () => {
     if (selectedBlueprintId) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`);
       setShowDeleteModal(false);
       await deleteBlueprint({ id: selectedBlueprintId });
       dispatch(setBlueprintId(undefined));
