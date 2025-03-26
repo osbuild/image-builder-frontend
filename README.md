@@ -25,6 +25,7 @@ Frontend code for Image Builder.
 2. [File structure](#file-structure)
 3. [Style Guidelines](#style-guidelines)
 4. [Test Guidelines](#test-guidelines)
+5. [Running hosted service Playwright tests](#running-hosted-service-playwright-tests)
 
 ## How to build and run image-builder-frontend
 
@@ -354,3 +355,30 @@ Follow these steps to find and paste the certification file into the 'Keychain A
 8. Close the localhost screen.
 
 9. Run `npm run stage-beta:msw` and open the Firefox browser to verify that it is working as expected.
+
+## Running hosted service Playwright tests
+
+1. Copy the [example env file](playwright_example.env) content and create a file named `.env` in the root directory of the project. Paste the example file content into it.
+   For local development fill in the:
+    * `BASE_URL` - `https://stage.foo.redhat.com:1337` is required, which is already set in the example config
+    * `PLAYWRIGHT_USER` - your consoledot stage username
+    * `PLAYWRIGHT_PASSWORD` - your consoledot stage password
+
+2. Make sure Playwright is installed as a dev dependency
+   ```bash
+   npm ci
+   ```
+
+3. Download the Playwright browsers with 
+   ```bash
+   npx playwright install
+   ```
+
+4. Start the local development stage server by running 
+   ```bash
+   npm run start:stage
+   ```
+
+5. Now you have two options of how to run the tests:
+   * (Preferred) Use VS Code and the [Playwright Test module for VSCode](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright). But other editors do have similar plugins for ease of use, if so desired
+   * Using terminal - `npx playwright test` will run the playwright test suite. `npx playwright test --headed` will run the suite in a vnc-like browser so you can watch it's interactions.

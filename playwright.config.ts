@@ -1,4 +1,5 @@
 import { defineConfig, devices, type ReporterDescription } from '@playwright/test';
+import 'dotenv/config';
 
 const reporters: ReporterDescription[] = [
   ['html'],
