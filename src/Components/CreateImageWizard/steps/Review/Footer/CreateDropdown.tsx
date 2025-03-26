@@ -45,15 +45,32 @@ export const CreateSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-        module: AMPLITUDE_MODULE_NAME,
-        isPreview: isBeta(),
-        type: 'createBlueprintAndBuildImages',
+    if (!process.env.IS_ON_PREMISE && requestBody) {
+      const analyticsData = {
+        image_name: requestBody.name,
+        description: requestBody.description,
+        distribution: requestBody.distribution,
+        openscap: requestBody.customizations.openscap,
+        image_request_types: requestBody.image_requests.map(
+          (req) => req.image_type
+        ),
+        image_request_architectures: requestBody.image_requests.map(
+          (req) => req.architecture
+        ),
+        // imageRequests: requestBody.image_requests,
+        // customizations: requestBody.customizations,
+        metadata: requestBody.metadata,
         packages: packages.map((pkg) => pkg.name),
-      });
+        file_system_configuration: requestBody.customizations.filesystem,
+        module: AMPLITUDE_MODULE_NAME,
+        is_preview: isBeta(),
+        type: 'createBlueprintAndBuildImages',
+      };
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
+        analyticsData
+      );
     }
-
     const blueprint =
       requestBody &&
       (await createBlueprint({
