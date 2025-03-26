@@ -55,13 +55,15 @@ const ReviewWizardFooter = () => {
     if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
       const userData = await auth?.getUser();
       const orgId = userData?.identity?.internal?.org_id;
-      const requestBody = orgId && mapRequestFromState(store, orgId);
+      const accountId = userData?.identity?.internal?.account_id;
+      const requestBody =
+        orgId && accountId && mapRequestFromState(store, orgId, accountId);
       return requestBody;
     }
 
     // NOTE: This should be fine on-prem, we should
     // be able to ignore the `org-id`
-    return mapRequestFromState(store, '');
+    return mapRequestFromState(store, '', '');
   };
 
   return (

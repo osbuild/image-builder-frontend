@@ -284,6 +284,7 @@ describe('Registration request generated correctly', () => {
       insights: true,
       rhc: true,
       organization: 5,
+      account: 5,
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
@@ -308,6 +309,7 @@ describe('Registration request generated correctly', () => {
       insights: true,
       rhc: false,
       organization: 5,
+      account: 5,
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
@@ -334,6 +336,7 @@ describe('Registration request generated correctly', () => {
       insights: false,
       rhc: false,
       organization: 5,
+      account: 5,
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
@@ -377,6 +380,7 @@ describe('Registration request generated correctly', () => {
       insights: true,
       rhc: true,
       organization: 5,
+      account: 5,
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
@@ -404,6 +408,7 @@ describe('Registration request generated correctly', () => {
       insights: true,
       rhc: true,
       organization: 5,
+      account: 5,
       'server-url': 'subscription.rhsm.redhat.com',
       'base-url': 'https://cdn.redhat.com/',
     };
