@@ -33,7 +33,7 @@ export const CreateSaveAndBuildBtn = ({
   setIsOpen,
   isDisabled,
 }: CreateDropdownProps) => {
-  const { analytics, isBeta } = useChrome();
+  const { analytics, auth, isBeta } = useChrome();
   const packages = useAppSelector(selectPackages);
 
   const [buildBlueprint] = useComposeBlueprintMutation();
@@ -43,10 +43,12 @@ export const CreateSaveAndBuildBtn = ({
   const dispatch = useAppDispatch();
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
+    const user = await auth.getUser();
     setIsOpen(false);
 
     if (!process.env.IS_ON_PREMISE && requestBody) {
       const analyticsData = {
+        user: user,
         image_name: requestBody.name,
         description: requestBody.description,
         distribution: requestBody.distribution,
@@ -70,6 +72,8 @@ export const CreateSaveAndBuildBtn = ({
         `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
         analyticsData
       );
+      // eslint-disable-next-line no-console
+      console.log('ANALYTICS: ', analyticsData);
     }
     const blueprint =
       requestBody &&
