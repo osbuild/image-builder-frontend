@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   DropdownList,
@@ -8,12 +8,18 @@ import {
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
+import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import { useUpdateBlueprintMutation } from '../../../../../store/backendApi';
+import { useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
   useComposeBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
+import { selectPackages } from '../../../../../store/wizardSlice';
+import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type EditDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
@@ -28,13 +34,40 @@ export const EditSaveAndBuildBtn = ({
   blueprintId,
   isDisabled,
 }: EditDropdownProps) => {
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  const { analytics, auth, isBeta } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const [buildBlueprint] = useComposeBlueprintMutation();
+  const packages = useAppSelector(selectPackages);
+
   const [updateBlueprint] = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
 
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
+
+    if (!process.env.IS_ON_PREMISE && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
+        ...analyticsData,
+        type: 'editBlueprintAndBuildImages',
+        account_id: userData?.identity.internal?.account_id || 'Not found',
+      });
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+        module: AMPLITUDE_MODULE_NAME,
+        trigger: 'blueprint_updated',
+        image_request_types: requestBody.image_requests.map(
+          (req) => req.image_type
+        ),
+      });
+    }
     setIsOpen(false);
     if (requestBody) {
       await updateBlueprint({
@@ -64,11 +97,31 @@ export const EditSaveButton = ({
   blueprintId,
   isDisabled,
 }: EditDropdownProps) => {
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  const { analytics, auth, isBeta } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
+  const packages = useAppSelector(selectPackages);
+
   const [updateBlueprint, { isLoading }] = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
+
+    if (!process.env.IS_ON_PREMISE && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
+        ...analyticsData,
+        type: 'editBlueprint',
+        account_id: userData?.identity.internal?.account_id || 'Not found',
+      });
+    }
     setIsOpen(false);
     if (requestBody) {
       updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });

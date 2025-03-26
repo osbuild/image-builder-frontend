@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   DropdownList,
@@ -11,6 +11,7 @@ import {
   Button,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import { useCreateBlueprintMutation } from '../../../../../store/backendApi';
@@ -21,6 +22,7 @@ import {
   useComposeBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
+import { createAnalytics } from '../../../../../Utilities/analytics';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
 type CreateDropdownProps = {
@@ -34,7 +36,15 @@ export const CreateSaveAndBuildBtn = ({
   setIsOpen,
   isDisabled,
 }: CreateDropdownProps) => {
-  const { analytics, isBeta } = useChrome();
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  const { analytics, auth, isBeta } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const packages = useAppSelector(selectPackages);
 
   const [buildBlueprint] = useComposeBlueprintMutation();
@@ -47,15 +57,21 @@ export const CreateSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-        module: AMPLITUDE_MODULE_NAME,
-        isPreview: isBeta(),
+    if (!process.env.IS_ON_PREMISE && !isFedoraEnv && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
+        ...analyticsData,
         type: 'createBlueprintAndBuildImages',
-        packages: packages.map((pkg) => pkg.name),
+        account_id: userData?.identity.internal?.account_id || 'Not found',
+      });
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+        module: AMPLITUDE_MODULE_NAME,
+        trigger: 'blueprint_created',
+        image_request_types: requestBody.image_requests.map(
+          (req) => req.image_type
+        ),
       });
     }
-
     const blueprint =
       requestBody &&
       (await createBlueprint({
@@ -86,7 +102,15 @@ export const CreateSaveButton = ({
   getBlueprintPayload,
   isDisabled,
 }: CreateDropdownProps) => {
-  const { analytics, isBeta } = useChrome();
+  const { analytics, auth, isBeta } = useChrome();
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const packages = useAppSelector(selectPackages);
   const { isFedoraEnv } = useGetEnvironment();
 
@@ -141,12 +165,12 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-        module: AMPLITUDE_MODULE_NAME,
-        isPreview: isBeta(),
+    if (!process.env.IS_ON_PREMISE && !isFedoraEnv && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
+        ...analyticsData,
         type: 'createBlueprint',
-        packages: packages.map((pkg) => pkg.name),
+        account_id: userData?.identity.internal?.account_id || 'Not found',
       });
     }
     const blueprint =

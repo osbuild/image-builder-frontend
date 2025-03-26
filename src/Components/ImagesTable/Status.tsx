@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import './ImageBuildStatus.scss';
 import {
@@ -23,8 +23,11 @@ import {
   OffIcon,
   PendingIcon,
 } from '@patternfly/react-icons';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 import {
+  AMPLITUDE_MODULE_NAME,
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
 } from '../../constants';
@@ -74,13 +77,21 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
+  const { analytics } = useChrome();
 
   if (!isSuccess) {
     return <></>;
   }
 
   switch (data?.image_status.status) {
-    case 'failure':
+    case 'failure': {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+        module: AMPLITUDE_MODULE_NAME,
+        error: true,
+        error_id: data.image_status.error?.id,
+        error_details: data.image_status.error?.details,
+        error_reason: data.image_status.error?.reason,
+      });
       return (
         <ErrorStatus
           icon={statuses[data.image_status.status].icon}
@@ -88,6 +99,8 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
           error={data.image_status.error || ''}
         />
       );
+    }
+
     default:
       return (
         <Status
@@ -106,13 +119,28 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
-
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   if (!isSuccess) {
     return <Skeleton />;
   }
 
   switch (data?.image_status.status) {
-    case 'failure':
+    case 'failure': {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+        module: AMPLITUDE_MODULE_NAME,
+        error: true,
+        error_id: data.image_status.error?.id,
+        error_details: data.image_status.error?.details,
+        error_reason: data.image_status.error?.reason,
+        account_id: userData?.identity.internal?.account_id || 'Not found',
+      });
       return (
         <ErrorStatus
           icon={statuses['failure'].icon}
@@ -120,6 +148,7 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
           error={data.image_status.error || ''}
         />
       );
+    }
     default:
       return (
         <Status
@@ -135,8 +164,17 @@ type AzureStatusPropTypes = {
 };
 
 export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
+  const { analytics } = useChrome();
+
   switch (status.image_status.status) {
-    case 'failure':
+    case 'failure': {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+        module: AMPLITUDE_MODULE_NAME,
+        error: true,
+        error_id: status.image_status.error?.id,
+        error_details: status.image_status.error?.details,
+        error_reason: status.image_status.error?.reason,
+      });
       return (
         <ErrorStatus
           icon={statuses[status.image_status.status].icon}
@@ -144,6 +182,7 @@ export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
           error={status.image_status.error || ''}
         />
       );
+    }
     default:
       return (
         <Status

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Dropdown,
@@ -15,10 +15,12 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import { skipToken } from '@reduxjs/toolkit/query';
 
-import { targetOptions } from '../../constants';
+import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
 import {
   useGetBlueprintQuery,
   useComposeBlueprintMutation,
@@ -38,6 +40,16 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const [buildBlueprint, { isLoading: imageBuildLoading }] =
     useComposeBlueprintMutation();
   const dispatch = useAppDispatch();
+  const { analytics, auth } = useChrome();
+
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
@@ -49,6 +61,11 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
               (target) => !deselectedTargets.includes(target)
             ),
           },
+        });
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+          module: AMPLITUDE_MODULE_NAME,
+          trigger: 'synchronize images',
+          account_id: userData?.identity.internal?.account_id || 'Not found',
         });
       } catch (imageBuildError) {
         dispatch(
