@@ -25,12 +25,12 @@ export const togglePreview = async (page: Page) => {
 };
 
 export const login = async (page: Page) => {
-  if (!process.env.USER || !process.env.PASSWORD) {
+  if (!process.env.PLAYWRIGHT_USER || !process.env.PLAYWRIGHT_PASSWORD) {
     throw new Error('user or password not set in environment');
   }
 
-  const user = process.env.USER;
-  const password = process.env.PASSWORD;
+  const user = process.env.PLAYWRIGHT_USER;
+  const password = process.env.PLAYWRIGHT_PASSWORD;
 
   if (isHosted()) {
     return loginConsole(page, user, password);

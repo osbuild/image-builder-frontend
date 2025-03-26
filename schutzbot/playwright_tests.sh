@@ -71,8 +71,8 @@ sudo systemctl start osbuild-worker@1
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
-     -e "USER=admin" \
-     -e "PASSWORD=foobar" \
+     -e "PLAYWRIGHT_USER=admin" \
+     -e "PLAYWRIGHT_PASSWORD=foobar" \
      -e "CURRENTS_PROJECT_ID=$CURRENTS_PROJECT_ID" \
      -e "CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY" \
      --net=host \
