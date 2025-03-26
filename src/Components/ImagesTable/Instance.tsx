@@ -1,4 +1,4 @@
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 import path from 'path';
 
@@ -20,11 +20,13 @@ import {
 } from '@patternfly/react-core/dist/esm/components/List/List';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import cockpit from 'cockpit';
 import { useNavigate } from 'react-router-dom';
 
 import {
+  AMPLITUDE_MODULE_NAME,
   FILE_SYSTEM_CUSTOMIZATION_URL,
   MODAL_ANCHOR,
   SEARCH_INPUT,
@@ -93,6 +95,15 @@ const ProvisioningLink = ({
   compose,
   composeStatus,
 }: ProvisioningLinkPropTypes) => {
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const [wizardOpen, setWizardOpen] = useState(false);
   const [exposedScalprumModule, error] = useLoadModule(
     {
@@ -155,7 +166,16 @@ const ProvisioningLink = ({
         isLoading={isLoadingPermission}
         variant="link"
         isInline
-        onClick={() => setWizardOpen(true)}
+        onClick={() => {
+          analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
+            module: AMPLITUDE_MODULE_NAME,
+            image_name: compose.image_name,
+            current_path: window.location.pathname,
+            account_id: userData?.identity.internal?.account_id || 'Not found',
+          });
+
+          setWizardOpen(true);
+        }}
       >
         Launch
       </Button>

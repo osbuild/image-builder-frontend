@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   ClipboardCopy,
@@ -12,9 +12,12 @@ import {
   Skeleton,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
 import ClonesTable from './ClonesTable';
 
+import { AMPLITUDE_MODULE_NAME } from '../../constants';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { extractProvisioningList } from '../../store/helpers';
 import {
@@ -131,7 +134,15 @@ type AwsDetailsPropTypes = {
 
 export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
   const options = compose.request.image_requests[0].upload_request.options;
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   if (!isAwsUploadRequestOptions(options)) {
     throw TypeError(
       `Error: options must be of type AwsUploadRequestOptions, not ${typeof options}.`
@@ -152,6 +163,15 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               clickTip="Copied"
               variant="inline-compact"
               ouiaId="aws-uuid"
+              onClick={() => {
+                analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                  module: AMPLITUDE_MODULE_NAME,
+                  link_name: compose.id,
+                  current_path: window.location.pathname,
+                  account_id:
+                    userData?.identity.internal?.account_id || 'Not found',
+                });
+              }}
             >
               {compose.id}
             </ClipboardCopy>
@@ -183,6 +203,18 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
                 // the format of an account link is taken from
                 // https://docs.aws.amazon.com/signin/latest/userguide/sign-in-urls-defined.html
                 href={`https://${options.share_with_accounts[0]}.signin.aws.amazon.com/console/`}
+                onClick={() => {
+                  analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
+                    module: AMPLITUDE_MODULE_NAME,
+
+                    link_name: options.share_with_accounts
+                      ? options.share_with_accounts[0]
+                      : '',
+                    current_path: window.location.pathname,
+                    account_id:
+                      userData?.identity.internal?.account_id || 'Not found',
+                  });
+                }}
               >
                 {options.share_with_accounts[0]}
               </Button>

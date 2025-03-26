@@ -23,6 +23,8 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
@@ -47,6 +49,7 @@ import { ExpiringStatus, CloudStatus, LocalStatus } from './Status';
 import { AwsTarget, Target } from './Target';
 
 import {
+  AMPLITUDE_MODULE_NAME,
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
   PAGINATION_LIMIT,
@@ -441,7 +444,14 @@ type AwsRowPropTypes = {
 
 const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
-
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const target = <AwsTarget compose={compose} />;
 
   const status = <CloudStatus compose={compose} />;
@@ -451,7 +461,15 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const details = <AwsDetails compose={compose} />;
 
   const actions = (
-    <ActionsColumn items={awsActions(compose, composeStatus, navigate)} />
+    <ActionsColumn
+      items={awsActions(
+        compose,
+        composeStatus,
+        navigate,
+        analytics,
+        userData?.identity.internal?.account_id
+      )}
+    />
   );
 
   return (
@@ -497,6 +515,10 @@ type RowPropTypes = {
   details: JSX.Element;
 };
 
+type Analytics = {
+  track: (event: string, props?: Record<string, unknown>) => void;
+};
+
 const Row = ({
   compose,
   rowIndex,
@@ -506,6 +528,14 @@ const Row = ({
   details,
   instance,
 }: RowPropTypes) => {
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
   const dispatch = useDispatch();
@@ -568,7 +598,13 @@ const Row = ({
           {actions ? (
             actions
           ) : (
-            <ActionsColumn items={defaultActions(compose)} />
+            <ActionsColumn
+              items={defaultActions(
+                compose,
+                analytics,
+                userData?.identity.internal?.account_id
+              )}
+            />
           )}
         </Td>
       </Tr>
@@ -581,33 +617,53 @@ const Row = ({
   );
 };
 
-const defaultActions = (compose: ComposesResponseItem) => [
-  {
-    title: (
-      <a
-        className="ib-subdued-link"
-        href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-          JSON.stringify(compose.request, null, '  ')
-        )}`}
-        download={`request-${compose.id}.json`}
-      >
-        Download compose request (.json)
-      </a>
-    ),
-  },
-];
+const defaultActions = (
+  compose: ComposesResponseItem,
+  analytics: Analytics,
+  account_id: string | undefined
+) => {
+  const name = `request-${compose.id}.json`;
+
+  return [
+    {
+      title: (
+        <a
+          className="ib-subdued-link"
+          href={`data:text/plain;charset=utf-8,${encodeURIComponent(
+            JSON.stringify(compose.request, null, '  ')
+          )}`}
+          download={name}
+          onClick={() => {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - File Downloaded`, {
+              module: AMPLITUDE_MODULE_NAME,
+              link_name: name,
+              current_path: window.location.pathname,
+              account_id: account_id || 'Not found',
+            });
+          }}
+        >
+          Download compose request (.json)
+        </a>
+      ),
+    },
+  ];
+};
 
 const awsActions = (
   compose: ComposesResponseItem,
   status: ComposeStatus | undefined,
-  navigate: NavigateFunction
-) => [
-  {
-    title: 'Share to new region',
-    onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
-    isDisabled: status?.image_status.status === 'success' ? false : true,
-  },
-  ...defaultActions(compose),
-];
+  navigate: NavigateFunction,
+  analytics: Analytics,
+  account_id: string | undefined
+) => {
+  return [
+    {
+      title: 'Share to new region',
+      onClick: () => navigate(resolveRelPath(`share/${compose.id}`)),
+      isDisabled: status?.image_status.status === 'success' ? false : true,
+    },
+    ...defaultActions(compose, analytics, account_id),
+  ];
+};
 
 export default ImagesTable;
