@@ -211,75 +211,6 @@ spec:
         workspace: git-auth
       - name: netrc
         workspace: netrc
-    - name: clone-repository-oci-ta
-      params:
-      - name: url
-        value: $(params.git-url)
-      - name: revision
-        value: $(params.revision)
-      - name: ociStorage
-        value: $(params.output-image).git
-      runAfter:
-      - init
-      taskRef:
-        params:
-        - name: name
-          value: git-clone-oci-ta
-        - name: bundle
-          value: quay.io/konflux-ci/tekton-catalog/task-git-clone-oci-ta@sha256:0f4360ce144d46171ebd2e8f4d4575539a0600e02208ba5fc9beeb2c27ddfd4c
-        - name: kind
-          value: task
-        resolver: bundles
-      when:
-      - input: $(tasks.init.results.build)
-        operator: in
-        values:
-        - "true"
-      workspaces:
-      - name: basic-auth
-        workspace: git-auth
-    # - name: run-unit-tests
-    #   description: Validates frontend unit tests
-    #   params:
-    #     - name: SOURCE_ARTIFACT
-    #       value: $(tasks.clone-repository-oci-ta.results.SOURCE_ARTIFACT)
-    #   runAfter:
-    #     - clone-repository-oci-ta
-    #   workspaces:
-    #   - name: basic-auth
-    #     workspace: git-auth
-    #   taskSpec:
-    #     params:
-    #       - description: The Trusted Artifact URI pointing to the artifact with the application source code.
-    #         name: SOURCE_ARTIFACT
-    #         type: string
-    #     volumes:
-    #       # New volume to store a copy of the source code accessible only to this Task.
-    #       - name: workdir
-    #         emptyDir: {}
-    #     stepTemplate:
-    #       volumeMounts:
-    #         - mountPath: /var/workdir
-    #           name: workdir
-    #           readOnly: false
-    #     sidecars:
-    #     steps:
-    #       - name: use-trusted-artifact
-    #         image: quay.io/redhat-appstudio/build-trusted-artifacts:latest@sha256:8391272c4e5011120e9e7fee2c1f339e9405366110bf239dadcbc21e953ce099
-    #         args:
-    #           - use
-    #           - $(params.SOURCE_ARTIFACT)=/var/workdir
-    #       - image: registry.access.redhat.com/ubi8/nodejs-20
-    #         workingDir: /var/workdir
-    #         name: unit-tests
-    #         securityContext:
-    #           runAsUser: 0
-    #         script: |
-    #           #!/bin/bash
-    #           set -ex
-
-    #           npm install
-    #           npm test
     - name: build-container
       params:
       - name: IMAGE
@@ -376,6 +307,54 @@ spec:
       workspaces:
       - name: workspace
         workspace: workspace
+    - name: sast-shell-check
+      params:
+        - name: image-digest
+          value: $(tasks.build-image-index.results.IMAGE_DIGEST)
+        - name: image-url
+          value: $(tasks.build-image-index.results.IMAGE_URL)
+      runAfter:
+        - build-image-index
+      taskRef:
+        params:
+          - name: name
+            value: sast-shell-check
+          - name: bundle
+            value: quay.io/konflux-ci/tekton-catalog/task-sast-shell-check:0.1@sha256:1b3d68c33a92dfc3da3975581cae80c99c8d1995cab519ae98c6331b5677ded0
+          - name: kind
+            value: task
+        resolver: bundles
+      when:
+        - input: $(params.skip-checks)
+          operator: in
+          values:
+            - "false"
+      workspaces:
+        - name: workspace
+          workspace: workspace
+    - name: sast-unicode-check
+      params:
+        - name: image-url
+          value: $(tasks.build-image-index.results.IMAGE_URL)
+      runAfter:
+        - build-image-index
+      taskRef:
+        params:
+          - name: name
+            value: sast-unicode-check
+          - name: bundle
+            value: quay.io/konflux-ci/tekton-catalog/task-sast-unicode-check:0.1@sha256:b1a9af196a79baa75632ef494eb6db987f57e870d882d47f5b495e1441c01e3b
+          - name: kind
+            value: task
+        resolver: bundles
+      when:
+        - input: $(params.skip-checks)
+          operator: in
+          values:
+            - "false"
+      workspaces:
+        - name: workspace
+          workspace: workspace
     - name: deprecated-base-image-check
       params:
       - name: IMAGE_URL
