@@ -2,8 +2,8 @@ import React from 'react';
 
 import { Form, Text, Title } from '@patternfly/react-core';
 
-import EmptyUserState from './component/Empty';
-import UserInfo from './component/UserInfo';
+import EmptyUserState from './components/Empty';
+import UserInfo from './components/UserInfo';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectUsers } from '../../../../store/wizardSlice';
