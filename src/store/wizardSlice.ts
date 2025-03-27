@@ -634,23 +634,23 @@ export const wizardSlice = createSlice({
       state.fileSystem.partitions.push(action.payload);
     },
     removePartition: (state, action: PayloadAction<Partition['id']>) => {
-      state.fileSystem.partitions.splice(
-        state.fileSystem.partitions.findIndex(
-          (partition) => partition.id === action.payload
-        ),
-        1
+      const index = state.fileSystem.partitions.findIndex(
+        (partition) => partition.id === action.payload
       );
+      if (index !== -1) {
+        state.fileSystem.partitions.splice(index, 1);
+      }
     },
     removePartitionByMountpoint: (
       state,
       action: PayloadAction<Partition['mountpoint']>
     ) => {
-      state.fileSystem.partitions.splice(
-        state.fileSystem.partitions.findIndex(
-          (partition) => partition.mountpoint === action.payload
-        ),
-        1
+      const index = state.fileSystem.partitions.findIndex(
+        (partition) => partition.mountpoint === action.payload
       );
+      if (index !== -1) {
+        state.fileSystem.partitions.splice(index, 1);
+      }
     },
     changePartitionOrder: (state, action: PayloadAction<string[]>) => {
       state.fileSystem.partitions = state.fileSystem.partitions.sort(
@@ -759,10 +759,12 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<IBPackageWithRepositoryInfo['name']>
     ) => {
-      state.packages.splice(
-        state.packages.findIndex((pkg) => pkg.name === action.payload),
-        1
+      const index = state.packages.findIndex(
+        (pkg) => pkg.name === action.payload
       );
+      if (index !== -1) {
+        state.packages.splice(index, 1);
+      }
     },
     addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
       const existingGrpIndex = state.groups.findIndex(
@@ -779,10 +781,12 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<GroupWithRepositoryInfo['name']>
     ) => {
-      state.groups.splice(
-        state.groups.findIndex((grp) => grp.name === action.payload),
-        1
+      const index = state.groups.findIndex(
+        (grp) => grp.name === action.payload
       );
+      if (index !== -1) {
+        state.groups.splice(index, 1);
+      }
     },
     addLanguage: (state, action: PayloadAction<string>) => {
       if (
@@ -794,10 +798,12 @@ export const wizardSlice = createSlice({
     },
     removeLanguage: (state, action: PayloadAction<string>) => {
       if (state.locale.languages) {
-        state.locale.languages.splice(
-          state.locale.languages.findIndex((lang) => lang === action.payload),
-          1
+        const index = state.locale.languages.findIndex(
+          (lang) => lang === action.payload
         );
+        if (index !== -1) {
+          state.locale.languages.splice(index, 1);
+        }
       }
     },
     clearLanguages: (state) => {
@@ -826,12 +832,12 @@ export const wizardSlice = createSlice({
       }
     },
     removeEnabledService: (state, action: PayloadAction<string>) => {
-      state.services.enabled.splice(
-        state.services.enabled.findIndex(
-          (service) => service === action.payload
-        ),
-        1
+      const index = state.services.enabled.findIndex(
+        (service) => service === action.payload
       );
+      if (index !== -1) {
+        state.services.enabled.splice(index, 1);
+      }
     },
     changeMaskedServices: (state, action: PayloadAction<string[]>) => {
       state.services.masked = action.payload;
@@ -844,12 +850,12 @@ export const wizardSlice = createSlice({
       }
     },
     removeMaskedService: (state, action: PayloadAction<string>) => {
-      state.services.masked.splice(
-        state.services.masked.findIndex(
-          (service) => service === action.payload
-        ),
-        1
+      const index = state.services.masked.findIndex(
+        (service) => service === action.payload
       );
+      if (index !== -1) {
+        state.services.masked.splice(index, 1);
+      }
     },
     changeDisabledServices: (state, action: PayloadAction<string[]>) => {
       state.services.disabled = action.payload;
@@ -862,12 +868,12 @@ export const wizardSlice = createSlice({
       }
     },
     removeDisabledService: (state, action: PayloadAction<string>) => {
-      state.services.disabled.splice(
-        state.services.disabled.findIndex(
-          (service) => service === action.payload
-        ),
-        1
+      const index = state.services.disabled.findIndex(
+        (service) => service === action.payload
       );
+      if (index !== -1) {
+        state.services.disabled.splice(index, 1);
+      }
     },
     changeKernelName: (state, action: PayloadAction<string>) => {
       state.kernel.name = action.payload;
@@ -885,10 +891,12 @@ export const wizardSlice = createSlice({
     },
     removeKernelArg: (state, action: PayloadAction<string>) => {
       if (state.kernel.append.length > 0) {
-        state.kernel.append.splice(
-          state.kernel.append.findIndex((arg) => arg === action.payload),
-          1
+        const index = state.kernel.append.findIndex(
+          (arg) => arg === action.payload
         );
+        if (index !== -1) {
+          state.kernel.append.splice(index, 1);
+        }
       }
     },
     clearKernelAppend: (state) => {
@@ -904,12 +912,12 @@ export const wizardSlice = createSlice({
       }
     },
     removeEnabledFirewallService: (state, action: PayloadAction<string>) => {
-      state.firewall.services.enabled.splice(
-        state.firewall.services.enabled.findIndex(
-          (service) => service === action.payload
-        ),
-        1
+      const index = state.firewall.services.enabled.findIndex(
+        (service) => service === action.payload
       );
+      if (index !== -1) {
+        state.firewall.services.enabled.splice(index, 1);
+      }
     },
     addDisabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
@@ -921,12 +929,12 @@ export const wizardSlice = createSlice({
       }
     },
     removeDisabledFirewallService: (state, action: PayloadAction<string>) => {
-      state.firewall.services.disabled.splice(
-        state.firewall.services.disabled.findIndex(
-          (service) => service === action.payload
-        ),
-        1
+      const index = state.firewall.services.disabled.findIndex(
+        (service) => service === action.payload
       );
+      if (index !== -1) {
+        state.firewall.services.disabled.splice(index, 1);
+      }
     },
     changeTimezone: (state, action: PayloadAction<string>) => {
       state.timezone.timezone = action.payload;
@@ -939,12 +947,14 @@ export const wizardSlice = createSlice({
       }
     },
     removeNtpServer: (state, action: PayloadAction<string>) => {
-      state.timezone.ntpservers?.splice(
-        state.timezone.ntpservers.findIndex(
+      if (state.timezone.ntpservers) {
+        const index = state.timezone.ntpservers.findIndex(
           (server) => server === action.payload
-        ),
-        1
-      );
+        );
+        if (index !== -1) {
+          state.timezone.ntpservers.splice(index, 1);
+        }
+      }
     },
     changeHostname: (state, action: PayloadAction<string>) => {
       state.hostname = action.payload;
@@ -981,10 +991,12 @@ export const wizardSlice = createSlice({
       }
     },
     removePort: (state, action: PayloadAction<string>) => {
-      state.firewall.ports.splice(
-        state.firewall.ports.findIndex((port) => port === action.payload),
-        1
+      const index = state.firewall.ports.findIndex(
+        (port) => port === action.payload
       );
+      if (index !== -1) {
+        state.firewall.ports.splice(index, 1);
+      }
     },
     setUserAdministratorByIndex: (
       state,
