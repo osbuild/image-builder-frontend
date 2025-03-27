@@ -34,7 +34,7 @@ export const PasswordValidatedInput = ({
   const environments = useAppSelector(selectImageTypes);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const { validationState, strength } = checkPasswordValidity(
+  const { validationState } = checkPasswordValidity(
     value,
     environments.includes('azure')
   );
@@ -44,16 +44,8 @@ export const PasswordValidatedInput = ({
     setIsPasswordVisible(!isPasswordVisible);
   };
 
-  const passStrLabel = (
-    <HelperText>
-      <HelperTextItem variant={strength.variant} icon={strength.icon}>
-        {strength.text}
-      </HelperTextItem>
-    </HelperText>
-  );
-
   return (
-    <FormGroup label="Password" isRequired labelInfo={passStrLabel}>
+    <FormGroup label="Password" isRequired>
       <>
         <InputGroup>
           <InputGroupItem isFill>
