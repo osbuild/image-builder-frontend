@@ -21,6 +21,7 @@ import {
   useComposeBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
+import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
@@ -41,11 +42,12 @@ export const CreateSaveAndBuildBtn = ({
     fixedCacheKey: 'createBlueprintKey',
   });
   const dispatch = useAppDispatch();
+  const { isFedoraEnv } = useGetEnvironment();
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE) {
+    if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
       analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
         module: AMPLITUDE_MODULE_NAME,
         isPreview: isBeta(),
@@ -86,6 +88,7 @@ export const CreateSaveButton = ({
 }: CreateDropdownProps) => {
   const { analytics, isBeta } = useChrome();
   const packages = useAppSelector(selectPackages);
+  const { isFedoraEnv } = useGetEnvironment();
 
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -138,7 +141,7 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE) {
+    if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
       analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
         module: AMPLITUDE_MODULE_NAME,
         isPreview: isBeta(),
@@ -146,13 +149,11 @@ export const CreateSaveButton = ({
         packages: packages.map((pkg) => pkg.name),
       });
     }
-
     const blueprint =
       requestBody &&
       (await createBlueprint({
         createBlueprintRequest: requestBody,
       }).unwrap());
-
     if (blueprint) {
       dispatch(setBlueprintId(blueprint?.id));
     }
