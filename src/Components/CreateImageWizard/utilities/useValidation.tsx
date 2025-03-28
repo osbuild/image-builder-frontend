@@ -21,19 +21,16 @@ import {
   selectRegistrationType,
   selectHostname,
   selectKernel,
-  selectUserNameByIndex,
   selectUsers,
-  selectUserPasswordByIndex,
-  selectUserSshKeyByIndex,
   selectNtpServers,
   selectFirewall,
   selectServices,
   selectLanguages,
   selectKeyboard,
   selectTimezone,
-  selectImageTypes,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
+  selectImageTypes,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -57,6 +54,13 @@ import {
 export type StepValidation = {
   errors: {
     [key: string]: string;
+  };
+  disabledNext: boolean;
+};
+
+export type UsersStepValidation = {
+  errors: {
+    [key: string]: { [key: string]: string };
   };
   disabledNext: boolean;
 };
@@ -89,12 +93,6 @@ export function useIsBlueprintValid(): boolean {
     !users.disabledNext
   );
 }
-
-type ValidationFlags = {
-  isUserNameValidValue: boolean;
-  isSshKeyValidValue: boolean;
-  isPasswordValidValue: boolean;
-};
 
 type PasswordValidationResult = {
   isValid: boolean;
@@ -453,69 +451,67 @@ export function useServicesValidation(): StepValidation {
   };
 }
 
-const getUserNameErrorMsg = (userName: string): string => {
+const validateUserName = (userName: string): string => {
+  if (!userName) {
+    return 'Required value';
+  }
   if (userName && !isUserNameValid(userName)) {
     return 'Invalid user name';
   }
   return '';
 };
 
-const getSshKeyErrorMsg = (userSshKey: string): string => {
+const validateSshKey = (userSshKey: string): string => {
   if (userSshKey && !isSshKeyValid(userSshKey)) {
     return 'Invalid SSH key';
   }
   return '';
 };
 
-export function useUsersValidation(): StepValidation {
-  const index = 0;
+export function useUsersValidation(): UsersStepValidation {
   const environments = useAppSelector(selectImageTypes);
-  const userNameSelector = selectUserNameByIndex(index);
-  const userName = useAppSelector(userNameSelector);
-  const userPasswordSelector = selectUserPasswordByIndex(index);
-  const userPassword = useAppSelector(userPasswordSelector);
-  const userSshKeySelector = selectUserSshKeyByIndex(index);
-  const userSshKey = useAppSelector(userSshKeySelector);
   const users = useAppSelector(selectUsers);
+  const errors: { [key: string]: { [key: string]: string } } = {};
 
-  const userNameError = getUserNameErrorMsg(userName);
-  const sshKeyError = getSshKeyErrorMsg(userSshKey);
+  if (users.length === 0) {
+    return {
+      errors: {},
+      disabledNext: false,
+    };
+  }
 
-  const { isUserNameValidValue, isSshKeyValidValue, isPasswordValidValue } =
-    calculateValidationFlags(
-      userName,
-      userPassword,
-      userSshKey,
+  for (let index = 0; index < users.length; index++) {
+    const userNameError = validateUserName(users[index].name);
+    const sshKeyError = validateSshKey(users[index].ssh_key);
+    const isPasswordValid = checkPasswordValidity(
+      users[index].password,
       environments.includes('azure')
-    );
+    ).isValid;
+
+    if (
+      userNameError ||
+      sshKeyError ||
+      (users[index].password && !isPasswordValid)
+    ) {
+      errors[`${index}`] = {
+        userName: userNameError,
+        userSshKey: sshKeyError,
+        userPassword: !isPasswordValid ? 'Invalid password' : '',
+      };
+    }
+  }
 
   const canProceed =
     // Case 1: there is no users
     users.length === 0 ||
-    // Case 2: userName is valid and SshKey or Password is valid
-    (isUserNameValidValue && (isSshKeyValidValue || isPasswordValidValue));
+    // Case 2: all users are valid
+    Object.keys(errors).length === 0;
 
   return {
-    errors: {
-      userName: userNameError,
-      userSshKey: sshKeyError,
-    },
+    errors,
     disabledNext: !canProceed,
   };
 }
-
-const calculateValidationFlags = (
-  userName: string,
-  userPassword: string,
-  userSshKey: string,
-  isAzure: boolean
-): ValidationFlags => {
-  const isUserNameValidValue = !!userName && isUserNameValid(userName);
-  const isSshKeyValidValue = !!userSshKey && isSshKeyValid(userSshKey);
-  const isPasswordValidValue =
-    !!userPassword && checkPasswordValidity(userPassword, isAzure).isValid;
-  return { isUserNameValidValue, isSshKeyValidValue, isPasswordValidValue };
-};
 
 export const checkPasswordValidity = (
   password: string,

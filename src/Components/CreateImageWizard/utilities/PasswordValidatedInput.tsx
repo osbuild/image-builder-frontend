@@ -45,7 +45,7 @@ export const PasswordValidatedInput = ({
   };
 
   return (
-    <FormGroup label="Password" isRequired>
+    <FormGroup label="Password" className="pf-v5-u-pb-md">
       <>
         <InputGroup>
           <InputGroupItem isFill>
