@@ -107,6 +107,17 @@ module.exports = {
       'os-release': false,
     },
   },
+  module: {
+    rules: [
+      {
+        // running `make` on cockpit plugin creates './pkg'
+        // directory, the generated files do not pass
+        // `npm run build` outputing failures
+        // this ensures the directory is exluded during build time
+        exclude: ',/pkg',
+      },
+    ],
+  },
   routes: {
     ...(process.env.CONFIG_PORT && {
       [`${process.env.BETA ? '/beta' : ''}/config`]: {
