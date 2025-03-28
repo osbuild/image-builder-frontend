@@ -9,6 +9,18 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
     .contentFrame();
 };
 
+export const navigateToOptionalSteps = async (page: Page) => {
+  await page.getByTestId('blueprints-create-button').click();
+  await page.getByText('Virtualization - Guest image').click();
+  await page.getByRole('button', { name: 'Next' }).click();
+};
+
+export const createBlueprint = async (page: Page) => {
+  await page.getByRole('button', { name: 'Create blueprint' }).click();
+  await page.getByTestId('close-button-saveandbuild-modal').click();
+  await page.getByRole('button', { name: 'Create blueprint' }).click();
+};
+
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
 
