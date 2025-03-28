@@ -24,6 +24,5 @@
         "./src/test/mocks/*"
       ]
     }
-  },
-  "exclude": ["./pkg"],
+  }
 }
