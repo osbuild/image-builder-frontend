@@ -5,6 +5,8 @@ import {
   ibFrame,
   navigateToOptionalSteps,
   createBlueprint,
+  fillInDetails,
+  registerLater,
 } from '../lib/lib';
 
 test.describe.serial('Test Hostname', () => {
@@ -13,6 +15,7 @@ test.describe.serial('Test Hostname', () => {
       await login(page);
       await ibFrame(page);
       await navigateToOptionalSteps(page);
+      await registerLater(page);
     });
 
     await test.step('Select and fill the Hostname step', async () => {
@@ -24,7 +27,11 @@ test.describe.serial('Test Hostname', () => {
       await page.getByRole('button', { name: 'Review and finish' }).click();
     });
 
-    await test.step('Review and create BP', async () => {
+    await test.step('Fill the BP details', async () => {
+      await fillInDetails(page);
+    });
+
+    await test.step('Create BP', async () => {
       await createBlueprint(page);
     });
   });
