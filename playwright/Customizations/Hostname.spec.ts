@@ -1,13 +1,13 @@
 import { test } from '@playwright/test';
 
+import { login } from '../helpers/login';
+import { navigateToOptionalSteps } from '../helpers/navHelpers';
 import {
-  login,
-  ibFrame,
-  navigateToOptionalSteps,
-  createBlueprint,
-  fillInDetails,
   registerLater,
-} from '../lib/lib';
+  fillInDetails,
+  createBlueprint,
+} from '../helpers/wizardHelpers';
+import { ibFrame } from '../lib/lib';
 
 test.describe.serial('Test Hostname', () => {
   test('Create a blueprint with Hostname customization', async ({ page }) => {
