@@ -1,0 +1,51 @@
+import type { Page } from '@playwright/test';
+
+import { closePopupsIfExist, isHosted, togglePreview } from '../lib/lib';
+
+export const login = async (page: Page) => {
+  if (!process.env.PLAYWRIGHT_USER || !process.env.PLAYWRIGHT_PASSWORD) {
+    throw new Error('user or password not set in environment');
+  }
+
+  const user = process.env.PLAYWRIGHT_USER;
+  const password = process.env.PLAYWRIGHT_PASSWORD;
+
+  if (isHosted()) {
+    return loginConsole(page, user, password);
+  }
+  return loginCockpit(page, user, password);
+};
+
+export const loginCockpit = async (
+  page: Page,
+  user: string,
+  password: string
+) => {
+  await page.goto('/cockpit-image-builder');
+
+  await page.getByRole('textbox', { name: 'User name' }).fill(user);
+  await page.getByRole('textbox', { name: 'Password' }).fill(password);
+
+  // cockpit-image-builder needs superuser
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await page.getByRole('button', { name: 'Limited access' }).click();
+  await page.getByText('Close').click();
+  await page.getByRole('button', { name: 'Administrative access' });
+};
+
+export const loginConsole = async (
+  page: Page,
+  user: string,
+  password: string
+) => {
+  await page.goto('/insights/image-builder/landing');
+  await page
+    .getByRole('textbox', { name: 'Red Hat login or email' })
+    .fill(user);
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('textbox', { name: 'Password' }).fill(password);
+  await page.getByRole('button', { name: 'Log in' }).click();
+  await closePopupsIfExist(page);
+  await togglePreview(page);
+  await page.getByRole('heading', { name: 'All images' });
+};

@@ -9,32 +9,6 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
     .contentFrame();
 };
 
-export const navigateToOptionalSteps = async (page: Page) => {
-  await page.getByTestId('blueprints-create-button').click();
-  await page.getByTestId('checkbox-guest-image').click();
-  await page.getByRole('button', { name: 'Next' }).click();
-};
-
-export const createBlueprint = async (page: Page) => {
-  await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByTestId('close-button-saveandbuild-modal').click();
-  await page.getByRole('button', { name: 'Create blueprint' }).click();
-};
-
-export const fillInDetails = async (page: Page) => {
-  await page.getByRole('listitem').filter({ hasText: 'Details' }).click();
-  await page.getByTestId('blueprint').click();
-  await page.getByTestId('blueprint').fill('test');
-  await expect(page.getByTestId('blueprint')).toHaveValue('test');
-  await page.getByTestId('blueprint description').fill('Testing blueprint');
-  await page.getByRole('button', { name: 'Next' }).click();
-};
-
-export const registerLater = async (page: Page) => {
-  await page.getByRole('button', { name: 'Register' }).click();
-  await page.getByTestId('automatically-register-checkbox').click();
-};
-
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
 
@@ -50,51 +24,11 @@ export const togglePreview = async (page: Page) => {
   await expect(toggleSwitch).toBeChecked();
 };
 
-export const login = async (page: Page) => {
-  if (!process.env.PLAYWRIGHT_USER || !process.env.PLAYWRIGHT_PASSWORD) {
-    throw new Error('user or password not set in environment');
-  }
-
-  const user = process.env.PLAYWRIGHT_USER;
-  const password = process.env.PLAYWRIGHT_PASSWORD;
-
-  if (isHosted()) {
-    return loginConsole(page, user, password);
-  }
-  return loginCockpit(page, user, password);
-};
-
 export const isHosted = (): boolean => {
   return process.env.BASE_URL?.includes('redhat.com') || false;
 };
 
-const loginCockpit = async (page: Page, user: string, password: string) => {
-  await page.goto('/cockpit-image-builder');
-
-  await page.getByRole('textbox', { name: 'User name' }).fill(user);
-  await page.getByRole('textbox', { name: 'Password' }).fill(password);
-
-  // cockpit-image-builder needs superuser
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await page.getByRole('button', { name: 'Limited access' }).click();
-  await page.getByText('Close').click();
-  await page.getByRole('button', { name: 'Administrative access' });
-};
-
-const loginConsole = async (page: Page, user: string, password: string) => {
-  await page.goto('/insights/image-builder/landing');
-  await page
-    .getByRole('textbox', { name: 'Red Hat login or email' })
-    .fill(user);
-  await page.getByRole('button', { name: 'Next' }).click();
-  await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  await page.getByRole('button', { name: 'Log in' }).click();
-  await closePopupsIfExist(page);
-  await togglePreview(page);
-  await page.getByRole('heading', { name: 'All images' });
-};
-
-const closePopupsIfExist = async (page: Page) => {
+export const closePopupsIfExist = async (page: Page) => {
   const locatorsToCheck = [
     page.locator('.pf-v5-c-alert.notification-item button'), // This closes all toast pop-ups
     page.locator(`button[id^="pendo-close-guide-"]`), // This closes the pendo guide pop-up
