@@ -266,7 +266,8 @@ export function useHostnameValidation(): StepValidation {
   const errorMessage =
     'Invalid hostname. The hostname should be composed of up to 64 7-bit ASCII lower-case alphanumeric characters or hyphens forming a valid DNS domain name. It is recommended that this name contains only a single label, i.e. without any dots.';
 
-  const hostnameError = !isHostnameValid(hostname) ? errorMessage : '';
+  const hostnameError =
+    hostname && !isHostnameValid(hostname) ? errorMessage : '';
 
   return {
     errors: {
@@ -288,9 +289,8 @@ export function useKernelValidation(): StepValidation {
     }
   }
 
-  const kernelNameError = !isKernelNameValid(kernel.name)
-    ? 'Invalid format.'
-    : '';
+  const kernelNameError =
+    kernel.name && !isKernelNameValid(kernel.name) ? 'Invalid format.' : '';
 
   const kernelAppendError =
     invalidArgs.length > 0 ? `Invalid kernel arguments: ${invalidArgs}` : '';
