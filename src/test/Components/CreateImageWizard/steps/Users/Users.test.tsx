@@ -97,6 +97,39 @@ const addPassword = async (mockPassword: string) => {
   await waitFor(() => expect(enterPassword).toHaveValue(mockPassword));
 };
 
+const getAdminCheckbox = async () => {
+  const adminCheckbox = await screen.findByRole('checkbox', {
+    name: /administrator/i,
+  });
+  return adminCheckbox;
+};
+
+const checkAdminCheckbox = async () => {
+  const user = userEvent.setup();
+  const adminCheckbox = await getAdminCheckbox();
+  await waitFor(() => user.click(adminCheckbox));
+};
+
+const addUserGroup = async (group: string) => {
+  const user = userEvent.setup();
+  const userGroupInput = await screen.findByPlaceholderText('Add user group');
+  await waitFor(() => user.click(userGroupInput));
+  await waitFor(() => user.type(userGroupInput, group));
+  const addGroup = await screen.findByRole('button', {
+    name: /Add user group/,
+  });
+  await waitFor(() => user.click(addGroup));
+};
+
+const removeUserGroup = async (group: string) => {
+  const user = userEvent.setup();
+
+  const removeGroupButton = await screen.findByRole('button', {
+    name: `Close ${group}`,
+  });
+  await waitFor(() => user.click(removeGroupButton));
+};
+
 describe('Step Users', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
@@ -209,11 +242,47 @@ describe('Step Users', () => {
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
+
+  test('user groups can be added and removed', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserGroup('users');
+    await addUserGroup('widget');
+    await removeUserGroup('users');
+    expect(screen.queryByText('users')).not.toBeInTheDocument();
+  });
+
+  test('adding wheel group checks Administrator checkbox', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterLater();
+    await goToUsersStep();
+    await clickAddUser();
+    const adminCheckbox = await getAdminCheckbox();
+
+    // Adding wheel group via groups input
+    await addUserGroup('wheel');
+    expect(adminCheckbox).toBeChecked();
+
+    await removeUserGroup('wheel');
+    expect(adminCheckbox).not.toBeChecked();
+
+    // Adding wheel group via Admin checkbox
+    await checkAdminCheckbox();
+    expect(adminCheckbox).toBeChecked();
+    await screen.findByText('wheel');
+
+    await checkAdminCheckbox();
+    expect(adminCheckbox).not.toBeChecked();
+    expect(screen.queryByText('wheel')).not.toBeInTheDocument();
+  });
 });
 
 describe('User request generated correctly', () => {
   test('create image with valid name, password, ssh key and checked Administrator checkbox', async () => {
-    const user = userEvent.setup();
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
@@ -224,10 +293,9 @@ describe('User request generated correctly', () => {
     await addPassword(validPassword);
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeEnabled());
-    const isAdmin = screen.getByRole('checkbox', {
-      name: /administrator/i,
-    });
-    await waitFor(() => user.click(isAdmin));
+    await checkAdminCheckbox();
+    await addUserGroup('users');
+    await addUserGroup('widget');
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedRequest = {
@@ -238,7 +306,7 @@ describe('User request generated correctly', () => {
             name: 'best',
             ssh_key: 'ssh-rsa d',
             password: validPassword,
-            groups: ['wheel'],
+            groups: ['wheel', 'users', 'widget'],
           },
         ],
       },
@@ -256,6 +324,8 @@ describe('User request generated correctly', () => {
     await clickAddUser();
     await addUserName('test');
     await addSshKey('ssh-rsa');
+    await addUserGroup('users');
+    await addUserGroup('widget');
     await clickRemoveUser();
     await waitFor(() => expect('add a user to your image'));
     await goToReviewStep();
