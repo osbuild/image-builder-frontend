@@ -1,7 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { login, ibFrame, isHosted } from './lib/lib';
+import { login } from './helpers/login';
+import { ibFrame, isHosted } from './lib/lib';
 
 test.describe.serial('test', () => {
   const blueprintName = uuidv4();
