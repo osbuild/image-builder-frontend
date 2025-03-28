@@ -406,9 +406,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
                 id="step-oscap"
                 key="step-oscap"
-                isHidden={
-                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
-                }
+                isHidden={distribution === RHEL_10_BETA}
                 navItem={customStatusNavItem}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />

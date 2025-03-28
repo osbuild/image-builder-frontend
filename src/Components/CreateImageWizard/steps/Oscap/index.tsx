@@ -10,15 +10,19 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import OscapOnPremSpinner from './OnPremSpinner';
+import OscapOnPremWarning from './OnPremWarning';
 import { Oscap, removeBetaFromRelease } from './Oscap';
 
 import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
   COMPLIANCE_URL,
 } from '../../../../constants';
-import { useBackendPrefetch } from '../../../../store/backendApi';
+import {
+  useBackendPrefetch,
+  useGetOscapCustomizationsQuery,
+} from '../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { useGetOscapCustomizationsQuery } from '../../../../store/imageBuilderApi';
 import {
   ComplianceType,
   selectComplianceProfileID,
@@ -34,8 +38,9 @@ import {
   clearKernelAppend,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
+import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
 
-const OscapStep = () => {
+const OscapContent = () => {
   const dispatch = useAppDispatch();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
@@ -156,5 +161,21 @@ const OscapStep = () => {
     </Form>
   );
 };
+
+const OnPremOscapStep = () => {
+  const [onPremOpenSCAPAvailable, isLoading] = useOnPremOpenSCAPAvailable();
+
+  if (isLoading) {
+    return <OscapOnPremSpinner />;
+  }
+
+  if (!onPremOpenSCAPAvailable) {
+    return <OscapOnPremWarning />;
+  }
+
+  return <OscapContent />;
+};
+
+const OscapStep = process.env.IS_ON_PREMISE ? OnPremOscapStep : OscapContent;
 
 export default OscapStep;

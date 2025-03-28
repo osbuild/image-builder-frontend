@@ -23,9 +23,10 @@ test.describe.serial('test', () => {
       });
       await page.getByTestId('automatically-register-checkbox').uncheck();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
-      await frame.getByRole('heading', { name: 'Compliance' });
-      await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
+
+    await frame.getByRole('heading', { name: 'Compliance' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     await frame.getByRole('heading', { name: 'File system configuration' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
