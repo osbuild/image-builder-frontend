@@ -67,9 +67,13 @@ const clickAddUser = async () => {
 
 const clickRemoveUser = async () => {
   const user = userEvent.setup();
-  const addUser = await screen.findByRole('button', { name: /remove user/i });
-  expect(addUser).toBeEnabled();
-  await waitFor(() => user.click(addUser));
+  const removeUser = await screen.findByRole('button', { name: /close tab/i });
+  expect(removeUser).toBeEnabled();
+  await waitFor(() => user.click(removeUser));
+  const removeUserModalButton = await screen.findByRole('button', {
+    name: /Remove user/,
+  });
+  await waitFor(() => user.click(removeUserModalButton));
 };
 
 const addSshKey = async (sshKey: string) => {
