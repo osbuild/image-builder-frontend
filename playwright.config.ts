@@ -29,7 +29,7 @@ export default defineConfig({
       ? process.env.BASE_URL
       : 'http://127.0.0.1:9090',
     video: 'retain-on-failure',
-    trace: 'on-first-retry',
+    trace: 'on',
 
     ignoreHTTPSErrors: true,
   },
