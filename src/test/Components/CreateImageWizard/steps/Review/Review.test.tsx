@@ -5,7 +5,6 @@ import userEvent from '@testing-library/user-event';
 import {
   clickBack,
   clickNext,
-  clickRegisterLater,
   renderCreateMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
@@ -47,7 +46,6 @@ const setupWithCentos = async () => {
 
 const handleRegistration = async () => {
   await clickNext(); // Registration
-  await clickRegisterLater();
 };
 
 const goToReviewStep = async () => {
