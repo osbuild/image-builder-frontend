@@ -68,19 +68,21 @@ const Aws = () => {
         by Red Hat, to your own AWS account.
       </Content>
       <FormGroup label="Share method:">
-        <Radio
-          id="radio-with-description"
-          label="Use an account configured from Sources."
-          name="radio-7"
-          description="Use a configured source to launch environments directly from the console."
-          isChecked={shareMethod === 'sources'}
-          onChange={() => {
-            dispatch(changeAwsSourceId(undefined));
-            dispatch(changeAwsAccountId(''));
-            dispatch(changeAwsShareMethod('sources'));
-          }}
-          autoFocus
-        />
+        {!process.env.IS_ON_PREMISE && (
+          <Radio
+            id="radio-with-description"
+            label="Use an account configured from Sources."
+            name="radio-7"
+            description="Use a configured source to launch environments directly from the console."
+            isChecked={shareMethod === 'sources'}
+            onChange={() => {
+              dispatch(changeAwsSourceId(undefined));
+              dispatch(changeAwsAccountId(''));
+              dispatch(changeAwsShareMethod('sources'));
+            }}
+            autoFocus
+          />
+        )}
         <Radio
           id="radio"
           label="Manually enter an account ID."
@@ -91,6 +93,7 @@ const Aws = () => {
             dispatch(changeAwsAccountId(''));
             dispatch(changeAwsShareMethod('manual'));
           }}
+          autoFocus={!!process.env.IS_ON_PREMISE}
         />
       </FormGroup>
       {shareMethod === 'sources' && (
