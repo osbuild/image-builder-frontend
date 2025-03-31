@@ -7,6 +7,7 @@ import {
   TextContent,
   Text,
   Button,
+  Spinner,
 } from '@patternfly/react-core';
 import {
   Select,
@@ -24,7 +25,12 @@ import {
   RHEL_10_BETA,
   RHEL_10,
 } from '../../../../constants';
-import { useGetOscapProfilesQuery } from '../../../../store/backendApi';
+import {
+  useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
+  useBackendPrefetch,
+} from '../../../../store/backendApi';
 import { usePoliciesQuery, PolicyRead } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -32,8 +38,6 @@ import {
   DistributionProfileItem,
   Filesystem,
   OpenScapProfile,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
   Services,
 } from '../../../../store/imageBuilderApi';
 import {
@@ -96,6 +100,7 @@ const ProfileSelector = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const complianceType = useAppSelector(selectComplianceType);
+  const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
 
   const {
     data: profiles,
@@ -135,6 +140,18 @@ const ProfileSelector = () => {
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
+
+  // prefetch the profiles customizations for on-prem
+  // and save the results to the cache, since the request
+  // is quite slow
+  if (process.env.IS_ON_PREMISE) {
+    profiles?.forEach((profile) => {
+      prefetchProfile({
+        distribution: release,
+        profile: profile,
+      });
+    });
+  }
 
   useEffect(() => {
     if (!policies || policies.data === undefined) {
@@ -288,6 +305,10 @@ const ProfileSelector = () => {
   };
 
   const options = () => {
+    if (isFetching) {
+      return [<OScapLoadingOption key="oscap-loading-option" />];
+    }
+
     if (profiles) {
       return [<OScapNoneOption key="oscap-none-option" />].concat(
         profiles.map((profile_id, index) => {
@@ -320,7 +341,6 @@ const ProfileSelector = () => {
     >
       {complianceType === 'openscap' && (
         <Select
-          loadingVariant={isFetching ? 'spinner' : undefined}
           ouiaId="profileSelect"
           variant={SelectVariant.typeahead}
           onToggle={handleToggle}
@@ -333,6 +353,9 @@ const ProfileSelector = () => {
           typeAheadAriaLabel="Select a profile"
           isDisabled={!isSuccess || hasWslTargetOnly}
           onFilter={(_event, value) => {
+            if (isFetching) {
+              return [<OScapLoadingOption key="oscap-loading-option" />];
+            }
             if (profiles) {
               return [<OScapNoneOption key="oscap-none-option" />].concat(
                 profiles.map((profile_id, index) => {
@@ -384,6 +407,16 @@ const ProfileSelector = () => {
 const OScapNoneOption = () => {
   return (
     <SelectOption value={{ toString: () => 'None', compareTo: () => false }} />
+  );
+};
+
+const OScapLoadingOption = () => {
+  return (
+    <SelectOption
+      value={{ toString: () => 'Loading...', compareTo: () => false }}
+    >
+      <Spinner size="lg" />
+    </SelectOption>
   );
 };
 

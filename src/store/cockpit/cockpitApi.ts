@@ -8,6 +8,7 @@ import path from 'path';
 // We also needed to create an alias in vitest to make this work.
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
+import TOML from 'toml';
 import { v4 as uuidv4 } from 'uuid';
 
 // We have to work around RTK query here, since it doesn't like splitting
@@ -18,7 +19,10 @@ import { v4 as uuidv4 } from 'uuid';
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
 
-import { mapHostedToOnPrem } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
+import {
+  mapHostedToOnPrem,
+  mapOnPremToHosted,
+} from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
 import { BLUEPRINTS_DIR } from '../../constants';
 import {
   ComposeBlueprintApiResponse,
@@ -47,7 +51,34 @@ import {
   ComposeResponse,
   UpdateBlueprintApiResponse,
   UpdateBlueprintApiArg,
+  DistributionProfileItem,
+  GetOscapCustomizationsApiResponse,
+  GetOscapCustomizationsApiArg,
 } from '../service/imageBuilderApi';
+
+const lookupDatastreamDistro = (distribution: string) => {
+  if (distribution.startsWith('fedora')) {
+    return 'fedora';
+  }
+
+  if (distribution === 'centos-9') {
+    return 'cs9';
+  }
+
+  if (distribution === 'centos-10') {
+    return 'cs10';
+  }
+
+  if (distribution === 'rhel-9') {
+    return 'rhel9';
+  }
+
+  if (distribution === 'rhel-10') {
+    return 'rhel10';
+  }
+
+  throw 'Unknown distribution';
+};
 
 const getBlueprintsPath = async () => {
   const user = await cockpit.user();
@@ -293,13 +324,98 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetOscapProfilesApiResponse,
         GetOscapProfilesApiArg
       >({
-        queryFn: async () => {
-          // TODO: make a call to get the openscap profiles
-          // For now, just return an empty list so we can
-          // step through the wizard.
-          return {
-            data: [],
-          };
+        queryFn: async ({ distribution }) => {
+          try {
+            const dsDistro = lookupDatastreamDistro(distribution);
+            const result = (await cockpit.spawn(
+              [
+                'oscap',
+                'info',
+                '--profiles',
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const profiles = result
+              .split('\n')
+              .filter((profile) => profile !== '')
+              .map((profile) => profile.split(':')[0])
+              .map((profile) => profile as DistributionProfileItem);
+
+            return {
+              data: profiles,
+            };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
+      getOscapCustomizations: builder.query<
+        GetOscapCustomizationsApiResponse,
+        GetOscapCustomizationsApiArg
+      >({
+        queryFn: async ({ distribution, profile }) => {
+          try {
+            const dsDistro = lookupDatastreamDistro(distribution);
+            let result = (await cockpit.spawn(
+              [
+                'oscap',
+                'xccdf',
+                'generate',
+                'fix',
+                '--fix-type',
+                'blueprint',
+                '--profile',
+                profile,
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const parsed = TOML.parse(result);
+            const blueprint = mapOnPremToHosted(parsed);
+
+            result = (await cockpit.spawn(
+              [
+                'oscap',
+                'info',
+                '--profile',
+                profile,
+                `/usr/share/xml/scap/ssg/content/ssg-${dsDistro}-ds.xml`,
+              ],
+              {
+                superuser: 'try',
+              }
+            )) as string;
+
+            const descriptionLine = result
+              .split('\n')
+              .filter((s) => s.includes('Description: '));
+
+            const description =
+              descriptionLine.length > 0
+                ? descriptionLine[0].split('Description: ')[1]
+                : '';
+
+            return {
+              data: {
+                ...blueprint.customizations,
+                openscap: {
+                  profile_id: profile,
+                  // the profile name is stored in the description
+                  profile_name: blueprint.description,
+                  profile_description: description,
+                },
+              },
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
       composeBlueprint: builder.mutation<
@@ -481,6 +597,8 @@ export const {
   useUpdateBlueprintMutation,
   useDeleteBlueprintMutation,
   useGetOscapProfilesQuery,
+  useGetOscapCustomizationsQuery,
+  useLazyGetOscapCustomizationsQuery,
   useComposeBlueprintMutation,
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
