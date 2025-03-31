@@ -15,6 +15,7 @@ export const test = oldTest.extend<WithCleanup>({
   cleanup: async ({}, use) => {
     const cleanupFns: Map<symbol, () => Promise<unknown>> = new Map();
 
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     await use({
       add: (cleanupFn) => {
         const key = Symbol();
