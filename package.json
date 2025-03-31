@@ -52,7 +52,7 @@
     "@typescript-eslint/eslint-plugin": "8.28.0",
     "@typescript-eslint/parser": "8.28.0",
     "@vitejs/plugin-react": "4.3.4",
-    "@vitest/coverage-v8": "3.0.5",
+    "@vitest/coverage-v8": "3.0.9",
     "babel-loader": "10.0.0",
     "chart.js": "4.4.7",
     "chartjs-adapter-moment": "1.0.1",
@@ -90,7 +90,7 @@
     "ts-patch": "3.3.0",
     "typescript": "5.8.2",
     "uuid": "11.1.0",
-    "vitest": "3.0.5",
+    "vitest": "3.0.9",
     "vitest-canvas-mock": "0.3.3",
     "webpack-bundle-analyzer": "4.10.2",
     "whatwg-fetch": "3.6.20"
