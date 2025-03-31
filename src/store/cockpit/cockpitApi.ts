@@ -124,6 +124,19 @@ const readComposes = async (bpID: string) => {
   return composes;
 };
 
+const getCloudConfigs = async () => {
+  try {
+    const worker_config = cockpit.file(
+      '/etc/osbuild-worker/osbuild-worker.toml'
+    );
+    const contents = await worker_config.read();
+    const parsed = TOML.parse(contents);
+    return Object.keys(parsed).filter((k) => k === 'aws');
+  } catch {
+    return [];
+  }
+};
+
 export const cockpitApi = contentSourcesApi.injectEndpoints({
   endpoints: (builder) => {
     return {
@@ -131,33 +144,40 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        queryFn: () => {
-          // TODO: this is hardcoded for now, but we may need to query
-          // the cloudapi endpoint on the composer socket to get the
-          // available information
-          return {
-            data: [
-              {
-                arch: 'aarch64',
-                image_types: ['guest-image', 'image-installer'],
-                repositories: [],
-              },
-              {
-                arch: 'x86_64',
-                image_types: [
-                  'rhel-edge-commit',
-                  'rhel-edge-installer',
-                  'edge-commit',
-                  'edge-installer',
-                  'guest-image',
-                  'image-installer',
-                  'vsphere',
-                  'vsphere-ova',
-                ],
-                repositories: [],
-              },
-            ],
-          };
+        queryFn: async () => {
+          try {
+            const cloudImageTypes = await getCloudConfigs();
+            return {
+              data: [
+                {
+                  arch: 'aarch64',
+                  image_types: [
+                    'guest-image',
+                    'image-installer',
+                    ...cloudImageTypes,
+                  ],
+                  repositories: [],
+                },
+                {
+                  arch: 'x86_64',
+                  image_types: [
+                    'rhel-edge-commit',
+                    'rhel-edge-installer',
+                    'edge-commit',
+                    'edge-installer',
+                    'guest-image',
+                    'image-installer',
+                    'vsphere',
+                    'vsphere-ova',
+                    ...cloudImageTypes,
+                  ],
+                  repositories: [],
+                },
+              ],
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
       getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
