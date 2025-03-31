@@ -2,6 +2,10 @@ import type { Page } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted, togglePreview } from '../lib/lib';
 
+/**
+ * Logs in to either Cockpit or Console, will distinguish between them based on the environment
+ * @param page - the page object
+ */
 export const login = async (page: Page) => {
   if (!process.env.PLAYWRIGHT_USER || !process.env.PLAYWRIGHT_PASSWORD) {
     throw new Error('user or password not set in environment');
