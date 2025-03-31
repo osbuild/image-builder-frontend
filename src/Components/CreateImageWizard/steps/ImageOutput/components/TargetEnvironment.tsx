@@ -69,9 +69,13 @@ const TargetEnvironmentCard = ({
         }}
       >
         <Flex direction={{ default: 'column' }}>
-          <FlexItem>
-            <img className="provider-icon" src={imageSrc} alt={imageAlt} />
-          </FlexItem>
+          {!process.env.IS_ON_PREMISE && (
+            // the logos don't display in cockpit,
+            // so we can just hide them
+            <FlexItem>
+              <img className="provider-icon" src={imageSrc} alt={imageAlt} />
+            </FlexItem>
+          )}
           <FlexItem>
             <Title headingLevel="h5" size="md">
               {title}
