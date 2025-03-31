@@ -464,6 +464,33 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprint = mapHostedToOnPrem(createBPReq);
             const composes: ComposeResponse[] = [];
             for (const ir of parsed.image_requests) {
+              const { upload_request } = ir;
+
+              if (upload_request.type === 'aws.s3') {
+                upload_request.type = 'local';
+                upload_request.upload_options = {};
+              }
+
+              const config = TOML.parse(
+                await cockpit
+                  .file('/etc/osbuild-worker/osbuild-worker.toml')
+                  .read()
+              );
+
+              if (upload_request.type === 'aws') {
+                if (!config.aws || !config.aws.region) {
+                  return {
+                    error:
+                      'Unable to read AWS options from osbuild-worker config. Please configure the cloud options.',
+                  };
+                }
+
+                upload_request.upload_options = {
+                  ...upload_request.options,
+                  region: config.aws.region,
+                };
+              }
+
               const composeReq = {
                 distribution: createBPReq.distribution,
                 blueprint: blueprint,
@@ -472,12 +499,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     architecture: ir.architecture,
                     image_type: ir.image_type,
                     repositories: [],
-                    upload_targets: [
-                      {
-                        type: 'local',
-                        upload_options: {},
-                      },
-                    ],
+                    upload_targets: [upload_request],
                   },
                 ],
               };
@@ -490,7 +512,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     image_type: ir.image_type,
                     repositories: [],
                     upload_request: {
-                      type: 'local',
+                      type: upload_request.type,
                       options: {},
                     },
                   },
