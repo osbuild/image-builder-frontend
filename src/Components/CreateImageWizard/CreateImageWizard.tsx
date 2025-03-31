@@ -87,6 +87,7 @@ import {
   selectImageTypes,
   addImageType,
   changeRegistrationType,
+  changeAwsShareMethod,
 } from '../../store/wizardSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
@@ -233,6 +234,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       const arch = await getHostArch();
       dispatch(changeArchitecture(arch));
     };
+
+    if (process.env.IS_ON_PREMISE) {
+      dispatch(changeAwsShareMethod('manual'));
+    }
 
     if (process.env.IS_ON_PREMISE && !isEdit) {
       if (!searchParams.get('release')) {
