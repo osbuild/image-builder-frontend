@@ -455,6 +455,23 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprint = mapHostedToOnPrem(createBPReq);
             const composes: ComposeResponse[] = [];
             for (const ir of parsed.image_requests) {
+              const { upload_request } = ir;
+
+              if (upload_request.type === 'aws.s3') {
+                upload_request.type = 'local';
+                upload_request.upload_options = {};
+              }
+
+              if (upload_request.type === 'aws') {
+                upload_request.upload_options = {
+                  ...upload_request.options,
+                  // TODO: maybe read this from the osbuild-worker
+                  // file? Or configure the image-request to save
+                  // this (it's hardcoded on-prem though)
+                  region: 'eu-west-1',
+                };
+              }
+
               const composeReq = {
                 distribution: createBPReq.distribution,
                 blueprint: blueprint,
@@ -463,12 +480,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     architecture: ir.architecture,
                     image_type: ir.image_type,
                     repositories: [],
-                    upload_targets: [
-                      {
-                        type: 'local',
-                        upload_options: {},
-                      },
-                    ],
+                    upload_targets: [upload_request],
                   },
                 ],
               };
@@ -481,7 +493,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     image_type: ir.image_type,
                     repositories: [],
                     upload_request: {
-                      type: 'local',
+                      type: upload_request.type,
                       options: {},
                     },
                   },
