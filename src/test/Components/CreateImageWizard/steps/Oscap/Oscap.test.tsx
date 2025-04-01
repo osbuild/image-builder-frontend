@@ -53,9 +53,9 @@ const selectWslTarget = async () => {
 
 const selectProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
+  const selectProfileDropdown = await screen.findByPlaceholderText(
+    /select a profile/i
+  );
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
@@ -66,9 +66,9 @@ const selectProfile = async () => {
 
 const selectDifferentProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
+  const selectProfileDropdown = await screen.findByPlaceholderText(
+    /select a profile/i
+  );
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis2Profile = await screen.findByText(
@@ -79,9 +79,9 @@ const selectDifferentProfile = async () => {
 
 const selectNone = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByRole('textbox', {
-    name: /select a profile/i,
-  });
+  const selectProfileDropdown = await screen.findByPlaceholderText(
+    /select a profile/i
+  );
   await waitFor(() => user.click(selectProfileDropdown));
 
   await waitFor(async () => user.click(await screen.findByText(/none/i)));
@@ -182,9 +182,9 @@ describe('Step OpenSCAP', () => {
     await screen.findByText(
       /OpenSCAP profiles are not compatible with WSL images/i
     );
-    expect(
-      await screen.findByRole('textbox', { name: /select a profile/i })
-    ).toBeDisabled();
+    expect(await screen.findByTestId('profileSelect')).toHaveClass(
+      'pf-m-disabled'
+    );
   });
 
   test('alert displayed and OpenSCAP dropdown enabled when targets include WSL', async () => {
@@ -197,9 +197,7 @@ describe('Step OpenSCAP', () => {
       /OpenSCAP profiles are not compatible with WSL images/i
     );
     await waitFor(() => {
-      expect(
-        screen.getByRole('textbox', { name: /select a profile/i })
-      ).toBeEnabled();
+      expect(screen.getByPlaceholderText(/select a profile/i)).toBeEnabled();
     });
   });
 
