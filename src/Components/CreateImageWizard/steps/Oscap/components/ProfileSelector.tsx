@@ -332,8 +332,8 @@ const ProfileSelector = () => {
 
     if (kernelAppend) {
       const kernelArgsArray = kernelAppend.split(' ');
-      for (const arg in kernelArgsArray) {
-        dispatch(addKernelArg(kernelArgsArray[arg]));
+      for (const arg of kernelArgsArray) {
+        dispatch(addKernelArg(arg));
       }
     }
   };
