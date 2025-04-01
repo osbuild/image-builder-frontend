@@ -72,10 +72,10 @@ export const EditSaveAndBuildBtn = ({
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
 
-    if (requestBody) {
+    if (!process.env.IS_ON_PREMISE && requestBody) {
       const analyticsData = createAnalytics(requestBody, packages, isBeta);
       analytics.track(
-        `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
+        `${AMPLITUDE_MODULE_NAME}-blueprintEdited`,
         analyticsData
       );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
@@ -123,10 +123,10 @@ export const EditSaveButton = ({
   const onSave = async () => {
     const requestBody = await getBlueprintPayload();
 
-    if (requestBody) {
+    if (!process.env.IS_ON_PREMISE && requestBody) {
       const analyticsData = createAnalytics(requestBody, packages, isBeta);
       analytics.track(
-        `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
+        `${AMPLITUDE_MODULE_NAME}-blueprintEdited`,
         analyticsData
       );
     }
