@@ -86,7 +86,7 @@ import {
   Partition,
 } from '../FileSystem/FileSystemTable';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
-import OscapProfileInformation from '../Oscap/OscapProfileInformation';
+import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
 import { PopoverActivation } from '../Registration/ActivationKeysList';
 
 const ExpirationWarning = () => {

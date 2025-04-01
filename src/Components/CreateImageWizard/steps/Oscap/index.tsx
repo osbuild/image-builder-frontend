@@ -10,9 +10,10 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import OscapOnPremSpinner from './OnPremSpinner';
-import OscapOnPremWarning from './OnPremWarning';
-import { Oscap, removeBetaFromRelease } from './Oscap';
+import OscapOnPremSpinner from './components/OnPremSpinner';
+import OscapOnPremWarning from './components/OnPremWarning';
+import Oscap from './Oscap';
+import { removeBetaFromRelease } from './removeBetaFromRelease';
 
 import {
   COMPLIANCE_AND_VULN_SCANNING_URL,
