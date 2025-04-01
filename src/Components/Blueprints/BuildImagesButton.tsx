@@ -64,7 +64,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
         });
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
           trigger: 'synchronize images',
-          userData: userData?.identity,
+          userData: userData?.identity?.account_number,
         });
       } catch (imageBuildError) {
         dispatch(

@@ -75,7 +75,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const handleDelete = async () => {
     if (selectedBlueprintId) {
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`, {
-        userData: userData?.identity,
+        userData: userData?.identity?.account_number,
       });
       setShowDeleteModal(false);
       await deleteBlueprint({ id: selectedBlueprintId });
