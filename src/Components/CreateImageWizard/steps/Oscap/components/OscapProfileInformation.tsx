@@ -11,18 +11,18 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 
-import { RELEASES } from '../../../../constants';
-import { useGetOscapCustomizationsQuery } from '../../../../store/backendApi';
-import { PolicyRead, usePolicyQuery } from '../../../../store/complianceApi';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { OpenScapProfile } from '../../../../store/imageBuilderApi';
+import { RELEASES } from '../../../../../constants';
+import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
+import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { OpenScapProfile } from '../../../../../store/imageBuilderApi';
 import {
   changeCompliance,
   selectCompliancePolicyID,
   selectComplianceProfileID,
   selectDistribution,
-} from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
+} from '../../../../../store/wizardSlice';
+import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 type OscapProfileInformationOptionPropType = {
   allowChangingCompliancePolicy?: boolean;
