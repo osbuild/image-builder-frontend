@@ -42,7 +42,6 @@ import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
   isBlueprintNameValid,
-  isBlueprintDescriptionValid,
   isMountpointMinSizeValid,
   isSnapshotValid,
   isHostnameValid,
@@ -598,9 +597,11 @@ export function useDetailsValidation(): StepValidation {
     return { errors: { name: '' }, disabledNext: false };
   }
 
-  const descriptionError = !isBlueprintDescriptionValid(description)
-    ? 'Invalid description'
-    : '';
+  let descriptionError = '';
+  const maxDescriptionLength = 250;
+  if (description.length > maxDescriptionLength) {
+    descriptionError = `Description is too long (max ${maxDescriptionLength} characters)`;
+  }
 
   return {
     errors: {
