@@ -48,10 +48,6 @@ export const isSnapshotValid = (dateString: string) => {
   return !isNaN(date.getTime()) && isSnapshotDateValid(date);
 };
 
-export const isBlueprintDescriptionValid = (blueprintDescription: string) => {
-  return blueprintDescription.length <= 250;
-};
-
 export const isFileSystemConfigValid = (partitions: Partition[]) => {
   const duplicates = getDuplicateMountPoints(partitions);
   return duplicates.length === 0;
