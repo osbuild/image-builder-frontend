@@ -512,6 +512,9 @@ const ProfileSelector = () => {
           onOpenChange={handleToggle}
           toggle={toggleOpenSCAP}
           shouldFocusFirstItemOnOpen={false}
+          popperProps={{
+            maxWidth: '50vw',
+          }}
         >
           <SelectList>
             {isFetching && (
