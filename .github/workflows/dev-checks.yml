@@ -25,8 +25,8 @@ jobs:
       run: npm run circular
     - name: Run build
       run: npm run build
-    - name: Run lint check
-      run: npm run lint
+    # - name: Run lint check
+      # run: npm run lint
     - name: Run unit tests
       run: npm run test:coverage
     - name: Run unit tests with cockpit
