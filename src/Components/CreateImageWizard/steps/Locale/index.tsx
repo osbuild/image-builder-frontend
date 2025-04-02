@@ -11,7 +11,7 @@ const LocaleStep = () => {
       <Title headingLevel="h1" size="xl">
         Locale
       </Title>
-      <Text>Select locale for your image.</Text>
+      <Text>Select the locale for your image.</Text>
       <LanguagesDropDown />
       <KeyboardDropDown />
     </Form>
