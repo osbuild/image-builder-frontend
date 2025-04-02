@@ -44,57 +44,69 @@ import {
 } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
 
+const withDelay = (resolver) => {
+  return async (input) => {
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 10);
+    });
+
+    return resolver(input);
+  };
+};
+
 export const handlers = [
-  http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
+  http.get(`${PROVISIONING_API}/sources`, withDelay(({ request }) => {
     const url = new URL(request.url);
     const provider = url.searchParams.get('provider');
     return HttpResponse.json(mockSourcesByProvider(provider));
-  }),
+  })),
   http.get(
     `${PROVISIONING_API}/sources/:sourceId/upload_info`,
-    ({ params }) => {
+    withDelay(({ params }) => {
+      console.log('params', params);
       const { sourceId } = params;
       if (sourceId === '666' || sourceId === '667' || sourceId === '123') {
         return HttpResponse.json(mockUploadInfo(sourceId));
       } else {
         return new HttpResponse(null, { status: 404 });
       }
-    }
-  ),
-  http.post(`${CONTENT_SOURCES_API}/rpms/names`, async ({ request }) => {
+    })),
+  http.post(`${CONTENT_SOURCES_API}/rpms/names`, withDelay(async ({ request }) => {
     const { search, urls } = await request.json();
     return HttpResponse.json(mockSourcesPackagesResults(search, urls));
-  }),
+  })),
   http.post(
     `${CONTENT_SOURCES_API}/package_groups/names`,
-    async ({ request }) => {
+    withDelay(async ({ request }) => {
       const { search, urls } = await request.json();
       return HttpResponse.json(mockSourcesGroupsResults(search, urls));
     }
-  ),
-  http.get(`${CONTENT_SOURCES_API}/features/`, async () => {
+    )),
+  http.get(`${CONTENT_SOURCES_API}/features/`, withDelay(async () => {
     return HttpResponse.json(mockedFeatureResponse);
-  }),
-  http.post(`${CONTENT_SOURCES_API}/snapshots/for_date/`, async () => {
+  })),
+  http.post(`${CONTENT_SOURCES_API}/snapshots/for_date/`, withDelay(async () => {
     return HttpResponse.json(mockSourcesPackagesResults);
-  }),
-  http.get(`${IMAGE_BUILDER_API}/packages`, ({ request }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/packages`, withDelay(({ request }) => {
     const url = new URL(request.url);
     const search = url.searchParams.get('search');
     return HttpResponse.json(mockSourcesPackagesResults(search));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/architectures/:distro`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/architectures/:distro`, withDelay(({ params }) => {
     const { distro } = params;
     return HttpResponse.json(mockArchitecturesByDistro(distro));
-  }),
-  http.get(`${RHSM_API}/activation_keys`, () => {
+  })),
+  http.get(`${RHSM_API}/activation_keys`, withDelay(() => {
     return HttpResponse.json(mockActivationKeysResults());
-  }),
-  http.get(`${RHSM_API}/activation_keys/:key`, ({ params }) => {
+  })),
+  http.get(`${RHSM_API}/activation_keys/:key`, withDelay(({ params }) => {
     const { key } = params;
     return HttpResponse.json(mockActivationKeyInformation(key));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/repositories/`, ({ request }) => {
+  })),
+  http.get(`${CONTENT_SOURCES_API}/repositories/`, withDelay(({ request }) => {
     const url = new URL(request.url);
     const available_for_arch = url.searchParams.get('available_for_arch');
     const available_for_version = url.searchParams.get('available_for_version');
@@ -109,43 +121,43 @@ export const handlers = [
       search,
     };
     return HttpResponse.json(mockRepositoryResults(args));
-  }),
-  http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
+  })),
+  http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, withDelay(({ params }) => {
     const { repo_id } = params;
     return HttpResponse.json(mockPopularRepo(repo_id));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/composes`, withDelay(({ request }) => {
     return HttpResponse.json(composesEndpoint(new URL(request.url)));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/composes/:composeId`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId`, withDelay(({ params }) => {
     const { composeId } = params;
     return HttpResponse.json(mockStatus(composeId));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/composes/:composeId/clones`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/composes/:composeId/clones`, withDelay(({ params }) => {
     const { composeId } = params;
     return HttpResponse.json(mockClones(composeId));
-  }),
-  http.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/clones/:cloneId`, withDelay(({ params }) => {
     const { cloneId } = params;
     return HttpResponse.json(mockCloneStatus[cloneId]);
-  }),
-  http.post(`${IMAGE_BUILDER_API}/compose`, () => {
+  })),
+  http.post(`${IMAGE_BUILDER_API}/compose`, withDelay(() => {
     return HttpResponse.json({});
-  }),
+  })),
   http.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/profiles`,
-    ({ request }) => {
+    withDelay(({ request }) => {
       return HttpResponse.json(distributionOscapProfiles(request));
-    }
+    })
   ),
   http.get(
     `${IMAGE_BUILDER_API}/oscap/:distribution/:profile/customizations`,
-    ({ params }) => {
+    withDelay(({ params }) => {
       const { profile } = params;
       return HttpResponse.json(oscapCustomizations(profile));
-    }
+    })
   ),
-  http.get(`${IMAGE_BUILDER_API}/blueprints`, ({ request }) => {
+  http.get(`${IMAGE_BUILDER_API}/blueprints`, withDelay(({ request }) => {
     const url = new URL(request.url);
     const nameParam = url.searchParams.get('name');
     const search = url.searchParams.get('search');
@@ -176,17 +188,17 @@ export const handlers = [
     );
 
     return HttpResponse.json(resp);
-  }),
-  http.post(`${IMAGE_BUILDER_API}/blueprint/:id/compose`, () => {
+  })),
+  http.post(`${IMAGE_BUILDER_API}/blueprint/:id/compose`, withDelay(() => {
     return new HttpResponse(null, { status: 200 });
-  }),
-  http.post(CREATE_BLUEPRINT, () => {
+  })),
+  http.post(CREATE_BLUEPRINT, withDelay(() => {
     const response = {
       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     };
     return HttpResponse.json(response);
-  }),
-  http.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/blueprints/:id/composes`, withDelay(({ params }) => {
     const { id } = params;
     const emptyBlueprintId = mockGetBlueprints.data[1].id;
     const outOfSyncBlueprintId = mockGetBlueprints.data[3].id;
@@ -202,22 +214,22 @@ export const handlers = [
       default:
         return HttpResponse.json(mockBlueprintComposes);
     }
-  }),
-  http.get(`${IMAGE_BUILDER_API}/blueprints/:id`, ({ params }) => {
+  })),
+  http.get(`${IMAGE_BUILDER_API}/blueprints/:id`, withDelay(({ params }) => {
     const id = params['id'];
     return HttpResponse.json(getMockBlueprintResponse(id));
-  }),
-  http.put(`${IMAGE_BUILDER_API}/blueprints/:id`, ({ params }) => {
+  })),
+  http.put(`${IMAGE_BUILDER_API}/blueprints/:id`, withDelay(({ params }) => {
     const id = params['id'];
     return HttpResponse.json({ id: id });
-  }),
-  http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
+  })),
+  http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, withDelay(() => {
     return HttpResponse.json(mockPkgRecommendations);
-  }),
-  http.get(`${COMPLIANCE_API}/policies`, () => {
+  })),
+  http.get(`${COMPLIANCE_API}/policies`, withDelay(() => {
     return HttpResponse.json(mockPolicies);
-  }),
-  http.get(`${COMPLIANCE_API}/policies/:id`, ({ params }) => {
+  })),
+  http.get(`${COMPLIANCE_API}/policies/:id`, withDelay(({ params }) => {
     const id = params['id'];
     for (const p of mockPolicies.data) {
       if (p.id === id) {
@@ -225,5 +237,5 @@ export const handlers = [
       }
     }
     return HttpResponse.error();
-  }),
+  })),
 ];
