@@ -51,7 +51,23 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   // cockpit-image-builder needs superuser
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.getByRole('button', { name: 'Limited access' }).click();
-  await page.getByText('Close').click();
+
+  // different popup opens based on type of account (can be passwordless)
+  const authenticateButton = page.getByRole('button', { name: 'Authenticate' });
+  const closeButton = page.getByText('Close');
+  await expect(authenticateButton.or(closeButton)).toBeVisible();
+
+  if (await authenticateButton.isVisible()) {
+    // with password
+    await page.getByRole('textbox', { name: 'Password' }).fill(password);
+    await authenticateButton.click();
+  }
+  if (await closeButton.isVisible()) {
+    // passwordless
+    await closeButton.click();
+  }
+
+  // expect to have administrative access
   await page.getByRole('button', { name: 'Administrative access' });
 };
 
