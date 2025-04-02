@@ -79,7 +79,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Details' });
     await screen.findByRole('button', { name: 'Review' });
     if (!process.env.IS_ON_PREMISE) {
-      await screen.findByRole('button', { name: 'Register' });
+      await screen.findByRole('button', { name: /Register/ });
       await screen.findByRole('button', { name: 'OpenSCAP' });
       await screen.findByRole('button', { name: 'Repeatable build' });
       await screen.findByRole('button', { name: 'Custom repositories' });
