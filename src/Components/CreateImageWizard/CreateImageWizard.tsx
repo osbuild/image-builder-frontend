@@ -260,7 +260,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     const isVisitOptional =
       'parentId' in step && step.parentId === 'step-optional-steps';
 
-    if (step.id === 'step-register' && step.isVisited) {
+    if (process.env.IS_ON_PREMISE) {
+      if (step.id === 'step-oscap' && step.isVisited) {
+        setWasRegisterVisited(true);
+      }
+    } else if (step.id === 'step-register' && step.isVisited) {
       setWasRegisterVisited(true);
     }
 
