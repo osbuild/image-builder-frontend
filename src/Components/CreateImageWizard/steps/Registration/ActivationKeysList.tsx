@@ -86,9 +86,6 @@ const ActivationKeysList = () => {
         .filter((keyName: string) =>
           String(keyName).toLowerCase().includes(filterValue.toLowerCase())
         );
-      if (filteredKeys && !filteredKeys.length) {
-        filteredKeys = [`No results found for "${filterValue}"`];
-      }
       if (!isOpen) {
         setIsOpen(true);
       }
@@ -200,6 +197,14 @@ const ActivationKeysList = () => {
           data-testid="activation-keys-loading"
         >
           <Spinner size="md" />
+        </SelectOption>
+      );
+    }
+
+    if (isSuccessActivationKeys && selectOptions.length === 0) {
+      selectOptionsElement.push(
+        <SelectOption key="no_results" value="no_results" isDisabled>
+          No results found
         </SelectOption>
       );
     }
