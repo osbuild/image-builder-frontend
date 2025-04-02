@@ -9,10 +9,7 @@ import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
-import {
-  useListActivationKeysQuery,
-  useShowActivationKeyQuery,
-} from '../../../store/rhsmApi';
+import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import {
   selectBlueprintId,
   selectBlueprintName,
@@ -124,12 +121,6 @@ export function useRegistrationValidation(): StepValidation {
   );
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
 
-  const {
-    isUninitialized,
-    isFetching: isFetchingKeys,
-    isError: isErrorKeys,
-  } = useListActivationKeysQuery();
-
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
       { name: activationKey! },
@@ -139,9 +130,6 @@ export function useRegistrationValidation(): StepValidation {
     );
 
   if (registrationType !== 'register-later' && !activationKey) {
-    if (isUninitialized || isFetchingKeys || !isErrorKeys) {
-      return { errors: {}, disabledNext: false };
-    }
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
