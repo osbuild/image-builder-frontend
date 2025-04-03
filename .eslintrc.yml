@@ -55,6 +55,7 @@ rules:
   # Temporarily disabled
   jsx-a11y/no-autofocus: off
   rulesdir/forbid-pf-relative-imports: off
+  no-condition-in-test: off
 overrides:
   - files: ["src/tests/**/*.ts"]
     extends: "plugin:testing-library/react"
