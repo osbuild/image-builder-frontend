@@ -33,7 +33,11 @@ export const loginCockpit = async (
   // cockpit-image-builder needs superuser
   await page.getByRole('button', { name: 'Log in' }).click();
   await page.getByRole('button', { name: 'Limited access' }).click();
-  await page.getByText('Close').click();
+  await page
+    .getByRole('textbox', { name: 'Password for tkosci:' })
+    .fill(password);
+  await page.getByRole('button', { name: 'Authenticate' }).click();
+  //await page.getByText('Close').click();
   await page.getByRole('button', { name: 'Administrative access' });
 };
 

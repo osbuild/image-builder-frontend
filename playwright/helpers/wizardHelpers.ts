@@ -1,4 +1,4 @@
-import { expect, type Page, test } from '@playwright/test';
+import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
 import { ibFrame } from '../lib/lib';
 
@@ -7,7 +7,10 @@ import { ibFrame } from '../lib/lib';
  * @param page - the page object
  * @param blueprintName - the name of the created blueprint
  */
-export const createBlueprint = async (page: Page, blueprintName: string) => {
+export const createBlueprint = async (
+  page: Page | FrameLocator,
+  blueprintName: string
+) => {
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByTestId('close-button-saveandbuild-modal').click();
   await page.getByRole('button', { name: 'Create blueprint' }).click();
@@ -26,7 +29,10 @@ export const createBlueprint = async (page: Page, blueprintName: string) => {
  * @param page - the page object
  * @param blueprintName - the name of the blueprint to create
  */
-export const fillInDetails = async (page: Page, blueprintName: string) => {
+export const fillInDetails = async (
+  page: Page | FrameLocator,
+  blueprintName: string
+) => {
   await page.getByRole('listitem').filter({ hasText: 'Details' }).click();
   await page.getByTestId('blueprint').click();
   await page.getByTestId('blueprint').fill(blueprintName);
@@ -39,16 +45,16 @@ export const fillInDetails = async (page: Page, blueprintName: string) => {
  * Select "Register later" option in the wizard
  * @param page - the page object
  */
-export const registerLater = async (page: Page) => {
+export const registerLater = async (page: Page | FrameLocator) => {
   await page.getByRole('button', { name: 'Register' }).click();
-  await page.getByTestId('automatically-register-checkbox').click();
+  await page.getByTestId('register-later-radio').click();
 };
 
 /**
  * Fill in the image output step in the wizard by selecting the Guest Image
  * @param page - the page object
  */
-export const fillInImageOutputGuest = async (page: Page) => {
+export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
   await page.getByTestId('checkbox-guest-image').click();
   await page.getByRole('button', { name: 'Next' }).click();
 };
@@ -64,17 +70,17 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
     'Delete the blueprint with name: ' + blueprintName,
     async () => {
       // Locate back to the Image Builder page every time becuase the test can fail at any stage
-      await ibFrame(page);
-      await page
+      const frame = await ibFrame(page);
+      await frame
         .getByRole('textbox', { name: 'Search input' })
         .fill(blueprintName);
-      await page
+      await frame
         .locator('.pf-v5-c-card__title-text')
         .getByText(blueprintName)
         .click();
-      await page.getByTestId('blueprint-action-menu-toggle').click();
-      await page.getByRole('menuitem', { name: 'Delete blueprint' }).click();
-      await page.getByRole('button', { name: 'Delete' }).click();
+      await frame.getByTestId('blueprint-action-menu-toggle').click();
+      await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
+      await frame.getByRole('button', { name: 'Delete' }).click();
     },
     { box: true }
   );
@@ -84,7 +90,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
  * Export the blueprint
  * @param page - the page object
  */
-export const exportBlueprint = async (page: Page) => {
+export const exportBlueprint = async (page: Page | FrameLocator) => {
   await page.getByTestId('blueprint-action-menu-toggle').click();
   const downloadPromise = page.waitForEvent('download');
   await page
@@ -98,7 +104,7 @@ export const exportBlueprint = async (page: Page) => {
  * Import the blueprint
  * @param page - the page object
  */
-export const importBlueprint = async (page: Page) => {
+export const importBlueprint = async (page: Page | FrameLocator) => {
   await page.getByTestId('import-blueprint-button').click();
   const dragBoxSelector = page.locator('.pf-v5-c-file-upload');
   await dragBoxSelector
