@@ -110,11 +110,12 @@ import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
  */
 export const mapRequestFromState = (
   store: Store,
-  orgID: string
+  orgID: string,
+  accountID: string
 ): CreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
-  const customizations = getCustomizations(state, orgID);
+  const customizations = getCustomizations(state, orgID, accountID);
 
   return {
     name: selectBlueprintName(state),
@@ -527,7 +528,11 @@ const getImageOptions = (
   return {};
 };
 
-const getCustomizations = (state: RootState, orgID: string): Customizations => {
+const getCustomizations = (
+  state: RootState,
+  orgID: string,
+  accountID: string
+): Customizations => {
   return {
     containers: undefined,
     directories: undefined,
@@ -548,7 +553,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
           },
         ]
       : undefined,
-    subscription: getSubscription(state, orgID),
+    subscription: getSubscription(state, orgID, accountID),
     packages: getPackages(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
@@ -678,7 +683,8 @@ const getTimezone = (state: RootState) => {
 
 const getSubscription = (
   state: RootState,
-  orgID: string
+  orgID: string,
+  accountID: string
 ): Subscription | undefined => {
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
@@ -696,6 +702,7 @@ const getSubscription = (
   const initialSubscription = {
     'activation-key': activationKey,
     organization: Number(orgID),
+    account: accountID,
     'server-url': selectServerUrl(state),
     'base-url': selectBaseUrl(state),
   };

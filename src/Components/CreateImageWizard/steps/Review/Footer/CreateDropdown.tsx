@@ -21,11 +21,40 @@ import {
   useComposeBlueprintMutation,
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
+import { IBPackageWithRepositoryInfo } from '../../Packages/Packages';
 
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
+};
+
+const createAnalytics = (
+  requestBody: CreateBlueprintRequest,
+  packages: IBPackageWithRepositoryInfo[],
+  isBeta: () => boolean
+) => {
+  const analyticsData = {
+    image_name: requestBody.name,
+    description: requestBody.description,
+    distribution: requestBody.distribution,
+    openscap: requestBody.customizations.openscap,
+    image_request_types: requestBody.image_requests.map(
+      (req) => req.image_type
+    ),
+    image_request_architectures: requestBody.image_requests.map(
+      (req) => req.architecture
+    ),
+    imageRequests: requestBody.image_requests,
+    customizations: requestBody.customizations,
+    metadata: requestBody.metadata,
+    packages: packages.map((pkg) => pkg.name),
+    file_system_configuration: requestBody.customizations.filesystem,
+    module: AMPLITUDE_MODULE_NAME,
+    is_preview: isBeta(),
+    type: 'createBlueprintAndBuildImages',
+  };
+  return analyticsData;
 };
 
 export const CreateSaveAndBuildBtn = ({
@@ -45,15 +74,19 @@ export const CreateSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-        module: AMPLITUDE_MODULE_NAME,
-        isPreview: isBeta(),
-        type: 'createBlueprintAndBuildImages',
-        packages: packages.map((pkg) => pkg.name),
+    if (!process.env.IS_ON_PREMISE && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
+        analyticsData
+      );
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+        trigger: 'blueprint_created',
+        image_request_types: requestBody.image_requests.map(
+          (req) => req.image_type
+        ),
       });
     }
-
     const blueprint =
       requestBody &&
       (await createBlueprint({
@@ -138,13 +171,12 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME}-blueprintCreated`, {
-        module: AMPLITUDE_MODULE_NAME,
-        isPreview: isBeta(),
-        type: 'createBlueprint',
-        packages: packages.map((pkg) => pkg.name),
-      });
+    if (!process.env.IS_ON_PREMISE && requestBody) {
+      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      analytics.track(
+        `${AMPLITUDE_MODULE_NAME}-blueprintCreated`,
+        analyticsData
+      );
     }
 
     const blueprint =

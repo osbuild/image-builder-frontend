@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   ActionGroup,
@@ -6,8 +6,14 @@ import {
   Modal,
   ModalVariant,
 } from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 
-import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
+import {
+  AMPLITUDE_MODULE_NAME,
+  PAGINATION_LIMIT,
+  PAGINATION_OFFSET,
+} from '../../constants';
 import {
   backendApi,
   useDeleteBlueprintMutation,
@@ -36,6 +42,15 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
   const dispatch = useAppDispatch();
+  const { analytics, auth } = useChrome();
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
 
   const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -59,6 +74,9 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   });
   const handleDelete = async () => {
     if (selectedBlueprintId) {
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`, {
+        userData: userData?.identity?.account_number,
+      });
       setShowDeleteModal(false);
       await deleteBlueprint({ id: selectedBlueprintId });
       dispatch(setBlueprintId(undefined));
