@@ -88,11 +88,50 @@ const clickAddUser = async () => {
   await waitFor(() => user.click(addUser));
 };
 
+const addAnotherUser = async () => {
+  const user = userEvent.setup();
+  const addUser = await screen.findByRole('button', { name: /add tab/i });
+  expect(addUser).toBeEnabled();
+  await waitFor(() => user.click(addUser));
+};
+
+const addAndFillThreeUsers = async () => {
+  await clickAddUser();
+  await addUserName('rachel');
+  await addSshKey('ssh-rsa rachel');
+  await addPasswordByUserIndex('rachelPass', 0);
+  await checkAdminCheckbox();
+  await addUserGroupByUserIndex('users', 0);
+  await addUserGroupByUserIndex('widget', 0);
+
+  await addAnotherUser();
+  await switchToNewUser();
+  await addUserName('monica');
+
+  await addAnotherUser();
+  await switchToNewUser();
+  await addUserName('chandler');
+  await addSshKey('ssh-rsa chandler');
+  await addPasswordByUserIndex('chandlerPass', 2);
+  await addUserGroupByUserIndex('group', 2);
+};
+
+const switchToNewUser = async () => {
+  const user = userEvent.setup();
+  const newUserButton = await screen.findByRole('tab', { name: /user tab/i });
+  await waitFor(() => user.click(newUserButton));
+};
+
+const closeNthTab = async (index: number) => {
+  const user = userEvent.setup();
+  const tabs = await screen.findAllByRole('presentation');
+  const closeTabButton = await within(tabs[index]).findByRole('button');
+  await waitFor(() => user.click(closeTabButton));
+  await clickRemoveUser();
+};
+
 const clickRemoveUser = async () => {
   const user = userEvent.setup();
-  const removeUser = await screen.findByRole('button', { name: /close tab/i });
-  expect(removeUser).toBeEnabled();
-  await waitFor(() => user.click(removeUser));
   const removeUserModalButton = await screen.findByRole('button', {
     name: /Remove user/,
   });
@@ -117,11 +156,10 @@ const addUserName = async (userName: string) => {
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
-const addPassword = async (mockPassword: string) => {
+const addPasswordByUserIndex = async (password: string, index: number) => {
   const user = userEvent.setup();
-  const enterPassword = screen.getByPlaceholderText(/enter password/i);
-  await waitFor(() => user.type(enterPassword, mockPassword));
-  await waitFor(() => expect(enterPassword).toHaveValue(mockPassword));
+  const passwordInputs = screen.getAllByPlaceholderText(/enter password/i);
+  await waitFor(() => user.type(passwordInputs[index], password));
 };
 
 const getAdminCheckbox = async () => {
@@ -137,11 +175,13 @@ const checkAdminCheckbox = async () => {
   await waitFor(() => user.click(adminCheckbox));
 };
 
-const addUserGroup = async (group: string) => {
+const addUserGroupByUserIndex = async (group: string, index: number) => {
   const user = userEvent.setup();
-  const userGroupInput = await screen.findByPlaceholderText('Add user group');
-  await waitFor(() => user.click(userGroupInput));
-  await waitFor(() => user.type(userGroupInput, group));
+  const userGroupInputs = await screen.findAllByPlaceholderText(
+    'Add user group'
+  );
+  await waitFor(() => user.click(userGroupInputs[index]));
+  await waitFor(() => user.type(userGroupInputs[index], group));
   const addGroup = await screen.findByRole('button', {
     name: /Add user group/,
   });
@@ -214,7 +254,7 @@ describe('Step Users', () => {
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
-    await addPassword(invalidPassword);
+    await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
       /Password must be at least 6 characters long/i
@@ -235,7 +275,7 @@ describe('Step Users', () => {
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
-    await addPassword(invalidPassword);
+    await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
       /Password must be at least 6 characters long/i
@@ -251,8 +291,8 @@ describe('Step Users', () => {
     await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
-    await addUserGroup('users');
-    await addUserGroup('widget');
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
     await removeUserGroup('users');
     expect(screen.queryByText('users')).not.toBeInTheDocument();
   });
@@ -265,7 +305,7 @@ describe('Step Users', () => {
     const adminCheckbox = await getAdminCheckbox();
 
     // Adding wheel group via groups input
-    await addUserGroup('wheel');
+    await addUserGroupByUserIndex('wheel', 0);
     expect(adminCheckbox).toBeChecked();
 
     await removeUserGroup('wheel');
@@ -279,6 +319,27 @@ describe('Step Users', () => {
     await checkAdminCheckbox();
     expect(adminCheckbox).not.toBeChecked();
     expect(screen.queryByText('wheel')).not.toBeInTheDocument();
+  });
+
+  test('one valid and one invalid user', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeEnabled();
+
+    await addAnotherUser();
+    await switchToNewUser();
+
+    await addUserName('s');
+    expect(nextButton).toBeDisabled();
+
+    // remove invalid user and expect Next to get enabled
+    await closeNthTab(1);
+    expect(nextButton).toBeEnabled();
   });
 
   test('revisit step button on Review works', async () => {
@@ -305,10 +366,10 @@ describe('User request generated correctly', () => {
     await clickAddUser();
     await addUserName(validUserName);
     await addSshKey(validSshKey);
-    await addPassword(validPassword);
+    await addPasswordByUserIndex(validPassword, 0);
     await checkAdminCheckbox();
-    await addUserGroup('users');
-    await addUserGroup('widget');
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
     await goToReviewStep();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -341,10 +402,71 @@ describe('User request generated correctly', () => {
     await clickAddUser();
     await addUserName('test');
     await addSshKey('ssh-rsa');
-    await addUserGroup('users');
-    await addUserGroup('widget');
-    await clickRemoveUser();
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
+    await closeNthTab(0);
     await waitFor(() => expect(screen.getByText(/add a user to your image/i)));
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {},
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('add multiple users', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+
+    await addAndFillThreeUsers();
+
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        users: [
+          {
+            name: 'rachel',
+            ssh_key: 'ssh-rsa rachel',
+            password: 'rachelPass',
+            groups: ['wheel', 'users', 'widget'],
+          },
+          {
+            name: 'monica',
+          },
+          {
+            name: 'chandler',
+            ssh_key: 'ssh-rsa chandler',
+            password: 'chandlerPass',
+            groups: ['group'],
+          },
+        ],
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('remove multiple users', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+
+    await addAndFillThreeUsers();
+    await closeNthTab(2);
+    await closeNthTab(1);
+    await closeNthTab(0);
+
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
