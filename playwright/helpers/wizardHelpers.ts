@@ -1,6 +1,6 @@
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { ibFrame } from '../lib/lib';
+import { ibFrame, isHosted } from '../lib/lib';
 
 /**
  * Clicks the create button, handles the modal, clicks the button again and selecets the BP in the list
@@ -43,11 +43,14 @@ export const fillInDetails = async (
 
 /**
  * Select "Register later" option in the wizard
+ * This function executes only on the hosted service
  * @param page - the page object
  */
 export const registerLater = async (page: Page | FrameLocator) => {
-  await page.getByRole('button', { name: 'Register' }).click();
-  await page.getByTestId('register-later-radio').click();
+  if (isHosted()) {
+    await page.getByRole('button', { name: 'Register' }).click();
+    await page.getByTestId('register-later-radio').click();
+  }
 };
 
 /**
@@ -88,30 +91,36 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
 
 /**
  * Export the blueprint
+ * This function executes only on the hosted service
  * @param page - the page object
  */
 export const exportBlueprint = async (page: Page | FrameLocator) => {
-  await page.getByTestId('blueprint-action-menu-toggle').click();
-  const downloadPromise = page.waitForEvent('download');
-  await page
-    .getByRole('menuitem', { name: 'Download blueprint (.json)' })
-    .click();
-  const download = await downloadPromise;
-  await download.saveAs('../../downloads/testing.json');
+  if (isHosted()) {
+    await page.getByTestId('blueprint-action-menu-toggle').click();
+    const downloadPromise = page.waitForEvent('download');
+    await page
+      .getByRole('menuitem', { name: 'Download blueprint (.json)' })
+      .click();
+    const download = await downloadPromise;
+    await download.saveAs('../../downloads/testing.json');
+  }
 };
 
 /**
  * Import the blueprint
+ * This function executes only on the hosted service
  * @param page - the page object
  */
 export const importBlueprint = async (page: Page | FrameLocator) => {
-  await page.getByTestId('import-blueprint-button').click();
-  const dragBoxSelector = page.locator('.pf-v5-c-file-upload');
-  await dragBoxSelector
-    .locator('input[type=file]')
-    .setInputFiles('../../downloads/testing.json');
-  await expect(
-    page.getByRole('textbox', { name: 'File upload' })
-  ).not.toBeEmpty();
-  await page.getByTestId('import-blueprint-finish').click();
+  if (isHosted()) {
+    await page.getByTestId('import-blueprint-button').click();
+    const dragBoxSelector = page.locator('.pf-v5-c-file-upload');
+    await dragBoxSelector
+      .locator('input[type=file]')
+      .setInputFiles('../../downloads/testing.json');
+    await expect(
+      page.getByRole('textbox', { name: 'File upload' })
+    ).not.toBeEmpty();
+    await page.getByTestId('import-blueprint-finish').click();
+  }
 };

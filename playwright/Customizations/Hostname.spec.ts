@@ -21,18 +21,18 @@ test.describe.serial('Test Hostname', () => {
     cleanup,
   }) => {
     const blueprintName = 'test-' + uuidv4();
+    const hostname = 'testsystem';
 
-    // Delete the blueprint after the run
+    // Delete the blueprint after the run fixture
     await cleanup.add(() => deleteBlueprint(page, blueprintName));
 
+    // Login, navigate to IB and get the frame
     await login(page);
     const frame = await ibFrame(page);
 
     await test.step('Navigate to optional steps in Wizard', async () => {
       await navigateToOptionalSteps(frame);
-      if (isHosted()) {
-        await registerLater(frame);
-      }
+      await registerLater(frame);
     });
 
     await test.step('Select and fill the Hostname step', async () => {
@@ -47,7 +47,7 @@ test.describe.serial('Test Hostname', () => {
       await frame.getByRole('textbox', { name: 'hostname input' }).click();
       await frame
         .getByRole('textbox', { name: 'hostname input' })
-        .fill('testsystem');
+        .fill(hostname);
       await frame.getByRole('button', { name: 'Review and finish' }).click();
     });
 
@@ -59,6 +59,20 @@ test.describe.serial('Test Hostname', () => {
       await createBlueprint(frame, blueprintName);
     });
 
+    await test.step('Edit BP', async () => {
+      await frame.getByRole('button', { name: 'Edit blueprint' }).click();
+      await frame.getByTestId('revisit-hostname').click();
+      await frame.getByRole('textbox', { name: 'hostname input' }).click();
+      await frame
+        .getByRole('textbox', { name: 'hostname input' })
+        .fill(hostname + 'edited');
+      await frame.getByRole('button', { name: 'Review and finish' }).click();
+      await frame
+        .getByRole('button', { name: 'Save changes to blueprint' })
+        .click();
+    });
+
+    // This is for hosted service only as these features are not avaiable in cockpit plugin
     if (isHosted()) {
       await test.step('Export BP', async () => {
         await exportBlueprint(frame);
@@ -73,7 +87,7 @@ test.describe.serial('Test Hostname', () => {
         await frame.getByRole('button', { name: 'Hostname' }).click();
         await expect(
           frame.getByRole('textbox', { name: 'hostname input' })
-        ).toHaveValue('testsystem');
+        ).toHaveValue(hostname + 'edited');
         await frame.getByRole('button', { name: 'Cancel' }).click();
       });
     }
