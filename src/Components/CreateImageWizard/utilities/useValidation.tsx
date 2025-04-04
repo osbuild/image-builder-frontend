@@ -471,7 +471,7 @@ const validateUserName = (userName: string): string => {
   if (!userName) {
     return 'Required value';
   }
-  if (userName && !isUserNameValid(userName)) {
+  if (!isUserNameValid(userName)) {
     return 'Invalid user name';
   }
   return '';

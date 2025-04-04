@@ -407,7 +407,7 @@ describe('User request generated correctly', () => {
     await addUserGroupByUserIndex('users', 0);
     await addUserGroupByUserIndex('widget', 0);
     await closeNthTab(0);
-    await waitFor(() => expect(screen.getByText(/add a user to your image/i)));
+    await screen.findByText(/add a user to your image/i);
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

@@ -38,7 +38,7 @@ const RemoveUserModal = ({
       nextTabIndex = activeTabKey - 1 > 0 ? activeTabKey - 1 : 0;
     } else if (activeTabKey === users.length - 1) {
       // if the closing tab is the last tab, focus the preceding tab
-      nextTabIndex = users.length - 2 > 0 ? users.length - 2 : 0;
+      nextTabIndex = users.length - 2 >= 0 ? users.length - 2 : 0;
     }
 
     setActiveTabKey(nextTabIndex);
