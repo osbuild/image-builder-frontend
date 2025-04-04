@@ -3,7 +3,6 @@ import React from 'react';
 import {
   DropEvent,
   FileUpload,
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -51,7 +50,7 @@ const SatelliteRegistration = () => {
     setIsRejected(true);
   };
   return (
-    <Form>
+    <>
       <SatelliteRegistrationCommand />
       <FormGroup label="Certificate authority (CA)" isRequired>
         <FileUpload
@@ -88,12 +87,12 @@ const SatelliteRegistration = () => {
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
                 : validated === 'error'
                 ? stepValidation.errors['certificate']
-                : 'Drag and drop a file or upload one'}
+                : 'Drag and drop a valid certificate file or upload one'}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
-    </Form>
+    </>
   );
 };
 
