@@ -487,6 +487,7 @@ export function useUsersValidation(): UsersStepValidation {
       users[index].password,
       environments.includes('azure')
     ).isValid;
+    const passwordError = !isPasswordValid ? 'Invalid password' : '';
 
     if (
       userNameError ||
@@ -496,7 +497,7 @@ export function useUsersValidation(): UsersStepValidation {
       errors[`${index}`] = {
         userName: userNameError,
         userSshKey: sshKeyError,
-        userPassword: !isPasswordValid ? 'Invalid password' : '',
+        userPassword: passwordError,
       };
     }
   }
