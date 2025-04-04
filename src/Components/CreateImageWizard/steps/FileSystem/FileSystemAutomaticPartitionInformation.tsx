@@ -1,20 +1,15 @@
 import React from 'react';
 
-import {
-  Button,
-  Text,
-  TextContent,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Button, Content, ContentVariants } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../constants';
 
 const FileSystemAutomaticPartition = () => {
   return (
-    <TextContent>
-      <Text component={TextVariants.h3}>Automatic partitioning</Text>
-      <Text>
+    <Content>
+      <Content component={ContentVariants.h3}>Automatic partitioning</Content>
+      <Content component="p">
         The system automatically partitions your image storage depending on the
         target environment(s). The target environment sometimes dictates all or
         part of the partitioning scheme. Automatic partitioning applies the most
@@ -31,8 +26,8 @@ const FileSystemAutomaticPartition = () => {
         >
           Customizing file systems during the image creation
         </Button>
-      </Text>
-    </TextContent>
+      </Content>
+    </Content>
   );
 };
 

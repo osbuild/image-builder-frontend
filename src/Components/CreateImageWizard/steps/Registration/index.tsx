@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title, FormGroup } from '@patternfly/react-core';
+import { Content, Form, Title, FormGroup } from '@patternfly/react-core';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
 import ActivationKeysList from './ActivationKeysList';
@@ -21,11 +21,11 @@ const RegistrationStep = () => {
       <Title headingLevel="h1" size="xl">
         Register systems using this image
       </Title>
-      <Text>
+      <Content component="p">
         You can either automatically register your systems with Red Hat to
         enhance security and track your spending or choose to register your
         system during initial boot.
-      </Text>
+      </Content>
       <Registration />
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
       {!process.env.IS_ON_PREMISE &&

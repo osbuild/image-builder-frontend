@@ -6,11 +6,10 @@ import {
   FormGroup,
   Popover,
   Radio,
-  Text,
-  TextContent,
-  TextVariants,
-  Tile,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
@@ -97,7 +96,9 @@ const TargetEnvironment = () => {
       data-testid="target-select"
     >
       <FormGroup
-        label={<Text component={TextVariants.small}>Public cloud</Text>}
+        label={
+          <Content component={ContentVariants.small}>Public cloud</Content>
+        }
         data-testid="target-public"
       >
         <div className="tiles">
@@ -197,7 +198,9 @@ const TargetEnvironment = () => {
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
-            label={<Text component={TextVariants.small}>Private cloud</Text>}
+            label={
+              <Content component={ContentVariants.small}>Private cloud</Content>
+            }
             className="pf-v5-u-mt-sm"
             data-testid="target-private"
           >
@@ -235,26 +238,25 @@ const TargetEnvironment = () => {
                             maxWidth="30rem"
                             position="right"
                             bodyContent={
-                              <TextContent>
-                                <Text>
+                              <Content>
+                                <Content component="p">
                                   An OVA file is a virtual appliance used by
                                   virtualization platforms such as VMware
                                   vSphere. It is a package that contains files
                                   used to describe a virtual machine, which
                                   includes a VMDK image, OVF descriptor file and
                                   a manifest file.
-                                </Text>
-                              </TextContent>
+                                </Content>
+                              </Content>
                             }
                           >
                             <Button
+                              icon={<HelpIcon />}
                               className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                               variant="plain"
                               aria-label="About OVA file"
                               isInline
-                            >
-                              <HelpIcon />
-                            </Button>
+                            />
                           </Popover>
                         </>
                       }
@@ -284,24 +286,23 @@ const TargetEnvironment = () => {
                           maxWidth="30rem"
                           position="right"
                           bodyContent={
-                            <TextContent>
-                              <Text>
+                            <Content>
+                              <Content component="p">
                                 A VMDK file is a virtual disk that stores the
                                 contents of a virtual machine. This disk has to
                                 be imported into vSphere using govc import.vmdk,
                                 use the OVA version when using the vSphere UI.
-                              </Text>
-                            </TextContent>
+                              </Content>
+                            </Content>
                           }
                         >
                           <Button
+                            icon={<HelpIcon />}
                             className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                             variant="plain"
                             aria-label="About VMDK file"
                             isInline
-                          >
-                            <HelpIcon />
-                          </Button>
+                          />
                         </Popover>
                       </>
                     }
@@ -324,7 +325,7 @@ const TargetEnvironment = () => {
         </>
       )}
       <FormGroup
-        label={<Text component={TextVariants.small}>Other</Text>}
+        label={<Content component={ContentVariants.small}>Other</Content>}
         data-testid="target-other"
       >
         {supportedEnvironments?.includes('guest-image') && (

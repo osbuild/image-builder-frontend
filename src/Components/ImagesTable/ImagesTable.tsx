@@ -259,7 +259,7 @@ const ImagesTable = () => {
       </Table>
       <Toolbar className="pf-v5-u-mb-xl">
         <ToolbarContent>
-          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+          <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
             <Pagination
               variant={PaginationVariant.bottom}
               itemCount={itemCount}

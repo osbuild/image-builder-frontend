@@ -6,13 +6,9 @@ import {
   AlertActionLink,
   Flex,
   FlexItem,
-  Text,
+  Content,
 } from '@patternfly/react-core';
-import {
-  TextContent,
-  TextList,
-  TextListItem,
-} from '@patternfly/react-core/dist/esm';
+
 // Import for optional quickstarts functionality
 // import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 
@@ -76,15 +72,15 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           </>
         }
       >
-        <TextContent>
-          <Text>
+        <Content>
+          <Content component="p">
             New options for blueprint customization are now available:
-          </Text>
-          <TextList>
-            <TextListItem>Timezone</TextListItem>
-            <TextListItem>Locale</TextListItem>
-          </TextList>
-        </TextContent>
+          </Content>
+          <Content component="ul">
+            <Content component="li">Timezone</Content>
+            <Content component="li">Locale</Content>
+          </Content>
+        </Content>
       </Alert>
     );
   } else {

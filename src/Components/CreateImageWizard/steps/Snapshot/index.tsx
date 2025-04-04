@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Form, Grid, Text, Title } from '@patternfly/react-core';
+import { Button, Form, Grid, Content, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Snapshot from './Snapshot';
@@ -14,10 +14,10 @@ export default function SnapshotStep() {
         Repeatable build
       </Title>
       <Grid>
-        <Text>
+        <Content component="p">
           Control the consistency of the packages in the repository used to
           build the image.
-        </Text>
+        </Content>
         <Button
           component="a"
           target="_blank"

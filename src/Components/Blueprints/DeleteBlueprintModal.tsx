@@ -1,11 +1,7 @@
 import React from 'react';
 
-import {
-  ActionGroup,
-  Button,
-  Modal,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { ActionGroup, Button } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 
 import { PAGINATION_LIMIT, PAGINATION_OFFSET } from '../../constants';
 import {
