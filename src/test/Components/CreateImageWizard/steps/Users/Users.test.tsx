@@ -5,7 +5,6 @@ import { userEvent } from '@testing-library/user-event';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { usersCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { addTargetEnvAzure } from '../../CreateImageWizard.test';
 import {
   blueprintRequest,
   clickBack,
@@ -14,28 +13,31 @@ import {
   getNextButton,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderEditMode,
+  selectGuestImageTarget,
   verifyCancelButton,
 } from '../../wizardTestUtils';
-import {
-  clickRegisterLater,
-  goToRegistrationStep,
-  renderCreateMode,
-} from '../../wizardTestUtils';
+import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
+
 const validUserName = 'best';
 const validSshKey = 'ssh-rsa d';
 const validPassword = 'validPassword';
 const invalidPassword = 'inval';
+const rachelPasswd = 'rachelPass';
+const chandlerPasswd = 'chandlerPass';
 
 const goToUsersStep = async () => {
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
-  await clickNext();
+  await clickNext(); // Registration
+  await clickRegisterLater();
+  await clickNext(); // OpenSCAP
+  await clickNext(); // File system configuration
+  await clickNext(); // Snapshots
+  await clickNext(); // Custom repositories
+  await clickNext(); // Additional packages
+  await clickNext(); // Users
 };
 
 const goToReviewStep = async () => {
@@ -49,6 +51,29 @@ const goToReviewStep = async () => {
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review
+};
+
+const addAzureTarget = async () => {
+  const user = userEvent.setup();
+  await waitFor(() => user.click(screen.getByTestId('upload-azure')));
+  await clickNext();
+
+  const azureSourceDropdown = await screen.findByPlaceholderText(
+    /select source/i
+  );
+  await waitFor(() => user.click(azureSourceDropdown));
+  const azureSource = await screen.findByRole('option', {
+    name: /azureSource1/i,
+  });
+  await waitFor(() => user.click(azureSource));
+
+  const resourceGroupDropdown = await screen.findByPlaceholderText(
+    /select resource group/i
+  );
+  await waitFor(() => user.click(resourceGroupDropdown));
+  await waitFor(async () =>
+    user.click(await screen.findByLabelText('Resource group myResourceGroup1'))
+  );
 };
 
 const clickRevisitButton = async () => {
@@ -65,11 +90,54 @@ const clickAddUser = async () => {
   await waitFor(() => user.click(addUser));
 };
 
-const clickRemoveUser = async () => {
+const addAnotherUser = async () => {
   const user = userEvent.setup();
-  const addUser = await screen.findByRole('button', { name: /remove user/i });
+  const addUser = await screen.findByRole('button', { name: /add tab/i });
   expect(addUser).toBeEnabled();
   await waitFor(() => user.click(addUser));
+};
+
+const addAndFillThreeUsers = async () => {
+  await clickAddUser();
+  await addUserName('rachel');
+  await addSshKey('ssh-rsa rachel');
+  await addPasswordByUserIndex('rachelPass', 0);
+  await checkAdminCheckbox();
+  await addUserGroupByUserIndex('users', 0);
+  await addUserGroupByUserIndex('widget', 0);
+
+  await addAnotherUser();
+  await switchToNewUser();
+  await addUserName('monica');
+
+  await addAnotherUser();
+  await switchToNewUser();
+  await addUserName('chandler');
+  await addSshKey('ssh-rsa chandler');
+  await addPasswordByUserIndex('chandlerPass', 2);
+  await addUserGroupByUserIndex('group', 2);
+};
+
+const switchToNewUser = async () => {
+  const user = userEvent.setup();
+  const newUserButton = await screen.findByRole('tab', { name: /user tab/i });
+  await waitFor(() => user.click(newUserButton));
+};
+
+const closeNthTab = async (index: number) => {
+  const user = userEvent.setup();
+  const tabs = await screen.findAllByRole('presentation');
+  const closeTabButton = await within(tabs[index]).findByRole('button');
+  await waitFor(() => user.click(closeTabButton));
+  await clickRemoveUser();
+};
+
+const clickRemoveUser = async () => {
+  const user = userEvent.setup();
+  const removeUserModalButton = await screen.findByRole('button', {
+    name: /Remove user/,
+  });
+  await waitFor(() => user.click(removeUserModalButton));
 };
 
 const addSshKey = async (sshKey: string) => {
@@ -90,11 +158,10 @@ const addUserName = async (userName: string) => {
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
-const addPassword = async (mockPassword: string) => {
+const addPasswordByUserIndex = async (value: string, index: number) => {
   const user = userEvent.setup();
-  const enterPassword = screen.getByPlaceholderText(/enter password/i);
-  await waitFor(() => user.type(enterPassword, mockPassword));
-  await waitFor(() => expect(enterPassword).toHaveValue(mockPassword));
+  const passwordInputs = screen.getAllByPlaceholderText(/enter password/i);
+  await waitFor(() => user.type(passwordInputs[index], value));
 };
 
 const getAdminCheckbox = async () => {
@@ -110,11 +177,13 @@ const checkAdminCheckbox = async () => {
   await waitFor(() => user.click(adminCheckbox));
 };
 
-const addUserGroup = async (group: string) => {
+const addUserGroupByUserIndex = async (group: string, index: number) => {
   const user = userEvent.setup();
-  const userGroupInput = await screen.findByPlaceholderText('Add user group');
-  await waitFor(() => user.click(userGroupInput));
-  await waitFor(() => user.type(userGroupInput, group));
+  const userGroupInputs = await screen.findAllByPlaceholderText(
+    'Add user group'
+  );
+  await waitFor(() => user.click(userGroupInputs[index]));
+  await waitFor(() => user.type(userGroupInputs[index], group));
   const addGroup = await screen.findByRole('button', {
     name: /Add user group/,
   });
@@ -136,22 +205,19 @@ describe('Step Users', () => {
     router = undefined;
   });
 
-  test('without adding user loads timezone', async () => {
-    const user = userEvent.setup();
+  test('clicking Next loads Timezone', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
-    const nextButton = await getNextButton();
-    expect(nextButton).toBeEnabled();
-    await waitFor(() => user.click(nextButton));
-    await screen.findByText('Select a timezone for your image.');
+    await clickNext();
+    await screen.findByRole('heading', {
+      name: 'Timezone',
+    });
   });
 
   test('clicking Back loads Additional packages', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickBack();
     await screen.findByRole('heading', { name: 'Additional packages' });
@@ -159,60 +225,38 @@ describe('Step Users', () => {
 
   test('clicking Cancel loads landing page', async () => {
     await renderCreateMode();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await verifyCancelButton(router);
   });
 
-  test('revisit step button on Review works', async () => {
-    await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
-    await goToUsersStep();
-    await clickAddUser();
-    await addUserName(validUserName);
-    await addSshKey(validSshKey);
-    const nextButton = await getNextButton();
-    await waitFor(() => expect(nextButton).toBeEnabled());
-    await goToReviewStep();
-    await clickRevisitButton();
-    await screen.findByRole('heading', { name: /Users/ });
-  });
-
   test('with invalid name', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
-    await addUserName('ss.');
-    await addSshKey('ssh');
-    const invalidUserMessage = screen.getByText(/invalid user name/i);
-    await waitFor(() => expect(invalidUserMessage));
-  });
-
-  test('with invalid ssh key', async () => {
-    await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
-    await goToUsersStep();
-    await clickAddUser();
-    await addSshKey('ssh');
-    await addUserName('bestUser');
-    const invalidUserMessage = screen.getByText(/invalid ssh key/i);
-    await waitFor(() => expect(invalidUserMessage));
-  });
-
-  test('try to create Azure image with invalid password', async () => {
-    const user = userEvent.setup();
-    await renderCreateMode();
-    await waitFor(() => user.click(screen.getByTestId('upload-azure')));
+    await addUserName('.');
     await clickNext();
-    await addTargetEnvAzure();
-    await clickRegisterLater();
+    await waitFor(() => expect(screen.getByText(/invalid user name/i)));
+  });
+
+  test('with invalid SSH key', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+    await clickAddUser();
+    await addSshKey('ssh');
+    await clickNext();
+    await waitFor(() => expect(screen.getByText(/invalid ssh key/i)));
+  });
+
+  test('Azure target with invalid password', async () => {
+    await renderCreateMode();
+    await addAzureTarget();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
-    await addPassword(invalidPassword);
+    await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
       /Password must be at least 6 characters long./i
@@ -222,49 +266,48 @@ describe('Step Users', () => {
     );
     await waitFor(() => expect(invalidUserMessage));
     await waitFor(() => expect(warningUserMessage));
+
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('with invalid password', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
-    await addPassword(invalidPassword);
+    await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
       /Password must be at least 6 characters long./i
     );
     await waitFor(() => expect(invalidUserMessage));
+
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
   test('user groups can be added and removed', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
-    await addUserGroup('users');
-    await addUserGroup('widget');
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
     await removeUserGroup('users');
     expect(screen.queryByText('users')).not.toBeInTheDocument();
   });
 
   test('adding wheel group checks Administrator checkbox', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
     const adminCheckbox = await getAdminCheckbox();
 
     // Adding wheel group via groups input
-    await addUserGroup('wheel');
+    await addUserGroupByUserIndex('wheel', 0);
     expect(adminCheckbox).toBeChecked();
 
     await removeUserGroup('wheel');
@@ -279,38 +322,76 @@ describe('Step Users', () => {
     expect(adminCheckbox).not.toBeChecked();
     expect(screen.queryByText('wheel')).not.toBeInTheDocument();
   });
+
+  test('one valid and one invalid user', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeEnabled();
+
+    await addAnotherUser();
+    await switchToNewUser();
+
+    await addUserName('s');
+    expect(nextButton).toBeDisabled();
+
+    // remove invalid user and expect Next to get enabled
+    await closeNthTab(1);
+    expect(nextButton).toBeEnabled();
+  });
+
+  test('revisit step button on Review works', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+    await clickAddUser();
+    await addUserName(validUserName);
+    await goToReviewStep();
+    await clickRevisitButton();
+    await screen.findByRole('heading', { name: /Users/ });
+  });
 });
 
 describe('User request generated correctly', () => {
-  test('create image with valid name, password, ssh key and checked Administrator checkbox', async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test('add a user', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
     await addSshKey(validSshKey);
-    await addPassword(validPassword);
-    const nextButton = await getNextButton();
-    await waitFor(() => expect(nextButton).toBeEnabled());
+    await addPasswordByUserIndex(validPassword, 0);
     await checkAdminCheckbox();
-    await addUserGroup('users');
-    await addUserGroup('widget');
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
     await goToReviewStep();
+    // informational modal pops up in the first test only as it's tied
+    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
+    await openAndDismissSaveAndBuildModal();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
         users: [
           {
-            name: 'best',
-            ssh_key: 'ssh-rsa d',
+            name: validUserName,
+            ssh_key: validSshKey,
             password: validPassword,
             groups: ['wheel', 'users', 'widget'],
           },
         ],
       },
     };
+
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
@@ -318,22 +399,84 @@ describe('User request generated correctly', () => {
 
   test('remove a user', async () => {
     await renderCreateMode();
-    await goToRegistrationStep();
-    await clickRegisterLater();
+    await selectGuestImageTarget();
     await goToUsersStep();
     await clickAddUser();
     await addUserName('test');
     await addSshKey('ssh-rsa');
-    await addUserGroup('users');
-    await addUserGroup('widget');
-    await clickRemoveUser();
-    await waitFor(() => expect('add a user to your image'));
+    await addUserGroupByUserIndex('users', 0);
+    await addUserGroupByUserIndex('widget', 0);
+    await closeNthTab(0);
+    await screen.findByText(/add a user to your image/i);
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {},
     };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('add multiple users', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+
+    await addAndFillThreeUsers();
+
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {
+        users: [
+          {
+            name: 'rachel',
+            ssh_key: 'ssh-rsa rachel',
+            password: rachelPasswd,
+            groups: ['wheel', 'users', 'widget'],
+          },
+          {
+            name: 'monica',
+          },
+          {
+            name: 'chandler',
+            ssh_key: 'ssh-rsa chandler',
+            password: chandlerPasswd,
+            groups: ['group'],
+          },
+        ],
+      },
+    };
+
+    await waitFor(() => {
+      expect(receivedRequest).toEqual(expectedRequest);
+    });
+  });
+
+  test('remove multiple users', async () => {
+    await renderCreateMode();
+    await selectGuestImageTarget();
+    await goToUsersStep();
+
+    await addAndFillThreeUsers();
+    await closeNthTab(2);
+    await closeNthTab(1);
+    await closeNthTab(0);
+
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = {
+      ...blueprintRequest,
+      customizations: {},
+    };
+
     await waitFor(() => {
       expect(receivedRequest).toEqual(expectedRequest);
     });
@@ -353,6 +496,7 @@ describe('Users edit mode', () => {
     const receivedRequest = await interceptEditBlueprintRequest(
       `${EDIT_BLUEPRINT}/${id}`
     );
-    expect(receivedRequest).toEqual(usersCreateBlueprintRequest);
+    const expectedRequest = usersCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
   });
 });
