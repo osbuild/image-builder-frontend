@@ -26,6 +26,8 @@ const validUserName = 'best';
 const validSshKey = 'ssh-rsa d';
 const validPassword = 'validPassword';
 const invalidPassword = 'inval';
+const rachelPasswd = 'rachelPass';
+const chandlerPasswd = 'chandlerPass';
 
 const goToUsersStep = async () => {
   await clickNext(); // Registration
@@ -156,10 +158,10 @@ const addUserName = async (userName: string) => {
   await waitFor(() => expect(enterUserName).toHaveValue(userName));
 };
 
-const addPasswordByUserIndex = async (password: string, index: number) => {
+const addPasswordByUserIndex = async (value: string, index: number) => {
   const user = userEvent.setup();
   const passwordInputs = screen.getAllByPlaceholderText(/enter password/i);
-  await waitFor(() => user.type(passwordInputs[index], password));
+  await waitFor(() => user.type(passwordInputs[index], value));
 };
 
 const getAdminCheckbox = async () => {
@@ -436,7 +438,7 @@ describe('User request generated correctly', () => {
           {
             name: 'rachel',
             ssh_key: 'ssh-rsa rachel',
-            password: 'rachelPass',
+            password: rachelPasswd,
             groups: ['wheel', 'users', 'widget'],
           },
           {
@@ -445,7 +447,7 @@ describe('User request generated correctly', () => {
           {
             name: 'chandler',
             ssh_key: 'ssh-rsa chandler',
-            password: 'chandlerPass',
+            password: chandlerPasswd,
             groups: ['group'],
           },
         ],
