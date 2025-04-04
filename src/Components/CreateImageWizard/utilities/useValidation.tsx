@@ -31,6 +31,7 @@ import {
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectImageTypes,
+  UserWithAdditionalInfo,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -451,12 +452,22 @@ export function useServicesValidation(): StepValidation {
   };
 }
 
-const validateUserName = (userName: string): string => {
+const validateUserName = (
+  users: UserWithAdditionalInfo[],
+  userName: string
+): string => {
   if (!userName) {
     return 'Required value';
   }
-  if (userName && !isUserNameValid(userName)) {
+  if (!isUserNameValid(userName)) {
     return 'Invalid user name';
+  }
+
+  // check for duplicate names
+  const duplicateName =
+    new Set(users.map((user) => user.name)).size !== users.length;
+  if (duplicateName) {
+    return 'Username already exists';
   }
   return '';
 };
@@ -481,13 +492,14 @@ export function useUsersValidation(): UsersStepValidation {
   }
 
   for (let index = 0; index < users.length; index++) {
-    const userNameError = validateUserName(users[index].name);
+    const userNameError = validateUserName(users, users[index].name);
     const sshKeyError = validateSshKey(users[index].ssh_key);
     const isPasswordValid = checkPasswordValidity(
       users[index].password,
       environments.includes('azure')
     ).isValid;
-    const passwordError = !isPasswordValid ? 'Invalid password' : '';
+    const passwordError =
+      users[index].password && !isPasswordValid ? 'Invalid password' : '';
 
     if (
       userNameError ||
