@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import calculateNewIndex from './calculateNewIndex';
 import RemoveUserModal from './RemoveUserModal';
 
 import { GENERATING_SSH_KEY_PAIRS_URL } from '../../../../../constants';
@@ -23,6 +24,7 @@ import {
   selectUsers,
   addUserGroupByIndex,
   removeUserGroupByIndex,
+  removeUser,
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
@@ -37,8 +39,13 @@ const UserInfo = () => {
 
   const [index, setIndex] = useState(0);
   const [activeTabKey, setActiveTabKey] = useState(0);
-  const [tabIndex, setTabIndex] = useState(0);
   const [showRemoveUserModal, setShowRemoveUserModal] = useState(false);
+
+  // Taken directly from PF5 Dynamic tabs documentation
+  // https://v5-archive.patternfly.org/components/tabs#dynamic-tabs
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const tabComponentRef = React.useRef<any>();
+  const firstMount = React.useRef(true);
 
   const onSelect = (event: React.MouseEvent, tabIndex: number) => {
     setActiveTabKey(tabIndex);
@@ -51,9 +58,37 @@ const UserInfo = () => {
     dispatch(addUser());
   };
 
+  React.useEffect(() => {
+    if (firstMount.current) {
+      firstMount.current = false;
+      return;
+    } else {
+      const first =
+        tabComponentRef.current.tabList.current.childNodes[activeTabKey];
+      if (first) {
+        first.firstChild.focus();
+      }
+    }
+  }, [users.length]);
+
   const onClose = (_event: React.MouseEvent, tabIndex: number) => {
-    setShowRemoveUserModal(true);
-    setTabIndex(tabIndex);
+    if (
+      users[tabIndex].name === '' &&
+      users[tabIndex].password === '' &&
+      users[tabIndex].ssh_key === ''
+    ) {
+      const nextTabIndex = calculateNewIndex(
+        tabIndex,
+        activeTabKey,
+        users.length
+      );
+      setActiveTabKey(nextTabIndex);
+      setIndex(nextTabIndex);
+      dispatch(removeUser(tabIndex));
+    } else {
+      setShowRemoveUserModal(true);
+      setIndex(tabIndex);
+    }
   };
 
   const handleNameChange = (
@@ -102,9 +137,10 @@ const UserInfo = () => {
         setShowRemoveUserModal={setShowRemoveUserModal}
         activeTabKey={activeTabKey}
         setActiveTabKey={setActiveTabKey}
-        tabIndex={tabIndex}
+        tabIndex={index}
         setIndex={setIndex}
         isOpen={showRemoveUserModal}
+        userName={users[index] ? users[index].name : ''}
       />
       <Tabs
         aria-label="Users tabs"
@@ -112,11 +148,12 @@ const UserInfo = () => {
         onSelect={onSelect}
         onAdd={onAdd}
         onClose={onClose}
+        ref={tabComponentRef}
       >
         {users.map((user, index) => (
           <Tab
             aria-label={`User ${user.name} tab`}
-            key={user.name}
+            key={index}
             eventKey={index}
             title={<TabTitleText>{user.name || 'New user'}</TabTitleText>}
           >
@@ -167,7 +204,7 @@ const UserInfo = () => {
                 }
                 onChange={(_e, value) => handleCheckboxChange(_e, value)}
                 aria-label="Administrator"
-                id="user Administrator"
+                id={`${user.name}-${index}`}
                 name="user Administrator"
               />
             </FormGroup>
