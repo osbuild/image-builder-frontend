@@ -79,7 +79,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Details' });
     await screen.findByRole('button', { name: 'Review' });
     if (!process.env.IS_ON_PREMISE) {
-      await screen.findByRole('button', { name: 'Register' });
+      await screen.findByRole('button', { name: /Register/ });
       await screen.findByRole('button', { name: 'OpenSCAP' });
       await screen.findByRole('button', { name: 'Repeatable build' });
       await screen.findByRole('button', { name: 'Custom repositories' });
@@ -144,9 +144,7 @@ describe('Keyboard accessibility', () => {
       'automatically-register-radio'
     );
     expect(registrationCheckbox).toHaveFocus();
-    await screen.findByRole('textbox', {
-      name: 'Select activation key',
-    });
+    await screen.findByPlaceholderText('Select activation key');
     await clickNext();
 
     // TODO: Focus on textbox on OpenSCAP step
