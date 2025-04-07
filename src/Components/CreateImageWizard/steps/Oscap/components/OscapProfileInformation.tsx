@@ -101,7 +101,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dl}>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Profile description:
               </Content>
@@ -110,7 +110,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Operating system:
               </Content>
@@ -119,7 +119,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Reference ID:
               </Content>
@@ -133,7 +133,7 @@ export const OscapProfileInformation = ({
                 <>
                   <Content
                     component={ContentVariants.dt}
-                    className="pf-v5-u-min-width"
+                    className="pf-v6-u-min-width"
                   >
                     Kernel arguments:
                   </Content>
@@ -150,7 +150,7 @@ export const OscapProfileInformation = ({
                 <>
                   <Content
                     component={ContentVariants.dt}
-                    className="pf-v5-u-min-width"
+                    className="pf-v6-u-min-width"
                   >
                     Disabled services:
                   </Content>
@@ -163,7 +163,7 @@ export const OscapProfileInformation = ({
                   </Content>
                   <Content
                     component={ContentVariants.dt}
-                    className="pf-v5-u-min-width"
+                    className="pf-v6-u-min-width"
                   >
                     Enabled services:
                   </Content>

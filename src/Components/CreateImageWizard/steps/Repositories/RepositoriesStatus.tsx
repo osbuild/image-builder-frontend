@@ -66,7 +66,7 @@ const RepositoriesStatus = ({
         <Icon status="success">
           <CheckCircleIcon />
         </Icon>{' '}
-        <span className="pf-v5-u-font-weight-bold pf-v5-u-success-color-200">
+        <span className="pf-v6-u-font-weight-bold pf-v6-u-success-color-200">
           {repoStatus}
         </span>
       </>
@@ -82,12 +82,12 @@ const RepositoriesStatus = ({
               <Alert
                 variant={repoStatus === 'Invalid' ? 'danger' : 'warning'}
                 title={repoStatus}
-                className="pf-v5-u-pb-sm"
+                className="pf-v6-u-pb-sm"
                 isInline
                 isPlain
               />
               {repoUrl ? (
-                <p className="pf-v5-u-pb-md">Cannot fetch {repoUrl}</p>
+                <p className="pf-v6-u-pb-md">Cannot fetch {repoUrl}</p>
               ) : (
                 ''
               )}
@@ -136,13 +136,13 @@ const RepositoriesStatus = ({
             </>
           }
         >
-          <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
+          <Button variant="link" className="pf-v6-u-p-0 pf-v6-u-font-size-sm">
             {repoStatus === 'Invalid' && (
               <>
                 <Icon status="danger">
                   <ExclamationCircleIcon />
                 </Icon>{' '}
-                <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200 failure-button">
+                <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200 failure-button">
                   {repoStatus}
                 </span>
               </>
@@ -152,7 +152,7 @@ const RepositoriesStatus = ({
                 <Icon status="warning">
                   <ExclamationTriangleIcon />
                 </Icon>{' '}
-                <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200 failure-button">
+                <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200 failure-button">
                   {repoStatus}
                 </span>
               </>
@@ -165,7 +165,7 @@ const RepositoriesStatus = ({
     return (
       <>
         <Spinner isInline />{' '}
-        <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+        <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
           {repoStatus}
         </span>
       </>

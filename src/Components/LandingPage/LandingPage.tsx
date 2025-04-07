@@ -60,7 +60,7 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
-        <Sidebar hasBorder className="pf-v5-u-background-color-100">
+        <Sidebar hasBorder className="pf-v6-u-background-color-100">
           <SidebarPanel
             variant="sticky"
             width={{ default: 'width_25' }}
@@ -88,7 +88,7 @@ export const LandingPage = () => {
       <ImageBuilderHeader activeTab={activeTabKey} />
       {edgeParityFlag ? (
         <Tabs
-          className="pf-c-tabs pf-c-page-header pf-c-table"
+          className="pf-v6-c-tabs pf-v6-c-page-header pf-v6-c-table"
           activeKey={activeTabKey}
           onSelect={handleTabClick}
         >

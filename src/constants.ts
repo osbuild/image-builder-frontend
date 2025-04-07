@@ -210,7 +210,7 @@ export const AWS_S3_EXPIRATION_TIME_IN_HOURS = 6;
 export const OCI_STORAGE_EXPIRATION_TIME_IN_DAYS = 7;
 
 // Anchor element for all modals that we display so that they play nice with top-most components like Quickstarts
-export const MODAL_ANCHOR = '.pf-c-page.chr-c-page';
+export const MODAL_ANCHOR = '.pf-v6-c-page.chr-c-page';
 
 export const STATUS_POLLING_INTERVAL = 8000;
 

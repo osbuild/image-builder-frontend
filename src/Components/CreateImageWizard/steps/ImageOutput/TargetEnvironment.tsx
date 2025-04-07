@@ -104,7 +104,7 @@ const TargetEnvironment = () => {
         <div className="tiles">
           {supportedEnvironments?.includes('aws') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-aws"
               title="Amazon Web Services"
               icon={
@@ -126,7 +126,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('gcp') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-google"
               title="Google Cloud Platform"
               icon={
@@ -150,7 +150,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('azure') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-azure"
               title="Microsoft Azure"
               icon={
@@ -174,7 +174,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('oci') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-oci"
               title="Oracle Cloud Infrastructure"
               icon={
@@ -201,7 +201,7 @@ const TargetEnvironment = () => {
             label={
               <Content component={ContentVariants.small}>Private cloud</Content>
             }
-            className="pf-v5-u-mt-sm"
+            className="pf-v6-u-mt-sm"
             data-testid="target-private"
           >
             <Checkbox
@@ -252,7 +252,7 @@ const TargetEnvironment = () => {
                           >
                             <Button
                               icon={<HelpIcon />}
-                              className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                              className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
                               variant="plain"
                               aria-label="About OVA file"
                               isInline
@@ -274,7 +274,7 @@ const TargetEnvironment = () => {
                     />
                   )}
                   <Radio
-                    className="pf-v5-u-mt-sm"
+                    className="pf-v6-u-mt-sm"
                     name="vsphere-radio"
                     aria-label="VMware vSphere radio button VMDK"
                     id="vsphere-radio-vmdk"
@@ -298,7 +298,7 @@ const TargetEnvironment = () => {
                         >
                           <Button
                             icon={<HelpIcon />}
-                            className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                            className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
                             variant="plain"
                             aria-label="About VMDK file"
                             isInline

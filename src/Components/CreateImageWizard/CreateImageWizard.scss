@@ -1,20 +1,20 @@
-.pf-v5-c-wizard__nav-list {
+.pf-v6-c-wizard__nav-list {
     padding-right: 0px;
 }
 
 
-.pf-c-popover[data-popper-reference-hidden="true"] {
+.pf-v6-c-popover[data-popper-reference-hidden="true"] {
     font-weight: initial;
     visibility: initial;
     pointer-events: initial;
 }
 
-.pf-c-form {
-    --pf-c-form--GridGap: var(--pf-v5-global--spacer--md);
+.pf-v6-c-form {
+    --pf-v5-c-form--GridGap: var(--pf-v5-global--spacer--md);
 }
 
-.pf-c-form__group-label {
-    --pf-c-form__group-label--PaddingBottom: var(--pf-v5-global--spacer--xs);
+.pf-v6-c-form__group-label {
+    --pf-v5-c-form__group-label--PaddingBottom: var(--pf-v5-global--spacer--xs);
 }
 
 .tiles {
@@ -26,16 +26,16 @@
     max-width: 250px;
 }
 
-.pf-c-tile:focus {
-    --pf-c-tile__title--Color: var(--pf-c-tile__title--Color);
-    --pf-c-tile__icon--Color: var(---pf-v5-global--Color--100);
-    --pf-c-tile--before--BorderWidth: var(--pf-v5-global--BorderWidth--sm);
-    --pf-c-tile--before--BorderColor: var(--pf-v5-global--BorderColor--100);
+.pf-v6-c-tile:focus {
+    --pf-v5-c-tile__title--Color: var(--pf-v5-c-tile__title--Color);
+    --pf-v5-c-tile__icon--Color: var(---pf-v5-global--Color--100);
+    --pf-v5-c-tile--before--BorderWidth: var(--pf-v5-global--BorderWidth--sm);
+    --pf-v5-c-tile--before--BorderColor: var(--pf-v5-global--BorderColor--100);
 }
 
-.pf-c-tile.pf-m-selected:focus {
-    --pf-c-tile__title--Color: var(--pf-c-tile--focus__title--Color);
-    --pf-c-tile__icon--Color: var(--pf-c-tile--focus__icon--Color);
+.pf-v6-c-tile.pf-m-selected:focus {
+    --pf-v5-c-tile__title--Color: var(--pf-v5-c-tile--focus__title--Color);
+    --pf-v5-c-tile__icon--Color: var(--pf-v5-c-tile--focus__icon--Color);
 }
 
 .provider-icon {
@@ -43,11 +43,11 @@
     height: 1em;
 }
 
-.pf-v5-u-min-width {
+.pf-v6-u-min-width {
     --pf-v5-u-min-width--MinWidth: 18ch;
 }
 
-.pf-v5-u-max-width {
+.pf-v6-u-max-width {
     --pf-v5-u-max-width--MaxWidth: 26rem;
 }
 
@@ -67,7 +67,7 @@ ul.pf-m-plain {
 
 // Targets the alert within the Reviewsteps > content dropdown
 // Removes excess top margin padding
-div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
+div.pf-v6-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     margin-top: 18px;
 
     h4 {
@@ -75,14 +75,14 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     }
 }
 
-.pf-v5-c-wizard__main {
+.pf-v6-c-wizard__main {
     flex: 1 1 auto;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 
-.pf-v5-c-wizard__footer {
+.pf-v6-c-wizard__footer {
     position: sticky;
     bottom: 0;
 }
