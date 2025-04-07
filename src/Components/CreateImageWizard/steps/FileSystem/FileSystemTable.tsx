@@ -177,7 +177,10 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
 
-  const onSelect = (event: React.MouseEvent, selection: string) => {
+  const onSelect = (
+    event: React.MouseEvent<Element, MouseEvent> | undefined,
+    selection: string | number | undefined
+  ) => {
     setIsOpen(false);
     const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
     dispatch(
@@ -318,7 +321,10 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 
   const initialValue = useRef(partition).current;
 
-  const onSelect = (event: React.MouseEvent, selection: Units) => {
+  const onSelect = (
+    event: React.MouseEvent<Element, MouseEvent> | undefined,
+    selection: string | number | undefined
+  ) => {
     if (initialValue.unit === 'B' && selection === 'B') {
       dispatch(
         changePartitionMinSize({
@@ -327,7 +333,9 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
         })
       );
     }
-    dispatch(changePartitionUnit({ id: partition.id, unit: selection }));
+    dispatch(
+      changePartitionUnit({ id: partition.id, unit: selection as Units })
+    );
     setIsOpen(false);
   };
 
