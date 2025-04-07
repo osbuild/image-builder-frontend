@@ -20,7 +20,7 @@ const OscapOnPremWarning = () => {
         <Alert
           style={{
             margin:
-              '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+              '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
           }}
           isInline
           variant="warning"
