@@ -7,7 +7,6 @@ import {
   Popover,
   Radio,
   Content,
-  ContentVariants,
 } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -96,9 +95,7 @@ const TargetEnvironment = () => {
       data-testid="target-select"
     >
       <FormGroup
-        label={
-          <Content component={ContentVariants.small}>Public cloud</Content>
-        }
+        label={<small>Public cloud</small>}
         data-testid="target-public"
       >
         <div className="tiles">
@@ -198,9 +195,7 @@ const TargetEnvironment = () => {
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
-            label={
-              <Content component={ContentVariants.small}>Private cloud</Content>
-            }
+            label={<small>Private cloud</small>}
             className="pf-v6-u-mt-sm"
             data-testid="target-private"
           >
@@ -324,10 +319,7 @@ const TargetEnvironment = () => {
           </FormGroup>
         </>
       )}
-      <FormGroup
-        label={<Content component={ContentVariants.small}>Other</Content>}
-        data-testid="target-other"
-      >
+      <FormGroup label={<small>Other</small>} data-testid="target-other">
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label="Virtualization - Guest image (.qcow2)"

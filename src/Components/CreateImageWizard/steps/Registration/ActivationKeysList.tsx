@@ -263,10 +263,8 @@ const ActivationKeysList = () => {
         >
           <SelectList>{prepareSelectOptions()}</SelectList>
         </Select>
-        <Content>
-          <Content component="p">
-            Create and manage activation keys on the <ManageKeysButton />
-          </Content>
+        <Content component="p">
+          Create and manage activation keys on the <ManageKeysButton />
         </Content>
       </FormGroup>
       {isErrorActivationKeys && (
