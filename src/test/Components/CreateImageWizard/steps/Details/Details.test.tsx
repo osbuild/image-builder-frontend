@@ -105,12 +105,10 @@ describe('Step Details', () => {
     // enter invalid image name
     const invalidName = 'a'.repeat(101);
     await enterBlueprintName(invalidName);
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
 
     // enter valid image name
     await enterBlueprintName();
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
   });
 
@@ -123,12 +121,10 @@ describe('Step Details', () => {
     // enter invalid image description
     const invalidDescription = 'a'.repeat(251);
     await enterBlueprintDescription(invalidDescription);
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
 
     // enter valid image description
     await enterBlueprintDescription();
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
   });
 
