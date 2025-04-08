@@ -1,4 +1,4 @@
-import type { Page } from '@playwright/test';
+import { type Page, expect } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted, togglePreview } from '../lib/lib';
 
