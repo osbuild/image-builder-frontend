@@ -36,9 +36,9 @@ test('Create a blueprint with Hostname customization', async ({
 
   await test.step('Select and fill the Hostname step', async () => {
     if (isHosted()) {
-      await frame.getByRole('button', { name: 'Hostname' }).click();
+      await page.getByRole('button', { name: 'Hostname' }).click();
     } else {
-      await frame
+      await page
         .getByRole('listitem')
         .filter({ hasText: /^Hostname$/ })
         .click();
@@ -72,20 +72,20 @@ test('Create a blueprint with Hostname customization', async ({
   // This is for hosted service only as these features are not avaiable in cockpit plugin
   if (isHosted()) {
     await test.step('Export BP', async () => {
-      await exportBlueprint(frame);
+      await exportBlueprint(page);
     });
 
     await test.step('Import BP', async () => {
-      await importBlueprint(frame);
+      await importBlueprint(page);
     });
 
     await test.step('Review imported BP', async () => {
-      await fillInImageOutputGuest(frame);
-      await frame.getByRole('button', { name: 'Hostname' }).click();
+      await fillInImageOutputGuest(page);
+      await page.getByRole('button', { name: 'Hostname' }).click();
       await expect(
-        frame.getByRole('textbox', { name: 'hostname input' })
+        page.getByRole('textbox', { name: 'hostname input' })
       ).toHaveValue(hostname + 'edited');
-      await frame.getByRole('button', { name: 'Cancel' }).click();
+      await page.getByRole('button', { name: 'Cancel' }).click();
     });
   }
 });

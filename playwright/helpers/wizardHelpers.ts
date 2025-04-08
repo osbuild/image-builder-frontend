@@ -94,7 +94,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
  * This function executes only on the hosted service
  * @param page - the page object
  */
-export const exportBlueprint = async (page: Page | FrameLocator) => {
+export const exportBlueprint = async (page: Page) => {
   if (isHosted()) {
     await page.getByTestId('blueprint-action-menu-toggle').click();
     const downloadPromise = page.waitForEvent('download');
