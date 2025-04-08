@@ -2,8 +2,9 @@ import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/cleanup';
+import { isHosted } from '../helpers/helpers';
 import { login } from '../helpers/login';
-import { navigateToOptionalSteps } from '../helpers/navHelpers';
+import { navigateToOptionalSteps, ibFrame } from '../helpers/navHelpers';
 import {
   registerLater,
   fillInDetails,
@@ -13,7 +14,6 @@ import {
   exportBlueprint,
   importBlueprint,
 } from '../helpers/wizardHelpers';
-import { ibFrame, isHosted } from '../lib/lib';
 
 test('Create a blueprint with Hostname customization', async ({
   page,
@@ -35,14 +35,7 @@ test('Create a blueprint with Hostname customization', async ({
   });
 
   await test.step('Select and fill the Hostname step', async () => {
-    if (isHosted()) {
-      await page.getByRole('button', { name: 'Hostname' }).click();
-    } else {
-      await page
-        .getByRole('listitem')
-        .filter({ hasText: /^Hostname$/ })
-        .click();
-    }
+    await frame.getByRole('button', { name: 'Hostname' }).click();
     await frame.getByRole('textbox', { name: 'hostname input' }).click();
     await frame.getByRole('textbox', { name: 'hostname input' }).fill(hostname);
     await frame.getByRole('button', { name: 'Review and finish' }).click();

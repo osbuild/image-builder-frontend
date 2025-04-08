@@ -1,6 +1,6 @@
 import { type Page, expect } from '@playwright/test';
 
-import { closePopupsIfExist, isHosted, togglePreview } from '../lib/lib';
+import { closePopupsIfExist, isHosted, togglePreview } from './helpers';
 
 /**
  * Logs in to either Cockpit or Console, will distinguish between them based on the environment
@@ -46,7 +46,9 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   }
 
   // expect to have administrative access
-  await page.getByRole('button', { name: 'Administrative access' });
+  await expect(
+    page.getByRole('button', { name: 'Administrative access' })
+  ).toBeVisible();
 };
 
 const loginConsole = async (page: Page, user: string, password: string) => {
@@ -59,5 +61,5 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   await page.getByRole('button', { name: 'Log in' }).click();
   await closePopupsIfExist(page);
   await togglePreview(page);
-  await page.getByRole('heading', { name: 'All images' });
+  await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible();
 };

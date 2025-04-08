@@ -1,13 +1,4 @@
-import { type Page, type FrameLocator, expect } from '@playwright/test';
-
-export const ibFrame = (page: Page): FrameLocator | Page => {
-  if (isHosted()) {
-    return page;
-  }
-  return page
-    .locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]')
-    .contentFrame();
-};
+import { type Page, expect } from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');

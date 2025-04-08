@@ -1,6 +1,7 @@
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { ibFrame, isHosted } from '../lib/lib';
+import { isHosted } from './helpers';
+import { ibFrame } from './navHelpers';
 
 /**
  * Clicks the create button, handles the modal, clicks the button again and selecets the BP in the list
