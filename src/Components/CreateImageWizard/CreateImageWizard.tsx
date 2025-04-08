@@ -8,6 +8,7 @@ import {
   WizardStep,
   useWizardContext,
   PageSection,
+  Flex,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import { useNavigate, useSearchParams } from 'react-router-dom';
@@ -101,39 +102,41 @@ export const CustomWizardFooter = ({
     useWizardContext();
   return (
     <WizardFooterWrapper>
-      <Button
-        ouiaId="wizard-next-btn"
-        variant="primary"
-        onClick={() => {
-          if (!beforeNext || beforeNext()) goToNextStep();
-        }}
-        isDisabled={disableNext}
-      >
-        Next
-      </Button>
-      <Button
-        ouiaId="wizard-back-btn"
-        variant="secondary"
-        onClick={goToPrevStep}
-        isDisabled={disableBack || false}
-      >
-        Back
-      </Button>
-      {optional && (
+      <Flex columnGap={{ default: 'columnGapSm' }}>
         <Button
-          ouiaId="wizard-review-and-finish-btn"
-          variant="tertiary"
+          ouiaId="wizard-next-btn"
+          variant="primary"
           onClick={() => {
-            if (!beforeNext || beforeNext()) goToStepById('step-review');
+            if (!beforeNext || beforeNext()) goToNextStep();
           }}
           isDisabled={disableNext}
         >
-          Review and finish
+          Next
         </Button>
-      )}
-      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
-        Cancel
-      </Button>
+        <Button
+          ouiaId="wizard-back-btn"
+          variant="secondary"
+          onClick={goToPrevStep}
+          isDisabled={disableBack || false}
+        >
+          Back
+        </Button>
+        {optional && (
+          <Button
+            ouiaId="wizard-review-and-finish-btn"
+            variant="tertiary"
+            onClick={() => {
+              if (!beforeNext || beforeNext()) goToStepById('step-review');
+            }}
+            isDisabled={disableNext}
+          >
+            Review and finish
+          </Button>
+        )}
+        <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
+          Cancel
+        </Button>
+      </Flex>
     </WizardFooterWrapper>
   );
 };

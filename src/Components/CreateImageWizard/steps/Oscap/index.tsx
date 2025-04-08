@@ -111,7 +111,7 @@ const OscapContent = () => {
         </FormGroup>
       )}
       {(!complianceEnabled || complianceType === 'openscap') && (
-        <Content component="p">
+        <Content>
           OpenSCAP enables you to automatically monitor the adherence of your
           registered RHEL systems to a selected regulatory compliance profile.
           <br />
@@ -129,7 +129,7 @@ const OscapContent = () => {
         </Content>
       )}
       {complianceType === 'compliance' && (
-        <Content component="p">
+        <Content>
           Insights compliance enables you to monitor the adherence of your
           registered RHEL systems to a selected compliance policy.
           <br />

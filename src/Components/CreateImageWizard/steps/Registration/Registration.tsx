@@ -126,6 +126,7 @@ const Registration = () => {
           registrationType === 'register-now-insights' ||
           registrationType === 'register-now-rhc'
         }
+        className="pf-v6-u-pb-sm"
         onChange={(_event, checked) => {
           // TO DO: Update when rhc starts working for RHEL 10 Beta
           if (checked && distribution !== RHEL_10_BETA) {

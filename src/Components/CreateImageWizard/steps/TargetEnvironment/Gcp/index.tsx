@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { Radio, Content, Form, Title, FormGroup } from '@patternfly/react-core';
+import {
+  Radio,
+  Content,
+  ContentVariants,
+  Form,
+  Title,
+  FormGroup,
+} from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -34,7 +41,7 @@ const Gcp = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Google Cloud Platform
       </Title>
-      <Content component="p">
+      <Content>
         Select how to share your image. The image you create can be used to
         launch instances on GCP, regardless of which method you select.
       </Content>
@@ -45,7 +52,10 @@ const Gcp = () => {
           label="Share image with a Google account"
           name="radio-1"
           description={
-            <Content component="p">
+            <Content
+              component={ContentVariants.small}
+              className="pf-v6-u-pb-sm"
+            >
               Your image will be uploaded to GCP and shared with the account you
               provide below.
               <b>The image expires in 14 days.</b> To keep permanent access to
@@ -64,7 +74,7 @@ const Gcp = () => {
           label="Share image with Red Hat Insights only"
           name="radio-2"
           description={
-            <Content component="p">
+            <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with Red Hat
               Insights.
               <b> The image expires in 14 days.</b> You cannot access or

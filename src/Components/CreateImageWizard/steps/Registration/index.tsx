@@ -21,7 +21,7 @@ const RegistrationStep = () => {
       <Title headingLevel="h1" size="xl">
         Register systems using this image
       </Title>
-      <Content component="p">
+      <Content>
         You can either automatically register your systems with Red Hat to
         enhance security and track your spending or choose to register your
         system during initial boot.

@@ -37,6 +37,7 @@ export default function Snapshot() {
           description="Use the newest repository content available when building this image."
           isChecked={useLatest}
           onChange={() => !useLatest && dispatch(changeUseLatest(true))}
+          className="pf-v6-u-pb-sm"
         />
         <Radio
           id="use snapshot date radio"

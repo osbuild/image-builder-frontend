@@ -14,7 +14,7 @@ export default function SnapshotStep() {
         Repeatable build
       </Title>
       <Grid>
-        <Content component="p">
+        <Content>
           Control the consistency of the packages in the repository used to
           build the image.
         </Content>

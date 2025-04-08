@@ -11,7 +11,7 @@ const TimezoneStep = () => {
       <Title headingLevel="h1" size="xl">
         Timezone
       </Title>
-      <Content component="p">Select a timezone for your image.</Content>
+      <Content>Select a timezone for your image.</Content>
       <TimezoneDropDown />
       <NtpServersInput />
     </Form>

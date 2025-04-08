@@ -37,7 +37,7 @@ const RepositoriesStep = () => {
       <Title headingLevel="h1" size="xl">
         Custom repositories
       </Title>
-      <Content component="p">
+      <Content>
         Select the linked custom repositories from which you can add packages to
         the image.
         <br />
