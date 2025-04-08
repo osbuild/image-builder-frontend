@@ -400,7 +400,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
                 navItem={customStatusNavItem}
                 status={
-                  registrationValidation.disabledNext ? 'error' : 'default'
+                  wasRegisterVisited
+                    ? registrationValidation.disabledNext
+                      ? 'error'
+                      : 'default'
+                    : 'default'
                 }
                 footer={
                   <CustomWizardFooter
