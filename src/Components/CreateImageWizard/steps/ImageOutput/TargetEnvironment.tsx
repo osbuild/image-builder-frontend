@@ -108,9 +108,16 @@ const TargetEnvironment = () => {
               title="Amazon Web Services"
               icon={
                 <img
-                  className="provider-icon"
-                  src={'/apps/frontend-assets/partners-icons/aws.svg'}
-                  alt="Amazon Web Services logo"
+                  src="/apps/frontend-assets/partners-icons/aws.svg"
+                  // since we can't load the aws log for on-prem, we can
+                  // remove this class and improve the UI of the alt text
+                  // as a solution for now
+                  className={process.env.IS_ON_PREMISE ? '' : 'provider-icon'}
+                  alt={
+                    process.env.IS_ON_PREMISE
+                      ? 'AWS'
+                      : 'Amazon Web Services logo'
+                  }
                 />
               }
               onClick={() => {
