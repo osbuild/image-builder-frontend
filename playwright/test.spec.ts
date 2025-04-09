@@ -78,7 +78,9 @@ test.describe.serial('test', () => {
     await frame.getByTestId('close-button-saveandbuild-modal').click();
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
-    await frame.getByText(blueprintName);
+    await expect(
+      frame.locator('.pf-v5-c-card__title-text').getByText(blueprintName)
+    ).toBeVisible();
   });
 
   test('edit blueprint', async ({ page }) => {
