@@ -203,6 +203,8 @@ export type ErrorsErrorResponse = {
 export type ApiContentUnitSearchRequest = {
   /** List of names to search using an exact match */
   exact_names?: string[] | undefined;
+  /** Whether to include module information */
+  include_package_sources?: boolean | undefined;
   /** Maximum number of records to return for the search */
   limit?: number | undefined;
   /** Search string to search content unit names */
@@ -593,9 +595,27 @@ export type ApiRepositoryRpmCollectionResponse = {
   links?: ApiLinks | undefined;
   meta?: ApiResponseMetadata | undefined;
 };
+export type ApiModuleInfoResponse = {
+  /** Architecture of the module */
+  arch?: string | undefined;
+  /** Context of the module */
+  context?: string | undefined;
+  /** Description of the module */
+  description?: string | undefined;
+  /** Name of the module */
+  name?: string | undefined;
+  /** Stream of the module */
+  stream?: string | undefined;
+  /** Type of rpm (can be either 'package' or 'module') */
+  type?: string | undefined;
+  /** Version of the module */
+  version?: string | undefined;
+};
 export type ApiSearchRpmResponse = {
   /** Package name found */
   package_name?: string | undefined;
+  /** List of the module streams for the package */
+  package_sources?: ApiModuleInfoResponse[] | undefined;
   /** Summary of the package found */
   summary?: string | undefined;
 };
