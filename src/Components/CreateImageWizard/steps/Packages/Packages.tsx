@@ -1025,12 +1025,10 @@ const Packages = () => {
                       />{' '}
                       Red Hat repository
                     </Td>
-                    <Td>Supported</Td>
                   </>
                 ) : grp.repository === 'custom' ? (
                   <>
                     <Td>Third party repository</Td>
-                    <Td>Not supported</Td>
                   </>
                 ) : grp.repository === 'recommended' ? (
                   <>
@@ -1041,11 +1039,9 @@ const Packages = () => {
                       EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
                       Everything x86_64
                     </Td>
-                    <Td>Not supported</Td>
                   </>
                 ) : (
                   <>
-                    <Td className="not-available">Not available</Td>
                     <Td className="not-available">Not available</Td>
                   </>
                 )}
@@ -1119,12 +1115,10 @@ const Packages = () => {
                       />{' '}
                       Red Hat repository
                     </Td>
-                    <Td>Supported</Td>
                   </>
                 ) : pkg.repository === 'custom' ? (
                   <>
                     <Td>Third party repository</Td>
-                    <Td>Not supported</Td>
                   </>
                 ) : pkg.repository === 'recommended' ? (
                   <>
@@ -1135,11 +1129,9 @@ const Packages = () => {
                       EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
                       Everything x86_64
                     </Td>
-                    <Td>Not supported</Td>
                   </>
                 ) : (
                   <>
-                    <Td className="not-available">Not available</Td>
                     <Td className="not-available">Not available</Td>
                   </>
                 )}
@@ -1243,9 +1235,8 @@ const Packages = () => {
           <Tr>
             <Th aria-label="Expanded" width={10} />
             <Th aria-label="Selected" width={10} />
-            <Th width={30}>Name</Th>
-            <Th width={25}>Package repository</Th>
-            <Th width={25}>Support</Th>
+            <Th width={50}>Name</Th>
+            <Th width={35}>Package repository</Th>
           </Tr>
         </Thead>
         {bodyContent}
