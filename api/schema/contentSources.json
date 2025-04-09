@@ -42,6 +42,10 @@
                         },
                         "type": "array"
                     },
+                    "include_package_sources": {
+                        "description": "Whether to include module information",
+                        "type": "boolean"
+                    },
                     "limit": {
                         "description": "Maximum number of records to return for the search",
                         "type": "integer"
@@ -244,6 +248,39 @@
                             "$ref": "#/components/schemas/api.SnapshotForDate"
                         },
                         "type": "array"
+                    }
+                },
+                "type": "object"
+            },
+            "api.ModuleInfoResponse": {
+                "properties": {
+                    "arch": {
+                        "description": "Architecture of the module",
+                        "type": "string"
+                    },
+                    "context": {
+                        "description": "Context of the module",
+                        "type": "string"
+                    },
+                    "description": {
+                        "description": "Description of the module",
+                        "type": "string"
+                    },
+                    "name": {
+                        "description": "Name of the module",
+                        "type": "string"
+                    },
+                    "stream": {
+                        "description": "Stream of the module",
+                        "type": "string"
+                    },
+                    "type": {
+                        "description": "Type of rpm (can be either 'package' or 'module')",
+                        "type": "string"
+                    },
+                    "version": {
+                        "description": "Version of the module",
+                        "type": "string"
                     }
                 },
                 "type": "object"
@@ -1137,6 +1174,13 @@
                         "description": "Package name found",
                         "type": "string"
                     },
+                    "package_sources": {
+                        "description": "List of the module streams for the package",
+                        "items": {
+                            "$ref": "#/components/schemas/api.ModuleInfoResponse"
+                        },
+                        "type": "array"
+                    },
                     "summary": {
                         "description": "Summary of the package found",
                         "type": "string"
@@ -1376,6 +1420,10 @@
             },
             "api.SnapshotSearchRpmRequest": {
                 "properties": {
+                    "include_package_sources": {
+                        "description": "Whether to include module information",
+                        "type": "boolean"
+                    },
                     "limit": {
                         "description": "Maximum number of records to return for the search",
                         "type": "integer"
@@ -6595,7 +6643,7 @@
     },
     "servers": [
         {
-            "url": "https://api.example.com/api/content-sources/v1.0/"
+            "url": "https://console.redhat.com/api/content-sources/v1.0/"
         }
     ]
 }
