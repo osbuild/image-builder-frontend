@@ -3,6 +3,10 @@ import React, { ReactElement, useEffect, useMemo, useState } from 'react';
 import {
   Bullseye,
   Button,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   EmptyState,
   EmptyStateActions,
   EmptyStateBody,
@@ -38,7 +42,15 @@ import {
   SearchIcon,
   TimesIcon,
 } from '@patternfly/react-icons';
-import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import {
+  ExpandableRowContent,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+} from '@patternfly/react-table';
 import { useDispatch } from 'react-redux';
 
 import CustomHelperText from './components/CustomHelperText';
@@ -345,174 +357,190 @@ const Packages = () => {
 
   const EmptySearch = () => {
     return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-              {toggleSelected === 'toggle-available' ? (
-                <EmptyStateBody>
-                  Search above to add additional
-                  <br />
-                  packages to your image.
-                </EmptyStateBody>
-              ) : (
-                <EmptyStateBody>
-                  No packages selected.
-                  <br />
-                  Search above to see available packages.
-                </EmptyStateBody>
-              )}
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
+      <Tbody>
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+                {toggleSelected === 'toggle-available' ? (
+                  <EmptyStateBody>
+                    Search above to add additional
+                    <br />
+                    packages to your image.
+                  </EmptyStateBody>
+                ) : (
+                  <EmptyStateBody>
+                    No packages selected.
+                    <br />
+                    Search above to see available packages.
+                  </EmptyStateBody>
+                )}
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
     );
   };
 
   const Searching = () => {
     return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
-              <EmptyStateBody>
-                {activeTabKey === Repos.OTHER
-                  ? 'Searching for recommendations'
-                  : 'Searching'}
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
+      <Tbody>
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
+                <EmptyStateBody>
+                  {activeTabKey === Repos.OTHER
+                    ? 'Searching for recommendations'
+                    : 'Searching'}
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
     );
   };
 
   const TooShort = () => {
     return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                icon={<EmptyStateIcon icon={SearchIcon} />}
-                titleText="The search value is too short"
-                headingLevel="h4"
-              />
-              <EmptyStateBody>
-                Please make the search more specific and try again.
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
+      <Tbody>
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader
+                  icon={<EmptyStateIcon icon={SearchIcon} />}
+                  titleText="The search value is too short"
+                  headingLevel="h4"
+                />
+                <EmptyStateBody>
+                  Please make the search more specific and try again.
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
     );
   };
 
   const TryLookingUnderIncluded = () => {
     return (
-      <Tr>
-        <Td colSpan={5}>
-          <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                titleText="No selected packages in Other repos"
-                headingLevel="h4"
-              />
-              <EmptyStateBody>
-                Try looking under &quot;
-                <Button
-                  variant="link"
-                  onClick={() => setActiveTabKey(Repos.INCLUDED)}
-                  isInline
-                >
-                  Included repos
-                </Button>
-                &quot;.
-              </EmptyStateBody>
-            </EmptyState>
-          </Bullseye>
-        </Td>
-      </Tr>
+      <Tbody>
+        <Tr>
+          <Td colSpan={5}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader
+                  titleText="No selected packages in Other repos"
+                  headingLevel="h4"
+                />
+                <EmptyStateBody>
+                  Try looking under &quot;
+                  <Button
+                    variant="link"
+                    onClick={() => setActiveTabKey(Repos.INCLUDED)}
+                    isInline
+                  >
+                    Included repos
+                  </Button>
+                  &quot;.
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
     );
   };
 
   const NoResultsFound = () => {
     if (activeTabKey === Repos.INCLUDED) {
       return (
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-                <EmptyStateHeader
-                  titleText="No results found"
-                  headingLevel="h4"
-                />
-                <EmptyStateBody>
-                  Adjust your search and try again, or search in other
-                  repositories (your repositories and popular repositories).
-                </EmptyStateBody>
-                <EmptyStateFooter>
-                  <EmptyStateActions>
+        <Tbody>
+          <Tr>
+            <Td colSpan={5}>
+              <Bullseye>
+                <EmptyState variant={EmptyStateVariant.sm}>
+                  <EmptyStateHeader
+                    icon={<EmptyStateIcon icon={SearchIcon} />}
+                  />
+                  <EmptyStateHeader
+                    titleText="No results found"
+                    headingLevel="h4"
+                  />
+                  <EmptyStateBody>
+                    Adjust your search and try again, or search in other
+                    repositories (your repositories and popular repositories).
+                  </EmptyStateBody>
+                  <EmptyStateFooter>
+                    <EmptyStateActions>
+                      <Button
+                        variant="primary"
+                        ouiaId="search-other-repositories"
+                        onClick={() => setActiveTabKey(Repos.OTHER)}
+                      >
+                        Search other repositories
+                      </Button>
+                    </EmptyStateActions>
+                    <EmptyStateActions>
+                      <Button
+                        className="pf-v5-u-pt-md"
+                        variant="link"
+                        isInline
+                        component="a"
+                        target="_blank"
+                        iconPosition="right"
+                        icon={<ExternalLinkAltIcon />}
+                        href={CONTENT_URL}
+                      >
+                        Manage your repositories and popular repositories
+                      </Button>
+                    </EmptyStateActions>
+                  </EmptyStateFooter>
+                </EmptyState>
+              </Bullseye>
+            </Td>
+          </Tr>
+        </Tbody>
+      );
+    } else {
+      return (
+        <Tbody>
+          <Tr>
+            <Td colSpan={5}>
+              <Bullseye>
+                <EmptyState variant={EmptyStateVariant.sm}>
+                  <EmptyStateHeader
+                    icon={<EmptyStateIcon icon={SearchIcon} />}
+                  />
+                  <EmptyStateHeader
+                    titleText="No results found"
+                    headingLevel="h4"
+                  />
+                  <EmptyStateBody>
+                    No packages found in known repositories. If you know of a
+                    repository containing this packages, add it to{' '}
                     <Button
-                      variant="primary"
-                      ouiaId="search-other-repositories"
-                      onClick={() => setActiveTabKey(Repos.OTHER)}
-                    >
-                      Search other repositories
-                    </Button>
-                  </EmptyStateActions>
-                  <EmptyStateActions>
-                    <Button
-                      className="pf-v5-u-pt-md"
                       variant="link"
                       isInline
                       component="a"
                       target="_blank"
-                      iconPosition="right"
-                      icon={<ExternalLinkAltIcon />}
                       href={CONTENT_URL}
                     >
-                      Manage your repositories and popular repositories
-                    </Button>
-                  </EmptyStateActions>
-                </EmptyStateFooter>
-              </EmptyState>
-            </Bullseye>
-          </Td>
-        </Tr>
-      );
-    } else {
-      return (
-        <Tr>
-          <Td colSpan={5}>
-            <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-                <EmptyStateHeader
-                  titleText="No results found"
-                  headingLevel="h4"
-                />
-                <EmptyStateBody>
-                  No packages found in known repositories. If you know of a
-                  repository containing this packages, add it to{' '}
-                  <Button
-                    variant="link"
-                    isInline
-                    component="a"
-                    target="_blank"
-                    href={CONTENT_URL}
-                  >
-                    your repositories
-                  </Button>{' '}
-                  and try searching for it again.
-                </EmptyStateBody>
-              </EmptyState>
-            </Bullseye>
-          </Td>
-        </Tr>
+                      your repositories
+                    </Button>{' '}
+                    and try searching for it again.
+                  </EmptyStateBody>
+                </EmptyState>
+              </Bullseye>
+            </Td>
+          </Tr>
+        </Tbody>
       );
     }
   };
@@ -879,6 +907,38 @@ const Packages = () => {
     }
   };
 
+  const initialExpandedPkgs: IBPackageWithRepositoryInfo['name'][] = [];
+  const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
+
+  const setPkgExpanded = (
+    pkg: IBPackageWithRepositoryInfo['name'],
+    isExpanding: boolean
+  ) =>
+    setExpandedPkgs((prevExpanded) => {
+      const otherExpandedPkgs = prevExpanded.filter((p) => p !== pkg);
+      return isExpanding ? [...otherExpandedPkgs, pkg] : otherExpandedPkgs;
+    });
+
+  const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo['name']) =>
+    expandedPkgs.includes(pkg);
+
+  const initialExpandedGroups: GroupWithRepositoryInfo['name'][] = [];
+  const [expandedGroups, setExpandedGroups] = useState(initialExpandedGroups);
+
+  const setGroupsExpanded = (
+    group: GroupWithRepositoryInfo['name'],
+    isExpanding: boolean
+  ) =>
+    setExpandedGroups((prevExpanded) => {
+      const otherExpandedGroups = prevExpanded.filter((g) => g !== group);
+      return isExpanding
+        ? [...otherExpandedGroups, group]
+        : otherExpandedGroups;
+    });
+
+  const isGroupExpanded = (group: GroupWithRepositoryInfo['name']) =>
+    expandedGroups.includes(group);
+
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
@@ -887,103 +947,133 @@ const Packages = () => {
         transformedGroups
           .slice(computeStart(), computeEnd())
           .map((grp, rowIndex) => (
-            <Tr key={`${grp.name}-${rowIndex}`} data-testid="package-row">
-              <Td
-                select={{
-                  isSelected: groups.some((g) => g.name === grp.name),
-                  rowIndex: rowIndex,
-                  onSelect: (event, isSelecting) =>
-                    handleGroupSelect(grp, rowIndex, isSelecting),
-                }}
-              />
-              <Td>
-                @{grp.name}
-                <Popover
-                  minWidth="25rem"
-                  headerContent="Included packages"
-                  bodyContent={
-                    <div
-                      style={
-                        grp.package_list.length > 0
-                          ? { height: '40em', overflow: 'scroll' }
-                          : {}
-                      }
-                    >
-                      {grp.package_list.length > 0 ? (
-                        <Table
-                          variant="compact"
-                          data-testid="group-included-packages-table"
-                        >
-                          <Tbody>
-                            {grp.package_list.map((pkg) => (
-                              <Tr key={`details-${pkg}`}>
-                                <Td>{pkg}</Td>
-                              </Tr>
-                            ))}
-                          </Tbody>
-                        </Table>
-                      ) : (
-                        <Text>This group has no packages</Text>
-                      )}
-                    </div>
-                  }
-                >
-                  <Button
-                    variant="plain"
-                    aria-label="About included packages"
-                    component="span"
-                    className="pf-v5-u-p-0"
-                    isInline
+            <Tbody
+              key={`${grp.name}-${rowIndex}`}
+              isExpanded={isGroupExpanded(grp.name)}
+            >
+              <Tr data-testid="package-row">
+                <Td
+                  expand={{
+                    rowIndex: rowIndex,
+                    isExpanded: isGroupExpanded(grp.name),
+                    onToggle: () =>
+                      setGroupsExpanded(grp.name, !isGroupExpanded(grp.name)),
+                    expandId: `${grp.name}-expandable`,
+                  }}
+                />
+                <Td
+                  select={{
+                    isSelected: groups.some((g) => g.name === grp.name),
+                    rowIndex: rowIndex,
+                    onSelect: (event, isSelecting) =>
+                      handleGroupSelect(grp, rowIndex, isSelecting),
+                  }}
+                />
+                <Td>
+                  @{grp.name}
+                  <Popover
+                    minWidth="25rem"
+                    headerContent="Included packages"
+                    bodyContent={
+                      <div
+                        style={
+                          grp.package_list.length > 0
+                            ? { height: '40em', overflow: 'scroll' }
+                            : {}
+                        }
+                      >
+                        {grp.package_list.length > 0 ? (
+                          <Table
+                            variant="compact"
+                            data-testid="group-included-packages-table"
+                          >
+                            <Tbody>
+                              {grp.package_list.map((pkg) => (
+                                <Tr key={`details-${pkg}`}>
+                                  <Td>{pkg}</Td>
+                                </Tr>
+                              ))}
+                            </Tbody>
+                          </Table>
+                        ) : (
+                          <Text>This group has no packages</Text>
+                        )}
+                      </div>
+                    }
                   >
-                    <HelpIcon className="pf-v5-u-ml-xs" />
-                  </Button>
-                </Popover>
-              </Td>
-              <Td>
-                {grp.description ? (
-                  grp.description
+                    <Button
+                      variant="plain"
+                      aria-label="About included packages"
+                      component="span"
+                      className="pf-v5-u-p-0"
+                      isInline
+                    >
+                      <HelpIcon className="pf-v5-u-ml-xs" />
+                    </Button>
+                  </Popover>
+                </Td>
+                {grp.repository === 'distro' ? (
+                  <>
+                    <Td>
+                      <img
+                        src={
+                          '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                        }
+                        alt="Red Hat logo"
+                        height={RH_ICON_SIZE}
+                        width={RH_ICON_SIZE}
+                      />{' '}
+                      Red Hat repository
+                    </Td>
+                    <Td>Supported</Td>
+                  </>
+                ) : grp.repository === 'custom' ? (
+                  <>
+                    <Td>Third party repository</Td>
+                    <Td>Not supported</Td>
+                  </>
+                ) : grp.repository === 'recommended' ? (
+                  <>
+                    <Td>
+                      <Icon status="warning">
+                        <OptimizeIcon />
+                      </Icon>{' '}
+                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                      Everything x86_64
+                    </Td>
+                    <Td>Not supported</Td>
+                  </>
                 ) : (
-                  <span className="not-available">Not available</span>
+                  <>
+                    <Td className="not-available">Not available</Td>
+                    <Td className="not-available">Not available</Td>
+                  </>
                 )}
-              </Td>
-              {grp.repository === 'distro' ? (
-                <>
-                  <Td>
-                    <img
-                      src={
-                        '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                      }
-                      alt="Red Hat logo"
-                      height={RH_ICON_SIZE}
-                      width={RH_ICON_SIZE}
-                    />{' '}
-                    Red Hat repository
-                  </Td>
-                  <Td>Supported</Td>
-                </>
-              ) : grp.repository === 'custom' ? (
-                <>
-                  <Td>Third party repository</Td>
-                  <Td>Not supported</Td>
-                </>
-              ) : grp.repository === 'recommended' ? (
-                <>
-                  <Td>
-                    <Icon status="warning">
-                      <OptimizeIcon />
-                    </Icon>{' '}
-                    EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                    Everything x86_64
-                  </Td>
-                  <Td>Not supported</Td>
-                </>
-              ) : (
-                <>
-                  <Td className="not-available">Not available</Td>
-                  <Td className="not-available">Not available</Td>
-                </>
-              )}
-            </Tr>
+              </Tr>
+              <Tr isExpanded={isGroupExpanded(grp.name)}>
+                <Td colSpan={5}>
+                  <ExpandableRowContent>
+                    {
+                      <DescriptionList>
+                        <DescriptionListGroup>
+                          <DescriptionListTerm>
+                            Description
+                            {toggleSelected === 'toggle-selected' && (
+                              <PackageInfoNotAvailablePopover />
+                            )}
+                          </DescriptionListTerm>
+                          <DescriptionListDescription>
+                            {grp.description
+                              ? grp.description
+                              : 'Not available'}
+                          </DescriptionListDescription>
+                        </DescriptionListGroup>
+                      </DescriptionList>
+                    }
+                  </ExpandableRowContent>
+                </Td>
+              </Tr>
+            </Tbody>
           ))
       );
     }
@@ -993,61 +1083,89 @@ const Packages = () => {
         transformedPackages
           .slice(computeStart(), computeEnd())
           .map((pkg, rowIndex) => (
-            <Tr key={`${pkg.name}-${rowIndex}`} data-testid="package-row">
-              <Td
-                select={{
-                  isSelected: packages.some((p) => p.name === pkg.name),
-                  rowIndex: rowIndex,
-                  onSelect: (event, isSelecting) =>
-                    handleSelect(pkg, rowIndex, isSelecting),
-                }}
-              />
-              <Td>{pkg.name}</Td>
-              <Td>
-                {pkg.summary ? (
-                  pkg.summary
+            <Tbody
+              key={`${pkg.name}-${rowIndex}`}
+              isExpanded={isPkgExpanded(pkg.name)}
+            >
+              <Tr data-testid="package-row">
+                <Td
+                  expand={{
+                    rowIndex: rowIndex,
+                    isExpanded: isPkgExpanded(pkg.name),
+                    onToggle: () =>
+                      setPkgExpanded(pkg.name, !isPkgExpanded(pkg.name)),
+                    expandId: `${pkg.name}-expandable`,
+                  }}
+                />
+                <Td
+                  select={{
+                    isSelected: packages.some((p) => p.name === pkg.name),
+                    rowIndex: rowIndex,
+                    onSelect: (event, isSelecting) =>
+                      handleSelect(pkg, rowIndex, isSelecting),
+                  }}
+                />
+                <Td>{pkg.name}</Td>
+                {pkg.repository === 'distro' ? (
+                  <>
+                    <Td>
+                      <img
+                        src={
+                          '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
+                        }
+                        alt="Red Hat logo"
+                        height={RH_ICON_SIZE}
+                        width={RH_ICON_SIZE}
+                      />{' '}
+                      Red Hat repository
+                    </Td>
+                    <Td>Supported</Td>
+                  </>
+                ) : pkg.repository === 'custom' ? (
+                  <>
+                    <Td>Third party repository</Td>
+                    <Td>Not supported</Td>
+                  </>
+                ) : pkg.repository === 'recommended' ? (
+                  <>
+                    <Td>
+                      <Icon status="warning">
+                        <OptimizeIcon />
+                      </Icon>{' '}
+                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                      Everything x86_64
+                    </Td>
+                    <Td>Not supported</Td>
+                  </>
                 ) : (
-                  <span className="not-available">Not available</span>
+                  <>
+                    <Td className="not-available">Not available</Td>
+                    <Td className="not-available">Not available</Td>
+                  </>
                 )}
-              </Td>
-              {pkg.repository === 'distro' ? (
-                <>
-                  <Td>
-                    <img
-                      src={
-                        '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                      }
-                      alt="Red Hat logo"
-                      height={RH_ICON_SIZE}
-                      width={RH_ICON_SIZE}
-                    />{' '}
-                    Red Hat repository
-                  </Td>
-                  <Td>Supported</Td>
-                </>
-              ) : pkg.repository === 'custom' ? (
-                <>
-                  <Td>Third party repository</Td>
-                  <Td>Not supported</Td>
-                </>
-              ) : pkg.repository === 'recommended' ? (
-                <>
-                  <Td>
-                    <Icon status="warning">
-                      <OptimizeIcon />
-                    </Icon>{' '}
-                    EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                    Everything x86_64
-                  </Td>
-                  <Td>Not supported</Td>
-                </>
-              ) : (
-                <>
-                  <Td className="not-available">Not available</Td>
-                  <Td className="not-available">Not available</Td>
-                </>
-              )}
-            </Tr>
+              </Tr>
+              <Tr isExpanded={isPkgExpanded(pkg.name)}>
+                <Td colSpan={5}>
+                  <ExpandableRowContent>
+                    {
+                      <DescriptionList>
+                        <DescriptionListGroup>
+                          <DescriptionListTerm>
+                            Description
+                            {toggleSelected === 'toggle-selected' && (
+                              <PackageInfoNotAvailablePopover />
+                            )}
+                          </DescriptionListTerm>
+                          <DescriptionListDescription>
+                            {pkg.summary ? pkg.summary : 'Not available'}
+                          </DescriptionListDescription>
+                        </DescriptionListGroup>
+                      </DescriptionList>
+                    }
+                  </ExpandableRowContent>
+                </Td>
+              </Tr>
+            </Tbody>
           ))
       );
     }
@@ -1114,6 +1232,8 @@ const Packages = () => {
     recommendedRepositories,
     transformedPackages.length,
     transformedGroups.length,
+    expandedPkgs,
+    expandedGroups,
   ]);
 
   const PackagesTable = () => {
@@ -1121,19 +1241,14 @@ const Packages = () => {
       <Table variant="compact" data-testid="packages-table">
         <Thead>
           <Tr>
-            <Th aria-label="Selected" />
-            <Th width={20}>Name</Th>
-            <Th width={35}>
-              Description
-              {toggleSelected === 'toggle-selected' && (
-                <PackageInfoNotAvailablePopover />
-              )}
-            </Th>
+            <Th aria-label="Expanded" width={10} />
+            <Th aria-label="Selected" width={10} />
+            <Th width={30}>Name</Th>
             <Th width={25}>Package repository</Th>
-            <Th width={20}>Support</Th>
+            <Th width={25}>Support</Th>
           </Tr>
         </Thead>
-        <Tbody>{bodyContent}</Tbody>
+        {bodyContent}
       </Table>
     );
   };
