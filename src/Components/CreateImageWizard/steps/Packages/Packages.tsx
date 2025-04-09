@@ -19,8 +19,10 @@ import {
   Popover,
   Spinner,
   Stack,
+  Tab,
+  Tabs,
+  TabTitleText,
   Text,
-  TextContent,
   TextInput,
   ToggleGroup,
   ToggleGroupItem,
@@ -41,6 +43,10 @@ import { useDispatch } from 'react-redux';
 
 import CustomHelperText from './components/CustomHelperText';
 import PackageInfoNotAvailablePopover from './components/PackageInfoNotAvailablePopover';
+import {
+  IncludedReposPopover,
+  OtherReposPopover,
+} from './components/RepoPopovers';
 
 import {
   CONTENT_URL,
@@ -91,9 +97,9 @@ export type GroupWithRepositoryInfo = {
   package_list: string[];
 };
 
-export enum RepoToggle {
-  INCLUDED = 'toggle-included-repos',
-  OTHER = 'toggle-other-repos',
+export enum Repos {
+  INCLUDED = 'included-repos',
+  OTHER = 'other-repos',
 }
 
 export const RedHatRepository = () => {
@@ -151,10 +157,7 @@ const Packages = () => {
   const [perPage, setPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [toggleSelected, setToggleSelected] = useState('toggle-available');
-
-  const [toggleSourceRepos, setToggleSourceRepos] = useState<RepoToggle>(
-    RepoToggle.INCLUDED
-  );
+  const [activeTabKey, setActiveTabKey] = useState(Repos.INCLUDED);
 
   const [searchTerm, setSearchTerm] = useState('');
   const [
@@ -259,10 +262,7 @@ const Packages = () => {
       }
     }
     if (debouncedSearchTerm.length > 2) {
-      if (
-        toggleSourceRepos === RepoToggle.INCLUDED &&
-        customRepositories.length > 0
-      ) {
+      if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
         searchCustomRpms({
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
@@ -286,7 +286,7 @@ const Packages = () => {
     searchCustomRpms,
     searchDistroRpms,
     debouncedSearchTerm,
-    toggleSourceRepos,
+    activeTabKey,
     searchRecommendedRpms,
     epelRepoUrlByDistribution,
     isSuccessDistroRepositories,
@@ -316,10 +316,7 @@ const Packages = () => {
         },
       });
     }
-    if (
-      toggleSourceRepos === RepoToggle.INCLUDED &&
-      customRepositories.length > 0
-    ) {
+    if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substr(1),
@@ -328,7 +325,7 @@ const Packages = () => {
           }),
         },
       });
-    } else if (toggleSourceRepos === RepoToggle.OTHER && isSuccessEpelRepo) {
+    } else if (activeTabKey === Repos.OTHER && isSuccessEpelRepo) {
       searchRecommendedGroups({
         apiContentUnitSearchRequest: {
           search: debouncedSearchTerm.substr(1),
@@ -342,7 +339,7 @@ const Packages = () => {
     searchCustomGroups,
     searchRecommendedGroups,
     debouncedSearchTerm,
-    toggleSourceRepos,
+    activeTabKey,
     epelRepoUrlByDistribution,
   ]);
 
@@ -381,7 +378,7 @@ const Packages = () => {
             <EmptyState variant={EmptyStateVariant.sm}>
               <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
               <EmptyStateBody>
-                {toggleSourceRepos === RepoToggle.OTHER
+                {activeTabKey === Repos.OTHER
                   ? 'Searching for recommendations'
                   : 'Searching'}
               </EmptyStateBody>
@@ -427,7 +424,7 @@ const Packages = () => {
                 Try looking under &quot;
                 <Button
                   variant="link"
-                  onClick={() => setToggleSourceRepos(RepoToggle.INCLUDED)}
+                  onClick={() => setActiveTabKey(Repos.INCLUDED)}
                   isInline
                 >
                   Included repos
@@ -442,7 +439,7 @@ const Packages = () => {
   };
 
   const NoResultsFound = () => {
-    if (toggleSourceRepos === RepoToggle.INCLUDED) {
+    if (activeTabKey === Repos.INCLUDED) {
       return (
         <Tr>
           <Td colSpan={5}>
@@ -462,7 +459,7 @@ const Packages = () => {
                     <Button
                       variant="primary"
                       ouiaId="search-other-repositories"
-                      onClick={() => setToggleSourceRepos(RepoToggle.OTHER)}
+                      onClick={() => setActiveTabKey(Repos.OTHER)}
                     >
                       Search other repositories
                     </Button>
@@ -620,7 +617,7 @@ const Packages = () => {
       debouncedSearchTerm !== '' &&
       combinedPackageData.length === 0 &&
       isSuccessRecommendedPackages &&
-      toggleSourceRepos === RepoToggle.OTHER
+      activeTabKey === Repos.OTHER
     ) {
       transformedRecommendedData = dataRecommendedPackages!.map((values) => ({
         name: values.package_name!,
@@ -634,7 +631,7 @@ const Packages = () => {
     }
 
     if (toggleSelected === 'toggle-available') {
-      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+      if (activeTabKey === Repos.INCLUDED) {
         return combinedPackageData.filter(
           (pkg) => pkg.repository !== 'recommended'
         );
@@ -648,7 +645,7 @@ const Packages = () => {
       if (currentlyRemovedPackages.length > 0) {
         selectedPackages.push(...currentlyRemovedPackages);
       }
-      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+      if (activeTabKey === Repos.INCLUDED) {
         return selectedPackages.sort((a, b) =>
           sortfn(a.name, b.name, debouncedSearchTerm)
         );
@@ -667,7 +664,7 @@ const Packages = () => {
     isSuccessRecommendedPackages,
     packages,
     toggleSelected,
-    toggleSourceRepos,
+    activeTabKey,
   ]);
 
   const transformedGroups = useMemo(() => {
@@ -705,7 +702,7 @@ const Packages = () => {
     }
 
     if (toggleSelected === 'toggle-available') {
-      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+      if (activeTabKey === Repos.INCLUDED) {
         return combinedGroupData.filter(
           (pkg) => pkg.repository !== 'recommended'
         );
@@ -716,7 +713,7 @@ const Packages = () => {
       }
     } else {
       const selectedGroups = [...groups];
-      if (toggleSourceRepos === RepoToggle.INCLUDED) {
+      if (activeTabKey === Repos.INCLUDED) {
         return selectedGroups;
       } else {
         return [];
@@ -734,7 +731,7 @@ const Packages = () => {
     isSuccessRecommendedGroups,
     groups,
     toggleSelected,
-    toggleSourceRepos,
+    activeTabKey,
   ]);
 
   const handleSearch = async (
@@ -742,13 +739,13 @@ const Packages = () => {
     selection: string
   ) => {
     setSearchTerm(selection);
-    setToggleSourceRepos(RepoToggle.INCLUDED);
+    setActiveTabKey(Repos.INCLUDED);
     setToggleSelected('toggle-available');
   };
 
   const handleClear = async () => {
     setSearchTerm('');
-    setToggleSourceRepos(RepoToggle.INCLUDED);
+    setActiveTabKey(Repos.INCLUDED);
   };
 
   const handleSelect = (
@@ -823,14 +820,6 @@ const Packages = () => {
     setToggleSelected(id);
   };
 
-  const handleRepoToggleClick = (type: RepoToggle) => {
-    if (toggleSourceRepos !== type) {
-      setCurrentlyRemovedPackages([]);
-      setPage(1);
-      setToggleSourceRepos(type);
-    }
-  };
-
   const handleSetPage = (_: React.MouseEvent, newPage: number) => {
     setPage(newPage);
   };
@@ -880,6 +869,14 @@ const Packages = () => {
       dispatch(addGroup(isSelectingGroup!));
     }
     setIsRepoModalOpen(!isRepoModalOpen);
+  };
+
+  const handleTabClick = (event: React.MouseEvent, tabIndex: Repos) => {
+    if (tabIndex !== activeTabKey) {
+      setCurrentlyRemovedPackages([]);
+      setPage(1);
+      setActiveTabKey(tabIndex);
+    }
   };
 
   const composePkgTable = () => {
@@ -1071,13 +1068,13 @@ const Packages = () => {
         return <EmptySearch />;
       case (debouncedSearchTerm &&
         (isLoadingRecommendedPackages || isLoadingRecommendedGroups) &&
-        toggleSourceRepos === RepoToggle.OTHER) ||
+        activeTabKey === Repos.OTHER) ||
         (debouncedSearchTerm &&
           (isLoadingDistroPackages ||
             isLoadingCustomPackages ||
             isLoadingDistroGroups ||
             isLoadingCustomGroups) &&
-          toggleSourceRepos === RepoToggle.INCLUDED):
+          activeTabKey === Repos.INCLUDED):
         return <Searching />;
       case debouncedSearchTerm &&
         transformedPackages.length === 0 &&
@@ -1086,7 +1083,7 @@ const Packages = () => {
         return <NoResultsFound />;
       case debouncedSearchTerm &&
         toggleSelected === 'toggle-selected' &&
-        toggleSourceRepos === RepoToggle.OTHER &&
+        activeTabKey === Repos.OTHER &&
         packages.length > 0 &&
         groups.length > 0:
         return <TryLookingUnderIncluded />;
@@ -1111,13 +1108,35 @@ const Packages = () => {
     packages.length,
     groups.length,
     toggleSelected,
-    toggleSourceRepos,
+    activeTabKey,
     transformedPackages,
     isSelectingPackage,
     recommendedRepositories,
     transformedPackages.length,
     transformedGroups.length,
   ]);
+
+  const PackagesTable = () => {
+    return (
+      <Table variant="compact" data-testid="packages-table">
+        <Thead>
+          <Tr>
+            <Th aria-label="Selected" />
+            <Th width={20}>Package name</Th>
+            <Th width={35}>
+              Description
+              {toggleSelected === 'toggle-selected' && (
+                <PackageInfoNotAvailablePopover />
+              )}
+            </Th>
+            <Th width={25}>Package repository</Th>
+            <Th width={20}>Support</Th>
+          </Tr>
+        </Thead>
+        <Tbody>{bodyContent}</Tbody>
+      </Table>
+    );
+  };
 
   return (
     <>
@@ -1182,72 +1201,6 @@ const Packages = () => {
                 />
               </ToggleGroup>
             </ToolbarItem>
-            <ToolbarItem>
-              <ToggleGroup>
-                <ToggleGroupItem
-                  text={
-                    <>
-                      Included repos{' '}
-                      <Popover
-                        bodyContent={
-                          <TextContent>
-                            <Text>
-                              View packages from the Red Hat repository and
-                              repositories you&apos;ve selected.
-                            </Text>
-                          </TextContent>
-                        }
-                      >
-                        <Button
-                          variant="plain"
-                          aria-label="About included repositories"
-                          component="span"
-                          className="pf-v5-u-p-0"
-                          size="sm"
-                          isInline
-                        >
-                          <HelpIcon />
-                        </Button>
-                      </Popover>
-                    </>
-                  }
-                  buttonId={RepoToggle.INCLUDED}
-                  isSelected={toggleSourceRepos === RepoToggle.INCLUDED}
-                  onChange={() => handleRepoToggleClick(RepoToggle.INCLUDED)}
-                />
-                <ToggleGroupItem
-                  text={
-                    <>
-                      Other repos{' '}
-                      <Popover
-                        bodyContent={
-                          <TextContent>
-                            <Text>
-                              View packages from popular repositories and your
-                              other repositories not included in the image.
-                            </Text>
-                          </TextContent>
-                        }
-                      >
-                        <Button
-                          variant="plain"
-                          aria-label="About other repositories"
-                          component="span"
-                          className="pf-v5-u-p-0"
-                          size="sm"
-                          isInline
-                        >
-                          <HelpIcon />
-                        </Button>
-                      </Popover>
-                    </>
-                  }
-                  buttonId="toggle-other-repos"
-                  isSelected={toggleSourceRepos === RepoToggle.OTHER}
-                  onChange={() => handleRepoToggleClick(RepoToggle.OTHER)}
-                />
-              </ToggleGroup>
-            </ToolbarItem>
             <ToolbarItem variant="pagination">
               <Pagination
                 data-testid="packages-pagination-top"
@@ -1277,23 +1230,31 @@ const Packages = () => {
         </Stack>
       </Toolbar>
 
-      <Table variant="compact" data-testid="packages-table">
-        <Thead>
-          <Tr>
-            <Th aria-label="Selected" />
-            <Th width={20}>Package name</Th>
-            <Th width={35}>
-              Description
-              {toggleSelected === 'toggle-selected' && (
-                <PackageInfoNotAvailablePopover />
-              )}
-            </Th>
-            <Th width={25}>Package repository</Th>
-            <Th width={20}>Support</Th>
-          </Tr>
-        </Thead>
-        <Tbody>{bodyContent}</Tbody>
-      </Table>
+      <Tabs
+        activeKey={activeTabKey}
+        onSelect={handleTabClick}
+        aria-label="Repositories tabs on packages step"
+      >
+        <Tab
+          eventKey="included-repos"
+          title={
+            <TabTitleText>
+              Included repos <IncludedReposPopover />
+            </TabTitleText>
+          }
+          aria-label="Included repositories"
+        />
+        <Tab
+          eventKey="other-repos"
+          title={
+            <TabTitleText>
+              Other repos <OtherReposPopover />
+            </TabTitleText>
+          }
+          aria-label="Other repositories"
+        />
+      </Tabs>
+      <PackagesTable />
       <Pagination
         data-testid="packages-pagination-bottom"
         itemCount={
