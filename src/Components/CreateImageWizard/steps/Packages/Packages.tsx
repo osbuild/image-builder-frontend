@@ -1122,7 +1122,7 @@ const Packages = () => {
         <Thead>
           <Tr>
             <Th aria-label="Selected" />
-            <Th width={20}>Package name</Th>
+            <Th width={20}>Name</Th>
             <Th width={35}>
               Description
               {toggleSelected === 'toggle-selected' && (
@@ -1189,11 +1189,13 @@ const Packages = () => {
                   onChange={handleFilterToggleClick}
                 />
                 <ToggleGroupItem
-                  text={`Selected (${
-                    packages.length + groups.length <= 100
-                      ? packages.length + groups.length
-                      : '100+'
-                  })`}
+                  text={`Selected${
+                    packages.length + groups.length === 0
+                      ? ''
+                      : packages.length + groups.length <= 100
+                      ? ` (${packages.length + groups.length})`
+                      : ' (100+)'
+                  }`}
                   buttonId="toggle-selected"
                   data-testid="packages-selected-toggle"
                   isSelected={toggleSelected === 'toggle-selected'}
