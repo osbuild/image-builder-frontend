@@ -37,6 +37,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
       <Card
         isSelected={blueprint.id === selectedBlueprintId}
         ouiaId={`blueprint-card-${blueprint.id}`}
+        data-testid={`blueprint-card`}
         isCompact
         isClickable
         onClick={() => dispatch(setBlueprintId(blueprint.id))}

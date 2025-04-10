@@ -16,10 +16,7 @@ export const createBlueprint = async (
   await page.getByRole('button', { name: 'Close' }).first().click();
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
-  await page
-    .locator('.pf-v5-c-card__title-text')
-    .getByText(blueprintName)
-    .click();
+  await page.getByTestId('blueprint-card').getByText(blueprintName).click();
 };
 
 /**
@@ -84,7 +81,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
         .getByRole('textbox', { name: 'Search input' })
         .fill(blueprintName);
       await frame
-        .locator('.pf-v5-c-card__title-text')
+        .getByTestId('blueprint-card')
         .getByText(blueprintName)
         .click();
       await frame.getByRole('button', { name: 'Menu toggle' }).click();
@@ -120,7 +117,7 @@ export const exportBlueprint = async (page: Page) => {
 export const importBlueprint = async (page: Page | FrameLocator) => {
   if (isHosted()) {
     await page.getByRole('button', { name: 'Import' }).click();
-    const dragBoxSelector = page.locator('.pf-v5-c-file-upload');
+    const dragBoxSelector = page.getByRole('presentation').first();
     await dragBoxSelector
       .locator('input[type=file]')
       .setInputFiles('../../downloads/testing.json');
