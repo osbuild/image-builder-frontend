@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
-
 import { jwtDecode } from 'jwt-decode';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
