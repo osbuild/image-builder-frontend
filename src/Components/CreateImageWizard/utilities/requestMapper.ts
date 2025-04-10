@@ -235,6 +235,7 @@ function commonRequestToState(
         ssh_key: user.ssh_key || '',
         groups: user.groups || [],
         isAdministrator: user.groups?.includes('wheel') || false,
+        hasPassword: user.hasPassword || false,
       })) || [],
     compliance:
       compliancePolicyID !== undefined
