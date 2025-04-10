@@ -23,6 +23,7 @@ type ValidatedPasswordInput = TextInputProps & {
   placeholder: string;
   ariaLabel: string;
   onChange: (event: React.FormEvent<HTMLInputElement>, value: string) => void;
+  hasPassword: boolean;
 };
 
 export const PasswordValidatedInput = ({
@@ -30,6 +31,7 @@ export const PasswordValidatedInput = ({
   placeholder,
   ariaLabel,
   onChange,
+  hasPassword,
 }: ValidatedPasswordInput) => {
   const environments = useAppSelector(selectImageTypes);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
@@ -52,7 +54,7 @@ export const PasswordValidatedInput = ({
             <TextInput
               isRequired
               type={isPasswordVisible ? 'text' : 'password'}
-              value={value}
+              value={hasPassword ? '•'.repeat(8) : value}
               onChange={onChange}
               aria-label={ariaLabel}
               placeholder={placeholder}
@@ -63,6 +65,7 @@ export const PasswordValidatedInput = ({
               variant="control"
               onClick={togglePasswordVisibility}
               aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+              isDisabled={hasPassword}
             >
               {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
             </Button>
