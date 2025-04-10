@@ -654,6 +654,9 @@ export type User = {
     Empty string can be used to remove the password during update but only with ssh_key set.
      */
   password?: string | undefined;
+  /** Indicates whether the user has a password set.
+   */
+  hasPassword?: boolean | undefined;
 };
 export type Services = {
   /** List of services to enable by default */
