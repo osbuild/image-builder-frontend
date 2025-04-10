@@ -23,10 +23,10 @@ const ArchSelect = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const setArch = (
-    _event: React.MouseEvent,
-    selection: ImageRequest['architecture']
+    event: React.MouseEvent<Element, MouseEvent> | undefined,
+    selection: string | number | undefined
   ) => {
-    dispatch(changeArchitecture(selection));
+    dispatch(changeArchitecture(selection as ImageRequest['architecture']));
     setIsOpen(false);
   };
 

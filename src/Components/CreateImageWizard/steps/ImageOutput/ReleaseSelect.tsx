@@ -56,14 +56,17 @@ const ReleaseSelect = () => {
     ? ON_PREM_RELEASES
     : RELEASES;
 
-  const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
+  const handleSelect = (
+    event: React.MouseEvent<Element, MouseEvent> | undefined,
+    selection: string | number | undefined
+  ) => {
     if (selection !== ('loader' as Distributions)) {
-      if (!isRhel(selection)) {
+      if (!isRhel(selection as Distributions)) {
         dispatch(changeRegistrationType('register-later'));
       } else {
         dispatch(changeRegistrationType('register-now-rhc'));
       }
-      dispatch(changeDistribution(selection));
+      dispatch(changeDistribution(selection as Distributions));
       setIsOpen(false);
     }
   };

@@ -6,11 +6,9 @@ import {
   FormGroup,
   Popover,
   Radio,
-  Text,
-  TextContent,
-  TextVariants,
-  Tile,
+  Content,
 } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
@@ -97,13 +95,13 @@ const TargetEnvironment = () => {
       data-testid="target-select"
     >
       <FormGroup
-        label={<Text component={TextVariants.small}>Public cloud</Text>}
+        label={<small>Public cloud</small>}
         data-testid="target-public"
       >
         <div className="tiles">
           {supportedEnvironments?.includes('aws') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-aws"
               title="Amazon Web Services"
               icon={
@@ -125,7 +123,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('gcp') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-google"
               title="Google Cloud Platform"
               icon={
@@ -149,7 +147,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('azure') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-azure"
               title="Microsoft Azure"
               icon={
@@ -173,7 +171,7 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments?.includes('oci') && (
             <Tile
-              className="tile pf-v5-u-mr-sm"
+              className="tile pf-v6-u-mr-sm"
               data-testid="upload-oci"
               title="Oracle Cloud Infrastructure"
               icon={
@@ -197,8 +195,8 @@ const TargetEnvironment = () => {
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
-            label={<Text component={TextVariants.small}>Private cloud</Text>}
-            className="pf-v5-u-mt-sm"
+            label={<small>Private cloud</small>}
+            className="pf-v6-u-mt-sm"
             data-testid="target-private"
           >
             <Checkbox
@@ -235,26 +233,25 @@ const TargetEnvironment = () => {
                             maxWidth="30rem"
                             position="right"
                             bodyContent={
-                              <TextContent>
-                                <Text>
+                              <Content>
+                                <Content component="p">
                                   An OVA file is a virtual appliance used by
                                   virtualization platforms such as VMware
                                   vSphere. It is a package that contains files
                                   used to describe a virtual machine, which
                                   includes a VMDK image, OVF descriptor file and
                                   a manifest file.
-                                </Text>
-                              </TextContent>
+                                </Content>
+                              </Content>
                             }
                           >
                             <Button
-                              className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                              icon={<HelpIcon />}
+                              className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
                               variant="plain"
                               aria-label="About OVA file"
                               isInline
-                            >
-                              <HelpIcon />
-                            </Button>
+                            />
                           </Popover>
                         </>
                       }
@@ -272,7 +269,7 @@ const TargetEnvironment = () => {
                     />
                   )}
                   <Radio
-                    className="pf-v5-u-mt-sm"
+                    className="pf-v6-u-mt-sm"
                     name="vsphere-radio"
                     aria-label="VMware vSphere radio button VMDK"
                     id="vsphere-radio-vmdk"
@@ -284,24 +281,23 @@ const TargetEnvironment = () => {
                           maxWidth="30rem"
                           position="right"
                           bodyContent={
-                            <TextContent>
-                              <Text>
+                            <Content>
+                              <Content component="p">
                                 A VMDK file is a virtual disk that stores the
                                 contents of a virtual machine. This disk has to
                                 be imported into vSphere using govc import.vmdk,
                                 use the OVA version when using the vSphere UI.
-                              </Text>
-                            </TextContent>
+                              </Content>
+                            </Content>
                           }
                         >
                           <Button
-                            className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                            icon={<HelpIcon />}
+                            className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
                             variant="plain"
                             aria-label="About VMDK file"
                             isInline
-                          >
-                            <HelpIcon />
-                          </Button>
+                          />
                         </Popover>
                       </>
                     }
@@ -323,10 +319,7 @@ const TargetEnvironment = () => {
           </FormGroup>
         </>
       )}
-      <FormGroup
-        label={<Text component={TextVariants.small}>Other</Text>}
-        data-testid="target-other"
-      >
+      <FormGroup label={<small>Other</small>} data-testid="target-other">
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label="Virtualization - Guest image (.qcow2)"

@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   Radio,
-  Text,
+  Content,
   Form,
   Title,
   FormGroup,
@@ -58,15 +58,15 @@ const Aws = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Amazon Web Services
       </Title>
-      <Text>
+      <Content component="p">
         Your image will be uploaded to AWS and shared with the account you
         provide below.
-      </Text>
-      <Text>
+      </Content>
+      <Content component="p">
         <b>The shared image will expire within 14 days.</b> To permanently
         access the image, copy the image, which will be shared to your account
         by Red Hat, to your own AWS account.
-      </Text>
+      </Content>
       <FormGroup label="Share method:">
         <Radio
           id="radio-with-description"
@@ -80,6 +80,7 @@ const Aws = () => {
             dispatch(changeAwsShareMethod('sources'));
           }}
           autoFocus
+          className="pf-v6-u-pb-sm"
         />
         <Radio
           id="radio"
@@ -108,7 +109,7 @@ const Aws = () => {
                 />
               </FormGroup>
               <HelperText>
-                <HelperTextItem component="div" variant="indeterminate">
+                <HelperTextItem component="div" variant="default">
                   Images are built in the default region but can be copied to
                   other regions later.
                 </HelperTextItem>

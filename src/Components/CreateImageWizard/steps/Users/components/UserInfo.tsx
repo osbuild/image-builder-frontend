@@ -111,7 +111,7 @@ const UserInfo = () => {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           href={GENERATING_SSH_KEY_PAIRS_URL}
-          className="pf-v5-u-pl-0"
+          className="pf-v6-u-pl-0"
         >
           Learn more about SSH keys
         </Button>

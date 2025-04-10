@@ -134,12 +134,11 @@ const KernelName = () => {
         {kernel && (
           <TextInputGroupUtilities>
             <Button
+              icon={<TimesIcon />}
               variant="plain"
               onClick={onClearButtonClick}
               aria-label="Clear input"
-            >
-              <TimesIcon />
-            </Button>
+            />
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>

@@ -4,11 +4,8 @@ import {
   CodeBlock,
   CodeBlockCode,
   Spinner,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 
 import { RELEASES } from '../../../../../constants';
@@ -100,87 +97,87 @@ export const OscapProfileInformation = ({
       )}
       {isSuccessOscapProfileInfo && (
         <>
-          <TextContent>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
+          <Content>
+            <Content component={ContentVariants.dl}>
+              <Content
+                component={ContentVariants.dt}
+                className="pf-v6-u-min-width"
               >
                 Profile description:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {oscapProfile?.profile_description}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
+              </Content>
+              <Content
+                component={ContentVariants.dt}
+                className="pf-v6-u-min-width"
               >
                 Operating system:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {RELEASES.get(release)}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
+              </Content>
+              <Content
+                component={ContentVariants.dt}
+                className="pf-v6-u-min-width"
               >
                 Reference ID:
-              </TextListItem>
-              <TextListItem
+              </Content>
+              <Content
                 data-testid="oscap-profile-info-ref-id"
-                component={TextListItemVariants.dd}
+                component={ContentVariants.dd}
               >
                 {oscapProfile?.profile_id}
-              </TextListItem>
+              </Content>
               {!isKernelEnabled && (
                 <>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
+                  <Content
+                    component={ContentVariants.dt}
+                    className="pf-v6-u-min-width"
                   >
                     Kernel arguments:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
+                  </Content>
+                  <Content component={ContentVariants.dd}>
                     <CodeBlock>
                       <CodeBlockCode>
                         {oscapProfileInfo?.kernel?.append}
                       </CodeBlockCode>
                     </CodeBlock>
-                  </TextListItem>
+                  </Content>
                 </>
               )}
               {!isServicesStepEnabled && (
                 <>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
+                  <Content
+                    component={ContentVariants.dt}
+                    className="pf-v6-u-min-width"
                   >
                     Disabled services:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
+                  </Content>
+                  <Content component={ContentVariants.dd}>
                     <CodeBlock>
                       <CodeBlockCode>
                         {disabledAndMaskedServicesDisplayString}
                       </CodeBlockCode>
                     </CodeBlock>
-                  </TextListItem>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
+                  </Content>
+                  <Content
+                    component={ContentVariants.dt}
+                    className="pf-v6-u-min-width"
                   >
                     Enabled services:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
+                  </Content>
+                  <Content component={ContentVariants.dd}>
                     <CodeBlock>
                       <CodeBlockCode>
                         {enabledServicesDisplayString}
                       </CodeBlockCode>
                     </CodeBlock>
-                  </TextListItem>
+                  </Content>
                 </>
               )}
-            </TextList>
-          </TextContent>
+            </Content>
+          </Content>
         </>
       )}
     </>

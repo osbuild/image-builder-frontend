@@ -85,7 +85,7 @@ export const EditSaveButton = ({
           <FlexItem>
             <Spinner
               style={
-                { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
+                { '--pf-v6-c-spinner--Color': '#fff' } as React.CSSProperties
               }
               isInline
               size="md"

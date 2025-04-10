@@ -7,8 +7,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
   Icon,
   InputGroup,
@@ -19,8 +17,7 @@ import {
   Popover,
   Spinner,
   Stack,
-  Text,
-  TextContent,
+  Content,
   TextInput,
   ToggleGroup,
   ToggleGroupItem,
@@ -28,7 +25,7 @@ import {
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import {
   ExternalLinkAltIcon,
   HelpIcon,
@@ -351,8 +348,7 @@ const Packages = () => {
       <Tr>
         <Td colSpan={5}>
           <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+            <EmptyState icon={SearchIcon} variant={EmptyStateVariant.sm}>
               {toggleSelected === 'toggle-available' ? (
                 <EmptyStateBody>
                   Search above to add additional
@@ -378,8 +374,7 @@ const Packages = () => {
       <Tr>
         <Td colSpan={5}>
           <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
+            <EmptyState icon={Spinner} variant={EmptyStateVariant.sm}>
               <EmptyStateBody>
                 {toggleSourceRepos === RepoToggle.OTHER
                   ? 'Searching for recommendations'
@@ -397,12 +392,12 @@ const Packages = () => {
       <Tr>
         <Td colSpan={5}>
           <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                icon={<EmptyStateIcon icon={SearchIcon} />}
-                titleText="The search value is too short"
-                headingLevel="h4"
-              />
+            <EmptyState
+              headingLevel="h4"
+              icon={SearchIcon}
+              titleText="The search value is too short"
+              variant={EmptyStateVariant.sm}
+            >
               <EmptyStateBody>
                 Please make the search more specific and try again.
               </EmptyStateBody>
@@ -418,11 +413,11 @@ const Packages = () => {
       <Tr>
         <Td colSpan={5}>
           <Bullseye>
-            <EmptyState variant={EmptyStateVariant.sm}>
-              <EmptyStateHeader
-                titleText="No selected packages in Other repos"
-                headingLevel="h4"
-              />
+            <EmptyState
+              headingLevel="h4"
+              titleText="No selected packages in Other repos"
+              variant={EmptyStateVariant.sm}
+            >
               <EmptyStateBody>
                 Try looking under &quot;
                 <Button
@@ -447,12 +442,12 @@ const Packages = () => {
         <Tr>
           <Td colSpan={5}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-                <EmptyStateHeader
-                  titleText="No results found"
-                  headingLevel="h4"
-                />
+              <EmptyState
+                headingLevel="h4"
+                titleText="No results found"
+                icon={SearchIcon}
+                variant={EmptyStateVariant.sm}
+              >
                 <EmptyStateBody>
                   Adjust your search and try again, or search in other
                   repositories (your repositories and popular repositories).
@@ -469,7 +464,7 @@ const Packages = () => {
                   </EmptyStateActions>
                   <EmptyStateActions>
                     <Button
-                      className="pf-v5-u-pt-md"
+                      className="pf-v6-u-pt-md"
                       variant="link"
                       isInline
                       component="a"
@@ -492,12 +487,12 @@ const Packages = () => {
         <Tr>
           <Td colSpan={5}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
-                <EmptyStateHeader
-                  titleText="No results found"
-                  headingLevel="h4"
-                />
+              <EmptyState
+                headingLevel="h4"
+                titleText="No results found"
+                icon={SearchIcon}
+                variant={EmptyStateVariant.sm}
+              >
                 <EmptyStateBody>
                   No packages found in known repositories. If you know of a
                   repository containing this packages, add it to{' '}
@@ -926,20 +921,21 @@ const Packages = () => {
                           </Tbody>
                         </Table>
                       ) : (
-                        <Text>This group has no packages</Text>
+                        <Content component="p">
+                          This group has no packages
+                        </Content>
                       )}
                     </div>
                   }
                 >
                   <Button
+                    icon={<HelpIcon className="pf-v6-u-ml-xs" />}
                     variant="plain"
                     aria-label="About included packages"
                     component="span"
-                    className="pf-v5-u-p-0"
+                    className="pf-v6-u-p-0"
                     isInline
-                  >
-                    <HelpIcon className="pf-v5-u-ml-xs" />
-                  </Button>
+                  />
                 </Popover>
               </Td>
               <Td>
@@ -1125,7 +1121,7 @@ const Packages = () => {
       <Toolbar>
         <Stack>
           <ToolbarContent>
-            <ToolbarItem variant="search-filter">
+            <ToolbarItem>
               <InputGroup>
                 <InputGroupItem isFill>
                   <InputGroupText id="search-icon">
@@ -1190,24 +1186,23 @@ const Packages = () => {
                       Included repos{' '}
                       <Popover
                         bodyContent={
-                          <TextContent>
-                            <Text>
+                          <Content>
+                            <Content component="p">
                               View packages from the Red Hat repository and
                               repositories you&apos;ve selected.
-                            </Text>
-                          </TextContent>
+                            </Content>
+                          </Content>
                         }
                       >
                         <Button
+                          icon={<HelpIcon />}
                           variant="plain"
                           aria-label="About included repositories"
                           component="span"
-                          className="pf-v5-u-p-0"
+                          className="pf-v6-u-p-0"
                           size="sm"
                           isInline
-                        >
-                          <HelpIcon />
-                        </Button>
+                        />
                       </Popover>
                     </>
                   }
@@ -1221,24 +1216,23 @@ const Packages = () => {
                       Other repos{' '}
                       <Popover
                         bodyContent={
-                          <TextContent>
-                            <Text>
+                          <Content>
+                            <Content component="p">
                               View packages from popular repositories and your
                               other repositories not included in the image.
-                            </Text>
-                          </TextContent>
+                            </Content>
+                          </Content>
                         }
                       >
                         <Button
+                          icon={<HelpIcon />}
                           variant="plain"
                           aria-label="About other repositories"
                           component="span"
-                          className="pf-v5-u-p-0"
+                          className="pf-v6-u-p-0"
                           size="sm"
                           isInline
-                        >
-                          <HelpIcon />
-                        </Button>
+                        />
                       </Popover>
                     </>
                   }

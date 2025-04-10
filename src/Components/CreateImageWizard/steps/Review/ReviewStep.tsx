@@ -5,13 +5,8 @@ import {
   ExpandableSection,
   Stack,
   StackItem,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-  TextVariants,
+  Content,
+  ContentVariants,
   useWizardContext,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
@@ -156,15 +151,16 @@ const Review = () => {
   }: RevisitStepButtonProps) => {
     return (
       <Button
+        icon={<ArrowRightIcon />}
         variant="link"
         aria-label={ariaLabel}
         data-testid={testId}
         component="span"
         onClick={() => revisitStep(stepId)}
-        className="pf-v5-u-p-0 pf-v5-u-font-weight-bold"
+        className="pf-v6-u-p-0 pf-v6-u-font-weight-bold"
         isInline
       >
-        Revisit step <ArrowRightIcon />
+        Revisit step
       </Button>
     );
   };
@@ -175,25 +171,25 @@ const Review = () => {
 
   const composeExpandable = (label: string, testId: string, stepId: string) => {
     return (
-      <TextContent>
-        <TextList component={TextListVariants.dl}>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width pf-v5-u-text-align-left"
+      <Content>
+        <Content component={ContentVariants.dl}>
+          <Content
+            component={ContentVariants.dt}
+            className="pf-v6-u-min-width pf-v6-u-text-align-left"
           >
             <Button variant="link" component="span" isInline>
               {label}
             </Button>
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             <RevisitStepButton
               ariaLabel={`Revisit ${label} step`}
               testId={testId}
               stepId={stepId}
             />
-          </TextListItem>
-        </TextList>
-      </TextContent>
+          </Content>
+        </Content>
+      </Content>
     );
   };
 
@@ -254,44 +250,44 @@ const Review = () => {
         </Stack>
 
         {environments.includes('vsphere') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
+          <Content>
+            <Content component={ContentVariants.h3}>
               {targetOptions.vsphere} (.vmdk)
-            </Text>
+            </Content>
             <TargetEnvOtherList />
-          </TextContent>
+          </Content>
         )}
         {environments.includes('vsphere-ova') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
+          <Content>
+            <Content component={ContentVariants.h3}>
               {targetOptions['vsphere-ova']} (.ova)
-            </Text>
+            </Content>
             <TargetEnvOtherList />
-          </TextContent>
+          </Content>
         )}
         {environments.includes('guest-image') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
+          <Content>
+            <Content component={ContentVariants.h3}>
               {targetOptions['guest-image']} (.qcow2)
-            </Text>
+            </Content>
             <TargetEnvOtherList />
-          </TextContent>
+          </Content>
         )}
         {environments.includes('image-installer') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
+          <Content>
+            <Content component={ContentVariants.h3}>
               {targetOptions['image-installer']} (.iso)
-            </Text>
+            </Content>
             <TargetEnvOtherList />
-          </TextContent>
+          </Content>
         )}
         {environments.includes('wsl') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
+          <Content>
+            <Content component={ContentVariants.h3}>
               WSL - {targetOptions.wsl} (.tar.gz)
-            </Text>
+            </Content>
             <TargetEnvOtherList />
-          </TextContent>
+          </Content>
         )}
       </ExpandableSection>
       {isRhel(distribution) && (

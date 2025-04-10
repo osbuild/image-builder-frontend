@@ -4,11 +4,9 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
-  Text,
+  Content,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
   Bullseye,
 } from '@patternfly/react-core';
@@ -30,17 +28,16 @@ type ImagesEmptyStateProps = {
 
 const EmptyBlueprintsImagesTable = () => (
   <Bullseye>
-    <EmptyState variant={EmptyStateVariant.lg}>
-      <EmptyStateHeader
-        icon={<EmptyStateIcon icon={PlusCircleIcon} />}
-        titleText="No images"
-        data-testid="empty-state-header"
-      />
+    <EmptyState
+      icon={PlusCircleIcon}
+      titleText="No images"
+      variant={EmptyStateVariant.lg}
+    >
       <EmptyStateBody>
-        <Text>
+        <Content component="p">
           The selected blueprint version doesn&apos;t contain any images. Build
           an image from this version, or adjust the filters.
-        </Text>
+        </Content>
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
@@ -56,26 +53,27 @@ const EmptyBlueprintsImagesTable = () => (
 const EmptyImagesTable = () => {
   return (
     <Bullseye>
-      <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+      <EmptyState
+        variant={EmptyStateVariant.lg}
+        data-testid="empty-state"
+        titleText="No images"
+        headingLevel="h4"
+        icon={SearchIcon}
+      >
         <>
-          <EmptyStateHeader
-            titleText="No images"
-            icon={<EmptyStateIcon icon={SearchIcon} />}
-            headingLevel="h4"
-          />
           <EmptyStateBody>
-            <Text>
+            <Content component="p">
               Image builder is a tool for creating deployment-ready customized
               system images: installation disks, virtual machines, cloud
               vendor-specific images, and others. By using image builder, you
               can create these images faster than with manual procedures because
               it eliminates the specific configurations required for each output
               type.
-            </Text>
-            <Text>
+            </Content>
+            <Content component="p">
               There are no images yet. Create a blueprint to create images.
-            </Text>
-            <Text>
+            </Content>
+            <Content component="p">
               <Button
                 component="a"
                 target="_blank"
@@ -87,7 +85,7 @@ const EmptyImagesTable = () => {
               >
                 Learn more about managing images with DNF
               </Button>
-            </Text>
+            </Content>
           </EmptyStateBody>
           <EmptyStateFooter>
             <EmptyStateActions>
@@ -99,7 +97,7 @@ const EmptyImagesTable = () => {
                 iconPosition="right"
                 isInline
                 href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
-                className="pf-v5-u-pt-md"
+                className="pf-v6-u-pt-md"
               >
                 Image builder for RPM-DNF documentation
               </Button>

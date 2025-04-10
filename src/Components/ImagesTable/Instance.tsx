@@ -8,12 +8,11 @@ import {
   ClipboardCopy,
   List,
   ListItem,
-  Modal,
-  ModalVariant,
   Popover,
   PopoverPosition,
   Skeleton,
 } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import {
   ListComponent,
   OrderType,
@@ -321,7 +320,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
               iconPosition="right"
               // TO DO update the link after documentation is up
               href={FILE_SYSTEM_CUSTOMIZATION_URL}
-              className="pf-v5-u-pl-0"
+              className="pf-v6-u-pl-0"
             >
               Read more about launching OCI images
             </Button>
@@ -330,7 +329,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
       >
         <Button
           variant="link"
-          className="pf-v5-u-p-0 pf-v5-u-font-size-sm"
+          className="pf-v6-u-p-0 pf-v6-u-font-size-sm"
           isDisabled={data?.image_status.status === 'success' ? false : true}
         >
           Image link

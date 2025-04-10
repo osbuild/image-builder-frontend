@@ -198,7 +198,7 @@ describe('repository snapshot tab - ', () => {
     expect(snapshotMethodElement).toHaveTextContent('State as of 2024-04-22');
     // Check that the button is clickable (has 1 repo selected)
     await waitFor(() => {
-      expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'true');
+      expect(snapshotMethodElement).toBeDisabled();
     });
   });
 

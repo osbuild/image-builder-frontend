@@ -3,8 +3,6 @@ import React from 'react';
 import {
   EmptyState,
   EmptyStateVariant,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateBody,
   EmptyStateFooter,
   Button,
@@ -20,16 +18,17 @@ type EmptyProps = {
 
 export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
   return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
-      <EmptyStateHeader
-        titleText={
-          hasFilterValue
-            ? 'No matching repositories found'
-            : 'No Custom Repositories'
-        }
-        icon={<EmptyStateIcon icon={RepositoryIcon} />}
-        headingLevel="h4"
-      />
+    <EmptyState
+      headingLevel="h4"
+      icon={RepositoryIcon}
+      titleText={
+        hasFilterValue
+          ? 'No matching repositories found'
+          : 'No Custom Repositories'
+      }
+      variant={EmptyStateVariant.lg}
+      data-testid="empty-state"
+    >
       <EmptyStateBody>
         {hasFilterValue
           ? 'Try another search query or clear the current search value'
@@ -42,7 +41,7 @@ export default function Empty({ hasFilterValue, refetch }: EmptyProps) {
           component="a"
           target="_blank"
           href={CONTENT_URL}
-          className="pf-v5-u-mr-sm"
+          className="pf-v6-u-mr-sm"
         >
           Go to repositories
         </Button>

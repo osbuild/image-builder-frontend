@@ -7,8 +7,7 @@ import {
   Select,
   SelectList,
   SelectOption,
-  Text,
-  TextContent,
+  Content,
   MenuToggleElement,
   MenuToggle,
   TextInputGroup,
@@ -264,11 +263,9 @@ const ActivationKeysList = () => {
         >
           <SelectList>{prepareSelectOptions()}</SelectList>
         </Select>
-        <TextContent>
-          <Text>
-            Create and manage activation keys on the <ManageKeysButton />
-          </Text>
-        </TextContent>
+        <Content component="p">
+          Create and manage activation keys on the <ManageKeysButton />
+        </Content>
       </FormGroup>
       {isErrorActivationKeys && (
         <Alert

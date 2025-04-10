@@ -5,7 +5,7 @@ import {
   Form,
   FormGroup,
   Radio,
-  Text,
+  Content,
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -111,7 +111,7 @@ const OscapContent = () => {
         </FormGroup>
       )}
       {(!complianceEnabled || complianceType === 'openscap') && (
-        <Text>
+        <Content>
           OpenSCAP enables you to automatically monitor the adherence of your
           registered RHEL systems to a selected regulatory compliance profile.
           <br />
@@ -126,10 +126,10 @@ const OscapContent = () => {
           >
             Documentation
           </Button>
-        </Text>
+        </Content>
       )}
       {complianceType === 'compliance' && (
-        <Text>
+        <Content>
           Insights compliance enables you to monitor the adherence of your
           registered RHEL systems to a selected compliance policy.
           <br />
@@ -156,7 +156,7 @@ const OscapContent = () => {
           >
             Documentation
           </Button>
-        </Text>
+        </Content>
       )}
       <Oscap />
     </Form>

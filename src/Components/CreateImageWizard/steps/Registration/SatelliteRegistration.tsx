@@ -82,7 +82,6 @@ const SatelliteRegistration = () => {
               variant={
                 isRejected || validated === 'error' ? 'error' : 'default'
               }
-              hasIcon
             >
               {isRejected
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'

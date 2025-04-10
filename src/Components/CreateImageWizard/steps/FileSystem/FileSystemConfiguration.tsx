@@ -3,9 +3,8 @@ import React from 'react';
 import {
   Alert,
   Button,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -42,19 +41,19 @@ const FileSystemConfiguration = () => {
 
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h3}>Configure partitions</Text>
-      </TextContent>
+      <Content>
+        <Content component={ContentVariants.h3}>Configure partitions</Content>
+      </Content>
       {partitions?.find((partition) =>
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
-      <TextContent>
-        <Text>
+      <Content>
+        <Content>
           Create partitions for your image by defining mount points and minimum
           sizes. Image builder creates partitions with a logical volume (LVM)
           device type.
-        </Text>
-        <Text>
+        </Content>
+        <Content>
           The order of partitions may change when the image is installed in
           order to conform to best practices and ensure functionality.
           <br></br>
@@ -65,12 +64,12 @@ const FileSystemConfiguration = () => {
             icon={<ExternalLinkAltIcon />}
             iconPosition="right"
             href={FILE_SYSTEM_CUSTOMIZATION_URL}
-            className="pf-v5-u-pl-0"
+            className="pf-v6-u-pl-0"
           >
             Read more about manual configuration here
           </Button>
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       {environments.includes('image-installer') && (
         <Alert
           variant="warning"
@@ -79,18 +78,18 @@ const FileSystemConfiguration = () => {
         />
       )}
       <FileSystemTable />
-      <TextContent>
+      <Content>
         <Button
           ouiaId="add-partition"
           data-testid="file-system-add-partition"
-          className="pf-v5-u-text-align-left"
+          className="pf-v6-u-text-align-left"
           variant="link"
           icon={<PlusCircleIcon />}
           onClick={handleAddPartition}
         >
           Add partition
         </Button>
-      </TextContent>
+      </Content>
     </>
   );
 };

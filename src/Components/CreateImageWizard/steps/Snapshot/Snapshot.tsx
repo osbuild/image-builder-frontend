@@ -7,7 +7,7 @@ import {
   FormGroup,
   Grid,
   Radio,
-  Text,
+  Content,
   Title,
 } from '@patternfly/react-core';
 
@@ -37,6 +37,7 @@ export default function Snapshot() {
           description="Use the newest repository content available when building this image."
           isChecked={useLatest}
           onChange={() => !useLatest && dispatch(changeUseLatest(true))}
+          className="pf-v6-u-pb-sm"
         />
         <Radio
           id="use snapshot date radio"
@@ -54,10 +55,10 @@ export default function Snapshot() {
             Use latest content
           </Title>
           <Grid>
-            <Text>
+            <Content component="p">
               Image Builder will automatically use the newest state of
               repositories when building this image.
-            </Text>
+            </Content>
           </Grid>
         </>
       ) : (
@@ -104,10 +105,10 @@ export default function Snapshot() {
             </Flex>
           </FormGroup>
           <Grid>
-            <Text>
+            <Content component="p">
               Image Builder will reflect the state of repositories based on the
               selected date when building this image.
-            </Text>
+            </Content>
           </Grid>
         </>
       )}

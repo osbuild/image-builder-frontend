@@ -1,6 +1,13 @@
 import React from 'react';
 
-import { Radio, Text, Form, Title, FormGroup } from '@patternfly/react-core';
+import {
+  Radio,
+  Content,
+  ContentVariants,
+  Form,
+  Title,
+  FormGroup,
+} from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -34,10 +41,10 @@ const Gcp = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Google Cloud Platform
       </Title>
-      <Text>
+      <Content>
         Select how to share your image. The image you create can be used to
         launch instances on GCP, regardless of which method you select.
-      </Text>
+      </Content>
       <FormGroup label="Select image sharing" isRequired>
         <Radio
           id="share-with-google"
@@ -45,12 +52,15 @@ const Gcp = () => {
           label="Share image with a Google account"
           name="radio-1"
           description={
-            <Text>
+            <Content
+              component={ContentVariants.small}
+              className="pf-v6-u-pb-sm"
+            >
               Your image will be uploaded to GCP and shared with the account you
               provide below.
               <b>The image expires in 14 days.</b> To keep permanent access to
               your image, copy it to your GCP project.
-            </Text>
+            </Content>
           }
           isChecked={shareMethod === 'withGoogle'}
           onChange={() => {
@@ -64,12 +74,12 @@ const Gcp = () => {
           label="Share image with Red Hat Insights only"
           name="radio-2"
           description={
-            <Text>
+            <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with Red Hat
               Insights.
               <b> The image expires in 14 days.</b> You cannot access or
               recreate this image in your GCP project.
-            </Text>
+            </Content>
           }
           isChecked={shareMethod === 'withInsights'}
           onChange={() => {

@@ -4,13 +4,8 @@ import {
   Alert,
   Button,
   Popover,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListVariants,
-  TextListItemVariants,
-  TextVariants,
+  Content,
+  ContentVariants,
   FormGroup,
   CodeBlock,
   CodeBlockCode,
@@ -93,7 +88,7 @@ import PopoverActivation from '../Registration/components/PopoverActivation';
 
 const ExpirationWarning = () => {
   return (
-    <div className="pf-v5-u-mr-sm pf-v5-u-font-size-sm pf-v5-u-warning-color-200">
+    <div className="pf-v6-u-mr-sm pf-v6-u-font-size-sm pf-v6-u-warning-color-200">
       <ExclamationTriangleIcon /> Expires 14 days after creation
     </div>
   );
@@ -109,38 +104,33 @@ export const ImageOutputList = () => {
     ? ON_PREM_RELEASES
     : RELEASES;
   return (
-    <TextContent>
+    <Content>
       {distribution === RHEL_8 && (
         <>
-          <Text className="pf-v5-u-font-size-sm">
+          <Content component="p" className="pf-v6-u-font-size-sm">
             {RELEASES.get(distribution)} will be supported through{' '}
             {toMonthAndYear(RHEL_8_FULL_SUPPORT[1])}, with optional ELS support
             through {toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[1])}. Consider
             building an image with {RELEASES.get(RHEL_9)} to extend the support
             period.
-          </Text>
+          </Content>
           <FormGroup label="Release lifecycle">
             <MajorReleasesLifecyclesChart />
           </FormGroup>
           <br />
         </>
       )}
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Release
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {releases.get(distribution)}
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Architecture
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>{arch}</TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+        <Content component={ContentVariants.dt}>Architecture</Content>
+        <Content component={ContentVariants.dd}>{arch}</Content>
+      </Content>
+    </Content>
   );
 };
 export const FSCList = () => {
@@ -150,16 +140,13 @@ export const FSCList = () => {
   const partitions = useAppSelector(selectPartitions);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Configuration type
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
+        </Content>
+        <Content
+          component={ContentVariants.dd}
           data-testid="partitioning-auto-manual"
         >
           {fileSystemConfigurationType === 'manual' ? 'Manual' : 'Automatic'}
@@ -178,24 +165,24 @@ export const FSCList = () => {
                   variant="link"
                   aria-label="File system configuration info"
                   aria-describedby="file-system-configuration-info"
-                  className="pf-v5-u-pt-0 pf-v5-u-pb-0"
+                  className="pf-v6-u-pt-0 pf-v6-u-pb-0"
                 >
                   View partitions
                 </Button>
               </Popover>
             </>
           )}
-        </TextListItem>
+        </Content>
         {fileSystemConfigurationType === 'manual' && (
           <>
-            <TextListItem component={TextListItemVariants.dt}>
+            <Content component={ContentVariants.dt}>
               Image size (minimum) <MinimumSizePopover />
-            </TextListItem>
+            </Content>
             <MinSize partitions={partitions} />
           </>
         )}
-      </TextList>
-    </TextContent>
+      </Content>
+    </Content>
   );
 };
 
@@ -219,9 +206,7 @@ export const MinSize = ({ partitions }: MinSizeProps) => {
     }
   }
 
-  return (
-    <TextListItem component={TextListItemVariants.dd}> {minSize} </TextListItem>
-  );
+  return <Content component={ContentVariants.dd}> {minSize} </Content>;
 };
 
 export const TargetEnvAWSList = () => {
@@ -243,40 +228,29 @@ export const TargetEnvAWSList = () => {
   );
 
   return (
-    <TextContent>
-      <Text component={TextVariants.h3}>{targetOptions.aws}</Text>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.h3}>{targetOptions.aws}</Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Image type
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           Red Hat hosted image
           <br />
           <ExpirationWarning />
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Shared to account
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {awsAccountId}
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
+        </Content>
+        <Content component={ContentVariants.dt}>Shared to account</Content>
+        <Content component={ContentVariants.dd}>{awsAccountId}</Content>
+        <Content component={ContentVariants.dt}>
           {awsShareMethod === 'sources' ? 'Source' : null}
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {isSuccess && awsShareMethod === 'sources' ? source?.name : null}
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dt}>
-          Default region
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          us-east-1
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+        <Content component={ContentVariants.dt}>Default region</Content>
+        <Content component={ContentVariants.dd}>us-east-1</Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -285,37 +259,30 @@ export const TargetEnvGCPList = () => {
   const sharedMethod = useAppSelector(selectGcpShareMethod);
   const email = useAppSelector(selectGcpEmail);
   return (
-    <TextContent>
-      <Text component={TextVariants.h3}>{targetOptions.gcp}</Text>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.h3}>{targetOptions.gcp}</Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Image type
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           Red Hat hosted image
           <br />
           <ExpirationWarning />
-        </TextListItem>
+        </Content>
         <>
           {sharedMethod === 'withInsights' ? (
             <>
-              <TextListItem component={TextListItemVariants.dt}>
-                Shared with
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              <Content component={ContentVariants.dt}>Shared with</Content>
+              <Content component={ContentVariants.dd}>
                 Red Hat Insights only
                 <br />
-              </TextListItem>
+              </Content>
             </>
           ) : (
             <>
-              <TextListItem component={TextListItemVariants.dt}>
-                Account type
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              <Content component={ContentVariants.dt}>Account type</Content>
+              <Content component={ContentVariants.dd}>
                 {accountType === 'group'
                   ? 'Google group'
                   : accountType === 'serviceAccount'
@@ -323,18 +290,18 @@ export const TargetEnvGCPList = () => {
                   : accountType === 'user'
                   ? 'Google account'
                   : 'Domain'}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dt}>
+              </Content>
+              <Content component={ContentVariants.dt}>
                 {accountType === 'domain' ? 'Domain' : 'Principal'}
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {email || accountType}
-              </TextListItem>
+              </Content>
             </>
           )}
         </>
-      </TextList>
-    </TextContent>
+      </Content>
+    </Content>
   );
 };
 
@@ -348,94 +315,71 @@ export const TargetEnvAzureList = () => {
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
 
   return (
-    <TextContent>
-      <Text component={TextVariants.h3}>{targetOptions.azure}</Text>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.h3}>{targetOptions.azure}</Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Image type
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           Red Hat hosted image
           <br />
           <ExpirationWarning />
-        </TextListItem>
+        </Content>
         {shareMethod === 'sources' && isSuccessAzureSources && (
           <>
-            <TextListItem component={TextListItemVariants.dt}>
-              Azure Source
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
+            <Content component={ContentVariants.dt}>Azure Source</Content>
+            <Content component={ContentVariants.dd}>
               {
                 rawAzureSources?.data?.find(
                   (source) => source.id === azureSource
                 )?.name
               }
-            </TextListItem>
+            </Content>
           </>
         )}
         {shareMethod === 'manual' && (
           <>
-            <TextListItem component={TextListItemVariants.dt}>
-              Azure tenant ID
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {tenantId}
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>
-              Subscription ID
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {subscriptionId}
-            </TextListItem>
+            <Content component={ContentVariants.dt}>Azure tenant ID</Content>
+            <Content component={ContentVariants.dd}>{tenantId}</Content>
+            <Content component={ContentVariants.dt}>Subscription ID</Content>
+            <Content component={ContentVariants.dd}>{subscriptionId}</Content>
           </>
         )}
-        <TextListItem component={TextListItemVariants.dt}>
-          Resource group
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
-          {azureResourceGroup}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        <Content component={ContentVariants.dt}>Resource group</Content>
+        <Content component={ContentVariants.dd}>{azureResourceGroup}</Content>
+      </Content>
+    </Content>
   );
 };
 
 export const TargetEnvOciList = () => {
   return (
-    <TextContent>
-      <Text component={TextVariants.h3}>{targetOptions.oci}</Text>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.h3}>{targetOptions.oci}</Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Object Storage URL
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           The URL for the built image will be ready to copy
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
 export const TargetEnvOtherList = () => {
   return (
     <>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Image type
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           Built image will be available for download
-        </TextListItem>
-      </TextList>
+        </Content>
+      </Content>
     </>
   );
 };
@@ -498,17 +442,17 @@ export const ContentList = () => {
 
   return (
     <>
-      <TextContent>
-        <TextList component={TextListVariants.dl}>
+      <Content>
+        <Content component={ContentVariants.dl}>
           <>
-            <TextListItem
-              component={TextListItemVariants.dt}
-              className="pf-v5-u-min-width"
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
             >
               Repeatable build
-            </TextListItem>
-            <TextListItem
-              component={TextListItemVariants.dd}
+            </Content>
+            <Content
+              component={ContentVariants.dd}
               data-testid="snapshot-method"
             >
               <Popover
@@ -529,7 +473,7 @@ export const ContentList = () => {
                 <Button
                   variant="link"
                   aria-label="Snapshot method"
-                  className="pf-v5-u-p-0"
+                  className="pf-v6-u-p-0"
                   isDisabled={noRepositoriesSelected || isLoading || isError}
                   isLoading={isLoading}
                 >
@@ -546,13 +490,11 @@ export const ContentList = () => {
               ) : (
                 ''
               )}
-            </TextListItem>
+            </Content>
           </>
-          <TextListItem component={TextListItemVariants.dt}>
-            Custom repositories
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dd}
+          <Content component={ContentVariants.dt}>Custom repositories</Content>
+          <Content
+            component={ContentVariants.dd}
             data-testid="custom-repositories-count"
           >
             {customRepositories?.length + recommendedRepositories.length > 0 ? (
@@ -566,7 +508,7 @@ export const ContentList = () => {
                 <Button
                   variant="link"
                   aria-label="About custom repositories"
-                  className="pf-v5-u-p-0"
+                  className="pf-v6-u-p-0"
                 >
                   {customRepositories?.length +
                     recommendedRepositories.length || 0}
@@ -575,15 +517,12 @@ export const ContentList = () => {
             ) : (
               0
             )}
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+          </Content>
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             Additional packages
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dd}
+          </Content>
+          <Content
+            component={ContentVariants.dd}
             data-testid="chosen-packages-count"
           >
             {packages?.length > 0 || groups?.length > 0 ? (
@@ -597,7 +536,7 @@ export const ContentList = () => {
                 <Button
                   variant="link"
                   aria-label="About packages"
-                  className="pf-v5-u-p-0"
+                  className="pf-v6-u-p-0"
                 >
                   {packages?.length + groups?.length}
                 </Button>
@@ -605,9 +544,9 @@ export const ContentList = () => {
             ) : (
               0
             )}
-          </TextListItem>
-        </TextList>
-      </TextContent>
+          </Content>
+        </Content>
+      </Content>
       {duplicatePackages.length > 0 && (
         <Alert
           title="Can not guarantee where some selected packages will come from"
@@ -625,19 +564,16 @@ export const ContentList = () => {
 
 export const RegisterLaterList = () => {
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Registration type
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           Register the system later
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -654,48 +590,45 @@ export const RegisterNowList = () => {
   );
   return (
     <>
-      <TextContent>
-        <TextList component={TextListVariants.dl}>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+      <Content>
+        <Content component={ContentVariants.dl}>
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             Registration type
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dd}
+          </Content>
+          <Content
+            component={ContentVariants.dd}
             data-testid="review-registration"
           >
-            <TextList isPlain>
+            <Content component="ul" isPlainList>
               {registrationType?.startsWith('register-now') && (
-                <TextListItem>
+                <Content component="li">
                   Register with Red Hat Subscription Manager (RHSM)
                   <br />
-                </TextListItem>
+                </Content>
               )}
               {(registrationType === 'register-now-insights' ||
                 registrationType === 'register-now-rhc') && (
-                <TextListItem>
+                <Content component="li">
                   Connect to Red Hat Insights
                   <br />
-                </TextListItem>
+                </Content>
               )}
               {registrationType === 'register-now-rhc' && (
-                <TextListItem>
+                <Content component="li">
                   Use remote host configuration (rhc) utility
                   <br />
-                </TextListItem>
+                </Content>
               )}
-            </TextList>
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dt}>
+            </Content>
+          </Content>
+          <Content component={ContentVariants.dt}>
             Activation key <PopoverActivation />
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             <ActivationKeyInformation />
-          </TextListItem>
-        </TextList>
-      </TextContent>
+          </Content>
+        </Content>
+      </Content>
       {isError && (
         <Alert
           title="Information about the activation key unavailable"
@@ -716,36 +649,34 @@ export const DetailsList = () => {
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
+    <Content>
+      <Content component={ContentVariants.dl}>
         {blueprintName && (
           <>
-            <TextListItem
-              component={TextListItemVariants.dt}
-              className="pf-v5-u-min-width"
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
             >
               Blueprint name
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {blueprintName}
-            </TextListItem>
+            </Content>
+            <Content component={ContentVariants.dd}>{blueprintName}</Content>
           </>
         )}
         {blueprintDescription && (
           <>
-            <TextListItem
-              component={TextListItemVariants.dt}
-              className="pf-v5-u-min-width"
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
             >
               Description
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
+            </Content>
+            <Content component={ContentVariants.dd}>
               {blueprintDescription}
-            </TextListItem>
+            </Content>
           </>
         )}
-      </TextList>
-    </TextContent>
+      </Content>
+    </Content>
   );
 };
 
@@ -758,28 +689,22 @@ export const TimezoneList = () => {
   const ntpServers = useAppSelector(selectNtpServers);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Timezone
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {timezone ? timezone : 'None'}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           NTP servers
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {ntpServers && ntpServers.length > 0 ? ntpServers.join(', ') : 'None'}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -795,48 +720,36 @@ export const UsersList = () => {
   const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
+    <Content>
+      <Content component={ContentVariants.dl}>
         <>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             Username
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             {userName ? userName : 'None'}
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+          </Content>
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             Password
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             {userPassword ? '●'.repeat(8) : 'None'}
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+          </Content>
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             SSH key
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             {userSshKey ? userSshKey : 'None'}
-          </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width"
-          >
+          </Content>
+          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
             Administrator
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
+          </Content>
+          <Content component={ContentVariants.dd}>
             {userIsAdministrator ? 'True' : 'False'}
-          </TextListItem>
+          </Content>
         </>
-      </TextList>
-    </TextContent>
+      </Content>
+    </Content>
   );
 };
 
@@ -845,28 +758,22 @@ export const LocaleList = () => {
   const keyboard = useAppSelector(selectKeyboard);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Languages
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {languages && languages.length > 0 ? languages.join(', ') : 'None'}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Keyboard
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {keyboard ? keyboard : 'None'}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -874,19 +781,16 @@ export const HostnameList = () => {
   const hostname = useAppSelector(selectHostname);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Hostname
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {hostname ? hostname : 'None'}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -894,24 +798,18 @@ export const KernelList = () => {
   const kernel = useAppSelector(selectKernel);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Name
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {kernel.name ? kernel.name : 'None'}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Append
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {kernel.append.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{kernel.append.join(' ')}</CodeBlockCode>
@@ -919,9 +817,9 @@ export const KernelList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -929,15 +827,12 @@ export const FirewallList = () => {
   const firewall = useAppSelector(selectFirewall);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Ports
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {firewall.ports.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{firewall.ports.join(' ')}</CodeBlockCode>
@@ -945,14 +840,11 @@ export const FirewallList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Disabled services
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {firewall.services.disabled.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>
@@ -962,14 +854,11 @@ export const FirewallList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Enabled services
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {firewall.services.enabled.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>
@@ -979,9 +868,9 @@ export const FirewallList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -989,15 +878,12 @@ export const ServicesList = () => {
   const services = useAppSelector(selectServices);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Disabled
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {services.disabled.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{services.disabled.join(' ')}</CodeBlockCode>
@@ -1005,14 +891,11 @@ export const ServicesList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Masked
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {services.masked.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{services.masked.join(' ')}</CodeBlockCode>
@@ -1020,14 +903,11 @@ export const ServicesList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Enabled
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {services.enabled.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{services.enabled.join(' ')}</CodeBlockCode>
@@ -1035,9 +915,9 @@ export const ServicesList = () => {
           ) : (
             'None'
           )}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
 
@@ -1045,18 +925,15 @@ export const FirstBootList = () => {
   const isFirstbootEnabled = !!useAppSelector(selectFirstBootScript);
 
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
+    <Content>
+      <Content component={ContentVariants.dl}>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           First boot script
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>
+        </Content>
+        <Content component={ContentVariants.dd}>
           {isFirstbootEnabled ? 'Enabled' : 'Disabled'}
-        </TextListItem>
-      </TextList>
-    </TextContent>
+        </Content>
+      </Content>
+    </Content>
   );
 };
