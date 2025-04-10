@@ -29,17 +29,13 @@ import {
   selectImageTypes,
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
   const { isFedoraEnv } = useGetEnvironment();
-  const wslFlag = useFlag('image-builder.wsl.enabled');
 
   const { data } = useGetArchitecturesQuery(
     {
@@ -353,7 +349,7 @@ const TargetEnvironment = () => {
             data-testid="checkbox-image-installer"
           />
         )}
-        {supportedEnvironments?.includes('wsl') && wslFlag && (
+        {supportedEnvironments?.includes('wsl') && (
           <Checkbox
             label={
               <>
