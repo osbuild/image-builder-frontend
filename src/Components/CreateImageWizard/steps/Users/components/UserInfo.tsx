@@ -116,7 +116,7 @@ const UserInfo = () => {
         {users.map((user, index) => (
           <Tab
             aria-label={`User ${user.name} tab`}
-            key={user.name}
+            key={index}
             eventKey={index}
             title={<TabTitleText>{user.name || 'New user'}</TabTitleText>}
           >
@@ -167,7 +167,7 @@ const UserInfo = () => {
                 }
                 onChange={(_e, value) => handleCheckboxChange(_e, value)}
                 aria-label="Administrator"
-                id="user Administrator"
+                id={`${user.name}-${index}`}
                 name="user Administrator"
               />
             </FormGroup>
