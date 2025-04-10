@@ -3,7 +3,6 @@ import React from 'react';
 import {
   DropEvent,
   FileUpload,
-  Form,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -24,13 +23,11 @@ const SatelliteRegistration = () => {
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
   const [isRejected, setIsRejected] = React.useState(false);
   const stepValidation = useRegistrationValidation();
-  const validated =
-    stepValidation.errors['certificate'] === 'default'
-      ? 'default'
-      : stepValidation.errors['certificate']
-      ? 'error'
-      : 'success';
-
+  const validated = stepValidation.errors['certificate']
+    ? 'error'
+    : stepValidation.errors['certificate'] === undefined && caCertificate
+    ? 'success'
+    : 'default';
   const handleClear = () => {
     dispatch(changeSatelliteCaCertificate(''));
   };
@@ -51,7 +48,7 @@ const SatelliteRegistration = () => {
     setIsRejected(true);
   };
   return (
-    <Form>
+    <>
       <SatelliteRegistrationCommand />
       <FormGroup label="Certificate authority (CA)" isRequired>
         <FileUpload
@@ -72,7 +69,7 @@ const SatelliteRegistration = () => {
             maxSize: 512000,
             onDropRejected: handleFileRejected,
           }}
-          validated={isRejected ? 'error' : 'default'}
+          validated={isRejected ? 'error' : validated}
           browseButtonText="Upload"
           allowEditingUploadedText={true}
         />
@@ -80,7 +77,11 @@ const SatelliteRegistration = () => {
           <HelperText>
             <HelperTextItem
               variant={
-                isRejected || validated === 'error' ? 'error' : 'default'
+                isRejected || validated === 'error'
+                  ? 'error'
+                  : validated === 'success'
+                  ? 'success'
+                  : 'default'
               }
               hasIcon
             >
@@ -88,12 +89,14 @@ const SatelliteRegistration = () => {
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
                 : validated === 'error'
                 ? stepValidation.errors['certificate']
+                : validated === 'success'
+                ? 'Certificate was uploaded'
                 : 'Drag and drop a valid certificate file or upload one'}
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
       </FormGroup>
-    </Form>
+    </>
   );
 };
 

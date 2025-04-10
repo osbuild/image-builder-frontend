@@ -14,6 +14,11 @@ import {
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
+import {
+  CERTIFICATE,
+  SATELLITE_COMMAND,
+  SATELLITE_COMMAND_EXPIRED_TOKEN,
+} from '../../../../fixtures/customizations';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
 import {
@@ -29,6 +34,8 @@ import {
   clickBack,
   verifyCancelButton,
   clickReviewAndFinish,
+  getNextButton,
+  clickRegisterSatellite,
 } from '../../wizardTestUtils';
 
 const localStorageMock = (() => {
@@ -86,6 +93,29 @@ const selectActivationKey = async (key: string) => {
   });
   user.click(activationKey);
   await screen.findByDisplayValue(key);
+};
+
+const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
+  const user = userEvent.setup({ delay: null });
+  const satelliteRegistrationCommand = await screen.findByPlaceholderText(
+    /registration command/i
+  );
+
+  await waitFor(() => user.type(satelliteRegistrationCommand, command));
+};
+
+const uploadFile = async (scriptName: string): Promise<void> => {
+  const user = userEvent.setup();
+  const fileInput: HTMLElement | null =
+    // eslint-disable-next-line testing-library/no-node-access
+    document.querySelector('input[type="file"]');
+
+  if (fileInput) {
+    const file = new File([scriptName], 'certificate.pem', {
+      type: 'application/x-pem-file',
+    });
+    await waitFor(() => user.upload(fileInput, file));
+  }
 };
 
 const goToReviewStep = async () => {
@@ -388,6 +418,29 @@ describe('Registration request generated correctly', () => {
 
     // clear mocked values in localStorage so they don't affect following tests
     localStorage.clear();
+  });
+
+  test('register with satellite', async () => {
+    await renderCreateMode();
+    await goToRegistrationStep();
+    await clickRegisterSatellite();
+
+    const nextButton = await getNextButton();
+    expect(nextButton).toBeDisabled();
+
+    await uploadFile(CERTIFICATE);
+    expect(nextButton).toBeDisabled();
+    await addSatelliteRegistrationCommandViaKeyDown(
+      SATELLITE_COMMAND_EXPIRED_TOKEN
+    );
+
+    const expiredTokenHelper = await screen.findByText(
+      /The token is already expired or will expire by next day. Expiration date/i
+    );
+    await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
+
+    await addSatelliteRegistrationCommandViaKeyDown(SATELLITE_COMMAND);
+    expect(nextButton).toBeEnabled();
   });
 });
 
