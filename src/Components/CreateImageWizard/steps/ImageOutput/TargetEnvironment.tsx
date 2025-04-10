@@ -11,7 +11,7 @@ import {
   TextVariants,
   Tile,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
+import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
@@ -355,7 +355,52 @@ const TargetEnvironment = () => {
         )}
         {supportedEnvironments?.includes('wsl') && wslFlag && (
           <Checkbox
-            label="WSL - Windows Subsystem for Linux (.tar.gz)"
+            label={
+              <>
+                WSL - Windows Subsystem for Linux (.tar.gz)
+                <Popover
+                  maxWidth="30rem"
+                  position="right"
+                  headerContent={
+                    <TextContent>
+                      <Text>
+                        WSL is not officially supported by Red Hat.
+                      </Text>
+                    </TextContent>
+                  }
+                  bodyContent={
+                    <TextContent>
+                      <Text>
+                        Unfortunately Windows Subsystem for Linux is currently
+                        not supported by Red Hat.
+                      </Text>
+                    </TextContent>
+                  }
+                  footerContent={
+                    <Button
+                          component="a"
+                          target="_blank"
+                          variant="link"
+                          icon={<ExternalLinkAltIcon />}
+                          iconPosition="right"
+                          isInline
+                          href="https://access.redhat.com/solutions/6338661"
+                        >
+                      Learn more
+                    </Button>
+                  }
+                >
+                  <Button
+                    className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                    variant="plain"
+                    aria-label="About WSL file"
+                    isInline
+                  >
+                    <HelpIcon />
+                  </Button>
+                </Popover>
+              </>
+            }
             isChecked={environments.includes('wsl')}
             onChange={() => {
               handleToggleEnvironment('wsl');
