@@ -465,10 +465,6 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               if (upload_request.type === 'aws') {
                 upload_request.upload_options = {
                   ...upload_request.options,
-                  // TODO: maybe read this from the osbuild-worker
-                  // file? Or configure the image-request to save
-                  // this (it's hardcoded on-prem though)
-                  region: 'eu-west-1',
                 };
               }
 

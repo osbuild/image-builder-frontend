@@ -84,6 +84,7 @@ import {
   selectUsers,
   selectMetadata,
   selectFirewall,
+  selectAwsRegion,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -483,9 +484,18 @@ const getImageOptions = (
   | GcpUploadRequestOptions => {
   switch (imageType) {
     case 'aws':
-      if (selectAwsShareMethod(state) === 'sources')
+      if (selectAwsShareMethod(state) === 'sources') {
         return { share_with_sources: [selectAwsSourceId(state) || ''] };
-      else return { share_with_accounts: [selectAwsAccountId(state)] };
+      } else {
+        const options: AwsUploadRequestOptions = {
+          share_with_accounts: [selectAwsAccountId(state)],
+        };
+        const region = selectAwsRegion(state);
+        if (region) {
+          options.region = region;
+        }
+        return options;
+      }
     case 'azure':
       if (selectAzureShareMethod(state) === 'sources')
         return {
