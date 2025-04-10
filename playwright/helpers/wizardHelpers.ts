@@ -13,7 +13,7 @@ export const createBlueprint = async (
   blueprintName: string
 ) => {
   await page.getByRole('button', { name: 'Create blueprint' }).click();
-  await page.getByTestId('close-button-saveandbuild-modal').click();
+  await page.getByRole('button', { name: 'Close' }).first().click();
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
   await page
@@ -35,10 +35,15 @@ export const fillInDetails = async (
   blueprintName: string
 ) => {
   await page.getByRole('listitem').filter({ hasText: 'Details' }).click();
-  await page.getByTestId('blueprint').click();
-  await page.getByTestId('blueprint').fill(blueprintName);
-  await expect(page.getByTestId('blueprint')).toHaveValue(blueprintName);
-  await page.getByTestId('blueprint description').fill('Testing blueprint');
+  await page
+    .getByRole('textbox', { name: 'Blueprint name' })
+    .fill(blueprintName);
+  await expect(
+    page.getByRole('textbox', { name: 'Blueprint name' })
+  ).toHaveValue(blueprintName);
+  await page
+    .getByRole('textbox', { name: 'Blueprint description' })
+    .fill('Testing blueprint');
   await page.getByRole('button', { name: 'Next' }).click();
 };
 
@@ -50,7 +55,7 @@ export const fillInDetails = async (
 export const registerLater = async (page: Page | FrameLocator) => {
   if (isHosted()) {
     await page.getByRole('button', { name: 'Register' }).click();
-    await page.getByTestId('register-later-radio').click();
+    await page.getByRole('radio', { name: 'Register later' }).click();
   }
 };
 
@@ -59,7 +64,7 @@ export const registerLater = async (page: Page | FrameLocator) => {
  * @param page - the page object
  */
 export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
-  await page.getByTestId('checkbox-guest-image').click();
+  await page.getByRole('checkbox', { name: 'Virtualization' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
 };
 
@@ -82,7 +87,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
         .locator('.pf-v5-c-card__title-text')
         .getByText(blueprintName)
         .click();
-      await frame.getByTestId('blueprint-action-menu-toggle').click();
+      await frame.getByRole('button', { name: 'Menu toggle' }).click();
       await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
       await frame.getByRole('button', { name: 'Delete' }).click();
     },
@@ -97,7 +102,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
  */
 export const exportBlueprint = async (page: Page) => {
   if (isHosted()) {
-    await page.getByTestId('blueprint-action-menu-toggle').click();
+    await page.getByRole('button', { name: 'Menu toggle' }).click();
     const downloadPromise = page.waitForEvent('download');
     await page
       .getByRole('menuitem', { name: 'Download blueprint (.json)' })
@@ -114,7 +119,7 @@ export const exportBlueprint = async (page: Page) => {
  */
 export const importBlueprint = async (page: Page | FrameLocator) => {
   if (isHosted()) {
-    await page.getByTestId('import-blueprint-button').click();
+    await page.getByRole('button', { name: 'Import' }).click();
     const dragBoxSelector = page.locator('.pf-v5-c-file-upload');
     await dragBoxSelector
       .locator('input[type=file]')
@@ -122,6 +127,6 @@ export const importBlueprint = async (page: Page | FrameLocator) => {
     await expect(
       page.getByRole('textbox', { name: 'File upload' })
     ).not.toBeEmpty();
-    await page.getByTestId('import-blueprint-finish').click();
+    await page.getByRole('button', { name: 'Review and Finish' }).click();
   }
 };

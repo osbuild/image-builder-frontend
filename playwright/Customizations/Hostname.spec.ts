@@ -36,7 +36,6 @@ test('Create a blueprint with Hostname customization', async ({
 
   await test.step('Select and fill the Hostname step', async () => {
     await frame.getByRole('button', { name: 'Hostname' }).click();
-    await frame.getByRole('textbox', { name: 'hostname input' }).click();
     await frame.getByRole('textbox', { name: 'hostname input' }).fill(hostname);
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
@@ -51,7 +50,7 @@ test('Create a blueprint with Hostname customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByTestId('revisit-hostname').click();
+    await frame.getByLabel('Revisit Hostname step').click();
     await frame.getByRole('textbox', { name: 'hostname input' }).click();
     await frame
       .getByRole('textbox', { name: 'hostname input' })
