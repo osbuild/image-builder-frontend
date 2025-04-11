@@ -79,6 +79,7 @@ import {
   selectUserAdministrator,
   selectFirewall,
   selectServices,
+  selectAwsRegion,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
@@ -230,6 +231,7 @@ export const TargetEnvAWSList = () => {
   });
   const awsAccountId = useAppSelector(selectAwsAccountId);
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
+  const awsRegion = useAppSelector(selectAwsRegion);
   const sourceId = useAppSelector(selectAwsSourceId);
   const { source } = useGetSourceListQuery(
     {
@@ -273,7 +275,7 @@ export const TargetEnvAWSList = () => {
           Default region
         </TextListItem>
         <TextListItem component={TextListItemVariants.dd}>
-          us-east-1
+          {awsRegion ? awsRegion : 'us-east-1'}
         </TextListItem>
       </TextList>
     </TextContent>
