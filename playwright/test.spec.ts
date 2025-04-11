@@ -1,7 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { login, ibFrame, isHosted } from './lib/lib';
+import { isHosted } from './helpers/helpers';
+import { login } from './helpers/login';
+import { ibFrame } from './helpers/navHelpers';
 
 test.describe.serial('test', () => {
   const blueprintName = uuidv4();
@@ -76,7 +78,9 @@ test.describe.serial('test', () => {
     await frame.getByTestId('close-button-saveandbuild-modal').click();
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
-    await frame.getByText(blueprintName);
+    await expect(
+      frame.locator('.pf-v5-c-card__title-text').getByText(blueprintName)
+    ).toBeVisible();
   });
 
   test('edit blueprint', async ({ page }) => {

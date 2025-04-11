@@ -60,3 +60,6 @@ overrides:
     extends: "plugin:testing-library/react"
   - files: ["playwright/**/*.ts"]
     extends: "plugin:playwright/recommended"
+    rules:
+      playwright/no-conditional-in-test: off
+      playwright/no-conditional-expect: off
