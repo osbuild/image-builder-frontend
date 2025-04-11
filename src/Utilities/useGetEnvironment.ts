@@ -44,6 +44,7 @@ const onPremFlag = (flag: string): boolean => {
     case 'image-builder.kernel.enabled':
     case 'image-builder.firewall.enabled':
     case 'image-builder.services.enabled':
+    case 'image-builder.templates.enabled':
       return true;
     default:
       return false;
