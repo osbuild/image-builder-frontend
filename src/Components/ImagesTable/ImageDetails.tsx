@@ -139,7 +139,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
   const { analytics, auth } = useChrome();
   useEffect(() => {
     (async () => {
-      const data = await auth.getUser();
+      const data = await auth?.getUser();
       setUserData(data);
     })();
   }, [auth]);
