@@ -359,9 +359,7 @@ const TargetEnvironment = () => {
                   position="right"
                   headerContent={
                     <TextContent>
-                      <Text>
-                        WSL is not officially supported by Red Hat.
-                      </Text>
+                      <Text>WSL is not officially supported by Red Hat</Text>
                     </TextContent>
                   }
                   bodyContent={
@@ -374,14 +372,14 @@ const TargetEnvironment = () => {
                   }
                   footerContent={
                     <Button
-                          component="a"
-                          target="_blank"
-                          variant="link"
-                          icon={<ExternalLinkAltIcon />}
-                          iconPosition="right"
-                          isInline
-                          href="https://access.redhat.com/solutions/6338661"
-                        >
+                      component="a"
+                      target="_blank"
+                      variant="link"
+                      icon={<ExternalLinkAltIcon />}
+                      iconPosition="right"
+                      isInline
+                      href="https://access.redhat.com/solutions/6338661"
+                    >
                       Learn more
                     </Button>
                   }
