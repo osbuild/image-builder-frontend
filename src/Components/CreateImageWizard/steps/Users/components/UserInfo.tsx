@@ -18,6 +18,7 @@ import {
   selectUserGroupsByIndex,
   addUserGroupByIndex,
   removeUserGroupByIndex,
+  selectHasPasswordByIndex,
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
@@ -38,6 +39,8 @@ const UserInfo = () => {
   const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
   const userGroupsSelector = selectUserGroupsByIndex(index);
   const userGroups = useAppSelector(userGroupsSelector);
+  const userHasPasswordSelector = selectHasPasswordByIndex(index);
+  const userHasPassword = useAppSelector(userHasPasswordSelector);
 
   const handleNameChange = (
     _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -92,6 +95,7 @@ const UserInfo = () => {
         ariaLabel="blueprint user password"
         placeholder="Enter password"
         onChange={(_e, value) => handlePasswordChange(_e, value)}
+        hasPassword={userHasPassword}
       />
       <FormGroup isRequired label="SSH key">
         <ValidatedInputAndTextArea

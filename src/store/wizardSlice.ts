@@ -439,6 +439,11 @@ export const selectUserGroupsByIndex =
     return state.wizard.users[userIndex]?.groups;
   };
 
+export const selectHasPasswordByIndex =
+  (userIndex: number) => (state: RootState) => {
+    return state.wizard.users[userIndex]?.hasPassword;
+  };
+
 export const selectKernel = (state: RootState) => {
   return state.wizard.kernel;
 };
@@ -1017,6 +1022,7 @@ export const wizardSlice = createSlice({
         ssh_key: '',
         groups: [],
         isAdministrator: false,
+        hasPassword: false,
       };
 
       state.users.push(newUser);
