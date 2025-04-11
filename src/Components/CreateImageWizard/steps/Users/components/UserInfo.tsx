@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
+import calculateNewIndex from './calculateNewIndex';
 import RemoveUserModal from './RemoveUserModal';
 
 import { GENERATING_SSH_KEY_PAIRS_URL } from '../../../../../constants';
@@ -23,6 +24,7 @@ import {
   selectUsers,
   addUserGroupByIndex,
   removeUserGroupByIndex,
+  removeUser,
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
@@ -52,8 +54,23 @@ const UserInfo = () => {
   };
 
   const onClose = (_event: React.MouseEvent, tabIndex: number) => {
-    setShowRemoveUserModal(true);
-    setTabIndex(tabIndex);
+    if (
+      users[tabIndex].name === '' &&
+      users[tabIndex].password === '' &&
+      users[tabIndex].ssh_key === ''
+    ) {
+      const nextTabIndex = calculateNewIndex(
+        tabIndex,
+        activeTabKey,
+        users.length
+      );
+      setActiveTabKey(nextTabIndex);
+      setIndex(nextTabIndex);
+      dispatch(removeUser(tabIndex));
+    } else {
+      setShowRemoveUserModal(true);
+      setTabIndex(tabIndex);
+    }
   };
 
   const handleNameChange = (
@@ -105,7 +122,7 @@ const UserInfo = () => {
         tabIndex={tabIndex}
         setIndex={setIndex}
         isOpen={showRemoveUserModal}
-        userName={users[tabIndex].name}
+        userName={users[tabIndex] ? users[tabIndex].name : ''}
       />
       <Tabs
         aria-label="Users tabs"

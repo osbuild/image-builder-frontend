@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Button, Modal } from '@patternfly/react-core';
 
+import calculateNewIndex from './calculateNewIndex';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { removeUser, selectUsers } from '../../../../../store/wizardSlice';
 
@@ -32,16 +34,11 @@ const RemoveUserModal = ({
   };
 
   const onConfirm = () => {
-    const tabIndexNum = tabIndex;
-    let nextTabIndex = activeTabKey;
-
-    if (tabIndexNum < activeTabKey) {
-      // if a preceding tab is closing, keep focus on the new index of the current tab
-      nextTabIndex = activeTabKey - 1 > 0 ? activeTabKey - 1 : 0;
-    } else if (activeTabKey === users.length - 1) {
-      // if the closing tab is the last tab, focus the preceding tab
-      nextTabIndex = users.length - 2 >= 0 ? users.length - 2 : 0;
-    }
+    const nextTabIndex = calculateNewIndex(
+      tabIndex,
+      activeTabKey,
+      users.length
+    );
 
     setActiveTabKey(nextTabIndex);
     setIndex(nextTabIndex);
@@ -51,7 +48,7 @@ const RemoveUserModal = ({
 
   return (
     <Modal
-      title={`Remove user ${userName}?`}
+      title={`Remove user${userName ? ` ${userName}` : ''}?`}
       isOpen={isOpen}
       onClose={onClose}
       width="50%"
