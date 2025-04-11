@@ -105,6 +105,7 @@ const UserInfo = () => {
         tabIndex={tabIndex}
         setIndex={setIndex}
         isOpen={showRemoveUserModal}
+        userName={users[tabIndex].name}
       />
       <Tabs
         aria-label="Users tabs"

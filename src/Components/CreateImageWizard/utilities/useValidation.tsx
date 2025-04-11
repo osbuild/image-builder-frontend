@@ -487,7 +487,8 @@ export function useUsersValidation(): UsersStepValidation {
       users[index].password,
       environments.includes('azure')
     ).isValid;
-    const passwordError = !isPasswordValid ? 'Invalid password' : '';
+    const passwordError =
+      users[index].password && !isPasswordValid ? 'Invalid password' : '';
 
     if (
       userNameError ||

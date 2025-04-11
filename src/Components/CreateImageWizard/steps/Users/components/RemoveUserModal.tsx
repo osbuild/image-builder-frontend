@@ -12,6 +12,7 @@ type RemoveUserModalProps = {
   tabIndex: number;
   setIndex: React.Dispatch<React.SetStateAction<number>>;
   isOpen: boolean;
+  userName: string;
 };
 
 const RemoveUserModal = ({
@@ -21,6 +22,7 @@ const RemoveUserModal = ({
   tabIndex,
   setIndex,
   isOpen,
+  userName,
 }: RemoveUserModalProps) => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
@@ -49,7 +51,7 @@ const RemoveUserModal = ({
 
   return (
     <Modal
-      title="Remove user?"
+      title={`Remove user ${userName}?`}
       isOpen={isOpen}
       onClose={onClose}
       width="50%"
