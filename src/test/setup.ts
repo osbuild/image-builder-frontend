@@ -24,6 +24,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
           identity: {
             internal: {
               org_id: 5,
+              account_id: 5,
             },
           },
         };
