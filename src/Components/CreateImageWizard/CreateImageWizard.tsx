@@ -10,6 +10,7 @@ import {
   PageSection,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
@@ -57,7 +58,13 @@ import {
   isGcpEmailValid,
 } from './validators';
 
-import { RHEL_8, RHEL_10_BETA, AARCH64, CENTOS_9 } from '../../constants';
+import {
+  RHEL_8,
+  RHEL_10_BETA,
+  AARCH64,
+  CENTOS_9,
+  AMPLITUDE_MODULE_NAME,
+} from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -97,14 +104,24 @@ export const CustomWizardFooter = ({
   beforeNext,
   optional: optional,
 }: CustomWizardFooterPropType) => {
-  const { goToNextStep, goToPrevStep, goToStepById, close } =
+  const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
     useWizardContext();
+  const { analytics } = useChrome();
+  const nextBtnID = 'wizard-next-btn';
+  const backBtnID = 'wizard-back-btn';
+  const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
+  const cancelBtnID = 'wizard-cancel-btn';
   return (
     <WizardFooterWrapper>
       <Button
-        ouiaId="wizard-next-btn"
+        ouiaId={nextBtnID}
         variant="primary"
         onClick={() => {
+          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+            module: AMPLITUDE_MODULE_NAME,
+            button_id: nextBtnID,
+            active_step_id: activeStep.id,
+          });
           if (!beforeNext || beforeNext()) goToNextStep();
         }}
         isDisabled={disableNext}
@@ -112,18 +129,30 @@ export const CustomWizardFooter = ({
         Next
       </Button>
       <Button
-        ouiaId="wizard-back-btn"
+        ouiaId={backBtnID}
         variant="secondary"
-        onClick={goToPrevStep}
+        onClick={() => {
+          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+            module: AMPLITUDE_MODULE_NAME,
+            button_id: backBtnID,
+            active_step_id: activeStep.id,
+          });
+          goToPrevStep();
+        }}
         isDisabled={disableBack || false}
       >
         Back
       </Button>
       {optional && (
         <Button
-          ouiaId="wizard-review-and-finish-btn"
+          ouiaId={reviewAndFinishBtnID}
           variant="tertiary"
           onClick={() => {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+              module: AMPLITUDE_MODULE_NAME,
+              button_id: reviewAndFinishBtnID,
+              active_step_id: activeStep.id,
+            });
             if (!beforeNext || beforeNext()) goToStepById('step-review');
           }}
           isDisabled={disableNext}
@@ -131,7 +160,18 @@ export const CustomWizardFooter = ({
           Review and finish
         </Button>
       )}
-      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
+      <Button
+        ouiaId={cancelBtnID}
+        variant="link"
+        onClick={() => {
+          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+            module: AMPLITUDE_MODULE_NAME,
+            button_id: cancelBtnID,
+            active_step_id: activeStep.id,
+          });
+          close();
+        }}
+      >
         Cancel
       </Button>
     </WizardFooterWrapper>
