@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
 import { blueprintsSlice } from './BlueprintSlice';
+import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
 import { cockpitApi } from './cockpit/cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
@@ -28,6 +29,7 @@ export const serviceReducer = combineReducers({
   [complianceApi.reducerPath]: complianceApi.reducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
+  cloudConfig: cloudProviderConfigSlice.reducer,
 });
 
 export const onPremReducer = combineReducers({
@@ -41,6 +43,7 @@ export const onPremReducer = combineReducers({
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
+  cloudConfig: cloudProviderConfigSlice.reducer,
 });
 
 startAppListening({
@@ -95,7 +98,7 @@ startAppListening({
       (elem) => elem.arch === architecture
     )?.image_types;
 
-    const filteredImageTypes = imageTypes.filter((imageType) =>
+    const filteredImageTypes = imageTypes.filter((imageType: string) =>
       allowedImageTypes?.includes(imageType)
     );
 
