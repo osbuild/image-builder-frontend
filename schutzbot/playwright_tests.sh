@@ -80,5 +80,5 @@ sudo podman run \
      --privileged  \
      --rm \
      --init \
-     mcr.microsoft.com/playwright:v1.50.1-noble \
-     /bin/sh -c "cd tests && npx -y playwright@1.50.1 test"
+     mcr.microsoft.com/playwright:v1.51.1-noble \
+     /bin/sh -c "cd tests && npx -y playwright@1.51.1 test"
