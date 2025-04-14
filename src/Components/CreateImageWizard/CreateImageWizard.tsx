@@ -387,7 +387,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             id="step-target-environment"
             isHidden={
               !targetEnvironments.find(
-                (target) =>
+                (target: string) =>
                   target === 'aws' || target === 'gcp' || target === 'azure'
               )
             }
