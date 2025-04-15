@@ -117,11 +117,13 @@ export const CustomWizardFooter = ({
         ouiaId={nextBtnID}
         variant="primary"
         onClick={() => {
-          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-            module: AMPLITUDE_MODULE_NAME,
-            button_id: nextBtnID,
-            active_step_id: activeStep.id,
-          });
+          if (!process.env.IS_ON_PREMISE) {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+              module: AMPLITUDE_MODULE_NAME,
+              button_id: nextBtnID,
+              active_step_id: activeStep.id,
+            });
+          }
           if (!beforeNext || beforeNext()) goToNextStep();
         }}
         isDisabled={disableNext}
@@ -132,11 +134,13 @@ export const CustomWizardFooter = ({
         ouiaId={backBtnID}
         variant="secondary"
         onClick={() => {
-          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-            module: AMPLITUDE_MODULE_NAME,
-            button_id: backBtnID,
-            active_step_id: activeStep.id,
-          });
+          if (!process.env.IS_ON_PREMISE) {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+              module: AMPLITUDE_MODULE_NAME,
+              button_id: backBtnID,
+              active_step_id: activeStep.id,
+            });
+          }
           goToPrevStep();
         }}
         isDisabled={disableBack || false}
@@ -148,11 +152,13 @@ export const CustomWizardFooter = ({
           ouiaId={reviewAndFinishBtnID}
           variant="tertiary"
           onClick={() => {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-              module: AMPLITUDE_MODULE_NAME,
-              button_id: reviewAndFinishBtnID,
-              active_step_id: activeStep.id,
-            });
+            if (!process.env.IS_ON_PREMISE) {
+              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                module: AMPLITUDE_MODULE_NAME,
+                button_id: reviewAndFinishBtnID,
+                active_step_id: activeStep.id,
+              });
+            }
             if (!beforeNext || beforeNext()) goToStepById('step-review');
           }}
           isDisabled={disableNext}
@@ -164,11 +170,13 @@ export const CustomWizardFooter = ({
         ouiaId={cancelBtnID}
         variant="link"
         onClick={() => {
-          analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-            module: AMPLITUDE_MODULE_NAME,
-            button_id: cancelBtnID,
-            active_step_id: activeStep.id,
-          });
+          if (!process.env.IS_ON_PREMISE) {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+              module: AMPLITUDE_MODULE_NAME,
+              button_id: cancelBtnID,
+              active_step_id: activeStep.id,
+            });
+          }
           close();
         }}
       >
