@@ -674,7 +674,12 @@ export const complianceBlueprintResponse: BlueprintResponse = {
   id: mockBlueprintIds['compliance'],
   description: mockBlueprintDescriptions['compliance'],
   lint: {
-    errors: [],
+    errors: [
+      {
+        name: 'compliance',
+        description: "some thingy isn't right",
+      },
+    ],
   },
 };
 
