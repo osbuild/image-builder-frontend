@@ -7,12 +7,33 @@ import { http, HttpResponse } from 'msw';
 import CreateImageWizard from '../../../Components/CreateImageWizard';
 import LandingPage from '../../../Components/LandingPage/LandingPage';
 import { IMAGE_BUILDER_API } from '../../../constants';
-import { emptyGetBlueprints } from '../../fixtures/blueprints';
+import {
+  emptyGetBlueprints,
+  mockBlueprintIds,
+} from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
+  const blueprint = await screen.findByTestId(bpId);
+  await waitFor(() => user.click(blueprint));
+  return blueprint;
+};
+
+const selectBlueprintByNameAndId = async (name: string, bpId: string) => {
+  const user = userEvent.setup();
+  const search = await screen.findByRole('textbox', {
+    name: /search input/i,
+  });
+
+  await waitFor(() => user.clear(search));
+  await waitFor(() => user.type(search, name));
+  expect(screen.getByRole('textbox', { name: /search input/i })).toHaveValue(
+    name
+  );
+
+  await screen.findByText('compliance');
   const blueprint = await screen.findByTestId(bpId);
   await waitFor(() => user.click(blueprint));
   return blueprint;
@@ -165,6 +186,25 @@ describe('Blueprints', () => {
         /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./
       )
     ).not.toBeInTheDocument();
+  });
+
+  test('blueprint linting and fixing', async () => {
+    renderCustomRoutesWithReduxRouter();
+
+    const id = mockBlueprintIds.compliance;
+    await selectBlueprintByNameAndId('compliance', id);
+    await screen.findByText('The selected blueprint has errors.');
+    await screen.findByText("compliance: some thingy isn't right");
+
+    const button = await screen.findByRole('button', {
+      name: /fix errors automatically/i,
+    });
+    user.click(button);
+    await waitFor(() => {
+      expect(
+        screen.queryByText('The selected blueprint has errors.')
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe('edit blueprint', () => {

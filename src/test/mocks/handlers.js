@@ -211,6 +211,14 @@ export const handlers = [
     const id = params['id'];
     return HttpResponse.json({ id: id });
   }),
+  http.post(
+    `${IMAGE_BUILDER_API}/experimental/blueprints/:id/fixup`,
+    ({ params }) => {
+      const id = params['id'];
+      getMockBlueprintResponse(id).lint.errors = [];
+      return HttpResponse(null, { status: 200 });
+    }
+  ),
   http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
     return HttpResponse.json(mockPkgRecommendations);
   }),
