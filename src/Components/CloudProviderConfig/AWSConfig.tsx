@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 
-import path from 'path';
-
 import {
   Form,
   FormGroup,
@@ -20,6 +18,10 @@ import {
   selectAWSRegion,
 } from '../../store/cloudProviderConfigSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import {
+  useIsAwsBucketValid,
+  useIsAwsCredsPathValid,
+} from '../CreateImageWizard/utilities/useValidation';
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
 const AWS_REGIONS = [
@@ -40,40 +42,20 @@ const AWS_REGIONS = [
   'us-gov-west-1',
 ];
 
-const isAwsBucketValid = (bucket: string | undefined) => {
-  if (bucket === undefined || bucket === '') {
-    return true;
-  }
-
-  const regex = /^[a-z0-9.-]{3,63}$/;
-  return regex.test(bucket);
-};
-
-const isAwsCredsPathValid = (credsPath: string | undefined) => {
-  if (credsPath === undefined || credsPath === '') {
-    return true;
-  }
-
-  try {
-    path.normalize(credsPath);
-    return true;
-  } catch {
-    return false;
-  }
-};
-
 type FormGroupProps = {
   value: string | undefined;
   setValue: (value: string) => void;
 };
 
 const AWSBucket = ({ value, setValue }: FormGroupProps) => {
+  const isValid = useIsAwsBucketValid();
+
   return (
     <FormGroup label="AWS Bucket">
       <ValidatedInput
         ariaLabel="aws-bucket"
         value={value || ''}
-        validator={isAwsBucketValid}
+        validator={() => isValid}
         onChange={(_event, value) => setValue(value)}
         helperText="Invalid AWS bucket name"
       />
@@ -128,12 +110,14 @@ const AWSRegion = ({ value, setValue }: FormGroupProps) => {
 };
 
 const AWSCredsPath = ({ value, setValue }: FormGroupProps) => {
+  const isValid = useIsAwsCredsPathValid();
+
   return (
     <FormGroup label="AWS Credentials Filepath">
       <ValidatedInput
         ariaLabel="aws-creds-path"
         value={value || ''}
-        validator={isAwsCredsPathValid}
+        validator={() => isValid}
         onChange={(_event, value) => setValue(value)}
         helperText="Invalid filepath for AWS credentials"
       />
