@@ -37,6 +37,7 @@ import {
   UploadTypes,
   User,
 } from '../../../store/imageBuilderApi';
+import { ApiRepositoryImportResponseRead } from '../../../store/service/contentSourcesApi';
 import {
   selectActivationKey,
   selectArchitecture,
@@ -394,6 +395,24 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     ...commonRequestToState(request),
   };
 };
+
+export function mapToCustomRepositories(
+  repo: ApiRepositoryImportResponseRead
+): CustomRepository[] {
+  if (!repo.uuid) return [];
+  return [
+    {
+      id: repo.uuid,
+      name: repo.name,
+      baseurl: repo.url ? [repo.url] : undefined,
+      gpgkey: repo.gpg_key ? [repo.gpg_key] : undefined,
+      check_gpg: repo.metadata_verification ?? undefined,
+      check_repo_gpg: repo.metadata_verification ?? undefined,
+      module_hotfixes: repo.module_hotfixes ?? undefined,
+      enabled: true,
+    },
+  ];
+}
 
 /**
  * This function maps the blueprint response to the wizard state, used to populate the wizard with the blueprint details
