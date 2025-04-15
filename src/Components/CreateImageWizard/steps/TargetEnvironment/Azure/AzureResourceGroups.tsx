@@ -23,6 +23,8 @@ import {
   selectAzureSource,
 } from '../../../../../store/wizardSlice';
 
+const emptyArray: string[] = [];
+
 export const AzureResourceGroups = () => {
   const azureSource = useAppSelector(selectAzureSource);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
@@ -43,7 +45,9 @@ export const AzureResourceGroups = () => {
     }
   );
 
-  const resourceGroups = sourceDetails?.azure?.resource_groups || [];
+  // use a static empty array to avoid an infinite render loop in useEffect functions depending
+  // on `resourceGroups`
+  const resourceGroups = sourceDetails?.azure?.resource_groups || emptyArray;
 
   useEffect(() => {
     let filteredGroups = resourceGroups;
