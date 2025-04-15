@@ -1,11 +1,18 @@
 import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
-import type { RootState } from '.';
+import type {
+  AWSWorkerConfig,
+  CloudProviderConfigState,
+} from './cockpit/types';
 
-import type { CloudProviderConfigState } from './cockpit/types';
+import type { RootState } from '.';
 
 export const initialState: CloudProviderConfigState = {
   aws: undefined,
+};
+
+export const selectAWSConfig = (state: RootState) => {
+  return state.cloudConfig?.aws;
 };
 
 export const selectAWSBucketName = (state: RootState) => {
@@ -24,6 +31,9 @@ export const cloudProviderConfigSlice = createSlice({
   name: 'cloudConfig',
   initialState,
   reducers: {
+    changeAWSConfig: (state, action: PayloadAction<AWSWorkerConfig>) => {
+      state.aws = action.payload;
+    },
     changeAWSBucketName: (state, action: PayloadAction<string>) => {
       if (state.aws === undefined) {
         state.aws = {};
@@ -45,5 +55,9 @@ export const cloudProviderConfigSlice = createSlice({
   },
 });
 
-export const { changeAWSBucketName, changeAWSRegion, changeAWSCredsPath } =
-  cloudProviderConfigSlice.actions;
+export const {
+  changeAWSConfig,
+  changeAWSBucketName,
+  changeAWSRegion,
+  changeAWSCredsPath,
+} = cloudProviderConfigSlice.actions;

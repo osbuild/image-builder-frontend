@@ -18,6 +18,7 @@ import { v4 as uuidv4 } from 'uuid';
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
+import type { WorkerConfigResponse } from './types';
 
 import {
   mapHostedToOnPrem,
@@ -580,6 +581,27 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
+        queryFn: async () => {
+          try {
+            const workerConfig = cockpit.file(
+              '/etc/osbuild-worker/osbuild-worker.toml'
+            );
+
+            const contents = await workerConfig.read();
+            const parsed = TOML.parse(contents);
+
+            return { data: parsed };
+          } catch (error) {
+            // no worker file error message
+            if (error.message === 'input is null') {
+              return { data: {} };
+            }
+
+            return { error };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -603,4 +625,5 @@ export const {
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
   useGetComposeStatusQuery,
+  useGetWorkerConfigQuery,
 } = cockpitApi;
