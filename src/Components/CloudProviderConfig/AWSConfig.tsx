@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import path from 'path';
 
-import { Form, FormGroup } from '@patternfly/react-core';
+import {
+  Form,
+  FormGroup,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectOption,
+} from '@patternfly/react-core';
 
 import {
   changeAWSBucketName,
@@ -15,6 +22,24 @@ import {
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { ValidatedInput } from '../CreateImageWizard/ValidatedInput';
 
+const AWS_REGIONS = [
+  'us-east-1',
+  'us-east-2',
+  'us-west-1',
+  'us-west-2',
+  'ca-central-1',
+  'ca-west-1',
+  'eu-central-1',
+  'eu-west-1',
+  'eu-west-2',
+  'eu-west-3',
+  'eu-south-1',
+  'eu-south-2',
+  'eu-north-1',
+  'us-gov-east-1',
+  'us-gov-west-1',
+];
+
 const isAwsBucketValid = (bucket: string | undefined) => {
   if (bucket === undefined || bucket === '') {
     return true;
@@ -22,17 +47,6 @@ const isAwsBucketValid = (bucket: string | undefined) => {
 
   const regex = /^[a-z0-9.-]{3,63}$/;
   return regex.test(bucket);
-};
-
-const isAwsRegionValid = (region: string | undefined) => {
-  if (region === undefined || region === '') {
-    return true;
-  }
-
-  // TODO: add more regions
-  // Or rather, make the list a select box
-  const validRegions = ['us-east-1', 'eu-west-1'];
-  return validRegions.includes(region);
 };
 
 const isAwsCredsPathValid = (credsPath: string | undefined) => {
@@ -68,15 +82,47 @@ const AWSBucket = ({ value, setValue }: FormGroupProps) => {
 };
 
 const AWSRegion = ({ value, setValue }: FormGroupProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const onSelect = (
+    _event: React.MouseEvent<Element, MouseEvent> | undefined,
+    value: string | number | undefined
+  ) => {
+    setValue(value as string);
+    setIsOpen(false);
+  };
+
+  const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
+    <MenuToggle
+      ref={toggleRef}
+      onClick={() => setIsOpen(!isOpen)}
+      isExpanded={isOpen}
+      style={
+        {
+          width: '100%',
+        } as React.CSSProperties
+      }
+    >
+      {value}
+    </MenuToggle>
+  );
+
   return (
     <FormGroup label="AWS Region">
-      <ValidatedInput
-        ariaLabel="aws-region"
-        value={value || ''}
-        validator={isAwsRegionValid}
-        onChange={(_event, value) => setValue(value)}
-        helperText="Not a valid AWS region"
-      />
+      <Select
+        isOpen={isOpen}
+        selected={value}
+        onSelect={onSelect}
+        onOpenChange={() => setIsOpen(!isOpen)}
+        toggle={toggle}
+        // TODO: allow user defined items?
+      >
+        {AWS_REGIONS.map((region) => (
+          <SelectOption key={region} value={region}>
+            {region}
+          </SelectOption>
+        ))}
+      </Select>
     </FormGroup>
   );
 };
