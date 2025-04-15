@@ -365,8 +365,9 @@ const TargetEnvironment = () => {
                   bodyContent={
                     <TextContent>
                       <Text>
-                        Unfortunately Windows Subsystem for Linux is currently
-                        not supported by Red Hat.
+                        Using RHEL on Microsoft&apos;s Windows Subsystem for
+                        Linux (WSL) is permitted as a Validated Software
+                        Platform and Third Party Component Support Policy.
                       </Text>
                     </TextContent>
                   }
@@ -378,7 +379,7 @@ const TargetEnvironment = () => {
                       icon={<ExternalLinkAltIcon />}
                       iconPosition="right"
                       isInline
-                      href="https://access.redhat.com/solutions/6338661"
+                      href="https://access.redhat.com/articles/7115538"
                     >
                       Learn more
                     </Button>
