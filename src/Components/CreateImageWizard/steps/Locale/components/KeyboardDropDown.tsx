@@ -57,10 +57,6 @@ const KeyboardDropDown = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(!isOpen);
-  };
-
   const onInputClick = () => {
     if (!isOpen) {
       setIsOpen(true);
@@ -138,7 +134,7 @@ const KeyboardDropDown = () => {
         isOpen={isOpen}
         selected={keyboard}
         onSelect={onSelect}
-        onOpenChange={onToggle}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >

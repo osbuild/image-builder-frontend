@@ -62,10 +62,6 @@ const LanguagesDropDown = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(!isOpen);
-  };
-
   const onInputClick = () => {
     if (!isOpen) {
       setIsOpen(true);
@@ -142,7 +138,7 @@ const LanguagesDropDown = () => {
         isOpen={isOpen}
         selected={inputValue}
         onSelect={onSelect}
-        onOpenChange={onToggle}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >

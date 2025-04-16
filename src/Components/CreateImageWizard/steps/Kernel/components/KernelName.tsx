@@ -65,10 +65,6 @@ const KernelName = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(!isOpen);
-  };
-
   const onInputClick = () => {
     if (!isOpen) {
       setIsOpen(true);
@@ -159,9 +155,9 @@ const KernelName = () => {
         <Select
           isScrollable
           isOpen={isOpen}
+          onOpenChange={(isOpen) => setIsOpen(isOpen)}
           selected={kernel}
           onSelect={onSelect}
-          onOpenChange={onToggle}
           toggle={toggle}
           shouldFocusFirstItemOnOpen={false}
         >

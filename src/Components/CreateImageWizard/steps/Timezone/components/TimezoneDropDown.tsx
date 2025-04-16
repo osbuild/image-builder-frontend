@@ -54,10 +54,6 @@ const TimezoneDropDown = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue]);
 
-  const onToggle = (isOpen: boolean) => {
-    setIsOpen(!isOpen);
-  };
-
   const onInputClick = () => {
     if (!isOpen) {
       setIsOpen(true);
@@ -133,9 +129,9 @@ const TimezoneDropDown = () => {
       <Select
         isScrollable
         isOpen={isOpen}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
         selected={timezone}
         onSelect={onSelect}
-        onOpenChange={onToggle}
         toggle={toggle}
         shouldFocusFirstItemOnOpen={false}
       >

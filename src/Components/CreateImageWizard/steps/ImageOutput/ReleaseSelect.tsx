@@ -158,6 +158,7 @@ const ReleaseSelect = () => {
     <FormGroup isRequired={true} label="Release">
       <Select
         isOpen={isOpen}
+        onOpenChange={(isOpen) => setIsOpen(isOpen)}
         selected={releases.get(distribution)}
         onSelect={handleSelect}
         toggle={toggle}
@@ -169,7 +170,15 @@ const ReleaseSelect = () => {
             // Hide this for on-prem since the host
             // could be centos or fedora
             !process.env.IS_ON_PREMISE && (
-              <SelectOption onClick={handleExpand} value="loader" isLoadButton>
+              <SelectOption
+                onClick={(ev) => {
+                  // prevents setIsOpen{isOpen} from closing the Wizard
+                  ev.stopPropagation();
+                  handleExpand();
+                }}
+                value="loader"
+                isLoadButton
+              >
                 Show options for further development of RHEL
               </SelectOption>
             )}
