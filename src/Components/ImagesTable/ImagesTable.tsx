@@ -86,10 +86,13 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput =
     useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
@@ -99,6 +102,15 @@ const ImagesTable = () => {
   );
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
+
+  const { isFedoraEnv } = useGetEnvironment();
+  const { analytics, auth } = useChrome();
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -211,6 +223,14 @@ const ImagesTable = () => {
     });
   }
   const itemCount = data?.meta.count || 0;
+
+  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+    const orgId = userData?.identity.internal?.org_id;
+
+    analytics.group(orgId, {
+      imagebuilder_image_count: composesData?.meta.count,
+    });
+  }
 
   return (
     <>

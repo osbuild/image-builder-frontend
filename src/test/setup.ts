@@ -39,6 +39,7 @@ vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
   default: () => ({
     analytics: {
       track: () => 'test',
+      group: () => 'test',
     },
     isBeta: () => true,
   }),

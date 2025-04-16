@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import {
   Bullseye,
@@ -18,6 +18,8 @@ import {
 } from '@patternfly/react-core';
 import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
+import { ChromeUser } from '@redhat-cloud-services/types';
 import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
 
@@ -46,6 +48,7 @@ import {
 } from '../../store/imageBuilderApi';
 import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
+import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -60,6 +63,10 @@ type emptyBlueprintStateProps = {
 };
 
 const BlueprintsSidebar = () => {
+  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
+  const { isFedoraEnv } = useGetEnvironment();
+  const { analytics, auth } = useChrome();
+
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
@@ -69,6 +76,13 @@ const BlueprintsSidebar = () => {
     limit: blueprintsLimit,
     offset: blueprintsOffset,
   };
+
+  useEffect(() => {
+    (async () => {
+      const data = await auth?.getUser();
+      setUserData(data);
+    })();
+  }, [auth]);
 
   if (blueprintSearchInput) {
     searchParams.search = blueprintSearchInput;
@@ -118,6 +132,14 @@ const BlueprintsSidebar = () => {
     dispatch(setBlueprintsOffset(0));
     dispatch(setBlueprintId(undefined));
   };
+
+  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+    const orgId = userData?.identity?.internal?.org_id;
+
+    analytics.group(orgId, {
+      imagebuilder_blueprint_count: blueprintsData?.meta.count,
+    });
+  }
 
   return (
     <>
