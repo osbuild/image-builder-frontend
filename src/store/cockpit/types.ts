@@ -18,3 +18,20 @@ export type Package = {
   version: string;
   release: string;
 };
+
+export type AWSWorkerConfig =
+  | {
+      bucket?: string | undefined;
+      region?: string | undefined;
+      credentials?: string | undefined;
+    }
+  | undefined;
+
+export type WorkerConfigResponse = {
+  aws?: AWSWorkerConfig;
+};
+
+// just use an aliase, the underlying type is the same.
+// use separate names to stick to conventions and avoid
+// possible confusion
+export type CloudProviderConfigState = WorkerConfigResponse;
