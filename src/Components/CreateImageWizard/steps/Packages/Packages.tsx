@@ -74,6 +74,7 @@ import {
   useListRepositoriesQuery,
   useSearchRpmMutation,
   useSearchPackageGroupMutation,
+  ApiSearchRpmResponse,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
@@ -100,6 +101,7 @@ export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
   repository: PackageRepository;
+  sources?: ApiSearchRpmResponse['package_sources'];
 };
 
 export type GroupWithRepositoryInfo = {
@@ -269,6 +271,7 @@ const Packages = () => {
                 return repo.baseurl;
               }),
             limit: 500,
+            include_package_sources: true,
           },
         });
       }
@@ -282,6 +285,7 @@ const Packages = () => {
               return repo.id;
             }),
             limit: 500,
+            include_package_sources: true,
           },
         });
       } else {
@@ -289,6 +293,7 @@ const Packages = () => {
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
             urls: [epelRepoUrlByDistribution],
+            include_package_sources: true,
           },
         });
       }
@@ -626,6 +631,7 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'distro',
+        sources: values.package_sources,
       }));
     }
 
@@ -634,6 +640,7 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'custom',
+        sources: values.package_sources,
       }));
     }
 
@@ -651,6 +658,7 @@ const Packages = () => {
         name: values.package_name!,
         summary: values.summary!,
         repository: 'recommended',
+        sources: values.package_sources,
       }));
 
       combinedPackageData = combinedPackageData.concat(
@@ -1012,6 +1020,7 @@ const Packages = () => {
                     </Button>
                   </Popover>
                 </Td>
+                <Td>N/A</Td>
                 {grp.repository === 'distro' ? (
                   <>
                     <Td>
@@ -1102,6 +1111,11 @@ const Packages = () => {
                   }}
                 />
                 <Td>{pkg.name}</Td>
+                <Td>
+                  {pkg.sources?.map((source) =>
+                    source.type === 'module' ? source.stream : 'N/A'
+                  )}
+                </Td>
                 {pkg.repository === 'distro' ? (
                   <>
                     <Td>
@@ -1233,10 +1247,11 @@ const Packages = () => {
       <Table variant="compact" data-testid="packages-table">
         <Thead>
           <Tr>
-            <Th aria-label="Expanded" width={10} />
-            <Th aria-label="Selected" width={10} />
-            <Th width={50}>Name</Th>
-            <Th width={35}>Package repository</Th>
+            <Th aria-label="Expanded" />
+            <Th aria-label="Selected" />
+            <Th width={30}>Name</Th>
+            <Th width={20}>Application stream</Th>
+            <Th width={30}>Package repository</Th>
           </Tr>
         </Thead>
         {bodyContent}
