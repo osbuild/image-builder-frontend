@@ -27,3 +27,10 @@ export const useIsAwsCredsPathValid = (): boolean => {
   const validPathPattern = /^(\/[^/\0]*)+\/?$/;
   return path.isAbsolute(credsPath) && validPathPattern.test(credsPath);
 };
+
+export const useIsAwsStepValid = (): boolean => {
+  const isBucketValid = useIsAwsBucketValid();
+  const isCredsPathValid = useIsAwsCredsPathValid();
+
+  return isBucketValid && isCredsPathValid;
+};
