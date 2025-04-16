@@ -171,6 +171,15 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.recommendPackageRequest,
       }),
     }),
+    fixupBlueprint: build.mutation<
+      FixupBlueprintApiResponse,
+      FixupBlueprintApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/experimental/blueprints/${queryArg.id}/fixup`,
+        method: "POST",
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -335,6 +344,11 @@ export type RecommendPackageApiResponse =
 export type RecommendPackageApiArg = {
   recommendPackageRequest: RecommendPackageRequest;
 };
+export type FixupBlueprintApiResponse = unknown;
+export type FixupBlueprintApiArg = {
+  /** UUID of a blueprint */
+  id: string;
+};
 export type Repository = {
   /** An ID referring to a repository defined in content sources can be used instead of
     'baseurl', 'mirrorlist' or 'metalink'.
@@ -378,6 +392,8 @@ export type Distributions =
   | "rhel-8.10"
   | "rhel-9"
   | "rhel-9-nightly"
+  | "rhel-9.6-nightly"
+  | "rhel-9.7-nightly"
   | "rhel-9-beta"
   | "rhel-90"
   | "rhel-91"
@@ -386,6 +402,8 @@ export type Distributions =
   | "rhel-94"
   | "rhel-95"
   | "rhel-10-nightly"
+  | "rhel-10.0-nightly"
+  | "rhel-10.1-nightly"
   | "rhel-10-beta"
   | "centos-9"
   | "centos-10"
@@ -578,6 +596,14 @@ export type Subscription = {
    */
   rhc?: boolean | undefined;
 };
+export type Module = {
+  /** Name of the module to enable.
+   */
+  name: string;
+  /** Stream to enable.
+   */
+  stream: string;
+};
 export type CustomRepository = {
   id: string;
   name?: string | undefined;
@@ -711,6 +737,9 @@ export type Customizations = {
   files?: File[] | undefined;
   subscription?: Subscription | undefined;
   packages?: string[] | undefined;
+  /** List of dnf modules to enable, so that packages can be installed from them.
+   */
+  enabled_modules?: Module[] | undefined;
   payload_repositories?: Repository[] | undefined;
   /** List of custom repositories. */
   custom_repositories?: CustomRepository[] | undefined;
@@ -759,10 +788,18 @@ export type CreateBlueprintRequest = {
   customizations: Customizations;
   metadata?: BlueprintMetadata | undefined;
 };
+export type BlueprintLintItem = {
+  name: string;
+  description: string;
+};
+export type BlueprintLint = {
+  errors: BlueprintLintItem[];
+};
 export type BlueprintResponse = {
   id: string;
   name: string;
   description: string;
+  lint: BlueprintLint;
   distribution: Distributions;
   /** Array of image requests. Having more image requests in a single blueprint is currently not supported.
    */
@@ -959,4 +996,5 @@ export const {
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
   useRecommendPackageMutation,
+  useFixupBlueprintMutation,
 } = injectedRtkApi;

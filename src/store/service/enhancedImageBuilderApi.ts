@@ -222,6 +222,31 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
           });
       },
     },
+    fixupBlueprint: {
+      invalidatesTags: [{ type: 'Blueprint' }],
+      onQueryStarted: async (_, { dispatch, queryFulfilled }) => {
+        queryFulfilled
+          .then(() => {
+            dispatch(
+              addNotification({
+                variant: 'success',
+                title: 'Blueprint was fixed',
+              })
+            );
+          })
+          .catch((err) => {
+            dispatch(
+              addNotification({
+                variant: 'danger',
+                title: 'Blueprint could not be fixed',
+                description: `Status code ${err.error.status}: ${errorMessage(
+                  err
+                )}`,
+              })
+            );
+          });
+      },
+    },
   },
 });
 

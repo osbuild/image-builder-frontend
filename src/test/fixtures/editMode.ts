@@ -186,6 +186,9 @@ export const rhel9BlueprintResponse: BlueprintResponse = {
   ...rhel9CreateBlueprintRequest,
   id: mockBlueprintIds['rhel9'],
   description: mockBlueprintDescriptions['rhel9'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const rhel8CreateBlueprintRequest: CreateBlueprintRequest = {
@@ -200,6 +203,9 @@ export const rhel8BlueprintResponse: BlueprintResponse = {
   ...rhel8CreateBlueprintRequest,
   id: mockBlueprintIds['rhel8'],
   description: mockBlueprintDescriptions['rhel8'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const centos9CreateBlueprintRequest: CreateBlueprintRequest = {
@@ -214,6 +220,9 @@ export const centos9BlueprintResponse: BlueprintResponse = {
   ...centos9CreateBlueprintRequest,
   id: mockBlueprintIds['centos9'],
   description: mockBlueprintDescriptions['centos9'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const x86_64ImageRequest: ImageRequest = {
@@ -232,6 +241,9 @@ export const x86_64BlueprintResponse: BlueprintResponse = {
   ...x86_64CreateBlueprintRequest,
   id: mockBlueprintIds['x86_64'],
   description: mockBlueprintDescriptions['x86_64'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const aarch64ImageRequest: ImageRequest = {
@@ -250,6 +262,9 @@ export const aarch64BlueprintResponse: BlueprintResponse = {
   ...aarch64CreateBlueprintRequest,
   id: mockBlueprintIds['aarch64'],
   description: mockBlueprintDescriptions['aarch64'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const awsImageRequest: ImageRequest = {
@@ -274,6 +289,9 @@ export const awsBlueprintResponse: BlueprintResponse = {
   ...awsCreateBlueprintRequest,
   id: mockBlueprintIds['aws'],
   description: mockBlueprintDescriptions['aws'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const gcpImageRequest: ImageRequest = {
@@ -298,6 +316,9 @@ export const gcpBlueprintResponse: BlueprintResponse = {
   ...gcpCreateBlueprintRequest,
   id: mockBlueprintIds['gcp'],
   description: mockBlueprintDescriptions['gcp'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const azureImageRequest: ImageRequest = {
@@ -324,6 +345,9 @@ export const azureBlueprintResponse: BlueprintResponse = {
   ...azureCreateBlueprintRequest,
   id: mockBlueprintIds['azure'],
   description: mockBlueprintDescriptions['azure'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const registrationCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -339,6 +363,9 @@ export const registrationBlueprintResponse: BlueprintResponse = {
   ...registrationCreateBlueprintRequest,
   id: mockBlueprintIds['registration'],
   description: mockBlueprintDescriptions['registration'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -358,6 +385,9 @@ export const oscapBlueprintResponse: BlueprintResponse = {
   ...oscapCreateBlueprintRequest,
   id: mockBlueprintIds['oscap'],
   description: mockBlueprintDescriptions['oscap'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const fscCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -373,6 +403,9 @@ export const fscBlueprintResponse: BlueprintResponse = {
   ...fscCreateBlueprintRequest,
   id: mockBlueprintIds['fsc'],
   description: mockBlueprintDescriptions['fsc'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const snapshotCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -389,6 +422,9 @@ export const snapshotBlueprintResponse: BlueprintResponse = {
   ...snapshotCreateBlueprintRequest,
   id: mockBlueprintIds['snapshot'],
   description: mockBlueprintDescriptions['snapshot'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const repositoriesCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -405,6 +441,9 @@ export const repositoriesBlueprintResponse: BlueprintResponse = {
   ...repositoriesCreateBlueprintRequest,
   id: mockBlueprintIds['repositories'],
   description: mockBlueprintDescriptions['repositories'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const packagesCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -420,6 +459,9 @@ export const packagesBlueprintResponse: BlueprintResponse = {
   ...packagesCreateBlueprintRequest,
   id: mockBlueprintIds['packages'],
   description: mockBlueprintDescriptions['packages'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const timezoneCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -438,6 +480,9 @@ export const timezoneBlueprintResponse: BlueprintResponse = {
   ...timezoneCreateBlueprintRequest,
   id: mockBlueprintIds['timezone'],
   description: mockBlueprintDescriptions['timezone'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const usersCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -459,6 +504,9 @@ export const usersBlueprintResponse: BlueprintResponse = {
   ...usersCreateBlueprintRequest,
   id: mockBlueprintIds['users'],
   description: mockBlueprintDescriptions['users'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const localeCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -477,6 +525,9 @@ export const localeBlueprintResponse: BlueprintResponse = {
   ...localeCreateBlueprintRequest,
   id: mockBlueprintIds['locale'],
   description: mockBlueprintDescriptions['locale'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const hostnameCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -492,6 +543,9 @@ export const hostnameBlueprintResponse: BlueprintResponse = {
   ...hostnameCreateBlueprintRequest,
   id: mockBlueprintIds['hostname'],
   description: mockBlueprintDescriptions['hostname'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const kernelCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -510,6 +564,9 @@ export const kernelBlueprintResponse: BlueprintResponse = {
   ...kernelCreateBlueprintRequest,
   id: mockBlueprintIds['kernel'],
   description: mockBlueprintDescriptions['kernel'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const firewallCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -539,6 +596,9 @@ export const firewallBlueprintResponse: BlueprintResponse = {
   ...firewallCreateBlueprintRequest,
   id: mockBlueprintIds['firewall'],
   description: mockBlueprintDescriptions['firewall'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const servicesCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -554,6 +614,9 @@ export const servicesBlueprintResponse: BlueprintResponse = {
   ...servicesCreateBlueprintRequest,
   id: mockBlueprintIds['services'],
   description: mockBlueprintDescriptions['services'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const firstBootCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -570,6 +633,9 @@ export const firstBootBlueprintResponse: BlueprintResponse = {
   ...firstBootCreateBlueprintRequest,
   id: mockBlueprintIds['firstBoot'],
   description: mockBlueprintDescriptions['firstBoot'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const detailsCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -583,6 +649,9 @@ export const detailsBlueprintResponse: BlueprintResponse = {
   ...detailsCreateBlueprintRequest,
   id: mockBlueprintIds['details'],
   description: mockBlueprintDescriptions['details'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const complianceCreateBlueprintRequest: CreateBlueprintRequest = {
@@ -604,6 +673,9 @@ export const complianceBlueprintResponse: BlueprintResponse = {
   ...complianceCreateBlueprintRequest,
   id: mockBlueprintIds['compliance'],
   description: mockBlueprintDescriptions['compliance'],
+  lint: {
+    errors: [],
+  },
 };
 
 export const getMockBlueprintResponse = (id: string) => {
