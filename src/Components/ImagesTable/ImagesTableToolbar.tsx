@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import {
   Alert,
   AlertActionLink,
+  ExpandableSection,
+  List,
+  ListItem,
   Pagination,
   Toolbar,
   ToolbarContent,
@@ -10,7 +13,10 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import { useGetBlueprintsQuery } from '../../store/backendApi';
+import {
+  useGetBlueprintsQuery,
+  useGetBlueprintQuery,
+} from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,
@@ -22,6 +28,7 @@ import {
   useGetBlueprintComposesQuery,
   Distributions,
   GetBlueprintComposesApiArg,
+  useFixupBlueprintMutation,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
@@ -116,6 +123,19 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     }
   };
 
+  const { data: blueprintDetails } = useGetBlueprintQuery(
+    { id: selectedBlueprintId! },
+    { skip: !selectedBlueprintId }
+  );
+
+  const [fixupBlueprint] = useFixupBlueprintMutation();
+  const hasErrors =
+    blueprintDetails?.lint?.errors && blueprintDetails?.lint?.errors.length > 0;
+  const [isLintExp, setIsLintExp] = React.useState(true);
+  const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
+    setIsLintExp(isExpanded);
+  };
+
   return (
     <>
       <DeleteBlueprintModal
@@ -138,6 +158,42 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
+        {hasErrors && (
+          <Alert
+            variant="warning"
+            style={{
+              margin:
+                '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+            }}
+            isInline
+            title={`The selected blueprint has errors.`}
+            ouiaId="blueprint-errors-alert"
+            actionLinks={
+              <AlertActionLink
+                onClick={async () => {
+                  await fixupBlueprint({ id: selectedBlueprintId! });
+                }}
+                id="blueprint_fix_errors_automatically"
+              >
+                Fix errors automatically (updates the blueprint)
+              </AlertActionLink>
+            }
+          >
+            <ExpandableSection
+              toggleText={isLintExp ? 'Show less' : 'Show more'}
+              onToggle={onToggleLintExp}
+              isExpanded={isLintExp}
+            >
+              <List isPlain>
+                {blueprintDetails?.lint?.errors?.map((err) => (
+                  <ListItem key={err.description}>
+                    {err.name}: {err.description}
+                  </ListItem>
+                ))}
+              </List>
+            </ExpandableSection>
+          </Alert>
+        )}
         {itemCount > 0 && isBlueprintOutSync && (
           <Alert
             style={{
@@ -156,7 +212,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               </AlertActionLink>
             }
           />
-        )}
+        )}{' '}
         {blueprintsComposes &&
           blueprintsComposes.data.length > 0 &&
           isBlueprintDistroCentos8() && (
@@ -171,7 +227,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               ouiaId="centos-8-blueprint-alert"
             />
           )}
-
         <ToolbarContent>
           {selectedBlueprintId && (
             <>
