@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 
 import {
-  Button,
+  Alert,
+  AlertActionLink,
   Form,
-  FormGroup,
-  Radio,
   Text,
   Title,
+  ToggleGroup,
+  ToggleGroupItem,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
@@ -16,14 +16,12 @@ import OscapOnPremWarning from './components/OnPremWarning';
 import Oscap from './Oscap';
 import { removeBetaFromRelease } from './removeBetaFromRelease';
 
-import {
-  COMPLIANCE_AND_VULN_SCANNING_URL,
-  COMPLIANCE_URL,
-} from '../../../../constants';
+import { COMPLIANCE_URL } from '../../../../constants';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
 } from '../../../../store/backendApi';
+import { usePoliciesQuery } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
   ComplianceType,
@@ -54,6 +52,7 @@ const OscapContent = () => {
   const profileID = useAppSelector(selectComplianceProfileID);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
+  const majorVersion = release.split('-')[1];
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
@@ -101,78 +100,59 @@ const OscapContent = () => {
       analytics.screen('ib-createimagewizard-step-security-openscap');
     }
   }
+  const { data: policies } = usePoliciesQuery(
+    {
+      filter: `os_major_version=${majorVersion}`,
+    },
+    {
+      skip: complianceType === 'openscap',
+    }
+  );
 
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
         {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
+      <Text>
+        Below you can select which Insights compliance policy or OpenSCAP
+        profile your image will be compliant to. Insights compliance allows the
+        use of tailored policies, whereas OpenSCAP gives you the default
+        versions. This will automatically help monitor the adherence of your
+        registered RHEL systems to a selected policy or profile.
+      </Text>
       {complianceEnabled && (
-        <FormGroup>
-          <Radio
-            id="openscap radio openscap type"
-            label="OpenSCAP"
-            name="oscap-radio-openscap"
-            isChecked={complianceType === 'openscap'}
-            onChange={() => handleTypeChange('openscap')}
-          />
-          <Radio
-            id="openscap radio compliance type"
-            label="Insights compliance"
-            name="oscap-radio-compliance"
-            isChecked={complianceType === 'compliance'}
+        <ToggleGroup aria-label="Default with single selectable">
+          <ToggleGroupItem
+            text="Compliance policies"
+            buttonId="toggle-group-compliance"
+            isSelected={complianceType === 'compliance'}
             onChange={() => handleTypeChange('compliance')}
           />
-        </FormGroup>
+          <ToggleGroupItem
+            text="OpenSCAP profiles"
+            buttonId="toggle-group-openscap"
+            isSelected={complianceType === 'openscap'}
+            onChange={() => handleTypeChange('openscap')}
+          />
+        </ToggleGroup>
       )}
-      {(!complianceEnabled || complianceType === 'openscap') && (
-        <Text>
-          OpenSCAP enables you to automatically monitor the adherence of your
-          registered RHEL systems to a selected regulatory compliance profile.
-          <br />
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={COMPLIANCE_AND_VULN_SCANNING_URL}
-          >
-            Documentation
-          </Button>
-        </Text>
-      )}
-      {complianceType === 'compliance' && (
-        <Text>
-          Insights compliance enables you to monitor the adherence of your
-          registered RHEL systems to a selected compliance policy.
-          <br />
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={COMPLIANCE_URL}
-          >
-            Define new policies in Insights Compliance
-          </Button>
-          <br />
-          <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
-            isInline
-            href={COMPLIANCE_AND_VULN_SCANNING_URL}
-          >
-            Documentation
-          </Button>
-        </Text>
-      )}
+      {Array.isArray(policies?.data) &&
+        policies.data.length === 0 &&
+        complianceType === 'compliance' && (
+          <Alert variant="info" isInline title="No compliance policies created">
+            <p>
+              Currently there are no compliance policies in your environment. To
+              help you get started, select one of the default policies below and
+              we will create the policy for you. However, in order to modify the
+              policy or to create a new one, you must go through Insights
+              Compliance.
+            </p>
+            <AlertActionLink component="a" href={COMPLIANCE_URL}>
+              Save blueprint and navigate to Insights Compliance
+            </AlertActionLink>
+          </Alert>
+        )}
       <Oscap />
     </Form>
   );

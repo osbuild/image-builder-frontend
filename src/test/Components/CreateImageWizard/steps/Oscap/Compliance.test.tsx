@@ -39,7 +39,9 @@ const goToComplianceStep = async () => {
   await clickRegisterLater();
   await clickNext(); // Compliance
   await screen.findByRole('heading', { name: /Compliance/ });
-  const button = await screen.findByLabelText('Insights compliance');
+  const button = await screen.findByRole('button', {
+    name: /Compliance policies/,
+  });
   await waitFor(() => user.click(button));
   // wait until all policies are loaded
   await screen.findByText('Select a policy');

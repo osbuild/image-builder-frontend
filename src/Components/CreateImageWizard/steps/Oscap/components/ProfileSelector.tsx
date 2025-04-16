@@ -17,8 +17,6 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
-import OpenSCAPFGLabel from './OpenSCAPFGLabel';
-
 import {
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
@@ -323,6 +321,11 @@ const ProfileSelector = () => {
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
       isDisabled={!isSuccess || hasWslTargetOnly}
+      style={
+        {
+          width: '100%',
+        } as React.CSSProperties
+      }
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
@@ -350,7 +353,7 @@ const ProfileSelector = () => {
   );
 
   return (
-    <FormGroup data-testid="profiles-form-group" label={<OpenSCAPFGLabel />}>
+    <FormGroup data-testid="profiles-form-group" label="Profile">
       <Select
         isScrollable
         isOpen={isOpen}
