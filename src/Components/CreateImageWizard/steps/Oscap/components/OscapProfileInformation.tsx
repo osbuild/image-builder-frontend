@@ -1,8 +1,6 @@
 import React, { useEffect } from 'react';
 
 import {
-  CodeBlock,
-  CodeBlockCode,
   Spinner,
   TextContent,
   TextList,
@@ -11,7 +9,6 @@ import {
   TextListVariants,
 } from '@patternfly/react-core';
 
-import { RELEASES } from '../../../../../constants';
 import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -22,7 +19,6 @@ import {
   selectComplianceProfileID,
   selectDistribution,
 } from '../../../../../store/wizardSlice';
-import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 type OscapProfileInformationOptionPropType = {
   allowChangingCompliancePolicy?: boolean;
@@ -35,9 +31,6 @@ export const OscapProfileInformation = ({
   const release = useAppSelector(selectDistribution);
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
-
-  const isKernelEnabled = useFlag('image-builder.kernel.enabled');
-  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   const {
     data: oscapProfileInfo,
@@ -82,15 +75,6 @@ export const OscapProfileInformation = ({
     );
   }, [isSuccessPolicyInfo]);
 
-  const enabledServicesDisplayString =
-    oscapProfileInfo?.services?.enabled?.join(' ');
-  const disabledAndMaskedServices = [
-    ...(oscapProfileInfo?.services?.disabled ?? []),
-    ...(oscapProfileInfo?.services?.masked ?? []),
-  ];
-  const disabledAndMaskedServicesDisplayString =
-    disabledAndMaskedServices.join(' ');
-
   const oscapProfile = oscapProfileInfo?.openscap as OpenScapProfile;
 
   return (
@@ -115,15 +99,6 @@ export const OscapProfileInformation = ({
                 component={TextListItemVariants.dt}
                 className="pf-v5-u-min-width"
               >
-                Operating system:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
-                {RELEASES.get(release)}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
-                className="pf-v5-u-min-width"
-              >
                 Reference ID:
               </TextListItem>
               <TextListItem
@@ -132,53 +107,50 @@ export const OscapProfileInformation = ({
               >
                 {oscapProfile?.profile_id}
               </TextListItem>
-              {!isKernelEnabled && (
-                <>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
-                  >
-                    Kernel arguments:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    <CodeBlock>
-                      <CodeBlockCode>
-                        {oscapProfileInfo?.kernel?.append}
-                      </CodeBlockCode>
-                    </CodeBlock>
-                  </TextListItem>
-                </>
-              )}
-              {!isServicesStepEnabled && (
-                <>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
-                  >
-                    Disabled services:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    <CodeBlock>
-                      <CodeBlockCode>
-                        {disabledAndMaskedServicesDisplayString}
-                      </CodeBlockCode>
-                    </CodeBlock>
-                  </TextListItem>
-                  <TextListItem
-                    component={TextListItemVariants.dt}
-                    className="pf-v5-u-min-width"
-                  >
-                    Enabled services:
-                  </TextListItem>
-                  <TextListItem component={TextListItemVariants.dd}>
-                    <CodeBlock>
-                      <CodeBlockCode>
-                        {enabledServicesDisplayString}
-                      </CodeBlockCode>
-                    </CodeBlock>
-                  </TextListItem>
-                </>
-              )}
+            </TextList>
+          </TextContent>
+        </>
+      )}
+      {isSuccessPolicyInfo && (
+        <>
+          <TextContent>
+            <TextList component={TextListVariants.dl}>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                Policy description:
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {policyInfo?.data?.schema?.description}
+              </TextListItem>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                Business objective:
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {policyInfo?.data?.schema?.business_objective}
+              </TextListItem>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                Policy type:
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {policyInfo?.data?.schema?.type}
+              </TextListItem>
+              <TextListItem
+                component={TextListItemVariants.dt}
+                className="pf-v5-u-min-width"
+              >
+                Reference ID:
+              </TextListItem>
+              <TextListItem component={TextListItemVariants.dd}>
+                {policyInfo?.data?.schema?.id}
+              </TextListItem>
             </TextList>
           </TextContent>
         </>
