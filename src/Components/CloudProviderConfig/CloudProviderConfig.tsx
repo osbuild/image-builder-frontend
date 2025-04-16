@@ -8,6 +8,7 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   PageSection,
+  Skeleton,
   Title,
   Wizard,
   WizardStep,
@@ -63,7 +64,7 @@ export const CloudProviderConfig = () => {
   const dispatch = useAppDispatch();
   const handleClose = () => navigate(resolveRelPath(''));
 
-  const { data, error } = useGetWorkerConfigQuery({});
+  const { data, error, refetch, isLoading } = useGetWorkerConfigQuery({});
 
   const initAWSConfig = useCallback(
     (config: AWSWorkerConfig | undefined) => {
@@ -88,6 +89,10 @@ export const CloudProviderConfig = () => {
     initAWSConfig(data?.aws);
   }, [data, initAWSConfig]);
 
+  if (isLoading) {
+    return <Skeleton />;
+  }
+
   if (error) {
     return <ConfigError onClose={handleClose} />;
   }
@@ -106,7 +111,11 @@ export const CloudProviderConfig = () => {
               isBackDisabled: true,
             }}
           >
-            <AWSConfig />
+            <AWSConfig
+              refetch={refetch}
+              reinit={initAWSConfig}
+              isEnabled={!!(data?.aws && Object.keys(data.aws).length > 0)}
+            />
           </WizardStep>
         </Wizard>
       </PageSection>
