@@ -12,13 +12,19 @@ export const CloudProviderConfig = () => {
   const navigate = useNavigate();
   const handleClose = () => navigate(resolveRelPath(''));
 
-  // TODO: add custom wizard footer
   return (
     <>
       <ImageBuilderHeader inWizard={true} />
       <PageSection>
         <Wizard onClose={handleClose}>
-          <WizardStep name="AWS Config" id="aws-config">
+          <WizardStep
+            name="AWS Config"
+            id="aws-config"
+            footer={{
+              nextButtonText: 'Submit',
+              isBackDisabled: true,
+            }}
+          >
             <AWSConfig />
           </WizardStep>
         </Wizard>
