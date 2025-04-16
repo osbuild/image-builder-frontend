@@ -2,17 +2,9 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit';
 
 import type { RootState } from '.';
 
-export type cloudProviderConfigState = {
-  aws?:
-    | {
-        bucket?: string;
-        region?: string;
-        credentials?: string;
-      }
-    | undefined;
-};
+import type { CloudProviderConfigState } from './cockpit/types';
 
-export const initialState: cloudProviderConfigState = {
+export const initialState: CloudProviderConfigState = {
   aws: undefined,
 };
 
