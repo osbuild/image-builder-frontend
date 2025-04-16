@@ -7,12 +7,14 @@ import {
   MenuToggleElement,
   Select,
   SelectOption,
+  Switch,
 } from '@patternfly/react-core';
 
 import { useIsAwsBucketValid, useIsAwsCredsPathValid } from './validators';
 
 import {
   changeAWSBucketName,
+  changeAWSConfig,
   changeAWSCredsPath,
   changeAWSRegion,
   selectAWSBucketName,
@@ -40,35 +42,58 @@ const AWS_REGIONS = [
   'us-gov-west-1',
 ];
 
-type FormGroupProps = {
-  value: string | undefined;
-  setValue: (value: string) => void;
+type FormGroupProps<T> = {
+  value: T | undefined;
+  onChange: (value: T) => void;
+  isDisabled?: boolean;
 };
 
-const AWSBucket = ({ value, setValue }: FormGroupProps) => {
+const AWSConfigToggle = ({ value, onChange }: FormGroupProps<boolean>) => {
+  const handleChange = (
+    _event: React.FormEvent<HTMLInputElement>,
+    checked: boolean
+  ) => {
+    onChange(checked);
+  };
+
+  return (
+    <FormGroup label="Configure AWS Uploads">
+      <Switch
+        id="aws-config-switch"
+        ouiaId="aws-config-switch"
+        // empty label so there is no icon
+        label=""
+        isChecked={value}
+        onChange={handleChange}
+      />
+    </FormGroup>
+  );
+};
+
+const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   const isValid = useIsAwsBucketValid();
 
   return (
-    <FormGroup label="AWS Bucket">
+    <FormGroup label="AWS Bucket" disabled={isDisabled}>
       <ValidatedInput
         ariaLabel="aws-bucket"
         value={value || ''}
         validator={() => isValid}
-        onChange={(_event, value) => setValue(value)}
+        onChange={(_event, value) => onChange(value)}
         helperText="Invalid AWS bucket name"
       />
     </FormGroup>
   );
 };
 
-const AWSRegion = ({ value, setValue }: FormGroupProps) => {
+const AWSRegion = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
     value: string | number | undefined
   ) => {
-    setValue(value as string);
+    onChange(value as string);
     setIsOpen(false);
   };
 
@@ -88,7 +113,7 @@ const AWSRegion = ({ value, setValue }: FormGroupProps) => {
   );
 
   return (
-    <FormGroup label="AWS Region">
+    <FormGroup label="AWS Region" disabled={isDisabled}>
       <Select
         isOpen={isOpen}
         selected={value}
@@ -107,45 +132,61 @@ const AWSRegion = ({ value, setValue }: FormGroupProps) => {
   );
 };
 
-const AWSCredsPath = ({ value, setValue }: FormGroupProps) => {
+const AWSCredsPath = ({
+  value,
+  onChange,
+  isDisabled,
+}: FormGroupProps<string>) => {
   const isValid = useIsAwsCredsPathValid();
 
   return (
-    <FormGroup label="AWS Credentials Filepath">
+    <FormGroup label="AWS Credentials Filepath" disabled={isDisabled}>
       <ValidatedInput
         ariaLabel="aws-creds-path"
         value={value || ''}
         validator={() => isValid}
-        onChange={(_event, value) => setValue(value)}
+        onChange={(_event, value) => onChange(value)}
         helperText="Invalid filepath for AWS credentials"
       />
     </FormGroup>
   );
 };
 
-export const AWSConfig = () => {
+// TODO: fix this type
+export const AWSConfig = ({ refetch }: { refetch: any }) => {
   const dispatch = useAppDispatch();
   const bucket = useAppSelector(selectAWSBucketName);
   const region = useAppSelector(selectAWSRegion);
   const credentials = useAppSelector(selectAWSCredsPath);
+  const [enabled, setEnabled] = useState<boolean>(true);
 
-  // TODO: maybe add a radio button to toggle AWS configuration
-  // on or off - this might simplify validation & the overall
-  // experience
+  const onToggle = async (v: boolean) => {
+    let awsConfig = undefined;
+    if (v) {
+      const { data } = await refetch();
+      awsConfig = data?.aws;
+    }
+    dispatch(changeAWSConfig(awsConfig));
+    setEnabled(v);
+  };
 
   return (
     <Form>
+      <AWSConfigToggle value={enabled} onChange={onToggle} />
       <AWSBucket
         value={bucket}
-        setValue={(v) => dispatch(changeAWSBucketName(v))}
+        onChange={(v) => dispatch(changeAWSBucketName(v))}
+        isDisabled={!enabled}
       />
       <AWSRegion
         value={region}
-        setValue={(v) => dispatch(changeAWSRegion(v))}
+        onChange={(v) => dispatch(changeAWSRegion(v))}
+        isDisabled={!enabled}
       />
       <AWSCredsPath
         value={credentials}
-        setValue={(v) => dispatch(changeAWSCredsPath(v))}
+        onChange={(v) => dispatch(changeAWSCredsPath(v))}
+        isDisabled={!enabled}
       />
     </Form>
   );

@@ -17,7 +17,7 @@ export const CloudProviderConfig = () => {
   const dispatch = useAppDispatch();
   const handleClose = () => navigate(resolveRelPath(''));
 
-  const { data, error } = useGetWorkerConfigQuery({});
+  const { data, error, refetch } = useGetWorkerConfigQuery({});
   const isAwsStepValid = useIsAwsStepValid();
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const CloudProviderConfig = () => {
               onBack: () => navigate(resolveRelPath('')),
             }}
           >
-            <AWSConfig />
+            <AWSConfig refetch={refetch} />
           </WizardStep>
         </Wizard>
       </PageSection>
