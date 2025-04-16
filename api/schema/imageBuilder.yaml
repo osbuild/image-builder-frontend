@@ -722,6 +722,27 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/RecommendationsResponse"
+  /experimental/blueprints/{id}/fixup:
+    parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        example: '123e4567-e89b-12d3-a456-426655440000'
+        required: true
+        description: UUID of a blueprint
+    post:
+      summary: Apply linter fixes to blueprint
+      operationId: fixupBlueprint
+      description: |
+        Apply fixes which should fix any lint errors in the blueprint.
+      responses:
+        200:
+          description: successful update
+        404:
+          description: blueprint was not found
+
 components:
   schemas:
     HTTPError:
@@ -1028,6 +1049,7 @@ components:
         - id
         - name
         - description
+        - lint
         - distribution
         - image_requests
         - customizations
@@ -1039,6 +1061,8 @@ components:
           type: string
         description:
           type: string
+        lint:
+          $ref: "#/components/schemas/BlueprintLint"
         distribution:
           $ref: '#/components/schemas/Distributions'
         image_requests:
@@ -1097,6 +1121,29 @@ components:
         is_on_prem:
           type: boolean
           default: false
+    BlueprintLint:
+      required:
+        - errors
+      description: |
+        Linting errors in the current blueprint, these might need to be resolved before the
+        blueprint can be used to build images again.
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/BlueprintLintItem'
+    BlueprintLintItem:
+      type: object
+      required:
+        - name
+        - description
+      properties:
+        name:
+          type: string
+          example: Compliance
+        description:
+          type: string
+          example: package a required by policy is not present
     Distributions:
       type: string
       description: |
@@ -1116,6 +1163,8 @@ components:
         - rhel-8.10
         - rhel-9
         - rhel-9-nightly
+        - rhel-9.6-nightly
+        - rhel-9.7-nightly
         - rhel-9-beta
         - rhel-90
         - rhel-91
@@ -1124,6 +1173,8 @@ components:
         - rhel-94
         - rhel-95
         - rhel-10-nightly
+        - rhel-10.0-nightly
+        - rhel-10.1-nightly
         - rhel-10-beta
         - centos-9
         - centos-10
@@ -1588,6 +1639,12 @@ components:
           example: ['postgresql']
           items:
             type: string
+        enabled_modules:
+          type: array
+          description: |
+            List of dnf modules to enable, so that packages can be installed from them.
+          items:
+            $ref: '#/components/schemas/Module'
         payload_repositories:
           type: array
           items:
@@ -2118,3 +2175,20 @@ components:
           type: boolean
         module_hotfixes:
           type: boolean
+    Module:
+      type: object
+      required:
+        - name
+        - stream
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          example: 'nodejs'
+          description: |
+            Name of the module to enable.
+        stream:
+          type: string
+          example: '22'
+          description: |
+            Stream to enable.

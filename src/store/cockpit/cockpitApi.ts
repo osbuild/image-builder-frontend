@@ -171,6 +171,10 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 id,
                 version: version,
                 last_modified_at: new Date(bpInfo!.mtime * 1000).toString(),
+                // linting is not supported on prem
+                lint: {
+                  errors: [],
+                },
               },
             };
           } catch (error) {

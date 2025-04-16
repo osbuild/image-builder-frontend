@@ -28,6 +28,7 @@ const config: ConfigFile = {
     'deleteBlueprint',
     'getBlueprint',
     'recommendPackage',
+    'fixupBlueprint',
   ],
 };
 

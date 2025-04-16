@@ -545,6 +545,9 @@ export const multipleTargetsBlueprintResponse: GetBlueprintApiResponse = {
       rhc: true,
     },
   },
+  lint: {
+    errors: [],
+  },
 };
 
 export const darkChocolateBlueprintResponse: GetBlueprintApiResponse = {
@@ -560,5 +563,8 @@ export const darkChocolateBlueprintResponse: GetBlueprintApiResponse = {
       insights: true,
       rhc: true,
     },
+  },
+  lint: {
+    errors: [],
   },
 };
