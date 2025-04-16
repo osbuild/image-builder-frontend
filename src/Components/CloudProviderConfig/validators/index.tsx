@@ -31,3 +31,10 @@ export const useIsAwsCredsPathValid = (): boolean => {
     return false;
   }
 };
+
+export const useIsAwsStepValid = (): boolean => {
+  const isBucketValid = useIsAwsBucketValid();
+  const isCredsPathValid = useIsAwsCredsPathValid();
+
+  return isBucketValid && isCredsPathValid;
+};
