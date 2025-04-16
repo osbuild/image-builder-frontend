@@ -18,3 +18,16 @@ export type Package = {
   version: string;
   release: string;
 };
+
+export type AWSWorkerConfig = {
+  bucket?: string | undefined;
+  credentials?: string | undefined;
+};
+
+export type WorkerConfigResponse = {
+  aws?: AWSWorkerConfig;
+};
+
+export type CloudProviderConfigState = {
+  aws: AWSWorkerConfig;
+};
