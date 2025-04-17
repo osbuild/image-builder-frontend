@@ -215,10 +215,10 @@ describe('Step Users', () => {
     await addPassword(invalidPassword);
 
     const invalidUserMessage = screen.getByText(
-      /Password must be at least 6 characters long./i
+      /Password must be at least 6 characters long/i
     );
     const warningUserMessage = screen.getByText(
-      /Must include at least 3 of the following: lowercase letters, uppercase letters, numbers, symbols./i
+      /Must include at least 3 of the following: lowercase letters, uppercase letters, numbers, symbols/i
     );
     await waitFor(() => expect(invalidUserMessage));
     await waitFor(() => expect(warningUserMessage));
@@ -236,7 +236,7 @@ describe('Step Users', () => {
     await addPassword(invalidPassword);
 
     const invalidUserMessage = screen.getByText(
-      /Password must be at least 6 characters long./i
+      /Password must be at least 6 characters long/i
     );
     await waitFor(() => expect(invalidUserMessage));
     const nextButton = await getNextButton();

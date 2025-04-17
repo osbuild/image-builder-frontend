@@ -40,7 +40,7 @@ const ImageOutputStep = () => {
       </Title>
       <Text>
         Images enables you to create customized blueprints, create custom images
-        from the blueprints, and push them to target environments
+        from the blueprints, and push them to target environments.
         <br />
         <DocumentationButton />
       </Text>
