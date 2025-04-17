@@ -72,12 +72,12 @@ export const PasswordValidatedInput = ({
       <FormHelperText>
         <HelperText component="ul">
           <HelperTextItem variant={ruleLength} component="li" hasIcon>
-            Password must be at least 6 characters long.
+            Password must be at least 6 characters long
           </HelperTextItem>
           {environments.includes('azure') && (
             <HelperTextItem variant={ruleCharacters} component="li" hasIcon>
               Must include at least 3 of the following: lowercase letters,
-              uppercase letters, numbers, symbols.
+              uppercase letters, numbers, symbols
             </HelperTextItem>
           )}
         </HelperText>
