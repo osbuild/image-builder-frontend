@@ -9,6 +9,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import OscapOnPremSpinner from './components/OnPremSpinner';
 import OscapOnPremWarning from './components/OnPremWarning';
@@ -38,16 +39,22 @@ import {
   selectComplianceType,
   clearKernelAppend,
 } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
+import {
+  useFlag,
+  useGetEnvironment,
+} from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
+  const { analytics } = useChrome();
+  const { isFedoraEnv } = useGetEnvironment();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
+
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
@@ -86,6 +93,14 @@ const OscapContent = () => {
     dispatch(changeDisabledServices([]));
     dispatch(clearKernelAppend());
   };
+
+  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+    if (complianceEnabled) {
+      analytics.screen('ib-createimagewizard-step-security-compliance');
+    } else {
+      analytics.screen('ib-createimagewizard-step-security-openscap');
+    }
+  }
 
   return (
     <Form>
