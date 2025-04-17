@@ -25,10 +25,6 @@ import {
   useLazyGetOscapCustomizationsQuery,
   useBackendPrefetch,
 } from '../../../../../store/backendApi';
-import {
-  usePoliciesQuery,
-  PolicyRead,
-} from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
@@ -40,8 +36,6 @@ import {
   changeCompliance,
   selectDistribution,
   selectComplianceProfileID,
-  selectCompliancePolicyID,
-  selectCompliancePolicyTitle,
   addPackage,
   addPartition,
   changeFileSystemConfigurationType,
@@ -104,59 +98,15 @@ const OScapSelectOption = ({
   );
 };
 
-type ComplianceSelectOptionPropType = {
-  policy: PolicyRead;
-};
-
-type ComplianceSelectOptionValueType = {
-  policyID: string;
-  profileID: string;
-  toString: () => string;
-};
-
-const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
-  const selectObj = (
-    policyID: string,
-    profileID: string,
-    title: string
-  ): ComplianceSelectOptionValueType => ({
-    policyID,
-    profileID,
-    toString: () => title,
-  });
-
-  const descr = (
-    <>
-      Threshold: {policy.compliance_threshold}
-      <br />
-      Active systems: {policy.total_system_count}
-    </>
-  );
-
-  return (
-    <SelectOption
-      key={policy.id}
-      value={selectObj(policy.id!, policy.ref_id!, policy.title!)}
-      description={descr}
-    >
-      {policy.title}
-    </SelectOption>
-  );
-};
-
 const ProfileSelector = () => {
-  const policyID = useAppSelector(selectCompliancePolicyID);
-  const policyTitle = useAppSelector(selectCompliancePolicyTitle);
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
-  const majorVersion = release.split('-')[1];
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string>('None');
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
 
@@ -166,27 +116,9 @@ const ProfileSelector = () => {
     isSuccess,
     isError,
     refetch,
-  } = useGetOscapProfilesQuery(
-    {
-      distribution: release,
-    },
-    {
-      skip: complianceType === 'compliance',
-    }
-  );
-
-  const {
-    data: policies,
-    isFetching: isFetchingPolicies,
-    isSuccess: isSuccessPolicies,
-  } = usePoliciesQuery(
-    {
-      filter: `os_major_version=${majorVersion}`,
-    },
-    {
-      skip: complianceType === 'openscap',
-    }
-  );
+  } = useGetOscapProfilesQuery({
+    distribution: release,
+  });
 
   const { data: currentProfileData } = useGetOscapCustomizationsQuery(
     {
@@ -210,28 +142,6 @@ const ProfileSelector = () => {
       });
     });
   }
-
-  useEffect(() => {
-    if (!policies || policies.data === undefined) {
-      return;
-    }
-
-    if (policyID && !policyTitle) {
-      for (const p of policies.data) {
-        const pol = p as PolicyRead;
-        if (pol.id === policyID) {
-          dispatch(
-            changeCompliance({
-              policyID: pol.id,
-              profileID: pol.ref_id,
-              policyTitle: pol.title,
-            })
-          );
-        }
-      }
-    }
-  }, [isSuccessPolicies]);
-
   useEffect(() => {
     let filteredProfiles = profiles;
 
@@ -361,9 +271,7 @@ const ProfileSelector = () => {
     }
   };
 
-  const applyChanges = (
-    selection: OScapSelectOptionValueType | ComplianceSelectOptionValueType
-  ) => {
+  const applyChanges = (selection: OScapSelectOptionValueType) => {
     if (selection.profileID === undefined) {
       // handle user has selected 'None' case
       handleClear();
@@ -384,25 +292,13 @@ const ProfileSelector = () => {
           handlePackages(oldOscapPackages, newOscapPackages);
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          if (complianceType === 'openscap') {
-            dispatch(
-              changeCompliance({
-                profileID: selection.profileID,
-                policyID: undefined,
-                policyTitle: undefined,
-              })
-            );
-          } else {
-            const compl = selection as ComplianceSelectOptionValueType;
-            setSelected(compl.toString());
-            dispatch(
-              changeCompliance({
-                profileID: compl.profileID,
-                policyID: compl.policyID,
-                policyTitle: compl.toString(),
-              })
-            );
-          }
+          dispatch(
+            changeCompliance({
+              profileID: selection.profileID,
+              policyID: undefined,
+              policyTitle: undefined,
+            })
+          );
         });
     }
   };
@@ -414,36 +310,9 @@ const ProfileSelector = () => {
     if (selection) {
       setInputValue(selection);
       setFilterValue('');
-      applyChanges(
-        selection as unknown as
-          | OScapSelectOptionValueType
-          | ComplianceSelectOptionValueType
-      );
+      applyChanges(selection as unknown as OScapSelectOptionValueType);
       setIsOpen(false);
     }
-  };
-
-  const complianceOptions = () => {
-    if (!policies || policies.data === undefined) {
-      return [];
-    }
-
-    const res = [
-      <SelectOption
-        key="compliance-none-option"
-        value={{ toString: () => 'None', compareTo: () => false }}
-      >
-        None
-      </SelectOption>,
-    ];
-    for (const p of policies.data) {
-      if (p === undefined) {
-        continue;
-      }
-      const pol = p as PolicyRead;
-      res.push(<ComplianceSelectOption key={pol.id} policy={pol} />);
-    }
-    return res;
   };
 
   const toggleOpenSCAP = (toggleRef: React.Ref<MenuToggleElement>) => (
@@ -480,85 +349,51 @@ const ProfileSelector = () => {
     </MenuToggle>
   );
 
-  const toggleCompliance = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={() => setIsOpen(!isOpen)}
-      isExpanded={isOpen}
-      isDisabled={isFetchingPolicies}
-      style={
-        {
-          width: '200px',
-        } as React.CSSProperties
-      }
-    >
-      {selected}
-    </MenuToggle>
-  );
-
   return (
-    <FormGroup
-      data-testid="profiles-form-group"
-      label={complianceType === 'openscap' ? <OpenSCAPFGLabel /> : <>Policy</>}
-    >
-      {complianceType === 'openscap' && (
-        <Select
-          isScrollable
-          isOpen={isOpen}
-          selected={profileID}
-          onSelect={handleSelect}
-          onOpenChange={handleToggle}
-          toggle={toggleOpenSCAP}
-          shouldFocusFirstItemOnOpen={false}
-          popperProps={{
-            maxWidth: '50vw',
-          }}
-        >
-          <SelectList>
-            {isFetching && (
+    <FormGroup data-testid="profiles-form-group" label={<OpenSCAPFGLabel />}>
+      <Select
+        isScrollable
+        isOpen={isOpen}
+        selected={profileID}
+        onSelect={handleSelect}
+        onOpenChange={handleToggle}
+        toggle={toggleOpenSCAP}
+        shouldFocusFirstItemOnOpen={false}
+        popperProps={{
+          maxWidth: '50vw',
+        }}
+      >
+        <SelectList>
+          {isFetching && (
+            <SelectOption
+              value="loader"
+              data-testid="openscap-profiles-fetching"
+            >
+              <Spinner size="lg" />
+            </SelectOption>
+          )}
+          {selectOptions.length > 0 &&
+            [
               <SelectOption
-                value="loader"
-                data-testid="openscap-profiles-fetching"
+                key="oscap-none-option"
+                value={{ toString: () => 'None', compareTo: () => false }}
               >
-                <Spinner size="lg" />
-              </SelectOption>
-            )}
-            {selectOptions.length > 0 &&
-              [
-                <SelectOption
-                  key="oscap-none-option"
-                  value={{ toString: () => 'None', compareTo: () => false }}
-                >
-                  None
-                </SelectOption>,
-              ].concat(
-                selectOptions.map(
-                  (name: DistributionProfileItem, index: number) => (
-                    <OScapSelectOption key={index} profile_id={name} />
-                  )
+                None
+              </SelectOption>,
+            ].concat(
+              selectOptions.map(
+                (name: DistributionProfileItem, index: number) => (
+                  <OScapSelectOption key={index} profile_id={name} />
                 )
-              )}
-            {isSuccess && selectOptions.length === 0 && (
-              <SelectOption isDisabled>
-                {`No results found for "${filterValue}"`}
-              </SelectOption>
+              )
             )}
-          </SelectList>
-        </Select>
-      )}
-      {complianceType === 'compliance' && (
-        <Select
-          isScrollable
-          isOpen={isOpen}
-          onSelect={handleSelect}
-          onOpenChange={handleToggle}
-          selected={selected}
-          toggle={toggleCompliance}
-          shouldFocusFirstItemOnOpen={false}
-        >
-          {complianceOptions()}
-        </Select>
-      )}
+          {isSuccess && selectOptions.length === 0 && (
+            <SelectOption isDisabled>
+              {`No results found for "${filterValue}"`}
+            </SelectOption>
+          )}
+        </SelectList>
+      </Select>
       {isError && (
         <Alert
           title="Error fetching the profiles"
