@@ -92,6 +92,7 @@ const UserInfo = () => {
         ariaLabel="blueprint user password"
         placeholder="Enter password"
         onChange={(_e, value) => handlePasswordChange(_e, value)}
+        hasPassword={user.hasPassword}
       />
       <FormGroup isRequired label="SSH key">
         <ValidatedInputAndTextArea
