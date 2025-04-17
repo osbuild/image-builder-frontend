@@ -19,6 +19,7 @@ const config: ConfigFile = {
     'getPackages',
     'getOscapProfiles',
     'getOscapCustomizations',
+    'getOscapCustomizationsForPolicy',
     'createBlueprint',
     'updateBlueprint',
     'composeBlueprint',
