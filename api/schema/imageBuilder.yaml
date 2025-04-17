@@ -702,6 +702,33 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Customizations'
+  /oscap/{policy}/{distribution}/policy_customizations:
+    parameters:
+      - in: path
+        name: policy
+        schema:
+          type: string
+          format: uuid
+        example: '123e4567-e89b-12d3-a456-426655440000'
+        required: true
+      - in: path
+        name: distribution
+        schema:
+          $ref: '#/components/schemas/Distributions'
+        required: true
+    get:
+      summary: get the customizations for a compliance policy
+      operationId: getOscapCustomizationsForPolicy
+      tags:
+        - oscap
+      responses:
+        '200':
+          description: |
+            A customizations array updated with the needed elements.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customizations'
   /experimental/recommendations:
     post:
       summary: List recommended packages.
@@ -1218,6 +1245,11 @@ components:
             be used. If no snapshots made before the specified date can be found, the snapshot
             closest to, but after the specified date will be used. If no snapshots can be found at
             all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
+        content_template:
+          type: string
+          description: |
+            ID of the content template. A content template and snapshot date cannot both be specified.
+            If a content template is specified, the snapshot date used will be the one from the content template.
     ImageTypes:
       type: string
       enum:
@@ -2013,6 +2045,10 @@ components:
             Plaintext passwords are also supported, they will be hashed and stored using the SHA-512 algorithm.
             The password is never returned in the response.
             Empty string can be used to remove the password during update but only with ssh_key set.
+        hasPassword:
+          type: boolean
+          description: |
+            Indicates whether the user has a password set.
     Filesystem:
       type: object
       required:
