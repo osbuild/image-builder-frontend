@@ -161,6 +161,14 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/oscap/${queryArg.distribution}/${queryArg.profile}/customizations`,
       }),
     }),
+    getOscapCustomizationsForPolicy: build.query<
+      GetOscapCustomizationsForPolicyApiResponse,
+      GetOscapCustomizationsForPolicyApiArg
+    >({
+      query: (queryArg) => ({
+        url: `/oscap/${queryArg.policy}/${queryArg.distribution}/policy_customizations`,
+      }),
+    }),
     recommendPackage: build.mutation<
       RecommendPackageApiResponse,
       RecommendPackageApiArg
@@ -338,6 +346,13 @@ export type GetOscapCustomizationsApiArg = {
   distribution: Distributions;
   /** Name of the profile to retrieve customizations from */
   profile: DistributionProfileItem;
+};
+export type GetOscapCustomizationsForPolicyApiResponse =
+  /** status 200 A customizations array updated with the needed elements.
+   */ Customizations;
+export type GetOscapCustomizationsForPolicyApiArg = {
+  policy: string;
+  distribution: Distributions;
 };
 export type RecommendPackageApiResponse =
   /** status 200 Return the recommended packages. */ RecommendationsResponse;
@@ -1002,6 +1017,8 @@ export const {
   useLazyGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
   useLazyGetOscapCustomizationsQuery,
+  useGetOscapCustomizationsForPolicyQuery,
+  useLazyGetOscapCustomizationsForPolicyQuery,
   useRecommendPackageMutation,
   useFixupBlueprintMutation,
 } = injectedRtkApi;
