@@ -23,14 +23,21 @@ import { parse } from 'toml';
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
 import {
+  ApiRepositoryImportResponseRead,
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '../../store/contentSourcesApi';
 import { useAppDispatch } from '../../store/hooks';
-import { BlueprintExportResponse } from '../../store/imageBuilderApi';
-import { importCustomRepositories, wizardState } from '../../store/wizardSlice';
+import {
+  BlueprintExportResponse,
+  CustomRepository,
+} from '../../store/imageBuilderApi';
+import { wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
-import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
+import {
+  mapExportRequestToState,
+  mapToCustomRepositories,
+} from '../CreateImageWizard/utilities/requestMapper';
 
 interface ImportBlueprintModalProps {
   setShowImportModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -70,7 +77,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
 
   async function handleRepositoryImport(
     blueprintExportedResponse: BlueprintExportResponse
-  ) {
+  ): Promise<CustomRepository[] | undefined> {
     if (isCheckedImportRepos && blueprintExportedResponse.content_sources) {
       const customRepositories: ApiRepositoryRequest[] =
         blueprintExportedResponse.content_sources.map(
@@ -81,15 +88,17 @@ export const ImportBlueprintModal: React.FunctionComponent<
         const result = await importRepositories({
           body: customRepositories,
         }).unwrap();
-        dispatch(
-          importCustomRepositories(
-            blueprintExportedResponse.customizations.custom_repositories || []
-          )
-        );
-
         if (Array.isArray(result)) {
           const importedRepositoryNames: string[] = [];
+          const newCustomRepos: CustomRepository[] = [];
           result.forEach((repository) => {
+            const contentSourcesRepo =
+              repository as ApiRepositoryImportResponseRead;
+            if (contentSourcesRepo.uuid) {
+              newCustomRepos.push(
+                ...mapToCustomRepositories(contentSourcesRepo)
+              );
+            }
             if (repository.warnings?.length === 0 && repository.url) {
               importedRepositoryNames.push(repository.url);
               return;
@@ -102,6 +111,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               })
             );
           });
+
           if (importedRepositoryNames.length !== 0) {
             dispatch(
               addNotification({
@@ -111,6 +121,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               })
             );
           }
+          return newCustomRepos;
         }
       } catch {
         dispatch(
@@ -125,60 +136,72 @@ export const ImportBlueprintModal: React.FunctionComponent<
 
   React.useEffect(() => {
     if (filename && fileContent) {
-      try {
-        const isToml = filename.endsWith('.toml');
-        const isJson = filename.endsWith('.json');
-        if (isToml) {
-          const tomlBlueprint = parse(fileContent);
-          const blueprintFromFile = mapOnPremToHosted(tomlBlueprint);
-          const importBlueprintState = mapExportRequestToState(
-            blueprintFromFile,
-            []
-          );
-          setIsOnPrem(true);
-          setImportedBlueprint(importBlueprintState);
-        } else if (isJson) {
-          const blueprintFromFile = JSON.parse(fileContent);
-          try {
-            const blueprintExportedResponse: BlueprintExportResponse = {
-              name: blueprintFromFile.name,
-              description: blueprintFromFile.description,
-              distribution: blueprintFromFile.distribution,
-              customizations: blueprintFromFile.customizations,
-              metadata: blueprintFromFile.metadata,
-              content_sources: blueprintFromFile.content_sources,
-            };
+      const parseAndImport = async () => {
+        try {
+          const isToml = filename.endsWith('.toml');
+          const isJson = filename.endsWith('.json');
+          if (isToml) {
+            const tomlBlueprint = parse(fileContent);
+            const blueprintFromFile = mapOnPremToHosted(tomlBlueprint);
             const importBlueprintState = mapExportRequestToState(
-              blueprintExportedResponse,
-              blueprintFromFile.image_requests || []
-            );
-
-            if (blueprintExportedResponse.content_sources) {
-              handleRepositoryImport(blueprintExportedResponse);
-            }
-            setIsOnPrem(false);
-            setImportedBlueprint(importBlueprintState);
-          } catch {
-            const blueprintFromFileMapped =
-              mapOnPremToHosted(blueprintFromFile);
-            const importBlueprintState = mapExportRequestToState(
-              blueprintFromFileMapped,
+              blueprintFromFile,
               []
             );
             setIsOnPrem(true);
             setImportedBlueprint(importBlueprintState);
+          } else if (isJson) {
+            const blueprintFromFile = JSON.parse(fileContent);
+            let customRepos: CustomRepository[] = [];
+            try {
+              if (blueprintFromFile.content_sources) {
+                const imported = await handleRepositoryImport(
+                  blueprintFromFile
+                );
+                customRepos = imported ?? [];
+              }
+
+              const blueprintExportedResponse: BlueprintExportResponse = {
+                name: blueprintFromFile.name,
+                description: blueprintFromFile.description,
+                distribution: blueprintFromFile.distribution,
+                customizations: blueprintFromFile.customizations,
+                metadata: blueprintFromFile.metadata,
+                content_sources: blueprintFromFile.content_sources,
+              };
+              blueprintExportedResponse.customizations.custom_repositories =
+                customRepos;
+              blueprintExportedResponse.customizations.payload_repositories =
+                undefined;
+              const importBlueprintState = mapExportRequestToState(
+                blueprintExportedResponse,
+                blueprintFromFile.image_requests || []
+              );
+
+              setIsOnPrem(false);
+              setImportedBlueprint(importBlueprintState);
+            } catch {
+              const blueprintFromFileMapped =
+                mapOnPremToHosted(blueprintFromFile);
+              const importBlueprintState = mapExportRequestToState(
+                blueprintFromFileMapped,
+                []
+              );
+              setIsOnPrem(true);
+              setImportedBlueprint(importBlueprintState);
+            }
           }
+        } catch (error) {
+          setIsInvalidFormat(true);
+          dispatch(
+            addNotification({
+              variant: 'warning',
+              title: 'File is not a valid blueprint',
+              description: error?.data?.error?.message,
+            })
+          );
         }
-      } catch (error) {
-        setIsInvalidFormat(true);
-        dispatch(
-          addNotification({
-            variant: 'warning',
-            title: 'File is not a valid blueprint',
-            description: error?.data?.error?.message,
-          })
-        );
-      }
+      };
+      parseAndImport();
     }
   }, [filename, fileContent]);
 
