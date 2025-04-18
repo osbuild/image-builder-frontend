@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 
+import { CloudProviderConfig } from './Components/CloudProviderConfig/CloudProviderConfig';
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { manageEdgeImagesUrlName } from './Utilities/edge';
@@ -63,6 +64,16 @@ export const Router = () => {
             element={<EdgeImageDetail />}
           />
         </Route>
+      )}
+      {process.env.IS_ON_PREMISE && (
+        <Route
+          path={'/cloud-provider-config'}
+          element={
+            <Suspense>
+              <CloudProviderConfig />
+            </Suspense>
+          }
+        />
       )}
     </Routes>
   );
