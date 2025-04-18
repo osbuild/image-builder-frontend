@@ -34,6 +34,7 @@ import {
   selectImageTypes,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
+  selectTemplate,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -227,8 +228,9 @@ export function useFilesystemValidation(): StepValidation {
 export function useSnapshotValidation(): StepValidation {
   const snapshotDate = useAppSelector(selectSnapshotDate);
   const useLatest = useAppSelector(selectUseLatest);
+  const template = useAppSelector(selectTemplate);
 
-  if (!useLatest && !isSnapshotValid(snapshotDate)) {
+  if (!useLatest && !isSnapshotValid(snapshotDate) && template === '') {
     return {
       errors: { snapshotDate: 'Invalid snapshot date' },
       disabledNext: true,

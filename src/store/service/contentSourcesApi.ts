@@ -89,6 +89,24 @@ const injectedRtkApi = api.injectEndpoints({
         body: queryArg.apiListSnapshotByDateRequest,
       }),
     }),
+    listTemplates: build.query<ListTemplatesApiResponse, ListTemplatesApiArg>({
+      query: (queryArg) => ({
+        url: `/templates/`,
+        params: {
+          offset: queryArg.offset,
+          limit: queryArg.limit,
+          version: queryArg.version,
+          arch: queryArg.arch,
+          name: queryArg.name,
+          repository_uuids: queryArg.repositoryUuids,
+          snapshot_uuids: queryArg.snapshotUuids,
+          sort_by: queryArg.sortBy,
+        },
+      }),
+    }),
+    getTemplate: build.query<GetTemplateApiResponse, GetTemplateApiArg>({
+      query: (queryArg) => ({ url: `/templates/${queryArg.uuid}` }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -169,6 +187,32 @@ export type ListSnapshotsByDateApiResponse =
 export type ListSnapshotsByDateApiArg = {
   /** request body */
   apiListSnapshotByDateRequest: ApiListSnapshotByDateRequest;
+};
+export type ListTemplatesApiResponse =
+  /** status 200 OK */ ApiTemplateCollectionResponseRead;
+export type ListTemplatesApiArg = {
+  /** Starting point for retrieving a subset of results. Determines how many items to skip from the beginning of the result set. Default value:`0`. */
+  offset?: number;
+  /** Number of items to include in response. Use it to control the number of items, particularly when dealing with large datasets. Default value: `100`. */
+  limit?: number;
+  /** Filter templates by version. */
+  version?: string;
+  /** Filter templates by architecture. */
+  arch?: string;
+  /** Filter templates by name. */
+  name?: string;
+  /** Filter templates by associated repositories using a comma separated list of repository UUIDs */
+  repositoryUuids?: string;
+  /** Filter templates by associated snapshots using a comma separated list of snapshot UUIDs */
+  snapshotUuids?: string;
+  /** Sort the response data based on specific parameters. Sort criteria can include `name`, `arch`, and `version`. */
+  sortBy?: string;
+};
+export type GetTemplateApiResponse =
+  /** status 200 OK */ ApiTemplateResponseRead;
+export type GetTemplateApiArg = {
+  /** Template ID. */
+  uuid: string;
 };
 export type ApiFeature = {
   /** Whether the current user can access the feature */
@@ -636,6 +680,91 @@ export type ApiListSnapshotByDateRequest = {
   /** Repository UUIDs to find snapshots for */
   repository_uuids: string[];
 };
+export type ApiTemplateResponse = {
+  /** Architecture of the template */
+  arch?: string | undefined;
+  /** Datetime template was created */
+  created_at?: string | undefined;
+  /** User that created the template */
+  created_by?: string | undefined;
+  /** Latest date to include snapshots for */
+  date?: string | undefined;
+  /** Description of the template */
+  description?: string | undefined;
+  /** Error of last update_latest_snapshot task that updated the template */
+  last_update_snapshot_error?: string | undefined;
+  last_update_task?: ApiTaskInfoResponse | undefined;
+  /** UUID of the last update_template_content task that updated the template */
+  last_update_task_uuid?: string | undefined;
+  /** User that most recently updated the template */
+  last_updated_by?: string | undefined;
+  /** Name of the template */
+  name?: string | undefined;
+  /** Organization ID of the owner */
+  org_id?: string | undefined;
+  /** Repositories added to the template */
+  repository_uuids?: string[] | undefined;
+  /** Environment ID used by subscription-manager and candlepin */
+  rhsm_environment_id?: string | undefined;
+  /** Datetime template was last updated */
+  updated_at?: string | undefined;
+  /** Use latest snapshot for all repositories in the template */
+  use_latest?: boolean | undefined;
+  /** Version of the template */
+  version?: string | undefined;
+};
+export type ApiTemplateResponseRead = {
+  /** Architecture of the template */
+  arch?: string | undefined;
+  /** Datetime template was created */
+  created_at?: string | undefined;
+  /** User that created the template */
+  created_by?: string | undefined;
+  /** Latest date to include snapshots for */
+  date?: string | undefined;
+  /** Description of the template */
+  description?: string | undefined;
+  /** Error of last update_latest_snapshot task that updated the template */
+  last_update_snapshot_error?: string | undefined;
+  last_update_task?: ApiTaskInfoResponse | undefined;
+  /** UUID of the last update_template_content task that updated the template */
+  last_update_task_uuid?: string | undefined;
+  /** User that most recently updated the template */
+  last_updated_by?: string | undefined;
+  /** Name of the template */
+  name?: string | undefined;
+  /** Organization ID of the owner */
+  org_id?: string | undefined;
+  /** Repositories added to the template */
+  repository_uuids?: string[] | undefined;
+  /** Whether the candlepin environment is created and systems can be added */
+  rhsm_environment_created?: boolean | undefined;
+  /** Environment ID used by subscription-manager and candlepin */
+  rhsm_environment_id?: string | undefined;
+  /** The list of snapshots in use by the template */
+  snapshots?: ApiSnapshotResponse[] | undefined;
+  /** List of snapshots used by this template which are going to be deleted soon */
+  to_be_deleted_snapshots?: ApiSnapshotResponse[] | undefined;
+  /** Datetime template was last updated */
+  updated_at?: string | undefined;
+  /** Use latest snapshot for all repositories in the template */
+  use_latest?: boolean | undefined;
+  uuid?: string | undefined;
+  /** Version of the template */
+  version?: string | undefined;
+};
+export type ApiTemplateCollectionResponse = {
+  /** Requested Data */
+  data?: ApiTemplateResponse[] | undefined;
+  links?: ApiLinks | undefined;
+  meta?: ApiResponseMetadata | undefined;
+};
+export type ApiTemplateCollectionResponseRead = {
+  /** Requested Data */
+  data?: ApiTemplateResponseRead[] | undefined;
+  links?: ApiLinks | undefined;
+  meta?: ApiResponseMetadata | undefined;
+};
 export const {
   useListFeaturesQuery,
   useSearchPackageGroupMutation,
@@ -645,4 +774,6 @@ export const {
   useListRepositoriesRpmsQuery,
   useSearchRpmMutation,
   useListSnapshotsByDateMutation,
+  useListTemplatesQuery,
+  useGetTemplateQuery,
 } = injectedRtkApi;

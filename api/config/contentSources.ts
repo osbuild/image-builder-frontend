@@ -17,6 +17,8 @@ const config: ConfigFile = {
     'listFeatures',
     'listSnapshotsByDate',
     'bulkImportRepositories',
+    'listTemplates',
+    'getTemplate',
   ],
 };
 
