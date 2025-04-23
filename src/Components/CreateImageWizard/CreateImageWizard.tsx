@@ -192,7 +192,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const [searchParams] = useSearchParams();
   const { isFedoraEnv } = useGetEnvironment();
   // Feature flags
-  const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const isUsersEnabled = useFlag('image-builder.users.enabled');
   const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
@@ -662,7 +661,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-first-boot"
                 navItem={customStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!isFirstBootEnabled}
+                isHidden={!!process.env.IS_ON_PREMISE || isFedoraEnv}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}

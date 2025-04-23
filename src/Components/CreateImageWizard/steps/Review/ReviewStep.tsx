@@ -198,7 +198,6 @@ const Review = () => {
     );
   };
 
-  const isFirstBootEnabled = useFlag('image-builder.firstboot.enabled');
   const isUsersEnabled = useFlag('image-builder.users.enabled');
   const { isFedoraEnv } = useGetEnvironment();
   return (
@@ -504,23 +503,21 @@ const Review = () => {
             <ServicesList />
           </ExpandableSection>
         )}
-      {isFirstBootEnabled && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'First boot',
-            'revisit-first-boot',
-            'wizard-first-boot'
-          )}
-          onToggle={(_event, isExpandableFirstBoot) =>
-            onToggleFirstBoot(isExpandableFirstBoot)
-          }
-          isExpanded={isExpandableFirstBoot}
-          isIndented
-          data-testid="firstboot-expandable"
-        >
-          <FirstBootList />
-        </ExpandableSection>
-      )}
+      <ExpandableSection
+        toggleContent={composeExpandable(
+          'First boot',
+          'revisit-first-boot',
+          'wizard-first-boot'
+        )}
+        onToggle={(_event, isExpandableFirstBoot) =>
+          onToggleFirstBoot(isExpandableFirstBoot)
+        }
+        isExpanded={isExpandableFirstBoot}
+        isIndented
+        data-testid="firstboot-expandable"
+      >
+        <FirstBootList />
+      </ExpandableSection>
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
           toggleContent={composeExpandable(
