@@ -72,13 +72,10 @@ import {
   selectLanguages,
   selectKeyboard,
   selectHostname,
-  selectUserNameByIndex,
-  selectUserPasswordByIndex,
-  selectUserSshKeyByIndex,
   selectKernel,
-  selectUserAdministrator,
   selectFirewall,
   selectServices,
+  selectUsers,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
@@ -800,20 +797,12 @@ export const TimezoneList = () => {
 };
 
 export const UsersList = () => {
-  const index = 0;
-  const userNameSelector = selectUserNameByIndex(index);
-  const userName = useAppSelector(userNameSelector);
-  const userPasswordSelector = selectUserPasswordByIndex(index);
-  const userPassword = useAppSelector(userPasswordSelector);
-  const userSshKeySelector = selectUserSshKeyByIndex(index);
-  const userSshKey = useAppSelector(userSshKeySelector);
-  const userIsAdministratorSelector = selectUserAdministrator(index);
-  const userIsAdministrator = useAppSelector(userIsAdministratorSelector);
+  const users = useAppSelector(selectUsers);
 
   return (
     <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <>
+      {users.map((user) => (
+        <TextList key={user.name} component={TextListVariants.dl}>
           <TextListItem
             component={TextListItemVariants.dt}
             className="pf-v5-u-min-width"
@@ -821,7 +810,7 @@ export const UsersList = () => {
             Username
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
-            {userName ? userName : 'None'}
+            {user.name ? user.name : 'None'}
           </TextListItem>
           <TextListItem
             component={TextListItemVariants.dt}
@@ -830,7 +819,7 @@ export const UsersList = () => {
             Password
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
-            {userPassword ? '●'.repeat(8) : 'None'}
+            {user.password || user.hasPassword ? '●'.repeat(8) : 'None'}
           </TextListItem>
           <TextListItem
             component={TextListItemVariants.dt}
@@ -839,7 +828,7 @@ export const UsersList = () => {
             SSH key
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
-            {userSshKey ? userSshKey : 'None'}
+            {user.ssh_key ? user.ssh_key : 'None'}
           </TextListItem>
           <TextListItem
             component={TextListItemVariants.dt}
@@ -848,10 +837,10 @@ export const UsersList = () => {
             Administrator
           </TextListItem>
           <TextListItem component={TextListItemVariants.dd}>
-            {userIsAdministrator ? 'True' : 'False'}
+            {user.isAdministrator ? 'True' : 'False'}
           </TextListItem>
-        </>
-      </TextList>
+        </TextList>
+      ))}
     </TextContent>
   );
 };
