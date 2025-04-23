@@ -15,19 +15,16 @@ import {
   EmptyStateIcon,
   EmptyStateVariant,
   Icon,
-  InputGroup,
-  InputGroupItem,
-  InputGroupText,
   Pagination,
   PaginationVariant,
   Popover,
+  SearchInput,
   Spinner,
   Stack,
   Tab,
   Tabs,
   TabTitleText,
   Text,
-  TextInput,
   ToggleGroup,
   ToggleGroupItem,
   Toolbar,
@@ -40,7 +37,6 @@ import {
   HelpIcon,
   OptimizeIcon,
   SearchIcon,
-  TimesIcon,
 } from '@patternfly/react-icons';
 import {
   ExpandableRowContent,
@@ -1248,39 +1244,16 @@ const Packages = () => {
         <Stack>
           <ToolbarContent>
             <ToolbarItem variant="search-filter">
-              <InputGroup>
-                <InputGroupItem isFill>
-                  <InputGroupText id="search-icon">
-                    <SearchIcon />
-                  </InputGroupText>
-                  <TextInput
-                    data-ouia-component-id="packages-search-input"
-                    type="text"
-                    validated={
-                      debouncedSearchTermLengthOf1 &&
-                      !debouncedSearchTermIsGroup
-                        ? 'error'
-                        : 'default'
-                    }
-                    placeholder="Type to search"
-                    aria-label="Search packages"
-                    data-testid="packages-search-input"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                  />
-                </InputGroupItem>
-                {searchTerm && (
-                  <InputGroupItem>
-                    <Button
-                      variant="control"
-                      aria-label="clear-package-search"
-                      onClick={handleClear}
-                      icon={<TimesIcon />}
-                      ouiaId="clear-package-search-button"
-                    />
-                  </InputGroupItem>
-                )}
-              </InputGroup>
+              <SearchInput
+                data-ouia-component-id="packages-search-input"
+                type="text"
+                placeholder="Type to search"
+                aria-label="Search packages"
+                data-testid="packages-search-input"
+                value={searchTerm}
+                onChange={handleSearch}
+                onClear={() => handleClear()}
+              />
             </ToolbarItem>
             <ToolbarItem>
               <ToggleGroup>
