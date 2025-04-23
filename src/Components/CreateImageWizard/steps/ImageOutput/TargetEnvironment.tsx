@@ -365,9 +365,11 @@ const TargetEnvironment = () => {
                   bodyContent={
                     <TextContent>
                       <Text>
-                        Using RHEL on Microsoft&apos;s Windows Subsystem for
-                        Linux (WSL) is permitted as a Validated Software
-                        Platform and Third Party Component Support Policy.
+                        You can use RHEL on Microsoft&apos;s Windows Subsystem
+                        for Linux (WSL) for development and learning use cases.
+                        Red Hat supports WSL under the Validated Software
+                        Pattern and Third Party Component Support Policy, which
+                        does not include production use cases.
                       </Text>
                     </TextContent>
                   }
@@ -381,7 +383,7 @@ const TargetEnvironment = () => {
                       isInline
                       href="https://access.redhat.com/articles/7115538"
                     >
-                      Learn more
+                      Learn more about Red Hat&apos;s WSL support
                     </Button>
                   }
                 >
