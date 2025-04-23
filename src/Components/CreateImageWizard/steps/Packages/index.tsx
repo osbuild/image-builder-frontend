@@ -8,10 +8,8 @@ import Packages from './Packages';
 import { RHEL_8, RHEL_9 } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const PackagesStep = () => {
-  const packageRecommendationsFlag = useFlag('image-builder.pkgrecs.enabled');
   const distribution = useAppSelector(selectDistribution);
   return (
     <Form>
@@ -33,10 +31,9 @@ const PackagesStep = () => {
         </Alert>
       )}
       <Packages />
-      {packageRecommendationsFlag &&
-        (distribution === RHEL_8 || distribution === RHEL_9) && (
-          <PackageRecommendations />
-        )}
+      {(distribution === RHEL_8 || distribution === RHEL_9) && (
+        <PackageRecommendations />
+      )}
     </Form>
   );
 };
