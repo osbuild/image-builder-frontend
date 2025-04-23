@@ -1017,6 +1017,7 @@ export const wizardSlice = createSlice({
         ssh_key: '',
         groups: [],
         isAdministrator: false,
+        hasPassword: false,
       };
 
       state.users.push(newUser);

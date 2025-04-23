@@ -235,6 +235,7 @@ function commonRequestToState(
         ssh_key: user.ssh_key || '',
         groups: user.groups || [],
         isAdministrator: user.groups?.includes('wheel') || false,
+        hasPassword: user.hasPassword || false,
       })) || [],
     compliance:
       compliancePolicyID !== undefined
@@ -649,6 +650,7 @@ const getUsers = (state: RootState): User[] | undefined => {
     if (user.groups.length > 0) {
       result.groups = user.groups;
     }
+    result.hasPassword = user.hasPassword || user.password !== '';
     return result as User;
   });
 };
