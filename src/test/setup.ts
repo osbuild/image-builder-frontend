@@ -63,8 +63,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.import.enabled':
         return true;
-      case 'image-builder.firstboot.enabled':
-        return true;
       case 'image-builder.hostname.enabled':
         return true;
       case 'image-builder.kernel.enabled':
