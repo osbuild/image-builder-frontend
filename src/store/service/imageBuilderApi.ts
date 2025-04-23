@@ -549,6 +549,10 @@ export type ImageRequest = {
     all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
      */
   snapshot_date?: string | undefined;
+  /** ID of the content template. A content template and snapshot date cannot both be specified.
+    If a content template is specified, the snapshot date used will be the one from the content template.
+     */
+  content_template?: string | undefined;
 };
 export type Container = {
   /** Reference to the container to embed */
@@ -654,6 +658,9 @@ export type User = {
     Empty string can be used to remove the password during update but only with ssh_key set.
      */
   password?: string | undefined;
+  /** Indicates whether the user has a password set.
+   */
+  hasPassword?: boolean | undefined;
 };
 export type Services = {
   /** List of services to enable by default */
