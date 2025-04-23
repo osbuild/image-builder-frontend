@@ -38,7 +38,7 @@
     "@playwright/test": "1.51.1",
     "@currents/playwright": "1.12.0",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.12",
-    "@redhat-cloud-services/frontend-components-config": "6.3.8",
+    "@redhat-cloud-services/frontend-components-config": "6.5.5",
     "@redhat-cloud-services/tsc-transform-imports": "1.0.23",
     "@rtk-query/codegen-openapi": "2.0.0",
     "@testing-library/dom": "10.4.0",
