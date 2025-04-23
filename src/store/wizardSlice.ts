@@ -414,31 +414,6 @@ export const selectUsers = (state: RootState) => {
   return state.wizard.users;
 };
 
-export const selectUserNameByIndex =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.name;
-  };
-
-export const selectUserPasswordByIndex =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.password;
-  };
-
-export const selectUserSshKeyByIndex =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.ssh_key;
-  };
-
-export const selectUserAdministrator =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.isAdministrator;
-  };
-
-export const selectUserGroupsByIndex =
-  (userIndex: number) => (state: RootState) => {
-    return state.wizard.users[userIndex]?.groups;
-  };
-
 export const selectKernel = (state: RootState) => {
   return state.wizard.kernel;
 };
