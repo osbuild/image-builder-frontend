@@ -650,6 +650,7 @@ const getUsers = (state: RootState): User[] | undefined => {
     if (user.groups.length > 0) {
       result.groups = user.groups;
     }
+    result.hasPassword = user.hasPassword || user.password !== '';
     return result as User;
   });
 };
