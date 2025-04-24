@@ -1,3 +1,5 @@
+import { mockPolicies } from './compliance';
+
 import {
   GetOscapProfilesApiResponse,
   GetOscapCustomizationsApiResponse,
@@ -90,7 +92,6 @@ export const oscapCustomizations = (
     };
   }
   return {
-    filesystem: [{ min_size: 1073741824, mountpoint: '/tmp' }],
     openscap: {
       profile_id: 'content_profile_stig_gui',
       profile_name: 'DISA STIG with GUI for Red Hat Enterprise Linux 8',
@@ -113,4 +114,16 @@ export const oscapCustomizations = (
       enabled: ['crond', 'firewalld', 'systemd-journald', 'rsyslog', 'auditd'],
     },
   };
+};
+
+export const oscapCustomizationsPolicy = (
+  policy: string
+): GetOscapCustomizationsApiResponse => {
+  const policyData = mockPolicies.data.find((p) => p.id === policy);
+  const customizations = oscapCustomizations(policyData!.ref_id);
+  // filter out a single package to simulate the customizations being tailored
+  customizations.packages = customizations.packages!.filter(
+    (p) => p !== 'aide'
+  );
+  return customizations;
 };

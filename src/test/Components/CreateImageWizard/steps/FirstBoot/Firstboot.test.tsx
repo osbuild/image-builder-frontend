@@ -198,7 +198,6 @@ describe('First boot request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
-        filesystem: [{ min_size: 10737418240, mountpoint: '/' }],
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',
         },
@@ -229,7 +228,6 @@ describe('First boot request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
-        filesystem: [{ min_size: 10737418240, mountpoint: '/' }],
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',
         },
