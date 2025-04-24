@@ -100,11 +100,17 @@ const getRows = async () => {
 const comparePackageSearchResults = async () => {
   const availablePackages = await getRows();
 
-  await waitFor(() => expect(availablePackages).toHaveLength(3));
+  await waitFor(() => expect(availablePackages).toHaveLength(5));
 
   expect(availablePackages[0]).toHaveTextContent('test');
   expect(availablePackages[1]).toHaveTextContent('test-lib');
   expect(availablePackages[2]).toHaveTextContent('testPkg');
+  expect(availablePackages[3]).toHaveTextContent('testModule');
+  expect(availablePackages[4]).toHaveTextContent('testModule');
+
+  // Ensure both modules have one row
+  await screen.findByText('1.22');
+  await screen.findByText('1.24');
 };
 
 const clickFirstPackageCheckbox = async () => {
@@ -269,7 +275,12 @@ describe('Step Packages', () => {
     await clickThirdPackageCheckbox();
 
     await toggleSelected();
-    await comparePackageSearchResults();
+    const availablePackages = await getRows();
+    await waitFor(() => expect(availablePackages).toHaveLength(3));
+
+    expect(availablePackages[0]).toHaveTextContent('test');
+    expect(availablePackages[1]).toHaveTextContent('test-lib');
+    expect(availablePackages[2]).toHaveTextContent('testPkg');
   });
 
   test('selected packages persist throughout steps', async () => {
@@ -400,6 +411,26 @@ describe('Step Packages', () => {
     await within(pkgTable).findByText('recommendedPackage1');
   });
 
+  test('only one stream gets selected, other should be disabled', async () => {
+    const user = userEvent.setup();
+
+    await renderCreateMode();
+    await goToPackagesStep();
+    await selectCustomRepo();
+    await typeIntoSearchBox('test');
+
+    const firstAppStreamRow = await screen.findByRole('checkbox', {
+      name: /select row 3/i,
+    });
+    await waitFor(() => user.click(firstAppStreamRow));
+
+    const secondAppStreamRow = await screen.findByRole('checkbox', {
+      name: /select row 4/i,
+    });
+    expect(secondAppStreamRow).toBeDisabled();
+    expect(secondAppStreamRow).not.toBeChecked();
+  });
+
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToPackagesStep();
@@ -424,9 +455,9 @@ describe('Step Packages', () => {
 
       // the pagination in the top right
       const top = await screen.findByTestId('packages-pagination-top');
-      expect(top).toHaveTextContent('of 3');
+      expect(top).toHaveTextContent('of 5');
       const bottom = await screen.findByTestId('packages-pagination-bottom');
-      expect(bottom).toHaveTextContent('of 3');
+      expect(bottom).toHaveTextContent('of 5');
     });
 
     test('itemcount correct after toggling selected', async () => {
@@ -486,6 +517,7 @@ describe('Packages request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
+  const user = userEvent.setup();
 
   test('with custom packages', async () => {
     await renderCreateMode();
@@ -513,6 +545,46 @@ describe('Packages request generated correctly', () => {
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
     await clickFirstPackageCheckbox(); // select
+    await clickFirstPackageCheckbox(); // deselect
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest = blueprintRequest;
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('with module', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await typeIntoSearchBox('test'); // search for 'test' package
+    const moduleCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 3/i,
+    });
+    await waitFor(() => user.click(moduleCheckbox));
+    await goToReviewStep();
+    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
+
+    const expectedRequest: CreateBlueprintRequest = {
+      ...blueprintRequest,
+      customizations: {
+        packages: ['testModule'],
+        enabled_modules: [{ name: 'testModule', stream: '1.22' }],
+      },
+    };
+
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('deselecting a module removes it from the request', async () => {
+    await renderCreateMode();
+    await goToPackagesStep();
+    await typeIntoSearchBox('test'); // search for 'test' package
+    const moduleCheckbox = await screen.findByRole('checkbox', {
+      name: /select row 3/i,
+    });
+    await waitFor(() => user.click(moduleCheckbox)); // select
+    await toggleSelected();
     await clickFirstPackageCheckbox(); // deselect
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
