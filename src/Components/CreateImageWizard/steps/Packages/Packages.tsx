@@ -940,19 +940,19 @@ const Packages = () => {
     }
   };
 
-  const initialExpandedPkgs: IBPackageWithRepositoryInfo['name'][] = [];
+  const initialExpandedPkgs: IBPackageWithRepositoryInfo[] = [];
   const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
 
   const setPkgExpanded = (
-    pkg: IBPackageWithRepositoryInfo['name'],
+    pkg: IBPackageWithRepositoryInfo,
     isExpanding: boolean
   ) =>
     setExpandedPkgs((prevExpanded) => {
-      const otherExpandedPkgs = prevExpanded.filter((p) => p !== pkg);
+      const otherExpandedPkgs = prevExpanded.filter((p) => p.name !== pkg.name);
       return isExpanding ? [...otherExpandedPkgs, pkg] : otherExpandedPkgs;
     });
 
-  const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo['name']) =>
+  const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo) =>
     expandedPkgs.includes(pkg);
 
   const initialExpandedGroups: GroupWithRepositoryInfo['name'][] = [];
@@ -1148,15 +1148,14 @@ const Packages = () => {
           .map((pkg, rowIndex) => (
             <Tbody
               key={`${pkg.name}-${rowIndex}`}
-              isExpanded={isPkgExpanded(pkg.name)}
+              isExpanded={isPkgExpanded(pkg)}
             >
               <Tr data-testid="package-row">
                 <Td
                   expand={{
                     rowIndex: rowIndex,
-                    isExpanded: isPkgExpanded(pkg.name),
-                    onToggle: () =>
-                      setPkgExpanded(pkg.name, !isPkgExpanded(pkg.name)),
+                    isExpanded: isPkgExpanded(pkg),
+                    onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
                     expandId: `${pkg.name}-expandable`,
                   }}
                 />
@@ -1209,7 +1208,7 @@ const Packages = () => {
                   </>
                 )}
               </Tr>
-              <Tr isExpanded={isPkgExpanded(pkg.name)}>
+              <Tr isExpanded={isPkgExpanded(pkg)}>
                 <Td colSpan={5}>
                   <ExpandableRowContent>
                     {
