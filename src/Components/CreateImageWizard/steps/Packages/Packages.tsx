@@ -1166,10 +1166,7 @@ const Packages = () => {
 
   const bodyContent = useMemo(() => {
     switch (true) {
-      case debouncedSearchTermLengthOf1 &&
-        !debouncedSearchTermIsGroup &&
-        transformedPackages.length === 0 &&
-        transformedGroups.length === 0:
+      case debouncedSearchTermLengthOf1 && !debouncedSearchTermIsGroup:
         return TooShort();
       case (toggleSelected === 'toggle-selected' &&
         packages.length === 0 &&
