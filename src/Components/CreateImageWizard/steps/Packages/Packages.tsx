@@ -87,6 +87,9 @@ import {
   addRecommendedRepository,
   removeRecommendedRepository,
   selectRecommendedRepositories,
+  addModule,
+  removeModule,
+  selectModules,
 } from '../../../../store/wizardSlice';
 import sortfn from '../../../../Utilities/sortfn';
 import useDebounce from '../../../../Utilities/useDebounce';
@@ -136,6 +139,7 @@ const Packages = () => {
   const recommendedRepositories = useAppSelector(selectRecommendedRepositories);
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
+  const modules = useAppSelector(selectModules);
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
@@ -620,7 +624,7 @@ const Packages = () => {
     let transformedRecommendedData: IBPackageWithRepositoryInfo[] = [];
 
     if (isSuccessDistroPackages) {
-      transformedDistroData = dataDistroPackages!.map((values) => ({
+      transformedDistroData = dataDistroPackages.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
         repository: 'distro',
@@ -629,7 +633,7 @@ const Packages = () => {
     }
 
     if (isSuccessCustomPackages) {
-      transformedCustomData = dataCustomPackages!.map((values) => ({
+      transformedCustomData = dataCustomPackages.map((values) => ({
         name: values.package_name!,
         summary: values.summary!,
         repository: 'custom',
@@ -637,9 +641,22 @@ const Packages = () => {
       }));
     }
 
-    let combinedPackageData = transformedDistroData.concat(
-      transformedCustomData
-    );
+    // Combine distribution and custom repositories packages
+    let combinedPackageData = transformedDistroData
+      .concat(transformedCustomData)
+      .flatMap((item) => {
+        // Spread modules into separate rows by application stream
+        if (item.sources && item.sources[0].type === 'module') {
+          return item.sources.map((source) => ({
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+            sources: [source],
+          }));
+        } else {
+          return [item];
+        }
+      });
 
     if (
       debouncedSearchTerm !== '' &&
@@ -793,12 +810,27 @@ const Packages = () => {
         setIsSelectingPackage(pkg);
       } else {
         dispatch(addPackage(pkg));
+        if (pkg.sources && pkg.sources[0].type === 'module') {
+          dispatch(
+            addModule({
+              name: pkg.sources[0].name || '',
+              stream: pkg.sources[0].stream || '',
+            })
+          );
+        }
         setCurrentlyRemovedPackages((prev) =>
           prev.filter((curr) => curr.name !== pkg.name)
         );
       }
     } else {
       dispatch(removePackage(pkg.name));
+      if (
+        pkg.sources &&
+        pkg.sources[0].type === 'module' &&
+        pkg.sources[0].name
+      ) {
+        dispatch(removeModule(pkg.sources[0].name));
+      }
       setCurrentlyRemovedPackages((last) => [...last, pkg]);
       if (
         isSuccessEpelRepo &&
@@ -939,6 +971,39 @@ const Packages = () => {
 
   const isGroupExpanded = (group: GroupWithRepositoryInfo['name']) =>
     expandedGroups.includes(group);
+
+  const isPackageSelected = (pkg: IBPackageWithRepositoryInfo) => {
+    let isSelected = false;
+
+    if (!pkg.sources || pkg.sources[0].type === 'package') {
+      isSelected = packages.some((p) => p.name === pkg.name);
+    }
+
+    if (pkg.sources && pkg.sources[0] && pkg.sources[0].type === 'module') {
+      isSelected =
+        packages.some((p) => p.name === pkg.name) &&
+        modules.some(
+          (p) =>
+            pkg.sources && pkg.sources[0] && p.stream === pkg.sources[0].stream
+        );
+    }
+
+    return isSelected;
+  };
+
+  const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
+    return (
+      (pkg.sources &&
+        pkg.sources[0].type === 'module' &&
+        modules.some(
+          (module) => pkg.sources && module.name === pkg.sources[0].name
+        ) &&
+        !modules.some(
+          (p) => pkg.sources && p.stream === pkg.sources[0].stream
+        )) ||
+      false
+    );
+  };
 
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
@@ -1097,10 +1162,11 @@ const Packages = () => {
                 />
                 <Td
                   select={{
-                    isSelected: packages.some((p) => p.name === pkg.name),
+                    isSelected: isPackageSelected(pkg),
                     rowIndex: rowIndex,
                     onSelect: (event, isSelecting) =>
                       handleSelect(pkg, rowIndex, isSelecting),
+                    isDisabled: isSelectDisabled(pkg),
                   }}
                 />
                 <Td>{pkg.name}</Td>
