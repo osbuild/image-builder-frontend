@@ -45,6 +45,27 @@ export const mockSourcesPackagesResults = (
       {
         package_name: 'testPkg',
         summary: 'test package summary',
+        package_sources: [
+          {
+            type: 'package',
+          },
+        ],
+      },
+      {
+        package_name: 'testModule',
+        summary: 'testModule summary',
+        package_sources: [
+          {
+            name: 'testModule',
+            type: 'module',
+            stream: '1.22',
+          },
+          {
+            name: 'testModule',
+            type: 'module',
+            stream: '1.24',
+          },
+        ],
       },
     ];
   }

@@ -24,6 +24,7 @@ import {
   CustomRepository,
   File,
   ImageRequest,
+  Module,
   Repository,
 } from '../../store/imageBuilderApi';
 
@@ -139,6 +140,9 @@ export const firstBootData: File[] = [
 
 // Packages
 export const expectedPackages: string[] = ['test'];
+export const expectedModules: Module[] = [
+  { name: 'testModule', stream: '1.22' },
+];
 
 export const expectedSinglePackageRecommendation: string[] = [
   'test', // recommendations are generated only when some packages have been selected
@@ -452,6 +456,7 @@ export const packagesCreateBlueprintRequest: CreateBlueprintRequest = {
   description: mockBlueprintDescriptions['packages'],
   customizations: {
     packages: expectedPackages,
+    enabled_modules: expectedModules,
   },
 };
 
