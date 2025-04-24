@@ -88,6 +88,7 @@ import {
   selectTemplate,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
+  selectModules,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -329,6 +330,7 @@ function commonRequestToState(
           repository: '' as PackageRepository,
           package_list: [],
         })) || [],
+    enabled_modules: request.customizations.enabled_modules || [],
     locale: {
       languages: request.customizations.locale?.languages || [],
       keyboard: request.customizations.locale?.keyboard || '',
@@ -577,6 +579,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     files: files.length > 0 ? files : undefined,
     subscription: getSubscription(state, orgID),
     packages: getPackages(state),
+    enabled_modules: getModules(state),
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
@@ -691,6 +694,16 @@ const getPackages = (state: RootState) => {
     return packages
       .map((pkg) => pkg.name)
       .concat(groups.map((grp) => '@' + grp.name));
+  } else {
+    return undefined;
+  }
+};
+
+const getModules = (state: RootState) => {
+  const modules = selectModules(state);
+
+  if (modules.length > 0) {
+    return modules;
   } else {
     return undefined;
   }

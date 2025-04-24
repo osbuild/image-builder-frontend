@@ -8,6 +8,7 @@ import type {
   ImageRequest,
   ImageTypes,
   Locale,
+  Module,
   Repository,
   Timezone,
   User,
@@ -141,6 +142,7 @@ export type wizardState = {
     redHatRepositories: Repository[];
   };
   packages: IBPackageWithRepositoryInfo[];
+  enabled_modules: Module[];
   groups: GroupWithRepositoryInfo[];
   services: {
     enabled: string[];
@@ -232,6 +234,7 @@ export const initialState: wizardState = {
     redHatRepositories: [],
   },
   packages: [],
+  enabled_modules: [],
   groups: [],
   services: {
     enabled: [],
@@ -413,6 +416,10 @@ export const selectRedHatRepositories = (state: RootState) => {
 
 export const selectPackages = (state: RootState) => {
   return state.wizard.packages;
+};
+
+export const selectModules = (state: RootState) => {
+  return state.wizard.enabled_modules;
 };
 
 export const selectGroups = (state: RootState) => {
@@ -808,6 +815,30 @@ export const wizardSlice = createSlice({
         state.packages.splice(index, 1);
       }
     },
+    addModule: (state, action: PayloadAction<Module>) => {
+      const existingModuleIndex = state.enabled_modules.findIndex(
+        (module) => module.name === action.payload.name
+      );
+
+      if (existingModuleIndex !== -1) {
+        state.enabled_modules[existingModuleIndex] = action.payload;
+      } else {
+        state.enabled_modules.push(action.payload);
+      }
+    },
+    removeModule: (state, action: PayloadAction<Module['name']>) => {
+      const index = state.enabled_modules.findIndex(
+        (module) => module.name === action.payload
+      );
+      // count other packages from the same module
+      const pkgCount = state.packages.filter((pkg) =>
+        pkg.sources?.some((module) => module.name === action.payload)
+      );
+      // if the module exists and it's not connected to any packages, remove it
+      if (index !== -1 && pkgCount.length < 1) {
+        state.enabled_modules.splice(index, 1);
+      }
+    },
     addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
       const existingGrpIndex = state.groups.findIndex(
         (grp) => grp.name === action.payload.name
@@ -1129,6 +1160,8 @@ export const {
   removeRecommendedRepository,
   addPackage,
   removePackage,
+  addModule,
+  removeModule,
   addGroup,
   removeGroup,
   addLanguage,
