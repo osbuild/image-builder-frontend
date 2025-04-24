@@ -98,7 +98,10 @@ test.describe.serial('test', () => {
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await frame.getByTestId('packages-search-input').fill('osbuild-composer');
+    await frame
+      .getByTestId('packages-search-input')
+      .locator('input')
+      .fill('osbuild-composer');
     await frame.getByTestId('packages-table').getByText('Searching');
     await frame.getByRole('gridcell', { name: 'osbuild-composer' }).first();
     await frame.getByRole('checkbox', { name: 'Select row 0' }).check();
