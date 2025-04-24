@@ -42,7 +42,7 @@ const goToComplianceStep = async () => {
   const button = await screen.findByLabelText('Insights compliance');
   await waitFor(() => user.click(button));
   // wait until all policies are loaded
-  await screen.findByText('None');
+  await screen.findByText('Select a policy');
 };
 
 const goToReviewStep = async () => {
@@ -65,7 +65,7 @@ const goToReviewStep = async () => {
 const selectPolicy = async () => {
   const user = userEvent.setup();
 
-  const policyMenu = await screen.findByText('None');
+  const policyMenu = await screen.findByText('Select a policy');
   await waitFor(() => user.click(policyMenu));
 
   const cisl2 = await screen.findByRole('option', {
@@ -162,7 +162,8 @@ describe('Compliance edit mode', () => {
       name: /Selected/i,
     });
     user.click(selectedBtn);
-    await screen.findByText('aide');
     await screen.findByText('emacs');
+
+    expect(screen.queryByText('aide')).not.toBeInTheDocument();
   });
 });

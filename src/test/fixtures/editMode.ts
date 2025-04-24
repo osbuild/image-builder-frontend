@@ -660,7 +660,8 @@ export const complianceCreateBlueprintRequest: CreateBlueprintRequest = {
   name: mockBlueprintNames['compliance'],
   description: mockBlueprintDescriptions['compliance'],
   customizations: {
-    packages: expectedPackagesCisL2,
+    // filter out a single package to simulate the customizations being tailored
+    packages: expectedPackagesCisL2.filter((p) => p !== 'aide'),
     openscap: {
       policy_id: '0ee9a781-b53f-4d9e-91e1-d75aed088c44',
     },

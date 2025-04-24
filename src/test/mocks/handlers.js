@@ -32,6 +32,7 @@ import { mockedFeatureResponse } from '../fixtures/features';
 import {
   distributionOscapProfiles,
   oscapCustomizations,
+  oscapCustomizationsPolicy,
 } from '../fixtures/oscap';
 import {
   mockPkgRecommendations,
@@ -160,6 +161,13 @@ export const handlers = [
     ({ params }) => {
       const { profile } = params;
       return HttpResponse.json(oscapCustomizations(profile));
+    }
+  ),
+  http.get(
+    `${IMAGE_BUILDER_API}/oscap/:policy/:distribution/policy_customizations`,
+    ({ params }) => {
+      const { policy } = params;
+      return HttpResponse.json(oscapCustomizationsPolicy(policy));
     }
   ),
   http.get(`${IMAGE_BUILDER_API}/blueprints`, ({ request }) => {
