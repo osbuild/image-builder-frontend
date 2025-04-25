@@ -524,7 +524,8 @@ const Repositories = () => {
             </ToolbarItem>
             <ToolbarItem variant="search-filter">
               <SearchInput
-                aria-label="Search repositories"
+                placeholder="Filter repositories"
+                aria-label="Filter repositories"
                 onChange={handleFilterRepositories}
                 value={filterValue}
                 onClear={() => setFilterValue('')}
