@@ -114,7 +114,6 @@ export const CustomWizardFooter = ({
   return (
     <WizardFooterWrapper>
       <Button
-        ouiaId={nextBtnID}
         variant="primary"
         onClick={() => {
           if (!process.env.IS_ON_PREMISE) {
@@ -131,7 +130,6 @@ export const CustomWizardFooter = ({
         Next
       </Button>
       <Button
-        ouiaId={backBtnID}
         variant="secondary"
         onClick={() => {
           if (!process.env.IS_ON_PREMISE) {
@@ -149,7 +147,6 @@ export const CustomWizardFooter = ({
       </Button>
       {optional && (
         <Button
-          ouiaId={reviewAndFinishBtnID}
           variant="tertiary"
           onClick={() => {
             if (!process.env.IS_ON_PREMISE) {
@@ -167,7 +164,6 @@ export const CustomWizardFooter = ({
         </Button>
       )}
       <Button
-        ouiaId={cancelBtnID}
         variant="link"
         onClick={() => {
           if (!process.env.IS_ON_PREMISE) {

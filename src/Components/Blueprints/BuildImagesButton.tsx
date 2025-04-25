@@ -193,7 +193,6 @@ export const BuildImagesButtonEmptyState = ({
   };
   return (
     <Button
-      ouiaId="build-images-button"
       onClick={onBuildHandler}
       isDisabled={!selectedBlueprintId}
       isLoading={imageBuildLoading}

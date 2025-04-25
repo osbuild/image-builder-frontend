@@ -150,7 +150,6 @@ export const AzureSourcesSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="source_select"
       ref={toggleRef}
       variant="typeahead"
       onClick={handleToggle}

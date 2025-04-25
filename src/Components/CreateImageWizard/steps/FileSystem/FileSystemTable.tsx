@@ -147,7 +147,6 @@ const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
           variant="link"
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          ouiaId="remove-mount-point"
           isDisabled={partition.mountpoint === '/'}
         />
       </Td>
@@ -193,7 +192,6 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="mount-point"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -250,7 +248,6 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
         );
       }}
       aria-label="mountpoint suffix"
-      ouiaId="mount-suffix"
     />
   );
 };
@@ -289,7 +286,6 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
           : ''
       }
       type="text"
-      ouiaId="size"
       stepValidation={stepValidation}
       fieldName={`min-size-${partition.id}`}
       placeholder="File system"
@@ -339,7 +335,6 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="unit"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
@@ -511,7 +506,6 @@ const FileSystemTable = () => {
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
-      ouiaId="partition_table_v2"
       aria-label="File system table"
       variant="compact"
       data-testid="fsc-table"

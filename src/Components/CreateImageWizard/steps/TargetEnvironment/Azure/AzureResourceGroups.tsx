@@ -102,7 +102,6 @@ export const AzureResourceGroups = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="resource_group_select"
       ref={toggleRef}
       variant="typeahead"
       onClick={() => setIsOpen(!isOpen)}

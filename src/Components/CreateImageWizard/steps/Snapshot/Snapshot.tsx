@@ -64,7 +64,6 @@ export default function Snapshot() {
       <FormGroup>
         <Radio
           id="use latest snapshot radio"
-          ouiaId="use-latest-snapshot-radio"
           name="use-latest-snapshot"
           label="Disable repeatable build"
           description="Use the newest repository content available when building this image"
@@ -73,7 +72,6 @@ export default function Snapshot() {
         />
         <Radio
           id="use snapshot date radio"
-          ouiaId="use-snapshot-date-radio"
           name="use-snapshot-date"
           label="Enable repeatable build"
           description="Build this image with the repository content of a selected date"

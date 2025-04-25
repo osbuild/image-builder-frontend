@@ -448,7 +448,6 @@ const ProfileSelector = () => {
 
   const toggleOpenSCAP = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="profileSelect"
       data-testid="profileSelect"
       ref={toggleRef}
       variant="typeahead"
@@ -483,7 +482,6 @@ const ProfileSelector = () => {
 
   const toggleCompliance = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="compliancePolicySelect"
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}

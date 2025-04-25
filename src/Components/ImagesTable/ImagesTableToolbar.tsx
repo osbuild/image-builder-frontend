@@ -167,7 +167,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             }}
             isInline
             title={`The selected blueprint has errors.`}
-            ouiaId="blueprint-errors-alert"
             actionLinks={
               <AlertActionLink
                 onClick={async () => {
@@ -202,7 +201,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             }}
             isInline
             title={`The selected blueprint is at version ${selectedBlueprintVersion}, the latest images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
-            ouiaId="blueprint-out-of-sync-alert"
             actionLinks={
               <AlertActionLink
                 onClick={() => setShowDiffModal(true)}
@@ -224,7 +222,6 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               isInline
               variant="warning"
               title="CentOS Stream 8 is no longer supported, building images from this blueprint will fail. Edit blueprint to update the release to CentOS Stream 9."
-              ouiaId="centos-8-blueprint-alert"
             />
           )}
         <ToolbarContent>

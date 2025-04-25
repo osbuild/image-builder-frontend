@@ -316,7 +316,6 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
                 hoverTip="Copy"
                 clickTip="Copied"
                 variant="inline-compact"
-                ouiaId="oci-link"
                 isBlock
               >
                 {options?.url || ''}

@@ -162,7 +162,6 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="aws-uuid"
               onClick={() => {
                 analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                   module: AMPLITUDE_MODULE_NAME,
@@ -274,7 +273,6 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="azure-uuid"
             >
               {compose.id}
             </ClipboardCopy>
@@ -361,7 +359,6 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="gcp-uuid"
             >
               {compose.id}
             </ClipboardCopy>
@@ -442,7 +439,6 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="gcp-uuid"
             >
               {compose.id}
             </ClipboardCopy>
@@ -496,7 +492,6 @@ export const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="other-targets-uuid"
             >
               {compose.id}
             </ClipboardCopy>
@@ -529,7 +524,6 @@ export const LocalDetails = ({ compose }: LocalDetailsPropTypes) => {
               hoverTip="Copy"
               clickTip="Copied"
               variant="inline-compact"
-              ouiaId="other-targets-uuid"
             >
               {compose.id}
             </ClipboardCopy>
