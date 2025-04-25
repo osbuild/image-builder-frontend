@@ -17,8 +17,6 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useNavigate } from 'react-router-dom';
 
-import BetaLabel from './BetaLabel';
-
 import {
   CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
@@ -151,8 +149,6 @@ export const ImageBuilderHeader = ({
                   <Button
                     data-testid="import-blueprint-button"
                     variant="secondary"
-                    icon={<BetaLabel />}
-                    iconPosition="end"
                     onClick={() => setShowImportModal(true)}
                     isDisabled={!isOnBlueprintsTab}
                   >

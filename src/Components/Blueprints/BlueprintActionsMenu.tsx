@@ -16,7 +16,6 @@ import {
   useLazyExportBlueprintQuery,
 } from '../../store/imageBuilderApi';
 import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
-import BetaLabel from '../sharedComponents/BetaLabel';
 
 interface BlueprintActionsMenuProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -70,7 +69,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
       <DropdownList>
         {importExportFlag && (
           <DropdownItem onClick={handleClick}>
-            Download blueprint (.json) <BetaLabel />
+            Download blueprint (.json)
           </DropdownItem>
         )}
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
