@@ -1243,7 +1243,7 @@ const Packages = () => {
             <ToolbarItem variant="search-filter">
               <SearchInput
                 type="text"
-                placeholder="Type to search"
+                placeholder="Search packages"
                 aria-label="Search packages"
                 data-testid="packages-search-input"
                 value={searchTerm}

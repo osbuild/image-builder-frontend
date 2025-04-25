@@ -65,7 +65,7 @@ const clickRevisitButton = async () => {
 
 const searchForRepository = async (repo: string) => {
   const user = userEvent.setup();
-  const search = await screen.findByLabelText('Search repositories');
+  const search = await screen.findByLabelText('Filter repositories');
   await waitFor(() => user.type(search, repo));
   await waitFor(() => expect(screen.getByText(repo)).toBeInTheDocument);
 };

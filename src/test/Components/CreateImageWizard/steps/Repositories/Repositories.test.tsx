@@ -116,7 +116,7 @@ const toggleAll = async () => {
 const searchForRepository = async (searchTerm: string) => {
   const user = userEvent.setup();
   const searchInput = await screen.findByRole('textbox', {
-    name: /search repositories/i,
+    name: /filter repositories/i,
   });
   await waitFor(() => user.type(searchInput, searchTerm));
 };
@@ -270,7 +270,7 @@ describe('Repositories request generated correctly', () => {
 
   const selectNginxRepository = async () => {
     const user = userEvent.setup();
-    const search = await screen.findByLabelText('Search repositories');
+    const search = await screen.findByLabelText('Filter repositories');
     await waitFor(() => user.type(search, 'nginx stable repo'));
     await waitFor(
       () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument
