@@ -360,7 +360,7 @@ describe('Blueprints', () => {
       await waitFor(() => user.click(toggleButton));
 
       const downloadButton = screen.getByRole('menuitem', {
-        name: /download blueprint \(\.json\) preview/i,
+        name: /download blueprint \(\.json\)/i,
       });
       expect(downloadButton).toBeInTheDocument();
     });
