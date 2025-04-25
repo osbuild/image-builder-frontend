@@ -59,7 +59,7 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   ): ComplianceSelectOptionValueType => ({
     policyID,
     profileID,
-    toString: () => title,
+    toString: () => title || 'None',
   });
 
   const descr = (
@@ -89,7 +89,6 @@ const PolicySelector = () => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const [selected, setSelected] = useState<string>('None');
 
   const {
     data: policies,
@@ -231,13 +230,11 @@ const PolicySelector = () => {
           handlePackages(oldOscapPackages, newOscapPackages);
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
-          const compl = selection as ComplianceSelectOptionValueType;
-          setSelected(compl.toString());
           dispatch(
             changeCompliance({
-              profileID: compl.profileID,
-              policyID: compl.policyID,
-              policyTitle: compl.toString(),
+              profileID: selection.profileID,
+              policyID: selection.policyID,
+              policyTitle: selection.toString(),
             })
           );
         });
@@ -290,7 +287,7 @@ const PolicySelector = () => {
         } as React.CSSProperties
       }
     >
-      {selected}
+      {policyTitle || 'Select a policy'}
     </MenuToggle>
   );
 
@@ -301,7 +298,7 @@ const PolicySelector = () => {
         isOpen={isOpen}
         onSelect={handleSelect}
         onOpenChange={handleToggle}
-        selected={selected}
+        selected={policyID}
         toggle={toggleCompliance}
         shouldFocusFirstItemOnOpen={false}
       >
