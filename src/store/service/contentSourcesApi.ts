@@ -639,15 +639,19 @@ export type ApiRepositoryRpmCollectionResponse = {
   links?: ApiLinks | undefined;
   meta?: ApiResponseMetadata | undefined;
 };
-export type ApiModuleInfoResponse = {
+export type ApiPackageSourcesResponse = {
   /** Architecture of the module */
   arch?: string | undefined;
   /** Context of the module */
   context?: string | undefined;
   /** Description of the module */
   description?: string | undefined;
+  /** End date of the lifecycle */
+  end_date?: string | undefined;
   /** Name of the module */
   name?: string | undefined;
+  /** Start date of the lifecycle */
+  start_date?: string | undefined;
   /** Stream of the module */
   stream?: string | undefined;
   /** Type of rpm (can be either 'package' or 'module') */
@@ -659,7 +663,7 @@ export type ApiSearchRpmResponse = {
   /** Package name found */
   package_name?: string | undefined;
   /** List of the module streams for the package */
-  package_sources?: ApiModuleInfoResponse[] | undefined;
+  package_sources?: ApiPackageSourcesResponse[] | undefined;
   /** Summary of the package found */
   summary?: string | undefined;
 };

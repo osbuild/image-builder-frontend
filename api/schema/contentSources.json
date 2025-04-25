@@ -252,7 +252,7 @@
                 },
                 "type": "object"
             },
-            "api.ModuleInfoResponse": {
+            "api.PackageSourcesResponse": {
                 "properties": {
                     "arch": {
                         "description": "Architecture of the module",
@@ -266,8 +266,16 @@
                         "description": "Description of the module",
                         "type": "string"
                     },
+                    "end_date": {
+                        "description": "End date of the lifecycle",
+                        "type": "string"
+                    },
                     "name": {
                         "description": "Name of the module",
+                        "type": "string"
+                    },
+                    "start_date": {
+                        "description": "Start date of the lifecycle",
                         "type": "string"
                     },
                     "stream": {
@@ -1177,7 +1185,7 @@
                     "package_sources": {
                         "description": "List of the module streams for the package",
                         "items": {
-                            "$ref": "#/components/schemas/api.ModuleInfoResponse"
+                            "$ref": "#/components/schemas/api.PackageSourcesResponse"
                         },
                         "type": "array"
                     },
