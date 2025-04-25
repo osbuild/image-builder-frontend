@@ -33,6 +33,9 @@ import {
 } from '@patternfly/react-core';
 import { Modal } from '@patternfly/react-core';
 import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  ExclamationTriangleIcon,
   ExternalLinkAltIcon,
   HelpIcon,
   OptimizeIcon,
@@ -1002,6 +1005,55 @@ const Packages = () => {
     );
   };
 
+  const formatDate = (date: string | undefined) => {
+    if (!date) {
+      return <>N/A</>;
+    }
+
+    const retirementDate = new Date(date);
+
+    const currentDate = new Date();
+    const msPerDay = 1000 * 60 * 60 * 24;
+    const differenceInDays = Math.round(
+      (retirementDate.getTime() - currentDate.getTime()) / msPerDay
+    );
+
+    let icon;
+
+    switch (true) {
+      case differenceInDays < 0:
+        icon = (
+          <Icon status="danger" isInline>
+            <ExclamationCircleIcon />
+          </Icon>
+        );
+        break;
+      case differenceInDays <= 365:
+        icon = (
+          <Icon status="warning" isInline>
+            <ExclamationTriangleIcon />
+          </Icon>
+        );
+        break;
+      case differenceInDays > 365:
+        icon = (
+          <Icon status="success" isInline>
+            <CheckCircleIcon />
+          </Icon>
+        );
+        break;
+    }
+
+    return (
+      <>
+        {icon}{' '}
+        {retirementDate.toLocaleString('en-US', { month: 'short' }) +
+          ' ' +
+          retirementDate.getFullYear()}
+      </>
+    );
+  };
+
   const composePkgTable = () => {
     let rows: ReactElement[] = [];
 
@@ -1075,6 +1127,7 @@ const Packages = () => {
                     </Button>
                   </Popover>
                 </Td>
+                <Td>N/A</Td>
                 <Td>N/A</Td>
                 {grp.repository === 'distro' ? (
                   <>
@@ -1164,6 +1217,13 @@ const Packages = () => {
                 <Td>
                   {pkg.sources?.map((source) =>
                     source.type === 'module' ? source.stream : 'N/A'
+                  )}
+                </Td>
+                <Td>
+                  {pkg.sources?.map((source) =>
+                    source.type === 'module'
+                      ? formatDate(source.end_date)
+                      : 'N/A'
                   )}
                 </Td>
                 {pkg.repository === 'distro' ? (
@@ -1286,9 +1346,10 @@ const Packages = () => {
           <Tr>
             <Th aria-label="Expanded" />
             <Th aria-label="Selected" />
-            <Th width={30}>Name</Th>
+            <Th width={20}>Name</Th>
             <Th width={20}>Application stream</Th>
-            <Th width={30}>Package repository</Th>
+            <Th width={20}>Retirement date</Th>
+            <Th width={20}>Package repository</Th>
           </Tr>
         </Thead>
         {bodyContent}
