@@ -13,7 +13,6 @@ import type { StepValidation } from './utilities/useValidation';
 
 type ValidatedTextInputPropTypes = TextInputProps & {
   dataTestId?: string;
-  ouiaId?: string;
   ariaLabel: string | undefined;
   helperText: string | undefined;
   validator: (value: string | undefined) => boolean;
@@ -137,7 +136,6 @@ export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
 
 export const ValidatedInput = ({
   dataTestId,
-  ouiaId,
   ariaLabel,
   helperText,
   validator,
@@ -164,7 +162,6 @@ export const ValidatedInput = ({
       <TextInput
         value={value}
         data-testid={dataTestId}
-        ouiaId={ouiaId || ''}
         type="text"
         onChange={onChange!}
         validated={handleValidation()}

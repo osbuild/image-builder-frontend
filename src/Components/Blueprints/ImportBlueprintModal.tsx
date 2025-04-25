@@ -243,7 +243,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
         </>
       }
       onClose={onImportClose}
-      ouiaId="import-blueprint-modal"
     >
       <Form>
         <FormGroup fieldId="checkbox-import-custom-repositories">
@@ -302,7 +301,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 state: { blueprint: importedBlueprint },
               })
             }
-            ouiaId="import-blueprint-finish"
             data-testid="import-blueprint-finish"
           >
             Review and finish

@@ -80,11 +80,7 @@ export const EditSaveAndBuildBtn = ({
 
   return (
     <DropdownList>
-      <DropdownItem
-        onClick={onSaveAndBuild}
-        ouiaId="wizard-edit-build-btn"
-        isDisabled={isDisabled}
-      >
+      <DropdownItem onClick={onSaveAndBuild} isDisabled={isDisabled}>
         Save changes and build image(s)
       </DropdownItem>
     </DropdownList>

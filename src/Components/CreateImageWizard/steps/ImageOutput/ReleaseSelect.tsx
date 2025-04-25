@@ -144,7 +144,6 @@ const ReleaseSelect = () => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="release_select"
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}

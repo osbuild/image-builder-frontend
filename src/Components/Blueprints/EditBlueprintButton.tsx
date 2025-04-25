@@ -13,7 +13,6 @@ export const EditBlueprintButton = () => {
 
   return (
     <Button
-      ouiaId="edit-blueprint-button"
       onClick={() =>
         navigate(resolveRelPath(`imagewizard/${selectedBlueprintId}`))
       }

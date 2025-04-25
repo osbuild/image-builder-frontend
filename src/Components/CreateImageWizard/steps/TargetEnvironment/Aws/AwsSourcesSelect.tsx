@@ -143,7 +143,6 @@ export const AwsSourcesSelect = () => {
       onClick={handleToggle}
       isExpanded={isOpen}
       isDisabled={!isSuccess || isLoading}
-      ouiaId="source_select"
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain

@@ -100,7 +100,6 @@ const ReviewWizardFooter = () => {
               }}
             />
           )}
-          ouiaId="wizard-finish-dropdown"
           shouldFocusToggleOnSelect
         >
           {composeId ? (
@@ -119,14 +118,10 @@ const ReviewWizardFooter = () => {
           )}
         </Dropdown>
       </div>
-      <Button
-        ouiaId="wizard-back-btn"
-        variant="secondary"
-        onClick={goToPrevStep}
-      >
+      <Button variant="secondary" onClick={goToPrevStep}>
         Back
       </Button>
-      <Button ouiaId="wizard-cancel-btn" variant="link" onClick={close}>
+      <Button variant="link" onClick={close}>
         Cancel
       </Button>
     </WizardFooterWrapper>

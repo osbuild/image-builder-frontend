@@ -60,7 +60,6 @@ const RemoveUserModal = ({
           Cancel
         </Button>,
       ]}
-      ouiaId="removeUserModal"
     >
       This action is permanent and cannot be undone. Once deleted all
       information about the user will be lost.

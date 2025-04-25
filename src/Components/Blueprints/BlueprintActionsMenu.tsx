@@ -48,7 +48,6 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   };
   return (
     <Dropdown
-      ouiaId={`blueprints-dropdown`}
       isOpen={showBlueprintActionsMenu}
       onSelect={onSelect}
       onOpenChange={(showBlueprintActionsMenu: boolean) =>

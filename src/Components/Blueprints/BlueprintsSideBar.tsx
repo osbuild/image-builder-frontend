@@ -155,7 +155,6 @@ const BlueprintsSidebar = () => {
               <Flex justifyContent={{ default: 'justifyContentCenter' }}>
                 <FlexItem>
                   <Button
-                    ouiaId={`clear-selected-blueprint-button`}
                     variant="link"
                     isDisabled={!selectedBlueprintId}
                     onClick={handleClickViewAll}

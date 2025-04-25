@@ -222,7 +222,6 @@ const ActivationKeysList = () => {
       isDisabled={
         !isSuccessActivationKeys || registrationType === 'register-later'
       }
-      ouiaId="activation_key_select"
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain

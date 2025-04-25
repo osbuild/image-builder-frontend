@@ -25,7 +25,6 @@ const OscapOnPremWarning = () => {
           isInline
           variant="warning"
           title="The packages required to apply security profiles by using OpenSCAP are missing on this host. Install them with the following command"
-          ouiaId="oscap-unavailable-alert"
         />
       </FormGroup>
       <FormGroup>
