@@ -83,6 +83,10 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           <TextList>
             <TextListItem>Timezone</TextListItem>
             <TextListItem>Locale</TextListItem>
+            <TextListItem>Hostname</TextListItem>
+            <TextListItem>Kernel</TextListItem>
+            <TextListItem>Firewall</TextListItem>
+            <TextListItem>Systemd services</TextListItem>
           </TextList>
         </TextContent>
       </Alert>
