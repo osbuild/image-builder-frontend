@@ -223,7 +223,7 @@ const ProfileSelector = () => {
       return partition;
     });
 
-    if (newPartitions) {
+    if (newPartitions.length > 0) {
       dispatch(changeFileSystemConfigurationType('manual'));
       for (const partition of newPartitions) {
         dispatch(addPartition(partition));
