@@ -194,10 +194,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Feature flags
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const isUsersEnabled = useFlag('image-builder.users.enabled');
-  const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
-  const isKernelEnabled = useFlag('image-builder.kernel.enabled');
-  const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
-  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -596,7 +592,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-hostname"
                 key="wizard-hostname"
                 navItem={customStatusNavItem}
-                isHidden={!isHostnameEnabled}
                 status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -612,7 +607,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-kernel"
                 key="wizard-kernel"
                 navItem={customStatusNavItem}
-                isHidden={!isKernelEnabled}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -628,7 +622,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-firewall"
                 key="wizard-firewall"
                 navItem={customStatusNavItem}
-                isHidden={!isFirewallEnabled}
                 status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -644,7 +637,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-services"
                 key="wizard-services"
                 navItem={customStatusNavItem}
-                isHidden={!isServicesStepEnabled}
                 status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter

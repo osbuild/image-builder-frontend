@@ -52,6 +52,10 @@ const goToReviewStep = async () => {
   await clickNext(); // Additional packages
   await clickNext(); // Timezone
   await clickNext(); // Locale
+  await clickNext(); // Hostname
+  await clickNext(); // Kernel
+  await clickNext(); // Firewall
+  await clickNext(); // Systemd services
   await clickNext(); // First boot
   await clickNext(); // Details
   await enterBlueprintName('Compliance test');
