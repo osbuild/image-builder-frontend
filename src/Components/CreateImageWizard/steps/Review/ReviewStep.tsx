@@ -106,11 +106,6 @@ const Review = () => {
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
-  const isHostnameEnabled = useFlag('image-builder.hostname.enabled');
-  const isKernelEnabled = useFlag('image-builder.kernel.enabled');
-  const isFirewallEnabled = useFlag('image-builder.firewall.enabled');
-  const isServicesStepEnabled = useFlag('image-builder.services.enabled');
-
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
   const onToggleTargetEnvs = (isExpandedTargetEnvs: boolean) =>
@@ -429,7 +424,7 @@ const Review = () => {
           <LocaleList />
         </ExpandableSection>
       )}
-      {isHostnameEnabled && hostname && (
+      {hostname && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Hostname',
@@ -446,7 +441,7 @@ const Review = () => {
           <HostnameList />
         </ExpandableSection>
       )}
-      {isKernelEnabled && (kernel.name || kernel.append.length > 0) && (
+      {(kernel.name || kernel.append.length > 0) && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Kernel',
@@ -463,46 +458,44 @@ const Review = () => {
           <KernelList />
         </ExpandableSection>
       )}
-      {isFirewallEnabled &&
-        (firewall.ports.length > 0 ||
-          firewall.services.disabled.length > 0 ||
-          firewall.services.enabled.length > 0) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Firewall',
-              'revisit-firewall',
-              'wizard-firewall'
-            )}
-            onToggle={(_event, isExpandedFirewall) =>
-              onToggleFirewall(isExpandedFirewall)
-            }
-            isExpanded={isExpandedFirewall}
-            isIndented
-            data-testid="firewall-expandable"
-          >
-            <FirewallList />
-          </ExpandableSection>
-        )}
-      {isServicesStepEnabled &&
-        (services.enabled.length > 0 ||
-          services.disabled.length > 0 ||
-          services.masked.length > 0) && (
-          <ExpandableSection
-            toggleContent={composeExpandable(
-              'Systemd services',
-              'revisit-services',
-              'wizard-services'
-            )}
-            onToggle={(_event, isExpandedServices) =>
-              onToggleServices(isExpandedServices)
-            }
-            isExpanded={isExpandedServices}
-            isIndented
-            data-testid="services-expandable"
-          >
-            <ServicesList />
-          </ExpandableSection>
-        )}
+      {(firewall.ports.length > 0 ||
+        firewall.services.disabled.length > 0 ||
+        firewall.services.enabled.length > 0) && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Firewall',
+            'revisit-firewall',
+            'wizard-firewall'
+          )}
+          onToggle={(_event, isExpandedFirewall) =>
+            onToggleFirewall(isExpandedFirewall)
+          }
+          isExpanded={isExpandedFirewall}
+          isIndented
+          data-testid="firewall-expandable"
+        >
+          <FirewallList />
+        </ExpandableSection>
+      )}
+      {(services.enabled.length > 0 ||
+        services.disabled.length > 0 ||
+        services.masked.length > 0) && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Systemd services',
+            'revisit-services',
+            'wizard-services'
+          )}
+          onToggle={(_event, isExpandedServices) =>
+            onToggleServices(isExpandedServices)
+          }
+          isExpanded={isExpandedServices}
+          isIndented
+          data-testid="services-expandable"
+        >
+          <ServicesList />
+        </ExpandableSection>
+      )}
       <ExpandableSection
         toggleContent={composeExpandable(
           'First boot',
