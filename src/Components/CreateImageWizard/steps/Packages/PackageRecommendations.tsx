@@ -95,7 +95,7 @@ const PackageRecommendations = () => {
           response.data.packages.length > 0
         ) {
           analytics.track(
-            `${AMPLITUDE_MODULE_NAME}-packageRecommendationsShown`,
+            `${AMPLITUDE_MODULE_NAME} - Package Recommendations Shown`,
             {
               module: AMPLITUDE_MODULE_NAME,
               isPreview: isBeta(),
@@ -261,7 +261,7 @@ const PackageRecommendations = () => {
                             component="a"
                             onClick={() => {
                               analytics.track(
-                                `${AMPLITUDE_MODULE_NAME}-recommendedPackageAdded`,
+                                `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,
                                 {
                                   module: AMPLITUDE_MODULE_NAME,
                                   isPreview: isBeta(),
