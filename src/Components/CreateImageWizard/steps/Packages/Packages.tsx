@@ -61,7 +61,6 @@ import {
   ContentOrigin,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
-  RH_ICON_SIZE,
 } from '../../../../constants';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
@@ -114,21 +113,6 @@ export enum Repos {
   INCLUDED = 'included-repos',
   OTHER = 'other-repos',
 }
-
-export const RedHatRepository = () => {
-  return (
-    <>
-      {' '}
-      <img
-        src={'/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'}
-        alt="Red Hat logo"
-        height={RH_ICON_SIZE}
-        width={RH_ICON_SIZE}
-      />{' '}
-      Red Hat repository
-    </>
-  );
-};
 
 const Packages = () => {
   const dispatch = useDispatch();
@@ -1081,17 +1065,7 @@ const Packages = () => {
                 <Td>N/A</Td>
                 {grp.repository === 'distro' ? (
                   <>
-                    <Td>
-                      <img
-                        src={
-                          '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                        }
-                        alt="Red Hat logo"
-                        height={RH_ICON_SIZE}
-                        width={RH_ICON_SIZE}
-                      />{' '}
-                      Red Hat repository
-                    </Td>
+                    <Td>Red Hat</Td>
                   </>
                 ) : grp.repository === 'custom' ? (
                   <>
@@ -1181,17 +1155,7 @@ const Packages = () => {
                 </Td>
                 {pkg.repository === 'distro' ? (
                   <>
-                    <Td>
-                      <img
-                        src={
-                          '/apps/frontend-assets/red-hat-logos/logo_hat-only.svg'
-                        }
-                        alt="Red Hat logo"
-                        height={RH_ICON_SIZE}
-                        width={RH_ICON_SIZE}
-                      />{' '}
-                      Red Hat repository
-                    </Td>
+                    <Td>Red Hat</Td>
                   </>
                 ) : pkg.repository === 'custom' ? (
                   <>
