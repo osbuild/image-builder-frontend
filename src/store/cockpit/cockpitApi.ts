@@ -588,17 +588,22 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
       getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
         queryFn: async () => {
           try {
+            // we need to ensure that the file is created
+            await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
+              { superuser: 'require' }
+            );
+
             const config = await cockpit
               .file('/etc/osbuild-worker/osbuild-worker.toml')
               .read();
 
             return { data: TOML.parse(config) };
           } catch (error) {
-            // no worker file error message
-            if (error.message === 'input is null') {
-              return { data: {} };
-            }
-
             return { error };
           }
         },
