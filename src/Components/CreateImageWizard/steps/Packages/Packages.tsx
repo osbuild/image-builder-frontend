@@ -1167,6 +1167,11 @@ const Packages = () => {
                       handleSelect(pkg, rowIndex, isSelecting),
                     isDisabled: isSelectDisabled(pkg),
                   }}
+                  title={
+                    isSelectDisabled(pkg)
+                      ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
+                      : ''
+                  }
                 />
                 <Td>{pkg.name}</Td>
                 <Td>
