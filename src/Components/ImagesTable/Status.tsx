@@ -85,13 +85,15 @@ export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
 
   switch (data?.image_status.status) {
     case 'failure': {
-      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
-        module: AMPLITUDE_MODULE_NAME,
-        error: true,
-        error_id: data.image_status.error?.id,
-        error_details: data.image_status.error?.details,
-        error_reason: data.image_status.error?.reason,
-      });
+      if (!process.env.IS_ON_PREMISE) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+          module: AMPLITUDE_MODULE_NAME,
+          error: true,
+          error_id: data.image_status.error?.id,
+          error_details: data.image_status.error?.details,
+          error_reason: data.image_status.error?.reason,
+        });
+      }
       return (
         <ErrorStatus
           icon={statuses[data.image_status.status].icon}
@@ -133,14 +135,16 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
 
   switch (data?.image_status.status) {
     case 'failure': {
-      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
-        module: AMPLITUDE_MODULE_NAME,
-        error: true,
-        error_id: data.image_status.error?.id,
-        error_details: data.image_status.error?.details,
-        error_reason: data.image_status.error?.reason,
-        account_id: userData?.identity.internal?.account_id || 'Not found',
-      });
+      if (!process.env.IS_ON_PREMISE) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+          module: AMPLITUDE_MODULE_NAME,
+          error: true,
+          error_id: data.image_status.error?.id,
+          error_details: data.image_status.error?.details,
+          error_reason: data.image_status.error?.reason,
+          account_id: userData?.identity.internal?.account_id || 'Not found',
+        });
+      }
       return (
         <ErrorStatus
           icon={statuses['failure'].icon}
@@ -168,13 +172,15 @@ export const AzureStatus = ({ status }: AzureStatusPropTypes) => {
 
   switch (status.image_status.status) {
     case 'failure': {
-      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
-        module: AMPLITUDE_MODULE_NAME,
-        error: true,
-        error_id: status.image_status.error?.id,
-        error_details: status.image_status.error?.details,
-        error_reason: status.image_status.error?.reason,
-      });
+      if (!process.env.IS_ON_PREMISE) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Created`, {
+          module: AMPLITUDE_MODULE_NAME,
+          error: true,
+          error_id: status.image_status.error?.id,
+          error_details: status.image_status.error?.details,
+          error_reason: status.image_status.error?.reason,
+        });
+      }
       return (
         <ErrorStatus
           icon={statuses[status.image_status.status].icon}
