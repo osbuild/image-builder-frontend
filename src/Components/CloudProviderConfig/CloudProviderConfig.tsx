@@ -19,9 +19,15 @@ import { useNavigate } from 'react-router-dom';
 import { AWSConfig } from './AWSConfig';
 import { useIsAwsStepValid } from './validators';
 
-import { changeAWSConfig } from '../../store/cloudProviderConfigSlice';
-import { useGetWorkerConfigQuery } from '../../store/cockpit/cockpitApi';
-import { useAppDispatch } from '../../store/hooks';
+import {
+  changeAWSConfig,
+  selectAWSConfig,
+} from '../../store/cloudProviderConfigSlice';
+import {
+  useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
+} from '../../store/cockpit/cockpitApi';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -54,8 +60,10 @@ const ConfigError = ({
 export const CloudProviderConfig = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const config = useAppSelector(selectAWSConfig);
   const handleClose = () => navigate(resolveRelPath(''));
 
+  const [updateConfig] = useUpdateWorkerConfigMutation();
   const { data, error, refetch } = useGetWorkerConfigQuery({});
   const isAwsStepValid = useIsAwsStepValid();
 
@@ -80,6 +88,10 @@ export const CloudProviderConfig = () => {
               isNextDisabled: !isAwsStepValid,
               isBackDisabled: true,
               onBack: () => navigate(resolveRelPath('')),
+              onNext: () => {
+                updateConfig({ updateWorkerConfigRequest: { aws: config } });
+                navigate(resolveRelPath(''));
+              },
             }}
           >
             <AWSConfig refetch={refetch} />
