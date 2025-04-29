@@ -31,7 +31,21 @@ export type WorkerConfigResponse = {
   aws?: AWSWorkerConfig;
 };
 
+export type WorkerConfigFile = {
+  // the worker file has a key value/pair for
+  // each section, which could be of any type.
+  // Disable the linter warning for this.
+  // eslint-disable-next-line
+  [key: string]: any;
+};
+
 // just use an alias, the underlying type is the same.
 // use separate names to stick to conventions and avoid
 // possible confusion
 export type CloudProviderConfigState = WorkerConfigResponse;
+
+export type WorkerConfigRequest = WorkerConfigResponse | undefined;
+
+export type UpdateWorkerConfigApiArg = {
+  updateWorkerConfigRequest: WorkerConfigRequest;
+};
