@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { parse } from '@ltd/j-toml';
 import {
   ActionGroup,
   Button,
@@ -18,7 +19,6 @@ import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { useNavigate } from 'react-router-dom';
-import { parse } from 'toml';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
 
@@ -27,7 +27,10 @@ import {
   useBulkImportRepositoriesMutation,
 } from '../../store/contentSourcesApi';
 import { useAppDispatch } from '../../store/hooks';
-import { BlueprintExportResponse } from '../../store/imageBuilderApi';
+import {
+  BlueprintExportResponse,
+  BlueprintItem,
+} from '../../store/imageBuilderApi';
 import { importCustomRepositories, wizardState } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import { mapExportRequestToState } from '../CreateImageWizard/utilities/requestMapper';
@@ -130,7 +133,9 @@ export const ImportBlueprintModal: React.FunctionComponent<
         const isJson = filename.endsWith('.json');
         if (isToml) {
           const tomlBlueprint = parse(fileContent);
-          const blueprintFromFile = mapOnPremToHosted(tomlBlueprint);
+          const blueprintFromFile = mapOnPremToHosted(
+            tomlBlueprint as BlueprintItem
+          );
           const importBlueprintState = mapExportRequestToState(
             blueprintFromFile,
             []

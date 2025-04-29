@@ -6,9 +6,9 @@ import path from 'path';
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
+import TOML from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
-import TOML from 'toml';
 import { v4 as uuidv4 } from 'uuid';
 
 // We have to work around RTK query here, since it doesn't like splitting
@@ -382,7 +382,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             )) as string;
 
             const parsed = TOML.parse(result);
-            const blueprint = mapOnPremToHosted(parsed);
+            const blueprint = mapOnPremToHosted(parsed as BlueprintItem);
 
             result = (await cockpit.spawn(
               [
