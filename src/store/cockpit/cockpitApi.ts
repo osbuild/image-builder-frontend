@@ -6,7 +6,7 @@ import path from 'path';
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
-import TOML from '@ltd/j-toml';
+import TOML, { Section } from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,7 +18,11 @@ import { v4 as uuidv4 } from 'uuid';
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
-import type { WorkerConfigResponse } from './types';
+import type {
+  UpdateWorkerConfigApiArg,
+  WorkerConfigFile,
+  WorkerConfigResponse,
+} from './types';
 
 import {
   mapHostedToOnPrem,
@@ -608,6 +612,48 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      updateWorkerConfig: builder.mutation<
+        WorkerConfigResponse,
+        UpdateWorkerConfigApiArg
+      >({
+        queryFn: async ({ updateWorkerConfigRequest }) => {
+          try {
+            const workerConfig = cockpit.file(
+              '/etc/osbuild-worker/osbuild-worker.toml',
+              {
+                superuser: 'required',
+              }
+            );
+
+            const contents = await workerConfig.modify((prev: string) => {
+              if (!updateWorkerConfigRequest) {
+                return prev;
+              }
+
+              const merged = {
+                ...TOML.parse(prev),
+                ...updateWorkerConfigRequest,
+              } as WorkerConfigFile;
+
+              const contents: WorkerConfigFile = {};
+              Object.keys(merged).forEach((key: string) => {
+                contents[key] = Section({
+                  ...merged[key],
+                });
+              });
+
+              return TOML.stringify(contents, {
+                newline: '\n',
+                newlineAround: 'document',
+              });
+            });
+
+            return { data: TOML.parse(contents) };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -632,4 +678,5 @@ export const {
   useGetBlueprintComposesQuery,
   useGetComposeStatusQuery,
   useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
 } = cockpitApi;
