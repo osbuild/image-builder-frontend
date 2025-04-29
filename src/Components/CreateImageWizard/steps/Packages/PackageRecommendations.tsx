@@ -21,8 +21,6 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useDispatch } from 'react-redux';
 
-import { RedHatRepository } from './Packages';
-
 import { AMPLITUDE_MODULE_NAME, ContentOrigin } from '../../../../constants';
 import {
   useListRepositoriesQuery,
@@ -252,9 +250,7 @@ const PackageRecommendations = () => {
                               .map((p) => p.summary)}
                           </Td>
                         )}
-                        <Td>
-                          <RedHatRepository />
-                        </Td>
+                        <Td>Red Hat</Td>
                         <Td>
                           <Button
                             variant="link"
