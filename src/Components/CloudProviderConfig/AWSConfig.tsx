@@ -17,6 +17,7 @@ import {
   changeAWSCredsPath,
   changeAWSRegion,
   selectAWSBucketName,
+  selectAWSConfig,
   selectAWSCredsPath,
   selectAWSRegion,
 } from '../../store/cloudProviderConfigSlice';
@@ -191,10 +192,11 @@ type AWSConfigProps = {
 
 export const AWSConfig = ({ refetch }: AWSConfigProps) => {
   const dispatch = useAppDispatch();
+  const config = useAppSelector(selectAWSConfig);
   const bucket = useAppSelector(selectAWSBucketName);
   const region = useAppSelector(selectAWSRegion);
   const credentials = useAppSelector(selectAWSCredsPath);
-  const [enabled, setEnabled] = useState<boolean>(true);
+  const [enabled, setEnabled] = useState<boolean>(config !== undefined);
 
   useEffect(() => {
     if (config) {
