@@ -637,9 +637,13 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
 
               const contents: WorkerConfigFile = {};
               Object.keys(merged).forEach((key: string) => {
-                contents[key] = Section({
-                  ...merged[key],
-                });
+                // this check helps prevent saving empty objects
+                // into the osbuild-worker.toml config file.
+                if (merged[key] !== undefined) {
+                  contents[key] = Section({
+                    ...merged[key],
+                  });
+                }
               });
 
               return TOML.stringify(contents, {

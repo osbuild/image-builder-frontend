@@ -23,10 +23,14 @@ import {
   changeAWSBucketName,
   changeAWSCredsPath,
   reinitializeAWSConfig,
+  selectAWSConfig,
 } from '../../store/cloudProviderConfigSlice';
-import { useGetWorkerConfigQuery } from '../../store/cockpit/cockpitApi';
+import {
+  useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
+} from '../../store/cockpit/cockpitApi';
 import { AWSWorkerConfig } from '../../store/cockpit/types';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
@@ -62,8 +66,10 @@ const ConfigError = ({
 export const CloudProviderConfig = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const config = useAppSelector(selectAWSConfig);
   const handleClose = () => navigate(resolveRelPath(''));
 
+  const [updateConfig] = useUpdateWorkerConfigMutation();
   const { data, error, refetch, isLoading } = useGetWorkerConfigQuery({});
 
   const initAWSConfig = useCallback(
@@ -109,6 +115,12 @@ export const CloudProviderConfig = () => {
               nextButtonText: 'Submit',
               isNextDisabled: !isAwsStepValid(config),
               isBackDisabled: true,
+              onNext: () => {
+                updateConfig({
+                  updateWorkerConfigRequest: { aws: config },
+                });
+                navigate(resolveRelPath(''));
+              },
             }}
           >
             <AWSConfig
