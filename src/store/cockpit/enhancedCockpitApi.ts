@@ -1,7 +1,7 @@
 import { cockpitApi } from './cockpitApi';
 
 const enhancedApi = cockpitApi.enhanceEndpoints({
-  addTagTypes: ['Blueprint', 'Blueprints', 'Composes'],
+  addTagTypes: ['Blueprint', 'Blueprints', 'Composes', 'WorkerConfig'],
   endpoints: {
     getBlueprint: {
       providesTags: () => {
@@ -30,6 +30,12 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     },
     getBlueprintComposes: {
       providesTags: [{ type: 'Composes' }],
+    },
+    getWorkerConfig: {
+      providesTags: [{ type: 'WorkerConfig' }],
+    },
+    updateWorkerConfig: {
+      invalidatesTags: [{ type: 'WorkerConfig' }],
     },
   },
 });
