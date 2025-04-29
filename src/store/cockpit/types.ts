@@ -28,6 +28,22 @@ export type WorkerConfigResponse = {
   aws?: AWSWorkerConfig;
 };
 
+export type WorkerConfigFile = {
+  // the worker file has a key value/pair for
+  // each section, which could be of any type.
+  // Disable the linter warning for this.
+  // eslint-disable-next-line
+  [key: string]: any;
+};
+
 export type CloudProviderConfigState = {
   aws: AWSWorkerConfig;
+};
+
+export type WorkerConfigRequest = {
+  aws?: AWSWorkerConfig | undefined;
+};
+
+export type UpdateWorkerConfigApiArg = {
+  updateWorkerConfigRequest: WorkerConfigRequest | undefined;
 };
