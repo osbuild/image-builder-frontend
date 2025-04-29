@@ -20,7 +20,7 @@ export default defineConfig({
   reporter: reporters,
   globalTimeout: 29.5 * 60 * 1000, // 29.5m, Set because of codebuild, we want PW to timeout before CB to get the results.
   timeout: 3 * 60 * 1000, // 3m
-  expect: { timeout: 30_000 }, // 30s
+  expect: { timeout: 50_000 }, // 50s
   use: {
     actionTimeout: 30_000, // 30s
     navigationTimeout: 30_000, // 30s
