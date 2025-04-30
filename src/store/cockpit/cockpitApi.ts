@@ -652,6 +652,23 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               });
             });
 
+            // TODO: maybe give a warning that we need admin access?
+            await cockpit.spawn(['systemctl', 'stop', 'osbuild-*'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              [
+                'systemctl',
+                'start',
+                'osbuild-composer.socket',
+                'osbuild-composer',
+              ],
+              {
+                superuser: 'require',
+              }
+            );
+
             return { data: TOML.parse(contents) };
           } catch (error) {
             return { error };
