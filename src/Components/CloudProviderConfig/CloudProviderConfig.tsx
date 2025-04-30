@@ -1,6 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { MouseEventHandler, useEffect } from 'react';
 
-import { PageSection, Wizard, WizardStep } from '@patternfly/react-core';
+import {
+  Button,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateIcon,
+  EmptyStateVariant,
+  PageSection,
+  Title,
+  Wizard,
+  WizardStep,
+} from '@patternfly/react-core';
+import { ExclamationIcon } from '@patternfly/react-icons';
 import { useNavigate } from 'react-router-dom';
 
 import { AWSConfig } from './AWSConfig';
@@ -11,6 +24,32 @@ import { useGetWorkerConfigQuery } from '../../store/cockpit/cockpitApi';
 import { useAppDispatch } from '../../store/hooks';
 import { resolveRelPath } from '../../Utilities/path';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
+
+const ConfigError = ({
+  onClose,
+}: {
+  onClose: MouseEventHandler<HTMLButtonElement>;
+}) => {
+  return (
+    <EmptyState variant={EmptyStateVariant.xl}>
+      <EmptyStateIcon icon={ExclamationIcon} color="#C9190B" />
+      <Title headingLevel="h4" size="lg">
+        Error
+      </Title>
+      <EmptyStateBody>
+        There was an error reading the `/etc/osbuild-worker/osbuild-worker.toml`
+        config file
+      </EmptyStateBody>
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <Button variant="primary" onClick={onClose}>
+            Go back
+          </Button>
+        </EmptyStateActions>
+      </EmptyStateFooter>
+    </EmptyState>
+  );
+};
 
 export const CloudProviderConfig = () => {
   const navigate = useNavigate();
@@ -25,13 +64,7 @@ export const CloudProviderConfig = () => {
   }, [data, dispatch]);
 
   if (error) {
-    // TODO: improve error alert
-    return (
-      <div>
-        There was an error reading the `/etc/osbuild-worker/osbuild-worker.toml`
-        config file
-      </div>
-    );
+    return <ConfigError onClose={handleClose} />;
   }
 
   return (
