@@ -964,6 +964,8 @@ const Packages = () => {
     }
 
     if (pkg.sources && pkg.sources[0] && pkg.sources[0].type === 'module') {
+      // the package is selected if it's added to the packages state
+      // and its module stream matches one in enabled_modules
       isSelected =
         packages.some((p) => p.name === pkg.name) &&
         modules.some(
@@ -975,6 +977,17 @@ const Packages = () => {
     return isSelected;
   };
 
+  /**
+   * Determines if the package's (or group's) select is disabled.
+   *
+   * Select should be disabled:
+   * - if the item is a module
+   * - and the module is added to enabled_modules
+   * - but the stream doesn't match the stream in enabled_modules
+   *
+   * @param pkg Package
+   * @returns Package (or group) is / is not selected
+   */
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
     return (
       (pkg.sources &&
