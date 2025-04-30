@@ -13,8 +13,8 @@ if (process.env.CURRENTS_PROJECT_ID && process.env.CURRENTS_RECORD_KEY) {
 
 export default defineConfig({
   testDir: 'playwright',
-  fullyParallel: true,
-  workers: 2,
+  fullyParallel: false,
+  workers: 1,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: reporters,
