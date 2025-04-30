@@ -9,7 +9,7 @@ jobs:
   playwright-tests:
     runs-on:
       - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
-      - instance-size:medium
+      - instance-size:large
       - buildspec-override:true
 
     steps:
