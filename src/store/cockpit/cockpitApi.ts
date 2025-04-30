@@ -652,6 +652,39 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               });
             });
 
+            const systemServices = [
+              'osbuild-composer.socket',
+              'osbuild-worker@*.service',
+              'osbuild-composer.service',
+            ];
+
+            await cockpit.spawn(
+              [
+                'systemctl',
+                'stop',
+                // we need to be explicit here and stop all the services first,
+                // otherwise this step is a little bit flaky
+                ...systemServices,
+              ],
+              {
+                superuser: 'require',
+              }
+            );
+
+            await cockpit.spawn(
+              [
+                'systemctl',
+                'restart',
+                // we need to restart all the services explicitly too
+                // since the config doesn't always get reloaded if we
+                // only reload the worker service
+                ...systemServices,
+              ],
+              {
+                superuser: 'require',
+              }
+            );
+
             return { data: TOML.parse(contents) };
           } catch (error) {
             return { error };
