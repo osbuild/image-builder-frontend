@@ -83,7 +83,7 @@
     "postcss-scss": "4.0.9",
     "react-chartjs-2": "5.3.0",
     "redux-mock-store": "1.5.5",
-    "sass": "1.86.0",
+    "sass": "1.87.0",
     "sass-loader": "16.0.5",
     "stylelint": "16.18.0",
     "stylelint-config-recommended-scss": "14.1.0",
