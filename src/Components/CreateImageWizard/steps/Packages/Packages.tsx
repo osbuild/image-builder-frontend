@@ -683,6 +683,15 @@ const Packages = () => {
         ];
       });
 
+    // group by name, but sort by application stream in descending order
+    unpackedData.sort((a, b) => {
+      if (a.name === b.name) {
+        return (b.stream ?? '').localeCompare(a.stream ?? '');
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    });
+
     if (toggleSelected === 'toggle-available') {
       if (activeTabKey === Repos.INCLUDED) {
         return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
