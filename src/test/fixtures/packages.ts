@@ -51,6 +51,10 @@ export const mockSourcesPackagesResults = (
           },
         ],
       },
+    ];
+  }
+  if (search === 'testModule') {
+    return [
       {
         package_name: 'testModule',
         summary: 'testModule summary',
@@ -59,11 +63,13 @@ export const mockSourcesPackagesResults = (
             name: 'testModule',
             type: 'module',
             stream: '1.22',
+            end_date: '2025-05-01',
           },
           {
             name: 'testModule',
             type: 'module',
             stream: '1.24',
+            end_date: '2027-05-01',
           },
         ],
       },
