@@ -56,7 +56,7 @@ jobs:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
           export PLAYWRIGHT_USER=image-builder-playwright-$RANDOM
-          export PLAYWRIGHT_PASSWORD=image-builder-playwright-$(uuidgen)
+          export PLAYWRIGHT_PASSWORD=image-builder-playwright-$(cat /proc/sys/kernel/random/uuid 2>/dev/null)
           # Step 1: Create a new empty account
           curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
           # Step 2: Attach subscriptions to the new account
