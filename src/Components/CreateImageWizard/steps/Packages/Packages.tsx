@@ -73,6 +73,7 @@ import {
   useSearchRpmMutation,
   useSearchPackageGroupMutation,
   ApiSearchRpmResponse,
+  ApiPackageSourcesResponse,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
@@ -93,16 +94,25 @@ import {
   removeModule,
   selectModules,
 } from '../../../../store/wizardSlice';
-import sortfn from '../../../../Utilities/sortfn';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
+
+export type ItemWithSources = {
+  name: Package['name'];
+  summary: Package['summary'];
+  repository: PackageRepository;
+  sources?: ApiSearchRpmResponse['package_sources'];
+};
 
 export type IBPackageWithRepositoryInfo = {
   name: Package['name'];
   summary: Package['summary'];
   repository: PackageRepository;
-  sources?: ApiSearchRpmResponse['package_sources'];
+  type?: string;
+  module_name?: string;
+  stream?: string;
+  end_date?: string;
 };
 
 export type GroupWithRepositoryInfo = {
@@ -606,9 +616,9 @@ const Packages = () => {
   };
 
   const transformedPackages = useMemo(() => {
-    let transformedDistroData: IBPackageWithRepositoryInfo[] = [];
-    let transformedCustomData: IBPackageWithRepositoryInfo[] = [];
-    let transformedRecommendedData: IBPackageWithRepositoryInfo[] = [];
+    let transformedDistroData: ItemWithSources[] = [];
+    let transformedCustomData: ItemWithSources[] = [];
+    let transformedRecommendedData: ItemWithSources[] = [];
 
     if (isSuccessDistroPackages) {
       transformedDistroData = dataDistroPackages.map((values) => ({
@@ -628,22 +638,9 @@ const Packages = () => {
       }));
     }
 
-    // Combine distribution and custom repositories packages
-    let combinedPackageData = transformedDistroData
-      .concat(transformedCustomData)
-      .flatMap((item) => {
-        // Spread modules into separate rows by application stream
-        if (item.sources && item.sources[0].type === 'module') {
-          return item.sources.map((source) => ({
-            name: item.name,
-            summary: item.summary,
-            repository: item.repository,
-            sources: [source],
-          }));
-        } else {
-          return [item];
-        }
-      });
+    let combinedPackageData = transformedDistroData.concat(
+      transformedCustomData
+    );
 
     if (
       debouncedSearchTerm !== '' &&
@@ -663,15 +660,35 @@ const Packages = () => {
       );
     }
 
+    const unpackedData: IBPackageWithRepositoryInfo[] =
+      combinedPackageData.flatMap((item) => {
+        // Spread modules into separate rows by application stream
+        if (item.sources && item.sources[0].type === 'module') {
+          return item.sources.map((source) => ({
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+            type: source.type,
+            module_name: source.name,
+            stream: source.stream,
+            end_date: source.end_date,
+          }));
+        } else {
+          return [
+            {
+              name: item.name,
+              summary: item.summary,
+              repository: item.repository,
+            },
+          ];
+        }
+      });
+
     if (toggleSelected === 'toggle-available') {
       if (activeTabKey === Repos.INCLUDED) {
-        return combinedPackageData.filter(
-          (pkg) => pkg.repository !== 'recommended'
-        );
+        return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
       } else {
-        return combinedPackageData.filter(
-          (pkg) => pkg.repository === 'recommended'
-        );
+        return unpackedData.filter((pkg) => pkg.repository === 'recommended');
       }
     } else {
       const selectedPackages = [...packages];
@@ -679,9 +696,7 @@ const Packages = () => {
         selectedPackages.push(...currentlyRemovedPackages);
       }
       if (activeTabKey === Repos.INCLUDED) {
-        return selectedPackages.sort((a, b) =>
-          sortfn(a.name, b.name, debouncedSearchTerm)
-        );
+        return selectedPackages;
       } else {
         return [];
       }
@@ -797,11 +812,11 @@ const Packages = () => {
         setIsSelectingPackage(pkg);
       } else {
         dispatch(addPackage(pkg));
-        if (pkg.sources && pkg.sources[0].type === 'module') {
+        if (pkg.type === 'module') {
           dispatch(
             addModule({
-              name: pkg.sources[0].name || '',
-              stream: pkg.sources[0].stream || '',
+              name: pkg.module_name || '',
+              stream: pkg.stream || '',
             })
           );
         }
@@ -811,12 +826,8 @@ const Packages = () => {
       }
     } else {
       dispatch(removePackage(pkg.name));
-      if (
-        pkg.sources &&
-        pkg.sources[0].type === 'module' &&
-        pkg.sources[0].name
-      ) {
-        dispatch(removeModule(pkg.sources[0].name));
+      if (pkg.type === 'module' && pkg.module_name) {
+        dispatch(removeModule(pkg.module_name));
       }
       setCurrentlyRemovedPackages((last) => [...last, pkg]);
       if (
@@ -959,22 +970,66 @@ const Packages = () => {
   const isGroupExpanded = (group: GroupWithRepositoryInfo['name']) =>
     expandedGroups.includes(group);
 
+  const [activeSortIndex, setActiveSortIndex] = useState<number>(0);
+  const [activeSortDirection, setActiveSortDirection] = useState<
+    'asc' | 'desc'
+  >('asc');
+
+  const getSortableRowValues = (
+    pkg: IBPackageWithRepositoryInfo
+  ): (string | number | ApiPackageSourcesResponse[] | undefined)[] => {
+    const { name, summary, stream, end_date, repository } = pkg;
+    return [name, summary, stream, end_date, repository];
+  };
+
+  let sortedPackages = transformedPackages;
+  sortedPackages = transformedPackages.sort((a, b) => {
+    const aValue = getSortableRowValues(a)[activeSortIndex];
+    const bValue = getSortableRowValues(b)[activeSortIndex];
+    if (typeof aValue === 'number') {
+      // Numeric sort
+      if (activeSortDirection === 'asc') {
+        return (aValue as number) - (bValue as number);
+      }
+      return (bValue as number) - (aValue as number);
+    } else {
+      // String sort
+      if (activeSortDirection === 'asc') {
+        return (aValue as string).localeCompare(bValue as string);
+      }
+      return (bValue as string).localeCompare(aValue as string);
+    }
+  });
+
+  const getSortParams = (columnIndex: number) => ({
+    sortBy: {
+      index: activeSortIndex,
+      direction: activeSortDirection,
+    },
+    onSort: (
+      _event: React.MouseEvent,
+      index: number,
+      direction: 'asc' | 'desc'
+    ) => {
+      setActiveSortIndex(index);
+      setActiveSortDirection(direction);
+    },
+    columnIndex,
+  });
+
   const isPackageSelected = (pkg: IBPackageWithRepositoryInfo) => {
     let isSelected = false;
 
-    if (!pkg.sources || pkg.sources[0].type === 'package') {
+    if (!pkg.type || pkg.type === 'package') {
       isSelected = packages.some((p) => p.name === pkg.name);
     }
 
-    if (pkg.sources && pkg.sources[0] && pkg.sources[0].type === 'module') {
+    if (pkg.type === 'module') {
       // the package is selected if it's added to the packages state
       // and its module stream matches one in enabled_modules
       isSelected =
         packages.some((p) => p.name === pkg.name) &&
-        modules.some(
-          (p) =>
-            pkg.sources && pkg.sources[0] && p.stream === pkg.sources[0].stream
-        );
+        modules.some((p) => p.stream === pkg.stream);
     }
 
     return isSelected;
@@ -993,14 +1048,9 @@ const Packages = () => {
    */
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
     return (
-      (pkg.sources &&
-        pkg.sources[0].type === 'module' &&
-        modules.some(
-          (module) => pkg.sources && module.name === pkg.sources[0].name
-        ) &&
-        !modules.some(
-          (p) => pkg.sources && p.stream === pkg.sources[0].stream
-        )) ||
+      (pkg.type === 'module' &&
+        modules.some((module) => module.name === pkg.module_name) &&
+        !modules.some((p) => p.stream === pkg.stream)) ||
       false
     );
   };
@@ -1183,7 +1233,7 @@ const Packages = () => {
 
     if (showPackages) {
       rows = rows.concat(
-        transformedPackages
+        sortedPackages
           .slice(computeStart(), computeEnd())
           .map((pkg, rowIndex) => (
             <Tbody
@@ -1214,17 +1264,9 @@ const Packages = () => {
                   }
                 />
                 <Td>{pkg.name}</Td>
+                <Td>{pkg.type === 'module' ? pkg.stream : 'N/A'}</Td>
                 <Td>
-                  {pkg.sources?.map((source) =>
-                    source.type === 'module' ? source.stream : 'N/A'
-                  )}
-                </Td>
-                <Td>
-                  {pkg.sources?.map((source) =>
-                    source.type === 'module'
-                      ? formatDate(source.end_date)
-                      : 'N/A'
-                  )}
+                  {pkg.type === 'module' ? formatDate(pkg.end_date) : 'N/A'}
                 </Td>
                 {pkg.repository === 'distro' ? (
                   <>
@@ -1337,6 +1379,9 @@ const Packages = () => {
     transformedGroups.length,
     expandedPkgs,
     expandedGroups,
+    sortedPackages,
+    activeSortDirection,
+    activeSortIndex,
   ]);
 
   const PackagesTable = () => {
@@ -1346,9 +1391,15 @@ const Packages = () => {
           <Tr>
             <Th aria-label="Expanded" />
             <Th aria-label="Selected" />
-            <Th width={20}>Name</Th>
-            <Th width={20}>Application stream</Th>
-            <Th width={20}>Retirement date</Th>
+            <Th sort={getSortParams(0)} width={20}>
+              Name
+            </Th>
+            <Th sort={getSortParams(2)} width={20}>
+              Application stream
+            </Th>
+            <Th sort={getSortParams(3)} width={20}>
+              Retirement date
+            </Th>
             <Th width={20}>Package repository</Th>
           </Tr>
         </Thead>
