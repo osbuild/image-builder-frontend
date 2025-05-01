@@ -831,8 +831,8 @@ export const wizardSlice = createSlice({
         (module) => module.name === action.payload
       );
       // count other packages from the same module
-      const pkgCount = state.packages.filter((pkg) =>
-        pkg.sources?.some((module) => module.name === action.payload)
+      const pkgCount = state.packages.filter(
+        (pkg) => pkg.module_name === action.payload
       );
       // if the module exists and it's not connected to any packages, remove it
       if (index !== -1 && pkgCount.length < 1) {
