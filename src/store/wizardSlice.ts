@@ -1106,6 +1106,9 @@ export const wizardSlice = createSlice({
         (group) => group === action.payload.group
       );
       if (groupIndex !== -1) {
+        if (action.payload.group === 'wheel') {
+          state.users[action.payload.index].isAdministrator = false;
+        }
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
