@@ -8,16 +8,22 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
-import { NotReady } from './Components/Cockpit/NotReady';
+import { NotReady, RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
 import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
+import { useIsCockpitAdmin } from './Utilities/useIsCockpitAdmin';
 
 const Application = () => {
   const { enabled, started } = useGetComposerSocketStatus();
+  const isAdmin = useIsCockpitAdmin();
 
   if (!started || !enabled) {
     return <NotReady enabled={enabled} />;
+  }
+
+  if (!isAdmin) {
+    return <RequireAdmin />;
   }
 
   return (
