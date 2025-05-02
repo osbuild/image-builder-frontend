@@ -171,6 +171,7 @@ const Packages = () => {
   const [activeTabKey, setActiveTabKey] = useState(Repos.INCLUDED);
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeStream, setActiveStream] = useState<string>('');
   const [
     searchCustomRpms,
     {
@@ -796,11 +797,17 @@ const Packages = () => {
     setSearchTerm(selection);
     setActiveTabKey(Repos.INCLUDED);
     setToggleSelected('toggle-available');
+    setActiveStream('');
+    setActiveSortIndex(0);
+    setActiveSortDirection('asc');
   };
 
   const handleClear = async () => {
     setSearchTerm('');
     setActiveTabKey(Repos.INCLUDED);
+    setActiveStream('');
+    setActiveSortIndex(0);
+    setActiveSortDirection('asc');
   };
 
   const handleSelect = (
@@ -820,6 +827,9 @@ const Packages = () => {
       } else {
         dispatch(addPackage(pkg));
         if (pkg.type === 'module') {
+          setActiveStream(pkg.stream || '');
+          setActiveSortIndex(2);
+          setPage(1);
           dispatch(
             addModule({
               name: pkg.module_name || '',
@@ -1000,6 +1010,13 @@ const Packages = () => {
       return (bValue as number) - (aValue as number);
     }
     // String sort
+    // if active stream is set, sort it to the top
+    if (aValue === activeStream) {
+      return -1;
+    }
+    if (bValue === activeStream) {
+      return 1;
+    }
     if (activeSortDirection === 'asc') {
       // handle packages with undefined stream
       if (!aValue) {
@@ -1009,15 +1026,16 @@ const Packages = () => {
         return 1;
       }
       return (aValue as string).localeCompare(bValue as string);
+    } else {
+      // handle packages with undefined stream
+      if (!aValue) {
+        return 1;
+      }
+      if (!bValue) {
+        return -1;
+      }
+      return (bValue as string).localeCompare(aValue as string);
     }
-    // handle packages with undefined stream
-    if (!aValue) {
-      return 1;
-    }
-    if (!bValue) {
-      return -1;
-    }
-    return (bValue as string).localeCompare(aValue as string);
   });
 
   const getSortParams = (columnIndex: number) => ({
