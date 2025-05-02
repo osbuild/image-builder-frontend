@@ -673,23 +673,21 @@ const Packages = () => {
             stream: source.stream,
             end_date: source.end_date,
           }));
-        } else {
-          return [
-            {
-              name: item.name,
-              summary: item.summary,
-              repository: item.repository,
-            },
-          ];
         }
+        return [
+          {
+            name: item.name,
+            summary: item.summary,
+            repository: item.repository,
+          },
+        ];
       });
 
     if (toggleSelected === 'toggle-available') {
       if (activeTabKey === Repos.INCLUDED) {
         return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
-      } else {
-        return unpackedData.filter((pkg) => pkg.repository === 'recommended');
       }
+      return unpackedData.filter((pkg) => pkg.repository === 'recommended');
     } else {
       const selectedPackages = [...packages];
       if (currentlyRemovedPackages.length > 0) {
@@ -978,8 +976,7 @@ const Packages = () => {
   const getSortableRowValues = (
     pkg: IBPackageWithRepositoryInfo
   ): (string | number | ApiPackageSourcesResponse[] | undefined)[] => {
-    const { name, summary, stream, end_date, repository } = pkg;
-    return [name, summary, stream, end_date, repository];
+    return [pkg.name, pkg.summary, pkg.stream, pkg.end_date, pkg.repository];
   };
 
   let sortedPackages = transformedPackages;
@@ -992,13 +989,26 @@ const Packages = () => {
         return (aValue as number) - (bValue as number);
       }
       return (bValue as number) - (aValue as number);
-    } else {
-      // String sort
-      if (activeSortDirection === 'asc') {
-        return (aValue as string).localeCompare(bValue as string);
-      }
-      return (bValue as string).localeCompare(aValue as string);
     }
+    // String sort
+    if (activeSortDirection === 'asc') {
+      // handle packages with undefined stream
+      if (!aValue) {
+        return -1;
+      }
+      if (!bValue) {
+        return 1;
+      }
+      return (aValue as string).localeCompare(bValue as string);
+    }
+    // handle packages with undefined stream
+    if (!aValue) {
+      return 1;
+    }
+    if (!bValue) {
+      return -1;
+    }
+    return (bValue as string).localeCompare(aValue as string);
   });
 
   const getSortParams = (columnIndex: number) => ({
