@@ -187,6 +187,7 @@ type CreateImageWizardProps = {
 };
 
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
+  const { analytics, isBeta } = useChrome();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -333,7 +334,18 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         }
         isVisited={step.isVisited || false}
         stepIndex={step.index}
-        onClick={() => goToStepByIndex(step.index)}
+        onClick={() => {
+          goToStepByIndex(step.index);
+          if (isEdit && step.id === 'wizard-additional-packages') {
+            analytics.track(
+              `${AMPLITUDE_MODULE_NAME} - Additional Packages Revisited in Edit`,
+              {
+                module: AMPLITUDE_MODULE_NAME,
+                isPreview: isBeta(),
+              }
+            );
+          }
+        }}
         status={status}
       />
     );
