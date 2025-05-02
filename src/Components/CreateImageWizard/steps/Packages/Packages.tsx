@@ -361,7 +361,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={5}>
+          <Td colSpan={6}>
             <Bullseye>
               <EmptyState variant={EmptyStateVariant.sm}>
                 <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
@@ -390,7 +390,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={5}>
+          <Td colSpan={6}>
             <Bullseye>
               <EmptyState variant={EmptyStateVariant.sm}>
                 <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
@@ -411,7 +411,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={5}>
+          <Td colSpan={6}>
             <Bullseye>
               <EmptyState variant={EmptyStateVariant.sm}>
                 <EmptyStateHeader
@@ -434,7 +434,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={5}>
+          <Td colSpan={6}>
             <Bullseye>
               <EmptyState variant={EmptyStateVariant.sm}>
                 <EmptyStateHeader
@@ -465,7 +465,7 @@ const Packages = () => {
       return (
         <Tbody>
           <Tr>
-            <Td colSpan={5}>
+            <Td colSpan={6}>
               <Bullseye>
                 <EmptyState variant={EmptyStateVariant.sm}>
                   <EmptyStateHeader
@@ -513,7 +513,7 @@ const Packages = () => {
       return (
         <Tbody>
           <Tr>
-            <Td colSpan={5}>
+            <Td colSpan={6}>
               <Bullseye>
                 <EmptyState variant={EmptyStateVariant.sm}>
                   <EmptyStateHeader
@@ -1223,7 +1223,7 @@ const Packages = () => {
                 )}
               </Tr>
               <Tr isExpanded={isGroupExpanded(grp.name)}>
-                <Td colSpan={5}>
+                <Td colSpan={6}>
                   <ExpandableRowContent>
                     {
                       <DescriptionList>
@@ -1312,7 +1312,7 @@ const Packages = () => {
                 )}
               </Tr>
               <Tr isExpanded={isPkgExpanded(pkg)}>
-                <Td colSpan={5}>
+                <Td colSpan={6}>
                   <ExpandableRowContent>
                     {
                       <DescriptionList>
