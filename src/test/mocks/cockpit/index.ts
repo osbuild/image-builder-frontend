@@ -4,6 +4,7 @@ import path from 'path';
 
 import { cockpitFile } from './cockpitFile';
 import { cockpitHTTP } from './cockpitHTTP';
+import { cockpitPermission } from './cockpitPermission';
 
 type userinfo = {
   home: string;
@@ -31,4 +32,5 @@ export default {
     });
   },
   http: cockpitHTTP,
+  permission: cockpitPermission,
 };
