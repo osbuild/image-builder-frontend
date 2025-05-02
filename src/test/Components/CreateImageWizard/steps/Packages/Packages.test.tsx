@@ -500,10 +500,10 @@ describe('Step Packages', () => {
       const rows = await screen.findAllByRole('row');
       rows.shift();
       expect(rows).toHaveLength(2);
-      expect(rows[0]).toHaveTextContent('1.22');
-      expect(rows[1]).toHaveTextContent('1.24');
-      expect(rows[0]).toHaveTextContent('May 2025');
-      expect(rows[1]).toHaveTextContent('May 2027');
+      expect(rows[0]).toHaveTextContent('1.24');
+      expect(rows[1]).toHaveTextContent('1.22');
+      expect(rows[0]).toHaveTextContent('May 2027');
+      expect(rows[1]).toHaveTextContent('May 2025');
     });
 
     test('only one stream gets selected, other should be disabled', async () => {
@@ -584,7 +584,7 @@ describe('Packages request generated correctly', () => {
       ...blueprintRequest,
       customizations: {
         packages: ['testModule'],
-        enabled_modules: [{ name: 'testModule', stream: '1.22' }],
+        enabled_modules: [{ name: 'testModule', stream: '1.24' }],
       },
     };
 
