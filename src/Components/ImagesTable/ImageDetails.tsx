@@ -163,7 +163,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               clickTip="Copied"
               variant="inline-compact"
               onClick={() => {
-                analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                analytics.track(`${AMPLITUDE_MODULE_NAME} - Copy UUID`, {
                   module: AMPLITUDE_MODULE_NAME,
                   link_name: compose.id,
                   current_path: window.location.pathname,
