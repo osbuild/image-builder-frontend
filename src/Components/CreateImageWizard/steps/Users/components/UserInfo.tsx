@@ -62,12 +62,11 @@ const UserInfo = () => {
     if (firstMount.current) {
       firstMount.current = false;
       return;
-    } else {
-      const first =
-        tabComponentRef.current.tabList.current.childNodes[activeTabKey];
-      if (first) {
-        first.firstChild.focus();
-      }
+    }
+    const first =
+      tabComponentRef.current.tabList.current.childNodes[activeTabKey];
+    if (first) {
+      first.firstChild.focus();
     }
   }, [users.length]);
 

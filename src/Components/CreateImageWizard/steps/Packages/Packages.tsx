@@ -510,41 +510,40 @@ const Packages = () => {
           </Tr>
         </Tbody>
       );
-    } else {
-      return (
-        <Tbody>
-          <Tr>
-            <Td colSpan={6}>
-              <Bullseye>
-                <EmptyState variant={EmptyStateVariant.sm}>
-                  <EmptyStateHeader
-                    icon={<EmptyStateIcon icon={SearchIcon} />}
-                  />
-                  <EmptyStateHeader
-                    titleText="No results found"
-                    headingLevel="h4"
-                  />
-                  <EmptyStateBody>
-                    No packages found in known repositories. If you know of a
-                    repository containing this packages, add it to{' '}
-                    <Button
-                      variant="link"
-                      isInline
-                      component="a"
-                      target="_blank"
-                      href={CONTENT_URL}
-                    >
-                      your repositories
-                    </Button>{' '}
-                    and try searching for it again.
-                  </EmptyStateBody>
-                </EmptyState>
-              </Bullseye>
-            </Td>
-          </Tr>
-        </Tbody>
-      );
     }
+    return (
+      <Tbody>
+        <Tr>
+          <Td colSpan={6}>
+            <Bullseye>
+              <EmptyState variant={EmptyStateVariant.sm}>
+                <EmptyStateHeader
+                  icon={<EmptyStateIcon icon={SearchIcon} />}
+                />
+                <EmptyStateHeader
+                  titleText="No results found"
+                  headingLevel="h4"
+                />
+                <EmptyStateBody>
+                  No packages found in known repositories. If you know of a
+                  repository containing this packages, add it to{' '}
+                  <Button
+                    variant="link"
+                    isInline
+                    component="a"
+                    target="_blank"
+                    href={CONTENT_URL}
+                  >
+                    your repositories
+                  </Button>{' '}
+                  and try searching for it again.
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
+    );
   };
 
   const RepositoryModal = () => {
@@ -688,9 +687,8 @@ const Packages = () => {
     unpackedData.sort((a, b) => {
       if (a.name === b.name) {
         return (b.stream ?? '').localeCompare(a.stream ?? '');
-      } else {
-        return a.name.localeCompare(b.name);
       }
+      return a.name.localeCompare(b.name);
     });
 
     if (toggleSelected === 'toggle-available') {
@@ -698,17 +696,15 @@ const Packages = () => {
         return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
       }
       return unpackedData.filter((pkg) => pkg.repository === 'recommended');
-    } else {
-      const selectedPackages = [...packages];
-      if (currentlyRemovedPackages.length > 0) {
-        selectedPackages.push(...currentlyRemovedPackages);
-      }
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedPackages;
-      } else {
-        return [];
-      }
     }
+    const selectedPackages = [...packages];
+    if (currentlyRemovedPackages.length > 0) {
+      selectedPackages.push(...currentlyRemovedPackages);
+    }
+    if (activeTabKey === Repos.INCLUDED) {
+      return selectedPackages;
+    }
+    return [];
   }, [
     currentlyRemovedPackages,
     dataCustomPackages,
@@ -762,21 +758,16 @@ const Packages = () => {
         return combinedGroupData.filter(
           (pkg) => pkg.repository !== 'recommended'
         );
-      } else {
-        return combinedGroupData.filter(
-          (pkg) => pkg.repository === 'recommended'
-        );
       }
-    } else {
-      const selectedGroups = [...groups];
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedGroups;
-      } else {
-        return [];
-      }
+      return combinedGroupData.filter(
+        (pkg) => pkg.repository === 'recommended'
+      );
     }
-
-    return combinedGroupData;
+    const selectedGroups = [...groups];
+    if (activeTabKey === Repos.INCLUDED) {
+      return selectedGroups;
+    }
+    return [];
   }, [
     dataDistroGroups,
     dataCustomGroups,

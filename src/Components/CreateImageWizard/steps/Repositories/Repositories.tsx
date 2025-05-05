@@ -672,125 +672,124 @@ const Repositories = () => {
         />
       </Grid>
     );
-  } else {
-    return (
-      <>
-        <Alert
-          variant="info"
-          isInline
-          title={
-            <>
-              The repositories seen below are from the selected content template
-              and have been added automatically. If you do not want these
-              repositories in your image, you can{' '}
-              <Button
-                component="a"
-                target="_blank"
-                variant="link"
-                isInline
-                icon={<ExternalLinkAltIcon />}
-                href={`${TEMPLATES_URL}/${templateUuid}/edit`}
-              >
-                {' '}
-                modify this content template
-              </Button>{' '}
-              or choose another snapshot option.
-            </>
-          }
-        />
-        <Grid>
-          <Panel>
-            <PanelMain>
-              <Table variant="compact">
-                <Thead>
-                  <Tr>
-                    <Th aria-label="Selected" />
-                    <Th width={45}>Name</Th>
-                    <Th width={15}>Architecture</Th>
-                    <Th>Version</Th>
-                    <Th width={10}>Packages</Th>
-                    <Th>Status</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {reposInTemplate.map((repo, rowIndex) => {
-                    const {
-                      uuid = '',
-                      url = '',
-                      name,
-                      status = '',
-                      origin = '',
-                      distribution_arch,
-                      distribution_versions,
-                      package_count,
-                      last_introspection_time,
-                      failed_introspections_count,
-                    } = repo;
-
-                    return (
-                      <Tr key={`${uuid}-${rowIndex}`}>
-                        <Td
-                          select={{
-                            isSelected: true,
-                            rowIndex: rowIndex,
-                            isDisabled: true,
-                          }}
-                        />
-                        <Td dataLabel={'Name'}>
-                          {name}
-                          {origin === ContentOrigin.UPLOAD ? (
-                            <UploadRepositoryLabel />
-                          ) : (
-                            <>
-                              <br />
-                              <Button
-                                component="a"
-                                target="_blank"
-                                variant="link"
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition="right"
-                                isInline
-                                href={url}
-                              >
-                                {url}
-                              </Button>
-                            </>
-                          )}
-                        </Td>
-                        <Td dataLabel={'Architecture'}>
-                          {distribution_arch || '-'}
-                        </Td>
-                        <Td dataLabel={'Version'}>
-                          {distribution_versions || '-'}
-                        </Td>
-                        <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
-                        <Td dataLabel={'Status'}>
-                          <RepositoriesStatus
-                            repoStatus={status || 'Unavailable'}
-                            repoUrl={url}
-                            repoIntrospections={last_introspection_time}
-                            repoFailCount={failed_introspections_count}
-                          />
-                        </Td>
-                      </Tr>
-                    );
-                  })}
-                </Tbody>
-              </Table>
-            </PanelMain>
-          </Panel>
-          <Pagination
-            itemCount={reposInTemplateCount ?? PAGINATION_COUNT}
-            perPage={perPage}
-            page={page}
-            onSetPage={(_, newPage) => setPage(newPage)}
-            onPerPageSelect={handlePerPageSelect}
-            variant={PaginationVariant.bottom}
-          />
-        </Grid>
-      </>
-    );
   }
+  return (
+    <>
+      <Alert
+        variant="info"
+        isInline
+        title={
+          <>
+            The repositories seen below are from the selected content template
+            and have been added automatically. If you do not want these
+            repositories in your image, you can{' '}
+            <Button
+              component="a"
+              target="_blank"
+              variant="link"
+              isInline
+              icon={<ExternalLinkAltIcon />}
+              href={`${TEMPLATES_URL}/${templateUuid}/edit`}
+            >
+              {' '}
+              modify this content template
+            </Button>{' '}
+            or choose another snapshot option.
+          </>
+        }
+      />
+      <Grid>
+        <Panel>
+          <PanelMain>
+            <Table variant="compact">
+              <Thead>
+                <Tr>
+                  <Th aria-label="Selected" />
+                  <Th width={45}>Name</Th>
+                  <Th width={15}>Architecture</Th>
+                  <Th>Version</Th>
+                  <Th width={10}>Packages</Th>
+                  <Th>Status</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {reposInTemplate.map((repo, rowIndex) => {
+                  const {
+                    uuid = '',
+                    url = '',
+                    name,
+                    status = '',
+                    origin = '',
+                    distribution_arch,
+                    distribution_versions,
+                    package_count,
+                    last_introspection_time,
+                    failed_introspections_count,
+                  } = repo;
+
+                  return (
+                    <Tr key={`${uuid}-${rowIndex}`}>
+                      <Td
+                        select={{
+                          isSelected: true,
+                          rowIndex: rowIndex,
+                          isDisabled: true,
+                        }}
+                      />
+                      <Td dataLabel={'Name'}>
+                        {name}
+                        {origin === ContentOrigin.UPLOAD ? (
+                          <UploadRepositoryLabel />
+                        ) : (
+                          <>
+                            <br />
+                            <Button
+                              component="a"
+                              target="_blank"
+                              variant="link"
+                              icon={<ExternalLinkAltIcon />}
+                              iconPosition="right"
+                              isInline
+                              href={url}
+                            >
+                              {url}
+                            </Button>
+                          </>
+                        )}
+                      </Td>
+                      <Td dataLabel={'Architecture'}>
+                        {distribution_arch || '-'}
+                      </Td>
+                      <Td dataLabel={'Version'}>
+                        {distribution_versions || '-'}
+                      </Td>
+                      <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
+                      <Td dataLabel={'Status'}>
+                        <RepositoriesStatus
+                          repoStatus={status || 'Unavailable'}
+                          repoUrl={url}
+                          repoIntrospections={last_introspection_time}
+                          repoFailCount={failed_introspections_count}
+                        />
+                      </Td>
+                    </Tr>
+                  );
+                })}
+              </Tbody>
+            </Table>
+          </PanelMain>
+        </Panel>
+        <Pagination
+          itemCount={reposInTemplateCount ?? PAGINATION_COUNT}
+          perPage={perPage}
+          page={page}
+          onSetPage={(_, newPage) => setPage(newPage)}
+          onPerPageSelect={handlePerPageSelect}
+          variant={PaginationVariant.bottom}
+        />
+      </Grid>
+    </>
+  );
 };
 
-export default Repositories;
+
