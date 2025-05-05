@@ -31,9 +31,13 @@ const detectScriptType = (scriptString: string): Language => {
 
     if (path.includes('bin/bash') || path.includes('bin/sh')) {
       return Language.shell;
-    } else if (path.includes('bin/python') || path.includes('bin/python3')) {
+    }
+
+    if (path.includes('bin/python') || path.includes('bin/python3')) {
       return Language.python;
-    } else if (path.includes('ansible-playbook')) {
+    }
+
+    if (path.includes('ansible-playbook')) {
       return Language.yaml;
     }
   }
