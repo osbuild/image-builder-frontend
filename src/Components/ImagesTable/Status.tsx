@@ -222,7 +222,9 @@ export const ExpiringStatus = ({
     return (
       <Status icon={statuses['expired'].icon} text={statuses['expired'].text} />
     );
-  } else if (imageType === 'aws.s3' && status === 'success') {
+  }
+
+  if (imageType === 'aws.s3' && status === 'success') {
     const text = `Expires in ${remainingHours} ${
       remainingHours > 1 ? 'hours' : 'hour'
     }`;
@@ -236,7 +238,9 @@ export const ExpiringStatus = ({
         }
       />
     );
-  } else if (imageType === 'oci.objectstorage' && status === 'success') {
+  }
+
+  if (imageType === 'oci.objectstorage' && status === 'success') {
     const text = `Expires in ${remainingDays} ${
       remainingDays > 1 ? 'days' : 'day'
     }`;
@@ -250,7 +254,9 @@ export const ExpiringStatus = ({
         }
       />
     );
-  } else if (status === 'failure') {
+  }
+
+  if (status === 'failure') {
     return (
       <ErrorStatus
         icon={statuses[status].icon}
@@ -258,9 +264,9 @@ export const ExpiringStatus = ({
         error={composeStatus?.image_status.error || ''}
       />
     );
-  } else {
-    return <Status icon={statuses[status].icon} text={statuses[status].text} />;
   }
+
+  return <Status icon={statuses[status].icon} text={statuses[status].text} />;
 };
 
 type LocalStatusPropTypes = {
