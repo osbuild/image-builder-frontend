@@ -91,9 +91,9 @@ const AzureSourceName = ({ id }: AzureSourceNamePropTypes) => {
   const sourcename = sources?.find((source) => source.id === id);
   if (sourcename) {
     return <p>{sourcename.name}</p>;
-  } else {
-    return <SourceNotFoundPopover />;
   }
+
+  return <SourceNotFoundPopover />;
 };
 
 type AwsSourceNamePropTypes = {
@@ -114,9 +114,9 @@ const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
   const sourcename = sources?.find((source) => source.id === id);
   if (sourcename) {
     return <p>{sourcename.name}</p>;
-  } else {
-    return <SourceNotFoundPopover />;
   }
+
+  return <SourceNotFoundPopover />;
 };
 
 const parseGcpSharedWith = (
