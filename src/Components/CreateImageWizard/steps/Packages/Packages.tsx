@@ -503,109 +503,40 @@ const Packages = () => {
           </Tr>
         </Tbody>
       );
-    } else {
-      return (
-        <Tbody>
-          <Tr>
-            <Td colSpan={6}>
-              <Bullseye>
-                <EmptyState
-                  headingLevel="h4"
-                  titleText="No results found"
-                  icon={SearchIcon}
-                  variant={EmptyStateVariant.sm}
-                >
-                  <EmptyStateBody>
-                    No packages found in known repositories. If you know of a
-                    repository containing this packages, add it to{' '}
-                    <Button
-                      variant="link"
-                      isInline
-                      component="a"
-                      target="_blank"
-                      href={CONTENT_URL}
-                    >
-                      your repositories
-                    </Button>{' '}
-                    and try searching for it again.
-                  </EmptyStateBody>
-                </EmptyState>
-              </Bullseye>
-            </Td>
-          </Tr>
-        </Tbody>
-      );
     }
-  };
-
-  const RepositoryModal = () => {
     return (
-      <Modal
-        titleIconVariant="warning"
-        title="Custom repositories will be added to your image"
-        isOpen={isRepoModalOpen}
-        onClose={handleCloseModalToggle}
-        width="50%"
-        actions={[
-          <Button
-            key="add"
-            variant="primary"
-            isLoading={createLoading}
-            isDisabled={createLoading}
-            onClick={handleConfirmModalToggle}
-          >
-            Add listed repositories
-          </Button>,
-          <Button key="back" variant="link" onClick={handleCloseModalToggle}>
-            Back
-          </Button>,
-        ]}
-      >
-        You have selected packages that belong to custom repositories. By
-        continuing, you are acknowledging and consenting to adding the following
-        custom repositories to your image.
-        <br />
-        <br />
-        The repositories will also get enabled in{' '}
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          iconPosition="right"
-          isInline
-          icon={<ExternalLinkAltIcon />}
-          href={CONTENT_URL}
-        >
-          content services
-        </Button>{' '}
-        if they were not enabled yet:
-        <br />
-        <Table variant="compact">
-          <Thead>
-            <Tr>
-              {isSelectingPackage ? <Th>Packages</Th> : <Th>Package groups</Th>}
-              <Th>Repositories</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              {isSelectingPackage ? (
-                <Td>{isSelectingPackage?.name}</Td>
-              ) : (
-                <Td>{isSelectingGroup?.name}</Td>
-              )}
-              <Td>
-                EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-        <br />
-        To move forward, either add the repos to your image, or go back to
-        review your package selections.
-      </Modal>
+      <Tbody>
+        <Tr>
+          <Td colSpan={6}>
+            <Bullseye>
+              <EmptyState
+                headingLevel="h4"
+                titleText="No results found"
+                icon={SearchIcon}
+                variant={EmptyStateVariant.sm}
+              >
+                <EmptyStateBody>
+                  No packages found in known repositories. If you know of a
+                  repository containing this packages, add it to{' '}
+                  <Button
+                    variant="link"
+                    isInline
+                    component="a"
+                    target="_blank"
+                    href={CONTENT_URL}
+                  >
+                    your repositories
+                  </Button>{' '}
+                  and try searching for it again.
+                </EmptyStateBody>
+              </EmptyState>
+            </Bullseye>
+          </Td>
+        </Tr>
+      </Tbody>
     );
   };
+
 
   const transformedPackages = useMemo(() => {
     let transformedDistroData: ItemWithSources[] = [];
@@ -679,9 +610,8 @@ const Packages = () => {
     unpackedData.sort((a, b) => {
       if (a.name === b.name) {
         return (b.stream ?? '').localeCompare(a.stream ?? '');
-      } else {
-        return a.name.localeCompare(b.name);
       }
+      return a.name.localeCompare(b.name);
     });
 
     if (toggleSelected === 'toggle-available') {
@@ -689,17 +619,15 @@ const Packages = () => {
         return unpackedData.filter((pkg) => pkg.repository !== 'recommended');
       }
       return unpackedData.filter((pkg) => pkg.repository === 'recommended');
-    } else {
-      const selectedPackages = [...packages];
-      if (currentlyRemovedPackages.length > 0) {
-        selectedPackages.push(...currentlyRemovedPackages);
-      }
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedPackages;
-      } else {
-        return [];
-      }
     }
+    const selectedPackages = [...packages];
+    if (currentlyRemovedPackages.length > 0) {
+      selectedPackages.push(...currentlyRemovedPackages);
+    }
+    if (activeTabKey === Repos.INCLUDED) {
+      return selectedPackages;
+    }
+    return [];
   }, [
     currentlyRemovedPackages,
     dataCustomPackages,
@@ -753,21 +681,16 @@ const Packages = () => {
         return combinedGroupData.filter(
           (pkg) => pkg.repository !== 'recommended'
         );
-      } else {
-        return combinedGroupData.filter(
-          (pkg) => pkg.repository === 'recommended'
-        );
       }
-    } else {
-      const selectedGroups = [...groups];
-      if (activeTabKey === Repos.INCLUDED) {
-        return selectedGroups;
-      } else {
-        return [];
-      }
+      return combinedGroupData.filter(
+        (pkg) => pkg.repository === 'recommended'
+      );
     }
-
-    return combinedGroupData;
+    const selectedGroups = [...groups];
+    if (activeTabKey === Repos.INCLUDED) {
+      return selectedGroups;
+    }
+    return [];
   }, [
     dataDistroGroups,
     dataCustomGroups,
