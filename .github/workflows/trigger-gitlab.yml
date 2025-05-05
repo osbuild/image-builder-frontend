@@ -4,12 +4,11 @@ name: Trigger GitLab CI
 
 on:
   workflow_run:
-    workflows: ["Development checks"]
+    workflows: ["Verify PR best practicess"]
     types: [completed]
 
 jobs:
   trigger-gitlab:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     env:
       IMAGEBUILDER_BOT_GITLAB_SSH_KEY: ${{ secrets.IMAGEBUILDER_BOT_GITLAB_SSH_KEY }}
