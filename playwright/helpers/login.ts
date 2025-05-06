@@ -1,6 +1,7 @@
 import { type Page, expect } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted, togglePreview } from './helpers';
+import { ibFrame } from './navHelpers';
 
 /**
  * Logs in to either Cockpit or Console, will distinguish between them based on the environment
@@ -25,9 +26,16 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
 
   await page.getByRole('textbox', { name: 'User name' }).fill(user);
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
-
-  // cockpit-image-builder needs superuser
   await page.getByRole('button', { name: 'Log in' }).click();
+
+  // image-builder lives inside an iframe
+  const frame = ibFrame(page);
+
+  // cockpit-image-builder needs superuser, expect an error message
+  // when the user does not have admin priviliges
+  await expect(
+    frame.getByRole('heading', { name: 'Access is limited' })
+  ).toBeVisible();
   await page.getByRole('button', { name: 'Limited access' }).click();
 
   // different popup opens based on type of account (can be passwordless)
@@ -48,6 +56,9 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   // expect to have administrative access
   await expect(
     page.getByRole('button', { name: 'Administrative access' })
+  ).toBeVisible();
+  await expect(
+    frame.getByRole('heading', { name: 'All images' })
   ).toBeVisible();
 };
 
