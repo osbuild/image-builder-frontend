@@ -43,7 +43,7 @@
     "@rtk-query/codegen-openapi": "2.0.0",
     "@testing-library/dom": "10.4.0",
     "@testing-library/jest-dom": "6.6.3",
-    "@testing-library/react": "16.2.0",
+    "@testing-library/react": "16.3.0",
     "@testing-library/user-event": "14.6.1",
     "@types/node": "22.15.1",
     "@types/react": "18.3.12",
