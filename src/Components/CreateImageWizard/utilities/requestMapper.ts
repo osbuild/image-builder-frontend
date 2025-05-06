@@ -694,9 +694,8 @@ const getPackages = (state: RootState) => {
     return packages
       .map((pkg) => pkg.name)
       .concat(groups.map((grp) => '@' + grp.name));
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 const getModules = (state: RootState) => {
@@ -704,9 +703,8 @@ const getModules = (state: RootState) => {
 
   if (modules.length > 0) {
     return modules;
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 const getTimezone = (state: RootState) => {
@@ -715,12 +713,11 @@ const getTimezone = (state: RootState) => {
 
   if (!timezone && ntpservers?.length === 0) {
     return undefined;
-  } else {
-    return {
-      timezone: timezone ? timezone : undefined,
-      ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
-    };
   }
+  return {
+    timezone: timezone ? timezone : undefined,
+    ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
+  };
 };
 
 const getSubscription = (
@@ -763,12 +760,11 @@ const getLocale = (state: RootState) => {
 
   if (languages?.length === 0 && !keyboard) {
     return undefined;
-  } else {
-    return {
-      languages: languages && languages.length > 0 ? languages : undefined,
-      keyboard: keyboard ? keyboard : undefined,
-    };
   }
+  return {
+    languages: languages && languages.length > 0 ? languages : undefined,
+    keyboard: keyboard ? keyboard : undefined,
+  };
 };
 
 const getFirewall = (state: RootState) => {
