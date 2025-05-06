@@ -283,7 +283,7 @@ const PolicySelector = () => {
       isDisabled={isFetchingPolicies || hasWslTargetOnly}
       style={
         {
-          width: '200px',
+          width: '100%',
         } as React.CSSProperties
       }
     >
