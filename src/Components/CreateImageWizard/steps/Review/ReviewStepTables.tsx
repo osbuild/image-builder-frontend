@@ -87,7 +87,7 @@ export const FSReviewTable = () => {
               <Th>Minimum size</Th>
             </Tr>
           </Thead>
-          <Tbody data-testid="file-system-configuration-tbody-review">
+          <Tbody>
             {partitions.map((partition, partitionIndex) => (
               <Tr key={partitionIndex}>
                 <Td className="pf-m-width-30">{partition.mountpoint}</Td>
@@ -175,7 +175,7 @@ export const SnapshotTable = ({
                 <Th>Last snapshot date</Th>
               </Tr>
             </Thead>
-            <Tbody data-testid="packages-tbody-review">
+            <Tbody>
               {data?.data?.map(({ uuid, name, last_snapshot }, pkgIndex) => (
                 <Tr key={pkgIndex}>
                   <Td>{name}</Td>
@@ -224,7 +224,7 @@ export const PackagesTable = () => {
               <Th>Package repository</Th>
             </Tr>
           </Thead>
-          <Tbody data-testid="packages-tbody-review">
+          <Tbody>
             {packages.map((pkg, pkgIndex) => (
               <Tr key={pkgIndex}>
                 <Td className="pf-m-width-30">{pkg.name}</Td>
@@ -277,7 +277,7 @@ export const RepositoriesTable = () => {
               <Th>Name</Th>
             </Tr>
           </Thead>
-          <Tbody data-testid="repositories-tbody-review">
+          <Tbody>
             {repositoriesList.map((repo, repoIndex) => (
               <Tr key={repoIndex + 1}>
                 <Td className="pf-m-width-60">

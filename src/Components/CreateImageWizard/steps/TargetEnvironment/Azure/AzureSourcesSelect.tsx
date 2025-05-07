@@ -183,7 +183,7 @@ export const AzureSourcesSelect = () => {
 
   return (
     <>
-      <FormGroup isRequired label={'Source name'} data-testid="azure-sources">
+      <FormGroup isRequired label={'Source name'}>
         <Select
           isScrollable
           isOpen={isOpen}

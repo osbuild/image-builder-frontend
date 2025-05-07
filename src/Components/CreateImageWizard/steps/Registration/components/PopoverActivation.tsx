@@ -47,7 +47,6 @@ const PopoverActivation = () => {
       <Button
         variant="plain"
         aria-label="Activation key popover"
-        aria-describedby="subscription-activation-key"
         className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0 pf-v5-u-pr-0"
       >
         <HelpIcon />

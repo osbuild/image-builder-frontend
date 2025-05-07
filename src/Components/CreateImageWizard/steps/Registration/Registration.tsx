@@ -143,7 +143,6 @@ const Registration = () => {
         description={
           <Button
             component="a"
-            data-testid="registration-additional-options"
             variant="link"
             isDisabled={!registrationType.startsWith('register-now')}
             isInline
@@ -162,7 +161,6 @@ const Registration = () => {
                   <InsightsPopover />
                 </>
               }
-              data-testid="registration-checkbox-insights"
               isChecked={
                 registrationType === 'register-now-insights' ||
                 registrationType === 'register-now-rhc'
@@ -185,7 +183,6 @@ const Registration = () => {
                       <RhcPopover />
                     </>
                   }
-                  data-testid="registration-checkbox-rhc"
                   isChecked={registrationType === 'register-now-rhc'}
                   onChange={(_event, checked) => {
                     if (checked) {
@@ -218,7 +215,6 @@ const Registration = () => {
       {isSatelliteRegistrationEnabled && (
         <Radio
           label="Register with Satellite"
-          data-testid="register-satellite-radio"
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));

@@ -114,14 +114,7 @@ const BlueprintsSidebar = () => {
     return (
       <EmptyBlueprintState
         icon={PlusCircleIcon}
-        action={
-          <Link
-            to={resolveRelPath('imagewizard')}
-            data-testid="create-blueprint-action-emptystate"
-          >
-            Add blueprint
-          </Link>
-        }
+        action={<Link to={resolveRelPath('imagewizard')}>Add blueprint</Link>}
         titleText="No blueprints yet"
         bodyText="Add a blueprint and optionally build related images."
       />
@@ -224,7 +217,6 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}
       resultsCount={`${blueprintsTotal} blueprints`}
-      data-testid="blueprints-search-input"
     />
   );
 };

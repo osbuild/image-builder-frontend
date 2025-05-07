@@ -94,7 +94,6 @@ const TargetEnvironment = () => {
     >
       <FormGroup
         label={<Text component={TextVariants.small}>Public cloud</Text>}
-        data-testid="target-public"
       >
         <div className="tiles">
           {supportedEnvironments?.includes('aws') && (
@@ -170,7 +169,6 @@ const TargetEnvironment = () => {
           {supportedEnvironments?.includes('oci') && (
             <Tile
               className="tile pf-v5-u-mr-sm"
-              data-testid="upload-oci"
               title="Oracle Cloud Infrastructure"
               icon={
                 <img
@@ -195,7 +193,6 @@ const TargetEnvironment = () => {
           <FormGroup
             label={<Text component={TextVariants.small}>Private cloud</Text>}
             className="pf-v5-u-mt-sm"
-            data-testid="target-private"
           >
             <Checkbox
               label="VMware vSphere"
@@ -319,10 +316,7 @@ const TargetEnvironment = () => {
           </FormGroup>
         </>
       )}
-      <FormGroup
-        label={<Text component={TextVariants.small}>Other</Text>}
-        data-testid="target-other"
-      >
+      <FormGroup label={<Text component={TextVariants.small}>Other</Text>}>
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label="Virtualization - Guest image (.qcow2)"

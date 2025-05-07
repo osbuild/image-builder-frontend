@@ -102,7 +102,7 @@ const Templates = () => {
                 onPerPageSelect={handlePerPageSelect}
                 isCompact
               />
-              <Table variant="compact" data-testid="templates-table">
+              <Table variant="compact">
                 <Thead>
                   <Tr>
                     <Th aria-label="Selected" />

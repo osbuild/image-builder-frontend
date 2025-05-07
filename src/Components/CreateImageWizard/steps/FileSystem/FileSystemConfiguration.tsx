@@ -81,7 +81,6 @@ const FileSystemConfiguration = () => {
       <FileSystemTable />
       <TextContent>
         <Button
-          data-testid="file-system-add-partition"
           className="pf-v5-u-text-align-left"
           variant="link"
           icon={<PlusCircleIcon />}

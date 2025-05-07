@@ -575,7 +575,7 @@ const Repositories = () => {
                 refetch={refresh}
               />
             ) : (
-              <Table variant="compact" data-testid="repositories-table">
+              <Table variant="compact">
                 <Thead>
                   <Tr>
                     <Th aria-label="Selected" />
@@ -607,10 +607,7 @@ const Repositories = () => {
                     );
 
                     return (
-                      <Tr
-                        key={`${uuid}-${rowIndex}`}
-                        data-testid="repositories-row"
-                      >
+                      <Tr key={`${uuid}-${rowIndex}`}>
                         <Td
                           select={{
                             isSelected: selected.has(uuid),
@@ -704,7 +701,7 @@ const Repositories = () => {
         <Grid>
           <Panel>
             <PanelMain>
-              <Table variant="compact" data-testid="repositories-table">
+              <Table variant="compact">
                 <Thead>
                   <Tr>
                     <Th aria-label="Selected" />
@@ -731,10 +728,7 @@ const Repositories = () => {
                     } = repo;
 
                     return (
-                      <Tr
-                        key={`${uuid}-${rowIndex}`}
-                        data-testid="repositories-row"
-                      >
+                      <Tr key={`${uuid}-${rowIndex}`}>
                         <Td
                           select={{
                             isSelected: true,

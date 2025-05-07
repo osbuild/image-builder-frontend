@@ -292,7 +292,7 @@ const PolicySelector = () => {
   );
 
   return (
-    <FormGroup data-testid="profiles-form-group" label="Policy">
+    <FormGroup label="Policy">
       <Select
         isScrollable
         isOpen={isOpen}

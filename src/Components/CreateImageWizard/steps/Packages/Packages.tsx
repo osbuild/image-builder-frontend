@@ -1467,7 +1467,6 @@ const Packages = () => {
                 <ToggleGroupItem
                   text="Available"
                   buttonId="toggle-available"
-                  data-testid="packages-available-toggle"
                   isSelected={toggleSelected === 'toggle-available'}
                   onChange={handleFilterToggleClick}
                 />
@@ -1480,7 +1479,6 @@ const Packages = () => {
                       : ' (100+)'
                   }`}
                   buttonId="toggle-selected"
-                  data-testid="packages-selected-toggle"
                   isSelected={toggleSelected === 'toggle-selected'}
                   onChange={handleFilterToggleClick}
                 />

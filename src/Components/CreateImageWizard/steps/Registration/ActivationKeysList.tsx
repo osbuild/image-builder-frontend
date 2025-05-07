@@ -191,11 +191,7 @@ const ActivationKeysList = () => {
 
     if (!isSuccessActivationKeys && isFetchingActivationKeys) {
       selectOptionsElement.push(
-        <SelectOption
-          key="Fetching"
-          value="loader"
-          data-testid="activation-keys-loading"
-        >
+        <SelectOption key="Fetching" value="loader">
           <Spinner size="md" />
         </SelectOption>
       );
@@ -250,7 +246,6 @@ const ActivationKeysList = () => {
             Activation key to use for this image <PopoverActivation />
           </>
         }
-        data-testid="subscription-activation-key"
       >
         <Select
           isScrollable

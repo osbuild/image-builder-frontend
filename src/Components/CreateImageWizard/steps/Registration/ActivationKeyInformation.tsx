@@ -109,7 +109,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                             <Th>Name</Th>
                           </Tr>
                         </Thead>
-                        <Tbody data-testid="additional-repositories-table">
+                        <Tbody>
                           {activationKeyInfo.body?.additionalRepositories?.map(
                             (repo, index) => (
                               <Tr key={index}>
@@ -123,7 +123,6 @@ const ActivationKeyInformation = (): JSX.Element => {
                   }
                 >
                   <Button
-                    data-testid="repositories-popover-button"
                     variant="link"
                     aria-label="Show additional repositories"
                     className="pf-v5-u-pl-0 pf-v5-u-pt-0 pf-v5-u-pb-0"
