@@ -34,7 +34,7 @@
     "@babel/preset-env": "7.27.1",
     "@babel/preset-react": "7.26.3",
     "@babel/preset-typescript": "7.27.0",
-    "@currents/playwright": "1.12.1",
+    "@currents/playwright": "1.12.3",
     "@patternfly/react-icons": "5.4.2",
     "@playwright/test": "1.51.1",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "2.0.12",
