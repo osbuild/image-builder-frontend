@@ -366,6 +366,8 @@ export const AwsS3Instance = ({
   compose,
   isExpired,
 }: AwsS3InstancePropTypes) => {
+  const { analytics } = useChrome();
+
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
@@ -418,6 +420,16 @@ export const AwsS3Instance = ({
       isInline
       href={options?.url}
       isDisabled={isExpired}
+      onClick={() => {
+        if (!process.env.IS_ON_PREMISE) {
+          analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Downloaded`, {
+            module: AMPLITUDE_MODULE_NAME,
+            blueprint_id: compose.blueprint_id,
+            blueprint_version: compose.blueprint_version,
+            image_type: compose.request.image_requests[0].image_type,
+          });
+        }
+      }}
     >
       Download ({fileExtensions[compose.request.image_requests[0].image_type]})
     </Button>
