@@ -87,10 +87,8 @@ const FirstBootStep = () => {
           }}
           code={selectedScript}
           height="35vh"
-          emptyStateButton={<span data-testid="firstboot_browse">Browse</span>}
-          emptyStateLink={
-            <span data-testid="firstboot_write_manual">Start from scratch</span>
-          }
+          emptyStateButton="Browse"
+          emptyStateLink="Start from scratch"
         />
         {errors.script && (
           <FormHelperText>

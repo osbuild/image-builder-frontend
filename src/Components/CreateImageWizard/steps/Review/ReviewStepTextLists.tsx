@@ -160,10 +160,7 @@ export const FSCList = () => {
         >
           Configuration type
         </TextListItem>
-        <TextListItem
-          component={TextListItemVariants.dd}
-          data-testid="partitioning-auto-manual"
-        >
+        <TextListItem component={TextListItemVariants.dd}>
           {fileSystemConfigurationType === 'manual' ? 'Manual' : 'Automatic'}
           {fileSystemConfigurationType === 'manual' && (
             <>
@@ -176,7 +173,6 @@ export const FSCList = () => {
                 bodyContent={<FSReviewTable />}
               >
                 <Button
-                  data-testid="file-system-configuration-popover"
                   variant="link"
                   aria-label="File system configuration info"
                   aria-describedby="file-system-configuration-info"
@@ -526,10 +522,7 @@ export const ContentList = () => {
             >
               Repeatable build
             </TextListItem>
-            <TextListItem
-              component={TextListItemVariants.dd}
-              data-testid="snapshot-method"
-            >
+            <TextListItem component={TextListItemVariants.dd}>
               <Popover
                 position="bottom"
                 headerContent={
@@ -572,10 +565,7 @@ export const ContentList = () => {
           <TextListItem component={TextListItemVariants.dt}>
             Custom repositories
           </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dd}
-            data-testid="custom-repositories-count"
-          >
+          <TextListItem component={TextListItemVariants.dd}>
             {customRepositories?.length + recommendedRepositories.length > 0 ? (
               <Popover
                 position="bottom"
@@ -603,10 +593,7 @@ export const ContentList = () => {
           >
             Additional packages
           </TextListItem>
-          <TextListItem
-            component={TextListItemVariants.dd}
-            data-testid="chosen-packages-count"
-          >
+          <TextListItem component={TextListItemVariants.dd}>
             {packages?.length > 0 || groups?.length > 0 ? (
               <Popover
                 position="bottom"

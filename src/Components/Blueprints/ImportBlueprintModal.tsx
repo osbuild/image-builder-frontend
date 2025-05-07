@@ -258,7 +258,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
             aria-label="Import Custom Repositories checkbox"
             id="checkbox-import-custom-repositories"
             name="Import Repositories"
-            data-testid="checkbox-import-custom-repositories"
           />
         </FormGroup>
         <FormGroup fieldId="import-blueprint-file-upload">

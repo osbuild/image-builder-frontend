@@ -134,11 +134,7 @@ export const AzureResourceGroups = () => {
   );
 
   return (
-    <FormGroup
-      isRequired
-      label={'Resource group'}
-      data-testid="azure-resource-groups"
-    >
+    <FormGroup isRequired label={'Resource group'}>
       <Select
         isScrollable
         isOpen={isOpen}
@@ -151,10 +147,7 @@ export const AzureResourceGroups = () => {
       >
         <SelectList>
           {isFetching && (
-            <SelectOption
-              value="loader"
-              data-testid="azure-resource-groups-loading"
-            >
+            <SelectOption value="loader">
               <Spinner size="lg" />
             </SelectOption>
           )}

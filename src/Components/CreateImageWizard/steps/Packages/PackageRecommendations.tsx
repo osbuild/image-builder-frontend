@@ -227,7 +227,6 @@ const PackageRecommendations = () => {
                           component="a"
                           onClick={() => addAllPackages()}
                           isInline
-                          data-testid="add-all-recommendations-button"
                         >
                           Add all packages
                         </Button>
@@ -272,7 +271,6 @@ const PackageRecommendations = () => {
                             }}
                             isInline
                             isDisabled={isRecommendedPackageSelected(pkg)}
-                            data-testid="add-recommendation-button"
                           >
                             Add package
                           </Button>

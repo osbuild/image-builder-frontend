@@ -353,7 +353,7 @@ const ProfileSelector = () => {
   );
 
   return (
-    <FormGroup data-testid="profiles-form-group" label="Profile">
+    <FormGroup label="Profile">
       <Select
         isScrollable
         isOpen={isOpen}
@@ -368,10 +368,7 @@ const ProfileSelector = () => {
       >
         <SelectList>
           {isFetching && (
-            <SelectOption
-              value="loader"
-              data-testid="openscap-profiles-fetching"
-            >
+            <SelectOption value="loader">
               <Spinner size="lg" />
             </SelectOption>
           )}

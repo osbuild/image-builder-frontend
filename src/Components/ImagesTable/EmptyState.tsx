@@ -34,7 +34,6 @@ const EmptyBlueprintsImagesTable = () => (
       <EmptyStateHeader
         icon={<EmptyStateIcon icon={PlusCircleIcon} />}
         titleText="No images"
-        data-testid="empty-state-header"
       />
       <EmptyStateBody>
         <Text>

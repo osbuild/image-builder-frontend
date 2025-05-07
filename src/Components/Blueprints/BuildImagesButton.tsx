@@ -155,7 +155,6 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
           <MenuList>
             {blueprintImageType?.map((imageType, index) => (
               <MenuItem
-                data-testid="blueprint-menu-items"
                 key={imageType}
                 hasCheckbox
                 itemId={index}
