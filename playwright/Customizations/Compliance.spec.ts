@@ -47,7 +47,6 @@ test('Create a blueprint with Compliance customization', async ({
     await expect(frame.getByPlaceholder('Select a profile')).toHaveValue(
       'xccdf_org.ssgproject.content_profile_ccn_basic'
     );
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
 
     // Compliance policies - dunno if they are there in the test profiles
     await frame.getByRole('button', { name: 'Compliance policies' }).click();
@@ -60,6 +59,7 @@ test('Create a blueprint with Compliance customization', async ({
     await expect(frame.getByPlaceholder('Select a profile')).toHaveValue(
       'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server (Customizations Test)'
     );
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
 
   await test.step('Fill the BP details', async (step) => {
