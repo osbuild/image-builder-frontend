@@ -149,7 +149,6 @@ export const ImageBuilderHeader = ({
               <FlexItem>
                 {importExportFlag && (
                   <Button
-                    data-testid="import-blueprint-button"
                     variant="secondary"
                     onClick={() => setShowImportModal(true)}
                     isDisabled={!isOnBlueprintsTab}
