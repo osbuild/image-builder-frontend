@@ -6,12 +6,16 @@ source /etc/os-release
 sudo dnf install -y \
      libappstream-glib
 
-# RHEL9 has nodejs and npm separately
 if [[ "$ID" == rhel && ${VERSION_ID%.*} == 10 ]]; then
     sudo dnf install -y nodejs-npm \
          sqlite # node fails to pull this in
-else
+elif [[ "$ID" == rhel ]]; then
     sudo dnf install -y npm
+elif [[ "$ID" == fedora ]]; then
+    sudo dnf install -y \
+         nodejs-npm \
+         sqlite \
+         gettext
 fi
 
 npm ci
