@@ -116,7 +116,6 @@ export const ImageBuilderHeader = ({
                   </Button>
                   {importExportFlag && (
                     <Button
-                      data-testid="import-blueprint-button"
                       variant="secondary"
                       onClick={() => setShowImportModal(true)}
                     >

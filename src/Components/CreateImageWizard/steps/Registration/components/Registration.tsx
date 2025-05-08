@@ -120,7 +120,6 @@ const Registration = () => {
     <FormGroup label="Registration method">
       <Radio
         label="Automatically register and enable advanced capabilities"
-        data-testid="automatically-register-radio"
         isChecked={
           registrationType === 'register-now' ||
           registrationType === 'register-now-insights' ||
@@ -200,7 +199,6 @@ const Registration = () => {
       />
       <Radio
         label="Register later"
-        data-testid="register-later-radio"
         isChecked={registrationType === 'register-later'}
         onChange={() => {
           dispatch(changeRegistrationType('register-later'));
