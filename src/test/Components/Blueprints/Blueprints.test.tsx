@@ -356,9 +356,9 @@ describe('Blueprints', () => {
       renderCustomRoutesWithReduxRouter();
 
       await selectBlueprintById(blueprintIdWithComposes);
-      const toggleButton = await screen.findByTestId(
-        'blueprint-action-menu-toggle'
-      );
+      const toggleButton = await screen.findByRole('button', {
+        name: /blueprint menu toggle/i,
+      });
       await waitFor(() => user.click(toggleButton));
 
       const downloadButton = screen.getByRole('menuitem', {

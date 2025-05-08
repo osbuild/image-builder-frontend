@@ -66,7 +66,6 @@ const Gcp = () => {
         />
         <Radio
           id="share-with-insights"
-          data-testid="share-with-insights"
           label="Share image with Red Hat Insights only"
           name="radio-2"
           description={
@@ -88,7 +87,6 @@ const Gcp = () => {
           <FormGroup label="Account type" isRequired>
             <Radio
               id="google-account"
-              data-testid="google-account"
               label="Google account"
               name="radio-3"
               isChecked={accountType === 'user'}
@@ -98,7 +96,6 @@ const Gcp = () => {
             />
             <Radio
               id="service-account"
-              data-testid="service-account"
               label="Service account"
               name="radio-4"
               isChecked={accountType === 'serviceAccount'}
@@ -108,7 +105,6 @@ const Gcp = () => {
             />
             <Radio
               id="google-group"
-              data-testid="google-group"
               label="Google group"
               name="radio-5"
               isChecked={accountType === 'group'}
@@ -118,7 +114,6 @@ const Gcp = () => {
             />
             <Radio
               id="google-domain"
-              data-testid="google-domain"
               label="Google Workspace domain or Cloud Identity domain"
               name="radio-6"
               isChecked={accountType === 'domain'}

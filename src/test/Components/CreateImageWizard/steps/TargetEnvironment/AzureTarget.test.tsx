@@ -70,14 +70,18 @@ const clickRevisitButton = async () => {
 
 const selectAzureTarget = async () => {
   const user = userEvent.setup();
-  const azureCard = await screen.findByTestId('upload-azure');
+  const azureCard = await screen.findByRole('button', {
+    name: /Microsoft Azure/i,
+  });
   await waitFor(() => user.click(azureCard));
   await clickNext();
 };
 
 const deselectAzureAndSelectGuestImage = async () => {
   const user = userEvent.setup();
-  const azureCard = await screen.findByTestId('upload-azure');
+  const azureCard = await screen.findByRole('button', {
+    name: /Microsoft Azure/i,
+  });
   await waitFor(() => user.click(azureCard));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
@@ -157,7 +161,7 @@ const enterSubscriptionId = async () => {
 
 const selectV1 = async () => {
   const user = userEvent.setup();
-  const hypervMenu = screen.getByTestId('azure-hyper-v-generation-select');
+  const hypervMenu = screen.getByRole('button', { name: /Generation 2/i });
 
   await waitFor(() => user.click(hypervMenu));
   const v1 = await screen.findByRole('option', {
