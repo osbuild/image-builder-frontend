@@ -70,15 +70,19 @@ const clickRevisitButton = async () => {
 
 const selectAwsTarget = async () => {
   const user = userEvent.setup();
-  const awsCard = await screen.findByTestId('upload-aws');
+  const awsCard = await screen.findByRole('button', {
+    name: /Amazon Web Services/i,
+  });
   await waitFor(() => user.click(awsCard));
   await clickNext();
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
   const user = userEvent.setup();
-  const awsCard = await screen.findByTestId('upload-aws');
-  await waitFor(() => user.click(awsCard));
+  const awsCard = await screen.findAllByRole('button', {
+    name: /Amazon Web Services/i,
+  });
+  await waitFor(() => user.click(awsCard[1]));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });

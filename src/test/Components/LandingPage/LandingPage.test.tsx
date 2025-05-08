@@ -28,6 +28,8 @@ describe('Landing Page', () => {
 
     renderCustomRoutesWithReduxRouter();
     // check table loads
-    await screen.findByTestId('empty-state');
+    await screen.findByText(
+      /Image builder is a tool for creating deployment-ready customized system images/i
+    );
   });
 });

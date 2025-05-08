@@ -293,15 +293,15 @@ describe('Import modal', () => {
 
   test('renders import component', async () => {
     renderCustomRoutesWithReduxRouter();
-    const importButton = await screen.findByTestId('import-blueprint-button');
+    const importButton = await screen.findByRole('button', { name: /Import/i });
     await waitFor(() => expect(importButton).toBeInTheDocument());
   });
 
   const setUp = async () => {
     renderCustomRoutesWithReduxRouter();
-    const importBlueprintBtn = await screen.findByTestId(
-      'import-blueprint-button'
-    );
+    const importBlueprintBtn = await screen.findByRole('button', {
+      name: /Import/i,
+    });
     await waitFor(() => user.click(importBlueprintBtn));
     const reviewButton = await screen.findByRole('button', {
       name: /review and finish/i,
@@ -312,7 +312,9 @@ describe('Import modal', () => {
   test('should show alert on invalid blueprint', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, INVALID_JSON);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i
@@ -323,7 +325,9 @@ describe('Import modal', () => {
   test('should show alert on invalid blueprint incorrect architecture', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, INVALID_ARCHITECTURE_JSON);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i
@@ -334,7 +338,9 @@ describe('Import modal', () => {
   test('should enable button and ignore subscription in blueprint file', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, IGNORE_SUBSCRIPTION_BLUEPRINT);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
@@ -348,7 +354,9 @@ describe('Import modal', () => {
   test('should enable button on correct blueprint and go to wizard', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, BLUEPRINT_JSON);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
@@ -369,7 +377,9 @@ describe('Import modal', () => {
   test('should enable button on toml blueprint and go to wizard', async () => {
     await setUp();
     await uploadFile(`blueprints.toml`, ONPREM_BLUEPRINT_TOML);
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
@@ -381,7 +391,10 @@ describe('Import modal', () => {
 
     // Image output
     await waitFor(
-      async () => await user.click(await screen.findByTestId('upload-aws'))
+      async () =>
+        await user.click(
+          await screen.findByRole('button', { name: /Amazon Web Services/i })
+        )
     );
     await clickNext();
 
@@ -404,9 +417,9 @@ describe('Import modal', () => {
     await screen.findByText(
       'Automatically register and enable advanced capabilities'
     );
-    //const registrationCheckbox = await screen.findByTestId(
-    //  'automatically-register-radio'
-    //);
+    //const registrationCheckbox = await screen.findByRole('radio', {
+    //  name: /Automatically register and enable advanced capabilities/i,
+    //});
     //expect(registrationCheckbox).toHaveFocus();
     await screen.findByPlaceholderText('Select activation key');
 
@@ -514,7 +527,9 @@ describe('Import modal', () => {
       `blueprints.toml`,
       ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES
     );
-    const reviewButton = screen.getByTestId('import-blueprint-finish');
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
     await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
