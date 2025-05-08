@@ -32,7 +32,7 @@ const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {
   };
 
   return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+    <EmptyState variant={EmptyStateVariant.lg}>
       <EmptyStateHeader titleText={'No content templates'} headingLevel="h4" />
       <EmptyStateBody>
         {`Content templates can be added in the "Templates" area of the
