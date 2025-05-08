@@ -79,14 +79,18 @@ const createGCPCloudImage = (
 
 const clickGCPTarget = async () => {
   const user = userEvent.setup();
-  const googleOption = await screen.findByTestId('upload-google');
+  const googleOption = await screen.findByRole('option', {
+    name: /Google Cloud Platform/i,
+  });
   await waitFor(() => user.click(googleOption));
   await clickNext();
 };
 
 const deselectGcpAndSelectGuestImage = async () => {
   const user = userEvent.setup();
-  const googleCard = await screen.findByTestId('upload-google');
+  const googleCard = await screen.findByRole('option', {
+    name: /Google Cloud Platform/i,
+  });
   await waitFor(() => user.click(googleCard));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
@@ -96,7 +100,9 @@ const deselectGcpAndSelectGuestImage = async () => {
 
 const selectGoogleAccount = async (optionId: string) => {
   const user = userEvent.setup();
-  const googleAccountOption = await screen.findByTestId(optionId);
+  const googleAccountOption = await screen.findByRole('radio', {
+    name: optionId,
+  });
   await waitFor(() => user.click(googleAccountOption));
   const principalInput = await screen.findByTestId('principal');
   await waitFor(() => user.type(principalInput, GCP_ACCOUNT));
@@ -115,7 +121,7 @@ describe('Step Upload to Google', () => {
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-account');
+    await selectGoogleAccount('Google account');
     await clickNext();
     await screen.findByRole('heading', {
       name: 'Register systems using this image',
@@ -163,7 +169,7 @@ describe('Step Upload to Google', () => {
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-account');
+    await selectGoogleAccount('Google account');
     await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
@@ -178,7 +184,7 @@ describe('GCP image type request generated correctly', () => {
   test('share image with google account', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-account');
+    await selectGoogleAccount('Google account');
     await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -198,7 +204,7 @@ describe('GCP image type request generated correctly', () => {
   test('share image with service account', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('service-account');
+    await selectGoogleAccount('Service account');
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
@@ -214,7 +220,7 @@ describe('GCP image type request generated correctly', () => {
   test('share image with google group', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-group');
+    await selectGoogleAccount('Google group');
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
@@ -230,7 +236,9 @@ describe('GCP image type request generated correctly', () => {
   test('share image with domain', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-domain');
+    await selectGoogleAccount(
+      'Google Workspace domain or Cloud Identity domain'
+    );
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedImageRequest = createGCPCloudImage('gcp', {
@@ -247,9 +255,9 @@ describe('GCP image type request generated correctly', () => {
     const user = userEvent.setup();
     await renderCreateMode();
     await clickGCPTarget();
-    const shareWithInsightOption = await screen.findByTestId(
-      'share-with-insights'
-    );
+    const shareWithInsightOption = await screen.findByRole('radio', {
+      name: /Share image with Red Hat Insights only/i,
+    });
 
     user.click(shareWithInsightOption);
     await goToReview();
@@ -265,7 +273,9 @@ describe('GCP image type request generated correctly', () => {
   test('after selecting and deselecting gcp', async () => {
     await renderCreateMode();
     await clickGCPTarget();
-    await selectGoogleAccount('google-domain');
+    await selectGoogleAccount(
+      'Google Workspace domain or Cloud Identity domain'
+    );
     await clickBack();
     await deselectGcpAndSelectGuestImage();
     await goToReview();
