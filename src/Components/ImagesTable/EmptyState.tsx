@@ -55,7 +55,6 @@ const EmptyImagesTable = () => {
     <Bullseye>
       <EmptyState
         variant={EmptyStateVariant.lg}
-        data-testid="empty-state"
         titleText="No images"
         headingLevel="h4"
         icon={SearchIcon}

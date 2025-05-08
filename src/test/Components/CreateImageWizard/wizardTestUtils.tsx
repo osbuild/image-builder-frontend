@@ -117,7 +117,9 @@ export const selectRhel9 = async () => {
 
 export const selectGuestImageTarget = async () => {
   const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByTestId('checkbox-guest-image');
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /Virtualization guest image/i,
+  });
   await waitFor(() => user.click(guestImageCheckBox));
 };
 

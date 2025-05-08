@@ -119,7 +119,6 @@ export const MajorReleasesLifecyclesChart = () => {
     <Panel>
       <PanelMain maxHeight="10rem">
         <Bar
-          data-testid="release-lifecycle-chart"
           options={chartMajorVersionCfg.options}
           data={chartMajorVersionCfg.data}
         />

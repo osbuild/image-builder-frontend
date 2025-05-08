@@ -327,7 +327,6 @@ export const ImportBlueprintModal: React.FunctionComponent<
               state: { blueprint: importedBlueprint },
             })
           }
-          data-testid="import-blueprint-finish"
         >
           Review and finish
         </Button>

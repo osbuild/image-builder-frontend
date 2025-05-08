@@ -55,7 +55,9 @@ const goToReviewStep = async () => {
 
 const addAzureTarget = async () => {
   const user = userEvent.setup();
-  await waitFor(() => user.click(screen.getByTestId('upload-azure')));
+  await waitFor(() =>
+    user.click(screen.getByRole('button', { name: /Microsoft Azure/i }))
+  );
   await clickNext();
 
   const azureSourceDropdown = await screen.findByPlaceholderText(

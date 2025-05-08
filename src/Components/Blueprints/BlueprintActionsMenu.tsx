@@ -60,7 +60,6 @@ export const BlueprintActionsMenu: React.FunctionComponent<
           onClick={() => setShowBlueprintActionsMenu(!showBlueprintActionsMenu)}
           variant="plain"
           aria-label="blueprint menu toggle"
-          data-testid="blueprint-action-menu-toggle"
         >
           <EllipsisVIcon aria-hidden="true" />
         </MenuToggle>

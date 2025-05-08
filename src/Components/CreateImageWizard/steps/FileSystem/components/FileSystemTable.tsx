@@ -194,7 +194,6 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
       onClick={onToggleClick}
       isExpanded={isOpen}
       isDisabled={prefix === '/'}
-      data-testid="prefix-select"
       isFullWidth
     >
       {prefix}
@@ -332,12 +331,7 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
   };
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
-    <MenuToggle
-      ref={toggleRef}
-      onClick={onToggleClick}
-      isExpanded={isOpen}
-      data-testid="unit-select"
-    >
+    <MenuToggle ref={toggleRef} onClick={onToggleClick} isExpanded={isOpen}>
       {partition.unit}
     </MenuToggle>
   );
@@ -505,7 +499,6 @@ const FileSystemTable = () => {
       className={isDragging ? styles.modifiers.dragOver : ''}
       aria-label="File system table"
       variant="compact"
-      data-testid="fsc-table"
     >
       <Thead>
         <Tr>
@@ -526,7 +519,6 @@ const FileSystemTable = () => {
         onDrop={onDragOver}
         onDragLeave={onDragLeave}
         ref={bodyRef}
-        data-testid="file-system-configuration-tbody"
       >
         {partitions &&
           partitions.map((partition) => (

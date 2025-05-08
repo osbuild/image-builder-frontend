@@ -47,7 +47,6 @@ export const AzureHyperVSelect = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      data-testid="azure-hyper-v-generation-select"
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
     >

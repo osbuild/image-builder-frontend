@@ -40,15 +40,17 @@ const selectRhel8 = async () => {
 
 const selectImageInstallerTarget = async () => {
   const user = userEvent.setup();
-  const imageInstallerCheckbox = await screen.findByTestId(
-    'checkbox-image-installer'
-  );
+  const imageInstallerCheckbox = await screen.findByRole('checkbox', {
+    name: /Bare metal installer/i,
+  });
   await waitFor(() => user.click(imageInstallerCheckbox));
 };
 
 const selectWslTarget = async () => {
   const user = userEvent.setup();
-  const wslCheckBox = await screen.findByTestId('checkbox-wsl');
+  const wslCheckBox = await screen.findByRole('checkbox', {
+    name: /windows subsystem for linux/i,
+  });
   await waitFor(() => user.click(wslCheckBox));
 };
 

@@ -27,7 +27,6 @@ const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
           : 'No custom repositories'
       }
       variant={EmptyStateVariant.lg}
-      data-testid="empty-state"
     >
       <EmptyStateBody>
         {hasFilterValue
