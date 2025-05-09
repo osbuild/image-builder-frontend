@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Alert,
   Button,
   Popover,
   Text,
@@ -159,6 +160,31 @@ export const ImageBuilderHeader = ({
             </>
           )}
         </Flex>
+        {!isOnBlueprintsTab && (
+          <Flex>
+            <FlexItem>
+              <Alert
+                variant="info"
+                isInline
+                title={
+                  <>Upcoming decommission of hosted edge management service</>
+                }
+                className="pf-v5-u-mt-sm pf-v5-u-mb-sm"
+              >
+                <TextContent>
+                  <Text>
+                    As of July 31, 2025, the hosted edge management service,
+                    will no longer be supported. Consequently, pushing image
+                    updates to Immutable (OSTree) systems via the Hybrid Cloud
+                    Console using this service will be discontinued. Customers
+                    are encouraged to explore Red Hat Edge Manager (RHEM) as the
+                    recommended alternative for managing their edge systems.
+                  </Text>
+                </TextContent>
+              </Alert>
+            </FlexItem>
+          </Flex>
+        )}
       </PageHeader>
     </>
   );
