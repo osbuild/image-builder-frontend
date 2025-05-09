@@ -102,7 +102,9 @@ export const renderEditMode = async (id: string) => {
 
 export const selectGuestImageTarget = async () => {
   const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByTestId('checkbox-guest-image');
+  const guestImageCheckBox = await screen.findByRole('checkbox', {
+    name: /Virtualization guest image/i,
+  });
   await waitFor(() => user.click(guestImageCheckBox));
 };
 

@@ -16,14 +16,16 @@ test.describe.serial('test', () => {
     await frame.getByTestId('blueprints-create-button').click();
 
     await frame.getByRole('heading', { name: 'Image output' });
-    await frame.getByTestId('checkbox-guest-image').click();
+    await frame
+      .getByRole('checkbox', { name: /Virtualization guest image/i })
+      .click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     if (isHosted()) {
       await frame.getByRole('heading', {
         name: 'Register systems using this image',
       });
-      await page.getByTestId('register-later-radio').click();
+      await page.getByRole('radio', { name: /Register later/i }).click();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
 
@@ -143,7 +145,7 @@ test.describe.serial('test', () => {
       .getByRole('textbox', { name: 'Search input' })
       .fill(blueprintName);
     await frame.getByText(blueprintName, { exact: true }).first().click();
-    await frame.getByTestId('blueprint-action-menu-toggle').click();
+    await frame.getByRole('button', { name: /blueprint menu toggle/i }).click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
     await frame.getByRole('button', { name: 'Delete' }).click();
   });
