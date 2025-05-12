@@ -112,6 +112,55 @@ type ValidationState = {
   ruleCharacters: HelperTextVariant;
 };
 
+export function validateSatelliteToken(
+  registrationCommand: string | undefined
+) {
+  const errors: Record<string, string> = {};
+  if (registrationCommand === '' || !registrationCommand) {
+    errors.command = 'No registration command for Satellite registration';
+    return errors;
+  }
+
+  try {
+    const match = registrationCommand?.match(
+      /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/
+    );
+    if (!match) {
+      Object.assign(errors, { command: 'Invalid or missing token' });
+    } else {
+      const token = match[1];
+      const decoded = jwtDecode(token);
+      const currentTimeSeconds = Date.now() / 1000;
+      const dayInSeconds = 86400;
+      if (decoded.exp && decoded.exp < currentTimeSeconds + dayInSeconds) {
+        const expirationDate = new Date(decoded.exp * 1000);
+        let relativeTimeString;
+        const secondsRemaining = decoded.exp - currentTimeSeconds;
+        if (secondsRemaining < 1) {
+          relativeTimeString = `is expired`;
+        } else if (secondsRemaining < 60) {
+          relativeTimeString = `will expire in less than a minute`;
+        } else if (secondsRemaining < 3600) {
+          const minutesLeft = Math.floor(secondsRemaining / 60);
+          relativeTimeString = `will expire in approximately ${minutesLeft} minute${
+            minutesLeft > 1 ? 's' : ''
+          }`;
+        } else {
+          const hoursLeftExact = secondsRemaining / 3600;
+          const numHours = Math.round(hoursLeftExact);
+          relativeTimeString = `will expire in approximately ${numHours} hour${
+            numHours > 1 ? 's' : ''
+          }`;
+        }
+        errors.expired = `The token ${relativeTimeString}. Expiration date: ${expirationDate.toString()}. Check out the Satellite documentation to extend the Token lifetime.`;
+      }
+    }
+  } catch {
+    errors.command = 'Invalid or missing token';
+  }
+  return errors;
+}
+
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
@@ -154,44 +203,13 @@ export function useRegistrationValidation(): StepValidation {
           'Valid certificate must be present if you are registering Satellite.',
       });
     }
-    if (registrationCommand === '' || !registrationCommand) {
-      Object.assign(errors, {
-        command: 'No registration command for Satellite registration',
-      });
-    }
-    try {
-      const match = registrationCommand?.match(
-        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/
-      );
-      if (!match) {
-        Object.assign(errors, { command: 'Invalid or missing token' });
-      } else {
-        const token = match[1];
-        const decoded = jwtDecode(token);
-        if (decoded.exp) {
-          const currentTimeSeconds = Date.now() / 1000;
-          const dayInSeconds = 86400;
-          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
-            const expirationDate = new Date(decoded.exp * 1000);
-            Object.assign(errors, {
-              expired:
-                'The token is already expired or will expire by next day. Expiration date: ' +
-                expirationDate,
-            });
-            return {
-              errors: errors,
-              disabledNext: caCertificate === undefined,
-            };
-          }
-        }
-      }
-    } catch {
-      Object.assign(errors, { command: 'Invalid or missing token' });
-    }
+    const tokenErrors = validateSatelliteToken(registrationCommand);
+    Object.assign(errors, tokenErrors);
+
     return {
       errors: errors,
       disabledNext:
-        Object.keys(errors).length > 0 || caCertificate === undefined,
+        Object.keys(errors).filter((key) => key !== 'expired').length > 0,
     };
   }
 

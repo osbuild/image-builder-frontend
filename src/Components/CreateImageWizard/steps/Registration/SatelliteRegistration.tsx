@@ -50,7 +50,7 @@ const SatelliteRegistration = () => {
   return (
     <>
       <SatelliteRegistrationCommand />
-      <FormGroup label="Certificate authority (CA)" isRequired>
+      <FormGroup label="Certificate authority (CA) for Satellite" isRequired>
         <FileUpload
           id="text-file-with-restrictions-example"
           type="text"
@@ -93,6 +93,12 @@ const SatelliteRegistration = () => {
                 ? 'Certificate was uploaded'
                 : 'Drag and drop a valid certificate file or upload one'}
             </HelperTextItem>
+            {(isRejected || validated !== 'success') && (
+              <HelperTextItem>
+                You can find this certificate at{' '}
+                <i>http://satellite.example.com</i>/pub/katello-server-ca.crt
+              </HelperTextItem>
+            )}
           </HelperText>
         </FormHelperText>
       </FormGroup>
