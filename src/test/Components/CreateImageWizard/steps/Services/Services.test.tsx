@@ -179,20 +179,34 @@ describe('Step Services', () => {
     // Enabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addEnabledService('-------');
-    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Expected format: <service-name>. Example: sshd')
+    ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[0]));
 
     // Disabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addDisabledService('-------');
-    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Expected format: <service-name>. Example: sshd')
+    ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[1]));
 
     // Masked services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addMaskedService('-------');
-    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Expected format: <service-name>. Example: sshd')
+    ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[2]));
+
+    // Enabled services input
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addEnabledService('-------');
+    expect(
+      await screen.findByText('Expected format: <service-name>. Example: sshd')
+    ).toBeInTheDocument();
+    await waitFor(() => user.click(clearInputButtons[0]));
   });
 
   test('services from OpenSCAP get added correctly and cannot be removed', async () => {

@@ -162,9 +162,15 @@ describe('Step Timezone', () => {
   test('NTP server in an invalid format cannot be added', async () => {
     await renderCreateMode();
     await goToTimezoneStep();
-    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'Expected format: <ntp-server>. Example: time.redhat.com'
+      )
+    ).not.toBeInTheDocument();
     await addNtpServerViaKeyDown('this is not NTP server');
-    await screen.findByText('Invalid format.');
+    await screen.findByText(
+      'Expected format: <ntp-server>. Example: time.redhat.com'
+    );
   });
 
   test('revisit step button on Review works', async () => {
