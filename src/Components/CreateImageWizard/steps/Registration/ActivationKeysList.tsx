@@ -217,14 +217,17 @@ const ActivationKeysList = () => {
       isExpanded={isOpen}
       data-testid="activation-key-select"
       isDisabled={
-        !isSuccessActivationKeys || registrationType === 'register-later'
+        !isSuccessActivationKeys ||
+        registrationType === 'register-later' ||
+        registrationType === 'register-satellite'
       }
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
           value={
             activationKey
-              ? registrationType === 'register-later'
+              ? registrationType === 'register-later' ||
+                registrationType === 'register-satellite'
                 ? ''
                 : activationKey
               : inputValue

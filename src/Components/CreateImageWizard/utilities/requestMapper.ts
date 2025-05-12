@@ -166,6 +166,25 @@ const getLatestRelease = (distribution: Distributions) => {
     : distribution;
 };
 
+function removeShebangAndNewline(satelliteCommand: string) {
+  let processedContent = satelliteCommand;
+
+  if (processedContent.startsWith('#!')) {
+    const newlineIndex = processedContent.indexOf('\n');
+    if (newlineIndex > -1) {
+      processedContent = processedContent.substring(newlineIndex + 1);
+    } else {
+      processedContent = '';
+    }
+  }
+
+  if (processedContent.endsWith('\n')) {
+    processedContent = processedContent.slice(0, -1);
+  }
+
+  return processedContent;
+}
+
 function commonRequestToState(
   request: BlueprintResponse | CreateBlueprintRequest
 ) {
@@ -381,14 +400,16 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           ? request.customizations.subscription.rhc
             ? 'register-now-rhc'
             : 'register-now-insights'
-          : request.customizations.cacerts
+          : getSatelliteCommand(request.customizations.files)
           ? 'register-satellite'
           : 'register-later',
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
       satelliteRegistration: {
-        command: getSatelliteCommand(request.customizations.files),
+        command: removeShebangAndNewline(
+          getSatelliteCommand(request.customizations.files)
+        ),
         caCert: request.customizations.cacerts?.pem_certs[0],
       },
     },
@@ -473,9 +494,7 @@ const getSatelliteCommand = (files?: File[]): string => {
   const satelliteCommandFile = files?.find(
     (file) => file.path === '/usr/local/sbin/register-satellite'
   );
-  return satelliteCommandFile?.data
-    ? decodeURIComponent(atob(satelliteCommandFile.data))
-    : '';
+  return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
 
 const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
@@ -587,8 +606,9 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     });
     files.push({
       path: '/usr/local/sbin/register-satellite',
-      data: btoa(encodeURIComponent(satCmd)),
+      data: btoa('#!/bin/bash\n' + satCmd + '\n'),
       data_encoding: 'base64',
+      mode: '0774',
       ensure_parents: true,
     });
   }
@@ -749,7 +769,10 @@ const getSubscription = (
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
 
-  if (registrationType === 'register-later') {
+  if (
+    registrationType === 'register-later' ||
+    registrationType === 'register-satellite'
+  ) {
     return undefined;
   }
 
