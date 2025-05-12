@@ -87,6 +87,7 @@ import {
   selectMetadata,
   selectFirewall,
   selectTemplate,
+  selectTemplateName,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectModules,
@@ -307,6 +308,7 @@ function commonRequestToState(
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
       snapshotDate: snapshot_date,
       template: request.image_requests[0]?.content_template || '',
+      templateName: request.image_requests[0]?.content_template_name || '',
     },
     repositories: {
       customRepositories: request.customizations?.custom_repositories || [],
@@ -457,6 +459,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
   const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
   const template = selectTemplate(state);
+  const templateName = selectTemplateName(state);
   return imageTypes.map((type) => ({
     architecture: selectArchitecture(state),
     image_type: type,
@@ -466,6 +469,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
     },
     snapshot_date: !useLatest && !template ? snapshotDate : undefined,
     content_template: template || undefined,
+    content_template_name: templateName || undefined,
   }));
 };
 
