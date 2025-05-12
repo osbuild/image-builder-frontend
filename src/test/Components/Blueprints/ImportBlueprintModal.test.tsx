@@ -555,9 +555,6 @@ describe('Import modal', () => {
         await screen.findByPlaceholderText('Paste your public SSH key')
       )
     );
-    expect(
-      await screen.findByText(/Invalid user groups: 0000/)
-    ).toBeInTheDocument();
     await waitFor(() =>
       user.click(screen.getByRole('button', { name: /close 0000/i }))
     );

@@ -71,7 +71,44 @@ const LabelInput = ({
     }
 
     if (!validator(value)) {
-      setOnStepInputErrorText('Invalid format.');
+      switch (fieldName) {
+        case 'ports':
+          setOnStepInputErrorText(
+            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+          );
+          break;
+        case 'kernelAppend':
+          setOnStepInputErrorText(
+            'Expected format: <kernel-argument>. Example: console=tty0'
+          );
+          break;
+        case 'kernelName':
+          setOnStepInputErrorText(
+            'Expected format: <kernel-name>. Example: kernel-5.14.0-284.11.1.el9_2.x86_64'
+          );
+          break;
+        case 'groups':
+          setOnStepInputErrorText(
+            'Expected format: <group-name>. Example: admin'
+          );
+          break;
+        case 'ntpServers':
+          setOnStepInputErrorText(
+            'Expected format: <ntp-server>. Example: time.redhat.com'
+          );
+          break;
+        case 'enabledSystemdServices':
+        case 'disabledSystemdServices':
+        case 'maskedSystemdServices':
+        case 'disabledServices':
+        case 'enabledServices':
+          setOnStepInputErrorText(
+            'Expected format: <service-name>. Example: sshd'
+          );
+          break;
+        default:
+          setOnStepInputErrorText('Invalid format.');
+      }
       return;
     }
 

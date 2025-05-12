@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { jwtDecode, JwtPayload } from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { getListOfDuplicates } from './getListOfDuplicates';
 
@@ -30,6 +30,7 @@ import {
   selectLanguages,
   selectKeyboard,
   selectTimezone,
+  selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectImageTypes,
   UserWithAdditionalInfo,
@@ -45,11 +46,11 @@ import {
   isMountpointMinSizeValid,
   isSnapshotValid,
   isHostnameValid,
-  isKernelNameValid,
   isUserNameValid,
   isSshKeyValid,
   isNtpServerValid,
   isKernelArgumentValid,
+  isKernelNameValid,
   isPortValid,
   isServiceValid,
   isUserGroupValid,
@@ -113,74 +114,13 @@ type ValidationState = {
   ruleCharacters: HelperTextVariant;
 };
 
-function tokenValidityRemaining(expireTimeInSeconds: number): number {
-  const currentTimeSeconds = Math.floor(Date.now() / 1000);
-  return expireTimeInSeconds - currentTimeSeconds;
-}
-
-function decodeToken(token: string): JwtPayload | undefined {
-  try {
-    const decoded = jwtDecode(token) as { exp?: number };
-    return decoded;
-  } catch {
-    return undefined;
-  }
-}
-
-function getExpirationString(totalSeconds: number): string | undefined {
-  const hours = Math.floor(totalSeconds / 3600);
-
-  if (hours > 25) {
-    return undefined;
-  }
-
-  if (hours > 0) {
-    return `${hours} hour${hours > 1 ? 's' : ''}`;
-  }
-  return 'less than an hour';
-}
-
-export function validateSatelliteToken(
-  registrationCommand: string | undefined
-) {
-  const errors: Record<string, string> = {};
-  if (registrationCommand === '') {
-    errors.command = 'No registration command for Satellite registration';
-    return errors;
-  }
-
-  const match = registrationCommand?.match(/Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/);
-  if (!match || match.length < 2) {
-    errors.command = 'Invalid or missing token';
-    return errors;
-  }
-  const satelliteToken = decodeToken(match[1]);
-  if (satelliteToken === undefined) {
-    errors.command = 'Invalid or missing token';
-    return errors;
-  }
-
-  if (satelliteToken.exp) {
-    const tokenRemainingS = tokenValidityRemaining(satelliteToken.exp);
-    if (tokenRemainingS <= 0) {
-      errors.command = `The token is expired. Check out the Satellite documentation to extend the token lifetime.`;
-      return errors;
-    }
-    const expirationString = getExpirationString(tokenRemainingS);
-    if (expirationString !== undefined) {
-      errors.expired = `The token expires in ${expirationString}. Check out the Satellite documentation to extend the token lifetime.`;
-    }
-  }
-
-  return errors;
-}
-
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand
   );
+  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -190,11 +130,7 @@ export function useRegistrationValidation(): StepValidation {
       }
     );
 
-  if (
-    registrationType !== 'register-later' &&
-    registrationType !== 'register-satellite' &&
-    !activationKey
-  ) {
+  if (registrationType !== 'register-later' && !activationKey) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -203,7 +139,6 @@ export function useRegistrationValidation(): StepValidation {
 
   if (
     registrationType !== 'register-later' &&
-    registrationType !== 'register-satellite' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
@@ -215,14 +150,50 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-satellite') {
     const errors = {};
-    const tokenErrors = validateSatelliteToken(registrationCommand);
-    Object.assign(errors, tokenErrors);
-
+    if (caCertificate === '') {
+      Object.assign(errors, {
+        certificate:
+          'Valid certificate must be present if you are registering Satellite.',
+      });
+    }
+    if (registrationCommand === '' || !registrationCommand) {
+      Object.assign(errors, {
+        command: 'No registration command for Satellite registration',
+      });
+    }
+    try {
+      const match = registrationCommand?.match(
+        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/
+      );
+      if (!match) {
+        Object.assign(errors, { command: 'Invalid or missing token' });
+      } else {
+        const token = match[1];
+        const decoded = jwtDecode(token);
+        if (decoded.exp) {
+          const currentTimeSeconds = Date.now() / 1000;
+          const dayInSeconds = 86400;
+          if (decoded.exp < currentTimeSeconds + dayInSeconds) {
+            const expirationDate = new Date(decoded.exp * 1000);
+            Object.assign(errors, {
+              expired:
+                'The token is already expired or will expire by next day. Expiration date: ' +
+                expirationDate,
+            });
+            return {
+              errors: errors,
+              disabledNext: caCertificate === undefined,
+            };
+          }
+        }
+      }
+    } catch {
+      Object.assign(errors, { command: 'Invalid or missing token' });
+    }
     return {
       errors: errors,
       disabledNext:
-        Object.keys(errors).some((key) => key !== 'expired') ||
-        !registrationCommand,
+        Object.keys(errors).length > 0 || caCertificate === undefined,
     };
   }
 

@@ -49,7 +49,11 @@ test('Create a blueprint with Kernel customization', async ({
       .getByPlaceholder('Add kernel argument')
       .fill('invalid/argument');
     await frame.getByRole('button', { name: 'Add kernel argument' }).click();
-    await expect(frame.getByText('Invalid format.')).toBeVisible();
+    await expect(
+      frame.getByText(
+        'Expected format: <kernel-argument>. Example: console=tty0'
+      )
+    ).toBeVisible();
     await frame.getByPlaceholder('Select kernel package').fill('new-package');
     await frame
       .getByRole('option', { name: 'Custom kernel package "new-' })
