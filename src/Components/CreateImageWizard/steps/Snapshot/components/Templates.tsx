@@ -20,6 +20,7 @@ import {
   selectDistribution,
   selectTemplate,
   changeTemplate,
+  changeTemplateName,
 } from '../../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
 import { Error } from '../../Repositories/components/Error';
@@ -53,9 +54,15 @@ const Templates = () => {
     { refetchOnMountOrArgChange: 60 }
   );
 
-  const handleRowSelect = (templateUuid: string | undefined): void => {
+  const handleRowSelect = (
+    templateUuid: string | undefined,
+    templateName: string | undefined
+  ): void => {
     if (templateUuid) {
       dispatch(changeTemplate(templateUuid));
+    }
+    if (templateName) {
+      dispatch(changeTemplateName(templateName));
     }
   };
 
@@ -123,7 +130,7 @@ const Templates = () => {
                             variant: 'radio',
                             isSelected: uuid === templateUuid,
                             rowIndex: rowIndex,
-                            onSelect: () => handleRowSelect(uuid),
+                            onSelect: () => handleRowSelect(uuid, name),
                           }}
                         />
                         <Td dataLabel={'Name'}>{name}</Td>
