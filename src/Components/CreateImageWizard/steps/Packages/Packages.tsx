@@ -1078,9 +1078,7 @@ const Packages = () => {
     return (
       (pkg.type === 'module' &&
         modules.some((module) => module.name === pkg.module_name) &&
-        !modules.some((p) => p.stream === pkg.stream)) ||
-      false
-    );
+        !modules.some((p) => p.stream === pkg.stream)));
   };
 
   const formatDate = (date: string | undefined) => {
