@@ -60,10 +60,11 @@ export const AwsSourcesSelect = () => {
       setSelectOptions(filteredSources);
     }
 
-    // This useEffect hook should run *only* on when the filter value changes.
+    // This useEffect hook should run *only* on when the filter value
+    // or the original array of sources changes.
     // eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
+  }, [filterValue, sources]);
 
   const onInputClick = () => {
     if (!isOpen) {
