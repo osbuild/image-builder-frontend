@@ -31,6 +31,7 @@ import {
   selectActivationKey,
   selectRegistrationType,
 } from '../../../../store/wizardSlice';
+import sortfn from '../../../../Utilities/sortfn';
 import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 import { generateRandomId } from '../../utilities/generateRandomId';
 
@@ -91,7 +92,7 @@ const ActivationKeysList = () => {
     }
 
     if (filteredKeys) {
-      setSelectOptions(filteredKeys);
+      setSelectOptions(filteredKeys.sort((a, b) => sortfn(a, b, filterValue)));
     }
 
     // This useEffect hook should run *only* on when the filter value
