@@ -95,10 +95,11 @@ const ActivationKeysList = () => {
       setSelectOptions(filteredKeys);
     }
 
-    // This useEffect hook should run *only* on when the filter value changes.
+    // This useEffect hook should run *only* on when the filter value
+    // or the original array of keys changes.
     // eslint's exhaustive-deps rule does not support this use.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue]);
+  }, [filterValue, activationKeys?.body]);
 
   const setActivationKey = (
     _event: React.MouseEvent<Element, MouseEvent>,
@@ -189,7 +190,7 @@ const ActivationKeysList = () => {
       );
     }
 
-    if (!isSuccessActivationKeys && isFetchingActivationKeys) {
+    if (isFetchingActivationKeys) {
       selectOptionsElement.push(
         <SelectOption key="Fetching" value="loader">
           <Spinner size="md" />
