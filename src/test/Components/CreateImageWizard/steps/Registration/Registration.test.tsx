@@ -435,7 +435,7 @@ describe('Registration request generated correctly', () => {
     );
 
     const expiredTokenHelper = await screen.findByText(
-      /The token is already expired or will expire by next day. Expiration date/i
+      /The token is expired. Expiration date/i
     );
     await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
 
