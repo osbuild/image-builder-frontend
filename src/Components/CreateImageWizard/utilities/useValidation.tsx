@@ -51,6 +51,7 @@ import {
   isKernelArgumentValid,
   isPortValid,
   isServiceValid,
+  isUserGroupValid,
 } from '../validators';
 
 export type StepValidation = {
@@ -494,6 +495,7 @@ export function useUsersValidation(): UsersStepValidation {
   }
 
   for (let index = 0; index < users.length; index++) {
+    const invalidGroups = [];
     const userNameError = validateUserName(users, users[index].name);
     const sshKeyError = validateSshKey(users[index].ssh_key);
     const isPasswordValid = checkPasswordValidity(
@@ -503,15 +505,28 @@ export function useUsersValidation(): UsersStepValidation {
     const passwordError =
       users[index].password && !isPasswordValid ? 'Invalid password' : '';
 
+    if (users[index].groups.length > 0) {
+      for (const g of users[index].groups) {
+        if (!isUserGroupValid(g)) {
+          invalidGroups.push(g);
+        }
+      }
+    }
+
+    const groupsError =
+      invalidGroups.length > 0 ? `Invalid user groups: ${invalidGroups}` : '';
+
     if (
       userNameError ||
       sshKeyError ||
-      (users[index].password && !isPasswordValid)
+      (users[index].password && !isPasswordValid) ||
+      groupsError
     ) {
       errors[`${index}`] = {
         userName: userNameError,
         userSshKey: sshKeyError,
         userPassword: passwordError,
+        groups: groupsError,
       };
     }
   }

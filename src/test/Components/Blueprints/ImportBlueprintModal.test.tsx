@@ -219,15 +219,11 @@ name = "anaconda-tools"
 hostname = "--invalid-hostname--"
 fips = true
 
-[[customizations.sshkey]]
-user = "root"
-key = "ssh-rsa d"
-
 [[customizations.user]]
-name = "admin"
-password = "$6$CHO2$3rN8eviE2t50lmVyBYihTgVRHcaecmeCk31L..."
-key = "ssh-rsa d"
-groups = ["widget", "users", "wheel"]
+name = "t"
+password = "00"
+key = "KEY"
+groups = ["0000"]
 
 [customizations.services]
 enabled = ["--invalid-enabled-service"]
@@ -539,7 +535,31 @@ describe('Import modal', () => {
     await clickNext(); // Repository snapshot
     await clickNext(); // Custom Repos step
     await clickNext(); // Packages step
-    await clickNext(); // Users
+
+    // Users
+    await clickNext();
+    expect(await screen.findByText('Invalid user name')).toBeInTheDocument();
+    await waitFor(async () =>
+      user.type(await screen.findByPlaceholderText('Enter username'), 'est')
+    );
+    expect(
+      await screen.findByText('Password must be at least 6 characters long')
+    ).toBeInTheDocument();
+    await waitFor(async () =>
+      user.clear(await screen.findByPlaceholderText('Enter password'))
+    );
+    expect(await screen.findByText('Invalid SSH key')).toBeInTheDocument();
+    await waitFor(async () =>
+      user.clear(
+        await screen.findByPlaceholderText('Paste your public SSH key')
+      )
+    );
+    expect(
+      await screen.findByText(/Invalid user groups: 0000/)
+    ).toBeInTheDocument();
+    await waitFor(() =>
+      user.click(screen.getByRole('button', { name: /close 0000/i }))
+    );
 
     // Timezone
     await clickNext();

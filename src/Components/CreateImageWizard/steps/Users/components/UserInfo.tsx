@@ -126,6 +126,7 @@ const UserInfo = () => {
       errors: {
         userName: stepValidation?.errors[index]?.userName,
         userSshKey: stepValidation?.errors[index]?.userSshKey,
+        groups: stepValidation?.errors[index]?.groups,
       },
       disabledNext: stepValidation.disabledNext,
     };
