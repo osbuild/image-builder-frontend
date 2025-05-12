@@ -63,19 +63,29 @@ test('Create a blueprint with Firewall customization', async ({
   await test.step('Select and incorrectly fill the ports in Firewall step', async () => {
     await frame.getByPlaceholder('Add ports').fill('x');
     await frame.getByRole('button', { name: 'Add ports' }).click();
-    await expect(frame.getByText('Invalid format.').nth(0)).toBeVisible();
+    await expect(
+      frame
+        .getByText(
+          'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+        )
+        .nth(0)
+    ).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
     await frame.getByPlaceholder('Add disabled service').fill('1');
     await frame.getByRole('button', { name: 'Add disabled service' }).click();
-    await expect(frame.getByText('Invalid format.').nth(1)).toBeVisible();
+    await expect(
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0)
+    ).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the enabled services in Firewall step', async () => {
     await frame.getByPlaceholder('Add enabled service').fill('ťčš');
     await frame.getByRole('button', { name: 'Add enabled service' }).click();
-    await expect(frame.getByText('Invalid format.').nth(2)).toBeVisible();
+    await expect(
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1)
+    ).toBeVisible();
   });
 
   await test.step('Fill the BP details', async () => {

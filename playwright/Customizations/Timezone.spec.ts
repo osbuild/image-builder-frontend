@@ -55,7 +55,11 @@ test('Create a blueprint with Timezone customization', async ({
     await expect(frame.getByText('NTP server already exists.')).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('xxxx');
     await frame.getByRole('button', { name: 'Add NTP server' }).click();
-    await expect(frame.getByText('Invalid format.')).toBeVisible();
+    await expect(
+      frame
+        .getByText('Expected format: <ntp-server>. Example: time.redhat.com')
+        .nth(0)
+    ).toBeVisible();
     await frame.getByPlaceholder('Add NTP servers').fill('0.cz.pool.ntp.org');
     await frame.getByRole('button', { name: 'Add NTP server' }).click();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeVisible();
