@@ -54,10 +54,10 @@ export const PasswordValidatedInput = ({
             <TextInput
               isRequired
               type={isPasswordVisible ? 'text' : 'password'}
-              value={hasPassword ? '•'.repeat(8) : value}
+              value={value}
               onChange={onChange}
               aria-label={ariaLabel}
-              placeholder={placeholder}
+              placeholder={hasPassword ? '●'.repeat(8) : placeholder}
             />
           </InputGroupItem>
           <InputGroupItem>
