@@ -473,9 +473,7 @@ const getSatelliteCommand = (files?: File[]): string => {
   const satelliteCommandFile = files?.find(
     (file) => file.path === '/usr/local/sbin/register-satellite'
   );
-  return satelliteCommandFile?.data
-    ? decodeURIComponent(atob(satelliteCommandFile.data))
-    : '';
+  return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
 
 const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
@@ -587,7 +585,8 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     });
     files.push({
       path: '/usr/local/sbin/register-satellite',
-      data: btoa(encodeURIComponent(satCmd)),
+      data: btoa(satCmd),
+      mode: '0774',
       data_encoding: 'base64',
       ensure_parents: true,
     });
