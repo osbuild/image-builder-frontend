@@ -1,4 +1,14 @@
-const sortfn = (a: string, b: string, searchTerm: string) => {
+const sortfn = (
+  a: string | undefined,
+  b: string | undefined,
+  searchTerm: string
+) => {
+  if (!a) {
+    return -1;
+  }
+  if (!b) {
+    return 1;
+  }
   const x = a.toLowerCase();
   const y = b.toLowerCase();
   // check exact match first
