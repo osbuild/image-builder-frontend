@@ -287,7 +287,7 @@ const PolicySelector = () => {
         } as React.CSSProperties
       }
     >
-      {policyTitle || 'Select a policy'}
+      {policyID === undefined ? 'None' : policyTitle || 'Select a policy'}
     </MenuToggle>
   );
 
