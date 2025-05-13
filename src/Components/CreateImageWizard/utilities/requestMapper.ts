@@ -381,7 +381,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
           ? request.customizations.subscription.rhc
             ? 'register-now-rhc'
             : 'register-now-insights'
-          : request.customizations.cacerts
+          : getSatelliteCommand(request.customizations.files)
           ? 'register-satellite'
           : 'register-later',
       activationKey: isRhel(request.distribution)
@@ -748,7 +748,10 @@ const getSubscription = (
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
 
-  if (registrationType === 'register-later') {
+  if (
+    registrationType === 'register-later' ||
+    registrationType === 'register-satellite'
+  ) {
     return undefined;
   }
 
