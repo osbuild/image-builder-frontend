@@ -8,7 +8,11 @@ import {
   Tab,
   TabTitleText,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import {
+  ExclamationCircleIcon,
+  ExternalLinkAltIcon,
+} from '@patternfly/react-icons';
+import { global_danger_color_100 } from '@patternfly/react-tokens';
 
 import calculateNewIndex from './calculateNewIndex';
 import RemoveUserModal from './RemoveUserModal';
@@ -155,7 +159,20 @@ const UserInfo = () => {
             aria-label={`User ${user.name} tab`}
             key={index}
             eventKey={index}
-            title={<TabTitleText>{user.name || 'New user'}</TabTitleText>}
+            title={
+              <TabTitleText>
+                {user.name || 'New user'}
+                {getValidationByIndex(index)?.errors.userName &&
+                  getValidationByIndex(index)?.errors.userName !==
+                    'Required value' && (
+                    <ExclamationCircleIcon
+                      color={global_danger_color_100.value}
+                      style={{ marginLeft: 6 }}
+                      title="Validation error"
+                    />
+                  )}
+              </TabTitleText>
+            }
           >
             <FormGroup isRequired label="Username" className="pf-v5-u-pb-md">
               <ValidatedInputAndTextArea
