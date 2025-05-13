@@ -65,7 +65,7 @@ export const PasswordValidatedInput = ({
               variant="control"
               onClick={togglePasswordVisibility}
               aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-              isDisabled={hasPassword}
+              isDisabled={hasPassword && !value}
             >
               {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
             </Button>
