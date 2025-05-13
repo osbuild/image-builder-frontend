@@ -486,7 +486,8 @@ export function useServicesValidation(): StepValidation {
 
 const validateUserName = (
   users: UserWithAdditionalInfo[],
-  userName: string
+  userName: string,
+  currentIndex: number
 ): string => {
   if (!userName) {
     return 'Required value';
@@ -496,9 +497,10 @@ const validateUserName = (
   }
 
   // check for duplicate names
-  const duplicateName =
-    new Set(users.map((user) => user.name)).size !== users.length;
-  if (duplicateName) {
+  const count = users.filter(
+    (user, index) => user.name === userName && index !== currentIndex
+  ).length;
+  if (count > 0) {
     return 'Username already exists';
   }
   return '';
@@ -525,7 +527,7 @@ export function useUsersValidation(): UsersStepValidation {
 
   for (let index = 0; index < users.length; index++) {
     const invalidGroups = [];
-    const userNameError = validateUserName(users, users[index].name);
+    const userNameError = validateUserName(users, users[index].name, index);
     const sshKeyError = validateSshKey(users[index].ssh_key);
     const isPasswordValid = checkPasswordValidity(
       users[index].password,
