@@ -7,8 +7,12 @@ import {
   Tabs,
   Tab,
   TabTitleText,
+  Icon,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import {
+  ExclamationCircleIcon,
+  ExternalLinkAltIcon,
+} from '@patternfly/react-icons';
 
 import calculateNewIndex from './calculateNewIndex';
 import RemoveUserModal from './RemoveUserModal';
@@ -122,12 +126,9 @@ const UserInfo = () => {
   };
 
   const getValidationByIndex = (index: number) => {
+    const errors = stepValidation?.errors[index] || {};
     return {
-      errors: {
-        userName: stepValidation?.errors[index]?.userName,
-        userSshKey: stepValidation?.errors[index]?.userSshKey,
-        groups: stepValidation?.errors[index]?.groups,
-      },
+      errors,
       disabledNext: stepValidation.disabledNext,
     };
   };
@@ -156,7 +157,20 @@ const UserInfo = () => {
             aria-label={`User ${user.name} tab`}
             key={index}
             eventKey={index}
-            title={<TabTitleText>{user.name || 'New user'}</TabTitleText>}
+            title={
+              <TabTitleText>
+                {user.name || 'New user'}{' '}
+                {Object.entries(getValidationByIndex(index).errors).some(
+                  ([field, error]) =>
+                    Boolean(error) &&
+                    !(field === 'userName' && error === 'Required value')
+                ) && (
+                  <Icon status="danger">
+                    <ExclamationCircleIcon title="Validation error" />
+                  </Icon>
+                )}
+              </TabTitleText>
+            }
           >
             <FormGroup isRequired label="Username" className="pf-v6-u-pb-md">
               <ValidatedInputAndTextArea
