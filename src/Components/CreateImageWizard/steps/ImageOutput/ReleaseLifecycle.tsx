@@ -19,6 +19,8 @@ import {
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
+  RHEL_10_FULL_SUPPORT,
+  RHEL_10_MAINTENANCE_SUPPORT,
 } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
@@ -31,12 +33,16 @@ const currentDate = new Date().toISOString();
 
 export const chartMajorVersionCfg = {
   data: {
-    labels: ['RHEL 9', 'RHEL 8'],
+    labels: ['RHEL 10', 'RHEL 9', 'RHEL 8'],
     datasets: [
       {
         label: 'Full support',
         backgroundColor: '#0066CC',
         data: [
+          {
+            x: RHEL_10_FULL_SUPPORT,
+            y: 'RHEL 10',
+          },
           {
             x: RHEL_9_FULL_SUPPORT,
             y: 'RHEL 9',
@@ -51,6 +57,10 @@ export const chartMajorVersionCfg = {
         label: 'Maintenance support',
         backgroundColor: '#8BC1F7',
         data: [
+          {
+            x: RHEL_10_MAINTENANCE_SUPPORT,
+            y: 'RHEL 10',
+          },
           {
             x: RHEL_9_MAINTENANCE_SUPPORT,
             y: 'RHEL 9',
@@ -72,7 +82,7 @@ export const chartMajorVersionCfg = {
           unit: 'year' as const,
         },
         min: '2019-01-01' as const,
-        max: '2033-01-01' as const,
+        max: '2036-01-01' as const,
       },
       y: {
         stacked: true,
