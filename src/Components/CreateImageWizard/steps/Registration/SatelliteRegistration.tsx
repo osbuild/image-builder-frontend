@@ -50,7 +50,7 @@ const SatelliteRegistration = () => {
   return (
     <>
       <SatelliteRegistrationCommand />
-      <FormGroup label="Certificate authority (CA) for Satellite" isRequired>
+      <FormGroup label="Certificate authority (CA) for Satellite">
         <FileUpload
           id="text-file-with-restrictions-example"
           type="text"
@@ -59,7 +59,6 @@ const SatelliteRegistration = () => {
           onDataChange={handleDataChange}
           onTextChange={handleTextChange}
           onClearClick={handleClear}
-          isRequired={true}
           dropzoneProps={{
             accept: {
               'application/x-pem-file': ['.pem'],
