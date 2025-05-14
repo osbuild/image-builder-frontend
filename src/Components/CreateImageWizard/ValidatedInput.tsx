@@ -142,6 +142,7 @@ export const ValidatedInput = ({
   value,
   placeholder,
   onChange,
+  ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
 
@@ -168,6 +169,7 @@ export const ValidatedInput = ({
         aria-label={ariaLabel || ''}
         onBlur={handleBlur}
         placeholder={placeholder || ''}
+        {...props}
       />
       {!isPristine && !validator(value) && (
         <HelperText>

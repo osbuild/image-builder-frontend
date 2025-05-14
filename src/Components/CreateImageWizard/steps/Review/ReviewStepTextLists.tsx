@@ -665,6 +665,22 @@ export const RegisterSatelliteList = () => {
   );
 };
 
+export const RegisterAapList = () => {
+  return (
+    <TextContent>
+      <TextList component={TextListVariants.dl}>
+        <TextListItem
+          component={TextListItemVariants.dt}
+          className="pf-v5-u-min-width"
+        >
+          Register AAP
+        </TextListItem>
+        <TextListItem component={TextListItemVariants.dd}>Enabled</TextListItem>
+      </TextList>
+    </TextContent>
+  );
+};
+
 export const RegisterNowList = () => {
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
