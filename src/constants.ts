@@ -87,6 +87,7 @@ export const RELEASES = new Map([
   [RHEL_9_BETA, 'Red Hat Enterprise Linux (RHEL) 9 Beta'],
   [RHEL_10_BETA, 'Red Hat Enterprise Linux (RHEL) 10 Beta'],
   [CENTOS_9, 'CentOS Stream 9'],
+  [CENTOS_10, 'CentOS Stream 10'],
 ]);
 
 export const ON_PREM_RELEASES = new Map([
@@ -101,6 +102,7 @@ export const FEDORA_RELEASES = new Map([
   [FEDORA_40, 'Fedora Linux 40'],
   [FEDORA_41, 'Fedora Linux 41'],
   [CENTOS_9, 'CentOS Stream 9'],
+  [CENTOS_10, 'CentOS Stream 10'],
 ]);
 
 export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
