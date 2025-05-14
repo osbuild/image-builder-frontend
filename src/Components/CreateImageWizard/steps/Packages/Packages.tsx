@@ -1301,10 +1301,8 @@ const Packages = () => {
                   }
                 />
                 <Td>{pkg.name}</Td>
-                <Td>{pkg.type === 'module' ? pkg.stream : 'N/A'}</Td>
-                <Td>
-                  {pkg.type === 'module' ? formatDate(pkg.end_date) : 'N/A'}
-                </Td>
+                <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
+                <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
                 {pkg.repository === 'distro' ? (
                   <>
                     <Td>Red Hat</Td>
