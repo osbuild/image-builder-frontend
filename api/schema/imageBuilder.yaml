@@ -1199,10 +1199,13 @@ components:
         - rhel-93
         - rhel-94
         - rhel-95
+        - rhel-9.6
+        - rhel-10
         - rhel-10-nightly
         - rhel-10.0-nightly
         - rhel-10.1-nightly
         - rhel-10-beta
+        - rhel-10.0
         - centos-9
         - centos-10
         - fedora-37
@@ -1210,6 +1213,7 @@ components:
         - fedora-39
         - fedora-40
         - fedora-41
+        - fedora-42
     ImageRequest:
       type: object
       additionalProperties: false
@@ -1246,10 +1250,10 @@ components:
             closest to, but after the specified date will be used. If no snapshots can be found at
             all, the request will fail. The format must be YYYY-MM-DD (ISO 8601 extended).
         content_template:
-           type: string
-           description: |
-             ID of the content template. A content template and snapshot date cannot both be specified.
-             If a content template is specified, the snapshot date used will be the one from the content template.
+          type: string
+          description: |
+            ID of the content template. A content template and snapshot date cannot both be specified.
+            If a content template is specified, the snapshot date used will be the one from the content template.
     ImageTypes:
       type: string
       enum:
@@ -1808,12 +1812,14 @@ components:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Owner of the directory as a user name or a uid
           example: 'root'
         group:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Group of the directory as a group name or a gid
           example: 'root'
         ensure_parents:
@@ -1839,12 +1845,14 @@ components:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Owner of the file as a uid or a user name
           example: 'root'
         group:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Group of the file as a gid or a group name
           example: 'root'
         data:
@@ -2048,7 +2056,7 @@ components:
         hasPassword:
           type: boolean
           description: |
-            Indicates whether the user has a password set.
+            Indicates whether the user has a password set. This flag is read-only.
     Filesystem:
       type: object
       required:
@@ -2093,6 +2101,11 @@ components:
           example: true
           description: |
             Optional flag to use rhc to register the system, which also always enables Insights.
+        insights_client_proxy:
+          type: string
+          format: uri
+          description: |
+            Optional value to set proxy option when registering the system to Insights.
     OpenSCAP:
       oneOf:
         - $ref: '#/components/schemas/OpenSCAPProfile'

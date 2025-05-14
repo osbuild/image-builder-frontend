@@ -416,17 +416,21 @@ export type Distributions =
   | "rhel-93"
   | "rhel-94"
   | "rhel-95"
+  | "rhel-9.6"
+  | "rhel-10"
   | "rhel-10-nightly"
   | "rhel-10.0-nightly"
   | "rhel-10.1-nightly"
   | "rhel-10-beta"
+  | "rhel-10.0"
   | "centos-9"
   | "centos-10"
   | "fedora-37"
   | "fedora-38"
   | "fedora-39"
   | "fedora-40"
-  | "fedora-41";
+  | "fedora-41"
+  | "fedora-42";
 export type ListResponseMeta = {
   count: number;
 };
@@ -614,6 +618,9 @@ export type Subscription = {
   /** Optional flag to use rhc to register the system, which also always enables Insights.
    */
   rhc?: boolean | undefined;
+  /** Optional value to set proxy option when registering the system to Insights.
+   */
+  insights_client_proxy?: string | undefined;
 };
 export type Module = {
   /** Name of the module to enable.
@@ -673,7 +680,7 @@ export type User = {
     Empty string can be used to remove the password during update but only with ssh_key set.
      */
   password?: string | undefined;
-  /** Indicates whether the user has a password set.
+  /** Indicates whether the user has a password set. This flag is read-only.
    */
   hasPassword?: boolean | undefined;
 };
