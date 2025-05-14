@@ -8,6 +8,7 @@ import {
   WizardStep,
   useWizardContext,
   PageSection,
+  PageSectionTypes,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
@@ -354,7 +355,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   return (
     <>
       <ImageBuilderHeader inWizard />
-      <PageSection>
+      <PageSection type={PageSectionTypes.wizard}>
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}

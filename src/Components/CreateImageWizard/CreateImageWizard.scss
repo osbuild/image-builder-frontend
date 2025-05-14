@@ -74,15 +74,3 @@ div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
         margin-block-start: 0;
     }
 }
-
-.pf-v5-c-wizard__main {
-    flex: 1 1 auto;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.pf-v5-c-wizard__footer {
-    position: sticky;
-    bottom: 0;
-}
