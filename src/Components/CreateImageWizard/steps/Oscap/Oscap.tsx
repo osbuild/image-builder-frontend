@@ -13,10 +13,23 @@ import {
   selectImageTypes,
 } from '../../../../store/wizardSlice';
 
-const Oscap = () => {
+type OscapPropTypes = {
+  majorVersion: string;
+};
+
+const Oscap = ({ majorVersion }: OscapPropTypes) => {
   const oscapProfile = useAppSelector(selectComplianceProfileID);
   const environments = useAppSelector(selectImageTypes);
   const complianceType = useAppSelector(selectComplianceType);
+
+  if (majorVersion === '10' && complianceType === 'openscap') {
+    return (
+      <Alert title="OpenSCAP Security Profiles for RHEL 10 Not Yet Available">
+        OpenSCAP security profiles aren’t available for RHEL 10 in Image Builder
+        yet. Support is on the way—check back soon for updates.
+      </Alert>
+    );
+  }
 
   return (
     <>
