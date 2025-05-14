@@ -61,6 +61,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Kernel
   await clickNext(); // Firewall
   await clickNext(); // Systemd services
+  await clickNext(); // AAP
   await clickNext(); // First boot
   await clickNext(); // Details
   await enterBlueprintName('Compliance test');

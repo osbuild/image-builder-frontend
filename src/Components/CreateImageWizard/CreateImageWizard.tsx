@@ -15,6 +15,7 @@ import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizar
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
+import AAPStep from './steps/AAP';
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
 import { FileSystemContext } from './steps/FileSystem/components/FileSystemTable';
@@ -40,6 +41,7 @@ import UsersStep from './steps/Users';
 import { getHostArch, getHostDistro } from './utilities/getHostInfo';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
+  useAAPValidation,
   useDetailsValidation,
   useFilesystemValidation,
   useFirewallValidation,
@@ -200,6 +202,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Feature flags
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
+  const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -291,6 +294,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const firewallValidation = useFirewallValidation();
   // Services
   const servicesValidation = useServicesValidation();
+  // AAP
+  const aapValidation = useAAPValidation();
   // Firstboot
   const firstBootValidation = useFirstBootValidation();
   // Details
@@ -302,7 +307,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 22;
+    startIndex = 23;
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
@@ -674,6 +679,21 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               >
                 <ServicesStep />
               </WizardStep>,
+              ...(isAAPRegistrationEnabled ? [<WizardStep
+                name="Ansible Automation Platform"
+                id="wizard-aap"
+                key="wizard-aap"
+                navItem={CustomStatusNavItem}
+                status={aapValidation.disabledNext ? 'error' : 'default'}
+                footer={
+                  <CustomWizardFooter
+                    disableNext={aapValidation.disabledNext}
+                    optional={true}
+                  />
+                }
+                >
+                  <AAPStep />
+                </WizardStep>] : []),
               <WizardStep
                 name="First boot script configuration"
                 id="wizard-first-boot"

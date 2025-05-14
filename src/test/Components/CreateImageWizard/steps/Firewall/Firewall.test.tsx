@@ -44,6 +44,7 @@ const goToFirewallStep = async () => {
 
 const goToReviewStep = async () => {
   await clickNext(); // Services
+  await clickNext(); // AAP
   await clickNext(); // First boot script
   await clickNext(); // Details
   await enterBlueprintName();

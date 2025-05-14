@@ -72,6 +72,9 @@ test.describe.serial('test', () => {
     frame.getByRole('heading', { name: 'Systemd services' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
+    frame.getByRole('heading', { name: 'Ansible Automation Platform' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
     if (isHosted()) {
       frame.getByRole('heading', { name: 'First boot configuration' });
       await frame.getByRole('button', { name: 'Next', exact: true }).click();

@@ -53,6 +53,7 @@ const goToFirstBootStep = async (): Promise<void> => {
   await clickNext(); // Kernel
   await clickNext(); // Firewall
   await clickNext(); // Services
+  await clickNext(); // AAP
   await clickNext(); // First Boot
 };
 
@@ -77,6 +78,7 @@ const goFromOscapToFirstBoot = async () => {
   await clickNext(); // Kernel
   await clickNext(); // Firewall
   await clickNext(); // Services
+  await clickNext(); // AAP
   await clickNext(); // First boot script
 };
 

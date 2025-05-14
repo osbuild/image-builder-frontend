@@ -74,6 +74,7 @@ const goFromOpenSCAPToKernel = async () => {
 const goToReviewStep = async () => {
   await clickNext(); // Firewall
   await clickNext(); // Services
+  await clickNext(); // AAP
   await clickNext(); // First boot script
   await clickNext(); // Details
   await enterBlueprintName();
