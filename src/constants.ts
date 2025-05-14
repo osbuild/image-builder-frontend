@@ -83,6 +83,7 @@ export const UNIT_GIB = 1024 ** 3;
 export const RELEASES = new Map([
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
+  [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
   [RHEL_9_BETA, 'Red Hat Enterprise Linux (RHEL) 9 Beta'],
   [RHEL_10_BETA, 'Red Hat Enterprise Linux (RHEL) 10 Beta'],
   [CENTOS_9, 'CentOS Stream 9'],
@@ -102,8 +103,10 @@ export const FEDORA_RELEASES = new Map([
   [CENTOS_9, 'CentOS Stream 9'],
 ]);
 
+export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];
 export const RHEL_8_FULL_SUPPORT = ['2019-05-07', '2024-05-31'];
+export const RHEL_10_MAINTENANCE_SUPPORT = ['2030-05-31', '2035-05-31'];
 export const RHEL_9_MAINTENANCE_SUPPORT = ['2027-05-31', '2032-05-31'];
 export const RHEL_8_MAINTENANCE_SUPPORT = ['2024-05-31', '2029-05-31'];
 
