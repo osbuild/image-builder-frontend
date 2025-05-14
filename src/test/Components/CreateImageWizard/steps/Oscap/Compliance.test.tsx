@@ -24,6 +24,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
     switch (flag) {
       case 'image-builder.compliance.enabled':
         return true;
+      case 'image-builder.aap.enabled':
+        return true;
       default:
         return false;
     }

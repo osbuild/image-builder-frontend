@@ -714,6 +714,9 @@ describe('Import modal', () => {
       ),
     );
 
+    // AAP
+    await clickNext();
+
     // Firstboot
     await clickNext();
     expect(

@@ -23,6 +23,7 @@ import {
   CockpitUploadTypes,
 } from '../../../store/cockpit/types';
 import {
+  AapRegistration,
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
@@ -49,6 +50,11 @@ import { ApiRepositoryImportResponseRead } from '../../../store/service/contentS
 import {
   ComplianceType,
   initialState,
+  RegistrationType,
+  selectAapCallbackUrl,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
   selectActivationKey,
   selectArchitecture,
   selectAwsAccountId,
@@ -387,14 +393,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       baseUrl: request.customizations.subscription?.['base-url'] || '',
     },
     registration: {
-      registrationType:
-        request.customizations?.subscription && isRhel(request.distribution)
-          ? request.customizations.subscription.rhc
-            ? 'register-now-rhc'
-            : 'register-now-insights'
-          : getSatelliteCommand(request.customizations.files)
-            ? 'register-satellite'
-            : 'register-later',
+      registrationType: getRegistrationType(request),
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
@@ -402,6 +401,15 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         command: getSatelliteCommand(request.customizations.files),
         caCert: request.customizations.cacerts?.pem_certs[0],
       },
+    },
+    aapRegistration: {
+      callbackUrl:
+        request.customizations?.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+      tlsCertificateAuthority:
+        request.customizations?.aap_registration?.tls_certificate_authority,
+      skipTlsVerification:
+        request.customizations?.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(request),
   };
@@ -452,6 +460,15 @@ export const mapExportRequestToState = (
     },
     env: initialState.env,
     registration: initialState.registration,
+    aapRegistration: {
+      callbackUrl:
+        request.customizations?.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+      tlsCertificateAuthority:
+        request.customizations?.aap_registration?.tls_certificate_authority,
+      skipTlsVerification:
+        request.customizations?.aap_registration?.skip_tls_verification,
+    },
     ...commonRequestToState(blueprintResponse),
   };
 };
@@ -459,6 +476,24 @@ export const mapExportRequestToState = (
 const getFirstBootScript = (files?: File[]): string => {
   const firstBootFile = files?.find((file) => file.path === FIRSTBOOT_PATH);
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
+};
+
+const getAapRegistration = (state: RootState): AapRegistration | undefined => {
+  const callbackUrl = selectAapCallbackUrl(state);
+  const hostConfigKey = selectAapHostConfigKey(state);
+  const tlsCertificateAuthority = selectAapTlsCertificateAuthority(state);
+  const skipTlsVerification = selectAapTlsConfirmation(state);
+
+  if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
+    return undefined;
+  }
+
+  return {
+    ansible_callback_url: callbackUrl || '',
+    host_config_key: hostConfigKey || '',
+    tls_certificate_authority: tlsCertificateAuthority || undefined,
+    skip_tls_verification: skipTlsVerification || undefined,
+  };
 };
 
 const getImageRequests = (
@@ -480,6 +515,24 @@ const getImageRequests = (
     content_template: template || undefined,
     content_template_name: templateName || undefined,
   }));
+};
+
+const getRegistrationType = (request: BlueprintResponse): RegistrationType => {
+  const subscription = request.customizations.subscription;
+  const distribution = request.distribution;
+  const files = request.customizations.files;
+
+  if (subscription && isRhel(distribution)) {
+    if (subscription.rhc) {
+      return 'register-now-rhc';
+    } else {
+      return 'register-now-insights';
+    }
+  } else if (getSatelliteCommand(files)) {
+    return 'register-satellite';
+  } else {
+    return 'register-later';
+  }
 };
 
 const getSatelliteCommand = (files?: File[]): string => {
@@ -642,6 +695,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
             pem_certs: [satCert],
           }
         : undefined,
+    aap_registration: getAapRegistration(state),
   };
 };
 

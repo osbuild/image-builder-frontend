@@ -109,12 +109,12 @@ describe('Step Services', () => {
     router = undefined;
   });
 
-  test('clicking Next loads First boot script', async () => {
+  test('clicking Next loads Ansible Automation Platform', async () => {
     await renderCreateMode();
     await goToServicesStep();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'First boot configuration',
+      name: 'Ansible Automation Platform',
     });
   });
 

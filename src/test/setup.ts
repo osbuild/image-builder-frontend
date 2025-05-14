@@ -64,6 +64,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.templates.enabled':
         return true;
+      case 'image-builder.aap.enabled':
+        return true;
       default:
         return false;
     }
