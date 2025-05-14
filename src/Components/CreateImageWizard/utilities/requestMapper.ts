@@ -19,6 +19,7 @@ import {
 } from '../../../constants';
 import { RootState } from '../../../store';
 import {
+  AapRegistration,
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
@@ -95,6 +96,11 @@ import {
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectModules,
+  selectAapControllerUrl,
+  selectAapJobTemplateId,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
+  RegistrationType,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FileSystemConfigurationType } from '../steps/FileSystem';
@@ -382,20 +388,26 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       baseUrl: request.customizations.subscription?.['base-url'] || '',
     },
     registration: {
-      registrationType:
-        request.customizations?.subscription && isRhel(request.distribution)
-          ? request.customizations.subscription.rhc
-            ? 'register-now-rhc'
-            : 'register-now-insights'
-          : getSatelliteCommand(request.customizations.files)
-          ? 'register-satellite'
-          : 'register-later',
+      registrationType: getRegistrationType(request),
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
       satelliteRegistration: {
         command: getSatelliteCommand(request.customizations.files),
         caCert: request.customizations.cacerts?.pem_certs[0],
+      },
+      aapRegistration: {
+        controllerUrl:
+          request.image_requests[0]?.aap_registration?.ansible_controller_url,
+        jobTemplateId:
+          String(
+            request.image_requests[0]?.aap_registration?.job_template_id
+          ) || undefined,
+        hostConfigKey:
+          request.image_requests[0]?.aap_registration?.host_config_key,
+        tlsCertificateAuthority:
+          request.image_requests[0]?.aap_registration
+            ?.tls_certificate_authority,
       },
     },
     ...commonRequestToState(request),
@@ -456,12 +468,31 @@ const getFirstBootScript = (files?: File[]): string => {
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
+const getAapRegistration = (state: RootState): AapRegistration | undefined => {
+  const registrationType = selectRegistrationType(state);
+  if (registrationType !== 'register-aap') {
+    return undefined;
+  }
+
+  const ansible_controller_url = String(selectAapControllerUrl(state));
+  const job_template_id = Number(selectAapJobTemplateId(state));
+  const host_config_key = String(selectAapHostConfigKey(state));
+  const tls_certificate_authority = selectAapTlsCertificateAuthority(state);
+  return {
+    ansible_controller_url,
+    job_template_id,
+    host_config_key,
+    tls_certificate_authority,
+  };
+};
+
 const getImageRequests = (state: RootState): ImageRequest[] => {
   const imageTypes = selectImageTypes(state);
   const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
   const template = selectTemplate(state);
   const templateName = selectTemplateName(state);
+  const aapRegistration = getAapRegistration(state);
   return imageTypes.map((type) => ({
     architecture: selectArchitecture(state),
     image_type: type,
@@ -472,7 +503,31 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
     snapshot_date: !useLatest && !template ? snapshotDate : undefined,
     content_template: template || undefined,
     content_template_name: templateName || undefined,
+    aap_registration: aapRegistration,
   }));
+};
+
+const getRegistrationType = (request: BlueprintResponse): RegistrationType => {
+  const subscription = request.customizations.subscription;
+  const distribution = request.distribution;
+  const files = request.customizations.files;
+  const isAapType = Boolean(
+    request.image_requests[0].aap_registration?.ansible_controller_url
+  );
+
+  if (subscription && isRhel(distribution)) {
+    if (subscription.rhc) {
+      return 'register-now-rhc';
+    } else {
+      return 'register-now-insights';
+    }
+  } else if (getSatelliteCommand(files)) {
+    return 'register-satellite';
+  } else if (isAapType) {
+    return 'register-aap';
+  } else {
+    return 'register-later';
+  }
 };
 
 const getSatelliteCommand = (files?: File[]): string => {
@@ -751,7 +806,8 @@ const getSubscription = (
 
   if (
     registrationType === 'register-later' ||
-    registrationType === 'register-satellite'
+    registrationType === 'register-satellite' ||
+    registrationType === 'register-aap'
   ) {
     return undefined;
   }
