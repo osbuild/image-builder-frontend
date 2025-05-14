@@ -81,6 +81,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
             New options for blueprint customization are now available:
           </Text>
           <TextList>
+            <TextListItem>Users</TextListItem>
             <TextListItem>Timezone</TextListItem>
             <TextListItem>Locale</TextListItem>
             <TextListItem>Hostname</TextListItem>
