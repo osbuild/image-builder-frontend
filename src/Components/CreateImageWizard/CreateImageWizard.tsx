@@ -62,6 +62,7 @@ import {
 import {
   RHEL_8,
   RHEL_10_BETA,
+  RHEL_10,
   AARCH64,
   CENTOS_9,
   AMPLITUDE_MODULE_NAME,
@@ -209,6 +210,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }
     if (searchParams.get('release') === 'rhel10beta') {
       dispatch(changeDistribution(RHEL_10_BETA));
+    }
+    if (searchParams.get('release') === 'rhel10') {
+      dispatch(changeDistribution(RHEL_10));
     }
     if (searchParams.get('arch') === AARCH64) {
       dispatch(changeArchitecture(AARCH64));
