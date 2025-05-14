@@ -28,7 +28,6 @@ import {
   selectLanguages,
   selectKeyboard,
   selectTimezone,
-  selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectImageTypes,
   UserWithAdditionalInfo,
@@ -177,7 +176,6 @@ export function useRegistrationValidation(): StepValidation {
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand
   );
-  const caCertificate = useAppSelector(selectSatelliteCaCertificate);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -212,20 +210,13 @@ export function useRegistrationValidation(): StepValidation {
 
   if (registrationType === 'register-satellite') {
     const errors = {};
-    if (caCertificate === '') {
-      Object.assign(errors, {
-        certificate:
-          'Valid certificate must be present if you are registering Satellite.',
-      });
-    }
     const tokenErrors = validateSatelliteToken(registrationCommand);
     Object.assign(errors, tokenErrors);
 
     return {
       errors: errors,
       disabledNext:
-       Object.keys(errors).some((key) => key !== 'expired') || 
-        !caCertificate ||
+        Object.keys(errors).some((key) => key !== 'expired') ||
         !registrationCommand,
     };
   }
