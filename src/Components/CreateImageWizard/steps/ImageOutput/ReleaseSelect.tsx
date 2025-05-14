@@ -19,6 +19,9 @@ import {
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
   RHEL_10_BETA,
+  RHEL_10,
+  RHEL_10_FULL_SUPPORT,
+  RHEL_10_MAINTENANCE_SUPPORT,
   ON_PREM_RELEASES,
   FEDORA_RELEASES,
 } from '../../../../constants';
@@ -92,6 +95,11 @@ const ReleaseSelect = () => {
     if (key === RHEL_9) {
       fullSupportEnd = toMonthAndYear(RHEL_9_FULL_SUPPORT[1]);
       maintenanceSupportEnd = toMonthAndYear(RHEL_9_MAINTENANCE_SUPPORT[1]);
+    }
+
+    if (key === RHEL_10) {
+      fullSupportEnd = toMonthAndYear(RHEL_10_FULL_SUPPORT[1]);
+      maintenanceSupportEnd = toMonthAndYear(RHEL_10_MAINTENANCE_SUPPORT[1]);
     }
 
     if (isRhel(key)) {
