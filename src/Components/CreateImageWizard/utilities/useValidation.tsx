@@ -32,6 +32,9 @@ import {
   selectImageTypes,
   UserWithAdditionalInfo,
   selectTemplate,
+  selectAapJobTemplateId,
+  selectAapHostConfigKey,
+  selectAapControllerUrl,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -51,6 +54,8 @@ import {
   isPortValid,
   isServiceValid,
   isUserGroupValid,
+  isJobTemplateIdValid,
+  isValidUrl,
 } from '../validators';
 
 export type StepValidation = {
@@ -179,6 +184,9 @@ export function useRegistrationValidation(): StepValidation {
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand
   );
+  const controllerUrl = useAppSelector(selectAapControllerUrl);
+  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -191,6 +199,7 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
+    registrationType !== 'register-aap' &&
     !activationKey
   ) {
     return {
@@ -202,6 +211,7 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
+    registrationType !== 'register-aap' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
@@ -221,6 +231,31 @@ export function useRegistrationValidation(): StepValidation {
       disabledNext:
         Object.keys(errors).some((key) => key !== 'expired') ||
         !registrationCommand,
+    };
+  }
+
+  if (registrationType === 'register-aap') {
+    const errors: Record<string, string> = {};
+
+    if (!controllerUrl) {
+      errors.controllerUrl = 'Ansible Controller URL is required';
+    } else if (!isValidUrl(controllerUrl)) {
+      errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
+    }
+
+    if (!jobTemplateId) {
+      errors.jobTemplateId = 'Job Template ID is required';
+    } else if (!isJobTemplateIdValid(jobTemplateId)) {
+      errors.jobTemplateId = 'Job Template ID must be a number';
+    }
+
+    if (!hostConfigKey) {
+      errors.hostConfigKey = 'Host Config Key is required';
+    }
+
+    return {
+      errors: errors,
+      disabledNext: Object.keys(errors).length > 0,
     };
   }
 

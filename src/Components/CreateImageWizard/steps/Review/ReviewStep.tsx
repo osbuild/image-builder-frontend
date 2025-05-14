@@ -36,6 +36,7 @@ import {
   FirewallList,
   ServicesList,
   RegisterSatelliteList,
+  RegisterAapList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -309,6 +310,7 @@ const Review = () => {
           {registrationType === 'register-satellite' && (
             <RegisterSatelliteList />
           )}
+          {registrationType === 'register-aap' && <RegisterAapList />}
           {registrationType.startsWith('register-now') && <RegisterNowList />}
         </ExpandableSection>
       )}
