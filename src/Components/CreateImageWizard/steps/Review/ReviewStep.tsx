@@ -310,6 +310,7 @@ const Review = () => {
           {registrationType === 'register-satellite' && (
             <RegisterSatelliteList />
           )}
+          {registrationType === 'register-aap' && <RegisterAapList />}
           {registrationType.startsWith('register-now') && <RegisterNowList />}
         </ExpandableSection>
       )}

@@ -35,6 +35,9 @@ import {
   selectUseLatest,
   selectUsers,
   UserWithAdditionalInfo,
+  selectAapJobTemplateId,
+  selectAapHostConfigKey,
+  selectAapControllerUrl,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -54,6 +57,8 @@ import {
   isSshKeyValid,
   isUserGroupValid,
   isUserNameValid,
+  isJobTemplateIdValid,
+  isValidUrl,
 } from '../validators';
 
 export type StepValidation = {
@@ -121,6 +126,9 @@ export function useRegistrationValidation(): StepValidation {
     selectSatelliteRegistrationCommand
   );
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
+  const controllerUrl = useAppSelector(selectAapControllerUrl);
+  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -130,7 +138,11 @@ export function useRegistrationValidation(): StepValidation {
       }
     );
 
-  if (registrationType !== 'register-later' && !activationKey) {
+  if (
+    registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
+    !activationKey
+  ) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -139,6 +151,7 @@ export function useRegistrationValidation(): StepValidation {
 
   if (
     registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
@@ -194,6 +207,31 @@ export function useRegistrationValidation(): StepValidation {
       errors: errors,
       disabledNext:
         Object.keys(errors).length > 0 || caCertificate === undefined,
+    };
+  }
+
+  if (registrationType === 'register-aap') {
+    const errors: Record<string, string> = {};
+
+    if (!controllerUrl) {
+      errors.controllerUrl = 'Ansible Controller URL is required';
+    } else if (!isValidUrl(controllerUrl)) {
+      errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
+    }
+
+    if (!jobTemplateId) {
+      errors.jobTemplateId = 'Job Template ID is required';
+    } else if (!isJobTemplateIdValid(jobTemplateId)) {
+      errors.jobTemplateId = 'Job Template ID must be a number';
+    }
+
+    if (!hostConfigKey) {
+      errors.hostConfigKey = 'Host Config Key is required';
+    }
+
+    return {
+      errors: errors,
+      disabledNext: Object.keys(errors).length > 0,
     };
   }
 
