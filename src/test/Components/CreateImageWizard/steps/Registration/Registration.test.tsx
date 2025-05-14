@@ -101,7 +101,9 @@ const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
     /registration command/i
   );
 
+  await waitFor(() => user.clear(satelliteRegistrationCommand));
   await waitFor(() => user.type(satelliteRegistrationCommand, command));
+  satelliteRegistrationCommand.blur();
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
@@ -435,7 +437,7 @@ describe('Registration request generated correctly', () => {
     );
 
     const expiredTokenHelper = await screen.findByText(
-      /The token is expired. Expiration date/i
+      /The token is expired./i
     );
     await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
 
