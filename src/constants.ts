@@ -252,6 +252,8 @@ ConditionPathExists=!/var/local/.custom-first-boot-done
 Wants=network-online.target
 After=network-online.target
 After=osbuild-first-boot.service
+After=register-satellite.service
+After=aap-first-boot-reg.service
 
 [Service]
 Type=oneshot
@@ -260,9 +262,7 @@ ExecStartPost=/usr/bin/touch /var/local/.custom-first-boot-done
 RemainAfterExit=yes
 
 [Install]
-WantedBy=basic.target
 WantedBy=multi-user.target
-WantedBy=graphical.target
 `);
 
 export const FIRST_BOOT_SERVICE = 'custom-first-boot';
@@ -282,9 +282,7 @@ ExecStartPost=/usr/bin/touch /var/local/.register-satellite-done
 RemainAfterExit=yes
 
 [Install]
-WantedBy=basic.target
 WantedBy=multi-user.target
-WantedBy=graphical.target
 `);
 
 export const SATELLITE_SERVICE = 'register-satellite';
