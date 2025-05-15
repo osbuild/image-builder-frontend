@@ -18,6 +18,7 @@ import {
   CERTIFICATE,
   SATELLITE_COMMAND,
   SATELLITE_COMMAND_EXPIRED_TOKEN,
+  SATELLITE_COMMAND_NO_EXPIRATION,
 } from '../../../../fixtures/customizations';
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
@@ -442,6 +443,10 @@ describe('Registration request generated correctly', () => {
     await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
 
     await addSatelliteRegistrationCommandViaKeyDown(SATELLITE_COMMAND);
+    expect(nextButton).toBeEnabled();
+    await addSatelliteRegistrationCommandViaKeyDown(
+      SATELLITE_COMMAND_NO_EXPIRATION
+    );
     expect(nextButton).toBeEnabled();
   });
 });

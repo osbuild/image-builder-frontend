@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { CheckCircleIcon } from '@patternfly/react-icons';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
@@ -116,10 +116,10 @@ function tokenValidityRemaining(expireTimeInSeconds: number): number {
   return expireTimeInSeconds - currentTimeSeconds;
 }
 
-function getTokenExpirationTime(token: string): number | undefined {
+function decodeToken(token: string): JwtPayload | undefined {
   try {
     const decoded = jwtDecode(token) as { exp?: number };
-    return decoded.exp;
+    return decoded;
   } catch {
     return undefined;
   }
@@ -152,19 +152,22 @@ export function validateSatelliteToken(
     errors.command = 'Invalid or missing token';
     return errors;
   }
-  const expiresInSeconds = getTokenExpirationTime(match[1]);
-  if (expiresInSeconds === undefined) {
+  const satelliteToken = decodeToken(match[1]);
+  if (satelliteToken === undefined) {
     errors.command = 'Invalid or missing token';
     return errors;
   }
-  const tokenRemainingS = tokenValidityRemaining(expiresInSeconds);
-  if (tokenRemainingS <= 0) {
-    errors.command = `The token is expired. Check out the Satellite documentation to extend the token lifetime.`;
-    return errors;
-  }
-  const expirationString = getExpirationString(tokenRemainingS);
-  if (expirationString !== undefined) {
-    errors.expired = `The token expires in ${expirationString}. Check out the Satellite documentation to extend the token lifetime.`;
+
+  if (satelliteToken.exp) {
+    const tokenRemainingS = tokenValidityRemaining(satelliteToken.exp);
+    if (tokenRemainingS <= 0) {
+      errors.command = `The token is expired. Check out the Satellite documentation to extend the token lifetime.`;
+      return errors;
+    }
+    const expirationString = getExpirationString(tokenRemainingS);
+    if (expirationString !== undefined) {
+      errors.expired = `The token expires in ${expirationString}. Check out the Satellite documentation to extend the token lifetime.`;
+    }
   }
 
   return errors;
