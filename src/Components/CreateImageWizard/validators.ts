@@ -138,3 +138,17 @@ export const isServiceValid = (service: string) => {
     /[a-zA-Z]+/.test(service) // contains at least one letter
   );
 };
+
+export const isJobTemplateIdValid = (id: string) => {
+  return /^\d+$/.test(id);
+};
+
+export const isValidUrl = (url: string): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === 'https:';
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (error) {
+    return false;
+  }
+};

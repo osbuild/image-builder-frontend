@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Text, Form, Title, FormGroup } from '@patternfly/react-core';
 
+import AAPRegistration from './AAPRegistration';
 import ActivationKeyInformation from './ActivationKeyInformation';
 import ActivationKeysList from './ActivationKeysList';
 import Registration from './Registration';
@@ -28,12 +29,15 @@ const RegistrationStep = () => {
       </Text>
       <Registration />
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
+      {registrationType === 'register-aap' && <AAPRegistration />}
       {!process.env.IS_ON_PREMISE &&
-        registrationType !== 'register-satellite' && <ActivationKeysList />}
+        registrationType !== 'register-satellite' &&
+        registrationType !== 'register-aap' && <ActivationKeysList />}
       {!process.env.IS_ON_PREMISE &&
         activationKey &&
         registrationType !== 'register-later' &&
-        registrationType !== 'register-satellite' && (
+        registrationType !== 'register-satellite' &&
+        registrationType !== 'register-aap' && (
           <FormGroup
             label={'Selected activation key'}
             data-testid="selected-activation-key"
