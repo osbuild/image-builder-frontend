@@ -360,6 +360,23 @@ export type Subscription = {
   /** Optional flag to use rhc to register the system, which also always enables Insights.
    */
   rhc?: boolean | undefined;
+  /** Optional value to set proxy option when registering the system to Insights
+   */
+  insights_client_proxy?: string | undefined;
+  /** Optional value to register with a template when registering the system with Insights.
+   */
+  template_uuid?: string | undefined;
+  /** Optional value to register with a template when using rhc to register the system with Insights.
+   */
+  template_name?: string | undefined;
+};
+export type Module = {
+  /** Name of the module to enable.
+   */
+  name: string;
+  /** Stream to enable.
+   */
+  stream: string;
 };
 export type User = {
   name: string;
@@ -493,6 +510,7 @@ export type SubManDnfPluginsConfig = {
 };
 export type SubManRhsmConfig = {
   manage_repos?: boolean | undefined;
+  auto_enable_yum_plugins?: boolean | undefined;
 };
 export type SubManRhsmCertdConfig = {
   auto_registration?: boolean | undefined;
@@ -511,12 +529,72 @@ export type RhsmCustomization = {
 export type CaCertsCustomization = {
   pem_certs: string[];
 };
+export type Minsize = string;
+export type FilesystemTyped = {
+  type?: "plain" | undefined;
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  mountpoint: string;
+  label?: string | undefined;
+  /** The filesystem type
+   */
+  fs_type?: ("ext4" | "xfs" | "vfat") | undefined;
+};
+export type BtrfsSubvolume = {
+  /** The name of the subvolume, which defines the location (path) on the root volume
+   */
+  name: string;
+  /** Mountpoint for the subvolume
+   */
+  mountpoint: string;
+};
+export type BtrfsVolume = {
+  type?: "btrfs" | undefined;
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  subvolumes: BtrfsSubvolume[];
+};
+export type LogicalVolume = {
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  /** Mountpoint for the logical volume
+   */
+  mountpoint: string;
+  label?: string | undefined;
+  /** The filesystem type for the logical volume
+   */
+  fs_type?: ("ext4" | "xfs" | "vfat") | undefined;
+};
+export type VolumeGroup = {
+  type?: "lvm" | undefined;
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  /** Volume group name (will be automatically generated if omitted)
+   */
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  logical_volumes: LogicalVolume[];
+};
+export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
+export type Disk = {
+  /** Type of the partition table
+   */
+  type?: ("gpt" | "dos") | undefined;
+  minsize?: Minsize | undefined;
+  partitions: Partition[];
+};
 export type Customizations = {
   containers?: Container[] | undefined;
   directories?: Directory[] | undefined;
   files?: File[] | undefined;
   subscription?: Subscription | undefined;
   packages?: string[] | undefined;
+  enabled_modules?: Module[] | undefined;
   users?: User[] | undefined;
   /** Extra repositories for packages specified in customizations. These
     repositories will only be used to depsolve and retrieve packages
@@ -558,6 +636,7 @@ export type Customizations = {
   rpm?: RpmCustomization | undefined;
   rhsm?: RhsmCustomization | undefined;
   cacerts?: CaCertsCustomization | undefined;
+  disk?: Disk | undefined;
 };
 export type Koji = {
   server: string;
@@ -624,8 +703,7 @@ export type BlueprintFirewall = {
 };
 export type BlueprintFilesystem = {
   mountpoint: string;
-  /** size of the filesystem in bytes */
-  minsize: any;
+  minsize: Minsize;
 };
 export type BlueprintOpenScap = {
   /** Puts a specified policy ID in the RHSM facts, so that any instances registered to
@@ -682,6 +760,7 @@ export type BlueprintCustomizations = {
   services?: Services | undefined;
   /** List of filesystem mountpoints to create */
   filesystem?: BlueprintFilesystem[] | undefined;
+  disk?: Disk | undefined;
   /** Name of the installation device, currently only useful for the edge-simplified-installer type
    */
   installation_device?: string | undefined;
@@ -723,6 +802,7 @@ export type Blueprint = {
   /** An alias for packages, retained for backwards compatability
    */
   modules?: Package[] | undefined;
+  enabled_modules?: Module[] | undefined;
   /** Package groups to be installed */
   groups?: PackageGroup[] | undefined;
   /** Container images to embed into the final artfact */
