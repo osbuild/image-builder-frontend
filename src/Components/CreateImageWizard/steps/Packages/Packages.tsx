@@ -291,7 +291,6 @@ const Packages = () => {
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
             urls: [epelRepoUrlByDistribution],
-            include_package_sources: true,
           },
         });
       }
@@ -664,7 +663,7 @@ const Packages = () => {
     const unpackedData: IBPackageWithRepositoryInfo[] =
       combinedPackageData.flatMap((item) => {
         // Spread modules into separate rows by application stream
-        if (item.sources && item.sources[0].type === 'module') {
+        if (item.sources) {
           return item.sources.map((source) => ({
             name: item.name,
             summary: item.summary,
