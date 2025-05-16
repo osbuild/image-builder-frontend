@@ -767,23 +767,18 @@ components:
                 $ref: '#/components/schemas/ComposeStatus'
 
     DistributionList:
-      properties:
-        map:
-          type: object
-          description: Distribution name
-          additionalProperties:
-            map:
-              type: object
-              description: Architecture name
-              additionalProperties:
-                map:
-                  type: object
-                  description: Image type name
-                  additionalProperties:
-                    type: array
-                    description: Repository used for this distro:arch:image-type
-                    items:
-                      $ref: '#/components/schemas/BlueprintRepository'
+      type: object
+      description: |
+        Map of distributions to their architecture.
+      additionalProperties:
+        type: object
+        description: |
+          Map of architectures to their repositories.
+        additionalProperties:
+          type: array
+          description: Repository used for this distro:arch:image-type
+          items:
+            $ref: '#/components/schemas/BlueprintRepository'
 
     ComposeStatus:
       allOf:
@@ -1050,13 +1045,17 @@ components:
           ostree_commit:
             type: string
             description: 'ID (hash) of the built commit'
-    PackageMetadata:
+          request:
+            $ref: '#/components/schemas/ComposeRequest'
+            description: 'Original request to create this compose'
+    PackageMetadataCommon:
       required:
         - type
         - name
         - version
         - release
         - arch
+        - sigmd5
       properties:
         type:
           type: string
@@ -1070,14 +1069,21 @@ components:
           type: string
         arch:
           type: string
-        sigmd5:
-          type: string
         signature:
           type: string
         checksum:
           type: string
           description: 'Optional package checksum using ALGO:HASH form'
           example: 'sha256:525788de3dd44497c27d4172568366b20380a6b6707f0a1970473e4d97046a4f'
+    PackageMetadata:
+      allOf:
+        - $ref: '#/components/schemas/PackageMetadataCommon'
+        - type: object
+          required:
+            - sigmd5
+          properties:
+            sigmd5:
+              type: string
 
     ComposeRequest:
       additionalProperties: false
@@ -1399,6 +1405,8 @@ components:
       properties:
         manage_repos:
           type: boolean
+        auto_enable_yum_plugins:
+          type: boolean
     SubManRHSMCertdConfig:
       type: object
       properties:
@@ -1670,6 +1678,10 @@ components:
               An alias for packages, retained for backwards compatability
           items:
             $ref: '#/components/schemas/Package'
+        enabled_modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
         groups:
           type: array
           description: Package groups to be installed
@@ -1719,6 +1731,8 @@ components:
           description: List of filesystem mountpoints to create
           items:
             $ref: '#/components/schemas/BlueprintFilesystem'
+        disk:
+          $ref: '#/components/schemas/Disk'
         installation_device:
           type: string
           description: |
@@ -1815,6 +1829,23 @@ components:
           type: string
           example: 'anaconda-tools'
           description: Package group name
+    Module:
+      type: object
+      required:
+        - name
+        - stream
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+          example: 'nodejs'
+          description: |
+            Name of the module to enable.
+        stream:
+          type: string
+          example: '22'
+          description: |
+            Stream to enable.
     Customizations:
       type: object
       additionalProperties: false
@@ -1841,6 +1872,10 @@ components:
           example: ['postgres']
           items:
             type: string
+        enabled_modules:
+          type: array
+          items:
+            $ref: '#/components/schemas/Module'
         users:
           type: array
           items:
@@ -1920,6 +1955,8 @@ components:
           $ref: '#/components/schemas/RHSMCustomization'
         cacerts:
           $ref: '#/components/schemas/CACertsCustomization'
+        disk:
+          $ref: '#/components/schemas/Disk'
     Container:
       type: object
       required:
@@ -2020,12 +2057,14 @@ components:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Owner of the directory as a user name or a uid
           example: 'root'
         group:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Group of the directory as a group name or a gid
           example: 'root'
         ensure_parents:
@@ -2051,12 +2090,14 @@ components:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Owner of the file as a uid or a user name
           example: 'root'
         group:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Group of the file as a gid or a group name
           example: 'root'
         data:
@@ -2086,12 +2127,14 @@ components:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Owner of the file as a uid or a user name
           example: 'root'
         group:
           oneOf:
             - type: string
             - type: integer
+              x-go-type: int64
           description: Group of the file as a gid or a group name
           example: 'root'
         data:
@@ -2120,9 +2163,7 @@ components:
           type: string
           example: '/var'
         minsize:
-          x-go-type: uint64
-          example: 2147483648
-          description: 'size of the filesystem in bytes'
+          $ref: '#/components/schemas/minsize'
     OSTree:
       type: object
       properties:
@@ -2183,6 +2224,19 @@ components:
           example: true
           description: |
             Optional flag to use rhc to register the system, which also always enables Insights.
+        insights_client_proxy:
+          type: string
+          format: uri
+          description: |
+            Optional value to set proxy option when registering the system to Insights
+        template_uuid:
+          type: string
+          description: |
+            Optional value to register with a template when registering the system with Insights.
+        template_name:
+          type: string
+          description: |
+            Optional value to register with a template when using rhc to register the system with Insights.
     User:
       type: object
       additionalProperties: false
@@ -2477,7 +2531,7 @@ components:
         packages:
           type: array
           items:
-            $ref: '#/components/schemas/PackageMetadata'
+            $ref: '#/components/schemas/PackageMetadataCommon'
           description: 'Package list including NEVRA'
 
     SearchPackagesRequest:
@@ -2544,6 +2598,142 @@ components:
           type: string
         license:
           type: string
+
+    Disk:
+      type: object
+      required:
+        - partitions
+      properties:
+        type:
+          type: string
+          enum:
+            - gpt
+            - dos
+          description: |
+            Type of the partition table
+        minsize:
+          $ref: '#/components/schemas/minsize'
+        partitions:
+          type: array
+          items:
+            $ref: '#/components/schemas/Partition'
+    Partition:
+      type: object
+      oneOf:
+        - $ref: '#/components/schemas/FilesystemTyped'
+        - $ref: '#/components/schemas/BtrfsVolume'
+        - $ref: '#/components/schemas/VolumeGroup'
+    FilesystemTyped:
+      type: object
+      required:
+        - mountpoint
+      properties:
+        type:
+          type: string
+          default: plain
+          enum:
+            - plain
+        part_type:
+          type: string
+          description: |
+            The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+        minsize:
+          $ref: '#/components/schemas/minsize'
+        mountpoint:
+          type: string
+        label:
+          type: string
+        fs_type:
+          type: string
+          enum:
+            - ext4
+            - xfs
+            - vfat
+          description: |
+            The filesystem type
+    BtrfsVolume:
+      type: object
+      required:
+        - subvolumes
+      properties:
+        type:
+          type: string
+          enum:
+            - btrfs
+        part_type:
+          type: string
+          description: |
+            The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+        minsize:
+          $ref: '#/components/schemas/minsize'
+        subvolumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/BtrfsSubvolume'
+    BtrfsSubvolume:
+      type: object
+      required:
+        - name
+        - mountpoint
+      properties:
+        name:
+          type: string
+          description: |
+            The name of the subvolume, which defines the location (path) on the root volume
+        mountpoint:
+          type: string
+          description: |
+            Mountpoint for the subvolume
+    VolumeGroup:
+      type: object
+      required:
+        - logical_volumes
+      properties:
+        type:
+          type: string
+          enum:
+            - lvm
+        part_type:
+          type: string
+          description: |
+            The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+        name:
+          type: string
+          description: |
+            Volume group name (will be automatically generated if omitted)
+        minsize:
+          $ref: '#/components/schemas/minsize'
+        logical_volumes:
+          type: array
+          items:
+            $ref: '#/components/schemas/LogicalVolume'
+    LogicalVolume:
+      type: object
+      required:
+        - mountpoint
+      properties:
+        name:
+          type: string
+        minsize:
+          $ref: '#/components/schemas/minsize'
+        mountpoint:
+          type: string
+          description: |
+            Mountpoint for the logical volume
+        label:
+          type: string
+        fs_type:
+          type: string
+          enum:
+            - ext4
+            - xfs
+            - vfat
+          description: |
+            The filesystem type for the logical volume
+    minsize:
+      type: string
+      example: "2 GiB"
+      description: 'size with data units'
 
   parameters:
     page:

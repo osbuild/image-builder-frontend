@@ -546,9 +546,15 @@ export type OsTree = {
   parent?: string | undefined;
   /** Determines whether a valid subscription manager (candlepin) identity is required to
     access this repository. Consumer certificates will be used as client certificates when
-    fetching metadata and content.
+     fetching metadata and content.
      */
   rhsm?: boolean | undefined;
+};
+export type AapRegistration = {
+  ansible_controller_url: string;
+  job_template_id: number;
+  host_config_key: string;
+  tls_certificate_authority?: string | undefined;
 };
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
@@ -572,6 +578,10 @@ export type ImageRequest = {
     If a content template is specified, the snapshot date used will be the one from the content template.
      */
   content_template?: string | undefined;
+  /** Name of the content template. Used when registering the system to Insights.
+   */
+  content_template_name?: string | undefined;
+  aap_registration?: AapRegistration | undefined;
 };
 export type Container = {
   /** Reference to the container to embed */
