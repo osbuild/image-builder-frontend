@@ -127,7 +127,9 @@ const verifyNameInReviewStep = async (name: string) => {
 
 const selectVMwareTarget = async () => {
   const user = userEvent.setup();
-  const vmwareImageCheckBox = await screen.findByTestId('checkbox-vmware');
+  const vmwareImageCheckBox = await screen.findByRole('checkbox', {
+    name: /VMware checkbox/i,
+  });
   await waitFor(() => user.click(vmwareImageCheckBox));
 };
 
@@ -187,15 +189,21 @@ describe('Step Image output', () => {
     await renderCreateMode();
     const nextButton = await getNextButton();
 
-    const awsTile = await screen.findByTestId('upload-aws');
+    const awsTile = await screen.findByRole('option', {
+      name: /Amazon Web Services/i,
+    });
     user.click(awsTile); // select
     user.click(awsTile); // deselect
 
-    const googleTile = await screen.findByTestId('upload-google');
+    const googleTile = await screen.findByRole('option', {
+      name: /Google Cloud Platform/i,
+    });
     user.click(googleTile); // select
     user.click(googleTile); // deselect
 
-    const azureTile = await screen.findByTestId('upload-azure');
+    const azureTile = await screen.findByRole('option', {
+      name: /Microsoft Azure/i,
+    });
     user.click(azureTile); // select
     user.click(azureTile); // deselect
 
@@ -243,12 +251,16 @@ describe('Step Image output', () => {
     await renderCreateMode();
 
     await selectRhel8();
-    await screen.findByTestId('release-lifecycle-chart');
+    await screen.findByRole('region', {
+      name: /hide information about release lifecycle/i,
+    });
 
     await selectRhel9();
     await waitFor(() =>
       expect(
-        screen.queryByTestId('release-lifecycle-chart')
+        screen.queryByRole('region', {
+          name: /hide information about release lifecycle/i,
+        })
       ).not.toBeInTheDocument()
     );
   });
@@ -265,11 +277,21 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectVMwareTarget();
 
-    let vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    let ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    let vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+    let vmwareCheckbox = await screen.findByRole('checkbox', {
+      name: /VMware checkbox/i,
+    });
+    let ovaFileRadio = await screen.findByRole('radio', {
+      name: /Open virtualization format \(\.ova\)/i,
+    });
+    let vmdkFileRadio = await screen.findByRole('radio', {
+      name: /Virtual disk \(\.vmdk\)/i,
+    });
 
-    expect(await screen.findByTestId('checkbox-vmware')).toBeChecked();
+    expect(
+      await screen.findByRole('checkbox', {
+        name: /VMware checkbox/i,
+      })
+    ).toBeChecked();
     expect(ovaFileRadio).toBeChecked();
     expect(vmdkFileRadio).not.toBeChecked();
 
@@ -277,9 +299,15 @@ describe('Step Image output', () => {
     user.click(vmdkFileRadio);
 
     // refresh values
-    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+    vmwareCheckbox = await screen.findByRole('checkbox', {
+      name: /VMware checkbox/i,
+    });
+    ovaFileRadio = await screen.findByRole('radio', {
+      name: /Open virtualization format \(\.ova\)/i,
+    });
+    vmdkFileRadio = await screen.findByRole('radio', {
+      name: /Virtual disk \(\.vmdk\)/i,
+    });
 
     expect(vmwareCheckbox).toBeChecked();
     expect(ovaFileRadio).not.toBeChecked();
@@ -289,9 +317,15 @@ describe('Step Image output', () => {
     user.click(vmwareCheckbox);
 
     // refresh values
-    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
+    vmwareCheckbox = await screen.findByRole('checkbox', {
+      name: /VMware checkbox/i,
+    });
+    ovaFileRadio = await screen.findByRole('radio', {
+      name: /Open virtualization format \(\.ova\)/i,
+    });
+    vmdkFileRadio = await screen.findByRole('radio', {
+      name: /Virtual disk \(\.vmdk\)/i,
+    });
 
     expect(vmwareCheckbox).not.toBeChecked();
     expect(ovaFileRadio).not.toBeChecked();
@@ -368,11 +402,15 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('wsl');
 
     // make sure the UX conforms to the mocks
-    await screen.findByTestId('upload-aws');
-    await screen.findByTestId('upload-google');
-    await screen.findByTestId('upload-azure');
-    await screen.findByTestId('checkbox-guest-image');
-    await screen.findByTestId('checkbox-image-installer');
+    await screen.findByRole('option', { name: /Amazon Web Services/i });
+    await screen.findByRole('option', { name: /Google Cloud Platform/i });
+    await screen.findByRole('option', { name: /Microsoft Azure/i });
+    await screen.findByRole('checkbox', {
+      name: /Virtualization guest image/i,
+    });
+    await screen.findByRole('checkbox', {
+      name: /Bare metal installer/i,
+    });
     await screen.findByText(/vmware vsphere/i);
     await screen.findByText(/open virtualization format \(\.ova\)/i);
     expect(
@@ -403,11 +441,15 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('wsl');
 
     // make sure the UX conforms to the mocks
-    await screen.findByTestId('upload-aws');
-    await screen.findByTestId('upload-google');
-    await screen.findByTestId('upload-azure');
-    await screen.findByTestId('checkbox-guest-image');
-    await screen.findByTestId('checkbox-image-installer');
+    await screen.findByRole('option', { name: /Amazon Web Services/i });
+    await screen.findByRole('option', { name: /Google Cloud Platform/i });
+    await screen.findByRole('option', { name: /Microsoft Azure/i });
+    await screen.findByRole('checkbox', {
+      name: /Virtualization guest image/i,
+    });
+    await screen.findByRole('checkbox', {
+      name: /Bare metal installer/i,
+    });
     await screen.findByText(/vmware vsphere/i);
     await screen.findByText(/open virtualization format \(\.ova\)/i);
     await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
@@ -435,13 +477,21 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('wsl');
 
     // make sure the UX conforms to the mocks
-    await screen.findByTestId('upload-aws');
+    await screen.findByRole('option', { name: /Amazon Web Services/i });
     await waitFor(() =>
-      expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('option', { name: /Google Cloud Platform/i })
+      ).not.toBeInTheDocument()
     );
-    expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
-    await screen.findByTestId('checkbox-guest-image');
-    await screen.findByTestId('checkbox-image-installer');
+    expect(
+      screen.queryByRole('option', { name: /Microsoft Azure/i })
+    ).not.toBeInTheDocument();
+    await screen.findByRole('checkbox', {
+      name: /Virtualization guest image/i,
+    });
+    await screen.findByRole('checkbox', {
+      name: /Bare metal installer/i,
+    });
     expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
     expect(
       screen.queryByText(/open virtualization format \(\.ova\)/i)
@@ -474,11 +524,19 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).not.toContain('wsl');
 
     // make sure the UX conforms to the mocks
-    await screen.findByTestId('upload-aws');
-    expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument();
-    expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
-    await screen.findByTestId('checkbox-guest-image');
-    await screen.findByTestId('checkbox-image-installer');
+    await screen.findByRole('option', { name: /Amazon Web Services/i });
+    expect(
+      screen.queryByRole('option', { name: /Google Cloud Platform/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('option', { name: /Microsoft Azure/i })
+    ).not.toBeInTheDocument();
+    await screen.findByRole('checkbox', {
+      name: /Virtualization guest image/i,
+    });
+    await screen.findByRole('checkbox', {
+      name: /Bare metal installer/i,
+    });
     expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
     expect(
       screen.queryByText(/open virtualization format \(\.ova\)/i)
@@ -502,7 +560,9 @@ describe('Check step consistency', () => {
     const next = await screen.findByRole('button', { name: /Next/ });
 
     // select GCP, it's available for x86_64
-    const uploadGcpBtn = await screen.findByTestId('upload-google');
+    const uploadGcpBtn = await screen.findByRole('option', {
+      name: /Google Cloud Platform/i,
+    });
     user.click(uploadGcpBtn);
     await waitFor(() => expect(next).toBeEnabled());
 
@@ -511,7 +571,9 @@ describe('Check step consistency', () => {
     await waitFor(() => expect(next).toBeDisabled());
 
     // clicking on AWS enables the Next button
-    const uploadAwsBtn = await screen.findByTestId('upload-aws');
+    const uploadAwsBtn = await screen.findByRole('option', {
+      name: /Amazon Web Services/i,
+    });
     user.click(uploadAwsBtn);
     await waitFor(() => expect(next).toBeEnabled());
 
@@ -593,7 +655,11 @@ describe('Set target using query parameter', () => {
 
   test('image-installer (query parameter provided)', async () => {
     await renderCreateMode({ target: 'iso' });
-    expect(await screen.findByTestId('checkbox-image-installer')).toBeChecked();
+    expect(
+      await screen.findByRole('checkbox', {
+        name: /Bare metal installer/i,
+      })
+    ).toBeChecked();
     await handleRegistration();
     await goToDetailsStep();
     await enterNameAndGoToReviewStep();
@@ -606,7 +672,11 @@ describe('Set target using query parameter', () => {
 
   test('guest-image (query parameter provided)', async () => {
     await renderCreateMode({ target: 'qcow2' });
-    expect(await screen.findByTestId('checkbox-guest-image')).toBeChecked();
+    expect(
+      await screen.findByRole('checkbox', {
+        name: /Virtualization guest image/i,
+      })
+    ).toBeChecked();
     await handleRegistration();
     await goToDetailsStep();
     await enterNameAndGoToReviewStep();

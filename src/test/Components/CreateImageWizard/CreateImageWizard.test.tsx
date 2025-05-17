@@ -13,10 +13,20 @@ const getSourceDropdown = async () => {
 const selectAllEnvironments = async () => {
   const user = userEvent.setup();
 
-  await waitFor(() => user.click(screen.getByTestId('upload-aws')));
-  await waitFor(() => user.click(screen.getByTestId('upload-google')));
-  await waitFor(() => user.click(screen.getByTestId('upload-azure')));
-  await waitFor(() => user.click(screen.getByTestId('checkbox-guest-image')));
+  await waitFor(() =>
+    user.click(screen.getByRole('option', { name: /Amazon Web Services/i }))
+  );
+  await waitFor(() =>
+    user.click(screen.getByRole('option', { name: /Google Cloud Platform/i }))
+  );
+  await waitFor(() =>
+    user.click(screen.getByRole('option', { name: /Microsoft Azure/i }))
+  );
+  await waitFor(() =>
+    user.click(
+      screen.getByRole('checkbox', { name: /Virtualization guest image/i })
+    )
+  );
 };
 
 const testTile = async (tile: HTMLElement) => {
@@ -137,9 +147,9 @@ describe('Keyboard accessibility', () => {
     await screen.findByText(
       'Automatically register and enable advanced capabilities'
     );
-    const registrationCheckbox = await screen.findByTestId(
-      'automatically-register-radio'
-    );
+    const registrationCheckbox = await screen.findByRole('radio', {
+      name: /Automatically register and enable advanced capabilities/i,
+    });
     expect(registrationCheckbox).toHaveFocus();
     await screen.findByPlaceholderText('Select activation key');
     await clickNext();
@@ -162,7 +172,9 @@ describe('Keyboard accessibility', () => {
 
   test('pressing Enter does not advance the wizard', async () => {
     await renderCreateMode();
-    user.click(await screen.findByTestId('upload-aws'));
+    user.click(
+      await screen.findByRole('option', { name: /Amazon Web Services/i })
+    );
     user.keyboard('{enter}');
     await screen.findByRole('heading', {
       name: /image output/i,
@@ -172,8 +184,14 @@ describe('Keyboard accessibility', () => {
   test('target environment tiles are keyboard selectable', async () => {
     await renderCreateMode();
 
-    await testTile(await screen.findByTestId('upload-aws'));
-    await testTile(await screen.findByTestId('upload-google'));
-    await testTile(await screen.findByTestId('upload-azure'));
+    await testTile(
+      await screen.findByRole('option', { name: /Amazon Web Services/i })
+    );
+    await testTile(
+      await screen.findByRole('option', { name: /Google Cloud Platform/i })
+    );
+    await testTile(
+      await screen.findByRole('option', { name: /Microsoft Azure/i })
+    );
   });
 });

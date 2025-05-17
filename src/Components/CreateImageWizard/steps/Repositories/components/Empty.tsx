@@ -20,7 +20,7 @@ type EmptyProps = {
 
 const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
   return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+    <EmptyState variant={EmptyStateVariant.lg}>
       <EmptyStateHeader
         titleText={
           hasFilterValue

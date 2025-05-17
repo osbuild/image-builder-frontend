@@ -55,7 +55,7 @@ const EmptyBlueprintsImagesTable = () => (
 const EmptyImagesTable = () => {
   return (
     <Bullseye>
-      <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+      <EmptyState variant={EmptyStateVariant.lg}>
         <>
           <EmptyStateHeader
             titleText="No images"
