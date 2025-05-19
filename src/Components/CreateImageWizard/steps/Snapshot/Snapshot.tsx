@@ -7,7 +7,7 @@ import {
   FormGroup,
   Grid,
   Radio,
-  Text,
+  Content,
   Title,
 } from '@patternfly/react-core';
 
@@ -99,10 +99,10 @@ export default function Snapshot() {
             Use latest content
           </Title>
           <Grid>
-            <Text>
+            <Content component="p">
               Image Builder will automatically use the newest state of
               repositories when building this image.
-            </Text>
+            </Content>
           </Grid>
         </>
       ) : selectedOption === 'snapshotDate' ? (
@@ -149,10 +149,10 @@ export default function Snapshot() {
             </Flex>
           </FormGroup>
           <Grid>
-            <Text>
+            <Content component="p">
               Image Builder will reflect the state of repositories based on the
               selected date when building this image.
-            </Text>
+            </Content>
           </Grid>
         </>
       ) : isTemplatesEnabled && selectedOption === 'template' ? (

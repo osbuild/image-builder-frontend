@@ -3,8 +3,6 @@ import React from 'react';
 import {
   Alert,
   EmptyState,
-  EmptyStateHeader,
-  EmptyStateIcon,
   Panel,
   PanelMain,
   Spinner,
@@ -114,13 +112,11 @@ const Error = () => {
 
 const Loading = () => {
   return (
-    <EmptyState>
-      <EmptyStateHeader
-        titleText="Loading"
-        icon={<EmptyStateIcon icon={Spinner} />}
-        headingLevel="h4"
-      />
-    </EmptyState>
+    <EmptyState
+      headingLevel="h4"
+      icon={Spinner}
+      titleText="Loading"
+    ></EmptyState>
   );
 };
 

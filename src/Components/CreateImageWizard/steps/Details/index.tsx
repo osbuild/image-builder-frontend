@@ -6,7 +6,7 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
-  Text,
+  Content,
   Title,
 } from '@patternfly/react-core';
 
@@ -48,11 +48,11 @@ const DetailsStep = () => {
       <Title headingLevel="h1" size="xl">
         Details
       </Title>
-      <Text>
+      <Content component="p">
         Enter a name to identify your blueprint. If no name is entered, the
         images created from this blueprint will use the name of the parent
         blueprint.
-      </Text>
+      </Content>
       <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
         <ValidatedInputAndTextArea
           ariaLabel="blueprint name"

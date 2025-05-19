@@ -14,8 +14,8 @@ import {
   ToggleGroupItem,
   PaginationVariant,
   Grid,
-  Modal,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
@@ -504,7 +504,7 @@ const Repositories = () => {
         )}
         <Toolbar>
           <ToolbarContent>
-            <ToolbarItem variant="bulk-select">
+            <ToolbarItem>
               <BulkSelect
                 selected={selected}
                 contentList={contentList}
@@ -522,7 +522,7 @@ const Repositories = () => {
                 }
               />
             </ToolbarItem>
-            <ToolbarItem variant="search-filter">
+            <ToolbarItem>
               <SearchInput
                 placeholder="Filter repositories"
                 aria-label="Filter repositories"

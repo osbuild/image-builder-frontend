@@ -11,65 +11,65 @@ test.describe.serial('test', () => {
     await login(page);
     const frame = await ibFrame(page);
 
-    await frame.getByRole('heading', { name: 'Images About image builder' });
-    await frame.getByRole('heading', { name: 'Blueprints' });
+    frame.getByRole('heading', { name: 'Images About image builder' });
+    frame.getByRole('heading', { name: 'Blueprints' });
     await frame.getByTestId('blueprints-create-button').click();
 
-    await frame.getByRole('heading', { name: 'Image output' });
+    frame.getByRole('heading', { name: 'Image output' });
     await frame.getByTestId('checkbox-guest-image').click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     if (isHosted()) {
-      await frame.getByRole('heading', {
+      frame.getByRole('heading', {
         name: 'Register systems using this image',
       });
       await page.getByTestId('register-later-radio').click();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
 
-    await frame.getByRole('heading', { name: 'Compliance' });
+    frame.getByRole('heading', { name: 'Compliance' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
-    await frame.getByRole('heading', { name: 'File system configuration' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    if (isHosted()) {
-      await frame.getByRole('heading', { name: 'Repository snapshot' });
-      await frame.getByRole('button', { name: 'Next', exact: true }).click();
-      await frame.getByRole('heading', { name: 'Custom repositories' });
-      await frame.getByRole('button', { name: 'Next', exact: true }).click();
-    }
-
-    await frame.getByRole('heading', { name: 'Additional packages' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Users' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Timezone' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Locale' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Hostname' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Kernel' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Firewall' });
-    await frame.getByRole('button', { name: 'Next', exact: true }).click();
-
-    await frame.getByRole('heading', { name: 'Systemd services' });
+    frame.getByRole('heading', { name: 'File system configuration' });
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     if (isHosted()) {
-      await frame.getByRole('heading', { name: 'First boot configuration' });
+      frame.getByRole('heading', { name: 'Repository snapshot' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+      frame.getByRole('heading', { name: 'Custom repositories' });
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
 
-    await frame.getByRole('heading', { name: 'Details' });
+    frame.getByRole('heading', { name: 'Additional packages' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Users' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Timezone' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Locale' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Hostname' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Kernel' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Firewall' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Systemd services' });
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    if (isHosted()) {
+      frame.getByRole('heading', { name: 'First boot configuration' });
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    }
+
+    frame.getByRole('heading', { name: 'Details' });
     await frame.getByTestId('blueprint').fill(blueprintName);
     await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
@@ -102,21 +102,21 @@ test.describe.serial('test', () => {
       .getByTestId('packages-search-input')
       .locator('input')
       .fill('osbuild-composer');
-    await frame.getByTestId('packages-table').getByText('Searching');
-    await frame.getByRole('gridcell', { name: 'osbuild-composer' }).first();
+    frame.getByTestId('packages-table').getByText('Searching');
+    frame.getByRole('gridcell', { name: 'osbuild-composer' }).first();
     await frame.getByRole('checkbox', { name: 'Select row 0' }).check();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
-    await frame.getByRole('gridcell', { name: 'osbuild-composer' });
+    frame.getByRole('gridcell', { name: 'osbuild-composer' });
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
-    await frame.getByRole('gridcell', { name: 'osbuild-composer' });
+    frame.getByRole('gridcell', { name: 'osbuild-composer' });
     await frame.getByRole('button', { name: 'Cancel', exact: true }).click();
-    await frame.getByRole('heading', { name: 'All images' });
+    frame.getByRole('heading', { name: 'All images' });
   });
 
   test('build blueprint', async ({ page }) => {
@@ -133,7 +133,7 @@ test.describe.serial('test', () => {
       .getByTestId('images-table')
       .getByRole('button', { name: 'Details' })
       .click();
-    await frame.getByText('Build Information');
+    frame.getByText('Build Information');
   });
 
   test('delete blueprint', async ({ page }) => {

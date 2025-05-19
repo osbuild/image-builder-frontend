@@ -11,8 +11,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
   Icon,
   Pagination,
@@ -24,14 +22,14 @@ import {
   Tab,
   Tabs,
   TabTitleText,
-  Text,
+  Content,
   ToggleGroup,
   ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
 } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -363,8 +361,7 @@ const Packages = () => {
         <Tr>
           <Td colSpan={6}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={SearchIcon} />} />
+              <EmptyState icon={SearchIcon} variant={EmptyStateVariant.sm}>
                 {toggleSelected === 'toggle-available' ? (
                   <EmptyStateBody>
                     Search above to add additional
@@ -392,8 +389,7 @@ const Packages = () => {
         <Tr>
           <Td colSpan={6}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader icon={<EmptyStateIcon icon={Spinner} />} />
+              <EmptyState icon={Spinner} variant={EmptyStateVariant.sm}>
                 <EmptyStateBody>
                   {activeTabKey === Repos.OTHER
                     ? 'Searching for recommendations'
@@ -413,12 +409,12 @@ const Packages = () => {
         <Tr>
           <Td colSpan={6}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader
-                  icon={<EmptyStateIcon icon={SearchIcon} />}
-                  titleText="The search value is too short"
-                  headingLevel="h4"
-                />
+              <EmptyState
+                headingLevel="h4"
+                icon={SearchIcon}
+                titleText="The search value is too short"
+                variant={EmptyStateVariant.sm}
+              >
                 <EmptyStateBody>
                   Please make the search more specific and try again.
                 </EmptyStateBody>
@@ -436,11 +432,11 @@ const Packages = () => {
         <Tr>
           <Td colSpan={6}>
             <Bullseye>
-              <EmptyState variant={EmptyStateVariant.sm}>
-                <EmptyStateHeader
-                  titleText="No selected packages in Other repos"
-                  headingLevel="h4"
-                />
+              <EmptyState
+                headingLevel="h4"
+                titleText="No selected packages in Other repos"
+                variant={EmptyStateVariant.sm}
+              >
                 <EmptyStateBody>
                   Try looking under &quot;
                   <Button
@@ -467,14 +463,12 @@ const Packages = () => {
           <Tr>
             <Td colSpan={6}>
               <Bullseye>
-                <EmptyState variant={EmptyStateVariant.sm}>
-                  <EmptyStateHeader
-                    icon={<EmptyStateIcon icon={SearchIcon} />}
-                  />
-                  <EmptyStateHeader
-                    titleText="No results found"
-                    headingLevel="h4"
-                  />
+                <EmptyState
+                  headingLevel="h4"
+                  titleText="No results found"
+                  icon={SearchIcon}
+                  variant={EmptyStateVariant.sm}
+                >
                   <EmptyStateBody>
                     Adjust your search and try again, or search in other
                     repositories (your repositories and popular repositories).
@@ -515,14 +509,12 @@ const Packages = () => {
           <Tr>
             <Td colSpan={6}>
               <Bullseye>
-                <EmptyState variant={EmptyStateVariant.sm}>
-                  <EmptyStateHeader
-                    icon={<EmptyStateIcon icon={SearchIcon} />}
-                  />
-                  <EmptyStateHeader
-                    titleText="No results found"
-                    headingLevel="h4"
-                  />
+                <EmptyState
+                  headingLevel="h4"
+                  titleText="No results found"
+                  icon={SearchIcon}
+                  variant={EmptyStateVariant.sm}
+                >
                   <EmptyStateBody>
                     No packages found in known repositories. If you know of a
                     repository containing this packages, add it to{' '}
@@ -1197,20 +1189,21 @@ const Packages = () => {
                             </Tbody>
                           </Table>
                         ) : (
-                          <Text>This group has no packages</Text>
+                          <Content component="p">
+                            This group has no packages
+                          </Content>
                         )}
                       </div>
                     }
                   >
                     <Button
+                      icon={<HelpIcon className="pf-v5-u-ml-xs" />}
                       variant="plain"
                       aria-label="About included packages"
                       component="span"
                       className="pf-v5-u-p-0"
                       isInline
-                    >
-                      <HelpIcon className="pf-v5-u-ml-xs" />
-                    </Button>
+                    />
                   </Popover>
                 </Td>
                 <Td>N/A</Td>
@@ -1448,7 +1441,7 @@ const Packages = () => {
       <Toolbar>
         <Stack>
           <ToolbarContent>
-            <ToolbarItem variant="search-filter">
+            <ToolbarItem>
               <SearchInput
                 type="text"
                 placeholder="Search packages"

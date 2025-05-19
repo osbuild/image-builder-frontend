@@ -82,7 +82,6 @@ const SatelliteRegistration = () => {
                   ? 'success'
                   : 'default'
               }
-              hasIcon
             >
               {isRejected
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'

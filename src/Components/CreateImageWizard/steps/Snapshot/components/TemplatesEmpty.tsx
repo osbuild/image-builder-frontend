@@ -3,7 +3,6 @@ import React from 'react';
 import {
   EmptyState,
   EmptyStateVariant,
-  EmptyStateHeader,
   EmptyStateBody,
   EmptyStateFooter,
   Button,
@@ -32,8 +31,12 @@ const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {
   };
 
   return (
-    <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
-      <EmptyStateHeader titleText={'No content templates'} headingLevel="h4" />
+    <EmptyState
+      headingLevel="h4"
+      titleText={'No content templates'}
+      variant={EmptyStateVariant.lg}
+      data-testid="empty-state"
+    >
       <EmptyStateBody>
         {`Content templates can be added in the "Templates" area of the
         console.`}

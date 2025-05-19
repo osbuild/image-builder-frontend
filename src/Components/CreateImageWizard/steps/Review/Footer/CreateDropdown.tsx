@@ -7,9 +7,9 @@ import {
   Spinner,
   Flex,
   FlexItem,
-  Modal,
   Button,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 

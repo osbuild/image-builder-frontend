@@ -2,7 +2,7 @@ import React from 'react';
 
 import {
   Radio,
-  Text,
+  Content,
   Form,
   Title,
   FormGroup,
@@ -68,12 +68,12 @@ const Azure = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Microsoft Azure
       </Title>
-      <Text>
+      <Content component="p">
         Upon build, Image Builder sends the image to the selected authorized
         Azure account. The image will be uploaded to the resource group in the
         subscription you specify.
-      </Text>
-      <Text>
+      </Content>
+      <Content component="p">
         To authorize Image Builder to push images to Microsoft Azure, the
         account owner must configure Image Builder as an authorized application
         for a specific tenant ID and give it the role of &quot;Contributor&quot;
@@ -91,7 +91,7 @@ const Azure = () => {
         >
           Learn more about OAuth 2.0
         </Button>
-      </Text>
+      </Content>
       <AzureHyperVSelect />
       <FormGroup label="Share method:">
         <Radio

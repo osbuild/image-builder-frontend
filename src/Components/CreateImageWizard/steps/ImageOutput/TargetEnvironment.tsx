@@ -6,12 +6,11 @@ import {
   FormGroup,
   Popover,
   Radio,
-  Text,
-  TextContent,
-  TextVariants,
-  Tile,
   Tooltip,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
+import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
@@ -123,7 +122,9 @@ const TargetEnvironment = () => {
       data-testid="target-select"
     >
       <FormGroup
-        label={<Text component={TextVariants.small}>Public cloud</Text>}
+        label={
+          <Content component={ContentVariants.small}>Public cloud</Content>
+        }
       >
         <div className="tiles">
           {supportedEnvironments?.includes('aws') && (
@@ -214,7 +215,9 @@ const TargetEnvironment = () => {
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
-            label={<Text component={TextVariants.small}>Private cloud</Text>}
+            label={
+              <Content component={ContentVariants.small}>Private cloud</Content>
+            }
             className="pf-v5-u-mt-sm"
           >
             <Checkbox
@@ -251,26 +254,25 @@ const TargetEnvironment = () => {
                             maxWidth="30rem"
                             position="right"
                             bodyContent={
-                              <TextContent>
-                                <Text>
+                              <Content>
+                                <Content component="p">
                                   An OVA file is a virtual appliance used by
                                   virtualization platforms such as VMware
                                   vSphere. It is a package that contains files
                                   used to describe a virtual machine, which
                                   includes a VMDK image, OVF descriptor file and
                                   a manifest file.
-                                </Text>
-                              </TextContent>
+                                </Content>
+                              </Content>
                             }
                           >
                             <Button
+                              icon={<HelpIcon />}
                               className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                               variant="plain"
                               aria-label="About OVA file"
                               isInline
-                            >
-                              <HelpIcon />
-                            </Button>
+                            />
                           </Popover>
                         </>
                       }
@@ -300,24 +302,23 @@ const TargetEnvironment = () => {
                           maxWidth="30rem"
                           position="right"
                           bodyContent={
-                            <TextContent>
-                              <Text>
+                            <Content>
+                              <Content component="p">
                                 A VMDK file is a virtual disk that stores the
                                 contents of a virtual machine. This disk has to
                                 be imported into vSphere using govc import.vmdk,
                                 use the OVA version when using the vSphere UI.
-                              </Text>
-                            </TextContent>
+                              </Content>
+                            </Content>
                           }
                         >
                           <Button
+                            icon={<HelpIcon />}
                             className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                             variant="plain"
                             aria-label="About VMDK file"
                             isInline
-                          >
-                            <HelpIcon />
-                          </Button>
+                          />
                         </Popover>
                       </>
                     }
@@ -339,7 +340,9 @@ const TargetEnvironment = () => {
           </FormGroup>
         </>
       )}
-      <FormGroup label={<Text component={TextVariants.small}>Other</Text>}>
+      <FormGroup
+        label={<Content component={ContentVariants.small}>Other</Content>}
+      >
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label="Virtualization - Guest image (.qcow2)"
@@ -375,20 +378,22 @@ const TargetEnvironment = () => {
                   maxWidth="30rem"
                   position="right"
                   headerContent={
-                    <TextContent>
-                      <Text>WSL is not officially supported by Red Hat</Text>
-                    </TextContent>
+                    <Content>
+                      <Content component="p">
+                        WSL is not officially supported by Red Hat
+                      </Content>
+                    </Content>
                   }
                   bodyContent={
-                    <TextContent>
-                      <Text>
+                    <Content>
+                      <Content component="p">
                         You can use RHEL on Microsoft&apos;s Windows Subsystem
                         for Linux (WSL) for development and learning use cases.
                         Red Hat supports WSL under the Validated Software
                         Pattern and Third Party Component Support Policy, which
                         does not include production use cases.
-                      </Text>
-                    </TextContent>
+                      </Content>
+                    </Content>
                   }
                   footerContent={
                     <Button
@@ -405,13 +410,12 @@ const TargetEnvironment = () => {
                   }
                 >
                   <Button
+                    icon={<HelpIcon />}
                     className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
                     variant="plain"
                     aria-label="About WSL file"
                     isInline
-                  >
-                    <HelpIcon />
-                  </Button>
+                  />
                 </Popover>
               </>
             }

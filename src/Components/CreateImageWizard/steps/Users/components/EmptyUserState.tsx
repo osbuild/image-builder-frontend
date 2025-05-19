@@ -4,8 +4,6 @@ import {
   Button,
   EmptyState,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
 import UserIcon from '@patternfly/react-icons/dist/esm/icons/user-icon';
@@ -21,11 +19,11 @@ const EmptyUserState = () => {
   };
 
   return (
-    <EmptyState variant={EmptyStateVariant.lg}>
-      <EmptyStateHeader
-        icon={<EmptyStateIcon icon={UserIcon} />}
-        headingLevel="h4"
-      />
+    <EmptyState
+      headingLevel="h4"
+      icon={UserIcon}
+      variant={EmptyStateVariant.lg}
+    >
       <EmptyStateFooter>
         <Button variant="secondary" onClick={onAddUserClick}>
           Add a user

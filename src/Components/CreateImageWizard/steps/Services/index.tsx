@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import ServicesInput from './components/ServicesInputs';
 
@@ -10,7 +10,9 @@ const ServicesStep = () => {
       <Title headingLevel="h1" size="xl">
         Systemd services
       </Title>
-      <Text>Enable, disable and mask systemd services.</Text>
+      <Content component="p">
+        Enable, disable and mask systemd services.
+      </Content>
       <ServicesInput />
     </Form>
   );

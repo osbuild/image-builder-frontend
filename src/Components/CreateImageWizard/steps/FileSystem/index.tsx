@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import FileSystemAutomaticPartition from './FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './FileSystemConfiguration';
@@ -22,7 +22,7 @@ const FileSystemStep = () => {
       <Title headingLevel="h1" size="xl">
         File system configuration
       </Title>
-      <Text>Define the partitioning of the image.</Text>
+      <Content component="p">Define the partitioning of the image.</Content>
       {hasIsoTargetOnly ? (
         <FileSystemAutomaticPartition />
       ) : fileSystemConfigurationType === 'automatic' ? (

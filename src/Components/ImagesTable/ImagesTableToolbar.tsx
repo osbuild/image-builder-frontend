@@ -241,7 +241,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               </ToolbarItem>
             </>
           )}
-          <ToolbarItem variant="pagination" align={{ default: 'alignRight' }}>
+          <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
             {pagination}
           </ToolbarItem>
         </ToolbarContent>

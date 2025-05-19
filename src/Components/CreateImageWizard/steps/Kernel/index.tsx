@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
@@ -11,7 +11,9 @@ const KernelStep = () => {
       <Title headingLevel="h1" size="xl">
         Kernel
       </Title>
-      <Text>Customize kernel name and kernel arguments.</Text>
+      <Content component="p">
+        Customize kernel name and kernel arguments.
+      </Content>
       <KernelName />
       <KernelArguments />
     </Form>
