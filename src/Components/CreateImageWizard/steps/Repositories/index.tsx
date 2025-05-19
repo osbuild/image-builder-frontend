@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert, Button, Form, Text, Title } from '@patternfly/react-core';
+import { Alert, Button, Form, Content, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import Repositories from './Repositories';
@@ -37,12 +37,12 @@ const RepositoriesStep = () => {
       <Title headingLevel="h1" size="xl">
         Custom repositories
       </Title>
-      <Text>
+      <Content component="p">
         Select the linked custom repositories from which you can add packages to
         the image.
         <br />
         <ManageRepositoriesButton />
-      </Text>
+      </Content>
       {packages.length && recommendedRepos.length ? (
         <Alert
           title="Why can't I remove a selected repository?"

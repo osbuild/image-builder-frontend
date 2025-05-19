@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import HostnameInput from './components/HostnameInput';
 
@@ -10,7 +10,7 @@ const HostnameStep = () => {
       <Title headingLevel="h1" size="xl">
         Hostname
       </Title>
-      <Text>Select a hostname for your image.</Text>
+      <Content component="p">Select a hostname for your image.</Content>
       <HostnameInput />
     </Form>
   );

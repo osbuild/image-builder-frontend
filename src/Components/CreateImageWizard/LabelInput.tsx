@@ -105,21 +105,19 @@ const LabelInput = ({
         />
         <TextInputGroupUtilities>
           <Button
+            icon={<PlusCircleIcon className="pf-v5-u-primary-color-100" />}
             variant="plain"
             onClick={(e) => handleAddItem(e, inputValue)}
             isDisabled={!inputValue}
             aria-label={ariaLabel}
-          >
-            <PlusCircleIcon className="pf-v5-u-primary-color-100" />
-          </Button>
+          />
           <Button
+            icon={<TimesIcon />}
             variant="plain"
             onClick={handleClear}
             isDisabled={!inputValue}
             aria-label="Clear input"
-          >
-            <TimesIcon />
-          </Button>
+          />
         </TextInputGroupUtilities>
       </TextInputGroup>
       {errorText && (

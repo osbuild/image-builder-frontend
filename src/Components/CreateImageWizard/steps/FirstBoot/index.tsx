@@ -2,7 +2,7 @@ import React from 'react';
 
 import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import {
-  Text,
+  Content,
   Form,
   FormGroup,
   FormHelperText,
@@ -52,22 +52,22 @@ const FirstBootStep = () => {
       <Title headingLevel="h1" size="xl">
         First boot configuration
       </Title>
-      <Text>
+      <Content component="p">
         Configure the image with a custom script that will execute on its first
         boot.
-      </Text>
+      </Content>
       <Alert
         variant="warning"
         isExpandable
         isInline
         title="Important: please do not include sensitive information"
       >
-        <Text>
+        <Content component="p">
           Please ensure that your script does not contain any secrets,
           passwords, or other sensitive data. All scripts should be crafted
           without including confidential information to maintain security and
           privacy.
-        </Text>
+        </Content>
       </Alert>
       <FormGroup>
         <CodeEditor
@@ -93,9 +93,7 @@ const FirstBootStep = () => {
         {errors.script && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem variant="error" hasIcon>
-                {errors.script}
-              </HelperTextItem>
+              <HelperTextItem variant="error">{errors.script}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         )}

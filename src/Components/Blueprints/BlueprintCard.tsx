@@ -40,9 +40,6 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         isCompact
         isClickable
         onClick={() => dispatch(setBlueprintId(blueprint.id))}
-        isSelectableRaised
-        hasSelectableInput
-        selectableInputAriaLabel={`Select blueprint ${blueprint.name}`}
       >
         <CardHeader data-testid={blueprint.id}>
           <CardTitle>

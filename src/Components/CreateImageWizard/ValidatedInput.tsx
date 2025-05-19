@@ -98,9 +98,7 @@ export const ValidatedInputAndTextArea = ({
       )}
       {warning !== undefined && warning !== '' && (
         <HelperText>
-          <HelperTextItem variant="warning" hasIcon>
-            {warning}
-          </HelperTextItem>
+          <HelperTextItem variant="warning">{warning}</HelperTextItem>
         </HelperText>
       )}
       {validated === 'error' && hasError && (
@@ -127,9 +125,7 @@ const getValidationState = (
 export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
   return (
     <HelperText>
-      <HelperTextItem variant="error" hasIcon>
-        {errorMessage}
-      </HelperTextItem>
+      <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
     </HelperText>
   );
 };
@@ -171,9 +167,7 @@ export const ValidatedInput = ({
       />
       {!isPristine && !validator(value) && (
         <HelperText>
-          <HelperTextItem variant="error" hasIcon>
-            {helperText}
-          </HelperTextItem>
+          <HelperTextItem variant="error">{helperText}</HelperTextItem>
         </HelperText>
       )}
     </>

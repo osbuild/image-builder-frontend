@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { DiffEditor } from '@monaco-editor/react';
-import { Button, Modal, ModalVariant } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 
 import { BuildImagesButton } from './BuildImagesButton';
 

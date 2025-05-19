@@ -5,8 +5,6 @@ import {
   EmptyState,
   EmptyStateActions,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   EmptyStateVariant,
 } from '@patternfly/react-core';
 import { CubesIcon } from '@patternfly/react-icons';
@@ -14,12 +12,12 @@ import cockpit from 'cockpit';
 
 export const NotReady = ({ enabled }: { enabled: boolean }) => {
   return (
-    <EmptyState variant={EmptyStateVariant.xl}>
-      <EmptyStateHeader
-        titleText={`OSBuild Composer is not ${enabled ? 'started' : 'enabled'}`}
-        headingLevel="h4"
-        icon={<EmptyStateIcon icon={CubesIcon} />}
-      />
+    <EmptyState
+      headingLevel="h4"
+      icon={CubesIcon}
+      titleText={`OSBuild Composer is not ${enabled ? 'started' : 'enabled'}`}
+      variant={EmptyStateVariant.xl}
+    >
       <EmptyStateFooter>
         <EmptyStateActions>
           <Button

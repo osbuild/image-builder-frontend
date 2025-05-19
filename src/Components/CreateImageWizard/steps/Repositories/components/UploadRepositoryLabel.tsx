@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Label, Text, Tooltip } from '@patternfly/react-core';
+import { Button, Label, Content, Tooltip } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, UploadIcon } from '@patternfly/react-icons';
 
 import { CONTENT_URL } from '../../../../../constants';
@@ -9,7 +9,7 @@ const UploadRepositoryLabel = () => {
   return (
     <Tooltip
       content={
-        <Text>
+        <Content component="p">
           Upload repository: Snapshots will only be taken when new content is
           uploaded.&nbsp;
           <Button
@@ -23,7 +23,7 @@ const UploadRepositoryLabel = () => {
           >
             Create and manage repositories here.
           </Button>
-        </Text>
+        </Content>
       }
     >
       <Label

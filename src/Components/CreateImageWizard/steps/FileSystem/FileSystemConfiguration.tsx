@@ -3,9 +3,8 @@ import React from 'react';
 import {
   Alert,
   Button,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { PlusCircleIcon } from '@patternfly/react-icons';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -42,19 +41,19 @@ const FileSystemConfiguration = () => {
 
   return (
     <>
-      <TextContent>
-        <Text component={TextVariants.h3}>Configure partitions</Text>
-      </TextContent>
+      <Content>
+        <Content component={ContentVariants.h3}>Configure partitions</Content>
+      </Content>
       {partitions?.find((partition) =>
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
-      <TextContent>
-        <Text>
+      <Content>
+        <Content component="p">
           Create partitions for your image by defining mount points and minimum
           sizes. Image builder creates partitions with a logical volume (LVM)
           device type.
-        </Text>
-        <Text>
+        </Content>
+        <Content component="p">
           The order of partitions may change when the image is installed in
           order to conform to best practices and ensure functionality.
           <br></br>
@@ -69,8 +68,8 @@ const FileSystemConfiguration = () => {
           >
             Read more about manual configuration here
           </Button>
-        </Text>
-      </TextContent>
+        </Content>
+      </Content>
       {environments.includes('image-installer') && (
         <Alert
           variant="warning"
@@ -79,7 +78,7 @@ const FileSystemConfiguration = () => {
         />
       )}
       <FileSystemTable />
-      <TextContent>
+      <Content>
         <Button
           className="pf-v5-u-text-align-left"
           variant="link"
@@ -88,7 +87,7 @@ const FileSystemConfiguration = () => {
         >
           Add partition
         </Button>
-      </TextContent>
+      </Content>
     </>
   );
 };

@@ -4,7 +4,7 @@ import {
   Alert,
   AlertActionLink,
   Form,
-  Text,
+  Content,
   Title,
   ToggleGroup,
   ToggleGroupItem,
@@ -114,13 +114,13 @@ const OscapContent = () => {
       <Title headingLevel="h1" size="xl">
         {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
-      <Text>
+      <Content component="p">
         Below you can select which Insights compliance policy or OpenSCAP
         profile your image will be compliant to. Insights compliance allows the
         use of tailored policies, whereas OpenSCAP gives you the default
         versions. This will automatically help monitor the adherence of your
         registered RHEL systems to a selected policy or profile.
-      </Text>
+      </Content>
       {complianceEnabled && (
         <ToggleGroup aria-label="Default with single selectable">
           <ToggleGroupItem

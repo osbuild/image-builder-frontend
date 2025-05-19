@@ -359,7 +359,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   return (
     <>
       <ImageBuilderHeader inWizard />
-      <PageSection type={PageSectionTypes.wizard}>
+      <PageSection hasBodyWrapper={false} type={PageSectionTypes.wizard}>
         <Wizard
           startIndex={startIndex}
           onClose={() => navigate(resolveRelPath(''))}

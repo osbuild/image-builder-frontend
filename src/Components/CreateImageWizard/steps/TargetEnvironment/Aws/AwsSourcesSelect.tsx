@@ -158,12 +158,11 @@ export const AwsSourcesSelect = () => {
         {chosenSource?.name && (
           <TextInputGroupUtilities>
             <Button
+              icon={<TimesIcon />}
               variant="plain"
               onClick={handleClear}
               aria-label="Clear input"
-            >
-              <TimesIcon />
-            </Button>
+            />
           </TextInputGroupUtilities>
         )}
       </TextInputGroup>

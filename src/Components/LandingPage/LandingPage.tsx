@@ -6,8 +6,7 @@ import {
   Tabs,
   Tab,
   TabTitleText,
-  Text,
-  TextContent,
+  Content,
   TabAction,
   PageSection,
   Sidebar,
@@ -59,7 +58,7 @@ export const LandingPage = () => {
 
   const imageList = (
     <>
-      <PageSection>
+      <PageSection hasBodyWrapper={false}>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
         <Sidebar hasBorder className="pf-v5-u-background-color-100">
           <SidebarPanel
@@ -101,14 +100,14 @@ export const LandingPage = () => {
                 header={'Conventional (RPM-DNF)'}
                 body={
                   <div>
-                    <TextContent>
-                      <Text>
+                    <Content>
+                      <Content component="p">
                         With RPM-DNF, you can manage the system software by
                         using the DNF package manager and updated RPM packages.
                         This is a simple and adaptive method of managing and
                         modifying the system over its lifecycle.
-                      </Text>
-                      <Text>
+                      </Content>
+                      <Content component="p">
                         <Button
                           component="a"
                           target="_blank"
@@ -120,8 +119,8 @@ export const LandingPage = () => {
                         >
                           Learn more about managing images with DNF
                         </Button>
-                      </Text>
-                    </TextContent>
+                      </Content>
+                    </Content>
                   </div>
                 }
               />
@@ -136,8 +135,8 @@ export const LandingPage = () => {
               <HelpPopover
                 header={'Immutable (OSTree)'}
                 body={
-                  <TextContent>
-                    <Text>
+                  <Content>
+                    <Content component="p">
                       With OSTree, you can manage the system software by
                       referencing a central image repository. OSTree images
                       contain a complete operating system ready to be remotely
@@ -145,8 +144,8 @@ export const LandingPage = () => {
                       through commits and enable secure updates that only
                       address changes and keep the operating system unchanged.
                       The updates are quick, and the rollbacks are easy.
-                    </Text>
-                    <Text>
+                    </Content>
+                    <Content component="p">
                       <Button
                         component="a"
                         target="_blank"
@@ -158,8 +157,8 @@ export const LandingPage = () => {
                       >
                         Learn more about OSTree
                       </Button>
-                    </Text>
-                  </TextContent>
+                    </Content>
+                  </Content>
                 }
               />
             }

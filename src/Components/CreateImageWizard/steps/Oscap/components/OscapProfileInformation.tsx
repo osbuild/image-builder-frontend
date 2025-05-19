@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react';
 
-import {
-  Spinner,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-} from '@patternfly/react-core';
+import { Spinner, Content, ContentVariants } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
@@ -84,75 +77,75 @@ export const OscapProfileInformation = ({
       )}
       {isSuccessOscapProfileInfo && (
         <>
-          <TextContent>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem
-                component={TextListItemVariants.dt}
+          <Content>
+            <Content component={ContentVariants.dl}>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Profile description:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {oscapProfile?.profile_description}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
+              </Content>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Reference ID:
-              </TextListItem>
-              <TextListItem
+              </Content>
+              <Content
                 data-testid="oscap-profile-info-ref-id"
-                component={TextListItemVariants.dd}
+                component={ContentVariants.dd}
               >
                 {oscapProfile?.profile_id}
-              </TextListItem>
-            </TextList>
-          </TextContent>
+              </Content>
+            </Content>
+          </Content>
         </>
       )}
       {isSuccessPolicyInfo && (
         <>
-          <TextContent>
-            <TextList component={TextListVariants.dl}>
-              <TextListItem
-                component={TextListItemVariants.dt}
+          <Content>
+            <Content component={ContentVariants.dl}>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Policy description:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {policyInfo?.data?.schema?.description}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
+              </Content>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Business objective:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {policyInfo?.data?.schema?.business_objective}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
+              </Content>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Policy type:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {policyInfo?.data?.schema?.type}
-              </TextListItem>
-              <TextListItem
-                component={TextListItemVariants.dt}
+              </Content>
+              <Content
+                component={ContentVariants.dt}
                 className="pf-v5-u-min-width"
               >
                 Reference ID:
-              </TextListItem>
-              <TextListItem component={TextListItemVariants.dd}>
+              </Content>
+              <Content component={ContentVariants.dd}>
                 {policyInfo?.data?.schema?.id}
-              </TextListItem>
-            </TextList>
-          </TextContent>
+              </Content>
+            </Content>
+          </Content>
         </>
       )}
     </>

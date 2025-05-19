@@ -6,8 +6,7 @@ import {
   FormGroup,
   Popover,
   Radio,
-  Text,
-  TextContent,
+  Content,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
@@ -27,13 +26,13 @@ const InsightsPopover = () => {
       position="right"
       minWidth="30rem"
       bodyContent={
-        <TextContent>
-          <Text>
+        <Content>
+          <Content component="p">
             Red Hat Insights client provides actionable intelligence about your
             Red Hat Enterprise Linux environments, helping to identify and
             address operational and vulnerability risks before an issue results
             in downtime.
-          </Text>
+          </Content>
           <Button
             component="a"
             target="_blank"
@@ -45,17 +44,16 @@ const InsightsPopover = () => {
           >
             Learn more about Red Hat Insights
           </Button>
-        </TextContent>
+        </Content>
       }
     >
       <Button
+        icon={<HelpIcon />}
         variant="plain"
         className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
-      >
-        <HelpIcon />
-      </Button>
+      />
     </Popover>
   );
 };
@@ -67,12 +65,12 @@ const RhcPopover = () => {
       position="right"
       minWidth="30rem"
       bodyContent={
-        <TextContent>
-          <Text>
+        <Content>
+          <Content component="p">
             Remote host configuration allows Red Hat Enterprise Linux hosts to
             connect to Red Hat Insights. Remote host configuration is required
             to use the Red Hat Insights Remediations service.
-          </Text>
+          </Content>
           <Button
             component="a"
             target="_blank"
@@ -84,17 +82,16 @@ const RhcPopover = () => {
           >
             Learn more about remote host configuration
           </Button>
-        </TextContent>
+        </Content>
       }
     >
       <Button
+        icon={<HelpIcon />}
         variant="plain"
         className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
         aria-label="About remote host configuration (rhc)"
         isInline
-      >
-        <HelpIcon />
-      </Button>
+      />
     </Popover>
   );
 };

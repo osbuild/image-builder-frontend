@@ -4,8 +4,7 @@ import {
   Alert,
   Button,
   Popover,
-  Text,
-  TextContent,
+  Content,
   Flex,
   FlexItem,
 } from '@patternfly/react-core';
@@ -43,16 +42,16 @@ const AboutImageBuilderPopover = () => {
       minWidth="35rem"
       headerContent={'About image builder'}
       bodyContent={
-        <TextContent>
-          <Text>
+        <Content>
+          <Content component="p">
             Image builder is a tool for creating deployment-ready customized
             system images: installation disks, virtual machines, cloud
             vendor-specific images, and others. By using image builder, you can
             make these images faster than manual procedures because it
             eliminates the specific configurations required for each output
             type.
-          </Text>
-          <Text>
+          </Content>
+          <Content component="p">
             <Button
               component="a"
               target="_blank"
@@ -64,8 +63,8 @@ const AboutImageBuilderPopover = () => {
             >
               Image builder for RPM-DNF documentation
             </Button>
-          </Text>
-          <Text>
+          </Content>
+          <Content component="p">
             <Button
               component="a"
               target="_blank"
@@ -77,17 +76,16 @@ const AboutImageBuilderPopover = () => {
             >
               Image builder for OSTree documentation
             </Button>
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
       }
     >
       <Button
+        icon={<HelpIcon />}
         variant="plain"
         aria-label="About image builder"
         className="pf-v5-u-pl-sm header-button"
-      >
-        <HelpIcon />
-      </Button>
+      />
     </Popover>
   );
 };

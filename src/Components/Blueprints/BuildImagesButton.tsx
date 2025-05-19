@@ -115,38 +115,35 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
           ref={toggleRef}
           onClick={onToggleClick}
           isExpanded={isOpen}
-          splitButtonOptions={{
-            variant: 'action',
-            items: [
-              <MenuToggleAction
-                data-testid="blueprint-build-image-menu-option"
-                key="split-action"
-                onClick={onBuildHandler}
-                id="wizard-build-image-btn"
-                isDisabled={
-                  !selectedBlueprintId ||
-                  deselectedTargets.length === blueprintImageType?.length
-                }
-              >
-                <Flex display={{ default: 'inlineFlex' }}>
-                  {imageBuildLoading && (
-                    <FlexItem>
-                      <Spinner
-                        style={
-                          {
-                            '--pf-v5-c-spinner--Color': '#fff',
-                          } as React.CSSProperties
-                        }
-                        isInline
-                        size="md"
-                      />
-                    </FlexItem>
-                  )}
-                  <FlexItem>{children ? children : 'Build images'}</FlexItem>
-                </Flex>
-              </MenuToggleAction>,
-            ],
-          }}
+          splitButtonItems={[
+            <MenuToggleAction
+              data-testid="blueprint-build-image-menu-option"
+              key="split-action"
+              onClick={onBuildHandler}
+              id="wizard-build-image-btn"
+              isDisabled={
+                !selectedBlueprintId ||
+                deselectedTargets.length === blueprintImageType?.length
+              }
+            >
+              <Flex display={{ default: 'inlineFlex' }}>
+                {imageBuildLoading && (
+                  <FlexItem>
+                    <Spinner
+                      style={
+                        {
+                          '--pf-v5-c-spinner--Color': '#fff',
+                        } as React.CSSProperties
+                      }
+                      isInline
+                      size="md"
+                    />
+                  </FlexItem>
+                )}
+                <FlexItem>{children ? children : 'Build images'}</FlexItem>
+              </Flex>
+            </MenuToggleAction>,
+          ]}
         ></MenuToggle>
       )}
     >

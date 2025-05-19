@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert, Text, Form, Title } from '@patternfly/react-core';
+import { Alert, Content, Form, Title } from '@patternfly/react-core';
 
 import PackageRecommendations from './PackageRecommendations';
 import Packages from './Packages';
@@ -16,7 +16,9 @@ const PackagesStep = () => {
       <Title headingLevel="h1" size="xl">
         Additional packages
       </Title>
-      <Text>Blueprints created with Images include all required packages.</Text>
+      <Content component="p">
+        Blueprints created with Images include all required packages.
+      </Content>
       {!process.env.IS_ON_PREMISE && (
         <Alert variant="info" isInline title="Search for package groups">
           Search for package groups by starting your search with the
