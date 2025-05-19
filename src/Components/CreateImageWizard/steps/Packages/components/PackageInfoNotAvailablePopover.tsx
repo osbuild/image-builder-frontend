@@ -24,7 +24,7 @@ const PackageInfoNotAvailablePopover = () => {
         icon={<HelpIcon />}
         variant="plain"
         aria-label="Package description"
-        className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+        className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
       />
     </Popover>
   );

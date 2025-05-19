@@ -158,7 +158,7 @@ const UserInfo = () => {
             eventKey={index}
             title={<TabTitleText>{user.name || 'New user'}</TabTitleText>}
           >
-            <FormGroup isRequired label="Username" className="pf-v5-u-pb-md">
+            <FormGroup isRequired label="Username" className="pf-v6-u-pb-md">
               <ValidatedInputAndTextArea
                 ariaLabel="blueprint user name"
                 value={user.name || ''}
@@ -175,7 +175,7 @@ const UserInfo = () => {
               onChange={(_e, value) => handlePasswordChange(_e, value)}
               hasPassword={user.hasPassword}
             />
-            <FormGroup label="SSH key" className="pf-v5-u-pb-md">
+            <FormGroup label="SSH key" className="pf-v6-u-pb-md">
               <ValidatedInputAndTextArea
                 inputType={'textArea'}
                 ariaLabel="public SSH key"
@@ -193,12 +193,12 @@ const UserInfo = () => {
                 icon={<ExternalLinkAltIcon />}
                 iconPosition="right"
                 href={GENERATING_SSH_KEY_PAIRS_URL}
-                className="pf-v5-u-pl-0"
+                className="pf-v6-u-pl-0"
               >
                 Learn more about SSH keys
               </Button>
             </FormGroup>
-            <FormGroup className="pf-v5-u-pb-md">
+            <FormGroup className="pf-v6-u-pb-md">
               <Checkbox
                 label="Administrator"
                 isChecked={

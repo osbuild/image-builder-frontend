@@ -1,4 +1,4 @@
-.pf-v5-c-wizard__nav-list {
+.pf-v6-c-wizard__nav-list {
     padding-right: 0px;
 }
 
@@ -43,11 +43,11 @@
     height: 1em;
 }
 
-.pf-v5-u-min-width {
+.pf-v6-u-min-width {
     --pf-v5-u-min-width--MinWidth: 18ch;
 }
 
-.pf-v5-u-max-width {
+.pf-v6-u-max-width {
     --pf-v5-u-max-width--MaxWidth: 26rem;
 }
 
@@ -67,7 +67,7 @@ ul.pf-m-plain {
 
 // Targets the alert within the Reviewsteps > content dropdown
 // Removes excess top margin padding
-div.pf-v5-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
+div.pf-v6-c-alert.pf-m-inline.pf-m-plain.pf-m-warning {
     margin-top: 18px;
 
     h4 {
