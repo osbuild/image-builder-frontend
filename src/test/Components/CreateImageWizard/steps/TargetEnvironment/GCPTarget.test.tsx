@@ -150,13 +150,11 @@ describe('Step Upload to Google', () => {
     await waitFor(async () =>
       user.type(await screen.findByTestId('principal'), 'a')
     );
-    expect(await getNextButton()).toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeDisabled();
 
     await waitFor(async () =>
       user.type(await screen.findByTestId('principal'), 'test@test.com')
     );
-    expect(await getNextButton()).not.toHaveClass('pf-m-disabled');
     expect(await getNextButton()).toBeEnabled();
   });
 
