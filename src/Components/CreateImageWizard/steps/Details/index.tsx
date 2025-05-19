@@ -48,7 +48,7 @@ const DetailsStep = () => {
       <Title headingLevel="h1" size="xl">
         Details
       </Title>
-      <Content component="p">
+      <Content>
         Enter a name to identify your blueprint. If no name is entered, the
         images created from this blueprint will use the name of the parent
         blueprint.

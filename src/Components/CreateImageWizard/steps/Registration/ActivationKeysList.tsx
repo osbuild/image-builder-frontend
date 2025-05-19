@@ -262,7 +262,7 @@ const ActivationKeysList = () => {
           <SelectList>{prepareSelectOptions()}</SelectList>
         </Select>
         <Content>
-          <Content component="p">
+          <Content>
             Create and manage activation keys on the <ManageKeysButton />
           </Content>
         </Content>

@@ -19,9 +19,7 @@ const ReviewStep = () => {
       <Title headingLevel="h1" size="xl">
         Review {blueprintName} blueprint
       </Title>
-      {blueprintDescription && (
-        <Content component="p">{blueprintDescription}</Content>
-      )}
+      {blueprintDescription && <Content>{blueprintDescription}</Content>}
       <Review />
     </Form>
   );

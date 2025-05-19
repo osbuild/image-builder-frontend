@@ -10,9 +10,7 @@ const ServicesStep = () => {
       <Title headingLevel="h1" size="xl">
         Systemd services
       </Title>
-      <Content component="p">
-        Enable, disable and mask systemd services.
-      </Content>
+      <Content>Enable, disable and mask systemd services.</Content>
       <ServicesInput />
     </Form>
   );

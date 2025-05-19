@@ -22,7 +22,7 @@ const FileSystemStep = () => {
       <Title headingLevel="h1" size="xl">
         File system configuration
       </Title>
-      <Content component="p">Define the partitioning of the image.</Content>
+      <Content>Define the partitioning of the image.</Content>
       {hasIsoTargetOnly ? (
         <FileSystemAutomaticPartition />
       ) : fileSystemConfigurationType === 'automatic' ? (
