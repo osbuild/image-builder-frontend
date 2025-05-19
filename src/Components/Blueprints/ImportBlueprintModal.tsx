@@ -11,10 +11,9 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
-  Modal,
-  ModalVariant,
   Popover,
 } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
@@ -261,13 +260,12 @@ export const ImportBlueprintModal: React.FunctionComponent<
             }
           >
             <Button
+              icon={<HelpIcon />}
               variant="plain"
               aria-label="About import"
               className="pf-v5-u-pl-sm"
               isInline
-            >
-              <HelpIcon />
-            </Button>
+            />
           </Popover>
         </>
       }

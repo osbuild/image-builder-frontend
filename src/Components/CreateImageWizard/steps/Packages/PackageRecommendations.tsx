@@ -12,9 +12,8 @@ import {
   PanelMainBody,
   Popover,
   Spinner,
-  Text,
-  TextContent,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { HelpIcon, OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
@@ -160,8 +159,8 @@ const PackageRecommendations = () => {
                   Recommended Red Hat packages{' '}
                 </FlexItem>
                 <FlexItem>
-                  <TextContent>
-                    <Text component={TextVariants.small}>
+                  <Content>
+                    <Content component={ContentVariants.small}>
                       <em>Powered by RHEL Lightspeed</em>{' '}
                       <Popover
                         maxWidth="30rem"
@@ -170,19 +169,19 @@ const PackageRecommendations = () => {
                         onShow={() => setIsExpanded(false)}
                         onHide={() => setIsExpanded(false)}
                         bodyContent={
-                          <TextContent>
-                            <Text>
+                          <Content>
+                            <Content component="p">
                               RHEL Lightspeed provides intelligent tools to
                               improve the productivity and efficiency of teams
                               using RHEL.
-                            </Text>
-                          </TextContent>
+                            </Content>
+                          </Content>
                         }
                       >
                         <HelpIcon />
                       </Popover>
-                    </Text>
-                  </TextContent>
+                    </Content>
+                  </Content>
                 </FlexItem>
               </Flex>
             }
@@ -209,12 +208,12 @@ const PackageRecommendations = () => {
             )}
             {isSuccess && data && data?.packages && (
               <>
-                <TextContent>
-                  <Text>
+                <Content>
+                  <Content component="p">
                     Other users commonly add these packages with the ones you
                     selected.
-                  </Text>
-                </TextContent>
+                  </Content>
+                </Content>
                 <Table variant="compact">
                   <Thead>
                     <Tr>

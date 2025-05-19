@@ -2,8 +2,7 @@ import React, { useRef, useState } from 'react';
 
 import {
   Popover,
-  TextContent,
-  Text,
+  Content,
   Button,
   Alert,
   TextInput,
@@ -46,22 +45,21 @@ export const MinimumSizePopover = () => {
     <Popover
       maxWidth="30rem"
       bodyContent={
-        <TextContent>
-          <Text>
+        <Content>
+          <Content component="p">
             Image Builder may extend this size based on requirements, selected
             packages, and configurations.
-          </Text>
-        </TextContent>
+          </Content>
+        </Content>
       }
     >
       <Button
+        icon={<HelpIcon />}
         variant="plain"
         aria-label="File system configuration info"
         aria-describedby="file-system-configuration-info"
         className="pf-v5-u-p-0"
-      >
-        <HelpIcon />
-      </Button>
+      />
     </Popover>
   );
 };

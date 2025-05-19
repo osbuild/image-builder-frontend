@@ -184,6 +184,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
         <TextInputGroupUtilities>
           {selected.length > 0 && (
             <Button
+              icon={<TimesIcon aria-hidden />}
               variant="plain"
               onClick={() => {
                 setInputValue('');
@@ -191,9 +192,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
                 setValidated(ValidatedOptions.error);
               }}
               aria-label="Clear input value"
-            >
-              <TimesIcon aria-hidden />
-            </Button>
+            />
           )}
         </TextInputGroupUtilities>
       </TextInputGroup>
@@ -208,7 +207,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
       <FormGroup
         label="Select region"
         isRequired
-        labelIcon={
+        labelHelp={
           <Popover
             headerContent={<div>Sharing images to other regions</div>}
             bodyContent={
@@ -221,13 +220,12 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
             }
           >
             <Button
+              icon={<HelpIcon />}
               variant="plain"
               aria-label="About regions"
               className="pf-v5-u-pl-sm header-button"
               isInline
-            >
-              <HelpIcon />
-            </Button>
+            />
           </Popover>
         }
       >

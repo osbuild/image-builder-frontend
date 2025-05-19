@@ -1,11 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import {
-  ActionGroup,
-  Button,
-  Modal,
-  ModalVariant,
-} from '@patternfly/react-core';
+import { ActionGroup, Button } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 

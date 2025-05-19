@@ -8,12 +8,11 @@ import {
   ClipboardCopy,
   List,
   ListItem,
-  Modal,
-  ModalVariant,
   Popover,
   PopoverPosition,
   Skeleton,
 } from '@patternfly/react-core';
+import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import {
   ListComponent,
   OrderType,

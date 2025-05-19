@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Text, Title } from '@patternfly/react-core';
+import { Form, Content, Title } from '@patternfly/react-core';
 
 import Review from './ReviewStep';
 
@@ -19,7 +19,9 @@ const ReviewStep = () => {
       <Title headingLevel="h1" size="xl">
         Review {blueprintName} blueprint
       </Title>
-      {blueprintDescription && <Text>{blueprintDescription}</Text>}
+      {blueprintDescription && (
+        <Content component="p">{blueprintDescription}</Content>
+      )}
       <Review />
     </Form>
   );

@@ -13,7 +13,7 @@ import {
   Popover,
   Skeleton,
   Spinner,
-  Text,
+  Content,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -458,7 +458,9 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
         bodyContent={
           <>
             <Alert variant="danger" title={text} isInline isPlain />
-            <Text className="pf-v5-u-pt-md pf-v5-u-pb-md">{reason}</Text>
+            <Content component="p" className="pf-v5-u-pt-md pf-v5-u-pb-md">
+              {reason}
+            </Content>
             <Panel isScrollable>
               <PanelMain maxHeight="25rem">
                 <CodeBlock>
@@ -467,6 +469,7 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
               </PanelMain>
             </Panel>
             <Button
+              icon={<CopyIcon />}
               variant="link"
               onClick={() =>
                 navigator.clipboard.writeText(
@@ -475,7 +478,7 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
               }
               className="pf-v5-u-pl-0 pf-v5-u-mt-md"
             >
-              Copy error text to clipboard <CopyIcon />
+              Copy error text to clipboard
             </Button>
           </>
         }

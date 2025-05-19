@@ -7,8 +7,6 @@ import {
   EmptyStateActions,
   EmptyStateBody,
   EmptyStateFooter,
-  EmptyStateHeader,
-  EmptyStateIcon,
   Flex,
   FlexItem,
   SearchInput,
@@ -227,12 +225,7 @@ const EmptyBlueprintState = ({
   icon,
   action,
 }: emptyBlueprintStateProps) => (
-  <EmptyState variant="sm">
-    <EmptyStateHeader
-      titleText={titleText}
-      headingLevel="h4"
-      icon={<EmptyStateIcon icon={icon} />}
-    />
+  <EmptyState headingLevel="h4" icon={icon} titleText={titleText} variant="sm">
     <EmptyStateBody>{bodyText}</EmptyStateBody>
     <EmptyStateFooter>
       <EmptyStateActions>{action}</EmptyStateActions>

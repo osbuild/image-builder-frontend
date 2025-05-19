@@ -6,7 +6,7 @@ import {
   EmptyStateBody,
   EmptyStateIcon,
   EmptyStateVariant,
-  Text,
+  Content,
   EmptyStateActions,
   EmptyStateHeader,
   EmptyStateFooter,
@@ -30,16 +30,16 @@ type ImagesEmptyStateProps = {
 
 const EmptyBlueprintsImagesTable = () => (
   <Bullseye>
-    <EmptyState variant={EmptyStateVariant.lg}>
-      <EmptyStateHeader
-        icon={<EmptyStateIcon icon={PlusCircleIcon} />}
-        titleText="No images"
-      />
+    <EmptyState
+      icon={PlusCircleIcon}
+      titleText="No images"
+      variant={EmptyStateVariant.lg}
+    >
       <EmptyStateBody>
-        <Text>
+        <Content component="p">
           The selected blueprint version doesn&apos;t contain any images. Build
           an image from this version, or adjust the filters.
-        </Text>
+        </Content>
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
@@ -63,18 +63,18 @@ const EmptyImagesTable = () => {
             headingLevel="h4"
           />
           <EmptyStateBody>
-            <Text>
+            <Content component="p">
               Image builder is a tool for creating deployment-ready customized
               system images: installation disks, virtual machines, cloud
               vendor-specific images, and others. By using image builder, you
               can create these images faster than with manual procedures because
               it eliminates the specific configurations required for each output
               type.
-            </Text>
-            <Text>
+            </Content>
+            <Content component="p">
               There are no images yet. Create a blueprint to create images.
-            </Text>
-            <Text>
+            </Content>
+            <Content component="p">
               <Button
                 component="a"
                 target="_blank"
@@ -86,7 +86,7 @@ const EmptyImagesTable = () => {
               >
                 Learn more about managing images with DNF
               </Button>
-            </Text>
+            </Content>
           </EmptyStateBody>
           <EmptyStateFooter>
             <EmptyStateActions>

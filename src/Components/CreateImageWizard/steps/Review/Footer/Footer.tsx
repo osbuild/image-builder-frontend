@@ -76,9 +76,8 @@ const ReviewWizardFooter = () => {
             onClick={onToggleClick}
             isExpanded={isOpen}
             isDisabled={!isValid}
-            splitButtonOptions={{
-              variant: 'action',
-              items: composeId
+            splitButtonItems={
+              composeId
                 ? [
                     <EditSaveButton
                       key="wizard-edit-save-btn"
@@ -95,8 +94,8 @@ const ReviewWizardFooter = () => {
                       setIsOpen={setIsOpen}
                       isDisabled={!isValid}
                     />,
-                  ],
-            }}
+                  ]
+            }
           />
         )}
         shouldFocusToggleOnSelect

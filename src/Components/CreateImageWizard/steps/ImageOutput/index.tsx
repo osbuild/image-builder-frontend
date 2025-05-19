@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { Text, Form, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import ArchSelect from './ArchSelect';
 import CentOSAcknowledgement from './CentOSAcknowledgement';
@@ -38,12 +38,12 @@ const ImageOutputStep = () => {
       <Title headingLevel="h1" size="xl">
         Image output
       </Title>
-      <Text>
+      <Content component="p">
         Images enables you to create customized blueprints, create custom images
         from the blueprints, and push them to target environments.
         <br />
         <DocumentationButton />
-      </Text>
+      </Content>
       <ReleaseSelect />
       {distribution.match('centos-*') && <CentOSAcknowledgement />}
       <ReleaseLifecycle />

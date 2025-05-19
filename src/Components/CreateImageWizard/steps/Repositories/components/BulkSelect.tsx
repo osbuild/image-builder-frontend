@@ -50,17 +50,15 @@ export function BulkSelect({
           data-testid="bulk-select-toggle"
           ref={toggleRef}
           isDisabled={isDisabled}
-          splitButtonOptions={{
-            items: [
-              <MenuToggleCheckbox
-                id="bulk-select-checkbox"
-                key="split-checkbox"
-                aria-label="Select all"
-                isChecked={allChecked || someChecked ? null : false}
-                onClick={handleSelectPage}
-              />,
-            ],
-          }}
+          splitButtonItems={[
+            <MenuToggleCheckbox
+              id="bulk-select-checkbox"
+              key="split-checkbox"
+              aria-label="Select all"
+              isChecked={allChecked || someChecked ? null : false}
+              onClick={handleSelectPage}
+            />,
+          ]}
           onClick={toggleDropdown}
         >
           {someChecked ? `${selected.size} selected` : null}
