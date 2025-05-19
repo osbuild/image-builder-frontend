@@ -84,7 +84,7 @@ const AboutImageBuilderPopover = () => {
         icon={<HelpIcon />}
         variant="plain"
         aria-label="About image builder"
-        className="pf-v5-u-pl-sm header-button"
+        className="pf-v6-u-pl-sm header-button"
       />
     </Popover>
   );

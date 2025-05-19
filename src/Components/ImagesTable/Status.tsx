@@ -232,7 +232,7 @@ export const ExpiringStatus = ({
       <Status
         icon={statuses['expiring'].icon}
         text={
-          <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200">
+          <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200">
             {text}
           </span>
         }
@@ -248,7 +248,7 @@ export const ExpiringStatus = ({
       <Status
         icon={statuses['expiring'].icon}
         text={
-          <span className="pf-v5-u-font-weight-bold pf-v5-u-warning-color-200">
+          <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200">
             {text}
           </span>
         }
@@ -304,7 +304,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
         Image build failed
       </span>
     ),
@@ -313,14 +313,14 @@ const statuses = {
   pending: {
     icon: <PendingIcon />,
     text: (
-      <span className="pf-v5-u-font-weight-bold">Image build is pending</span>
+      <span className="pf-v6-u-font-weight-bold">Image build is pending</span>
     ),
   },
 
   building: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
         Image build in progress
       </span>
     ),
@@ -329,7 +329,7 @@ const statuses = {
   uploading: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
         Image upload in progress
       </span>
     ),
@@ -338,7 +338,7 @@ const statuses = {
   registering: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
         Cloud registration in progress
       </span>
     ),
@@ -347,7 +347,7 @@ const statuses = {
   running: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
         Running
       </span>
     ),
@@ -360,7 +360,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-success-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-success-color-200">
         Ready
       </span>
     ),
@@ -368,7 +368,7 @@ const statuses = {
 
   expired: {
     icon: <OffIcon />,
-    text: <span className="pf-v5-u-font-weight-bold">Expired</span>,
+    text: <span className="pf-v6-u-font-weight-bold">Expired</span>,
   },
 
   expiring: {
@@ -386,7 +386,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
         Sharing image failed
       </span>
     ),
@@ -399,7 +399,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v5-u-font-weight-bold pf-v5-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
         Failure sharing
       </span>
     ),
@@ -413,8 +413,8 @@ type StatusPropTypes = {
 
 const Status = ({ icon, text }: StatusPropTypes) => {
   return (
-    <Flex className="pf-v5-u-align-items-baseline pf-m-nowrap">
-      <div className="pf-v5-u-mr-sm">{icon}</div>
+    <Flex className="pf-v6-u-align-items-baseline pf-m-nowrap">
+      <div className="pf-v6-u-mr-sm">{icon}</div>
       <p>{text}</p>
     </Flex>
   );
@@ -449,8 +449,8 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
   }
 
   return (
-    <Flex className="pf-v5-u-align-items-baseline pf-m-nowrap">
-      <div className="pf-v5-u-mr-sm">{icon}</div>
+    <Flex className="pf-v6-u-align-items-baseline pf-m-nowrap">
+      <div className="pf-v6-u-mr-sm">{icon}</div>
       <Popover
         data-testid="errorstatus-popover"
         position="bottom"
@@ -458,7 +458,7 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
         bodyContent={
           <>
             <Alert variant="danger" title={text} isInline isPlain />
-            <Content component="p" className="pf-v5-u-pt-md pf-v5-u-pb-md">
+            <Content component="p" className="pf-v6-u-pt-md pf-v6-u-pb-md">
               {reason}
             </Content>
             <Panel isScrollable>
@@ -476,14 +476,14 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
                   reason + '\n\n' + detailsArray.join('\n')
                 )
               }
-              className="pf-v5-u-pl-0 pf-v5-u-mt-md"
+              className="pf-v6-u-pl-0 pf-v6-u-mt-md"
             >
               Copy error text to clipboard
             </Button>
           </>
         }
       >
-        <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
+        <Button variant="link" className="pf-v6-u-p-0 pf-v6-u-font-size-sm">
           <div className="failure-button">{text}</div>
         </Button>
       </Popover>

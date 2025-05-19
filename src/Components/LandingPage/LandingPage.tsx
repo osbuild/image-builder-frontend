@@ -60,7 +60,7 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
-        <Sidebar hasBorder className="pf-v5-u-background-color-100">
+        <Sidebar hasBorder className="pf-v6-u-background-color-100">
           <SidebarPanel
             variant="sticky"
             width={{ default: 'width_25' }}
