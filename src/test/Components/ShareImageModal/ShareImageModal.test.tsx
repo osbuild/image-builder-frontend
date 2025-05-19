@@ -43,7 +43,7 @@ describe('Create Share To Regions Modal', () => {
     const usEast2 = await screen.findByRole('option', {
       name: /us east \(ohio\) us-east-2/i,
     });
-    expect(usEast2).not.toHaveClass('pf-m-disabled');
+    expect(usEast2).toBeEnabled();
     user.click(usEast2);
     await waitFor(() => expect(shareButton).toBeEnabled());
 

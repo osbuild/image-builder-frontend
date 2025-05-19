@@ -184,20 +184,20 @@ describe('Step Upload to AWS', () => {
     await goToAwsStep();
 
     const nextButton = await getNextButton();
-    expect(nextButton).toHaveClass('pf-m-disabled');
+    expect(nextButton).toBeDisabled();
 
     await chooseManualOption();
-    expect(nextButton).toHaveClass('pf-m-disabled');
+    expect(nextButton).toBeDisabled();
 
     await enterAccountId();
-    expect(nextButton).not.toHaveClass('pf-m-disabled');
+    expect(nextButton).toBeEnabled();
 
     await chooseSourcesOption();
-    await waitFor(() => expect(nextButton).toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(nextButton).toBeDisabled());
 
     await getSourceDropdown();
     await selectSource();
-    await waitFor(() => expect(nextButton).not.toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(nextButton).toBeEnabled());
   });
 
   test('compose request share_with_sources field is correct', async () => {
