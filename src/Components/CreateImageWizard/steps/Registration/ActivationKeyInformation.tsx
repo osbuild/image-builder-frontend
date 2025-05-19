@@ -54,7 +54,7 @@ const ActivationKeyInformation = (): JSX.Element => {
               <Popover
                 bodyContent={
                   <Content>
-                    <Content component="p">
+                    <Content>
                       The core repositories for your operating system version
                       are always enabled and do not need to be explicitly added
                       to the activation key.

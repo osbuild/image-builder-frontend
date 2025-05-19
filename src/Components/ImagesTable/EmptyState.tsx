@@ -36,7 +36,7 @@ const EmptyBlueprintsImagesTable = () => (
       variant={EmptyStateVariant.lg}
     >
       <EmptyStateBody>
-        <Content component="p">
+        <Content>
           The selected blueprint version doesn&apos;t contain any images. Build
           an image from this version, or adjust the filters.
         </Content>
@@ -63,7 +63,7 @@ const EmptyImagesTable = () => {
             headingLevel="h4"
           />
           <EmptyStateBody>
-            <Content component="p">
+            <Content>
               Image builder is a tool for creating deployment-ready customized
               system images: installation disks, virtual machines, cloud
               vendor-specific images, and others. By using image builder, you
@@ -71,10 +71,10 @@ const EmptyImagesTable = () => {
               it eliminates the specific configurations required for each output
               type.
             </Content>
-            <Content component="p">
+            <Content>
               There are no images yet. Create a blueprint to create images.
             </Content>
-            <Content component="p">
+            <Content>
               <Button
                 component="a"
                 target="_blank"

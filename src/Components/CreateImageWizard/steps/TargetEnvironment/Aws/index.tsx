@@ -58,11 +58,11 @@ const Aws = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Amazon Web Services
       </Title>
-      <Content component="p">
+      <Content>
         Your image will be uploaded to AWS and shared with the account you
         provide below.
       </Content>
-      <Content component="p">
+      <Content>
         <b>The shared image will expire within 14 days.</b> To permanently
         access the image, copy the image, which will be shared to your account
         by Red Hat, to your own AWS account.

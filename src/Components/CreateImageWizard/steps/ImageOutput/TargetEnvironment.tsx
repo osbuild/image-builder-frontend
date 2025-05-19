@@ -255,7 +255,7 @@ const TargetEnvironment = () => {
                             position="right"
                             bodyContent={
                               <Content>
-                                <Content component="p">
+                                <Content>
                                   An OVA file is a virtual appliance used by
                                   virtualization platforms such as VMware
                                   vSphere. It is a package that contains files
@@ -303,7 +303,7 @@ const TargetEnvironment = () => {
                           position="right"
                           bodyContent={
                             <Content>
-                              <Content component="p">
+                              <Content>
                                 A VMDK file is a virtual disk that stores the
                                 contents of a virtual machine. This disk has to
                                 be imported into vSphere using govc import.vmdk,
@@ -379,14 +379,14 @@ const TargetEnvironment = () => {
                   position="right"
                   headerContent={
                     <Content>
-                      <Content component="p">
+                      <Content>
                         WSL is not officially supported by Red Hat
                       </Content>
                     </Content>
                   }
                   bodyContent={
                     <Content>
-                      <Content component="p">
+                      <Content>
                         You can use RHEL on Microsoft&apos;s Windows Subsystem
                         for Linux (WSL) for development and learning use cases.
                         Red Hat supports WSL under the Validated Software

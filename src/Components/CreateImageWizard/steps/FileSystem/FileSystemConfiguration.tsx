@@ -48,12 +48,12 @@ const FileSystemConfiguration = () => {
         partition?.mountpoint?.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
       <Content>
-        <Content component="p">
+        <Content>
           Create partitions for your image by defining mount points and minimum
           sizes. Image builder creates partitions with a logical volume (LVM)
           device type.
         </Content>
-        <Content component="p">
+        <Content>
           The order of partitions may change when the image is installed in
           order to conform to best practices and ensure functionality.
           <br></br>

@@ -16,7 +16,7 @@ const UsersStep = () => {
       <Title headingLevel="h1" size="xl">
         Users
       </Title>
-      <Content component="p">Add a user to your image.</Content>
+      <Content>Add a user to your image.</Content>
       {users.length !== 0 ? <UserInfo /> : <EmptyUserState />}
     </Form>
   );
