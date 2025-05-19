@@ -81,7 +81,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dl}>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Profile description:
               </Content>
@@ -90,7 +90,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Reference ID:
               </Content>
@@ -110,7 +110,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dl}>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Policy description:
               </Content>
@@ -119,7 +119,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Business objective:
               </Content>
@@ -128,7 +128,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Policy type:
               </Content>
@@ -137,7 +137,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v5-u-min-width"
+                className="pf-v6-u-min-width"
               >
                 Reference ID:
               </Content>

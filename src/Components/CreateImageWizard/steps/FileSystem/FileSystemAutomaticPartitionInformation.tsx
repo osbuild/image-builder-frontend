@@ -22,7 +22,7 @@ const FileSystemAutomaticPartition = () => {
           icon={<ExternalLinkAltIcon />}
           iconPosition="right"
           href={FILE_SYSTEM_CUSTOMIZATION_URL}
-          className="pf-v5-u-pl-0"
+          className="pf-v6-u-pl-0"
         >
           Customizing file systems during the image creation
         </Button>

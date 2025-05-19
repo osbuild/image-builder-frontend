@@ -66,13 +66,13 @@ const ActivationKeyInformation = (): JSX.Element => {
                   icon={<HelpIcon />}
                   variant="plain"
                   aria-label="About additional repositories"
-                  className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
+                  className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
                 />
               </Popover>
             </Content>
             <Content
               component={ContentVariants.dd}
-              className="pf-v5-u-display-flex pf-v5-u-align-items-flex-end"
+              className="pf-v6-u-display-flex pf-v6-u-align-items-flex-end"
             >
               {activationKeyInfo?.body?.additionalRepositories &&
               activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
@@ -109,7 +109,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                   <Button
                     variant="link"
                     aria-label="Show additional repositories"
-                    className="pf-v5-u-pl-0 pf-v5-u-pt-0 pf-v5-u-pb-0"
+                    className="pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0"
                   >
                     {activationKeyInfo.body?.additionalRepositories?.length}{' '}
                     repositories

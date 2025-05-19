@@ -484,7 +484,7 @@ const Packages = () => {
                     </EmptyStateActions>
                     <EmptyStateActions>
                       <Button
-                        className="pf-v5-u-pt-md"
+                        className="pf-v6-u-pt-md"
                         variant="link"
                         isInline
                         component="a"
@@ -1197,11 +1197,11 @@ const Packages = () => {
                     }
                   >
                     <Button
-                      icon={<HelpIcon className="pf-v5-u-ml-xs" />}
+                      icon={<HelpIcon className="pf-v6-u-ml-xs" />}
                       variant="plain"
                       aria-label="About included packages"
                       component="span"
-                      className="pf-v5-u-p-0"
+                      className="pf-v6-u-p-0"
                       isInline
                     />
                   </Popover>

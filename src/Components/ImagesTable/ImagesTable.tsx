@@ -280,7 +280,7 @@ const ImagesTable = () => {
           );
         })}
       </Table>
-      <Toolbar className="pf-v5-u-mb-xl">
+      <Toolbar className="pf-v6-u-mb-xl">
         <ToolbarContent>
           <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
             <Pagination

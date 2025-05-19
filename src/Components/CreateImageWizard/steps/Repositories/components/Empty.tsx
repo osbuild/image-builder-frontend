@@ -41,7 +41,7 @@ const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
           component="a"
           target="_blank"
           href={CONTENT_URL}
-          className="pf-v5-u-mr-sm"
+          className="pf-v6-u-mr-sm"
         >
           Go to repositories
         </Button>

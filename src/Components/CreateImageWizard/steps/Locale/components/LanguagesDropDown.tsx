@@ -171,7 +171,7 @@ const LanguagesDropDown = () => {
           )}`}</HelperTextItem>
         </HelperText>
       )}
-      <LabelGroup numLabels={5} className="pf-v5-u-mt-sm pf-v5-u-w-100">
+      <LabelGroup numLabels={5} className="pf-v6-u-mt-sm pf-v6-u-w-100">
         {languages?.map((lang) => (
           <Label key={lang} onClose={(e) => handleRemoveLang(e, lang)}>
             {lang}

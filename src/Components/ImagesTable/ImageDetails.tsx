@@ -43,7 +43,7 @@ const SourceNotFoundPopover = () => {
           <Alert
             variant="danger"
             title="Source name cannot be loaded"
-            className="pf-v5-u-pb-md"
+            className="pf-v6-u-pb-md"
             isInline
             isPlain
           />
@@ -66,7 +66,7 @@ const SourceNotFoundPopover = () => {
         </>
       }
     >
-      <Button variant="link" className="pf-v5-u-p-0 pf-v5-u-font-size-sm">
+      <Button variant="link" className="pf-v6-u-p-0 pf-v6-u-font-size-sm">
         <div className="failure-button">Source name cannot be loaded</div>
       </Button>
     </Popover>
@@ -151,10 +151,10 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
@@ -223,7 +223,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
       </DescriptionList>
       <>
         <br />
-        <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+        <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
           Cloud Provider Identifiers
         </div>
       </>
@@ -262,10 +262,10 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
@@ -298,10 +298,10 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>Image name</DescriptionListTerm>
           <DescriptionListDescription>
@@ -348,10 +348,10 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
@@ -386,10 +386,10 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
         )}
       </DescriptionList>
       <br />
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>Image name</DescriptionListTerm>
           <DescriptionListDescription>
@@ -428,10 +428,10 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
@@ -450,10 +450,10 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>Object Storage URL</DescriptionListTerm>
           <DescriptionListDescription>
@@ -481,10 +481,10 @@ type AwsS3DetailsPropTypes = {
 export const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
@@ -513,10 +513,10 @@ type LocalDetailsPropTypes = {
 export const LocalDetails = ({ compose }: LocalDetailsPropTypes) => {
   return (
     <>
-      <div className="pf-v5-u-font-weight-bold pf-v5-u-pb-md">
+      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v5-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>

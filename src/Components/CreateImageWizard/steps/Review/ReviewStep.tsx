@@ -153,7 +153,7 @@ const Review = () => {
         data-testid={testId}
         component="span"
         onClick={() => revisitStep(stepId)}
-        className="pf-v5-u-p-0 pf-v5-u-font-weight-bold"
+        className="pf-v6-u-p-0 pf-v6-u-font-weight-bold"
         isInline
       >
         Revisit step
@@ -171,7 +171,7 @@ const Review = () => {
         <Content component={ContentVariants.dl}>
           <Content
             component={ContentVariants.dt}
-            className="pf-v5-u-min-width pf-v5-u-text-align-left"
+            className="pf-v6-u-min-width pf-v6-u-text-align-left"
           >
             <Button variant="link" component="span" isInline>
               {label}

@@ -263,7 +263,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               icon={<HelpIcon />}
               variant="plain"
               aria-label="About import"
-              className="pf-v5-u-pl-sm"
+              className="pf-v6-u-pl-sm"
               isInline
             />
           </Popover>
