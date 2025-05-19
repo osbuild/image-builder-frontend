@@ -52,6 +52,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Snapshots
   await clickNext(); // Custom repositories
   await clickNext(); // Additional packages
+  await clickNext(); // Users
   await clickNext(); // Timezone
   await clickNext(); // Locale
   await clickNext(); // Hostname

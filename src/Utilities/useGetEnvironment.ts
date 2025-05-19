@@ -39,7 +39,6 @@ export const useFlagWithEphemDefault = (
 
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
-    case 'image-builder.users.enabled':
     case 'image-builder.templates.enabled':
       return true;
     default:
