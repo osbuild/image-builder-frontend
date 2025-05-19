@@ -79,7 +79,7 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
     await expect(
-      frame.locator('.pf-v5-c-card__title-text').getByText(blueprintName)
+      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName)
     ).toBeVisible();
   });
 

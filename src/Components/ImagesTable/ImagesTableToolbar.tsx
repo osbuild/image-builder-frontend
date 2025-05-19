@@ -163,7 +163,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             variant="warning"
             style={{
               margin:
-                '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+                '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
             }}
             isInline
             title={`The selected blueprint has errors.`}
@@ -197,7 +197,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
           <Alert
             style={{
               margin:
-                '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+                '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
             }}
             isInline
             title={`The selected blueprint is at version ${selectedBlueprintVersion}, the latest images are at version ${latestImageVersion}. Build images to synchronize with the latest version.`}
@@ -217,7 +217,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             <Alert
               style={{
                 margin:
-                  '0 var(--pf-v5-c-toolbar__content--PaddingRight) 0 var(--pf-v5-c-toolbar__content--PaddingLeft)',
+                  '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
               }}
               isInline
               variant="warning"
