@@ -27,7 +27,7 @@ const InsightsPopover = () => {
       minWidth="30rem"
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             Red Hat Insights client provides actionable intelligence about your
             Red Hat Enterprise Linux environments, helping to identify and
             address operational and vulnerability risks before an issue results
@@ -66,7 +66,7 @@ const RhcPopover = () => {
       minWidth="30rem"
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             Remote host configuration allows Red Hat Enterprise Linux hosts to
             connect to Red Hat Insights. Remote host configuration is required
             to use the Red Hat Insights Remediations service.

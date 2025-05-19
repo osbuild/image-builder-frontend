@@ -52,7 +52,7 @@ const FirstBootStep = () => {
       <Title headingLevel="h1" size="xl">
         First boot configuration
       </Title>
-      <Content component="p">
+      <Content>
         Configure the image with a custom script that will execute on its first
         boot.
       </Content>
@@ -62,7 +62,7 @@ const FirstBootStep = () => {
         isInline
         title="Important: please do not include sensitive information"
       >
-        <Content component="p">
+        <Content>
           Please ensure that your script does not contain any secrets,
           passwords, or other sensitive data. All scripts should be crafted
           without including confidential information to maintain security and

@@ -101,13 +101,13 @@ export const LandingPage = () => {
                 body={
                   <div>
                     <Content>
-                      <Content component="p">
+                      <Content>
                         With RPM-DNF, you can manage the system software by
                         using the DNF package manager and updated RPM packages.
                         This is a simple and adaptive method of managing and
                         modifying the system over its lifecycle.
                       </Content>
-                      <Content component="p">
+                      <Content>
                         <Button
                           component="a"
                           target="_blank"
@@ -136,7 +136,7 @@ export const LandingPage = () => {
                 header={'Immutable (OSTree)'}
                 body={
                   <Content>
-                    <Content component="p">
+                    <Content>
                       With OSTree, you can manage the system software by
                       referencing a central image repository. OSTree images
                       contain a complete operating system ready to be remotely
@@ -145,7 +145,7 @@ export const LandingPage = () => {
                       address changes and keep the operating system unchanged.
                       The updates are quick, and the rollbacks are easy.
                     </Content>
-                    <Content component="p">
+                    <Content>
                       <Button
                         component="a"
                         target="_blank"

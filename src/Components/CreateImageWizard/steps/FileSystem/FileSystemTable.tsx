@@ -46,7 +46,7 @@ export const MinimumSizePopover = () => {
       maxWidth="30rem"
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             Image Builder may extend this size based on requirements, selected
             packages, and configurations.
           </Content>

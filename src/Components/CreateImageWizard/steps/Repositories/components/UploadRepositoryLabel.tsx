@@ -9,7 +9,7 @@ const UploadRepositoryLabel = () => {
   return (
     <Tooltip
       content={
-        <Content component="p">
+        <Content>
           Upload repository: Snapshots will only be taken when new content is
           uploaded.&nbsp;
           <Button

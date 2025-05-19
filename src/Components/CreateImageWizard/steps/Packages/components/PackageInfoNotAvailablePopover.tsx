@@ -9,10 +9,10 @@ const PackageInfoNotAvailablePopover = () => {
       headerContent="Package description"
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             The package description provides more information about the package.
           </Content>
-          <Content component="p">
+          <Content>
             When editing an existing blueprint, you may see a &quot;Not
             available&quot; value in the field because information about
             previously added packages can not be fetched.

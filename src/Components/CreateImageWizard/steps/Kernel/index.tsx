@@ -11,9 +11,7 @@ const KernelStep = () => {
       <Title headingLevel="h1" size="xl">
         Kernel
       </Title>
-      <Content component="p">
-        Customize kernel name and kernel arguments.
-      </Content>
+      <Content>Customize kernel name and kernel arguments.</Content>
       <KernelName />
       <KernelArguments />
     </Form>

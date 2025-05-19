@@ -9,7 +9,7 @@ const FileSystemAutomaticPartition = () => {
   return (
     <Content>
       <Content component={ContentVariants.h3}>Automatic partitioning</Content>
-      <Content component="p">
+      <Content>
         The system automatically partitions your image storage depending on the
         target environment(s). The target environment sometimes dictates all or
         part of the partitioning scheme. Automatic partitioning applies the most

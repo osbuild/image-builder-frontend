@@ -16,7 +16,7 @@ const PackagesStep = () => {
       <Title headingLevel="h1" size="xl">
         Additional packages
       </Title>
-      <Content component="p">
+      <Content>
         Blueprints created with Images include all required packages.
       </Content>
       {!process.env.IS_ON_PREMISE && (

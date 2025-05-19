@@ -170,7 +170,7 @@ const PackageRecommendations = () => {
                         onHide={() => setIsExpanded(false)}
                         bodyContent={
                           <Content>
-                            <Content component="p">
+                            <Content>
                               RHEL Lightspeed provides intelligent tools to
                               improve the productivity and efficiency of teams
                               using RHEL.
@@ -209,7 +209,7 @@ const PackageRecommendations = () => {
             {isSuccess && data && data?.packages && (
               <>
                 <Content>
-                  <Content component="p">
+                  <Content>
                     Other users commonly add these packages with the ones you
                     selected.
                   </Content>

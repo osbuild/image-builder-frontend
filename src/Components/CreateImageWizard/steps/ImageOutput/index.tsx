@@ -38,7 +38,7 @@ const ImageOutputStep = () => {
       <Title headingLevel="h1" size="xl">
         Image output
       </Title>
-      <Content component="p">
+      <Content>
         Images enables you to create customized blueprints, create custom images
         from the blueprints, and push them to target environments.
         <br />

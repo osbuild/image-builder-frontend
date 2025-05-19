@@ -11,9 +11,7 @@ const FirewallStep = () => {
       <Title headingLevel="h1" size="xl">
         Firewall
       </Title>
-      <Content component="p">
-        Customize firewall settings for your image.
-      </Content>
+      <Content>Customize firewall settings for your image.</Content>
       <PortsInput />
       <Services />
     </Form>

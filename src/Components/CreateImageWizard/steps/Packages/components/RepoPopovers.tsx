@@ -8,7 +8,7 @@ export const IncludedReposPopover = () => {
     <Popover
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             View packages from the Red Hat repository and repositories
             you&apos;ve selected.
           </Content>
@@ -33,7 +33,7 @@ export const OtherReposPopover = () => {
     <Popover
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             View packages from popular repositories and your other repositories
             not included in the image.
           </Content>

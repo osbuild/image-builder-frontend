@@ -41,7 +41,7 @@ const AboutImageBuilderPopover = () => {
       headerContent={'About image builder'}
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             Image builder is a tool for creating deployment-ready customized
             system images: installation disks, virtual machines, cloud
             vendor-specific images, and others. By using image builder, you can
@@ -49,7 +49,7 @@ const AboutImageBuilderPopover = () => {
             eliminates the specific configurations required for each output
             type.
           </Content>
-          <Content component="p">
+          <Content>
             <Button
               component="a"
               target="_blank"
@@ -62,7 +62,7 @@ const AboutImageBuilderPopover = () => {
               Image builder for RPM-DNF documentation
             </Button>
           </Content>
-          <Content component="p">
+          <Content>
             <Button
               component="a"
               target="_blank"

@@ -68,12 +68,12 @@ const Azure = () => {
       <Title headingLevel="h1" size="xl">
         Target environment - Microsoft Azure
       </Title>
-      <Content component="p">
+      <Content>
         Upon build, Image Builder sends the image to the selected authorized
         Azure account. The image will be uploaded to the resource group in the
         subscription you specify.
       </Content>
-      <Content component="p">
+      <Content>
         To authorize Image Builder to push images to Microsoft Azure, the
         account owner must configure Image Builder as an authorized application
         for a specific tenant ID and give it the role of &quot;Contributor&quot;

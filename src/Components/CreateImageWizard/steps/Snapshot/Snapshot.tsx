@@ -99,7 +99,7 @@ export default function Snapshot() {
             Use latest content
           </Title>
           <Grid>
-            <Content component="p">
+            <Content>
               Image Builder will automatically use the newest state of
               repositories when building this image.
             </Content>
@@ -149,7 +149,7 @@ export default function Snapshot() {
             </Flex>
           </FormGroup>
           <Grid>
-            <Content component="p">
+            <Content>
               Image Builder will reflect the state of repositories based on the
               selected date when building this image.
             </Content>

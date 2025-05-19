@@ -1189,9 +1189,7 @@ const Packages = () => {
                             </Tbody>
                           </Table>
                         ) : (
-                          <Content component="p">
-                            This group has no packages
-                          </Content>
+                          <Content>This group has no packages</Content>
                         )}
                       </div>
                     }

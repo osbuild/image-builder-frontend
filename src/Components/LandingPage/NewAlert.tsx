@@ -73,7 +73,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
         }
       >
         <Content>
-          <Content component="p">
+          <Content>
             New options for blueprint customization are now available:
           </Content>
           <Content component="ul">

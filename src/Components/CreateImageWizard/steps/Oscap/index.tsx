@@ -114,7 +114,7 @@ const OscapContent = () => {
       <Title headingLevel="h1" size="xl">
         {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
-      <Content component="p">
+      <Content>
         Below you can select which Insights compliance policy or OpenSCAP
         profile your image will be compliant to. Insights compliance allows the
         use of tailored policies, whereas OpenSCAP gives you the default

@@ -22,18 +22,16 @@ const PopoverActivation = () => {
       maxWidth="35rem"
       bodyContent={
         <Content>
-          <Content component="p">
+          <Content>
             Activation keys enable you to register a system with appropriate
             subscriptions, system purpose, and repositories attached.
           </Content>
-          <Content component="p">
+          <Content>
             If using an activation key with command line registration, you must
             provide your organization&apos;s ID.
           </Content>
           {orgId ? (
-            <Content component="p">
-              Your organization&apos;s ID is {orgId}
-            </Content>
+            <Content>Your organization&apos;s ID is {orgId}</Content>
           ) : (
             <Spinner size="md" />
           )}
