@@ -305,14 +305,14 @@ describe('Import modal', () => {
     const reviewButton = await screen.findByRole('button', {
       name: /review and finish/i,
     });
-    await waitFor(() => expect(reviewButton).toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(reviewButton).toBeDisabled());
   };
 
   test('should show alert on invalid blueprint', async () => {
     await setUp();
     await uploadFile(`blueprints.json`, INVALID_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    expect(reviewButton).toHaveClass('pf-m-disabled');
+    expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i
     );
@@ -323,7 +323,7 @@ describe('Import modal', () => {
     await setUp();
     await uploadFile(`blueprints.json`, INVALID_ARCHITECTURE_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    expect(reviewButton).toHaveClass('pf-m-disabled');
+    expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
       /not compatible with the blueprints format\./i
     );
@@ -334,7 +334,7 @@ describe('Import modal', () => {
     await setUp();
     await uploadFile(`blueprints.json`, IGNORE_SUBSCRIPTION_BLUEPRINT);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
     await waitFor(async () =>
@@ -348,7 +348,7 @@ describe('Import modal', () => {
     await setUp();
     await uploadFile(`blueprints.json`, BLUEPRINT_JSON);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
     await waitFor(async () =>
@@ -369,7 +369,7 @@ describe('Import modal', () => {
     await setUp();
     await uploadFile(`blueprints.toml`, ONPREM_BLUEPRINT_TOML);
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
     await waitFor(async () =>
@@ -514,7 +514,7 @@ describe('Import modal', () => {
       ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES
     );
     const reviewButton = screen.getByTestId('import-blueprint-finish');
-    await waitFor(() => expect(reviewButton).not.toHaveClass('pf-m-disabled'));
+    await waitFor(() => expect(reviewButton).toBeEnabled());
     user.click(reviewButton);
 
     // Image output

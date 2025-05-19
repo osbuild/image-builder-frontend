@@ -239,7 +239,7 @@ describe('repository snapshot tab - ', () => {
       name: /select all/i,
     });
     // eslint-disable-next-line testing-library/no-node-access
-    expect(bulkSelectCheckbox.closest('div')).toHaveClass('pf-m-disabled');
+    expect(bulkSelectCheckbox.closest('div')).toBeDisabled();
   });
 
   test('button Reset works to empty the snapshot date', async () => {
