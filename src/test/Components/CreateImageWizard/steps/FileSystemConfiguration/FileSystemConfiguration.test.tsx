@@ -190,9 +190,9 @@ describe('Step File system configuration', () => {
     const mountPointOptions = await within(rows[2]).findByTestId(
       'prefix-select'
     );
-    user.click(mountPointOptions);
-    const varButton = await within(rows[2]).findByRole('option', {
-      name: '/var',
+    await waitFor(() => user.click(mountPointOptions));
+    const varButton = await screen.findByRole('option', {
+      name: /\/var/i,
     });
     user.click(varButton);
     await waitFor(() => expect(mountPointAlerts[0]).not.toBeInTheDocument());

@@ -287,7 +287,7 @@ describe('Blueprints', () => {
     test('paging of blueprints', async () => {
       renderCustomRoutesWithReduxRouter();
 
-      expect(await screen.findAllByRole('checkbox')).toHaveLength(10);
+      expect(await screen.findAllByTestId('blueprint-card')).toHaveLength(10);
 
       const option = await screen.findByTestId('blueprints-pagination-bottom');
       const prevButton = within(option).getByRole('button', {
@@ -311,7 +311,7 @@ describe('Blueprints', () => {
       user.click(button);
 
       await waitFor(() => {
-        expect(screen.getAllByRole('checkbox')).toHaveLength(10);
+        expect(screen.getAllByTestId('blueprint-card')).toHaveLength(10);
       });
     });
   });
