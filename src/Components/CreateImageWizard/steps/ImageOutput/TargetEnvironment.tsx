@@ -10,6 +10,7 @@ import {
   TextContent,
   TextVariants,
   Tile,
+  Tooltip,
 } from '@patternfly/react-core';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
@@ -29,7 +30,10 @@ import {
   selectImageTypes,
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+import {
+  useFlag,
+  useGetEnvironment,
+} from '../../../../Utilities/useGetEnvironment';
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
@@ -52,6 +56,10 @@ const TargetEnvironment = () => {
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
+
+  const showOracleUnavailableWarning = useFlag(
+    'image-builder.oci.unavailable-warning.enabled'
+  );
 
   useEffect(() => {
     if (!isFedoraEnv) prefetchActivationKeys();
@@ -85,6 +93,28 @@ const TargetEnvironment = () => {
       handleToggleEnvironment(env);
     }
   };
+
+  const ociTile = (
+    <Tile
+      className="tile pf-v5-u-mr-sm"
+      title="Oracle Cloud Infrastructure"
+      icon={
+        <img
+          className="provider-icon"
+          src={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
+          alt="Oracle Cloud Infrastructure logo"
+        />
+      }
+      onClick={() => {
+        handleToggleEnvironment('oci');
+      }}
+      onKeyDown={(e) => handleKeyDown(e, 'oci')}
+      isSelected={environments.includes('oci')}
+      isStacked
+      isDisplayLarge
+      isDisabled={showOracleUnavailableWarning}
+    />
+  );
 
   return (
     <FormGroup
@@ -166,26 +196,19 @@ const TargetEnvironment = () => {
               isDisplayLarge
             />
           )}
-          {supportedEnvironments?.includes('oci') && (
-            <Tile
-              className="tile pf-v5-u-mr-sm"
-              title="Oracle Cloud Infrastructure"
-              icon={
-                <img
-                  className="provider-icon"
-                  src={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
-                  alt="Oracle Cloud Infrastructure logo"
-                />
-              }
-              onClick={() => {
-                handleToggleEnvironment('oci');
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'oci')}
-              isSelected={environments.includes('oci')}
-              isStacked
-              isDisplayLarge
-            />
-          )}
+          {supportedEnvironments?.includes('oci') &&
+            showOracleUnavailableWarning && (
+              <Tooltip
+                content={
+                  <div>Oracle Cloud support is temporarily unavailable</div>
+                }
+              >
+                <div>{ociTile}</div>
+              </Tooltip>
+            )}
+          {supportedEnvironments?.includes('oci') &&
+            !showOracleUnavailableWarning &&
+            ociTile}
         </div>
       </FormGroup>
       {supportedEnvironments?.includes('vsphere') && (
