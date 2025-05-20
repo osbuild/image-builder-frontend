@@ -4,6 +4,7 @@ import {
   Button,
   HelperText,
   HelperTextItem,
+  Icon,
   Label,
   LabelGroup,
   TextInputGroup,
@@ -105,7 +106,11 @@ const LabelInput = ({
         />
         <TextInputGroupUtilities>
           <Button
-            icon={<PlusCircleIcon className="pf-v6-u-primary-color-100" />}
+            icon={
+              <Icon status="info">
+                <PlusCircleIcon />
+              </Icon>
+            }
             variant="plain"
             onClick={(e) => handleAddItem(e, inputValue)}
             isDisabled={!inputValue}

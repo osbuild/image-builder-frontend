@@ -8,7 +8,6 @@ import {
   Radio,
   Tooltip,
   Content,
-  ContentVariants,
 } from '@patternfly/react-core';
 import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -121,11 +120,7 @@ const TargetEnvironment = () => {
       label="Select target environments"
       data-testid="target-select"
     >
-      <FormGroup
-        label={
-          <Content component={ContentVariants.small}>Public cloud</Content>
-        }
-      >
+      <FormGroup label={<small>Public cloud</small>}>
         <div className="tiles">
           {supportedEnvironments?.includes('aws') && (
             <Tile
@@ -215,9 +210,7 @@ const TargetEnvironment = () => {
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
-            label={
-              <Content component={ContentVariants.small}>Private cloud</Content>
-            }
+            label={<small>Private cloud</small>}
             className="pf-v6-u-mt-sm"
           >
             <Checkbox
@@ -340,9 +333,7 @@ const TargetEnvironment = () => {
           </FormGroup>
         </>
       )}
-      <FormGroup
-        label={<Content component={ContentVariants.small}>Other</Content>}
-      >
+      <FormGroup label={<small>Other</small>}>
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
             label="Virtualization - Guest image (.qcow2)"
