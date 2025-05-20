@@ -8,6 +8,8 @@ import {
   Content,
   ContentVariants,
   useWizardContext,
+  SplitItem,
+  Split,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
 
@@ -167,25 +169,23 @@ const Review = () => {
 
   const composeExpandable = (label: string, testId: string, stepId: string) => {
     return (
-      <Content>
-        <Content component={ContentVariants.dl}>
-          <Content
-            component={ContentVariants.dt}
-            className="pf-v6-u-min-width pf-v6-u-text-align-left"
-          >
-            <Button variant="link" component="span" isInline>
-              {label}
-            </Button>
-          </Content>
-          <Content component={ContentVariants.dd}>
-            <RevisitStepButton
-              ariaLabel={`Revisit ${label} step`}
-              testId={testId}
-              stepId={stepId}
-            />
-          </Content>
-        </Content>
-      </Content>
+      <Split hasGutter>
+        <SplitItem
+          isFilled
+          className="pf-v6-u-min-width pf-v6-u-text-align-start"
+        >
+          <Button variant="link" component="span" isInline>
+            {label}
+          </Button>
+        </SplitItem>
+        <SplitItem isFilled>
+          <RevisitStepButton
+            ariaLabel={`Revisit ${label} step`}
+            testId={testId}
+            stepId={stepId}
+          />
+        </SplitItem>
+      </Split>
     );
   };
 
@@ -242,48 +242,57 @@ const Review = () => {
               <TargetEnvOciList />
             </StackItem>
           )}
+          {environments.includes('vsphere') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions.vsphere} (.vmdk)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('vsphere-ova') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['vsphere-ova']} (.ova)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('guest-image') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['guest-image']} (.qcow2)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('image-installer') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['image-installer']} (.iso)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('wsl') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  WSL - {targetOptions.wsl} (.tar.gz)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
         </Stack>
-
-        {environments.includes('vsphere') && (
-          <Content>
-            <Content component={ContentVariants.h3}>
-              {targetOptions.vsphere} (.vmdk)
-            </Content>
-            <TargetEnvOtherList />
-          </Content>
-        )}
-        {environments.includes('vsphere-ova') && (
-          <Content>
-            <Content component={ContentVariants.h3}>
-              {targetOptions['vsphere-ova']} (.ova)
-            </Content>
-            <TargetEnvOtherList />
-          </Content>
-        )}
-        {environments.includes('guest-image') && (
-          <Content>
-            <Content component={ContentVariants.h3}>
-              {targetOptions['guest-image']} (.qcow2)
-            </Content>
-            <TargetEnvOtherList />
-          </Content>
-        )}
-        {environments.includes('image-installer') && (
-          <Content>
-            <Content component={ContentVariants.h3}>
-              {targetOptions['image-installer']} (.iso)
-            </Content>
-            <TargetEnvOtherList />
-          </Content>
-        )}
-        {environments.includes('wsl') && (
-          <Content>
-            <Content component={ContentVariants.h3}>
-              WSL - {targetOptions.wsl} (.tar.gz)
-            </Content>
-            <TargetEnvOtherList />
-          </Content>
-        )}
       </ExpandableSection>
       {isRhel(distribution) && (
         <ExpandableSection
