@@ -4,11 +4,9 @@ import {
   Button,
   EmptyState,
   EmptyStateBody,
-  EmptyStateIcon,
   EmptyStateVariant,
   Content,
   EmptyStateActions,
-  EmptyStateHeader,
   EmptyStateFooter,
   Bullseye,
 } from '@patternfly/react-core';
@@ -55,13 +53,14 @@ const EmptyBlueprintsImagesTable = () => (
 const EmptyImagesTable = () => {
   return (
     <Bullseye>
-      <EmptyState variant={EmptyStateVariant.lg} data-testid="empty-state">
+      <EmptyState
+        variant={EmptyStateVariant.lg}
+        data-testid="empty-state"
+        titleText="No images"
+        headingLevel="h4"
+        icon={SearchIcon}
+      >
         <>
-          <EmptyStateHeader
-            titleText="No images"
-            icon={<EmptyStateIcon icon={SearchIcon} />}
-            headingLevel="h4"
-          />
           <EmptyStateBody>
             <Content>
               Image builder is a tool for creating deployment-ready customized
