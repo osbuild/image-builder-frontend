@@ -31,7 +31,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
 
       - name: Install front-end dependencies
         run: npm ci
@@ -48,8 +48,11 @@ jobs:
 
       - name: Start front-end server
         run: |
-          npm run start:stage &
-          npx wait-on https://localhost:1337
+          npm run start:federated &
+          npx wait-on http://localhost:8003/apps/image-builder/
+
+      - name: Run testing proxy
+        run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name consoledot-testing-proxy quay.io/dvagner/consoledot-testing-proxy
 
       - name: Run front-end Playwright tests
         env:
