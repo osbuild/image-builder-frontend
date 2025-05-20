@@ -48,6 +48,7 @@ type ComplianceSelectOptionPropType = {
 type ComplianceSelectOptionValueType = {
   policyID: string;
   profileID: string;
+  title: string;
   toString: () => string;
 };
 
@@ -59,6 +60,7 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   ): ComplianceSelectOptionValueType => ({
     policyID,
     profileID,
+    title,
     toString: () => title || 'None',
   });
 
@@ -234,7 +236,7 @@ const PolicySelector = () => {
             changeCompliance({
               profileID: selection.profileID,
               policyID: selection.policyID,
-              policyTitle: selection.toString(),
+              policyTitle: selection.title,
             })
           );
         });
@@ -287,7 +289,7 @@ const PolicySelector = () => {
         } as React.CSSProperties
       }
     >
-      {policyID === undefined ? 'None' : policyTitle || 'Select a policy'}
+      {policyTitle || 'None'}
     </MenuToggle>
   );
 

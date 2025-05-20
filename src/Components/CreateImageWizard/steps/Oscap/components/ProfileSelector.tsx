@@ -329,11 +329,11 @@ const ProfileSelector = () => {
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
-          value={profileID ? profileID : inputValue || 'None'}
+          value={profileID ? profileID : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
           autoComplete="off"
-          placeholder="Select a profile"
+          placeholder="None"
           isExpanded={isOpen}
         />
 
