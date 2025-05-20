@@ -53,9 +53,7 @@ const selectWslTarget = async () => {
 
 const selectProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(
-    /select a profile/i
-  );
+  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
@@ -66,9 +64,7 @@ const selectProfile = async () => {
 
 const selectDifferentProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(
-    /select a profile/i
-  );
+  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis2Profile = await screen.findByText(
@@ -79,9 +75,7 @@ const selectDifferentProfile = async () => {
 
 const selectNone = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(
-    /select a profile/i
-  );
+  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
   await waitFor(async () => user.click(await screen.findByText(/none/i)));
@@ -197,7 +191,7 @@ describe('Step OpenSCAP', () => {
       /OpenSCAP profiles are not compatible with WSL images/i
     );
     await waitFor(() => {
-      expect(screen.getByPlaceholderText(/select a profile/i)).toBeEnabled();
+      expect(screen.getByPlaceholderText(/none/i)).toBeEnabled();
     });
   });
 
