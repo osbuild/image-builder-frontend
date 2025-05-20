@@ -108,9 +108,7 @@ const removeService = async (service: string) => {
 
 const selectProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(
-    /select a profile/i
-  );
+  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
