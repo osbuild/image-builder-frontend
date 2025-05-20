@@ -44,7 +44,7 @@ const goToComplianceStep = async () => {
   });
   await waitFor(() => user.click(button));
   // wait until all policies are loaded
-  await screen.findByText('Select a policy');
+  await screen.findByText('None');
 };
 
 const goToReviewStep = async () => {
@@ -67,7 +67,7 @@ const goToReviewStep = async () => {
 const selectPolicy = async () => {
   const user = userEvent.setup();
 
-  const policyMenu = await screen.findByText('Select a policy');
+  const policyMenu = await screen.findByText('None');
   await waitFor(() => user.click(policyMenu));
 
   const cisl2 = await screen.findByRole('option', {
