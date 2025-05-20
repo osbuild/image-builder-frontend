@@ -9,6 +9,7 @@ import {
   useWizardContext,
   PageSection,
   PageSectionTypes,
+  Flex,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
@@ -115,71 +116,73 @@ export const CustomWizardFooter = ({
   const cancelBtnID = 'wizard-cancel-btn';
   return (
     <WizardFooterWrapper>
-      <Button
-        variant="primary"
-        onClick={() => {
-          if (!process.env.IS_ON_PREMISE) {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-              module: AMPLITUDE_MODULE_NAME,
-              button_id: nextBtnID,
-              active_step_id: activeStep.id,
-            });
-          }
-          if (!beforeNext || beforeNext()) goToNextStep();
-        }}
-        isDisabled={disableNext}
-      >
-        Next
-      </Button>
-      <Button
-        variant="secondary"
-        onClick={() => {
-          if (!process.env.IS_ON_PREMISE) {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-              module: AMPLITUDE_MODULE_NAME,
-              button_id: backBtnID,
-              active_step_id: activeStep.id,
-            });
-          }
-          goToPrevStep();
-        }}
-        isDisabled={disableBack || false}
-      >
-        Back
-      </Button>
-      {optional && (
+      <Flex columnGap={{ default: 'columnGapSm' }}>
         <Button
-          variant="tertiary"
+          variant="primary"
           onClick={() => {
             if (!process.env.IS_ON_PREMISE) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
                 module: AMPLITUDE_MODULE_NAME,
-                button_id: reviewAndFinishBtnID,
+                button_id: nextBtnID,
                 active_step_id: activeStep.id,
               });
             }
-            if (!beforeNext || beforeNext()) goToStepById('step-review');
+            if (!beforeNext || beforeNext()) goToNextStep();
           }}
           isDisabled={disableNext}
         >
-          Review and finish
+          Next
         </Button>
-      )}
-      <Button
-        variant="link"
-        onClick={() => {
-          if (!process.env.IS_ON_PREMISE) {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-              module: AMPLITUDE_MODULE_NAME,
-              button_id: cancelBtnID,
-              active_step_id: activeStep.id,
-            });
-          }
-          close();
-        }}
-      >
-        Cancel
-      </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            if (!process.env.IS_ON_PREMISE) {
+              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                module: AMPLITUDE_MODULE_NAME,
+                button_id: backBtnID,
+                active_step_id: activeStep.id,
+              });
+            }
+            goToPrevStep();
+          }}
+          isDisabled={disableBack || false}
+        >
+          Back
+        </Button>
+        {optional && (
+          <Button
+            variant="tertiary"
+            onClick={() => {
+              if (!process.env.IS_ON_PREMISE) {
+                analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                  module: AMPLITUDE_MODULE_NAME,
+                  button_id: reviewAndFinishBtnID,
+                  active_step_id: activeStep.id,
+                });
+              }
+              if (!beforeNext || beforeNext()) goToStepById('step-review');
+            }}
+            isDisabled={disableNext}
+          >
+            Review and finish
+          </Button>
+        )}
+        <Button
+          variant="link"
+          onClick={() => {
+            if (!process.env.IS_ON_PREMISE) {
+              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
+                module: AMPLITUDE_MODULE_NAME,
+                button_id: cancelBtnID,
+                active_step_id: activeStep.id,
+              });
+            }
+            close();
+          }}
+        >
+          Cancel
+        </Button>
+      </Flex>
     </WizardFooterWrapper>
   );
 };
