@@ -47,7 +47,7 @@ export const PasswordValidatedInput = ({
   };
 
   return (
-    <FormGroup label="Password" className="pf-v5-u-pb-md">
+    <FormGroup label="Password" className="pf-v6-u-pb-md">
       <>
         <InputGroup>
           <InputGroupItem isFill>
@@ -74,11 +74,11 @@ export const PasswordValidatedInput = ({
       </>
       <FormHelperText>
         <HelperText component="ul">
-          <HelperTextItem variant={ruleLength} component="li" hasIcon>
+          <HelperTextItem variant={ruleLength} component="li">
             Password must be at least 6 characters long
           </HelperTextItem>
           {environments.includes('azure') && (
-            <HelperTextItem variant={ruleCharacters} component="li" hasIcon>
+            <HelperTextItem variant={ruleCharacters} component="li">
               Must include at least 3 of the following: lowercase letters,
               uppercase letters, numbers, symbols
             </HelperTextItem>

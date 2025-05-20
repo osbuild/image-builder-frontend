@@ -7,9 +7,9 @@ import {
   Spinner,
   Flex,
   FlexItem,
-  Modal,
   Button,
 } from '@patternfly/react-core';
+import { Modal } from '@patternfly/react-core/deprecated';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
@@ -192,7 +192,7 @@ export const CreateSaveButton = ({
             <FlexItem>
               <Spinner
                 style={
-                  { '--pf-v5-c-spinner--Color': '#fff' } as React.CSSProperties
+                  { '--pf-v6-c-spinner--Color': '#fff' } as React.CSSProperties
                 }
                 isInline
                 size="md"

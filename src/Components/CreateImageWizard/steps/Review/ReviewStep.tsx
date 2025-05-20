@@ -5,14 +5,11 @@ import {
   ExpandableSection,
   Stack,
   StackItem,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-  TextVariants,
+  Content,
+  ContentVariants,
   useWizardContext,
+  SplitItem,
+  Split,
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
 
@@ -152,15 +149,16 @@ const Review = () => {
   }: RevisitStepButtonProps) => {
     return (
       <Button
+        icon={<ArrowRightIcon />}
         variant="link"
         aria-label={ariaLabel}
         data-testid={testId}
         component="span"
         onClick={() => revisitStep(stepId)}
-        className="pf-v5-u-p-0 pf-v5-u-font-weight-bold"
+        className="pf-v6-u-p-0 pf-v6-u-font-weight-bold"
         isInline
       >
-        Revisit step <ArrowRightIcon />
+        Revisit step
       </Button>
     );
   };
@@ -171,25 +169,23 @@ const Review = () => {
 
   const composeExpandable = (label: string, testId: string, stepId: string) => {
     return (
-      <TextContent>
-        <TextList component={TextListVariants.dl}>
-          <TextListItem
-            component={TextListItemVariants.dt}
-            className="pf-v5-u-min-width pf-v5-u-text-align-left"
-          >
-            <Button variant="link" component="span" isInline>
-              {label}
-            </Button>
-          </TextListItem>
-          <TextListItem component={TextListItemVariants.dd}>
-            <RevisitStepButton
-              ariaLabel={`Revisit ${label} step`}
-              testId={testId}
-              stepId={stepId}
-            />
-          </TextListItem>
-        </TextList>
-      </TextContent>
+      <Split hasGutter>
+        <SplitItem
+          isFilled
+          className="pf-v6-u-min-width pf-v6-u-text-align-start"
+        >
+          <Button variant="link" component="span" isInline>
+            {label}
+          </Button>
+        </SplitItem>
+        <SplitItem isFilled>
+          <RevisitStepButton
+            ariaLabel={`Revisit ${label} step`}
+            testId={testId}
+            stepId={stepId}
+          />
+        </SplitItem>
+      </Split>
     );
   };
 
@@ -246,48 +242,57 @@ const Review = () => {
               <TargetEnvOciList />
             </StackItem>
           )}
+          {environments.includes('vsphere') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions.vsphere} (.vmdk)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('vsphere-ova') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['vsphere-ova']} (.ova)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('guest-image') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['guest-image']} (.qcow2)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('image-installer') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['image-installer']} (.iso)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
+          {environments.includes('wsl') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  WSL - {targetOptions.wsl} (.tar.gz)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
         </Stack>
-
-        {environments.includes('vsphere') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
-              {targetOptions.vsphere} (.vmdk)
-            </Text>
-            <TargetEnvOtherList />
-          </TextContent>
-        )}
-        {environments.includes('vsphere-ova') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
-              {targetOptions['vsphere-ova']} (.ova)
-            </Text>
-            <TargetEnvOtherList />
-          </TextContent>
-        )}
-        {environments.includes('guest-image') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
-              {targetOptions['guest-image']} (.qcow2)
-            </Text>
-            <TargetEnvOtherList />
-          </TextContent>
-        )}
-        {environments.includes('image-installer') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
-              {targetOptions['image-installer']} (.iso)
-            </Text>
-            <TargetEnvOtherList />
-          </TextContent>
-        )}
-        {environments.includes('wsl') && (
-          <TextContent>
-            <Text component={TextVariants.h3}>
-              WSL - {targetOptions.wsl} (.tar.gz)
-            </Text>
-            <TargetEnvOtherList />
-          </TextContent>
-        )}
       </ExpandableSection>
       {isRhel(distribution) && (
         <ExpandableSection

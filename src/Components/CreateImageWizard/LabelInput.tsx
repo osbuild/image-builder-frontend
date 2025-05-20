@@ -4,6 +4,7 @@ import {
   Button,
   HelperText,
   HelperTextItem,
+  Icon,
   Label,
   LabelGroup,
   TextInputGroup,
@@ -105,21 +106,23 @@ const LabelInput = ({
         />
         <TextInputGroupUtilities>
           <Button
+            icon={
+              <Icon status="info">
+                <PlusCircleIcon />
+              </Icon>
+            }
             variant="plain"
             onClick={(e) => handleAddItem(e, inputValue)}
             isDisabled={!inputValue}
             aria-label={ariaLabel}
-          >
-            <PlusCircleIcon className="pf-v5-u-primary-color-100" />
-          </Button>
+          />
           <Button
+            icon={<TimesIcon />}
             variant="plain"
             onClick={handleClear}
             isDisabled={!inputValue}
             aria-label="Clear input"
-          >
-            <TimesIcon />
-          </Button>
+          />
         </TextInputGroupUtilities>
       </TextInputGroup>
       {errorText && (
@@ -131,7 +134,7 @@ const LabelInput = ({
         <LabelGroup
           categoryName={requiredCategoryName}
           numLabels={20}
-          className="pf-v5-u-mt-sm pf-v5-u-w-100"
+          className="pf-v6-u-mt-sm pf-v6-u-w-100"
         >
           {requiredList.map((item) => (
             <Label key={item} isCompact>
@@ -140,7 +143,7 @@ const LabelInput = ({
           ))}
         </LabelGroup>
       )}
-      <LabelGroup numLabels={20} className="pf-v5-u-mt-sm pf-v5-u-w-100">
+      <LabelGroup numLabels={20} className="pf-v6-u-mt-sm pf-v6-u-w-100">
         {list?.map((item) => (
           <Label
             key={item}

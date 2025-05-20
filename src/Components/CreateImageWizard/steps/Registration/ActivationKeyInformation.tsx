@@ -3,13 +3,8 @@ import React from 'react';
 import {
   Alert,
   Spinner,
-  Text,
-  TextContent,
-  TextList,
-  TextListItem,
-  TextListItemVariants,
-  TextListVariants,
-  TextVariants,
+  Content,
+  ContentVariants,
 } from '@patternfly/react-core';
 import { Button, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
@@ -38,57 +33,46 @@ const ActivationKeyInformation = (): JSX.Element => {
     <>
       {isFetchingActivationKeyInfo && <Spinner size="lg" />}
       {isSuccessActivationKeyInfo && (
-        <TextContent>
-          <TextList component={TextListVariants.dl}>
-            <TextListItem component={TextListItemVariants.dt}>
-              Name:
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {activationKey}
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>
-              Role:
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
+        <Content>
+          <Content component={ContentVariants.dl}>
+            <Content component={ContentVariants.dt}>Name:</Content>
+            <Content component={ContentVariants.dd}>{activationKey}</Content>
+            <Content component={ContentVariants.dt}>Role:</Content>
+            <Content component={ContentVariants.dd}>
               {activationKeyInfo?.body?.role || 'Not defined'}
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>
-              SLA:
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
+            </Content>
+            <Content component={ContentVariants.dt}>SLA:</Content>
+            <Content component={ContentVariants.dd}>
               {activationKeyInfo?.body?.serviceLevel || 'Not defined'}
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>
-              Usage:
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
+            </Content>
+            <Content component={ContentVariants.dt}>Usage:</Content>
+            <Content component={ContentVariants.dd}>
               {activationKeyInfo?.body?.usage || 'Not defined'}
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dt}>
+            </Content>
+            <Content component={ContentVariants.dt}>
               Additional repositories:
               <Popover
                 bodyContent={
-                  <TextContent>
-                    <Text>
+                  <Content>
+                    <Content>
                       The core repositories for your operating system version
                       are always enabled and do not need to be explicitly added
                       to the activation key.
-                    </Text>
-                  </TextContent>
+                    </Content>
+                  </Content>
                 }
               >
                 <Button
+                  icon={<HelpIcon />}
                   variant="plain"
                   aria-label="About additional repositories"
-                  className="pf-v5-u-pl-sm pf-v5-u-pt-0 pf-v5-u-pb-0"
-                >
-                  <HelpIcon />
-                </Button>
+                  className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
+                />
               </Popover>
-            </TextListItem>
-            <TextListItem
-              component={TextListItemVariants.dd}
-              className="pf-v5-u-display-flex pf-v5-u-align-items-flex-end"
+            </Content>
+            <Content
+              component={ContentVariants.dd}
+              className="pf-v6-u-display-flex pf-v6-u-align-items-flex-end"
             >
               {activationKeyInfo?.body?.additionalRepositories &&
               activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
@@ -96,10 +80,10 @@ const ActivationKeyInformation = (): JSX.Element => {
                   position="right"
                   minWidth="30rem"
                   bodyContent={
-                    <TextContent>
-                      <Text component={TextVariants.h3}>
+                    <Content>
+                      <Content component={ContentVariants.h3}>
                         Additional repositories
-                      </Text>
+                      </Content>
                       <Table
                         aria-label="Additional repositories table"
                         variant="compact"
@@ -119,13 +103,13 @@ const ActivationKeyInformation = (): JSX.Element => {
                           )}
                         </Tbody>
                       </Table>
-                    </TextContent>
+                    </Content>
                   }
                 >
                   <Button
                     variant="link"
                     aria-label="Show additional repositories"
-                    className="pf-v5-u-pl-0 pf-v5-u-pt-0 pf-v5-u-pb-0"
+                    className="pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0"
                   >
                     {activationKeyInfo.body?.additionalRepositories?.length}{' '}
                     repositories
@@ -134,20 +118,16 @@ const ActivationKeyInformation = (): JSX.Element => {
               ) : (
                 'None'
               )}
-            </TextListItem>
-          </TextList>
-        </TextContent>
+            </Content>
+          </Content>
+        </Content>
       )}
       {isErrorActivationKeyInfo && (
-        <TextContent>
-          <TextList component={TextListVariants.dl}>
-            <TextListItem component={TextListItemVariants.dt}>
-              Name:
-            </TextListItem>
-            <TextListItem component={TextListItemVariants.dd}>
-              {activationKey}
-            </TextListItem>
-          </TextList>
+        <Content>
+          <Content component={ContentVariants.dl}>
+            <Content component={ContentVariants.dt}>Name:</Content>
+            <Content component={ContentVariants.dd}>{activationKey}</Content>
+          </Content>
           <br />
           <Alert
             title="Information about the activation key unavailable"
@@ -158,7 +138,7 @@ const ActivationKeyInformation = (): JSX.Element => {
             Information about the activation key cannot be loaded. Please check
             the key was not removed and try again later.
           </Alert>
-        </TextContent>
+        </Content>
       )}
     </>
   );
