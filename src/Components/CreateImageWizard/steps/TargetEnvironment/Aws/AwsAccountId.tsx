@@ -42,7 +42,7 @@ export const AwsAccountId = () => {
         />
       </FormGroup>
       <HelperText>
-        <HelperTextItem component="div" variant="indeterminate">
+        <HelperTextItem component="div" variant="default">
           This is the account associated with the source.
         </HelperTextItem>
       </HelperText>
