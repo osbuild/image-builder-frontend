@@ -9,6 +9,7 @@ import {
   FormGroup,
   CodeBlock,
   CodeBlockCode,
+  Icon,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
@@ -90,9 +91,12 @@ import PopoverActivation from '../Registration/components/PopoverActivation';
 
 const ExpirationWarning = () => {
   return (
-    <div className="pf-v6-u-mr-sm pf-v6-u-font-size-sm pf-v6-u-warning-color-200">
-      <ExclamationTriangleIcon /> Expires 14 days after creation
-    </div>
+    <Content className="pf-v6-u-font-size-sm pf-v6-u-text-color-status-warning">
+      <Icon status="warning" isInline>
+        <ExclamationTriangleIcon />
+      </Icon>{' '}
+      Expires 14 days after creation
+    </Content>
   );
 };
 
@@ -486,6 +490,7 @@ export const ContentList = () => {
               >
                 <Button
                   variant="link"
+                  isInline
                   aria-label="Snapshot method"
                   className="pf-v6-u-p-0"
                   isDisabled={noRepositoriesSelected || isLoading || isError}
