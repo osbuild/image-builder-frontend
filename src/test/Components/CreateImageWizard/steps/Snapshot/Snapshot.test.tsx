@@ -182,7 +182,7 @@ describe('repository snapshot tab - ', () => {
     // Check date was recorded correctly
     expect(snapshotMethodElement).toHaveTextContent('State as of 2024-04-22');
     // Check that the button is clickable (has 1 repo selected)
-    expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'false');
+    expect(snapshotMethodElement).toBeEnabled();
 
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -218,7 +218,7 @@ describe('repository snapshot tab - ', () => {
     expect(snapshotMethodElement).toHaveTextContent('State as of 2024-04-22');
     // Check that the button is clickable (has 1 repo selected)
     await waitFor(() => {
-      expect(snapshotMethodElement).toHaveAttribute('aria-disabled', 'true');
+      expect(snapshotMethodElement).toBeDisabled();
     });
   });
 
@@ -239,7 +239,7 @@ describe('repository snapshot tab - ', () => {
       name: /select all/i,
     });
     // eslint-disable-next-line testing-library/no-node-access
-    expect(bulkSelectCheckbox.closest('div')).toBeDisabled();
+    expect(bulkSelectCheckbox.closest('div')).toHaveClass('pf-m-disabled');
   });
 
   test('button Reset works to empty the snapshot date', async () => {
@@ -250,12 +250,12 @@ describe('repository snapshot tab - ', () => {
     // Check the Next button is enabled
     const nextBtn = await screen.findByRole('button', { name: /Next/i });
     await waitFor(() => {
-      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
+      expect(nextBtn).toBeEnabled();
     });
     // reset fills in the current date, so it should not be disabled
     await clickReset();
     await waitFor(() => {
-      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
+      expect(nextBtn).toBeEnabled();
     });
 
     const dateStr = yyyyMMddFormat(new Date());
@@ -313,11 +313,11 @@ describe('repository snapshot tab - ', () => {
     await selectUseTemplate();
     const nextBtn = await getNextButton();
     await waitFor(() => {
-      expect(nextBtn).toHaveAttribute('aria-disabled', 'true');
+      expect(nextBtn).toBeDisabled();
     });
     await selectFirstTemplate();
     await waitFor(() => {
-      expect(nextBtn).toHaveAttribute('aria-disabled', 'false');
+      expect(nextBtn).toBeEnabled();
     });
     await clickNext();
     await goToReviewStep();
