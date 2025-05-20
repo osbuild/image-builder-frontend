@@ -108,7 +108,7 @@ const Aws = () => {
                 />
               </FormGroup>
               <HelperText>
-                <HelperTextItem component="div" variant="indeterminate">
+                <HelperTextItem component="div" variant="default">
                   Images are built in the default region but can be copied to
                   other regions later.
                 </HelperTextItem>
