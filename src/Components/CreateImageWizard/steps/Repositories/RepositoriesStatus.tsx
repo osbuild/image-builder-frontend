@@ -38,13 +38,17 @@ const getLastIntrospection = (
 
   if (timeDeltaInSeconds <= 60) {
     return 'A few seconds ago';
-  } else if (timeDeltaInSeconds <= 60 * 60) {
-    return 'A few minutes ago';
-  } else if (timeDeltaInSeconds <= 60 * 60 * 24) {
-    return 'A few hours ago';
-  } else {
-    return timestampToDisplayString(repoIntrospections);
   }
+
+  if (timeDeltaInSeconds <= 60 * 60) {
+    return 'A few minutes ago';
+  }
+
+  if (timeDeltaInSeconds <= 60 * 60 * 24) {
+    return 'A few hours ago';
+  }
+
+  return timestampToDisplayString(repoIntrospections);
 };
 
 type RepositoryStatusProps = {
@@ -71,7 +75,9 @@ const RepositoriesStatus = ({
         </span>
       </>
     );
-  } else if (repoStatus === 'Invalid' || repoStatus === 'Unavailable') {
+  }
+
+  if (repoStatus === 'Invalid' || repoStatus === 'Unavailable') {
     return (
       <>
         <Popover
@@ -161,7 +167,9 @@ const RepositoriesStatus = ({
         </Popover>
       </>
     );
-  } else if (repoStatus === 'Pending') {
+  }
+
+  if (repoStatus === 'Pending') {
     return (
       <>
         <Spinner isInline />{' '}
