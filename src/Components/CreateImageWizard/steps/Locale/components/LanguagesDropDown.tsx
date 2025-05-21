@@ -28,6 +28,24 @@ import sortfn from '../../../../../Utilities/sortfn';
 import { useLocaleValidation } from '../../../utilities/useValidation';
 import { languagesList } from '../languagesList';
 
+const parseLanguageOption = (language: string) => {
+  try {
+    const [region] = language.split('.');
+    const [languageCode, countryCode] = region.split('_');
+
+    const languageName = new Intl.DisplayNames(['en'], {
+      type: 'language',
+    }).of(languageCode);
+    const countryName = new Intl.DisplayNames(['en'], { type: 'region' }).of(
+      countryCode
+    );
+
+    return `${languageName} - ${countryName} (${language})`;
+  } catch {
+    return language;
+  }
+};
+
 const LanguagesDropDown = () => {
   const languages = useAppSelector(selectLanguages);
   const dispatch = useAppDispatch();
@@ -42,19 +60,28 @@ const LanguagesDropDown = () => {
   const [filterValue, setFilterValue] = useState<string>('');
   const [selectOptions, setSelectOptions] = useState<string[]>(languagesList);
 
+  type ParsedLanguages = { [key: string]: string };
+
+  const parsedLanguages = languagesList.reduce((acc, language) => {
+    acc[language] = parseLanguageOption(language);
+    return acc;
+  }, {} as ParsedLanguages);
+
   useEffect(() => {
-    let filteredLanguages = languagesList;
+    let filteredLanguages = Object.entries(parsedLanguages);
 
     if (filterValue) {
-      filteredLanguages = languagesList.filter((language: string) =>
-        String(language).toLowerCase().includes(filterValue.toLowerCase())
+      filteredLanguages = filteredLanguages.filter(([, parsed]) =>
+        String(parsed).toLowerCase().includes(filterValue.toLowerCase())
       );
       if (!isOpen) {
         setIsOpen(true);
       }
     }
     setSelectOptions(
-      filteredLanguages.sort((a, b) => sortfn(a, b, filterValue))
+      filteredLanguages
+        .sort((a, b) => sortfn(a[1], b[1], filterValue))
+        .map(([raw]) => raw)
     );
 
     // This useEffect hook should run *only* on when the filter value changes.
@@ -152,7 +179,7 @@ const LanguagesDropDown = () => {
                   languages?.includes(option) && 'Language already added'
                 }
               >
-                {option}
+                {parseLanguageOption(option)}
               </SelectOption>
             ))
           ) : (
@@ -173,8 +200,12 @@ const LanguagesDropDown = () => {
       )}
       <LabelGroup numLabels={5} className="pf-v6-u-mt-sm pf-v6-u-w-100">
         {languages?.map((lang) => (
-          <Label key={lang} onClose={(e) => handleRemoveLang(e, lang)}>
-            {lang}
+          <Label
+            key={lang}
+            onClose={(e) => handleRemoveLang(e, lang)}
+            isCompact
+          >
+            {parseLanguageOption(lang)}
           </Label>
         ))}
       </LabelGroup>
