@@ -1088,6 +1088,7 @@ export const wizardSlice = createSlice({
       state,
       action: PayloadAction<UserAdministratorPayload>
     ) => {
+      // TODO
       const { index, isAdministrator } = action.payload;
       const user = state.users[index];
 
