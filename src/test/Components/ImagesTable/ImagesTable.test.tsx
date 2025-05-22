@@ -19,8 +19,10 @@ describe('Images Table', () => {
 
     const table = await screen.findByTestId('images-table');
 
-    // make sure the empty-state message isn't present
-    const emptyState = screen.queryByTestId('empty-state');
+    // make sure the empty state message isn't present
+    const emptyState = screen.queryByText(
+      /Image builder is a tool for creating deployment-ready customized system images/i
+    );
     expect(emptyState).not.toBeInTheDocument();
 
     // check table
@@ -228,8 +230,10 @@ describe('Clones table', () => {
 
     const table = await screen.findByTestId('images-table');
 
-    // make sure the empty-state message isn't present
-    const emptyState = screen.queryByTestId('empty-state');
+    // make sure the empty state message isn't present
+    const emptyState = screen.queryByText(
+      /Image builder is a tool for creating deployment-ready customized system images/i
+    );
     expect(emptyState).not.toBeInTheDocument();
 
     // get rows

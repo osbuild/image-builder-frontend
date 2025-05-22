@@ -129,7 +129,6 @@ const TargetEnvironment = () => {
           {supportedEnvironments?.includes('aws') && (
             <Tile
               className="tile pf-v5-u-mr-sm"
-              data-testid="upload-aws"
               title="Amazon Web Services"
               icon={
                 <img
@@ -151,7 +150,6 @@ const TargetEnvironment = () => {
           {supportedEnvironments?.includes('gcp') && (
             <Tile
               className="tile pf-v5-u-mr-sm"
-              data-testid="upload-google"
               title="Google Cloud Platform"
               icon={
                 <img
@@ -175,7 +173,6 @@ const TargetEnvironment = () => {
           {supportedEnvironments?.includes('azure') && (
             <Tile
               className="tile pf-v5-u-mr-sm"
-              data-testid="upload-azure"
               title="Microsoft Azure"
               icon={
                 <img
@@ -235,7 +232,6 @@ const TargetEnvironment = () => {
               aria-label="VMware checkbox"
               id="checkbox-vmware"
               name="VMware"
-              data-testid="checkbox-vmware"
               body={
                 <>
                   {supportedEnvironments?.includes('vsphere-ova') && (
@@ -243,7 +239,6 @@ const TargetEnvironment = () => {
                       name="vsphere-radio"
                       aria-label="VMware vSphere radio button OVA"
                       id="vsphere-radio-ova"
-                      data-testid="radio-vsphere-ova"
                       label={
                         <>
                           Open virtualization format (.ova)
@@ -292,7 +287,6 @@ const TargetEnvironment = () => {
                     name="vsphere-radio"
                     aria-label="VMware vSphere radio button VMDK"
                     id="vsphere-radio-vmdk"
-                    data-testid="radio-vsphere-vmdk"
                     label={
                       <>
                         Virtual disk (.vmdk)
@@ -350,7 +344,6 @@ const TargetEnvironment = () => {
             aria-label="Virtualization guest image checkbox"
             id="checkbox-guest-image"
             name="Virtualization guest image"
-            data-testid="checkbox-guest-image"
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
@@ -363,7 +356,6 @@ const TargetEnvironment = () => {
             aria-label="Bare metal installer checkbox"
             id="checkbox-image-installer"
             name="Bare metal installer"
-            data-testid="checkbox-image-installer"
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
@@ -422,7 +414,6 @@ const TargetEnvironment = () => {
             aria-label="windows subsystem for linux checkbox"
             id="checkbox-wsl"
             name="WSL"
-            data-testid="checkbox-wsl"
           />
         )}
       </FormGroup>
