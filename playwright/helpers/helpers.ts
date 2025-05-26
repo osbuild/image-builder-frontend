@@ -25,6 +25,10 @@ export const closePopupsIfExist = async (page: Page) => {
     page.locator(`button[id^="pendo-close-guide-"]`), // This closes the pendo guide pop-up
     page.locator(`button[id="truste-consent-button"]`), // This closes the trusted consent pop-up
     page.getByLabel('close-notification'), // This closes a one off info notification (May be covered by the toast above, needs recheck.)
+    page
+      .locator('iframe[name="intercom-modal-frame"]')
+      .contentFrame()
+      .getByRole('button', { name: 'Close' }),
   ];
 
   for (const locator of locatorsToCheck) {
