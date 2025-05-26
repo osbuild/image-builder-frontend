@@ -54,7 +54,6 @@ export const RHEL_10 = 'rhel-10';
 export const RHEL_10_BETA = 'rhel-10-beta';
 export const CENTOS_9 = 'centos-9';
 export const CENTOS_10 = 'centos-10';
-export const FEDORA_40 = 'fedora-40';
 export const FEDORA_41 = 'fedora-41';
 export const FEDORA_42 = 'fedora-42';
 export const X86_64 = 'x86_64';
@@ -95,7 +94,6 @@ export const RELEASES = new Map([
 
 export const ON_PREM_RELEASES = new Map([
   [CENTOS_10, 'CentOS Stream 10'],
-  [FEDORA_40, 'Fedora Linux 40'],
   [FEDORA_41, 'Fedora Linux 41'],
   [FEDORA_42, 'Fedora Linux 42'],
   [RHEL_10_BETA, 'Red Hat Enterprise Linux (RHEL) 10 Beta'],
@@ -103,7 +101,6 @@ export const ON_PREM_RELEASES = new Map([
 ]);
 
 export const FEDORA_RELEASES = new Map([
-  [FEDORA_40, 'Fedora Linux 40'],
   [FEDORA_41, 'Fedora Linux 41'],
   [FEDORA_42, 'Fedora Linux 42'],
   [CENTOS_9, 'CentOS Stream 9'],
