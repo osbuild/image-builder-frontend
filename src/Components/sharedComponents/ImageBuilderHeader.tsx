@@ -161,7 +161,7 @@ export const ImageBuilderHeader = ({
             </>
           )}
         </Flex>
-        {!isOnBlueprintsTab && (
+        {!isOnBlueprintsTab && !inWizard && (
           <Flex>
             <FlexItem>
               <Alert
