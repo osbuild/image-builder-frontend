@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import {
   Button,
   Dropdown,
+  Flex,
   MenuToggle,
   WizardFooterWrapper,
   useWizardContext,
@@ -66,61 +67,63 @@ const ReviewWizardFooter = () => {
 
   return (
     <WizardFooterWrapper>
-      <Dropdown
-        isOpen={isOpen}
-        onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
-        toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
-          <MenuToggle
-            variant="primary"
-            ref={toggleRef}
-            onClick={onToggleClick}
-            isExpanded={isOpen}
-            isDisabled={!isValid}
-            splitButtonItems={
-              composeId
-                ? [
-                    <EditSaveButton
-                      key="wizard-edit-save-btn"
-                      getBlueprintPayload={getBlueprintPayload}
-                      setIsOpen={setIsOpen}
-                      blueprintId={composeId}
-                      isDisabled={!isValid}
-                    />,
-                  ]
-                : [
-                    <CreateSaveButton
-                      key="wizard-create-save-btn"
-                      getBlueprintPayload={getBlueprintPayload}
-                      setIsOpen={setIsOpen}
-                      isDisabled={!isValid}
-                    />,
-                  ]
-            }
-          />
-        )}
-        shouldFocusToggleOnSelect
-      >
-        {composeId ? (
-          <EditSaveAndBuildBtn
-            getBlueprintPayload={getBlueprintPayload}
-            setIsOpen={setIsOpen}
-            blueprintId={composeId}
-            isDisabled={!isValid}
-          />
-        ) : (
-          <CreateSaveAndBuildBtn
-            getBlueprintPayload={getBlueprintPayload}
-            setIsOpen={setIsOpen}
-            isDisabled={!isValid}
-          />
-        )}
-      </Dropdown>
-      <Button variant="secondary" onClick={goToPrevStep}>
-        Back
-      </Button>
-      <Button variant="link" onClick={close}>
-        Cancel
-      </Button>
+      <Flex columnGap={{ default: 'columnGapSm' }}>
+        <Dropdown
+          isOpen={isOpen}
+          onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
+          toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
+            <MenuToggle
+              variant="primary"
+              ref={toggleRef}
+              onClick={onToggleClick}
+              isExpanded={isOpen}
+              isDisabled={!isValid}
+              splitButtonItems={
+                composeId
+                  ? [
+                      <EditSaveButton
+                        key="wizard-edit-save-btn"
+                        getBlueprintPayload={getBlueprintPayload}
+                        setIsOpen={setIsOpen}
+                        blueprintId={composeId}
+                        isDisabled={!isValid}
+                      />,
+                    ]
+                  : [
+                      <CreateSaveButton
+                        key="wizard-create-save-btn"
+                        getBlueprintPayload={getBlueprintPayload}
+                        setIsOpen={setIsOpen}
+                        isDisabled={!isValid}
+                      />,
+                    ]
+              }
+            />
+          )}
+          shouldFocusToggleOnSelect
+        >
+          {composeId ? (
+            <EditSaveAndBuildBtn
+              getBlueprintPayload={getBlueprintPayload}
+              setIsOpen={setIsOpen}
+              blueprintId={composeId}
+              isDisabled={!isValid}
+            />
+          ) : (
+            <CreateSaveAndBuildBtn
+              getBlueprintPayload={getBlueprintPayload}
+              setIsOpen={setIsOpen}
+              isDisabled={!isValid}
+            />
+          )}
+        </Dropdown>
+        <Button variant="secondary" onClick={goToPrevStep}>
+          Back
+        </Button>
+        <Button variant="link" onClick={close}>
+          Cancel
+        </Button>
+      </Flex>
     </WizardFooterWrapper>
   );
 };
