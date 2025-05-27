@@ -170,16 +170,16 @@ export const ImageBuilderHeader = ({
                 }
                 className="pf-v5-u-mt-sm pf-v5-u-mb-sm"
               >
-                <TextContent>
-                  <Text>
+                <Content>
+                  <Content>
                     As of July 31, 2025, the hosted edge management service will
                     no longer be supported. This means that pushing image
                     updates to Immutable (OSTree) systems using the Hybrid Cloud
                     Console will be discontinued. For an alternative way to
                     manage edge systems, customers are encouraged to explore Red
                     Hat Edge Manager (RHEM).
-                  </Text>
-                  <Text>
+                  </Content>
+                  <Content>
                     <Button
                       component="a"
                       target="_blank"
@@ -191,8 +191,8 @@ export const ImageBuilderHeader = ({
                     >
                       Red Hat Edge Manager (RHEM) documentation
                     </Button>
-                  </Text>
-                </TextContent>
+                  </Content>
+                </Content>
               </Alert>
             </FlexItem>
           </Flex>
