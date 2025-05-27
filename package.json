@@ -69,7 +69,7 @@
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "5.2.0",
     "eslint-plugin-react-redux": "4.2.2",
-    "eslint-plugin-testing-library": "7.1.1",
+    "eslint-plugin-testing-library": "7.2.2",
     "git-revision-webpack-plugin": "5.0.0",
     "history": "5.3.0",
     "identity-obj-proxy": "3.0.0",
