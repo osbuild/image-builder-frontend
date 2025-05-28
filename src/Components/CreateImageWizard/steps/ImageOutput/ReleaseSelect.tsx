@@ -156,6 +156,11 @@ const ReleaseSelect = () => {
       onClick={onToggleClick}
       isExpanded={isOpen}
       data-testid="release_select"
+      style={
+        {
+          'max-width': '100%',
+        } as React.CSSProperties
+      }
     >
       {releases.get(distribution)}
     </MenuToggle>
