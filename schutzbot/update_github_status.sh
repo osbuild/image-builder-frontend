@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # if a user is logged in to the runner, wait until they're done
-while (( $(who -s | wc -l)  > 0 )); do
+while (( $(who -u | grep -v '?' | wc -l)  > 0 )); do
     echo "Waiting for user(s) to log off"
     sleep 30
 done
