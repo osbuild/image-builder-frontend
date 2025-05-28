@@ -36,6 +36,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
     <>
       <Card
         isSelected={blueprint.id === selectedBlueprintId}
+        isSelectable
         data-testid={`blueprint-card`}
         isCompact
         isClickable
