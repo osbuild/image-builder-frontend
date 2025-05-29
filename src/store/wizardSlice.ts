@@ -748,10 +748,10 @@ export const wizardSlice = createSlice({
     changeSnapshotDate: (state, action: PayloadAction<string>) => {
       const yyyyMMDDRegex = /^\d{4}-\d{2}-\d{2}$/;
       const date = new Date(action.payload);
-      if (action.payload === '') {
-        state.snapshotting.snapshotDate = '';
-      } else if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
+      if (yyyyMMDDRegex.test(action.payload) && !isNaN(date.getTime())) {
         state.snapshotting.snapshotDate = date.toISOString();
+      } else {
+        state.snapshotting.snapshotDate = action.payload;
       }
     },
     changeTemplate: (state, action: PayloadAction<string>) => {
