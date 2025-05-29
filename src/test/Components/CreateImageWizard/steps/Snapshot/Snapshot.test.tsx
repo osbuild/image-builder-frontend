@@ -254,6 +254,12 @@ describe('repository snapshot tab - ', () => {
     });
     // reset fills in the current date, so it should not be disabled
     await clickReset();
+    // works even for invalid values
+    await updateDatePickerWithValue('xxx');
+    await waitFor(() => {
+      expect(nextBtn).toBeDisabled();
+    });
+    await clickReset();
     await waitFor(() => {
       expect(nextBtn).toBeEnabled();
     });
