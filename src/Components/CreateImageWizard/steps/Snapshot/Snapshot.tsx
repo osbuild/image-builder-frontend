@@ -138,10 +138,7 @@ export default function Snapshot() {
                 onClick={async () => {
                   //Patternfly DatePicker seems to only clear error text if value is reset to '',
                   // if you have an invalid date (2000-01-010000) and try to reset it, it must be set to '' first
-                  dispatch(changeSnapshotDate(''));
-                  setTimeout(() => {
-                    dispatch(changeSnapshotDate(yyyyMMddFormat(new Date())));
-                  }, 1);
+                  dispatch(changeSnapshotDate(yyyyMMddFormat(new Date())));
                 }}
               >
                 Reset
