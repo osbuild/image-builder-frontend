@@ -6,7 +6,7 @@ import path from 'path';
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
-import TOML from '@ltd/j-toml';
+import TOML, { Section } from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,11 @@ import { v4 as uuidv4 } from 'uuid';
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
+import type {
+  UpdateWorkerConfigApiArg,
+  WorkerConfigFile,
+  WorkerConfigResponse,
+} from './types';
 
 import {
   mapHostedToOnPrem,
@@ -584,6 +589,92 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
+        queryFn: async () => {
+          try {
+            // we need to ensure that the file is created
+            await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
+              { superuser: 'require' }
+            );
+
+            const config = await cockpit
+              .file('/etc/osbuild-worker/osbuild-worker.toml')
+              .read();
+
+            return { data: TOML.parse(config) };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
+      updateWorkerConfig: builder.mutation<
+        WorkerConfigResponse,
+        UpdateWorkerConfigApiArg
+      >({
+        queryFn: async ({ updateWorkerConfigRequest }) => {
+          try {
+            const workerConfig = cockpit.file(
+              '/etc/osbuild-worker/osbuild-worker.toml',
+              {
+                superuser: 'required',
+              }
+            );
+
+            const contents = await workerConfig.modify((prev: string) => {
+              if (!updateWorkerConfigRequest) {
+                return prev;
+              }
+
+              const merged = {
+                ...TOML.parse(prev),
+                ...updateWorkerConfigRequest,
+              } as WorkerConfigFile;
+
+              const contents: WorkerConfigFile = {};
+              Object.keys(merged).forEach((key: string) => {
+                // this check helps prevent saving empty objects
+                // into the osbuild-worker.toml config file.
+                if (merged[key] !== undefined) {
+                  contents[key] = Section({
+                    ...merged[key],
+                  });
+                }
+              });
+
+              return TOML.stringify(contents, {
+                newline: '\n',
+                newlineAround: 'document',
+              });
+            });
+
+            // TODO: maybe give a warning that we need admin access?
+            await cockpit.spawn(['systemctl', 'stop', 'osbuild-*'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              [
+                'systemctl',
+                'start',
+                'osbuild-composer.socket',
+                'osbuild-composer',
+              ],
+              {
+                superuser: 'require',
+              }
+            );
+
+            return { data: TOML.parse(contents) };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -607,4 +698,6 @@ export const {
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
   useGetComposeStatusQuery,
+  useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
 } = cockpitApi;
