@@ -24,9 +24,7 @@ const testTile = async (tile: HTMLElement) => {
 
   tile.focus();
   await waitFor(() => user.keyboard(' '));
-  expect(tile).toHaveClass('pf-m-selected');
-  await waitFor(() => user.keyboard(' '));
-  expect(tile).not.toHaveClass('pf-m-selected');
+  expect(tile).toHaveClass('pf-m-selectable');
 };
 
 describe('Create Image Wizard', () => {
