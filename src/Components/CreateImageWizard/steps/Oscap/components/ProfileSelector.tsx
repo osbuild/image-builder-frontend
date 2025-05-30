@@ -333,7 +333,7 @@ const ProfileSelector = () => {
           onClick={onInputClick}
           onChange={onTextInputChange}
           autoComplete="off"
-          placeholder="Select a profile"
+          placeholder="None"
           isExpanded={isOpen}
         />
 
