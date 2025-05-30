@@ -1,15 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { MouseEventHandler, useEffect } from 'react';
 
 import {
   Button,
+  Card,
   Checkbox,
   FormGroup,
   Popover,
   Radio,
   Tooltip,
   Content,
+  CardHeader,
+  Gallery,
+  Flex,
+  FlexItem,
+  Title,
 } from '@patternfly/react-core';
-import { Tile } from '@patternfly/react-core/deprecated';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
@@ -32,6 +37,54 @@ import {
   useFlag,
   useGetEnvironment,
 } from '../../../../Utilities/useGetEnvironment';
+
+type TargetEnvironmentProps = {
+  title: string;
+  imageSrc: string;
+  imageAlt: string;
+  isSelected: boolean;
+  isDisabled?: boolean;
+  testId: string;
+  handleOnClick: MouseEventHandler<HTMLElement>;
+  onMouseEnter?: MouseEventHandler<HTMLElement>;
+};
+
+const TargetEnvironmentCard = ({
+  title,
+  imageSrc,
+  imageAlt,
+  handleOnClick,
+  onMouseEnter,
+  isSelected,
+  isDisabled = false,
+  testId,
+}: TargetEnvironmentProps) => {
+  return (
+    <Card
+      data-testid={testId}
+      style={{ textAlign: 'center' } as React.CSSProperties}
+      onClick={handleOnClick}
+      onMouseUp={onMouseEnter}
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      isSelectable
+      isLarge
+    >
+      <CardHeader>
+        <Flex direction={{ default: 'column' }}>
+          <FlexItem>
+            <img className="provider-icon" src={imageSrc} alt={imageAlt} />
+          </FlexItem>
+          <FlexItem>
+            <Title headingLevel="h5" size="md">
+              {title}
+            </Title>
+          </FlexItem>
+        </Flex>
+      </CardHeader>
+    </Card>
+  );
+};
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
@@ -85,31 +138,14 @@ const TargetEnvironment = () => {
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent, env: ImageTypes) => {
-    if (e.key === ' ') {
-      e.preventDefault();
-      handleToggleEnvironment(env);
-    }
-  };
-
   const ociTile = (
-    <Tile
-      className="tile pf-v5-u-mr-sm"
+    <TargetEnvironmentCard
+      testId="upload-oci"
       title="Oracle Cloud Infrastructure"
-      icon={
-        <img
-          className="provider-icon"
-          src={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
-          alt="Oracle Cloud Infrastructure logo"
-        />
-      }
-      onClick={() => {
-        handleToggleEnvironment('oci');
-      }}
-      onKeyDown={(e) => handleKeyDown(e, 'oci')}
+      imageSrc={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
+      imageAlt="Oracle Cloud Infrastructure logo"
+      handleOnClick={() => handleToggleEnvironment('oci')}
       isSelected={environments.includes('oci')}
-      isStacked
-      isDisplayLarge
       isDisabled={showOracleUnavailableWarning}
     />
   );
@@ -121,75 +157,42 @@ const TargetEnvironment = () => {
       data-testid="target-select"
     >
       <FormGroup label={<small>Public cloud</small>}>
-        <div className="tiles">
+        <Gallery hasGutter>
           {supportedEnvironments?.includes('aws') && (
-            <Tile
-              className="tile pf-v6-u-mr-sm"
-              data-testid="upload-aws"
+            <TargetEnvironmentCard
+              testId="upload-aws"
               title="Amazon Web Services"
-              icon={
-                <img
-                  className="provider-icon"
-                  src={'/apps/frontend-assets/partners-icons/aws.svg'}
-                  alt="Amazon Web Services logo"
-                />
-              }
-              onClick={() => {
-                handleToggleEnvironment('aws');
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'aws')}
+              imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
+              imageAlt="Amazon Web Services logo"
+              handleOnClick={() => handleToggleEnvironment('aws')}
               onMouseEnter={() => prefetchSources({ provider: 'aws' })}
               isSelected={environments.includes('aws')}
-              isStacked
-              isDisplayLarge
             />
           )}
           {supportedEnvironments?.includes('gcp') && (
-            <Tile
-              className="tile pf-v6-u-mr-sm"
-              data-testid="upload-google"
+            <TargetEnvironmentCard
+              testId="upload-google"
               title="Google Cloud Platform"
-              icon={
-                <img
-                  className="provider-icon"
-                  src={
-                    '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
-                  }
-                  alt="Google Cloud Platform logo"
-                />
+              imageSrc={
+                '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
               }
-              onClick={() => {
-                handleToggleEnvironment('gcp');
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'gcp')}
-              isSelected={environments.includes('gcp')}
+              imageAlt="Google Cloud Platform logo"
+              handleOnClick={() => handleToggleEnvironment('gcp')}
               onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-              isStacked
-              isDisplayLarge
+              isSelected={environments.includes('gcp')}
             />
           )}
           {supportedEnvironments?.includes('azure') && (
-            <Tile
-              className="tile pf-v6-u-mr-sm"
-              data-testid="upload-azure"
+            <TargetEnvironmentCard
+              testId="upload-azure"
               title="Microsoft Azure"
-              icon={
-                <img
-                  className="provider-icon"
-                  src={
-                    '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
-                  }
-                  alt="Microsoft Azure logo"
-                />
+              imageSrc={
+                '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
               }
-              onClick={() => {
-                handleToggleEnvironment('azure');
-              }}
-              onKeyDown={(e) => handleKeyDown(e, 'azure')}
+              imageAlt="Microsoft Azure logo"
+              handleOnClick={() => handleToggleEnvironment('azure')}
               onMouseEnter={() => prefetchSources({ provider: 'azure' })}
               isSelected={environments.includes('azure')}
-              isStacked
-              isDisplayLarge
             />
           )}
           {supportedEnvironments?.includes('oci') &&
@@ -205,7 +208,7 @@ const TargetEnvironment = () => {
           {supportedEnvironments?.includes('oci') &&
             !showOracleUnavailableWarning &&
             ociTile}
-        </div>
+        </Gallery>
       </FormGroup>
       {supportedEnvironments?.includes('vsphere') && (
         <>
