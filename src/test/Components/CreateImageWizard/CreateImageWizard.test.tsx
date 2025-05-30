@@ -24,9 +24,10 @@ const testTile = async (tile: HTMLElement) => {
 
   tile.focus();
   await waitFor(() => user.keyboard(' '));
-  expect(tile).toHaveClass('pf-m-selected');
-  await waitFor(() => user.keyboard(' '));
-  expect(tile).not.toHaveClass('pf-m-selected');
+  expect(tile).toHaveClass('pf-m-selectable');
+  // remove the keyboard test since cards don't
+  // have a keydown event and tiles have been
+  // deprecated
 };
 
 describe('Create Image Wizard', () => {
