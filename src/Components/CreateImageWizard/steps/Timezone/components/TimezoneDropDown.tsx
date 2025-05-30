@@ -40,9 +40,16 @@ const TimezoneDropDown = () => {
     let filteredTimezones = timezones;
 
     if (filterValue) {
-      filteredTimezones = timezones.filter((timezone: string) =>
-        String(timezone).toLowerCase().includes(filterValue.toLowerCase())
-      );
+      const normalizedFilter = filterValue
+        .toLowerCase()
+        .replace(/[_/]/g, ' ')
+        .trim();
+
+      filteredTimezones = timezones.filter((timezone: string) => {
+        const normalizedTimezone = timezone.toLowerCase().replace(/[_/]/g, ' ');
+        return normalizedTimezone.includes(normalizedFilter);
+      });
+
       if (!isOpen) {
         setIsOpen(true);
       }
