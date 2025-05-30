@@ -142,11 +142,13 @@ const ProfileSelector = () => {
   }
   useEffect(() => {
     let filteredProfiles = profiles;
+    const trimmedFilter = filterValue.toLowerCase().trim();
 
     if (filterValue) {
       filteredProfiles = profiles?.filter((profile: string) =>
-        String(profile).toLowerCase().includes(filterValue.toLowerCase())
+        String(profile).toLowerCase().includes(trimmedFilter)
       );
+
       if (!isOpen) {
         setIsOpen(true);
       }
