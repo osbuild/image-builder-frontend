@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { MouseEventHandler, useEffect } from 'react';
 
 import {
   Button,
@@ -37,6 +37,54 @@ import {
   useFlag,
   useGetEnvironment,
 } from '../../../../Utilities/useGetEnvironment';
+
+type TargetEnvironmentCardProps = {
+  title: string;
+  imageSrc: string;
+  imageAlt: string;
+  isSelected: boolean;
+  isDisabled?: boolean;
+  testId: string;
+  handleOnClick: MouseEventHandler<HTMLElement>;
+  onMouseEnter?: MouseEventHandler<HTMLElement>;
+};
+
+const TargetEnvironmentCard = ({
+  title,
+  imageSrc,
+  imageAlt,
+  handleOnClick,
+  onMouseEnter,
+  isSelected,
+  isDisabled = false,
+  testId,
+}: TargetEnvironmentCardProps) => {
+  return (
+    <Card
+      data-testid={testId}
+      style={{ textAlign: 'center' } as React.CSSProperties}
+      onClick={handleOnClick}
+      onMouseUp={onMouseEnter}
+      isSelected={isSelected}
+      isDisabled={isDisabled}
+      isSelectable
+      isLarge
+    >
+      <CardHeader>
+        <Flex direction={{ default: 'column' }}>
+          <FlexItem>
+            <img className="provider-icon" src={imageSrc} alt={imageAlt} />
+          </FlexItem>
+          <FlexItem>
+            <Title headingLevel="h5" size="md">
+              {title}
+            </Title>
+          </FlexItem>
+        </Flex>
+      </CardHeader>
+    </Card>
+  );
+};
 
 const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
@@ -91,34 +139,15 @@ const TargetEnvironment = () => {
   };
 
   const ociTile = (
-    <Card
-      style={{ textAlign: 'center' } as React.CSSProperties}
-      onClick={() => {
-        handleToggleEnvironment('oci');
-      }}
+    <TargetEnvironmentCard
+      testId="upload-oci"
+      title="Oracle Cloud Infrastructure"
+      imageSrc={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
+      imageAlt="Oracle Cloud Infrastructure logo"
+      handleOnClick={() => handleToggleEnvironment('oci')}
       isSelected={environments.includes('oci')}
-      isSelectable
-      isClickable
       isDisabled={showOracleUnavailableWarning}
-      isLarge
-    >
-      <CardHeader>
-        <Flex direction={{ default: 'column' }}>
-          <FlexItem>
-            <img
-              className="provider-icon"
-              src={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
-              alt="Oracle Cloud Infrastructure logo"
-            />
-          </FlexItem>
-          <FlexItem>
-            <Title headingLevel="h5" size="md">
-              Oracle Cloud Infrastructure
-            </Title>
-          </FlexItem>
-        </Flex>
-      </CardHeader>
-    </Card>
+    />
   );
 
   return (
@@ -130,98 +159,41 @@ const TargetEnvironment = () => {
       <FormGroup label={<small>Public cloud</small>}>
         <Gallery hasGutter>
           {supportedEnvironments?.includes('aws') && (
-            <Card
-              style={{ textAlign: 'center' } as React.CSSProperties}
-              data-testid="upload-aws"
-              onClick={() => {
-                handleToggleEnvironment('aws');
-              }}
+            <TargetEnvironmentCard
+              testId="upload-aws"
+              title="Amazon Web Services"
+              imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
+              imageAlt="Amazon Web Services logo"
+              handleOnClick={() => handleToggleEnvironment('aws')}
               onMouseEnter={() => prefetchSources({ provider: 'aws' })}
               isSelected={environments.includes('aws')}
-              isSelectable
-              isLarge
-            >
-              <CardHeader>
-                <Flex direction={{ default: 'column' }}>
-                  <FlexItem>
-                    <img
-                      className="provider-icon"
-                      src={'/apps/frontend-assets/partners-icons/aws.svg'}
-                      alt="Amazon Web Services logo"
-                    />
-                  </FlexItem>
-                  <FlexItem>
-                    <Title headingLevel="h5" size="md">
-                      Amazon Web Services
-                    </Title>
-                  </FlexItem>
-                </Flex>
-              </CardHeader>
-            </Card>
+            />
           )}
           {supportedEnvironments?.includes('gcp') && (
-            <Card
-              style={{ textAlign: 'center' } as React.CSSProperties}
-              data-testid="upload-google"
-              onClick={() => {
-                handleToggleEnvironment('gcp');
-              }}
-              isSelected={environments.includes('gcp')}
+            <TargetEnvironmentCard
+              testId="upload-google"
+              title="Google Cloud Platform"
+              imageSrc={
+                '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
+              }
+              imageAlt="Google Cloud Platform logo"
+              handleOnClick={() => handleToggleEnvironment('gcp')}
               onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-              isSelectable
-              isLarge
-            >
-              <CardHeader>
-                <Flex direction={{ default: 'column' }}>
-                  <FlexItem>
-                    <img
-                      className="provider-icon"
-                      src={
-                        '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
-                      }
-                      alt="Google Cloud Platform logo"
-                    />
-                  </FlexItem>
-                  <FlexItem>
-                    <Title headingLevel="h5" size="md">
-                      Google Cloud Platform
-                    </Title>
-                  </FlexItem>
-                </Flex>
-              </CardHeader>
-            </Card>
+              isSelected={environments.includes('gcp')}
+            />
           )}
           {supportedEnvironments?.includes('azure') && (
-            <Card
-              style={{ textAlign: 'center' } as React.CSSProperties}
-              data-testid="upload-azure"
-              onClick={() => {
-                handleToggleEnvironment('azure');
-              }}
+            <TargetEnvironmentCard
+              testId="upload-azure"
+              title="Microsoft Azure"
+              imageSrc={
+                '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
+              }
+              imageAlt="Microsoft Azure logo"
+              handleOnClick={() => handleToggleEnvironment('azure')}
               onMouseEnter={() => prefetchSources({ provider: 'azure' })}
               isSelected={environments.includes('azure')}
-              isSelectable
-              isLarge
-            >
-              <CardHeader>
-                <Flex direction={{ default: 'column' }}>
-                  <FlexItem>
-                    <img
-                      className="provider-icon"
-                      src={
-                        '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
-                      }
-                      alt="Microsoft Azure logo"
-                    />
-                  </FlexItem>
-                  <FlexItem>
-                    <Title headingLevel="h5" size="md">
-                      Microsoft Azure
-                    </Title>
-                  </FlexItem>
-                </Flex>
-              </CardHeader>
-            </Card>
+            />
           )}
           {supportedEnvironments?.includes('oci') &&
             showOracleUnavailableWarning && (
