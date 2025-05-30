@@ -120,17 +120,27 @@ describe('Step Firewall', () => {
   test('port in an invalid format cannot be added', async () => {
     await renderCreateMode();
     await goToFirewallStep();
-    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+      )
+    ).not.toBeInTheDocument();
     await addPort('00:wrongFormat');
-    await screen.findByText('Invalid format.');
+    await screen.findByText(
+      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+    );
   });
 
   test('service in an invalid format cannot be added', async () => {
     await renderCreateMode();
     await goToFirewallStep();
-    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('Expected format: <service-name>. Example: sshd')
+    ).not.toBeInTheDocument();
     await addPort('wrong--service');
-    await screen.findByText('Invalid format.');
+    await screen.findByText(
+      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+    );
   });
 
   test('revisit step button on Review works', async () => {
