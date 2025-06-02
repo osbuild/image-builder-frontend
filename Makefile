@@ -1,5 +1,6 @@
 PACKAGE_NAME = cockpit-image-builder
-INSTALL_DIR = /share/cockpit/$(PACKAGE_NAME)
+INSTALL_DIR_BASE = /share/cockpit/
+INSTALL_DIR = $(INSTALL_DIR_BASE)$(PACKAGE_NAME)
 APPSTREAMFILE=org.image-builder.$(PACKAGE_NAME).metainfo.xml
 
 VERSION := $(shell (cd "$(SRCDIR)" && grep "^Version:" cockpit/$(PACKAGE_NAME).spec | sed 's/[^[:digit:]]*\([[:digit:]]\+\).*/\1/'))
@@ -55,6 +56,7 @@ cockpit/devel-uninstall:
 cockpit/devel-install: PREFIX=~/.local
 cockpit/devel-install:
 	PREFIX="~/.local"
+	mkdir -p $(PREFIX)$(INSTALL_DIR_BASE)
 	ln -s $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
 
 .PHONY: cockpit/download
