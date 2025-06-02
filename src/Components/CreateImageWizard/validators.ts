@@ -126,7 +126,7 @@ export const isKernelArgumentValid = (arg: string) => {
 };
 
 export const isPortValid = (port: string) => {
-  return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?:[a-z]{1,6}$/.test(port);
+  return /^(\d{1,5}|[a-z]{1,6})(-\d{1,5})?[:/][a-z]{1,6}$/.test(port);
 };
 
 export const isServiceValid = (service: string) => {
