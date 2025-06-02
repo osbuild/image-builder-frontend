@@ -238,24 +238,24 @@ The symbolic link allows Cockpit to serve the frontend assets from your local de
 making it easier to test changes in real-time without deploying to a remote server.
 
 ```bash
-make devel-install
+make cockpit/devel-install
 ```
 
 ```bash
-make build
+make cockpit/build
 ```
 
 To uninstall and remove the symbolic link, run the following command:
 
 ```bash
-make devel-uninstall
+make cockpit/devel-uninstall
 ```
 
 For convenience, you can run the following to combine all three steps:
 
 
 ```bash
-make cockpit/all
+make cockpit/devel
 ```
 
 ### Quick Reference
