@@ -1075,12 +1075,16 @@ const Packages = () => {
    * @returns Package (or group) is / is not selected
    */
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
-    return (
-      (pkg.type === 'module' &&
-        modules.some((module) => module.name === pkg.module_name) &&
-        !modules.some((p) => p.stream === pkg.stream)) ||
-      false
-    );
+    const isModuleStreamConflict =
+      pkg.type === 'module' &&
+      modules.some((module) => module.name === pkg.module_name) &&
+      !modules.some((p) => p.stream === pkg.stream);
+
+    const isNonModuleDisabledByModule =
+      (!pkg.type || pkg.type === 'package') &&
+      modules.some((module) => module.name === pkg.name);
+
+    return isModuleStreamConflict || isNonModuleDisabledByModule;
   };
 
   const formatDate = (date: string | undefined) => {
