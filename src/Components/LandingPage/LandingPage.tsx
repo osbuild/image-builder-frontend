@@ -9,12 +9,13 @@ import {
   Content,
   TabAction,
   PageSection,
-  Sidebar,
-  SidebarContent,
-  SidebarPanel,
+  Grid,
+  GridItem,
   Title,
   Toolbar,
   ToolbarContent,
+  Flex,
+  FlexItem,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
@@ -54,31 +55,29 @@ export const LandingPage = () => {
     setActiveTabKey(tabIndex);
   };
 
-  const edgeParityFlag = useFlag('edgeParity.image-list');
-
   const imageList = (
     <>
-      <PageSection hasBodyWrapper={false}>
+      <PageSection>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
-        <Sidebar hasBorder className="pf-v6-u-background-color-100">
-          <SidebarPanel
-            variant="sticky"
-            width={{ default: 'width_25' }}
-            className="sidebar-panel"
-          >
-            <Toolbar>
-              <ToolbarContent>
-                <Title headingLevel="h2">{'Blueprints'}</Title>
-              </ToolbarContent>
-            </Toolbar>
-            <SidebarContent hasPadding>
-              <BlueprintsSidebar />
-            </SidebarContent>
-          </SidebarPanel>
-          <SidebarContent>
+        <Grid hasGutter style={{ maxHeight: 'calc(100vh - 130px)', overflow: 'auto' }}>
+          <GridItem span={3}>
+            <Flex direction={{ default: 'column' }} style={{ height: '100%' }}>
+              <FlexItem>
+                <Toolbar>
+                  <ToolbarContent>
+                    <Title headingLevel="h2">{'Blueprints'}</Title>
+                  </ToolbarContent>
+                </Toolbar>
+              </FlexItem>
+              <FlexItem grow={{ default: 'grow' }} style={{ overflow: 'auto' }}>
+                <BlueprintsSidebar />
+              </FlexItem>
+            </Flex>
+          </GridItem>
+          <GridItem span={9}>
             <ImagesTable />
-          </SidebarContent>
-        </Sidebar>
+          </GridItem>
+        </Grid>
       </PageSection>
     </>
   );
@@ -86,64 +85,25 @@ export const LandingPage = () => {
   return (
     <>
       <ImageBuilderHeader activeTab={activeTabKey} />
-      {edgeParityFlag ? (
-        <Tabs
-          className="pf-c-tabs pf-c-page-header pf-c-table"
-          activeKey={activeTabKey}
-          onSelect={handleTabClick}
-        >
-          <Tab
-            eventKey={0}
-            title={<TabTitleText> Conventional (RPM-DNF){''} </TabTitleText>}
-            actions={
-              <HelpPopover
-                header={'Conventional (RPM-DNF)'}
-                body={
-                  <div>
-                    <Content>
-                      <Content>
-                        With RPM-DNF, you can manage the system software by
-                        using the DNF package manager and updated RPM packages.
-                        This is a simple and adaptive method of managing and
-                        modifying the system over its lifecycle.
-                      </Content>
-                      <Content>
-                        <Button
-                          component="a"
-                          target="_blank"
-                          variant="link"
-                          icon={<ExternalLinkAltIcon />}
-                          iconPosition="right"
-                          isInline
-                          href={MANAGING_WITH_DNF_URL}
-                        >
-                          Learn more about managing images with DNF
-                        </Button>
-                      </Content>
-                    </Content>
-                  </div>
-                }
-              />
-            }
-          >
-            {imageList}
-          </Tab>
-          <Tab
-            eventKey={1}
-            title={<TabTitleText>Immutable (OSTree) </TabTitleText>}
-            actions={
-              <HelpPopover
-                header={'Immutable (OSTree)'}
-                body={
+      <Tabs
+        className="pf-c-tabs pf-c-page-header pf-c-table"
+        activeKey={activeTabKey}
+        onSelect={handleTabClick}
+      >
+        <Tab
+          eventKey={0}
+          title={<TabTitleText> Conventional (RPM-DNF){''} </TabTitleText>}
+          actions={
+            <HelpPopover
+              header={'Conventional (RPM-DNF)'}
+              body={
+                <div>
                   <Content>
                     <Content>
-                      With OSTree, you can manage the system software by
-                      referencing a central image repository. OSTree images
-                      contain a complete operating system ready to be remotely
-                      installed at scale. You can track updates to images
-                      through commits and enable secure updates that only
-                      address changes and keep the operating system unchanged.
-                      The updates are quick, and the rollbacks are easy.
+                      With RPM-DNF, you can manage the system software by using
+                      the DNF package manager and updated RPM packages. This is
+                      a simple and adaptive method of managing and modifying the
+                      system over its lifecycle.
                     </Content>
                     <Content>
                       <Button
@@ -153,22 +113,57 @@ export const LandingPage = () => {
                         icon={<ExternalLinkAltIcon />}
                         iconPosition="right"
                         isInline
-                        href={OSTREE_URL}
+                        href={MANAGING_WITH_DNF_URL}
                       >
-                        Learn more about OSTree
+                        Learn more about managing images with DNF
                       </Button>
                     </Content>
                   </Content>
-                }
-              />
-            }
-          >
-            <EdgeImagesTable />
-          </Tab>
-        </Tabs>
-      ) : (
-        imageList
-      )}
+                </div>
+              }
+            />
+          }
+        >
+          {imageList}
+        </Tab>
+        <Tab
+          eventKey={1}
+          title={<TabTitleText>Immutable (OSTree) </TabTitleText>}
+          actions={
+            <HelpPopover
+              header={'Immutable (OSTree)'}
+              body={
+                <Content>
+                  <Content>
+                    With OSTree, you can manage the system software by
+                    referencing a central image repository. OSTree images
+                    contain a complete operating system ready to be remotely
+                    installed at scale. You can track updates to images through
+                    commits and enable secure updates that only address changes
+                    and keep the operating system unchanged. The updates are
+                    quick, and the rollbacks are easy.
+                  </Content>
+                  <Content>
+                    <Button
+                      component="a"
+                      target="_blank"
+                      variant="link"
+                      icon={<ExternalLinkAltIcon />}
+                      iconPosition="right"
+                      isInline
+                      href={OSTREE_URL}
+                    >
+                      Learn more about OSTree
+                    </Button>
+                  </Content>
+                </Content>
+              }
+            />
+          }
+        >
+          <EdgeImagesTable />
+        </Tab>
+      </Tabs>
       <Outlet />
     </>
   );

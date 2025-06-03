@@ -104,6 +104,7 @@ export const ImageBuilderHeader = ({
   );
   const [showImportModal, setShowImportModal] = useState(false);
   const isOnBlueprintsTab = activeTab === 0;
+
   return (
     <>
       {importExportFlag && (
