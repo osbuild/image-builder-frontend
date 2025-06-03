@@ -442,21 +442,20 @@ const FileSystemTable = () => {
       curListItem.id === draggedItemId
     ) {
       return null;
-    } else {
-      const dragId = curListItem.id;
-      const newDraggingToItemIndex = Array.from(
-        bodyRef.current.children
-      ).findIndex((item) => item.id === dragId);
-      if (newDraggingToItemIndex !== draggingToItemIndex && draggedItemId) {
-        const tempItemOrder = moveItem(
-          [...itemOrder],
-          draggedItemId,
-          newDraggingToItemIndex
-        );
-        move(tempItemOrder);
-        setDraggingToItemIndex(newDraggingToItemIndex);
-        setTempItemOrder(tempItemOrder);
-      }
+    }
+    const dragId = curListItem.id;
+    const newDraggingToItemIndex = Array.from(
+      bodyRef.current.children
+    ).findIndex((item) => item.id === dragId);
+    if (newDraggingToItemIndex !== draggingToItemIndex && draggedItemId) {
+      const tempItemOrder = moveItem(
+        [...itemOrder],
+        draggedItemId,
+        newDraggingToItemIndex
+      );
+      move(tempItemOrder);
+      setDraggingToItemIndex(newDraggingToItemIndex);
+      setTempItemOrder(tempItemOrder);
     }
   };
 
