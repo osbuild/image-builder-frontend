@@ -2,13 +2,8 @@ import React, { lazy, Suspense } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 
-import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-import { manageEdgeImagesUrlName } from './Hooks/Edge/useGetNotificationProp';
-import {
-  useFlag,
-  useFlagWithEphemDefault,
-} from './Utilities/useGetEnvironment';
+import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
@@ -17,7 +12,6 @@ const ImportImageWizard = lazy(
 const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard'));
 
 export const Router = () => {
-  const edgeParityFlag = useFlag('edgeParity.image-list');
   const importExportFlag = useFlagWithEphemDefault(
     'image-builder.import.enabled'
   );
@@ -52,18 +46,6 @@ export const Router = () => {
           </Suspense>
         }
       />
-      {edgeParityFlag && (
-        <Route
-          path={`/${manageEdgeImagesUrlName}/:imageId`}
-          element={<EdgeImageDetail />}
-        >
-          <Route path="*" element={<EdgeImageDetail />} />
-          <Route
-            path={`versions/:imageVersionId/*`}
-            element={<EdgeImageDetail />}
-          />
-        </Route>
-      )}
     </Routes>
   );
 };
