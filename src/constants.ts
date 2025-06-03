@@ -35,13 +35,8 @@ export const MANAGING_WITH_DNF_URL =
   'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/managing_software_with_the_dnf_tool/index';
 export const CREATING_IMAGES_WITH_IB_SERVICE_URL =
   'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
-export const RHEM_DOCUMENTATION_URL =
-  'https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.5/html/managing_device_fleets_with_the_red_hat_edge_manager/index';
-export const OSTREE_URL = 'https://ostreedev.github.io/ostree/';
 export const DOCUMENTATION_URL =
   'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index';
-export const CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL =
-  'https://docs.redhat.com/en/documentation/edge_management/2022/html/create_rhel_for_edge_images_and_configure_automated_management/index';
 export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 export const GENERATING_SSH_KEY_PAIRS_URL =
