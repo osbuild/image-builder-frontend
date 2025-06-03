@@ -59,20 +59,14 @@ export const LandingPage = () => {
     <>
       <PageSection>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
-        <Grid hasGutter style={{ maxHeight: 'calc(100vh - 130px)', overflow: 'auto' }}>
+        <Grid hasGutter>
           <GridItem span={3}>
-            <Flex direction={{ default: 'column' }} style={{ height: '100%' }}>
-              <FlexItem>
-                <Toolbar>
-                  <ToolbarContent>
-                    <Title headingLevel="h2">{'Blueprints'}</Title>
-                  </ToolbarContent>
-                </Toolbar>
-              </FlexItem>
-              <FlexItem grow={{ default: 'grow' }} style={{ overflow: 'auto' }}>
-                <BlueprintsSidebar />
-              </FlexItem>
-            </Flex>
+            <Toolbar>
+              <ToolbarContent>
+                <Title headingLevel="h2">{'Blueprints'}</Title>
+              </ToolbarContent>
+            </Toolbar>
+            <BlueprintsSidebar />
           </GridItem>
           <GridItem span={9}>
             <ImagesTable />
