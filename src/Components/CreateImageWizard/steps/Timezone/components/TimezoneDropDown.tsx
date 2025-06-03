@@ -43,10 +43,14 @@ const TimezoneDropDown = () => {
       const normalizedFilter = filterValue
         .toLowerCase()
         .replace(/[_/]/g, ' ')
+        .replace(/\s+/g, ' ')
         .trim();
 
       filteredTimezones = timezones.filter((timezone: string) => {
-        const normalizedTimezone = timezone.toLowerCase().replace(/[_/]/g, ' ');
+        const normalizedTimezone = timezone
+          .toLowerCase()
+          .replace(/[_/]/g, ' ')
+          .replace(/\s+/g, ' ');
         return normalizedTimezone.includes(normalizedFilter);
       });
 
