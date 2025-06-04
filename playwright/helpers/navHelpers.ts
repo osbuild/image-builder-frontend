@@ -24,3 +24,15 @@ export const ibFrame = (page: Page): FrameLocator | Page => {
     .locator('iframe[name="cockpit1\\:localhost\\/cockpit-image-builder"]')
     .contentFrame();
 };
+
+/**
+ * Navigates to the landing page of the Image Builder
+ * @param page - the page object
+ */
+export const navigateToLandingPage = async (page: Page) => {
+  if (isHosted()) {
+    await page.goto('/insights/image-builder/landing');
+  } else {
+    await page.goto('/cockpit-image-builder');
+  }
+};

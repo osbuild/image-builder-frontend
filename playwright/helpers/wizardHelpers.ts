@@ -1,7 +1,7 @@
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
 import { isHosted } from './helpers';
-import { ibFrame } from './navHelpers';
+import { ibFrame, navigateToLandingPage } from './navHelpers';
 
 /**
  * Clicks the create button, handles the modal, clicks the button again and selecets the BP in the list
@@ -65,6 +65,7 @@ export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
 /**
  * Delete the blueprint with the given name
  * Will locate to the Image Builder page and search for the blueprint first
+ * If the blueprint is not found, it will fail gracefully
  * @param page - the page object
  * @param blueprintName - the name of the blueprint to delete
  */
@@ -73,10 +74,21 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
     'Delete the blueprint with name: ' + blueprintName,
     async () => {
       // Locate back to the Image Builder page every time because the test can fail at any stage
+      await navigateToLandingPage(page);
       const frame = await ibFrame(page);
       await frame
         .getByRole('textbox', { name: 'Search input' })
         .fill(blueprintName);
+      // Check if no blueprints found -> that means no blueprint was created -> fail gracefully and do not raise error
+      try {
+        await expect(
+          frame.getByRole('heading', { name: 'No blueprints found' })
+        ).toBeVisible({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
+        return; // Fail gracefully, no blueprint to delete
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      } catch (error) {
+        // If the No BP heading was not found, it means the blueprint (possibly) was created -> continue with deletion
+      }
       await frame
         .getByTestId('blueprint-card')
         .getByText(blueprintName)
