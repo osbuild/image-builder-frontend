@@ -1,3 +1,55 @@
+@font-face {
+  font-family: 'Red Hat Text';
+  font-style: normal;
+  font-weight: 400 500;
+  src: url('/cockpit/static/fonts/RedHatText/RedHatTextVF.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Text';
+  font-style: italic;
+  font-weight: 400 500;
+  src: url('/cockpit/static/fonts/RedHatText/RedHatTextVF-Italic.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 400 700;
+  src: url('/cockpit/static/fonts/RedHatDisplay/RedHatDisplayVF.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: italic;
+  font-weight: 400 700;
+  src: url('/cockpit/static/fonts/RedHatDisplay/RedHatDisplayVF-Italic.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: RedHatText;
+  font-style: normal;
+  font-weight: 400;
+  src: url('/cockpit/static/fonts/RedHatText-Regular.woff2') format('woff2');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: RedHatText;
+  font-style: normal;
+  font-weight: 700;
+  src: url('/cockpit/static/fonts/RedHatText-Medium.woff2') format('woff2');
+  font-display: fallback;
+}
+
 // Override as PF Page doesn't allow empty masthead and sidebar
 @media (min-width: 75rem) {
   .pf-v6-c-page.no-masthead-sidebar {
