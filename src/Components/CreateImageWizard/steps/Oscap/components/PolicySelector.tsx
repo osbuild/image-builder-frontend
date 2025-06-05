@@ -18,7 +18,6 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   Filesystem,
-  Services,
   useGetOscapCustomizationsForPolicyQuery,
   useLazyGetOscapCustomizationsForPolicyQuery,
 } from '../../../../../store/imageBuilderApi';
@@ -30,9 +29,6 @@ import {
   addPartition,
   changeFileSystemConfigurationType,
   clearPartitions,
-  changeEnabledServices,
-  changeMaskedServices,
-  changeDisabledServices,
   clearKernelAppend,
   addKernelArg,
 } from '../../../../../store/wizardSlice';
@@ -89,7 +85,8 @@ const PolicySelector = () => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { clearCompliancePackages, handlePackages } = useSelectorHandlers();
+  const { clearCompliancePackages, handlePackages, handleServices } =
+    useSelectorHandlers();
 
   const {
     data: policies,
@@ -168,12 +165,6 @@ const PolicySelector = () => {
         dispatch(addPartition(partition));
       }
     }
-  };
-
-  const handleServices = (services: Services | undefined) => {
-    dispatch(changeEnabledServices(services?.enabled || []));
-    dispatch(changeMaskedServices(services?.masked || []));
-    dispatch(changeDisabledServices(services?.disabled || []));
   };
 
   const handleKernelAppend = (kernelAppend: string | undefined) => {
