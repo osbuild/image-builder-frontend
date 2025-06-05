@@ -36,7 +36,6 @@ import {
   changeCompliance,
   selectDistribution,
   selectComplianceProfileID,
-  addPackage,
   addPartition,
   changeFileSystemConfigurationType,
   clearPartitions,
@@ -108,7 +107,7 @@ const ProfileSelector = () => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
-  const { clearCompliancePackages } = useSelectorHandlers();
+  const { clearCompliancePackages, handlePackages } = useSelectorHandlers();
 
   const {
     data: profiles,
@@ -184,23 +183,6 @@ const ProfileSelector = () => {
     dispatch(clearKernelAppend());
     setInputValue('');
     setFilterValue('');
-  };
-
-  const handlePackages = (
-    oldOscapPackages: string[],
-    newOscapPackages: string[]
-  ) => {
-    clearCompliancePackages(oldOscapPackages);
-
-    for (const pkg of newOscapPackages) {
-      dispatch(
-        addPackage({
-          name: pkg,
-          summary: 'Required by chosen OpenSCAP profile',
-          repository: 'distro',
-        })
-      );
-    }
   };
 
   const handlePartitions = (oscapPartitions: Filesystem[]) => {
@@ -283,7 +265,11 @@ const ProfileSelector = () => {
           const oscapPartitions = response.filesystem || [];
           const newOscapPackages = response.packages || [];
           handlePartitions(oscapPartitions);
-          handlePackages(oldOscapPackages, newOscapPackages);
+          handlePackages(
+            oldOscapPackages,
+            newOscapPackages,
+            'Required by chosen OpenSCAP profile'
+          );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
           dispatch(
