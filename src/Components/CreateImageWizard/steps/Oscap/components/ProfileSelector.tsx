@@ -31,7 +31,6 @@ import {
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
 import {
-  addKernelArg,
   changeCompliance,
   changeFileSystemConfigurationType,
   clearKernelAppend,
@@ -40,8 +39,6 @@ import {
   selectDistribution,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
-import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/components/FileSystemTable';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {
@@ -75,6 +72,7 @@ const ProfileSelector = () => {
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
   const {
     clearCompliancePackages,
+    handleKernelAppend,
     handlePackages,
     handlePartitions,
     handleServices,
@@ -185,17 +183,6 @@ const ProfileSelector = () => {
     dispatch(clearKernelAppend());
     setInputValue('');
     setFilterValue('');
-  };
-
-  const handleKernelAppend = (kernelAppend: string | undefined) => {
-    dispatch(clearKernelAppend());
-
-    if (kernelAppend) {
-      const kernelArgsArray = kernelAppend.split(' ');
-      for (const arg of kernelArgsArray) {
-        dispatch(addKernelArg(arg));
-      }
-    }
   };
 
   const onInputClick = () => {

@@ -20,7 +20,6 @@ import {
   useLazyGetOscapCustomizationsForPolicyQuery,
 } from '../../../../../store/imageBuilderApi';
 import {
-  addKernelArg,
   changeCompliance,
   changeFileSystemConfigurationType,
   clearKernelAppend,
@@ -83,6 +82,7 @@ const PolicySelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     clearCompliancePackages,
+    handleKernelAppend,
     handlePackages,
     handlePartitions,
     handleServices,
@@ -143,17 +143,6 @@ const PolicySelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
-  };
-
-  const handleKernelAppend = (kernelAppend: string | undefined) => {
-    dispatch(clearKernelAppend());
-
-    if (kernelAppend) {
-      const kernelArgsArray = kernelAppend.split(' ');
-      for (const arg of kernelArgsArray) {
-        dispatch(addKernelArg(arg));
-      }
-    }
   };
 
   const applyChanges = (selection: ComplianceSelectOptionValueType) => {
