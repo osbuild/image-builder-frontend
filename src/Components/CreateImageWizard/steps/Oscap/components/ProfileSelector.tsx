@@ -31,17 +31,12 @@ import {
   Filesystem,
   OpenScap,
   OpenScapProfile,
-  Services,
 } from '../../../../../store/imageBuilderApi';
 import {
   addKernelArg,
-  addPackage,
   addPartition,
   changeCompliance,
-  changeDisabledServices,
-  changeEnabledServices,
   changeFileSystemConfigurationType,
-  changeMaskedServices,
   clearKernelAppend,
   clearPartitions,
   selectComplianceProfileID,
@@ -82,7 +77,8 @@ const ProfileSelector = () => {
   >([]);
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
-  const { clearCompliancePackages, handlePackages } = useSelectorHandlers();
+  const { clearCompliancePackages, handlePackages, handleServices } =
+    useSelectorHandlers();
 
   const {
     data: profiles,
@@ -211,12 +207,6 @@ const ProfileSelector = () => {
         dispatch(addPartition(partition));
       }
     }
-  };
-
-  const handleServices = (services: Services | undefined) => {
-    dispatch(changeEnabledServices(services?.enabled || []));
-    dispatch(changeMaskedServices(services?.masked || []));
-    dispatch(changeDisabledServices(services?.disabled || []));
   };
 
   const handleKernelAppend = (kernelAppend: string | undefined) => {

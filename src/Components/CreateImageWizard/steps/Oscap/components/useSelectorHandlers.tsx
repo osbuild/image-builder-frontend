@@ -1,5 +1,12 @@
 import { useAppDispatch } from '../../../../../store/hooks';
-import { addPackage, removePackage } from '../../../../../store/wizardSlice';
+import { Services } from '../../../../../store/imageBuilderApi';
+import {
+  addPackage,
+  changeDisabledServices,
+  changeEnabledServices,
+  changeMaskedServices,
+  removePackage,
+} from '../../../../../store/wizardSlice';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
@@ -28,8 +35,15 @@ export const useSelectorHandlers = () => {
     }
   };
 
+  const handleServices = (services: Services | undefined) => {
+    dispatch(changeEnabledServices(services?.enabled || []));
+    dispatch(changeMaskedServices(services?.masked || []));
+    dispatch(changeDisabledServices(services?.disabled || []));
+  };
+
   return {
     clearCompliancePackages,
     handlePackages,
+    handleServices,
   };
 };
