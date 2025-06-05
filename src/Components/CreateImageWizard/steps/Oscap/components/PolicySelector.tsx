@@ -24,7 +24,6 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import {
   addKernelArg,
-  addPackage,
   addPartition,
   changeCompliance,
   changeDisabledServices,
@@ -93,7 +92,7 @@ const PolicySelector = () => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { clearCompliancePackages } = useSelectorHandlers();
+  const { clearCompliancePackages, handlePackages } = useSelectorHandlers();
 
   const {
     data: policies,
@@ -150,23 +149,6 @@ const PolicySelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
-  };
-
-  const handlePackages = (
-    oldOscapPackages: string[],
-    newOscapPackages: string[]
-  ) => {
-    clearCompliancePackages(oldOscapPackages);
-
-    for (const pkg of newOscapPackages) {
-      dispatch(
-        addPackage({
-          name: pkg,
-          summary: 'Required by chosen compliance policy',
-          repository: 'distro',
-        })
-      );
-    }
   };
 
   const handlePartitions = (oscapPartitions: Filesystem[]) => {
@@ -226,7 +208,11 @@ const PolicySelector = () => {
           const oscapPartitions = response.filesystem || [];
           const newOscapPackages = response.packages || [];
           handlePartitions(oscapPartitions);
-          handlePackages(oldOscapPackages, newOscapPackages);
+          handlePackages(
+            oldOscapPackages,
+            newOscapPackages,
+            'Required by chosen compliance policy'
+          );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
           dispatch(
