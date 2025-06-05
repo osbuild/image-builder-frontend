@@ -3,12 +3,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { Filesystem, Services } from '../../../../../store/imageBuilderApi';
 import {
+  addKernelArg,
   addPackage,
   addPartition,
   changeDisabledServices,
   changeEnabledServices,
   changeFileSystemConfigurationType,
   changeMaskedServices,
+  clearKernelAppend,
   clearPartitions,
   removePackage,
 } from '../../../../../store/wizardSlice';
@@ -21,6 +23,17 @@ export const useSelectorHandlers = () => {
   const clearCompliancePackages = (oscapPackages: string[]) => {
     for (const pkg of oscapPackages) {
       dispatch(removePackage(pkg));
+    }
+  };
+
+  const handleKernelAppend = (kernelAppend: string | undefined) => {
+    dispatch(clearKernelAppend());
+
+    if (kernelAppend) {
+      const kernelArgsArray = kernelAppend.split(' ');
+      for (const arg of kernelArgsArray) {
+        dispatch(addKernelArg(arg));
+      }
     }
   };
 
@@ -72,6 +85,7 @@ export const useSelectorHandlers = () => {
 
   return {
     clearCompliancePackages,
+    handleKernelAppend,
     handlePackages,
     handleServices,
     handlePartitions,
