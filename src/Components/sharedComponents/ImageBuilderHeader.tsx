@@ -10,6 +10,8 @@ import {
 } from '@redhat-cloud-services/frontend-components';
 import { useNavigate } from 'react-router-dom';
 
+import { RenderComponent } from './RenderComponent';
+
 import {
   CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
@@ -99,12 +101,12 @@ export const ImageBuilderHeader = ({
   const isOnBlueprintsTab = activeTab === 0;
   return (
     <>
-      {importExportFlag && (
+      <RenderComponent when={importExportFlag}>
         <ImportBlueprintModal
           setShowImportModal={setShowImportModal}
           isOpen={showImportModal}
         />
-      )}
+      </RenderComponent>
       <PageHeader>
         <PageHeaderTitle
           className="title"
@@ -117,38 +119,36 @@ export const ImageBuilderHeader = ({
             </>
           }
           actionsContent={
-            <>
-              {!inWizard && (
-                <Flex>
+            <RenderComponent when={!inWizard}>
+              <Flex>
+                <Button
+                  variant="primary"
+                  data-testid="blueprints-create-button"
+                  onClick={() => navigate(resolveRelPath('imagewizard'))}
+                  isDisabled={!isOnBlueprintsTab}
+                  onMouseEnter={() =>
+                    prefetchTargets({
+                      distribution: distribution,
+                    })
+                  }
+                >
+                  Create blueprint
+                </Button>
+                <RenderComponent when={importExportFlag}>
                   <Button
-                    variant="primary"
-                    data-testid="blueprints-create-button"
-                    onClick={() => navigate(resolveRelPath('imagewizard'))}
+                    data-testid="import-blueprint-button"
+                    variant="secondary"
+                    onClick={() => setShowImportModal(true)}
                     isDisabled={!isOnBlueprintsTab}
-                    onMouseEnter={() =>
-                      prefetchTargets({
-                        distribution: distribution,
-                      })
-                    }
                   >
-                    Create blueprint
+                    Import
                   </Button>
-                  {importExportFlag && (
-                    <Button
-                      data-testid="import-blueprint-button"
-                      variant="secondary"
-                      onClick={() => setShowImportModal(true)}
-                      isDisabled={!isOnBlueprintsTab}
-                    >
-                      Import
-                    </Button>
-                  )}
-                </Flex>
-              )}
-            </>
+                </RenderComponent>
+              </Flex>
+            </RenderComponent>
           }
         />
-        {!isOnBlueprintsTab && !inWizard && !process.env.IS_ON_PREMISE && (
+        <RenderComponent when={!isOnBlueprintsTab && !inWizard}>
           <Alert
             variant="info"
             isInline
@@ -178,7 +178,7 @@ export const ImageBuilderHeader = ({
               </Content>
             </Content>
           </Alert>
-        )}
+        </RenderComponent>
       </PageHeader>
     </>
   );
