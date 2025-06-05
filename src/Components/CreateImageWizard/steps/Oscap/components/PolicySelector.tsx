@@ -7,7 +7,6 @@ import {
   Select,
   SelectOption,
 } from '@patternfly/react-core';
-import { v4 as uuidv4 } from 'uuid';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
@@ -17,24 +16,19 @@ import {
 } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  Filesystem,
   useGetOscapCustomizationsForPolicyQuery,
   useLazyGetOscapCustomizationsForPolicyQuery,
 } from '../../../../../store/imageBuilderApi';
 import {
   addKernelArg,
-  addPartition,
   changeCompliance,
   changeFileSystemConfigurationType,
   clearKernelAppend,
-  clearPartitions,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
   selectDistribution,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
-import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/components/FileSystemTable';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type ComplianceSelectOptionPropType = {
@@ -87,8 +81,12 @@ const PolicySelector = () => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { clearCompliancePackages, handlePackages, handleServices } =
-    useSelectorHandlers();
+  const {
+    clearCompliancePackages,
+    handlePackages,
+    handlePartitions,
+    handleServices,
+  } = useSelectorHandlers();
 
   const {
     data: policies,
@@ -145,28 +143,6 @@ const PolicySelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
-  };
-
-  const handlePartitions = (oscapPartitions: Filesystem[]) => {
-    dispatch(clearPartitions());
-
-    const newPartitions = oscapPartitions.map((filesystem) => {
-      const [size, unit] = parseSizeUnit(filesystem.min_size);
-      const partition: Partition = {
-        mountpoint: filesystem.mountpoint,
-        min_size: size.toString(),
-        unit: unit as Units,
-        id: uuidv4(),
-      };
-      return partition;
-    });
-
-    if (newPartitions.length > 0) {
-      dispatch(changeFileSystemConfigurationType('manual'));
-      for (const partition of newPartitions) {
-        dispatch(addPartition(partition));
-      }
-    }
   };
 
   const handleKernelAppend = (kernelAppend: string | undefined) => {
