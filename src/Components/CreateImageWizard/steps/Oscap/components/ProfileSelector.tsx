@@ -17,6 +17,8 @@ import {
 import { TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useSelectorHandlers } from './useSelectorHandlers';
+
 import {
   useGetOscapProfilesQuery,
   useGetOscapCustomizationsQuery,
@@ -37,7 +39,6 @@ import {
   addPackage,
   addPartition,
   changeFileSystemConfigurationType,
-  removePackage,
   clearPartitions,
   changeEnabledServices,
   changeMaskedServices,
@@ -107,6 +108,7 @@ const ProfileSelector = () => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
+  const { clearCompliancePackages } = useSelectorHandlers();
 
   const {
     data: profiles,
@@ -176,7 +178,7 @@ const ProfileSelector = () => {
         policyTitle: undefined,
       })
     );
-    clearOscapPackages(currentProfileData?.packages || []);
+    clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
@@ -188,7 +190,7 @@ const ProfileSelector = () => {
     oldOscapPackages: string[],
     newOscapPackages: string[]
   ) => {
-    clearOscapPackages(oldOscapPackages);
+    clearCompliancePackages(oldOscapPackages);
 
     for (const pkg of newOscapPackages) {
       dispatch(
@@ -198,12 +200,6 @@ const ProfileSelector = () => {
           repository: 'distro',
         })
       );
-    }
-  };
-
-  const clearOscapPackages = (oscapPackages: string[]) => {
-    for (const pkg of oscapPackages) {
-      dispatch(removePackage(pkg));
     }
   };
 

@@ -9,6 +9,8 @@ import {
 } from '@patternfly/react-core';
 import { v4 as uuidv4 } from 'uuid';
 
+import { useSelectorHandlers } from './useSelectorHandlers';
+
 import {
   usePoliciesQuery,
   PolicyRead,
@@ -28,7 +30,6 @@ import {
   addPackage,
   addPartition,
   changeFileSystemConfigurationType,
-  removePackage,
   clearPartitions,
   changeEnabledServices,
   changeMaskedServices,
@@ -89,6 +90,7 @@ const PolicySelector = () => {
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
+  const { clearCompliancePackages } = useSelectorHandlers();
 
   const {
     data: policies,
@@ -141,7 +143,7 @@ const PolicySelector = () => {
         policyTitle: undefined,
       })
     );
-    clearOscapPackages(currentProfileData?.packages || []);
+    clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
@@ -151,7 +153,7 @@ const PolicySelector = () => {
     oldOscapPackages: string[],
     newOscapPackages: string[]
   ) => {
-    clearOscapPackages(oldOscapPackages);
+    clearCompliancePackages(oldOscapPackages);
 
     for (const pkg of newOscapPackages) {
       dispatch(
@@ -161,12 +163,6 @@ const PolicySelector = () => {
           repository: 'distro',
         })
       );
-    }
-  };
-
-  const clearOscapPackages = (oscapPackages: string[]) => {
-    for (const pkg of oscapPackages) {
-      dispatch(removePackage(pkg));
     }
   };
 
