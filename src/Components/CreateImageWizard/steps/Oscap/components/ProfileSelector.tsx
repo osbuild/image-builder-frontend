@@ -15,7 +15,6 @@ import {
   TextInputGroupUtilities,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
-import { v4 as uuidv4 } from 'uuid';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
 
@@ -28,23 +27,18 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
-  Filesystem,
   OpenScapProfile,
 } from '../../../../../store/imageBuilderApi';
 import {
   changeCompliance,
   selectDistribution,
   selectComplianceProfileID,
-  addPartition,
   changeFileSystemConfigurationType,
-  clearPartitions,
   selectComplianceType,
   clearKernelAppend,
   addKernelArg,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
-import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/FileSystemTable';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionPropType = {
@@ -103,8 +97,12 @@ const ProfileSelector = () => {
   const [selectOptions, setSelectOptions] = useState<string[]>([]);
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
-  const { clearCompliancePackages, handlePackages, handleServices } =
-    useSelectorHandlers();
+  const {
+    clearCompliancePackages,
+    handlePackages,
+    handlePartitions,
+    handleServices,
+  } = useSelectorHandlers();
 
   const {
     data: profiles,
@@ -180,28 +178,6 @@ const ProfileSelector = () => {
     dispatch(clearKernelAppend());
     setInputValue('');
     setFilterValue('');
-  };
-
-  const handlePartitions = (oscapPartitions: Filesystem[]) => {
-    dispatch(clearPartitions());
-
-    const newPartitions = oscapPartitions.map((filesystem) => {
-      const [size, unit] = parseSizeUnit(filesystem.min_size);
-      const partition: Partition = {
-        mountpoint: filesystem.mountpoint,
-        min_size: size.toString(),
-        unit: unit as Units,
-        id: uuidv4(),
-      };
-      return partition;
-    });
-
-    if (newPartitions.length > 0) {
-      dispatch(changeFileSystemConfigurationType('manual'));
-      for (const partition of newPartitions) {
-        dispatch(addPartition(partition));
-      }
-    }
   };
 
   const handleKernelAppend = (kernelAppend: string | undefined) => {
