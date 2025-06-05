@@ -26,7 +26,6 @@ import {
   selectCompliancePolicyTitle,
   changeFileSystemConfigurationType,
   clearKernelAppend,
-  addKernelArg,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
@@ -81,6 +80,7 @@ const PolicySelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const {
     clearCompliancePackages,
+    handleKernelAppend,
     handlePackages,
     handlePartitions,
     handleServices,
@@ -141,17 +141,6 @@ const PolicySelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
-  };
-
-  const handleKernelAppend = (kernelAppend: string | undefined) => {
-    dispatch(clearKernelAppend());
-
-    if (kernelAppend) {
-      const kernelArgsArray = kernelAppend.split(' ');
-      for (const arg of kernelArgsArray) {
-        dispatch(addKernelArg(arg));
-      }
-    }
   };
 
   const applyChanges = (selection: ComplianceSelectOptionValueType) => {

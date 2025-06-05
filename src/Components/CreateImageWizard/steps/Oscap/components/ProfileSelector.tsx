@@ -36,7 +36,6 @@ import {
   changeFileSystemConfigurationType,
   selectComplianceType,
   clearKernelAppend,
-  addKernelArg,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
@@ -99,6 +98,7 @@ const ProfileSelector = () => {
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
   const {
     clearCompliancePackages,
+    handleKernelAppend,
     handlePackages,
     handlePartitions,
     handleServices,
@@ -178,17 +178,6 @@ const ProfileSelector = () => {
     dispatch(clearKernelAppend());
     setInputValue('');
     setFilterValue('');
-  };
-
-  const handleKernelAppend = (kernelAppend: string | undefined) => {
-    dispatch(clearKernelAppend());
-
-    if (kernelAppend) {
-      const kernelArgsArray = kernelAppend.split(' ');
-      for (const arg of kernelArgsArray) {
-        dispatch(addKernelArg(arg));
-      }
-    }
   };
 
   const onInputClick = () => {
