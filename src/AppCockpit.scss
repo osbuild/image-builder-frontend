@@ -1,0 +1,18 @@
+// Override as PF Page doesn't allow empty masthead and sidebar
+@media (min-width: 75rem) {
+  .pf-v6-c-page.no-masthead-sidebar {
+    /* custom class to scope this style to a specific page component instance */
+    --pf-v6-c-page__main-container--GridArea: var(
+      --pf-v6-c-page--masthead--main-container--GridArea
+    );
+  }
+}
+
+.pf-v6-c-page__main-section {
+  padding-inline: 0;
+  padding-block-start: 0;
+}
+
+.pf-v6-c-page__main > section.pf-v6-c-page__main-section:not(.pf-m-padding) {
+  padding-inline: 0;
+}

@@ -3,11 +3,13 @@ import '@patternfly/patternfly/patternfly-addons.css';
 
 import React from 'react';
 
+import { Page, PageSection } from '@patternfly/react-core';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
+import './AppCockpit.scss';
 import { NotReady, RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
@@ -37,7 +39,11 @@ const Application = () => {
 };
 const ImageBuilder = () => (
   <Provider store={store}>
-    <Application />
+    <Page className="no-masthead-sidebar" isContentFilled>
+      <PageSection>
+        <Application />
+      </PageSection>
+    </Page>
   </Provider>
 );
 
