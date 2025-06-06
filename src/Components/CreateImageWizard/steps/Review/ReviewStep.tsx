@@ -59,10 +59,7 @@ import {
   selectUsers,
   selectKernel,
 } from '../../../../store/wizardSlice';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -189,7 +186,6 @@ const Review = () => {
     );
   };
 
-  const isUsersEnabled = useFlag('image-builder.users.enabled');
   const { isFedoraEnv } = useGetEnvironment();
   return (
     <>
@@ -379,7 +375,7 @@ const Review = () => {
           <ContentList />
         </ExpandableSection>
       )}
-      {isUsersEnabled && users.length > 0 && (
+      {users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
