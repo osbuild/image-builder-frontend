@@ -58,7 +58,7 @@ export const MinimumSizePopover = () => {
         variant="plain"
         aria-label="File system configuration info"
         aria-describedby="file-system-configuration-info"
-        className="pf-v6-u-p-0"
+        className="popover-button pf-v6-u-p-0"
       />
     </Popover>
   );

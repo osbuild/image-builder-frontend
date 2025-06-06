@@ -1,0 +1,14 @@
+:is(.pf-v6-c-content--dl, .pf-v6-c-content dl) {
+  &.review-step-dl {
+    // this fixes the alignment issues on the
+    // review step. PF6 handles the grid template
+    // differently to PF5
+    grid-template: auto/auto 1fr;
+  }
+}
+
+.pf-v6-c-button {
+  &.popover-button {
+    min-width: 0;
+  }
+}
