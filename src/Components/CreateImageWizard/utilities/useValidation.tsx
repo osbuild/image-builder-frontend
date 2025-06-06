@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from 'react';
 
+import path from 'path';
+
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
+import {
+  selectAWSBucketName,
+  selectAWSCredsPath,
+} from '../../../store/cloudProviderConfigSlice';
 import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
@@ -713,3 +719,26 @@ export function useDetailsValidation(): StepValidation {
     disabledNext: !!nameError || !!descriptionError || uniqueName !== true,
   };
 }
+
+export const useIsAwsBucketValid = (): boolean => {
+  const bucket = useAppSelector(selectAWSBucketName);
+
+  if (bucket === undefined || bucket === '') {
+    return true;
+  }
+
+  const regex = /^[a-z0-9.-]{3,63}$/;
+  return regex.test(bucket);
+};
+
+export const useIsAwsCredsPathValid = (): boolean => {
+  const credsPath = useAppSelector(selectAWSCredsPath);
+
+  if (credsPath === undefined || credsPath === '') {
+    return true;
+  }
+
+  // Basic path validation regex (can be adjusted for specific requirements)
+  const validPathPattern = /^(\/[^/\0]*)+\/?$/;
+  return path.isAbsolute(credsPath) && validPathPattern.test(credsPath);
+};
