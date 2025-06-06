@@ -68,3 +68,11 @@
 .pf-v6-c-page__main > section.pf-v6-c-page__main-section:not(.pf-m-padding) {
   padding-inline: 0;
 }
+
+.pf-v6-c-card {
+  &.pf-m-clickable::before,
+  &.pf-m-selectable::before {
+    border: var(--pf-v6-c-card--BorderColor) var(--pf-v6-c-card--BorderStyle)
+      var(--pf-v6-c-card--BorderWidth) !important;
+  }
+}
