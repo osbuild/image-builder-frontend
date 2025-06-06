@@ -93,6 +93,7 @@ import {
   selectModules,
 } from '../../../../store/wizardSlice';
 import useDebounce from '../../../../Utilities/useDebounce';
+import { RenderComponent } from '../../../sharedComponents/RenderComponent';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
 
@@ -1515,15 +1516,17 @@ const Packages = () => {
           }
           aria-label="Included repositories"
         />
-        <Tab
-          eventKey="other-repos"
-          title={
-            <TabTitleText>
-              Other repos <OtherReposPopover />
-            </TabTitleText>
-          }
-          aria-label="Other repositories"
-        />
+        <RenderComponent when={!process.env.IS_ON_PREMISE}>
+          <Tab
+            eventKey="other-repos"
+            title={
+              <TabTitleText>
+                Other repos <OtherReposPopover />
+              </TabTitleText>
+            }
+            aria-label="Other repositories"
+          />
+        </RenderComponent>
       </Tabs>
       <PackagesTable />
       <Pagination
