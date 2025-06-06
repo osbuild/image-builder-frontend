@@ -149,6 +149,7 @@ const UserInfo = () => {
         activeKey={activeTabKey}
         onSelect={onSelect}
         onAdd={onAdd}
+        isAddButtonDisabled={stepValidation.disabledNext}
         onClose={onClose}
         ref={tabComponentRef}
       >
