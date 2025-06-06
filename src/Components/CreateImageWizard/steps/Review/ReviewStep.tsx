@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
 
+import './ReviewStep.scss';
 import {
   ContentList,
   FSCList,
@@ -63,6 +64,7 @@ import {
   useFlag,
   useGetEnvironment,
 } from '../../../../Utilities/useGetEnvironment';
+import { RenderComponent } from '../../../sharedComponents/RenderComponent';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -222,27 +224,27 @@ const Review = () => {
         data-testid="target-environments-expandable"
       >
         <Stack hasGutter>
-          {environments.includes('aws') && (
+          <RenderComponent when={environments.includes('aws')}>
             <StackItem>
               <TargetEnvAWSList />
             </StackItem>
-          )}
-          {environments.includes('gcp') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('gcp')}>
             <StackItem>
               <TargetEnvGCPList />
             </StackItem>
-          )}
-          {environments.includes('azure') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('azure')}>
             <StackItem>
               <TargetEnvAzureList />
             </StackItem>
-          )}
-          {environments.includes('oci') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('oci')}>
             <StackItem>
               <TargetEnvOciList />
             </StackItem>
-          )}
-          {environments.includes('vsphere') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('vsphere')}>
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
@@ -251,8 +253,8 @@ const Review = () => {
                 <TargetEnvOtherList />
               </Content>
             </StackItem>
-          )}
-          {environments.includes('vsphere-ova') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('vsphere-ova')}>
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
@@ -261,8 +263,8 @@ const Review = () => {
                 <TargetEnvOtherList />
               </Content>
             </StackItem>
-          )}
-          {environments.includes('guest-image') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('guest-image')}>
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
@@ -271,8 +273,8 @@ const Review = () => {
                 <TargetEnvOtherList />
               </Content>
             </StackItem>
-          )}
-          {environments.includes('image-installer') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('image-installer')}>
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
@@ -281,8 +283,8 @@ const Review = () => {
                 <TargetEnvOtherList />
               </Content>
             </StackItem>
-          )}
-          {environments.includes('wsl') && (
+          </RenderComponent>
+          <RenderComponent when={environments.includes('wsl')}>
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
@@ -291,10 +293,10 @@ const Review = () => {
                 <TargetEnvOtherList />
               </Content>
             </StackItem>
-          )}
+          </RenderComponent>
         </Stack>
       </ExpandableSection>
-      {isRhel(distribution) && (
+      <RenderComponent when={isRhel(distribution)}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Registration',
@@ -308,14 +310,20 @@ const Review = () => {
           isIndented
           data-testid="registration-expandable"
         >
-          {registrationType === 'register-later' && <RegisterLaterList />}
-          {registrationType === 'register-satellite' && (
+          <RenderComponent when={registrationType === 'register-later'}>
+            <RegisterLaterList />
+          </RenderComponent>
+          <RenderComponent when={registrationType === 'register-satellite'}>
             <RegisterSatelliteList />
-          )}
-          {registrationType.startsWith('register-now') && <RegisterNowList />}
+          </RenderComponent>
+          <RenderComponent when={registrationType.startsWith('register-now')}>
+            <RegisterNowList />
+          </RenderComponent>
         </ExpandableSection>
-      )}
-      {complianceProfile && complianceType === 'openscap' && (
+      </RenderComponent>
+      <RenderComponent
+        when={!!complianceProfile && complianceType === 'openscap'}
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'OpenSCAP',
@@ -331,8 +339,10 @@ const Review = () => {
         >
           <OscapList />
         </ExpandableSection>
-      )}
-      {compliancePolicy && complianceType === 'compliance' && (
+      </RenderComponent>
+      <RenderComponent
+        when={!!compliancePolicy && complianceType === 'compliance'}
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'Compliance',
@@ -348,7 +358,7 @@ const Review = () => {
         >
           <OscapList />
         </ExpandableSection>
-      )}
+      </RenderComponent>
       <ExpandableSection
         toggleContent={composeExpandable(
           'File system configuration',
@@ -362,7 +372,7 @@ const Review = () => {
       >
         <FSCList />
       </ExpandableSection>
-      {!isFedoraEnv && (
+      <RenderComponent when={!isFedoraEnv}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Content',
@@ -378,8 +388,8 @@ const Review = () => {
         >
           <ContentList />
         </ExpandableSection>
-      )}
-      {isUsersEnabled && users.length > 0 && (
+      </RenderComponent>
+      <RenderComponent when={isUsersEnabled && users.length > 0}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Users',
@@ -393,8 +403,10 @@ const Review = () => {
         >
           <UsersList />
         </ExpandableSection>
-      )}
-      {(timezone || (ntpServers && ntpServers.length > 0)) && (
+      </RenderComponent>
+      <RenderComponent
+        when={!!timezone || (ntpServers && ntpServers.length > 0)}
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'Timezone',
@@ -410,9 +422,13 @@ const Review = () => {
         >
           <TimezoneList />
         </ExpandableSection>
-      )}
-      {((languages && languages.length > 0) ||
-        (keyboard && keyboard.length > 0)) && (
+      </RenderComponent>
+      <RenderComponent
+        when={
+          (!!languages && languages.length > 0) ||
+          (!!keyboard && keyboard.length > 0)
+        }
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'Locale',
@@ -428,8 +444,8 @@ const Review = () => {
         >
           <LocaleList />
         </ExpandableSection>
-      )}
-      {hostname && (
+      </RenderComponent>
+      <RenderComponent when={!!hostname}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Hostname',
@@ -445,8 +461,8 @@ const Review = () => {
         >
           <HostnameList />
         </ExpandableSection>
-      )}
-      {(kernel.name || kernel.append.length > 0) && (
+      </RenderComponent>
+      <RenderComponent when={!!kernel.name || kernel.append.length > 0}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Kernel',
@@ -462,10 +478,14 @@ const Review = () => {
         >
           <KernelList />
         </ExpandableSection>
-      )}
-      {(firewall.ports.length > 0 ||
-        firewall.services.disabled.length > 0 ||
-        firewall.services.enabled.length > 0) && (
+      </RenderComponent>
+      <RenderComponent
+        when={
+          firewall.ports.length > 0 ||
+          firewall.services.disabled.length > 0 ||
+          firewall.services.enabled.length > 0
+        }
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'Firewall',
@@ -481,10 +501,14 @@ const Review = () => {
         >
           <FirewallList />
         </ExpandableSection>
-      )}
-      {(services.enabled.length > 0 ||
-        services.disabled.length > 0 ||
-        services.masked.length > 0) && (
+      </RenderComponent>
+      <RenderComponent
+        when={
+          services.enabled.length > 0 ||
+          services.disabled.length > 0 ||
+          services.masked.length > 0
+        }
+      >
         <ExpandableSection
           toggleContent={composeExpandable(
             'Systemd services',
@@ -500,7 +524,7 @@ const Review = () => {
         >
           <ServicesList />
         </ExpandableSection>
-      )}
+      </RenderComponent>
       <ExpandableSection
         toggleContent={composeExpandable(
           'First boot',
@@ -516,7 +540,7 @@ const Review = () => {
       >
         <FirstBootList />
       </ExpandableSection>
-      {(blueprintName || blueprintDescription) && (
+      <RenderComponent when={!!blueprintName || !!blueprintDescription}>
         <ExpandableSection
           toggleContent={composeExpandable(
             'Details',
@@ -532,7 +556,7 @@ const Review = () => {
         >
           <DetailsList />
         </ExpandableSection>
-      )}
+      </RenderComponent>
     </>
   );
 };

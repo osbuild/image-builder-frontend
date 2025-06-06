@@ -12,6 +12,7 @@ import {
   selectComplianceProfileID,
   selectDistribution,
 } from '../../../../../store/wizardSlice';
+import { RenderComponent } from '../../../../sharedComponents/RenderComponent';
 
 type OscapProfileInformationOptionPropType = {
   allowChangingCompliancePolicy?: boolean;
@@ -72,82 +73,80 @@ export const OscapProfileInformation = ({
 
   return (
     <>
-      {(isFetchingOscapProfileInfo || isFetchingPolicyInfo) && (
+      <RenderComponent
+        when={isFetchingOscapProfileInfo || isFetchingPolicyInfo}
+      >
         <Spinner size="lg" />
-      )}
-      {isSuccessOscapProfileInfo && (
-        <>
-          <Content>
-            <Content component={ContentVariants.dl}>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Profile description:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {oscapProfile?.profile_description}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Reference ID:
-              </Content>
-              <Content
-                data-testid="oscap-profile-info-ref-id"
-                component={ContentVariants.dd}
-              >
-                {oscapProfile?.profile_id}
-              </Content>
+      </RenderComponent>
+      <RenderComponent when={isSuccessOscapProfileInfo}>
+        <Content>
+          <Content component={ContentVariants.dl} className="review-step-dl">
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Profile description
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {oscapProfile?.profile_description}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Reference ID
+            </Content>
+            <Content
+              data-testid="oscap-profile-info-ref-id"
+              component={ContentVariants.dd}
+            >
+              {oscapProfile?.profile_id}
             </Content>
           </Content>
-        </>
-      )}
-      {isSuccessPolicyInfo && (
-        <>
-          <Content>
-            <Content component={ContentVariants.dl}>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Policy description:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.description}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Business objective:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.business_objective}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Policy type:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.type}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Reference ID:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {policyInfo?.data?.schema?.id}
-              </Content>
+        </Content>
+      </RenderComponent>
+      <RenderComponent when={isSuccessPolicyInfo}>
+        <Content>
+          <Content component={ContentVariants.dl} className="review-step-dl">
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Policy description
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {policyInfo?.data?.schema?.description}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Business objective
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {policyInfo?.data?.schema?.business_objective}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Policy type
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {policyInfo?.data?.schema?.type}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Reference ID
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {policyInfo?.data?.schema?.id}
             </Content>
           </Content>
-        </>
-      )}
+        </Content>
+      </RenderComponent>
     </>
   );
 };

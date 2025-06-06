@@ -1,13 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  Alert,
-  Button,
-  Popover,
-  Content,
-  Flex,
-  FlexItem,
-} from '@patternfly/react-core';
+import { Button, Popover, Content, Flex, Alert } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -16,6 +9,8 @@ import {
   PageHeaderTitle,
 } from '@redhat-cloud-services/frontend-components';
 import { useNavigate } from 'react-router-dom';
+
+import { RenderComponent } from './RenderComponent';
 
 import {
   CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
@@ -30,11 +25,6 @@ import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
-
-type ImageBuilderHeaderPropTypes = {
-  activeTab?: number;
-  inWizard?: boolean;
-};
 
 const AboutImageBuilderPopover = () => {
   return (
@@ -90,6 +80,11 @@ const AboutImageBuilderPopover = () => {
   );
 };
 
+type ImageBuilderHeaderPropTypes = {
+  activeTab?: number;
+  inWizard?: boolean;
+};
+
 export const ImageBuilderHeader = ({
   activeTab,
   inWizard,
@@ -106,30 +101,26 @@ export const ImageBuilderHeader = ({
   const isOnBlueprintsTab = activeTab === 0;
   return (
     <>
-      {importExportFlag && (
+      <RenderComponent when={importExportFlag}>
         <ImportBlueprintModal
           setShowImportModal={setShowImportModal}
           isOpen={showImportModal}
         />
-      )}
+      </RenderComponent>
       <PageHeader>
-        <Flex>
-          <FlexItem>
-            <PageHeaderTitle
-              className="title"
-              title={
-                <>
-                  Images <AboutImageBuilderPopover />
-                  <OpenSourceBadge
-                    repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
-                  />
-                </>
-              }
-            />
-          </FlexItem>
-          {!inWizard && (
+        <PageHeaderTitle
+          className="title"
+          title={
             <>
-              <FlexItem align={{ default: 'alignRight' }}>
+              Images <AboutImageBuilderPopover />
+              <OpenSourceBadge
+                repositoriesURL={OSBUILD_SERVICE_ARCHITECTURE_URL}
+              />
+            </>
+          }
+          actionsContent={
+            <RenderComponent when={!inWizard}>
+              <Flex>
                 <Button
                   variant="primary"
                   data-testid="blueprints-create-button"
@@ -143,9 +134,7 @@ export const ImageBuilderHeader = ({
                 >
                   Create blueprint
                 </Button>
-              </FlexItem>
-              <FlexItem>
-                {importExportFlag && (
+                <RenderComponent when={importExportFlag}>
                   <Button
                     data-testid="import-blueprint-button"
                     variant="secondary"
@@ -154,49 +143,42 @@ export const ImageBuilderHeader = ({
                   >
                     Import
                   </Button>
-                )}
-              </FlexItem>
-            </>
-          )}
-        </Flex>
-        {!isOnBlueprintsTab && !inWizard && (
-          <Flex>
-            <FlexItem>
-              <Alert
-                variant="info"
-                isInline
-                title={
-                  <>Upcoming decommission of hosted Edge Management service</>
-                }
-                className="pf-v5-u-mt-sm pf-v5-u-mb-sm"
-              >
-                <Content>
-                  <Content>
-                    As of July 31, 2025, the hosted edge management service will
-                    no longer be supported. This means that pushing image
-                    updates to Immutable (OSTree) systems using the Hybrid Cloud
-                    Console will be discontinued. For an alternative way to
-                    manage edge systems, customers are encouraged to explore Red
-                    Hat Edge Manager (RHEM).
-                  </Content>
-                  <Content>
-                    <Button
-                      component="a"
-                      target="_blank"
-                      variant="link"
-                      icon={<ExternalLinkAltIcon />}
-                      iconPosition="right"
-                      isInline
-                      href={RHEM_DOCUMENTATION_URL}
-                    >
-                      Red Hat Edge Manager (RHEM) documentation
-                    </Button>
-                  </Content>
-                </Content>
-              </Alert>
-            </FlexItem>
-          </Flex>
-        )}
+                </RenderComponent>
+              </Flex>
+            </RenderComponent>
+          }
+        />
+        <RenderComponent when={!isOnBlueprintsTab && !inWizard}>
+          <Alert
+            variant="info"
+            isInline
+            title={<>Upcoming decommission of hosted Edge Management service</>}
+            className="pf-v6-u-mt-sm pf-v6-u-mb-sm"
+          >
+            <Content>
+              <Content>
+                As of July 31, 2025, the hosted edge management service will no
+                longer be supported. This means that pushing image updates to
+                Immutable (OSTree) systems using the Hybrid Cloud Console will
+                be discontinued. For an alternative way to manage edge systems,
+                customers are encouraged to explore Red Hat Edge Manager (RHEM).
+              </Content>
+              <Content>
+                <Button
+                  component="a"
+                  target="_blank"
+                  variant="link"
+                  icon={<ExternalLinkAltIcon />}
+                  iconPosition="right"
+                  isInline
+                  href={RHEM_DOCUMENTATION_URL}
+                >
+                  Red Hat Edge Manager (RHEM) documentation
+                </Button>
+              </Content>
+            </Content>
+          </Alert>
+        </RenderComponent>
       </PageHeader>
     </>
   );

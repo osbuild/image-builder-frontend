@@ -1,0 +1,78 @@
+@font-face {
+  font-family: 'Red Hat Text';
+  font-style: normal;
+  font-weight: 400 500;
+  src: url('/cockpit/static/fonts/RedHatText/RedHatTextVF.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Text';
+  font-style: italic;
+  font-weight: 400 500;
+  src: url('/cockpit/static/fonts/RedHatText/RedHatTextVF-Italic.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: normal;
+  font-weight: 400 700;
+  src: url('/cockpit/static/fonts/RedHatDisplay/RedHatDisplayVF.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: 'Red Hat Display';
+  font-style: italic;
+  font-weight: 400 700;
+  src: url('/cockpit/static/fonts/RedHatDisplay/RedHatDisplayVF-Italic.woff2')
+    format('woff2-variations');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: RedHatText;
+  font-style: normal;
+  font-weight: 400;
+  src: url('/cockpit/static/fonts/RedHatText-Regular.woff2') format('woff2');
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: RedHatText;
+  font-style: normal;
+  font-weight: 700;
+  src: url('/cockpit/static/fonts/RedHatText-Medium.woff2') format('woff2');
+  font-display: fallback;
+}
+
+// Override as PF Page doesn't allow empty masthead and sidebar
+@media (min-width: 75rem) {
+  .pf-v6-c-page.no-masthead-sidebar {
+    /* custom class to scope this style to a specific page component instance */
+    --pf-v6-c-page__main-container--GridArea: var(
+      --pf-v6-c-page--masthead--main-container--GridArea
+    );
+  }
+}
+
+.pf-v6-c-page__main-section {
+  padding-inline: 0;
+  padding-block-start: 0;
+}
+
+.pf-v6-c-page__main > section.pf-v6-c-page__main-section:not(.pf-m-padding) {
+  padding-inline: 0;
+}
+
+.pf-v6-c-card {
+  &.pf-m-clickable::before,
+  &.pf-m-selectable::before {
+    border: var(--pf-v6-c-card--BorderColor) var(--pf-v6-c-card--BorderStyle)
+      var(--pf-v6-c-card--BorderWidth) !important;
+  }
+}
