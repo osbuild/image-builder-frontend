@@ -6,7 +6,7 @@ import path from 'path';
 // the `tsconfig` to stubs of the `cockpit` and `cockpit/fsinfo`
 // modules. These stubs are in the `src/test/mocks/cockpit` directory.
 // We also needed to create an alias in vitest to make this work.
-import TOML from '@ltd/j-toml';
+import TOML, { Section } from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,11 @@ import { v4 as uuidv4 } from 'uuid';
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
+import type {
+  UpdateWorkerConfigApiArg,
+  WorkerConfigFile,
+  WorkerConfigResponse,
+} from './types';
 
 import {
   mapHostedToOnPrem,
@@ -119,6 +124,19 @@ const readComposes = async (bpID: string) => {
   return composes;
 };
 
+const getCloudConfigs = async () => {
+  try {
+    const worker_config = cockpit.file(
+      '/etc/osbuild-worker/osbuild-worker.toml'
+    );
+    const contents = await worker_config.read();
+    const parsed = TOML.parse(contents);
+    return Object.keys(parsed).filter((k) => k === 'aws');
+  } catch {
+    return [];
+  }
+};
+
 export const cockpitApi = contentSourcesApi.injectEndpoints({
   endpoints: (builder) => {
     return {
@@ -126,33 +144,40 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetArchitecturesApiResponse,
         GetArchitecturesApiArg
       >({
-        queryFn: () => {
-          // TODO: this is hardcoded for now, but we may need to query
-          // the cloudapi endpoint on the composer socket to get the
-          // available information
-          return {
-            data: [
-              {
-                arch: 'aarch64',
-                image_types: ['guest-image', 'image-installer'],
-                repositories: [],
-              },
-              {
-                arch: 'x86_64',
-                image_types: [
-                  'rhel-edge-commit',
-                  'rhel-edge-installer',
-                  'edge-commit',
-                  'edge-installer',
-                  'guest-image',
-                  'image-installer',
-                  'vsphere',
-                  'vsphere-ova',
-                ],
-                repositories: [],
-              },
-            ],
-          };
+        queryFn: async () => {
+          try {
+            const cloudImageTypes = await getCloudConfigs();
+            return {
+              data: [
+                {
+                  arch: 'aarch64',
+                  image_types: [
+                    'guest-image',
+                    'image-installer',
+                    ...cloudImageTypes,
+                  ],
+                  repositories: [],
+                },
+                {
+                  arch: 'x86_64',
+                  image_types: [
+                    'rhel-edge-commit',
+                    'rhel-edge-installer',
+                    'edge-commit',
+                    'edge-installer',
+                    'guest-image',
+                    'image-installer',
+                    'vsphere',
+                    'vsphere-ova',
+                    ...cloudImageTypes,
+                  ],
+                  repositories: [],
+                },
+              ],
+            };
+          } catch (error) {
+            return { error };
+          }
         },
       }),
       getBlueprint: builder.query<GetBlueprintApiResponse, GetBlueprintApiArg>({
@@ -439,6 +464,33 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprint = mapHostedToOnPrem(createBPReq);
             const composes: ComposeResponse[] = [];
             for (const ir of parsed.image_requests) {
+              const { upload_request } = ir;
+
+              if (upload_request.type === 'aws.s3') {
+                upload_request.type = 'local';
+                upload_request.upload_options = {};
+              }
+
+              const config = TOML.parse(
+                await cockpit
+                  .file('/etc/osbuild-worker/osbuild-worker.toml')
+                  .read()
+              );
+
+              if (upload_request.type === 'aws') {
+                if (!config.aws || !config.aws.region) {
+                  return {
+                    error:
+                      'Unable to read AWS options from osbuild-worker config. Please configure the cloud options.',
+                  };
+                }
+
+                upload_request.upload_options = {
+                  ...upload_request.options,
+                  region: config.aws.region,
+                };
+              }
+
               const composeReq = {
                 distribution: createBPReq.distribution,
                 blueprint: blueprint,
@@ -447,12 +499,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     architecture: ir.architecture,
                     image_type: ir.image_type,
                     repositories: [],
-                    upload_targets: [
-                      {
-                        type: 'local',
-                        upload_options: {},
-                      },
-                    ],
+                    upload_targets: [upload_request],
                   },
                 ],
               };
@@ -465,7 +512,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     image_type: ir.image_type,
                     repositories: [],
                     upload_request: {
-                      type: 'local',
+                      type: upload_request.type,
                       options: {},
                     },
                   },
@@ -584,6 +631,92 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           }
         },
       }),
+      getWorkerConfig: builder.query<WorkerConfigResponse, unknown>({
+        queryFn: async () => {
+          try {
+            // we need to ensure that the file is created
+            await cockpit.spawn(['mkdir', '-p', '/etc/osbuild-worker'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
+              { superuser: 'require' }
+            );
+
+            const config = await cockpit
+              .file('/etc/osbuild-worker/osbuild-worker.toml')
+              .read();
+
+            return { data: TOML.parse(config) };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
+      updateWorkerConfig: builder.mutation<
+        WorkerConfigResponse,
+        UpdateWorkerConfigApiArg
+      >({
+        queryFn: async ({ updateWorkerConfigRequest }) => {
+          try {
+            const workerConfig = cockpit.file(
+              '/etc/osbuild-worker/osbuild-worker.toml',
+              {
+                superuser: 'required',
+              }
+            );
+
+            const contents = await workerConfig.modify((prev: string) => {
+              if (!updateWorkerConfigRequest) {
+                return prev;
+              }
+
+              const merged = {
+                ...TOML.parse(prev),
+                ...updateWorkerConfigRequest,
+              } as WorkerConfigFile;
+
+              const contents: WorkerConfigFile = {};
+              Object.keys(merged).forEach((key: string) => {
+                // this check helps prevent saving empty objects
+                // into the osbuild-worker.toml config file.
+                if (merged[key] !== undefined) {
+                  contents[key] = Section({
+                    ...merged[key],
+                  });
+                }
+              });
+
+              return TOML.stringify(contents, {
+                newline: '\n',
+                newlineAround: 'document',
+              });
+            });
+
+            // TODO: maybe give a warning that we need admin access?
+            await cockpit.spawn(['systemctl', 'stop', 'osbuild-*'], {
+              superuser: 'require',
+            });
+
+            await cockpit.spawn(
+              [
+                'systemctl',
+                'start',
+                'osbuild-composer.socket',
+                'osbuild-composer',
+              ],
+              {
+                superuser: 'require',
+              }
+            );
+
+            return { data: TOML.parse(contents) };
+          } catch (error) {
+            return { error };
+          }
+        },
+      }),
     };
   },
   // since we are inheriting some endpoints,
@@ -607,4 +740,6 @@ export const {
   useGetComposesQuery,
   useGetBlueprintComposesQuery,
   useGetComposeStatusQuery,
+  useGetWorkerConfigQuery,
+  useUpdateWorkerConfigMutation,
 } = cockpitApi;
