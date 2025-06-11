@@ -4,6 +4,7 @@ on:
   pull_request:
     types: [opened, reopened, synchronize, labeled, unlabeled]
   workflow_dispatch:
+  merge_group:
 
 jobs:
   playwright-tests:
