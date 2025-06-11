@@ -70,10 +70,12 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   });
   const handleDelete = async () => {
     if (selectedBlueprintId) {
-      analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`, {
-        module: AMPLITUDE_MODULE_NAME,
-        account_id: userData?.identity.internal?.account_id || 'Not found',
-      });
+      if (!process.env.IS_ON_PREMISE) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Deleted`, {
+          module: AMPLITUDE_MODULE_NAME,
+          account_id: userData?.identity.internal?.account_id || 'Not found',
+        });
+      }
       setShowDeleteModal(false);
       await deleteBlueprint({ id: selectedBlueprintId });
       dispatch(setBlueprintId(undefined));
