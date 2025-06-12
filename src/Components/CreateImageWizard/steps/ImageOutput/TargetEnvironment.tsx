@@ -150,66 +150,77 @@ const TargetEnvironment = () => {
     />
   );
 
+  const publicCloudsSupported = () => {
+    return (
+      supportedEnvironments?.includes('aws') ||
+      supportedEnvironments?.includes('gcp') ||
+      supportedEnvironments?.includes('azure') ||
+      supportedEnvironments?.includes('oci')
+    );
+  };
+
   return (
     <FormGroup
       isRequired={true}
       label="Select target environments"
       data-testid="target-select"
     >
-      <FormGroup label={<small>Public cloud</small>}>
-        <Gallery hasGutter>
-          {supportedEnvironments?.includes('aws') && (
-            <TargetEnvironmentCard
-              testId="upload-aws"
-              title="Amazon Web Services"
-              imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
-              imageAlt="Amazon Web Services logo"
-              handleOnClick={() => handleToggleEnvironment('aws')}
-              onMouseEnter={() => prefetchSources({ provider: 'aws' })}
-              isSelected={environments.includes('aws')}
-            />
-          )}
-          {supportedEnvironments?.includes('gcp') && (
-            <TargetEnvironmentCard
-              testId="upload-google"
-              title="Google Cloud Platform"
-              imageSrc={
-                '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
-              }
-              imageAlt="Google Cloud Platform logo"
-              handleOnClick={() => handleToggleEnvironment('gcp')}
-              onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-              isSelected={environments.includes('gcp')}
-            />
-          )}
-          {supportedEnvironments?.includes('azure') && (
-            <TargetEnvironmentCard
-              testId="upload-azure"
-              title="Microsoft Azure"
-              imageSrc={
-                '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
-              }
-              imageAlt="Microsoft Azure logo"
-              handleOnClick={() => handleToggleEnvironment('azure')}
-              onMouseEnter={() => prefetchSources({ provider: 'azure' })}
-              isSelected={environments.includes('azure')}
-            />
-          )}
-          {supportedEnvironments?.includes('oci') &&
-            showOracleUnavailableWarning && (
-              <Tooltip
-                content={
-                  <div>Oracle Cloud support is temporarily unavailable</div>
-                }
-              >
-                <div>{ociTile}</div>
-              </Tooltip>
+      {publicCloudsSupported() && (
+        <FormGroup label={<small>Public cloud</small>}>
+          <Gallery hasGutter>
+            {supportedEnvironments?.includes('aws') && (
+              <TargetEnvironmentCard
+                testId="upload-aws"
+                title="Amazon Web Services"
+                imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
+                imageAlt="Amazon Web Services logo"
+                handleOnClick={() => handleToggleEnvironment('aws')}
+                onMouseEnter={() => prefetchSources({ provider: 'aws' })}
+                isSelected={environments.includes('aws')}
+              />
             )}
-          {supportedEnvironments?.includes('oci') &&
-            !showOracleUnavailableWarning &&
-            ociTile}
-        </Gallery>
-      </FormGroup>
+            {supportedEnvironments?.includes('gcp') && (
+              <TargetEnvironmentCard
+                testId="upload-google"
+                title="Google Cloud Platform"
+                imageSrc={
+                  '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
+                }
+                imageAlt="Google Cloud Platform logo"
+                handleOnClick={() => handleToggleEnvironment('gcp')}
+                onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
+                isSelected={environments.includes('gcp')}
+              />
+            )}
+            {supportedEnvironments?.includes('azure') && (
+              <TargetEnvironmentCard
+                testId="upload-azure"
+                title="Microsoft Azure"
+                imageSrc={
+                  '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
+                }
+                imageAlt="Microsoft Azure logo"
+                handleOnClick={() => handleToggleEnvironment('azure')}
+                onMouseEnter={() => prefetchSources({ provider: 'azure' })}
+                isSelected={environments.includes('azure')}
+              />
+            )}
+            {supportedEnvironments?.includes('oci') &&
+              showOracleUnavailableWarning && (
+                <Tooltip
+                  content={
+                    <div>Oracle Cloud support is temporarily unavailable</div>
+                  }
+                >
+                  <div>{ociTile}</div>
+                </Tooltip>
+              )}
+            {supportedEnvironments?.includes('oci') &&
+              !showOracleUnavailableWarning &&
+              ociTile}
+          </Gallery>
+        </FormGroup>
+      )}
       {supportedEnvironments?.includes('vsphere') && (
         <>
           <FormGroup
