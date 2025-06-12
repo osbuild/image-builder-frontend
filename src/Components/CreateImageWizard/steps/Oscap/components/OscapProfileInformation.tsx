@@ -78,7 +78,7 @@ export const OscapProfileInformation = ({
       {isSuccessOscapProfileInfo && (
         <>
           <Content>
-            <Content component={ContentVariants.dl}>
+            <Content component={ContentVariants.dl} className="review-step-dl">
               <Content
                 component={ContentVariants.dt}
                 className="pf-v6-u-min-width"
@@ -107,7 +107,7 @@ export const OscapProfileInformation = ({
       {isSuccessPolicyInfo && (
         <>
           <Content>
-            <Content component={ContentVariants.dl}>
+            <Content component={ContentVariants.dl} className="review-step-dl">
               <Content
                 component={ContentVariants.dt}
                 className="pf-v6-u-min-width"

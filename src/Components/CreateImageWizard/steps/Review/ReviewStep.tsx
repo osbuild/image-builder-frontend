@@ -13,6 +13,7 @@ import {
 } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
 
+import './ReviewStep.scss';
 import {
   ContentList,
   FSCList,
