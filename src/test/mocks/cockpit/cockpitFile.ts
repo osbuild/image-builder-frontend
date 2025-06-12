@@ -32,7 +32,7 @@ export const getLastBlueprintReq = () => {
   return lastRequest.blueprints[lastRequest.blueprints.length - 1];
 };
 
-export const cockpitFile = (filepath: string) => {
+export const cockpitFile = (filepath: string, options?: object) => {
   return {
     read: (): Promise<string> => {
       const file = path.parse(filepath);
@@ -51,6 +51,11 @@ export const cockpitFile = (filepath: string) => {
       if (file.name === dir.name) {
         lastRequest.blueprints.push(contents);
       }
+    },
+    modify: (callback: (contents: string) => string): Promise<string> => {
+      return new Promise((resolve) => {
+        resolve(callback(''));
+      });
     },
   };
 };
