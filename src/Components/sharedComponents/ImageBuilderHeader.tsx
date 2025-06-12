@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-  Alert,
   Button,
   Popover,
   Content,
@@ -18,10 +17,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import {
-  CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
   OSBUILD_SERVICE_ARCHITECTURE_URL,
-  RHEM_DOCUMENTATION_URL,
 } from '../../constants';
 import { useBackendPrefetch } from '../../store/backendApi';
 import { useAppSelector } from '../../store/hooks';
@@ -32,7 +29,6 @@ import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
-  activeTab?: number;
   inWizard?: boolean;
 };
 
@@ -64,19 +60,6 @@ const AboutImageBuilderPopover = () => {
               Image builder for RPM-DNF documentation
             </Button>
           </Content>
-          <Content>
-            <Button
-              component="a"
-              target="_blank"
-              variant="link"
-              icon={<ExternalLinkAltIcon />}
-              iconPosition="right"
-              isInline
-              href={CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL}
-            >
-              Image builder for OSTree documentation
-            </Button>
-          </Content>
         </Content>
       }
     >
@@ -91,7 +74,6 @@ const AboutImageBuilderPopover = () => {
 };
 
 export const ImageBuilderHeader = ({
-  activeTab,
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
@@ -103,7 +85,6 @@ export const ImageBuilderHeader = ({
     'image-builder.import.enabled'
   );
   const [showImportModal, setShowImportModal] = useState(false);
-  const isOnBlueprintsTab = activeTab === 0;
   return (
     <>
       {importExportFlag && (
@@ -134,7 +115,6 @@ export const ImageBuilderHeader = ({
                   variant="primary"
                   data-testid="blueprints-create-button"
                   onClick={() => navigate(resolveRelPath('imagewizard'))}
-                  isDisabled={!isOnBlueprintsTab}
                   onMouseEnter={() =>
                     prefetchTargets({
                       distribution: distribution,
@@ -150,7 +130,6 @@ export const ImageBuilderHeader = ({
                     data-testid="import-blueprint-button"
                     variant="secondary"
                     onClick={() => setShowImportModal(true)}
-                    isDisabled={!isOnBlueprintsTab}
                   >
                     Import
                   </Button>
@@ -159,44 +138,6 @@ export const ImageBuilderHeader = ({
             </>
           )}
         </Flex>
-        {!isOnBlueprintsTab && !inWizard && (
-          <Flex>
-            <FlexItem>
-              <Alert
-                variant="info"
-                isInline
-                title={
-                  <>Upcoming decommission of hosted Edge Management service</>
-                }
-                className="pf-v5-u-mt-sm pf-v5-u-mb-sm"
-              >
-                <Content>
-                  <Content>
-                    As of July 31, 2025, the hosted edge management service will
-                    no longer be supported. This means that pushing image
-                    updates to Immutable (OSTree) systems using the Hybrid Cloud
-                    Console will be discontinued. For an alternative way to
-                    manage edge systems, customers are encouraged to explore Red
-                    Hat Edge Manager (RHEM).
-                  </Content>
-                  <Content>
-                    <Button
-                      component="a"
-                      target="_blank"
-                      variant="link"
-                      icon={<ExternalLinkAltIcon />}
-                      iconPosition="right"
-                      isInline
-                      href={RHEM_DOCUMENTATION_URL}
-                    >
-                      Red Hat Edge Manager (RHEM) documentation
-                    </Button>
-                  </Content>
-                </Content>
-              </Alert>
-            </FlexItem>
-          </Flex>
-        )}
       </PageHeader>
     </>
   );
