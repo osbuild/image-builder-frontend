@@ -460,6 +460,7 @@ export type ImageTypes =
   | "edge-installer"
   | "gcp"
   | "guest-image"
+  | "openshift-virt"
   | "image-installer"
   | "oci"
   | "vsphere"
