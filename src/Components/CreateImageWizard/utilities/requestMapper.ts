@@ -494,6 +494,8 @@ const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
       return 'aws.s3';
     case 'guest-image':
       return 'aws.s3';
+    case 'openshift-virt':
+      return 'aws.s3';
     case 'image-installer':
       return 'aws.s3';
     case 'vsphere':

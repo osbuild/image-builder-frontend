@@ -273,6 +273,16 @@ const Review = () => {
               </Content>
             </StackItem>
           )}
+          {environments.includes('openshift-virt') && (
+            <StackItem>
+              <Content>
+                <Content component={ContentVariants.h3}>
+                  {targetOptions['openshift-virt']} (.tar)
+                </Content>
+                <TargetEnvOtherList />
+              </Content>
+            </StackItem>
+          )}
           {environments.includes('image-installer') && (
             <StackItem>
               <Content>

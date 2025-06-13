@@ -66,6 +66,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   'edge-installer': 'Edge Installer',
   gcp: 'Google Cloud Platform',
   'guest-image': 'Virtualization - Guest image',
+  'openshift-virt': 'OpenShift Virtualization',
   'image-installer': 'Bare metal - Installer',
   vsphere: 'VMware vSphere',
   'vsphere-ova': 'VMware vSphere',

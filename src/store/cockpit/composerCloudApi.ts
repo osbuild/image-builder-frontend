@@ -140,6 +140,7 @@ export type ImageTypes =
   | "gcp"
   | "gcp-rhui"
   | "guest-image"
+  | "openshift-virt"
   | "image-installer"
   | "iot-bootable-container"
   | "iot-commit"

@@ -382,6 +382,7 @@ export const AwsS3Instance = ({
     'edge-installer': '',
     gcp: '',
     'guest-image': '.qcow2',
+    'openshift-virt': '.tar',
     'image-installer': '.iso',
     vsphere: '.vmdk',
     'vsphere-ova': '.ova',

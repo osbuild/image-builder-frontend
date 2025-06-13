@@ -221,12 +221,26 @@ const TargetEnvironment = () => {
           </Gallery>
         </FormGroup>
       )}
-      {supportedEnvironments?.includes('vsphere') && (
-        <>
-          <FormGroup
-            label={<small>Private cloud</small>}
-            className="pf-v6-u-mt-sm"
-          >
+      {(supportedEnvironments?.includes('vsphere') ||
+        supportedEnvironments?.includes('openshift-virt')) && (
+        <FormGroup
+          label={<small>Private cloud</small>}
+          className="pf-v6-u-mt-sm"
+        >
+          {supportedEnvironments?.includes('openshift-virt') && (
+            <Checkbox
+              label="OpenShift Virtualization (.tar)"
+              isChecked={environments.includes('openshift-virt')}
+              onChange={() => {
+                handleToggleEnvironment('openshift-virt');
+              }}
+              aria-label="Virtualization guest image checkbox"
+              id="checkbox-openshift-virt"
+              name="Virtualization openshift virt"
+              data-testid="checkbox-openshift-virt"
+            />
+          )}
+          {supportedEnvironments?.includes('vsphere') && (
             <Checkbox
               label="VMware vSphere"
               isChecked={hasVsphere}
@@ -344,8 +358,8 @@ const TargetEnvironment = () => {
                 </>
               }
             />
-          </FormGroup>
-        </>
+          )}
+        </FormGroup>
       )}
       <FormGroup label={<small>Other</small>}>
         {supportedEnvironments?.includes('guest-image') && (
