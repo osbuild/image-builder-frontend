@@ -68,11 +68,15 @@ const searchForLanguage = async (search: string) => {
 const selectLanguages = async () => {
   const user = userEvent.setup();
   await searchForLanguage('nl');
-  const nlOption = await screen.findByRole('option', { name: 'nl_NL.UTF-8' });
+  const nlOption = await screen.findByRole('option', {
+    name: 'Dutch - Netherlands (nl_NL.UTF-8)',
+  });
   await waitFor(() => user.click(nlOption));
 
   await searchForLanguage('en');
-  const enOption = await screen.findByRole('option', { name: 'en_GB.UTF-8' });
+  const enOption = await screen.findByRole('option', {
+    name: 'English - United Kingdom (en_GB.UTF-8)',
+  });
   await waitFor(() => user.click(enOption));
 };
 
@@ -130,16 +134,20 @@ describe('Step Locale', () => {
     await goToLocaleStep();
     await searchForLanguage('nl');
     const nlOptions = await screen.findAllByRole('option');
-    expect(nlOptions[0]).toHaveTextContent('nl_AW.UTF-8');
-    expect(nlOptions[1]).toHaveTextContent('nl_BE.UTF-8');
-    expect(nlOptions[2]).toHaveTextContent('nl_NL.UTF-8');
+    expect(nlOptions[0]).toHaveTextContent('Dutch - Aruba (nl_AW.UTF-8)');
+    expect(nlOptions[1]).toHaveTextContent('Dutch - Belgium (nl_BE.UTF-8)');
+    expect(nlOptions[2]).toHaveTextContent('Dutch - Netherlands (nl_NL.UTF-8)');
 
     await clearLanguageSearch();
     await searchForLanguage('gb');
     const gbOptions = await screen.findAllByRole('option');
-    expect(gbOptions[0]).toHaveTextContent('gbm_IN.UTF-8');
-    expect(gbOptions[1]).toHaveTextContent('cy_GB.UTF-8');
-    expect(gbOptions[2]).toHaveTextContent('en_GB.UTF-8');
+    expect(gbOptions[0]).toHaveTextContent('gbm - India (gbm_IN.UTF-8)');
+    expect(gbOptions[1]).toHaveTextContent(
+      'Cornish - United Kingdom (kw_GB.UTF-8)'
+    );
+    expect(gbOptions[2]).toHaveTextContent(
+      'English - United Kingdom (en_GB.UTF-8)'
+    );
   });
 
   test('keyboard search results get sorted correctly', async () => {
