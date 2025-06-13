@@ -199,7 +199,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const { isFedoraEnv } = useGetEnvironment();
   // Feature flags
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
-  const isUsersEnabled = useFlag('image-builder.users.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -566,7 +565,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-users"
                 key="wizard-users"
                 navItem={customStatusNavItem}
-                isHidden={!isUsersEnabled}
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter

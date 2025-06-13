@@ -59,8 +59,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
   useUnleashContext: () => vi.fn(),
   useFlag: vi.fn((flag) => {
     switch (flag) {
-      case 'image-builder.users.enabled':
-        return true;
       case 'image-builder.import.enabled':
         return true;
       case 'edgeParity.image-list':
