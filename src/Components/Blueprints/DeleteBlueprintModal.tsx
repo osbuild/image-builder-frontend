@@ -1,7 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
-import { ActionGroup, Button } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
+} from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
@@ -83,22 +89,20 @@ export const DeleteBlueprintModal: React.FunctionComponent<
     setShowDeleteModal(false);
   };
   return (
-    <Modal
-      variant={ModalVariant.small}
-      titleIconVariant="warning"
-      isOpen={isOpen}
-      onClose={onDeleteClose}
-      title={'Delete blueprint?'}
-      description={`All versions of ${blueprintName} and its associated images will be deleted.`}
-    >
-      <ActionGroup>
+    <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={onDeleteClose}>
+      <ModalHeader title={'Delete blueprint?'} titleIconVariant="warning" />
+      <ModalBody>
+        All versions of {blueprintName} and its associated images will be
+        deleted.
+      </ModalBody>
+      <ModalFooter>
         <Button variant="danger" type="button" onClick={handleDelete}>
           Delete
         </Button>
         <Button variant="link" type="button" onClick={onDeleteClose}>
           Cancel
         </Button>
-      </ActionGroup>
+      </ModalFooter>
     </Modal>
   );
 };

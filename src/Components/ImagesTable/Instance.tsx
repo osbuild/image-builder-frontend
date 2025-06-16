@@ -8,11 +8,12 @@ import {
   ClipboardCopy,
   List,
   ListItem,
+  Modal,
+  ModalVariant,
   Popover,
   PopoverPosition,
   Skeleton,
 } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import {
   ListComponent,
   OrderType,
@@ -204,9 +205,7 @@ const ProvisioningLink = ({
         {wizardOpen && (
           <Modal
             isOpen
-            hasNoBodyWrapper
             appendTo={appendTo}
-            showClose={false}
             variant={ModalVariant.large}
             aria-label="Open launch wizard"
           >

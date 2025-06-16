@@ -2,7 +2,6 @@ import React from 'react';
 
 import { parse } from '@ltd/j-toml';
 import {
-  ActionGroup,
   Button,
   Checkbox,
   FileUpload,
@@ -11,9 +10,13 @@ import {
   FormHelperText,
   HelperText,
   HelperTextItem,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+  ModalVariant,
   Popover,
 } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
@@ -239,94 +242,99 @@ export const ImportBlueprintModal: React.FunctionComponent<
     <Modal
       variant={ModalVariant.medium}
       isOpen={isOpen}
-      title={
-        <>
-          Import pipeline
-          <Popover
-            bodyContent={
-              <div>
-                You can import the blueprints you created by using the Red Hat
-                image builder into Insights images to create customized images.
-              </div>
-            }
-          >
-            <Button
-              icon={<HelpIcon />}
-              variant="plain"
-              aria-label="About import"
-              className="pf-v6-u-pl-sm"
-              isInline
-            />
-          </Popover>
-        </>
-      }
       onClose={onImportClose}
     >
-      <Form>
-        <FormGroup fieldId="checkbox-import-custom-repositories">
-          <Checkbox
-            label="Import missing custom repositories after file upload."
-            isChecked={isCheckedImportRepos}
-            onChange={() => setIsCheckedImportRepos((prev) => !prev)}
-            aria-label="Import Custom Repositories checkbox"
-            id="checkbox-import-custom-repositories"
-            name="Import Repositories"
-          />
-        </FormGroup>
-        <FormGroup fieldId="import-blueprint-file-upload">
-          <FileUpload
-            id="import-blueprint-file-upload"
-            type="text"
-            value={fileContent}
-            filename={filename}
-            filenamePlaceholder="Drag and drop a file or upload one"
-            onFileInputChange={handleFileInputChange}
-            onDataChange={handleDataChange}
-            onReadStarted={handleFileReadStarted}
-            onReadFinished={handleFileReadFinished}
-            onClearClick={handleClear}
-            isLoading={isLoading}
-            isReadOnly={true}
-            browseButtonText="Upload"
-            dropzoneProps={{
-              accept: { 'text/json': ['.json'], 'text/plain': ['.toml'] },
-              maxSize: 512000,
-              onDropRejected: handleFileRejected,
-            }}
-            validated={isRejected || isInvalidFormat ? 'error' : 'default'}
-          />
-          <FormHelperText>
-            <HelperText>
-              <HelperTextItem variant={variantSwitch()}>
-                {isRejected
-                  ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
-                  : isInvalidFormat
-                  ? 'Not compatible with the blueprints format.'
-                  : isOnPrem
-                  ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
-                  : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
-              </HelperTextItem>
-            </HelperText>
-          </FormHelperText>
-        </FormGroup>
-        <ActionGroup>
-          <Button
-            type="button"
-            isDisabled={isRejected || isInvalidFormat || !fileContent}
-            onClick={() =>
-              navigate(resolveRelPath(`imagewizard/import`), {
-                state: { blueprint: importedBlueprint },
-              })
-            }
-            data-testid="import-blueprint-finish"
-          >
-            Review and finish
-          </Button>
-          <Button variant="link" type="button" onClick={onImportClose}>
-            Cancel
-          </Button>
-        </ActionGroup>
-      </Form>
+      <ModalHeader
+        title={
+          <>
+            Import pipeline
+            <Popover
+              bodyContent={
+                <div>
+                  You can import the blueprints you created by using the Red Hat
+                  image builder into Insights images to create customized
+                  images.
+                </div>
+              }
+            >
+              <Button
+                icon={<HelpIcon />}
+                variant="plain"
+                aria-label="About import"
+                className="pf-v6-u-pl-sm"
+                isInline
+              />
+            </Popover>
+          </>
+        }
+      />
+      <ModalBody>
+        <Form>
+          <FormGroup fieldId="checkbox-import-custom-repositories">
+            <Checkbox
+              label="Import missing custom repositories after file upload."
+              isChecked={isCheckedImportRepos}
+              onChange={() => setIsCheckedImportRepos((prev) => !prev)}
+              aria-label="Import Custom Repositories checkbox"
+              id="checkbox-import-custom-repositories"
+              name="Import Repositories"
+            />
+          </FormGroup>
+          <FormGroup fieldId="import-blueprint-file-upload">
+            <FileUpload
+              id="import-blueprint-file-upload"
+              type="text"
+              value={fileContent}
+              filename={filename}
+              filenamePlaceholder="Drag and drop a file or upload one"
+              onFileInputChange={handleFileInputChange}
+              onDataChange={handleDataChange}
+              onReadStarted={handleFileReadStarted}
+              onReadFinished={handleFileReadFinished}
+              onClearClick={handleClear}
+              isLoading={isLoading}
+              isReadOnly={true}
+              browseButtonText="Upload"
+              dropzoneProps={{
+                accept: { 'text/json': ['.json'], 'text/plain': ['.toml'] },
+                maxSize: 512000,
+                onDropRejected: handleFileRejected,
+              }}
+              validated={isRejected || isInvalidFormat ? 'error' : 'default'}
+            />
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem variant={variantSwitch()}>
+                  {isRejected
+                    ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
+                    : isInvalidFormat
+                    ? 'Not compatible with the blueprints format.'
+                    : isOnPrem
+                    ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
+                    : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          </FormGroup>
+        </Form>
+      </ModalBody>
+      <ModalFooter>
+        <Button
+          type="button"
+          isDisabled={isRejected || isInvalidFormat || !fileContent}
+          onClick={() =>
+            navigate(resolveRelPath(`imagewizard/import`), {
+              state: { blueprint: importedBlueprint },
+            })
+          }
+          data-testid="import-blueprint-finish"
+        >
+          Review and finish
+        </Button>
+        <Button variant="link" type="button" onClick={onImportClose}>
+          Cancel
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };

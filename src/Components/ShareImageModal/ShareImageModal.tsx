@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 
-import { Modal } from '@patternfly/react-core/deprecated';
+import { Modal, ModalBody, ModalHeader } from '@patternfly/react-core';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import RegionsSelect from './RegionsSelect';
@@ -30,12 +30,16 @@ const ShareToRegionsModal = () => {
       variant="small"
       aria-label="Share to new region"
       onClose={handleClose}
-      title="Share to new region"
-      description="Configure new regions for this image that will run on your AWS. All the
-        regions will launch with the same configuration."
       appendTo={appendTo}
     >
-      <RegionsSelect composeId={composeId} handleClose={handleClose} />
+      <ModalHeader
+        title="Share to new region"
+        description="Configure new regions for this image that will run on your AWS. All the
+        regions will launch with the same configuration."
+      />
+      <ModalBody>
+        <RegionsSelect composeId={composeId} handleClose={handleClose} />
+      </ModalBody>
     </Modal>
   );
 };
