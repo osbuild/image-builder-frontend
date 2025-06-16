@@ -8,8 +8,11 @@ import {
   Flex,
   FlexItem,
   Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core/deprecated';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
@@ -123,12 +126,14 @@ export const CreateSaveButton = ({
     };
 
     return (
-      <Modal
-        title="Save time by building images"
-        isOpen={showModal}
-        onClose={handleClose}
-        width="50%"
-        actions={[
+      <Modal isOpen={showModal} onClose={handleClose} width="50%">
+        <ModalHeader title="Save time by building images" />
+        <ModalBody>
+          Building blueprints and images doesn&apos;t need to be a two step
+          process. To build images simultaneously, use the dropdown arrow to the
+          right side of this button.
+        </ModalBody>
+        <ModalFooter>
           <Button
             key="back"
             variant="primary"
@@ -136,12 +141,8 @@ export const CreateSaveButton = ({
             onClick={handleClose}
           >
             Close
-          </Button>,
-        ]}
-      >
-        Building blueprints and images doesn’t need to be a two step process. To
-        build images simultaneously, use the dropdown arrow to the right side of
-        this button.
+          </Button>
+        </ModalFooter>
       </Modal>
     );
   };

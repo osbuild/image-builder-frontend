@@ -13,6 +13,7 @@ import {
   EmptyStateFooter,
   EmptyStateVariant,
   Icon,
+  Modal,
   Pagination,
   PaginationVariant,
   Popover,
@@ -28,8 +29,10 @@ import {
   Toolbar,
   ToolbarContent,
   ToolbarItem,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core/deprecated';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -577,12 +580,64 @@ const Packages = () => {
   const RepositoryModal = () => {
     return (
       <Modal
-        titleIconVariant="warning"
-        title="Custom repositories will be added to your image"
         isOpen={isRepoModalOpen}
         onClose={handleCloseModalToggle}
         width="50%"
-        actions={[
+      >
+        <ModalHeader
+          title="Custom repositories will be added to your image"
+          titleIconVariant="warning"
+        />
+        <ModalBody>
+          You have selected packages that belong to custom repositories. By
+          continuing, you are acknowledging and consenting to adding the
+          following custom repositories to your image.
+          <br />
+          <br />
+          The repositories will also get enabled in{' '}
+          <Button
+            component="a"
+            target="_blank"
+            variant="link"
+            iconPosition="right"
+            isInline
+            icon={<ExternalLinkAltIcon />}
+            href={CONTENT_URL}
+          >
+            content services
+          </Button>{' '}
+          if they were not enabled yet:
+          <br />
+          <Table variant="compact">
+            <Thead>
+              <Tr>
+                {isSelectingPackage ? (
+                  <Th>Packages</Th>
+                ) : (
+                  <Th>Package groups</Th>
+                )}
+                <Th>Repositories</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              <Tr>
+                {isSelectingPackage ? (
+                  <Td>{isSelectingPackage?.name}</Td>
+                ) : (
+                  <Td>{isSelectingGroup?.name}</Td>
+                )}
+                <Td>
+                  EPEL {getEpelVersionForDistribution(distribution)} Everything
+                  x86_64
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
+          <br />
+          To move forward, either add the repos to your image, or go back to
+          review your package selections.
+        </ModalBody>
+        <ModalFooter>
           <Button
             key="add"
             variant="primary"
@@ -591,55 +646,11 @@ const Packages = () => {
             onClick={handleConfirmModalToggle}
           >
             Add listed repositories
-          </Button>,
+          </Button>
           <Button key="back" variant="link" onClick={handleCloseModalToggle}>
             Back
-          </Button>,
-        ]}
-      >
-        You have selected packages that belong to custom repositories. By
-        continuing, you are acknowledging and consenting to adding the following
-        custom repositories to your image.
-        <br />
-        <br />
-        The repositories will also get enabled in{' '}
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          iconPosition="right"
-          isInline
-          icon={<ExternalLinkAltIcon />}
-          href={CONTENT_URL}
-        >
-          content services
-        </Button>{' '}
-        if they were not enabled yet:
-        <br />
-        <Table variant="compact">
-          <Thead>
-            <Tr>
-              {isSelectingPackage ? <Th>Packages</Th> : <Th>Package groups</Th>}
-              <Th>Repositories</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr>
-              {isSelectingPackage ? (
-                <Td>{isSelectingPackage?.name}</Td>
-              ) : (
-                <Td>{isSelectingGroup?.name}</Td>
-              )}
-              <Td>
-                EPEL {getEpelVersionForDistribution(distribution)} Everything
-                x86_64
-              </Td>
-            </Tr>
-          </Tbody>
-        </Table>
-        <br />
-        To move forward, either add the repos to your image, or go back to
-        review your package selections.
+          </Button>
+        </ModalFooter>
       </Modal>
     );
   };
