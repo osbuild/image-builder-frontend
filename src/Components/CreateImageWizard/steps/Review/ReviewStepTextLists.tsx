@@ -900,20 +900,6 @@ export const FirewallList = () => {
           )}
         </Content>
         <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
-          Disabled services
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {firewall.services.disabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>
-                {firewall.services.disabled.join(' ')}
-              </CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Enabled services
         </Content>
         <Content component={ContentVariants.dd}>
@@ -921,6 +907,20 @@ export const FirewallList = () => {
             <CodeBlock>
               <CodeBlockCode>
                 {firewall.services.enabled.join(' ')}
+              </CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Disabled services
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {firewall.services.disabled.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>
+                {firewall.services.disabled.join(' ')}
               </CodeBlockCode>
             </CodeBlock>
           ) : (
@@ -938,6 +938,18 @@ export const ServicesList = () => {
   return (
     <Content>
       <Content component={ContentVariants.dl} className="review-step-dl">
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Enabled
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {services.enabled.length > 0 ? (
+            <CodeBlock>
+              <CodeBlockCode>{services.enabled.join(' ')}</CodeBlockCode>
+            </CodeBlock>
+          ) : (
+            'None'
+          )}
+        </Content>
         <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Disabled
         </Content>
@@ -957,18 +969,6 @@ export const ServicesList = () => {
           {services.masked.length > 0 ? (
             <CodeBlock>
               <CodeBlockCode>{services.masked.join(' ')}</CodeBlockCode>
-            </CodeBlock>
-          ) : (
-            'None'
-          )}
-        </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
-          Enabled
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {services.enabled.length > 0 ? (
-            <CodeBlock>
-              <CodeBlockCode>{services.enabled.join(' ')}</CodeBlockCode>
             </CodeBlock>
           ) : (
             'None'
