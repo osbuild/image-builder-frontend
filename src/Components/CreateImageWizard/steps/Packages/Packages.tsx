@@ -1508,20 +1508,14 @@ const Packages = () => {
       >
         <Tab
           eventKey="included-repos"
-          title={
-            <TabTitleText>
-              Included repos <IncludedReposPopover />
-            </TabTitleText>
-          }
+          title={<TabTitleText>Included repos</TabTitleText>}
+          actions={<IncludedReposPopover />}
           aria-label="Included repositories"
         />
         <Tab
           eventKey="other-repos"
-          title={
-            <TabTitleText>
-              Other repos <OtherReposPopover />
-            </TabTitleText>
-          }
+          title={<TabTitleText>Other repos</TabTitleText>}
+          actions={<OtherReposPopover />}
           aria-label="Other repositories"
         />
       </Tabs>
