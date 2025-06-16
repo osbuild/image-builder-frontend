@@ -72,6 +72,7 @@ import {
   useSearchPackageGroupMutation,
   ApiSearchRpmResponse,
   ApiPackageSourcesResponse,
+  useGetTemplateQuery,
 } from '../../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../../store/hooks';
 import { Package } from '../../../../store/imageBuilderApi';
@@ -91,6 +92,7 @@ import {
   addModule,
   removeModule,
   selectModules,
+  selectTemplate,
 } from '../../../../store/wizardSlice';
 import useDebounce from '../../../../Utilities/useDebounce';
 
@@ -135,6 +137,24 @@ const Packages = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
   const modules = useAppSelector(selectModules);
+  const template = useAppSelector(selectTemplate);
+
+  const { data: templateData } = useGetTemplateQuery({
+    uuid: template,
+  });
+
+  const {
+    data: { data: reposInTemplate = [] } = {},
+    isLoading: isLoadingReposInTemplate,
+  } = useListRepositoriesQuery({
+    contentType: 'rpm',
+    limit: 100,
+    offset: 0,
+    uuid:
+      templateData && templateData.repository_uuids
+        ? templateData.repository_uuids.join(',')
+        : '',
+  });
 
   const { data: distroRepositories, isSuccess: isSuccessDistroRepositories } =
     useGetArchitecturesQuery({
@@ -256,16 +276,23 @@ const Packages = () => {
         searchDistroRpms({
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
-            urls: distroRepositories
-              ?.filter((archItem) => {
-                return archItem.arch === arch;
-              })[0]
-              .repositories.flatMap((repo) => {
-                if (!repo.baseurl) {
-                  throw new Error(`Repository ${repo} missing baseurl`);
-                }
-                return repo.baseurl;
-              }),
+            urls:
+              template === ''
+                ? distroRepositories
+                    ?.filter((archItem) => {
+                      return archItem.arch === arch;
+                    })[0]
+                    .repositories.flatMap((repo) => {
+                      if (!repo.baseurl) {
+                        throw new Error(`Repository ${repo} missing baseurl`);
+                      }
+                      return repo.baseurl;
+                    })
+                : reposInTemplate
+                    .filter((r) => r.org_id === '-1' && !!r.url)
+                    .flatMap((r) =>
+                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!
+                    ),
             limit: 500,
             include_package_sources: true,
           },
@@ -302,9 +329,12 @@ const Packages = () => {
     searchRecommendedRpms,
     epelRepoUrlByDistribution,
     isSuccessDistroRepositories,
-    searchDistroRpms,
     distroRepositories,
     arch,
+    reposInTemplate,
+    template,
+    distribution,
+    debouncedSearchTermIsGroup,
   ]);
 
   useEffect(() => {
@@ -353,6 +383,11 @@ const Packages = () => {
     debouncedSearchTerm,
     activeTabKey,
     epelRepoUrlByDistribution,
+    debouncedSearchTermIsGroup,
+    arch,
+    distroRepositories,
+    isSuccessDistroRepositories,
+    isSuccessEpelRepo,
   ]);
 
   const EmptySearch = () => {
@@ -1361,6 +1396,7 @@ const Packages = () => {
           (isLoadingDistroPackages ||
             isLoadingCustomPackages ||
             isLoadingDistroGroups ||
+            isLoadingReposInTemplate ||
             isLoadingCustomGroups) &&
           activeTabKey === Repos.INCLUDED):
         return <Searching />;
@@ -1407,6 +1443,8 @@ const Packages = () => {
     sortedPackages,
     activeSortDirection,
     activeSortIndex,
+    template,
+    reposInTemplate,
   ]);
 
   const PackagesTable = () => {
