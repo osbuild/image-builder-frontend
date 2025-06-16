@@ -1,7 +1,12 @@
 import React from 'react';
 
-import { Button } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core/deprecated';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from '@patternfly/react-core';
 
 import calculateNewIndex from './calculateNewIndex';
 
@@ -48,22 +53,20 @@ const RemoveUserModal = ({
   };
 
   return (
-    <Modal
-      title={`Remove user${userName ? ` ${userName}` : ''}?`}
-      isOpen={isOpen}
-      onClose={onClose}
-      width="50%"
-      actions={[
+    <Modal isOpen={isOpen} onClose={onClose} width="50%">
+      <ModalHeader title={`Remove user${userName ? ` ${userName}` : ''}?`} />
+      <ModalBody>
+        This action is permanent and cannot be undone. Once deleted all
+        information about the user will be lost.
+      </ModalBody>
+      <ModalFooter>
         <Button key="confirm" variant="primary" onClick={onConfirm}>
           Remove user
-        </Button>,
+        </Button>
         <Button key="cancel" variant="link" onClick={onClose}>
           Cancel
-        </Button>,
-      ]}
-    >
-      This action is permanent and cannot be undone. Once deleted all
-      information about the user will be lost.
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };
