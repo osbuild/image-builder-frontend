@@ -158,7 +158,7 @@ const ReleaseSelect = () => {
       data-testid="release_select"
       style={
         {
-          'max-width': '100%',
+          maxWidth: '100%',
         } as React.CSSProperties
       }
     >
