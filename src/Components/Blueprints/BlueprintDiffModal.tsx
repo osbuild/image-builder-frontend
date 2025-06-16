@@ -1,8 +1,14 @@
 import React from 'react';
 
 import { DiffEditor } from '@monaco-editor/react';
-import { Button } from '@patternfly/react-core';
-import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
+import {
+  Button,
+  Modal,
+  ModalVariant,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
+} from '@patternfly/react-core';
 
 import { BuildImagesButton } from './BuildImagesButton';
 
@@ -40,16 +46,23 @@ const BlueprintDiffModal = ({
   }
 
   return (
-    <Modal
-      variant={ModalVariant.large}
-      titleIconVariant={'info'}
-      isOpen={isOpen}
-      onClose={onClose}
-      title={`Compare ${blueprintName || ''} versions`}
-      actions={[
+    <Modal variant={ModalVariant.large} isOpen={isOpen} onClose={onClose}>
+      <ModalHeader
+        title={`Compare ${blueprintName || ''} versions`}
+        titleIconVariant={'info'}
+      />
+      <ModalBody>
+        <DiffEditor
+          height="90vh"
+          language="json"
+          original={JSON.stringify(baseBlueprint, undefined, 2)}
+          modified={JSON.stringify(blueprint, undefined, 2)}
+        />
+      </ModalBody>
+      <ModalFooter>
         <BuildImagesButton key="build-button">
           Synchronize images
-        </BuildImagesButton>,
+        </BuildImagesButton>
         <Button
           key="cancel-button"
           variant="link"
@@ -57,15 +70,8 @@ const BlueprintDiffModal = ({
           onClick={onClose}
         >
           Cancel
-        </Button>,
-      ]}
-    >
-      <DiffEditor
-        height="90vh"
-        language="json"
-        original={JSON.stringify(baseBlueprint, undefined, 2)}
-        modified={JSON.stringify(blueprint, undefined, 2)}
-      />
+        </Button>
+      </ModalFooter>
     </Modal>
   );
 };
