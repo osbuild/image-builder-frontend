@@ -11,6 +11,7 @@ import {
   Bullseye,
   Badge,
   Button,
+  PageSection,
 } from '@patternfly/react-core';
 import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import {
@@ -233,7 +234,7 @@ const ImagesTable = () => {
   }
 
   return (
-    <>
+    <PageSection>
       <ImagesTableToolbar
         itemCount={itemCount}
         perPage={perPage}
@@ -296,7 +297,7 @@ const ImagesTable = () => {
           </ToolbarItem>
         </ToolbarContent>
       </Toolbar>
-    </>
+    </PageSection>
   );
 };
 
