@@ -171,21 +171,21 @@ describe('Step Services', () => {
       name: /clear input/i,
     });
 
+    // Enabled services input
+    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
+    await addEnabledService('-------');
+    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
+    await waitFor(() => user.click(clearInputButtons[0]));
+
     // Disabled services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addDisabledService('-------');
     expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[0]));
+    await waitFor(() => user.click(clearInputButtons[1]));
 
     // Masked services input
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addMaskedService('-------');
-    expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
-    await waitFor(() => user.click(clearInputButtons[1]));
-
-    // Enabled services input
-    expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
-    await addEnabledService('-------');
     expect(await screen.findByText('Invalid format.')).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[2]));
   });

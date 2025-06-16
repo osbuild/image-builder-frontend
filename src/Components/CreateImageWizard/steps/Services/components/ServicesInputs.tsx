@@ -54,6 +54,23 @@ const ServicesInput = () => {
 
   return (
     <>
+      <FormGroup isRequired={false} label="Enabled services">
+        <LabelInput
+          ariaLabel="Add enabled service"
+          placeholder="Add enabled service"
+          validator={isServiceValid}
+          list={enabledServices.filter(
+            (service) => !enabledRequiredByOpenSCAP.includes(service)
+          )}
+          requiredList={enabledRequiredByOpenSCAP}
+          requiredCategoryName="Required by OpenSCAP"
+          item="Enabled service"
+          addAction={addEnabledService}
+          removeAction={removeEnabledService}
+          stepValidation={stepValidation}
+          fieldName="enabledSystemdServices"
+        />
+      </FormGroup>
       <FormGroup isRequired={false} label="Disabled services">
         <LabelInput
           ariaLabel="Add disabled service"
@@ -87,23 +104,6 @@ const ServicesInput = () => {
           removeAction={removeMaskedService}
           stepValidation={stepValidation}
           fieldName="maskedSystemdServices"
-        />
-      </FormGroup>
-      <FormGroup isRequired={false} label="Enabled services">
-        <LabelInput
-          ariaLabel="Add enabled service"
-          placeholder="Add enabled service"
-          validator={isServiceValid}
-          list={enabledServices.filter(
-            (service) => !enabledRequiredByOpenSCAP.includes(service)
-          )}
-          requiredList={enabledRequiredByOpenSCAP}
-          requiredCategoryName="Required by OpenSCAP"
-          item="Enabled service"
-          addAction={addEnabledService}
-          removeAction={removeEnabledService}
-          stepValidation={stepValidation}
-          fieldName="enabledSystemdServices"
         />
       </FormGroup>
     </>
