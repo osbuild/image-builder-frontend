@@ -20,7 +20,6 @@ export const IncludedReposPopover = () => {
         variant="plain"
         aria-label="About included repositories"
         component="span"
-        className="pf-v6-u-p-0"
         size="sm"
         isInline
       />
@@ -45,7 +44,6 @@ export const OtherReposPopover = () => {
         variant="plain"
         aria-label="About other repositories"
         component="span"
-        className="pf-v6-u-p-0"
         size="sm"
         isInline
       />
