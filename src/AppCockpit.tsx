@@ -3,6 +3,7 @@ import '@patternfly/patternfly/patternfly-addons.css';
 
 import React from 'react';
 
+import 'cockpit-dark-theme';
 import { Page, PageSection } from '@patternfly/react-core';
 import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
 import { createRoot } from 'react-dom/client';
