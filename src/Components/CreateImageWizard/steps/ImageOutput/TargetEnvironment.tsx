@@ -7,7 +7,6 @@ import {
   FormGroup,
   Popover,
   Radio,
-  Tooltip,
   Content,
   CardHeader,
   Gallery,
@@ -33,10 +32,7 @@ import {
   selectImageTypes,
 } from '../../../../store/wizardSlice';
 import isRhel from '../../../../Utilities/isRhel';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 type TargetEnvironmentCardProps = {
   title: string;
@@ -108,10 +104,6 @@ const TargetEnvironment = () => {
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
 
-  const showOracleUnavailableWarning = useFlag(
-    'image-builder.oci.unavailable-warning.enabled'
-  );
-
   useEffect(() => {
     if (!isFedoraEnv) prefetchActivationKeys();
   }, []);
@@ -137,18 +129,6 @@ const TargetEnvironment = () => {
       dispatch(addImageType(environment));
     }
   };
-
-  const ociTile = (
-    <TargetEnvironmentCard
-      testId="upload-oci"
-      title="Oracle Cloud Infrastructure"
-      imageSrc={'/apps/frontend-assets/partners-icons/oracle-short.svg'}
-      imageAlt="Oracle Cloud Infrastructure logo"
-      handleOnClick={() => handleToggleEnvironment('oci')}
-      isSelected={environments.includes('oci')}
-      isDisabled={showOracleUnavailableWarning}
-    />
-  );
 
   const publicCloudsSupported = () => {
     return (
@@ -205,19 +185,18 @@ const TargetEnvironment = () => {
                 isSelected={environments.includes('azure')}
               />
             )}
-            {supportedEnvironments?.includes('oci') &&
-              showOracleUnavailableWarning && (
-                <Tooltip
-                  content={
-                    <div>Oracle Cloud support is temporarily unavailable</div>
-                  }
-                >
-                  <div>{ociTile}</div>
-                </Tooltip>
-              )}
-            {supportedEnvironments?.includes('oci') &&
-              !showOracleUnavailableWarning &&
-              ociTile}
+            {supportedEnvironments?.includes('oci') && (
+              <TargetEnvironmentCard
+                testId="upload-oci"
+                title="Oracle Cloud Infrastructure"
+                imageSrc={
+                  '/apps/frontend-assets/partners-icons/oracle-short.svg'
+                }
+                imageAlt="Oracle Cloud Infrastructure logo"
+                handleOnClick={() => handleToggleEnvironment('oci')}
+                isSelected={environments.includes('oci')}
+              />
+            )}
           </Gallery>
         </FormGroup>
       )}
