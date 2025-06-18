@@ -90,9 +90,9 @@ export const UNIT_GIB = 1024 ** 3;
 
 // Use a Map() to ensure order is preserved (order is not gauranteed by an Object())
 export const RELEASES = new Map([
+  [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
   [RHEL_9, 'Red Hat Enterprise Linux (RHEL) 9'],
   [RHEL_8, 'Red Hat Enterprise Linux (RHEL) 8'],
-  [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
   [RHEL_9_BETA, 'Red Hat Enterprise Linux (RHEL) 9 Beta'],
   [RHEL_10_BETA, 'Red Hat Enterprise Linux (RHEL) 10 Beta'],
   [CENTOS_9, 'CentOS Stream 9'],
