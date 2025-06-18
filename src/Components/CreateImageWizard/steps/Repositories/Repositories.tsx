@@ -40,6 +40,7 @@ import {
   ApiRepositoryResponseRead,
   useListRepositoriesQuery,
   useGetTemplateQuery,
+  useListRepositoryParametersQuery,
 } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -86,6 +87,35 @@ const Repositories = () => {
   const [isTemplateSelected, setIsTemplateSelected] = useState(false);
 
   const debouncedFilterValue = useDebounce(filterValue);
+
+  const { data: repositoryParameters } = useListRepositoryParametersQuery();
+
+  const getReadableArchitecture = (technicalArch: string | undefined) => {
+    if (!technicalArch || !repositoryParameters?.distribution_arches) {
+      return technicalArch || '-';
+    }
+
+    const archParam = repositoryParameters.distribution_arches.find(
+      (arch) => arch.label === technicalArch
+    );
+
+    return archParam?.name || technicalArch;
+  };
+
+  const getReadableVersions = (technicalVersions: string[] | undefined) => {
+    if (!technicalVersions || !repositoryParameters?.distribution_versions) {
+      return technicalVersions || '-';
+    }
+
+    const readableVersions = technicalVersions.map((version) => {
+      const versionParam = repositoryParameters.distribution_versions?.find(
+        (v) => v.label === version
+      );
+      return versionParam?.name || version;
+    });
+
+    return readableVersions.join(', ');
+  };
 
   const selected = useMemo(
     () =>
@@ -640,10 +670,10 @@ const Repositories = () => {
                           )}
                         </Td>
                         <Td dataLabel={'Architecture'}>
-                          {distribution_arch || '-'}
+                          {getReadableArchitecture(distribution_arch)}
                         </Td>
                         <Td dataLabel={'Version'}>
-                          {distribution_versions || '-'}
+                          {getReadableVersions(distribution_versions)}
                         </Td>
                         <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
                         <Td dataLabel={'Status'}>
@@ -758,10 +788,10 @@ const Repositories = () => {
                           )}
                         </Td>
                         <Td dataLabel={'Architecture'}>
-                          {distribution_arch || '-'}
+                          {getReadableArchitecture(distribution_arch)}
                         </Td>
                         <Td dataLabel={'Version'}>
-                          {distribution_versions || '-'}
+                          {getReadableVersions(distribution_versions)}
                         </Td>
                         <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
                         <Td dataLabel={'Status'}>

@@ -72,6 +72,12 @@ const injectedRtkApi = api.injectEndpoints({
         },
       }),
     }),
+    listRepositoryParameters: build.query<
+      ListRepositoryParametersApiResponse,
+      ListRepositoryParametersApiArg
+    >({
+      query: () => ({ url: `/repository_parameters/` }),
+    }),
     searchRpm: build.mutation<SearchRpmApiResponse, SearchRpmApiArg>({
       query: (queryArg) => ({
         url: `/rpms/names`,
@@ -177,6 +183,9 @@ export type ListRepositoriesRpmsApiArg = {
   /** Sort the response based on specific repository parameters. Sort criteria can include `name`, `url`, `status`, and `package_count`. */
   sortBy?: string;
 };
+export type ListRepositoryParametersApiResponse =
+  /** status 200 OK */ ApiRepositoryParameterResponse;
+export type ListRepositoryParametersApiArg = void;
 export type SearchRpmApiResponse = /** status 200 OK */ ApiSearchRpmResponse[];
 export type SearchRpmApiArg = {
   /** request body */
@@ -639,6 +648,24 @@ export type ApiRepositoryRpmCollectionResponse = {
   links?: ApiLinks | undefined;
   meta?: ApiResponseMetadata | undefined;
 };
+export type ConfigDistributionArch = {
+  /** Static label of the architecture */
+  label?: string | undefined;
+  /** Human-readable form of the architecture */
+  name?: string | undefined;
+};
+export type ConfigDistributionVersion = {
+  /** Static label of the version */
+  label?: string | undefined;
+  /** Human-readable form of the version */
+  name?: string | undefined;
+};
+export type ApiRepositoryParameterResponse = {
+  /** Architectures available for repository creation */
+  distribution_arches?: ConfigDistributionArch[] | undefined;
+  /** Versions available for repository creation */
+  distribution_versions?: ConfigDistributionVersion[] | undefined;
+};
 export type ApiPackageSourcesResponse = {
   /** Architecture of the module */
   arch?: string | undefined;
@@ -776,6 +803,7 @@ export const {
   useCreateRepositoryMutation,
   useBulkImportRepositoriesMutation,
   useListRepositoriesRpmsQuery,
+  useListRepositoryParametersQuery,
   useSearchRpmMutation,
   useListSnapshotsByDateMutation,
   useListTemplatesQuery,
