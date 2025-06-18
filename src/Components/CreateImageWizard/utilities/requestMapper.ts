@@ -12,6 +12,10 @@ import {
   RHEL_9_BETA,
   RHEL_10,
   RHEL_10_BETA,
+  FIRSTBOOT_PATH,
+  FIRSTBOOT_SERVICE_PATH,
+  SATELLITE_SERVICE_PATH,
+  SATELLITE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
 import {
@@ -448,9 +452,7 @@ export const mapExportRequestToState = (
 };
 
 const getFirstBootScript = (files?: File[]): string => {
-  const firstBootFile = files?.find(
-    (file) => file.path === '/usr/local/sbin/custom-first-boot'
-  );
+  const firstBootFile = files?.find((file) => file.path === FIRSTBOOT_PATH);
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
@@ -564,13 +566,13 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
   const files: File[] = [];
   if (selectFirstBootScript(state)) {
     files.push({
-      path: '/etc/systemd/system/custom-first-boot.service',
+      path: FIRSTBOOT_SERVICE_PATH,
       data: FIRST_BOOT_SERVICE_DATA,
       data_encoding: 'base64',
       ensure_parents: true,
     });
     files.push({
-      path: '/usr/local/sbin/custom-first-boot',
+      path: FIRSTBOOT_PATH,
       data: btoa(selectFirstBootScript(state)),
       data_encoding: 'base64',
       mode: '0774',
@@ -580,13 +582,13 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
   const satCmd = selectSatelliteRegistrationCommand(state);
   if (satCmd && selectRegistrationType(state) === 'register-satellite') {
     files.push({
-      path: '/etc/systemd/system/register-satellite.service',
+      path: SATELLITE_SERVICE_PATH,
       data: SATELLITE_SERVICE_DATA,
       data_encoding: 'base64',
       ensure_parents: true,
     });
     files.push({
-      path: '/usr/local/sbin/register-satellite',
+      path: SATELLITE_PATH,
       data: btoa(satCmd),
       mode: '0774',
       data_encoding: 'base64',

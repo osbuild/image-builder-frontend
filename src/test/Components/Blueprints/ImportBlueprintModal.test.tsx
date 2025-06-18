@@ -1,6 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
+import { FIRSTBOOT_PATH } from '../../../constants';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 import { clickNext } from '../CreateImageWizard/wizardTestUtils';
 
@@ -169,7 +170,7 @@ data = "IyEvYmluL2Jhc2gKZmlyc3Rib290IHNjcmlwdCB0byB0ZXN0IGltcG9ydA=="
 data_encoding = "base64"
 ensure_parents = true
 mode = "0774"
-path = "/usr/local/sbin/custom-first-boot"
+path = "${FIRSTBOOT_PATH}"
 
 [[customizations.filesystem]]
 mountpoint = "/var"
@@ -241,7 +242,7 @@ data = "IyEvYmluL2Jhc2gKZmlyc3Rib290IHNjcmlwdCB0byB0ZXN0IGltcG9ydA=="
 data_encoding = "base64"
 ensure_parents = true
 mode = "0774"
-path = "/usr/local/sbin/custom-first-boot"
+path = "${FIRSTBOOT_PATH}"
 
 [[customizations.filesystem]]
 mountpoint = "/var"
