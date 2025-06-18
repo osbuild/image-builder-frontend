@@ -12,6 +12,7 @@ import {
   FIRST_BOOT_SERVICE,
   FIRST_BOOT_SERVICE_DATA,
   FIRSTBOOT_PATH,
+  FIRSTBOOT_SERVICE_PATH,
   RHEL_8,
   RHEL_9,
   UNIT_GIB,
@@ -125,7 +126,7 @@ export const SCRIPT_WITHOUT_SHEBANG = `echo "Hello, world!"`;
 
 export const firstBootData: File[] = [
   {
-    path: '/etc/systemd/system/custom-first-boot.service',
+    path: FIRSTBOOT_SERVICE_PATH,
     data: FIRST_BOOT_SERVICE_DATA,
     data_encoding: 'base64',
     ensure_parents: true,
