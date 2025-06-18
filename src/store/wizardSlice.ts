@@ -32,7 +32,7 @@ import type {
 } from '../Components/CreateImageWizard/steps/TargetEnvironment/Gcp';
 import type { V1ListSourceResponseItem } from '../Components/CreateImageWizard/types';
 import { generateDefaultName } from '../Components/CreateImageWizard/utilities/useGenerateDefaultName';
-import { RHEL_9, X86_64 } from '../constants';
+import { RHEL_10, X86_64 } from '../constants';
 import { yyyyMMddFormat } from '../Utilities/time';
 
 import type { RootState } from '.';
@@ -183,7 +183,7 @@ export const initialState: wizardState = {
   },
   wizardMode: 'create',
   architecture: X86_64,
-  distribution: RHEL_9,
+  distribution: RHEL_10,
   imageTypes: [],
   aws: {
     accountId: '',
@@ -252,7 +252,7 @@ export const initialState: wizardState = {
     keyboard: '',
   },
   details: {
-    blueprintName: generateDefaultName(RHEL_9, X86_64),
+    blueprintName: generateDefaultName(RHEL_10, X86_64),
     isCustomName: false,
     blueprintDescription: '',
   },
