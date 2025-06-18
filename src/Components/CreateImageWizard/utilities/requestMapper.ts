@@ -519,7 +519,7 @@ const getImageOptions = (
     case 'aws':
       if (selectAwsShareMethod(state) === 'sources')
         return { share_with_sources: [selectAwsSourceId(state) || ''] };
-      else return { share_with_accounts: [selectAwsAccountId(state)] };
+      return { share_with_accounts: [selectAwsAccountId(state)] };
     case 'azure':
       if (selectAzureShareMethod(state) === 'sources')
         return {
@@ -527,13 +527,12 @@ const getImageOptions = (
           resource_group: selectAzureResourceGroup(state),
           hyper_v_generation: selectAzureHyperVGeneration(state),
         };
-      else
-        return {
-          tenant_id: selectAzureTenantId(state),
-          subscription_id: selectAzureSubscriptionId(state),
-          resource_group: selectAzureResourceGroup(state),
-          hyper_v_generation: selectAzureHyperVGeneration(state),
-        };
+      return {
+        tenant_id: selectAzureTenantId(state),
+        subscription_id: selectAzureSubscriptionId(state),
+        resource_group: selectAzureResourceGroup(state),
+        hyper_v_generation: selectAzureHyperVGeneration(state),
+      };
     case 'gcp': {
       let googleAccount: string = '';
       if (selectGcpShareMethod(state) === 'withGoogle') {
@@ -552,10 +551,9 @@ const getImageOptions = (
             googleAccount = `domain:${gcpEmail}`;
         }
         return { share_with_accounts: [googleAccount] };
-      } else {
-        // TODO: GCP withInsights is not implemented yet
-        return {};
       }
+      // TODO: GCP withInsights is not implemented yet
+      return {};
     }
   }
   return {};
@@ -716,9 +714,8 @@ const getPackages = (state: RootState) => {
     return packages
       .map((pkg) => pkg.name)
       .concat(groups.map((grp) => '@' + grp.name));
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 const getModules = (state: RootState) => {
@@ -726,9 +723,8 @@ const getModules = (state: RootState) => {
 
   if (modules.length > 0) {
     return modules;
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 const getTimezone = (state: RootState) => {
@@ -737,12 +733,11 @@ const getTimezone = (state: RootState) => {
 
   if (!timezone && ntpservers?.length === 0) {
     return undefined;
-  } else {
-    return {
-      timezone: timezone ? timezone : undefined,
-      ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
-    };
   }
+  return {
+    timezone: timezone ? timezone : undefined,
+    ntpservers: ntpservers && ntpservers.length > 0 ? ntpservers : undefined,
+  };
 };
 
 const getSubscription = (
@@ -788,12 +783,11 @@ const getLocale = (state: RootState) => {
 
   if (languages?.length === 0 && !keyboard) {
     return undefined;
-  } else {
-    return {
-      languages: languages && languages.length > 0 ? languages : undefined,
-      keyboard: keyboard ? keyboard : undefined,
-    };
   }
+  return {
+    languages: languages && languages.length > 0 ? languages : undefined,
+    keyboard: keyboard ? keyboard : undefined,
+  };
 };
 
 const getFirewall = (state: RootState) => {
