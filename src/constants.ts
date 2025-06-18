@@ -47,6 +47,13 @@ export const OSBUILD_SERVICE_ARCHITECTURE_URL =
 export const GENERATING_SSH_KEY_PAIRS_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/assembly_using-secure-communications-between-two-systems-with-openssh_configuring-basic-system-settings#generating-ssh-key-pairs_assembly_using-secure-communications-between-two-systems-with-openssh';
 
+export const FIRSTBOOT_PATH = '/usr/local/sbin/custom-first-boot';
+export const FIRSTBOOT_SERVICE_PATH =
+  '/etc/systemd/system/custom-first-boot.service';
+export const SATELLITE_PATH = '/usr/local/sbin/register-satellite';
+export const SATELLITE_SERVICE_PATH =
+  '/etc/systemd/system/register-satellite.service';
+
 export const RHEL_8 = 'rhel-8';
 export const RHEL_9 = 'rhel-9';
 export const RHEL_9_BETA = 'rhel-9-beta';
@@ -249,7 +256,7 @@ export const UNIQUE_VALIDATION_DELAY: number = 300;
 
 export const FIRST_BOOT_SERVICE_DATA = btoa(`[Unit]
 Description=Custom first boot script
-ConditionFileIsExecutable=/usr/local/sbin/custom-first-boot
+ConditionFileIsExecutable=${FIRSTBOOT_PATH}
 ConditionPathExists=!/var/local/.custom-first-boot-done
 Wants=network-online.target
 After=network-online.target
@@ -259,7 +266,7 @@ After=aap-first-boot-reg.service
 
 [Service]
 Type=oneshot
-ExecStart=/usr/local/sbin/custom-first-boot
+ExecStart=${FIRSTBOOT_PATH}
 ExecStartPost=/usr/bin/touch /var/local/.custom-first-boot-done
 RemainAfterExit=yes
 
