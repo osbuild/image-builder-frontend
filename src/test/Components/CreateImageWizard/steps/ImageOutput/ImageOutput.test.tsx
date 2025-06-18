@@ -177,16 +177,20 @@ describe('Step Image output', () => {
 
     const awsTile = await screen.findByTestId('upload-aws');
     user.click(awsTile); // select
+    await waitFor(() => expect(nextButton).toBeEnabled());
     user.click(awsTile); // deselect
+    await waitFor(() => expect(nextButton).toBeDisabled());
 
     const googleTile = await screen.findByTestId('upload-google');
     user.click(googleTile); // select
+    await waitFor(() => expect(nextButton).toBeEnabled());
     user.click(googleTile); // deselect
+    await waitFor(() => expect(nextButton).toBeDisabled());
 
     const azureTile = await screen.findByTestId('upload-azure');
     user.click(azureTile); // select
+    await waitFor(() => expect(nextButton).toBeEnabled());
     user.click(azureTile); // deselect
-
     await waitFor(() => expect(nextButton).toBeDisabled());
   });
 
