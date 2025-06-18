@@ -477,7 +477,7 @@ const getImageRequests = (state: RootState): ImageRequest[] => {
 
 const getSatelliteCommand = (files?: File[]): string => {
   const satelliteCommandFile = files?.find(
-    (file) => file.path === '/usr/local/sbin/register-satellite'
+    (file) => file.path === SATELLITE_PATH
   );
   return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
