@@ -37,16 +37,12 @@ import {
   selectComplianceType,
   clearKernelAppend,
 } from '../../../../store/wizardSlice';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
   const { analytics } = useChrome();
-  const { isFedoraEnv } = useGetEnvironment();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
@@ -93,7 +89,7 @@ const OscapContent = () => {
     dispatch(clearKernelAppend());
   };
 
-  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+  if (!process.env.IS_ON_PREMISE) {
     if (complianceEnabled) {
       analytics.screen('ib-createimagewizard-step-security-compliance');
     } else {

@@ -23,7 +23,6 @@ import {
   RHEL_10_FULL_SUPPORT,
   RHEL_10_MAINTENANCE_SUPPORT,
   ON_PREM_RELEASES,
-  FEDORA_RELEASES,
 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Distributions } from '../../../../../store/imageBuilderApi';
@@ -34,10 +33,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import isRhel from '../../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../../Utilities/time';
-import {
-  useFlag,
-  useGetEnvironment,
-} from '../../../../../Utilities/useGetEnvironment';
+import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
@@ -46,18 +42,12 @@ const ReleaseSelect = () => {
   const distribution = useAppSelector(selectDistribution);
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
-  const { isFedoraEnv } = useGetEnvironment();
-  const [showDevelopmentOptions, setShowDevelopmentOptions] =
-    useState(isFedoraEnv);
+  const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
 
   const isRHEL9BetaEnabled = useFlag('image-builder.rhel9.beta.enabled');
   const isRHEL10BetaEnabled = useFlag('image-builder.rhel10.beta.enabled');
 
-  const releases = isFedoraEnv
-    ? FEDORA_RELEASES
-    : process.env.IS_ON_PREMISE
-    ? ON_PREM_RELEASES
-    : RELEASES;
+  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
 
   const handleSelect = (_event: React.MouseEvent, selection: Distributions) => {
     if (selection !== ('loader' as Distributions)) {

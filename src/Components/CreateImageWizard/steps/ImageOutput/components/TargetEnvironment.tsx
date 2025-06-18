@@ -31,8 +31,6 @@ import {
   selectDistribution,
   selectImageTypes,
 } from '../../../../../store/wizardSlice';
-import isRhel from '../../../../../Utilities/isRhel';
-import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
 type TargetEnvironmentCardProps = {
   title: string;
@@ -101,14 +99,10 @@ const TargetEnvironment = () => {
   const arch = useAppSelector(selectArchitecture);
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
-  const { isFedoraEnv } = useGetEnvironment();
 
-  const { data } = useGetArchitecturesQuery(
-    {
-      distribution: distribution,
-    },
-    { skip: isFedoraEnv && isRhel(distribution) }
-  );
+  const { data } = useGetArchitecturesQuery({
+    distribution: distribution,
+  });
   // TODO: Handle isFetching state (add skeletons)
   // TODO: Handle isError state (very unlikely...)
 
@@ -120,7 +114,7 @@ const TargetEnvironment = () => {
   const prefetchActivationKeys = rhsmApi.usePrefetch('listActivationKeys');
 
   useEffect(() => {
-    if (!isFedoraEnv) prefetchActivationKeys();
+    prefetchActivationKeys();
   }, []);
 
   const supportedEnvironments = data?.find(
