@@ -28,8 +28,10 @@
           "instances": [
             {
               "detail": {
-                "publicdns": "",
-                "publicipv4": "10.0.0.88"
+                "privateipv4": "172.31.36.10",
+                "privateipv6": "2001:0db8:85a3:0000:0000:8a2e:0370:7334",
+                "publicdns": "ec2-184-73-141-211.compute-1.amazonaws.com",
+                "publicipv4": "184.73.141.211"
               },
               "instance_id": "i-2324343212"
             }
@@ -68,6 +70,7 @@
           "name": "my-instance",
           "poweroff": false,
           "pubkey_id": 42,
+          "resource_group": "redhat-hcc",
           "source_id": "654321"
         }
       },
@@ -79,6 +82,8 @@
           "instances": [
             {
               "detail": {
+                "privateipv4": "172.22.0.1",
+                "privateipv6": "",
                 "publicdns": "",
                 "publicipv4": "10.0.0.88"
               },
@@ -90,6 +95,7 @@
           "poweroff": false,
           "pubkey_id": 42,
           "reservation_id": 1310,
+          "resource_group": "myCustom Azure RG",
           "source_id": "654321"
         }
       },
@@ -104,6 +110,7 @@
           "poweroff": false,
           "pubkey_id": 42,
           "reservation_id": 1310,
+          "resource_group": "myCustom Azure RG",
           "source_id": "654321"
         }
       },
@@ -128,6 +135,8 @@
           "instances": [
             {
               "detail": {
+                "privateipv4": "10.198.0.2",
+                "privateipv6": "",
                 "publicdns": "",
                 "publicipv4": "10.0.0.88"
               },
@@ -229,7 +238,14 @@
               "steps": 3,
               "success": false
             }
-          ]
+          ],
+          "metadata": {
+            "links": {
+              "next": "",
+              "previous": ""
+            },
+            "total": 3
+          }
         }
       },
       "v1.GenericReservationResponsePayloadPendingExample": {
@@ -324,7 +340,14 @@
               "id": "lt-9843797432897342",
               "name": "XXL large backend API"
             }
-          ]
+          ],
+          "metadata": {
+            "links": {
+              "next": "",
+              "previous": ""
+            },
+            "total": 0
+          }
         }
       },
       "v1.NoopReservationResponsePayloadExample": {
@@ -339,11 +362,18 @@
               "body": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIEhnn80ZywmjeBFFOGm+cm+5HUwm62qTVnjKlOdYFLHN lzap",
               "fingerprint": "gL/y6MvNmJ8jDXtsL/oMmK8jUuIefN39BBuvYw/Rndk=",
               "fingerprint_legacy": "ee:f1:d4:62:99:ab:17:d9:3b:00:66:62:32:b2:55:9e",
-              "id": 1,
+              "id": 3,
               "name": "My key",
               "type": "ssh-ed25519"
             }
-          ]
+          ],
+          "metadata": {
+            "links": {
+              "next": "",
+              "previous": "/api/provisioning/v1/pubkeys?limit=2\u0026offset=0"
+            },
+            "total": 3
+          }
         }
       },
       "v1.PubkeyRequestExample": {
@@ -368,16 +398,27 @@
             {
               "id": "654321",
               "name": "My AWS account",
+              "provider": "aws",
               "source_type_id": "",
+              "status": "available",
               "uid": ""
             },
             {
               "id": "543621",
               "name": "My other AWS account",
+              "provider": "aws",
               "source_type_id": "",
+              "status": "available",
               "uid": ""
             }
-          ]
+          ],
+          "metadata": {
+            "links": {
+              "next": "",
+              "previous": "/api/provisioning/v1/sources?limit=2\u0026offset=0"
+            },
+            "total": 4
+          }
         }
       },
       "v1.SourceUploadInfoAWSResponse": {
@@ -403,6 +444,35 @@
           },
           "gcp": null,
           "provider": "azure"
+        }
+      }
+    },
+    "parameters": {
+      "Limit": {
+        "description": "The number of items to return.",
+        "in": "query",
+        "name": "limit",
+        "schema": {
+          "default": 100,
+          "type": "integer"
+        }
+      },
+      "Offset": {
+        "description": "The number of items to skip before starting to collect the result set.",
+        "in": "query",
+        "name": "offset",
+        "schema": {
+          "default": 0,
+          "type": "integer"
+        }
+      },
+      "Token": {
+        "description": "The token used for requesting the next page of results; empty token for the first page",
+        "in": "query",
+        "name": "token",
+        "schema": {
+          "default": "",
+          "type": "string"
         }
       }
     },
@@ -529,6 +599,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -557,6 +633,7 @@
           },
           "pubkey_id": {
             "format": "int64",
+            "nullable": true,
             "type": "integer"
           },
           "region": {
@@ -575,6 +652,7 @@
       "v1.AccountIDTypeResponse": {
         "properties": {
           "aws": {
+            "nullable": true,
             "properties": {
               "account_id": {
                 "type": "string"
@@ -606,9 +684,11 @@
             "type": "string"
           },
           "location": {
+            "description": "Location (also known as region) to deploy the VM into, be aware it needs to be the same as the image location. Defaults to the Resource Group location, or 'eastus' when also creating the resource group.",
             "type": "string"
           },
           "name": {
+            "description": "Name of the instance, to keep names unique, it will be suffixed with UUID. Optional, defaults to 'redhat-vm''",
             "type": "string"
           },
           "poweroff": {
@@ -617,6 +697,10 @@
           "pubkey_id": {
             "format": "int64",
             "type": "integer"
+          },
+          "resource_group": {
+            "description": "Azure resource group name to deploy the VM resources into. Optional, defaults to images resource group and when not found to 'redhat-deployed'.",
+            "type": "string"
           },
           "source_id": {
             "type": "string"
@@ -641,6 +725,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -669,11 +759,15 @@
           },
           "pubkey_id": {
             "format": "int64",
+            "nullable": true,
             "type": "integer"
           },
           "reservation_id": {
             "format": "int64",
             "type": "integer"
+          },
+          "resource_group": {
+            "type": "string"
           },
           "source_id": {
             "type": "string"
@@ -732,6 +826,12 @@
               "properties": {
                 "detail": {
                   "properties": {
+                    "private_ipv4": {
+                      "type": "string"
+                    },
+                    "private_ipv6": {
+                      "type": "string"
+                    },
                     "public_dns": {
                       "type": "string"
                     },
@@ -763,6 +863,7 @@
           },
           "pubkey_id": {
             "format": "int64",
+            "nullable": true,
             "type": "integer"
           },
           "reservation_id": {
@@ -829,6 +930,7 @@
             "type": "string"
           },
           "azure": {
+            "nullable": true,
             "properties": {
               "gen_v1": {
                 "type": "boolean"
@@ -879,6 +981,7 @@
         "properties": {
           "data": {
             "items": {
+              "nullable": true,
               "properties": {
                 "created_at": {
                   "format": "date-time",
@@ -924,6 +1027,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "metadata": {
+            "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -932,11 +1054,13 @@
         "properties": {
           "data": {
             "items": {
+              "nullable": true,
               "properties": {
                 "architecture": {
                   "type": "string"
                 },
                 "azure": {
+                  "nullable": true,
                   "properties": {
                     "gen_v1": {
                       "type": "boolean"
@@ -981,6 +1105,7 @@
         "properties": {
           "data": {
             "items": {
+              "nullable": true,
               "properties": {
                 "id": {
                   "type": "string"
@@ -992,6 +1117,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "metadata": {
+            "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1000,6 +1144,7 @@
         "properties": {
           "data": {
             "items": {
+              "nullable": true,
               "properties": {
                 "body": {
                   "type": "string"
@@ -1024,6 +1169,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "metadata": {
+            "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1032,6 +1196,7 @@
         "properties": {
           "data": {
             "items": {
+              "nullable": true,
               "properties": {
                 "id": {
                   "type": "string"
@@ -1039,7 +1204,15 @@
                 "name": {
                   "type": "string"
                 },
+                "provider": {
+                  "description": "One of ('azure', 'aws', 'gcp')",
+                  "type": "string"
+                },
                 "source_type_id": {
+                  "deprecated": true,
+                  "type": "string"
+                },
+                "status": {
                   "type": "string"
                 },
                 "uid": {
@@ -1049,6 +1222,25 @@
               "type": "object"
             },
             "type": "array"
+          },
+          "metadata": {
+            "properties": {
+              "links": {
+                "properties": {
+                  "next": {
+                    "type": "string"
+                  },
+                  "previous": {
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "total": {
+                "type": "integer"
+              }
+            },
+            "type": "object"
           }
         },
         "type": "object"
@@ -1065,9 +1257,11 @@
       "v1.PubkeyRequest": {
         "properties": {
           "body": {
+            "description": "Add a public part of a SSH key pair.",
             "type": "string"
           },
           "name": {
+            "description": "Enter the name of the newly created pubkey.",
             "type": "string"
           }
         },
@@ -1131,7 +1325,15 @@
           "name": {
             "type": "string"
           },
+          "provider": {
+            "description": "One of ('azure', 'aws', 'gcp')",
+            "type": "string"
+          },
           "source_type_id": {
+            "deprecated": true,
+            "type": "string"
+          },
+          "status": {
             "type": "string"
           },
           "uid": {
@@ -1186,7 +1388,7 @@
       "name": "GPL-3.0"
     },
     "title": "provisioning-api",
-    "version": "1.4.0"
+    "version": "1.13.0"
   },
   "openapi": "3.0.0",
   "paths": {
@@ -1219,7 +1421,7 @@
           }
         },
         "tags": [
-          "AvailabilityStatus"
+          "Source"
         ]
       }
     },
@@ -1288,8 +1490,16 @@
     },
     "/pubkeys": {
       "get": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. This operation returns list of all pubkeys for particular account.\n",
+        "description": "Returns a list of all public keys available in a particular account.\n",
         "operationId": "getPubkeyList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1304,7 +1514,7 @@
                 }
               }
             },
-            "description": "Returned on success."
+            "description": "OK. Returned on success."
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
@@ -1315,7 +1525,7 @@
         ]
       },
       "post": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. When pubkey is created, it is stored in the Provisioning database. Pubkeys are uploaded to clouds when an instance is launched. Some fields (e.g. type or fingerprint) are read only.\n",
+        "description": "Creates a new public key and stores it in the provisioning database. Public keys are uploaded to clouds at the time of launching an instance. Some fields such as type or fingerprint are read-only.\n",
         "operationId": "createPubkey",
         "requestBody": {
           "content": {
@@ -1347,7 +1557,7 @@
                 }
               }
             },
-            "description": "Returned on success."
+            "description": "OK. Returned on success."
           },
           "500": {
             "$ref": "#/components/responses/InternalError"
@@ -1360,11 +1570,11 @@
     },
     "/pubkeys/{ID}": {
       "delete": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. If a pubkey was uploaded to one or more clouds, the deletion request will attempt to delete those SSH keys from all clouds. This means in order to delete a pubkey the account must have valid credentials to all cloud accounts the pubkey was uploaded to, otherwise the delete operation will fail and the pubkey will not be deleted from Provisioning database. This operation returns no body.\n",
+        "description": "Deletes SSH keys that were uploaded with the specified public key from all the clouds. If a public key (pubkey) has been uploaded to one or more cloud providers, the deletion request attempts to remove those SSH keys from all associated clouds. Therefore, to delete a public key, the account must possess valid credentials for all cloud accounts to which the pubkey was uploaded. Otherwise, the delete operation fails, and the public key is not removed from the Provisioning database. This operation does not return a response body.\n",
         "operationId": "removePubkeyById",
         "parameters": [
           {
-            "description": "Database ID of resource.",
+            "description": "Enter the database ID of resource.",
             "in": "path",
             "name": "ID",
             "required": true,
@@ -1390,7 +1600,7 @@
         ]
       },
       "get": {
-        "description": "A pubkey represents an SSH public portion of a key pair with name and body. Pubkeys must have unique name and body (SSH public key fingerprint) per each account. Pubkey type is detected during create operation as well as fingerprints. Currently two types are supported: RSA and ssh-ed25519. Also, two fingerprint types are calculated: standard SHA fingerprint and legacy MD5 fingerprint available under fingerprint_legacy field. Fingerprints are used to check uniqueness of key.\n",
+        "description": "Gets details of the specified public key.",
         "operationId": "getPubkeyById",
         "parameters": [
           {
@@ -1418,7 +1628,7 @@
                 }
               }
             },
-            "description": "Returned on success"
+            "description": "OK. Returned on success"
           },
           "404": {
             "$ref": "#/components/responses/NotFound"
@@ -1436,6 +1646,14 @@
       "get": {
         "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. This operation returns list of all reservations for particular account. To get a reservation with common fields, use /reservations/ID. To get a detailed reservation with all fields which are different per provider, use /reservations/aws/ID. Reservation can be in three states: pending, success, failed. This can be recognized by the success field (null for pending, true for success, false for failure). See the examples.\n",
         "operationId": "getReservationsList",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
+          }
+        ],
         "responses": {
           "200": {
             "content": {
@@ -1637,7 +1855,7 @@
     },
     "/reservations/gcp": {
       "post": {
-        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the name pattern for example as \"instance\", instances names will be created in the format: \"instance-#####\". A single account can create maximum of 2 reservations per second.\n",
+        "description": "A reservation is a way to activate a job, keeps all data needed for a job to start. A GCP reservation is a reservation created for a GCP job. Image Builder UUID image is required and needs to be shared with the service account. Furthermore, by specifying the RFC-1035 compatible name pattern for example as \"instance\", instances names will be created in the format: \"instance-#####\". A single account can create maximum of 2 reservations per second.\n",
         "operationId": "createGCPReservation",
         "requestBody": {
           "content": {
@@ -1804,6 +2022,12 @@
               ],
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "$ref": "#/components/parameters/Offset"
           }
         ],
         "responses": {
@@ -1831,98 +2055,9 @@
         ]
       }
     },
-    "/sources/{ID}/account_identity": {
-      "get": {
-        "deprecated": true,
-        "description": "This endpoint is deprecated. Please use upload_info instead",
-        "operationId": "getSourceAccountIdentity",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database",
-            "in": "path",
-            "name": "ID",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.AccountIDTypeResponse"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        },
-        "tags": [
-          "Source"
-        ]
-      }
-    },
-    "/sources/{ID}/instance_types": {
-      "get": {
-        "deprecated": true,
-        "description": "Deprecated endpoint, use /instance_types instead.",
-        "operationId": "getInstanceTypeList",
-        "parameters": [
-          {
-            "description": "Source ID from Sources Database",
-            "in": "path",
-            "name": "ID",
-            "required": true,
-            "schema": {
-              "format": "int64",
-              "type": "integer"
-            }
-          },
-          {
-            "description": "Hyperscaler region",
-            "in": "query",
-            "name": "region",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/v1.ListInstaceTypeResponse"
-                }
-              }
-            },
-            "description": "Return on success."
-          },
-          "404": {
-            "$ref": "#/components/responses/NotFound"
-          },
-          "500": {
-            "$ref": "#/components/responses/InternalError"
-          }
-        },
-        "tags": [
-          "Source"
-        ]
-      }
-    },
     "/sources/{ID}/launch_templates": {
       "get": {
-        "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances.\nCurrently only AWS Launch Templates are supported.\n",
+        "description": "Return a list of launch templates.\nA launch template is a configuration set with a name that is available through hyperscaler API. When creating reservations, launch template can be provided in order to set additional configuration for instances. In GCP, when using templates, propagated user attributes are not overridden or updated. Only new attributes are added to the instance.\nCurrently AWS and GCP Launch Templates are supported.\n",
         "operationId": "getLaunchTemplatesList",
         "parameters": [
           {
@@ -1943,6 +2078,12 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "$ref": "#/components/parameters/Token"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
           }
         ],
         "responses": {
@@ -2037,8 +2178,16 @@
   ],
   "tags": [
     {
-      "description": "Public SSH keys operations",
+      "description": "A pubkey represents the SSH public portion of a key pair with a name and body. Public key types and fingerprints are detected during their creation process. Two types are supported: RSA and ssh-ed25519. Fingerprints are calculated in two ways: using the standard SHA method and the legacy MD5 method, which is available under the fingerprint_legacy field. Each public key has a unique name and body and helps in verifying the uniqueness of the keys. Using this API, you can perform the following operations.\n",
       "name": "Pubkey"
+    },
+    {
+      "description": "A reservation represents a request for launching one or more instances from a single image. This reservation triggers a background job, that will Launch set amount of instances with the same configuration. The configuration decides target provider, instance size and ssh pubkey to use for the default user.\n",
+      "name": "Reservation"
+    },
+    {
+      "description": "A Source represents a connection with public cloud account. These endpoints serve as convenient way to read information about available Sources to deploy instances into. The source of through is different application called Sources.\n",
+      "name": "Source"
     }
   ]
 }

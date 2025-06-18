@@ -391,6 +391,7 @@ export const AwsS3Instance = ({
     'rhel-edge-installer': '',
     vhd: '',
     oci: '',
+    'openshift-virt': '.tar',
   };
 
   const status = composeStatus?.image_status.status;
