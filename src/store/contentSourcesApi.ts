@@ -16,6 +16,7 @@ export const {
   useCreateRepositoryMutation,
   useBulkImportRepositoriesMutation,
   useListRepositoriesRpmsQuery,
+  useListRepositoryParametersQuery,
   useListTemplatesQuery,
   useGetTemplateQuery,
   contentSourcesApi,

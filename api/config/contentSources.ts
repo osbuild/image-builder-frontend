@@ -12,6 +12,7 @@ const config: ConfigFile = {
     'createRepository',
     'listRepositories',
     'listRepositoriesRpms',
+    'listRepositoryParameters',
     'searchRpm',
     'searchPackageGroup',
     'listFeatures',
