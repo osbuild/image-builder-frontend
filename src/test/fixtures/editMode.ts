@@ -11,6 +11,7 @@ import {
   CENTOS_9,
   FIRST_BOOT_SERVICE,
   FIRST_BOOT_SERVICE_DATA,
+  FIRSTBOOT_PATH,
   RHEL_8,
   RHEL_9,
   UNIT_GIB,
@@ -130,7 +131,7 @@ export const firstBootData: File[] = [
     ensure_parents: true,
   },
   {
-    path: '/usr/local/sbin/custom-first-boot',
+    path: FIRSTBOOT_PATH,
     data: BASE64_SCRIPT,
     data_encoding: 'base64',
     mode: '0774',
