@@ -2,19 +2,14 @@ import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome'
 import { useFlag as useUnleashFlag } from '@unleash/proxy-client-react';
 
 export const useGetEnvironment = process.env.IS_ON_PREMISE
-  ? () => ({ isBeta: () => false, isProd: () => true, isFedoraEnv: false })
+  ? () => ({ isBeta: () => false, isProd: () => true })
   : () => {
-      const { isBeta, isProd, getEnvironment, getEnvironmentDetails } =
-        useChrome();
+      const { isBeta, isProd, getEnvironment } = useChrome();
       // Expose beta features in the ephemeral environment
-      const isFedoraEnv: boolean =
-        getEnvironmentDetails()?.url.some((x: string) =>
-          x.includes('fedora')
-        ) ?? false;
       if (isBeta() || getEnvironment() === 'qa') {
-        return { isBeta: () => true, isProd: isProd, isFedoraEnv };
+        return { isBeta: () => true, isProd: isProd };
       }
-      return { isBeta: () => false, isProd: isProd, isFedoraEnv };
+      return { isBeta: () => false, isProd: isProd };
     };
 
 /**
@@ -48,12 +43,4 @@ const onPremFlag = (flag: string): boolean => {
 
 // Since some of these flags are only relevant to
 // the service, we need a way of bypassing this for on-prem
-export const useFlag = (flag: string) => {
-  const { isFedoraEnv } = useGetEnvironment();
-
-  const onPremFlagValue = onPremFlag(flag);
-  const unleashFlagValue = useUnleashFlag(flag);
-  const shouldUseOnPrem = process.env.IS_ON_PREMISE || isFedoraEnv;
-
-  return shouldUseOnPrem ? onPremFlagValue : unleashFlagValue;
-};
+export const useFlag = !process.env.IS_ON_PREMISE ? useUnleashFlag : onPremFlag;
