@@ -6,6 +6,8 @@ const injectedRtkApi = api.injectEndpoints({
         url: `/sources`,
         params: {
           provider: queryArg.provider,
+          limit: queryArg.limit,
+          offset: queryArg.offset,
         },
       }),
     }),
@@ -23,6 +25,10 @@ export type GetSourceListApiResponse =
   /** status 200 Returned on success. */ V1ListSourceResponse;
 export type GetSourceListApiArg = {
   provider?: "aws" | "azure" | "gcp";
+  /** The number of items to return. */
+  limit?: number;
+  /** The number of items to skip before starting to collect the result set. */
+  offset?: number;
 };
 export type GetSourceUploadInfoApiResponse =
   /** status 200 Return on success. */ V1SourceUploadInfoResponse;
@@ -32,12 +38,26 @@ export type GetSourceUploadInfoApiArg = {
 };
 export type V1ListSourceResponse = {
   data?:
-    | {
+    | ({
         id?: string | undefined;
         name?: string | undefined;
+        /** One of ('azure', 'aws', 'gcp') */
+        provider?: string | undefined;
         source_type_id?: string | undefined;
+        status?: string | undefined;
         uid?: string | undefined;
-      }[]
+      } | null)[]
+    | undefined;
+  metadata?:
+    | {
+        links?:
+          | {
+              next?: string | undefined;
+              previous?: string | undefined;
+            }
+          | undefined;
+        total?: number | undefined;
+      }
     | undefined;
 };
 export type V1ResponseError = {
