@@ -536,11 +536,11 @@ export type FilesystemTyped = {
    */
   part_type?: string | undefined;
   minsize?: Minsize | undefined;
-  mountpoint: string;
+  mountpoint?: string | undefined;
   label?: string | undefined;
-  /** The filesystem type
+  /** The filesystem type. Swap partitions must have an empty mountpoint.
    */
-  fs_type?: ("ext4" | "xfs" | "vfat") | undefined;
+  fs_type: "ext4" | "xfs" | "vfat" | "swap";
 };
 export type BtrfsSubvolume = {
   /** The name of the subvolume, which defines the location (path) on the root volume
@@ -551,7 +551,7 @@ export type BtrfsSubvolume = {
   mountpoint: string;
 };
 export type BtrfsVolume = {
-  type?: "btrfs" | undefined;
+  type: "btrfs";
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;
@@ -563,14 +563,14 @@ export type LogicalVolume = {
   minsize?: Minsize | undefined;
   /** Mountpoint for the logical volume
    */
-  mountpoint: string;
+  mountpoint?: string | undefined;
   label?: string | undefined;
-  /** The filesystem type for the logical volume
+  /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
    */
-  fs_type?: ("ext4" | "xfs" | "vfat") | undefined;
+  fs_type: "ext4" | "xfs" | "vfat" | "swap";
 };
 export type VolumeGroup = {
-  type?: "lvm" | undefined;
+  type: "lvm";
   /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
    */
   part_type?: string | undefined;

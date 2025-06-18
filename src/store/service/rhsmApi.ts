@@ -43,6 +43,8 @@ export type CreateActivationKeysApiArg = {
           repositoryLabel?: string | undefined;
         }[]
       | undefined;
+    /** should be 255 characters or shorter */
+    description?: string | undefined;
     /** Name should be present, unique and can only contain letters, numbers, underscores, or hyphens */
     name: string;
     releaseVersion?: string | undefined;
@@ -59,15 +61,16 @@ export type ShowActivationKeyApiArg = {
 };
 export type AdditionalRepositories = {
   repositoryLabel?: string | undefined;
-  repositoryName?: string | undefined;
 };
 export type ActivationKeys = {
   additionalRepositories?: AdditionalRepositories[] | undefined;
+  description?: string | undefined;
   id?: string | undefined;
   name?: string | undefined;
   releaseVersion?: string | undefined;
   role?: string | undefined;
   serviceLevel?: string | undefined;
+  updatedAt?: string | undefined;
   usage?: string | undefined;
 };
 export type ErrorDetails = {
