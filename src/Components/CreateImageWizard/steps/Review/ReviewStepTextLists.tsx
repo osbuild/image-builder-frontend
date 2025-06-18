@@ -232,7 +232,7 @@ export const TargetEnvAWSList = () => {
     },
     {
       selectFromResult: ({ data }) => ({
-        source: data?.data?.find((source) => source.id === sourceId),
+        source: data?.data?.find((source) => source?.id === sourceId),
       }),
     }
   );
@@ -364,7 +364,7 @@ export const TargetEnvAzureList = () => {
             <Content component={ContentVariants.dd}>
               {
                 rawAzureSources?.data?.find(
-                  (source) => source.id === azureSource
+                  (source) => source?.id === azureSource
                 )?.name
               }
             </Content>

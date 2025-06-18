@@ -57,7 +57,7 @@ export const AzureSourcesSelect = () => {
   );
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    rawSources?.data?.map((source) => source.name) || []
+    rawSources?.data?.map((source) => source?.name) || []
   );
 
   useEffect(() => {
@@ -75,11 +75,11 @@ export const AzureSourcesSelect = () => {
   ]);
 
   useEffect(() => {
-    let filteredSources = rawSources?.data?.map((source) => source.name);
+    let filteredSources = rawSources?.data?.map((source) => source?.name);
 
     if (filterValue) {
       filteredSources = rawSources?.data
-        ?.map((source) => source.name)
+        ?.map((source) => source?.name)
         .filter((source: string) =>
           String(source).toLowerCase().includes(filterValue.toLowerCase())
         );
@@ -119,7 +119,7 @@ export const AzureSourcesSelect = () => {
     sourceName: string
   ) => {
     const sourceId = rawSources?.data?.find(
-      (source) => source.name === sourceName
+      (source) => source?.name === sourceName
     )?.id;
     dispatch(changeAzureSource(sourceId || ''));
     dispatch(changeAzureResourceGroup(''));
@@ -145,7 +145,7 @@ export const AzureSourcesSelect = () => {
   };
 
   const selectedSource = azureSource
-    ? rawSources?.data?.find((source) => source.id === azureSource)?.name
+    ? rawSources?.data?.find((source) => source?.id === azureSource)?.name
     : undefined;
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (

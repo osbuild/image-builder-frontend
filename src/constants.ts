@@ -82,6 +82,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   'rhel-edge-installer': 'RHEL Edge Installer',
   vhd: '',
   oci: 'Oracle Cloud Infrastructure',
+  'openshift-virt': 'OpenShift Virtualization',
 };
 
 export const UNIT_KIB = 1024 ** 1;

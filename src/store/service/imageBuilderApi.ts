@@ -462,6 +462,7 @@ export type ImageTypes =
   | "guest-image"
   | "image-installer"
   | "oci"
+  | "openshift-virt"
   | "vsphere"
   | "vsphere-ova"
   | "wsl"
@@ -998,14 +999,12 @@ export type DistributionProfileItem =
 export type DistributionProfileResponse = DistributionProfileItem[];
 export type RecommendationsResponse = {
   packages: string[];
-  /** Version of the recommendation model used */
   modelVersion?: string | undefined;
 };
 export type RecommendPackageRequest = {
   packages: string[];
   recommendedPackages: number;
-  /** RHEL major release (e.g. "rhel8", "rhel9", "rhel10") */
-  distribution?: string | undefined;
+  distribution: string;
 };
 export const {
   useGetArchitecturesQuery,
