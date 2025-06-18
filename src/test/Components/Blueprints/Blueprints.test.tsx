@@ -65,7 +65,7 @@ describe('Blueprints', () => {
       })
     );
 
-    const { router } = await renderCustomRoutesWithReduxRouter();
+    const view = renderCustomRoutesWithReduxRouter();
     await screen.findByText('No blueprints yet');
     const emptyStateAction = screen.getByRole('link', {
       name: /Add blueprint/i,
@@ -73,6 +73,8 @@ describe('Blueprints', () => {
     expect(emptyStateAction).toBeInTheDocument();
 
     user.click(emptyStateAction);
+
+    const { router } = await view;
     await waitFor(() =>
       expect(router.state.location.pathname).toBe(
         '/insights/image-builder/imagewizard'
