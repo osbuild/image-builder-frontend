@@ -87,7 +87,6 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
@@ -104,7 +103,6 @@ const ImagesTable = () => {
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
-  const { isFedoraEnv } = useGetEnvironment();
   const { analytics, auth } = useChrome();
   useEffect(() => {
     (async () => {
@@ -225,7 +223,7 @@ const ImagesTable = () => {
   }
   const itemCount = data?.meta.count || 0;
 
-  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+  if (!process.env.IS_ON_PREMISE) {
     const orgId = userData?.identity.internal?.org_id;
 
     analytics.group(orgId, {

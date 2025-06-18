@@ -46,7 +46,6 @@ import {
 } from '../../store/imageBuilderApi';
 import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
-import { useGetEnvironment } from '../../Utilities/useGetEnvironment';
 
 type blueprintSearchProps = {
   blueprintsTotal: number;
@@ -62,7 +61,6 @@ type emptyBlueprintStateProps = {
 
 const BlueprintsSidebar = () => {
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
-  const { isFedoraEnv } = useGetEnvironment();
   const { analytics, auth } = useChrome();
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
@@ -124,7 +122,7 @@ const BlueprintsSidebar = () => {
     dispatch(setBlueprintId(undefined));
   };
 
-  if (!process.env.IS_ON_PREMISE && !isFedoraEnv) {
+  if (!process.env.IS_ON_PREMISE) {
     const orgId = userData?.identity?.internal?.org_id;
 
     analytics.group(orgId, {

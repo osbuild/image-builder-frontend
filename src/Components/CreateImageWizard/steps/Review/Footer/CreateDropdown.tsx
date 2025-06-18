@@ -23,7 +23,6 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
-import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
 type CreateDropdownProps = {
   getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
@@ -52,12 +51,11 @@ export const CreateSaveAndBuildBtn = ({
     fixedCacheKey: 'createBlueprintKey',
   });
   const dispatch = useAppDispatch();
-  const { isFedoraEnv } = useGetEnvironment();
   const onSaveAndBuild = async () => {
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && !isFedoraEnv && requestBody) {
+    if (!process.env.IS_ON_PREMISE && requestBody) {
       const analyticsData = createAnalytics(requestBody, packages, isBeta);
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,
@@ -108,7 +106,6 @@ export const CreateSaveButton = ({
     })();
   }, [auth]);
   const packages = useAppSelector(selectPackages);
-  const { isFedoraEnv } = useGetEnvironment();
 
   const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
@@ -161,7 +158,7 @@ export const CreateSaveButton = ({
     const requestBody = await getBlueprintPayload();
     setIsOpen(false);
 
-    if (!process.env.IS_ON_PREMISE && !isFedoraEnv && requestBody) {
+    if (!process.env.IS_ON_PREMISE && requestBody) {
       const analyticsData = createAnalytics(requestBody, packages, isBeta);
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,
@@ -169,11 +166,13 @@ export const CreateSaveButton = ({
         account_id: userData?.identity.internal?.account_id || 'Not found',
       });
     }
+
     const blueprint =
       requestBody &&
       (await createBlueprint({
         createBlueprintRequest: requestBody,
       }).unwrap());
+
     if (blueprint) {
       dispatch(setBlueprintId(blueprint?.id));
     }

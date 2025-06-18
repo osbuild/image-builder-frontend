@@ -60,7 +60,6 @@ import {
   selectUsers,
   selectKernel,
 } from '../../../../store/wizardSlice';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
@@ -187,7 +186,6 @@ const Review = () => {
     );
   };
 
-  const { isFedoraEnv } = useGetEnvironment();
   return (
     <>
       <ExpandableSection
@@ -359,23 +357,21 @@ const Review = () => {
       >
         <FSCList />
       </ExpandableSection>
-      {!isFedoraEnv && (
-        <ExpandableSection
-          toggleContent={composeExpandable(
-            'Content',
-            'revisit-custom-repositories',
-            'wizard-custom-repositories'
-          )}
-          onToggle={(_event, isExpandedContent) =>
-            onToggleContent(isExpandedContent)
-          }
-          isExpanded={isExpandedContent}
-          isIndented
-          data-testid="content-expandable"
-        >
-          <ContentList />
-        </ExpandableSection>
-      )}
+      <ExpandableSection
+        toggleContent={composeExpandable(
+          'Content',
+          'revisit-custom-repositories',
+          'wizard-custom-repositories'
+        )}
+        onToggle={(_event, isExpandedContent) =>
+          onToggleContent(isExpandedContent)
+        }
+        isExpanded={isExpandedContent}
+        isIndented
+        data-testid="content-expandable"
+      >
+        <ContentList />
+      </ExpandableSection>
       {users.length > 0 && (
         <ExpandableSection
           toggleContent={composeExpandable(

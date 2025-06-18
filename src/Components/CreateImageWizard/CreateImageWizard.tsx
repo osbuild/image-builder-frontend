@@ -65,7 +65,6 @@ import {
   RHEL_10_BETA,
   RHEL_10,
   AARCH64,
-  CENTOS_9,
   AMPLITUDE_MODULE_NAME,
   RHEL_9,
 } from '../../constants';
@@ -88,11 +87,10 @@ import {
   selectGcpShareMethod,
   selectImageTypes,
   addImageType,
-  changeRegistrationType,
 } from '../../store/wizardSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
-import { useFlag, useGetEnvironment } from '../../Utilities/useGetEnvironment';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 type CustomWizardFooterPropType = {
@@ -197,17 +195,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
-  const { isFedoraEnv } = useGetEnvironment();
+
   // Feature flags
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
     dispatch(initializeWizard());
-    if (isFedoraEnv) {
-      dispatch(changeDistribution(CENTOS_9));
-      dispatch(changeRegistrationType('register-later'));
-    }
     if (searchParams.get('release') === 'rhel8') {
       dispatch(changeDistribution(RHEL_8));
     }
@@ -331,14 +325,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     );
 
     // Only this code is different from the original
-    const status = (step?.id !== activeStep?.id && step?.status) || 'default';
+    const status = (step.id !== activeStep.id && step.status) || 'default';
 
     return (
       <WizardNavItem
-        key={step?.id}
-        id={step?.id}
+        key={step.id}
+        id={step.id}
         content={step.name}
-        isCurrent={activeStep?.id === step?.id}
+        isCurrent={activeStep.id === step.id}
         isDisabled={
           step.isDisabled ||
           (!step.isVisited &&
@@ -523,9 +517,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
                 isHidden={
-                  distribution === RHEL_10_BETA ||
-                  !!process.env.IS_ON_PREMISE ||
-                  isFedoraEnv
+                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
                 }
                 footer={
                   <CustomWizardFooter
@@ -542,9 +534,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-custom-repositories"
                 navItem={CustomStatusNavItem}
                 isHidden={
-                  distribution === RHEL_10_BETA ||
-                  !!process.env.IS_ON_PREMISE ||
-                  isFedoraEnv
+                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
                 }
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -558,7 +548,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
                 navItem={CustomStatusNavItem}
-                isHidden={isFedoraEnv}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
@@ -677,7 +666,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-first-boot"
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
-                isHidden={!!process.env.IS_ON_PREMISE || isFedoraEnv}
+                isHidden={!!process.env.IS_ON_PREMISE}
                 footer={
                   <CustomWizardFooter
                     disableNext={firstBootValidation.disabledNext}

@@ -21,7 +21,6 @@ import {
 import { FSReviewTable } from './ReviewStepTables';
 
 import {
-  FEDORA_RELEASES,
   ON_PREM_RELEASES,
   RELEASES,
   RHEL_10,
@@ -81,7 +80,6 @@ import {
   selectRedHatRepositories,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
 import {
   getConversionFactor,
   MinimumSizePopover,
@@ -106,12 +104,8 @@ const ExpirationWarning = () => {
 export const ImageOutputList = () => {
   const distribution = useAppSelector(selectDistribution);
   const arch = useAppSelector(selectArchitecture);
-  const { isFedoraEnv } = useGetEnvironment();
-  const releases = isFedoraEnv
-    ? FEDORA_RELEASES
-    : process.env.IS_ON_PREMISE
-    ? ON_PREM_RELEASES
-    : RELEASES;
+  const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
+
   return (
     <Content>
       {(distribution === RHEL_8 || distribution === RHEL_9) && (
