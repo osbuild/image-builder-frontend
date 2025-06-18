@@ -42,7 +42,15 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         isClickable
         onClick={() => dispatch(setBlueprintId(blueprint.id))}
       >
-        <CardHeader data-testid={blueprint.id}>
+        <CardHeader
+          data-testid={blueprint.id}
+          selectableActions={{
+            name: blueprint.id,
+            selectableActionId: blueprint.id,
+            selectableActionAriaLabel: blueprint.id,
+            isHidden: true, // hide the card's checkbox
+          }}
+        >
           <CardTitle>
             {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size="md" />

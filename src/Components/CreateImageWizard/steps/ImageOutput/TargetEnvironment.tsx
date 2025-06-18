@@ -66,7 +66,14 @@ const TargetEnvironmentCard = ({
       isSelectable
       isLarge
     >
-      <CardHeader>
+      <CardHeader
+        selectableActions={{
+          name: title,
+          selectableActionId: title.toLowerCase(),
+          selectableActionAriaLabel: title.toLowerCase(),
+          isHidden: true, // hide the card's checkbox
+        }}
+      >
         <Flex direction={{ default: 'column' }}>
           <FlexItem>
             <img className="provider-icon" src={imageSrc} alt={imageAlt} />
