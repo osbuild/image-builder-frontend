@@ -307,7 +307,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
   // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128
-  const customStatusNavItem = (
+  const CustomStatusNavItem = (
     step: WizardStepType,
     activeStep: WizardStepType,
     steps: WizardStepType[],
@@ -316,13 +316,15 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     const isVisitOptional =
       'parentId' in step && step.parentId === 'step-optional-steps';
 
-    if (process.env.IS_ON_PREMISE) {
-      if (step.id === 'step-oscap' && step.isVisited) {
+    useEffect(() => {
+      if (process.env.IS_ON_PREMISE) {
+        if (step.id === 'step-oscap' && step.isVisited) {
+          setWasRegisterVisited(true);
+        }
+      } else if (step.id === 'step-register' && step.isVisited) {
         setWasRegisterVisited(true);
       }
-    } else if (step.id === 'step-register' && step.isVisited) {
-      setWasRegisterVisited(true);
-    }
+    }, [step.id, step.isVisited]);
 
     const hasVisitedNextStep = steps.some(
       (s) => s.index > step.index && s.isVisited
@@ -460,7 +462,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="step-register"
                 key="step-register"
                 isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={
                   wasRegisterVisited
                     ? registrationValidation.disabledNext
@@ -482,7 +484,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="step-oscap"
                 key="step-oscap"
                 isHidden={distribution === RHEL_10_BETA}
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
                 }
@@ -493,7 +495,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="File system configuration"
                 id="step-file-system"
                 key="step-file-system"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter
                     beforeNext={() => {
@@ -518,7 +520,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Repeatable build"
                 id="wizard-repository-snapshot"
                 key="wizard-repository-snapshot"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
                 isHidden={
                   distribution === RHEL_10_BETA ||
@@ -538,7 +540,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Custom repositories"
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 isHidden={
                   distribution === RHEL_10_BETA ||
                   !!process.env.IS_ON_PREMISE ||
@@ -555,7 +557,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Additional packages"
                 id="wizard-additional-packages"
                 key="wizard-additional-packages"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 isHidden={isFedoraEnv}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -568,7 +570,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Users"
                 id="wizard-users"
                 key="wizard-users"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -583,7 +585,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Timezone"
                 id="wizard-timezone"
                 key="wizard-timezone"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -598,7 +600,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Locale"
                 id="wizard-locale"
                 key="wizard-locale"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -613,7 +615,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Hostname"
                 id="wizard-hostname"
                 key="wizard-hostname"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -628,7 +630,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Kernel"
                 id="wizard-kernel"
                 key="wizard-kernel"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -643,7 +645,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Firewall"
                 id="wizard-firewall"
                 key="wizard-firewall"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -658,7 +660,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="Systemd services"
                 id="wizard-services"
                 key="wizard-services"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
@@ -673,7 +675,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name="First boot script configuration"
                 id="wizard-first-boot"
                 key="wizard-first-boot"
-                navItem={customStatusNavItem}
+                navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
                 isHidden={!!process.env.IS_ON_PREMISE || isFedoraEnv}
                 footer={
@@ -690,7 +692,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           <WizardStep
             name="Details"
             id="step-details"
-            navItem={customStatusNavItem}
+            navItem={CustomStatusNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
               <CustomWizardFooter
