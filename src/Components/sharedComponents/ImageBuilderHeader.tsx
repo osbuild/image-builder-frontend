@@ -131,7 +131,7 @@ export const ImageBuilderHeader = ({
                       })
                     }
                   >
-                    Create blueprint
+                    Create image blueprint
                   </Button>
                   {importExportFlag && (
                     <Button
