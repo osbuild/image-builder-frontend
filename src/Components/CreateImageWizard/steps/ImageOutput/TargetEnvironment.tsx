@@ -41,7 +41,7 @@ type TargetEnvironmentCardProps = {
   isSelected: boolean;
   isDisabled?: boolean;
   testId: string;
-  handleOnClick: MouseEventHandler<HTMLElement>;
+  handleOnClick: () => void;
   onMouseEnter?: MouseEventHandler<HTMLElement>;
 };
 
@@ -59,8 +59,8 @@ const TargetEnvironmentCard = ({
     <Card
       data-testid={testId}
       style={{ textAlign: 'center' } as React.CSSProperties}
-      onClick={handleOnClick}
       onMouseUp={onMouseEnter}
+      onClick={handleOnClick}
       isSelected={isSelected}
       isDisabled={isDisabled}
       isSelectable
@@ -71,6 +71,13 @@ const TargetEnvironmentCard = ({
           name: title,
           selectableActionId: title.toLowerCase(),
           selectableActionAriaLabel: title.toLowerCase(),
+          // we need to give the `selectableActions` an
+          // onChange handler since the card actions use
+          // checkboxes to handle selectable cards.
+          // This workaround reduces noise in the test
+          // output
+          onChange: () => {},
+          isChecked: isSelected,
           isHidden: true, // hide the card's checkbox
         }}
       >

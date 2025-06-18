@@ -48,6 +48,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
             name: blueprint.id,
             selectableActionId: blueprint.id,
             selectableActionAriaLabel: blueprint.id,
+            onChange: () => dispatch(setBlueprintId(blueprint.id)),
             isHidden: true, // hide the card's checkbox
           }}
         >
