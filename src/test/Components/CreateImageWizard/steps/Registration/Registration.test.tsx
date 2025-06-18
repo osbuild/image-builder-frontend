@@ -104,7 +104,7 @@ const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
 
   await waitFor(() => user.clear(satelliteRegistrationCommand));
   await waitFor(() => user.type(satelliteRegistrationCommand, command));
-  satelliteRegistrationCommand.blur();
+  await waitFor(() => satelliteRegistrationCommand.blur());
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
