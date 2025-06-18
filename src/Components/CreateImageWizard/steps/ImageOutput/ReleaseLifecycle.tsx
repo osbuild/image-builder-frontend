@@ -17,6 +17,7 @@ import {
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
+  RHEL_9,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
   RHEL_10_FULL_SUPPORT,
@@ -135,7 +136,7 @@ const ReleaseLifecycle = () => {
     setIsExpanded(isExpanded);
   };
 
-  if (release === RHEL_8) {
+  if (release === RHEL_8 || release === RHEL_9) {
     return (
       <ExpandableSection
         toggleText={
