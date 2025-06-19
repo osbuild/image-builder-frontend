@@ -218,38 +218,19 @@ export const PackagesTable = () => {
               <Th>
                 Description <PackageInfoNotAvailablePopover />
               </Th>
-              <Th>Package repository</Th>
             </Tr>
           </Thead>
           <Tbody>
             {packages.map((pkg, pkgIndex) => (
               <Tr key={pkgIndex}>
-                <Td className="pf-m-width-30">{pkg.name}</Td>
+                <Td>{pkg.name}</Td>
                 <Td>{pkg.summary ? pkg.summary : 'Not available'}</Td>
-                <Td className="pf-m-width-30">
-                  {pkg.repository === 'distro'
-                    ? 'Red Hat repository'
-                    : pkg.repository === 'custom'
-                    ? 'Custom repository'
-                    : pkg.repository === 'recommended'
-                    ? 'EPEL Everything x86_64'
-                    : 'Not available'}
-                </Td>
               </Tr>
             ))}
             {groups.map((grp, grpIndex) => (
               <Tr key={grpIndex}>
-                <Td className="pf-m-width-30">@{grp.name}</Td>
+                <Td>@{grp.name}</Td>
                 <Td>{grp.description ? grp.description : 'Not available'}</Td>
-                <Td className="pf-m-width-30">
-                  {grp.repository === 'distro'
-                    ? 'Red Hat repository'
-                    : grp.repository === 'custom'
-                    ? 'Custom repository'
-                    : grp.repository === 'recommended'
-                    ? 'EPEL Everything x86_64'
-                    : 'Not available'}
-                </Td>
               </Tr>
             ))}
           </Tbody>
