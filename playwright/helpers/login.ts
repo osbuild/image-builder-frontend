@@ -1,3 +1,5 @@
+import path from 'path';
+
 import { type Page, expect } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted, togglePreview } from './helpers';
@@ -73,4 +75,15 @@ const loginConsole = async (page: Page, user: string, password: string) => {
   await page.getByRole('button', { name: 'Log in' }).click();
   await togglePreview(page);
   await expect(page.getByRole('heading', { name: 'All images' })).toBeVisible();
+};
+
+export const storeStorageStateAndToken = async (page: Page) => {
+  const { cookies } = await page
+    .context()
+    .storageState({ path: path.join(__dirname, '../../.auth/user.json') });
+  process.env.TOKEN = `Bearer ${
+    cookies.find((cookie) => cookie.name === 'cs_jwt')?.value
+  }`;
+  // eslint-disable-next-line playwright/no-wait-for-timeout
+  await page.waitForTimeout(100);
 };
