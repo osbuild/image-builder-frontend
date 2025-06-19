@@ -7,7 +7,7 @@ export const read_os_release = (): Promise<osRelease> => {
   return new Promise((resolve) => {
     resolve({
       ID: 'rhel',
-      VERSION_ID: '9',
+      VERSION_ID: '10',
     });
   });
 };
