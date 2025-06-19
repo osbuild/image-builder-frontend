@@ -998,10 +998,14 @@ export type DistributionProfileItem =
 export type DistributionProfileResponse = DistributionProfileItem[];
 export type RecommendationsResponse = {
   packages: string[];
+  /** Version of the recommendation model used */
+  modelVersion?: string | undefined;
 };
 export type RecommendPackageRequest = {
   packages: string[];
   recommendedPackages: number;
+  /** RHEL major release (e.g. "rhel-8", "rhel-9", "rhel-10") */
+  distribution?: string | undefined;
 };
 export const {
   useGetArchitecturesQuery,

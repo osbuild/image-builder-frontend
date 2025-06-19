@@ -82,6 +82,7 @@ const PackageRecommendations = () => {
           recommendPackageRequest: {
             packages: packages.map((pkg) => pkg.name),
             recommendedPackages: 5,
+            distribution: distribution,
           },
         });
 
@@ -98,6 +99,7 @@ const PackageRecommendations = () => {
               isPreview: isBeta(),
               shownRecommendations: response.data.packages,
               selectedPackages: packages.map((pkg) => pkg.name),
+              distribution: distribution,
             }
           );
         }
@@ -264,6 +266,7 @@ const PackageRecommendations = () => {
                                     (pkg) => pkg.name
                                   ),
                                   shownRecommendations: data.packages,
+                                  distribution: distribution,
                                 }
                               );
                               addRecommendedPackage(pkg);
