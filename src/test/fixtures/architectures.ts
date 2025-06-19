@@ -4,6 +4,38 @@ export const mockArchitecturesByDistro = (
   distro: Distributions
 ): Architectures => {
   const mockDistros: { [key: string]: Architectures } = {
+    'rhel-10': [
+      {
+        arch: 'x86_64',
+        image_types: [
+          'aws',
+          'azure',
+          'gcp',
+          'guest-image',
+          'image-installer',
+          'oci',
+          'wsl',
+        ],
+        repositories: [
+          {
+            baseurl:
+              'https://cdn.redhat.com/content/dist/rhel10/10/x86_64/baseos/os',
+            rhsm: true,
+          },
+        ],
+      },
+      {
+        arch: 'aarch64',
+        image_types: ['aws', 'guest-image', 'image-installer'],
+        repositories: [
+          {
+            baseurl:
+              'https://cdn.redhat.com/content/dist/rhel10/10/aarch64/baseos/os',
+            rhsm: true,
+          },
+        ],
+      },
+    ],
     'rhel-9': [
       {
         arch: 'x86_64',
@@ -11,6 +43,7 @@ export const mockArchitecturesByDistro = (
           'aws',
           'gcp',
           'azure',
+          'oci',
           'rhel-edge-commit',
           'rhel-edge-installer',
           'edge-commit',
@@ -47,6 +80,7 @@ export const mockArchitecturesByDistro = (
           'aws',
           'gcp',
           'azure',
+          'oci',
           'rhel-edge-commit',
           'rhel-edge-installer',
           'edge-commit',

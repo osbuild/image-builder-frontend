@@ -5,7 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
 import ImageWizard from '../../../Components/CreateImageWizard';
-import { RHEL_9 } from '../../../constants';
+import { RHEL_10 } from '../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
@@ -64,7 +64,7 @@ export const imageRequest: ImageRequest = {
 export const blueprintRequest: CreateBlueprintRequest = {
   name: 'Red Velvet',
   description: '',
-  distribution: RHEL_9,
+  distribution: RHEL_10,
   image_requests: [imageRequest],
   customizations: {},
 };
@@ -98,6 +98,21 @@ export const renderEditMode = async (id: string) => {
     ? `/imagewizard/${id}`
     : `imagewizard/${id}`;
   await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
+};
+
+export const openReleaseMenu = async () => {
+  const user = userEvent.setup();
+  const releaseMenu = screen.getByTestId('release_select');
+  await waitFor(() => user.click(releaseMenu));
+};
+
+export const selectRhel9 = async () => {
+  const user = userEvent.setup();
+  await openReleaseMenu();
+  const rhel9 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
+  });
+  await waitFor(() => user.click(rhel9));
 };
 
 export const selectGuestImageTarget = async () => {

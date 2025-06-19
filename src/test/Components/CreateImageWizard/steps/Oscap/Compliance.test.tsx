@@ -5,7 +5,7 @@ import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { complianceCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext } from '../../wizardTestUtils';
+import { clickNext, selectRhel9 } from '../../wizardTestUtils';
 import {
   clickRegisterLater,
   enterBlueprintName,
@@ -31,6 +31,7 @@ vi.mock('@unleash/proxy-client-react', () => ({
 
 const goToComplianceStep = async () => {
   const user = userEvent.setup();
+  await selectRhel9(); // Compliance is not available for RHEL 10 yet
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
