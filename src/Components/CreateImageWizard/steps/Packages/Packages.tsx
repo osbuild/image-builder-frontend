@@ -36,7 +36,6 @@ import {
   ExclamationTriangleIcon,
   ExternalLinkAltIcon,
   HelpIcon,
-  OptimizeIcon,
   SearchIcon,
 } from '@patternfly/react-icons';
 import {
@@ -359,7 +358,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={6}>
+          <Td colSpan={5}>
             <Bullseye>
               <EmptyState icon={SearchIcon} variant={EmptyStateVariant.sm}>
                 {toggleSelected === 'toggle-available' ? (
@@ -387,7 +386,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={6}>
+          <Td colSpan={5}>
             <Bullseye>
               <EmptyState icon={Spinner} variant={EmptyStateVariant.sm}>
                 <EmptyStateBody>
@@ -407,7 +406,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={6}>
+          <Td colSpan={5}>
             <Bullseye>
               <EmptyState
                 headingLevel="h4"
@@ -430,7 +429,7 @@ const Packages = () => {
     return (
       <Tbody>
         <Tr>
-          <Td colSpan={6}>
+          <Td colSpan={5}>
             <Bullseye>
               <EmptyState
                 headingLevel="h4"
@@ -461,7 +460,7 @@ const Packages = () => {
       return (
         <Tbody>
           <Tr>
-            <Td colSpan={6}>
+            <Td colSpan={5}>
               <Bullseye>
                 <EmptyState
                   headingLevel="h4"
@@ -509,7 +508,7 @@ const Packages = () => {
       return (
         <Tbody>
           <Tr>
-            <Td colSpan={6}>
+            <Td colSpan={5}>
               <Bullseye>
                 <EmptyState
                   headingLevel="h4"
@@ -1228,32 +1227,9 @@ const Packages = () => {
                 </Td>
                 <Td>N/A</Td>
                 <Td>N/A</Td>
-                {grp.repository === 'distro' ? (
-                  <>
-                    <Td>Red Hat</Td>
-                  </>
-                ) : grp.repository === 'custom' ? (
-                  <>
-                    <Td>Third party repository</Td>
-                  </>
-                ) : grp.repository === 'recommended' ? (
-                  <>
-                    <Td>
-                      <Icon status="warning">
-                        <OptimizeIcon />
-                      </Icon>{' '}
-                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                      Everything x86_64
-                    </Td>
-                  </>
-                ) : (
-                  <>
-                    <Td className="not-available">Not available</Td>
-                  </>
-                )}
               </Tr>
               <Tr isExpanded={isGroupExpanded(grp.name)}>
-                <Td colSpan={6}>
+                <Td colSpan={5}>
                   <ExpandableRowContent>
                     {
                       <DescriptionList>
@@ -1315,32 +1291,9 @@ const Packages = () => {
                 <Td>{pkg.name}</Td>
                 <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
                 <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
-                {pkg.repository === 'distro' ? (
-                  <>
-                    <Td>Red Hat</Td>
-                  </>
-                ) : pkg.repository === 'custom' ? (
-                  <>
-                    <Td>Third party repository</Td>
-                  </>
-                ) : pkg.repository === 'recommended' ? (
-                  <>
-                    <Td>
-                      <Icon status="warning">
-                        <OptimizeIcon />
-                      </Icon>{' '}
-                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                      Everything x86_64
-                    </Td>
-                  </>
-                ) : (
-                  <>
-                    <Td className="not-available">Not available</Td>
-                  </>
-                )}
               </Tr>
               <Tr isExpanded={isPkgExpanded(pkg)}>
-                <Td colSpan={6}>
+                <Td colSpan={5}>
                   <ExpandableRowContent>
                     {
                       <DescriptionList>
@@ -1438,16 +1391,15 @@ const Packages = () => {
           <Tr>
             <Th aria-label="Expanded" />
             <Th aria-label="Selected" />
-            <Th sort={getSortParams(0)} width={20}>
+            <Th sort={getSortParams(0)} width={30}>
               Name
             </Th>
             <Th sort={getSortParams(2)} width={20}>
               Application stream
             </Th>
-            <Th sort={getSortParams(3)} width={20}>
+            <Th sort={getSortParams(3)} width={30}>
               Retirement date
             </Th>
-            <Th width={20}>Package repository</Th>
           </Tr>
         </Thead>
         {bodyContent}
