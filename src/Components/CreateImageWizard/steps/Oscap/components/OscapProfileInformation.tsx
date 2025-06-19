@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 
-import { Spinner, Content, ContentVariants } from '@patternfly/react-core';
+import {
+  Spinner,
+  Content,
+  ContentVariants,
+  CodeBlock,
+  CodeBlockCode,
+} from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
@@ -77,29 +83,81 @@ export const OscapProfileInformation = ({
       )}
       {isSuccessOscapProfileInfo && (
         <>
-          <Content>
-            <Content component={ContentVariants.dl} className="review-step-dl">
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Profile description:
-              </Content>
-              <Content component={ContentVariants.dd}>
-                {oscapProfile?.profile_description}
-              </Content>
-              <Content
-                component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
-              >
-                Reference ID:
-              </Content>
-              <Content
-                data-testid="oscap-profile-info-ref-id"
-                component={ContentVariants.dd}
-              >
-                {oscapProfile?.profile_id}
-              </Content>
+          <Content component={ContentVariants.dl} className="review-step-dl">
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Profile description
+            </Content>
+            <Content component={ContentVariants.dd}>
+              {oscapProfile?.profile_description}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Reference ID
+            </Content>
+            <Content
+              data-testid="oscap-profile-info-ref-id"
+              component={ContentVariants.dd}
+            >
+              {oscapProfile?.profile_id}
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v6-u-min-width"
+            >
+              Packages
+            </Content>
+            <Content component={ContentVariants.dd}>
+              <CodeBlock>
+                <CodeBlockCode>
+                  {(oscapProfileInfo?.packages ?? []).join(', ')}
+                </CodeBlockCode>
+              </CodeBlock>
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v5-u-min-width"
+            >
+              Kernel arguments
+            </Content>
+            <Content component={ContentVariants.dd}>
+              <CodeBlock>
+                <CodeBlockCode>
+                  {oscapProfileInfo?.kernel?.append}
+                </CodeBlockCode>
+              </CodeBlock>
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v5-u-min-width"
+            >
+              Enabled services
+            </Content>
+            <Content component={ContentVariants.dd}>
+              <CodeBlock>
+                <CodeBlockCode>
+                  {(oscapProfileInfo?.services?.enabled ?? []).join(' ')}
+                </CodeBlockCode>
+              </CodeBlock>
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className="pf-v5-u-min-width"
+            >
+              Disabled services
+            </Content>
+            <Content component={ContentVariants.dd}>
+              <CodeBlock>
+                <CodeBlockCode>
+                  {(oscapProfileInfo?.services?.disabled ?? [])
+                    .concat(oscapProfileInfo?.services?.masked ?? [])
+                    .join(' ')}
+                </CodeBlockCode>
+              </CodeBlock>
             </Content>
           </Content>
         </>
