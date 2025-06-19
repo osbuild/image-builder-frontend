@@ -28,12 +28,17 @@ export const closePopupsIfExist = async (page: Page) => {
     page
       .locator('iframe[name="intercom-modal-frame"]')
       .contentFrame()
-      .getByRole('button', { name: 'Close' }),
+      .getByRole('button', { name: 'Close' }), // This closes the intercom pop-up
+    page
+      .locator('iframe[name="intercom-notifications-frame"]')
+      .contentFrame()
+      .getByRole('button', { name: 'Profile image for Rob Rob' })
+      .last(), // This closes the intercom pop-up notification at the bottom of the screen, the last notification is displayed first if stacked (different from the modal popup handled above)
   ];
 
   for (const locator of locatorsToCheck) {
     await page.addLocatorHandler(locator, async () => {
-      await locator.first().click(); // There can be multiple toast pop-ups
+      await locator.first().click({ timeout: 10_000, noWaitAfter: true }); // There can be multiple toast pop-ups
     });
   }
 };
