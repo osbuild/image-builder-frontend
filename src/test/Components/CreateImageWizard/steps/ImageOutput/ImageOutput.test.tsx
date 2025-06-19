@@ -63,6 +63,15 @@ const selectRhel8 = async () => {
   await waitFor(() => user.click(rhel8));
 };
 
+const selectRhel10 = async () => {
+  const user = userEvent.setup();
+  await openReleaseMenu();
+  const rhel10 = await screen.findByRole('option', {
+    name: /red hat enterprise linux \(rhel\) 10 full support ends: may 2030 \| maintenance support ends: may 2035/i,
+  });
+  await waitFor(() => user.click(rhel10));
+};
+
 const selectCentos9 = async () => {
   const user = userEvent.setup();
   await openReleaseMenu();
@@ -231,13 +240,16 @@ describe('Step Image output', () => {
     expect(showOptionsButton).not.toBeInTheDocument();
   });
 
-  test('release lifecycle chart appears only when RHEL 8 is chosen', async () => {
+  test('release lifecycle chart appears for RHEL 8 and RHEL 9', async () => {
     await renderCreateMode();
 
     await selectRhel8();
     await screen.findByTestId('release-lifecycle-chart');
 
     await selectRhel9();
+    await screen.findByTestId('release-lifecycle-chart');
+
+    await selectRhel10();
     await waitFor(() =>
       expect(
         screen.queryByTestId('release-lifecycle-chart')
