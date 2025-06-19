@@ -149,6 +149,17 @@ describe('Step OpenSCAP', () => {
     await goToOscapStep();
     await selectProfile();
 
+    await screen.findByText(/Packages/);
+    await screen.findByText(/aide, neovim/i);
+    await screen.findByText(/Kernel arguments/);
+    await screen.findByText(/audit_backlog_limit=8192 audit=1/i);
+    await screen.findByText(/Enabled services/);
+    await screen.findByText(/crond/i);
+    await screen.findByText(/Disabled services/);
+    await screen.findByText(
+      /rpcbind autofs nftables nfs-server emacs-service/i
+    );
+
     // check that the FSC contains a /tmp partition
     await clickNext();
     await screen.findByRole('heading', { name: /File system configuration/i });
