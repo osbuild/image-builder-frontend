@@ -67,6 +67,7 @@ import {
   AARCH64,
   CENTOS_9,
   AMPLITUDE_MODULE_NAME,
+  RHEL_9,
 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
@@ -209,6 +210,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }
     if (searchParams.get('release') === 'rhel8') {
       dispatch(changeDistribution(RHEL_8));
+    }
+    if (searchParams.get('release') === 'rhel9') {
+      dispatch(changeDistribution(RHEL_9));
     }
     if (searchParams.get('release') === 'rhel10beta') {
       dispatch(changeDistribution(RHEL_10_BETA));
