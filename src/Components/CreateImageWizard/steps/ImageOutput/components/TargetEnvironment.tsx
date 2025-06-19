@@ -36,7 +36,7 @@ type TargetEnvironmentCardProps = {
   title: string;
   imageSrc: string;
   imageAlt: string;
-  isSelected: boolean;
+  isClicked: boolean;
   isDisabled?: boolean;
   testId: string;
   handleOnClick: () => void;
@@ -49,7 +49,7 @@ const TargetEnvironmentCard = ({
   imageAlt,
   handleOnClick,
   onMouseEnter,
-  isSelected,
+  isClicked,
   isDisabled = false,
   testId,
 }: TargetEnvironmentCardProps) => {
@@ -58,26 +58,18 @@ const TargetEnvironmentCard = ({
       data-testid={testId}
       style={{ textAlign: 'center' } as React.CSSProperties}
       onMouseUp={onMouseEnter}
-      onClick={handleOnClick}
-      isSelected={isSelected}
+      isClicked={isClicked}
       isDisabled={isDisabled}
-      isSelectable
       isClickable
       isLarge
+      onClick={handleOnClick}
     >
       <CardHeader
         selectableActions={{
           name: title,
           selectableActionId: title.toLowerCase(),
           selectableActionAriaLabel: title.toLowerCase(),
-          // we need to give the `selectableActions` an
-          // onChange handler since the card actions use
-          // checkboxes to handle selectable cards.
-          // This workaround reduces noise in the test
-          // output
-          onChange: () => {},
-          isChecked: isSelected,
-          isHidden: true, // hide the card's checkbox
+          onClickAction: handleOnClick,
         }}
       >
         <Flex direction={{ default: 'column' }}>
@@ -165,7 +157,7 @@ const TargetEnvironment = () => {
                 imageAlt="Amazon Web Services logo"
                 handleOnClick={() => handleToggleEnvironment('aws')}
                 onMouseEnter={() => prefetchSources({ provider: 'aws' })}
-                isSelected={environments.includes('aws')}
+                isClicked={environments.includes('aws')}
               />
             )}
             {supportedEnvironments?.includes('gcp') && (
@@ -178,7 +170,7 @@ const TargetEnvironment = () => {
                 imageAlt="Google Cloud Platform logo"
                 handleOnClick={() => handleToggleEnvironment('gcp')}
                 onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
-                isSelected={environments.includes('gcp')}
+                isClicked={environments.includes('gcp')}
               />
             )}
             {supportedEnvironments?.includes('azure') && (
@@ -191,7 +183,7 @@ const TargetEnvironment = () => {
                 imageAlt="Microsoft Azure logo"
                 handleOnClick={() => handleToggleEnvironment('azure')}
                 onMouseEnter={() => prefetchSources({ provider: 'azure' })}
-                isSelected={environments.includes('azure')}
+                isClicked={environments.includes('azure')}
               />
             )}
             {supportedEnvironments?.includes('oci') && (
@@ -203,7 +195,7 @@ const TargetEnvironment = () => {
                 }
                 imageAlt="Oracle Cloud Infrastructure logo"
                 handleOnClick={() => handleToggleEnvironment('oci')}
-                isSelected={environments.includes('oci')}
+                isClicked={environments.includes('oci')}
               />
             )}
           </Gallery>

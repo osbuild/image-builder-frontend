@@ -16,7 +16,9 @@ export const createBlueprint = async (
   await page.getByRole('button', { name: 'Close' }).first().click();
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByRole('textbox', { name: 'Search input' }).fill(blueprintName);
-  await page.getByTestId('blueprint-card').getByText(blueprintName).click();
+  // the clickable blueprint cards are a bit awkward, so use the
+  // button's id instead
+  await page.locator(`button[id="${blueprintName}"]`).click();
 };
 
 /**
@@ -91,10 +93,10 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       } catch (error) {
         // If the No BP heading was not found, it means the blueprint (possibly) was created -> continue with deletion
       }
-      await frame
-        .getByTestId('blueprint-card')
-        .getByText(blueprintName)
-        .click();
+
+      // the clickable blueprint cards are a bit awkward, so use the
+      // button's id instead
+      await frame.locator(`button[id="${blueprintName}"]`).click();
       await frame.getByRole('button', { name: 'Menu toggle' }).click();
       await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
       await frame.getByRole('button', { name: 'Delete' }).click();
