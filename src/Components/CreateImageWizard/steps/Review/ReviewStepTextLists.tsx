@@ -25,10 +25,13 @@ import {
   FEDORA_RELEASES,
   ON_PREM_RELEASES,
   RELEASES,
+  RHEL_10,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
+  RHEL_9_FULL_SUPPORT,
+  RHEL_9_MAINTENANCE_SUPPORT,
   targetOptions,
   UNIT_GIB,
 } from '../../../../constants';
@@ -111,14 +114,23 @@ export const ImageOutputList = () => {
     : RELEASES;
   return (
     <Content>
-      {distribution === RHEL_8 && (
+      {(distribution === RHEL_8 || distribution === RHEL_9) && (
         <>
           <Content component="p" className="pf-v6-u-font-size-sm">
             {RELEASES.get(distribution)} will be supported through{' '}
-            {toMonthAndYear(RHEL_8_FULL_SUPPORT[1])}, with optional ELS support
-            through {toMonthAndYear(RHEL_8_MAINTENANCE_SUPPORT[1])}. Consider
-            building an image with {RELEASES.get(RHEL_9)} to extend the support
-            period.
+            {toMonthAndYear(
+              distribution === RHEL_8
+                ? RHEL_8_FULL_SUPPORT[1]
+                : RHEL_9_FULL_SUPPORT[1]
+            )}
+            , with optional ELS support through{' '}
+            {toMonthAndYear(
+              distribution === RHEL_8
+                ? RHEL_8_MAINTENANCE_SUPPORT[1]
+                : RHEL_9_MAINTENANCE_SUPPORT[1]
+            )}
+            . Consider building an image with {RELEASES.get(RHEL_10)} to extend
+            the support period.
           </Content>
           <FormGroup label="Release lifecycle">
             <MajorReleasesLifecyclesChart />
