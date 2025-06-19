@@ -221,9 +221,8 @@ const PackageRecommendations = () => {
                 <Table variant="compact">
                   <Thead>
                     <Tr>
-                      <Th width={20}>Package name</Th>
-                      <Th width={35}>Description</Th>
-                      <Th width={25}>Package repository</Th>
+                      <Th width={35}>Package name</Th>
+                      <Th width={45}>Description</Th>
                       <Th width={20}>
                         <Button
                           variant="link"
@@ -252,7 +251,6 @@ const PackageRecommendations = () => {
                               .map((p) => p.summary)}
                           </Td>
                         )}
-                        <Td>Red Hat</Td>
                         <Td>
                           <Button
                             variant="link"
