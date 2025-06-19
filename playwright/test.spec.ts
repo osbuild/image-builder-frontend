@@ -1,14 +1,15 @@
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { isHosted } from './helpers/helpers';
-import { login } from './helpers/login';
-import { ibFrame } from './helpers/navHelpers';
+import { closePopupsIfExist, isHosted } from './helpers/helpers';
+import { ibFrame, navigateToLandingPage } from './helpers/navHelpers';
 
 test.describe.serial('test', () => {
   const blueprintName = uuidv4();
   test('create blueprint', async ({ page }) => {
-    await login(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
     const frame = await ibFrame(page);
 
     frame.getByRole('heading', { name: 'Images About image builder' });
@@ -84,12 +85,14 @@ test.describe.serial('test', () => {
   });
 
   test('edit blueprint', async ({ page }) => {
+    await closePopupsIfExist(page);
     // package searching is really slow the first time in cockpit
     if (!isHosted()) {
       test.setTimeout(300000);
     }
 
-    await login(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
     const frame = await ibFrame(page);
     await frame
       .getByRole('textbox', { name: 'Search input' })
@@ -120,7 +123,9 @@ test.describe.serial('test', () => {
   });
 
   test('build blueprint', async ({ page }) => {
-    await login(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
     const frame = await ibFrame(page);
     await frame
       .getByRole('textbox', { name: 'Search input' })
@@ -137,7 +142,9 @@ test.describe.serial('test', () => {
   });
 
   test('delete blueprint', async ({ page }) => {
-    await login(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
     const frame = await ibFrame(page);
     await frame
       .getByRole('textbox', { name: 'Search input' })

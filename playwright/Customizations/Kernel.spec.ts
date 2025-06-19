@@ -1,10 +1,13 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { test } from '../fixtures/cleanup';
+import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
-import { login } from '../helpers/login';
-import { navigateToOptionalSteps, ibFrame } from '../helpers/navHelpers';
+import {
+  navigateToOptionalSteps,
+  ibFrame,
+  navigateToLandingPage,
+} from '../helpers/navHelpers';
 import {
   registerLater,
   fillInDetails,
@@ -24,8 +27,8 @@ test('Create a blueprint with Kernel customization', async ({
   // Delete the blueprint after the run fixture
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
 
-  // Login, navigate to IB and get the frame
-  await login(page);
+  // Navigate to IB landing page and get the frame
+  await navigateToLandingPage(page);
   const frame = await ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {

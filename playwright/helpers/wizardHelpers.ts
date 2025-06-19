@@ -1,6 +1,6 @@
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { isHosted } from './helpers';
+import { closePopupsIfExist, isHosted } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
 
 /**
@@ -70,6 +70,8 @@ export const fillInImageOutputGuest = async (page: Page | FrameLocator) => {
  * @param blueprintName - the name of the blueprint to delete
  */
 export const deleteBlueprint = async (page: Page, blueprintName: string) => {
+  // Since new browser is opened during the BP cleanup, we need to call the popup closer again
+  await closePopupsIfExist(page);
   await test.step(
     'Delete the blueprint with name: ' + blueprintName,
     async () => {

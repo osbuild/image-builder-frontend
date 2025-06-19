@@ -48,3 +48,4 @@ rpmbuild
 /blob-report/
 /playwright/.cache/
 .env
+.auth
