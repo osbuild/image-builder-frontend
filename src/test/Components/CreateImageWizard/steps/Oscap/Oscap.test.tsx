@@ -21,6 +21,7 @@ import {
   renderCreateMode,
   renderEditMode,
   selectGuestImageTarget,
+  selectRhel9,
 } from '../../wizardTestUtils';
 import {
   clickNext,
@@ -117,6 +118,7 @@ describe('Step OpenSCAP', () => {
 
   test('create an image with None OpenSCAP profile', async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectNone();
@@ -145,6 +147,7 @@ describe('Step OpenSCAP', () => {
 
   test('create an image with an OpenSCAP profile', async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
@@ -197,6 +200,7 @@ describe('Step OpenSCAP', () => {
 
   test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await clickReviewAndFinish();
@@ -213,6 +217,7 @@ describe('OpenSCAP request generated correctly', () => {
 
   test('add a profile', async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
@@ -234,6 +239,7 @@ describe('OpenSCAP request generated correctly', () => {
 
   test('remove a profile', { timeout: 20000 }, async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
@@ -253,6 +259,7 @@ describe('OpenSCAP request generated correctly', () => {
 
   test('change profile', { timeout: 20000 }, async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
@@ -280,6 +287,7 @@ describe('OpenSCAP request generated correctly', () => {
 
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
+    await selectRhel9(); // OpenSCAP is not available for RHEL 10 yet
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();

@@ -2,7 +2,11 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import {
+  CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
+  RHEL_9,
+} from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { servicesCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
@@ -15,6 +19,7 @@ import {
   interceptEditBlueprintRequest,
   renderEditMode,
   verifyCancelButton,
+  selectRhel9,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
 
@@ -192,6 +197,7 @@ describe('Step Services', () => {
 
   test('services from OpenSCAP get added correctly and cannot be removed', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToServices();
@@ -282,6 +288,7 @@ describe('Services request generated correctly', () => {
 
   test('with OpenSCAP profile that includes services', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToServices();
@@ -290,6 +297,7 @@ describe('Services request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
+      distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
         filesystem: [
           {

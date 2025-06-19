@@ -5,6 +5,7 @@ import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
   FIRST_BOOT_SERVICE,
+  RHEL_9,
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
@@ -21,6 +22,7 @@ import {
   goToOscapStep,
   selectGuestImageTarget,
   getNextButton,
+  selectRhel9,
 } from '../../wizardTestUtils';
 import {
   blueprintRequest,
@@ -159,6 +161,7 @@ describe('First Boot step', () => {
 describe('First boot request generated correctly', () => {
   test('with no OpenSCAP profile selected', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await goToFirstBootStep();
     await openCodeEditor();
     await uploadFile(SCRIPT);
@@ -170,6 +173,7 @@ describe('First boot request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
+      distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
         files: firstBootData,
         services: { enabled: [FIRST_BOOT_SERVICE] },
@@ -183,6 +187,7 @@ describe('First boot request generated correctly', () => {
 
   test('with an OpenSCAP profile', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
@@ -195,6 +200,7 @@ describe('First boot request generated correctly', () => {
     // request created with both OpenSCAP and first boot customization
     const expectedRequest = {
       ...blueprintRequest,
+      distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',
@@ -213,6 +219,7 @@ describe('First boot request generated correctly', () => {
 
   test('dos2unix', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
@@ -225,6 +232,7 @@ describe('First boot request generated correctly', () => {
     // request created with both OpenSCAP and first boot customization
     const expectedRequest = {
       ...blueprintRequest,
+      distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',

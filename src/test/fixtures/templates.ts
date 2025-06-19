@@ -50,7 +50,7 @@ const testingTemplates: ApiTemplateResponseRead[] = [
     org_id: '13476545',
     description: 'description-abc',
     arch: 'x86_64',
-    version: '9',
+    version: '10',
     date: '0001-01-01T00:00:00Z',
     repository_uuids: [
       '828e7db8-c0d4-48fc-a887-9070e0e75c45',

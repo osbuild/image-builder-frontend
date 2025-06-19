@@ -6,7 +6,7 @@ import { http, HttpResponse } from 'msw';
 import {
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
-  RHEL_9,
+  RHEL_10,
   RHSM_API,
 } from '../../../../../constants';
 import {
@@ -268,7 +268,7 @@ describe('Registration request generated correctly', () => {
   const blueprintRequest: CreateBlueprintRequest = {
     name: 'Red Velvet',
     description: '',
-    distribution: RHEL_9,
+    distribution: RHEL_10,
     image_requests: [imageRequest],
     customizations: {},
   };

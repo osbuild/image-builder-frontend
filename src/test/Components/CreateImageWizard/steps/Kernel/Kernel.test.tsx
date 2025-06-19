@@ -2,7 +2,11 @@ import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import {
+  CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
+  RHEL_9,
+} from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { kernelCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
@@ -14,6 +18,7 @@ import {
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderEditMode,
+  selectRhel9,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { clickRegisterLater, renderCreateMode } from '../../wizardTestUtils';
@@ -215,6 +220,7 @@ describe('Step Kernel', () => {
 
   test('kernel append from OpenSCAP gets added correctly and cannot be removed', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToKernel();
@@ -326,6 +332,7 @@ describe('Kernel request generated correctly', () => {
 
   test('with OpenSCAP profile that includes kernel append', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToKernel();
@@ -334,6 +341,7 @@ describe('Kernel request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
+      distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_ccn_basic',

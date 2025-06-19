@@ -2,7 +2,11 @@ import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 
-import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
+import {
+  CREATE_BLUEPRINT,
+  EDIT_BLUEPRINT,
+  RHEL_9,
+} from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
@@ -16,6 +20,7 @@ import {
   clickBack,
   clickNext,
   clickReviewAndFinish,
+  selectRhel9,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { selectCustomRepo } from '../../wizardTestUtils';
@@ -382,6 +387,7 @@ describe('Step Packages', () => {
 
   test('should display recommendations', async () => {
     await renderCreateMode();
+    await selectRhel9(); // recommendations are not available for RHEL 10 yet
     await goToPackagesStep();
     await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
@@ -394,6 +400,7 @@ describe('Step Packages', () => {
 
   test('allow to add recommendations to selected', async () => {
     await renderCreateMode();
+    await selectRhel9(); // recommendations are not available for RHEL 10 yet
     await goToPackagesStep();
     await checkRecommendationsEmptyState();
     await typeIntoSearchBox('test');
@@ -648,6 +655,7 @@ describe('Packages request generated correctly', () => {
 
     test('selecting single recommendation adds it to the request', async () => {
       await renderCreateMode();
+      await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await clickFirstPackageCheckbox(); // select
@@ -657,6 +665,7 @@ describe('Packages request generated correctly', () => {
 
       const expectedRequest: CreateBlueprintRequest = {
         ...blueprintRequest,
+        distribution: RHEL_9,
         customizations: {
           packages: expectedSinglePackageRecommendation,
         },
@@ -667,6 +676,7 @@ describe('Packages request generated correctly', () => {
 
     test('clicking "Add all packages" adds all recommendations to the request', async () => {
       await renderCreateMode();
+      await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await clickFirstPackageCheckbox(); // select
@@ -676,6 +686,7 @@ describe('Packages request generated correctly', () => {
 
       const expectedRequest: CreateBlueprintRequest = {
         ...blueprintRequest,
+        distribution: RHEL_9,
         customizations: {
           packages: expectedAllPackageRecommendations,
         },
@@ -686,6 +697,7 @@ describe('Packages request generated correctly', () => {
 
     test('deselecting a package recommendation removes it from the request', async () => {
       await renderCreateMode();
+      await selectRhel9(); // recommendations are not available for RHEL 10 yet
       await goToPackagesStep();
       await typeIntoSearchBox('test'); // search for 'test' package
       await clickFirstPackageCheckbox(); // select
@@ -697,6 +709,7 @@ describe('Packages request generated correctly', () => {
 
       const expectedRequest: CreateBlueprintRequest = {
         ...blueprintRequest,
+        distribution: RHEL_9,
         customizations: {
           packages: expectedPackagesWithoutRecommendations,
         },

@@ -7,6 +7,7 @@ import {
   CENTOS_9,
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
+  RHEL_10,
   RHEL_8,
   RHEL_9,
   X86_64,
@@ -27,6 +28,8 @@ import {
 import {
   clickNext,
   getNextButton,
+  openReleaseMenu,
+  selectRhel9,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import {
@@ -43,12 +46,6 @@ import { goToDetailsStep } from '../Details/Details.test';
 
 let router: RemixRouter | undefined = undefined;
 
-const openReleaseMenu = async () => {
-  const user = userEvent.setup();
-  const releaseMenu = screen.getByTestId('release_select');
-  await waitFor(() => user.click(releaseMenu));
-};
-
 const clickShowOptions = async () => {
   const user = userEvent.setup();
   const showOptions = await screen.findByRole('option', {
@@ -64,15 +61,6 @@ const selectRhel8 = async () => {
     name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
   });
   await waitFor(() => user.click(rhel8));
-};
-
-const selectRhel9 = async () => {
-  const user = userEvent.setup();
-  await openReleaseMenu();
-  const rhel9 = await screen.findByRole('option', {
-    name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
-  });
-  await waitFor(() => user.click(rhel9));
 };
 
 const selectCentos9 = async () => {
@@ -263,6 +251,7 @@ describe('Step Image output', () => {
 
   test('VMware checkbox select and unselect works', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await selectVMwareTarget();
 
     let vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
@@ -346,8 +335,39 @@ describe('Check that the target filtering is in accordance to mock content', () 
     vi.clearAllMocks();
   });
 
+  test('rhel10 x86_64', async () => {
+    await renderCreateMode();
+    await selectX86_64();
+
+    // make sure this test is in SYNC with the mocks
+    let images_types: string[] = []; // type is `string[]` and not `ImageType[]` because in imageBuilderAPI ArchitectureItem['image_types'] is type string
+    mockArchitecturesByDistro(RHEL_10).forEach((elem) => {
+      if (elem.arch === X86_64) {
+        images_types = elem.image_types;
+      }
+    });
+
+    expect(images_types).toContain('aws');
+    expect(images_types).toContain('gcp');
+    expect(images_types).toContain('azure');
+    expect(images_types).toContain('oci');
+    expect(images_types).toContain('guest-image');
+    expect(images_types).toContain('image-installer');
+    expect(images_types).toContain('wsl');
+
+    // make sure the UX conforms to the mocks
+    await screen.findByTestId('upload-aws');
+    await screen.findByTestId('upload-google');
+    await screen.findByTestId('upload-azure');
+    await screen.findByTestId('upload-oci');
+    await screen.findByTestId('checkbox-guest-image');
+    await screen.findByTestId('checkbox-image-installer');
+    await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
+  });
+
   test('rhel9 x86_64', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await selectX86_64();
 
     // make sure this test is in SYNC with the mocks
@@ -361,6 +381,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('aws');
     expect(images_types).toContain('gcp');
     expect(images_types).toContain('azure');
+    expect(images_types).toContain('oci');
     expect(images_types).toContain('guest-image');
     expect(images_types).toContain('image-installer');
     expect(images_types).toContain('vsphere');
@@ -371,6 +392,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
     await screen.findByTestId('upload-azure');
+    await screen.findByTestId('upload-oci');
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
     await screen.findByText(/vmware vsphere/i);
@@ -396,6 +418,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('aws');
     expect(images_types).toContain('gcp');
     expect(images_types).toContain('azure');
+    expect(images_types).toContain('oci');
     expect(images_types).toContain('guest-image');
     expect(images_types).toContain('image-installer');
     expect(images_types).toContain('vsphere');
@@ -406,6 +429,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-aws');
     await screen.findByTestId('upload-google');
     await screen.findByTestId('upload-azure');
+    await screen.findByTestId('upload-oci');
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
     await screen.findByText(/vmware vsphere/i);
@@ -413,8 +437,49 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
   });
 
+  test('rhel10 aarch64', async () => {
+    await renderCreateMode();
+    await selectAarch64();
+
+    // make sure this test is in SYNC with the mocks
+    let images_types: string[] = [];
+    mockArchitecturesByDistro(RHEL_10).forEach((elem) => {
+      if (elem.arch === AARCH64) {
+        images_types = elem.image_types;
+      }
+    });
+
+    expect(images_types).toContain('aws');
+    expect(images_types).not.toContain('gcp');
+    expect(images_types).not.toContain('azure');
+    expect(images_types).not.toContain('oci');
+    expect(images_types).toContain('guest-image');
+    expect(images_types).toContain('image-installer');
+    expect(images_types).not.toContain('vsphere');
+    expect(images_types).not.toContain('vsphere-ova');
+    expect(images_types).not.toContain('wsl');
+
+    // make sure the UX conforms to the mocks
+    await screen.findByTestId('upload-aws');
+    await waitFor(() =>
+      expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
+    );
+    expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
+    await screen.findByTestId('checkbox-guest-image');
+    await screen.findByTestId('checkbox-image-installer');
+    expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/open virtualization format \(\.ova\)/i)
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
+    ).not.toBeInTheDocument();
+  });
+
   test('rhel9 aarch64', async () => {
     await renderCreateMode();
+    await selectRhel9();
     await selectAarch64();
 
     // make sure this test is in SYNC with the mocks
@@ -428,6 +493,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('aws');
     expect(images_types).not.toContain('gcp');
     expect(images_types).not.toContain('azure');
+    expect(images_types).not.toContain('oci');
     expect(images_types).toContain('guest-image');
     expect(images_types).toContain('image-installer');
     expect(images_types).not.toContain('vsphere');
@@ -440,6 +506,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument()
     );
     expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
     expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
@@ -467,6 +534,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(images_types).toContain('aws');
     expect(images_types).not.toContain('gcp');
     expect(images_types).not.toContain('azure');
+    expect(images_types).not.toContain('oci');
     expect(images_types).toContain('guest-image');
     expect(images_types).toContain('image-installer');
     expect(images_types).not.toContain('vsphere');
@@ -477,6 +545,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-aws');
     expect(screen.queryByTestId('upload-google')).not.toBeInTheDocument();
     expect(screen.queryByTestId('upload-azure')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
     expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
@@ -526,16 +595,16 @@ describe('Set release using query parameter', () => {
     vi.clearAllMocks();
   });
 
-  test('rhel 9 by default (no query parameter)', async () => {
+  test('rhel 10 by default (no query parameter)', async () => {
     await renderCreateMode();
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9', {
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 10', {
       exact: true,
     });
   });
 
-  test('rhel 9 by default (invalid query parameter)', async () => {
+  test('rhel 10 by default (invalid query parameter)', async () => {
     await renderCreateMode({ release: 'rhel9001' });
-    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9', {
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 10', {
       exact: true,
     });
   });
@@ -543,6 +612,11 @@ describe('Set release using query parameter', () => {
   test('rhel 8 (query parameter provided)', async () => {
     await renderCreateMode({ release: 'rhel8' });
     await screen.findByText('Red Hat Enterprise Linux (RHEL) 8');
+  });
+
+  test('rhel 9 (query parameter provided)', async () => {
+    await renderCreateMode({ release: 'rhel9' });
+    await screen.findByText('Red Hat Enterprise Linux (RHEL) 9');
   });
 
   test('rhel 10 beta (query parameter provided)', async () => {
