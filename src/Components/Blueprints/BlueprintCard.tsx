@@ -33,8 +33,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
   return (
     <>
       <Card
-        isSelected={blueprint.id === selectedBlueprintId}
-        isSelectable
+        isClicked={blueprint.id === selectedBlueprintId}
         data-testid={`blueprint-card`}
         isCompact
         isClickable
@@ -43,11 +42,12 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         <CardHeader
           data-testid={blueprint.id}
           selectableActions={{
-            name: blueprint.id,
-            selectableActionId: blueprint.id,
-            selectableActionAriaLabel: blueprint.id,
+            name: blueprint.name,
+            // use the name rather than the id. This helps us
+            // chose the correct item in the playwright tests
+            selectableActionId: blueprint.name,
+            selectableActionAriaLabel: blueprint.name,
             onChange: () => dispatch(setBlueprintId(blueprint.id)),
-            isHidden: true, // hide the card's checkbox
           }}
         >
           <CardTitle>

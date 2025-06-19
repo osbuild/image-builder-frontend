@@ -100,7 +100,9 @@ test.describe.serial('test', () => {
     await frame
       .getByRole('textbox', { name: 'Search input' })
       .fill(blueprintName);
-    await frame.getByText(blueprintName, { exact: true }).first().click();
+    // the clickable blueprint cards are a bit awkward, so use the
+    // button's id instead
+    await frame.locator(`button[id="${blueprintName}"]`).click();
 
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
@@ -134,7 +136,9 @@ test.describe.serial('test', () => {
     await frame
       .getByRole('textbox', { name: 'Search input' })
       .fill(blueprintName);
-    await frame.getByText(blueprintName, { exact: true }).first().click();
+    // the clickable blueprint cards are a bit awkward, so use the
+    // button's id instead
+    await frame.locator(`button[id="${blueprintName}"]`).click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
 
     // make sure the image is present
@@ -154,7 +158,9 @@ test.describe.serial('test', () => {
     await frame
       .getByRole('textbox', { name: 'Search input' })
       .fill(blueprintName);
-    await frame.getByText(blueprintName, { exact: true }).first().click();
+    // the clickable blueprint cards are a bit awkward, so use the
+    // button's id instead
+    await frame.locator(`button[id="${blueprintName}"]`).click();
     await frame.getByTestId('blueprint-action-menu-toggle').click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
     await frame.getByRole('button', { name: 'Delete' }).click();
