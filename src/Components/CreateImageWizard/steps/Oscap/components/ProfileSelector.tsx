@@ -274,6 +274,27 @@ const ProfileSelector = () => {
     }
   };
 
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      
+      if (!isOpen) {
+        setIsOpen(true);
+      } else if (selectOptions.length === 1) {
+        const singleProfile = selectOptions[0];
+        const selection: OScapSelectOptionValueType = {
+          profileID: singleProfile.id,
+          toString: () => singleProfile.name || '',
+        };
+        
+        setInputValue(singleProfile.name || '');
+        setFilterValue('');
+        applyChanges(selection);
+        setIsOpen(false);
+      }
+    }
+  };
+
   const applyChanges = (selection: OScapSelectOptionValueType) => {
     if (selection.profileID === undefined) {
       // handle user has selected 'None' case
@@ -337,6 +358,7 @@ const ProfileSelector = () => {
           value={profileID ? profileID : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
+          onKeyDown={onKeyDown}
           autoComplete="off"
           placeholder="None"
           isExpanded={isOpen}
