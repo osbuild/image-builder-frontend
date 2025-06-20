@@ -27,6 +27,7 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   DistributionProfileItem,
   Filesystem,
+  OpenScap,
   OpenScapProfile,
   Services,
 } from '../../../../../store/imageBuilderApi';
@@ -51,49 +52,9 @@ import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
 import { Partition, Units } from '../../FileSystem/FileSystemTable';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
-type OScapSelectOptionPropType = {
-  profile_id: DistributionProfileItem;
-  filter?: string;
-};
-
 type OScapSelectOptionValueType = {
   profileID: DistributionProfileItem;
   toString: () => string;
-};
-
-const OScapSelectOption = ({
-  profile_id,
-  filter,
-}: OScapSelectOptionPropType) => {
-  const release = useAppSelector(selectDistribution);
-  const { data } = useGetOscapCustomizationsQuery({
-    distribution: release,
-    profile: profile_id,
-  });
-  const oscapProfile = data?.openscap as OpenScapProfile;
-  if (
-    filter &&
-    !oscapProfile?.profile_name?.toLowerCase().includes(filter.toLowerCase())
-  ) {
-    return null;
-  }
-  const selectObject = (
-    id: DistributionProfileItem,
-    name?: string
-  ): OScapSelectOptionValueType => ({
-    profileID: id,
-    toString: () => name || '',
-  });
-
-  return (
-    <SelectOption
-      key={profile_id}
-      value={selectObject(profile_id, oscapProfile?.profile_name)}
-      description={oscapProfile?.profile_description}
-    >
-      {oscapProfile?.profile_name}
-    </SelectOption>
-  );
 };
 
 const ProfileSelector = () => {
@@ -104,7 +65,20 @@ const ProfileSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [inputValue, setInputValue] = useState<string>('');
   const [filterValue, setFilterValue] = useState<string>('');
-  const [selectOptions, setSelectOptions] = useState<string[]>([]);
+  const [selectOptions, setSelectOptions] = useState<
+    {
+      id: DistributionProfileItem;
+      name: string | undefined;
+      description?: string | undefined;
+    }[]
+  >([]);
+  const [profileDetails, setProfileDetails] = useState<
+    {
+      id: DistributionProfileItem;
+      name: string | undefined;
+      description?: string | undefined;
+    }[]
+  >([]);
   const complianceType = useAppSelector(selectComplianceType);
   const prefetchProfile = useBackendPrefetch('getOscapCustomizations');
 
@@ -140,26 +114,57 @@ const ProfileSelector = () => {
       });
     });
   }
+
   useEffect(() => {
-    let filteredProfiles = profiles;
+    const fetchProfileDetails = async () => {
+      if (!profiles) return;
 
-    if (filterValue) {
-      filteredProfiles = profiles?.filter((profile: string) =>
-        String(profile).toLowerCase().includes(filterValue.toLowerCase())
-      );
-      if (!isOpen) {
-        setIsOpen(true);
-      }
+      const promises = profiles.map(async (profileID) => {
+        const response = await trigger(
+          { distribution: release, profile: profileID },
+          true
+        ).unwrap();
+
+        const oscap = response?.openscap;
+        const isProfile = (oscap: OpenScap): oscap is OpenScapProfile =>
+          'profile_name' in oscap;
+
+        const profile_name =
+          oscap && isProfile(oscap) ? oscap.profile_name : profileID;
+
+        const profile_description =
+          oscap && isProfile(oscap) ? oscap.profile_description : '';
+
+        return {
+          id: profileID,
+          name: profile_name,
+          description: profile_description,
+        };
+      });
+
+      const resolvedProfiles = await Promise.all(promises);
+      setProfileDetails(resolvedProfiles);
+      setSelectOptions(resolvedProfiles);
+    };
+
+    fetchProfileDetails();
+  }, [profiles, release, trigger]);
+
+  useEffect(() => {
+    if (!filterValue) {
+      setSelectOptions(profileDetails);
+      return;
     }
+    const trimmedFilter = filterValue.toLowerCase().trim();
+    const filtered = profileDetails.filter(({ name }) =>
+      name?.toLowerCase().includes(trimmedFilter)
+    );
 
-    if (filteredProfiles) {
-      setSelectOptions(filteredProfiles);
+    setSelectOptions(filtered);
+    if (!isOpen && filtered.length > 0) {
+      setIsOpen(true);
     }
-
-    // This useEffect hook should run *only* on when the filter value changes.
-    // eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [filterValue, profiles]);
+  }, [filterValue, profileDetails, isOpen]);
 
   const handleToggle = () => {
     if (!isOpen && complianceType === 'openscap') {
@@ -380,11 +385,18 @@ const ProfileSelector = () => {
                 None
               </SelectOption>,
             ].concat(
-              selectOptions.map(
-                (name: DistributionProfileItem, index: number) => (
-                  <OScapSelectOption key={index} profile_id={name} />
-                )
-              )
+              selectOptions.map(({ id, name, description }) => (
+                <SelectOption
+                  key={id}
+                  value={{
+                    profileID: id,
+                    toString: () => name,
+                  }}
+                  description={description}
+                >
+                  {name}
+                </SelectOption>
+              ))
             )}
           {isSuccess && selectOptions.length === 0 && (
             <SelectOption isDisabled>
