@@ -39,27 +39,45 @@ test('Create a blueprint with Locale customization', async ({
   await test.step('Select and fill the Locale step', async () => {
     await frame.getByRole('button', { name: 'Locale' }).click();
     await frame.getByPlaceholder('Select a language').fill('fy');
-    await frame.getByRole('option', { name: 'fy_DE.UTF-' }).click();
+    await frame
+      .getByRole('option', { name: 'Western Frisian - Germany (fy_DE.UTF-8)' })
+      .click();
     await expect(
-      frame.getByRole('button', { name: 'Close fy_DE.UTF-' })
+      frame.getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
     ).toBeEnabled();
-    await frame.getByRole('button', { name: 'Close fy_DE.UTF-' }).click();
+    await frame
+      .getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
+      .click();
     await expect(
-      frame.getByRole('button', { name: 'Close fy_DE.UTF-' })
+      frame.getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
     ).toBeHidden();
     await frame.getByPlaceholder('Select a language').fill('fy');
-    await frame.getByRole('option', { name: 'fy_DE.UTF-' }).click();
+    await frame
+      .getByRole('option', { name: 'Western Frisian - Germany (fy_DE.UTF-8)' })
+      .click();
     await expect(
-      frame.getByRole('button', { name: 'Close fy_DE.UTF-' })
+      frame.getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
     ).toBeEnabled();
     await frame.getByPlaceholder('Select a language').fill('aa');
-    await frame.getByRole('option', { name: 'aa_DJ.UTF-' }).click();
+    await frame
+      .getByRole('option', { name: 'aa - Djibouti (aa_DJ.UTF-8)' })
+      .click();
     await expect(
-      frame.getByRole('button', { name: 'Close aa_DJ.UTF-' })
+      frame.getByRole('button', { name: 'Close aa - Djibouti (aa_DJ.UTF-8)' })
     ).toBeEnabled();
     await frame.getByPlaceholder('Select a language').fill('aa');
     await expect(
-      frame.getByText('aa_DJ.UTF-8Language already addedaa_ER.UTF-8aa_ET.UTF-')
+      frame.getByText(
+        'aa - Djibouti (aa_DJ.UTF-8)Language already addedaa - Eritrea (aa_ER.UTF-8)aa - Ethiopia (aa_ET.UTF-8)'
+      )
     ).toBeAttached();
     await frame.getByPlaceholder('Select a language').fill('xxx');
     await expect(frame.getByText('No results found for')).toBeAttached();
@@ -81,15 +99,19 @@ test('Create a blueprint with Locale customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Locale step').click();
     await expect(
-      frame.getByRole('button', { name: 'Close fy_DE.UTF-' })
+      frame.getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
     ).toBeEnabled();
     await expect(
-      frame.getByRole('button', { name: 'Close aa_DJ.UTF-' })
+      frame.getByRole('button', { name: 'Close aa - Djibouti (aa_DJ.UTF-8)' })
     ).toBeEnabled();
     await frame.getByPlaceholder('Select a language').fill('aa');
-    await frame.getByRole('option', { name: 'aa_ER.UTF-' }).click();
+    await frame
+      .getByRole('option', { name: 'aa - Eritrea (aa_ER.UTF-8)' })
+      .click();
     await expect(
-      frame.getByRole('button', { name: 'Close aa_ER.UTF-' })
+      frame.getByRole('button', { name: 'Close aa - Eritrea (aa_ER.UTF-8)' })
     ).toBeEnabled();
     await frame.getByRole('button', { name: 'Clear input' }).click();
     await frame.getByRole('button', { name: 'Menu toggle' }).nth(1).click();
@@ -116,13 +138,15 @@ test('Create a blueprint with Locale customization', async ({
     await fillInImageOutputGuest(page);
     await page.getByRole('button', { name: 'Locale' }).click();
     await expect(
-      frame.getByRole('button', { name: 'Close fy_DE.UTF-' })
+      frame.getByRole('button', {
+        name: 'Close Western Frisian - Germany (fy_DE.UTF-8)',
+      })
     ).toBeEnabled();
     await expect(
-      frame.getByRole('button', { name: 'Close aa_DJ.UTF-' })
+      frame.getByRole('button', { name: 'Close aa - Djibouti (aa_DJ.UTF-8)' })
     ).toBeEnabled();
     await expect(
-      frame.getByRole('button', { name: 'Close aa_ER.UTF-' })
+      frame.getByRole('button', { name: 'Close aa - Eritrea (aa_ER.UTF-8)' })
     ).toBeEnabled();
     await expect(frame.getByPlaceholder('Select a keyboard')).toHaveValue(
       'ANSI-dvorak'
