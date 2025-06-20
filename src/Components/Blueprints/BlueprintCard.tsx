@@ -39,7 +39,6 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         isSelectable
         data-testid={`blueprint-card`}
         isCompact
-        isClickable
         onClick={() => dispatch(setBlueprintId(blueprint.id))}
       >
         <CardHeader
