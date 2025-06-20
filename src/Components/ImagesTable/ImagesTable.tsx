@@ -246,7 +246,6 @@ const ImagesTable = () => {
         <Thead>
           <Tr>
             <Th
-              style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }}
               aria-label="Details expandable"
             />
             <Th>Name</Th>
