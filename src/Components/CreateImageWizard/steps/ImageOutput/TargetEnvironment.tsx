@@ -64,6 +64,7 @@ const TargetEnvironmentCard = ({
       isSelected={isSelected}
       isDisabled={isDisabled}
       isSelectable
+      isClickable
       isLarge
     >
       <CardHeader
