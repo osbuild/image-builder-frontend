@@ -41,6 +41,7 @@ import {
 } from '../fixtures/packages';
 import {
   mockPopularRepo,
+  mockRepositoryParameters,
   mockRepositoryResults,
 } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
@@ -131,6 +132,9 @@ export const handlers = [
   http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
     const { repo_id } = params;
     return HttpResponse.json(mockPopularRepo(repo_id));
+  }),
+  http.get(`${CONTENT_SOURCES_API}/repository_parameters`, () => {
+    return HttpResponse.json(mockRepositoryParameters());
   }),
   http.get(`${IMAGE_BUILDER_API}/composes`, ({ request }) => {
     return HttpResponse.json(composesEndpoint(new URL(request.url)));
