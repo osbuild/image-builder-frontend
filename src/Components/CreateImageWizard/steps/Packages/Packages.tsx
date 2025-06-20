@@ -1049,7 +1049,11 @@ const Packages = () => {
     let isSelected = false;
 
     if (!pkg.type || pkg.type === 'package') {
-      isSelected = packages.some((p) => p.name === pkg.name);
+      const isModuleWithSameName = modules.some(
+        (module) => module.name === pkg.name
+      );
+      isSelected =
+        packages.some((p) => p.name === pkg.name) && !isModuleWithSameName;
     }
 
     if (pkg.type === 'module') {
@@ -1057,7 +1061,9 @@ const Packages = () => {
       // and its module stream matches one in enabled_modules
       isSelected =
         packages.some((p) => p.name === pkg.name) &&
-        modules.some((p) => p.stream === pkg.stream);
+        modules.some(
+          (m) => m.name === pkg.module_name && m.stream === pkg.stream
+        );
     }
 
     return isSelected;
@@ -1075,12 +1081,16 @@ const Packages = () => {
    * @returns Package (or group) is / is not selected
    */
   const isSelectDisabled = (pkg: IBPackageWithRepositoryInfo) => {
-    return (
-      (pkg.type === 'module' &&
-        modules.some((module) => module.name === pkg.module_name) &&
-        !modules.some((p) => p.stream === pkg.stream)) ||
-      false
-    );
+    const isModuleStreamConflict =
+      pkg.type === 'module' &&
+      modules.some((module) => module.name === pkg.module_name) &&
+      !modules.some((p) => p.stream === pkg.stream);
+
+    const isNonModuleDisabledByModule =
+      (!pkg.type || pkg.type === 'package') &&
+      modules.some((module) => module.name === pkg.name);
+
+    return isModuleStreamConflict || isNonModuleDisabledByModule;
   };
 
   const formatDate = (date: string | undefined) => {
