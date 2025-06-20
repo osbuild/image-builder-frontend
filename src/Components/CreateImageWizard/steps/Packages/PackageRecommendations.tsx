@@ -45,6 +45,18 @@ const PackageRecommendations = () => {
   const version = releaseToVersion(distribution);
   const undebouncedPackages = useAppSelector(selectPackages);
   const packages = useDebounce(undebouncedPackages);
+
+  const getDistributionForRecommendations = (distribution: string): string => {
+    const distroLower = distribution.toLowerCase();
+    if (distroLower.includes('rhel') && distroLower.includes('8'))
+      return 'rhel-8';
+    if (distroLower.includes('rhel') && distroLower.includes('9'))
+      return 'rhel-9';
+    if (distroLower.includes('rhel') && distroLower.includes('10'))
+      return 'rhel-10';
+    if (distroLower.includes('rhel')) return 'rhel-9';
+    return 'rhel-9';
+  };
   let distroRepoUrls: string[] = [];
 
   const [isExpanded, setIsExpanded] = useState(true);
@@ -82,6 +94,7 @@ const PackageRecommendations = () => {
           recommendPackageRequest: {
             packages: packages.map((pkg) => pkg.name),
             recommendedPackages: 5,
+            distribution: getDistributionForRecommendations(distribution),
           },
         });
 
@@ -98,6 +111,7 @@ const PackageRecommendations = () => {
               isPreview: isBeta(),
               shownRecommendations: response.data.packages,
               selectedPackages: packages.map((pkg) => pkg.name),
+              distribution: getDistributionForRecommendations(distribution),
             }
           );
         }
@@ -264,6 +278,10 @@ const PackageRecommendations = () => {
                                     (pkg) => pkg.name
                                   ),
                                   shownRecommendations: data.packages,
+                                  distribution:
+                                    getDistributionForRecommendations(
+                                      distribution
+                                    ),
                                 }
                               );
                               addRecommendedPackage(pkg);
