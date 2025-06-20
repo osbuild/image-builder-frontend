@@ -145,6 +145,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                   'edge-commit',
                   'edge-installer',
                   'guest-image',
+                  'openshift-virt',
                   'image-installer',
                   'vsphere',
                   'vsphere-ova',
