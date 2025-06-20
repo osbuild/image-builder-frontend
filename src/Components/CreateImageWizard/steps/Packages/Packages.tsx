@@ -475,12 +475,14 @@ const Packages = () => {
                   </EmptyStateBody>
                   <EmptyStateFooter>
                     <EmptyStateActions>
-                      <Button
-                        variant="primary"
-                        onClick={() => setActiveTabKey(Repos.OTHER)}
-                      >
-                        Search other repositories
-                      </Button>
+                      {!process.env.IS_ON_PREMISE && (
+                        <Button
+                          variant="primary"
+                          onClick={() => setActiveTabKey(Repos.OTHER)}
+                        >
+                          Search other repositories
+                        </Button>
+                      )}
                     </EmptyStateActions>
                     <EmptyStateActions>
                       <Button
@@ -1512,12 +1514,14 @@ const Packages = () => {
           actions={<IncludedReposPopover />}
           aria-label="Included repositories"
         />
-        <Tab
-          eventKey="other-repos"
-          title={<TabTitleText>Other repos</TabTitleText>}
-          actions={<OtherReposPopover />}
-          aria-label="Other repositories"
-        />
+        {!process.env.IS_ON_PREMISE && (
+          <Tab
+            eventKey="other-repos"
+            title={<TabTitleText>Other repos</TabTitleText>}
+            actions={<OtherReposPopover />}
+            aria-label="Other repositories"
+          />
+        )}
       </Tabs>
       <PackagesTable />
       <Pagination
