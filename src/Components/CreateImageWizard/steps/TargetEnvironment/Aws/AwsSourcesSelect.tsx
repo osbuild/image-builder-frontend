@@ -36,18 +36,18 @@ export const AwsSourcesSelect = () => {
     });
 
   const sources = data?.data;
-  const chosenSource = sources?.find((source) => source.id === sourceId);
+  const chosenSource = sources?.find((source) => source?.id === sourceId);
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    sources ? sources.map((source) => source.name) : []
+    sources ? sources.map((source) => source?.name) : []
   );
 
   useEffect(() => {
-    let filteredSources = sources?.map((source) => source.name);
+    let filteredSources = sources?.map((source) => source?.name);
 
     if (sources && filterValue) {
       filteredSources = sources
-        .map((source) => source.name)
+        .map((source) => source?.name)
         .filter((source: string) =>
           String(source).toLowerCase().includes(filterValue.toLowerCase())
         );
@@ -87,7 +87,7 @@ export const AwsSourcesSelect = () => {
     _event: React.MouseEvent<Element, MouseEvent>,
     value: string
   ) => {
-    const source = sources?.find((source) => source.name === value);
+    const source = sources?.find((source) => source?.name === value);
     dispatch(changeAwsSourceId(source?.id));
     setIsOpen(false);
   };

@@ -88,7 +88,7 @@ const AzureSourceName = ({ id }: AzureSourceNamePropTypes) => {
 
   const sources = extractProvisioningList(rawSources);
 
-  const sourcename = sources?.find((source) => source.id === id);
+  const sourcename = sources?.find((source) => source?.id === id);
   if (sourcename) {
     return <p>{sourcename.name}</p>;
   }
@@ -111,7 +111,7 @@ const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
 
   const sources = extractProvisioningList(rawSources);
 
-  const sourcename = sources?.find((source) => source.id === id);
+  const sourcename = sources?.find((source) => source?.id === id);
   if (sourcename) {
     return <p>{sourcename.name}</p>;
   }

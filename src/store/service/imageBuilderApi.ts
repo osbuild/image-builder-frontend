@@ -998,10 +998,12 @@ export type DistributionProfileItem =
 export type DistributionProfileResponse = DistributionProfileItem[];
 export type RecommendationsResponse = {
   packages: string[];
+  modelVersion?: string | undefined;
 };
 export type RecommendPackageRequest = {
   packages: string[];
   recommendedPackages: number;
+  distribution: Distributions;
 };
 export const {
   useGetArchitecturesQuery,
