@@ -680,3 +680,38 @@ export const mockPopularRepo = (repo_id: string) => {
     };
   }
 };
+
+export const mockRepositoryParameters = {
+  distribution_versions: [
+    {
+      name: 'Any',
+      label: 'any',
+    },
+    {
+      name: 'el8',
+      label: '8',
+    },
+    {
+      name: 'el9',
+      label: '9',
+    },
+    {
+      name: 'el10',
+      label: '10',
+    },
+  ],
+  distribution_arches: [
+    {
+      name: 'Any',
+      label: 'any',
+    },
+    {
+      name: 'aarch64',
+      label: 'aarch64',
+    },
+    {
+      name: 'x86_64',
+      label: 'x86_64',
+    },
+  ],
+};
