@@ -210,8 +210,10 @@ const PackageRecommendations = () => {
               <>
                 <Content>
                   <Content>
-                    Other users commonly add these packages with the ones you
-                    selected.
+                    Dependencies for your selected packages will be
+                    automatically included in the blueprint. The recommended
+                    packages are optional suggestions based on what other users
+                    add in similar setups.
                   </Content>
                 </Content>
                 <Table variant="compact">
