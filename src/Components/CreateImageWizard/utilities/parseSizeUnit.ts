@@ -1,5 +1,5 @@
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../constants';
-import { Units } from '../steps/FileSystem/FileSystemTable';
+import { Units } from '../steps/FileSystem/components/FileSystemTable';
 
 export const parseSizeUnit = (bytesize: string) => {
   let size;

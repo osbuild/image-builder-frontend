@@ -13,7 +13,6 @@ import {
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
-import ActivationKeyInformation from './../Registration/ActivationKeyInformation';
 import {
   PackagesTable,
   RepositoriesTable,
@@ -87,9 +86,10 @@ import {
   getConversionFactor,
   MinimumSizePopover,
   Partition,
-} from '../FileSystem/FileSystemTable';
-import { MajorReleasesLifecyclesChart } from '../ImageOutput/ReleaseLifecycle';
+} from '../FileSystem/components/FileSystemTable';
+import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
+import ActivationKeyInformation from '../Registration/components/ActivationKeyInformation';
 import PopoverActivation from '../Registration/components/PopoverActivation';
 
 const ExpirationWarning = () => {

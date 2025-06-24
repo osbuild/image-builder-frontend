@@ -12,14 +12,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   addPartition,
   selectImageTypes,
   selectPartitions,
-} from '../../../../store/wizardSlice';
-import UsrSubDirectoriesDisabled from '../../UsrSubDirectoriesDisabled';
+} from '../../../../../store/wizardSlice';
+import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
   const partitions = useAppSelector(selectPartitions);

@@ -49,7 +49,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/FileSystemTable';
+import { Partition, Units } from '../../FileSystem/components/FileSystemTable';
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {

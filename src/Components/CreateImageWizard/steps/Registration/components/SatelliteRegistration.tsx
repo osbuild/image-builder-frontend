@@ -9,14 +9,14 @@ import {
   HelperTextItem,
 } from '@patternfly/react-core';
 
-import SatelliteRegistrationCommand from './components/SatelliteRegistrationCommand';
+import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeSatelliteCaCertificate,
   selectSatelliteCaCertificate,
-} from '../../../../store/wizardSlice';
-import { useRegistrationValidation } from '../../utilities/useValidation';
+} from '../../../../../store/wizardSlice';
+import { useRegistrationValidation } from '../../../utilities/useValidation';
 
 const SatelliteRegistration = () => {
   const dispatch = useAppDispatch();

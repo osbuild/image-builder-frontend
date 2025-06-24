@@ -19,7 +19,7 @@ import type { FileSystemConfigurationType } from '../Components/CreateImageWizar
 import type {
   Partition,
   Units,
-} from '../Components/CreateImageWizard/steps/FileSystem/FileSystemTable';
+} from '../Components/CreateImageWizard/steps/FileSystem/components/FileSystemTable';
 import type {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,

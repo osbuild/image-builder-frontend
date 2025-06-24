@@ -16,11 +16,11 @@ import {
 } from '@patternfly/react-core';
 import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { useGetArchitecturesQuery } from '../../../../store/backendApi';
-import { useAppSelector, useAppDispatch } from '../../../../store/hooks';
-import { ImageTypes } from '../../../../store/imageBuilderApi';
-import { provisioningApi } from '../../../../store/provisioningApi';
-import { rhsmApi } from '../../../../store/rhsmApi';
+import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
+import { useAppSelector, useAppDispatch } from '../../../../../store/hooks';
+import { ImageTypes } from '../../../../../store/imageBuilderApi';
+import { provisioningApi } from '../../../../../store/provisioningApi';
+import { rhsmApi } from '../../../../../store/rhsmApi';
 import {
   addImageType,
   reinitializeAws,
@@ -30,9 +30,9 @@ import {
   selectArchitecture,
   selectDistribution,
   selectImageTypes,
-} from '../../../../store/wizardSlice';
-import isRhel from '../../../../Utilities/isRhel';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
+} from '../../../../../store/wizardSlice';
+import isRhel from '../../../../../Utilities/isRhel';
+import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
 type TargetEnvironmentCardProps = {
   title: string;

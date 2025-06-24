@@ -9,13 +9,13 @@ import {
   SelectOption,
 } from '@patternfly/react-core';
 
-import { ARCHES } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { ImageRequest } from '../../../../store/imageBuilderApi';
+import { ARCHES } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { ImageRequest } from '../../../../../store/imageBuilderApi';
 import {
   changeArchitecture,
   selectArchitecture,
-} from '../../../../store/wizardSlice';
+} from '../../../../../store/wizardSlice';
 
 const ArchSelect = () => {
   const arch = useAppSelector(selectArchitecture);

@@ -25,8 +25,8 @@ import {
   Td,
 } from '@patternfly/react-table';
 
-import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changePartitionMinSize,
   changePartitionMountpoint,
@@ -34,9 +34,9 @@ import {
   changePartitionUnit,
   removePartition,
   selectPartitions,
-} from '../../../../store/wizardSlice';
-import { useFilesystemValidation } from '../../utilities/useValidation';
-import { ValidatedInputAndTextArea } from '../../ValidatedInput';
+} from '../../../../../store/wizardSlice';
+import { useFilesystemValidation } from '../../../utilities/useValidation';
+import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 

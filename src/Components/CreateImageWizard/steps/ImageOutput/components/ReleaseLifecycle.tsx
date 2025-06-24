@@ -22,9 +22,9 @@ import {
   RHEL_9_MAINTENANCE_SUPPORT,
   RHEL_10_FULL_SUPPORT,
   RHEL_10_MAINTENANCE_SUPPORT,
-} from '../../../../constants';
-import { useAppSelector } from '../../../../store/hooks';
-import { selectDistribution } from '../../../../store/wizardSlice';
+} from '../../../../../constants';
+import { useAppSelector } from '../../../../../store/hooks';
+import { selectDistribution } from '../../../../../store/wizardSlice';
 import 'chartjs-adapter-moment';
 
 Chart.register(annotationPlugin);
