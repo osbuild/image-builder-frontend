@@ -5,7 +5,7 @@ import React from 'react';
 
 import 'cockpit-dark-theme';
 import { Page, PageSection } from '@patternfly/react-core';
-import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
+import NotificationsProvider from '@redhat-cloud-services/frontend-components-notifications/NotificationsProvider';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
@@ -31,10 +31,11 @@ const Application = () => {
 
   return (
     <React.Fragment>
-      <NotificationsPortal />
-      <HashRouter>
-        <Router />
-      </HashRouter>
+      <NotificationsProvider>
+        <HashRouter>
+          <Router />
+        </HashRouter>
+      </NotificationsProvider>
     </React.Fragment>
   );
 };

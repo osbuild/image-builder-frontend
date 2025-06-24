@@ -14,12 +14,15 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import { useCreateBlueprintMutation } from '../../../../../store/backendApi';
+import {
+  useComposeBPWithNotification as useComposeBlueprintMutation,
+  useCreateBPWithNotification as useCreateBlueprintMutation,
+} from '../../../../../Hooks';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
-  useComposeBlueprintMutation,
+  CreateBlueprintResponse,
 } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
@@ -46,8 +49,8 @@ export const CreateSaveAndBuildBtn = ({
   }, [auth]);
   const packages = useAppSelector(selectPackages);
 
-  const [buildBlueprint] = useComposeBlueprintMutation();
-  const [createBlueprint] = useCreateBlueprintMutation({
+  const { trigger: buildBlueprint } = useComposeBlueprintMutation();
+  const { trigger: createBlueprint } = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
   const dispatch = useAppDispatch();
@@ -70,13 +73,11 @@ export const CreateSaveAndBuildBtn = ({
         ),
       });
     }
-    const blueprint =
-      requestBody &&
-      (await createBlueprint({
+    if (requestBody) {
+      const blueprint = (await createBlueprint({
         createBlueprintRequest: requestBody,
-      }).unwrap()); // unwrap - access the success payload immediately after a mutation
+      })) as CreateBlueprintResponse;
 
-    if (blueprint) {
       buildBlueprint({ id: blueprint.id, body: {} });
       dispatch(setBlueprintId(blueprint.id));
     }
@@ -107,7 +108,7 @@ export const CreateSaveButton = ({
   }, [auth]);
   const packages = useAppSelector(selectPackages);
 
-  const [createBlueprint, { isLoading }] = useCreateBlueprintMutation({
+  const { trigger: createBlueprint, isLoading } = useCreateBlueprintMutation({
     fixedCacheKey: 'createBlueprintKey',
   });
   const dispatch = useAppDispatch();
@@ -166,15 +167,11 @@ export const CreateSaveButton = ({
         account_id: userData?.identity.internal?.account_id || 'Not found',
       });
     }
-
-    const blueprint =
-      requestBody &&
-      (await createBlueprint({
+    if (requestBody) {
+      const blueprint = (await createBlueprint({
         createBlueprintRequest: requestBody,
-      }).unwrap());
-
-    if (blueprint) {
-      dispatch(setBlueprintId(blueprint?.id));
+      })) as CreateBlueprintResponse;
+      dispatch(setBlueprintId(blueprint.id));
     }
   };
 

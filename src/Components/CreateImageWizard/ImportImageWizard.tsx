@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import CreateImageWizard from './CreateImageWizard';
@@ -13,6 +13,7 @@ const ImportImageWizard = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const addNotification = useAddNotification();
   const locationState = location.state as { blueprint?: wizardState };
   const blueprint = locationState?.blueprint;
   useEffect(() => {
@@ -20,12 +21,10 @@ const ImportImageWizard = () => {
       dispatch(loadWizardState(blueprint));
     } else {
       navigate(resolveRelPath(''));
-      dispatch(
-        addNotification({
-          variant: 'warning',
-          title: 'No blueprint was imported',
-        })
-      );
+      addNotification({
+        variant: 'warning',
+        title: 'No blueprint was imported',
+      });
     }
   }, [blueprint, dispatch]);
   return <CreateImageWizard />;

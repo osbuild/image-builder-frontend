@@ -10,11 +10,8 @@ import {
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
 } from '../../constants';
-import {
-  backendApi,
-  useDeleteBlueprintMutation,
-  useGetBlueprintsQuery,
-} from '../../store/backendApi';
+import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
+import { backendApi, useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
   selectLimit,
@@ -65,7 +62,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
       )?.name,
     }),
   });
-  const [deleteBlueprint] = useDeleteBlueprintMutation({
+  const { trigger: deleteBlueprint } = useDeleteBlueprintMutation({
     fixedCacheKey: 'delete-blueprint',
   });
   const handleDelete = async () => {

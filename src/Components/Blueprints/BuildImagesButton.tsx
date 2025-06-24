@@ -16,17 +16,14 @@ import {
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { skipToken } from '@reduxjs/toolkit/query';
 
 import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
-import {
-  useGetBlueprintQuery,
-  useComposeBlueprintMutation,
-} from '../../store/backendApi';
+import { useComposeBPWithNotification as useComposeBlueprintMutation } from '../../Hooks';
+import { useGetBlueprintQuery } from '../../store/backendApi';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppSelector } from '../../store/hooks';
 import { ImageTypes } from '../../store/imageBuilderApi';
 
 type BuildImagesButtonPropTypes = {
@@ -37,9 +34,8 @@ type BuildImagesButtonPropTypes = {
 export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const [deselectedTargets, setDeselectedTargets] = useState<ImageTypes[]>([]);
-  const [buildBlueprint, { isLoading: imageBuildLoading }] =
+  const { trigger: buildBlueprint, isLoading: imageBuildLoading } =
     useComposeBlueprintMutation();
-  const dispatch = useAppDispatch();
   const { analytics, auth } = useChrome();
 
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
@@ -53,29 +49,19 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
-      try {
-        await buildBlueprint({
-          id: selectedBlueprintId,
-          body: {
-            image_types: blueprintImageType?.filter(
-              (target) => !deselectedTargets.includes(target)
-            ),
-          },
-        });
-        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
-          module: AMPLITUDE_MODULE_NAME,
-          trigger: 'synchronize images',
-          account_id: userData?.identity.internal?.account_id || 'Not found',
-        });
-      } catch (imageBuildError) {
-        dispatch(
-          addNotification({
-            variant: 'warning',
-            title: 'No blueprint was build',
-            description: imageBuildError?.data?.error?.message,
-          })
-        );
-      }
+      await buildBlueprint({
+        id: selectedBlueprintId,
+        body: {
+          image_types: blueprintImageType?.filter(
+            (target) => !deselectedTargets.includes(target)
+          ),
+        },
+      });
+      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+        module: AMPLITUDE_MODULE_NAME,
+        trigger: 'synchronize images',
+        account_id: userData?.identity.internal?.account_id || 'Not found',
+      });
     }
   };
   const [isOpen, setIsOpen] = useState(false);
@@ -180,7 +166,7 @@ export const BuildImagesButtonEmptyState = ({
   children,
 }: BuildImagesButtonEmptyStatePropTypes) => {
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
-  const [buildBlueprint, { isLoading: imageBuildLoading }] =
+  const { trigger: buildBlueprint, isLoading: imageBuildLoading } =
     useComposeBlueprintMutation();
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {

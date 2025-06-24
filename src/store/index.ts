@@ -1,4 +1,3 @@
-import { notificationsReducer } from '@redhat-cloud-services/frontend-components-notifications/redux';
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
@@ -27,7 +26,6 @@ export const serviceReducer = combineReducers({
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
-  notifications: notificationsReducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
 });
@@ -41,7 +39,6 @@ export const onPremReducer = combineReducers({
   // TODO: add other endpoints so we can remove this.
   // It's still needed to get things to work.
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
-  notifications: notificationsReducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
 });
@@ -64,7 +61,7 @@ startAppListening({
           distribution: distribution,
         })(state as serviceState);
 
-    const allowedImageTypes = architecturesResponse?.data?.find(
+    const allowedImageTypes = architecturesResponse.data?.find(
       (elem) => elem.arch === architecture
     )?.image_types;
 

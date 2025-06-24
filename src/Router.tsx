@@ -4,7 +4,7 @@ import { Route, Routes } from 'react-router-dom';
 
 import EdgeImageDetail from './Components/edge/ImageDetails';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-import { manageEdgeImagesUrlName } from './Utilities/edge';
+import { manageEdgeImagesUrlName } from './Hooks/Edge/useGetNotificationProp';
 import {
   useFlag,
   useFlagWithEphemDefault,
