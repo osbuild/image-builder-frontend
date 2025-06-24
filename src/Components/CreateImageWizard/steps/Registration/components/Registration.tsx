@@ -11,13 +11,13 @@ import {
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
 
-import { INSIGHTS_URL, RHC_URL, RHEL_10_BETA } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { INSIGHTS_URL, RHC_URL, RHEL_10_BETA } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,
   selectDistribution,
   selectRegistrationType,
-} from '../../../../store/wizardSlice';
+} from '../../../../../store/wizardSlice';
 
 const InsightsPopover = () => {
   return (

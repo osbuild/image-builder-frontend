@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Content, Form, Title, FormGroup } from '@patternfly/react-core';
 
-import ActivationKeyInformation from './ActivationKeyInformation';
-import ActivationKeysList from './ActivationKeysList';
-import Registration from './Registration';
-import SatelliteRegistration from './SatelliteRegistration';
+import ActivationKeyInformation from './components/ActivationKeyInformation';
+import ActivationKeysList from './components/ActivationKeysList';
+import Registration from './components/Registration';
+import SatelliteRegistration from './components/SatelliteRegistration';
 
 import { useAppSelector } from '../../../../store/hooks';
 import {

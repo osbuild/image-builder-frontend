@@ -2,12 +2,12 @@ import React from 'react';
 
 import { FormGroup, Label, Radio } from '@patternfly/react-core';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFileSystemConfigurationType,
   selectFileSystemConfigurationType,
   selectComplianceProfileID,
-} from '../../../../store/wizardSlice';
+} from '../../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();

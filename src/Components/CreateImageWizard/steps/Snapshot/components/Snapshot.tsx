@@ -11,9 +11,9 @@ import {
   Title,
 } from '@patternfly/react-core';
 
-import Templates from './components/Templates';
+import Templates from './Templates';
 
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   selectSnapshotDate,
   changeUseLatest,
@@ -21,10 +21,10 @@ import {
   changeTemplate,
   selectUseLatest,
   selectTemplate,
-} from '../../../../store/wizardSlice';
-import { yyyyMMddFormat } from '../../../../Utilities/time';
-import { useFlag } from '../../../../Utilities/useGetEnvironment';
-import { isSnapshotDateValid } from '../../validators';
+} from '../../../../../store/wizardSlice';
+import { yyyyMMddFormat } from '../../../../../Utilities/time';
+import { useFlag } from '../../../../../Utilities/useGetEnvironment';
+import { isSnapshotDateValid } from '../../../validators';
 
 export default function Snapshot() {
   const dispatch = useAppDispatch();

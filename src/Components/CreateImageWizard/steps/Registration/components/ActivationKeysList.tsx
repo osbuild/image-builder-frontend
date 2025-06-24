@@ -15,25 +15,25 @@ import {
 } from '@patternfly/react-core';
 import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
 
-import ManageKeysButton from './components/ManageKeysButton';
-import PopoverActivation from './components/PopoverActivation';
+import ManageKeysButton from './ManageKeysButton';
+import PopoverActivation from './PopoverActivation';
 
-import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
+import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   useListActivationKeysQuery,
   useCreateActivationKeysMutation,
-} from '../../../../store/rhsmApi';
+} from '../../../../../store/rhsmApi';
 import {
   changeActivationKey,
   changeBaseUrl,
   changeServerUrl,
   selectActivationKey,
   selectRegistrationType,
-} from '../../../../store/wizardSlice';
-import sortfn from '../../../../Utilities/sortfn';
-import { useGetEnvironment } from '../../../../Utilities/useGetEnvironment';
-import { generateRandomId } from '../../utilities/generateRandomId';
+} from '../../../../../store/wizardSlice';
+import sortfn from '../../../../../Utilities/sortfn';
+import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
+import { generateRandomId } from '../../../utilities/generateRandomId';
 
 const ActivationKeysList = () => {
   const dispatch = useAppDispatch();

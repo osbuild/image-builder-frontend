@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import FileSystemAutomaticPartition from './FileSystemAutomaticPartitionInformation';
-import FileSystemConfiguration from './FileSystemConfiguration';
-import FileSystemPartition from './FileSystemPartition';
+import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
+import FileSystemConfiguration from './components/FileSystemConfiguration';
+import FileSystemPartition from './components/FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
 import { selectFileSystemConfigurationType } from '../../../../store/wizardSlice';

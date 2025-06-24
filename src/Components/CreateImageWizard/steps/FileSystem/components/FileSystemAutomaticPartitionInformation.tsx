@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Content, ContentVariants } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../constants';
+import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
 
 const FileSystemAutomaticPartition = () => {
   return (

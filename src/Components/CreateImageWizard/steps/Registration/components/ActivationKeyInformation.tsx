@@ -10,9 +10,9 @@ import { Button, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
-import { useAppSelector } from '../../../../store/hooks';
-import { useShowActivationKeyQuery } from '../../../../store/rhsmApi';
-import { selectActivationKey } from '../../../../store/wizardSlice';
+import { useAppSelector } from '../../../../../store/hooks';
+import { useShowActivationKeyQuery } from '../../../../../store/rhsmApi';
+import { selectActivationKey } from '../../../../../store/wizardSlice';
 
 const ActivationKeyInformation = (): JSX.Element => {
   const activationKey = useAppSelector(selectActivationKey);

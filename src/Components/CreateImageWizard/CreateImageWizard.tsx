@@ -17,7 +17,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import DetailsStep from './steps/Details';
 import FileSystemStep from './steps/FileSystem';
-import { FileSystemContext } from './steps/FileSystem/FileSystemTable';
+import { FileSystemContext } from './steps/FileSystem/components/FileSystemTable';
 import FirewallStep from './steps/Firewall';
 import FirstBootStep from './steps/FirstBoot';
 import HostnameStep from './steps/Hostname';

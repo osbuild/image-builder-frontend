@@ -3,7 +3,7 @@ import React from 'react';
 import { Button, Form, Grid, Content, Title } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 
-import Snapshot from './Snapshot';
+import Snapshot from './components/Snapshot';
 
 import { CONTENT_URL } from '../../../../constants';
 

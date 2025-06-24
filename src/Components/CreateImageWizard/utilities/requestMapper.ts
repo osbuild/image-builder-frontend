@@ -102,7 +102,7 @@ import {
   getConversionFactor,
   Partition,
   Units,
-} from '../steps/FileSystem/FileSystemTable';
+} from '../steps/FileSystem/components/FileSystemTable';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
   convertSchemaToIBCustomRepo,

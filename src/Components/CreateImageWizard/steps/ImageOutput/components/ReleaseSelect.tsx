@@ -24,20 +24,20 @@ import {
   RHEL_10_MAINTENANCE_SUPPORT,
   ON_PREM_RELEASES,
   FEDORA_RELEASES,
-} from '../../../../constants';
-import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
-import { Distributions } from '../../../../store/imageBuilderApi';
+} from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { Distributions } from '../../../../../store/imageBuilderApi';
 import {
   changeDistribution,
   changeRegistrationType,
   selectDistribution,
-} from '../../../../store/wizardSlice';
-import isRhel from '../../../../Utilities/isRhel';
-import { toMonthAndYear } from '../../../../Utilities/time';
+} from '../../../../../store/wizardSlice';
+import isRhel from '../../../../../Utilities/isRhel';
+import { toMonthAndYear } from '../../../../../Utilities/time';
 import {
   useFlag,
   useGetEnvironment,
-} from '../../../../Utilities/useGetEnvironment';
+} from '../../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.

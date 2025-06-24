@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import ArchSelect from './ArchSelect';
-import CentOSAcknowledgement from './CentOSAcknowledgement';
-import ReleaseLifecycle from './ReleaseLifecycle';
-import ReleaseSelect from './ReleaseSelect';
-import TargetEnvironment from './TargetEnvironment';
+import ArchSelect from './components/ArchSelect';
+import CentOSAcknowledgement from './components/CentOSAcknowledgement';
+import ReleaseLifecycle from './components/ReleaseLifecycle';
+import ReleaseSelect from './components/ReleaseSelect';
+import TargetEnvironment from './components/TargetEnvironment';
 
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
