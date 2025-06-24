@@ -16,7 +16,7 @@ import {
 import { Modal, ModalVariant } from '@patternfly/react-core/deprecated';
 import { DropEvent } from '@patternfly/react-core/dist/esm/helpers';
 import { HelpIcon } from '@patternfly/react-icons';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { useNavigate } from 'react-router-dom';
 
 import { mapOnPremToHosted } from './helpers/onPremToHostedBlueprintMapper';
@@ -26,7 +26,6 @@ import {
   ApiRepositoryRequest,
   useBulkImportRepositoriesMutation,
 } from '../../store/contentSourcesApi';
-import { useAppDispatch } from '../../store/hooks';
 import {
   BlueprintExportResponse,
   BlueprintItem,
@@ -64,7 +63,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const [isRejected, setIsRejected] = React.useState(false);
   const [isOnPrem, setIsOnPrem] = React.useState(false);
   const [isCheckedImportRepos, setIsCheckedImportRepos] = React.useState(true);
-  const dispatch = useAppDispatch();
+  const addNotification = useAddNotification();
   const [importRepositories] = useBulkImportRepositoriesMutation();
 
   const handleFileInputChange = (
@@ -103,33 +102,27 @@ export const ImportBlueprintModal: React.FunctionComponent<
               importedRepositoryNames.push(repository.url);
               return;
             }
-            dispatch(
-              addNotification({
-                variant: 'warning',
-                title: 'Failed to import custom repositories',
-                description: JSON.stringify(repository.warnings),
-              })
-            );
+            addNotification({
+              variant: 'warning',
+              title: 'Failed to import custom repositories',
+              description: JSON.stringify(repository.warnings),
+            });
           });
 
           if (importedRepositoryNames.length !== 0) {
-            dispatch(
-              addNotification({
-                variant: 'info',
-                title: 'Successfully imported custom repositories',
-                description: importedRepositoryNames.join(', '),
-              })
-            );
+            addNotification({
+              variant: 'info',
+              title: 'Successfully imported custom repositories',
+              description: importedRepositoryNames.join(', '),
+            });
           }
           return newCustomRepos;
         }
       } catch {
-        dispatch(
-          addNotification({
-            variant: 'danger',
-            title: 'Custom repositories import failed',
-          })
-        );
+        addNotification({
+          variant: 'danger',
+          title: 'Custom repositories import failed',
+        });
       }
     }
   }
@@ -197,13 +190,11 @@ export const ImportBlueprintModal: React.FunctionComponent<
           }
         } catch (error) {
           setIsInvalidFormat(true);
-          dispatch(
-            addNotification({
-              variant: 'warning',
-              title: 'File is not a valid blueprint',
-              description: error?.data?.error?.message,
-            })
-          );
+          addNotification({
+            variant: 'warning',
+            title: 'File is not a valid blueprint',
+            description: error?.data?.error?.message,
+          });
         }
       };
       parseAndImport();

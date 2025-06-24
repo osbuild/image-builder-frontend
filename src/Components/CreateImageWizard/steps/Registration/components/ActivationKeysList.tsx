@@ -13,7 +13,7 @@ import {
   TextInputGroup,
   TextInputGroupMain,
 } from '@patternfly/react-core';
-import { addNotification } from '@redhat-cloud-services/frontend-components-notifications/redux';
+import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
 import ManageKeysButton from './ManageKeysButton';
 import PopoverActivation from './PopoverActivation';
@@ -37,6 +37,7 @@ import { generateRandomId } from '../../../utilities/generateRandomId';
 
 const ActivationKeysList = () => {
   const dispatch = useAppDispatch();
+  const addNotification = useAddNotification();
 
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
@@ -138,13 +139,11 @@ const ActivationKeysList = () => {
         );
         dispatch(changeActivationKey(defaultActivationKeyName));
       } catch (error) {
-        dispatch(
-          addNotification({
-            variant: 'danger',
-            title: 'Error creating activation key',
-            description: error?.data?.error?.message,
-          })
-        );
+        addNotification({
+          variant: 'danger',
+          title: 'Error creating activation key',
+          description: error?.data?.error?.message,
+        });
       }
     };
 
