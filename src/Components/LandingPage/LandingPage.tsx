@@ -24,7 +24,7 @@ import './LandingPage.scss';
 import { NewAlert } from './NewAlert';
 
 import { MANAGING_WITH_DNF_URL, OSTREE_URL } from '../../constants';
-import { manageEdgeImagesUrlName } from '../../Utilities/edge';
+import { manageEdgeImagesUrlName } from '../../Hooks/Edge/useGetNotificationProp';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';

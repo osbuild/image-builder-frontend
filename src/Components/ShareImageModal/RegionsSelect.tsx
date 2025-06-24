@@ -29,9 +29,9 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import { AWS_REGIONS } from '../../constants';
+import { useCloneComposeWithNotification as useCloneComposeMutation } from '../../Hooks';
 import {
   ComposeStatus,
-  useCloneComposeMutation,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
@@ -130,7 +130,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
     }
   };
 
-  const [cloneCompose] = useCloneComposeMutation();
+  const { trigger: cloneCompose } = useCloneComposeMutation();
 
   const { data: composeStatus, isSuccess } = useGetComposeStatusQuery({
     composeId,

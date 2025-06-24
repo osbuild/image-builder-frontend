@@ -12,12 +12,12 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
-import { useUpdateBlueprintMutation } from '../../../../../store/backendApi';
-import { useAppSelector } from '../../../../../store/hooks';
 import {
-  CreateBlueprintRequest,
-  useComposeBlueprintMutation,
-} from '../../../../../store/imageBuilderApi';
+  useComposeBPWithNotification as useComposeBlueprintMutation,
+  useUpdateBPWithNotification as useUpdateBlueprintMutation,
+} from '../../../../../Hooks';
+import { useAppSelector } from '../../../../../store/hooks';
+import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
@@ -43,10 +43,10 @@ export const EditSaveAndBuildBtn = ({
       setUserData(data);
     })();
   }, [auth]);
-  const [buildBlueprint] = useComposeBlueprintMutation();
+  const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const packages = useAppSelector(selectPackages);
 
-  const [updateBlueprint] = useUpdateBlueprintMutation({
+  const { trigger: updateBlueprint } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
 
@@ -104,7 +104,7 @@ export const EditSaveButton = ({
   }, [auth]);
   const packages = useAppSelector(selectPackages);
 
-  const [updateBlueprint, { isLoading }] = useUpdateBlueprintMutation({
+  const { trigger: updateBlueprint, isLoading } = useUpdateBlueprintMutation({
     fixedCacheKey: 'updateBlueprintKey',
   });
   const onSave = async () => {

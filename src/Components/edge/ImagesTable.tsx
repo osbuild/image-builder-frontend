@@ -3,20 +3,18 @@ import React from 'react';
 import AsyncComponent from '@redhat-cloud-services/frontend-components/AsyncComponent';
 import ErrorState from '@redhat-cloud-services/frontend-components/ErrorState';
 import Unavailable from '@redhat-cloud-services/frontend-components/Unavailable';
-import { useDispatch } from 'react-redux';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 import { CREATING_IMAGES_WITH_IB_URL } from '../../constants';
 import {
-  getNotificationProp,
+  useGetNotificationProp,
   manageEdgeImagesUrlName,
-} from '../../Utilities/edge';
+} from '../../Hooks/Edge/useGetNotificationProp';
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 
 const ImagesTable = () => {
-  const dispatch = useDispatch();
-  const notificationProp = getNotificationProp(dispatch);
+  const notificationProp = useGetNotificationProp();
   // Feature flag for the federated modules
   const edgeParityFlag = useFlag('edgeParity.image-list');
   // Feature flag to access the 'local' images table list
