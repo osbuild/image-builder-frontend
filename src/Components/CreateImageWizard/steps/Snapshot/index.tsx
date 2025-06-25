@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { Button, Form, Grid, Content, Title } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Form, Content, Title } from '@patternfly/react-core';
 
 import Snapshot from './components/Snapshot';
 
-import { CONTENT_URL } from '../../../../constants';
+import ManageRepositoriesButton from '../Repositories/components/ManageRepositoriesButton';
 
 export default function SnapshotStep() {
   return (
@@ -13,23 +12,13 @@ export default function SnapshotStep() {
       <Title headingLevel="h1" size="xl">
         Repeatable build
       </Title>
-      <Grid>
+      <Content>
+        Control the consistency of the packages in the repository used to build
+        the image.
         <Content>
-          Control the consistency of the packages in the repository used to
-          build the image.
+          <ManageRepositoriesButton />
         </Content>
-        <Button
-          component="a"
-          target="_blank"
-          variant="link"
-          iconPosition="right"
-          isInline
-          icon={<ExternalLinkAltIcon />}
-          href={CONTENT_URL}
-        >
-          Create and manage repositories here
-        </Button>
-      </Grid>
+      </Content>
       <Snapshot />
     </Form>
   );
