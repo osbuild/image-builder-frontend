@@ -1,32 +1,15 @@
 import React from 'react';
 
-import { Alert, Button, Form, Content, Title } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { Alert, Form, Content, Title } from '@patternfly/react-core';
 
+import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './Repositories';
 
-import { CONTENT_URL } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectPackages,
   selectRecommendedRepositories,
 } from '../../../../store/wizardSlice';
-
-const ManageRepositoriesButton = () => {
-  return (
-    <Button
-      component="a"
-      target="_blank"
-      variant="link"
-      iconPosition="right"
-      isInline
-      icon={<ExternalLinkAltIcon />}
-      href={CONTENT_URL}
-    >
-      Create and manage repositories here
-    </Button>
-  );
-};
 
 const RepositoriesStep = () => {
   const packages = useAppSelector(selectPackages);
@@ -39,9 +22,10 @@ const RepositoriesStep = () => {
       </Title>
       <Content>
         Select the linked custom repositories from which you can add packages to
-        the image.
-        <br />
-        <ManageRepositoriesButton />
+        the image
+        <Content>
+          <ManageRepositoriesButton />
+        </Content>
       </Content>
       {packages.length && recommendedRepos.length ? (
         <Alert
