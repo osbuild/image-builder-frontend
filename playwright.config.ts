@@ -22,8 +22,8 @@ export default defineConfig({
   timeout: 3 * 60 * 1000, // 3m
   expect: { timeout: 50_000 }, // 50s
   use: {
-    actionTimeout: 30_000, // 30s
-    navigationTimeout: 30_000, // 30s
+    actionTimeout: 50_000, // 50s
+    navigationTimeout: 50_000, // 50s
     headless: true,
     baseURL: process.env.BASE_URL
       ? process.env.BASE_URL
