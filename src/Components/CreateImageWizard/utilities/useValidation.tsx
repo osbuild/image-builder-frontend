@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import { jwtDecode, JwtPayload } from 'jwt-decode';
 
+import { getListOfDuplicates } from './getListOfDuplicates';
+
 import { UNIQUE_VALIDATION_DELAY } from '../../../constants';
 import { useLazyGetBlueprintsQuery } from '../../../store/backendApi';
 import { useAppSelector } from '../../../store/hooks';
@@ -281,14 +283,26 @@ export function useTimezoneValidation(): StepValidation {
     }
   }
 
+  const duplicateNtpServers = getListOfDuplicates(ntpServers || []);
+
   const timezoneError =
     timezone && !timezones.includes(timezone) ? 'Unknown timezone' : '';
   const ntpServersError =
     invalidServers.length > 0 ? `Invalid NTP servers: ${invalidServers}` : '';
+  const duplicateNtpServersError =
+    duplicateNtpServers.length > 0
+      ? `Includes duplicate NTP servers: ${duplicateNtpServers.join(', ')}`
+      : '';
 
   return {
-    errors: { timezone: timezoneError, ntpServers: ntpServersError },
-    disabledNext: timezoneError !== '' || invalidServers.length > 0,
+    errors: {
+      timezone: timezoneError,
+      ntpServers: ntpServersError + '|' + duplicateNtpServersError,
+    },
+    disabledNext:
+      timezoneError !== '' ||
+      invalidServers.length > 0 ||
+      duplicateNtpServers.length > 0,
   };
 }
 
@@ -363,15 +377,28 @@ export function useKernelValidation(): StepValidation {
     }
   }
 
+  const duplicateKernelArgs = getListOfDuplicates(kernel.append);
+
   const kernelNameError =
     kernel.name && !isKernelNameValid(kernel.name) ? 'Invalid format.' : '';
 
   const kernelAppendError =
     invalidArgs.length > 0 ? `Invalid kernel arguments: ${invalidArgs}` : '';
 
+  const duplicateKernelArgsError =
+    duplicateKernelArgs.length > 0
+      ? `Includes duplicate kernel arguments: ${duplicateKernelArgs.join(', ')}`
+      : '';
+
   return {
-    errors: { kernel: kernelNameError, kernelAppend: kernelAppendError },
-    disabledNext: kernelNameError !== '' || kernelAppendError !== '',
+    errors: {
+      kernel: kernelNameError,
+      kernelAppend: kernelAppendError + '|' + duplicateKernelArgsError,
+    },
+    disabledNext:
+      kernelNameError !== '' ||
+      kernelAppendError !== '' ||
+      duplicateKernelArgs.length > 0,
   };
 }
 
@@ -405,8 +432,32 @@ export function useFirewallValidation(): StepValidation {
     }
   }
 
+  const duplicatePorts = getListOfDuplicates(firewall.ports);
+  const duplicateDisabledServices = getListOfDuplicates(
+    firewall.services.disabled
+  );
+  const duplicateEnabledServices = getListOfDuplicates(
+    firewall.services.enabled
+  );
+
   const portsError =
     invalidPorts.length > 0 ? `Invalid ports: ${invalidPorts}` : '';
+  const duplicatePortsError =
+    duplicatePorts.length > 0
+      ? `Includes duplicate ports: ${duplicatePorts.join(', ')}`
+      : '';
+  const duplicateDisabledServicesError =
+    duplicateDisabledServices.length > 0
+      ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
+          ', '
+        )}`
+      : '';
+  const duplicateEnabledServicesError =
+    duplicateEnabledServices.length > 0
+      ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
+          ', '
+        )}`
+      : '';
   const disabledServicesError =
     invalidDisabled.length > 0
       ? `Invalid disabled services: ${invalidDisabled}`
@@ -418,14 +469,19 @@ export function useFirewallValidation(): StepValidation {
 
   return {
     errors: {
-      ports: portsError,
-      disabledServices: disabledServicesError,
-      enabledServices: enabledServicesError,
+      ports: portsError + '|' + duplicatePortsError,
+      disabledServices:
+        disabledServicesError + '|' + duplicateDisabledServicesError,
+      enabledServices:
+        enabledServicesError + '|' + duplicateEnabledServicesError,
     },
     disabledNext:
       invalidPorts.length > 0 ||
       invalidDisabled.length > 0 ||
-      invalidEnabled.length > 0,
+      invalidEnabled.length > 0 ||
+      duplicatePorts.length > 0 ||
+      duplicateDisabledServices.length > 0 ||
+      duplicateEnabledServices.length > 0,
   };
 }
 
@@ -460,6 +516,10 @@ export function useServicesValidation(): StepValidation {
     }
   }
 
+  const duplicateDisabledServices = getListOfDuplicates(services.disabled);
+  const duplicateMaskedServices = getListOfDuplicates(services.masked);
+  const duplicateEnabledServices = getListOfDuplicates(services.enabled);
+
   const disabledSystemdServicesError =
     invalidDisabled.length > 0
       ? `Invalid disabled services: ${invalidDisabled}`
@@ -470,17 +530,41 @@ export function useServicesValidation(): StepValidation {
     invalidEnabled.length > 0
       ? `Invalid enabled services: ${invalidEnabled}`
       : '';
+  const duplicateDisabledServicesError =
+    duplicateDisabledServices.length > 0
+      ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
+          ', '
+        )}`
+      : '';
+  const duplicateMaskedServicesError =
+    duplicateMaskedServices.length > 0
+      ? `Includes duplicate masked services: ${duplicateMaskedServices.join(
+          ', '
+        )}`
+      : '';
+  const duplicateEnabledServicesError =
+    duplicateEnabledServices.length > 0
+      ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
+          ', '
+        )}`
+      : '';
 
   return {
     errors: {
-      disabledSystemdServices: disabledSystemdServicesError,
-      maskedSystemdServices: maskedSystemdServicesError,
-      enabledSystemdServices: enabledSystemdServicesError,
+      disabledSystemdServices:
+        disabledSystemdServicesError + '|' + duplicateDisabledServicesError,
+      maskedSystemdServices:
+        maskedSystemdServicesError + '|' + duplicateMaskedServicesError,
+      enabledSystemdServices:
+        enabledSystemdServicesError + '|' + duplicateEnabledServicesError,
     },
     disabledNext:
       invalidDisabled.length > 0 ||
       invalidMasked.length > 0 ||
-      invalidEnabled.length > 0,
+      invalidEnabled.length > 0 ||
+      duplicateDisabledServices.length > 0 ||
+      duplicateMaskedServices.length > 0 ||
+      duplicateEnabledServices.length > 0,
   };
 }
 
@@ -544,20 +628,27 @@ export function useUsersValidation(): UsersStepValidation {
       }
     }
 
-    const groupsError =
+    const duplicateGroups = getListOfDuplicates(users[index].groups);
+
+    const invalidError =
       invalidGroups.length > 0 ? `Invalid user groups: ${invalidGroups}` : '';
+    const duplicateError =
+      duplicateGroups.length > 0
+        ? `Includes duplicate groups: ${duplicateGroups.join(', ')}`
+        : '';
 
     if (
       userNameError ||
       sshKeyError ||
       (users[index].password && !isPasswordValid) ||
-      groupsError
+      invalidError ||
+      duplicateError
     ) {
-      errors[`${index}`] = {
+      errors[index] = {
         userName: userNameError,
         userSshKey: sshKeyError,
         userPassword: passwordError,
-        groups: groupsError,
+        groups: invalidError + '|' + duplicateError,
       };
     }
   }
