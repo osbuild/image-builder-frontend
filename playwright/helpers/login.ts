@@ -23,6 +23,38 @@ export const login = async (page: Page) => {
   return loginCockpit(page, user, password);
 };
 
+/**
+ * Checks if the user is already authenticated, if not, logs them in
+ * @param page - the page object
+ */
+export const ensureAuthenticated = async (page: Page) => {
+  // Navigate to the target page
+  if (isHosted()) {
+    await page.goto('/insights/image-builder/landing');
+  } else {
+    await page.goto('/cockpit-image-builder');
+  }
+
+  // Check for authentication success indicator
+  const successIndicator = isHosted()
+    ? page.getByRole('heading', { name: 'All images' })
+    : ibFrame(page).getByRole('heading', { name: 'All images' });
+
+  let isAuthenticated = false;
+  try {
+    // Give it a 30 second period to load, it's less expensive than having to rerun the test
+    await expect(successIndicator).toBeVisible({ timeout: 30000 });
+    isAuthenticated = true;
+  } catch {
+    isAuthenticated = false;
+  }
+
+  if (!isAuthenticated) {
+    // Not authenticated, need to login
+    await login(page);
+  }
+};
+
 const loginCockpit = async (page: Page, user: string, password: string) => {
   await page.goto('/cockpit-image-builder');
 
@@ -33,26 +65,36 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   // image-builder lives inside an iframe
   const frame = ibFrame(page);
 
-  // cockpit-image-builder needs superuser, expect an error message
-  // when the user does not have admin priviliges
-  await expect(
-    frame.getByRole('heading', { name: 'Access is limited' })
-  ).toBeVisible();
-  await page.getByRole('button', { name: 'Limited access' }).click();
+  try {
+    // Check if the user already has administrative access
+    await expect(
+      page.getByRole('button', { name: 'Administrative access' })
+    ).toBeVisible();
+  } catch {
+    // If not, try to gain it
+    // cockpit-image-builder needs superuser, expect an error message
+    // when the user does not have admin priviliges
+    await expect(
+      frame.getByRole('heading', { name: 'Access is limited' })
+    ).toBeVisible();
+    await page.getByRole('button', { name: 'Limited access' }).click();
 
-  // different popup opens based on type of account (can be passwordless)
-  const authenticateButton = page.getByRole('button', { name: 'Authenticate' });
-  const closeButton = page.getByText('Close');
-  await expect(authenticateButton.or(closeButton)).toBeVisible();
+    // different popup opens based on type of account (can be passwordless)
+    const authenticateButton = page.getByRole('button', {
+      name: 'Authenticate',
+    });
+    const closeButton = page.getByText('Close');
+    await expect(authenticateButton.or(closeButton)).toBeVisible();
 
-  if (await authenticateButton.isVisible()) {
-    // with password
-    await page.getByRole('textbox', { name: 'Password' }).fill(password);
-    await authenticateButton.click();
-  }
-  if (await closeButton.isVisible()) {
-    // passwordless
-    await closeButton.click();
+    if (await authenticateButton.isVisible()) {
+      // with password
+      await page.getByRole('textbox', { name: 'Password' }).fill(password);
+      await authenticateButton.click();
+    }
+    if (await closeButton.isVisible()) {
+      // passwordless
+      await closeButton.click();
+    }
   }
 
   // expect to have administrative access
@@ -81,9 +123,18 @@ export const storeStorageStateAndToken = async (page: Page) => {
   const { cookies } = await page
     .context()
     .storageState({ path: path.join(__dirname, '../../.auth/user.json') });
-  process.env.TOKEN = `Bearer ${
-    cookies.find((cookie) => cookie.name === 'cs_jwt')?.value
-  }`;
+  if (isHosted()) {
+    // For hosted service, look for cs_jwt token
+    process.env.TOKEN = `Bearer ${
+      cookies.find((cookie) => cookie.name === 'cs_jwt')?.value
+    }`;
+  } else {
+    // For Cockpit, we don't need a TOKEN but we can still store it for consistency
+    const cockpitCookie = cookies.find((cookie) => cookie.name === 'cockpit');
+    if (cockpitCookie) {
+      process.env.TOKEN = cockpitCookie.value;
+    }
+  }
   // eslint-disable-next-line playwright/no-wait-for-timeout
   await page.waitForTimeout(100);
 };
