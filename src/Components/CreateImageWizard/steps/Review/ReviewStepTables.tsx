@@ -25,6 +25,7 @@ import {
   selectRecommendedRepositories,
   selectTemplate,
 } from '../../../../store/wizardSlice';
+import { getEpelVersionForDistribution } from '../../../../Utilities/epel';
 import PackageInfoNotAvailablePopover from '../Packages/components/PackageInfoNotAvailablePopover';
 
 type repoPropType = {
@@ -284,8 +285,8 @@ export const RepositoriesTable = () => {
             {recommendedRepositoriesList.length > 0 && (
               <Tr key={0}>
                 <Td className="pf-m-width-60">
-                  EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
-                  Everything x86_64
+                  EPEL {getEpelVersionForDistribution(distribution)} Everything
+                  x86_64
                 </Td>
               </Tr>
             )}
