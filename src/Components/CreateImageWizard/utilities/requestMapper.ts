@@ -391,20 +391,18 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         command: getSatelliteCommand(request.customizations.files),
         caCert: request.customizations.cacerts?.pem_certs[0],
       },
-      aapRegistration: {
-        controllerUrl:
-          request.image_requests[0]?.aap_registration?.ansible_controller_url,
-        jobTemplateId:
-          String(
-            request.image_requests[0]?.aap_registration?.job_template_id
-          ) || undefined,
-        hostConfigKey:
-          request.image_requests[0]?.aap_registration?.host_config_key,
-        tlsCertificateAuthority:
-          request.image_requests[0]?.aap_registration
-            ?.tls_certificate_authority,
-        tlsConfirmation: undefined,
-      },
+    },
+    aapRegistration: {
+      controllerUrl:
+        request.image_requests[0]?.aap_registration?.ansible_controller_url,
+      jobTemplateId:
+        String(request.image_requests[0]?.aap_registration?.job_template_id) ||
+        undefined,
+      hostConfigKey:
+        request.image_requests[0]?.aap_registration?.host_config_key,
+      tlsCertificateAuthority:
+        request.image_requests[0]?.aap_registration?.tls_certificate_authority,
+      tlsConfirmation: undefined,
     },
     ...commonRequestToState(request),
   };
@@ -455,6 +453,17 @@ export const mapExportRequestToState = (
     },
     env: initialState.env,
     registration: initialState.registration,
+    aapRegistration: {
+      controllerUrl:
+        image_requests[0]?.aap_registration?.ansible_controller_url,
+      jobTemplateId:
+        String(image_requests[0]?.aap_registration?.job_template_id) ||
+        undefined,
+      hostConfigKey: image_requests[0]?.aap_registration?.host_config_key,
+      tlsCertificateAuthority:
+        image_requests[0]?.aap_registration?.tls_certificate_authority,
+      tlsConfirmation: undefined,
+    },
     ...commonRequestToState(blueprintResponse),
   };
 };
@@ -465,20 +474,25 @@ const getFirstBootScript = (files?: File[]): string => {
 };
 
 const getAapRegistration = (state: RootState): AapRegistration | undefined => {
-  const registrationType = selectRegistrationType(state);
-  if (registrationType !== 'register-aap') {
+  const controllerUrl = selectAapControllerUrl(state);
+  const jobTemplateId = selectAapJobTemplateId(state);
+  const hostConfigKey = selectAapHostConfigKey(state);
+  const tlsCertificateAuthority = selectAapTlsCertificateAuthority(state);
+
+  if (
+    !controllerUrl &&
+    !jobTemplateId &&
+    !hostConfigKey &&
+    !tlsCertificateAuthority
+  ) {
     return undefined;
   }
 
-  const ansible_controller_url = String(selectAapControllerUrl(state));
-  const job_template_id = Number(selectAapJobTemplateId(state));
-  const host_config_key = String(selectAapHostConfigKey(state));
-  const tls_certificate_authority = selectAapTlsCertificateAuthority(state);
   return {
-    ansible_controller_url,
-    job_template_id,
-    host_config_key,
-    tls_certificate_authority,
+    ansible_controller_url: controllerUrl || '',
+    job_template_id: jobTemplateId ? Number(jobTemplateId) : 0,
+    host_config_key: hostConfigKey || '',
+    tls_certificate_authority: tlsCertificateAuthority || undefined,
   };
 };
 
@@ -507,9 +521,6 @@ const getRegistrationType = (request: BlueprintResponse): RegistrationType => {
   const subscription = request.customizations.subscription;
   const distribution = request.distribution;
   const files = request.customizations.files;
-  const isAapType = Boolean(
-    request.image_requests[0].aap_registration?.ansible_controller_url
-  );
 
   if (subscription && isRhel(distribution)) {
     if (subscription.rhc) {
@@ -519,8 +530,6 @@ const getRegistrationType = (request: BlueprintResponse): RegistrationType => {
     }
   } else if (getSatelliteCommand(files)) {
     return 'register-satellite';
-  } else if (isAapType) {
-    return 'register-aap';
   } else {
     return 'register-later';
   }
@@ -802,8 +811,7 @@ const getSubscription = (
 
   if (
     registrationType === 'register-later' ||
-    registrationType === 'register-satellite' ||
-    registrationType === 'register-aap'
+    registrationType === 'register-satellite'
   ) {
     return undefined;
   }

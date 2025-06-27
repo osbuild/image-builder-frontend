@@ -78,6 +78,10 @@ import {
   selectTimezone,
   selectUseLatest,
   selectUsers,
+  selectAapControllerUrl,
+  selectAapJobTemplateId,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -645,18 +649,42 @@ export const RegisterSatelliteList = () => {
 };
 
 export const RegisterAapList = () => {
+  const controllerUrl = useAppSelector(selectAapControllerUrl);
+  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
+  const tlsCertificateAuthority = useAppSelector(
+    selectAapTlsCertificateAuthority
+  );
+
   return (
-    <TextContent>
-      <TextList component={TextListVariants.dl}>
-        <TextListItem
-          component={TextListItemVariants.dt}
-          className="pf-v5-u-min-width"
-        >
-          Register AAP
-        </TextListItem>
-        <TextListItem component={TextListItemVariants.dd}>Enabled</TextListItem>
-      </TextList>
-    </TextContent>
+    <Content>
+      <Content component={ContentVariants.dl} className="review-step-dl">
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Ansible Controller URL
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {controllerUrl || 'None'}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Job Template ID
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {jobTemplateId || 'None'}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Host Config Key
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {hostConfigKey || 'None'}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          TLS Certificate
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {tlsCertificateAuthority ? 'Configured' : 'None'}
+        </Content>
+      </Content>
+    </Content>
   );
 };
 

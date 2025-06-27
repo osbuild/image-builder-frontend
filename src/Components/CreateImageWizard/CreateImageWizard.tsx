@@ -204,7 +204,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   // Feature flags
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
-  // const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled') || true; // Default to true for now, remove when flag is implemented
+  const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled') || true; // Default to true for now, remove when flag is implemented
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
   useEffect(() => {
@@ -679,6 +679,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-aap"
                 navItem={CustomStatusNavItem}
                 status={aapValidation.disabledNext ? 'error' : 'default'}
+                isHidden={!isAAPRegistrationEnabled}
                 footer={
                   <CustomWizardFooter
                     disableNext={aapValidation.disabledNext}
