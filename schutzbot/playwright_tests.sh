@@ -12,6 +12,11 @@ sudo dnf install -y \
      cups \
      atk
 
+# the cockpit session idles out and we have to re-authenticate. This
+# causes some flakiness in the tests. We can update the idle timeout
+# default from 15 minutes to 30 minutes.
+echo "[Session]\nIdleTimeout=30" | sudo tee "/etc/cockpit/cockpit.conf"
+
 sudo systemctl enable --now cockpit.socket
 
 sudo useradd admin -p "$(openssl passwd foobar)"
