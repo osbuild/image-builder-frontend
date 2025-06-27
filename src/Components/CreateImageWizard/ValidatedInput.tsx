@@ -23,7 +23,7 @@ type ValidatedTextInputPropTypes = TextInputProps & {
 type ValidationInputProp = TextInputProps &
   TextAreaProps & {
     value: string;
-    placeholder: string;
+    placeholder?: string;
     stepValidation: StepValidation;
     dataTestId?: string;
     fieldName: string;
@@ -91,7 +91,7 @@ export const ValidatedInputAndTextArea = ({
           onChange={onChange}
           validated={validated}
           onBlur={handleBlur}
-          placeholder={placeholder}
+          placeholder={placeholder || ''}
           aria-label={ariaLabel}
           data-testid={dataTestId}
         />
@@ -138,6 +138,7 @@ export const ValidatedInput = ({
   value,
   placeholder,
   onChange,
+  ...props
 }: ValidatedTextInputPropTypes) => {
   const [isPristine, setIsPristine] = useState(!value ? true : false);
 
@@ -164,6 +165,7 @@ export const ValidatedInput = ({
         aria-label={ariaLabel || ''}
         onBlur={handleBlur}
         placeholder={placeholder || ''}
+        {...props}
       />
       {!isPristine && !validator(value) && (
         <HelperText>

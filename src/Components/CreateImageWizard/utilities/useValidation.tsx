@@ -32,6 +32,11 @@ import {
   selectImageTypes,
   UserWithAdditionalInfo,
   selectTemplate,
+  selectAapJobTemplateId,
+  selectAapHostConfigKey,
+  selectAapControllerUrl,
+  selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -51,6 +56,9 @@ import {
   isPortValid,
   isServiceValid,
   isUserGroupValid,
+  isJobTemplateIdValid,
+  isValidUrl,
+  validateMultipleCertificates,
 } from '../validators';
 
 export type StepValidation = {
@@ -225,6 +233,75 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   return { errors: {}, disabledNext: false };
+}
+
+export function useAAPValidation(): StepValidation {
+  const errors: Record<string, string> = {};
+  const controllerUrl = useAppSelector(selectAapControllerUrl);
+  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
+  const tlsCertificateAuthority = useAppSelector(
+    selectAapTlsCertificateAuthority
+  );
+  const tlsConfirmation = useAppSelector(selectAapTlsConfirmation);
+
+  if (
+    !controllerUrl &&
+    !jobTemplateId &&
+    !hostConfigKey &&
+    !tlsCertificateAuthority
+  ) {
+    return { errors: {}, disabledNext: false };
+  }
+  if (!controllerUrl || controllerUrl.trim() === '') {
+    errors.controllerUrl = 'Ansible Controller URL is required';
+  } else if (!isValidUrl(controllerUrl)) {
+    errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
+  }
+
+  if (!jobTemplateId || jobTemplateId.trim() === '') {
+    errors.jobTemplateId = 'Job Template ID is required';
+  } else if (!isJobTemplateIdValid(jobTemplateId)) {
+    errors.jobTemplateId = 'Job Template ID must be a number';
+  }
+
+  if (!hostConfigKey || hostConfigKey.trim() === '') {
+    errors.hostConfigKey = 'Host Config Key is required';
+  }
+
+  if (tlsCertificateAuthority && tlsCertificateAuthority.trim() !== '') {
+    const validation = validateMultipleCertificates(tlsCertificateAuthority);
+    if (validation.errors.length > 0) {
+      errors.certificate = validation.errors.join(' ');
+    } else if (validation.validCertificates.length === 0) {
+      errors.certificate = 'No valid certificates found in the input.';
+    }
+  }
+
+  if (controllerUrl && controllerUrl.trim() !== '') {
+    const isHttpsUrl = controllerUrl.toLowerCase().startsWith('https://');
+
+    if (isHttpsUrl) {
+      // If URL is HTTPS and TLS confirmation is not checked, require certificate or confirmation
+      if (
+        !tlsConfirmation &&
+        (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
+      ) {
+        errors.certificate =
+          'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
+      }
+    }
+
+    // If URL is just HTTP, always require a TLS certificate
+    if (!isHttpsUrl && !tlsCertificateAuthority) {
+      errors.certificate = 'HTTP URL requires a custom TLS certificate';
+    }
+  }
+
+  return {
+    errors: errors,
+    disabledNext: Object.keys(errors).length > 0,
+  };
 }
 
 export function useFilesystemValidation(): StepValidation {

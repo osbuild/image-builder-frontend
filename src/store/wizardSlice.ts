@@ -44,7 +44,8 @@ export type RegistrationType =
   | 'register-now'
   | 'register-now-insights'
   | 'register-now-rhc'
-  | 'register-satellite';
+  | 'register-satellite'
+  | 'register-aap';
 
 export type ComplianceType = 'openscap' | 'compliance';
 
@@ -89,6 +90,13 @@ export type wizardState = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
+  aapRegistration: {
+    controllerUrl: string | undefined;
+    jobTemplateId: string | undefined;
+    hostConfigKey: string | undefined;
+    tlsCertificateAuthority: string | undefined;
+    tlsConfirmation: boolean | undefined;
+  };
   aws: {
     accountId: string;
     shareMethod: AwsShareMethod;
@@ -185,6 +193,13 @@ export const initialState: wizardState = {
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
+  aapRegistration: {
+    controllerUrl: undefined,
+    jobTemplateId: undefined,
+    hostConfigKey: undefined,
+    tlsCertificateAuthority: undefined,
+    tlsConfirmation: undefined,
+  },
   aws: {
     accountId: '',
     shareMethod: 'sources',
@@ -355,13 +370,36 @@ export const selectRegistrationType = (state: RootState) => {
 export const selectActivationKey = (state: RootState) => {
   return state.wizard.registration.activationKey;
 };
-
 export const selectSatelliteRegistrationCommand = (state: RootState) => {
   return state.wizard.registration.satelliteRegistration?.command;
 };
 
 export const selectSatelliteCaCertificate = (state: RootState) => {
   return state.wizard.registration.satelliteRegistration.caCert;
+};
+
+export const selectAapRegistration = (state: RootState) => {
+  return state.wizard.aapRegistration;
+};
+
+export const selectAapControllerUrl = (state: RootState) => {
+  return state.wizard.aapRegistration?.controllerUrl;
+};
+
+export const selectAapJobTemplateId = (state: RootState) => {
+  return state.wizard.aapRegistration?.jobTemplateId;
+};
+
+export const selectAapHostConfigKey = (state: RootState) => {
+  return state.wizard.aapRegistration?.hostConfigKey;
+};
+
+export const selectAapTlsCertificateAuthority = (state: RootState) => {
+  return state.wizard.aapRegistration?.tlsCertificateAuthority;
+};
+
+export const selectAapTlsConfirmation = (state: RootState) => {
+  return state.wizard.aapRegistration?.tlsConfirmation;
 };
 
 export const selectComplianceProfileID = (state: RootState) => {
@@ -606,6 +644,24 @@ export const wizardSlice = createSlice({
     },
     changeSatelliteCaCertificate: (state, action: PayloadAction<string>) => {
       state.registration.satelliteRegistration.caCert = action.payload;
+    },
+    changeAapControllerUrl: (state, action: PayloadAction<string>) => {
+      state.aapRegistration.controllerUrl = action.payload;
+    },
+    changeAapJobTemplateId: (state, action: PayloadAction<string>) => {
+      state.aapRegistration.jobTemplateId = action.payload;
+    },
+    changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
+      state.aapRegistration.hostConfigKey = action.payload;
+    },
+    changeAapTlsCertificateAuthority: (
+      state,
+      action: PayloadAction<string>
+    ) => {
+      state.aapRegistration.tlsCertificateAuthority = action.payload;
+    },
+    changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
+      state.aapRegistration.tlsConfirmation = action.payload;
     },
     changeActivationKey: (
       state,
@@ -1206,6 +1262,11 @@ export const {
   changeTimezone,
   changeSatelliteRegistrationCommand,
   changeSatelliteCaCertificate,
+  changeAapControllerUrl,
+  changeAapJobTemplateId,
+  changeAapHostConfigKey,
+  changeAapTlsCertificateAuthority,
+  changeAapTlsConfirmation,
   addNtpServer,
   removeNtpServer,
   changeHostname,

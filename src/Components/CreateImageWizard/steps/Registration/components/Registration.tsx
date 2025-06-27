@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -115,7 +116,6 @@ const Registration = () => {
       dispatch(changeRegistrationType('register-now-insights'));
     }
   }, []);
-
   return (
     <FormGroup label="Registration method">
       <Radio
