@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -109,8 +110,6 @@ const Registration = () => {
     'image-builder.satellite.enabled'
   );
 
-  const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled') || true; // Default to true for now, remove when flag is implemented
-
   // TO DO: Remove when rhc starts working for RHEL 10 Beta
   useEffect(() => {
     if (distribution === RHEL_10_BETA) {
@@ -220,18 +219,6 @@ const Registration = () => {
           }}
           id="register-satellite"
           name="register-satellite"
-        />
-      )}
-      {isAAPRegistrationEnabled && (
-        <Radio
-          label="Register with Ansible Automation Platform"
-          isChecked={registrationType === 'register-aap'}
-          onChange={() => {
-            dispatch(changeRegistrationType('register-aap'));
-            setShowOptions(false);
-          }}
-          id="register-aap"
-          name="register-aap"
         />
       )}
     </FormGroup>
