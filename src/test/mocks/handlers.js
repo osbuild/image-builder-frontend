@@ -45,7 +45,7 @@ import {
   mockRepositoryResults,
 } from '../fixtures/repositories';
 import { mockSourcesByProvider, mockUploadInfo } from '../fixtures/sources';
-import { mockTemplateResults } from '../fixtures/templates';
+import { mockTemplateResults, testingTemplates } from '../fixtures/templates';
 
 export const handlers = [
   http.get(`${PROVISIONING_API}/sources`, ({ request }) => {
@@ -128,6 +128,10 @@ export const handlers = [
       offset,
     };
     return HttpResponse.json(mockTemplateResults(args));
+  }),
+  http.get(`${CONTENT_SOURCES_API}/templates/:uuid`, ({ params }) => {
+    const { uuid } = params;
+    return HttpResponse.json(testingTemplates[uuid]);
   }),
   http.get(`${CONTENT_SOURCES_API}/repositories/:repo_id`, ({ params }) => {
     const { repo_id } = params;
