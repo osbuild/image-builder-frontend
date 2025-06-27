@@ -17,20 +17,20 @@ import { CreateSaveAndBuildBtn, CreateSaveButton } from './CreateDropdown';
 import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import {
-  useCreateBlueprintMutation,
-  useUpdateBlueprintMutation,
-} from '../../../../../store/backendApi';
+  useCreateBPWithNotification as useCreateBlueprintMutation,
+  useUpdateBPWithNotification as useUpdateBlueprintMutation,
+} from '../../../../../Hooks';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
 
 const ReviewWizardFooter = () => {
   const { goToPrevStep, close } = useWizardContext();
-  const [, { isSuccess: isCreateSuccess, reset: resetCreate }] =
+  const { isSuccess: isCreateSuccess, reset: resetCreate } =
     useCreateBlueprintMutation({ fixedCacheKey: 'createBlueprintKey' });
 
   // initialize the server store with the data from RTK query
-  const [, { isSuccess: isUpdateSuccess, reset: resetUpdate }] =
+  const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
   const { composeId } = useParams();

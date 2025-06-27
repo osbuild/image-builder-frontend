@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
-import NotificationsPortal from '@redhat-cloud-services/frontend-components-notifications/NotificationPortal';
+import NotificationsProvider from '@redhat-cloud-services/frontend-components-notifications/NotificationsProvider';
 import '@patternfly/patternfly/patternfly-addons.css';
 
 import { Router } from './Router';
@@ -26,8 +26,9 @@ const App = () => {
 
   return (
     <React.Fragment>
-      <NotificationsPortal />
-      <Router />
+      <NotificationsProvider>
+        <Router />
+      </NotificationsProvider>
     </React.Fragment>
   );
 };

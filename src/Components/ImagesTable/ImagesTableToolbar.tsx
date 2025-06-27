@@ -13,6 +13,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 
+import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
   useGetBlueprintsQuery,
   useGetBlueprintQuery,
@@ -28,7 +29,6 @@ import {
   useGetBlueprintComposesQuery,
   Distributions,
   GetBlueprintComposesApiArg,
-  useFixupBlueprintMutation,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';
@@ -128,7 +128,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
     { skip: !selectedBlueprintId }
   );
 
-  const [fixupBlueprint] = useFixupBlueprintMutation();
+  const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
   const hasErrors =
     blueprintDetails?.lint?.errors && blueprintDetails?.lint?.errors.length > 0;
   const [isLintExp, setIsLintExp] = React.useState(true);
