@@ -142,13 +142,16 @@ export const isServiceValid = (service: string) => {
 export const isJobTemplateIdValid = (id: string) => {
   return /^\d+$/.test(id);
 };
-
 export const isValidUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);
-    return parsedUrl.protocol === 'https:';
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  } catch (error) {
+
+    const isHttpOrHttps = ['http:', 'https:'].includes(parsedUrl.protocol);
+    const hostname = parsedUrl.hostname;
+    const hasValidDomain = /^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(hostname);
+
+    return isHttpOrHttps && hasValidDomain;
+  } catch {
     return false;
   }
 };

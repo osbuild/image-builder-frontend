@@ -121,6 +121,7 @@ export type wizardState = {
       jobTemplateId: string | undefined;
       hostConfigKey: string | undefined;
       tlsCertificateAuthority: string | undefined;
+      tlsConfirmation: boolean | undefined;
     };
   };
   compliance: {
@@ -224,6 +225,7 @@ export const initialState: wizardState = {
       jobTemplateId: undefined,
       hostConfigKey: undefined,
       tlsCertificateAuthority: undefined,
+      tlsConfirmation: undefined,
     },
   },
   compliance: {
@@ -390,6 +392,10 @@ export const selectAapHostConfigKey = (state: RootState) => {
 
 export const selectAapTlsCertificateAuthority = (state: RootState) => {
   return state.wizard.registration.aapRegistration?.tlsCertificateAuthority;
+};
+
+export const selectAapTlsConfirmation = (state: RootState) => {
+  return state.wizard.registration.aapRegistration?.tlsConfirmation;
 };
 
 export const selectComplianceProfileID = (state: RootState) => {
@@ -650,6 +656,9 @@ export const wizardSlice = createSlice({
     ) => {
       state.registration.aapRegistration.tlsCertificateAuthority =
         action.payload;
+    },
+    changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
+      state.registration.aapRegistration.tlsConfirmation = action.payload;
     },
     changeActivationKey: (
       state,
@@ -1254,6 +1263,7 @@ export const {
   changeAapJobTemplateId,
   changeAapHostConfigKey,
   changeAapTlsCertificateAuthority,
+  changeAapTlsConfirmation,
   addNtpServer,
   removeNtpServer,
   changeHostname,

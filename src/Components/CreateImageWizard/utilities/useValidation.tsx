@@ -35,6 +35,8 @@ import {
   selectAapJobTemplateId,
   selectAapHostConfigKey,
   selectAapControllerUrl,
+  selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
 } from '../../../store/wizardSlice';
 import { keyboardsList } from '../steps/Locale/keyboardsList';
 import { languagesList } from '../steps/Locale/languagesList';
@@ -184,9 +186,6 @@ export function useRegistrationValidation(): StepValidation {
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand
   );
-  const controllerUrl = useAppSelector(selectAapControllerUrl);
-  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
-  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
@@ -199,7 +198,6 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
-    registrationType !== 'register-aap' &&
     !activationKey
   ) {
     return {
@@ -211,7 +209,6 @@ export function useRegistrationValidation(): StepValidation {
   if (
     registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
-    registrationType !== 'register-aap' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
@@ -234,32 +231,66 @@ export function useRegistrationValidation(): StepValidation {
     };
   }
 
-  if (registrationType === 'register-aap') {
-    const errors: Record<string, string> = {};
+  return { errors: {}, disabledNext: false };
+}
 
-    if (!controllerUrl) {
-      errors.controllerUrl = 'Ansible Controller URL is required';
-    } else if (!isValidUrl(controllerUrl)) {
-      errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
-    }
+export function useAAPValidation(): StepValidation {
+  const errors: Record<string, string> = {};
+  const controllerUrl = useAppSelector(selectAapControllerUrl);
+  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
+  const tlsCertificateAuthority = useAppSelector(
+    selectAapTlsCertificateAuthority
+  );
+  const tlsConfirmation = useAppSelector(selectAapTlsConfirmation);
 
-    if (!jobTemplateId) {
-      errors.jobTemplateId = 'Job Template ID is required';
-    } else if (!isJobTemplateIdValid(jobTemplateId)) {
-      errors.jobTemplateId = 'Job Template ID must be a number';
-    }
-
-    if (!hostConfigKey) {
-      errors.hostConfigKey = 'Host Config Key is required';
-    }
-
-    return {
-      errors: errors,
-      disabledNext: Object.keys(errors).length > 0,
-    };
+  if (
+    !controllerUrl &&
+    !jobTemplateId &&
+    !hostConfigKey &&
+    !tlsCertificateAuthority
+  ) {
+    return { errors: {}, disabledNext: false };
+  }
+  if (!controllerUrl || controllerUrl.trim() === '') {
+    errors.controllerUrl = 'Ansible Controller URL is required';
+  } else if (!isValidUrl(controllerUrl)) {
+    errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
   }
 
-  return { errors: {}, disabledNext: false };
+  if (!jobTemplateId || jobTemplateId.trim() === '') {
+    errors.jobTemplateId = 'Job Template ID is required';
+  } else if (!isJobTemplateIdValid(jobTemplateId)) {
+    errors.jobTemplateId = 'Job Template ID must be a number';
+  }
+
+  if (!hostConfigKey || hostConfigKey.trim() === '') {
+    errors.hostConfigKey = 'Host Config Key is required';
+  }
+
+  if (controllerUrl && controllerUrl.trim() !== '') {
+    const isHttpsUrl = controllerUrl.toLowerCase().startsWith('https://');
+
+    if (isHttpsUrl) {
+      // If URL is HTTPS and TLS confirmation is not checked, require certificate or confirmation
+      if (
+        !tlsConfirmation &&
+        (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
+      ) {
+        errors.tlsConfirmation =
+          'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
+      }
+    }
+
+    if (!isHttpsUrl && !tlsCertificateAuthority) {
+      errors.tlsConfirmation = 'HTTP URL requires a custom TLS certificate';
+    }
+  }
+
+  return {
+    errors: errors,
+    disabledNext: Object.keys(errors).length > 0,
+  };
 }
 
 export function useFilesystemValidation(): StepValidation {
