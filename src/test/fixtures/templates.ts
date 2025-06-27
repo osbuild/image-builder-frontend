@@ -43,7 +43,7 @@ const filterTemplates = (args: templateArgs): ApiTemplateResponse[] => {
   return templates;
 };
 
-const testingTemplates: ApiTemplateResponseRead[] = [
+export const testingTemplates: ApiTemplateResponseRead[] = [
   {
     uuid: 'c40e221b-93d6-4f7e-a704-f3041b8d75c3',
     name: 'template-abc',
