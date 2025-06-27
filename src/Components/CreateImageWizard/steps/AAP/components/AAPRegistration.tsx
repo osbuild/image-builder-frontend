@@ -138,7 +138,7 @@ const AAPRegistration = () => {
           ariaLabel="host config key"
           isRequired
           stepValidation={stepValidation}
-          fieldName=""
+          fieldName="hostConfigKey"
           placeholder=""
         />
       </FormGroup>
@@ -176,10 +176,9 @@ const AAPRegistration = () => {
                     ? 'success'
                     : 'default'
                 }
-                // hasIcon
               >
                 {isRejected
-                  ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
+                  ? 'Must be a .PEM/.CER/.CRT file'
                   : validated === 'error'
                   ? stepValidation.errors['certificate']
                   : validated === 'success'

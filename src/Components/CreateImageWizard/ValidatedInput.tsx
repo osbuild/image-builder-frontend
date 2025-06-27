@@ -23,7 +23,7 @@ type ValidatedTextInputPropTypes = TextInputProps & {
 type ValidationInputProp = TextInputProps &
   TextAreaProps & {
     value: string;
-    placeholder: string;
+    placeholder?: string;
     stepValidation: StepValidation;
     dataTestId?: string;
     fieldName: string;
@@ -91,7 +91,7 @@ export const ValidatedInputAndTextArea = ({
           onChange={onChange}
           validated={validated}
           onBlur={handleBlur}
-          placeholder={placeholder}
+          placeholder={placeholder || ''}
           aria-label={ariaLabel}
           data-testid={dataTestId}
         />
