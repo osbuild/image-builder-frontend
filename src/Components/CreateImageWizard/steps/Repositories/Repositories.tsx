@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  Modal,
   Pagination,
   Panel,
   PanelMain,
@@ -14,8 +15,10 @@ import {
   ToggleGroupItem,
   PaginationVariant,
   Grid,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from '@patternfly/react-core';
-import { Modal } from '@patternfly/react-core/deprecated';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
@@ -504,25 +507,22 @@ const Repositories = () => {
   if (!isTemplateSelected) {
     return (
       <Grid>
-        <Modal
-          titleIconVariant="warning"
-          title="Are you sure?"
-          isOpen={modalOpen}
-          onClose={onClose}
-          variant="small"
-          actions={[
+        <Modal isOpen={modalOpen} onClose={onClose} variant="small">
+          <ModalHeader title="Are you sure?" titleIconVariant="warning" />
+          <ModalBody>
+            You are removing a previously added repository.
+            <br />
+            We do not recommend removing repositories if you have added packages
+            from them.
+          </ModalBody>
+          <ModalFooter>
             <Button key="remove" variant="primary" onClick={handleRemoveAnyway}>
               Remove anyway
-            </Button>,
+            </Button>
             <Button key="back" variant="link" onClick={onClose}>
               Back
-            </Button>,
-          ]}
-        >
-          You are removing a previously added repository.
-          <br />
-          We do not recommend removing repositories if you have added packages
-          from them.
+            </Button>
+          </ModalFooter>
         </Modal>
         {wizardMode === 'edit' && (
           <Alert
