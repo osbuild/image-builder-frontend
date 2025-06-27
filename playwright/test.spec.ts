@@ -2,11 +2,13 @@ import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
 import { closePopupsIfExist, isHosted } from './helpers/helpers';
+import { ensureAuthenticated } from './helpers/login';
 import { ibFrame, navigateToLandingPage } from './helpers/navHelpers';
 
 test.describe.serial('test', () => {
   const blueprintName = uuidv4();
   test('create blueprint', async ({ page }) => {
+    await ensureAuthenticated(page);
     await closePopupsIfExist(page);
     // Navigate to IB landing page and get the frame
     await navigateToLandingPage(page);
@@ -85,6 +87,7 @@ test.describe.serial('test', () => {
   });
 
   test('edit blueprint', async ({ page }) => {
+    await ensureAuthenticated(page);
     await closePopupsIfExist(page);
     // package searching is really slow the first time in cockpit
     if (!isHosted()) {
@@ -123,6 +126,7 @@ test.describe.serial('test', () => {
   });
 
   test('build blueprint', async ({ page }) => {
+    await ensureAuthenticated(page);
     await closePopupsIfExist(page);
     // Navigate to IB landing page and get the frame
     await navigateToLandingPage(page);
@@ -142,6 +146,7 @@ test.describe.serial('test', () => {
   });
 
   test('delete blueprint', async ({ page }) => {
+    await ensureAuthenticated(page);
     await closePopupsIfExist(page);
     // Navigate to IB landing page and get the frame
     await navigateToLandingPage(page);

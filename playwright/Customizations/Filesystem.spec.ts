@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../src/constants';
 import { test } from '../fixtures/cleanup';
 import { isHosted } from '../helpers/helpers';
+import { ensureAuthenticated } from '../helpers/login';
 import {
   navigateToOptionalSteps,
   ibFrame,
@@ -27,6 +28,8 @@ test('Create a blueprint with Filesystem customization', async ({
 
   // Delete the blueprint after the run fixture
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
 
   // Login, navigate to IB and get the frame
   await navigateToLandingPage(page);

@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
+import { ensureAuthenticated } from '../helpers/login';
 import {
   navigateToOptionalSteps,
   ibFrame,
@@ -26,6 +27,8 @@ test('Create a blueprint with Locale customization', async ({
 
   // Delete the blueprint after the run fixture
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
+
+  await ensureAuthenticated(page);
 
   // Navigate to IB landing page and get the frame
   await navigateToLandingPage(page);
