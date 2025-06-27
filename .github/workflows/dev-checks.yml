@@ -7,10 +7,59 @@ on:
     branches: [ "main" ]
   merge_group:
 
-jobs:
-  dev-check:
-    runs-on: ubuntu-latest
+concurrency:
+  group: ${{github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
 
+jobs:
+  build:
+    name: Build Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run build
+      run: npm run build
+
+  lint-checks:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Run lint check
+      run: npm run lint
+
+  circular-dependencies:
+    name: Circular Dependencies Check
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Use Node.js 20
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: 'npm'
+    - name: Install dependencies
+      run: npm ci
+    - name: Check for circular dependencies
+      run: npm run circular
+
+  api-changes:
+    name: Manual API Changes Check
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js 20
@@ -21,10 +70,14 @@ jobs:
     - name: Install dependencies
       run: npm ci
     - name: Check for manual changes to API
-      run: npm run api:generate && [ -z "$(git status --porcelain=v1 2>/dev/null)" ] && echo "✓ No manual API changes." || echo "✗ API manually changed, please refer to the README for the procedure to follow for programmatically generated API endpoints." && [ -z "$(git status --porcelain=v1 2>/dev/null)" ]
-    - name: Check for circular dependencies
-      run: npm run circular
-    - name: Run build
-      run: npm run build
-    - name: Run lint check
-      run: npm run lint
+      run: |
+        npm run api:generate
+        if [ -n "$(git status --porcelain)" ]; then
+          echo
+          echo "✗ API manually changed, please refer to the README for the procedure to follow for programmatically generated API endpoints."
+          exit 1
+        else
+          echo
+          echo "✓ No manual API changes."
+          exit 0
+        fi

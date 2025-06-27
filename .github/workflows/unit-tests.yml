@@ -7,6 +7,12 @@ on:
     branches: [ "main" ]
   merge_group:
 
+# this prevents multiple jobs from the same pr
+# running when new changes are pushed.
+concurrency:
+  group: ${{github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   unit-tests:
     name: Service Tests
