@@ -25,6 +25,7 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useAAPValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
+import { validateMultipleCertificates } from '../../../validators';
 
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();
@@ -45,7 +46,9 @@ const AAPRegistration = () => {
   const validated = stepValidation.errors['certificate']
     ? 'error'
     : stepValidation.errors['certificate'] === undefined &&
-      tlsCertificateAuthority
+      tlsCertificateAuthority &&
+      validateMultipleCertificates(tlsCertificateAuthority).validCertificates
+        .length > 0
     ? 'success'
     : 'default';
 

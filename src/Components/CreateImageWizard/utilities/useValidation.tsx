@@ -61,6 +61,7 @@ import {
   isUserNameValid,
   isJobTemplateIdValid,
   isValidUrl,
+  validateMultipleCertificates,
 } from '../validators';
 
 export type StepValidation = {
@@ -249,6 +250,15 @@ export function useAAPValidation(): StepValidation {
     errors.hostConfigKey = 'Host Config Key is required';
   }
 
+  if (tlsCertificateAuthority && tlsCertificateAuthority.trim() !== '') {
+    const validation = validateMultipleCertificates(tlsCertificateAuthority);
+    if (validation.errors.length > 0) {
+      errors.certificate = validation.errors.join(' ');
+    } else if (validation.validCertificates.length === 0) {
+      errors.certificate = 'No valid certificates found in the input.';
+    }
+  }
+
   if (controllerUrl && controllerUrl.trim() !== '') {
     const isHttpsUrl = controllerUrl.toLowerCase().startsWith('https://');
 
@@ -258,13 +268,14 @@ export function useAAPValidation(): StepValidation {
         !tlsConfirmation &&
         (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
       ) {
-        errors.tlsConfirmation =
+        errors.certificate =
           'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
       }
     }
 
+    // If URL is just HTTP, always require a TLS certificate
     if (!isHttpsUrl && !tlsCertificateAuthority) {
-      errors.tlsConfirmation = 'HTTP URL requires a custom TLS certificate';
+      errors.certificate = 'HTTP URL requires a custom TLS certificate';
     }
   }
 
