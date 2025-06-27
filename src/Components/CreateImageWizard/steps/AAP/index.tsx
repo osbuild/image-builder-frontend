@@ -1,12 +1,14 @@
-import { Form, Title } from '@patternfly/react-core';
-import AAPRegistration from './components/AAPRegistration';
+import React from 'react';
 
+import { Form, Title } from '@patternfly/react-core';
+
+import AAPRegistration from './components/AAPRegistration';
 
 const AAPStep = () => {
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
-        Ansible Automation Platform
+        Ansible Automation Platform provisioning callback
       </Title>
       <AAPRegistration />
     </Form>

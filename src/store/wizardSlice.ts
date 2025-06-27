@@ -90,6 +90,13 @@ export type wizardState = {
   architecture: ImageRequest['architecture'];
   distribution: Distributions;
   imageTypes: ImageTypes[];
+  aapRegistration: {
+    controllerUrl: string | undefined;
+    jobTemplateId: string | undefined;
+    hostConfigKey: string | undefined;
+    tlsCertificateAuthority: string | undefined;
+    tlsConfirmation: boolean | undefined;
+  };
   aws: {
     accountId: string;
     shareMethod: AwsShareMethod;
@@ -115,13 +122,6 @@ export type wizardState = {
     satelliteRegistration: {
       command: string | undefined;
       caCert: string | undefined;
-    };
-    aapRegistration: {
-      controllerUrl: string | undefined;
-      jobTemplateId: string | undefined;
-      hostConfigKey: string | undefined;
-      tlsCertificateAuthority: string | undefined;
-      tlsConfirmation: boolean | undefined;
     };
   };
   compliance: {
@@ -193,6 +193,13 @@ export const initialState: wizardState = {
   architecture: X86_64,
   distribution: RHEL_10,
   imageTypes: [],
+  aapRegistration: {
+    controllerUrl: undefined,
+    jobTemplateId: undefined,
+    hostConfigKey: undefined,
+    tlsCertificateAuthority: undefined,
+    tlsConfirmation: undefined,
+  },
   aws: {
     accountId: '',
     shareMethod: 'sources',
@@ -219,13 +226,6 @@ export const initialState: wizardState = {
     satelliteRegistration: {
       command: undefined,
       caCert: undefined,
-    },
-    aapRegistration: {
-      controllerUrl: undefined,
-      jobTemplateId: undefined,
-      hostConfigKey: undefined,
-      tlsCertificateAuthority: undefined,
-      tlsConfirmation: undefined,
     },
   },
   compliance: {
@@ -378,24 +378,28 @@ export const selectSatelliteCaCertificate = (state: RootState) => {
   return state.wizard.registration.satelliteRegistration.caCert;
 };
 
+export const selectAapRegistration = (state: RootState) => {
+  return state.wizard.aapRegistration;
+};
+
 export const selectAapControllerUrl = (state: RootState) => {
-  return state.wizard.registration.aapRegistration?.controllerUrl;
+  return state.wizard.aapRegistration?.controllerUrl;
 };
 
 export const selectAapJobTemplateId = (state: RootState) => {
-  return state.wizard.registration.aapRegistration?.jobTemplateId;
+  return state.wizard.aapRegistration?.jobTemplateId;
 };
 
 export const selectAapHostConfigKey = (state: RootState) => {
-  return state.wizard.registration.aapRegistration?.hostConfigKey;
+  return state.wizard.aapRegistration?.hostConfigKey;
 };
 
 export const selectAapTlsCertificateAuthority = (state: RootState) => {
-  return state.wizard.registration.aapRegistration?.tlsCertificateAuthority;
+  return state.wizard.aapRegistration?.tlsCertificateAuthority;
 };
 
 export const selectAapTlsConfirmation = (state: RootState) => {
-  return state.wizard.registration.aapRegistration?.tlsConfirmation;
+  return state.wizard.aapRegistration?.tlsConfirmation;
 };
 
 export const selectComplianceProfileID = (state: RootState) => {
@@ -642,23 +646,22 @@ export const wizardSlice = createSlice({
       state.registration.satelliteRegistration.caCert = action.payload;
     },
     changeAapControllerUrl: (state, action: PayloadAction<string>) => {
-      state.registration.aapRegistration.controllerUrl = action.payload;
+      state.aapRegistration.controllerUrl = action.payload;
     },
     changeAapJobTemplateId: (state, action: PayloadAction<string>) => {
-      state.registration.aapRegistration.jobTemplateId = action.payload;
+      state.aapRegistration.jobTemplateId = action.payload;
     },
     changeAapHostConfigKey: (state, action: PayloadAction<string>) => {
-      state.registration.aapRegistration.hostConfigKey = action.payload;
+      state.aapRegistration.hostConfigKey = action.payload;
     },
     changeAapTlsCertificateAuthority: (
       state,
       action: PayloadAction<string>
     ) => {
-      state.registration.aapRegistration.tlsCertificateAuthority =
-        action.payload;
+      state.aapRegistration.tlsCertificateAuthority = action.payload;
     },
     changeAapTlsConfirmation: (state, action: PayloadAction<boolean>) => {
-      state.registration.aapRegistration.tlsConfirmation = action.payload;
+      state.aapRegistration.tlsConfirmation = action.payload;
     },
     changeActivationKey: (
       state,
