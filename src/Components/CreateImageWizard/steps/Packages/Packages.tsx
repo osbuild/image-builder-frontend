@@ -60,8 +60,7 @@ import {
 import {
   CONTENT_URL,
   ContentOrigin,
-  EPEL_8_REPO_DEFINITION,
-  EPEL_9_REPO_DEFINITION,
+  EPEL_10_REPO_DEFINITION,
 } from '../../../../constants';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
@@ -92,6 +91,11 @@ import {
   removeModule,
   selectModules,
 } from '../../../../store/wizardSlice';
+import {
+  getEpelDefinitionForDistribution,
+  getEpelUrlForDistribution,
+  getEpelVersionForDistribution,
+} from '../../../../Utilities/epel';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
@@ -141,11 +145,8 @@ const Packages = () => {
       distribution: distribution,
     });
 
-  // select the correct version of EPEL repository
-  // the urls are copied over from the content service
-  const epelRepoUrlByDistribution = distribution.startsWith('rhel-8')
-    ? EPEL_8_REPO_DEFINITION.url
-    : EPEL_9_REPO_DEFINITION.url;
+  const epelRepoUrlByDistribution =
+    getEpelUrlForDistribution(distribution) ?? EPEL_10_REPO_DEFINITION.url;
 
   const { data: epelRepo, isSuccess: isSuccessEpelRepo } =
     useListRepositoriesQuery({
@@ -597,7 +598,8 @@ const Packages = () => {
                 <Td>{isSelectingGroup?.name}</Td>
               )}
               <Td>
-                EPEL {distribution === 'rhel-8' ? '8' : '9'} Everything x86_64
+                EPEL {getEpelVersionForDistribution(distribution)} Everything
+                x86_64
               </Td>
             </Tr>
           </Tbody>
@@ -919,9 +921,9 @@ const Packages = () => {
 
     if (epelRepo.data.length === 0) {
       const result = await createRepository({
-        apiRepositoryRequest: distribution.startsWith('rhel-8')
-          ? EPEL_8_REPO_DEFINITION
-          : EPEL_9_REPO_DEFINITION,
+        apiRepositoryRequest:
+          getEpelDefinitionForDistribution(distribution) ??
+          EPEL_10_REPO_DEFINITION,
       });
       dispatch(
         addRecommendedRepository(
@@ -1242,7 +1244,7 @@ const Packages = () => {
                       <Icon status="warning">
                         <OptimizeIcon />
                       </Icon>{' '}
-                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                      EPEL {getEpelVersionForDistribution(distribution)}{' '}
                       Everything x86_64
                     </Td>
                   </>
@@ -1329,7 +1331,7 @@ const Packages = () => {
                       <Icon status="warning">
                         <OptimizeIcon />
                       </Icon>{' '}
-                      EPEL {distribution.startsWith('rhel-8') ? '8' : '9'}{' '}
+                      EPEL {getEpelVersionForDistribution(distribution)}{' '}
                       Everything x86_64
                     </Td>
                   </>

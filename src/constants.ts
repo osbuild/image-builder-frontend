@@ -244,6 +244,16 @@ export const EPEL_9_REPO_DEFINITION = {
   metadata_verification: false,
 };
 
+export const EPEL_10_REPO_DEFINITION = {
+  name: 'EPEL 10 Everything x86_64',
+  url: 'https://dl.fedoraproject.org/pub/epel/10/Everything/x86_64/',
+  distribution_versions: ['10'],
+  distribution_arch: 'x86_64',
+  gpg_key:
+    '-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQINBGV4X6kBEAC3eQxgiWuo08uc3mHo4ELux++uqTnYz/tJzEf9Ou3h36WnhumA\nNvs+Ts5h8PBx879Y9/aIX1Z20p1kf6tBCinZnEJu59n+TAAsph0+XQlV1l5YkleK\nZ2ff/Fg65k8QcLXWaIGykA/FaKznRiSurGuD6tRGhJw7DawEwBJr8QZSkRUpnH1L\nURW97Q/iKrRPiE5VEayE0y8eAL28jIIiFvR+4oJMzvCsRRB/2wYZ2MlJOW91hcYf\nmbUoXKOBD5UzsJylu7kj25K/ge8rEJ7KicOOwcdYddxsU3DxGSSfwF8AMagENcm2\nXROeXknjm84A8sNlUkFZBJwfuc7eRTiZGJrnQQVYLrkKj8Mxpq9Ts7hU51TqAWNI\nuvGDlJdYNE3D2RMqjMEsZ8ej08Thrib6xslu4NzTBkt+6QNnXL4E3hEgYtoyio60\nGswSz2ulogKg7X4JrNdJYE8/qNowyF3hoVgj5TG1/wQRq+5HlMMOLjgGu9wzLUix\nfnVfEUnzaofbrUf4/GabCaeY8xRe4tFQrvzigQ4g+kgwKKnfAeqBmPov0yljkw9z\nBYJWR5zvaw0ffg9Ing00KUSaXBXA5jSlgk1603Y+LefY1SlXsTyqohiRvGH6FI77\nHNMo72DwoJfFcYjncZUzKgXWJECR4nhVsdj6pKoOjcQ4aSuyVxtsR86ASQARAQAB\ntChGZWRvcmEgKGVwZWwxMCkgPGVwZWxAZmVkb3JhcHJvamVjdC5vcmc+iQJOBBMB\nCAA4FiEEfY0Vy/xOYmiFkfsmM9mFF+N+0VgFAmV4X6kCGw8FCwkIBwIGFQoJCAsC\nBBYCAwECHgECF4AACgkQM9mFF+N+0Vhv/A/+PlhPLSctGRCUEahE+cN4764Acc3p\nl40ZYzXRhqR0/Tc1/cSDjlA3qVTc8SPohi5OJXwCyr9EiMqKoyoDN097euqbYpyp\nyN/Pj0lBjsXwcpdDtZ21WGeQU0Khb04N68bMtJbDaxeBciTvDDQravZuPPh0m4Rg\nZ6myEoa6Aa6EK0hI1Qwi1qIWeRiuEkVT671IaKVETBW5XiUpNBXDAB/L+6DzUF9u\nscBzfsUDiPO6NrpYDtV3jwq22y6gWluIct/Ka8brwPbqK2sBfFzrHboRhfqlTGjs\n7F9qUGwIQZn/A8iozXZYQ0+JG1bhQyvjA8eN1GOcRpT+O7H7JXN49o6IG2As4+iK\nF04+qjqAu2sVfpD8mzM2VubFNllcKKiyCzRYHhSbObRCPzsudDL9GPiXeGGaCuWg\nsDkiA1MESvf2tLETAGBs/TziO4GwmXUtlKbRiq1FYm90mVq9mBxPZ/Idn+yZusNB\n0O5SXIbI8lYZw5n4XTK4b+byHRBYsOTHiTsGvjTF2Y7oSwW2CVUmL6RZ23mI4qoY\n1p5kzRS+GjT1acnTei/FTsOlIKCsjfeHx7uxCkX6xpAD8P3UtLQqfsgH0CL4vSZt\nTGO6L1InQlp4ZG3OYIomTKbD3/R0wod3U3dTqdulQMXL895u6OLTY3spY2m2MO2k\np9Dfd2pKuxK9Mys=\n=mhQZ\n-----END PGP PUBLIC KEY BLOCK-----',
+  metadata_verification: false,
+};
+
 export const DEBOUNCED_SEARCH_WAIT_TIME = 500;
 export const UNIQUE_VALIDATION_DELAY: number = 300;
 
