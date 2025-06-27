@@ -11,11 +11,10 @@ import {
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import AAPRegistration from './AAPRegistration';
-import ActivationKeyInformation from './ActivationKeyInformation';
-import ActivationKeysList from './ActivationKeysList';
-import Registration from './Registration';
-import SatelliteRegistration from './SatelliteRegistration';
+import ActivationKeyInformation from './components/ActivationKeyInformation';
+import ActivationKeysList from './components/ActivationKeysList';
+import Registration from './components/Registration';
+import SatelliteRegistration from './components/SatelliteRegistration';
 
 import { useAppSelector } from '../../../../store/hooks';
 import {
@@ -61,15 +60,12 @@ const RegistrationStep = () => {
       </FormGroup>
       <Registration />
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
-      {registrationType === 'register-aap' && <AAPRegistration />}
       {!process.env.IS_ON_PREMISE &&
-        registrationType !== 'register-satellite' &&
-        registrationType !== 'register-aap' && <ActivationKeysList />}
+        registrationType !== 'register-satellite' && <ActivationKeysList />}
       {!process.env.IS_ON_PREMISE &&
         activationKey &&
         registrationType !== 'register-later' &&
-        registrationType !== 'register-satellite' &&
-        registrationType !== 'register-aap' && (
+        registrationType !== 'register-satellite' && (
           <FormGroup
             label={'Selected activation key'}
             data-testid="selected-activation-key"

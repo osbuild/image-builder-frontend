@@ -403,6 +403,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
         tlsCertificateAuthority:
           request.image_requests[0]?.aap_registration
             ?.tls_certificate_authority,
+        tlsConfirmation: undefined,
       },
     },
     ...commonRequestToState(request),
