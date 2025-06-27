@@ -82,6 +82,7 @@ const PackageRecommendations = () => {
           recommendPackageRequest: {
             packages: packages.map((pkg) => pkg.name),
             recommendedPackages: 5,
+            distribution: distribution,
           },
         });
 

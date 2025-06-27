@@ -82,7 +82,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     checkImageName: build.mutation<
@@ -92,7 +92,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/checkImageName`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     createInstallerForImage: build.mutation<
@@ -102,7 +102,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/installer`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     createKickStartForImage: build.mutation<
@@ -112,7 +112,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/kickstart`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     getMetadataForImage: build.query<
@@ -134,7 +134,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/retry`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     createImageUpdate: build.mutation<
@@ -144,7 +144,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/update`,
         method: "POST",
-        body: queryArg.createImage,
+        body: queryArg.modelsCreateImageApi,
       }),
     }),
     getImageByOstree: build.query<
@@ -239,13 +239,13 @@ export type GetAllImagesApiArg = {
 export type CreateImageApiResponse = /** status 200 OK */ ImageResponse;
 export type CreateImageApiArg = {
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type CheckImageNameApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
 export type CheckImageNameApiArg = {
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type CreateInstallerForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -253,7 +253,7 @@ export type CreateInstallerForImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type CreateKickStartForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -261,7 +261,7 @@ export type CreateKickStartForImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type GetMetadataForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -281,7 +281,7 @@ export type RetryCreateImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type CreateImageUpdateApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -289,7 +289,7 @@ export type CreateImageUpdateApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  createImage: CreateImage;
+  modelsCreateImageApi: ModelsCreateImageApi;
 };
 export type GetImageByOstreeApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -308,10 +308,7 @@ export type GormDeletedAt = {
   valid?: boolean | undefined;
 };
 export type ModelsInstalledPackage = {
-  CreatedAt?: ModelsEdgeApiTime | undefined;
-  DeletedAt?: GormDeletedAt | undefined;
   ID?: number | undefined;
-  UpdatedAt?: ModelsEdgeApiTime | undefined;
   arch?: string | undefined;
   commits?: ModelsCommit[] | undefined;
   epoch?: string | undefined;
@@ -326,9 +323,17 @@ export type ModelsRepo = {
   CreatedAt?: ModelsEdgeApiTime | undefined;
   DeletedAt?: GormDeletedAt | undefined;
   ID?: number | undefined;
+  /** AWS repo upload status */
   RepoStatus?: string | undefined;
+  /** AWS repo URL */
   RepoURL?: string | undefined;
   UpdatedAt?: ModelsEdgeApiTime | undefined;
+  /** Pulp Repo ID (used for updates) */
+  pulp_repo_id?: string | undefined;
+  /** Status of Pulp repo import */
+  pulp_repo_status?: string | undefined;
+  /** Distribution URL returned from Pulp */
+  pulp_repo_url?: string | undefined;
 };
 export type ModelsCommit = {
   Account?: string | undefined;
@@ -422,6 +427,7 @@ export type ModelsImage = {
   TotalPackages?: number | undefined;
   UpdatedAt?: ModelsEdgeApiTime | undefined;
   Version?: number | undefined;
+  activationKey?: string | undefined;
   org_id?: string | undefined;
   /** storing for logging reference on resume */
   request_id?: string | undefined;
@@ -547,11 +553,12 @@ export type ImageResponse = {
   TotalPackages?: number | undefined;
   UpdatedAt?: ModelsEdgeApiTime | undefined;
   Version?: number | undefined;
+  activationKey?: string | undefined;
   org_id?: string | undefined;
   /** storing for logging reference on resume */
   request_id?: string | undefined;
 };
-export type CreateImage = object;
+export type ModelsCreateImageApi = object;
 export const {
   useListAllImageSetsQuery,
   useGetImageSetsViewQuery,
