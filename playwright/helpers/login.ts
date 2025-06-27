@@ -65,6 +65,22 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   // image-builder lives inside an iframe
   const frame = ibFrame(page);
 
+  const accessLevelButton = page.getByRole('button', {
+    name: 'Administrative access',
+  });
+
+  if (await accessLevelButton.isVisible()) {
+    await expect(
+      frame.getByRole('heading', { name: 'All images' })
+    ).toBeVisible();
+
+    // only update the access to administrative access on the
+    // first authentication. If the user is re-authenticating
+    // they might have admin priviliges already, so we can skip
+    // the below steps.
+    return;
+  }
+
   // cockpit-image-builder needs superuser, expect an error message
   // when the user does not have admin priviliges
   await expect(
@@ -88,9 +104,7 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   }
 
   // expect to have administrative access
-  await expect(
-    page.getByRole('button', { name: 'Administrative access' })
-  ).toBeVisible();
+  await expect(accessLevelButton).toBeVisible();
   await expect(
     frame.getByRole('heading', { name: 'All images' })
   ).toBeVisible();
