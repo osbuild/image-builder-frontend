@@ -274,6 +274,54 @@ const ProfileSelector = () => {
     }
   };
 
+  const onKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+      } else if (selectOptions.length === 1) {
+        const singleProfile = selectOptions[0];
+        const selectObject = (
+          id: DistributionProfileItem,
+          name?: string
+        ): OScapSelectOptionValueType => ({
+          profileID: id,
+          toString: () => name || '',
+        });
+        trigger(
+          {
+            distribution: release,
+            profile: singleProfile as DistributionProfileItem,
+          },
+          true
+        )
+          .unwrap()
+          .then((response) => {
+            const oscapProfile = response.openscap as OpenScapProfile;
+            const profileName = oscapProfile?.profile_name || singleProfile;
+            const selection = selectObject(
+              singleProfile as DistributionProfileItem,
+              profileName
+            );
+            setInputValue(profileName);
+            setFilterValue('');
+            applyChanges(selection);
+            setIsOpen(false);
+          })
+          .catch(() => {
+            const selection = selectObject(
+              singleProfile as DistributionProfileItem,
+              singleProfile as string
+            );
+            setInputValue(singleProfile as string);
+            setFilterValue('');
+            applyChanges(selection);
+            setIsOpen(false);
+          });
+      }
+    }
+  };
+
   const applyChanges = (selection: OScapSelectOptionValueType) => {
     if (selection.profileID === undefined) {
       // handle user has selected 'None' case
@@ -337,6 +385,7 @@ const ProfileSelector = () => {
           value={profileID ? profileID : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
+          onKeyDown={onKeyDown}
           autoComplete="off"
           placeholder="None"
           isExpanded={isOpen}
