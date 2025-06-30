@@ -12,8 +12,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
+import {
+  FILE_SYSTEM_CUSTOMIZATION_URL,
+  targetOptions,
+} from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import {
   addPartition,
   selectImageTypes,
@@ -38,6 +42,17 @@ const FileSystemConfiguration = () => {
       })
     );
   };
+
+  const automaticPartitioningOnlyTargets: ImageTypes[] = [
+    'image-installer',
+    'wsl',
+  ];
+
+  const filteredTargets = (
+    automaticPartitioningOnlyTargets.filter((env) =>
+      environments.includes(env)
+    ) as ImageTypes[]
+  ).map((env) => targetOptions[env]);
 
   return (
     <>
@@ -70,11 +85,14 @@ const FileSystemConfiguration = () => {
           </Button>
         </Content>
       </Content>
-      {environments.includes('image-installer') && (
+      {(environments.includes('image-installer') ||
+        environments.includes('wsl')) && (
         <Alert
           variant="warning"
           isInline
-          title="Filesystem customizations are not applied to 'Bare metal - Installer' images"
+          title={`Filesystem customizations are not applied to ${filteredTargets.join(
+            ' and '
+          )} images`}
         />
       )}
       <FileSystemTable />

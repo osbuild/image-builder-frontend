@@ -38,6 +38,7 @@ import Gcp from './steps/TargetEnvironment/Gcp';
 import TimezoneStep from './steps/Timezone';
 import UsersStep from './steps/Users';
 import { getHostArch, getHostDistro } from './utilities/getHostInfo';
+import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useFilesystemValidation,
   useSnapshotValidation,
@@ -292,6 +293,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Users
   const usersValidation = useUsersValidation();
 
+  const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
+
   let startIndex = 1; // default index
   if (isEdit) {
     startIndex = 22;
@@ -490,6 +493,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="step-file-system"
                 key="step-file-system"
                 navItem={CustomStatusNavItem}
+                isHidden={hasWslTargetOnly}
                 footer={
                   <CustomWizardFooter
                     beforeNext={() => {
