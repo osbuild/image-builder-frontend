@@ -278,7 +278,7 @@ describe('repository snapshot tab - ', () => {
 
     // wait until there's only 1 repository on the page
     await waitFor(async () => {
-      const rows = await screen.findAllByRole('row');
+      const rows = screen.getAllByRole('row');
       // header row + repo row
       expect(rows).toHaveLength(2);
     });
