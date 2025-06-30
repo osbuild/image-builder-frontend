@@ -511,12 +511,12 @@ const FileSystemTable = () => {
         <Tr>
           <Th aria-label="Drag mount point" />
           <Th>Mount point</Th>
-          <Th aria-label="Suffix"></Th>
+          <Th aria-label="Suffix">Suffix</Th>
           <Th>Type</Th>
           <Th>
             Minimum size <MinimumSizePopover />
           </Th>
-          <Th aria-label="Unit" />
+          <Th aria-label="Unit">Unit</Th>
           <Th aria-label="Remove mount point" />
         </Tr>
       </Thead>
