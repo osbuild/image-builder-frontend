@@ -163,13 +163,15 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
               clickTip="Copied"
               variant="inline-compact"
               onClick={() => {
-                analytics.track(`${AMPLITUDE_MODULE_NAME} - Copy UUID`, {
-                  module: AMPLITUDE_MODULE_NAME,
-                  link_name: compose.id,
-                  current_path: window.location.pathname,
-                  account_id:
-                    userData?.identity.internal?.account_id || 'Not found',
-                });
+                if (!process.env.IS_ON_PREMISE) {
+                  analytics.track(`${AMPLITUDE_MODULE_NAME} - Copy UUID`, {
+                    module: AMPLITUDE_MODULE_NAME,
+                    link_name: compose.id,
+                    current_path: window.location.pathname,
+                    account_id:
+                      userData?.identity.internal?.account_id || 'Not found',
+                  });
+                }
               }}
             >
               {compose.id}
@@ -203,16 +205,18 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
                 // https://docs.aws.amazon.com/signin/latest/userguide/sign-in-urls-defined.html
                 href={`https://${options.share_with_accounts[0]}.signin.aws.amazon.com/console/`}
                 onClick={() => {
-                  analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
-                    module: AMPLITUDE_MODULE_NAME,
+                  if (!process.env.IS_ON_PREMISE) {
+                    analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
+                      module: AMPLITUDE_MODULE_NAME,
 
-                    link_name: options.share_with_accounts
-                      ? options.share_with_accounts[0]
-                      : '',
-                    current_path: window.location.pathname,
-                    account_id:
-                      userData?.identity.internal?.account_id || 'Not found',
-                  });
+                      link_name: options.share_with_accounts
+                        ? options.share_with_accounts[0]
+                        : '',
+                      current_path: window.location.pathname,
+                      account_id:
+                        userData?.identity.internal?.account_id || 'Not found',
+                    });
+                  }
                 }}
               >
                 {options.share_with_accounts[0]}
