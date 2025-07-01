@@ -109,9 +109,7 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
 const loginConsole = async (page: Page, user: string, password: string) => {
   await closePopupsIfExist(page);
   await page.goto('/insights/image-builder/landing');
-  await page
-    .getByRole('textbox', { name: 'Red Hat login or email' })
-    .fill(user);
+  await page.getByRole('textbox', { name: 'Red Hat login' }).fill(user);
   await page.getByRole('button', { name: 'Next' }).click();
   await page.getByRole('textbox', { name: 'Password' }).fill(password);
   await page.getByRole('button', { name: 'Log in' }).click();
