@@ -624,6 +624,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-kernel"
                 key="wizard-kernel"
                 navItem={CustomStatusNavItem}
+                isHidden={hasWslTargetOnly}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter

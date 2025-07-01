@@ -1,17 +1,29 @@
 import React from 'react';
 
-import { Content, Form, Title } from '@patternfly/react-core';
+import { Alert, Content, Form, Title } from '@patternfly/react-core';
 
 import KernelArguments from './components/KernelArguments';
 import KernelName from './components/KernelName';
 
+import { useAppSelector } from '../../../../store/hooks';
+import { selectImageTypes } from '../../../../store/wizardSlice';
+
 const KernelStep = () => {
+  const environments = useAppSelector(selectImageTypes);
+
   return (
     <Form>
       <Title headingLevel="h1" size="xl">
         Kernel
       </Title>
       <Content>Customize kernel name and kernel arguments.</Content>
+      {environments.includes('wsl') && (
+        <Alert
+          variant="warning"
+          isInline
+          title="Kernel customizations are not applied to Windows Subsystem for Linux images"
+        />
+      )}
       <KernelName />
       <KernelArguments />
     </Form>
