@@ -11,6 +11,7 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
+import { Blueprint } from './composerCloudApi';
 // We have to work around RTK query here, since it doesn't like splitting
 // out the same api into two separate apis. So, instead, we can just
 // inherit/import the `contentSourcesApi` and build on top of that.
@@ -19,6 +20,10 @@ import { v4 as uuidv4 } from 'uuid';
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
 import type {
+  CockpitCreateBlueprintApiArg,
+  CockpitCreateBlueprintRequest,
+  CockpitImageRequest,
+  CockpitUpdateBlueprintApiArg,
   UpdateWorkerConfigApiArg,
   WorkerConfigFile,
   WorkerConfigResponse,
@@ -35,7 +40,6 @@ import {
   ComposeBlueprintApiResponse,
   ComposeResponse,
   ComposesResponseItem,
-  CreateBlueprintApiArg,
   CreateBlueprintApiResponse,
   CreateBlueprintRequest,
   DeleteBlueprintApiArg,
@@ -57,7 +61,6 @@ import {
   GetOscapCustomizationsApiResponse,
   GetOscapProfilesApiArg,
   GetOscapProfilesApiResponse,
-  UpdateBlueprintApiArg,
   UpdateBlueprintApiResponse,
 } from '../service/imageBuilderApi';
 
@@ -135,6 +138,28 @@ const getCloudConfigs = async () => {
   } catch {
     return [];
   }
+};
+
+const mapToOnpremRequest = (
+  blueprint: Blueprint,
+  distribution: string,
+  image_requests: CockpitImageRequest[]
+) => {
+  return {
+    blueprint,
+    distribution,
+    image_requests: image_requests.map((ir) => ({
+      architecture: ir.architecture,
+      image_type: ir.image_type,
+      repositories: [],
+      upload_targets: [
+        {
+          type: ir.upload_request.type,
+          upload_options: ir.upload_request.options,
+        },
+      ],
+    })),
+  };
 };
 
 export const cockpitApi = contentSourcesApi.injectEndpoints({
@@ -285,7 +310,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
       }),
       createBlueprint: builder.mutation<
         CreateBlueprintApiResponse,
-        CreateBlueprintApiArg
+        CockpitCreateBlueprintApiArg
       >({
         queryFn: async ({ createBlueprintRequest: blueprintReq }) => {
           try {
@@ -310,7 +335,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
       }),
       updateBlueprint: builder.mutation<
         UpdateBlueprintApiResponse,
-        UpdateBlueprintApiArg
+        CockpitUpdateBlueprintApiArg
       >({
         queryFn: async ({ id: id, createBlueprintRequest: blueprintReq }) => {
           try {
@@ -460,55 +485,47 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const contents = await file.read();
             const parsed = JSON.parse(contents);
 
-            const createBPReq = parsed as CreateBlueprintRequest;
-            const blueprint = mapHostedToOnPrem(createBPReq);
+            const blueprint = parsed as CockpitCreateBlueprintRequest;
             const composes: ComposeResponse[] = [];
-            for (const ir of parsed.image_requests) {
-              const composeReq = {
-                distribution: createBPReq.distribution,
-                blueprint: blueprint,
-                image_requests: [
-                  {
-                    architecture: ir.architecture,
-                    image_type: ir.image_type,
-                    repositories: [],
-                    upload_targets: [
-                      {
-                        type: 'local',
-                        upload_options: {},
-                      },
-                    ],
-                  },
-                ],
+            for (const ir of blueprint.image_requests) {
+              if (ir.upload_request.type === 'aws.s3') {
+                // this differs to crc because the on-prem backend
+                // can actually understand a `local` image type.
+                // We can build this locally rather than sending it
+                // to an s3 bucket.
+                ir.upload_request.type = 'local';
+              }
+
+              // this request gets saved to the local storage and needs to
+              // match the hosted format
+              const crcComposeRequest = {
+                ...blueprint,
+                image_requests: [ir],
               };
-              const saveReq = {
-                distribution: createBPReq.distribution,
-                blueprint: parsed,
-                image_requests: [
-                  {
-                    architecture: ir.architecture,
-                    image_type: ir.image_type,
-                    repositories: [],
-                    upload_request: {
-                      type: 'local',
-                      options: {},
-                    },
-                  },
-                ],
-              };
+
               const composeResp = await baseQuery({
                 url: '/compose',
                 method: 'POST',
-                body: JSON.stringify(composeReq),
+                body: JSON.stringify(
+                  // since this is the request that gets sent to the cloudapi
+                  // backend, we need to modify it slightly
+                  mapToOnpremRequest(
+                    mapHostedToOnPrem(blueprint as CreateBlueprintRequest),
+                    crcComposeRequest.distribution,
+                    [ir]
+                  )
+                ),
                 headers: {
                   'content-type': 'application/json',
                 },
               });
+
               await cockpit
                 .file(path.join(blueprintsDir, filename, composeResp.data?.id))
-                .replace(JSON.stringify(saveReq));
+                .replace(JSON.stringify(crcComposeRequest));
               composes.push({ id: composeResp.data?.id });
             }
+
             return {
               data: composes,
             };
