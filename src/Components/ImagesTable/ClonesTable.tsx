@@ -5,13 +5,17 @@ import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { AwsDetailsStatus, StatusClone } from './Status';
 
+import { useGetComposeStatusQuery } from '../../store/backendApi';
+import {
+  CockpitAwsUploadRequestOptions,
+  CockpitComposesResponseItem,
+} from '../../store/cockpit/types';
 import {
   ClonesResponseItem,
   ComposesResponseItem,
   UploadStatus,
   useGetCloneStatusQuery,
   useGetComposeClonesQuery,
-  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 
 type RowPropTypes = {
@@ -42,8 +46,8 @@ const Ami = ({ status }: AmiPropTypes) => {
   }
 };
 
-const ComposeRegion = () => {
-  return <p>us-east-1</p>;
+const ComposeRegion = ({ region }: { region?: string | undefined }) => {
+  return <p>{region || 'us-east-1'}</p>;
 };
 
 type CloneRegionPropTypes = {
@@ -98,17 +102,27 @@ const CloneRow = ({ clone }: CloneRowPropTypes) => {
 };
 
 type ComposeRowPropTypes = {
-  compose: ComposesResponseItem;
+  compose: ComposesResponseItem | CockpitComposesResponseItem;
 };
 
 const ComposeRow = ({ compose }: ComposeRowPropTypes) => {
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
+
+  const region = !process.env.IS_ON_PREMISE
+    ? 'us-east-1'
+    : // since this is on-premise, we know the type casting
+      // is okay to do here.
+      (
+        compose.request.image_requests[0].upload_request
+          .options as CockpitAwsUploadRequestOptions
+      ).region;
+
   return isSuccess ? (
     <Row
       ami={<Ami status={data?.image_status.upload_status} />}
-      region={<ComposeRegion />}
+      region={<ComposeRegion region={region} />}
       status={<AwsDetailsStatus compose={compose} />}
     />
   ) : null;
