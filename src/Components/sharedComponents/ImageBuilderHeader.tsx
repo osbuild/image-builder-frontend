@@ -105,7 +105,7 @@ export const ImageBuilderHeader = ({
           isOpen={showImportModal}
         />
       )}
-      <PageHeader>
+      <PageHeader className="pf-m-sticky-top">
         <PageHeaderTitle
           className="title"
           title={
