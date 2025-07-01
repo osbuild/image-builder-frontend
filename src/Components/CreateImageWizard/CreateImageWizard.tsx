@@ -404,9 +404,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 footer={
                   <CustomWizardFooter
                     disableNext={
-                      awsShareMethod === 'manual'
-                        ? !isAwsAccountIdValid(awsAccountId)
-                        : awsSourceId === undefined
+                      // we don't need the account id for
+                      // on-prem aws.
+                      process.env.IS_ON_PREMISE
+                        ? false
+                        : awsShareMethod === 'manual'
+                          ? !isAwsAccountIdValid(awsAccountId)
+                          : awsSourceId === undefined
                     }
                   />
                 }
