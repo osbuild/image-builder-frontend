@@ -16,13 +16,16 @@ import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
+import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
 import { useAppSelector } from '../../../../../store/hooks';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type EditDropdownProps = {
-  getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
+  getBlueprintPayload: () => Promise<
+    '' | CreateBlueprintRequest | CockpitCreateBlueprintRequest | undefined
+  >;
   setIsOpen: (isOpen: boolean) => void;
   blueprintId: string;
   isDisabled: boolean;
@@ -54,7 +57,11 @@ export const EditSaveAndBuildBtn = ({
     const requestBody = await getBlueprintPayload();
 
     if (!process.env.IS_ON_PREMISE && requestBody) {
-      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      const analyticsData = createAnalytics(
+        requestBody as CreateBlueprintRequest,
+        packages,
+        isBeta
+      );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
         ...analyticsData,
         type: 'editBlueprintAndBuildImages',
@@ -111,7 +118,11 @@ export const EditSaveButton = ({
     const requestBody = await getBlueprintPayload();
 
     if (!process.env.IS_ON_PREMISE && requestBody) {
-      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      const analyticsData = createAnalytics(
+        requestBody as CreateBlueprintRequest,
+        packages,
+        isBeta
+      );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
         ...analyticsData,
         type: 'editBlueprint',
@@ -120,7 +131,10 @@ export const EditSaveButton = ({
     }
     setIsOpen(false);
     if (requestBody) {
-      updateBlueprint({ id: blueprintId, createBlueprintRequest: requestBody });
+      updateBlueprint({
+        id: blueprintId,
+        createBlueprintRequest: requestBody,
+      });
     }
   };
   return (
