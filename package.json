@@ -33,7 +33,7 @@
     "@babel/core": "7.27.7",
     "@babel/preset-env": "7.27.2",
     "@babel/preset-react": "7.27.1",
-    "@babel/preset-typescript": "7.27.0",
+    "@babel/preset-typescript": "7.27.1",
     "@currents/playwright": "1.14.1",
     "@patternfly/react-icons": "6.1.0",
     "@playwright/test": "1.51.1",
