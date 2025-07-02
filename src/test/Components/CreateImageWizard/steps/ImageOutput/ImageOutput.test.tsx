@@ -122,12 +122,6 @@ const verifyNameInReviewStep = async (name: string) => {
   expect(definition).toHaveTextContent(name);
 };
 
-const selectVMwareTarget = async () => {
-  const user = userEvent.setup();
-  const vmwareImageCheckBox = await screen.findByTestId('checkbox-vmware');
-  await waitFor(() => user.click(vmwareImageCheckBox));
-};
-
 const handleRegistration = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
@@ -265,44 +259,6 @@ describe('Step Image output', () => {
     );
   });
 
-  test('VMware checkbox select and unselect works', async () => {
-    await renderCreateMode();
-    await selectRhel9();
-    await selectVMwareTarget();
-
-    let vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    let ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    let vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
-
-    expect(await screen.findByTestId('checkbox-vmware')).toBeChecked();
-    expect(ovaFileRadio).toBeChecked();
-    expect(vmdkFileRadio).not.toBeChecked();
-
-    // switch to VMDK
-    user.click(vmdkFileRadio);
-
-    // refresh values
-    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
-
-    expect(vmwareCheckbox).toBeChecked();
-    expect(ovaFileRadio).not.toBeChecked();
-    expect(vmdkFileRadio).toBeChecked();
-
-    // unselect VMware
-    user.click(vmwareCheckbox);
-
-    // refresh values
-    vmwareCheckbox = await screen.findByTestId('checkbox-vmware');
-    ovaFileRadio = await screen.findByTestId('radio-vsphere-ova');
-    vmdkFileRadio = await screen.findByTestId('radio-vsphere-vmdk');
-
-    expect(vmwareCheckbox).not.toBeChecked();
-    expect(ovaFileRadio).not.toBeChecked();
-    expect(vmdkFileRadio).not.toBeChecked();
-  });
-
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await selectGuestImageTarget();
@@ -411,8 +367,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-oci');
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    await screen.findByText(/vmware vsphere/i);
-    await screen.findByText(/open virtualization format \(\.ova\)/i);
+    await screen.findByText(
+      /VMware vSphere - Open virtualization format \(\.ova\)/
+    );
+    await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
     expect(
       screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
     ).not.toBeInTheDocument();
@@ -448,8 +406,10 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-oci');
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    await screen.findByText(/vmware vsphere/i);
-    await screen.findByText(/open virtualization format \(\.ova\)/i);
+    await screen.findByText(
+      /VMware vSphere - Open virtualization format \(\.ova\)/
+    );
+    await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
     await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
   });
 
@@ -484,9 +444,13 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/open virtualization format \(\.ova\)/i)
+      screen.queryByText(
+        /VMware vSphere - Open virtualization format \(\.ova\)/
+      )
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
@@ -525,9 +489,13 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/open virtualization format \(\.ova\)/i)
+      screen.queryByText(
+        /VMware vSphere - Open virtualization format \(\.ova\)/
+      )
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
@@ -564,9 +532,13 @@ describe('Check that the target filtering is in accordance to mock content', () 
     expect(screen.queryByTestId('upload-oci')).not.toBeInTheDocument();
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    expect(screen.queryByText(/vmware vsphere/i)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/open virtualization format \(\.ova\)/i)
+      screen.queryByText(
+        /VMware vSphere - Open virtualization format \(\.ova\)/
+      )
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)

@@ -6,7 +6,6 @@ import {
   Checkbox,
   FormGroup,
   Popover,
-  Radio,
   Content,
   CardHeader,
   Gallery,
@@ -105,9 +104,6 @@ const TargetEnvironment = () => {
   });
   // TODO: Handle isFetching state (add skeletons)
   // TODO: Handle isError state (very unlikely...)
-
-  const hasVsphere =
-    environments.includes('vsphere') || environments.includes('vsphere-ova');
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
@@ -209,131 +205,93 @@ const TargetEnvironment = () => {
           </Gallery>
         </FormGroup>
       )}
-      {supportedEnvironments?.includes('vsphere') && (
-        <>
-          <FormGroup
-            label={<small>Private cloud</small>}
-            className="pf-v6-u-mt-sm"
-          >
+      {(supportedEnvironments?.includes('vsphere') ||
+        supportedEnvironments?.includes('vsphere-ova')) && (
+        <FormGroup
+          label={<small>Private cloud</small>}
+          className="pf-v6-u-mt-sm"
+        >
+          {supportedEnvironments?.includes('vsphere-ova') && (
             <Checkbox
-              label="VMware vSphere"
-              isChecked={hasVsphere}
-              onChange={() => {
-                if (!hasVsphere) {
-                  dispatch(addImageType('vsphere-ova'));
-                } else {
-                  if (environments.includes('vsphere')) {
-                    dispatch(removeImageType('vsphere'));
-                  }
-                  if (environments.includes('vsphere-ova')) {
-                    dispatch(removeImageType('vsphere-ova'));
-                  }
-                }
-              }}
-              aria-label="VMware checkbox"
-              id="checkbox-vmware"
-              name="VMware"
-              data-testid="checkbox-vmware"
-              body={
+              name="vsphere-checkbox-ova"
+              aria-label="VMware vSphere checkbox OVA"
+              id="vsphere-checkbox-ova"
+              data-testid="checkbox-vsphere-ova"
+              label={
                 <>
-                  {supportedEnvironments?.includes('vsphere-ova') && (
-                    <Radio
-                      name="vsphere-radio"
-                      aria-label="VMware vSphere radio button OVA"
-                      id="vsphere-radio-ova"
-                      data-testid="radio-vsphere-ova"
-                      label={
-                        <>
-                          Open virtualization format (.ova)
-                          <Popover
-                            maxWidth="30rem"
-                            position="right"
-                            bodyContent={
-                              <Content>
-                                <Content>
-                                  An OVA file is a virtual appliance used by
-                                  virtualization platforms such as VMware
-                                  vSphere. It is a package that contains files
-                                  used to describe a virtual machine, which
-                                  includes a VMDK image, OVF descriptor file and
-                                  a manifest file.
-                                </Content>
-                              </Content>
-                            }
-                          >
-                            <Button
-                              icon={<HelpIcon />}
-                              className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-                              variant="plain"
-                              aria-label="About OVA file"
-                              isInline
-                            />
-                          </Popover>
-                        </>
-                      }
-                      onChange={() => {
-                        handleToggleEnvironment('vsphere-ova');
-                        handleToggleEnvironment('vsphere');
-                      }}
-                      isChecked={environments.includes('vsphere-ova')}
-                      isDisabled={
-                        !(
-                          environments.includes('vsphere') ||
-                          environments.includes('vsphere-ova')
-                        )
-                      }
+                  VMware vSphere - Open virtualization format (.ova)
+                  <Popover
+                    maxWidth="30rem"
+                    position="right"
+                    bodyContent={
+                      <Content>
+                        <Content>
+                          An OVA file is a virtual appliance used by
+                          virtualization platforms such as VMware vSphere. It is
+                          a package that contains files used to describe a
+                          virtual machine, which includes a VMDK image, OVF
+                          descriptor file and a manifest file.
+                        </Content>
+                      </Content>
+                    }
+                  >
+                    <Button
+                      icon={<HelpIcon />}
+                      className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
+                      variant="plain"
+                      aria-label="About OVA file"
+                      isInline
                     />
-                  )}
-                  <Radio
-                    className="pf-v6-u-mt-sm"
-                    name="vsphere-radio"
-                    aria-label="VMware vSphere radio button VMDK"
-                    id="vsphere-radio-vmdk"
-                    data-testid="radio-vsphere-vmdk"
-                    label={
-                      <>
-                        Virtual disk (.vmdk)
-                        <Popover
-                          maxWidth="30rem"
-                          position="right"
-                          bodyContent={
-                            <Content>
-                              <Content>
-                                A VMDK file is a virtual disk that stores the
-                                contents of a virtual machine. This disk has to
-                                be imported into vSphere using govc import.vmdk,
-                                use the OVA version when using the vSphere UI.
-                              </Content>
-                            </Content>
-                          }
-                        >
-                          <Button
-                            icon={<HelpIcon />}
-                            className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-                            variant="plain"
-                            aria-label="About VMDK file"
-                            isInline
-                          />
-                        </Popover>
-                      </>
-                    }
-                    onChange={() => {
-                      handleToggleEnvironment('vsphere-ova');
-                      handleToggleEnvironment('vsphere');
-                    }}
-                    isChecked={environments.includes('vsphere')}
-                    isDisabled={
-                      !(
-                        environments.includes('vsphere') ||
-                        environments.includes('vsphere-ova')
-                      )
-                    }
-                  />
+                  </Popover>
                 </>
               }
+              onChange={() => {
+                handleToggleEnvironment('vsphere-ova');
+              }}
+              isChecked={environments.includes('vsphere-ova')}
             />
-          </FormGroup>
-        </>
+          )}
+          {supportedEnvironments?.includes('vsphere') && (
+            <Checkbox
+              className="pf-v6-u-mt-sm"
+              name="vsphere-checkbox-vmdk"
+              aria-label="VMware vSphere checkbox VMDK"
+              id="vsphere-checkbox-vmdk"
+              data-testid="checkbox-vsphere-vmdk"
+              label={
+                <>
+                  VMware vSphere - Virtual disk (.vmdk)
+                  <Popover
+                    maxWidth="30rem"
+                    position="right"
+                    bodyContent={
+                      <Content>
+                        <Content>
+                          A VMDK file is a virtual disk that stores the contents
+                          of a virtual machine. This disk has to be imported
+                          into vSphere using govc import.vmdk, use the OVA
+                          version when using the vSphere UI.
+                        </Content>
+                      </Content>
+                    }
+                  >
+                    <Button
+                      icon={<HelpIcon />}
+                      className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
+                      variant="plain"
+                      aria-label="About VMDK file"
+                      isInline
+                    />
+                  </Popover>
+                </>
+              }
+              onChange={() => {
+                handleToggleEnvironment('vsphere');
+              }}
+              isChecked={environments.includes('vsphere')}
+            />
+          )}
+        </FormGroup>
       )}
       <FormGroup label={<small>Other</small>}>
         {supportedEnvironments?.includes('guest-image') && (
