@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 
-import { Form, FormGroup, Switch, TextInput } from '@patternfly/react-core';
+import {
+  Button,
+  Content,
+  Form,
+  FormGroup,
+  Popover,
+  Switch,
+  TextInput,
+} from '@patternfly/react-core';
+import { HelpIcon } from '@patternfly/react-icons';
 
 import { isAwsBucketValid, isAwsCredsPathValid } from './validators';
 
@@ -52,13 +61,15 @@ const AWSConfigToggle = ({ value, onChange }: ToggleGroupProps) => {
 const DisabledInputGroup = ({
   value,
   label,
+  ariaLabel,
 }: {
   value: string | undefined;
-  label: string;
+  label: React.ReactNode;
+  ariaLabel: string;
 }) => {
   return (
     <FormGroup label={label}>
-      <TextInput aria-label={label} value={value || ''} isDisabled />
+      <TextInput aria-label={ariaLabel} value={value || ''} isDisabled />
     </FormGroup>
   );
 };
@@ -67,7 +78,9 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   const label = 'AWS Bucket';
 
   if (isDisabled) {
-    return <DisabledInputGroup label={label} value={value} />;
+    return (
+      <DisabledInputGroup label={label} value={value} ariaLabel="aws-bucket" />
+    );
   }
 
   return (
@@ -83,15 +96,51 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   );
 };
 
+const CredsPathPopover = () => {
+  return (
+    <Popover
+      minWidth="35rem"
+      headerContent={'What is the AWS Credentials Path?'}
+      bodyContent={
+        <Content>
+          <Content>
+            This is the path to your AWS credentials file which contains your
+            aws access key id and secret access key. This path to the file is
+            normally in the home directory in the credentials file in the .aws
+            directory, <br /> i.e. /home/USERNAME/.aws/credentials
+          </Content>
+        </Content>
+      }
+    >
+      <Button
+        icon={<HelpIcon />}
+        variant="plain"
+        aria-label="Credentials Path Info"
+        className="pf-v6-u-pl-sm header-button"
+      />
+    </Popover>
+  );
+};
+
 const AWSCredsPath = ({
   value,
   onChange,
   isDisabled,
 }: FormGroupProps<string>) => {
-  const label = 'AWS Credentials Filepath';
+  const label = (
+    <>
+      AWS Credentials Filepath <CredsPathPopover />
+    </>
+  );
 
   if (isDisabled) {
-    return <DisabledInputGroup value={value} label={label} />;
+    return (
+      <DisabledInputGroup
+        value={value}
+        label={label}
+        ariaLabel="aws-creds-path"
+      />
+    );
   }
 
   return (
