@@ -263,7 +263,6 @@ make cockpit/devel
 | ---------                                                                                                            | -----------                                |
 | [`/api`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/api)                                     | API schema and config files                |
 | [`/config`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/config)                               | webpack configuration                      |
-| [`/devel`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/devel)                                 | tools for local development                |
 | [`/src`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src)                                     | source code                                |
 | [`/src/Components`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/Components)               | source code split by individual components |
 | [`/src/test`](https://github.com/RedHatInsights/image-builder-frontend/tree/main/src/test)                           | test utilities                             |
