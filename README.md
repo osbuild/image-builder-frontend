@@ -39,7 +39,7 @@ worrying if a feature from stage has been released yet.
 
 #### Nodejs and npm version
 
-Make sure you have npm@10 and node 18+ installed. If you need multiple versions of nodejs check out [nvm](https://github.com/nvm-sh/nvm).
+Make sure you have npm@10 and node 22+ installed. If you need multiple versions of nodejs check out [nvm](https://github.com/nvm-sh/nvm).
 
 #### Webpack proxy
 

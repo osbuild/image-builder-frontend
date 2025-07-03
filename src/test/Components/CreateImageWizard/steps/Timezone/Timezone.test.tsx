@@ -50,7 +50,7 @@ const goToReviewStep = async () => {
 };
 
 const selectTimezone = async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   const timezoneDropdown = await screen.findByPlaceholderText(
     /select a timezone/i
   );
