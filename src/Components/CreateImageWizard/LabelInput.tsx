@@ -48,30 +48,36 @@ const LabelInput = ({
   const dispatch = useAppDispatch();
 
   const [inputValue, setInputValue] = useState('');
-  const [errorText, setErrorText] = useState(stepValidation.errors[fieldName]);
+  const [onStepInputErrorText, setOnStepInputErrorText] = useState('');
+  let [invalidImports, duplicateImports] = ['', ''];
+
+  if (stepValidation.errors[fieldName]) {
+    [invalidImports, duplicateImports] =
+      stepValidation.errors[fieldName].split('|');
+  }
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
     value: string
   ) => {
     setInputValue(value);
-    setErrorText('');
+    setOnStepInputErrorText('');
   };
 
   const addItem = (value: string) => {
     if (list?.includes(value) || requiredList?.includes(value)) {
-      setErrorText(`${item} already exists.`);
+      setOnStepInputErrorText(`${item} already exists.`);
       return;
     }
 
     if (!validator(value)) {
-      setErrorText('Invalid format.');
+      setOnStepInputErrorText('Invalid format.');
       return;
     }
 
     dispatch(addAction(value));
     setInputValue('');
-    setErrorText('');
+    setOnStepInputErrorText('');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
@@ -87,12 +93,11 @@ const LabelInput = ({
 
   const handleRemoveItem = (e: React.MouseEvent, value: string) => {
     dispatch(removeAction(value));
-    setErrorText('');
   };
 
   const handleClear = () => {
     setInputValue('');
-    setErrorText('');
+    setOnStepInputErrorText('');
   };
 
   return (
@@ -125,9 +130,21 @@ const LabelInput = ({
           />
         </TextInputGroupUtilities>
       </TextInputGroup>
-      {errorText && (
+      {(onStepInputErrorText || invalidImports || duplicateImports) && (
         <HelperText>
-          <HelperTextItem variant={'error'}>{errorText}</HelperTextItem>
+          {onStepInputErrorText && (
+            <HelperTextItem variant={'error'}>
+              {onStepInputErrorText}
+            </HelperTextItem>
+          )}
+          {invalidImports && (
+            <HelperTextItem variant={'error'}>{invalidImports}</HelperTextItem>
+          )}
+          {duplicateImports && (
+            <HelperTextItem variant={'error'}>
+              {duplicateImports}
+            </HelperTextItem>
+          )}
         </HelperText>
       )}
       {requiredList && requiredList.length > 0 && (
