@@ -36,6 +36,7 @@ import {
   FirewallList,
   ServicesList,
   RegisterSatelliteList,
+  RegisterAapList,
 } from './ReviewStepTextLists';
 
 import isRhel from '../../../../../src/Utilities/isRhel';
@@ -59,12 +60,14 @@ import {
   selectServices,
   selectUsers,
   selectKernel,
+  selectAapRegistration,
 } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 
 const Review = () => {
   const { goToStepById } = useWizardContext();
 
+  const aapRegistration = useAppSelector(selectAapRegistration);
   const blueprintName = useAppSelector(selectBlueprintName);
   const blueprintDescription = useAppSelector(selectBlueprintDescription);
   const distribution = useAppSelector(selectDistribution);
@@ -83,6 +86,7 @@ const Review = () => {
   const users = useAppSelector(selectUsers);
   const kernel = useAppSelector(selectKernel);
 
+  const [isExpandedAap, setIsExpandedAap] = useState(true);
   const [isExpandedImageOutput, setIsExpandedImageOutput] = useState(true);
   const [isExpandedTargetEnvs, setIsExpandedTargetEnvs] = useState(true);
   const [isExpandedFSC, setIsExpandedFSC] = useState(true);
@@ -101,6 +105,8 @@ const Review = () => {
   const [isExpandableFirstBoot, setIsExpandedFirstBoot] = useState(true);
   const [isExpandedUsers, setIsExpandedUsers] = useState(true);
 
+  const onToggleAap = (isExpandedAap: boolean) =>
+    setIsExpandedAap(isExpandedAap);
   const onToggleImageOutput = (isExpandedImageOutput: boolean) =>
     setIsExpandedImageOutput(isExpandedImageOutput);
   const onToggleTargetEnvs = (isExpandedTargetEnvs: boolean) =>
@@ -497,6 +503,21 @@ const Review = () => {
           data-testid="services-expandable"
         >
           <ServicesList />
+        </ExpandableSection>
+      )}
+      {aapRegistration.controllerUrl && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'Ansible Automation Platform',
+            'revisit-aap',
+            'wizard-aap'
+          )}
+          onToggle={(_event, isExpandableAap) => onToggleAap(isExpandableAap)}
+          isExpanded={isExpandedAap}
+          isIndented
+          data-testid="aap-expandable"
+        >
+          <RegisterAapList />
         </ExpandableSection>
       )}
       <ExpandableSection
