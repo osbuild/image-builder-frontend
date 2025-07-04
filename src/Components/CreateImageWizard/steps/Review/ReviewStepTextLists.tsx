@@ -78,6 +78,7 @@ import {
   selectUsers,
   selectTemplate,
   selectRedHatRepositories,
+  selectAwsRegion,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -226,6 +227,7 @@ export const TargetEnvAWSList = () => {
   const awsAccountId = useAppSelector(selectAwsAccountId);
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const sourceId = useAppSelector(selectAwsSourceId);
+  const region = useAppSelector(selectAwsRegion);
   const { source } = useGetSourceListQuery(
     {
       provider: 'aws',
@@ -262,7 +264,9 @@ export const TargetEnvAWSList = () => {
         <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Default region
         </Content>
-        <Content component={ContentVariants.dd}>us-east-1</Content>
+        <Content component={ContentVariants.dd}>
+          {region || 'us-east-1'}
+        </Content>
       </Content>
     </Content>
   );

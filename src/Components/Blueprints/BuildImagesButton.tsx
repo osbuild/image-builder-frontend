@@ -57,11 +57,13 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
           ),
         },
       });
-      analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
-        module: AMPLITUDE_MODULE_NAME,
-        trigger: 'synchronize images',
-        account_id: userData?.identity.internal?.account_id || 'Not found',
-      });
+      if (!process.env.IS_ON_PREMISE) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Image Requested`, {
+          module: AMPLITUDE_MODULE_NAME,
+          trigger: 'synchronize images',
+          account_id: userData?.identity.internal?.account_id || 'Not found',
+        });
+      }
     }
   };
   const [isOpen, setIsOpen] = useState(false);

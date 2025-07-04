@@ -94,6 +94,7 @@ export type wizardState = {
     shareMethod: AwsShareMethod;
     source: V1ListSourceResponseItem | undefined;
     sourceId?: string | undefined;
+    region?: string | undefined;
   };
   azure: {
     shareMethod: AzureShareMethod;
@@ -189,6 +190,7 @@ export const initialState: wizardState = {
     accountId: '',
     shareMethod: 'sources',
     source: undefined,
+    region: 'us-east-1',
   },
   azure: {
     shareMethod: 'sources',
@@ -310,6 +312,10 @@ export const selectAwsSourceId = (state: RootState): string | undefined => {
 
 export const selectAwsShareMethod = (state: RootState) => {
   return state.wizard.aws.shareMethod;
+};
+
+export const selectAwsRegion = (state: RootState) => {
+  return state.wizard.aws.region;
 };
 
 export const selectAzureTenantId = (state: RootState) => {
@@ -534,10 +540,14 @@ export const wizardSlice = createSlice({
     changeAwsSourceId: (state, action: PayloadAction<string | undefined>) => {
       state.aws.sourceId = action.payload;
     },
+    changeAwsRegion: (state, action: PayloadAction<string | undefined>) => {
+      state.aws.region = action.payload;
+    },
     reinitializeAws: (state) => {
       state.aws.accountId = '';
       state.aws.shareMethod = 'sources';
       state.aws.source = undefined;
+      state.aws.region = 'us-east-1';
     },
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
       state.azure.tenantId = action.payload;
@@ -1136,6 +1146,7 @@ export const {
   changeAwsAccountId,
   changeAwsShareMethod,
   changeAwsSourceId,
+  changeAwsRegion,
   reinitializeAws,
   changeAzureTenantId,
   changeAzureShareMethod,
