@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Popover, Content, Flex, Alert } from '@patternfly/react-core';
+import { Button, Popover, Content, Flex } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 // eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
@@ -11,10 +11,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 
 import {
-  CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL,
   CREATING_IMAGES_WITH_IB_SERVICE_URL,
   OSBUILD_SERVICE_ARCHITECTURE_URL,
-  RHEM_DOCUMENTATION_URL,
 } from '../../constants';
 import { useBackendPrefetch } from '../../store/backendApi';
 import { useAppSelector } from '../../store/hooks';
@@ -23,6 +21,10 @@ import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
 import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
+
+type ImageBuilderHeaderPropTypes = {
+  inWizard?: boolean;
+};
 
 const AboutImageBuilderPopover = () => {
   return (
@@ -52,19 +54,6 @@ const AboutImageBuilderPopover = () => {
               Image builder for RPM-DNF documentation
             </Button>
           </Content>
-          <Content>
-            <Button
-              component="a"
-              target="_blank"
-              variant="link"
-              icon={<ExternalLinkAltIcon />}
-              iconPosition="right"
-              isInline
-              href={CREATE_RHEL_IMAGES_WITH_AUTOMATED_MANAGEMENT_URL}
-            >
-              Image builder for OSTree documentation
-            </Button>
-          </Content>
         </Content>
       }
     >
@@ -78,13 +67,7 @@ const AboutImageBuilderPopover = () => {
   );
 };
 
-type ImageBuilderHeaderPropTypes = {
-  activeTab?: number;
-  inWizard?: boolean;
-};
-
 export const ImageBuilderHeader = ({
-  activeTab,
   inWizard,
 }: ImageBuilderHeaderPropTypes) => {
   const navigate = useNavigate();
@@ -96,7 +79,6 @@ export const ImageBuilderHeader = ({
     'image-builder.import.enabled'
   );
   const [showImportModal, setShowImportModal] = useState(false);
-  const isOnBlueprintsTab = activeTab === 0;
   return (
     <>
       {importExportFlag && (
@@ -124,7 +106,6 @@ export const ImageBuilderHeader = ({
                     variant="primary"
                     data-testid="blueprints-create-button"
                     onClick={() => navigate(resolveRelPath('imagewizard'))}
-                    isDisabled={!isOnBlueprintsTab}
                     onMouseEnter={() =>
                       prefetchTargets({
                         distribution: distribution,
@@ -138,7 +119,6 @@ export const ImageBuilderHeader = ({
                       data-testid="import-blueprint-button"
                       variant="secondary"
                       onClick={() => setShowImportModal(true)}
-                      isDisabled={!isOnBlueprintsTab}
                     >
                       Import
                     </Button>
@@ -148,37 +128,6 @@ export const ImageBuilderHeader = ({
             </>
           }
         />
-        {!isOnBlueprintsTab && !inWizard && !process.env.IS_ON_PREMISE && (
-          <Alert
-            variant="info"
-            isInline
-            title={<>Upcoming decommission of hosted Edge Management service</>}
-            className="pf-v6-u-mt-sm pf-v6-u-mb-sm"
-          >
-            <Content>
-              <Content>
-                As of July 31, 2025, the hosted edge management service will no
-                longer be supported. This means that pushing image updates to
-                Immutable (OSTree) systems using the Hybrid Cloud Console will
-                be discontinued. For an alternative way to manage edge systems,
-                customers are encouraged to explore Red Hat Edge Manager (RHEM).
-              </Content>
-              <Content>
-                <Button
-                  component="a"
-                  target="_blank"
-                  variant="link"
-                  icon={<ExternalLinkAltIcon />}
-                  iconPosition="right"
-                  isInline
-                  href={RHEM_DOCUMENTATION_URL}
-                >
-                  Red Hat Edge Manager (RHEM) documentation
-                </Button>
-              </Content>
-            </Content>
-          </Alert>
-        )}
       </PageHeader>
     </>
   );
