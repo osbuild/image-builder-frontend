@@ -814,8 +814,6 @@ const Packages = () => {
         return [];
       }
     }
-
-    return combinedGroupData;
   }, [
     dataDistroGroups,
     dataCustomGroups,
