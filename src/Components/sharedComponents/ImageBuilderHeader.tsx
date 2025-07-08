@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 
 import { Button, Popover, Content, Flex } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
-// eslint-disable-next-line rulesdir/disallow-fec-relative-imports
 import {
   OpenSourceBadge,
   PageHeader,

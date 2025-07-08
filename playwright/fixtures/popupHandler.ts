@@ -11,7 +11,6 @@ export const test = base.extend<PopupHandlerFixture>({
   popupHandler: [
     async ({ page }, use) => {
       await closePopupsIfExist(page);
-      // eslint-disable-next-line react-hooks/rules-of-hooks
       await use(undefined);
     },
     { auto: true },
