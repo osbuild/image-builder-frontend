@@ -139,10 +139,6 @@ export const isServiceValid = (service: string) => {
   );
 };
 
-export const isJobTemplateIdValid = (id: string) => {
-  return /^\d+$/.test(id);
-};
-
 export const isValidUrl = (url: string): boolean => {
   try {
     const parsedUrl = new URL(url);

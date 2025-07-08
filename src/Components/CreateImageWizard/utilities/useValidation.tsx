@@ -32,9 +32,8 @@ import {
   selectImageTypes,
   UserWithAdditionalInfo,
   selectTemplate,
-  selectAapJobTemplateId,
   selectAapHostConfigKey,
-  selectAapControllerUrl,
+  selectAapCallbackUrl,
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
 } from '../../../store/wizardSlice';
@@ -56,7 +55,6 @@ import {
   isPortValid,
   isServiceValid,
   isUserGroupValid,
-  isJobTemplateIdValid,
   isValidUrl,
   validateMultipleCertificates,
 } from '../validators';
@@ -237,32 +235,20 @@ export function useRegistrationValidation(): StepValidation {
 
 export function useAAPValidation(): StepValidation {
   const errors: Record<string, string> = {};
-  const controllerUrl = useAppSelector(selectAapControllerUrl);
-  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const callbackUrl = useAppSelector(selectAapCallbackUrl);
   const hostConfigKey = useAppSelector(selectAapHostConfigKey);
   const tlsCertificateAuthority = useAppSelector(
     selectAapTlsCertificateAuthority
   );
   const tlsConfirmation = useAppSelector(selectAapTlsConfirmation);
 
-  if (
-    !controllerUrl &&
-    !jobTemplateId &&
-    !hostConfigKey &&
-    !tlsCertificateAuthority
-  ) {
+  if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
     return { errors: {}, disabledNext: false };
   }
-  if (!controllerUrl || controllerUrl.trim() === '') {
-    errors.controllerUrl = 'Ansible Controller URL is required';
-  } else if (!isValidUrl(controllerUrl)) {
-    errors.controllerUrl = 'Controller URL must be a valid HTTPS URL';
-  }
-
-  if (!jobTemplateId || jobTemplateId.trim() === '') {
-    errors.jobTemplateId = 'Job Template ID is required';
-  } else if (!isJobTemplateIdValid(jobTemplateId)) {
-    errors.jobTemplateId = 'Job Template ID must be a number';
+  if (!callbackUrl || callbackUrl.trim() === '') {
+    errors.callbackUrl = 'Ansible Callback URL is required';
+  } else if (!isValidUrl(callbackUrl)) {
+    errors.callbackUrl = 'Callback URL must be a valid URL';
   }
 
   if (!hostConfigKey || hostConfigKey.trim() === '') {
@@ -278,8 +264,8 @@ export function useAAPValidation(): StepValidation {
     }
   }
 
-  if (controllerUrl && controllerUrl.trim() !== '') {
-    const isHttpsUrl = controllerUrl.toLowerCase().startsWith('https://');
+  if (callbackUrl && callbackUrl.trim() !== '') {
+    const isHttpsUrl = callbackUrl.toLowerCase().startsWith('https://');
 
     if (isHttpsUrl) {
       // If URL is HTTPS and TLS confirmation is not checked, require certificate or confirmation
@@ -290,18 +276,15 @@ export function useAAPValidation(): StepValidation {
         errors.certificate =
           'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
       }
-    }
-
-    // If URL is just HTTP, always require a TLS certificate
-    if (!isHttpsUrl && !tlsCertificateAuthority) {
-      errors.certificate = 'HTTP URL requires a custom TLS certificate';
+    } else {
+      // If URL is just HTTP, always require a TLS certificate
+      if (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '') {
+        errors.certificate = 'HTTP URL requires a custom TLS certificate';
+      }
     }
   }
 
-  return {
-    errors: errors,
-    disabledNext: Object.keys(errors).length > 0,
-  };
+  return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
 
 export function useFilesystemValidation(): StepValidation {

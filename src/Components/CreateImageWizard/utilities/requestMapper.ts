@@ -96,10 +96,10 @@ import {
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
   selectModules,
-  selectAapControllerUrl,
-  selectAapJobTemplateId,
+  selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
   RegistrationType,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
@@ -398,16 +398,14 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       },
     },
     aapRegistration: {
-      controllerUrl:
-        request.image_requests[0]?.aap_registration?.ansible_controller_url,
-      jobTemplateId:
-        String(request.image_requests[0]?.aap_registration?.job_template_id) ||
-        undefined,
+      callbackUrl:
+        request.image_requests[0]?.aap_registration?.ansible_callback_url,
       hostConfigKey:
         request.image_requests[0]?.aap_registration?.host_config_key,
       tlsCertificateAuthority:
         request.image_requests[0]?.aap_registration?.tls_certificate_authority,
-      tlsConfirmation: undefined,
+      skipTlsVerification:
+        request.image_requests[0]?.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(request),
   };
@@ -459,15 +457,12 @@ export const mapExportRequestToState = (
     env: initialState.env,
     registration: initialState.registration,
     aapRegistration: {
-      controllerUrl:
-        image_requests[0]?.aap_registration?.ansible_controller_url,
-      jobTemplateId:
-        String(image_requests[0]?.aap_registration?.job_template_id) ||
-        undefined,
+      callbackUrl: image_requests[0]?.aap_registration?.ansible_callback_url,
       hostConfigKey: image_requests[0]?.aap_registration?.host_config_key,
       tlsCertificateAuthority:
         image_requests[0]?.aap_registration?.tls_certificate_authority,
-      tlsConfirmation: undefined,
+      skipTlsVerification:
+        image_requests[0]?.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(blueprintResponse),
   };
@@ -479,25 +474,20 @@ const getFirstBootScript = (files?: File[]): string => {
 };
 
 const getAapRegistration = (state: RootState): AapRegistration | undefined => {
-  const controllerUrl = selectAapControllerUrl(state);
-  const jobTemplateId = selectAapJobTemplateId(state);
+  const callbackUrl = selectAapCallbackUrl(state);
   const hostConfigKey = selectAapHostConfigKey(state);
   const tlsCertificateAuthority = selectAapTlsCertificateAuthority(state);
+  const skipTlsVerification = selectAapTlsConfirmation(state);
 
-  if (
-    !controllerUrl &&
-    !jobTemplateId &&
-    !hostConfigKey &&
-    !tlsCertificateAuthority
-  ) {
+  if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
     return undefined;
   }
 
   return {
-    ansible_controller_url: controllerUrl || '',
-    job_template_id: jobTemplateId ? Number(jobTemplateId) : 0,
+    ansible_callback_url: callbackUrl || '',
     host_config_key: hostConfigKey || '',
     tls_certificate_authority: tlsCertificateAuthority || undefined,
+    skip_tls_verification: skipTlsVerification || undefined,
   };
 };
 

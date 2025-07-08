@@ -12,13 +12,11 @@ import {
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  selectAapControllerUrl,
-  selectAapJobTemplateId,
+  selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
-  changeAapControllerUrl,
-  changeAapJobTemplateId,
+  changeAapCallbackUrl,
   changeAapHostConfigKey,
   changeAapTlsCertificateAuthority,
   changeAapTlsConfirmation,
@@ -29,8 +27,7 @@ import { validateMultipleCertificates } from '../../../validators';
 
 const AAPRegistration = () => {
   const dispatch = useAppDispatch();
-  const controllerUrl = useAppSelector(selectAapControllerUrl);
-  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const callbackUrl = useAppSelector(selectAapCallbackUrl);
   const hostConfigKey = useAppSelector(selectAapHostConfigKey);
   const tlsCertificateAuthority = useAppSelector(
     selectAapTlsCertificateAuthority
@@ -39,8 +36,7 @@ const AAPRegistration = () => {
   const [isRejected, setIsRejected] = React.useState(false);
   const stepValidation = useAAPValidation();
 
-  const isHttpsUrl =
-    controllerUrl?.toLowerCase().startsWith('https://') || false;
+  const isHttpsUrl = callbackUrl?.toLowerCase().startsWith('https://') || false;
   const shouldShowCaInput = !isHttpsUrl || (isHttpsUrl && !tlsConfirmation);
 
   const validated = stepValidation.errors['certificate']
@@ -52,12 +48,8 @@ const AAPRegistration = () => {
     ? 'success'
     : 'default';
 
-  const handleControllerUrlChange = (value: string) => {
-    dispatch(changeAapControllerUrl(value));
-  };
-
-  const handleJobTemplateIdChange = (value: string) => {
-    dispatch(changeAapJobTemplateId(value));
+  const handleCallbackUrlChange = (value: string) => {
+    dispatch(changeAapCallbackUrl(value));
   };
 
   const handleHostConfigKeyChange = (value: string) => {
@@ -90,47 +82,18 @@ const AAPRegistration = () => {
 
   return (
     <>
-      <FormGroup label="Ansible Controller URL" isRequired>
+      <FormGroup label="Ansible Callback URL" isRequired>
         <ValidatedInputAndTextArea
-          value={controllerUrl || ''}
-          onChange={(_event, value) => handleControllerUrlChange(value.trim())}
-          ariaLabel="ansible controller url"
+          value={callbackUrl || ''}
+          onChange={(_event, value) => handleCallbackUrlChange(value.trim())}
+          ariaLabel="ansible callback url"
           isRequired
           stepValidation={stepValidation}
-          fieldName="controllerUrl"
+          fieldName="callbackUrl"
           placeholder=""
         />
       </FormGroup>
-      {isHttpsUrl && (
-        <FormGroup>
-          <Checkbox
-            id="tls-confirmation-checkbox"
-            label="This HTTPS URL does not require a custom TLS certificate"
-            isChecked={tlsConfirmation || false}
-            onChange={(_event, checked) => handleTlsConfirmationChange(checked)}
-          />
-          {stepValidation.errors['tlsConfirmation'] && (
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem variant="error">
-                  {stepValidation.errors['tlsConfirmation']}
-                </HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          )}
-        </FormGroup>
-      )}
-      <FormGroup label="Job Template ID" isRequired>
-        <ValidatedInputAndTextArea
-          value={jobTemplateId || ''}
-          onChange={(_event, value) => handleJobTemplateIdChange(value.trim())}
-          ariaLabel="job template id"
-          isRequired
-          stepValidation={stepValidation}
-          fieldName="jobTemplateId"
-          placeholder=""
-        />
-      </FormGroup>
+
       <FormGroup label="Host Config Key" isRequired>
         <ValidatedInputAndTextArea
           value={hostConfigKey || ''}
@@ -187,6 +150,25 @@ const AAPRegistration = () => {
               </HelperTextItem>
             </HelperText>
           </FormHelperText>
+        </FormGroup>
+      )}
+      {isHttpsUrl && (
+        <FormGroup>
+          <Checkbox
+            id="tls-confirmation-checkbox"
+            label="This HTTPS URL does not require a CA certificate"
+            isChecked={tlsConfirmation || false}
+            onChange={(_event, checked) => handleTlsConfirmationChange(checked)}
+          />
+          {stepValidation.errors['tlsConfirmation'] && (
+            <FormHelperText>
+              <HelperText>
+                <HelperTextItem variant="error">
+                  {stepValidation.errors['tlsConfirmation']}
+                </HelperTextItem>
+              </HelperText>
+            </FormHelperText>
+          )}
         </FormGroup>
       )}
     </>

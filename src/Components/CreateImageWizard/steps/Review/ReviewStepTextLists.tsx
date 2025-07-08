@@ -78,8 +78,7 @@ import {
   selectUsers,
   selectTemplate,
   selectRedHatRepositories,
-  selectAapControllerUrl,
-  selectAapJobTemplateId,
+  selectAapCallbackUrl,
   selectAapHostConfigKey,
   selectAapTlsCertificateAuthority,
 } from '../../../../store/wizardSlice';
@@ -650,8 +649,7 @@ export const RegisterSatelliteList = () => {
 };
 
 export const RegisterAapList = () => {
-  const controllerUrl = useAppSelector(selectAapControllerUrl);
-  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
+  const callbackUrl = useAppSelector(selectAapCallbackUrl);
   const hostConfigKey = useAppSelector(selectAapHostConfigKey);
   const tlsCertificateAuthority = useAppSelector(
     selectAapTlsCertificateAuthority
@@ -661,16 +659,10 @@ export const RegisterAapList = () => {
     <Content>
       <Content component={ContentVariants.dl} className="review-step-dl">
         <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
-          Ansible Controller URL
+          Ansible Callback URL
         </Content>
         <Content component={ContentVariants.dd}>
-          {controllerUrl || 'None'}
-        </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
-          Job Template ID
-        </Content>
-        <Content component={ContentVariants.dd}>
-          {jobTemplateId || 'None'}
+          {callbackUrl || 'None'}
         </Content>
         <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
           Host Config Key
