@@ -504,7 +504,7 @@ const Review = () => {
           <ServicesList />
         </ExpandableSection>
       )}
-      {aapRegistration.controllerUrl && (
+      {aapRegistration.callbackUrl && (
         <ExpandableSection
           toggleContent={composeExpandable(
             'Ansible Automation Platform',

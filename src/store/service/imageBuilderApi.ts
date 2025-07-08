@@ -552,10 +552,11 @@ export type OsTree = {
   rhsm?: boolean | undefined;
 };
 export type AapRegistration = {
-  ansible_controller_url: string;
-  job_template_id: number;
+  ansible_callback_url: string;
   host_config_key: string;
   tls_certificate_authority?: string | undefined;
+  /** When true, indicates the user has confirmed that HTTPS callback URL does not require a CA certificate for verification */
+  skip_tls_verification?: boolean | undefined;
 };
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
