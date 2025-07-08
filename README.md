@@ -214,10 +214,13 @@ npx @rtk-query/codegen-openapi ./api/config/foobar.ts &
 ```
 
 
-6. Update the `.eslintignore` file by adding a new line for the generated code:
+6. Update the `eslint.config.js` file by adding the generated code path to the ignores array:
 
 ```
-foobarApi.ts
+ignores: [
+   <other ignored files>,
+  '**/foobarApi.ts',
+]
 ```
 
 7. run api generation
@@ -279,8 +282,19 @@ we're planning on using.
 
 ## Style Guidelines
 
-This project uses eslint's recommended styling guidelines. These rules can be found here:
-https://eslint.org/docs/rules/
+This project uses recommended rule sets rom several plugins:
+- `@eslint/js`
+- `typescript-eslint`
+- `eslint-plugin-react`
+- `eslint-plugin-react-hooks`
+- `eslint-plugin-react-redux`
+- `eslint-plugin-import`
+- `eslint-plugin-jsx-a11y`
+- `eslint-plugin-disable-autofix`
+- `eslint-plugin-jest-dom`
+- `eslint-plugin-testing-library`
+- `eslint-plugin-playwright`
+- `@redhat-cloud-services/eslint-config-redhat-cloud-services`
 
 To run the linter, use:
 ```bash
@@ -289,16 +303,10 @@ npm run lint
 
 Any errors that can be fixed automatically, can be corrected by running:
 ```bash
-npm run lint --fix
+npm run lint:js:fix
 ```
 
-All the linting rules and configuration of eslint can be found in [`.eslintrc.yml`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/.eslintrc.yml).
-
-### Additional eslint rules
-There are also additional rules added to enforce code style. Those being:
-- `import/order` -> enforces the order in import statements and separates them into groups based on their type
-- `prefer-const` -> enforces use of `const` declaration for variables that are never reassigned
-- `no-console` -> throws an error for any calls of `console` methods leftover after debugging
+All the linting rules and configuration of ESLint can be found in [`eslint.config.js`](https://github.com/RedHatInsights/image-builder-frontend/blob/main/eslint.config.js).
 
 ## Test Guidelines
 
