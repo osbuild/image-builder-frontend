@@ -10,9 +10,9 @@ import LandingPage from '../Components/LandingPage/LandingPage';
 import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import {
   serviceMiddleware as middleware,
-  serviceReducer as reducer,
   onPremMiddleware as onPremMiddleware,
   onPremReducer as onPremReducer,
+  serviceReducer as reducer,
 } from '../store';
 import { resolveRelPath } from '../Utilities/path';
 

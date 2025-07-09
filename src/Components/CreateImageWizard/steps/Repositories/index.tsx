@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Alert, Form, Content, Title } from '@patternfly/react-core';
+import { Alert, Content, Form, Title } from '@patternfly/react-core';
 
 import ManageRepositoriesButton from './components/ManageRepositoriesButton';
 import Repositories from './Repositories';

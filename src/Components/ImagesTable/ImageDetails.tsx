@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Alert,
+  Button,
   ClipboardCopy,
   DescriptionList,
-  DescriptionListGroup,
   DescriptionListDescription,
+  DescriptionListGroup,
   DescriptionListTerm,
-  Button,
   Popover,
-  Alert,
   Skeleton,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';

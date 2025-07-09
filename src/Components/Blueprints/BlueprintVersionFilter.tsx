@@ -10,9 +10,9 @@ import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/Me
 import { FilterIcon } from '@patternfly/react-icons';
 
 import {
-  versionFilterType,
   selectBlueprintVersionFilter,
   setBlueprintVersionFilter,
+  versionFilterType,
 } from '../../store/BlueprintSlice';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 

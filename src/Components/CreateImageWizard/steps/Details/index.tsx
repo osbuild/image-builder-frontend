@@ -1,12 +1,12 @@
 import React from 'react';
 
 import {
+  Content,
   Form,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
-  Content,
   Title,
 } from '@patternfly/react-core';
 

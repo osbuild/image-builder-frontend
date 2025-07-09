@@ -3,17 +3,17 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   FormGroup,
-  Spinner,
-  Select,
-  SelectList,
-  SelectOption,
-  MenuToggleElement,
-  MenuToggle,
-  TextInputGroup,
-  TextInputGroupMain,
   FormHelperText,
   HelperText,
   HelperTextItem,
+  MenuToggle,
+  MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
+  Spinner,
+  TextInputGroup,
+  TextInputGroupMain,
 } from '@patternfly/react-core';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
@@ -22,8 +22,8 @@ import ManageKeysButton from './ManageKeysButton';
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  useListActivationKeysQuery,
   useCreateActivationKeysMutation,
+  useListActivationKeysQuery,
 } from '../../../../../store/rhsmApi';
 import {
   changeActivationKey,

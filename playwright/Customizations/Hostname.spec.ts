@@ -5,18 +5,18 @@ import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
-  navigateToOptionalSteps,
   ibFrame,
   navigateToLandingPage,
+  navigateToOptionalSteps,
 } from '../helpers/navHelpers';
 import {
-  registerLater,
-  fillInDetails,
   createBlueprint,
-  fillInImageOutputGuest,
   deleteBlueprint,
   exportBlueprint,
+  fillInDetails,
+  fillInImageOutputGuest,
   importBlueprint,
+  registerLater,
 } from '../helpers/wizardHelpers';
 
 test('Create a blueprint with Hostname customization', async ({

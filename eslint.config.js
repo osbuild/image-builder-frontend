@@ -86,6 +86,11 @@ module.exports = defineConfig([
         ],
         pathGroupsExcludedImportTypes: ['react']
       }],
+      'sort-imports': ['error', {
+        ignoreCase: true,
+        ignoreDeclarationSort: true,
+        ignoreMemberSort: false,
+      }],
       'no-duplicate-imports': 'error',
       'prefer-const': ['error', {
         destructuring: 'any',

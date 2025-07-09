@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Alert,
+  Badge,
+  Bullseye,
+  Button,
+  PageSection,
   Pagination,
   PaginationVariant,
+  Spinner,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  Alert,
-  Spinner,
-  Bullseye,
-  Badge,
-  Button,
-  PageSection,
 } from '@patternfly/react-core';
 import { OnSetPage } from '@patternfly/react-core/dist/esm/components/Pagination/Pagination';
 import {
@@ -42,11 +42,11 @@ import ImagesTableToolbar from './ImagesTableToolbar';
 import {
   AwsS3Instance,
   CloudInstance,
-  OciInstance,
   LocalInstance,
+  OciInstance,
 } from './Instance';
 import Release from './Release';
-import { ExpiringStatus, CloudStatus, LocalStatus } from './Status';
+import { CloudStatus, ExpiringStatus, LocalStatus } from './Status';
 import { AwsTarget, Target } from './Target';
 
 import {
@@ -59,10 +59,10 @@ import {
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
 import {
-  useGetComposeStatusQuery,
-  useGetComposesQuery,
-  useGetBlueprintsQuery,
   useGetBlueprintComposesQuery,
+  useGetBlueprintsQuery,
+  useGetComposesQuery,
+  useGetComposeStatusQuery,
 } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,

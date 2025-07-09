@@ -1,11 +1,11 @@
 import React from 'react';
 
 import {
+  Button,
   EmptyState,
-  EmptyStateVariant,
   EmptyStateBody,
   EmptyStateFooter,
-  Button,
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import { RepositoryIcon } from '@patternfly/react-icons';
 

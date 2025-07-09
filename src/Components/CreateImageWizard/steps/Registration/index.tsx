@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  ClipboardCopy,
   Form,
-  Title,
   FormGroup,
   FormHelperText,
-  ClipboardCopy,
   HelperText,
   HelperTextItem,
+  Title,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 

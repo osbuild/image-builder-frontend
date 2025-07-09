@@ -2,9 +2,9 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import {
-  mockComposes,
   mockClones,
   mockCloneStatus,
+  mockComposes,
 } from '../../fixtures/composes';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
 

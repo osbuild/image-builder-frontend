@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import {
+  Button,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -8,7 +9,6 @@ import {
   InputGroup,
   InputGroupItem,
   TextInput,
-  Button,
   TextInputProps,
 } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';

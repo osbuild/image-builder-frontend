@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Form, Content, Title } from '@patternfly/react-core';
+import { Content, Form, Title } from '@patternfly/react-core';
 
 import EmptyUserState from './components/EmptyUserState';
 import UserInfo from './components/UserInfo';

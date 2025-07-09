@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 
 import {
-  Spinner,
-  Content,
-  ContentVariants,
   CodeBlock,
   CodeBlockCode,
+  Content,
+  ContentVariants,
+  Spinner,
 } from '@patternfly/react-core';
 
 import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';

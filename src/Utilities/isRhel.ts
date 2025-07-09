@@ -1,9 +1,9 @@
 import {
+  RHEL_10,
+  RHEL_10_BETA,
   RHEL_8,
   RHEL_9,
   RHEL_9_BETA,
-  RHEL_10,
-  RHEL_10_BETA,
 } from '../constants';
 
 function isRhel(distro: string) {
