@@ -1,10 +1,10 @@
 import { RHEL_8, RHEL_9 } from '../../constants';
 import {
-  GetBlueprintsApiResponse,
   CreateBlueprintResponse,
-  GetBlueprintComposesApiResponse,
-  GetBlueprintApiResponse,
   Distributions,
+  GetBlueprintApiResponse,
+  GetBlueprintComposesApiResponse,
+  GetBlueprintsApiResponse,
 } from '../../store/imageBuilderApi';
 
 export const mockBlueprintsCreation: CreateBlueprintResponse[] = [

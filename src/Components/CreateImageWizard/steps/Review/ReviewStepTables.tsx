@@ -19,8 +19,8 @@ import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
   selectDistribution,
-  selectPackages,
   selectGroups,
+  selectPackages,
   selectPartitions,
   selectRecommendedRepositories,
   selectTemplate,

@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Button,
   FormGroup,
-  Spinner,
+  MenuToggle,
+  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  MenuToggleElement,
-  MenuToggle,
+  Spinner,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  Button,
 } from '@patternfly/react-core';
 import { TimesIcon } from '@patternfly/react-icons';
 

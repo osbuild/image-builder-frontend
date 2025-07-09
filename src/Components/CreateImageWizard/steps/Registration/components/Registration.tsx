@@ -3,10 +3,10 @@ import React, { useEffect, useState } from 'react';
 import {
   Button,
   Checkbox,
+  Content,
   FormGroup,
   Popover,
   Radio,
-  Content,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';

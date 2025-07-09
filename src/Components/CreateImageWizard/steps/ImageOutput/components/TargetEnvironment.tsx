@@ -3,20 +3,20 @@ import React, { MouseEventHandler, useEffect } from 'react';
 import {
   Button,
   Card,
-  Checkbox,
-  FormGroup,
-  Popover,
-  Content,
   CardHeader,
-  Gallery,
+  Checkbox,
+  Content,
   Flex,
   FlexItem,
+  FormGroup,
+  Gallery,
+  Popover,
   Title,
 } from '@patternfly/react-core';
-import { HelpIcon, ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 
 import { useGetArchitecturesQuery } from '../../../../../store/backendApi';
-import { useAppSelector, useAppDispatch } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import { provisioningApi } from '../../../../../store/provisioningApi';
 import { rhsmApi } from '../../../../../store/rhsmApi';

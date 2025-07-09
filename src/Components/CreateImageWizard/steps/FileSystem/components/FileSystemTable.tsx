@@ -1,28 +1,28 @@
 import React, { useRef, useState } from 'react';
 
 import {
-  Popover,
-  Content,
-  Button,
   Alert,
-  TextInput,
-  Select,
-  MenuToggleElement,
+  Button,
+  Content,
   MenuToggle,
+  MenuToggleElement,
+  Popover,
+  Select,
   SelectList,
   SelectOption,
+  TextInput,
 } from '@patternfly/react-core';
 import { HelpIcon, MinusCircleIcon } from '@patternfly/react-icons';
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
   Table,
-  Th,
-  Thead,
   Tbody,
-  Tr,
-  TrProps,
   TbodyProps,
   Td,
+  Th,
+  Thead,
+  Tr,
+  TrProps,
 } from '@patternfly/react-table';
 
 import { UNIT_GIB, UNIT_KIB, UNIT_MIB } from '../../../../../constants';

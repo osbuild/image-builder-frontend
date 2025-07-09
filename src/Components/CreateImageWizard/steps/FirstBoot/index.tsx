@@ -2,14 +2,14 @@ import React from 'react';
 
 import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import {
+  Alert,
   Content,
   Form,
   FormGroup,
   FormHelperText,
-  Title,
-  Alert,
   HelperText,
   HelperTextItem,
+  Title,
 } from '@patternfly/react-core';
 
 import { FIRST_BOOT_SERVICE } from '../../../../constants';

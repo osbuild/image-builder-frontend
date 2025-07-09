@@ -2,9 +2,9 @@ import { RHEL_8, RHEL_9 } from '../../constants';
 import {
   AwsUploadStatus,
   ClonesResponse,
-  ComposeStatus,
   ComposesResponse,
   ComposesResponseItem,
+  ComposeStatus,
   UploadStatus,
 } from '../../store/imageBuilderApi';
 

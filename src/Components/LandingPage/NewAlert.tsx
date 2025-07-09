@@ -4,9 +4,9 @@ import {
   Alert,
   AlertActionCloseButton,
   AlertActionLink,
+  Content,
   Flex,
   FlexItem,
-  Content,
 } from '@patternfly/react-core';
 
 // Import for optional quickstarts functionality

@@ -10,8 +10,8 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  usePoliciesQuery,
   PolicyRead,
+  usePoliciesQuery,
 } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -21,20 +21,20 @@ import {
   useLazyGetOscapCustomizationsForPolicyQuery,
 } from '../../../../../store/imageBuilderApi';
 import {
-  changeCompliance,
-  selectDistribution,
-  selectCompliancePolicyID,
-  selectCompliancePolicyTitle,
+  addKernelArg,
   addPackage,
   addPartition,
-  changeFileSystemConfigurationType,
-  removePackage,
-  clearPartitions,
-  changeEnabledServices,
-  changeMaskedServices,
+  changeCompliance,
   changeDisabledServices,
+  changeEnabledServices,
+  changeFileSystemConfigurationType,
+  changeMaskedServices,
   clearKernelAppend,
-  addKernelArg,
+  clearPartitions,
+  removePackage,
+  selectCompliancePolicyID,
+  selectCompliancePolicyTitle,
+  selectDistribution,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';

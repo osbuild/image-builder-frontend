@@ -1,14 +1,14 @@
 import React from 'react';
 
 import {
-  Button,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateVariant,
-  Content,
-  EmptyStateActions,
-  EmptyStateFooter,
   Bullseye,
+  Button,
+  Content,
+  EmptyState,
+  EmptyStateActions,
+  EmptyStateBody,
+  EmptyStateFooter,
+  EmptyStateVariant,
 } from '@patternfly/react-core';
 import {
   ExternalLinkAltIcon,

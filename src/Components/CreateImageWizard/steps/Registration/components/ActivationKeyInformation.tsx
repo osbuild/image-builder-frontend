@@ -3,10 +3,10 @@ import React from 'react';
 import {
   Alert,
   Button,
-  Spinner,
   Content,
   ContentVariants,
   Popover,
+  Spinner,
 } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';

@@ -36,8 +36,8 @@ import {
 } from '../fixtures/oscap';
 import {
   mockPkgRecommendations,
-  mockSourcesPackagesResults,
   mockSourcesGroupsResults,
+  mockSourcesPackagesResults,
 } from '../fixtures/packages';
 import {
   mockPopularRepo,

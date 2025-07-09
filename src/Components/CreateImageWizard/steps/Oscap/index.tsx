@@ -3,8 +3,8 @@ import React, { useEffect } from 'react';
 import {
   Alert,
   AlertActionLink,
-  Form,
   Content,
+  Form,
   Title,
   ToggleGroup,
   ToggleGroupItem,
@@ -24,18 +24,18 @@ import {
 import { usePoliciesQuery } from '../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
-  ComplianceType,
-  selectComplianceProfileID,
   changeCompliance,
   changeComplianceType,
-  changeEnabledServices,
-  changeMaskedServices,
   changeDisabledServices,
-  removePackage,
+  changeEnabledServices,
   changeFileSystemConfigurationType,
-  selectDistribution,
-  selectComplianceType,
+  changeMaskedServices,
   clearKernelAppend,
+  ComplianceType,
+  removePackage,
+  selectComplianceProfileID,
+  selectComplianceType,
+  selectDistribution,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
