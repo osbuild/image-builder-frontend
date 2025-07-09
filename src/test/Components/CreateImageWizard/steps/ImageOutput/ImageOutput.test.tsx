@@ -26,21 +26,19 @@ import {
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import {
-  clickNext,
-  getNextButton,
-  openReleaseMenu,
-  selectRhel9,
-  verifyCancelButton,
-} from '../../wizardTestUtils';
-import {
   blueprintRequest,
+  clickNext,
   clickRegisterLater,
   enterBlueprintName,
+  getNextButton,
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
+  openReleaseMenu,
   renderCreateMode,
   renderEditMode,
+  selectRhel9,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 import { goToDetailsStep } from '../Details/Details.test';
 

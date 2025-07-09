@@ -6,8 +6,7 @@ import {
   Content,
   ContentVariants,
 } from '@patternfly/react-core';
-import { PlusCircleIcon } from '@patternfly/react-icons';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';

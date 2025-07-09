@@ -1,7 +1,11 @@
 // listenerMiddleware.ts
 // https://redux-toolkit.js.org/api/createListenerMiddleware#typescript-usage
-import { createListenerMiddleware, addListener } from '@reduxjs/toolkit';
-import type { TypedStartListening, TypedAddListener } from '@reduxjs/toolkit';
+import {
+  createListenerMiddleware,
+  addListener,
+  type TypedStartListening,
+  type TypedAddListener
+} from '@reduxjs/toolkit';
 
 import type { RootState, AppDispatch } from './index';
 

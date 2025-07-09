@@ -68,6 +68,7 @@ module.exports = defineConfig([
         ],
         pathGroupsExcludedImportTypes: ['react']
       }],
+      'no-duplicate-imports': 'error',
       'prefer-const': ['error', {
         destructuring: 'any',
       }],

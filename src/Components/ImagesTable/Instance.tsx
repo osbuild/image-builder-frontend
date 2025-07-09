@@ -31,8 +31,7 @@ import {
   MODAL_ANCHOR,
   SEARCH_INPUT,
 } from '../../constants';
-import { useGetBlueprintsQuery } from '../../store/backendApi';
-import { useGetComposeStatusQuery } from '../../store/backendApi';
+import { useGetBlueprintsQuery, useGetComposeStatusQuery } from '../../store/backendApi';
 import {
   selectSelectedBlueprintId,
   selectBlueprintSearchInput,

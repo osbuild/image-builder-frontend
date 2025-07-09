@@ -16,20 +16,18 @@ import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { awsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
 import {
+  blueprintRequest,
   clickBack,
   clickNext,
-  getNextButton,
-  verifyCancelButton,
-} from '../../wizardTestUtils';
-import {
-  blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
+  getNextButton,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 
 const goToAwsStep = async () => {
