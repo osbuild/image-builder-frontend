@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  HelperText,
+  HelperTextItem,
   Select,
   SelectOption,
   SelectList,
@@ -12,8 +14,6 @@ import {
   Button,
   FormGroup,
 } from '@patternfly/react-core';
-import { HelperTextItem } from '@patternfly/react-core';
-import { HelperText } from '@patternfly/react-core';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';

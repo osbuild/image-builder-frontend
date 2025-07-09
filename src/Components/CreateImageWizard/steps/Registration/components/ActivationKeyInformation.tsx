@@ -2,11 +2,12 @@ import React from 'react';
 
 import {
   Alert,
+  Button,
   Spinner,
   Content,
   ContentVariants,
+  Popover,
 } from '@patternfly/react-core';
-import { Button, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
