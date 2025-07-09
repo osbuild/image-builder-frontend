@@ -16,12 +16,12 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
-  openAndDismissSaveAndBuildModal,
   interceptEditBlueprintRequest,
+  openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
-  verifyCancelButton,
   selectRhel9,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;

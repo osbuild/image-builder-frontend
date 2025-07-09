@@ -26,8 +26,8 @@ import BlueprintsPagination from './BlueprintsPagination';
 
 import {
   DEBOUNCED_SEARCH_WAIT_TIME,
-  PAGINATION_OFFSET,
   PAGINATION_LIMIT,
+  PAGINATION_OFFSET,
 } from '../../constants';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {

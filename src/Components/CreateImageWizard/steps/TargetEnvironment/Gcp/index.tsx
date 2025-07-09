@@ -1,12 +1,12 @@
 import React from 'react';
 
 import {
-  Radio,
   Content,
-  Form,
-  Title,
-  FormGroup,
   ContentVariants,
+  Form,
+  FormGroup,
+  Radio,
+  Title,
 } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';

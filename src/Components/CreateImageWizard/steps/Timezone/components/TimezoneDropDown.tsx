@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Button,
+  FormGroup,
   HelperText,
   HelperTextItem,
-  Select,
-  SelectOption,
-  SelectList,
   MenuToggle,
   MenuToggleElement,
+  Select,
+  SelectList,
+  SelectOption,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
-  Button,
-  FormGroup,
 } from '@patternfly/react-core';
 import TimesIcon from '@patternfly/react-icons/dist/esm/icons/times-icon';
 

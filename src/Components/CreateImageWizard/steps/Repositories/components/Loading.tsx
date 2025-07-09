@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { EmptyState, Spinner, Bullseye } from '@patternfly/react-core';
+import { Bullseye, EmptyState, Spinner } from '@patternfly/react-core';
 
 export const Loading = () => {
   return (

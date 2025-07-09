@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
+  Content,
   FormGroup,
-  Spinner,
+  MenuToggle,
+  MenuToggleElement,
   Select,
   SelectList,
   SelectOption,
-  Content,
-  MenuToggleElement,
-  MenuToggle,
+  Spinner,
   TextInputGroup,
   TextInputGroupMain,
 } from '@patternfly/react-core';
@@ -21,8 +21,8 @@ import PopoverActivation from './PopoverActivation';
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  useListActivationKeysQuery,
   useCreateActivationKeysMutation,
+  useListActivationKeysQuery,
 } from '../../../../../store/rhsmApi';
 import {
   changeActivationKey,

@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Button,
+  Flex,
+  PageSection,
+  PageSectionTypes,
+  useWizardContext,
   Wizard,
   WizardFooterWrapper,
   WizardNavItem,
   WizardStep,
-  useWizardContext,
-  PageSection,
-  PageSectionTypes,
-  Flex,
 } from '@patternfly/react-core';
 import { WizardStepType } from '@patternfly/react-core/dist/esm/components/Wizard';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
@@ -40,40 +40,41 @@ import UsersStep from './steps/Users';
 import { getHostArch, getHostDistro } from './utilities/getHostInfo';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
-  useFilesystemValidation,
-  useSnapshotValidation,
-  useFirstBootValidation,
   useDetailsValidation,
-  useRegistrationValidation,
+  useFilesystemValidation,
+  useFirewallValidation,
+  useFirstBootValidation,
   useHostnameValidation,
   useKernelValidation,
-  useUsersValidation,
-  useTimezoneValidation,
-  useFirewallValidation,
-  useServicesValidation,
   useLocaleValidation,
+  useRegistrationValidation,
+  useServicesValidation,
+  useSnapshotValidation,
+  useTimezoneValidation,
+  useUsersValidation,
 } from './utilities/useValidation';
 import {
   isAwsAccountIdValid,
-  isAzureTenantGUIDValid,
-  isAzureSubscriptionIdValid,
   isAzureResourceGroupValid,
+  isAzureSubscriptionIdValid,
+  isAzureTenantGUIDValid,
   isGcpEmailValid,
 } from './validators';
 
 import {
-  RHEL_8,
-  RHEL_10_BETA,
-  RHEL_10,
   AARCH64,
   AMPLITUDE_MODULE_NAME,
+  RHEL_10,
+  RHEL_10_BETA,
+  RHEL_8,
   RHEL_9,
 } from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
-  changeDistribution,
+  addImageType,
   changeArchitecture,
+  changeDistribution,
   initializeWizard,
   selectAwsAccountId,
   selectAwsShareMethod,
@@ -87,7 +88,6 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
-  addImageType,
 } from '../../store/wizardSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';

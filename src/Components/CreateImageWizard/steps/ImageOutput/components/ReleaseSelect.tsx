@@ -10,7 +10,12 @@ import {
 } from '@patternfly/react-core';
 
 import {
+  ON_PREM_RELEASES,
   RELEASES,
+  RHEL_10,
+  RHEL_10_BETA,
+  RHEL_10_FULL_SUPPORT,
+  RHEL_10_MAINTENANCE_SUPPORT,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
@@ -18,11 +23,6 @@ import {
   RHEL_9_BETA,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
-  RHEL_10_BETA,
-  RHEL_10,
-  RHEL_10_FULL_SUPPORT,
-  RHEL_10_MAINTENANCE_SUPPORT,
-  ON_PREM_RELEASES,
 } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Distributions } from '../../../../../store/imageBuilderApi';

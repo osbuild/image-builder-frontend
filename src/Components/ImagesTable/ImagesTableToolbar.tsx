@@ -7,28 +7,28 @@ import {
   List,
   ListItem,
   Pagination,
+  Title,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  Title,
 } from '@patternfly/react-core';
 
 import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
 import {
-  useGetBlueprintsQuery,
   useGetBlueprintQuery,
+  useGetBlueprintsQuery,
 } from '../../store/backendApi';
 import {
-  selectSelectedBlueprintId,
   selectBlueprintSearchInput,
   selectBlueprintVersionFilterAPI,
+  selectSelectedBlueprintId,
 } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
 import {
   BlueprintItem,
-  useGetBlueprintComposesQuery,
   Distributions,
   GetBlueprintComposesApiArg,
+  useGetBlueprintComposesQuery,
 } from '../../store/imageBuilderApi';
 import { BlueprintActionsMenu } from '../Blueprints/BlueprintActionsMenu';
 import BlueprintDiffModal from '../Blueprints/BlueprintDiffModal';

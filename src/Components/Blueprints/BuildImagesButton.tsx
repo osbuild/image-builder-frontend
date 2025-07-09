@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
 import {
+  Button,
+  ButtonProps,
   Dropdown,
-  MenuToggle,
-  Menu,
-  MenuContent,
-  MenuList,
-  MenuItem,
   Flex,
   FlexItem,
-  Spinner,
+  Menu,
+  MenuContent,
+  MenuItem,
+  MenuList,
+  MenuToggle,
   MenuToggleAction,
-  ButtonProps,
-  Button,
+  Spinner,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import path from 'path';
 
-import type { Method, Headers, Params } from '../../../store/cockpit/types';
+import type { Headers, Method, Params } from '../../../store/cockpit/types';
 import { mockStatus } from '../../fixtures/composes';
 
 type requestOptions = {

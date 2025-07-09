@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Popover, Spinner, Content } from '@patternfly/react-core';
+import { Button, Content, Popover, Spinner } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
 

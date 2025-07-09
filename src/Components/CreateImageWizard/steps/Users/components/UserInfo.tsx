@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 import {
   Button,
-  FormGroup,
   Checkbox,
-  Tabs,
-  Tab,
-  TabTitleText,
+  FormGroup,
   Icon,
+  Tab,
+  Tabs,
+  TabTitleText,
 } from '@patternfly/react-core';
 import {
   ExclamationCircleIcon,
@@ -20,15 +20,15 @@ import RemoveUserModal from './RemoveUserModal';
 import { GENERATING_SSH_KEY_PAIRS_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  addUser,
+  addUserGroupByIndex,
+  removeUser,
+  removeUserGroupByIndex,
+  selectUsers,
+  setUserAdministratorByIndex,
   setUserNameByIndex,
   setUserPasswordByIndex,
   setUserSshKeyByIndex,
-  setUserAdministratorByIndex,
-  addUser,
-  selectUsers,
-  addUserGroupByIndex,
-  removeUserGroupByIndex,
-  removeUser,
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';

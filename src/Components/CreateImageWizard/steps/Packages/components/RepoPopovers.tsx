@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Popover, Content } from '@patternfly/react-core';
+import { Button, Content, Popover } from '@patternfly/react-core';
 import { HelpIcon } from '@patternfly/react-icons';
 
 export const IncludedReposPopover = () => {

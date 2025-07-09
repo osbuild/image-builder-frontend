@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Content, Form, Title, FormGroup } from '@patternfly/react-core';
+import { Content, Form, FormGroup, Title } from '@patternfly/react-core';
 
 import ActivationKeyInformation from './components/ActivationKeyInformation';
 import ActivationKeysList from './components/ActivationKeysList';

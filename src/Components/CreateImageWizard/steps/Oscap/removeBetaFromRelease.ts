@@ -1,8 +1,8 @@
 import {
-  RHEL_9_BETA,
-  RHEL_9,
-  RHEL_10_BETA,
   RHEL_10,
+  RHEL_10_BETA,
+  RHEL_9,
+  RHEL_9_BETA,
 } from '../../../../constants';
 import { Distributions } from '../../../../store/imageBuilderApi';
 

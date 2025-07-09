@@ -3,21 +3,21 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   Alert,
   Button,
+  Grid,
   Modal,
+  ModalBody,
+  ModalFooter,
+  ModalHeader,
   Pagination,
+  PaginationVariant,
   Panel,
   PanelMain,
   SearchInput,
+  ToggleGroup,
+  ToggleGroupItem,
   Toolbar,
   ToolbarContent,
   ToolbarItem,
-  ToggleGroup,
-  ToggleGroupItem,
-  PaginationVariant,
-  Grid,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
@@ -41,8 +41,8 @@ import {
 } from '../../../../constants';
 import {
   ApiRepositoryResponseRead,
-  useListRepositoriesQuery,
   useGetTemplateQuery,
+  useListRepositoriesQuery,
   useListRepositoryParametersQuery,
 } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
