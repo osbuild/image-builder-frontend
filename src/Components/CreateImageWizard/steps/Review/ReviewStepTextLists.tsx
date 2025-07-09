@@ -14,11 +14,11 @@ import {
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
 
 import {
+  FSReviewTable,
   PackagesTable,
   RepositoriesTable,
   SnapshotTable,
 } from './ReviewStepTables';
-import { FSReviewTable } from './ReviewStepTables';
 
 import {
   ON_PREM_RELEASES,

@@ -3,8 +3,7 @@ import React from 'react';
 import { Skeleton } from '@patternfly/react-core';
 
 import { targetOptions } from '../../constants';
-import { useGetComposeClonesQuery } from '../../store/imageBuilderApi';
-import { ComposesResponseItem } from '../../store/imageBuilderApi';
+import { ComposesResponseItem, useGetComposeClonesQuery } from '../../store/imageBuilderApi';
 
 type TargetPropTypes = {
   compose: ComposesResponseItem;

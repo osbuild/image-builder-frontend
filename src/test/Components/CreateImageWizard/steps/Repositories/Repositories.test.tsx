@@ -14,13 +14,11 @@ import {
   repositoriesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import {
+  blueprintRequest,
   clickBack,
   clickNext,
-  clickReviewAndFinish,
-} from '../../wizardTestUtils';
-import {
-  blueprintRequest,
   clickRegisterLater,
+  clickReviewAndFinish,
   enterBlueprintName,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,

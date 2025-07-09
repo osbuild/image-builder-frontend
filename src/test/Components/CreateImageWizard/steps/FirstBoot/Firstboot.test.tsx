@@ -17,22 +17,20 @@ import {
   firstBootData,
 } from '../../../../fixtures/editMode';
 import {
-  clickNext,
-  clickReviewAndFinish,
-  goToOscapStep,
-  selectGuestImageTarget,
-  getNextButton,
-  selectRhel9,
-} from '../../wizardTestUtils';
-import {
   blueprintRequest,
+  clickNext,
   clickRegisterLater,
+  clickReviewAndFinish,
   enterBlueprintName,
+  getNextButton,
+  goToOscapStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  selectGuestImageTarget,
+  selectRhel9,
 } from '../../wizardTestUtils';
 
 const goToFirstBootStep = async (): Promise<void> => {

@@ -14,7 +14,10 @@ import {
   oscapCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import {
+  clickNext,
+  clickReviewAndFinish,
   enterBlueprintName,
+  goToOscapStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -22,11 +25,6 @@ import {
   renderEditMode,
   selectGuestImageTarget,
   selectRhel9,
-} from '../../wizardTestUtils';
-import {
-  clickNext,
-  clickReviewAndFinish,
-  goToOscapStep,
 } from '../../wizardTestUtils';
 
 const selectRhel8 = async () => {

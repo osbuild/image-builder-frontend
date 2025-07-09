@@ -11,14 +11,12 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
-  clickNext,
-  clickReviewAndFinish,
-  getNextButton,
-} from '../../wizardTestUtils';
-import {
   blueprintRequest,
+  clickNext,
   clickRegisterLater,
+  clickReviewAndFinish,
   enterBlueprintName,
+  getNextButton,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
