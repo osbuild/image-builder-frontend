@@ -127,9 +127,6 @@ export function useRegistrationValidation(): StepValidation {
     selectSatelliteRegistrationCommand
   );
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
-  const controllerUrl = useAppSelector(selectAapControllerUrl);
-  const jobTemplateId = useAppSelector(selectAapJobTemplateId);
-  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
 
   const { isFetching: isFetchingKeyInfo, isError: isErrorKeyInfo } =
     useShowActivationKeyQuery(
