@@ -302,7 +302,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
   let startIndex = 1; // default index
   if (isEdit) {
-    startIndex = 22;
+    startIndex = 23;
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);

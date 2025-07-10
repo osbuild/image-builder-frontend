@@ -156,7 +156,7 @@ const AAPRegistration = () => {
         <FormGroup>
           <Checkbox
             id="tls-confirmation-checkbox"
-            label="This HTTPS URL does not require a CA certificate"
+            label="Insecure"
             isChecked={tlsConfirmation || false}
             onChange={(_event, checked) => handleTlsConfirmationChange(checked)}
           />
