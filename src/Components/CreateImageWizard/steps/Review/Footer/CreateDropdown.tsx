@@ -22,6 +22,7 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
 } from '../../../../../Hooks';
 import { setBlueprintId } from '../../../../../store/BlueprintSlice';
+import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   CreateBlueprintRequest,
@@ -31,7 +32,9 @@ import { selectPackages } from '../../../../../store/wizardSlice';
 import { createAnalytics } from '../../../../../Utilities/analytics';
 
 type CreateDropdownProps = {
-  getBlueprintPayload: () => Promise<'' | CreateBlueprintRequest | undefined>;
+  getBlueprintPayload: () => Promise<
+    '' | CreateBlueprintRequest | CockpitCreateBlueprintRequest | undefined
+  >;
   setIsOpen: (isOpen: boolean) => void;
   isDisabled: boolean;
 };
@@ -62,7 +65,11 @@ export const CreateSaveAndBuildBtn = ({
     setIsOpen(false);
 
     if (!process.env.IS_ON_PREMISE && requestBody) {
-      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      const analyticsData = createAnalytics(
+        requestBody as CreateBlueprintRequest,
+        packages,
+        isBeta
+      );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,
         type: 'createBlueprintAndBuildImages',
@@ -161,7 +168,11 @@ export const CreateSaveButton = ({
     setIsOpen(false);
 
     if (!process.env.IS_ON_PREMISE && requestBody) {
-      const analyticsData = createAnalytics(requestBody, packages, isBeta);
+      const analyticsData = createAnalytics(
+        requestBody as CreateBlueprintRequest,
+        packages,
+        isBeta
+      );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,
         type: 'createBlueprint',
