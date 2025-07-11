@@ -4,11 +4,12 @@ import { userEvent } from '@testing-library/user-event';
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { detailsCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext, getNextButton } from '../../wizardTestUtils';
 import {
   blueprintRequest,
+  clickNext,
   clickRegisterLater,
   enterBlueprintName,
+  getNextButton,
   goToRegistrationStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,

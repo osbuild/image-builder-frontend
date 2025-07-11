@@ -14,14 +14,14 @@ import { Bar } from 'react-chartjs-2';
 
 import {
   RELEASE_LIFECYCLE_URL,
+  RHEL_10_FULL_SUPPORT,
+  RHEL_10_MAINTENANCE_SUPPORT,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
-  RHEL_10_FULL_SUPPORT,
-  RHEL_10_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
 import { useAppSelector } from '../../../../../store/hooks';
 import { selectDistribution } from '../../../../../store/wizardSlice';

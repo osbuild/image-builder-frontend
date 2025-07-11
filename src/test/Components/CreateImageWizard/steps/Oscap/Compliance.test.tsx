@@ -5,8 +5,8 @@ import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { complianceCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { clickNext, selectRhel9 } from '../../wizardTestUtils';
 import {
+  clickNext,
   clickRegisterLater,
   enterBlueprintName,
   interceptBlueprintRequest,
@@ -14,6 +14,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  selectRhel9,
 } from '../../wizardTestUtils';
 
 // Overwrite

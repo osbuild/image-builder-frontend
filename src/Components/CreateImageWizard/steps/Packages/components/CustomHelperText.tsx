@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {
+  FormHelperText,
   HelperText,
   HelperTextItem,
-  FormHelperText,
 } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 export type HelperTextVariant =

@@ -8,7 +8,7 @@ import {
   Panel,
   PanelMain,
 } from '@patternfly/react-core';
-import { Table, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import TemplatesEmpty from './TemplatesEmpty';
 
@@ -16,11 +16,11 @@ import { PAGINATION_COUNT } from '../../../../../constants';
 import { useListTemplatesQuery } from '../../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  changeTemplate,
+  changeTemplateName,
   selectArchitecture,
   selectDistribution,
   selectTemplate,
-  changeTemplate,
-  changeTemplateName,
 } from '../../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../../Utilities/releaseToVersion';
 import { Error } from '../../Repositories/components/Error';

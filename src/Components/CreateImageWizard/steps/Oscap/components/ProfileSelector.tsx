@@ -18,10 +18,10 @@ import { TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import {
-  useGetOscapProfilesQuery,
-  useGetOscapCustomizationsQuery,
-  useLazyGetOscapCustomizationsQuery,
   useBackendPrefetch,
+  useGetOscapCustomizationsQuery,
+  useGetOscapProfilesQuery,
+  useLazyGetOscapCustomizationsQuery,
 } from '../../../../../store/backendApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -32,20 +32,20 @@ import {
   Services,
 } from '../../../../../store/imageBuilderApi';
 import {
-  changeCompliance,
-  selectDistribution,
-  selectComplianceProfileID,
+  addKernelArg,
   addPackage,
   addPartition,
-  changeFileSystemConfigurationType,
-  removePackage,
-  clearPartitions,
-  changeEnabledServices,
-  changeMaskedServices,
+  changeCompliance,
   changeDisabledServices,
-  selectComplianceType,
+  changeEnabledServices,
+  changeFileSystemConfigurationType,
+  changeMaskedServices,
   clearKernelAppend,
-  addKernelArg,
+  clearPartitions,
+  removePackage,
+  selectComplianceProfileID,
+  selectComplianceType,
+  selectDistribution,
 } from '../../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOnly';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';

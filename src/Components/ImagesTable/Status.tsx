@@ -6,6 +6,7 @@ import {
   Button,
   CodeBlock,
   CodeBlockCode,
+  Content,
   Flex,
   Icon,
   Panel,
@@ -13,7 +14,6 @@ import {
   Popover,
   Skeleton,
   Spinner,
-  Content,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -34,9 +34,9 @@ import {
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import {
   ClonesResponseItem,
+  ComposesResponseItem,
   ComposeStatus,
   ComposeStatusError,
-  ComposesResponseItem,
   UploadStatus,
 } from '../../store/imageBuilderApi';
 

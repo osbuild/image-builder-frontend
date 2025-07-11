@@ -5,8 +5,8 @@ import { useListRepositoriesQuery } from '../../../store/contentSourcesApi';
 import { useAppSelector } from '../../../store/hooks';
 import {
   selectArchitecture,
-  selectDistribution,
   selectCustomRepositories,
+  selectDistribution,
 } from '../../../store/wizardSlice';
 import { releaseToVersion } from '../../../Utilities/releaseToVersion';
 

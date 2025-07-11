@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
   Dropdown,
   Flex,
   MenuToggle,
-  WizardFooterWrapper,
   useWizardContext,
+  WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';

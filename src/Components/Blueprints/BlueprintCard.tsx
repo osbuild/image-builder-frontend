@@ -3,10 +3,10 @@ import React from 'react';
 import {
   Badge,
   Card,
-  CardHeader,
-  CardTitle,
   CardBody,
   CardFooter,
+  CardHeader,
+  CardTitle,
   Spinner,
 } from '@patternfly/react-core';
 

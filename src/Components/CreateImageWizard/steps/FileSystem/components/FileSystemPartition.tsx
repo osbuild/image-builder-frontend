@@ -5,8 +5,8 @@ import { FormGroup, Label, Radio } from '@patternfly/react-core';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFileSystemConfigurationType,
-  selectFileSystemConfigurationType,
   selectComplianceProfileID,
+  selectFileSystemConfigurationType,
 } from '../../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {

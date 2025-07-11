@@ -1,17 +1,17 @@
 import React from 'react';
 
 import {
-  Radio,
+  Button,
   Content,
   Form,
-  Title,
   FormGroup,
-  TextInput,
   Gallery,
   GalleryItem,
   HelperText,
   HelperTextItem,
-  Button,
+  Radio,
+  TextInput,
+  Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 

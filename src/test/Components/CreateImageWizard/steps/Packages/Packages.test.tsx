@@ -17,22 +17,20 @@ import {
   packagesCreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
 import {
+  blueprintRequest,
   clickBack,
   clickNext,
-  clickReviewAndFinish,
-  selectRhel9,
-  verifyCancelButton,
-} from '../../wizardTestUtils';
-import { selectCustomRepo } from '../../wizardTestUtils';
-import {
-  blueprintRequest,
   clickRegisterLater,
+  clickReviewAndFinish,
   enterBlueprintName,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  selectCustomRepo,
+  selectRhel9,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 
 const router: RemixRouter | undefined = undefined;

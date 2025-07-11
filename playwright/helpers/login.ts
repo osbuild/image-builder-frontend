@@ -1,6 +1,6 @@
 import path from 'path';
 
-import { type Page, expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted, togglePreview } from './helpers';
 import { ibFrame } from './navHelpers';

@@ -1,6 +1,6 @@
 import {
-  AwsUploadRequestOptions,
   Awss3UploadStatus,
+  AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   AzureUploadStatus,
   GcpUploadRequestOptions,

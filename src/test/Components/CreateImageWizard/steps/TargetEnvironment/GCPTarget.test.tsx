@@ -12,21 +12,19 @@ import {
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { gcpCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
+  blueprintRequest,
   clickBack,
   clickNext,
-  getNextButton,
-  verifyCancelButton,
-} from '../../wizardTestUtils';
-import {
-  blueprintRequest,
   clickRegisterLater,
   enterBlueprintName,
+  getNextButton,
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  verifyCancelButton,
 } from '../../wizardTestUtils';
 
 const GCP_ACCOUNT = 'test@gmail.com';

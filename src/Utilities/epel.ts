@@ -1,7 +1,7 @@
 import {
+  EPEL_10_REPO_DEFINITION,
   EPEL_8_REPO_DEFINITION,
   EPEL_9_REPO_DEFINITION,
-  EPEL_10_REPO_DEFINITION,
 } from '../constants';
 
 type EpelRepoDefinition = typeof EPEL_8_REPO_DEFINITION;

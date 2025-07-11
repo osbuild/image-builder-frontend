@@ -9,30 +9,28 @@ import {
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import {
-  SCRIPT,
-  SCRIPT_DOS,
-  SCRIPT_WITHOUT_SHEBANG,
   baseCreateBlueprintRequest,
   firstBootCreateBlueprintRequest,
   firstBootData,
+  SCRIPT,
+  SCRIPT_DOS,
+  SCRIPT_WITHOUT_SHEBANG,
 } from '../../../../fixtures/editMode';
 import {
-  clickNext,
-  clickReviewAndFinish,
-  goToOscapStep,
-  selectGuestImageTarget,
-  getNextButton,
-  selectRhel9,
-} from '../../wizardTestUtils';
-import {
   blueprintRequest,
+  clickNext,
   clickRegisterLater,
+  clickReviewAndFinish,
   enterBlueprintName,
+  getNextButton,
+  goToOscapStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  selectGuestImageTarget,
+  selectRhel9,
 } from '../../wizardTestUtils';
 
 const goToFirstBootStep = async (): Promise<void> => {

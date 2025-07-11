@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 
 import {
   Button,
+  Content,
   DatePicker,
   Flex,
   FormGroup,
   Grid,
   Radio,
-  Content,
   Title,
 } from '@patternfly/react-core';
 
@@ -15,12 +15,12 @@ import Templates from './Templates';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  selectSnapshotDate,
-  changeUseLatest,
   changeSnapshotDate,
   changeTemplate,
-  selectUseLatest,
+  changeUseLatest,
+  selectSnapshotDate,
   selectTemplate,
+  selectUseLatest,
 } from '../../../../../store/wizardSlice';
 import { yyyyMMddFormat } from '../../../../../Utilities/time';
 import { useFlag } from '../../../../../Utilities/useGetEnvironment';

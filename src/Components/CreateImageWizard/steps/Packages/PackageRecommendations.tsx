@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
+  Content,
+  ContentVariants,
   ExpandableSection,
   Flex,
   FlexItem,
@@ -12,8 +14,6 @@ import {
   PanelMainBody,
   Popover,
   Spinner,
-  Content,
-  ContentVariants,
 } from '@patternfly/react-core';
 import { HelpIcon, OptimizeIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';

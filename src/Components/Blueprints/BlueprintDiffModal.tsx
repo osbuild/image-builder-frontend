@@ -4,10 +4,10 @@ import { DiffEditor } from '@monaco-editor/react';
 import {
   Button,
   Modal,
-  ModalVariant,
   ModalBody,
   ModalFooter,
   ModalHeader,
+  ModalVariant,
 } from '@patternfly/react-core';
 
 import { BuildImagesButton } from './BuildImagesButton';

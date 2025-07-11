@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
 import {
-  DropdownList,
   DropdownItem,
-  MenuToggleAction,
-  Spinner,
+  DropdownList,
   Flex,
   FlexItem,
+  MenuToggleAction,
+  Spinner,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';

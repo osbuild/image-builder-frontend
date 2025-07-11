@@ -2,10 +2,10 @@ import React, { useEffect } from 'react';
 
 import {
   Alert,
+  FormGroup,
   HelperText,
   HelperTextItem,
   TextInput,
-  FormGroup,
 } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';

@@ -23,20 +23,20 @@ import {
 import { registrationCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import { server } from '../../../../mocks/server';
 import {
-  enterBlueprintName,
-  renderCreateMode,
-  interceptBlueprintRequest,
-  goToRegistrationStep,
+  clickBack,
+  clickNext,
   clickRegisterLater,
-  renderEditMode,
+  clickRegisterSatellite,
+  clickReviewAndFinish,
+  enterBlueprintName,
+  getNextButton,
+  goToRegistrationStep,
+  interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
-  clickNext,
-  clickBack,
+  renderCreateMode,
+  renderEditMode,
   verifyCancelButton,
-  clickReviewAndFinish,
-  getNextButton,
-  clickRegisterSatellite,
 } from '../../wizardTestUtils';
 
 const localStorageMock = (() => {

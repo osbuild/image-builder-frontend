@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   ActionGroup,
   Button,
   Form,
   FormGroup,
+  FormHelperText,
   HelperText,
   HelperTextItem,
-  FormHelperText,
   Label,
   LabelGroup,
+  MenuToggle,
   Popover,
   Select,
-  SelectOption,
   SelectList,
-  ValidatedOptions,
-  MenuToggle,
+  SelectOption,
   TextInputGroup,
   TextInputGroupMain,
   TextInputGroupUtilities,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import {
