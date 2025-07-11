@@ -370,6 +370,9 @@ export type Subscription = {
   /** Optional value to register with a template when using rhc to register the system with Insights.
    */
   template_name?: string | undefined;
+  /** Optional value used to specify the patch host when registering the system with Insights.
+   */
+  patch_url?: string | undefined;
 };
 export type Module = {
   /** Name of the module to enable.
