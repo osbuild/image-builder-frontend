@@ -1,3 +1,4 @@
+import TOML from '@ltd/j-toml';
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -164,5 +165,50 @@ test.describe.serial('test', () => {
     await frame.getByTestId('blueprint-action-menu-toggle').click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
     await frame.getByRole('button', { name: 'Delete' }).click();
+  });
+
+  test('cockpit worker config', async ({ page }) => {
+    if (isHosted()) {
+      return;
+    }
+
+    await ensureAuthenticated(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
+    const frame = ibFrame(page);
+    await frame
+      .getByRole('button', { name: 'Configure Cloud Providers' })
+      .click();
+    await frame.locator('button[id="aws-config-switch"]').click();
+    await frame
+      .getByRole('textbox', { name: 'AWS bucket' })
+      // this doesn't need to exist, we're just testing that
+      // the form works as expected
+      .fill('cockpit-ib-playwright-bucket');
+    await frame
+      .getByRole('textbox', { name: 'Path to AWS credentials' })
+      .fill('/test/credentials');
+    await frame.getByRole('button', { name: 'Submit' }).click();
+    await frame
+      .getByRole('button', { name: 'Configure Cloud Providers' })
+      .click();
+
+    // eslint-disable-next-line
+    const cockpit = require('cockpit');
+    const configFile = await cockpit
+      .file('/etc/osbuild-worker/osbuild-worker.toml')
+      .read();
+
+    const { aws } = TOML.parse(configFile);
+    expect(aws).toBeTruthy();
+
+    // eslint-disable-next-line
+    const { bucket, credentials } = aws as any;
+
+    await expect(frame.getByRole('textbox', { name: bucket })).toBeVisible();
+    await expect(
+      frame.getByRole('textbox', { name: credentials })
+    ).toBeVisible();
   });
 });
