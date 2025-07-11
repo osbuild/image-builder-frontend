@@ -11,7 +11,6 @@ export interface Cleanup {
 }
 
 export const test = oldTest.extend<WithCleanup>({
-  // eslint-disable-next-line no-empty-pattern
   cleanup: async ({}, use) => {
     const cleanupFns: Map<symbol, () => Promise<unknown>> = new Map();
 
