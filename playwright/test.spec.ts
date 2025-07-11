@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+
+import TOML from '@ltd/j-toml';
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -164,5 +167,75 @@ test.describe.serial('test', () => {
     await frame.getByTestId('blueprint-action-menu-toggle').click();
     await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
     await frame.getByRole('button', { name: 'Delete' }).click();
+  });
+
+  test('cockpit worker config', async ({ page }) => {
+    if (isHosted()) {
+      return;
+    }
+
+    await ensureAuthenticated(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
+    await page.goto('/cockpit-image-builder');
+    const frame = ibFrame(page);
+
+    const header = frame.getByText('Configure AWS Uploads');
+    if (!(await header.isVisible())) {
+      await frame
+        .getByRole('button', { name: 'Configure Cloud Providers' })
+        .click();
+      await expect(header).toBeVisible();
+    }
+
+    const bucket = 'cockpit-ib-playwright-bucket';
+    const credentials = '/test/credentials';
+    const switchInput = frame.locator('#aws-config-switch');
+    await expect(switchInput).toBeVisible();
+
+    // the test is a little bit flaky, if it fails the first time
+    // while setting the configs, the second time the config should
+    // already be loaded and visible, if it is go back to the landing page
+    // https://github.com/osbuild/image-builder-frontend/issues/3429
+    if (await switchInput.isChecked()) {
+      await frame.getByRole('button', { name: 'Cancel' }).click();
+      await expect(
+        frame.getByRole('heading', { name: 'All images' })
+      ).toBeVisible();
+    } else {
+      const switchToggle = frame.locator('.pf-v6-c-switch');
+      await switchToggle.click();
+
+      await frame
+        .getByPlaceholder('AWS bucket')
+        // this doesn't need to exist, we're just testing that
+        // the form works as expected
+        .fill(bucket);
+      await frame.getByPlaceholder('Path to AWS credentials').fill(credentials);
+      await frame.getByRole('button', { name: 'Submit' }).click();
+      await expect(
+        frame.getByRole('heading', { name: 'All images' })
+      ).toBeVisible();
+    }
+
+    const config = readFileSync('/etc/osbuild-worker/osbuild-worker.toml');
+    // this is for testing, the field `aws` should exist
+    // eslint-disable-next-line
+    const parsed = TOML.parse(config) as any;
+    expect(parsed.aws?.bucket).toBe(bucket);
+    expect(parsed.aws?.credentials).toBe(credentials);
+
+    await frame
+      .getByRole('button', { name: 'Configure Cloud Providers' })
+      .click();
+    await expect(header).toBeVisible();
+    await expect(frame.locator('#aws-config-switch')).toBeChecked();
+
+    await expect(frame.getByPlaceholder('AWS bucket')).toHaveValue(bucket);
+    await expect(frame.getByPlaceholder('Path to AWS credentials')).toHaveValue(
+      credentials
+    );
+    await frame.getByRole('button', { name: 'Cancel' }).click();
   });
 });

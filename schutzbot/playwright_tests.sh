@@ -77,6 +77,7 @@ sudo podman run \
      -e "CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY" \
      --net=host \
      -v "$PWD:/tests" \
+     -v '/etc:/etc' \
      --privileged  \
      --rm \
      --init \
