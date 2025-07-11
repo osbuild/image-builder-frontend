@@ -36,9 +36,9 @@ const selectGuestImage = async () => {
 
 const selectImageInstaller = async () => {
   const user = userEvent.setup();
-  const imageInstallerCheckbox = await screen.findByTestId(
-    'checkbox-image-installer'
-  );
+  const imageInstallerCheckbox = await screen.findByRole('checkbox', {
+    name: /Bare metal installer/i,
+  });
   await waitFor(() => user.click(imageInstallerCheckbox));
 };
 
@@ -71,8 +71,7 @@ const customizePartition = async () => {
 };
 
 const getRow = async (row: number) => {
-  const table = await screen.findByTestId('fsc-table');
-  const rows = await within(table).findAllByRole('row');
+  const rows = await screen.findAllByRole('row');
   return rows[row];
 };
 
@@ -88,7 +87,7 @@ const changePartitionSize = async () => {
 const changePartitionUnitsToKiB = async () => {
   const user = userEvent.setup();
   const row = await getRow(1);
-  const units = await within(row).findByTestId('unit-select');
+  const units = await within(row).findByText('GiB');
   await waitFor(() => user.click(units));
   const kibOption = await screen.findByRole('option', { name: 'KiB' });
   await waitFor(() => user.click(kibOption));
@@ -97,7 +96,7 @@ const changePartitionUnitsToKiB = async () => {
 const changePartitionUnitsToMiB = async () => {
   const user = userEvent.setup();
   const row = await getRow(1);
-  const units = await within(row).findByTestId('unit-select');
+  const units = await within(row).findByText('GiB');
   await waitFor(() => user.click(units));
   const mibOption = await screen.findByRole('option', { name: 'MiB' });
   await waitFor(() => user.click(mibOption));
@@ -180,16 +179,12 @@ describe('Step File system configuration', () => {
     const mountPointAlerts = screen.getAllByRole('heading', {
       name: /danger alert: duplicate mount point/i,
     });
-    const fscTable = await screen.findByTestId(
-      'file-system-configuration-tbody'
-    );
-    const rows = within(fscTable).getAllByRole('row');
+    const rows = await screen.findAllByRole('row');
+    rows.shift(); // remove table header
     expect(rows).toHaveLength(3);
 
     //Change mountpoint of final row to /var, resolving errors
-    const mountPointOptions = await within(rows[2]).findByTestId(
-      'prefix-select'
-    );
+    const mountPointOptions = await within(rows[2]).findByText('/home');
     await waitFor(() => user.click(mountPointOptions));
     const varButton = await screen.findByRole('option', {
       name: /\/var/i,

@@ -37,7 +37,6 @@ type TargetEnvironmentCardProps = {
   imageAlt: string;
   isClicked: boolean;
   isDisabled?: boolean;
-  testId: string;
   handleOnClick: () => void;
   onMouseEnter?: MouseEventHandler<HTMLElement>;
 };
@@ -50,11 +49,9 @@ const TargetEnvironmentCard = ({
   onMouseEnter,
   isClicked,
   isDisabled = false,
-  testId,
 }: TargetEnvironmentCardProps) => {
   return (
     <Card
-      data-testid={testId}
       style={{ textAlign: 'center' } as React.CSSProperties}
       onMouseUp={onMouseEnter}
       isClicked={isClicked}
@@ -147,7 +144,6 @@ const TargetEnvironment = () => {
           <Gallery hasGutter>
             {supportedEnvironments?.includes('aws') && (
               <TargetEnvironmentCard
-                testId="upload-aws"
                 title="Amazon Web Services"
                 imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
                 imageAlt="Amazon Web Services logo"
@@ -158,7 +154,6 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('gcp') && (
               <TargetEnvironmentCard
-                testId="upload-google"
                 title="Google Cloud Platform"
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
@@ -171,7 +166,6 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('azure') && (
               <TargetEnvironmentCard
-                testId="upload-azure"
                 title="Microsoft Azure"
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
@@ -184,7 +178,6 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('oci') && (
               <TargetEnvironmentCard
-                testId="upload-oci"
                 title="Oracle Cloud Infrastructure"
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/oracle-short.svg'
@@ -208,7 +201,6 @@ const TargetEnvironment = () => {
               name="vsphere-checkbox-ova"
               aria-label="VMware vSphere checkbox OVA"
               id="vsphere-checkbox-ova"
-              data-testid="checkbox-vsphere-ova"
               label={
                 <>
                   VMware vSphere - Open virtualization format (.ova)
@@ -249,7 +241,6 @@ const TargetEnvironment = () => {
               name="vsphere-checkbox-vmdk"
               aria-label="VMware vSphere checkbox VMDK"
               id="vsphere-checkbox-vmdk"
-              data-testid="checkbox-vsphere-vmdk"
               label={
                 <>
                   VMware vSphere - Virtual disk (.vmdk)
@@ -296,7 +287,6 @@ const TargetEnvironment = () => {
             aria-label="Virtualization guest image checkbox"
             id="checkbox-guest-image"
             name="Virtualization guest image"
-            data-testid="checkbox-guest-image"
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
@@ -309,7 +299,6 @@ const TargetEnvironment = () => {
             aria-label="Bare metal installer checkbox"
             id="checkbox-image-installer"
             name="Bare metal installer"
-            data-testid="checkbox-image-installer"
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
@@ -369,7 +358,6 @@ const TargetEnvironment = () => {
             aria-label="windows subsystem for linux checkbox"
             id="checkbox-wsl"
             name="WSL"
-            data-testid="checkbox-wsl"
           />
         )}
       </FormGroup>
