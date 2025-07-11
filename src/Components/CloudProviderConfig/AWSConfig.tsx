@@ -86,6 +86,7 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
   return (
     <FormGroup label={label}>
       <ValidatedInput
+        placeholder="AWS bucket"
         ariaLabel="aws-bucket"
         value={value || ''}
         validator={isAwsBucketValid}
@@ -146,6 +147,7 @@ const AWSCredsPath = ({
   return (
     <FormGroup label={label}>
       <ValidatedInput
+        placeholder="Path to AWS credentials"
         ariaLabel="aws-creds-path"
         value={value || ''}
         validator={isAwsCredsPathValid}
