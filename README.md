@@ -19,15 +19,19 @@ Frontend code for Image Builder.
 ## Table of Contents
 1. [How to build and run image-builder-frontend](#frontend-development)
    1. [Frontend Development](#frontend-development)
-      1. [API](#api-endpoints)
-      2. [Unleash feature flags](#unleash-feature-flags)
-   2. [Backend Development](#backend-development)
-2. [File structure](#file-structure)
-3. [Style Guidelines](#style-guidelines)
-4. [Test Guidelines](#test-guidelines)
-5. [Running hosted service Playwright tests](#running-hosted-service-playwright-tests)
+   2. [Image builder as Cockpit plugin](#image-builder-as-cockpit-plugin)
+   3. [Backend Development](#backend-development)
+2. [API](#api-endpoints)
+3. [Unleash feature flags](#unleash-feature-flags)
+4. [File structure](#file-structure)
+5. [Style Guidelines](#style-guidelines)
+6. [Test Guidelines](#test-guidelines)
+7. [Running hosted service Playwright tests](#running-hosted-service-playwright-tests)
 
 ## How to build and run image-builder-frontend
+
+> [!IMPORTANT]
+> Running image-builder-frontend against [console.redhat.com](https://console.redhat.com/) requires connection to the Red Hat VPN, which is only available to Red Hat employees. External contributors can locally run [image builder as Cockpit plugin](#image-builder-as-cockpit-plugin).
 
 ### Frontend Development
 
@@ -98,7 +102,58 @@ The UI should be running on
 https://prod.foo.redhat.com:1337/beta/insights/image-builder/landing.
 Note that this requires you to have access to either production or stage (plus VPN and proxy config) of insights.
 
-#### API endpoints
+### Image builder as Cockpit plugin
+
+> [!NOTE]
+> Issues marked with [cockpit-image-builder](https://github.com/osbuild/image-builder-frontend/issues?q=is%3Aissue%20state%3Aopen%20label%3Acockpit-image-builder) label are reproducible in image builder plugin and can be worked on by external contributors without connection to the Red Hat VPN.
+
+#### Cockpit setup
+To install and setup Cockpit follow guide at: https://cockpit-project.org/running.html
+
+#### On-premises image builder installation and configuration
+To install and configure `osbuild-composer` on your local machine follow our documentation: https://osbuild.org/docs/on-premises/installation/
+
+#### Scripts for local development of image builder plugin
+
+The following scripts are used to build the frontend with Webpack and install it into the Cockpit directories. These scripts streamline the development process by automating build and installation steps.
+
+Runs Webpack with the specified configuration (cockpit/webpack.config.ts) to build the frontend assets.
+Use this command whenever you need to compile the latest changes in your frontend code.
+
+Creates the necessary directory in the user's local Cockpit share (~/.local/share/cockpit/).
+Creates a symbolic link (image-builder-frontend) pointing to the built frontend assets (cockpit/public).
+Use this command after building the frontend to install it locally for development purposes.
+The symbolic link allows Cockpit to serve the frontend assets from your local development environment,
+making it easier to test changes in real-time without deploying to a remote server.
+
+```bash
+make cockpit/build
+```
+
+```bash
+make cockpit/devel-install
+```
+
+To uninstall and remove the symbolic link, run the following command:
+
+```bash
+make cockpit/devel-uninstall
+```
+
+For convenience, you can run the following to combine all three steps:
+
+
+```bash
+make cockpit/devel
+```
+
+### Backend Development
+
+To develop both the frontend and the backend you can again use the proxy to run both the
+frontend and backend locally against the chrome at cloud.redhat.com. For instructions
+see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-getting-started).
+
+## API endpoints
 
 API slice definitions are programmatically generated using the [@rtk-query/codegen-openapi](https://redux-toolkit.js.org/rtk-query/usage/code-generation) package.
 
@@ -107,7 +162,7 @@ corresponding configuration files are stored in `/api/config`. Each endpoint
 has a corresponding empty API slice and generated API slice which are stored in
 `/src/store`.
 
-##### Add a new API
+### Add a new API schema
 
 For a hypothetical API called foobar
 
@@ -173,12 +228,12 @@ npm run api
 
 And voilà!
 
-##### Add a new endpoint
+### Add a new endpoint
 
 To add a new endpoint, simply update the `api/config/foobar.ts` file with new
 endpoints in the `filterEndpoints` table.
 
-#### Unleash feature flags
+## Unleash feature flags
 
 Your user needs to have the corresponding rights, do the
 same as this MR in internal gitlab https://gitlab.cee.redhat.com/service/app-interface/-/merge_requests/79225
@@ -194,7 +249,7 @@ existing flags:
 
 https://github.com/RedHatInsights/image-builder-frontend/blob/c84b493eba82ce83a7844943943d91112ffe8322/src/Components/ImagesTable/ImageLink.js#L99
 
-##### Mocking flags for tests
+### Mocking flags for tests
 
 Flags can be mocked for the unit tests to access some feature. Checkout:
 https://github.com/osbuild/image-builder-frontend/blob/9a464e416bc3769cfc8e23b62f1dd410eb0e0455/src/test/Components/CreateImageWizard/CreateImageWizard.test.tsx#L49
@@ -204,60 +259,13 @@ base, then it's good practice to test the two of them. If not, only test what's
 actually owned by the frontend project.
 
 
-##### Cleaning the flags
+### Cleaning the flags
 
 Unleash toggles are expected to live for a limited amount of time, documentation
 specify 40 days for a release, we should keep that in mind for each toggle
 we're planning on using.
 
-### Backend Development
-
-To develop both the frontend and the backend you can again use the proxy to run both the
-frontend and backend locally against the chrome at cloud.redhat.com. For instructions
-see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-getting-started).
-
 ## File Structure
-
-### OnPremise Development - Cockpit Build and Install
-
-## Overview
-
-The following scripts are used to build the frontend with Webpack and install it into the Cockpit directories. These scripts streamline the development process by automating build and installation steps.
-
-### Scripts
-
-#### 1. Build the Cockpit Frontend
-
-Runs Webpack with the specified configuration (cockpit/webpack.config.ts) to build the frontend assets.
-Use this command whenever you need to compile the latest changes in your frontend code.
-
-Creates the necessary directory in the user's local Cockpit share (~/.local/share/cockpit/).
-Creates a symbolic link (image-builder-frontend) pointing to the built frontend assets (cockpit/public).
-Use this command after building the frontend to install it locally for development purposes.
-The symbolic link allows Cockpit to serve the frontend assets from your local development environment,
-making it easier to test changes in real-time without deploying to a remote server.
-
-```bash
-make cockpit/devel-install
-```
-
-```bash
-make cockpit/build
-```
-
-To uninstall and remove the symbolic link, run the following command:
-
-```bash
-make cockpit/devel-uninstall
-```
-
-For convenience, you can run the following to combine all three steps:
-
-
-```bash
-make cockpit/devel
-```
-
 ### Quick Reference
 | Directory                                                                                                            | Description                                |
 | ---------                                                                                                            | -----------                                |
