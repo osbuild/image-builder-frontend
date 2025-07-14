@@ -16,7 +16,6 @@ import {
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
 import ManageKeysButton from './ManageKeysButton';
-import PopoverActivation from './PopoverActivation';
 
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -243,13 +242,7 @@ const ActivationKeysList = () => {
 
   return (
     <>
-      <FormGroup
-        label={
-          <>
-            Activation key to use for this image <PopoverActivation />
-          </>
-        }
-      >
+      <FormGroup label="Activation key to use for this image">
         <Select
           isScrollable
           isOpen={isOpen}
