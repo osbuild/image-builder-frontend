@@ -88,7 +88,6 @@ import {
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
 import ActivationKeyInformation from '../Registration/components/ActivationKeyInformation';
-import PopoverActivation from '../Registration/components/PopoverActivation';
 
 const ExpirationWarning = () => {
   return (
@@ -690,7 +689,7 @@ export const RegisterNowList = () => {
             </Content>
           </Content>
           <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
-            Activation key <PopoverActivation />
+            Activation key
           </Content>
           <Content component={ContentVariants.dd}>
             <ActivationKeyInformation />

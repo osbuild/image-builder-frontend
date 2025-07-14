@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { Content, Form, Title, FormGroup } from '@patternfly/react-core';
+import {
+  Form,
+  Title,
+  FormGroup,
+  FormHelperText,
+  ClipboardCopy,
+  HelperText,
+  HelperTextItem,
+} from '@patternfly/react-core';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './components/ActivationKeyInformation';
 import ActivationKeysList from './components/ActivationKeysList';
@@ -14,6 +23,17 @@ import {
 } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
+  const { auth } = useChrome();
+  const [orgId, setOrgId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    (async () => {
+      const userData = await auth?.getUser();
+      const id = userData?.identity?.internal?.org_id;
+      setOrgId(id);
+    })();
+  }, []);
+
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
   return (
@@ -21,11 +41,23 @@ const RegistrationStep = () => {
       <Title headingLevel="h1" size="xl">
         Register systems using this image
       </Title>
-      <Content>
-        You can either automatically register your systems with Red Hat to
-        enhance security and track your spending or choose to register your
-        system during initial boot.
-      </Content>
+      <FormGroup label="Organization ID">
+        <ClipboardCopy
+          hoverTip="Copy to clipboard"
+          clickTip="Successfully copied to clipboard!"
+          variant="inline-compact"
+        >
+          {orgId || ''}
+        </ClipboardCopy>
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              If using an activation key with command line registration, you
+              must provide your organization&apos;s ID
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
+      </FormGroup>
       <Registration />
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
       {!process.env.IS_ON_PREMISE &&
