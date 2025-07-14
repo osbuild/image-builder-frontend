@@ -4,6 +4,7 @@ import { Content, Form, Title, FormGroup } from '@patternfly/react-core';
 
 import ActivationKeyInformation from './components/ActivationKeyInformation';
 import ActivationKeysList from './components/ActivationKeysList';
+import RegisterLaterAlert from './components/RegisterLaterAlert';
 import Registration from './components/Registration';
 import SatelliteRegistration from './components/SatelliteRegistration';
 
@@ -27,8 +28,10 @@ const RegistrationStep = () => {
         system during initial boot.
       </Content>
       <Registration />
+      {registrationType === 'register-later' && <RegisterLaterAlert />}
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
       {!process.env.IS_ON_PREMISE &&
+        registrationType !== 'register-later' &&
         registrationType !== 'register-satellite' && <ActivationKeysList />}
       {!process.env.IS_ON_PREMISE &&
         activationKey &&
