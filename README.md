@@ -73,35 +73,6 @@ echo "127.0.0.1 stage.foo.redhat.com" >> /etc/hosts
 
 4. open browser at `https://stage.foo.redhat.com:1337/beta/insights/image-builder`
 
-#### Insights proxy (deprecated)
-
-1. Clone the insights proxy: https://github.com/RedHatInsights/insights-proxy
-
-2. Setting up the proxy
-
-    Choose a runner (podman or docker), and point the SPANDX_CONFIG variable to
-    `profile/local-frontend.js` included in image-builder-frontend.
-
-    ```bash
-        sudo insights-proxy/scripts/patch-etc-hosts.sh
-        export RUNNER="podman"
-        export SPANDX_CONFIG=$PATH_TO/image-builder-frontend/profiles/local-frontend.js
-        sudo -E insights-proxy/scripts/run.sh
-    ```
-
-3. Starting up image-builder-frontend
-
-    In the image-builder-frontend checkout directory
-
-    ```bash
-        npm install
-        npm start
-    ```
-
-The UI should be running on
-https://prod.foo.redhat.com:1337/beta/insights/image-builder/landing.
-Note that this requires you to have access to either production or stage (plus VPN and proxy config) of insights.
-
 ### Image builder as Cockpit plugin
 
 > [!NOTE]
