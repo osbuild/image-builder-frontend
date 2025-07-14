@@ -218,7 +218,7 @@ describe('Step Registration', () => {
     );
   });
 
-  test('should disable dropdown when clicking Register the system later', async () => {
+  test('should show alert when selecting Register later', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
@@ -228,11 +228,12 @@ describe('Step Registration', () => {
         screen.queryByTestId('selected-activation-key'),
       ).not.toBeInTheDocument(),
     );
-    await waitFor(async () =>
-      expect(await screen.findByTestId('activation-key-select')).toHaveClass(
-        'pf-m-disabled',
-      ),
+    await waitFor(() =>
+      expect(
+        screen.queryByTestId('activation-key-select'),
+      ).not.toBeInTheDocument(),
     );
+    await screen.findByText(/You should register your image now/i);
     await goToReviewStep();
     await screen.findByText('Register the system later');
   });
