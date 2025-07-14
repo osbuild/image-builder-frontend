@@ -100,6 +100,7 @@ const PackageRecommendations = () => {
               shownRecommendations: response.data.packages,
               selectedPackages: packages.map((pkg) => pkg.name),
               distribution: distribution.replace('-', ''),
+              modelVersion: response.data.modelVersion,
             }
           );
         }
@@ -267,6 +268,7 @@ const PackageRecommendations = () => {
                                   ),
                                   shownRecommendations: data.packages,
                                   distribution: distribution.replace('-', ''),
+                                  modelVersion: data.modelVersion,
                                 }
                               );
                               addRecommendedPackage(pkg);
