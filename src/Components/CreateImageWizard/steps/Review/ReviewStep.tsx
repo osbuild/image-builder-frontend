@@ -284,7 +284,7 @@ const Review = () => {
             <StackItem>
               <Content>
                 <Content component={ContentVariants.h3}>
-                  WSL - {targetOptions.wsl} (.tar.gz)
+                  WSL - {targetOptions.wsl} (.wsl)
                 </Content>
                 <TargetEnvOtherList />
               </Content>

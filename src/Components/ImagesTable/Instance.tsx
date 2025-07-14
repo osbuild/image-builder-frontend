@@ -384,7 +384,7 @@ export const AwsS3Instance = ({
     'image-installer': '.iso',
     vsphere: '.vmdk',
     'vsphere-ova': '.ova',
-    wsl: '.tar.gz',
+    wsl: '.wsl',
     ami: '',
     'rhel-edge-commit': '',
     'rhel-edge-installer': '',
