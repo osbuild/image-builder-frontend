@@ -334,7 +334,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByTestId('upload-oci');
     await screen.findByTestId('checkbox-guest-image');
     await screen.findByTestId('checkbox-image-installer');
-    await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
+    await screen.findByText(/wsl - windows subsystem for linux \(\.wsl\)/i);
   });
 
   test('rhel9 x86_64', async () => {
@@ -372,7 +372,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     );
     await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
     ).not.toBeInTheDocument();
   });
 
@@ -410,7 +410,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       /VMware vSphere - Open virtualization format \(\.ova\)/
     );
     await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
-    await screen.findByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i);
+    await screen.findByText(/wsl - windows subsystem for linux \(\.wsl\)/i);
   });
 
   test('rhel10 aarch64', async () => {
@@ -453,7 +453,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
     ).not.toBeInTheDocument();
   });
 
@@ -498,7 +498,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
     ).not.toBeInTheDocument();
   });
 
@@ -541,7 +541,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.tar\.gz\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
     ).not.toBeInTheDocument();
   });
 });

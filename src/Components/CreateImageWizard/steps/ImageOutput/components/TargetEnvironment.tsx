@@ -316,7 +316,7 @@ const TargetEnvironment = () => {
           <Checkbox
             label={
               <>
-                WSL - Windows Subsystem for Linux (.tar.gz)
+                WSL - Windows Subsystem for Linux (.wsl)
                 <Popover
                   maxWidth="30rem"
                   position="right"
