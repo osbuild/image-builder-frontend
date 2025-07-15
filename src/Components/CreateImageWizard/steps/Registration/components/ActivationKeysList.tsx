@@ -7,16 +7,17 @@ import {
   Select,
   SelectList,
   SelectOption,
-  Content,
   MenuToggleElement,
   MenuToggle,
   TextInputGroup,
   TextInputGroupMain,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
 } from '@patternfly/react-core';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
 import ManageKeysButton from './ManageKeysButton';
-import PopoverActivation from './PopoverActivation';
 
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -243,13 +244,7 @@ const ActivationKeysList = () => {
 
   return (
     <>
-      <FormGroup
-        label={
-          <>
-            Activation key to use for this image <PopoverActivation />
-          </>
-        }
-      >
+      <FormGroup label="Activation key to use for this image">
         <Select
           isScrollable
           isOpen={isOpen}
@@ -261,11 +256,14 @@ const ActivationKeysList = () => {
         >
           <SelectList>{prepareSelectOptions()}</SelectList>
         </Select>
-        <Content>
-          <Content>
-            Create and manage activation keys on the <ManageKeysButton />
-          </Content>
-        </Content>
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              Image Builder provides and defaults to a no-cost activation key if
+              none exist. <ManageKeysButton />
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       {isErrorActivationKeys && (
         <Alert

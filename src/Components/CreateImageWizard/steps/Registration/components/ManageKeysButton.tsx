@@ -16,7 +16,7 @@ const ManageKeysButton = () => {
       isInline
       href={ACTIVATION_KEYS_URL}
     >
-      Activation keys page
+      Manage Activation keys
     </Button>
   );
 };
