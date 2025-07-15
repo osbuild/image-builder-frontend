@@ -103,22 +103,6 @@ const ActivationKeysList = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filterValue, activationKeys?.body]);
 
-  const setActivationKey = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string
-  ) => {
-    setIsOpen(false);
-    window.localStorage.setItem('imageBuilder.recentActivationKey', selection);
-    dispatch(changeActivationKey(selection));
-  };
-
-  const handleToggle = () => {
-    if (!isOpen) {
-      refetch();
-    }
-    setIsOpen(!isOpen);
-  };
-
   useEffect(() => {
     const isActivationKeysEmpty =
       isSuccessActivationKeys &&
@@ -168,6 +152,37 @@ const ActivationKeysList = () => {
     }
   }, [isSuccessActivationKeys]);
 
+  const setActivationKey = (selection: string) => {
+    setIsOpen(false);
+    window.localStorage.setItem('imageBuilder.recentActivationKey', selection);
+    dispatch(changeActivationKey(selection));
+  };
+
+  const handleToggle = () => {
+    if (!isOpen) {
+      refetch();
+    }
+    setIsOpen(!isOpen);
+  };
+
+  const handleSelect = (_event: React.MouseEvent, selection: string) => {
+    setActivationKey(selection);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent) => {
+    if (event.key !== 'Enter') return;
+
+    event.preventDefault();
+
+    if (!isOpen) {
+      setIsOpen(!isOpen);
+    }
+
+    if (selectOptions.includes(inputValue)) {
+      setActivationKey(inputValue);
+    }
+  };
+
   const onTextInputChange = (_event: React.FormEvent, value: string) => {
     setInputValue(value);
     setFilterValue(value);
@@ -214,6 +229,7 @@ const ActivationKeysList = () => {
       ref={toggleRef}
       variant="typeahead"
       onClick={handleToggle}
+      onKeyDown={handleKeyDown}
       isExpanded={isOpen}
       data-testid="activation-key-select"
       isDisabled={
@@ -249,7 +265,7 @@ const ActivationKeysList = () => {
           isScrollable
           isOpen={isOpen}
           selected={activationKey}
-          onSelect={setActivationKey}
+          onSelect={handleSelect}
           onOpenChange={handleToggle}
           toggle={toggle}
           shouldFocusFirstItemOnOpen={false}
