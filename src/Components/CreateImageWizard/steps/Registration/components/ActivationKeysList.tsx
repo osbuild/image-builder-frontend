@@ -7,11 +7,13 @@ import {
   Select,
   SelectList,
   SelectOption,
-  Content,
   MenuToggleElement,
   MenuToggle,
   TextInputGroup,
   TextInputGroupMain,
+  FormHelperText,
+  HelperText,
+  HelperTextItem,
 } from '@patternfly/react-core';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 
@@ -254,11 +256,14 @@ const ActivationKeysList = () => {
         >
           <SelectList>{prepareSelectOptions()}</SelectList>
         </Select>
-        <Content>
-          <Content>
-            Create and manage activation keys on the <ManageKeysButton />
-          </Content>
-        </Content>
+        <FormHelperText>
+          <HelperText>
+            <HelperTextItem>
+              Image Builder provides and defaults to a no-cost activation key if
+              none exist. <ManageKeysButton />
+            </HelperTextItem>
+          </HelperText>
+        </FormHelperText>
       </FormGroup>
       {isErrorActivationKeys && (
         <Alert
