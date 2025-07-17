@@ -39,7 +39,7 @@
     "@patternfly/react-icons": "6.1.0",
     "@playwright/test": "1.51.1",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "3.0.0",
-    "@redhat-cloud-services/frontend-components-config": "6.3.8",
+    "@redhat-cloud-services/frontend-components-config": "6.6.4",
     "@redhat-cloud-services/tsc-transform-imports": "1.0.25",
     "@rtk-query/codegen-openapi": "2.0.0",
     "@testing-library/dom": "10.4.0",
