@@ -558,6 +558,7 @@ const Row = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
   const dispatch = useDispatch();
+  const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
 
   const handleClick = ({
     blueprintId,
@@ -580,7 +581,7 @@ const Row = ({
           }}
         />
         <Td dataLabel="Image name">
-          {compose.blueprint_id ? (
+          {compose.blueprint_id && !selectedBlueprintId ? (
             <Button
               component="a"
               variant="link"
