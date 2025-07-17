@@ -78,6 +78,9 @@ import {
   selectTimezone,
   selectUseLatest,
   selectUsers,
+  selectAapCallbackUrl,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import {
@@ -639,6 +642,39 @@ export const RegisterSatelliteList = () => {
           Register Satellite
         </Content>
         <Content component={ContentVariants.dd}>Enabled</Content>
+      </Content>
+    </Content>
+  );
+};
+
+export const RegisterAapList = () => {
+  const callbackUrl = useAppSelector(selectAapCallbackUrl);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
+  const tlsCertificateAuthority = useAppSelector(
+    selectAapTlsCertificateAuthority
+  );
+
+  return (
+    <Content>
+      <Content component={ContentVariants.dl} className="review-step-dl">
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Ansible Callback URL
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {callbackUrl || 'None'}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          Host Config Key
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {hostConfigKey || 'None'}
+        </Content>
+        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          TLS Certificate
+        </Content>
+        <Content component={ContentVariants.dd}>
+          {tlsCertificateAuthority ? 'Configured' : 'None'}
+        </Content>
       </Content>
     </Content>
   );
