@@ -147,4 +147,5 @@ module.exports = {
     shared: [{ 'react-router-dom': { singleton: true, version: '*' } }],
     exclude: ['react-router-dom'],
   },
+  frontendCRDPath: path.resolve(__dirname, './deploy/frontend-clowder.yml')
 };
