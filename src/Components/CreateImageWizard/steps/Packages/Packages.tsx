@@ -837,6 +837,7 @@ const Packages = () => {
     setActiveStream('');
     setActiveSortIndex(0);
     setActiveSortDirection('asc');
+    setPage(1);
   };
 
   const handleClear = async () => {
