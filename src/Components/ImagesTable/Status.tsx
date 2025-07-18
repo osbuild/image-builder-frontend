@@ -238,7 +238,7 @@ export const ExpiringStatus = ({
       <Status
         icon={statuses['expiring'].icon}
         text={
-          <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200">
+          <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning">
             {text}
           </span>
         }
@@ -254,7 +254,7 @@ export const ExpiringStatus = ({
       <Status
         icon={statuses['expiring'].icon}
         text={
-          <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200">
+          <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning">
             {text}
           </span>
         }
@@ -310,7 +310,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger">
         Image build failed
       </span>
     ),
@@ -326,7 +326,7 @@ const statuses = {
   building: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
         Image build in progress
       </span>
     ),
@@ -335,7 +335,7 @@ const statuses = {
   uploading: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
         Image upload in progress
       </span>
     ),
@@ -344,7 +344,7 @@ const statuses = {
   registering: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
         Cloud registration in progress
       </span>
     ),
@@ -353,7 +353,7 @@ const statuses = {
   running: {
     icon: <Spinner isInline />,
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
         Running
       </span>
     ),
@@ -366,7 +366,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-success-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-success">
         Ready
       </span>
     ),
@@ -392,7 +392,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger">
         Sharing image failed
       </span>
     ),
@@ -405,7 +405,7 @@ const statuses = {
       </Icon>
     ),
     text: (
-      <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200">
+      <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger">
         Failure sharing
       </span>
     ),
