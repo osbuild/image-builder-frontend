@@ -148,7 +148,12 @@ const UserInfo = () => {
         aria-label="Users tabs"
         activeKey={activeTabKey}
         onSelect={onSelect}
-        onAdd={onAdd}
+        {...(users.some(
+          (user) =>
+            user.name === '' && user.password === '' && user.ssh_key === ''
+        )
+          ? {}
+          : { onAdd })}
         onClose={onClose}
         ref={tabComponentRef}
       >
