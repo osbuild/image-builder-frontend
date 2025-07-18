@@ -66,7 +66,7 @@ const RepositoriesStatus = ({
         <Icon status="success">
           <CheckCircleIcon />
         </Icon>{' '}
-        <span className="pf-v6-u-font-weight-bold pf-v6-u-success-color-200">
+        <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-success">
           {repoStatus}
         </span>
       </>
@@ -142,7 +142,7 @@ const RepositoriesStatus = ({
                 <Icon status="danger">
                   <ExclamationCircleIcon />
                 </Icon>{' '}
-                <span className="pf-v6-u-font-weight-bold pf-v6-u-danger-color-200 failure-button">
+                <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger failure-button">
                   {repoStatus}
                 </span>
               </>
@@ -152,7 +152,7 @@ const RepositoriesStatus = ({
                 <Icon status="warning">
                   <ExclamationTriangleIcon />
                 </Icon>{' '}
-                <span className="pf-v6-u-font-weight-bold pf-v6-u-warning-color-200 failure-button">
+                <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning failure-button">
                   {repoStatus}
                 </span>
               </>
@@ -165,7 +165,7 @@ const RepositoriesStatus = ({
     return (
       <>
         <Spinner isInline />{' '}
-        <span className="pf-v6-u-font-weight-bold pf-v6-u-info-color-200">
+        <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
           {repoStatus}
         </span>
       </>
