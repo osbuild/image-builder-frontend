@@ -19,6 +19,12 @@ import {
 } from '../../../constants';
 import { RootState } from '../../../store';
 import {
+  CockpitAwsUploadRequestOptions,
+  CockpitCreateBlueprintRequest,
+  CockpitImageRequest,
+  CockpitUploadTypes,
+} from '../../../store/cockpit/types';
+import {
   AwsUploadRequestOptions,
   AzureUploadRequestOptions,
   BlueprintExportResponse,
@@ -48,6 +54,7 @@ import {
   selectActivationKey,
   selectArchitecture,
   selectAwsAccountId,
+  selectAwsRegion,
   selectAwsShareMethod,
   selectAwsSourceId,
   selectAzureHyperVGeneration,
@@ -122,7 +129,7 @@ import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 export const mapRequestFromState = (
   store: Store,
   orgID: string
-): CreateBlueprintRequest => {
+): CreateBlueprintRequest | CockpitCreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
   const customizations = getCustomizations(state, orgID);
@@ -456,7 +463,9 @@ const getFirstBootScript = (files?: File[]): string => {
   return firstBootFile?.data ? atob(firstBootFile.data) : '';
 };
 
-const getImageRequests = (state: RootState): ImageRequest[] => {
+const getImageRequests = (
+  state: RootState
+): ImageRequest[] | CockpitImageRequest[] => {
   const imageTypes = selectImageTypes(state);
   const snapshotDate = selectSnapshotDate(state);
   const useLatest = selectUseLatest(state);
@@ -482,7 +491,9 @@ const getSatelliteCommand = (files?: File[]): string => {
   return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
 
-const uploadTypeByTargetEnv = (imageType: ImageTypes): UploadTypes => {
+const uploadTypeByTargetEnv = (
+  imageType: ImageTypes
+): UploadTypes | CockpitUploadTypes => {
   switch (imageType) {
     case 'aws':
       return 'aws';
@@ -516,12 +527,21 @@ const getImageOptions = (
 ):
   | AwsUploadRequestOptions
   | AzureUploadRequestOptions
-  | GcpUploadRequestOptions => {
+  | GcpUploadRequestOptions
+  | CockpitAwsUploadRequestOptions => {
   switch (imageType) {
     case 'aws':
       if (selectAwsShareMethod(state) === 'sources')
         return { share_with_sources: [selectAwsSourceId(state) || ''] };
-      return { share_with_accounts: [selectAwsAccountId(state)] };
+      if (!process.env.IS_ON_PREMISE)
+        return { share_with_accounts: [selectAwsAccountId(state)] };
+
+      // TODO: we might want to update the image-builder-crc api
+      // to accept a region instead (with default us-east-1)
+      return {
+        share_with_accounts: [selectAwsAccountId(state)],
+        region: selectAwsRegion(state),
+      };
     case 'azure':
       if (selectAzureShareMethod(state) === 'sources')
         return {

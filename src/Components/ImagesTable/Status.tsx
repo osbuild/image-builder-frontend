@@ -32,6 +32,7 @@ import {
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
 } from '../../constants';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
+import { CockpitComposesResponseItem } from '../../store/cockpit/types';
 import {
   ClonesResponseItem,
   ComposesResponseItem,
@@ -70,7 +71,7 @@ export const StatusClone = ({ clone, status }: StatusClonePropTypes) => {
 };
 
 type ComposeStatusPropTypes = {
-  compose: ComposesResponseItem;
+  compose: ComposesResponseItem | CockpitComposesResponseItem;
 };
 
 export const AwsDetailsStatus = ({ compose }: ComposeStatusPropTypes) => {
