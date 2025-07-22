@@ -462,7 +462,6 @@ export type ImageTypes =
   | "guest-image"
   | "image-installer"
   | "oci"
-  | "openshift-virt"
   | "vsphere"
   | "vsphere-ova"
   | "wsl"
@@ -552,10 +551,11 @@ export type OsTree = {
   rhsm?: boolean | undefined;
 };
 export type AapRegistration = {
-  ansible_controller_url: string;
-  job_template_id: number;
+  ansible_callback_url: string;
   host_config_key: string;
   tls_certificate_authority?: string | undefined;
+  /** When true, indicates the user has confirmed that HTTPS callback URL does not require a CA certificate for verification */
+  skip_tls_verification?: boolean | undefined;
 };
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
@@ -679,6 +679,65 @@ export type Filesystem = {
   /** size of the filesystem in bytes */
   min_size: any;
 };
+export type Minsize = string;
+export type FilesystemTyped = {
+  type?: "plain" | undefined;
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  /** The filesystem type. Swap partitions must have an empty mountpoint.
+   */
+  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+};
+export type BtrfsSubvolume = {
+  /** The name of the subvolume, which defines the location (path) on the root volume
+   */
+  name: string;
+  /** Mountpoint for the subvolume
+   */
+  mountpoint: string;
+};
+export type BtrfsVolume = {
+  type: "btrfs";
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  minsize?: Minsize | undefined;
+  subvolumes: BtrfsSubvolume[];
+};
+export type LogicalVolume = {
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  /** Mountpoint for the logical volume
+   */
+  mountpoint?: string | undefined;
+  label?: string | undefined;
+  /** The filesystem type for the logical volume. Swap LVs must have an empty mountpoint.
+   */
+  fs_type: "ext4" | "xfs" | "vfat" | "swap";
+};
+export type VolumeGroup = {
+  type: "lvm";
+  /** The partition type GUID for GPT partitions. For DOS partitions, this field can be used to set the (2 hex digit) partition type. If not set, the type will be automatically set based on the mountpoint or the payload type.
+   */
+  part_type?: string | undefined;
+  /** Volume group name (will be automatically generated if omitted)
+   */
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  logical_volumes: LogicalVolume[];
+};
+export type Partition = FilesystemTyped | BtrfsVolume | VolumeGroup;
+export type Disk = {
+  /** Type of the partition table
+   */
+  type?: ("gpt" | "dos") | undefined;
+  minsize?: Minsize | undefined;
+  partitions: Partition[];
+};
 export type User = {
   name: string;
   /** List of groups to add the user to. The 'wheel' group should be added explicitly, as the
@@ -785,6 +844,7 @@ export type Customizations = {
   custom_repositories?: CustomRepository[] | undefined;
   openscap?: OpenScap | undefined;
   filesystem?: Filesystem[] | undefined;
+  disk?: Disk | undefined;
   /** List of users that a customer can add,
     also specifying their respective groups and SSH keys and/or password
      */
@@ -864,7 +924,7 @@ export type BlueprintExportResponse = {
 export type ComposeResponse = {
   id: string;
 };
-export type ClientId = "api" | "ui";
+export type ClientId = "api" | "ui" | "mcp";
 export type ComposeRequest = {
   distribution: Distributions;
   image_name?: string | undefined;
