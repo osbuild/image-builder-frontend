@@ -221,13 +221,6 @@ test.describe.serial('test', () => {
       ).toBeVisible();
     }
 
-    const config = readFileSync('/etc/osbuild-worker/osbuild-worker.toml');
-    // this is for testing, the field `aws` should exist
-    // eslint-disable-next-line
-    const parsed = TOML.parse(config) as any;
-    expect(parsed.aws?.bucket).toBe(bucket);
-    expect(parsed.aws?.credentials).toBe(credentials);
-
     await frame
       .getByRole('button', { name: 'Configure Cloud Providers' })
       .click();
@@ -236,9 +229,16 @@ test.describe.serial('test', () => {
 
     await expect(frame.getByPlaceholder('AWS bucket')).toHaveValue(bucket);
     await expect(frame.getByPlaceholder('Path to AWS credentials')).toHaveValue(
-      credentials
+      credentials,
     );
     await frame.getByRole('button', { name: 'Cancel' }).click();
+
+    const config = readFileSync('/etc/osbuild-worker/osbuild-worker.toml');
+    // this is for testing, the field `aws` should exist
+    // eslint-disable-next-line
+    const parsed = TOML.parse(config) as any;
+    expect(parsed.aws?.bucket).toBe(bucket);
+    expect(parsed.aws?.credentials).toBe(credentials);
   });
 
   test('cockpit cloud upload', async ({ page }) => {
