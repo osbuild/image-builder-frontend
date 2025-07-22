@@ -9,9 +9,9 @@ import {
   createBlueprint,
   deleteBlueprint,
   exportBlueprint,
-  importBlueprint,
-  fillInImageOutputGuest,
   fillInDetails,
+  fillInImageOutputGuest,
+  importBlueprint,
   registerLater,
 } from '../helpers/wizardHelpers';
 
