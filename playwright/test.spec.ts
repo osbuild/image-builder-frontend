@@ -240,4 +240,53 @@ test.describe.serial('test', () => {
     );
     await frame.getByRole('button', { name: 'Cancel' }).click();
   });
+
+  test('cockpit cloud upload', async ({ page }) => {
+    if (isHosted()) {
+      return;
+    }
+
+    await ensureAuthenticated(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
+    await page.goto('/cockpit-image-builder');
+    const frame = ibFrame(page);
+
+    frame.getByRole('heading', { name: 'Images About image builder' });
+    frame.getByRole('heading', { name: 'Blueprints' });
+    await frame.getByTestId('blueprints-create-button').click();
+
+    frame.getByRole('heading', { name: 'Image output' });
+    // the first card should be the AWS card
+    await frame.locator('.pf-v6-c-card').first().click();
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    await frame.getByRole('button', { name: 'Back', exact: true }).click();
+
+    frame.getByRole('heading', { name: 'Details' });
+    await frame.getByTestId('blueprint').fill(blueprintName);
+    await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
+    await frame.getByRole('button', { name: 'Next', exact: true }).click();
+
+    await frame.getByRole('button', { name: 'Create blueprint' }).click();
+    await frame.getByTestId('close-button-saveandbuild-modal').click();
+    await frame.getByRole('button', { name: 'Create blueprint' }).click();
+
+    await frame
+      .getByRole('textbox', { name: 'Search input' })
+      .fill(blueprintName);
+    // the clickable blueprint cards are a bit awkward, so use the
+    // button's id instead
+    await frame.locator(`button[id="${blueprintName}"]`).click();
+    await frame.getByTestId('blueprint-build-image-menu-option').click();
+
+    // make sure the image is present
+    await frame
+      .getByTestId('images-table')
+      .getByRole('button', { name: 'Details' })
+      .click();
+    frame.getByText('Build Information');
+  });
 });
