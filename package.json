@@ -8,7 +8,7 @@
   },
   "dependencies": {
     "@ltd/j-toml": "1.38.0",
-    "@patternfly/patternfly": "6.1.0",
+    "@patternfly/patternfly": "6.3.0",
     "@patternfly/react-code-editor": "6.1.0",
     "@patternfly/react-core": "6.1.0",
     "@patternfly/react-table": "6.1.0",
