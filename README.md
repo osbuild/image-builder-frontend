@@ -128,19 +128,15 @@ see the [osbuild-getting-started project](https://github.com/osbuild/osbuild-get
 
 API slice definitions are programmatically generated using the [@rtk-query/codegen-openapi](https://redux-toolkit.js.org/rtk-query/usage/code-generation) package.
 
-OpenAPI schema for the endpoints are stored in `/api/schema`. Their
-corresponding configuration files are stored in `/api/config`. Each endpoint
-has a corresponding empty API slice and generated API slice which are stored in
-`/src/store`.
+The OpenAPI schema are imported during code generation. OpenAPI configuration files are
+stored in `/api/config`. Each endpoint has a corresponding empty API slice and generated API
+slice which are stored in `/src/store`.
 
 ### Add a new API schema
 
 For a hypothetical API called foobar
 
-1. Download the foobar API OpenAPI json or yaml representation under
-`api/schema/foobar.json`
-
-2. Create a new "empty" API file under `src/store/emptyFoobarApi.ts` that has following
+1. Create a new "empty" API file under `src/store/emptyFoobarApi.ts` that has following
 content:
 
 ```typescript
@@ -156,19 +152,19 @@ export const emptyFoobarApi = createApi({
 });
 ```
 
-3. Declare new constant `FOOBAR_API` with the API url in `src/constants.ts`
+2. Declare new constant `FOOBAR_API` with the API url in `src/constants.ts`
 
 ```typescript
 export const FOOBAR_API = 'api/foobar/v1'
 ```
 
-4. Create the config file for code generation in `api/config/foobar.ts` containing:
+3. Create the config file for code generation in `api/config/foobar.ts` containing:
 
 ```typescript
 import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
-  schemaFile: '../schema/foobar.json',
+  schemaFile: 'URL_TO_THE_OPENAPI_SCHEMA',
   apiFile: '../../src/store/emptyFoobarApi.ts',
   apiImport: 'emptyEdgeApi',
   outputFile: '../../src/store/foobarApi.ts',
@@ -178,14 +174,7 @@ const config: ConfigFile = {
 };
 ```
 
-5. Update the `api.sh` script by adding a new line for npx to generate the code:
-
-```bash
-npx @rtk-query/codegen-openapi ./api/config/foobar.ts &
-```
-
-
-6. Update the `eslint.config.js` file by adding the generated code path to the ignores array:
+4. Update the `eslint.config.js` file by adding the generated code path to the ignores array:
 
 ```
 ignores: [
@@ -194,7 +183,7 @@ ignores: [
 ]
 ```
 
-7. run api generation
+5. run api generation
 
 ```bash
 npm run api
@@ -355,12 +344,12 @@ Follow these steps to find and paste the certification file into the 'Keychain A
    npm ci
    ```
 
-3. Download the Playwright browsers with 
+3. Download the Playwright browsers with
    ```bash
    npx playwright install
    ```
 
-4. Start the local development stage server by running 
+4. Start the local development stage server by running
    ```bash
    npm run start:stage
    ```
