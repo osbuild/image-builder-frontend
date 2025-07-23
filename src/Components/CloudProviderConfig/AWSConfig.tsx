@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Button,
@@ -38,7 +38,7 @@ type ToggleGroupProps = Omit<FormGroupProps<boolean>, 'isDisabled'>;
 const AWSConfigToggle = ({ value, onChange }: ToggleGroupProps) => {
   const handleChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    checked: boolean
+    checked: boolean,
   ) => {
     onChange(checked);
   };
@@ -159,18 +159,23 @@ const AWSCredsPath = ({
 };
 
 type AWSConfigProps = {
-  isEnabled: boolean;
+  enabled: boolean;
+  setEnabled: (enabled: boolean) => void;
   reinit: (config: AWSWorkerConfig | undefined) => void;
   refetch: () => Promise<{
     data?: WorkerConfigResponse | undefined;
   }>;
 };
 
-export const AWSConfig = ({ isEnabled, refetch, reinit }: AWSConfigProps) => {
+export const AWSConfig = ({
+  enabled,
+  setEnabled,
+  refetch,
+  reinit,
+}: AWSConfigProps) => {
   const dispatch = useAppDispatch();
   const bucket = useAppSelector(selectAWSBucketName);
   const credentials = useAppSelector(selectAWSCredsPath);
-  const [enabled, setEnabled] = useState<boolean>(isEnabled);
 
   const onToggle = async (v: boolean) => {
     if (v) {

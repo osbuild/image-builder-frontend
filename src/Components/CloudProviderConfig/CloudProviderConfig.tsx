@@ -1,4 +1,9 @@
-import React, { MouseEventHandler, useCallback, useEffect } from 'react';
+import React, {
+  MouseEventHandler,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
 
 import {
   Button,
@@ -68,6 +73,7 @@ export const CloudProviderConfig = () => {
   const dispatch = useAppDispatch();
   const config = useAppSelector(selectAWSConfig);
   const handleClose = () => navigate(resolveRelPath(''));
+  const [enabled, setEnabled] = useState<boolean>(false);
 
   const [updateConfig] = useUpdateWorkerConfigMutation();
   const { data, error, refetch, isLoading } = useGetWorkerConfigQuery({});
@@ -76,8 +82,11 @@ export const CloudProviderConfig = () => {
     (config: AWSWorkerConfig | undefined) => {
       if (!config) {
         dispatch(reinitializeAWSConfig());
+        setEnabled(false);
         return;
       }
+
+      setEnabled(true);
 
       const { bucket, credentials } = config;
       if (bucket && bucket !== '') {
@@ -88,7 +97,7 @@ export const CloudProviderConfig = () => {
         dispatch(changeAWSCredsPath(credentials));
       }
     },
-    [dispatch]
+    [dispatch, setEnabled],
   );
 
   useEffect(() => {
@@ -126,7 +135,8 @@ export const CloudProviderConfig = () => {
             <AWSConfig
               refetch={refetch}
               reinit={initAWSConfig}
-              isEnabled={!!(data?.aws && Object.keys(data.aws).length > 0)}
+              enabled={enabled}
+              setEnabled={setEnabled}
             />
           </WizardStep>
         </Wizard>
