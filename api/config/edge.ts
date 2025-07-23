@@ -1,7 +1,7 @@
 import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
-  schemaFile: '../schema/edge.json',
+  schemaFile: 'https://console.redhat.com/api/edge/v1/openapi.json',
   apiFile: '../../src/store/service/emptyEdgeApi.ts',
   apiImport: 'emptyEdgeApi',
   outputFile: '../../src/store/service/edgeApi.ts',

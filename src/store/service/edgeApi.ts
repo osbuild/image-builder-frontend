@@ -82,7 +82,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     checkImageName: build.mutation<
@@ -92,7 +92,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/checkImageName`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     createInstallerForImage: build.mutation<
@@ -102,7 +102,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/installer`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     createKickStartForImage: build.mutation<
@@ -112,7 +112,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/kickstart`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     getMetadataForImage: build.query<
@@ -134,7 +134,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/retry`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     createImageUpdate: build.mutation<
@@ -144,7 +144,7 @@ const injectedRtkApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: `/images/${queryArg.imageId}/update`,
         method: "POST",
-        body: queryArg.modelsCreateImageApi,
+        body: queryArg.createImage,
       }),
     }),
     getImageByOstree: build.query<
@@ -239,13 +239,13 @@ export type GetAllImagesApiArg = {
 export type CreateImageApiResponse = /** status 200 OK */ ImageResponse;
 export type CreateImageApiArg = {
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type CheckImageNameApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
 export type CheckImageNameApiArg = {
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type CreateInstallerForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -253,7 +253,7 @@ export type CreateInstallerForImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type CreateKickStartForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -261,7 +261,7 @@ export type CreateKickStartForImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type GetMetadataForImageApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -281,7 +281,7 @@ export type RetryCreateImageApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type CreateImageUpdateApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -289,7 +289,7 @@ export type CreateImageUpdateApiArg = {
   /** Image ID */
   imageId: number;
   /** request body */
-  modelsCreateImageApi: ModelsCreateImageApi;
+  createImage: CreateImage;
 };
 export type GetImageByOstreeApiResponse =
   /** status 200 OK */ ModelsSuccessPlaceholderResponse;
@@ -558,7 +558,7 @@ export type ImageResponse = {
   /** storing for logging reference on resume */
   request_id?: string | undefined;
 };
-export type ModelsCreateImageApi = object;
+export type CreateImage = object;
 export const {
   useListAllImageSetsQuery,
   useGetImageSetsViewQuery,

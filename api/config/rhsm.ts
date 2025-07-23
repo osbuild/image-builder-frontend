@@ -1,7 +1,7 @@
 import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
-  schemaFile: '../schema/rhsm.json',
+  schemaFile: 'https://console.redhat.com/api/rhsm/v2/openapi.json',
   apiFile: '../../src/store/service/emptyRhsmApi.ts',
   apiImport: 'emptyRhsmApi',
   outputFile: '../../src/store/service/rhsmApi.ts',

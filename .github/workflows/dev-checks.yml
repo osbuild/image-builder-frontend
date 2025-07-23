@@ -71,7 +71,7 @@ jobs:
       run: npm ci
     - name: Check for manual changes to API
       run: |
-        npm run api:generate
+        npm run api
         if [ -n "$(git status --porcelain)" ]; then
           echo
           echo "✗ API manually changed, please refer to the README for the procedure to follow for programmatically generated API endpoints."
