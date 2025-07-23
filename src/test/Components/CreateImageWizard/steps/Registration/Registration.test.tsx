@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
 import {
@@ -36,6 +35,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -58,13 +58,11 @@ Object.defineProperty(window, 'localStorage', {
 const router: RemixRouter | undefined = undefined;
 
 const clickShowAdditionalConnectionOptions = async () => {
-  const user = userEvent.setup();
   const link = await screen.findByText('Show additional connection options');
   await waitFor(() => user.click(link));
 };
 
 const deselectEnableRemoteRemediations = async () => {
-  const user = userEvent.setup();
   const checkBox = await screen.findByRole('checkbox', {
     name: 'Enable remote remediations and system management with automation',
   });
@@ -72,7 +70,6 @@ const deselectEnableRemoteRemediations = async () => {
 };
 
 const deselectPredictiveAnalytics = async () => {
-  const user = userEvent.setup();
   const checkBox = await screen.findByRole('checkbox', {
     name: 'Enable predictive analytics and management capabilities',
   });
@@ -80,7 +77,6 @@ const deselectPredictiveAnalytics = async () => {
 };
 
 const openActivationKeyDropdown = async () => {
-  const user = userEvent.setup();
   const activationKeyDropdown = await screen.findByPlaceholderText(
     'Select activation key'
   );
@@ -88,7 +84,6 @@ const openActivationKeyDropdown = async () => {
 };
 
 const selectActivationKey = async (key: string) => {
-  const user = userEvent.setup();
   const activationKey = await screen.findByRole('option', {
     name: key,
   });
@@ -97,7 +92,6 @@ const selectActivationKey = async (key: string) => {
 };
 
 const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
-  const user = userEvent.setup({ delay: null });
   const satelliteRegistrationCommand = await screen.findByPlaceholderText(
     /registration command/i
   );
@@ -108,7 +102,6 @@ const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
-  const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
@@ -141,7 +134,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('registration-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-registration'

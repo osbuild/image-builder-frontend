@@ -1,10 +1,10 @@
 import React from 'react';
 
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import ShareImageModal from '../../../Components/ShareImageModal/ShareImageModal';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { user } from '../CreateImageWizard/wizardTestUtils';
 
 const composeId = '1579d95b-8f1d-4982-8c53-8c2afa4ab04c';
 
@@ -28,7 +28,6 @@ describe('Create Share To Regions Modal', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
   test('validation', async () => {
     await renderCustomRoutesWithReduxRouter(`share/${composeId}`, {}, routes);
 
@@ -106,7 +105,7 @@ describe('Create Share To Regions Modal', () => {
     expect(usEast1).toBeDisabled();
 
     // close the select again to avoid state update
-    user.click(selectToggle);
+    await waitFor(() => user.click(selectToggle));
   });
 
   // TODO Verify that sharing clones works once msw/data is incorporated.

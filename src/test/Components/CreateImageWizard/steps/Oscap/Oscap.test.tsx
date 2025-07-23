@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
@@ -25,10 +24,10 @@ import {
   renderEditMode,
   selectGuestImageTarget,
   selectRhel9,
+  user,
 } from '../../wizardTestUtils';
 
 const selectRhel8 = async () => {
-  const user = userEvent.setup();
   await waitFor(async () => user.click(screen.getByTestId('release_select')));
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8/i,
@@ -37,7 +36,6 @@ const selectRhel8 = async () => {
 };
 
 const selectImageInstallerTarget = async () => {
-  const user = userEvent.setup();
   const imageInstallerCheckbox = await screen.findByRole('checkbox', {
     name: /Bare metal installer/i,
   });
@@ -45,7 +43,6 @@ const selectImageInstallerTarget = async () => {
 };
 
 const selectWslTarget = async () => {
-  const user = userEvent.setup();
   const wslCheckBox = await screen.findByRole('checkbox', {
     name: /windows subsystem for linux/i,
   });
@@ -53,7 +50,6 @@ const selectWslTarget = async () => {
 };
 
 const selectProfile = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -64,7 +60,6 @@ const selectProfile = async () => {
 };
 
 const selectDifferentProfile = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -75,7 +70,6 @@ const selectDifferentProfile = async () => {
 };
 
 const selectNone = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -101,7 +95,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('oscap-detail-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-openscap'
@@ -113,8 +106,6 @@ describe('Step OpenSCAP', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('create an image with None OpenSCAP profile', async () => {
     await renderCreateMode();
@@ -313,7 +304,6 @@ describe('OpenSCAP edit mode', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
   test('edit mode works', async () => {
     const id = mockBlueprintIds['oscap'];
     await renderEditMode(id);
@@ -334,6 +324,7 @@ describe('OpenSCAP edit mode', () => {
     const fscBtns = await screen.findAllByRole('button', {
       name: /file system configuration/i,
     });
+    await waitFor(() => expect(fscBtns[0]).toBeEnabled());
     user.click(fscBtns[0]);
     await screen.findByRole('heading', { name: /file system configuration/i });
     await screen.findByText('/tmp');

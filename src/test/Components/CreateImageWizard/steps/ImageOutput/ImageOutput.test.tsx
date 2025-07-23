@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import {
   AARCH64,
@@ -38,6 +37,7 @@ import {
   renderCreateMode,
   renderEditMode,
   selectRhel9,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 import { goToDetailsStep } from '../Details/Details.test';
@@ -45,7 +45,6 @@ import { goToDetailsStep } from '../Details/Details.test';
 let router: RemixRouter | undefined = undefined;
 
 const clickShowOptions = async () => {
-  const user = userEvent.setup();
   const showOptions = await screen.findByRole('option', {
     name: /show options for further development of rhel/i,
   });
@@ -53,7 +52,6 @@ const clickShowOptions = async () => {
 };
 
 const selectRhel8 = async () => {
-  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel8 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 8 full support ends: may 2024 \| maintenance support ends: may 2029/i,
@@ -62,7 +60,6 @@ const selectRhel8 = async () => {
 };
 
 const selectRhel10 = async () => {
-  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel10 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 10 full support ends: may 2030 \| maintenance support ends: may 2035/i,
@@ -71,7 +68,6 @@ const selectRhel10 = async () => {
 };
 
 const selectCentos9 = async () => {
-  const user = userEvent.setup();
   await openReleaseMenu();
   await clickShowOptions();
   const centos9 = await screen.findByRole('option', {
@@ -81,13 +77,11 @@ const selectCentos9 = async () => {
 };
 
 const openArchitectureMenu = async () => {
-  const user = userEvent.setup();
   const archMenu = screen.getByTestId('arch_select');
   await waitFor(() => user.click(archMenu));
 };
 
 const selectX86_64 = async () => {
-  const user = userEvent.setup();
   await openArchitectureMenu();
   const x86_64 = await screen.findByRole('option', {
     name: 'x86_64',
@@ -96,7 +90,6 @@ const selectX86_64 = async () => {
 };
 
 const selectAarch64 = async () => {
-  const user = userEvent.setup();
   await openArchitectureMenu();
   const aarch64 = await screen.findByRole('option', {
     name: 'aarch64',
@@ -105,7 +98,6 @@ const selectAarch64 = async () => {
 };
 
 const selectGuestImageTarget = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -131,7 +123,6 @@ const enterNameAndGoToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('image-output-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-image-output'
@@ -144,8 +135,6 @@ describe('Step Image output', () => {
     vi.clearAllMocks();
     router = undefined;
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
@@ -609,8 +598,6 @@ describe('Check step consistency', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
-
   test('going back and forth with selected options only keeps the one compatible', async () => {
     await renderCreateMode();
     await selectX86_64();
@@ -700,8 +687,6 @@ describe('Set target using query parameter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('no target by default (no query parameter)', async () => {
     await renderCreateMode();

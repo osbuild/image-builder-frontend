@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -16,6 +15,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
 } from '../../wizardTestUtils';
 
 export const goToDetailsStep = async () => {
@@ -38,7 +38,6 @@ export const goToDetailsStep = async () => {
 const enterBlueprintDescription = async (
   description: string = 'Now with extra carmine!'
 ) => {
-  const user = userEvent.setup({ delay: null });
   const blueprintDescription = await screen.findByRole('textbox', {
     name: /blueprint description/i,
   });
@@ -53,7 +52,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('image-details-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-details'

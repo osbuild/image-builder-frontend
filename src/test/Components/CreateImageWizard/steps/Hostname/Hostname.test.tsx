@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -17,13 +16,13 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToHostnameStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -59,19 +58,16 @@ const goToReviewStep = async () => {
 };
 
 const enterHostname = async (hostname: string) => {
-  const user = userEvent.setup({ delay: null });
   const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
   await waitFor(() => user.type(hostnameInput, hostname));
 };
 
 const clearHostname = async () => {
-  const user = userEvent.setup();
   const hostnameInput = await screen.findByPlaceholderText(/Add a hostname/i);
   await waitFor(() => user.clear(hostnameInput));
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('hostname-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-hostname'

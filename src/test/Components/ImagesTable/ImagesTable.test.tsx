@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import {
   mockClones,
@@ -7,13 +6,13 @@ import {
   mockComposes,
 } from '../../fixtures/composes';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { user } from '../CreateImageWizard/wizardTestUtils';
 
 describe('Images Table', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
   test('render ImagesTable', async () => {
     renderCustomRoutesWithReduxRouter();
 
@@ -224,7 +223,6 @@ describe('Clones table', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
   test('renders clones table', async () => {
     await renderCustomRoutesWithReduxRouter();
 

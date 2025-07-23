@@ -1,6 +1,5 @@
 import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
@@ -30,13 +29,13 @@ import {
   renderEditMode,
   selectCustomRepo,
   selectRhel9,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 const router: RemixRouter | undefined = undefined;
 
 const selectGuestImageTarget = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -69,7 +68,6 @@ const goToReviewStep = async () => {
 };
 
 const typeIntoSearchBox = async (searchTerm: string) => {
-  const user = userEvent.setup();
   const searchbox = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
@@ -77,7 +75,6 @@ const typeIntoSearchBox = async (searchTerm: string) => {
 };
 
 const clearSearchInput = async () => {
-  const user = userEvent.setup();
   const pkgSearch = await screen.findByRole('textbox', {
     name: /search packages/i,
   });
@@ -111,7 +108,6 @@ const comparePackageSearchResults = async () => {
 };
 
 const clickFirstPackageCheckbox = async () => {
-  const user = userEvent.setup();
   const row0Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
@@ -119,7 +115,6 @@ const clickFirstPackageCheckbox = async () => {
 };
 
 const clickSecondPackageCheckbox = async () => {
-  const user = userEvent.setup();
   const row1Checkbox = await screen.findByRole('checkbox', {
     name: /select row 1/i,
   });
@@ -127,7 +122,6 @@ const clickSecondPackageCheckbox = async () => {
 };
 
 const clickThirdPackageCheckbox = async () => {
-  const user = userEvent.setup();
   const row2Checkbox = await screen.findByRole('checkbox', {
     name: /select row 2/i,
   });
@@ -135,13 +129,11 @@ const clickThirdPackageCheckbox = async () => {
 };
 
 const toggleSelected = async () => {
-  const user = userEvent.setup();
   const selected = await screen.findByRole('button', { name: /selected/i });
   await waitFor(() => user.click(selected));
 };
 
 const openIncludedPackagesPopover = async () => {
-  const user = userEvent.setup();
   const popoverBtn = await screen.findByRole('button', {
     name: /About included packages/i,
   });
@@ -157,19 +149,16 @@ const checkRecommendationsEmptyState = async () => {
 };
 
 const addSingleRecommendation = async () => {
-  const user = userEvent.setup();
   const addPackageButtons = await screen.findAllByText(/add package/i);
   await waitFor(() => user.click(addPackageButtons[0]));
 };
 
 const addAllRecommendations = async () => {
-  const user = userEvent.setup();
   const addAllBtn = await screen.findByText(/add all packages/i);
   await waitFor(async () => user.click(addAllBtn));
 };
 
 const deselectRecommendation = async () => {
-  const user = userEvent.setup();
   const row1Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
@@ -177,7 +166,6 @@ const deselectRecommendation = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-custom-repositories'
@@ -194,8 +182,6 @@ describe('Step Packages', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Users', async () => {
     await renderCreateMode();
@@ -512,8 +498,6 @@ describe('Step Packages', () => {
     });
 
     test('only one stream gets selected, other should be disabled', async () => {
-      const user = userEvent.setup();
-
       await renderCreateMode();
       await goToPackagesStep();
       await selectCustomRepo();
@@ -537,7 +521,6 @@ describe('Packages request generated correctly', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-  const user = userEvent.setup();
 
   test('with custom packages', async () => {
     await renderCreateMode();

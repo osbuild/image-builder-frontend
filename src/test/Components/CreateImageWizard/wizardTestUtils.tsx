@@ -52,6 +52,8 @@ const routes = [
   },
 ];
 
+export const user = userEvent.setup({ delay: null });
+
 export const imageRequest: ImageRequest = {
   architecture: 'x86_64',
   image_type: 'guest-image',
@@ -101,13 +103,11 @@ export const renderEditMode = async (id: string) => {
 };
 
 export const openReleaseMenu = async () => {
-  const user = userEvent.setup();
   const releaseMenu = screen.getByTestId('release_select');
   await waitFor(() => user.click(releaseMenu));
 };
 
 export const selectRhel9 = async () => {
-  const user = userEvent.setup();
   await openReleaseMenu();
   const rhel9 = await screen.findByRole('option', {
     name: /red hat enterprise linux \(rhel\) 9 full support ends: may 2027 \| maintenance support ends: may 2032/i,
@@ -116,7 +116,6 @@ export const selectRhel9 = async () => {
 };
 
 export const selectGuestImageTarget = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /Virtualization guest image/i,
   });
@@ -129,7 +128,6 @@ export const goToRegistrationStep = async () => {
 };
 
 export const clickRegisterLater = async () => {
-  const user = userEvent.setup();
   await screen.findByRole('heading', {
     name: /Register systems using this image/,
   });
@@ -140,7 +138,6 @@ export const clickRegisterLater = async () => {
 };
 
 export const clickRegisterSatellite = async () => {
-  const user = userEvent.setup();
   await screen.findByRole('heading', {
     name: /Register systems using this image/,
   });

@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -16,13 +15,13 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToTimezoneStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -51,7 +50,6 @@ const goToReviewStep = async () => {
 };
 
 const selectTimezone = async () => {
-  const user = userEvent.setup({ delay: null });
   const timezoneDropdown = await screen.findByPlaceholderText(
     /select a timezone/i
   );
@@ -61,7 +59,6 @@ const selectTimezone = async () => {
 };
 
 const searchForUnknownTimezone = async () => {
-  const user = userEvent.setup();
   const timezoneDropdown = await screen.findByPlaceholderText(
     /select a timezone/i
   );
@@ -69,7 +66,6 @@ const searchForUnknownTimezone = async () => {
 };
 
 const addNtpServerViaKeyDown = async (ntpServer: string) => {
-  const user = userEvent.setup();
   const ntpServersInput = await screen.findByPlaceholderText(
     /add ntp servers/i
   );
@@ -77,7 +73,6 @@ const addNtpServerViaKeyDown = async (ntpServer: string) => {
 };
 
 const addNtpServerViaAddButton = async (ntpServer: string) => {
-  const user = userEvent.setup();
   const ntpServersInput = await screen.findByPlaceholderText(
     /add ntp servers/i
   );
@@ -89,7 +84,6 @@ const addNtpServerViaAddButton = async (ntpServer: string) => {
 };
 
 const clearInput = async () => {
-  const user = userEvent.setup();
   const clearInputBtn = await screen.findByRole('button', {
     name: /clear input/i,
   });
@@ -97,7 +91,6 @@ const clearInput = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('timezone-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-timezone'

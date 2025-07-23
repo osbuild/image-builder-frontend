@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -16,13 +15,13 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToLocaleStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -51,7 +50,6 @@ const goToReviewStep = async () => {
 };
 
 const clearLanguageSearch = async () => {
-  const user = userEvent.setup();
   const languagesDropdown = await screen.findByPlaceholderText(
     /select a language/i
   );
@@ -59,7 +57,6 @@ const clearLanguageSearch = async () => {
 };
 
 const searchForLanguage = async (search: string) => {
-  const user = userEvent.setup();
   const languagesDropdown = await screen.findByPlaceholderText(
     /select a language/i
   );
@@ -67,7 +64,6 @@ const searchForLanguage = async (search: string) => {
 };
 
 const selectLanguages = async () => {
-  const user = userEvent.setup();
   await searchForLanguage('nl');
   const nlOption = await screen.findByRole('option', {
     name: 'Dutch - Netherlands (nl_NL.UTF-8)',
@@ -82,7 +78,6 @@ const selectLanguages = async () => {
 };
 
 const searchForKeyboard = async (keyboard: string) => {
-  const user = userEvent.setup({ delay: null });
   const keyboardDropdown = await screen.findByPlaceholderText(
     /select a keyboard/i
   );
@@ -90,13 +85,11 @@ const searchForKeyboard = async (keyboard: string) => {
 };
 
 const selectKeyboard = async () => {
-  const user = userEvent.setup({ delay: null });
   const usKeyboard = await screen.findByRole('option', { name: 'us' });
   await waitFor(() => user.click(usKeyboard));
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('locale-expandable');
   const revisitButton = await within(expandable).findByTestId('revisit-locale');
   await waitFor(() => user.click(revisitButton));

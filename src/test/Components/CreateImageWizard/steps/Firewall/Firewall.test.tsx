@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -16,13 +15,13 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToFirewallStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -51,13 +50,11 @@ const goToReviewStep = async () => {
 };
 
 const addPort = async (port: string) => {
-  const user = userEvent.setup();
   const portsInput = await screen.findByPlaceholderText(/add port/i);
   await waitFor(() => user.type(portsInput, port.concat(' ')));
 };
 
 const addEnabledFirewallService = async (service: string) => {
-  const user = userEvent.setup();
   const enabledServicesInput = await screen.findByPlaceholderText(
     /add enabled service/i
   );
@@ -65,7 +62,6 @@ const addEnabledFirewallService = async (service: string) => {
 };
 
 const addDisabledFirewallService = async (service: string) => {
-  const user = userEvent.setup();
   const disabledServiceInput = await screen.findByPlaceholderText(
     /add disabled service/i
   );
@@ -73,7 +69,6 @@ const addDisabledFirewallService = async (service: string) => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('firewall-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-firewall'

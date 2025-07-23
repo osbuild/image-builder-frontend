@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
@@ -21,13 +20,13 @@ import {
   renderCreateMode,
   renderEditMode,
   selectRhel9,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToServicesStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -49,7 +48,6 @@ const goToServicesStep = async () => {
 };
 
 const goToOpenSCAPStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -81,7 +79,6 @@ const goToReviewStep = async () => {
 };
 
 const addDisabledService = async (service: string) => {
-  const user = userEvent.setup();
   const disabledServiceInput = await screen.findByPlaceholderText(
     'Add disabled service'
   );
@@ -89,7 +86,6 @@ const addDisabledService = async (service: string) => {
 };
 
 const addMaskedService = async (service: string) => {
-  const user = userEvent.setup();
   const maskedServiceInput = await screen.findByPlaceholderText(
     'Add masked service'
   );
@@ -97,7 +93,6 @@ const addMaskedService = async (service: string) => {
 };
 
 const addEnabledService = async (service: string) => {
-  const user = userEvent.setup();
   const enabledServiceInput = await screen.findByPlaceholderText(
     'Add enabled service'
   );
@@ -105,7 +100,6 @@ const addEnabledService = async (service: string) => {
 };
 
 const removeService = async (service: string) => {
-  const user = userEvent.setup();
   const removeServiceButton = await screen.findByRole('button', {
     name: `Close ${service}`,
   });
@@ -113,7 +107,6 @@ const removeService = async (service: string) => {
 };
 
 const selectProfile = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -124,7 +117,6 @@ const selectProfile = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('services-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-services'
@@ -170,7 +162,6 @@ describe('Step Services', () => {
   });
 
   test('validation works', async () => {
-    const user = userEvent.setup();
     await renderCreateMode();
     await goToServicesStep();
     const clearInputButtons = await screen.findAllByRole('button', {

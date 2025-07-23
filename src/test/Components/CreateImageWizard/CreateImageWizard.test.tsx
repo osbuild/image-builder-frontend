@@ -1,7 +1,6 @@
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
-import { clickNext, renderCreateMode } from './wizardTestUtils';
+import { clickNext, renderCreateMode, user } from './wizardTestUtils';
 
 const getSourceDropdown = async () => {
   const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
@@ -11,8 +10,6 @@ const getSourceDropdown = async () => {
 };
 
 const selectAllEnvironments = async () => {
-  const user = userEvent.setup();
-
   await waitFor(() =>
     user.click(screen.getByRole('button', { name: /Amazon Web Services/i }))
   );
@@ -30,8 +27,6 @@ const selectAllEnvironments = async () => {
 };
 
 const testTile = async (tile: HTMLElement) => {
-  const user = userEvent.setup();
-
   tile.focus();
   await waitFor(() => user.keyboard(' '));
   expect(tile).toHaveClass('pf-v6-c-card__clickable-action');
@@ -78,8 +73,6 @@ describe('Keyboard accessibility', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('autofocus on each step first input element', async () => {
     await renderCreateMode();

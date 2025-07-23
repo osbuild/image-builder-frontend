@@ -1,9 +1,8 @@
 import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import { FIRSTBOOT_PATH, FIRSTBOOT_SERVICE_PATH } from '../../../constants';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
-import { clickNext } from '../CreateImageWizard/wizardTestUtils';
+import { clickNext, user } from '../CreateImageWizard/wizardTestUtils';
 
 const BLUEPRINT_JSON = `{
   "customizations": {
@@ -273,7 +272,6 @@ disabled = ["--invalid-disabled-service"]
 `;
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
-  const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
@@ -288,8 +286,6 @@ describe('Import modal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('renders import component', async () => {
     renderCustomRoutesWithReduxRouter();

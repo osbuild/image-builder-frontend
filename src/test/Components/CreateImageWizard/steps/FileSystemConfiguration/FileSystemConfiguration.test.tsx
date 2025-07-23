@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
@@ -22,10 +21,10 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
 } from '../../wizardTestUtils';
 
 const selectGuestImage = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -33,7 +32,6 @@ const selectGuestImage = async () => {
 };
 
 const selectImageInstaller = async () => {
-  const user = userEvent.setup();
   const imageInstallerCheckbox = await screen.findByRole('checkbox', {
     name: /Bare metal installer/i,
   });
@@ -48,19 +46,16 @@ const goToFileSystemConfigurationStep = async () => {
 };
 
 const clickManuallyConfigurePartitions = async () => {
-  const user = userEvent.setup();
   const button = await screen.findByText(/manually configure partitions/i);
   await waitFor(() => user.click(button));
 };
 
 const addPartition = async () => {
-  const user = userEvent.setup();
   const button = await screen.findByRole('button', { name: /add partition/i });
   await waitFor(() => user.click(button));
 };
 
 const customizePartition = async () => {
-  const user = userEvent.setup();
   const row = await getRow(2);
   const minSize = await within(row).findByRole('textbox', {
     name: /mountpoint suffix/i,
@@ -74,7 +69,6 @@ const getRow = async (row: number) => {
 };
 
 const changePartitionSize = async () => {
-  const user = userEvent.setup();
   const row = await getRow(1);
   const minSize = await within(row).findByRole('textbox', {
     name: /minimum partition size/i,
@@ -83,7 +77,6 @@ const changePartitionSize = async () => {
 };
 
 const changePartitionUnitsToKiB = async () => {
-  const user = userEvent.setup();
   const row = await getRow(1);
   const units = await within(row).findByText('GiB');
   await waitFor(() => user.click(units));
@@ -92,7 +85,6 @@ const changePartitionUnitsToKiB = async () => {
 };
 
 const changePartitionUnitsToMiB = async () => {
-  const user = userEvent.setup();
   const row = await getRow(1);
   const units = await within(row).findByText('GiB');
   await waitFor(() => user.click(units));
@@ -118,7 +110,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId(
     'file-system-configuration-expandable'
   );
@@ -132,8 +123,6 @@ describe('Step File system configuration', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('clicking Review and finish leads to Review', async () => {
     await renderCreateMode();

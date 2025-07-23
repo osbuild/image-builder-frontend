@@ -1,19 +1,18 @@
 import { Router as RemixRouter } from '@remix-run/router/dist/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 
 import {
   clickBack,
   clickNext,
   clickRegisterLater,
   renderCreateMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const selectGuestImage = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -26,7 +25,6 @@ const setupWithRhel = async () => {
 };
 
 const setupWithCentos = async () => {
-  const user = userEvent.setup();
   await renderCreateMode();
   const releaseMenu = screen.getByTestId('release_select');
 

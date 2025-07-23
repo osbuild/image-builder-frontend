@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
@@ -18,6 +17,7 @@ import {
   renderCreateMode,
   renderEditMode,
   selectGuestImageTarget,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -55,7 +55,6 @@ const goToReviewStep = async () => {
 };
 
 const addAzureTarget = async () => {
-  const user = userEvent.setup();
   await waitFor(() =>
     user.click(screen.getByRole('button', { name: /Microsoft Azure/i }))
   );
@@ -80,21 +79,18 @@ const addAzureTarget = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('users-expandable');
   const revisitButton = await within(expandable).findByTestId('revisit-users');
   await waitFor(() => user.click(revisitButton));
 };
 
 const clickAddUser = async () => {
-  const user = userEvent.setup();
   const addUser = await screen.findByRole('button', { name: /add a user/i });
   expect(addUser).toBeEnabled();
   await waitFor(() => user.click(addUser));
 };
 
 const addAnotherUser = async () => {
-  const user = userEvent.setup();
   const addUser = await screen.findByRole('button', { name: /add tab/i });
   expect(addUser).toBeEnabled();
   await waitFor(() => user.click(addUser));
@@ -122,13 +118,11 @@ const addAndFillThreeUsers = async () => {
 };
 
 const switchToNewUser = async () => {
-  const user = userEvent.setup();
   const newUserButton = await screen.findByRole('tab', { name: /user tab/i });
   await waitFor(() => user.click(newUserButton));
 };
 
 const closeNthTab = async (index: number) => {
-  const user = userEvent.setup();
   const tabs = await screen.findAllByRole('presentation');
   const closeTabButton = await within(tabs[index]).findByRole('button');
   await waitFor(() => user.click(closeTabButton));
@@ -136,7 +130,6 @@ const closeNthTab = async (index: number) => {
 };
 
 const clickRemoveUser = async () => {
-  const user = userEvent.setup();
   const removeUserModalButton = await screen.findByRole('button', {
     name: /Remove user/,
   });
@@ -144,7 +137,6 @@ const clickRemoveUser = async () => {
 };
 
 const addSshKey = async (sshKey: string) => {
-  const user = userEvent.setup();
   const enterSshKey = await screen.findByRole('textbox', {
     name: /public SSH key/i,
   });
@@ -153,7 +145,6 @@ const addSshKey = async (sshKey: string) => {
 };
 
 const addUserName = async (userName: string) => {
-  const user = userEvent.setup();
   const enterUserName = screen.getByRole('textbox', {
     name: /blueprint user name/i,
   });
@@ -162,7 +153,6 @@ const addUserName = async (userName: string) => {
 };
 
 const addPasswordByUserIndex = async (value: string, index: number) => {
-  const user = userEvent.setup();
   const passwordInputs = screen.getAllByPlaceholderText(/enter password/i);
   await waitFor(() => user.type(passwordInputs[index], value));
 };
@@ -175,13 +165,11 @@ const getAdminCheckbox = async () => {
 };
 
 const checkAdminCheckbox = async () => {
-  const user = userEvent.setup();
   const adminCheckbox = await getAdminCheckbox();
   await waitFor(() => user.click(adminCheckbox));
 };
 
 const addUserGroupByUserIndex = async (group: string, index: number) => {
-  const user = userEvent.setup();
   const userGroupInputs = await screen.findAllByPlaceholderText(
     'Add user group'
   );
@@ -194,8 +182,6 @@ const addUserGroupByUserIndex = async (group: string, index: number) => {
 };
 
 const removeUserGroup = async (group: string) => {
-  const user = userEvent.setup();
-
   const removeGroupButton = await screen.findByRole('button', {
     name: `Close ${group}`,
   });

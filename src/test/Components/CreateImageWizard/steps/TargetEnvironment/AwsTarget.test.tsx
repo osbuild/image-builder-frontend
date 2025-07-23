@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
 import {
@@ -27,6 +26,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -56,7 +56,6 @@ const goToReview = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId(
     'target-environments-expandable'
   );
@@ -67,7 +66,6 @@ const clickRevisitButton = async () => {
 };
 
 const selectAwsTarget = async () => {
-  const user = userEvent.setup();
   const awsCard = await screen.findByRole('button', {
     name: /Amazon Web Services/i,
   });
@@ -76,7 +74,6 @@ const selectAwsTarget = async () => {
 };
 
 const deselectAwsAndSelectGuestImage = async () => {
-  const user = userEvent.setup();
   const awsCard = await screen.findAllByRole('button', {
     name: /Amazon Web Services/i,
   });
@@ -88,7 +85,6 @@ const deselectAwsAndSelectGuestImage = async () => {
 };
 
 const chooseManualOption = async () => {
-  const user = userEvent.setup();
   const manualOption = await screen.findByText(
     /manually enter an account id\./i
   );
@@ -96,7 +92,6 @@ const chooseManualOption = async () => {
 };
 
 const enterAccountId = async () => {
-  const user = userEvent.setup();
   const awsAccountIdTextbox = await screen.findByRole('textbox', {
     name: 'aws account id',
   });
@@ -104,7 +99,6 @@ const enterAccountId = async () => {
 };
 
 const chooseSourcesOption = async () => {
-  const user = userEvent.setup();
   const sourceRadio = await screen.findByRole('radio', {
     name: /use an account configured from sources\./i,
   });
@@ -119,7 +113,6 @@ const getSourceDropdown = async () => {
 };
 
 const selectSource = async () => {
-  const user = userEvent.setup();
   const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
   await waitFor(async () => user.click(sourceTexbox));
 
@@ -136,8 +129,6 @@ describe('Step Upload to AWS', () => {
     vi.clearAllMocks();
     router = undefined;
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
@@ -216,7 +207,7 @@ describe('Step Upload to AWS', () => {
     const createBlueprintBtn = await screen.findByRole('button', {
       name: /Create blueprint/,
     });
-    user.click(createBlueprintBtn);
+    await waitFor(() => user.click(createBlueprintBtn));
   });
 
   test('revisit step button on Review works', async () => {

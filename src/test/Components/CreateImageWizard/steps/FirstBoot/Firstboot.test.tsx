@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
@@ -31,10 +30,10 @@ import {
   renderEditMode,
   selectGuestImageTarget,
   selectRhel9,
+  user,
 } from '../../wizardTestUtils';
 
 const goToFirstBootStep = async (): Promise<void> => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -57,7 +56,6 @@ const goToFirstBootStep = async (): Promise<void> => {
 };
 
 const selectSimplifiedOscapProfile = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -81,7 +79,6 @@ const goFromOscapToFirstBoot = async () => {
 };
 
 const openCodeEditor = async (): Promise<void> => {
-  const user = userEvent.setup();
   const startBtn = await screen.findByRole('button', {
     name: /Start from scratch/i,
   });
@@ -89,7 +86,6 @@ const openCodeEditor = async (): Promise<void> => {
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
-  const user = userEvent.setup();
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
@@ -100,14 +96,13 @@ const uploadFile = async (scriptName: string): Promise<void> => {
   }
 };
 
-const goToReviewStep = async (): Promise<void> => {
+const goToReviewStep = async () => {
   await clickNext(); // Details
   await enterBlueprintName();
   await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('firstboot-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-first-boot'
@@ -266,7 +261,6 @@ describe('First Boot edit mode', () => {
   });
 
   test('enabled service gets removed when first boot script is removed', async () => {
-    const user = userEvent.setup();
     const id = mockBlueprintIds['firstBoot'];
     await renderEditMode(id);
 
@@ -274,6 +268,7 @@ describe('First Boot edit mode', () => {
     const firstBootNavItem = await screen.findAllByRole('button', {
       name: /first boot/i,
     });
+    await waitFor(() => expect(firstBootNavItem[0]).toBeEnabled());
     await waitFor(() => user.click(firstBootNavItem[0]));
 
     // upload empty script file and go to Review

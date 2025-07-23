@@ -13,6 +13,7 @@ import {
 } from '../../fixtures/blueprints';
 import { server } from '../../mocks/server';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
+import { user } from '../CreateImageWizard/wizardTestUtils';
 
 const selectBlueprintById = async (bpId: string) => {
   const user = userEvent.setup();
@@ -22,7 +23,6 @@ const selectBlueprintById = async (bpId: string) => {
 };
 
 const selectBlueprintByNameAndId = async (name: string, bpId: string) => {
-  const user = userEvent.setup();
   const search = await screen.findByRole('textbox', {
     name: /search input/i,
   });
@@ -44,7 +44,6 @@ describe('Blueprints', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
   const blueprintNameWithComposes = 'Dark Chocolate';
   const blueprintIdWithComposes = '677b010b-e95e-4694-9813-d11d847f1bfc';
   const blueprintIdWithMultipleTargets = 'c1cfa347-4c37-49b5-8e73-6aa1d1746cfa';

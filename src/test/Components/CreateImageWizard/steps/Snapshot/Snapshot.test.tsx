@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
@@ -22,10 +21,10 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
 } from '../../wizardTestUtils';
 
 const goToSnapshotStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -53,7 +52,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-custom-repositories'
@@ -62,14 +60,12 @@ const clickRevisitButton = async () => {
 };
 
 const searchForRepository = async (repo: string) => {
-  const user = userEvent.setup();
   const search = await screen.findByLabelText('Filter repositories');
   await waitFor(() => user.type(search, repo));
   await waitFor(() => expect(screen.getByText(repo)).toBeInTheDocument);
 };
 
 const selectFirstRepository = async () => {
-  const user = userEvent.setup();
   const row0Checkbox = await screen.findByRole('checkbox', {
     name: /select row 0/i,
   });
@@ -77,7 +73,6 @@ const selectFirstRepository = async () => {
 };
 
 const clickBulkSelect = async () => {
-  const user = userEvent.setup();
   const bulkSelectCheckbox = await screen.findByRole('checkbox', {
     name: /select all/i,
   });
@@ -85,7 +80,6 @@ const clickBulkSelect = async () => {
 };
 
 const selectUseSnapshot = async () => {
-  const user = userEvent.setup();
   const snapshotRadio = await screen.findByRole('radio', {
     name: /Enable repeatable build/i,
   });
@@ -93,7 +87,6 @@ const selectUseSnapshot = async () => {
 };
 
 const updateDatePickerWithValue = async (date: string) => {
-  const user = userEvent.setup();
   const dateTextbox = await screen.findByRole('textbox', {
     name: /Date picker/i,
   });
@@ -109,7 +102,6 @@ const datePickerValue = async () => {
 };
 
 const clickContentDropdown = async () => {
-  const user = userEvent.setup();
   const contentExpandable = await screen.findByTestId('content-expandable');
   await waitFor(async () => user.click(contentExpandable));
 };
@@ -118,7 +110,6 @@ const getSnapshotMethodElement = async () =>
   await screen.findByRole('button', { name: /Snapshot method/i });
 
 const clickReset = async () => {
-  const user = userEvent.setup();
   const resetButton = await screen.findByRole('button', {
     name: /Reset/i,
   });
@@ -126,7 +117,6 @@ const clickReset = async () => {
 };
 
 const selectUseTemplate = async () => {
-  const user = userEvent.setup();
   const templateRadio = await screen.findByRole('radio', {
     name: /Use a content template/i,
   });
@@ -134,7 +124,6 @@ const selectUseTemplate = async () => {
 };
 
 const selectFirstTemplate = async () => {
-  const user = userEvent.setup();
   const row0Radio = await screen.findByRole('radio', {
     name: /select row 0/i,
   });

@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import {
   CREATE_BLUEPRINT,
@@ -21,6 +20,7 @@ import {
   renderCreateMode,
   renderEditMode,
   selectRhel9,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -29,7 +29,6 @@ let router: RemixRouter | undefined = undefined;
 const CUSTOM_NAME = 'custom-kernel-name';
 
 const goToKernelStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -49,7 +48,6 @@ const goToKernelStep = async () => {
 };
 
 const goToOpenSCAPStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -85,12 +83,10 @@ const getKernelNameOptions = async () => {
 };
 
 const openKernelNameOptions = async (dropdown: Element) => {
-  const user = userEvent.setup();
   await waitFor(() => user.click(dropdown));
 };
 
 const selectKernelName = async (kernelName: string) => {
-  const user = userEvent.setup();
   const kernelNameDropdown = await getKernelNameOptions();
   await openKernelNameOptions(kernelNameDropdown);
 
@@ -99,7 +95,6 @@ const selectKernelName = async (kernelName: string) => {
 };
 
 const selectCustomKernelName = async (kernelName: string) => {
-  const user = userEvent.setup();
   const kernelNameDropdown = await getKernelNameOptions();
   await waitFor(() => user.type(kernelNameDropdown, kernelName));
 
@@ -108,7 +103,6 @@ const selectCustomKernelName = async (kernelName: string) => {
 };
 
 const clearKernelName = async () => {
-  const user = userEvent.setup();
   const kernelNameClearBtn = await screen.findAllByRole('button', {
     name: /clear input/i,
   });
@@ -116,7 +110,6 @@ const clearKernelName = async () => {
 };
 
 const addKernelAppend = async (kernelArg: string) => {
-  const user = userEvent.setup();
   const kernelAppendInput = await screen.findByPlaceholderText(
     'Add kernel argument'
   );
@@ -130,8 +123,6 @@ const addKernelAppend = async (kernelArg: string) => {
 };
 
 const removeKernelArg = async (kernelArg: string) => {
-  const user = userEvent.setup();
-
   const removeNosmtArgButton = await screen.findByRole('button', {
     name: `Close ${kernelArg}`,
   });
@@ -139,7 +130,6 @@ const removeKernelArg = async (kernelArg: string) => {
 };
 
 const selectProfile = async () => {
-  const user = userEvent.setup();
   const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
   await waitFor(() => user.click(selectProfileDropdown));
 
@@ -148,7 +138,6 @@ const selectProfile = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('kernel-expandable');
   const revisitButton = await within(expandable).findByTestId('revisit-kernel');
   await waitFor(() => user.click(revisitButton));
@@ -196,7 +185,6 @@ describe('Step Kernel', () => {
   });
 
   test('disable Next with invalid custom kernel name', async () => {
-    const user = userEvent.setup();
     await renderCreateMode();
     await goToKernelStep();
 

@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import { CreateBlueprintRequest } from '../../../../../store/imageBuilderApi';
@@ -15,6 +14,7 @@ import {
   renderCreateMode,
   renderEditMode,
   selectRhel9,
+  user,
 } from '../../wizardTestUtils';
 
 // Overwrite
@@ -31,7 +31,6 @@ vi.mock('@unleash/proxy-client-react', () => ({
 }));
 
 const goToComplianceStep = async () => {
-  const user = userEvent.setup();
   await selectRhel9(); // Compliance is not available for RHEL 10 yet
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
@@ -68,8 +67,6 @@ const goToReviewStep = async () => {
 };
 
 const selectPolicy = async () => {
-  const user = userEvent.setup();
-
   const policyMenu = await screen.findByText('None');
   await waitFor(() => user.click(policyMenu));
 
@@ -83,7 +80,6 @@ const selectPolicy = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('compliance-detail-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-compliance'
@@ -144,7 +140,6 @@ describe('Compliance edit mode', () => {
   });
 
   test('fsc and packages get populated on edit', async () => {
-    const user = userEvent.setup();
     const id = mockBlueprintIds['compliance'];
     await renderEditMode(id);
 
@@ -152,6 +147,7 @@ describe('Compliance edit mode', () => {
     const fscBtns = await screen.findAllByRole('button', {
       name: /file system configuration/i,
     });
+    await waitFor(() => expect(fscBtns[0]).toBeEnabled());
     user.click(fscBtns[0]);
     await screen.findByRole('heading', { name: /file system configuration/i });
     await screen.findByText('/tmp');

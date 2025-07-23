@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT, PROVISIONING_API } from '../../../../../constants';
@@ -23,6 +22,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -55,7 +55,6 @@ const goToReview = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId(
     'target-environments-expandable'
   );
@@ -66,7 +65,6 @@ const clickRevisitButton = async () => {
 };
 
 const selectAzureTarget = async () => {
-  const user = userEvent.setup();
   const azureCard = await screen.findByRole('button', {
     name: /Microsoft Azure/i,
   });
@@ -75,7 +73,6 @@ const selectAzureTarget = async () => {
 };
 
 const deselectAzureAndSelectGuestImage = async () => {
-  const user = userEvent.setup();
   const azureCard = await screen.findByRole('button', {
     name: /Microsoft Azure/i,
   });
@@ -87,7 +84,6 @@ const deselectAzureAndSelectGuestImage = async () => {
 };
 
 const selectSource = async (sourceName: string) => {
-  const user = userEvent.setup();
   const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
   await waitFor(async () => user.click(sourceTexbox));
 
@@ -98,7 +94,6 @@ const selectSource = async (sourceName: string) => {
 };
 
 const selectResourceGroup = async () => {
-  const user = userEvent.setup();
   const resourceGrpTextbox = await screen.findByPlaceholderText(
     /select resource group/i
   );
@@ -111,7 +106,6 @@ const selectResourceGroup = async () => {
 };
 
 const selectManuallyEnterInformation = async () => {
-  const user = userEvent.setup();
   const manualOption = await screen.findByText(
     /manually enter the account information\./i
   );
@@ -119,7 +113,6 @@ const selectManuallyEnterInformation = async () => {
 };
 
 const selectSourcesOption = async () => {
-  const user = userEvent.setup();
   const sourcesOption = await screen.findByRole('radio', {
     name: /use an account configured from sources\./i,
   });
@@ -134,7 +127,6 @@ const getTenantGuidInput = async () => {
 };
 
 const enterTenantGuid = async () => {
-  const user = userEvent.setup();
   const tenantGuid = await getTenantGuidInput();
   await waitFor(() =>
     user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2')
@@ -149,7 +141,6 @@ const getSubscriptionIdInput = async () => {
 };
 
 const enterSubscriptionId = async () => {
-  const user = userEvent.setup();
   const subscriptionId = await getSubscriptionIdInput();
   await waitFor(() =>
     user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711')
@@ -157,7 +148,6 @@ const enterSubscriptionId = async () => {
 };
 
 const selectV1 = async () => {
-  const user = userEvent.setup();
   const hypervMenu = screen.getByRole('button', { name: /Generation 2/i });
 
   await waitFor(() => user.click(hypervMenu));
@@ -182,7 +172,6 @@ const getResourceGroupSelect = async () => {
 };
 
 const enterResourceGroup = async () => {
-  const user = userEvent.setup();
   const resourceGroup = await getResourceGroupTextInput();
   await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
 };
@@ -192,8 +181,6 @@ describe('Step Upload to Azure', () => {
     vi.clearAllMocks();
     router = undefined;
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();

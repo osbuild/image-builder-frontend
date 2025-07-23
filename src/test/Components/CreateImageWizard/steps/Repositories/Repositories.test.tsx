@@ -1,5 +1,4 @@
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
@@ -25,10 +24,10 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
 } from '../../wizardTestUtils';
 
 const goToRepositoriesStep = async () => {
-  const user = userEvent.setup();
   const guestImageCheckBox = await screen.findByRole('checkbox', {
     name: /virtualization guest image checkbox/i,
   });
@@ -57,7 +56,6 @@ const goToReviewStep = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
     'revisit-custom-repositories'
@@ -76,19 +74,16 @@ const getSecondRepoCheckbox = async () =>
   });
 
 const selectFirstRepository = async () => {
-  const user = userEvent.setup();
   const row0Checkbox = await getFirstRepoCheckbox();
   await waitFor(async () => user.click(row0Checkbox));
 };
 
 const deselectFirstRepository = async () => {
-  const user = userEvent.setup();
   const row0Checkbox = await getFirstRepoCheckbox();
   await waitFor(async () => user.click(row0Checkbox));
 };
 
 const clickBulkSelect = async () => {
-  const user = userEvent.setup();
   const bulkSelectCheckbox = await screen.findByRole('checkbox', {
     name: /select all/i,
   });
@@ -96,7 +91,6 @@ const clickBulkSelect = async () => {
 };
 
 const toggleSelected = async () => {
-  const user = userEvent.setup();
   const selectedButton = await screen.findByRole('button', {
     name: /selected repositories/i,
   });
@@ -104,7 +98,6 @@ const toggleSelected = async () => {
 };
 
 const toggleAll = async () => {
-  const user = userEvent.setup();
   const allButton = await screen.findByRole('button', {
     name: /all repositories/i,
   });
@@ -112,7 +105,6 @@ const toggleAll = async () => {
 };
 
 const searchForRepository = async (searchTerm: string) => {
-  const user = userEvent.setup();
   const searchInput = await screen.findByRole('textbox', {
     name: /filter repositories/i,
   });
@@ -123,8 +115,6 @@ describe('Step Custom repositories', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
-
-  const user = userEvent.setup();
 
   test('selected repositories stored in and retrieved from form state', async () => {
     await renderCreateMode();
@@ -267,7 +257,6 @@ describe('Repositories request generated correctly', () => {
   });
 
   const selectNginxRepository = async () => {
-    const user = userEvent.setup();
     const search = await screen.findByLabelText('Filter repositories');
     await waitFor(() => user.type(search, 'nginx stable repo'));
     await waitFor(
@@ -350,8 +339,6 @@ describe('Repositories edit mode', () => {
     vi.clearAllMocks();
   });
 
-  const user = userEvent.setup();
-
   test('edit mode works', async () => {
     const id = mockBlueprintIds['repositories'];
     await renderEditMode(id);
@@ -372,6 +359,7 @@ describe('Repositories edit mode', () => {
       name: /Custom repositories/,
     });
 
+    await waitFor(() => expect(customRepositories).toBeEnabled());
     user.click(customRepositories);
 
     await screen.findByText(

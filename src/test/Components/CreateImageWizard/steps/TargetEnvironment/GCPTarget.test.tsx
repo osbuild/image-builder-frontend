@@ -1,6 +1,5 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
-import { userEvent } from '@testing-library/user-event';
 
 import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
@@ -24,6 +23,7 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  user,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
@@ -51,7 +51,6 @@ const goToReview = async () => {
 };
 
 const clickRevisitButton = async () => {
-  const user = userEvent.setup();
   const expandable = await screen.findByTestId(
     'target-environments-expandable'
   );
@@ -76,7 +75,6 @@ const createGCPCloudImage = (
 };
 
 const clickGCPTarget = async () => {
-  const user = userEvent.setup();
   const googleOption = await screen.findByRole('button', {
     name: /Google Cloud Platform/i,
   });
@@ -85,7 +83,6 @@ const clickGCPTarget = async () => {
 };
 
 const deselectGcpAndSelectGuestImage = async () => {
-  const user = userEvent.setup();
   const googleCard = await screen.findAllByRole('button', {
     name: /Google Cloud Platform/i,
   });
@@ -97,7 +94,6 @@ const deselectGcpAndSelectGuestImage = async () => {
 };
 
 const selectGoogleAccount = async (optionId: string) => {
-  const user = userEvent.setup();
   const googleAccountOption = await screen.findByRole('radio', {
     name: optionId,
   });
@@ -113,8 +109,6 @@ describe('Step Upload to Google', () => {
     vi.clearAllMocks();
     router = undefined;
   });
-
-  const user = userEvent.setup();
 
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
@@ -248,7 +242,6 @@ describe('GCP image type request generated correctly', () => {
   });
 
   test('share image with red hat insight only', async () => {
-    const user = userEvent.setup();
     await renderCreateMode();
     await clickGCPTarget();
     const shareWithInsightOption = await screen.findByRole('radio', {
