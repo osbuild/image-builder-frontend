@@ -87,7 +87,7 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
     await expect(
-      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName)
+      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName),
     ).toBeVisible();
   });
 
@@ -196,14 +196,16 @@ test.describe.serial('test', () => {
     const switchInput = frame.locator('#aws-config-switch');
     await expect(switchInput).toBeVisible();
 
-    // the test is a little bit flaky, if it fails the first time
-    // while setting the configs, the second time the config should
-    // already be loaded and visible, if it is go back to the landing page
-    // https://github.com/osbuild/image-builder-frontend/issues/3429
+    // introduce a wait time, since it takes some time to load the
+    // worker config file.
+    await page.waitForTimeout(1000);
+
+    // If this test fails for any reason, the config should already be loaded
+    // and visible on the retury. If it is go back to the landing page
     if (await switchInput.isChecked()) {
       await frame.getByRole('button', { name: 'Cancel' }).click();
       await expect(
-        frame.getByRole('heading', { name: 'All images' })
+        frame.getByRole('heading', { name: 'All images' }),
       ).toBeVisible();
     } else {
       const switchToggle = frame.locator('.pf-v6-c-switch');
@@ -217,7 +219,7 @@ test.describe.serial('test', () => {
       await frame.getByPlaceholder('Path to AWS credentials').fill(credentials);
       await frame.getByRole('button', { name: 'Submit' }).click();
       await expect(
-        frame.getByRole('heading', { name: 'All images' })
+        frame.getByRole('heading', { name: 'All images' }),
       ).toBeVisible();
     }
 
@@ -225,6 +227,11 @@ test.describe.serial('test', () => {
       .getByRole('button', { name: 'Configure Cloud Providers' })
       .click();
     await expect(header).toBeVisible();
+
+    // introduce a wait time, since it takes some time to load the
+    // worker config file.
+    await page.waitForTimeout(1500);
+
     await expect(frame.locator('#aws-config-switch')).toBeChecked();
 
     await expect(frame.getByPlaceholder('AWS bucket')).toHaveValue(bucket);
@@ -241,6 +248,7 @@ test.describe.serial('test', () => {
     expect(parsed.aws?.credentials).toBe(credentials);
   });
 
+  const cockpitBlueprintname = uuidv4();
   test('cockpit cloud upload', async ({ page }) => {
     if (isHosted()) {
       return;
@@ -266,8 +274,10 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Back', exact: true }).click();
 
     frame.getByRole('heading', { name: 'Details' });
-    await frame.getByTestId('blueprint').fill(blueprintName);
-    await expect(frame.getByTestId('blueprint')).toHaveValue(blueprintName);
+    await frame.getByTestId('blueprint').fill(cockpitBlueprintname);
+    await expect(frame.getByTestId('blueprint')).toHaveValue(
+      cockpitBlueprintname,
+    );
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
@@ -276,10 +286,10 @@ test.describe.serial('test', () => {
 
     await frame
       .getByRole('textbox', { name: 'Search input' })
-      .fill(blueprintName);
+      .fill(cockpitBlueprintname);
     // the clickable blueprint cards are a bit awkward, so use the
     // button's id instead
-    await frame.locator(`button[id="${blueprintName}"]`).click();
+    await frame.locator(`button[id="${cockpitBlueprintname}"]`).click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
 
     // make sure the image is present
