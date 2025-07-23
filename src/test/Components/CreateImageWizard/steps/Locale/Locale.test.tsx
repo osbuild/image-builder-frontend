@@ -82,7 +82,7 @@ const selectLanguages = async () => {
 };
 
 const searchForKeyboard = async (keyboard: string) => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   const keyboardDropdown = await screen.findByPlaceholderText(
     /select a keyboard/i
   );
@@ -90,7 +90,7 @@ const searchForKeyboard = async (keyboard: string) => {
 };
 
 const selectKeyboard = async () => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null });
   const usKeyboard = await screen.findByRole('option', { name: 'us' });
   await waitFor(() => user.click(usKeyboard));
 };
