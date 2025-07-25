@@ -183,7 +183,7 @@ export const goToRegistrationStep = async () => {
 export const clickRegisterLater = async () => {
   const user = userEvent.setup();
   await screen.findByRole('heading', {
-    name: /Register systems using this image/,
+    name: /Register/,
   });
   const registerLaterRadio = await screen.findByRole('radio', {
     name: /register later/i,
@@ -194,7 +194,7 @@ export const clickRegisterLater = async () => {
 export const clickRegisterSatellite = async () => {
   const user = userEvent.setup();
   await screen.findByRole('heading', {
-    name: /Register systems using this image/,
+    name: /Register/,
   });
   const registerLaterRadio = await screen.findByRole('radio', {
     name: /register with satellite/i,

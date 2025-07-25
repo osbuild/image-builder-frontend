@@ -29,7 +29,7 @@ test.describe.serial('test', () => {
 
     if (isHosted()) {
       frame.getByRole('heading', {
-        name: 'Register systems using this image',
+        name: 'Register',
       });
       await page.getByRole('radio', { name: /Register later/i }).click();
       await frame.getByRole('button', { name: 'Next', exact: true }).click();

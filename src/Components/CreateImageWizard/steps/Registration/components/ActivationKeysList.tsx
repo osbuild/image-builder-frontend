@@ -2,12 +2,16 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
+  Button,
+  Flex,
+  FlexItem,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
   MenuToggle,
   MenuToggleElement,
+  Popover,
   Select,
   SelectList,
   SelectOption,
@@ -15,9 +19,11 @@ import {
   TextInputGroup,
   TextInputGroupMain,
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { v4 as uuidv4 } from 'uuid';
 
+import ActivationKeyInformation from './ActivationKeyInformation';
 import ManageKeysButton from './ManageKeysButton';
 
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
@@ -266,18 +272,38 @@ const ActivationKeysList = () => {
 
   return (
     <>
-      <FormGroup label='Activation key to use for this image'>
-        <Select
-          isScrollable
-          isOpen={isOpen}
-          selected={activationKey}
-          onSelect={handleSelect}
-          onOpenChange={handleToggle}
-          toggle={toggle}
-          shouldFocusFirstItemOnOpen={false}
-        >
-          <SelectList>{prepareSelectOptions()}</SelectList>
-        </Select>
+      <FormGroup label='Activation key'>
+        <Flex spaceItems={{ default: 'spaceItemsMd' }}>
+          <FlexItem>
+            <Select
+              isScrollable
+              isOpen={isOpen}
+              selected={activationKey}
+              onSelect={handleSelect}
+              onOpenChange={handleToggle}
+              toggle={toggle}
+              shouldFocusFirstItemOnOpen={false}
+            >
+              <SelectList>{prepareSelectOptions()}</SelectList>
+            </Select>
+          </FlexItem>
+          <FlexItem>
+            <Popover
+              headerContent='Details'
+              bodyContent={<ActivationKeyInformation />}
+              minWidth='30'
+            >
+              <Button
+                variant='secondary'
+                icon={<InfoCircleIcon />}
+                iconPosition='left'
+                isDisabled={!activationKey}
+              >
+                View details
+              </Button>
+            </Popover>
+          </FlexItem>
+        </Flex>
         <FormHelperText>
           <HelperText>
             <HelperTextItem>

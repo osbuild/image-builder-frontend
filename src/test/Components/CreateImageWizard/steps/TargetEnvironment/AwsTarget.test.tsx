@@ -132,7 +132,7 @@ describe('Step Upload to AWS', () => {
     await enterAccountId();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Register systems using this image',
+      name: 'Register',
     });
   });
 

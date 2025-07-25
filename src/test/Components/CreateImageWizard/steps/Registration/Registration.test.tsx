@@ -57,26 +57,20 @@ Object.defineProperty(window, 'localStorage', {
 // Initiliaze the router
 const router: RemixRouter | undefined = undefined;
 
-const clickShowAdditionalConnectionOptions = async () => {
-  const user = userEvent.setup();
-  const link = await screen.findByText('Show additional connection options');
-  await waitFor(() => user.click(link));
-};
-
 const deselectEnableRemoteRemediations = async () => {
   const user = userEvent.setup();
-  const checkBox = await screen.findByRole('checkbox', {
-    name: 'Enable remote remediations and system management with automation',
+  const optionSwitch = await screen.findByRole('switch', {
+    name: /Enable remote remediations and system management with automation/,
   });
-  await waitFor(() => user.click(checkBox));
+  await waitFor(() => user.click(optionSwitch));
 };
 
 const deselectPredictiveAnalytics = async () => {
   const user = userEvent.setup();
-  const checkBox = await screen.findByRole('checkbox', {
-    name: 'Enable predictive analytics and management capabilities',
+  const optionSwitch = await screen.findByRole('switch', {
+    name: /Enable predictive analytics and management capabilities/,
   });
-  await waitFor(() => user.click(checkBox));
+  await waitFor(() => user.click(optionSwitch));
 };
 
 const openActivationKeyDropdown = async () => {
@@ -199,7 +193,7 @@ describe('Step Registration', () => {
     );
   });
 
-  test('should disable dropdown when clicking Register the system later', async () => {
+  test('should hide dropdown when clicking Register the system later', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
@@ -210,9 +204,9 @@ describe('Step Registration', () => {
       ).not.toBeInTheDocument(),
     );
     await waitFor(async () =>
-      expect(await screen.findByTestId('activation-key-select')).toHaveClass(
-        'pf-m-disabled',
-      ),
+      expect(
+        screen.queryByTestId('activation-key-select'),
+      ).not.toBeInTheDocument(),
     );
     await goToReview();
     await screen.findByText('Register the system later');
@@ -226,7 +220,7 @@ describe('Step Registration', () => {
     await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', {
-      name: /Register systems using this image/,
+      name: /Register/,
     });
   });
 });
@@ -292,7 +286,6 @@ describe('Registration request generated correctly', () => {
   test('register + insights', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickShowAdditionalConnectionOptions();
     await deselectEnableRemoteRemediations();
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -324,7 +317,6 @@ describe('Registration request generated correctly', () => {
   test('register now', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickShowAdditionalConnectionOptions();
     await deselectPredictiveAnalytics();
     await goToReview();
     // informational modal pops up in the first test only as it's tied
