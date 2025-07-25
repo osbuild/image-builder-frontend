@@ -159,7 +159,7 @@ describe('Import modal', () => {
 
     // Registration
     await screen.findByText(
-      'Automatically register and enable advanced capabilities',
+      'Automatically register and enable advanced capabilities.',
     );
     //const registrationCheckbox = await screen.findByRole('radio', {
     //  name: /Automatically register and enable advanced capabilities/i,

@@ -107,7 +107,7 @@ describe('Step Upload to Google', () => {
     await selectGoogleAccount('Google account');
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Register systems using this image',
+      name: 'Register',
     });
   });
 

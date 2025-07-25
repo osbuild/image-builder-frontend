@@ -155,7 +155,7 @@ describe('Step Image output', () => {
     await selectGuestImageTarget();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Register systems using this image',
+      name: 'Register',
     });
   });
 

@@ -100,7 +100,7 @@ describe('Step Upload to Azure', () => {
     await enterResourceGroup();
     await clickNext();
     await screen.findByRole('heading', {
-      name: 'Register systems using this image',
+      name: 'Register',
     });
   });
 

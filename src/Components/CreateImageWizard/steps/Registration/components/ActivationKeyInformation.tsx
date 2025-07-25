@@ -5,10 +5,13 @@ import {
   Button,
   Content,
   ContentVariants,
+  DescriptionList,
+  DescriptionListDescription,
+  DescriptionListGroup,
+  DescriptionListTerm,
   Popover,
   Spinner,
 } from '@patternfly/react-core';
-import { HelpIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { useAppSelector } from '../../../../../store/hooks';
@@ -34,51 +37,40 @@ const ActivationKeyInformation = (): JSX.Element => {
     <>
       {isFetchingActivationKeyInfo && <Spinner size='lg' />}
       {isSuccessActivationKeyInfo && (
-        <Content>
-          <Content component={ContentVariants.dl}>
-            <Content component={ContentVariants.dt}>Name:</Content>
-            <Content component={ContentVariants.dd}>{activationKey}</Content>
-            <Content component={ContentVariants.dt}>Description:</Content>
-            <Content component={ContentVariants.dd}>
+        <DescriptionList>
+          <DescriptionListGroup>
+            <DescriptionListTerm>Name</DescriptionListTerm>
+            <DescriptionListDescription>
+              {activationKey}
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>Description</DescriptionListTerm>
+            <DescriptionListDescription>
               {activationKeyInfo?.body?.description || ''}
-            </Content>
-            <Content component={ContentVariants.dt}>Role:</Content>
-            <Content component={ContentVariants.dd}>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>Role</DescriptionListTerm>
+            <DescriptionListDescription>
               {activationKeyInfo?.body?.role || 'Not defined'}
-            </Content>
-            <Content component={ContentVariants.dt}>SLA:</Content>
-            <Content component={ContentVariants.dd}>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>SLA</DescriptionListTerm>
+            <DescriptionListDescription>
               {activationKeyInfo?.body?.serviceLevel || 'Not defined'}
-            </Content>
-            <Content component={ContentVariants.dt}>Usage:</Content>
-            <Content component={ContentVariants.dd}>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>Usage</DescriptionListTerm>
+            <DescriptionListDescription>
               {activationKeyInfo?.body?.usage || 'Not defined'}
-            </Content>
-            <Content component={ContentVariants.dt}>
-              Additional repositories:
-              <Popover
-                bodyContent={
-                  <Content>
-                    <Content>
-                      The core repositories for your operating system version
-                      are always enabled and do not need to be explicitly added
-                      to the activation key.
-                    </Content>
-                  </Content>
-                }
-              >
-                <Button
-                  icon={<HelpIcon />}
-                  variant='plain'
-                  aria-label='About additional repositories'
-                  className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
-                />
-              </Popover>
-            </Content>
-            <Content
-              component={ContentVariants.dd}
-              className='pf-v6-u-display-flex pf-v6-u-align-items-flex-end'
-            >
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>Additional repositories</DescriptionListTerm>
+            <DescriptionListDescription>
               {activationKeyInfo?.body?.additionalRepositories &&
               activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
                 <Popover
@@ -123,9 +115,9 @@ const ActivationKeyInformation = (): JSX.Element => {
               ) : (
                 'None'
               )}
-            </Content>
-          </Content>
-        </Content>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+        </DescriptionList>
       )}
       {isErrorActivationKeyInfo && (
         <Content>
