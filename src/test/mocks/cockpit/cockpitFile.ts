@@ -31,7 +31,7 @@ export const getLastBlueprintReq = () => {
   return lastRequest.blueprints[lastRequest.blueprints.length - 1];
 };
 
-export const cockpitFile = (filepath: string, options?: object) => {
+export const cockpitFile = (filepath: string, _options?: object) => {
   return {
     read: (): Promise<string> => {
       const file = path.parse(filepath);
