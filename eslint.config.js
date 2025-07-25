@@ -111,7 +111,13 @@ module.exports = defineConfig([
       '@typescript-eslint/no-require-imports': 'error',
       'disable-autofix/@typescript-eslint/no-unnecessary-condition': 'warn',
       'no-unused-vars': 'off', // disable js rule in favor of @typescript-eslint's rule
-      '@typescript-eslint/no-unused-vars': 'warn',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+        },
+      ],
       'jsx-a11y/no-autofocus': 'off',
     },
     settings: {
