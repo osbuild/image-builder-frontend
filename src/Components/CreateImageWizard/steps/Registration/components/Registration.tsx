@@ -101,10 +101,6 @@ const Registration = () => {
   const distribution = useAppSelector(selectDistribution);
   const registrationType = useAppSelector(selectRegistrationType);
 
-  const [showOptions, setShowOptions] = useState(
-    registrationType === 'register-later'
-  );
-
   const isSatelliteRegistrationEnabled = useFlag(
     'image-builder.satellite.enabled'
   );
@@ -136,21 +132,9 @@ const Registration = () => {
         id="register-system-now"
         name="register-system-now"
         autoFocus
-        description={
-          <Button
-            component="a"
-            variant="link"
-            isDisabled={!registrationType.startsWith('register-now')}
-            isInline
-            onClick={() => setShowOptions(!showOptions)}
-          >
-            {`${!showOptions ? 'Show' : 'Hide'} additional connection options`}
-          </Button>
-        }
+        className="pf-v6-u-pb-sm"
         body={
-          showOptions && (
             <Checkbox
-              className="pf-v6-u-ml-lg"
               label={
                 <>
                   Enable predictive analytics and management capabilities
@@ -170,6 +154,7 @@ const Registration = () => {
               }}
               id="register-system-now-insights"
               name="register-system-insights"
+              className="pf-v6-u-pt-0"
               body={
                 <Checkbox
                   label={
@@ -194,7 +179,6 @@ const Registration = () => {
                 />
               }
             />
-          )
         }
       />
       <Radio
@@ -202,7 +186,6 @@ const Registration = () => {
         isChecked={registrationType === 'register-later'}
         onChange={() => {
           dispatch(changeRegistrationType('register-later'));
-          setShowOptions(false);
         }}
         id="register-later"
         name="register-later"
@@ -213,7 +196,6 @@ const Registration = () => {
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));
-            setShowOptions(false);
           }}
           id="register-satellite"
           name="register-satellite"
