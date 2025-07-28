@@ -202,7 +202,7 @@ type MinSizeProps = {
 
 export const MinSize = ({ partitions }: MinSizeProps) => {
   let minSize = '';
-  if (partitions) {
+  if (partitions.length > 0) {
     let size = 0;
     for (const partition of partitions) {
       size += Number(partition.min_size) * getConversionFactor(partition.unit);

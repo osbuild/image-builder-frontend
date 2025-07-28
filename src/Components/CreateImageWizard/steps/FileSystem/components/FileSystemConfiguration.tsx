@@ -58,8 +58,8 @@ const FileSystemConfiguration = () => {
       <Content>
         <Content component={ContentVariants.h3}>Configure partitions</Content>
       </Content>
-      {partitions?.find((partition) =>
-        partition?.mountpoint?.includes('/usr')
+      {partitions.find((partition) =>
+        partition.mountpoint.includes('/usr')
       ) && <UsrSubDirectoriesDisabled />}
       <Content>
         <Content>
