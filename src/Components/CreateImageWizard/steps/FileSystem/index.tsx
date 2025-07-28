@@ -9,6 +9,7 @@ import FileSystemPartition from './components/FileSystemPartition';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectFileSystemConfigurationType } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
+
 export type FileSystemConfigurationType = 'automatic' | 'manual';
 
 const FileSystemStep = () => {
@@ -30,13 +31,11 @@ const FileSystemStep = () => {
           <FileSystemPartition />
           <FileSystemAutomaticPartition />
         </>
-      ) : fileSystemConfigurationType === 'manual' ? (
+      ) : (
         <>
           <FileSystemPartition />
           <FileSystemConfiguration />
         </>
-      ) : (
-        fileSystemConfigurationType === 'oscap' && <FileSystemConfiguration />
       )}
     </Form>
   );

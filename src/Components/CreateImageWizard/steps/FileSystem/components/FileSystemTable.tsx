@@ -520,7 +520,7 @@ const FileSystemTable = () => {
         onDragLeave={onDragLeave}
         ref={bodyRef}
       >
-        {partitions &&
+        {partitions.length > 0 &&
           partitions.map((partition) => (
             <Row
               onDrop={onDrop}
