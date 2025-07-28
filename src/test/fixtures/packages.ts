@@ -75,6 +75,64 @@ export const mockSourcesPackagesResults = (
       },
     ];
   }
+  if (search === 'sortingTest') {
+    return [
+      {
+        package_name: 'alphaModule',
+        summary: 'Alpha module for sorting tests',
+        package_sources: [
+          {
+            name: 'alphaModule',
+            type: 'module',
+            stream: '2.0',
+            end_date: '2025-12-01',
+          },
+          {
+            name: 'alphaModule',
+            type: 'module',
+            stream: '3.0',
+            end_date: '2027-12-01',
+          },
+        ],
+      },
+      {
+        package_name: 'betaModule',
+        summary: 'Beta module for sorting tests',
+        package_sources: [
+          {
+            name: 'betaModule',
+            type: 'module',
+            stream: '2.0',
+            end_date: '2025-06-01',
+          },
+          {
+            name: 'betaModule',
+            type: 'module',
+            stream: '4.0',
+            end_date: '2028-06-01',
+          },
+        ],
+      },
+      {
+        package_name: 'gammaModule',
+        summary: 'Gamma module for sorting tests',
+        package_sources: [
+          {
+            name: 'gammaModule',
+            type: 'module',
+            stream: '2.0',
+            end_date: '2025-08-01',
+          },
+          {
+            name: 'gammaModule',
+            type: 'module',
+            stream: '1.5',
+            end_date: '2026-08-01',
+          },
+        ],
+      },
+    ];
+  }
   if (search === 'mock') {
     return [
       {
