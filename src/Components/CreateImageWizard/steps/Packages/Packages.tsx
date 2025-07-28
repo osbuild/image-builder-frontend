@@ -66,7 +66,6 @@ import {
 } from '../../../../constants';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
-  ApiPackageSourcesResponse,
   ApiRepositoryResponseRead,
   ApiSearchRpmResponse,
   useCreateRepositoryMutation,
@@ -132,6 +131,35 @@ export enum Repos {
   INCLUDED = 'included-repos',
   OTHER = 'other-repos',
 }
+
+const compareVersions = (versionA: string, versionB: string): number => {
+  const partsA = versionA.split('.').map((part) => parseInt(part, 10) || 0);
+  const partsB = versionB.split('.').map((part) => parseInt(part, 10) || 0);
+
+  const maxLength = Math.max(partsA.length, partsB.length);
+  for (let i = 0; i < maxLength; i++) {
+    const partA = partsA[i] || 0;
+    const partB = partsB[i] || 0;
+    if (partA > partB) return 1;
+    if (partA < partB) return -1;
+  }
+  return 0;
+};
+
+const compareByStreamVersion = (
+  a: IBPackageWithRepositoryInfo,
+  b: IBPackageWithRepositoryInfo,
+): number => {
+  if (a.stream && b.stream) {
+    const comparison = compareVersions(a.stream, b.stream);
+    return -comparison;
+  } else if (a.stream) {
+    return -1;
+  } else if (b.stream) {
+    return 1;
+  }
+  return 0;
+};
 
 const Packages = () => {
   const dispatch = useDispatch();
@@ -866,8 +894,6 @@ const Packages = () => {
         dispatch(addPackage(pkg));
         if (pkg.type === 'module') {
           setActiveStream(pkg.stream || '');
-          setActiveSortIndex(2);
-          setPage(1);
           dispatch(
             addModule({
               name: pkg.module_name || '',
@@ -993,7 +1019,18 @@ const Packages = () => {
     }
   };
 
-  const initialExpandedPkgs: IBPackageWithRepositoryInfo[] = [];
+  const getPackageUniqueKey = (pkg: IBPackageWithRepositoryInfo): string => {
+    try {
+      if (!pkg || !pkg.name) {
+        return `invalid_${Date.now()}`;
+      }
+      return `${pkg.name}_${pkg.stream || 'none'}_${pkg.module_name || 'none'}_${pkg.repository || 'unknown'}`;
+    } catch {
+      return `error_${Date.now()}`;
+    }
+  };
+
+  const initialExpandedPkgs: string[] = [];
   const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
 
   const setPkgExpanded = (
@@ -1001,12 +1038,13 @@ const Packages = () => {
     isExpanding: boolean,
   ) =>
     setExpandedPkgs((prevExpanded) => {
-      const otherExpandedPkgs = prevExpanded.filter((p) => p.name !== pkg.name);
-      return isExpanding ? [...otherExpandedPkgs, pkg] : otherExpandedPkgs;
+      const pkgKey = getPackageUniqueKey(pkg);
+      const otherExpandedPkgs = prevExpanded.filter((key) => key !== pkgKey);
+      return isExpanding ? [...otherExpandedPkgs, pkgKey] : otherExpandedPkgs;
     });
 
   const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo) =>
-    expandedPkgs.includes(pkg);
+    expandedPkgs.includes(getPackageUniqueKey(pkg));
 
   const initialExpandedGroups: GroupWithRepositoryInfo['name'][] = [];
   const [expandedGroups, setExpandedGroups] = useState(initialExpandedGroups);
@@ -1030,51 +1068,66 @@ const Packages = () => {
     'asc' | 'desc'
   >('asc');
 
-  const getSortableRowValues = (
-    pkg: IBPackageWithRepositoryInfo,
-  ): (string | number | ApiPackageSourcesResponse[] | undefined)[] => {
-    return [pkg.name, pkg.summary, pkg.stream, pkg.end_date, pkg.repository];
-  };
+  const compareActiveStream = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo,
+    activeStream: string,
+  ): number => {
+    const aHasActiveStream = activeStream && a.stream === activeStream;
+    const bHasActiveStream = activeStream && b.stream === activeStream;
 
-  let sortedPackages = transformedPackages;
-  sortedPackages = transformedPackages.sort((a, b) => {
-    const aValue = getSortableRowValues(a)[activeSortIndex];
-    const bValue = getSortableRowValues(b)[activeSortIndex];
-    if (typeof aValue === 'number') {
-      // Numeric sort
-      if (activeSortDirection === 'asc') {
-        return (aValue as number) - (bValue as number);
-      }
-      return (bValue as number) - (aValue as number);
-    }
-    // String sort
-    // if active stream is set, sort it to the top
-    if (aValue === activeStream) {
+    if (aHasActiveStream && !bHasActiveStream) {
       return -1;
     }
-    if (bValue === activeStream) {
+    if (bHasActiveStream && !aHasActiveStream) {
       return 1;
     }
-    if (activeSortDirection === 'asc') {
-      // handle packages with undefined stream
-      if (!aValue) {
-        return -1;
-      }
-      if (!bValue) {
-        return 1;
-      }
-      return (aValue as string).localeCompare(bValue as string);
-    } else {
-      // handle packages with undefined stream
-      if (!aValue) {
-        return 1;
-      }
-      if (!bValue) {
-        return -1;
-      }
-      return (bValue as string).localeCompare(aValue as string);
+    return 0;
+  };
+
+  const compareByName = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo,
+  ): number => {
+    return (a.name || '').localeCompare(b.name || '');
+  };
+
+  const compareByEndDate = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo,
+  ): number => {
+    if (!a.end_date && !b.end_date) return 0;
+    if (!a.end_date) return 1;
+    if (!b.end_date) return -1;
+
+    // Both have dates - simple comparison
+    return a.end_date < b.end_date ? -1 : a.end_date > b.end_date ? 1 : 0;
+  };
+
+  const sortedPackages = useMemo(() => {
+    if (!transformedPackages || !Array.isArray(transformedPackages)) {
+      return [];
     }
-  });
+
+    return [...transformedPackages].sort((a, b) => {
+      const activeStreamComparison = compareActiveStream(a, b, activeStream);
+      if (activeStreamComparison !== 0) {
+        return activeStreamComparison;
+      }
+
+      const nameComparison = compareByName(a, b);
+      if (nameComparison !== 0) {
+        return nameComparison;
+      }
+
+      const streamComparison = compareByStreamVersion(a, b);
+      if (streamComparison !== 0) {
+        return streamComparison;
+      }
+
+      return compareByEndDate(a, b);
+    });
+  }, [transformedPackages, activeStream]);
 
   const getSortParams = (columnIndex: number) => ({
     sortBy: {
@@ -1100,14 +1153,15 @@ const Packages = () => {
         (module) => module.name === pkg.name,
       );
       isSelected =
-        packages.some((p) => p.name === pkg.name) && !isModuleWithSameName;
+        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
+        !isModuleWithSameName;
     }
 
     if (pkg.type === 'module') {
       // the package is selected if it's added to the packages state
       // and its module stream matches one in enabled_modules
       isSelected =
-        packages.some((p) => p.name === pkg.name) &&
+        packages.some((p) => p.name === pkg.name && p.stream === pkg.stream) &&
         modules.some(
           (m) => m.name === pkg.module_name && m.stream === pkg.stream,
         );
@@ -1306,61 +1360,64 @@ const Packages = () => {
       rows = rows.concat(
         sortedPackages
           .slice(computeStart(), computeEnd())
-          .map((pkg, rowIndex) => (
-            <Tbody
-              key={`${pkg.name}-${rowIndex}`}
-              isExpanded={isPkgExpanded(pkg)}
-            >
-              <Tr data-testid='package-row'>
-                <Td
-                  expand={{
-                    rowIndex: rowIndex,
-                    isExpanded: isPkgExpanded(pkg),
-                    onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
-                    expandId: `${pkg.name}-expandable`,
-                  }}
-                />
-                <Td
-                  select={{
-                    isSelected: isPackageSelected(pkg),
-                    rowIndex: rowIndex,
-                    onSelect: (event, isSelecting) =>
-                      handleSelect(pkg, rowIndex, isSelecting),
-                    isDisabled: isSelectDisabled(pkg),
-                  }}
-                  title={
-                    isSelectDisabled(pkg)
-                      ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
-                      : ''
-                  }
-                />
-                <Td>{pkg.name}</Td>
-                <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
-                <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
-              </Tr>
-              <Tr isExpanded={isPkgExpanded(pkg)}>
-                <Td colSpan={5}>
-                  <ExpandableRowContent>
-                    {
-                      <DescriptionList>
-                        <DescriptionListGroup>
-                          <DescriptionListTerm>
-                            Description
-                            {toggleSelected === 'toggle-selected' && (
-                              <PackageInfoNotAvailablePopover />
-                            )}
-                          </DescriptionListTerm>
-                          <DescriptionListDescription>
-                            {pkg.summary ? pkg.summary : 'Not available'}
-                          </DescriptionListDescription>
-                        </DescriptionListGroup>
-                      </DescriptionList>
+          .map((pkg, sliceIndex) => {
+            const absoluteRowIndex = computeStart() + sliceIndex;
+            return (
+              <Tbody
+                key={getPackageUniqueKey(pkg)}
+                isExpanded={isPkgExpanded(pkg)}
+              >
+                <Tr data-testid='package-row'>
+                  <Td
+                    expand={{
+                      rowIndex: absoluteRowIndex,
+                      isExpanded: isPkgExpanded(pkg),
+                      onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
+                      expandId: `${getPackageUniqueKey(pkg)}-expandable`,
+                    }}
+                  />
+                  <Td
+                    select={{
+                      isSelected: isPackageSelected(pkg),
+                      rowIndex: absoluteRowIndex,
+                      onSelect: (event, isSelecting) =>
+                        handleSelect(pkg, absoluteRowIndex, isSelecting),
+                      isDisabled: isSelectDisabled(pkg),
+                    }}
+                    title={
+                      isSelectDisabled(pkg)
+                        ? 'Disabled due to the package(s) you selected. You cannot select packages from different application stream versions.'
+                        : ''
                     }
-                  </ExpandableRowContent>
-                </Td>
-              </Tr>
-            </Tbody>
-          )),
+                  />
+                  <Td>{pkg.name}</Td>
+                  <Td>{pkg.stream ? pkg.stream : 'N/A'}</Td>
+                  <Td>{pkg.end_date ? formatDate(pkg.end_date) : 'N/A'}</Td>
+                </Tr>
+                <Tr isExpanded={isPkgExpanded(pkg)}>
+                  <Td colSpan={5}>
+                    <ExpandableRowContent>
+                      {
+                        <DescriptionList>
+                          <DescriptionListGroup>
+                            <DescriptionListTerm>
+                              Description
+                              {toggleSelected === 'toggle-selected' && (
+                                <PackageInfoNotAvailablePopover />
+                              )}
+                            </DescriptionListTerm>
+                            <DescriptionListDescription>
+                              {pkg.summary ? pkg.summary : 'Not available'}
+                            </DescriptionListDescription>
+                          </DescriptionListGroup>
+                        </DescriptionList>
+                      }
+                    </ExpandableRowContent>
+                  </Td>
+                </Tr>
+              </Tbody>
+            );
+          }),
       );
     }
     return rows;
