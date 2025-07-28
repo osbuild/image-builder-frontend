@@ -108,7 +108,7 @@ const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
-  const user = userEvent.setup();
+  const user = userEvent.setup({ delay: null});
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');
@@ -432,7 +432,7 @@ describe('Registration request generated correctly', () => {
     expect(nextButton).toBeDisabled();
 
     await uploadFile(CERTIFICATE);
-    expect(nextButton).toBeDisabled();
+    await waitFor(() => expect(nextButton).toBeDisabled());
     await addSatelliteRegistrationCommandViaKeyDown(
       SATELLITE_COMMAND_EXPIRED_TOKEN
     );
@@ -443,11 +443,11 @@ describe('Registration request generated correctly', () => {
     await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
 
     await addSatelliteRegistrationCommandViaKeyDown(SATELLITE_COMMAND);
-    expect(nextButton).toBeEnabled();
+    await waitFor(() => expect(nextButton).toBeEnabled());
     await addSatelliteRegistrationCommandViaKeyDown(
       SATELLITE_COMMAND_NO_EXPIRATION
     );
-    expect(nextButton).toBeEnabled();
+    await waitFor(() => expect(nextButton).toBeEnabled());
   });
 });
 
