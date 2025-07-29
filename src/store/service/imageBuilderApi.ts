@@ -550,13 +550,6 @@ export type OsTree = {
      */
   rhsm?: boolean | undefined;
 };
-export type AapRegistration = {
-  ansible_callback_url: string;
-  host_config_key: string;
-  tls_certificate_authority?: string | undefined;
-  /** When true, indicates the user has confirmed that HTTPS callback URL does not require a CA certificate for verification */
-  skip_tls_verification?: boolean | undefined;
-};
 export type ImageRequest = {
   /** CPU architecture of the image, x86_64 and aarch64 are currently supported.
    */
@@ -582,7 +575,6 @@ export type ImageRequest = {
   /** Name of the content template. Used when registering the system to Insights.
    */
   content_template_name?: string | undefined;
-  aap_registration?: AapRegistration | undefined;
 };
 export type Container = {
   /** Reference to the container to embed */
@@ -830,6 +822,13 @@ export type Installer = {
 export type CaCertsCustomization = {
   pem_certs: string[];
 };
+export type AapRegistration = {
+  ansible_callback_url: string;
+  host_config_key: string;
+  tls_certificate_authority?: string | undefined;
+  /** When true, indicates the user has confirmed that HTTPS callback URL does not require a CA certificate for verification */
+  skip_tls_verification?: boolean | undefined;
+};
 export type Customizations = {
   containers?: Container[] | undefined;
   directories?: Directory[] | undefined;
@@ -872,6 +871,7 @@ export type Customizations = {
   fips?: Fips | undefined;
   installer?: Installer | undefined;
   cacerts?: CaCertsCustomization | undefined;
+  aap_registration?: AapRegistration | undefined;
 };
 export type BlueprintMetadata = {
   parent_id: string | null;
