@@ -1,12 +1,14 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { http, HttpResponse } from 'msw';
 
 import {
   AARCH64,
   CENTOS_9,
   CREATE_BLUEPRINT,
   EDIT_BLUEPRINT,
+  IMAGE_BUILDER_API,
   RHEL_10,
   RHEL_8,
   RHEL_9,
@@ -25,6 +27,7 @@ import {
   rhel9CreateBlueprintRequest,
   x86_64CreateBlueprintRequest,
 } from '../../../../fixtures/editMode';
+import { server } from '../../../../mocks/server';
 import {
   blueprintRequest,
   clickNext,
@@ -309,6 +312,17 @@ describe('Step Image output', () => {
     await goToDetailsStep();
     await clickNext(); // Review
     await verifyNameInReviewStep('Red Velvet');
+  });
+
+  test('alert gets rendered when fetching target environments fails', async () => {
+    server.use(
+      http.get(`${IMAGE_BUILDER_API}/architectures/${RHEL_10}`, () => {
+        return new HttpResponse(null, { status: 404 });
+      })
+    );
+
+    await renderCreateMode();
+    await screen.findByText(/Couldn't fetch target environments/);
   });
 });
 
