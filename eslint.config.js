@@ -151,6 +151,12 @@ module.exports = defineConfig([
       ...pluginPlaywright.configs.recommended.rules,
       'playwright/no-conditional-in-test': 'off',
       'playwright/no-conditional-expect': 'off',
+      "playwright/no-skipped-test": [
+        "error",
+        {
+          "allowConditional": true
+        }
+      ]
     },
   },
 ]);
