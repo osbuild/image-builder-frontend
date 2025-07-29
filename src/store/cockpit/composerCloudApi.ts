@@ -134,6 +134,7 @@ export type ImageTypes =
   | "azure-cvm"
   | "azure-eap7-rhui"
   | "azure-rhui"
+  | "azure-sapapps-rhui"
   | "azure-sap-rhui"
   | "edge-commit"
   | "edge-container"
