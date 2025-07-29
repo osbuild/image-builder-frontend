@@ -1,16 +1,19 @@
 import React, { MouseEventHandler, useEffect } from 'react';
 
 import {
+  Alert,
   Button,
   Card,
   CardHeader,
   Checkbox,
   Content,
+  EmptyState,
   Flex,
   FlexItem,
   FormGroup,
   Gallery,
   Popover,
+  Spinner,
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
@@ -92,11 +95,9 @@ const TargetEnvironment = () => {
   const environments = useAppSelector(selectImageTypes);
   const distribution = useAppSelector(selectDistribution);
 
-  const { data } = useGetArchitecturesQuery({
+  const { data, isFetching, isError } = useGetArchitecturesQuery({
     distribution: distribution,
   });
-  // TODO: Handle isFetching state (add skeletons)
-  // TODO: Handle isError state (very unlikely...)
 
   const dispatch = useAppDispatch();
   const prefetchSources = provisioningApi.usePrefetch('getSourceList');
@@ -104,6 +105,9 @@ const TargetEnvironment = () => {
 
   useEffect(() => {
     prefetchActivationKeys();
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const supportedEnvironments = data?.find(
@@ -135,6 +139,22 @@ const TargetEnvironment = () => {
       supportedEnvironments?.includes('azure') ||
       supportedEnvironments?.includes('oci')
     );
+  };
+
+  if (isFetching) {
+    return <EmptyState titleText="Loading target environments" headingLevel="h6" icon={Spinner} />
+  };
+
+  if (isError) {
+    return (
+      <Alert
+        title="Couldn't fetch target environments"
+        variant="danger"
+        isInline
+      >
+        Target environments couldn&apos;t be loaded, please refresh the page or try again later.
+      </Alert>
+    )
   };
 
   return (
@@ -200,7 +220,7 @@ const TargetEnvironment = () => {
           label={<small>Private cloud</small>}
           className="pf-v6-u-mt-sm"
         >
-          {supportedEnvironments?.includes('vsphere-ova') && (
+          {supportedEnvironments.includes('vsphere-ova') && (
             <Checkbox
               name="vsphere-checkbox-ova"
               aria-label="VMware vSphere checkbox OVA"
@@ -239,7 +259,7 @@ const TargetEnvironment = () => {
               isChecked={environments.includes('vsphere-ova')}
             />
           )}
-          {supportedEnvironments?.includes('vsphere') && (
+          {supportedEnvironments.includes('vsphere') && (
             <Checkbox
               className="pf-v6-u-mt-sm"
               name="vsphere-checkbox-vmdk"

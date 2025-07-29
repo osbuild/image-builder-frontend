@@ -360,5 +360,3 @@ describe('Services edit mode', () => {
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });
-
-// TO DO 'Services step' -> 'revisit step button on Review works'
