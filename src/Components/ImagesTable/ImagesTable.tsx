@@ -104,12 +104,16 @@ const ImagesTable = () => {
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
   const { analytics, auth } = useChrome();
+
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -465,18 +469,20 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
+
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const target = <AwsTarget compose={compose} />;
-
   const status = <CloudStatus compose={compose} />;
-
   const instance = <CloudInstance compose={compose} />;
-
   const details = <AwsDetails compose={compose} />;
 
   const actions = (
@@ -549,12 +555,17 @@ const Row = ({
 }: RowPropTypes) => {
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
+
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);
   const dispatch = useDispatch();

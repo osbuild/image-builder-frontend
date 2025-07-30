@@ -10,7 +10,7 @@ import {
 } from '@patternfly/react-core';
 
 // Import for optional quickstarts functionality
-// import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+// import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 type NewAlertPropTypes = {
   setShowAlert: React.Dispatch<React.SetStateAction<boolean>>;

@@ -28,10 +28,13 @@ const RegistrationStep = () => {
 
   useEffect(() => {
     (async () => {
-      const userData = await auth?.getUser();
+      const userData = await auth.getUser();
       const id = userData?.identity?.internal?.org_id;
       setOrgId(id);
     })();
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const activationKey = useAppSelector(selectActivationKey);

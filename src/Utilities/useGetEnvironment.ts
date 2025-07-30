@@ -1,4 +1,4 @@
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useFlag as useUnleashFlag } from '@unleash/proxy-client-react';
 
 export const useGetEnvironment = process.env.IS_ON_PREMISE

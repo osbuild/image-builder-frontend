@@ -19,7 +19,7 @@ import {
   OrderType,
 } from '@patternfly/react-core/dist/esm/components/List/List';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import cockpit from 'cockpit';
@@ -100,12 +100,17 @@ const ProvisioningLink = ({
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const { analytics, auth } = useChrome();
+
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [wizardOpen, setWizardOpen] = useState(false);
   const [exposedScalprumModule, error] = useLoadModule(
     {

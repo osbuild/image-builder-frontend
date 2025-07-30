@@ -42,10 +42,13 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
 
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {

@@ -7,6 +7,12 @@ import 'vitest-canvas-mock';
 // scrollTo is not defined in jsdom - needed for the navigation to the wizard
 window.HTMLElement.prototype.scrollTo = function () {};
 
+// provide a fallback *only* when window.getComputedStyle is missing
+// eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
+window.getComputedStyle = window.getComputedStyle || (() => ({
+  getPropertyValue: () => '',
+}));
+
 // ResizeObserver is not defined and needs to be mocked and stubbed
 const MockResizeObserver = vi.fn(() => ({
   observe: vi.fn(),
@@ -16,29 +22,24 @@ const MockResizeObserver = vi.fn(() => ({
 vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
 vi.mock('@redhat-cloud-services/frontend-components/useChrome', () => ({
-  useChrome: () => ({
+  default: () => ({
     auth: {
-      getUser: () => {
-        return {
-          identity: {
-            internal: {
-              org_id: 5,
-            },
+      getUser: async () => ({
+        identity: {
+          internal: {
+            org_id: 5,
           },
-        };
-      },
+        },
+      }),
     },
     isBeta: () => true,
     isProd: () => true,
     getEnvironment: () => 'prod',
-  }),
-  default: () => ({
     analytics: {
       track: () => 'test',
       group: () => 'test',
       screen: () => 'test',
     },
-    isBeta: () => true,
   }),
 }));
 
@@ -67,7 +68,7 @@ vi.mock('@unleash/proxy-client-react', () => ({
   }),
 }));
 
-// Remove DOM dump from the testing-library output
+// remove DOM dump from the testing-library output
 configure({
   getElementError: (message: string) => {
     const error = new Error(message);
