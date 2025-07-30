@@ -47,12 +47,17 @@ export const CreateSaveAndBuildBtn = ({
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const { analytics, auth, isBeta } = useChrome();
+
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const packages = useAppSelector(selectPackages);
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
@@ -112,10 +117,14 @@ export const CreateSaveButton = ({
 
   useEffect(() => {
     (async () => {
-      const data = await auth?.getUser();
+      const data = await auth.getUser();
       setUserData(data);
     })();
-  }, [auth]);
+    // This useEffect hook should run *only* on mount and therefore has an empty
+    // dependency array. eslint's exhaustive-deps rule does not support this use.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const packages = useAppSelector(selectPackages);
 
   const { trigger: createBlueprint, isLoading } = useCreateBlueprintMutation({

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 import { Button, ExpandableSection } from '@patternfly/react-core';
 import { ArrowRightIcon } from '@patternfly/react-icons';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 export const Quickstarts = () => {
   const [showHint, setShowHint] = useState(true);

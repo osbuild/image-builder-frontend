@@ -9,7 +9,7 @@ import {
   WizardFooterWrapper,
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
-import { useChrome } from '@redhat-cloud-services/frontend-components/useChrome';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 import { useStore } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -52,7 +52,7 @@ const ReviewWizardFooter = () => {
 
   const getBlueprintPayload = async () => {
     if (!process.env.IS_ON_PREMISE) {
-      const userData = await auth?.getUser();
+      const userData = await auth.getUser();
       const orgId = userData?.identity?.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);
       return requestBody;
