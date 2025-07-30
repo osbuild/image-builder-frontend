@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -11,11 +11,10 @@ import {
 import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
 import { useFlag } from '@unleash/proxy-client-react';
 
-import { INSIGHTS_URL, RHC_URL, RHEL_10_BETA } from '../../../../../constants';
+import { INSIGHTS_URL, RHC_URL } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,
-  selectDistribution,
   selectRegistrationType,
 } from '../../../../../store/wizardSlice';
 
@@ -98,7 +97,6 @@ const RhcPopover = () => {
 
 const Registration = () => {
   const dispatch = useAppDispatch();
-  const distribution = useAppSelector(selectDistribution);
   const registrationType = useAppSelector(selectRegistrationType);
 
   const [showOptions, setShowOptions] = useState(
@@ -108,13 +106,6 @@ const Registration = () => {
   const isSatelliteRegistrationEnabled = useFlag(
     'image-builder.satellite.enabled'
   );
-
-  // TO DO: Remove when rhc starts working for RHEL 10 Beta
-  useEffect(() => {
-    if (distribution === RHEL_10_BETA) {
-      dispatch(changeRegistrationType('register-now-insights'));
-    }
-  }, []);
 
   return (
     <FormGroup label="Registration method">
@@ -126,11 +117,8 @@ const Registration = () => {
           registrationType === 'register-now-rhc'
         }
         onChange={(_event, checked) => {
-          // TO DO: Update when rhc starts working for RHEL 10 Beta
-          if (checked && distribution !== RHEL_10_BETA) {
+          if (checked) {
             dispatch(changeRegistrationType('register-now-rhc'));
-          } else if (checked && distribution === RHEL_10_BETA) {
-            dispatch(changeRegistrationType('register-now-insights'));
           }
         }}
         id="register-system-now"
@@ -187,8 +175,6 @@ const Registration = () => {
                       dispatch(changeRegistrationType('register-now-insights'));
                     }
                   }}
-                  // TO DO: Remove when rhc starts working for RHEL 10 Beta
-                  isDisabled={distribution === RHEL_10_BETA}
                   id="register-system-now-rhc"
                   name="register-system-rhc"
                 />

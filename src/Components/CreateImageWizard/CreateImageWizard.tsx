@@ -65,7 +65,6 @@ import {
   AARCH64,
   AMPLITUDE_MODULE_NAME,
   RHEL_10,
-  RHEL_10_BETA,
   RHEL_8,
   RHEL_9,
 } from '../../constants';
@@ -209,9 +208,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }
     if (searchParams.get('release') === 'rhel9') {
       dispatch(changeDistribution(RHEL_9));
-    }
-    if (searchParams.get('release') === 'rhel10beta') {
-      dispatch(changeDistribution(RHEL_10_BETA));
     }
     if (searchParams.get('release') === 'rhel10') {
       dispatch(changeDistribution(RHEL_10));
@@ -489,7 +485,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
                 id="step-oscap"
                 key="step-oscap"
-                isHidden={distribution === RHEL_10_BETA}
                 navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
@@ -529,9 +524,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key="wizard-repository-snapshot"
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
-                isHidden={
-                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
-                }
+                isHidden={!!process.env.IS_ON_PREMISE}
                 footer={
                   <CustomWizardFooter
                     disableNext={snapshotValidation.disabledNext}
@@ -546,9 +539,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 id="wizard-custom-repositories"
                 key="wizard-custom-repositories"
                 navItem={CustomStatusNavItem}
-                isHidden={
-                  distribution === RHEL_10_BETA || !!process.env.IS_ON_PREMISE
-                }
+                isHidden={!!process.env.IS_ON_PREMISE}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
