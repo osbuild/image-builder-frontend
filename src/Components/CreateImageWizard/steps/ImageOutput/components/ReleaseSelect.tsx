@@ -13,14 +13,12 @@ import {
   ON_PREM_RELEASES,
   RELEASES,
   RHEL_10,
-  RHEL_10_BETA,
   RHEL_10_FULL_SUPPORT,
   RHEL_10_MAINTENANCE_SUPPORT,
   RHEL_8,
   RHEL_8_FULL_SUPPORT,
   RHEL_8_MAINTENANCE_SUPPORT,
   RHEL_9,
-  RHEL_9_BETA,
   RHEL_9_FULL_SUPPORT,
   RHEL_9_MAINTENANCE_SUPPORT,
 } from '../../../../../constants';
@@ -33,7 +31,6 @@ import {
 } from '../../../../../store/wizardSlice';
 import isRhel from '../../../../../Utilities/isRhel';
 import { toMonthAndYear } from '../../../../../Utilities/time';
-import { useFlag } from '../../../../../Utilities/useGetEnvironment';
 
 const ReleaseSelect = () => {
   // What the UI refers to as the "release" is referred to as the "distribution" in the API.
@@ -43,9 +40,6 @@ const ReleaseSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const [showDevelopmentOptions, setShowDevelopmentOptions] = useState(false);
-
-  const isRHEL9BetaEnabled = useFlag('image-builder.rhel9.beta.enabled');
-  const isRHEL10BetaEnabled = useFlag('image-builder.rhel10.beta.enabled');
 
   const releases = process.env.IS_ON_PREMISE ? ON_PREM_RELEASES : RELEASES;
 
@@ -67,10 +61,6 @@ const ReleaseSelect = () => {
 
   const setDescription = (key: Distributions) => {
     if (process.env.IS_ON_PREMISE) {
-      return '';
-    }
-
-    if (key === RHEL_9_BETA || key === RHEL_10_BETA) {
       return '';
     }
 
@@ -103,14 +93,6 @@ const ReleaseSelect = () => {
       [...releases].filter(([key]) => {
         if (process.env.IS_ON_PREMISE) {
           return key === distribution;
-        }
-
-        if (key === RHEL_9_BETA) {
-          return isRHEL9BetaEnabled;
-        }
-
-        if (key === RHEL_10_BETA) {
-          return isRHEL10BetaEnabled;
         }
 
         // Only show non-RHEL distros if expanded

@@ -11,7 +11,7 @@ import { Distributions } from '../../../../store/imageBuilderApi';
 export const removeBetaFromRelease = (dist: Distributions): Distributions => {
   switch (dist) {
     case RHEL_10_BETA:
-      return RHEL_10 as Distributions;
+      return RHEL_10;
     case RHEL_9_BETA:
       return RHEL_9;
     default:
