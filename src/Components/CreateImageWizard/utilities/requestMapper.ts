@@ -510,7 +510,6 @@ const uploadTypeByTargetEnv = (
     case 'ami':
       return 'aws';
     default: {
-      // TODO: add edge type
       throw new Error(`image type: ${imageType} has no implementation yet`);
     }
   }
