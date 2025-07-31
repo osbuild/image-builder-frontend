@@ -502,7 +502,7 @@ export const usersCreateBlueprintRequest: CreateBlueprintRequest = {
         name: 'best',
         ssh_key: 'ssh-rsa d',
         groups: ['wheel'],
-        hasPassword: false,
+        hasPassword: true,
       },
     ],
   },
