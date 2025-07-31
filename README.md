@@ -166,7 +166,7 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 const config: ConfigFile = {
   schemaFile: 'URL_TO_THE_OPENAPI_SCHEMA',
   apiFile: '../../src/store/emptyFoobarApi.ts',
-  apiImport: 'emptyEdgeApi',
+  apiImport: 'emptyContentSourcesApi',
   outputFile: '../../src/store/foobarApi.ts',
   exportName: 'foobarApi',
   hooks: true,

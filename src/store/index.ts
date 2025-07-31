@@ -6,7 +6,6 @@ import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
 import { cockpitApi } from './cockpit/cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
-import { edgeApi } from './edgeApi';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
@@ -22,7 +21,6 @@ import wizardSlice, {
 
 export const serviceReducer = combineReducers({
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
-  [edgeApi.reducerPath]: edgeApi.reducer,
   [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,

@@ -21,7 +21,6 @@ module.exports = defineConfig([
       '**/contentSourcesApi.ts',
       '**/rhsmApi.ts',
       '**/provisioningApi.ts',
-      '**/edgeApi.ts',
       '**/complianceApi.ts',
       '**/composerCloudApi.ts'
     ]
