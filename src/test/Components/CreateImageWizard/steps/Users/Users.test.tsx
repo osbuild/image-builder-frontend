@@ -506,4 +506,30 @@ describe('Users edit mode', () => {
     const expectedRequest = usersCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
+  test('shows tooltip on disabled password eye icon when editing blueprint with existing password', async () => {
+    const user = userEvent.setup();
+    const id = mockBlueprintIds['users'];
+    await renderEditMode(id);
+
+    const usersNavButtons = await screen.findAllByRole('button', { name: /Users/ });
+    await waitFor(() => user.click(usersNavButtons[0]));
+
+    const passwordToggleButton = await screen.findByRole('button', {
+      name: 'Show password'
+    });
+
+    expect(passwordToggleButton).toBeDisabled();
+
+    await waitFor(() => user.hover(passwordToggleButton));
+
+    const tooltip = await screen.findByText('Passwords cannot be viewed when editing a blueprint for security reasons');
+    expect(tooltip).toBeInTheDocument();
+
+    await waitFor(() => user.unhover(passwordToggleButton));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Passwords cannot be viewed when editing a blueprint for security reasons')).not.toBeInTheDocument();
+    });
+  });
 });
