@@ -864,7 +864,6 @@ const Packages = () => {
       } else {
         dispatch(addPackage(pkg));
         if (pkg.type === 'module') {
-          // Set active stream for sorting (but don't change sort column or page)
           setActiveStream(pkg.stream || '');
           dispatch(
             addModule({
@@ -1059,8 +1058,8 @@ const Packages = () => {
 
 
   const compareActiveStream = (
-    a: IBPackageWithRepositoryInfo, 
-    b: IBPackageWithRepositoryInfo, 
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo,
     activeStream: string
   ): number => {
     const aHasActiveStream = activeStream && a.stream === activeStream;
@@ -1076,14 +1075,14 @@ const Packages = () => {
   };
 
   const compareByName = (
-    a: IBPackageWithRepositoryInfo, 
+    a: IBPackageWithRepositoryInfo,
     b: IBPackageWithRepositoryInfo
   ): number => {
     return (a.name || '').localeCompare(b.name || '');
   };
 
   const compareByStreamVersion = (
-    a: IBPackageWithRepositoryInfo, 
+    a: IBPackageWithRepositoryInfo,
     b: IBPackageWithRepositoryInfo
   ): number => {
     if (a.stream && b.stream) {
@@ -1103,7 +1102,7 @@ const Packages = () => {
   };
 
   const compareByEndDate = (
-    a: IBPackageWithRepositoryInfo, 
+    a: IBPackageWithRepositoryInfo,
     b: IBPackageWithRepositoryInfo
   ): number => {
     if (a.end_date && b.end_date) {
@@ -1122,7 +1121,6 @@ const Packages = () => {
     return 0;
   };
 
-  // Optimized sorting with useMemo
   const sortedPackages = useMemo(() => {
     try {
       if (!transformedPackages || !Array.isArray(transformedPackages)) {

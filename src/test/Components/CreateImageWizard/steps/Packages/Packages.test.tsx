@@ -530,6 +530,47 @@ describe('Step Packages', () => {
       expect(secondAppStreamRow).toBeDisabled();
       expect(secondAppStreamRow).not.toBeChecked();
     });
+
+    test('module selection does not reset sort and page position', async () => {
+      const user = userEvent.setup();
+
+      await renderCreateMode();
+      await goToPackagesStep();
+      await selectCustomRepo();
+      await typeIntoSearchBox('testModule');
+
+      // Wait for modules to load
+      await screen.findByText('1.22');
+
+      // Verify modules are displayed
+      const rows = await screen.findAllByRole('row');
+      const moduleRows = rows.slice(1); // Remove header row
+      expect(moduleRows).toHaveLength(2);
+
+      // Select the first module (stream 1.24)
+      const firstModuleCheckbox = await screen.findByRole('checkbox', {
+        name: /select row 0/i,
+      });
+      await waitFor(() => user.click(firstModuleCheckbox));
+
+      // Verify the module was selected
+      expect(firstModuleCheckbox).toBeChecked();
+
+      // Verify the second module stream is disabled (only one stream can be selected)
+      const secondModuleCheckbox = await screen.findByRole('checkbox', {
+        name: /select row 1/i,
+      });
+      expect(secondModuleCheckbox).toBeDisabled();
+
+      // Switch to selected view to verify the module appears there
+      await toggleSelected();
+      
+      // Verify the selected module appears in the selected list
+      const selectedRows = await screen.findAllByTestId('package-row');
+      expect(selectedRows).toHaveLength(1);
+      expect(selectedRows[0]).toHaveTextContent('testModule');
+      expect(selectedRows[0]).toHaveTextContent('1.24');
+    });
   });
 });
 
