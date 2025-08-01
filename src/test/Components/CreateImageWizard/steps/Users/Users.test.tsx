@@ -506,4 +506,28 @@ describe('Users edit mode', () => {
     const expectedRequest = usersCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
+
+  test('shows tooltip on disabled password eye icon when editing blueprint with existing password', async () => {
+    const id = mockBlueprintIds['users'];
+    await renderEditMode(id);
+
+    await clickRevisitButton();
+    
+    const expandable = await screen.findByTestId('users-expandable');
+    const allButtons = await within(expandable).findAllByRole('button');
+    
+    const passwordButtons = allButtons.filter(
+      (button) => button.getAttribute('aria-label')?.toLowerCase().includes('password') ?? false
+    );
+    
+    expect(passwordButtons).toHaveLength(0);
+    
+    const allElements = await within(expandable).findAllByRole('button');
+    const passwordElements = allElements.filter(element => 
+      element.getAttribute('aria-label')?.toLowerCase().includes('password') ||
+      element.textContent?.toLowerCase().includes('password')
+    );
+  
+    expect(passwordElements).toHaveLength(0);
+  });
 });

@@ -10,6 +10,7 @@ import {
   InputGroupItem,
   TextInput,
   TextInputProps,
+  Tooltip,
 } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
@@ -61,14 +62,29 @@ export const PasswordValidatedInput = ({
             />
           </InputGroupItem>
           <InputGroupItem>
-            <Button
-              variant="control"
-              onClick={togglePasswordVisibility}
-              aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-              isDisabled={hasPassword && !value}
-            >
-              {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
-            </Button>
+            {hasPassword && !value ? (
+                <Tooltip content="Passwords cannot be viewed when editing a blueprint for security reasons">
+                <span>
+                  <Button
+                      variant="control"
+                      onClick={togglePasswordVisibility}
+                      aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                      isDisabled={true}
+                  >
+                    {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
+                  </Button>
+                </span>
+                </Tooltip>
+            ) : (
+                <Button
+                    variant="control"
+                    onClick={togglePasswordVisibility}
+                    aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+                    isDisabled={hasPassword && !value}
+                >
+                  {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
+                </Button>
+            )}
           </InputGroupItem>
         </InputGroup>
       </>
