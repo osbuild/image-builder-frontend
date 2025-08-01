@@ -50,6 +50,7 @@ const goToReviewStep = async () => {
   await clickNext(); // Kernel
   await clickNext(); // Firewall
   await clickNext(); // Services
+  await clickNext(); // AAP
   if (!process.env.IS_ON_PREMISE) {
     await clickNext(); // First boot script
   }

@@ -11,6 +11,10 @@ import { useAppSelector } from '../../../store/hooks';
 import { BlueprintsResponse } from '../../../store/imageBuilderApi';
 import { useShowActivationKeyQuery } from '../../../store/rhsmApi';
 import {
+  selectAapCallbackUrl,
+  selectAapHostConfigKey,
+  selectAapTlsCertificateAuthority,
+  selectAapTlsConfirmation,
   selectActivationKey,
   selectBlueprintDescription,
   selectBlueprintId,
@@ -54,6 +58,8 @@ import {
   isSshKeyValid,
   isUserGroupValid,
   isUserNameValid,
+  isValidUrl,
+  validateMultipleCertificates,
 } from '../validators';
 
 export type StepValidation = {
@@ -130,7 +136,11 @@ export function useRegistrationValidation(): StepValidation {
       }
     );
 
-  if (registrationType !== 'register-later' && !activationKey) {
+  if (
+    registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
+    !activationKey
+  ) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -139,6 +149,7 @@ export function useRegistrationValidation(): StepValidation {
 
   if (
     registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
@@ -198,6 +209,60 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   return { errors: {}, disabledNext: false };
+}
+
+export function useAAPValidation(): StepValidation {
+  const errors: Record<string, string> = {};
+  const callbackUrl = useAppSelector(selectAapCallbackUrl);
+  const hostConfigKey = useAppSelector(selectAapHostConfigKey);
+  const tlsCertificateAuthority = useAppSelector(
+    selectAapTlsCertificateAuthority
+  );
+  const tlsConfirmation = useAppSelector(selectAapTlsConfirmation);
+
+  if (!callbackUrl && !hostConfigKey && !tlsCertificateAuthority) {
+    return { errors: {}, disabledNext: false };
+  }
+  if (!callbackUrl || callbackUrl.trim() === '') {
+    errors.callbackUrl = 'Ansible Callback URL is required';
+  } else if (!isValidUrl(callbackUrl)) {
+    errors.callbackUrl = 'Callback URL must be a valid URL';
+  }
+
+  if (!hostConfigKey || hostConfigKey.trim() === '') {
+    errors.hostConfigKey = 'Host Config Key is required';
+  }
+
+  if (tlsCertificateAuthority && tlsCertificateAuthority.trim() !== '') {
+    const validation = validateMultipleCertificates(tlsCertificateAuthority);
+    if (validation.errors.length > 0) {
+      errors.certificate = validation.errors.join(' ');
+    } else if (validation.validCertificates.length === 0) {
+      errors.certificate = 'No valid certificates found in the input.';
+    }
+  }
+
+  if (callbackUrl && callbackUrl.trim() !== '') {
+    const isHttpsUrl = callbackUrl.toLowerCase().startsWith('https://');
+
+    if (isHttpsUrl) {
+      // If URL is HTTPS and TLS confirmation is not checked, require certificate
+      if (
+        !tlsConfirmation &&
+        (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '')
+      ) {
+        errors.certificate =
+          'HTTPS URL requires either a custom TLS certificate or confirmation that no custom certificate is needed';
+      }
+    } else {
+      // If URL is just HTTP, always require a TLS certificate
+      if (!tlsCertificateAuthority || tlsCertificateAuthority.trim() === '') {
+        errors.certificate = 'HTTP URL requires a custom TLS certificate';
+      }
+    }
+  }
+
+  return { errors, disabledNext: Object.keys(errors).length > 0 };
 }
 
 export function useFilesystemValidation(): StepValidation {
