@@ -66,7 +66,6 @@ import {
 } from '../../../../constants';
 import { useGetArchitecturesQuery } from '../../../../store/backendApi';
 import {
-  ApiPackageSourcesResponse,
   ApiRepositoryResponseRead,
   ApiSearchRpmResponse,
   useCreateRepositoryMutation,
@@ -866,8 +865,6 @@ const Packages = () => {
         dispatch(addPackage(pkg));
         if (pkg.type === 'module') {
           setActiveStream(pkg.stream || '');
-          setActiveSortIndex(2);
-          setPage(1);
           dispatch(
             addModule({
               name: pkg.module_name || '',
@@ -883,13 +880,30 @@ const Packages = () => {
       dispatch(removePackage(pkg.name));
       if (pkg.type === 'module' && pkg.module_name) {
         dispatch(removeModule(pkg.module_name));
+        // Check if there will be other selected modules with the same stream AFTER removal
+        const remainingModulesWithSameStream = modules.filter(
+          (m) => m.name !== pkg.module_name && m.stream === pkg.stream
+        );
+        // Check if there will be other selected packages with the same stream AFTER removal
+        const remainingPackagesWithSameStream = packages.filter(
+          (p) => p.name !== pkg.name && p.stream === pkg.stream
+        );
+
+        if (pkg.stream === activeStream &&
+            remainingModulesWithSameStream.length === 0 &&
+            remainingPackagesWithSameStream.length === 0) {
+          setActiveStream('');
+          // Reset the list to its original order
+          setActiveSortIndex(0);
+          setActiveSortDirection('asc');
+          setPage(1);
+        }
       }
       setCurrentlyRemovedPackages((last) => [...last, pkg]);
       if (
         isSuccessEpelRepo &&
         epelRepo?.data &&
-        packages.filter((pkg) => pkg.repository === 'recommended').length ===
-          1 &&
+        packages.filter((pkg) => pkg.repository === 'recommended').length === 1 &&
         groups.filter((grp) => grp.repository === 'recommended').length === 0
       ) {
         dispatch(removeRecommendedRepository(epelRepo.data[0]));
@@ -993,7 +1007,18 @@ const Packages = () => {
     }
   };
 
-  const initialExpandedPkgs: IBPackageWithRepositoryInfo[] = [];
+  const getPackageUniqueKey = (pkg: IBPackageWithRepositoryInfo): string => {
+    try {
+      if (!pkg || !pkg.name) {
+        return `invalid_${Date.now()}`;
+      }
+      return `${pkg.name}_${pkg.stream || 'none'}_${pkg.module_name || 'none'}_${pkg.repository || 'unknown'}`;
+    } catch {
+      return `error_${Date.now()}`;
+    }
+  };
+
+  const initialExpandedPkgs: string[] = [];
   const [expandedPkgs, setExpandedPkgs] = useState(initialExpandedPkgs);
 
   const setPkgExpanded = (
@@ -1001,12 +1026,13 @@ const Packages = () => {
     isExpanding: boolean
   ) =>
     setExpandedPkgs((prevExpanded) => {
-      const otherExpandedPkgs = prevExpanded.filter((p) => p.name !== pkg.name);
-      return isExpanding ? [...otherExpandedPkgs, pkg] : otherExpandedPkgs;
+      const pkgKey = getPackageUniqueKey(pkg);
+      const otherExpandedPkgs = prevExpanded.filter((key) => key !== pkgKey);
+      return isExpanding ? [...otherExpandedPkgs, pkgKey] : otherExpandedPkgs;
     });
 
   const isPkgExpanded = (pkg: IBPackageWithRepositoryInfo) =>
-    expandedPkgs.includes(pkg);
+    expandedPkgs.includes(getPackageUniqueKey(pkg));
 
   const initialExpandedGroups: GroupWithRepositoryInfo['name'][] = [];
   const [expandedGroups, setExpandedGroups] = useState(initialExpandedGroups);
@@ -1030,51 +1056,103 @@ const Packages = () => {
     'asc' | 'desc'
   >('asc');
 
-  const getSortableRowValues = (
-    pkg: IBPackageWithRepositoryInfo
-  ): (string | number | ApiPackageSourcesResponse[] | undefined)[] => {
-    return [pkg.name, pkg.summary, pkg.stream, pkg.end_date, pkg.repository];
-  };
 
-  let sortedPackages = transformedPackages;
-  sortedPackages = transformedPackages.sort((a, b) => {
-    const aValue = getSortableRowValues(a)[activeSortIndex];
-    const bValue = getSortableRowValues(b)[activeSortIndex];
-    if (typeof aValue === 'number') {
-      // Numeric sort
-      if (activeSortDirection === 'asc') {
-        return (aValue as number) - (bValue as number);
-      }
-      return (bValue as number) - (aValue as number);
-    }
-    // String sort
-    // if active stream is set, sort it to the top
-    if (aValue === activeStream) {
+  const compareActiveStream = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo,
+    activeStream: string
+  ): number => {
+    const aHasActiveStream = activeStream && a.stream === activeStream;
+    const bHasActiveStream = activeStream && b.stream === activeStream;
+
+    if (aHasActiveStream && !bHasActiveStream) {
       return -1;
     }
-    if (bValue === activeStream) {
+    if (bHasActiveStream && !aHasActiveStream) {
       return 1;
     }
-    if (activeSortDirection === 'asc') {
-      // handle packages with undefined stream
-      if (!aValue) {
+    return 0;
+  };
+
+  const compareByName = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo
+  ): number => {
+    return (a.name || '').localeCompare(b.name || '');
+  };
+
+  const compareByStreamVersion = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo
+  ): number => {
+    if (a.stream && b.stream) {
+      if (a.stream > b.stream) {
         return -1;
       }
-      if (!bValue) {
+      if (a.stream < b.stream) {
         return 1;
       }
-      return (aValue as string).localeCompare(bValue as string);
-    } else {
-      // handle packages with undefined stream
-      if (!aValue) {
-        return 1;
-      }
-      if (!bValue) {
-        return -1;
-      }
-      return (bValue as string).localeCompare(aValue as string);
+      return 0;
+    } else if (a.stream) {
+      return -1;
+    } else if (b.stream) {
+      return 1;
     }
-  });
+    return 0;
+  };
+
+  const compareByEndDate = (
+    a: IBPackageWithRepositoryInfo,
+    b: IBPackageWithRepositoryInfo
+  ): number => {
+    if (a.end_date && b.end_date) {
+      if (a.end_date < b.end_date) {
+        return -1;
+      }
+      if (a.end_date > b.end_date) {
+        return 1;
+      }
+      return 0;
+    } else if (a.end_date) {
+      return -1;
+    } else if (b.end_date) {
+      return 1;
+    }
+    return 0;
+  };
+
+  const sortedPackages = useMemo(() => {
+    try {
+      if (!transformedPackages || !Array.isArray(transformedPackages)) {
+        return [];
+      }
+
+      return [...transformedPackages].sort((a, b) => {
+        try {
+          const activeStreamComparison = compareActiveStream(a, b, activeStream);
+          if (activeStreamComparison !== 0) {
+            return activeStreamComparison;
+          }
+
+          const nameComparison = compareByName(a, b);
+          if (nameComparison !== 0) {
+            return nameComparison;
+          }
+
+          const streamComparison = compareByStreamVersion(a, b);
+          if (streamComparison !== 0) {
+            return streamComparison;
+          }
+
+          return compareByEndDate(a, b);
+        } catch {
+          return 0;
+        }
+      });
+    } catch {
+      return [];
+    }
+  }, [transformedPackages, activeStream]);
 
   const getSortParams = (columnIndex: number) => ({
     sortBy: {
@@ -1306,26 +1384,28 @@ const Packages = () => {
       rows = rows.concat(
         sortedPackages
           .slice(computeStart(), computeEnd())
-          .map((pkg, rowIndex) => (
+          .map((pkg, sliceIndex) => {
+            const absoluteRowIndex = computeStart() + sliceIndex;
+            return (
             <Tbody
-              key={`${pkg.name}-${rowIndex}`}
+              key={getPackageUniqueKey(pkg)}
               isExpanded={isPkgExpanded(pkg)}
             >
               <Tr data-testid="package-row">
                 <Td
                   expand={{
-                    rowIndex: rowIndex,
+                    rowIndex: absoluteRowIndex,
                     isExpanded: isPkgExpanded(pkg),
                     onToggle: () => setPkgExpanded(pkg, !isPkgExpanded(pkg)),
-                    expandId: `${pkg.name}-expandable`,
+                    expandId: `${getPackageUniqueKey(pkg)}-expandable`,
                   }}
                 />
                 <Td
                   select={{
                     isSelected: isPackageSelected(pkg),
-                    rowIndex: rowIndex,
+                    rowIndex: absoluteRowIndex,
                     onSelect: (event, isSelecting) =>
-                      handleSelect(pkg, rowIndex, isSelecting),
+                      handleSelect(pkg, absoluteRowIndex, isSelecting),
                     isDisabled: isSelectDisabled(pkg),
                   }}
                   title={
@@ -1360,7 +1440,8 @@ const Packages = () => {
                 </Td>
               </Tr>
             </Tbody>
-          ))
+            );
+          })
       );
     }
     return rows;
