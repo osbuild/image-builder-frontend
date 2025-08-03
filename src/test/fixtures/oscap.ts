@@ -113,6 +113,9 @@ export const oscapCustomizations = (
       masked: ['nfs-server', 'rpcbind', 'autofs', 'nftables'],
       enabled: ['crond', 'firewalld', 'systemd-journald', 'rsyslog', 'auditd'],
     },
+    fips: {
+      enabled: true,
+    },
   };
 };
 

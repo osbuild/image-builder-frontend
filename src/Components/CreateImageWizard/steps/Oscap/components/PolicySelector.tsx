@@ -22,6 +22,7 @@ import {
 import {
   changeCompliance,
   changeFileSystemConfigurationType,
+  changeFips,
   clearKernelAppend,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
@@ -143,6 +144,7 @@ const PolicySelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
+    dispatch(changeFips(false));
   };
 
   const applyChanges = (selection: ComplianceSelectOptionValueType) => {
@@ -177,6 +179,7 @@ const PolicySelector = () => {
               policyTitle: selection.title,
             }),
           );
+          dispatch(changeFips(response?.fips?.enabled || false));
         });
     }
   };
