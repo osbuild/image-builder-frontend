@@ -170,6 +170,9 @@ export type wizardState = {
       disabled: string[];
     };
   };
+  fips: {
+    enabled: boolean;
+  };
   metadata?: {
     parent_id: string | null;
     exported_at: string;
@@ -269,6 +272,9 @@ export const initialState: wizardState = {
       enabled: [],
       disabled: [],
     },
+  },
+  fips: {
+    enabled: false,
   },
   firstBoot: { script: '' },
   users: [],
@@ -492,6 +498,10 @@ export const selectHostname = (state: RootState) => {
 
 export const selectFirewall = (state: RootState) => {
   return state.wizard.firewall;
+};
+
+export const selectFips = (state: RootState) => {
+  return state.wizard.fips;
 };
 
 export const wizardSlice = createSlice({
@@ -1131,6 +1141,9 @@ export const wizardSlice = createSlice({
         state.users[action.payload.index].groups.splice(groupIndex, 1);
       }
     },
+    changeFips: (state, action: PayloadAction<boolean>) => {
+      state.fips.enabled = action.payload;
+    },
   },
 });
 
@@ -1231,5 +1244,6 @@ export const {
   addUserGroupByIndex,
   removeUserGroupByIndex,
   changeRedHatRepositories,
+  changeFips,
 } = wizardSlice.actions;
 export default wizardSlice.reducer;
