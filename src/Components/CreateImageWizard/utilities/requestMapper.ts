@@ -70,6 +70,7 @@ import {
   selectCustomRepositories,
   selectDistribution,
   selectFileSystemConfigurationType,
+  selectFips,
   selectFirewall,
   selectFirstBootScript,
   selectGcpAccountType,
@@ -364,6 +365,9 @@ function commonRequestToState(
         disabled: request.customizations.firewall?.services?.disabled || [],
       },
     },
+    fips: {
+      enabled: request.customizations.fips?.enabled || false,
+    },
   };
 }
 
@@ -631,7 +635,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     fdo: undefined,
     ignition: undefined,
     partitioning_mode: undefined,
-    fips: undefined,
+    fips: getFips(state),
     cacerts:
       satCert && selectRegistrationType(state) === 'register-satellite'
         ? {
@@ -867,6 +871,18 @@ const getPayloadRepositories = (state: RootState) => {
     return undefined;
   }
   return payloadAndRecommendedRepositories;
+};
+
+const getFips = (state: RootState) => {
+  const fips = selectFips(state);
+
+  if (!fips.enabled) {
+    return undefined;
+  }
+
+  return {
+    enabled: fips.enabled,
+  };
 };
 
 const getKernel = (state: RootState) => {
