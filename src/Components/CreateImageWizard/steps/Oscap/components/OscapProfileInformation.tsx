@@ -17,6 +17,7 @@ import {
   selectCompliancePolicyID,
   selectComplianceProfileID,
   selectDistribution,
+  selectFips,
 } from '../../../../../store/wizardSlice';
 
 type OscapProfileInformationOptionPropType = {
@@ -30,6 +31,7 @@ export const OscapProfileInformation = ({
   const release = useAppSelector(selectDistribution);
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
+  const fips = useAppSelector(selectFips);
 
   const {
     data: oscapProfileInfo,
@@ -156,6 +158,19 @@ export const OscapProfileInformation = ({
                   {(oscapProfileInfo?.services?.disabled ?? [])
                     .concat(oscapProfileInfo?.services?.masked ?? [])
                     .join(' ')}
+                </CodeBlockCode>
+              </CodeBlock>
+            </Content>
+            <Content
+              component={ContentVariants.dt}
+              className='pf-v5-u-min-width'
+            >
+              FIPS mode
+            </Content>
+            <Content component={ContentVariants.dd}>
+              <CodeBlock>
+                <CodeBlockCode>
+                  {fips.enabled ? 'Enabled' : 'Disabled'}
                 </CodeBlockCode>
               </CodeBlock>
             </Content>

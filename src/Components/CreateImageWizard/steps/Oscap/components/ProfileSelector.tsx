@@ -33,6 +33,7 @@ import {
 import {
   changeCompliance,
   changeFileSystemConfigurationType,
+  changeFips,
   clearKernelAppend,
   selectComplianceProfileID,
   selectComplianceType,
@@ -181,6 +182,7 @@ const ProfileSelector = () => {
     dispatch(changeFileSystemConfigurationType('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
+    dispatch(changeFips(false));
     setInputValue('');
     setFilterValue('');
   };
@@ -261,6 +263,7 @@ const ProfileSelector = () => {
               policyTitle: undefined,
             }),
           );
+          dispatch(changeFips(response?.fips?.enabled || false));
         });
     }
   };
