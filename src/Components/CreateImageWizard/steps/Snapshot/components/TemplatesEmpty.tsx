@@ -19,9 +19,9 @@ const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {
   const GoToTemplatesButton = () => {
     return (
       <Button
-        component="a"
-        target="_blank"
-        variant="link"
+        component='a'
+        target='_blank'
+        variant='link'
         icon={<ExternalLinkAltIcon />}
         href={TEMPLATES_URL}
       >
@@ -32,7 +32,7 @@ const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {
 
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       titleText={'No content templates'}
       variant={EmptyStateVariant.lg}
     >
@@ -42,7 +42,7 @@ const TemplatesEmpty = ({ refetch }: TemplatesEmptyProps) => {
       </EmptyStateBody>
       <EmptyStateFooter>
         <GoToTemplatesButton />
-        <Button variant="secondary" isInline onClick={() => refetch()}>
+        <Button variant='secondary' isInline onClick={() => refetch()}>
           Refresh
         </Button>
       </EmptyStateFooter>

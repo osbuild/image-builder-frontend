@@ -92,8 +92,8 @@ import ActivationKeyInformation from '../Registration/components/ActivationKeyIn
 
 const ExpirationWarning = () => {
   return (
-    <Content className="pf-v6-u-font-size-sm pf-v6-u-text-color-status-warning">
-      <Icon status="warning" isInline>
+    <Content className='pf-v6-u-font-size-sm pf-v6-u-text-color-status-warning'>
+      <Icon status='warning' isInline>
         <ExclamationTriangleIcon />
       </Icon>{' '}
       Expires 14 days after creation
@@ -110,7 +110,7 @@ export const ImageOutputList = () => {
     <Content>
       {(distribution === RHEL_8 || distribution === RHEL_9) && (
         <>
-          <Content component="p" className="pf-v6-u-font-size-sm">
+          <Content component='p' className='pf-v6-u-font-size-sm'>
             {RELEASES.get(distribution)} will be supported through{' '}
             {toMonthAndYear(
               distribution === RHEL_8
@@ -126,20 +126,20 @@ export const ImageOutputList = () => {
             . Consider building an image with {RELEASES.get(RHEL_10)} to extend
             the support period.
           </Content>
-          <FormGroup label="Release lifecycle">
+          <FormGroup label='Release lifecycle'>
             <MajorReleasesLifecyclesChart />
           </FormGroup>
           <br />
         </>
       )}
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Release
         </Content>
         <Content component={ContentVariants.dd}>
           {releases.get(distribution)}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Architecture
         </Content>
         <Content component={ContentVariants.dd}>{arch}</Content>
@@ -155,8 +155,8 @@ export const FSCList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Configuration type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -165,17 +165,17 @@ export const FSCList = () => {
             <>
               {' '}
               <Popover
-                position="bottom"
-                headerContent="Partitions"
+                position='bottom'
+                headerContent='Partitions'
                 hasAutoWidth
-                minWidth="30rem"
+                minWidth='30rem'
                 bodyContent={<FSReviewTable />}
               >
                 <Button
-                  variant="link"
-                  aria-label="File system configuration info"
-                  aria-describedby="file-system-configuration-info"
-                  className="pf-v6-u-pt-0 pf-v6-u-pb-0"
+                  variant='link'
+                  aria-label='File system configuration info'
+                  aria-describedby='file-system-configuration-info'
+                  className='pf-v6-u-pt-0 pf-v6-u-pb-0'
                 >
                   View partitions
                 </Button>
@@ -241,8 +241,8 @@ export const TargetEnvAWSList = () => {
   return (
     <Content>
       <Content component={ContentVariants.h3}>{targetOptions.aws}</Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Image type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -250,17 +250,17 @@ export const TargetEnvAWSList = () => {
           <br />
           <ExpirationWarning />
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Shared to account
         </Content>
         <Content component={ContentVariants.dd}>{awsAccountId}</Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           {awsShareMethod === 'sources' ? 'Source' : null}
         </Content>
         <Content component={ContentVariants.dd}>
           {isSuccess && awsShareMethod === 'sources' ? source?.name : null}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Default region
         </Content>
         <Content component={ContentVariants.dd}>
@@ -278,8 +278,8 @@ export const TargetEnvGCPList = () => {
   return (
     <Content>
       <Content component={ContentVariants.h3}>{targetOptions.gcp}</Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Image type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -292,7 +292,7 @@ export const TargetEnvGCPList = () => {
             <>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Shared with
               </Content>
@@ -305,7 +305,7 @@ export const TargetEnvGCPList = () => {
             <>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Account type
               </Content>
@@ -320,7 +320,7 @@ export const TargetEnvGCPList = () => {
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 {accountType === 'domain' ? 'Domain' : 'Principal'}
               </Content>
@@ -347,8 +347,8 @@ export const TargetEnvAzureList = () => {
   return (
     <Content>
       <Content component={ContentVariants.h3}>{targetOptions.azure}</Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Image type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -360,7 +360,7 @@ export const TargetEnvAzureList = () => {
           <>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Azure Source
             </Content>
@@ -377,14 +377,14 @@ export const TargetEnvAzureList = () => {
           <>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Azure tenant ID
             </Content>
             <Content component={ContentVariants.dd}>{tenantId}</Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Subscription ID
             </Content>
@@ -402,8 +402,8 @@ export const TargetEnvOciList = () => {
   return (
     <Content>
       <Content component={ContentVariants.h3}>{targetOptions.oci}</Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Object Storage URL
         </Content>
         <Content component={ContentVariants.dd}>
@@ -417,8 +417,8 @@ export const TargetEnvOciList = () => {
 export const TargetEnvOtherList = () => {
   return (
     <>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Image type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -505,17 +505,17 @@ export const ContentList = () => {
   return (
     <>
       <Content>
-        <Content component={ContentVariants.dl} className="review-step-dl">
+        <Content component={ContentVariants.dl} className='review-step-dl'>
           <>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Repeatable build
             </Content>
             <Content component={ContentVariants.dd}>
               <Popover
-                position="bottom"
+                position='bottom'
                 headerContent={
                   useLatest
                     ? 'Use the latest repository content'
@@ -526,16 +526,16 @@ export const ContentList = () => {
                         )}`
                 }
                 hasAutoWidth
-                minWidth="60rem"
+                minWidth='60rem'
                 bodyContent={
                   <SnapshotTable snapshotForDate={data?.data || []} />
                 }
               >
                 <Button
-                  variant="link"
+                  variant='link'
                   isInline
-                  aria-label="Snapshot method"
-                  className="popover-button pf-v6-u-p-0"
+                  aria-label='Snapshot method'
+                  className='popover-button pf-v6-u-p-0'
                   isDisabled={noRepositoriesSelected || isLoading || isError}
                   isLoading={isLoading}
                 >
@@ -544,32 +544,32 @@ export const ContentList = () => {
               </Popover>
               {!useLatest && !isLoading && isSuccess && hasSnapshotDateAfter ? (
                 <Alert
-                  variant="warning"
+                  variant='warning'
                   isInline
                   isPlain
-                  title="A snapshot for this date is not available for some repositories."
+                  title='A snapshot for this date is not available for some repositories.'
                 />
               ) : (
                 ''
               )}
             </Content>
           </>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Custom repositories
           </Content>
           <Content component={ContentVariants.dd}>
             {customRepositories?.length + recommendedRepositories.length > 0 ? (
               <Popover
-                position="bottom"
-                headerContent="Custom repositories"
+                position='bottom'
+                headerContent='Custom repositories'
                 hasAutoWidth
-                minWidth="30rem"
+                minWidth='30rem'
                 bodyContent={<RepositoriesTable />}
               >
                 <Button
-                  variant="link"
-                  aria-label="About custom repositories"
-                  className="popover-button pf-v6-u-p-0"
+                  variant='link'
+                  aria-label='About custom repositories'
+                  className='popover-button pf-v6-u-p-0'
                 >
                   {customRepositories?.length +
                     recommendedRepositories.length || 0}
@@ -579,22 +579,22 @@ export const ContentList = () => {
               0
             )}
           </Content>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Additional packages
           </Content>
           <Content component={ContentVariants.dd}>
             {packages?.length > 0 || groups?.length > 0 ? (
               <Popover
-                position="bottom"
-                headerContent="Additional packages"
+                position='bottom'
+                headerContent='Additional packages'
                 hasAutoWidth
-                minWidth="60rem"
+                minWidth='60rem'
                 bodyContent={<PackagesTable />}
               >
                 <Button
-                  variant="link"
-                  aria-label="About packages"
-                  className="popover-button pf-v6-u-p-0"
+                  variant='link'
+                  aria-label='About packages'
+                  className='popover-button pf-v6-u-p-0'
                 >
                   {packages?.length + groups?.length}
                 </Button>
@@ -607,8 +607,8 @@ export const ContentList = () => {
       </Content>
       {duplicatePackages.length > 0 && (
         <Alert
-          title="Can not guarantee where some selected packages will come from"
-          variant="warning"
+          title='Can not guarantee where some selected packages will come from'
+          variant='warning'
           isInline
         >
           Some of the packages added to this image belong to multiple added
@@ -623,8 +623,8 @@ export const ContentList = () => {
 export const RegisterLaterList = () => {
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Registration type
         </Content>
         <Content component={ContentVariants.dd}>
@@ -638,8 +638,8 @@ export const RegisterLaterList = () => {
 export const RegisterSatelliteList = () => {
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Register Satellite
         </Content>
         <Content component={ContentVariants.dd}>Enabled</Content>
@@ -662,37 +662,37 @@ export const RegisterNowList = () => {
   return (
     <>
       <Content>
-        <Content component={ContentVariants.dl} className="review-step-dl">
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dl} className='review-step-dl'>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Registration type
           </Content>
           <Content
             component={ContentVariants.dd}
-            data-testid="review-registration"
+            data-testid='review-registration'
           >
-            <Content component="ul" isPlainList>
+            <Content component='ul' isPlainList>
               {registrationType?.startsWith('register-now') && (
-                <Content component="li">
+                <Content component='li'>
                   Register with Red Hat Subscription Manager (RHSM)
                   <br />
                 </Content>
               )}
               {(registrationType === 'register-now-insights' ||
                 registrationType === 'register-now-rhc') && (
-                <Content component="li">
+                <Content component='li'>
                   Connect to Red Hat Insights
                   <br />
                 </Content>
               )}
               {registrationType === 'register-now-rhc' && (
-                <Content component="li">
+                <Content component='li'>
                   Use remote host configuration (rhc) utility
                   <br />
                 </Content>
               )}
             </Content>
           </Content>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Activation key
           </Content>
           <Content component={ContentVariants.dd}>
@@ -702,8 +702,8 @@ export const RegisterNowList = () => {
       </Content>
       {isError && (
         <Alert
-          title="Information about the activation key unavailable"
-          variant="danger"
+          title='Information about the activation key unavailable'
+          variant='danger'
           isPlain
           isInline
         >
@@ -721,12 +721,12 @@ export const DetailsList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
         {blueprintName && (
           <>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Blueprint name
             </Content>
@@ -737,7 +737,7 @@ export const DetailsList = () => {
           <>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Description
             </Content>
@@ -761,14 +761,14 @@ export const TimezoneList = () => {
 
   return (
     <>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Timezone
         </Content>
         <Content component={ContentVariants.dd}>
           {timezone ? timezone : 'None'}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           NTP servers
         </Content>
         <Content component={ContentVariants.dd}>
@@ -788,30 +788,30 @@ export const UsersList = () => {
         <Content
           key={user.name}
           component={ContentVariants.dl}
-          className="review-step-dl"
+          className='review-step-dl'
         >
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Username
           </Content>
-          <Content component={ContentVariants.dd} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
             {user.name ? user.name : 'None'}
           </Content>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Password
           </Content>
-          <Content component={ContentVariants.dd} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
             {user.password || user.hasPassword ? '●'.repeat(8) : 'None'}
           </Content>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             SSH key
           </Content>
-          <Content component={ContentVariants.dd} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
             {user.ssh_key ? user.ssh_key : 'None'}
           </Content>
-          <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Administrator
           </Content>
-          <Content component={ContentVariants.dd} className="pf-v6-u-min-width">
+          <Content component={ContentVariants.dd} className='pf-v6-u-min-width'>
             {user.isAdministrator ? 'True' : 'False'}
           </Content>
         </Content>
@@ -826,14 +826,14 @@ export const LocaleList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Languages
         </Content>
         <Content component={ContentVariants.dd}>
           {languages && languages.length > 0 ? languages.join(', ') : 'None'}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Keyboard
         </Content>
         <Content component={ContentVariants.dd}>
@@ -849,8 +849,8 @@ export const HostnameList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Hostname
         </Content>
         <Content component={ContentVariants.dd}>
@@ -866,14 +866,14 @@ export const KernelList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Name
         </Content>
         <Content component={ContentVariants.dd}>
           {kernel.name ? kernel.name : 'None'}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Append
         </Content>
         <Content component={ContentVariants.dd}>
@@ -895,8 +895,8 @@ export const FirewallList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Ports
         </Content>
         <Content component={ContentVariants.dd}>
@@ -908,7 +908,7 @@ export const FirewallList = () => {
             'None'
           )}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Enabled services
         </Content>
         <Content component={ContentVariants.dd}>
@@ -922,7 +922,7 @@ export const FirewallList = () => {
             'None'
           )}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Disabled services
         </Content>
         <Content component={ContentVariants.dd}>
@@ -946,8 +946,8 @@ export const ServicesList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Enabled
         </Content>
         <Content component={ContentVariants.dd}>
@@ -959,7 +959,7 @@ export const ServicesList = () => {
             'None'
           )}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Disabled
         </Content>
         <Content component={ContentVariants.dd}>
@@ -971,7 +971,7 @@ export const ServicesList = () => {
             'None'
           )}
         </Content>
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           Masked
         </Content>
         <Content component={ContentVariants.dd}>
@@ -993,8 +993,8 @@ export const FirstBootList = () => {
 
   return (
     <Content>
-      <Content component={ContentVariants.dl} className="review-step-dl">
-        <Content component={ContentVariants.dt} className="pf-v6-u-min-width">
+      <Content component={ContentVariants.dl} className='review-step-dl'>
+        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
           First boot script
         </Content>
         <Content component={ContentVariants.dd}>

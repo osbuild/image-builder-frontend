@@ -447,9 +447,9 @@ const Packages = () => {
           <Td colSpan={5}>
             <Bullseye>
               <EmptyState
-                headingLevel="h4"
+                headingLevel='h4'
                 icon={SearchIcon}
-                titleText="The search value is too short"
+                titleText='The search value is too short'
                 variant={EmptyStateVariant.sm}
               >
                 <EmptyStateBody>
@@ -470,14 +470,14 @@ const Packages = () => {
           <Td colSpan={5}>
             <Bullseye>
               <EmptyState
-                headingLevel="h4"
-                titleText="No selected packages in Other repos"
+                headingLevel='h4'
+                titleText='No selected packages in Other repos'
                 variant={EmptyStateVariant.sm}
               >
                 <EmptyStateBody>
                   Try looking under &quot;
                   <Button
-                    variant="link"
+                    variant='link'
                     onClick={() => setActiveTabKey(Repos.INCLUDED)}
                     isInline
                   >
@@ -501,8 +501,8 @@ const Packages = () => {
             <Td colSpan={5}>
               <Bullseye>
                 <EmptyState
-                  headingLevel="h4"
-                  titleText="No results found"
+                  headingLevel='h4'
+                  titleText='No results found'
                   icon={SearchIcon}
                   variant={EmptyStateVariant.sm}
                 >
@@ -514,7 +514,7 @@ const Packages = () => {
                     <EmptyStateActions>
                       {!process.env.IS_ON_PREMISE && (
                         <Button
-                          variant="primary"
+                          variant='primary'
                           onClick={() => setActiveTabKey(Repos.OTHER)}
                         >
                           Search other repositories
@@ -523,12 +523,12 @@ const Packages = () => {
                     </EmptyStateActions>
                     <EmptyStateActions>
                       <Button
-                        className="pf-v6-u-pt-md"
-                        variant="link"
+                        className='pf-v6-u-pt-md'
+                        variant='link'
                         isInline
-                        component="a"
-                        target="_blank"
-                        iconPosition="right"
+                        component='a'
+                        target='_blank'
+                        iconPosition='right'
                         icon={<ExternalLinkAltIcon />}
                         href={CONTENT_URL}
                       >
@@ -549,8 +549,8 @@ const Packages = () => {
             <Td colSpan={5}>
               <Bullseye>
                 <EmptyState
-                  headingLevel="h4"
-                  titleText="No results found"
+                  headingLevel='h4'
+                  titleText='No results found'
                   icon={SearchIcon}
                   variant={EmptyStateVariant.sm}
                 >
@@ -558,10 +558,10 @@ const Packages = () => {
                     No packages found in known repositories. If you know of a
                     repository containing this packages, add it to{' '}
                     <Button
-                      variant="link"
+                      variant='link'
                       isInline
-                      component="a"
-                      target="_blank"
+                      component='a'
+                      target='_blank'
                       href={CONTENT_URL}
                     >
                       your repositories
@@ -582,11 +582,11 @@ const Packages = () => {
       <Modal
         isOpen={isRepoModalOpen}
         onClose={handleCloseModalToggle}
-        width="50%"
+        width='50%'
       >
         <ModalHeader
-          title="Custom repositories will be added to your image"
-          titleIconVariant="warning"
+          title='Custom repositories will be added to your image'
+          titleIconVariant='warning'
         />
         <ModalBody>
           You have selected packages that belong to custom repositories. By
@@ -596,10 +596,10 @@ const Packages = () => {
           <br />
           The repositories will also get enabled in{' '}
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
-            iconPosition="right"
+            component='a'
+            target='_blank'
+            variant='link'
+            iconPosition='right'
             isInline
             icon={<ExternalLinkAltIcon />}
             href={CONTENT_URL}
@@ -608,7 +608,7 @@ const Packages = () => {
           </Button>{' '}
           if they were not enabled yet:
           <br />
-          <Table variant="compact">
+          <Table variant='compact'>
             <Thead>
               <Tr>
                 {isSelectingPackage ? (
@@ -639,15 +639,15 @@ const Packages = () => {
         </ModalBody>
         <ModalFooter>
           <Button
-            key="add"
-            variant="primary"
+            key='add'
+            variant='primary'
             isLoading={createLoading}
             isDisabled={createLoading}
             onClick={handleConfirmModalToggle}
           >
             Add listed repositories
           </Button>
-          <Button key="back" variant="link" onClick={handleCloseModalToggle}>
+          <Button key='back' variant='link' onClick={handleCloseModalToggle}>
             Back
           </Button>
         </ModalFooter>
@@ -1168,21 +1168,21 @@ const Packages = () => {
     switch (true) {
       case differenceInDays < 0:
         icon = (
-          <Icon status="danger" isInline>
+          <Icon status='danger' isInline>
             <ExclamationCircleIcon />
           </Icon>
         );
         break;
       case differenceInDays <= 365:
         icon = (
-          <Icon status="warning" isInline>
+          <Icon status='warning' isInline>
             <ExclamationTriangleIcon />
           </Icon>
         );
         break;
       case differenceInDays > 365:
         icon = (
-          <Icon status="success" isInline>
+          <Icon status='success' isInline>
             <CheckCircleIcon />
           </Icon>
         );
@@ -1211,7 +1211,7 @@ const Packages = () => {
               key={`${grp.name}-${rowIndex}`}
               isExpanded={isGroupExpanded(grp.name)}
             >
-              <Tr data-testid="package-row">
+              <Tr data-testid='package-row'>
                 <Td
                   expand={{
                     rowIndex: rowIndex,
@@ -1232,8 +1232,8 @@ const Packages = () => {
                 <Td>
                   @{grp.name}
                   <Popover
-                    minWidth="25rem"
-                    headerContent="Included packages"
+                    minWidth='25rem'
+                    headerContent='Included packages'
                     bodyContent={
                       <div
                         style={
@@ -1244,8 +1244,8 @@ const Packages = () => {
                       >
                         {grp.package_list.length > 0 ? (
                           <Table
-                            variant="compact"
-                            data-testid="group-included-packages-table"
+                            variant='compact'
+                            data-testid='group-included-packages-table'
                           >
                             <Tbody>
                               {grp.package_list.map((pkg) => (
@@ -1262,11 +1262,11 @@ const Packages = () => {
                     }
                   >
                     <Button
-                      icon={<HelpIcon className="pf-v6-u-ml-xs" />}
-                      variant="plain"
-                      aria-label="About included packages"
-                      component="span"
-                      className="pf-v6-u-p-0"
+                      icon={<HelpIcon className='pf-v6-u-ml-xs' />}
+                      variant='plain'
+                      aria-label='About included packages'
+                      component='span'
+                      className='pf-v6-u-p-0'
                       isInline
                     />
                   </Popover>
@@ -1311,7 +1311,7 @@ const Packages = () => {
               key={`${pkg.name}-${rowIndex}`}
               isExpanded={isPkgExpanded(pkg)}
             >
-              <Tr data-testid="package-row">
+              <Tr data-testid='package-row'>
                 <Td
                   expand={{
                     rowIndex: rowIndex,
@@ -1434,11 +1434,11 @@ const Packages = () => {
 
   const PackagesTable = () => {
     return (
-      <Table variant="compact" data-testid="packages-table">
+      <Table variant='compact' data-testid='packages-table'>
         <Thead>
           <Tr>
-            <Th aria-label="Expanded" />
-            <Th aria-label="Selected" />
+            <Th aria-label='Expanded' />
+            <Th aria-label='Selected' />
             <Th sort={getSortParams(0)} width={30}>
               Name
             </Th>
@@ -1463,10 +1463,10 @@ const Packages = () => {
           <ToolbarContent>
             <ToolbarItem>
               <SearchInput
-                type="text"
-                placeholder="Search packages"
-                aria-label="Search packages"
-                data-testid="packages-search-input"
+                type='text'
+                placeholder='Search packages'
+                aria-label='Search packages'
+                data-testid='packages-search-input'
                 value={searchTerm}
                 onChange={handleSearch}
                 onClear={() => handleClear()}
@@ -1475,8 +1475,8 @@ const Packages = () => {
             <ToolbarItem>
               <ToggleGroup>
                 <ToggleGroupItem
-                  text="Available"
-                  buttonId="toggle-available"
+                  text='Available'
+                  buttonId='toggle-available'
                   isSelected={toggleSelected === 'toggle-available'}
                   onChange={handleFilterToggleClick}
                 />
@@ -1488,15 +1488,15 @@ const Packages = () => {
                         ? ` (${packages.length + groups.length})`
                         : ' (100+)'
                   }`}
-                  buttonId="toggle-selected"
+                  buttonId='toggle-selected'
                   isSelected={toggleSelected === 'toggle-selected'}
                   onChange={handleFilterToggleClick}
                 />
               </ToggleGroup>
             </ToolbarItem>
-            <ToolbarItem variant="pagination">
+            <ToolbarItem variant='pagination'>
               <Pagination
-                data-testid="packages-pagination-top"
+                data-testid='packages-pagination-top'
                 itemCount={
                   searchTerm === '' && toggleSelected === 'toggle-available'
                     ? 0
@@ -1517,7 +1517,7 @@ const Packages = () => {
           <ToolbarContent>
             <CustomHelperText
               hide={!debouncedSearchTermLengthOf1 || debouncedSearchTermIsGroup}
-              textValue="The search value must be greater than 1 character"
+              textValue='The search value must be greater than 1 character'
             />
           </ToolbarContent>
         </Stack>
@@ -1526,26 +1526,26 @@ const Packages = () => {
       <Tabs
         activeKey={activeTabKey}
         onSelect={handleTabClick}
-        aria-label="Repositories tabs on packages step"
+        aria-label='Repositories tabs on packages step'
       >
         <Tab
-          eventKey="included-repos"
+          eventKey='included-repos'
           title={<TabTitleText>Included repos</TabTitleText>}
           actions={<IncludedReposPopover />}
-          aria-label="Included repositories"
+          aria-label='Included repositories'
         />
         {!process.env.IS_ON_PREMISE && (
           <Tab
-            eventKey="other-repos"
+            eventKey='other-repos'
             title={<TabTitleText>Other repos</TabTitleText>}
             actions={<OtherReposPopover />}
-            aria-label="Other repositories"
+            aria-label='Other repositories'
           />
         )}
       </Tabs>
       <PackagesTable />
       <Pagination
-        data-testid="packages-pagination-bottom"
+        data-testid='packages-pagination-bottom'
         itemCount={
           searchTerm === '' && toggleSelected === 'toggle-available'
             ? 0

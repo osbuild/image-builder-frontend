@@ -113,7 +113,7 @@ const KernelName = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
@@ -122,8 +122,8 @@ const KernelName = () => {
           value={kernel ? kernel : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select kernel package"
+          autoComplete='off'
+          placeholder='Select kernel package'
           isExpanded={isOpen}
         />
 
@@ -131,9 +131,9 @@ const KernelName = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={onClearButtonClick}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -145,12 +145,12 @@ const KernelName = () => {
     <>
       {kernel && !initialOptions.includes(kernel) && (
         <Alert
-          title="Custom kernel packages cannot be validated and can cause build issues."
+          title='Custom kernel packages cannot be validated and can cause build issues.'
           isInline
-          variant="warning"
+          variant='warning'
         />
       )}
-      <FormGroup isRequired={false} label="Name">
+      <FormGroup isRequired={false} label='Name'>
         <Select
           isScrollable
           isOpen={isOpen}

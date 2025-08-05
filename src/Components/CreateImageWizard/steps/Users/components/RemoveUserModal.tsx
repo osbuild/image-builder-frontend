@@ -53,17 +53,17 @@ const RemoveUserModal = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} width="50%">
+    <Modal isOpen={isOpen} onClose={onClose} width='50%'>
       <ModalHeader title={`Remove user${userName ? ` ${userName}` : ''}?`} />
       <ModalBody>
         This action is permanent and cannot be undone. Once deleted all
         information about the user will be lost.
       </ModalBody>
       <ModalFooter>
-        <Button key="confirm" variant="primary" onClick={onConfirm}>
+        <Button key='confirm' variant='primary' onClick={onConfirm}>
           Remove user
         </Button>
-        <Button key="cancel" variant="link" onClick={onClose}>
+        <Button key='cancel' variant='link' onClick={onClose}>
           Cancel
         </Button>
       </ModalFooter>

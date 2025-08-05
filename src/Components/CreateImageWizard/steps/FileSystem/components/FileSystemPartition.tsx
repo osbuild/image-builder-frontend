@@ -23,27 +23,27 @@ const FileSystemPartition = () => {
   return (
     <FormGroup>
       <Radio
-        id="automatic file system config radio"
+        id='automatic file system config radio'
         label={
           <>
-            <Label isCompact color="blue">
+            <Label isCompact color='blue'>
               Recommended
             </Label>{' '}
             Use automatic partitioning
           </>
         }
-        name="sc-radio-automatic"
-        description="Automatically partition your image to what is best, depending on the target environment(s)"
+        name='sc-radio-automatic'
+        description='Automatically partition your image to what is best, depending on the target environment(s)'
         isChecked={fileSystemConfigurationType === 'automatic'}
         onChange={() => {
           dispatch(changeFileSystemConfigurationType('automatic'));
         }}
       />
       <Radio
-        id="manual file system config radio"
-        label="Manually configure partitions"
-        name="fsc-radio-manual"
-        description="Manually configure the file system of your image by adding, removing, and editing partitions"
+        id='manual file system config radio'
+        label='Manually configure partitions'
+        name='fsc-radio-manual'
+        description='Manually configure the file system of your image by adding, removing, and editing partitions'
         isChecked={fileSystemConfigurationType === 'manual'}
         onChange={() => {
           dispatch(changeFileSystemConfigurationType('manual'));

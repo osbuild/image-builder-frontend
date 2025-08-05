@@ -507,8 +507,8 @@ const Repositories = () => {
   if (!isTemplateSelected) {
     return (
       <Grid>
-        <Modal isOpen={modalOpen} onClose={onClose} variant="small">
-          <ModalHeader title="Are you sure?" titleIconVariant="warning" />
+        <Modal isOpen={modalOpen} onClose={onClose} variant='small'>
+          <ModalHeader title='Are you sure?' titleIconVariant='warning' />
           <ModalBody>
             You are removing a previously added repository.
             <br />
@@ -516,18 +516,18 @@ const Repositories = () => {
             from them.
           </ModalBody>
           <ModalFooter>
-            <Button key="remove" variant="primary" onClick={handleRemoveAnyway}>
+            <Button key='remove' variant='primary' onClick={handleRemoveAnyway}>
               Remove anyway
             </Button>
-            <Button key="back" variant="link" onClick={onClose}>
+            <Button key='back' variant='link' onClick={onClose}>
               Back
             </Button>
           </ModalFooter>
         </Modal>
         {wizardMode === 'edit' && (
           <Alert
-            title="Removing previously added repositories may lead to issues with selected packages"
-            variant="warning"
+            title='Removing previously added repositories may lead to issues with selected packages'
+            variant='warning'
             isPlain
             isInline
           />
@@ -554,8 +554,8 @@ const Repositories = () => {
             </ToolbarItem>
             <ToolbarItem>
               <SearchInput
-                placeholder="Filter repositories"
-                aria-label="Filter repositories"
+                placeholder='Filter repositories'
+                aria-label='Filter repositories'
                 onChange={handleFilterRepositories}
                 value={filterValue}
                 onClear={() => setFilterValue('')}
@@ -563,7 +563,7 @@ const Repositories = () => {
             </ToolbarItem>
             <ToolbarItem>
               <Button
-                variant="primary"
+                variant='primary'
                 isInline
                 onClick={() => refresh()}
                 isLoading={isFetching}
@@ -572,19 +572,19 @@ const Repositories = () => {
               </Button>
             </ToolbarItem>
             <ToolbarItem>
-              <ToggleGroup aria-label="Filter repositories list">
+              <ToggleGroup aria-label='Filter repositories list'>
                 <ToggleGroupItem
-                  text="All"
-                  aria-label="All repositories"
-                  buttonId="toggle-group-all"
+                  text='All'
+                  aria-label='All repositories'
+                  buttonId='toggle-group-all'
                   isSelected={toggleSelected === 'toggle-group-all'}
                   onChange={() => handleToggleClick('toggle-group-all')}
                 />
                 <ToggleGroupItem
-                  text="Selected"
+                  text='Selected'
                   isDisabled={!selected.size}
-                  aria-label="Selected repositories"
-                  buttonId="toggle-group-selected"
+                  aria-label='Selected repositories'
+                  buttonId='toggle-group-selected'
                   isSelected={toggleSelected === 'toggle-group-selected'}
                   onChange={() => handleToggleClick('toggle-group-selected')}
                 />
@@ -605,10 +605,10 @@ const Repositories = () => {
                 refetch={refresh}
               />
             ) : (
-              <Table variant="compact">
+              <Table variant='compact'>
                 <Thead>
                   <Tr>
-                    <Th aria-label="Selected" />
+                    <Th aria-label='Selected' />
                     <Th width={45}>Name</Th>
                     <Th width={15}>Architecture</Th>
                     <Th>Version</Th>
@@ -656,11 +656,11 @@ const Repositories = () => {
                             <>
                               <br />
                               <Button
-                                component="a"
-                                target="_blank"
-                                variant="link"
+                                component='a'
+                                target='_blank'
+                                variant='link'
                                 icon={<ExternalLinkAltIcon />}
-                                iconPosition="right"
+                                iconPosition='right'
                                 isInline
                                 href={url}
                               >
@@ -706,7 +706,7 @@ const Repositories = () => {
     return (
       <>
         <Alert
-          variant="info"
+          variant='info'
           isInline
           title={
             <>
@@ -714,9 +714,9 @@ const Repositories = () => {
               and have been added automatically. If you do not want these
               repositories in your image, you can{' '}
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
+                component='a'
+                target='_blank'
+                variant='link'
                 isInline
                 icon={<ExternalLinkAltIcon />}
                 href={`${TEMPLATES_URL}/${templateUuid}/edit`}
@@ -731,10 +731,10 @@ const Repositories = () => {
         <Grid>
           <Panel>
             <PanelMain>
-              <Table variant="compact">
+              <Table variant='compact'>
                 <Thead>
                   <Tr>
-                    <Th aria-label="Selected" />
+                    <Th aria-label='Selected' />
                     <Th width={45}>Name</Th>
                     <Th width={15}>Architecture</Th>
                     <Th>Version</Th>
@@ -774,11 +774,11 @@ const Repositories = () => {
                             <>
                               <br />
                               <Button
-                                component="a"
-                                target="_blank"
-                                variant="link"
+                                component='a'
+                                target='_blank'
+                                variant='link'
                                 icon={<ExternalLinkAltIcon />}
-                                iconPosition="right"
+                                iconPosition='right'
                                 isInline
                                 href={url}
                               >

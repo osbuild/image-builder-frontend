@@ -28,7 +28,7 @@ type ImageBuilderHeaderPropTypes = {
 const AboutImageBuilderPopover = () => {
   return (
     <Popover
-      minWidth="35rem"
+      minWidth='35rem'
       headerContent={'About image builder'}
       bodyContent={
         <Content>
@@ -42,11 +42,11 @@ const AboutImageBuilderPopover = () => {
           </Content>
           <Content>
             <Button
-              component="a"
-              target="_blank"
-              variant="link"
+              component='a'
+              target='_blank'
+              variant='link'
               icon={<ExternalLinkAltIcon />}
-              iconPosition="right"
+              iconPosition='right'
               isInline
               href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
             >
@@ -58,9 +58,9 @@ const AboutImageBuilderPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="About image builder"
-        className="pf-v6-u-pl-sm header-button"
+        variant='plain'
+        aria-label='About image builder'
+        className='pf-v6-u-pl-sm header-button'
       />
     </Popover>
   );
@@ -86,9 +86,9 @@ export const ImageBuilderHeader = ({
           isOpen={showImportModal}
         />
       )}
-      <PageHeader className="pf-m-sticky-top">
+      <PageHeader className='pf-m-sticky-top'>
         <PageHeaderTitle
-          className="title"
+          className='title'
           title={
             <>
               Images <AboutImageBuilderPopover />
@@ -102,8 +102,8 @@ export const ImageBuilderHeader = ({
               {!inWizard && (
                 <Flex>
                   <Button
-                    variant="primary"
-                    data-testid="blueprints-create-button"
+                    variant='primary'
+                    data-testid='blueprints-create-button'
                     onClick={() => navigate(resolveRelPath('imagewizard'))}
                     onMouseEnter={() =>
                       prefetchTargets({
@@ -115,7 +115,7 @@ export const ImageBuilderHeader = ({
                   </Button>
                   {importExportFlag && (
                     <Button
-                      variant="secondary"
+                      variant='secondary'
                       onClick={() => setShowImportModal(true)}
                     >
                       Import
@@ -123,9 +123,9 @@ export const ImageBuilderHeader = ({
                   )}
                   {process.env.IS_ON_PREMISE && (
                     <Button
-                      variant="secondary"
-                      data-testid="cloud-env-configure-button"
-                      ouiaId="cloud-env-configure-button"
+                      variant='secondary'
+                      data-testid='cloud-env-configure-button'
+                      ouiaId='cloud-env-configure-button'
                       onClick={() =>
                         navigate(resolveRelPath('cloud-provider-config'))
                       }

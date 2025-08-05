@@ -48,9 +48,9 @@ const ConfigError = ({
     <EmptyState
       variant={EmptyStateVariant.xl}
       icon={ExclamationIcon}
-      color="#C9190B"
+      color='#C9190B'
     >
-      <Title headingLevel="h4" size="lg">
+      <Title headingLevel='h4' size='lg'>
         Error
       </Title>
       <EmptyStateBody>
@@ -59,7 +59,7 @@ const ConfigError = ({
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <Button variant="primary" onClick={onClose}>
+          <Button variant='primary' onClick={onClose}>
             Go back
           </Button>
         </EmptyStateActions>
@@ -118,8 +118,8 @@ export const CloudProviderConfig = () => {
       <PageSection>
         <Wizard onClose={handleClose}>
           <WizardStep
-            name="AWS Config"
-            id="aws-config"
+            name='AWS Config'
+            id='aws-config'
             footer={{
               nextButtonText: 'Submit',
               isNextDisabled: !isAwsStepValid(config),

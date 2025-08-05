@@ -33,9 +33,9 @@ const Ami = ({ status }: AmiPropTypes) => {
     case 'success':
       return (
         <ClipboardCopy
-          hoverTip="Copy"
-          clickTip="Copied"
-          variant="inline-compact"
+          hoverTip='Copy'
+          clickTip='Copied'
+          variant='inline-compact'
         >
           {'ami' in status.options ? status.options.ami : ''}
         </ClipboardCopy>
@@ -61,10 +61,10 @@ const CloneRegion = ({ region }: CloneRegionPropTypes) => {
 const Row = ({ ami, region, status }: RowPropTypes) => {
   return (
     <Tbody>
-      <Tr className="no-bottom-border">
-        <Td dataLabel="AMI">{ami}</Td>
-        <Td dataLabel="Region">{region}</Td>
-        <Td dataLabel="Status">{status}</Td>
+      <Tr className='no-bottom-border'>
+        <Td dataLabel='AMI'>{ami}</Td>
+        <Td dataLabel='Region'>{region}</Td>
+        <Td dataLabel='Status'>{status}</Td>
       </Tr>
     </Tbody>
   );
@@ -143,12 +143,12 @@ const ClonesTable = ({ compose }: ClonesTablePropTypes) => {
   const { data } = useGetComposeClonesQuery({ composeId: compose.id });
 
   return (
-    <Table variant="compact" data-testid="clones-table">
+    <Table variant='compact' data-testid='clones-table'>
       <Thead>
-        <Tr className="no-bottom-border">
-          <Th className="pf-m-width-60">AMI</Th>
-          <Th className="pf-m-width-20">Region</Th>
-          <Th className="pf-m-width-20">Status</Th>
+        <Tr className='no-bottom-border'>
+          <Th className='pf-m-width-60'>AMI</Th>
+          <Th className='pf-m-width-20'>Region</Th>
+          <Th className='pf-m-width-20'>Status</Th>
         </Tr>
       </Thead>
       <ComposeRow compose={compose} />

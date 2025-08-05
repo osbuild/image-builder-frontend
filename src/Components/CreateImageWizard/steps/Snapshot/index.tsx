@@ -9,7 +9,7 @@ import ManageRepositoriesButton from '../Repositories/components/ManageRepositor
 export default function SnapshotStep() {
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Repeatable build
       </Title>
       <Content>

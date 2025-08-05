@@ -8,7 +8,7 @@ import Services from './components/Services';
 const FirewallStep = () => {
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Firewall
       </Title>
       <Content>Customize firewall settings for your image.</Content>

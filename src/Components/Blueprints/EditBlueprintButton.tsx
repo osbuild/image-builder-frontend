@@ -16,7 +16,7 @@ export const EditBlueprintButton = () => {
       onClick={() =>
         navigate(resolveRelPath(`imagewizard/${selectedBlueprintId}`))
       }
-      variant="secondary"
+      variant='secondary'
     >
       Edit blueprint
     </Button>

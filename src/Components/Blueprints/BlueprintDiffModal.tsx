@@ -53,20 +53,20 @@ const BlueprintDiffModal = ({
       />
       <ModalBody>
         <DiffEditor
-          height="90vh"
-          language="json"
+          height='90vh'
+          language='json'
           original={JSON.stringify(baseBlueprint, undefined, 2)}
           modified={JSON.stringify(blueprint, undefined, 2)}
         />
       </ModalBody>
       <ModalFooter>
-        <BuildImagesButton key="build-button">
+        <BuildImagesButton key='build-button'>
           Synchronize images
         </BuildImagesButton>
         <Button
-          key="cancel-button"
-          variant="link"
-          type="button"
+          key='cancel-button'
+          variant='link'
+          type='button'
           onClick={onClose}
         >
           Cancel

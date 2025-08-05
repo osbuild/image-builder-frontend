@@ -21,9 +21,9 @@ import {
 const InsightsPopover = () => {
   return (
     <Popover
-      headerContent="About Red Hat Insights"
-      position="right"
-      minWidth="30rem"
+      headerContent='About Red Hat Insights'
+      position='right'
+      minWidth='30rem'
       bodyContent={
         <Content>
           <Content>
@@ -33,11 +33,11 @@ const InsightsPopover = () => {
             in downtime.
           </Content>
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
+            component='a'
+            target='_blank'
+            variant='link'
             icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
+            iconPosition='right'
             isInline
             href={INSIGHTS_URL}
           >
@@ -48,9 +48,9 @@ const InsightsPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-        aria-label="About remote host configuration (rhc)"
+        variant='plain'
+        className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+        aria-label='About remote host configuration (rhc)'
         isInline
       />
     </Popover>
@@ -60,9 +60,9 @@ const InsightsPopover = () => {
 const RhcPopover = () => {
   return (
     <Popover
-      headerContent="About remote host configuration (rhc)"
-      position="right"
-      minWidth="30rem"
+      headerContent='About remote host configuration (rhc)'
+      position='right'
+      minWidth='30rem'
       bodyContent={
         <Content>
           <Content>
@@ -71,11 +71,11 @@ const RhcPopover = () => {
             to use the Red Hat Insights Remediations service.
           </Content>
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
+            component='a'
+            target='_blank'
+            variant='link'
             icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
+            iconPosition='right'
             isInline
             href={RHC_URL}
           >
@@ -86,9 +86,9 @@ const RhcPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-        aria-label="About remote host configuration (rhc)"
+        variant='plain'
+        className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+        aria-label='About remote host configuration (rhc)'
         isInline
       />
     </Popover>
@@ -108,9 +108,9 @@ const Registration = () => {
   );
 
   return (
-    <FormGroup label="Registration method">
+    <FormGroup label='Registration method'>
       <Radio
-        label="Automatically register and enable advanced capabilities"
+        label='Automatically register and enable advanced capabilities'
         isChecked={
           registrationType === 'register-now' ||
           registrationType === 'register-now-insights' ||
@@ -121,13 +121,13 @@ const Registration = () => {
             dispatch(changeRegistrationType('register-now-rhc'));
           }
         }}
-        id="register-system-now"
-        name="register-system-now"
+        id='register-system-now'
+        name='register-system-now'
         autoFocus
         description={
           <Button
-            component="a"
-            variant="link"
+            component='a'
+            variant='link'
             isDisabled={!registrationType.startsWith('register-now')}
             isInline
             onClick={() => setShowOptions(!showOptions)}
@@ -138,7 +138,7 @@ const Registration = () => {
         body={
           showOptions && (
             <Checkbox
-              className="pf-v6-u-ml-lg"
+              className='pf-v6-u-ml-lg'
               label={
                 <>
                   Enable predictive analytics and management capabilities
@@ -156,8 +156,8 @@ const Registration = () => {
                   dispatch(changeRegistrationType('register-now'));
                 }
               }}
-              id="register-system-now-insights"
-              name="register-system-insights"
+              id='register-system-now-insights'
+              name='register-system-insights'
               body={
                 <Checkbox
                   label={
@@ -175,8 +175,8 @@ const Registration = () => {
                       dispatch(changeRegistrationType('register-now-insights'));
                     }
                   }}
-                  id="register-system-now-rhc"
-                  name="register-system-rhc"
+                  id='register-system-now-rhc'
+                  name='register-system-rhc'
                 />
               }
             />
@@ -184,25 +184,25 @@ const Registration = () => {
         }
       />
       <Radio
-        label="Register later"
+        label='Register later'
         isChecked={registrationType === 'register-later'}
         onChange={() => {
           dispatch(changeRegistrationType('register-later'));
           setShowOptions(false);
         }}
-        id="register-later"
-        name="register-later"
+        id='register-later'
+        name='register-later'
       />
       {isSatelliteRegistrationEnabled && (
         <Radio
-          label="Register with Satellite"
+          label='Register with Satellite'
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));
             setShowOptions(false);
           }}
-          id="register-satellite"
-          name="register-satellite"
+          id='register-satellite'
+          name='register-satellite'
         />
       )}
     </FormGroup>

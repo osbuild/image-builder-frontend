@@ -151,7 +151,7 @@ export const AzureSourcesSelect = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={handleToggle}
       isExpanded={isOpen}
       isDisabled={!isSuccess}
@@ -161,8 +161,8 @@ export const AzureSourcesSelect = () => {
           value={selectedSource ? selectedSource : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select source"
+          autoComplete='off'
+          placeholder='Select source'
           isExpanded={isOpen}
         />
 
@@ -170,9 +170,9 @@ export const AzureSourcesSelect = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={handleClear}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -194,8 +194,8 @@ export const AzureSourcesSelect = () => {
         >
           <SelectList>
             {isFetching && (
-              <SelectOption key="loading" value="loader">
-                <Spinner size="lg" />
+              <SelectOption key='loading' value='loader'>
+                <Spinner size='lg' />
               </SelectOption>
             )}
             {selectOptions.length > 0 &&

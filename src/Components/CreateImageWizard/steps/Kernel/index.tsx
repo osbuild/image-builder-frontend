@@ -13,15 +13,15 @@ const KernelStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Kernel
       </Title>
       <Content>Customize kernel name and kernel arguments.</Content>
       {environments.includes('wsl') && (
         <Alert
-          variant="warning"
+          variant='warning'
           isInline
-          title="Kernel customizations are not applied to Windows Subsystem for Linux images"
+          title='Kernel customizations are not applied to Windows Subsystem for Linux images'
         />
       )}
       <KernelName />

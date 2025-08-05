@@ -127,7 +127,7 @@ const ReleaseSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      data-testid="release_select"
+      data-testid='release_select'
       style={
         {
           maxWidth: '100%',
@@ -139,7 +139,7 @@ const ReleaseSelect = () => {
   );
 
   return (
-    <FormGroup isRequired={true} label="Release">
+    <FormGroup isRequired={true} label='Release'>
       <Select
         isOpen={isOpen}
         onOpenChange={(isOpen) => setIsOpen(isOpen)}
@@ -160,7 +160,7 @@ const ReleaseSelect = () => {
                   ev.stopPropagation();
                   handleExpand();
                 }}
-                value="loader"
+                value='loader'
                 isLoadButton
               >
                 Show options for further development of RHEL

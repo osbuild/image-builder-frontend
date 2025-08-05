@@ -13,7 +13,7 @@ import cockpit from 'cockpit';
 export const NotReady = ({ enabled }: { enabled: boolean }) => {
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       icon={CubesIcon}
       titleText={`OSBuild Composer is not ${enabled ? 'started' : 'enabled'}`}
       variant={EmptyStateVariant.xl}
@@ -21,7 +21,7 @@ export const NotReady = ({ enabled }: { enabled: boolean }) => {
       <EmptyStateFooter>
         <EmptyStateActions>
           <Button
-            variant="primary"
+            variant='primary'
             onClick={(event) => {
               event.preventDefault();
               cockpit
@@ -40,7 +40,7 @@ export const NotReady = ({ enabled }: { enabled: boolean }) => {
         </EmptyStateActions>
         <EmptyStateActions>
           <Button
-            variant="link"
+            variant='link'
             onClick={(event) => {
               event.preventDefault();
               cockpit.jump(

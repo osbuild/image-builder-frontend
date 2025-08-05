@@ -118,7 +118,7 @@ export const CustomWizardFooter = ({
     <WizardFooterWrapper>
       <Flex columnGap={{ default: 'columnGapSm' }}>
         <Button
-          variant="primary"
+          variant='primary'
           onClick={() => {
             if (!process.env.IS_ON_PREMISE) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
@@ -134,7 +134,7 @@ export const CustomWizardFooter = ({
           Next
         </Button>
         <Button
-          variant="secondary"
+          variant='secondary'
           onClick={() => {
             if (!process.env.IS_ON_PREMISE) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
@@ -151,7 +151,7 @@ export const CustomWizardFooter = ({
         </Button>
         {optional && (
           <Button
-            variant="tertiary"
+            variant='tertiary'
             onClick={() => {
               if (!process.env.IS_ON_PREMISE) {
                 analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
@@ -168,7 +168,7 @@ export const CustomWizardFooter = ({
           </Button>
         )}
         <Button
-          variant="link"
+          variant='link'
           onClick={() => {
             if (!process.env.IS_ON_PREMISE) {
               analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
@@ -372,8 +372,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
           isVisitRequired
         >
           <WizardStep
-            name="Image output"
-            id="step-image-output"
+            name='Image output'
+            id='step-image-output'
             footer={
               <CustomWizardFooter
                 disableNext={targetEnvironments.length === 0}
@@ -384,8 +384,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             <ImageOutputStep />
           </WizardStep>
           <WizardStep
-            name="Target Environment"
-            id="step-target-environment"
+            name='Target Environment'
+            id='step-target-environment'
             isHidden={
               !targetEnvironments.find(
                 (target: string) =>
@@ -394,9 +394,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             }
             steps={[
               <WizardStep
-                name="Amazon Web Services"
-                id="wizard-target-aws"
-                key="wizard-target-aws"
+                name='Amazon Web Services'
+                id='wizard-target-aws'
+                key='wizard-target-aws'
                 footer={
                   <CustomWizardFooter
                     disableNext={
@@ -415,9 +415,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <Aws />
               </WizardStep>,
               <WizardStep
-                name="Google Cloud Platform"
-                id="wizard-target-gcp"
-                key="wizard-target-gcp"
+                name='Google Cloud Platform'
+                id='wizard-target-gcp'
+                key='wizard-target-gcp'
                 footer={
                   <CustomWizardFooter
                     disableNext={
@@ -431,9 +431,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <Gcp />
               </WizardStep>,
               <WizardStep
-                name="Azure"
-                id="wizard-target-azure"
-                key="wizard-target-azure"
+                name='Azure'
+                id='wizard-target-azure'
+                key='wizard-target-azure'
                 footer={
                   <CustomWizardFooter
                     disableNext={
@@ -456,13 +456,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             ]}
           />
           <WizardStep
-            name="Optional steps"
-            id="step-optional-steps"
+            name='Optional steps'
+            id='step-optional-steps'
             steps={[
               <WizardStep
-                name="Register"
-                id="step-register"
-                key="step-register"
+                name='Register'
+                id='step-register'
+                key='step-register'
                 isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
                 navItem={CustomStatusNavItem}
                 status={
@@ -483,8 +483,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               </WizardStep>,
               <WizardStep
                 name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
-                id="step-oscap"
-                key="step-oscap"
+                id='step-oscap'
+                key='step-oscap'
                 navItem={CustomStatusNavItem}
                 footer={
                   <CustomWizardFooter disableNext={false} optional={true} />
@@ -493,9 +493,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <OscapStep />
               </WizardStep>,
               <WizardStep
-                name="File system configuration"
-                id="step-file-system"
-                key="step-file-system"
+                name='File system configuration'
+                id='step-file-system'
+                key='step-file-system'
                 navItem={CustomStatusNavItem}
                 isHidden={hasWslTargetOnly}
                 footer={
@@ -519,9 +519,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 </FileSystemContext.Provider>
               </WizardStep>,
               <WizardStep
-                name="Repeatable build"
-                id="wizard-repository-snapshot"
-                key="wizard-repository-snapshot"
+                name='Repeatable build'
+                id='wizard-repository-snapshot'
+                key='wizard-repository-snapshot'
                 navItem={CustomStatusNavItem}
                 status={snapshotValidation.disabledNext ? 'error' : 'default'}
                 isHidden={!!process.env.IS_ON_PREMISE}
@@ -535,9 +535,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <SnapshotStep />
               </WizardStep>,
               <WizardStep
-                name="Custom repositories"
-                id="wizard-custom-repositories"
-                key="wizard-custom-repositories"
+                name='Custom repositories'
+                id='wizard-custom-repositories'
+                key='wizard-custom-repositories'
                 navItem={CustomStatusNavItem}
                 isHidden={!!process.env.IS_ON_PREMISE}
                 isDisabled={snapshotValidation.disabledNext}
@@ -548,9 +548,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <RepositoriesStep />
               </WizardStep>,
               <WizardStep
-                name="Additional packages"
-                id="wizard-additional-packages"
-                key="wizard-additional-packages"
+                name='Additional packages'
+                id='wizard-additional-packages'
+                key='wizard-additional-packages'
                 navItem={CustomStatusNavItem}
                 isDisabled={snapshotValidation.disabledNext}
                 footer={
@@ -560,9 +560,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <PackagesStep />
               </WizardStep>,
               <WizardStep
-                name="Users"
-                id="wizard-users"
-                key="wizard-users"
+                name='Users'
+                id='wizard-users'
+                key='wizard-users'
                 navItem={CustomStatusNavItem}
                 status={usersValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -575,9 +575,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <UsersStep />
               </WizardStep>,
               <WizardStep
-                name="Timezone"
-                id="wizard-timezone"
-                key="wizard-timezone"
+                name='Timezone'
+                id='wizard-timezone'
+                key='wizard-timezone'
                 navItem={CustomStatusNavItem}
                 status={timezoneValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -590,9 +590,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <TimezoneStep />
               </WizardStep>,
               <WizardStep
-                name="Locale"
-                id="wizard-locale"
-                key="wizard-locale"
+                name='Locale'
+                id='wizard-locale'
+                key='wizard-locale'
                 navItem={CustomStatusNavItem}
                 status={localeValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -605,9 +605,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <LocaleStep />
               </WizardStep>,
               <WizardStep
-                name="Hostname"
-                id="wizard-hostname"
-                key="wizard-hostname"
+                name='Hostname'
+                id='wizard-hostname'
+                key='wizard-hostname'
                 navItem={CustomStatusNavItem}
                 status={hostnameValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -620,9 +620,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <HostnameStep />
               </WizardStep>,
               <WizardStep
-                name="Kernel"
-                id="wizard-kernel"
-                key="wizard-kernel"
+                name='Kernel'
+                id='wizard-kernel'
+                key='wizard-kernel'
                 navItem={CustomStatusNavItem}
                 isHidden={hasWslTargetOnly}
                 status={kernelValidation.disabledNext ? 'error' : 'default'}
@@ -636,9 +636,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <KernelStep />
               </WizardStep>,
               <WizardStep
-                name="Firewall"
-                id="wizard-firewall"
-                key="wizard-firewall"
+                name='Firewall'
+                id='wizard-firewall'
+                key='wizard-firewall'
                 navItem={CustomStatusNavItem}
                 status={firewallValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -651,9 +651,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <FirewallStep />
               </WizardStep>,
               <WizardStep
-                name="Systemd services"
-                id="wizard-services"
-                key="wizard-services"
+                name='Systemd services'
+                id='wizard-services'
+                key='wizard-services'
                 navItem={CustomStatusNavItem}
                 status={servicesValidation.disabledNext ? 'error' : 'default'}
                 footer={
@@ -666,9 +666,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <ServicesStep />
               </WizardStep>,
               <WizardStep
-                name="First boot script configuration"
-                id="wizard-first-boot"
-                key="wizard-first-boot"
+                name='First boot script configuration'
+                id='wizard-first-boot'
+                key='wizard-first-boot'
                 navItem={CustomStatusNavItem}
                 status={firstBootValidation.disabledNext ? 'error' : 'default'}
                 isHidden={!!process.env.IS_ON_PREMISE}
@@ -684,8 +684,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             ]}
           />
           <WizardStep
-            name="Details"
-            id="step-details"
+            name='Details'
+            id='step-details'
             navItem={CustomStatusNavItem}
             status={detailsValidation.disabledNext ? 'error' : 'default'}
             footer={
@@ -697,8 +697,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             <DetailsStep />
           </WizardStep>
           <WizardStep
-            name="Review"
-            id="step-review"
+            name='Review'
+            id='step-review'
             footer={<ReviewWizardFooter />}
           >
             <ReviewStep />

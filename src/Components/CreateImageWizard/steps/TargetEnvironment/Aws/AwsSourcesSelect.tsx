@@ -120,15 +120,15 @@ export const AwsSourcesSelect = () => {
 
     if (isFetching) {
       selectOptionsElement.push(
-        <SelectOption key="fetching" value="loader">
-          <Spinner size="lg" />
+        <SelectOption key='fetching' value='loader'>
+          <Spinner size='lg' />
         </SelectOption>,
       );
     }
 
     if (isSuccess && selectOptions.length === 0) {
       selectOptionsElement.push(
-        <SelectOption key="no_results" value="no_results" isDisabled>
+        <SelectOption key='no_results' value='no_results' isDisabled>
           No results found
         </SelectOption>,
       );
@@ -140,7 +140,7 @@ export const AwsSourcesSelect = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={handleToggle}
       isExpanded={isOpen}
       isDisabled={!isSuccess || isLoading}
@@ -150,8 +150,8 @@ export const AwsSourcesSelect = () => {
           value={chosenSource?.name ? chosenSource.name : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select source"
+          autoComplete='off'
+          placeholder='Select source'
           isExpanded={isOpen}
         />
 
@@ -159,9 +159,9 @@ export const AwsSourcesSelect = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={handleClear}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -171,7 +171,7 @@ export const AwsSourcesSelect = () => {
 
   return (
     <>
-      <FormGroup isRequired label={'Source name'} data-testid="sources">
+      <FormGroup isRequired label={'Source name'} data-testid='sources'>
         <Select
           isScrollable
           isOpen={isOpen}

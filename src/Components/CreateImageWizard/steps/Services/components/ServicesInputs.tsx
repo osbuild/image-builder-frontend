@@ -54,56 +54,56 @@ const ServicesInput = () => {
 
   return (
     <>
-      <FormGroup isRequired={false} label="Enabled services">
+      <FormGroup isRequired={false} label='Enabled services'>
         <LabelInput
-          ariaLabel="Add enabled service"
-          placeholder="Add enabled service"
+          ariaLabel='Add enabled service'
+          placeholder='Add enabled service'
           validator={isServiceValid}
           list={enabledServices.filter(
             (service) => !enabledRequiredByOpenSCAP.includes(service),
           )}
           requiredList={enabledRequiredByOpenSCAP}
-          requiredCategoryName="Required by OpenSCAP"
-          item="Enabled service"
+          requiredCategoryName='Required by OpenSCAP'
+          item='Enabled service'
           addAction={addEnabledService}
           removeAction={removeEnabledService}
           stepValidation={stepValidation}
-          fieldName="enabledSystemdServices"
+          fieldName='enabledSystemdServices'
         />
       </FormGroup>
-      <FormGroup isRequired={false} label="Disabled services">
+      <FormGroup isRequired={false} label='Disabled services'>
         <LabelInput
-          ariaLabel="Add disabled service"
-          placeholder="Add disabled service"
+          ariaLabel='Add disabled service'
+          placeholder='Add disabled service'
           validator={isServiceValid}
           list={disabledServices.filter(
             (service) =>
               !oscapProfileInfo?.services?.disabled?.includes(service),
           )}
           requiredList={disabledRequiredByOpenSCAP}
-          requiredCategoryName="Required by OpenSCAP"
-          item="Disabled service"
+          requiredCategoryName='Required by OpenSCAP'
+          item='Disabled service'
           addAction={addDisabledService}
           removeAction={removeDisabledService}
           stepValidation={stepValidation}
-          fieldName="disabledSystemdServices"
+          fieldName='disabledSystemdServices'
         />
       </FormGroup>
-      <FormGroup isRequired={false} label="Masked services">
+      <FormGroup isRequired={false} label='Masked services'>
         <LabelInput
-          ariaLabel="Add masked service"
-          placeholder="Add masked service"
+          ariaLabel='Add masked service'
+          placeholder='Add masked service'
           validator={isServiceValid}
           list={maskedServices.filter(
             (service) => !oscapProfileInfo?.services?.masked?.includes(service),
           )}
           requiredList={maskedRequiredByOpenSCAP}
-          requiredCategoryName="Required by OpenSCAP"
-          item="Masked service"
+          requiredCategoryName='Required by OpenSCAP'
+          item='Masked service'
           addAction={addMaskedService}
           removeAction={removeMaskedService}
           stepValidation={stepValidation}
-          fieldName="maskedSystemdServices"
+          fieldName='maskedSystemdServices'
         />
       </FormGroup>
     </>

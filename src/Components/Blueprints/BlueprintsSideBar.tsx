@@ -100,7 +100,7 @@ const BlueprintsSidebar = () => {
   if (isLoading) {
     return (
       <Bullseye>
-        <Spinner size="xl" />
+        <Spinner size='xl' />
       </Bullseye>
     );
   }
@@ -114,8 +114,8 @@ const BlueprintsSidebar = () => {
       <EmptyBlueprintState
         icon={PlusCircleIcon}
         action={<Link to={resolveRelPath('imagewizard')}>Add blueprint</Link>}
-        titleText="No blueprints yet"
-        bodyText="Add a blueprint and optionally build related images."
+        titleText='No blueprints yet'
+        bodyText='Add a blueprint and optionally build related images.'
       />
     );
   }
@@ -147,7 +147,7 @@ const BlueprintsSidebar = () => {
               <Flex justifyContent={{ default: 'justifyContentCenter' }}>
                 <FlexItem>
                   <Button
-                    variant="link"
+                    variant='link'
                     isDisabled={!selectedBlueprintId}
                     onClick={handleClickViewAll}
                   >
@@ -163,14 +163,14 @@ const BlueprintsSidebar = () => {
             icon={SearchIcon}
             action={
               <Button
-                variant="link"
+                variant='link'
                 onClick={() => dispatch(setBlueprintSearchInput(undefined))}
               >
                 Clear all filters
               </Button>
             }
-            titleText="No blueprints found"
-            bodyText="No blueprints match your search criteria. Try a different search."
+            titleText='No blueprints found'
+            bodyText='No blueprints match your search criteria. Try a different search.'
           />
         )}
         {blueprintsTotal > 0 &&
@@ -212,7 +212,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
   return (
     <SearchInput
       value={blueprintSearchInput || ''}
-      placeholder="Search by name or description"
+      placeholder='Search by name or description'
       onChange={(_event, value) => onChange(value)}
       onClear={() => onChange('')}
       resultsCount={`${blueprintsTotal} blueprints`}
@@ -226,7 +226,7 @@ const EmptyBlueprintState = ({
   icon,
   action,
 }: emptyBlueprintStateProps) => (
-  <EmptyState headingLevel="h4" icon={icon} titleText={titleText} variant="sm">
+  <EmptyState headingLevel='h4' icon={icon} titleText={titleText} variant='sm'>
     <EmptyStateBody>{bodyText}</EmptyStateBody>
     <EmptyStateFooter>
       <EmptyStateActions>{action}</EmptyStateActions>

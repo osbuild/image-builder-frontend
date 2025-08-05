@@ -15,9 +15,9 @@ export const AzureAuthButton = () => {
   return (
     <FormGroup>
       <Button
-        component="a"
-        target="_blank"
-        variant="secondary"
+        component='a'
+        target='_blank'
+        variant='secondary'
         isDisabled={!guidRegex.test(tenantId)}
         href={
           'https://login.microsoftonline.com/' +

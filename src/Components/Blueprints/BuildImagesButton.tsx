@@ -101,17 +101,17 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
       onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
-          variant="primary"
-          data-testid="blueprint-build-image-menu"
+          variant='primary'
+          data-testid='blueprint-build-image-menu'
           ref={toggleRef}
           onClick={onToggleClick}
           isExpanded={isOpen}
           splitButtonItems={[
             <MenuToggleAction
-              data-testid="blueprint-build-image-menu-option"
-              key="split-action"
+              data-testid='blueprint-build-image-menu-option'
+              key='split-action'
               onClick={onBuildHandler}
-              id="wizard-build-image-btn"
+              id='wizard-build-image-btn'
               isDisabled={
                 !selectedBlueprintId ||
                 deselectedTargets.length === blueprintImageType?.length
@@ -127,7 +127,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
                         } as React.CSSProperties
                       }
                       isInline
-                      size="md"
+                      size='md'
                     />
                   </FlexItem>
                 )}

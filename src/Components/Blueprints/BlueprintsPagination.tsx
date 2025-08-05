@@ -50,8 +50,8 @@ const BlueprintsPagination = () => {
       page={currPage}
       onSetPage={onSetPage}
       onPerPageSelect={onPerPageSelect}
-      widgetId="blueprints-pagination-bottom"
-      data-testid="blueprints-pagination-bottom"
+      widgetId='blueprints-pagination-bottom'
+      data-testid='blueprints-pagination-bottom'
       isCompact
     />
   );

@@ -24,7 +24,7 @@ const Oscap = ({ majorVersion }: OscapPropTypes) => {
 
   if (majorVersion === '10' && complianceType === 'openscap') {
     return (
-      <Alert title="OpenSCAP Security Profiles for RHEL 10 Not Yet Available">
+      <Alert title='OpenSCAP Security Profiles for RHEL 10 Not Yet Available'>
         OpenSCAP security profiles aren’t available for RHEL 10 in Image Builder
         yet. Support is on the way—check back soon for updates.
       </Alert>
@@ -35,9 +35,9 @@ const Oscap = ({ majorVersion }: OscapPropTypes) => {
     <>
       {environments.includes('wsl') && (
         <Alert
-          variant="warning"
+          variant='warning'
           isInline
-          title="OpenSCAP profiles are not compatible with WSL images."
+          title='OpenSCAP profiles are not compatible with WSL images.'
         />
       )}
       {complianceType === 'openscap' ? <ProfileSelector /> : <PolicySelector />}

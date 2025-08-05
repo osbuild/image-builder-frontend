@@ -19,7 +19,7 @@ type EmptyProps = {
 const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       icon={RepositoryIcon}
       titleText={
         hasFilterValue
@@ -36,15 +36,15 @@ const Empty = ({ hasFilterValue, refetch }: EmptyProps) => {
       </EmptyStateBody>
       <EmptyStateFooter>
         <Button
-          variant="primary"
-          component="a"
-          target="_blank"
+          variant='primary'
+          component='a'
+          target='_blank'
           href={CONTENT_URL}
-          className="pf-v6-u-mr-sm"
+          className='pf-v6-u-mr-sm'
         >
           Go to repositories
         </Button>
-        <Button variant="secondary" isInline onClick={() => refetch()}>
+        <Button variant='secondary' isInline onClick={() => refetch()}>
           Refresh
         </Button>
       </EmptyStateFooter>

@@ -204,7 +204,7 @@ const ImagesTable = () => {
   if (!process.env.IS_ON_PREMISE && !isSuccess) {
     if (isError) {
       return (
-        <Alert variant="warning" title="Service unavailable">
+        <Alert variant='warning' title='Service unavailable'>
           <p>
             The Images service is unavailable right now. We&apos;re working on
             it... please check back later.
@@ -244,12 +244,12 @@ const ImagesTable = () => {
         setPage={setPage}
         onPerPageSelect={onPerPageSelect}
       />
-      <Table variant="compact" data-testid="images-table">
+      <Table variant='compact' data-testid='images-table'>
         <Thead>
           <Tr>
             <Th
               style={{ minWidth: itemCount === 0 ? '30px' : 'auto' }}
-              aria-label="Details expandable"
+              aria-label='Details expandable'
             />
             <Th>Name</Th>
             <Th>Updated</Th>
@@ -258,7 +258,7 @@ const ImagesTable = () => {
             <Th>Version</Th>
             <Th>Status</Th>
             <Th>Instance</Th>
-            <Th aria-label="Actions menu" />
+            <Th aria-label='Actions menu' />
           </Tr>
         </Thead>
         {itemCount === 0 && (
@@ -283,9 +283,9 @@ const ImagesTable = () => {
           );
         })}
       </Table>
-      <Toolbar className="pf-v6-u-mb-xl">
+      <Toolbar className='pf-v6-u-mb-xl'>
         <ToolbarContent>
-          <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
+          <ToolbarItem variant='pagination' align={{ default: 'alignEnd' }}>
             <Pagination
               variant={PaginationVariant.bottom}
               itemCount={itemCount}
@@ -293,8 +293,8 @@ const ImagesTable = () => {
               page={page}
               onSetPage={onSetPage}
               onPerPageSelect={onPerPageSelect}
-              widgetId="compose-pagination-bottom"
-              data-testid="images-pagination-bottom"
+              widgetId='compose-pagination-bottom'
+              data-testid='images-pagination-bottom'
             />
           </ToolbarItem>
         </ToolbarContent>
@@ -583,7 +583,7 @@ const Row = ({
 
   return (
     <Tbody key={compose.id} isExpanded={isExpanded}>
-      <Tr className="no-bottom-border">
+      <Tr className='no-bottom-border'>
         <Td
           expand={{
             rowIndex: rowIndex,
@@ -591,11 +591,11 @@ const Row = ({
             onToggle: () => handleToggle(),
           }}
         />
-        <Td dataLabel="Image name">
+        <Td dataLabel='Image name'>
           {compose.blueprint_id && !selectedBlueprintId ? (
             <Button
-              component="a"
-              variant="link"
+              component='a'
+              variant='link'
               isInline
               onClick={() =>
                 compose.blueprint_id &&
@@ -609,22 +609,22 @@ const Row = ({
           )}
         </Td>
         <Td
-          dataLabel="Created"
+          dataLabel='Created'
           title={timestampToDisplayStringDetailed(compose.created_at)}
         >
           {timestampToDisplayString(compose.created_at)}
         </Td>
-        <Td dataLabel="Release">
+        <Td dataLabel='Release'>
           <Release release={compose.request.distribution} />
         </Td>
-        <Td dataLabel="Target">
+        <Td dataLabel='Target'>
           {target ? target : <Target compose={compose} />}
         </Td>
-        <Td dataLabel="Version">
+        <Td dataLabel='Version'>
           <Badge isRead>{compose.blueprint_version || 'N/A'}</Badge>
         </Td>
-        <Td dataLabel="Status">{status}</Td>
-        <Td dataLabel="Instance">{instance}</Td>
+        <Td dataLabel='Status'>{status}</Td>
+        <Td dataLabel='Instance'>{instance}</Td>
         <Td>
           {actions ? (
             actions
@@ -659,7 +659,7 @@ const defaultActions = (
     {
       title: (
         <a
-          className="ib-subdued-link"
+          className='ib-subdued-link'
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
             JSON.stringify(compose.request, null, '  '),
           )}`}

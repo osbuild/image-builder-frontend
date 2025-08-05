@@ -17,7 +17,7 @@ const UploadRepositoryLabel = () => {
       }
     >
       <Label
-        variant="outline"
+        variant='outline'
         isCompact
         icon={<UploadIcon />}
         style={{ marginLeft: '8px' }}

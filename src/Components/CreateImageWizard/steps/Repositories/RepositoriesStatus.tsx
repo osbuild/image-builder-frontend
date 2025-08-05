@@ -63,10 +63,10 @@ const RepositoriesStatus = ({
   if (repoStatus === 'Valid') {
     return (
       <>
-        <Icon status="success">
+        <Icon status='success'>
           <CheckCircleIcon />
         </Icon>{' '}
-        <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-success">
+        <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-success'>
           {repoStatus}
         </span>
       </>
@@ -75,19 +75,19 @@ const RepositoriesStatus = ({
     return (
       <>
         <Popover
-          position="bottom"
-          minWidth="30rem"
+          position='bottom'
+          minWidth='30rem'
           bodyContent={
             <>
               <Alert
                 variant={repoStatus === 'Invalid' ? 'danger' : 'warning'}
                 title={repoStatus}
-                className="pf-v6-u-pb-sm"
+                className='pf-v6-u-pb-sm'
                 isInline
                 isPlain
               />
               {repoUrl ? (
-                <p className="pf-v6-u-pb-md">Cannot fetch {repoUrl}</p>
+                <p className='pf-v6-u-pb-md'>Cannot fetch {repoUrl}</p>
               ) : (
                 ''
               )}
@@ -123,10 +123,10 @@ const RepositoriesStatus = ({
                 </>
               )}
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
-                iconPosition="right"
+                component='a'
+                target='_blank'
+                variant='link'
+                iconPosition='right'
                 isInline
                 icon={<ExternalLinkAltIcon />}
                 href={CONTENT_URL}
@@ -136,23 +136,23 @@ const RepositoriesStatus = ({
             </>
           }
         >
-          <Button variant="link" className="pf-v6-u-p-0 pf-v6-u-font-size-sm">
+          <Button variant='link' className='pf-v6-u-p-0 pf-v6-u-font-size-sm'>
             {repoStatus === 'Invalid' && (
               <>
-                <Icon status="danger">
+                <Icon status='danger'>
                   <ExclamationCircleIcon />
                 </Icon>{' '}
-                <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger failure-button">
+                <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-danger failure-button'>
                   {repoStatus}
                 </span>
               </>
             )}
             {repoStatus === 'Unavailable' && (
               <>
-                <Icon status="warning">
+                <Icon status='warning'>
                   <ExclamationTriangleIcon />
                 </Icon>{' '}
-                <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning failure-button">
+                <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-warning failure-button'>
                   {repoStatus}
                 </span>
               </>
@@ -165,7 +165,7 @@ const RepositoriesStatus = ({
     return (
       <>
         <Spinner isInline />{' '}
-        <span className="pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info">
+        <span className='pf-v6-u-font-weight-bold pf-v6-u-text-color-status-info'>
           {repoStatus}
         </span>
       </>

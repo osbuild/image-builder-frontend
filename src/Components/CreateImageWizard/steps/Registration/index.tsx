@@ -41,14 +41,14 @@ const RegistrationStep = () => {
   const registrationType = useAppSelector(selectRegistrationType);
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Register systems using this image
       </Title>
-      <FormGroup label="Organization ID">
+      <FormGroup label='Organization ID'>
         <ClipboardCopy
-          hoverTip="Copy to clipboard"
-          clickTip="Successfully copied to clipboard!"
-          variant="inline-compact"
+          hoverTip='Copy to clipboard'
+          clickTip='Successfully copied to clipboard!'
+          variant='inline-compact'
         >
           {orgId || ''}
         </ClipboardCopy>
@@ -71,7 +71,7 @@ const RegistrationStep = () => {
         registrationType !== 'register-satellite' && (
           <FormGroup
             label={'Selected activation key'}
-            data-testid="selected-activation-key"
+            data-testid='selected-activation-key'
           >
             <ActivationKeyInformation />
           </FormGroup>

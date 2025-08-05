@@ -142,8 +142,8 @@ export const CreateSaveButton = ({
     };
 
     return (
-      <Modal isOpen={showModal} onClose={handleClose} width="50%">
-        <ModalHeader title="Save time by building images" />
+      <Modal isOpen={showModal} onClose={handleClose} width='50%'>
+        <ModalHeader title='Save time by building images' />
         <ModalBody>
           Building blueprints and images doesn&apos;t need to be a two step
           process. To build images simultaneously, use the dropdown arrow to the
@@ -151,9 +151,9 @@ export const CreateSaveButton = ({
         </ModalBody>
         <ModalFooter>
           <Button
-            key="back"
-            variant="primary"
-            data-testid="close-button-saveandbuild-modal"
+            key='back'
+            variant='primary'
+            data-testid='close-button-saveandbuild-modal'
             onClick={handleClose}
           >
             Close
@@ -201,7 +201,7 @@ export const CreateSaveButton = ({
       {showModal && <SaveAndBuildImagesModal />}
       <MenuToggleAction
         onClick={onClick}
-        id="wizard-create-save-btn"
+        id='wizard-create-save-btn'
         isDisabled={isDisabled}
       >
         <Flex display={{ default: 'inlineFlex' }}>
@@ -212,7 +212,7 @@ export const CreateSaveButton = ({
                   { '--pf-v6-c-spinner--Color': '#fff' } as React.CSSProperties
                 }
                 isInline
-                size="md"
+                size='md'
               />
             </FlexItem>
           )}

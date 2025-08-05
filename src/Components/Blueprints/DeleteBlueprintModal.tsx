@@ -93,16 +93,16 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   };
   return (
     <Modal variant={ModalVariant.small} isOpen={isOpen} onClose={onDeleteClose}>
-      <ModalHeader title={'Delete blueprint?'} titleIconVariant="warning" />
+      <ModalHeader title={'Delete blueprint?'} titleIconVariant='warning' />
       <ModalBody>
         All versions of {blueprintName} and its associated images will be
         deleted.
       </ModalBody>
       <ModalFooter>
-        <Button variant="danger" type="button" onClick={handleDelete}>
+        <Button variant='danger' type='button' onClick={handleDelete}>
           Delete
         </Button>
-        <Button variant="link" type="button" onClick={onDeleteClose}>
+        <Button variant='link' type='button' onClick={onDeleteClose}>
           Cancel
         </Button>
       </ModalFooter>

@@ -154,21 +154,21 @@ const LabelInput = ({
         <TextInputGroupUtilities>
           <Button
             icon={
-              <Icon status="info">
+              <Icon status='info'>
                 <PlusCircleIcon />
               </Icon>
             }
-            variant="plain"
+            variant='plain'
             onClick={(e) => handleAddItem(e, inputValue)}
             isDisabled={!inputValue}
             aria-label={ariaLabel}
           />
           <Button
             icon={<TimesIcon />}
-            variant="plain"
+            variant='plain'
             onClick={handleClear}
             isDisabled={!inputValue}
-            aria-label="Clear input"
+            aria-label='Clear input'
           />
         </TextInputGroupUtilities>
       </TextInputGroup>
@@ -185,7 +185,7 @@ const LabelInput = ({
         <LabelGroup
           categoryName={requiredCategoryName}
           numLabels={20}
-          className="pf-v6-u-mt-sm pf-v6-u-w-100"
+          className='pf-v6-u-mt-sm pf-v6-u-w-100'
         >
           {requiredList.map((item) => (
             <Label key={item} isCompact>
@@ -194,7 +194,7 @@ const LabelInput = ({
           ))}
         </LabelGroup>
       )}
-      <LabelGroup numLabels={20} className="pf-v6-u-mt-sm pf-v6-u-w-100">
+      <LabelGroup numLabels={20} className='pf-v6-u-mt-sm pf-v6-u-w-100'>
         {list?.map((item) => (
           <Label
             key={item}

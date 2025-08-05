@@ -17,10 +17,10 @@ export const IncludedReposPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="About included repositories"
-        component="span"
-        size="sm"
+        variant='plain'
+        aria-label='About included repositories'
+        component='span'
+        size='sm'
         isInline
       />
     </Popover>
@@ -41,10 +41,10 @@ export const OtherReposPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="About other repositories"
-        component="span"
-        size="sm"
+        variant='plain'
+        aria-label='About other repositories'
+        component='span'
+        size='sm'
         isInline
       />
     </Popover>

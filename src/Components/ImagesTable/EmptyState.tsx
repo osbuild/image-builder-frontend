@@ -30,7 +30,7 @@ const EmptyBlueprintsImagesTable = () => (
   <Bullseye>
     <EmptyState
       icon={PlusCircleIcon}
-      titleText="No images"
+      titleText='No images'
       variant={EmptyStateVariant.lg}
     >
       <EmptyStateBody>
@@ -41,7 +41,7 @@ const EmptyBlueprintsImagesTable = () => (
       </EmptyStateBody>
       <EmptyStateFooter>
         <EmptyStateActions>
-          <BuildImagesButtonEmptyState variant="link">
+          <BuildImagesButtonEmptyState variant='link'>
             Build latest images
           </BuildImagesButtonEmptyState>
         </EmptyStateActions>
@@ -55,8 +55,8 @@ const EmptyImagesTable = () => {
     <Bullseye>
       <EmptyState
         variant={EmptyStateVariant.lg}
-        titleText="No images"
-        headingLevel="h4"
+        titleText='No images'
+        headingLevel='h4'
         icon={SearchIcon}
       >
         <>
@@ -74,11 +74,11 @@ const EmptyImagesTable = () => {
             </Content>
             <Content>
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
+                component='a'
+                target='_blank'
+                variant='link'
                 icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
+                iconPosition='right'
                 isInline
                 href={MANAGING_WITH_DNF_URL}
               >
@@ -89,14 +89,14 @@ const EmptyImagesTable = () => {
           <EmptyStateFooter>
             <EmptyStateActions>
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
+                component='a'
+                target='_blank'
+                variant='link'
                 icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
+                iconPosition='right'
                 isInline
                 href={CREATING_IMAGES_WITH_IB_SERVICE_URL}
-                className="pf-v6-u-pt-md"
+                className='pf-v6-u-pt-md'
               >
                 Image builder for RPM-DNF documentation
               </Button>

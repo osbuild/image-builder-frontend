@@ -258,9 +258,9 @@ export const ImportBlueprintModal: React.FunctionComponent<
             >
               <Button
                 icon={<HelpIcon />}
-                variant="plain"
-                aria-label="About import"
-                className="pf-v6-u-pl-sm"
+                variant='plain'
+                aria-label='About import'
+                className='pf-v6-u-pl-sm'
                 isInline
               />
             </Popover>
@@ -269,23 +269,23 @@ export const ImportBlueprintModal: React.FunctionComponent<
       />
       <ModalBody>
         <Form>
-          <FormGroup fieldId="checkbox-import-custom-repositories">
+          <FormGroup fieldId='checkbox-import-custom-repositories'>
             <Checkbox
-              label="Import missing custom repositories after file upload."
+              label='Import missing custom repositories after file upload.'
               isChecked={isCheckedImportRepos}
               onChange={() => setIsCheckedImportRepos((prev) => !prev)}
-              aria-label="Import Custom Repositories checkbox"
-              id="checkbox-import-custom-repositories"
-              name="Import Repositories"
+              aria-label='Import Custom Repositories checkbox'
+              id='checkbox-import-custom-repositories'
+              name='Import Repositories'
             />
           </FormGroup>
-          <FormGroup fieldId="import-blueprint-file-upload">
+          <FormGroup fieldId='import-blueprint-file-upload'>
             <FileUpload
-              id="import-blueprint-file-upload"
-              type="text"
+              id='import-blueprint-file-upload'
+              type='text'
               value={fileContent}
               filename={filename}
-              filenamePlaceholder="Drag and drop a file or upload one"
+              filenamePlaceholder='Drag and drop a file or upload one'
               onFileInputChange={handleFileInputChange}
               onDataChange={handleDataChange}
               onReadStarted={handleFileReadStarted}
@@ -293,7 +293,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               onClearClick={handleClear}
               isLoading={isLoading}
               isReadOnly={true}
-              browseButtonText="Upload"
+              browseButtonText='Upload'
               dropzoneProps={{
                 accept: { 'text/json': ['.json'], 'text/plain': ['.toml'] },
                 maxSize: 512000,
@@ -319,7 +319,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
       </ModalBody>
       <ModalFooter>
         <Button
-          type="button"
+          type='button'
           isDisabled={isRejected || isInvalidFormat || !fileContent}
           onClick={() =>
             navigate(resolveRelPath(`imagewizard/import`), {
@@ -329,7 +329,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
         >
           Review and finish
         </Button>
-        <Button variant="link" type="button" onClick={onImportClose}>
+        <Button variant='link' type='button' onClick={onImportClose}>
           Cancel
         </Button>
       </ModalFooter>

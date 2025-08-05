@@ -107,7 +107,7 @@ const OscapContent = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
       <Content>
@@ -118,16 +118,16 @@ const OscapContent = () => {
         registered RHEL systems to a selected policy or profile.
       </Content>
       {complianceEnabled && (
-        <ToggleGroup aria-label="Default with single selectable">
+        <ToggleGroup aria-label='Default with single selectable'>
           <ToggleGroupItem
-            text="Compliance policies"
-            buttonId="toggle-group-compliance"
+            text='Compliance policies'
+            buttonId='toggle-group-compliance'
             isSelected={complianceType === 'compliance'}
             onChange={() => handleTypeChange('compliance')}
           />
           <ToggleGroupItem
-            text="OpenSCAP profiles"
-            buttonId="toggle-group-openscap"
+            text='OpenSCAP profiles'
+            buttonId='toggle-group-openscap'
             isSelected={complianceType === 'openscap'}
             onChange={() => handleTypeChange('openscap')}
           />
@@ -136,7 +136,7 @@ const OscapContent = () => {
       {Array.isArray(policies?.data) &&
         policies.data.length === 0 &&
         complianceType === 'compliance' && (
-          <Alert variant="info" isInline title="No compliance policies created">
+          <Alert variant='info' isInline title='No compliance policies created'>
             <p>
               Currently there are no compliance policies in your environment. To
               help you get started, select one of the default policies below and
@@ -144,7 +144,7 @@ const OscapContent = () => {
               policy or to create a new one, you must go through Insights
               Compliance.
             </p>
-            <AlertActionLink component="a" href={COMPLIANCE_URL}>
+            <AlertActionLink component='a' href={COMPLIANCE_URL}>
               Save blueprint and navigate to Insights Compliance
             </AlertActionLink>
           </Alert>

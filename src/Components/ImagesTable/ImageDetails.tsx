@@ -37,13 +37,13 @@ import {
 const SourceNotFoundPopover = () => {
   return (
     <Popover
-      position="bottom"
+      position='bottom'
       bodyContent={
         <>
           <Alert
-            variant="danger"
-            title="Source name cannot be loaded"
-            className="pf-v6-u-pb-md"
+            variant='danger'
+            title='Source name cannot be loaded'
+            className='pf-v6-u-pb-md'
             isInline
             isPlain
           />
@@ -53,11 +53,11 @@ const SourceNotFoundPopover = () => {
           </p>
           <br />
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
+            component='a'
+            target='_blank'
+            variant='link'
             icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
+            iconPosition='right'
             isInline
             href={'settings/sources'}
           >
@@ -66,8 +66,8 @@ const SourceNotFoundPopover = () => {
         </>
       }
     >
-      <Button variant="link" className="pf-v6-u-p-0 pf-v6-u-font-size-sm">
-        <div className="failure-button">Source name cannot be loaded</div>
+      <Button variant='link' className='pf-v6-u-p-0 pf-v6-u-font-size-sm'>
+        <div className='failure-button'>Source name cannot be loaded</div>
       </Button>
     </Popover>
   );
@@ -156,17 +156,17 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
               onClick={() => {
                 if (!process.env.IS_ON_PREMISE) {
                   analytics.track(`${AMPLITUDE_MODULE_NAME} - Copy UUID`, {
@@ -200,11 +200,11 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
             <DescriptionListTerm>Shared with</DescriptionListTerm>
             <DescriptionListDescription>
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
+                component='a'
+                target='_blank'
+                variant='link'
                 icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
+                iconPosition='right'
                 isInline
                 // the format of an account link is taken from
                 // https://docs.aws.amazon.com/signin/latest/userguide/sign-in-urls-defined.html
@@ -232,7 +232,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
       </DescriptionList>
       <>
         <br />
-        <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+        <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
           Cloud Provider Identifiers
         </div>
       </>
@@ -271,17 +271,17 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
             >
               {compose.id}
             </ClipboardCopy>
@@ -307,18 +307,18 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>Image name</DescriptionListTerm>
           <DescriptionListDescription>
             {composeStatus?.image_status.status === 'success' && (
               <ClipboardCopy
-                hoverTip="Copy"
-                clickTip="Copied"
-                variant="inline-compact"
+                hoverTip='Copy'
+                clickTip='Copied'
+                variant='inline-compact'
               >
                 {uploadStatus?.image_name || ''}
               </ClipboardCopy>
@@ -357,17 +357,17 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
             >
               {compose.id}
             </ClipboardCopy>
@@ -395,18 +395,18 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
         )}
       </DescriptionList>
       <br />
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>Image name</DescriptionListTerm>
           <DescriptionListDescription>
             {composeStatus?.image_status.status === 'success' && (
               <ClipboardCopy
-                hoverTip="Copy"
-                clickTip="Copied"
-                variant="inline-compact"
+                hoverTip='Copy'
+                clickTip='Copied'
+                variant='inline-compact'
               >
                 {uploadStatus?.image_name || ''}
               </ClipboardCopy>
@@ -437,17 +437,17 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
 
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
             >
               {compose.id}
             </ClipboardCopy>
@@ -459,18 +459,18 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
         </DescriptionListGroup>
       </DescriptionList>
       <br />
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Cloud Provider Identifiers
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>Object Storage URL</DescriptionListTerm>
           <DescriptionListDescription>
             {composeStatus?.image_status.status === 'success' && (
               <ClipboardCopy
-                hoverTip="Copy"
-                clickTip="Copied"
-                variant="inline-compact"
+                hoverTip='Copy'
+                clickTip='Copied'
+                variant='inline-compact'
                 isBlock
               >
                 {options?.url || ''}
@@ -490,17 +490,17 @@ type AwsS3DetailsPropTypes = {
 export const AwsS3Details = ({ compose }: AwsS3DetailsPropTypes) => {
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
             >
               {compose.id}
             </ClipboardCopy>
@@ -522,17 +522,17 @@ type LocalDetailsPropTypes = {
 export const LocalDetails = ({ compose }: LocalDetailsPropTypes) => {
   return (
     <>
-      <div className="pf-v6-u-font-weight-bold pf-v6-u-pb-md">
+      <div className='pf-v6-u-font-weight-bold pf-v6-u-pb-md'>
         Build Information
       </div>
-      <DescriptionList isHorizontal isCompact className=" pf-v6-u-pl-xl">
+      <DescriptionList isHorizontal isCompact className=' pf-v6-u-pl-xl'>
         <DescriptionListGroup>
           <DescriptionListTerm>UUID</DescriptionListTerm>
           <DescriptionListDescription>
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
             >
               {compose.id}
             </ClipboardCopy>

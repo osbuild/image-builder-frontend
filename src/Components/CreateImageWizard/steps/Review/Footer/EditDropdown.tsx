@@ -150,7 +150,7 @@ export const EditSaveButton = ({
   return (
     <MenuToggleAction
       onClick={onSave}
-      id="wizard-edit-save-btn"
+      id='wizard-edit-save-btn'
       isDisabled={isDisabled}
     >
       <Flex display={{ default: 'inlineFlex' }}>
@@ -161,7 +161,7 @@ export const EditSaveButton = ({
                 { '--pf-v6-c-spinner--Color': '#fff' } as React.CSSProperties
               }
               isInline
-              size="md"
+              size='md'
             />
           </FlexItem>
         )}

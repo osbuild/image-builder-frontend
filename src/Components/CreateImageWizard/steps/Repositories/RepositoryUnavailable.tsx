@@ -8,8 +8,8 @@ import { CONTENT_URL } from '../../../../constants';
 const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
   return (
     <Alert
-      variant="warning"
-      title="Previously added custom repository unavailable"
+      variant='warning'
+      title='Previously added custom repository unavailable'
       isInline
     >
       {quantity > 1
@@ -20,10 +20,10 @@ const RepositoryUnavailable = ({ quantity }: { quantity: number }) => {
       <br />
       <br />
       <Button
-        component="a"
-        target="_blank"
-        variant="link"
-        iconPosition="right"
+        component='a'
+        target='_blank'
+        variant='link'
+        iconPosition='right'
         isInline
         icon={<ExternalLinkAltIcon />}
         href={CONTENT_URL}

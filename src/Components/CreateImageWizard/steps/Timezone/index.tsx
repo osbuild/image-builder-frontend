@@ -8,7 +8,7 @@ import TimezoneDropDown from './components/TimezoneDropDown';
 const TimezoneStep = () => {
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Timezone
       </Title>
       <Content>Select a timezone for your image.</Content>

@@ -16,13 +16,13 @@ const FileSystemAutomaticPartition = () => {
         current supported configuration layout.
         <br></br>
         <Button
-          component="a"
-          target="_blank"
-          variant="link"
+          component='a'
+          target='_blank'
+          variant='link'
           icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
+          iconPosition='right'
           href={FILE_SYSTEM_CUSTOMIZATION_URL}
-          className="pf-v6-u-pl-0"
+          className='pf-v6-u-pl-0'
         >
           Customizing file systems during the image creation
         </Button>

@@ -35,7 +35,7 @@ const ImageOutputStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Image output
       </Title>
       <Content>

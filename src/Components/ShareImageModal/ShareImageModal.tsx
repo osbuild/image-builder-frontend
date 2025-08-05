@@ -27,15 +27,15 @@ const ShareToRegionsModal = () => {
   return (
     <Modal
       isOpen={true}
-      variant="small"
-      aria-label="Share to new region"
+      variant='small'
+      aria-label='Share to new region'
       onClose={handleClose}
       appendTo={appendTo}
     >
       <ModalHeader
-        title="Share to new region"
-        description="Configure new regions for this image that will run on your AWS. All the
-        regions will launch with the same configuration."
+        title='Share to new region'
+        description='Configure new regions for this image that will run on your AWS. All the
+        regions will launch with the same configuration.'
       />
       <ModalBody>
         <RegionsSelect composeId={composeId} handleClose={handleClose} />

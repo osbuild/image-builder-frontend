@@ -82,7 +82,7 @@ export const CloudInstance = ({ compose }: CloudInstancePropTypes) => {
 
 const DisabledProvisioningLink = () => {
   return (
-    <Button variant="link" isInline isDisabled>
+    <Button variant='link' isInline isDisabled>
       Launch
     </Button>
   );
@@ -170,9 +170,9 @@ const ProvisioningLink = ({
 
   const btn = (
     <Button
-      spinnerAriaLabel="Loading launch"
+      spinnerAriaLabel='Loading launch'
       isLoading={isLoadingPermission}
-      variant="link"
+      variant='link'
       isInline
       onClick={() => {
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Link Clicked`, {
@@ -190,9 +190,9 @@ const ProvisioningLink = ({
   );
   const buttonWithTooltip = (
     <Popover
-      triggerAction="hover"
+      triggerAction='hover'
       position={PopoverPosition.left}
-      aria-label="Outdated image tooltip"
+      aria-label='Outdated image tooltip'
       headerContent={<div>A newer version is available</div>}
       bodyContent={
         <div>This image can be launched, but it is not the latest version.</div>
@@ -204,7 +204,7 @@ const ProvisioningLink = ({
 
   return (
     <>
-      <Suspense fallback="loading...">
+      <Suspense fallback='loading...'>
         {selectedBlueprintVersion &&
         compose.blueprint_version !== selectedBlueprintVersion
           ? buttonWithTooltip
@@ -214,7 +214,7 @@ const ProvisioningLink = ({
             isOpen
             appendTo={appendTo}
             variant={ModalVariant.large}
-            aria-label="Open launch wizard"
+            aria-label='Open launch wizard'
           >
             <ProvisioningWizard
               hasAccess={permissions[provider]}
@@ -277,9 +277,9 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
   if (isExpired) {
     return (
       <Button
-        component="a"
-        target="_blank"
-        variant="link"
+        component='a'
+        target='_blank'
+        variant='link'
         onClick={() => navigate(resolveRelPath(`imagewizard/${compose.id}`))}
         isInline
       >
@@ -290,9 +290,9 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
 
   return (
     <Popover
-      position="bottom"
+      position='bottom'
       headerContent={<div>Launch an OCI image</div>}
-      minWidth="30rem"
+      minWidth='30rem'
       bodyContent={
         <>
           <p>
@@ -317,9 +317,9 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
           <br />
           {isSuccess && (
             <ClipboardCopy
-              hoverTip="Copy"
-              clickTip="Copied"
-              variant="inline-compact"
+              hoverTip='Copy'
+              clickTip='Copied'
+              variant='inline-compact'
               isBlock
             >
               {options?.url || ''}
@@ -328,23 +328,23 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
           {isFetching && <Skeleton />}
           {isError && (
             <Alert
-              title="The link to launch the image could not be loaded. Please refresh
-              the page and try again."
-              variant="danger"
+              title='The link to launch the image could not be loaded. Please refresh
+              the page and try again.'
+              variant='danger'
               isPlain
               isInline
             />
           )}
           <br />
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
+            component='a'
+            target='_blank'
+            variant='link'
             icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
+            iconPosition='right'
             // TO DO update the link after documentation is up
             href={FILE_SYSTEM_CUSTOMIZATION_URL}
-            className="pf-v6-u-pl-0"
+            className='pf-v6-u-pl-0'
           >
             Read more about launching OCI images
           </Button>
@@ -352,8 +352,8 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
       }
     >
       <Button
-        variant="link"
-        className="pf-v6-u-p-0 pf-v6-u-font-size-sm"
+        variant='link'
+        className='pf-v6-u-p-0 pf-v6-u-font-size-sm'
         isDisabled={data?.image_status.status === 'success' ? false : true}
       >
         Image link
@@ -410,7 +410,7 @@ export const AwsS3Instance = ({
 
   if (status !== 'success') {
     return (
-      <Button component="a" isDisabled variant="link" isInline>
+      <Button component='a' isDisabled variant='link' isInline>
         Download ({fileExtensions[compose.request.image_requests[0].image_type]}
         )
       </Button>
@@ -419,9 +419,9 @@ export const AwsS3Instance = ({
 
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       isInline
       href={options?.url}
       isDisabled={isExpired}
@@ -465,9 +465,9 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
   const href = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       onClick={async (ev) => {
         ev.preventDefault();
         // Make sure the file is readable for the user, the artefact

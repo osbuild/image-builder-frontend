@@ -58,10 +58,10 @@ const BlueprintVersionFilter: React.FC<blueprintVersionFilterProps> = ({
       shouldFocusToggleOnSelect
     >
       <DropdownList>
-        <DropdownItem value={'all'} key="all">
+        <DropdownItem value={'all'} key='all'>
           All versions
         </DropdownItem>
-        <DropdownItem value={'latest'} key="newest">
+        <DropdownItem value={'latest'} key='newest'>
           Newest
         </DropdownItem>
       </DropdownList>

@@ -6,9 +6,9 @@ export const Loading = () => {
   return (
     <Bullseye>
       <EmptyState
-        headingLevel="h4"
+        headingLevel='h4'
         icon={Spinner}
-        titleText="Loading"
+        titleText='Loading'
       ></EmptyState>
     </Bullseye>
   );

@@ -8,11 +8,11 @@ import { ACTIVATION_KEYS_URL } from '../../../../../constants';
 const ManageKeysButton = () => {
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
+      iconPosition='right'
       isInline
       href={ACTIVATION_KEYS_URL}
     >

@@ -37,22 +37,22 @@ const SatelliteRegistrationCommand = () => {
   };
 
   return (
-    <FormGroup label="Registration command from Satellite" isRequired>
+    <FormGroup label='Registration command from Satellite' isRequired>
       <ValidatedInputAndTextArea
         inputType={'textArea'}
-        ariaLabel="registration command"
+        ariaLabel='registration command'
         value={registrationCommand || ''}
         onChange={handleChange}
-        placeholder="Registration command"
+        placeholder='Registration command'
         stepValidation={stepValidation}
-        fieldName="command"
+        fieldName='command'
         warning={stepValidation.errors.expired}
       />
       <FormHelperText>
         <HelperText>
           <HelperTextItem>
             To generate command from Satellite, follow the{' '}
-            <a href={registrationDocs} target="_blank" rel="noreferrer">
+            <a href={registrationDocs} target='_blank' rel='noreferrer'>
               documentation
             </a>
             .

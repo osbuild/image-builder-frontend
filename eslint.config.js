@@ -124,7 +124,7 @@ module.exports = defineConfig([
         semi: true,
         tabWidth: 2,
         singleQuote: true,
-        jsxSingleQuote: false,
+        jsxSingleQuote: true,
         bracketSpacing: true,
         tsxSingleQuote: true,
         tsSingleQuote: true,

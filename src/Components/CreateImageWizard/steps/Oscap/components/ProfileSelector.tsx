@@ -279,9 +279,9 @@ const ProfileSelector = () => {
 
   const toggleOpenSCAP = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      data-testid="profileSelect"
+      data-testid='profileSelect'
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
       isDisabled={!isSuccess || hasWslTargetOnly}
@@ -297,8 +297,8 @@ const ProfileSelector = () => {
           onClick={onInputClick}
           onChange={onTextInputChange}
           onKeyDown={onKeyDown}
-          autoComplete="off"
-          placeholder="None"
+          autoComplete='off'
+          placeholder='None'
           isExpanded={isOpen}
         />
 
@@ -306,9 +306,9 @@ const ProfileSelector = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={handleClear}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -317,7 +317,7 @@ const ProfileSelector = () => {
   );
 
   return (
-    <FormGroup label="Profile">
+    <FormGroup label='Profile'>
       <Select
         isScrollable
         isOpen={isOpen}
@@ -332,14 +332,14 @@ const ProfileSelector = () => {
       >
         <SelectList>
           {isFetching && (
-            <SelectOption value="loader">
-              <Spinner size="lg" />
+            <SelectOption value='loader'>
+              <Spinner size='lg' />
             </SelectOption>
           )}
           {selectOptions.length > 0 &&
             [
               <SelectOption
-                key="oscap-none-option"
+                key='oscap-none-option'
                 value={{ toString: () => 'None', compareTo: () => false }}
               >
                 None
@@ -367,8 +367,8 @@ const ProfileSelector = () => {
       </Select>
       {isError && (
         <Alert
-          title="Error fetching the profiles"
-          variant="danger"
+          title='Error fetching the profiles'
+          variant='danger'
           isPlain
           isInline
         >

@@ -40,7 +40,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
       <Alert
         isExpandable
         style={{ margin: '0 0 16px 0' }}
-        title="New in Images: more customizations"
+        title='New in Images: more customizations'
         actionClose={<AlertActionCloseButton onClose={dismissAlert} />}
         actionLinks={
           <>
@@ -76,14 +76,14 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
           <Content>
             New options for blueprint customization are now available:
           </Content>
-          <Content component="ul">
-            <Content component="li">Users</Content>
-            <Content component="li">Timezone</Content>
-            <Content component="li">Locale</Content>
-            <Content component="li">Hostname</Content>
-            <Content component="li">Kernel</Content>
-            <Content component="li">Firewall</Content>
-            <Content component="li">Systemd services</Content>
+          <Content component='ul'>
+            <Content component='li'>Users</Content>
+            <Content component='li'>Timezone</Content>
+            <Content component='li'>Locale</Content>
+            <Content component='li'>Hostname</Content>
+            <Content component='li'>Kernel</Content>
+            <Content component='li'>Firewall</Content>
+            <Content component='li'>Systemd services</Content>
           </Content>
         </Content>
       </Alert>

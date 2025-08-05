@@ -60,14 +60,14 @@ const ArchSelect = () => {
       ref={toggleRef}
       onClick={onToggleClick}
       isExpanded={isOpen}
-      data-testid="arch_select"
+      data-testid='arch_select'
     >
       {arch}
     </MenuToggle>
   );
 
   return (
-    <FormGroup isRequired={true} label="Architecture">
+    <FormGroup isRequired={true} label='Architecture'>
       <Select
         isOpen={isOpen}
         selected={arch}
