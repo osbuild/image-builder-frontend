@@ -262,7 +262,7 @@ keyboard = "invalid-keyboard"
 
 [customizations.kernel]
 name = "--invalid-kernel-name--"
-append = "invalid-kernel-argument"
+append = "invalid$kernel$argument"
 
 [customizations.firewall]
 ports = ["invalid-port"]
@@ -640,7 +640,7 @@ describe('Import modal', () => {
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close invalid-kernel-argument/i })
+        screen.getByRole('button', { name: /close invalid\$kernel\$argument/i })
       )
     );
 

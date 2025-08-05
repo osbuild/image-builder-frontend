@@ -47,7 +47,7 @@ test('Create a blueprint with Kernel customization', async ({
     await frame.getByRole('button', { name: 'Add kernel argument' }).click();
     await frame
       .getByPlaceholder('Add kernel argument')
-      .fill('invalid/argument');
+      .fill('invalid$argument');
     await frame.getByRole('button', { name: 'Add kernel argument' }).click();
     await expect(
       frame.getByText(
