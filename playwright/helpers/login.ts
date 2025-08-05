@@ -68,14 +68,14 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
   try {
     // Check if the user already has administrative access
     await expect(
-      page.getByRole('button', { name: 'Administrative access' })
+      page.getByRole('button', { name: 'Administrative access' }),
     ).toBeVisible();
   } catch {
     // If not, try to gain it
     // cockpit-image-builder needs superuser, expect an error message
     // when the user does not have admin priviliges
     await expect(
-      frame.getByRole('heading', { name: 'Access is limited' })
+      frame.getByRole('heading', { name: 'Access is limited' }),
     ).toBeVisible();
     await page.getByRole('button', { name: 'Limited access' }).click();
 
@@ -99,10 +99,10 @@ const loginCockpit = async (page: Page, user: string, password: string) => {
 
   // expect to have administrative access
   await expect(
-    page.getByRole('button', { name: 'Administrative access' })
+    page.getByRole('button', { name: 'Administrative access' }),
   ).toBeVisible();
   await expect(
-    frame.getByRole('heading', { name: 'All images' })
+    frame.getByRole('heading', { name: 'All images' }),
   ).toBeVisible();
 };
 

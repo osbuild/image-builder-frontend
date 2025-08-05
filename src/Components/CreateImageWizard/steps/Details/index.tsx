@@ -28,7 +28,7 @@ const DetailsStep = () => {
 
   const handleNameChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    name: string
+    name: string,
   ) => {
     dispatch(changeBlueprintName(name));
     dispatch(setIsCustomName());
@@ -36,7 +36,7 @@ const DetailsStep = () => {
 
   const handleDescriptionChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    description: string
+    description: string,
   ) => {
     dispatch(changeBlueprintDescription(description));
   };

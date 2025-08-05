@@ -194,7 +194,7 @@ const BlueprintSearch = ({ blueprintsTotal }: blueprintSearchProps) => {
       dispatch(imageBuilderApi.util.invalidateTags([{ type: 'Blueprints' }]));
       dispatch(setBlueprintSearchInput(filter.length > 0 ? filter : undefined));
     }, DEBOUNCED_SEARCH_WAIT_TIME),
-    []
+    [],
   );
   React.useEffect(() => {
     return () => {

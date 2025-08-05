@@ -14,7 +14,7 @@ export const useCloneComposeWithNotification = () => {
           `Your image is being shared to ${cloneRequest.region} region`,
         error: () => 'Your image could not be shared',
       },
-    }
+    },
   );
 
   return {

@@ -294,7 +294,7 @@ const Packages = () => {
                 : reposInTemplate
                     .filter((r) => r.org_id === '-1' && !!r.url)
                     .flatMap((r) =>
-                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!
+                      r.url!.endsWith('/') ? r.url!.slice(0, -1) : r.url!,
                     ),
             limit: 500,
             include_package_sources: true,
@@ -679,7 +679,7 @@ const Packages = () => {
     }
 
     let combinedPackageData = transformedDistroData.concat(
-      transformedCustomData
+      transformedCustomData,
     );
 
     if (
@@ -696,7 +696,7 @@ const Packages = () => {
       }));
 
       combinedPackageData = combinedPackageData.concat(
-        transformedRecommendedData
+        transformedRecommendedData,
       );
     }
 
@@ -772,7 +772,7 @@ const Packages = () => {
           description: values.description!,
           repository: 'distro',
           package_list: values.package_list!,
-        }))
+        })),
       );
     }
     if (isSuccessCustomGroups) {
@@ -782,7 +782,7 @@ const Packages = () => {
           description: values.description!,
           repository: 'custom',
           package_list: values.package_list!,
-        }))
+        })),
       );
     }
     if (isSuccessRecommendedGroups) {
@@ -792,18 +792,18 @@ const Packages = () => {
           description: values.description!,
           repository: 'recommended',
           package_list: values.package_list!,
-        }))
+        })),
       );
     }
 
     if (toggleSelected === 'toggle-available') {
       if (activeTabKey === Repos.INCLUDED) {
         return combinedGroupData.filter(
-          (pkg) => pkg.repository !== 'recommended'
+          (pkg) => pkg.repository !== 'recommended',
         );
       } else {
         return combinedGroupData.filter(
-          (pkg) => pkg.repository === 'recommended'
+          (pkg) => pkg.repository === 'recommended',
         );
       }
     } else {
@@ -829,7 +829,7 @@ const Packages = () => {
 
   const handleSearch = async (
     event: React.FormEvent<HTMLInputElement>,
-    selection: string
+    selection: string,
   ) => {
     setSearchTerm(selection);
     setActiveTabKey(Repos.INCLUDED);
@@ -851,7 +851,7 @@ const Packages = () => {
   const handleSelect = (
     pkg: IBPackageWithRepositoryInfo,
     _: number,
-    isSelecting: boolean
+    isSelecting: boolean,
   ) => {
     if (isSelecting) {
       if (
@@ -872,11 +872,11 @@ const Packages = () => {
             addModule({
               name: pkg.module_name || '',
               stream: pkg.stream || '',
-            })
+            }),
           );
         }
         setCurrentlyRemovedPackages((prev) =>
-          prev.filter((curr) => curr.name !== pkg.name)
+          prev.filter((curr) => curr.name !== pkg.name),
         );
       }
     } else {
@@ -900,7 +900,7 @@ const Packages = () => {
   const handleGroupSelect = (
     grp: GroupWithRepositoryInfo,
     _: number,
-    isSelecting: boolean
+    isSelecting: boolean,
   ) => {
     if (isSelecting) {
       if (
@@ -941,7 +941,7 @@ const Packages = () => {
   const handlePerPageSelect = (
     _: React.MouseEvent,
     newPerPage: number,
-    newPage: number
+    newPage: number,
   ) => {
     setPerPage(newPerPage);
     setPage(newPage);
@@ -958,7 +958,7 @@ const Packages = () => {
   const handleConfirmModalToggle = async () => {
     if (!epelRepo || !epelRepo.data) {
       throw new Error(
-        `There was an error while adding the recommended repository.`
+        `There was an error while adding the recommended repository.`,
       );
     }
 
@@ -970,8 +970,8 @@ const Packages = () => {
       });
       dispatch(
         addRecommendedRepository(
-          (result as { data: ApiRepositoryResponseRead }).data
-        )
+          (result as { data: ApiRepositoryResponseRead }).data,
+        ),
       );
     } else {
       dispatch(addRecommendedRepository(epelRepo.data[0]));
@@ -998,7 +998,7 @@ const Packages = () => {
 
   const setPkgExpanded = (
     pkg: IBPackageWithRepositoryInfo,
-    isExpanding: boolean
+    isExpanding: boolean,
   ) =>
     setExpandedPkgs((prevExpanded) => {
       const otherExpandedPkgs = prevExpanded.filter((p) => p.name !== pkg.name);
@@ -1013,7 +1013,7 @@ const Packages = () => {
 
   const setGroupsExpanded = (
     group: GroupWithRepositoryInfo['name'],
-    isExpanding: boolean
+    isExpanding: boolean,
   ) =>
     setExpandedGroups((prevExpanded) => {
       const otherExpandedGroups = prevExpanded.filter((g) => g !== group);
@@ -1031,7 +1031,7 @@ const Packages = () => {
   >('asc');
 
   const getSortableRowValues = (
-    pkg: IBPackageWithRepositoryInfo
+    pkg: IBPackageWithRepositoryInfo,
   ): (string | number | ApiPackageSourcesResponse[] | undefined)[] => {
     return [pkg.name, pkg.summary, pkg.stream, pkg.end_date, pkg.repository];
   };
@@ -1084,7 +1084,7 @@ const Packages = () => {
     onSort: (
       _event: React.MouseEvent,
       index: number,
-      direction: 'asc' | 'desc'
+      direction: 'asc' | 'desc',
     ) => {
       setActiveSortIndex(index);
       setActiveSortDirection(direction);
@@ -1097,7 +1097,7 @@ const Packages = () => {
 
     if (!pkg.type || pkg.type === 'package') {
       const isModuleWithSameName = modules.some(
-        (module) => module.name === pkg.name
+        (module) => module.name === pkg.name,
       );
       isSelected =
         packages.some((p) => p.name === pkg.name) && !isModuleWithSameName;
@@ -1109,7 +1109,7 @@ const Packages = () => {
       isSelected =
         packages.some((p) => p.name === pkg.name) &&
         modules.some(
-          (m) => m.name === pkg.module_name && m.stream === pkg.stream
+          (m) => m.name === pkg.module_name && m.stream === pkg.stream,
         );
     }
 
@@ -1131,7 +1131,7 @@ const Packages = () => {
     const isModuleDisabledByPackage =
       pkg.type === 'module' &&
       packages.some(
-        (p) => (!p.type || p.type === 'package') && p.name === pkg.module_name
+        (p) => (!p.type || p.type === 'package') && p.name === pkg.module_name,
       );
 
     const isPackageDisabledByModule =
@@ -1160,7 +1160,7 @@ const Packages = () => {
     const currentDate = new Date();
     const msPerDay = 1000 * 60 * 60 * 24;
     const differenceInDays = Math.round(
-      (retirementDate.getTime() - currentDate.getTime()) / msPerDay
+      (retirementDate.getTime() - currentDate.getTime()) / msPerDay,
     );
 
     let icon;
@@ -1298,7 +1298,7 @@ const Packages = () => {
                 </Td>
               </Tr>
             </Tbody>
-          ))
+          )),
       );
     }
 
@@ -1360,7 +1360,7 @@ const Packages = () => {
                 </Td>
               </Tr>
             </Tbody>
-          ))
+          )),
       );
     }
     return rows;

@@ -6,7 +6,7 @@ import { DEBOUNCED_SEARCH_WAIT_TIME } from '../constants';
 
 function useDebounce<T>(
   value: T,
-  delay: number = DEBOUNCED_SEARCH_WAIT_TIME
+  delay: number = DEBOUNCED_SEARCH_WAIT_TIME,
 ): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -15,7 +15,7 @@ function useDebounce<T>(
     if (!isEqual(value, debouncedValue)) {
       const timer = setTimeout(
         () => setDebouncedValue(value),
-        value === '' ? 0 : delay //If value is empty string, instantly return
+        value === '' ? 0 : delay, //If value is empty string, instantly return
       );
 
       return () => {

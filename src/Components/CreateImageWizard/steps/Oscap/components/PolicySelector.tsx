@@ -45,7 +45,7 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   const selectObj = (
     policyID: string,
     profileID: string,
-    title: string
+    title: string,
   ): ComplianceSelectOptionValueType => ({
     policyID,
     profileID,
@@ -101,7 +101,7 @@ const PolicySelector = () => {
       distribution: release,
       policy: policyID!,
     },
-    { skip: !policyID }
+    { skip: !policyID },
   );
 
   const [trigger] = useLazyGetOscapCustomizationsForPolicyQuery();
@@ -120,7 +120,7 @@ const PolicySelector = () => {
               policyID: pol.id,
               profileID: pol.ref_id,
               policyTitle: pol.title,
-            })
+            }),
           );
         }
       }
@@ -137,7 +137,7 @@ const PolicySelector = () => {
         profileID: undefined,
         policyID: undefined,
         policyTitle: undefined,
-      })
+      }),
     );
     clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
@@ -156,7 +156,7 @@ const PolicySelector = () => {
           distribution: release,
           policy: selection.policyID,
         },
-        true // preferCacheValue
+        true, // preferCacheValue
       )
         .unwrap()
         .then((response) => {
@@ -166,7 +166,7 @@ const PolicySelector = () => {
           handlePackages(
             oldOscapPackages,
             newOscapPackages,
-            'Required by chosen compliance policy'
+            'Required by chosen compliance policy',
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
@@ -175,7 +175,7 @@ const PolicySelector = () => {
               profileID: selection.profileID,
               policyID: selection.policyID,
               policyTitle: selection.title,
-            })
+            }),
           );
         });
     }
@@ -183,7 +183,7 @@ const PolicySelector = () => {
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string
+    selection: string,
   ) => {
     if (selection) {
       applyChanges(selection as unknown as ComplianceSelectOptionValueType);

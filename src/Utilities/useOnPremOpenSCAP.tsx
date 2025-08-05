@@ -15,7 +15,7 @@ export const useOnPremOpenSCAPAvailable = () => {
         .then((res: string) => {
           setPackagesAvailable(
             res.includes('openscap-scanner') &&
-              res.includes('scap-security-guide')
+              res.includes('scap-security-guide'),
           );
           setIsLoading(false);
         })

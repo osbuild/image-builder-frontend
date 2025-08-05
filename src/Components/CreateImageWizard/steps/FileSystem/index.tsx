@@ -14,7 +14,7 @@ export type FileSystemConfigurationType = 'automatic' | 'manual';
 
 const FileSystemStep = () => {
   const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType
+    selectFileSystemConfigurationType,
   );
   const hasIsoTargetOnly = useHasSpecificTargetOnly('image-installer');
 

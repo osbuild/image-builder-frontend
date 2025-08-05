@@ -37,7 +37,7 @@ const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
     repos = repos.filter(
       (repo) =>
         repo.distribution_arch === 'any' ||
-        repo.distribution_arch === args.available_for_arch
+        repo.distribution_arch === args.available_for_arch,
     );
   }
 
@@ -59,7 +59,7 @@ const filterRepos = (args: repoArgs): ApiRepositoryResponse[] => {
   if (args.search) {
     repos = repos.filter(
       (repo) =>
-        repo.name?.includes(args.search!) || repo.url?.includes(args.search!)
+        repo.name?.includes(args.search!) || repo.url?.includes(args.search!),
     );
   }
 
@@ -591,7 +591,7 @@ const testingRepos: ApiRepositoryResponseRead[] = [
 const generateMeta = (
   limit: ApiResponseMetadata['limit'],
   offset: ApiResponseMetadata['offset'],
-  count: ApiResponseMetadata['count']
+  count: ApiResponseMetadata['count'],
 ): ApiResponseMetadata => {
   return {
     limit: limit,
@@ -602,7 +602,7 @@ const generateMeta = (
 
 const generateLinks = (
   limit: ApiResponseMetadata['limit'],
-  offset: ApiResponseMetadata['offset']
+  offset: ApiResponseMetadata['offset'],
 ): ApiLinks => {
   return {
     first: `/api/content-sources/v1/repositories/?limit=${limit}&offset=${offset}`,

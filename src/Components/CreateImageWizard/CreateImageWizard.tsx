@@ -309,7 +309,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     step: WizardStepType,
     activeStep: WizardStepType,
     steps: WizardStepType[],
-    goToStepByIndex: (index: number) => void
+    goToStepByIndex: (index: number) => void,
   ) => {
     const isVisitOptional =
       'parentId' in step && step.parentId === 'step-optional-steps';
@@ -325,7 +325,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
     }, [step.id, step.isVisited]);
 
     const hasVisitedNextStep = steps.some(
-      (s) => s.index > step.index && s.isVisited
+      (s) => s.index > step.index && s.isVisited,
     );
 
     // Only this code is different from the original
@@ -353,7 +353,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
               {
                 module: AMPLITUDE_MODULE_NAME,
                 isPreview: isBeta(),
-              }
+              },
             );
           }
         }}
@@ -389,7 +389,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
             isHidden={
               !targetEnvironments.find(
                 (target: string) =>
-                  target === 'aws' || target === 'gcp' || target === 'azure'
+                  target === 'aws' || target === 'gcp' || target === 'azure',
               )
             }
             steps={[

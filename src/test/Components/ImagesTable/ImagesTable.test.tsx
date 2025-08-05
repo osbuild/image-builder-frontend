@@ -21,7 +21,7 @@ describe('Images Table', () => {
 
     // make sure the empty state message isn't present
     const emptyState = screen.queryByText(
-      /Image builder is a tool for creating deployment-ready customized system images/i
+      /Image builder is a tool for creating deployment-ready customized system images/i,
     );
     expect(emptyState).not.toBeInTheDocument();
 
@@ -41,7 +41,7 @@ describe('Images Table', () => {
     expect(headerCells[7]).toHaveTextContent('Instance');
 
     const imageNameValues = mockComposes.map((compose) =>
-      compose.image_name ? compose.image_name : compose.id
+      compose.image_name ? compose.image_name : compose.id,
     );
 
     // 10 rows for 10 images
@@ -86,7 +86,7 @@ describe('Images Table', () => {
     const downloadLink: HTMLAnchorElement =
       await within(downloadButton).findByRole('link');
     expect(downloadLink.download).toBe(
-      'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json'
+      'request-1579d95b-8f1d-4982-8c53-8c2afa4ab04c.json',
     );
 
     const hrefParts = downloadLink.href.split(',');
@@ -96,8 +96,8 @@ describe('Images Table', () => {
 
     await waitFor(() =>
       expect(encodedRequest).toBe(
-        encodeURIComponent(JSON.stringify(expectedRequest, null, '  '))
-      )
+        encodeURIComponent(JSON.stringify(expectedRequest, null, '  ')),
+      ),
     );
   });
 
@@ -127,39 +127,39 @@ describe('Images Table', () => {
 
     // GCP image
     const errorPopoverR2 = await within(rows[2]).findByText(
-      /image build failed/i
+      /image build failed/i,
     );
     // AWS image
     const errorPopoverR7 = await within(rows[7]).findByText(
-      /image build failed/i
+      /image build failed/i,
     );
 
     expect(
-      screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1]
+      screen.getAllByText(/c1cfa347-4c37-49b5-8e73-6aa1d1746cfa/i)[1],
     ).not.toBeVisible();
 
     await user.click(errorPopoverR2);
     await screen.findByTestId('errorstatus-popover');
     await waitFor(() =>
-      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible(),
     );
     await user.click(errorPopoverR2);
     await waitFor(() =>
       expect(
-        screen.queryByTestId('errorstatus-popover')
-      ).not.toBeInTheDocument()
+        screen.queryByTestId('errorstatus-popover'),
+      ).not.toBeInTheDocument(),
     );
 
     await user.click(errorPopoverR7);
     await screen.findByTestId('errorstatus-popover');
     await waitFor(() =>
-      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible()
+      expect(screen.getAllByText(/Error in depsolve job/i)[0]).toBeVisible(),
     );
     await user.click(errorPopoverR7);
     await waitFor(() =>
       expect(
-        screen.queryByTestId('errorstatus-popover')
-      ).not.toBeInTheDocument()
+        screen.queryByTestId('errorstatus-popover'),
+      ).not.toBeInTheDocument(),
     );
 
     // Go to next page on the table
@@ -173,10 +173,10 @@ describe('Images Table', () => {
     rows = await within(table).findAllByRole('row');
 
     const errorPopoverP2R5 = await within(rows[5]).findByText(
-      /image build failed/i
+      /image build failed/i,
     );
     const errorPopoverP2R6 = await within(rows[6]).findByText(
-      /image build failed/i
+      /image build failed/i,
     );
 
     await user.click(errorPopoverP2R5);
@@ -186,19 +186,19 @@ describe('Images Table', () => {
     await user.click(errorPopoverP2R5);
     await waitFor(() =>
       expect(
-        screen.queryByTestId('errorstatus-popover')
-      ).not.toBeInTheDocument()
+        screen.queryByTestId('errorstatus-popover'),
+      ).not.toBeInTheDocument(),
     );
 
     await user.click(errorPopoverP2R6);
     await screen.findByTestId('errorstatus-popover');
     await waitFor(() =>
       expect(
-        screen.getAllByText(/Something went very wrong for Azure/i)[0]
-      ).toBeVisible()
+        screen.getAllByText(/Something went very wrong for Azure/i)[0],
+      ).toBeVisible(),
     );
     await waitFor(() =>
-      expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible()
+      expect(screen.getAllByText(/There was an error/i)[0]).toBeVisible(),
     );
   });
 });
@@ -231,7 +231,7 @@ describe('Clones table', () => {
 
     // make sure the empty state message isn't present
     const emptyState = screen.queryByText(
-      /Image builder is a tool for creating deployment-ready customized system images/i
+      /Image builder is a tool for creating deployment-ready customized system images/i,
     );
     expect(emptyState).not.toBeInTheDocument();
 
@@ -268,13 +268,13 @@ describe('Clones table', () => {
     const clonesTableData = {
       ami: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.ami
+          (clone) => mockCloneStatus[clone.id].options.ami,
         ),
       ],
       created: [...mockClones(composeId).data.map((clone) => clone.created_at)],
       region: [
         ...mockClones(composeId).data.map(
-          (clone) => mockCloneStatus[clone.id].options.region
+          (clone) => mockCloneStatus[clone.id].options.region,
         ),
       ],
     };

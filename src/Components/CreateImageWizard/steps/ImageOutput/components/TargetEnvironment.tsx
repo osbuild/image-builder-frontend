@@ -111,7 +111,7 @@ const TargetEnvironment = () => {
   }, []);
 
   const supportedEnvironments = data?.find(
-    (elem) => elem.arch === arch
+    (elem) => elem.arch === arch,
   )?.image_types;
 
   const handleToggleEnvironment = (environment: ImageTypes) => {

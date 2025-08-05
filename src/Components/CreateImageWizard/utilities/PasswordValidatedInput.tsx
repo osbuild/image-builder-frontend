@@ -39,7 +39,7 @@ export const PasswordValidatedInput = ({
 
   const { validationState } = checkPasswordValidity(
     value,
-    environments.includes('azure')
+    environments.includes('azure'),
   );
   const { ruleLength, ruleCharacters } = validationState;
 

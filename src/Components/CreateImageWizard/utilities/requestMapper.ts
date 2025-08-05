@@ -127,7 +127,7 @@ import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
  */
 export const mapRequestFromState = (
   store: Store,
-  orgID: string
+  orgID: string,
 ): CreateBlueprintRequest | CockpitCreateBlueprintRequest => {
   const state = store.getState();
   const imageRequests = getImageRequests(state);
@@ -174,17 +174,17 @@ const getLatestRelease = (distribution: Distributions) => {
 };
 
 function commonRequestToState(
-  request: BlueprintResponse | CreateBlueprintRequest
+  request: BlueprintResponse | CreateBlueprintRequest,
 ) {
   const gcp = request.image_requests.find(
-    (image) => image.image_type === 'gcp'
+    (image) => image.image_type === 'gcp',
   );
   const aws = request.image_requests.find(
-    (image) => image.image_type === 'aws'
+    (image) => image.image_type === 'aws',
   );
 
   const azure = request.image_requests.find(
-    (image) => image.image_type === 'azure'
+    (image) => image.image_type === 'azure',
   );
 
   const snapshotDateFromRequest =
@@ -272,7 +272,7 @@ function commonRequestToState(
       ? {
           mode: 'manual' as FileSystemConfigurationType,
           partitions: request.customizations?.filesystem.map((fs) =>
-            convertFilesystemToPartition(fs)
+            convertFilesystemToPartition(fs),
           ),
         }
       : {
@@ -298,7 +298,7 @@ function commonRequestToState(
         ? 'withGoogle'
         : 'withInsights') as GcpShareMethod,
       accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
-        ':'
+        ':',
       )[0] as GcpAccountType,
       email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
     },
@@ -408,7 +408,7 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
 };
 
 export function mapToCustomRepositories(
-  repo: ApiRepositoryImportResponseRead
+  repo: ApiRepositoryImportResponseRead,
 ): CustomRepository[] {
   if (!repo.uuid) return [];
   return [
@@ -432,7 +432,7 @@ export function mapToCustomRepositories(
  */
 export const mapExportRequestToState = (
   request: BlueprintExportResponse,
-  image_requests: ImageRequest[]
+  image_requests: ImageRequest[],
 ): wizardState => {
   const wizardMode = 'create';
   const blueprintResponse: CreateBlueprintRequest = {
@@ -462,7 +462,7 @@ const getFirstBootScript = (files?: File[]): string => {
 };
 
 const getImageRequests = (
-  state: RootState
+  state: RootState,
 ): ImageRequest[] | CockpitImageRequest[] => {
   const imageTypes = selectImageTypes(state);
   const snapshotDate = selectSnapshotDate(state);
@@ -484,13 +484,13 @@ const getImageRequests = (
 
 const getSatelliteCommand = (files?: File[]): string => {
   const satelliteCommandFile = files?.find(
-    (file) => file.path === SATELLITE_PATH
+    (file) => file.path === SATELLITE_PATH,
   );
   return satelliteCommandFile?.data ? atob(satelliteCommandFile.data) : '';
 };
 
 const uploadTypeByTargetEnv = (
-  imageType: ImageTypes
+  imageType: ImageTypes,
 ): UploadTypes | CockpitUploadTypes => {
   switch (imageType) {
     case 'aws':
@@ -520,7 +520,7 @@ const uploadTypeByTargetEnv = (
 };
 const getImageOptions = (
   imageType: ImageTypes,
-  state: RootState
+  state: RootState,
 ):
   | AwsUploadRequestOptions
   | AzureUploadRequestOptions
@@ -715,7 +715,7 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
       return {
         min_size: convertToBytes(
           partition.min_size,
-          getConversionFactor(partition.unit)
+          getConversionFactor(partition.unit),
         ),
         mountpoint: partition.mountpoint,
       };
@@ -761,7 +761,7 @@ const getTimezone = (state: RootState) => {
 
 const getSubscription = (
   state: RootState,
-  orgID: string
+  orgID: string,
 ): Subscription | undefined => {
   const registrationType = selectRegistrationType(state);
   const activationKey = selectActivationKey(state);
@@ -775,7 +775,7 @@ const getSubscription = (
 
   if (activationKey === undefined) {
     throw new Error(
-      'Activation key unexpectedly undefined while generating subscription customization'
+      'Activation key unexpectedly undefined while generating subscription customization',
     );
   }
 
@@ -845,7 +845,7 @@ const getCustomRepositories = (state: RootState) => {
 
   for (const repo in recommendedRepositories) {
     customAndRecommendedRepositories.push(
-      convertSchemaToIBCustomRepo(recommendedRepositories[repo])
+      convertSchemaToIBCustomRepo(recommendedRepositories[repo]),
     );
   }
 
@@ -863,7 +863,7 @@ const getPayloadRepositories = (state: RootState) => {
 
   for (const repo in recommendedRepositories) {
     payloadAndRecommendedRepositories.push(
-      convertSchemaToIBPayloadRepo(recommendedRepositories[repo])
+      convertSchemaToIBPayloadRepo(recommendedRepositories[repo]),
     );
   }
 

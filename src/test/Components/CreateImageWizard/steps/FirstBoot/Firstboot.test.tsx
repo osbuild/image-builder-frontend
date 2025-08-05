@@ -258,7 +258,7 @@ describe('First Boot edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = firstBootCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -280,7 +280,7 @@ describe('First Boot edit mode', () => {
     await goToReviewStep();
 
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     // both the enabled service and files should be removed
     // leaving the base blueprint request

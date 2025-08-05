@@ -38,7 +38,7 @@ export const test = oldTest.extend<WithCleanup>({
       async () => {
         await Promise.all(Array.from(cleanupFns).map(([, fn]) => fn()));
       },
-      { box: true }
+      { box: true },
     );
   },
 });

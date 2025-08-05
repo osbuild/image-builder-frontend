@@ -43,7 +43,7 @@ const RemoveUserModal = ({
     const nextTabIndex = calculateNewIndex(
       tabIndex,
       activeTabKey,
-      users.length
+      users.length,
     );
 
     setActiveTabKey(nextTabIndex);

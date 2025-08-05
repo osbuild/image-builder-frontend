@@ -29,7 +29,7 @@ export const selectLimit = (state: RootState) => state.blueprints.limit;
 export const selectBlueprintVersionFilter = (state: RootState) =>
   state.blueprints.versionFilter;
 export const selectBlueprintVersionFilterAPI = (
-  state: RootState
+  state: RootState,
 ): number | undefined => {
   const blueprintVersionFilter = state.blueprints.versionFilter;
   // We allow only 'latest' filtering, everything else is understood as 'all'
@@ -48,7 +48,7 @@ export const blueprintsSlice = createSlice({
     },
     setBlueprintSearchInput: (
       state,
-      action: PayloadAction<string | undefined>
+      action: PayloadAction<string | undefined>,
     ) => {
       state.searchInput = action.payload;
     },
@@ -60,7 +60,7 @@ export const blueprintsSlice = createSlice({
     },
     setBlueprintVersionFilter: (
       state,
-      action: PayloadAction<versionFilterType>
+      action: PayloadAction<versionFilterType>,
     ) => {
       state.versionFilter = action.payload;
     },

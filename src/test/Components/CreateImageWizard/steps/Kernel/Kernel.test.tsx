@@ -118,7 +118,7 @@ const clearKernelName = async () => {
 const addKernelAppend = async (kernelArg: string) => {
   const user = userEvent.setup();
   const kernelAppendInput = await screen.findByPlaceholderText(
-    'Add kernel argument'
+    'Add kernel argument',
   );
   await waitFor(() => user.click(kernelAppendInput));
   await waitFor(() => user.type(kernelAppendInput, kernelArg));
@@ -229,10 +229,10 @@ describe('Step Kernel', () => {
     await screen.findByText('audit_backlog_limit=8192');
     await screen.findByText('audit=1');
     expect(
-      screen.queryByRole('button', { name: /close audit_backlog_limit=8192/i })
+      screen.queryByRole('button', { name: /close audit_backlog_limit=8192/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /close audit=1/i })
+      screen.queryByRole('button', { name: /close audit=1/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -370,7 +370,7 @@ describe('Kernel edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = kernelCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

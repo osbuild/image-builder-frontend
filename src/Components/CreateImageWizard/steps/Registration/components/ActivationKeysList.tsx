@@ -62,7 +62,7 @@ const ActivationKeysList = () => {
     useCreateActivationKeysMutation();
 
   const recentActivationKey = window.localStorage.getItem(
-    'imageBuilder.recentActivationKey'
+    'imageBuilder.recentActivationKey',
   );
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const ActivationKeysList = () => {
   }, [dispatch, isProd]);
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    activationKeys?.body ? activationKeys.body.map((key) => key.name) : []
+    activationKeys?.body ? activationKeys.body.map((key) => key.name) : [],
   );
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const ActivationKeysList = () => {
       filteredKeys = activationKeys?.body
         ?.map((key) => key.name)
         .filter((keyName: string) =>
-          String(keyName).toLowerCase().includes(filterValue.toLowerCase())
+          String(keyName).toLowerCase().includes(filterValue.toLowerCase()),
         );
       if (!isOpen) {
         setIsOpen(true);
@@ -120,7 +120,7 @@ const ActivationKeysList = () => {
 
         window.localStorage.setItem(
           'imageBuilder.recentActivationKey',
-          defaultActivationKeyName
+          defaultActivationKeyName,
         );
         dispatch(changeActivationKey(defaultActivationKeyName));
       } catch (error) {
@@ -200,8 +200,8 @@ const ActivationKeysList = () => {
         selectOptionsElement.push(
           <SelectOption key={index} value={key}>
             {key}
-          </SelectOption>
-        )
+          </SelectOption>,
+        ),
       );
     }
 
@@ -209,7 +209,7 @@ const ActivationKeysList = () => {
       selectOptionsElement.push(
         <SelectOption key="Fetching" value="loader">
           <Spinner size="md" />
-        </SelectOption>
+        </SelectOption>,
       );
     }
 
@@ -217,7 +217,7 @@ const ActivationKeysList = () => {
       selectOptionsElement.push(
         <SelectOption key="no_results" value="no_results" isDisabled>
           No results found
-        </SelectOption>
+        </SelectOption>,
       );
     }
 

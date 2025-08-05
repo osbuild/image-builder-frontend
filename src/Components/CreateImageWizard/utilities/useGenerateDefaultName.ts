@@ -2,7 +2,7 @@ import { Distributions, ImageRequest } from '../../../store/imageBuilderApi';
 
 export const generateDefaultName = (
   distribution: Distributions,
-  arch: ImageRequest['architecture']
+  arch: ImageRequest['architecture'],
 ) => {
   const date = new Date();
   const day = date.getDate().toString().padStart(2, '0');

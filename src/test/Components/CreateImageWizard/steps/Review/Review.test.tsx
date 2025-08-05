@@ -105,11 +105,11 @@ describe('Step Review', () => {
 
     await screen.findByRole('heading', { name: /Review/ });
     const registrationExpandable = await screen.findByTestId(
-      'registration-expandable'
+      'registration-expandable',
     );
     await within(registrationExpandable).findByText('Registration type');
     await within(registrationExpandable).findByText(
-      'Register the system later'
+      'Register the system later',
     );
   });
 
@@ -119,11 +119,11 @@ describe('Step Review', () => {
 
     await screen.findByRole('heading', { name: /Review/ });
     expect(
-      screen.queryByTestId('registration-expandable')
+      screen.queryByTestId('registration-expandable'),
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Registration type')).not.toBeInTheDocument();
     expect(
-      screen.queryByText('Register the system later')
+      screen.queryByText('Register the system later'),
     ).not.toBeInTheDocument();
   });
 });

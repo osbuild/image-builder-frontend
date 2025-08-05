@@ -40,7 +40,7 @@ export const useSelectorHandlers = () => {
   const handlePackages = (
     oldOscapPackages: string[],
     newOscapPackages: string[],
-    reason: string
+    reason: string,
   ) => {
     clearCompliancePackages(oldOscapPackages);
 
@@ -50,7 +50,7 @@ export const useSelectorHandlers = () => {
           name: pkg,
           summary: reason,
           repository: 'distro',
-        })
+        }),
       );
     }
   };

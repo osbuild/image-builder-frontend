@@ -1,7 +1,7 @@
 import { Architectures, Distributions } from '../../store/imageBuilderApi';
 
 export const mockArchitecturesByDistro = (
-  distro: Distributions
+  distro: Distributions,
 ): Architectures => {
   const mockDistros: { [key: string]: Architectures } = {
     'rhel-10': [

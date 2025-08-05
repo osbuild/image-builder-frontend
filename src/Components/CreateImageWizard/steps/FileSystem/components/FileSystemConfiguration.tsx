@@ -38,7 +38,7 @@ const FileSystemConfiguration = () => {
         mountpoint: '/home',
         min_size: '1',
         unit: 'GiB',
-      })
+      }),
     );
   };
 
@@ -49,7 +49,7 @@ const FileSystemConfiguration = () => {
 
   const filteredTargets = (
     automaticPartitioningOnlyTargets.filter((env) =>
-      environments.includes(env)
+      environments.includes(env),
     ) as ImageTypes[]
   ).map((env) => targetOptions[env]);
 
@@ -59,7 +59,7 @@ const FileSystemConfiguration = () => {
         <Content component={ContentVariants.h3}>Configure partitions</Content>
       </Content>
       {partitions.find((partition) =>
-        partition.mountpoint.includes('/usr')
+        partition.mountpoint.includes('/usr'),
       ) && <UsrSubDirectoriesDisabled />}
       <Content>
         <Content>
@@ -90,7 +90,7 @@ const FileSystemConfiguration = () => {
           variant="warning"
           isInline
           title={`Filesystem customizations are not applied to ${filteredTargets.join(
-            ' and '
+            ' and ',
           )} images`}
         />
       )}

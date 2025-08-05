@@ -141,10 +141,10 @@ describe('Step Locale', () => {
     const gbOptions = await screen.findAllByRole('option');
     expect(gbOptions[0]).toHaveTextContent('gbm - India (gbm_IN.UTF-8)');
     expect(gbOptions[1]).toHaveTextContent(
-      'Cornish - United Kingdom (kw_GB.UTF-8)'
+      'Cornish - United Kingdom (kw_GB.UTF-8)',
     );
     expect(gbOptions[2]).toHaveTextContent(
-      'English - United Kingdom (en_GB.UTF-8)'
+      'English - United Kingdom (en_GB.UTF-8)',
     );
   });
 
@@ -165,14 +165,14 @@ describe('Step Locale', () => {
     await searchForLanguage('foo');
     await screen.findByText(/no results found/i);
     expect(
-      await screen.findByRole('option', { name: /no results found/i })
+      await screen.findByRole('option', { name: /no results found/i }),
     ).toBeDisabled();
     await clearLanguageSearch();
 
     await searchForKeyboard('foo');
     await screen.findByText(/no results found/i);
     expect(
-      await screen.findByRole('option', { name: /no results found/i })
+      await screen.findByRole('option', { name: /no results found/i }),
     ).toBeDisabled();
   });
 
@@ -270,7 +270,7 @@ describe('Locale edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = localeCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

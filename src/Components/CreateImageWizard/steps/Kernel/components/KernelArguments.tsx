@@ -31,11 +31,11 @@ const KernelArguments = () => {
     },
     {
       skip: !complianceProfileID,
-    }
+    },
   );
 
   const requiredByOpenSCAP = kernelAppend.filter((arg) =>
-    oscapProfileInfo?.kernel?.append?.split(' ').includes(arg)
+    oscapProfileInfo?.kernel?.append?.split(' ').includes(arg),
   );
 
   return (

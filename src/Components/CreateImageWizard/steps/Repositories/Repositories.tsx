@@ -99,7 +99,7 @@ const Repositories = () => {
     }
 
     const archParam = repositoryParameters.distribution_arches.find(
-      (arch) => arch.label === technicalArch
+      (arch) => arch.label === technicalArch,
     );
 
     return archParam?.name || technicalArch;
@@ -112,7 +112,7 @@ const Repositories = () => {
 
     const readableVersions = technicalVersions.map((version) => {
       const versionParam = repositoryParameters.distribution_versions?.find(
-        (v) => v.label === version
+        (v) => v.label === version,
       );
       return versionParam?.name || version;
     });
@@ -127,9 +127,9 @@ const Repositories = () => {
           ...customRepositories.map(({ id }) => id).flat(1),
           ...payloadRepositories.map(({ id }) => id),
           ...recommendedRepos.map(({ uuid }) => uuid),
-        ].filter((id) => !!id) as string[]
+        ].filter((id) => !!id) as string[],
       ),
-    [customRepositories, payloadRepositories, recommendedRepos]
+    [customRepositories, payloadRepositories, recommendedRepos],
   );
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -149,7 +149,7 @@ const Repositories = () => {
       offset: 0,
       uuid: [...initialSelectedState].join(','),
     },
-    { refetchOnMountOrArgChange: false, skip: isTemplateSelected }
+    { refetchOnMountOrArgChange: false, skip: isTemplateSelected },
   );
 
   useEffect(() => {
@@ -182,7 +182,7 @@ const Repositories = () => {
           ? [...selected].join(',')
           : '',
     },
-    { refetchOnMountOrArgChange: 60, skip: isTemplateSelected }
+    { refetchOnMountOrArgChange: 60, skip: isTemplateSelected },
   );
 
   const refresh = () => {
@@ -193,7 +193,7 @@ const Repositories = () => {
   };
 
   const addSelected = (
-    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[]
+    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
   ) => {
     let reposToAdd: ApiRepositoryResponseRead[] = [];
     // Check if array of items
@@ -202,7 +202,7 @@ const Repositories = () => {
         (r) =>
           r.uuid &&
           !isRepoDisabled(r, selected.has(r.uuid))[0] &&
-          !selected.has(r.uuid)
+          !selected.has(r.uuid),
       );
     } else {
       // Then it should be a single item
@@ -217,25 +217,25 @@ const Repositories = () => {
     }
 
     const customToAdd = reposToAdd.map((repo) =>
-      convertSchemaToIBCustomRepo(repo!)
+      convertSchemaToIBCustomRepo(repo!),
     );
 
     const payloadToAdd = reposToAdd.map((repo) =>
-      convertSchemaToIBPayloadRepo(repo!)
+      convertSchemaToIBPayloadRepo(repo!),
     );
 
     dispatch(changeCustomRepositories([...customRepositories, ...customToAdd]));
     dispatch(
-      changePayloadRepositories([...payloadRepositories, ...payloadToAdd])
+      changePayloadRepositories([...payloadRepositories, ...payloadToAdd]),
     );
   };
 
   const clearSelected = () => {
     const recommendedReposSet = new Set(
-      recommendedRepos.map(({ uuid }) => uuid)
+      recommendedRepos.map(({ uuid }) => uuid),
     );
     const initiallySelected = [...selected].some(
-      (uuid) => uuid && initialSelectedState.has(uuid)
+      (uuid) => uuid && initialSelectedState.has(uuid),
     );
 
     if (initiallySelected) {
@@ -246,34 +246,34 @@ const Repositories = () => {
 
     dispatch(
       changeCustomRepositories(
-        customRepositories.filter(({ id }) => recommendedReposSet.has(id))
-      )
+        customRepositories.filter(({ id }) => recommendedReposSet.has(id)),
+      ),
     );
     dispatch(
       changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => recommendedReposSet.has(id))
-      )
+        payloadRepositories.filter(({ id }) => recommendedReposSet.has(id)),
+      ),
     );
   };
 
   const removeSelected = (
-    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[]
+    repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
   ) => {
     if ((repo as ApiRepositoryResponseRead[])?.length) {
       const itemsToRemove = new Set(
-        (repo as ApiRepositoryResponseRead[]).map(({ uuid }) => uuid)
+        (repo as ApiRepositoryResponseRead[]).map(({ uuid }) => uuid),
       );
 
       dispatch(
         changeCustomRepositories(
-          customRepositories.filter(({ id }) => !itemsToRemove.has(id))
-        )
+          customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
+        ),
       );
 
       dispatch(
         changePayloadRepositories(
-          payloadRepositories.filter(({ id }) => !itemsToRemove.has(id))
-        )
+          payloadRepositories.filter(({ id }) => !itemsToRemove.has(id)),
+        ),
       );
 
       return;
@@ -283,29 +283,29 @@ const Repositories = () => {
     if (uuidToRemove) {
       dispatch(
         changeCustomRepositories(
-          customRepositories.filter(({ id }) => uuidToRemove !== id)
-        )
+          customRepositories.filter(({ id }) => uuidToRemove !== id),
+        ),
       );
       dispatch(
         changePayloadRepositories(
-          payloadRepositories.filter(({ id }) => uuidToRemove !== id)
-        )
+          payloadRepositories.filter(({ id }) => uuidToRemove !== id),
+        ),
       );
     }
   };
 
   const handleAddRemove = (
     repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
-    selected: boolean
+    selected: boolean,
   ) => {
     if (selected) return addSelected(repo);
     if ((repo as ApiRepositoryResponseRead[])?.length) {
       const initiallySelectedItems = (repo as ApiRepositoryResponseRead[]).map(
-        ({ uuid }) => uuid
+        ({ uuid }) => uuid,
       );
 
       const hasSome = initiallySelectedItems.some(
-        (uuid) => uuid && initialSelectedState.has(uuid)
+        (uuid) => uuid && initialSelectedState.has(uuid),
       );
 
       if (hasSome) {
@@ -317,7 +317,7 @@ const Repositories = () => {
       const isInitiallySelected =
         (repo as ApiRepositoryResponseRead).uuid &&
         initialSelectedState.has(
-          (repo as ApiRepositoryResponseRead).uuid || ''
+          (repo as ApiRepositoryResponseRead).uuid || '',
         );
       if (isInitiallySelected) {
         setModalOpen(true);
@@ -352,7 +352,7 @@ const Repositories = () => {
   ]);
 
   const handleToggleClick = (
-    toggleType: 'toggle-group-all' | 'toggle-group-selected'
+    toggleType: 'toggle-group-all' | 'toggle-group-selected',
   ) => {
     setPage(1);
     setToggleSelected(toggleType);
@@ -360,7 +360,7 @@ const Repositories = () => {
 
   const isRepoDisabled = (
     repo: ApiRepositoryResponseRead,
-    isSelected: boolean
+    isSelected: boolean,
   ): [boolean, string] => {
     if (isFetching) {
       return [true, 'Repository data is still fetching, please wait.'];
@@ -399,7 +399,7 @@ const Repositories = () => {
   const handlePerPageSelect = (
     _: React.MouseEvent,
     newPerPage: number,
-    newPage: number
+    newPage: number,
   ) => {
     setPerPage(newPerPage);
     setPage(newPage);
@@ -407,7 +407,7 @@ const Repositories = () => {
 
   const handleFilterRepositories = (
     e: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     e.preventDefault();
     setPage(1);
@@ -421,14 +421,14 @@ const Repositories = () => {
 
     dispatch(
       changeCustomRepositories(
-        customRepositories.filter(({ id }) => !itemsToRemove.has(id))
-      )
+        customRepositories.filter(({ id }) => !itemsToRemove.has(id)),
+      ),
     );
 
     dispatch(
       changePayloadRepositories(
-        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id || ''))
-      )
+        payloadRepositories.filter(({ id }) => !itemsToRemove.has(id || '')),
+      ),
     );
 
     setReposToRemove([]);
@@ -443,7 +443,7 @@ const Repositories = () => {
     {
       uuid: templateUuid,
     },
-    { refetchOnMountOrArgChange: true, skip: templateUuid === '' }
+    { refetchOnMountOrArgChange: true, skip: templateUuid === '' },
   );
 
   const {
@@ -463,40 +463,40 @@ const Repositories = () => {
           ? selectedTemplateData.repository_uuids?.join(',')
           : '',
     },
-    { refetchOnMountOrArgChange: true, skip: !isTemplateSelected }
+    { refetchOnMountOrArgChange: true, skip: !isTemplateSelected },
   );
 
   useEffect(() => {
     if (isTemplateSelected && reposInTemplate.length > 0) {
       const customReposInTemplate = reposInTemplate.filter(
-        (repo) => repo.origin !== ContentOrigin.REDHAT
+        (repo) => repo.origin !== ContentOrigin.REDHAT,
       );
       const redHatReposInTemplate = reposInTemplate.filter(
-        (repo) => repo.origin === ContentOrigin.REDHAT
+        (repo) => repo.origin === ContentOrigin.REDHAT,
       );
 
       dispatch(
         changeCustomRepositories(
           customReposInTemplate.map((repo) =>
-            convertSchemaToIBCustomRepo(repo!)
-          )
-        )
+            convertSchemaToIBCustomRepo(repo!),
+          ),
+        ),
       );
 
       dispatch(
         changePayloadRepositories(
           customReposInTemplate.map((repo) =>
-            convertSchemaToIBPayloadRepo(repo!)
-          )
-        )
+            convertSchemaToIBPayloadRepo(repo!),
+          ),
+        ),
       );
 
       dispatch(
         changeRedHatRepositories(
           redHatReposInTemplate.map((repo) =>
-            convertSchemaToIBPayloadRepo(repo!)
-          )
-        )
+            convertSchemaToIBPayloadRepo(repo!),
+          ),
+        ),
       );
     }
   }, [templateUuid, reposInTemplate]);
@@ -547,7 +547,7 @@ const Repositories = () => {
                   contentList.every(
                     (repo) =>
                       repo.uuid &&
-                      isRepoDisabled(repo, selected.has(repo.uuid))[0]
+                      isRepoDisabled(repo, selected.has(repo.uuid))[0],
                   )
                 }
               />
@@ -633,7 +633,7 @@ const Repositories = () => {
 
                     const [isDisabled, disabledReason] = isRepoDisabled(
                       repo,
-                      selected.has(uuid)
+                      selected.has(uuid),
                     );
 
                     return (

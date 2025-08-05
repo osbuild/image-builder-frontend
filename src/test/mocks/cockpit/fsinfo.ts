@@ -55,7 +55,7 @@ export const listComposes = (): Promise<fileinfo> => {
 export const fsinfo = (
   filepath: string,
   attributes: (keyof fileinfo)[],
-  options: object
+  options: object,
 ): Promise<fileinfo> => {
   if (filepath === bpDir) {
     return listBlueprints();

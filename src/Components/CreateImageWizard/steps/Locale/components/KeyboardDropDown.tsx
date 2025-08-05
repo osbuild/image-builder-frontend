@@ -42,14 +42,14 @@ const KeyboardDropDown = () => {
 
     if (filterValue) {
       filteredKeyboards = keyboardsList.filter((keyboard: string) =>
-        String(keyboard).toLowerCase().includes(filterValue.toLowerCase())
+        String(keyboard).toLowerCase().includes(filterValue.toLowerCase()),
       );
       if (!isOpen) {
         setIsOpen(true);
       }
     }
     setSelectOptions(
-      filteredKeyboards.sort((a, b) => sortfn(a, b, filterValue))
+      filteredKeyboards.sort((a, b) => sortfn(a, b, filterValue)),
     );
 
     // This useEffect hook should run *only* on when the filter value changes.

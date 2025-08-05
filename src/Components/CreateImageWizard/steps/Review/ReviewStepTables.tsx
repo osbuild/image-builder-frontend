@@ -40,7 +40,7 @@ const RepoName = ({ repoUuid }: repoPropType) => {
       contentType: 'rpm',
       origin: ContentOrigin.ALL,
     },
-    { skip: !repoUuid }
+    { skip: !repoUuid },
   );
 
   const errorLoading = () => {
@@ -132,7 +132,7 @@ export const SnapshotTable = ({
     {
       uuid: template,
     },
-    { refetchOnMountOrArgChange: true, skip: template === '' }
+    { refetchOnMountOrArgChange: true, skip: template === '' },
   );
 
   const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
@@ -148,7 +148,7 @@ export const SnapshotTable = ({
   const isAfterSet = new Set(
     snapshotForDate
       .filter(({ is_after }) => is_after)
-      .map(({ repository_uuid }) => repository_uuid)
+      .map(({ repository_uuid }) => repository_uuid),
   );
 
   const stringToDateToMMDDYYYY = (strDate: string) => {
@@ -244,7 +244,7 @@ export const RepositoriesTable = () => {
   const distribution = useAppSelector(selectDistribution);
   const repositoriesList = useAppSelector(selectCustomRepositories);
   const recommendedRepositoriesList = useAppSelector(
-    selectRecommendedRepositories
+    selectRecommendedRepositories,
   );
   return (
     <Panel isScrollable>

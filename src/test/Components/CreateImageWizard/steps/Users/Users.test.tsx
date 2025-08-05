@@ -57,7 +57,7 @@ const goToReviewStep = async () => {
 const addAzureTarget = async () => {
   const user = userEvent.setup();
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Microsoft Azure/i }))
+    user.click(screen.getByRole('button', { name: /Microsoft Azure/i })),
   );
   await clickNext();
 
@@ -70,11 +70,11 @@ const addAzureTarget = async () => {
   await waitFor(() => user.click(azureSource));
 
   const resourceGroupDropdown = await screen.findByPlaceholderText(
-    /select resource group/i
+    /select resource group/i,
   );
   await waitFor(() => user.click(resourceGroupDropdown));
   await waitFor(async () =>
-    user.click(await screen.findByLabelText('Resource group myResourceGroup1'))
+    user.click(await screen.findByLabelText('Resource group myResourceGroup1')),
   );
 };
 
@@ -260,10 +260,10 @@ describe('Step Users', () => {
     await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
-      /Password must be at least 6 characters long/i
+      /Password must be at least 6 characters long/i,
     );
     const warningUserMessage = screen.getByText(
-      /Must include at least 3 of the following: lowercase letters, uppercase letters, numbers, symbols/i
+      /Must include at least 3 of the following: lowercase letters, uppercase letters, numbers, symbols/i,
     );
     await waitFor(() => expect(invalidUserMessage));
     await waitFor(() => expect(warningUserMessage));
@@ -281,7 +281,7 @@ describe('Step Users', () => {
     await addPasswordByUserIndex(invalidPassword, 0);
 
     const invalidUserMessage = screen.getByText(
-      /Password must be at least 6 characters long/i
+      /Password must be at least 6 characters long/i,
     );
     await waitFor(() => expect(invalidUserMessage));
 
@@ -499,7 +499,7 @@ describe('Users edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = usersCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -524,7 +524,7 @@ describe('Users edit mode', () => {
     await waitFor(() => user.hover(passwordToggleButton));
 
     const tooltip = await screen.findByText(
-      'Passwords cannot be viewed when editing a blueprint for security reasons'
+      'Passwords cannot be viewed when editing a blueprint for security reasons',
     );
     expect(tooltip).toBeInTheDocument();
 
@@ -533,8 +533,8 @@ describe('Users edit mode', () => {
     await waitFor(() => {
       expect(
         screen.queryByText(
-          'Passwords cannot be viewed when editing a blueprint for security reasons'
-        )
+          'Passwords cannot be viewed when editing a blueprint for security reasons',
+        ),
       ).not.toBeInTheDocument();
     });
   });

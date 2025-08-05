@@ -18,7 +18,7 @@ interface BulkSelectProps {
   perPage: number;
   handleAddRemove: (
     repo: ApiRepositoryResponseRead | ApiRepositoryResponseRead[],
-    selected: boolean
+    selected: boolean,
   ) => void;
   isDisabled: boolean;
 }

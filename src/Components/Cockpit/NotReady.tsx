@@ -30,7 +30,7 @@ export const NotReady = ({ enabled }: { enabled: boolean }) => {
                   {
                     superuser: 'require',
                     err: 'message',
-                  }
+                  },
                 )
                 .then(() => window.location.reload());
             }}
@@ -45,7 +45,7 @@ export const NotReady = ({ enabled }: { enabled: boolean }) => {
               event.preventDefault();
               cockpit.jump(
                 '/system/services#/osbuild-composer.socket',
-                cockpit.transport.host
+                cockpit.transport.host,
               );
             }}
           >

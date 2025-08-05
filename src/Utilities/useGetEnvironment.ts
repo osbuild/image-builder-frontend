@@ -22,7 +22,7 @@ export const useGetEnvironment = process.env.IS_ON_PREMISE
  */
 export const useFlagWithEphemDefault = (
   flag: string,
-  ephemDefault: boolean = true
+  ephemDefault: boolean = true,
 ): boolean => {
   const getFlag = useFlag(flag);
   const { getEnvironment } = useChrome();

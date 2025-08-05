@@ -101,7 +101,7 @@ const PackageRecommendations = () => {
               selectedPackages: packages.map((pkg) => pkg.name),
               distribution: distribution.replace('-', ''),
               modelVersion: response.data.modelVersion,
-            }
+            },
           );
         }
       })();
@@ -127,8 +127,8 @@ const PackageRecommendations = () => {
             name: pkg,
             summary: 'Added from recommended packages',
             repository: 'distro',
-          })
-        )
+          }),
+        ),
       );
     }
   };
@@ -139,7 +139,7 @@ const PackageRecommendations = () => {
         name: pkg,
         summary: 'Added from recommended packages',
         repository: 'distro',
-      })
+      }),
     );
   };
 
@@ -264,12 +264,12 @@ const PackageRecommendations = () => {
                                   isPreview: isBeta(),
                                   packageName: pkg,
                                   selectedPackages: packages.map(
-                                    (pkg) => pkg.name
+                                    (pkg) => pkg.name,
                                   ),
                                   shownRecommendations: data.packages,
                                   distribution: distribution.replace('-', ''),
                                   modelVersion: data.modelVersion,
-                                }
+                                },
                               );
                               addRecommendedPackage(pkg);
                             }}

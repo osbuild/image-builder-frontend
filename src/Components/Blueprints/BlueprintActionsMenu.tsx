@@ -30,7 +30,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
   const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled'
+    'image-builder.import.enabled',
   );
 
   const [trigger] = useLazyExportBlueprintQuery();
@@ -81,7 +81,7 @@ export const BlueprintActionsMenu: React.FunctionComponent<
 
 async function handleExportBlueprint(
   blueprintName: string,
-  blueprint: BlueprintExportResponse
+  blueprint: BlueprintExportResponse,
 ) {
   const jsonData = JSON.stringify(blueprint, null, 2);
   const blob = new Blob([jsonData], { type: 'application/json' });

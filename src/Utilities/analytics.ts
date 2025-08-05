@@ -5,7 +5,7 @@ import { CreateBlueprintRequest } from '../store/imageBuilderApi';
 export const createAnalytics = (
   requestBody: CreateBlueprintRequest,
   packages: IBPackageWithRepositoryInfo[],
-  isBeta: () => boolean
+  isBeta: () => boolean,
 ) => {
   const analyticsData = {
     image_name: requestBody.name,
@@ -13,10 +13,10 @@ export const createAnalytics = (
     distribution: requestBody.distribution,
     openscap: requestBody.customizations.openscap,
     image_request_types: requestBody.image_requests.map(
-      (req) => req.image_type
+      (req) => req.image_type,
     ),
     image_request_architectures: requestBody.image_requests.map(
-      (req) => req.architecture
+      (req) => req.architecture,
     ),
     image_requests: requestBody.image_requests,
     organization: requestBody.customizations.subscription?.organization,

@@ -39,7 +39,7 @@ export default function Snapshot() {
   const isTemplatesEnabled = useFlag('image-builder.templates.enabled');
 
   const handleOptionChange = (
-    option: 'latest' | 'snapshotDate' | 'template'
+    option: 'latest' | 'snapshotDate' | 'template',
   ): void => {
     setSelectedOption(option);
     switch (option) {

@@ -56,7 +56,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
         id: selectedBlueprintId,
         body: {
           image_types: blueprintImageType?.filter(
-            (target) => !deselectedTargets.includes(target)
+            (target) => !deselectedTargets.includes(target),
           ),
         },
       });
@@ -74,21 +74,21 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
     setIsOpen(!isOpen);
   };
   const { data: blueprintDetails } = useGetBlueprintQuery(
-    selectedBlueprintId ? { id: selectedBlueprintId } : skipToken
+    selectedBlueprintId ? { id: selectedBlueprintId } : skipToken,
   );
   const blueprintImageType = blueprintDetails?.image_requests.map(
-    (image) => image.image_type
+    (image) => image.image_type,
   );
 
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    itemId: number
+    itemId: number,
   ) => {
     const imageType = blueprintImageType?.[itemId];
 
     if (imageType && deselectedTargets.includes(imageType)) {
       setDeselectedTargets(
-        deselectedTargets.filter((target) => target !== imageType)
+        deselectedTargets.filter((target) => target !== imageType),
       );
     } else if (imageType) {
       setDeselectedTargets([...deselectedTargets, imageType]);

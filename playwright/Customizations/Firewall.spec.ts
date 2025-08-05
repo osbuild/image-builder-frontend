@@ -66,9 +66,9 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(
       frame
         .getByText(
-          'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+          'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
         )
-        .nth(0)
+        .nth(0),
     ).toBeVisible();
   });
 
@@ -76,7 +76,7 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByPlaceholder('Add disabled service').fill('1');
     await frame.getByRole('button', { name: 'Add disabled service' }).click();
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0)
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0),
     ).toBeVisible();
   });
 
@@ -84,7 +84,7 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByPlaceholder('Add enabled service').fill('ťčš');
     await frame.getByRole('button', { name: 'Add enabled service' }).click();
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1)
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1),
     ).toBeVisible();
   });
 

@@ -10,7 +10,7 @@ import { ibFrame, navigateToLandingPage } from './navHelpers';
  */
 export const createBlueprint = async (
   page: Page | FrameLocator,
-  blueprintName: string
+  blueprintName: string,
 ) => {
   await page.getByRole('button', { name: 'Create blueprint' }).click();
   await page.getByRole('button', { name: 'Close' }).first().click();
@@ -31,7 +31,7 @@ export const createBlueprint = async (
  */
 export const fillInDetails = async (
   page: Page | FrameLocator,
-  blueprintName: string
+  blueprintName: string,
 ) => {
   await page.getByRole('listitem').filter({ hasText: 'Details' }).click();
   await page
@@ -86,7 +86,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       // Check if no blueprints found -> that means no blueprint was created -> fail gracefully and do not raise error
       try {
         await expect(
-          frame.getByRole('heading', { name: 'No blueprints found' })
+          frame.getByRole('heading', { name: 'No blueprints found' }),
         ).toBeVisible({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
         return; // Fail gracefully, no blueprint to delete
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -101,7 +101,7 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
       await frame.getByRole('button', { name: 'Delete' }).click();
     },
-    { box: true }
+    { box: true },
   );
 };
 
@@ -129,7 +129,7 @@ export const exportBlueprint = async (page: Page, blueprintName: string) => {
  */
 export const importBlueprint = async (
   page: Page | FrameLocator,
-  blueprintName: string
+  blueprintName: string,
 ) => {
   if (isHosted()) {
     await page.getByRole('button', { name: 'Import' }).click();
@@ -138,7 +138,7 @@ export const importBlueprint = async (
       .locator('input[type=file]')
       .setInputFiles('../../downloads/' + blueprintName + '.json');
     await expect(
-      page.getByRole('textbox', { name: 'File upload' })
+      page.getByRole('textbox', { name: 'File upload' }),
     ).not.toBeEmpty();
     await page.getByRole('button', { name: 'Review and Finish' }).click();
   }

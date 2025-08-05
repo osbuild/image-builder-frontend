@@ -39,7 +39,7 @@ import { resolveRelPath } from '../../Utilities/path';
 const generateRequests = (
   composeId: string,
   composeStatus: ComposeStatus,
-  regions: string[]
+  regions: string[],
 ) => {
   return regions.map((region) => {
     const options =
@@ -72,7 +72,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [validated, setValidated] = useState<ValidatedOptions>(
-    ValidatedOptions.default
+    ValidatedOptions.default,
   );
 
   const initialRegions = AWS_REGIONS;
@@ -87,7 +87,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
 
     if (inputValue) {
       newSelectOptions = initialRegions.filter((region) =>
-        region.value.toLowerCase().includes(inputValue.toLowerCase())
+        region.value.toLowerCase().includes(inputValue.toLowerCase()),
       );
 
       // When no options are found after filtering, display 'No results found'
@@ -112,7 +112,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setInputValue(value);
   };
@@ -122,7 +122,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
       setSelected(
         selected.includes(value)
           ? selected.filter((selection) => selection !== value)
-          : [...selected, value]
+          : [...selected, value],
       );
       setValidated(ValidatedOptions.success);
     } else {

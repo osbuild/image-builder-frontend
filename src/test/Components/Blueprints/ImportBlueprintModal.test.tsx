@@ -317,7 +317,7 @@ describe('Import modal', () => {
     });
     expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
-      /not compatible with the blueprints format\./i
+      /not compatible with the blueprints format\./i,
     );
     await waitFor(() => expect(helperText).toBeInTheDocument());
   });
@@ -330,7 +330,7 @@ describe('Import modal', () => {
     });
     expect(reviewButton).toBeDisabled();
     const helperText = await screen.findByText(
-      /not compatible with the blueprints format\./i
+      /not compatible with the blueprints format\./i,
     );
     await waitFor(() => expect(helperText).toBeInTheDocument());
   });
@@ -346,8 +346,8 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' })
-      ).toBeInTheDocument()
+        await screen.findByText('Image output', { selector: 'h1' }),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -362,8 +362,8 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' })
-      ).toBeInTheDocument()
+        await screen.findByText('Image output', { selector: 'h1' }),
+      ).toBeInTheDocument(),
     );
   });
 
@@ -385,16 +385,16 @@ describe('Import modal', () => {
 
     await waitFor(async () =>
       expect(
-        await screen.findByText('Image output', { selector: 'h1' })
-      ).toBeInTheDocument()
+        await screen.findByText('Image output', { selector: 'h1' }),
+      ).toBeInTheDocument(),
     );
 
     // Image output
     await waitFor(
       async () =>
         await user.click(
-          await screen.findByRole('button', { name: /Amazon Web Services/i })
-        )
+          await screen.findByRole('button', { name: /Amazon Web Services/i }),
+        ),
     );
     await clickNext();
 
@@ -415,7 +415,7 @@ describe('Import modal', () => {
 
     // Registration
     await screen.findByText(
-      'Automatically register and enable advanced capabilities'
+      'Automatically register and enable advanced capabilities',
     );
     //const registrationCheckbox = await screen.findByRole('radio', {
     //  name: /Automatically register and enable advanced capabilities/i,
@@ -492,7 +492,7 @@ describe('Import modal', () => {
     // Kernel
     await clickNext();
     const kernelNameInput = await screen.findByPlaceholderText(
-      /Select kernel package/i
+      /Select kernel package/i,
     );
     expect(kernelNameInput).toHaveValue('kernel-debug');
     await screen.findByText('nosmt=force');
@@ -523,7 +523,7 @@ describe('Import modal', () => {
     await setUp();
     await uploadFile(
       `blueprints.toml`,
-      ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES
+      ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES,
     );
     const reviewButton = screen.getByRole('button', {
       name: /Review and finish/i,
@@ -543,7 +543,7 @@ describe('Import modal', () => {
     // File system configuration
     await clickNext();
     expect(
-      await screen.findByText(/The Wizard only supports KiB, MiB, or GiB/)
+      await screen.findByText(/The Wizard only supports KiB, MiB, or GiB/),
     ).toBeInTheDocument();
 
     await clickNext(); // Repository snapshot
@@ -554,34 +554,34 @@ describe('Import modal', () => {
     await clickNext();
     expect(await screen.findByText('Invalid user name')).toBeInTheDocument();
     await waitFor(async () =>
-      user.type(await screen.findByPlaceholderText('Enter username'), 'est')
+      user.type(await screen.findByPlaceholderText('Enter username'), 'est'),
     );
     expect(
-      await screen.findByText('Password must be at least 6 characters long')
+      await screen.findByText('Password must be at least 6 characters long'),
     ).toBeInTheDocument();
     await waitFor(async () =>
-      user.clear(await screen.findByPlaceholderText('Enter password'))
+      user.clear(await screen.findByPlaceholderText('Enter password')),
     );
     expect(await screen.findByText('Invalid SSH key')).toBeInTheDocument();
     await waitFor(async () =>
       user.clear(
-        await screen.findByPlaceholderText('Paste your public SSH key')
-      )
+        await screen.findByPlaceholderText('Paste your public SSH key'),
+      ),
     );
 
     expect(
-      await screen.findByText(/Invalid user groups: 0000/)
+      await screen.findByText(/Invalid user groups: 0000/),
     ).toBeInTheDocument();
 
     await waitFor(() =>
-      user.click(screen.getByRole('button', { name: /close 0000/i }))
+      user.click(screen.getByRole('button', { name: /close 0000/i })),
     );
 
     // Timezone
     await clickNext();
     expect(await screen.findByText('Unknown timezone')).toBeInTheDocument();
     expect(
-      await screen.findByText('Invalid NTP servers: invalid-ntp-server')
+      await screen.findByText('Invalid NTP servers: invalid-ntp-server'),
     ).toBeInTheDocument();
     const clearButtons = await screen.findAllByRole('button', {
       name: /clear input/i,
@@ -591,29 +591,29 @@ describe('Import modal', () => {
       user.click(
         await screen.findByRole('button', {
           name: /close invalid-ntp-server/i,
-        })
-      )
+        }),
+      ),
     );
 
     // Locale
     await clickNext();
     expect(
-      await screen.findByText('Unknown languages: invalid-language')
+      await screen.findByText('Unknown languages: invalid-language'),
     ).toBeInTheDocument();
     expect(await screen.findByText('Unknown keyboard')).toBeInTheDocument();
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {
           name: /close invalid-language/i,
-        })
-      )
+        }),
+      ),
     );
     await waitFor(async () =>
       user.click(
         await screen.findByRole('button', {
           name: /clear input/i,
-        })
-      )
+        }),
+      ),
     );
 
     // Hostname
@@ -623,97 +623,101 @@ describe('Import modal', () => {
       user.clear(
         screen.getByRole('textbox', {
           name: /hostname input/i,
-        })
-      )
+        }),
+      ),
     );
 
     // Kernel
     await clickNext();
     expect(await screen.findByText(/Invalid format/)).toBeInTheDocument();
     expect(
-      await screen.findByText(/Invalid kernel arguments/)
+      await screen.findByText(/Invalid kernel arguments/),
     ).toBeInTheDocument();
     await waitFor(() =>
-      user.click(screen.getAllByRole('button', { name: /clear input/i })[0])
+      user.click(screen.getAllByRole('button', { name: /clear input/i })[0]),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
           name: /close invalid\$kernel\$argument/i,
-        })
-      )
+        }),
+      ),
     );
 
     // Firewall
     await clickNext();
     expect(
-      await screen.findByText(/Invalid ports: invalid-port/)
+      await screen.findByText(/Invalid ports: invalid-port/),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-service/
-      )
+        /Invalid disabled services: --invalid-disabled-service/,
+      ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-service/
-      )
+        /Invalid enabled services: --invalid-enabled-service/,
+      ),
     ).toBeInTheDocument();
     await waitFor(() =>
-      user.click(screen.getByRole('button', { name: /close invalid-port/i }))
+      user.click(screen.getByRole('button', { name: /close invalid-port/i })),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
           name: /close --invalid-disabled-service/i,
-        })
-      )
+        }),
+      ),
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close --invalid-enabled-service/i })
-      )
+        screen.getByRole('button', {
+          name: /close --invalid-enabled-service/i,
+        }),
+      ),
     );
 
     // Services
     await clickNext();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-service/
-      )
+        /Invalid enabled services: --invalid-enabled-service/,
+      ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-service/
-      )
+        /Invalid disabled services: --invalid-disabled-service/,
+      ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid masked services: --invalid-masked-service/
-      )
+        /Invalid masked services: --invalid-masked-service/,
+      ),
     ).toBeInTheDocument();
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close --invalid-enabled-service/i })
-      )
+        screen.getByRole('button', {
+          name: /close --invalid-enabled-service/i,
+        }),
+      ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
           name: /close --invalid-disabled-service/i,
-        })
-      )
+        }),
+      ),
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close --invalid-masked-service/i })
-      )
+        screen.getByRole('button', { name: /close --invalid-masked-service/i }),
+      ),
     );
 
     // Firstboot
     await clickNext();
     expect(
-      await screen.findByRole('heading', { name: /First boot configuration/i })
+      await screen.findByRole('heading', { name: /First boot configuration/i }),
     ).toBeInTheDocument();
   }, 20000);
 });

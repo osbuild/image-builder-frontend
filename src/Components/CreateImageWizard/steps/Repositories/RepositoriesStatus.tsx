@@ -28,12 +28,12 @@ import {
 import '../../../ImagesTable/ImageBuildStatus.scss';
 
 const getLastIntrospection = (
-  repoIntrospections: RepositoryStatusProps['repoIntrospections']
+  repoIntrospections: RepositoryStatusProps['repoIntrospections'],
 ) => {
   const currentDate = Date.now();
   const lastIntrospectionDate = convertStringToDate(repoIntrospections);
   const timeDeltaInSeconds = Math.floor(
-    (currentDate - lastIntrospectionDate) / 1000
+    (currentDate - lastIntrospectionDate) / 1000,
   );
 
   if (timeDeltaInSeconds <= 60) {

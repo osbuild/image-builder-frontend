@@ -118,7 +118,7 @@ export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
   const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand
+    selectSatelliteRegistrationCommand,
   );
   const caCertificate = useAppSelector(selectSatelliteCaCertificate);
 
@@ -127,7 +127,7 @@ export function useRegistrationValidation(): StepValidation {
       { name: activationKey! },
       {
         skip: !activationKey,
-      }
+      },
     );
 
   if (
@@ -168,7 +168,7 @@ export function useRegistrationValidation(): StepValidation {
     }
     try {
       const match = registrationCommand?.match(
-        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/
+        /Bearer\s+([\w-]+\.[\w-]+\.[\w-]+)/,
       );
       if (!match) {
         Object.assign(errors, { command: 'Invalid or missing token' });
@@ -410,10 +410,10 @@ export function useFirewallValidation(): StepValidation {
 
   const duplicatePorts = getListOfDuplicates(firewall.ports);
   const duplicateDisabledServices = getListOfDuplicates(
-    firewall.services.disabled
+    firewall.services.disabled,
   );
   const duplicateEnabledServices = getListOfDuplicates(
-    firewall.services.enabled
+    firewall.services.enabled,
   );
 
   const portsError =
@@ -425,13 +425,13 @@ export function useFirewallValidation(): StepValidation {
   const duplicateDisabledServicesError =
     duplicateDisabledServices.length > 0
       ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
-          ', '
+          ', ',
         )}`
       : '';
   const duplicateEnabledServicesError =
     duplicateEnabledServices.length > 0
       ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
-          ', '
+          ', ',
         )}`
       : '';
   const disabledServicesError =
@@ -509,19 +509,19 @@ export function useServicesValidation(): StepValidation {
   const duplicateDisabledServicesError =
     duplicateDisabledServices.length > 0
       ? `Includes duplicate disabled services: ${duplicateDisabledServices.join(
-          ', '
+          ', ',
         )}`
       : '';
   const duplicateMaskedServicesError =
     duplicateMaskedServices.length > 0
       ? `Includes duplicate masked services: ${duplicateMaskedServices.join(
-          ', '
+          ', ',
         )}`
       : '';
   const duplicateEnabledServicesError =
     duplicateEnabledServices.length > 0
       ? `Includes duplicate enabled services: ${duplicateEnabledServices.join(
-          ', '
+          ', ',
         )}`
       : '';
 
@@ -547,7 +547,7 @@ export function useServicesValidation(): StepValidation {
 const validateUserName = (
   users: UserWithAdditionalInfo[],
   userName: string,
-  currentIndex: number
+  currentIndex: number,
 ): string => {
   if (!userName) {
     return 'Required value';
@@ -558,7 +558,7 @@ const validateUserName = (
 
   // check for duplicate names
   const count = users.filter(
-    (user, index) => user.name === userName && index !== currentIndex
+    (user, index) => user.name === userName && index !== currentIndex,
   ).length;
   if (count > 0) {
     return 'Username already exists';
@@ -591,7 +591,7 @@ export function useUsersValidation(): UsersStepValidation {
     const sshKeyError = validateSshKey(users[index].ssh_key);
     const isPasswordValid = checkPasswordValidity(
       users[index].password,
-      environments.includes('azure')
+      environments.includes('azure'),
     ).isValid;
     const passwordError =
       users[index].password && !isPasswordValid ? 'Invalid password' : '';
@@ -643,7 +643,7 @@ export function useUsersValidation(): UsersStepValidation {
 
 export const checkPasswordValidity = (
   password: string,
-  isAzure: boolean
+  isAzure: boolean,
 ): PasswordValidationResult => {
   if (!password) {
     return {
@@ -686,7 +686,7 @@ export const checkPasswordValidity = (
 const getStrength = (
   strCount: number,
   rulesCount: number,
-  isAzure: boolean
+  isAzure: boolean,
 ): PasswordValidationResult['strength'] => {
   return isAzure && strCount >= 6 && rulesCount >= 3
     ? { variant: 'success', icon: <CheckCircleIcon />, text: 'Strong' }
@@ -743,7 +743,7 @@ export function useDetailsValidation(): StepValidation {
               setUniqueName(true);
             });
         },
-        UNIQUE_VALIDATION_DELAY // If name is empty string, instantly return
+        UNIQUE_VALIDATION_DELAY, // If name is empty string, instantly return
       );
 
       return () => {

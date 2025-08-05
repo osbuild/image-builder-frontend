@@ -43,7 +43,7 @@ export const OscapProfileInformation = ({
     },
     {
       skip: !complianceProfileID,
-    }
+    },
   );
 
   const {
@@ -57,7 +57,7 @@ export const OscapProfileInformation = ({
     {
       skip:
         !allowChangingCompliancePolicy || complianceProfileID ? true : false,
-    }
+    },
   );
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export const OscapProfileInformation = ({
         policyID: pol.id,
         profileID: pol.ref_id,
         policyTitle: pol.title,
-      })
+      }),
     );
   }, [isSuccessPolicyInfo]);
 

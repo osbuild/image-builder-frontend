@@ -37,19 +37,19 @@ const ServicesInput = () => {
     },
     {
       skip: !complianceProfileID,
-    }
+    },
   );
 
   const disabledRequiredByOpenSCAP = disabledServices.filter((service) =>
-    oscapProfileInfo?.services?.disabled?.includes(service)
+    oscapProfileInfo?.services?.disabled?.includes(service),
   );
 
   const maskedRequiredByOpenSCAP = maskedServices.filter((service) =>
-    oscapProfileInfo?.services?.masked?.includes(service)
+    oscapProfileInfo?.services?.masked?.includes(service),
   );
 
   const enabledRequiredByOpenSCAP = enabledServices.filter((service) =>
-    oscapProfileInfo?.services?.enabled?.includes(service)
+    oscapProfileInfo?.services?.enabled?.includes(service),
   );
 
   return (
@@ -60,7 +60,7 @@ const ServicesInput = () => {
           placeholder="Add enabled service"
           validator={isServiceValid}
           list={enabledServices.filter(
-            (service) => !enabledRequiredByOpenSCAP.includes(service)
+            (service) => !enabledRequiredByOpenSCAP.includes(service),
           )}
           requiredList={enabledRequiredByOpenSCAP}
           requiredCategoryName="Required by OpenSCAP"
@@ -78,7 +78,7 @@ const ServicesInput = () => {
           validator={isServiceValid}
           list={disabledServices.filter(
             (service) =>
-              !oscapProfileInfo?.services?.disabled?.includes(service)
+              !oscapProfileInfo?.services?.disabled?.includes(service),
           )}
           requiredList={disabledRequiredByOpenSCAP}
           requiredCategoryName="Required by OpenSCAP"
@@ -95,7 +95,7 @@ const ServicesInput = () => {
           placeholder="Add masked service"
           validator={isServiceValid}
           list={maskedServices.filter(
-            (service) => !oscapProfileInfo?.services?.masked?.includes(service)
+            (service) => !oscapProfileInfo?.services?.masked?.includes(service),
           )}
           requiredList={maskedRequiredByOpenSCAP}
           requiredCategoryName="Required by OpenSCAP"

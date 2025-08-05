@@ -53,17 +53,17 @@ const goToReview = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId(
-    'target-environments-expandable'
+    'target-environments-expandable',
   );
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-target-environments'
+    'revisit-target-environments',
   );
   await waitFor(() => user.click(revisitButton));
 };
 
 const createGCPCloudImage = (
   image_type: ImageTypes,
-  options: GcpUploadRequestOptions
+  options: GcpUploadRequestOptions,
 ): ImageRequest => {
   return {
     ...imageRequest,
@@ -152,12 +152,12 @@ describe('Step Upload to Google', () => {
     await clickGCPTarget();
 
     await waitFor(async () =>
-      user.type(await screen.findByTestId('principal'), 'a')
+      user.type(await screen.findByTestId('principal'), 'a'),
     );
     expect(await getNextButton()).toBeDisabled();
 
     await waitFor(async () =>
-      user.type(await screen.findByTestId('principal'), 'test@test.com')
+      user.type(await screen.findByTestId('principal'), 'test@test.com'),
     );
     expect(await getNextButton()).toBeEnabled();
   });
@@ -233,7 +233,7 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount(
-      'Google Workspace domain or Cloud Identity domain'
+      'Google Workspace domain or Cloud Identity domain',
     );
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -270,7 +270,7 @@ describe('GCP image type request generated correctly', () => {
     await renderCreateMode();
     await clickGCPTarget();
     await selectGoogleAccount(
-      'Google Workspace domain or Cloud Identity domain'
+      'Google Workspace domain or Cloud Identity domain',
     );
     await clickBack();
     await deselectGcpAndSelectGuestImage();
@@ -294,7 +294,7 @@ describe('GCP edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = gcpCreateBlueprintRequest;
     await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));

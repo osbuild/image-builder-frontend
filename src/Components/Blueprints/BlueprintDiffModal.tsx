@@ -34,11 +34,11 @@ const BlueprintDiffModal = ({
 
   const { data: baseBlueprint } = useGetBlueprintQuery(
     { id: selectedBlueprintId as string, version: baseVersion || -1 },
-    { skip: !selectedBlueprintId || !baseVersion }
+    { skip: !selectedBlueprintId || !baseVersion },
   );
   const { data: blueprint } = useGetBlueprintQuery(
     { id: selectedBlueprintId as string },
-    { skip: !selectedBlueprintId }
+    { skip: !selectedBlueprintId },
   );
 
   if (!baseBlueprint || !blueprint) {

@@ -82,7 +82,7 @@ const deselectPredictiveAnalytics = async () => {
 const openActivationKeyDropdown = async () => {
   const user = userEvent.setup();
   const activationKeyDropdown = await screen.findByPlaceholderText(
-    'Select activation key'
+    'Select activation key',
   );
   user.click(activationKeyDropdown);
 };
@@ -143,7 +143,7 @@ const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('registration-expandable');
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-registration'
+    'revisit-registration',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -191,13 +191,13 @@ describe('Step Registration', () => {
     server.use(
       http.get(`${RHSM_API}/activation_keys`, () => {
         return new HttpResponse(null, { status: 404 });
-      })
+      }),
     );
 
     await renderCreateMode();
     await goToRegistrationStep();
     expect(
-      await screen.findByRole('button', { name: /Review and finish/ })
+      await screen.findByRole('button', { name: /Review and finish/ }),
     ).toBeDisabled();
   });
 
@@ -210,11 +210,11 @@ describe('Step Registration', () => {
 
     const review = await screen.findByTestId('review-registration');
     expect(review).toHaveTextContent(
-      'Register with Red Hat Subscription Manager (RHSM)'
+      'Register with Red Hat Subscription Manager (RHSM)',
     );
     expect(review).toHaveTextContent('Connect to Red Hat Insights');
     expect(review).toHaveTextContent(
-      'Use remote host configuration (rhc) utility'
+      'Use remote host configuration (rhc) utility',
     );
   });
 
@@ -225,13 +225,13 @@ describe('Step Registration', () => {
 
     await waitFor(() =>
       expect(
-        screen.queryByTestId('selected-activation-key')
-      ).not.toBeInTheDocument()
+        screen.queryByTestId('selected-activation-key'),
+      ).not.toBeInTheDocument(),
     );
     await waitFor(async () =>
       expect(await screen.findByTestId('activation-key-select')).toHaveClass(
-        'pf-m-disabled'
-      )
+        'pf-m-disabled',
+      ),
     );
     await goToReviewStep();
     await screen.findByText('Register the system later');
@@ -433,18 +433,18 @@ describe('Registration request generated correctly', () => {
     await uploadFile(CERTIFICATE);
     await waitFor(() => expect(nextButton).toBeDisabled());
     await addSatelliteRegistrationCommandViaKeyDown(
-      SATELLITE_COMMAND_EXPIRED_TOKEN
+      SATELLITE_COMMAND_EXPIRED_TOKEN,
     );
 
     const expiredTokenHelper = await screen.findByText(
-      /The token is already expired or will expire by next day./i
+      /The token is already expired or will expire by next day./i,
     );
     await waitFor(() => expect(expiredTokenHelper).toBeInTheDocument());
 
     await addSatelliteRegistrationCommandViaKeyDown(SATELLITE_COMMAND);
     await waitFor(() => expect(nextButton).toBeEnabled());
     await addSatelliteRegistrationCommandViaKeyDown(
-      SATELLITE_COMMAND_NO_EXPIRATION
+      SATELLITE_COMMAND_NO_EXPIRATION,
     );
     await waitFor(() => expect(nextButton).toBeEnabled());
   });
@@ -461,7 +461,7 @@ describe('Registration edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = registrationCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

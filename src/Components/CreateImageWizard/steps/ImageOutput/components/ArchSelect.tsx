@@ -24,7 +24,7 @@ const ArchSelect = () => {
 
   const setArch = (
     _event: React.MouseEvent,
-    selection: ImageRequest['architecture']
+    selection: ImageRequest['architecture'],
   ) => {
     dispatch(changeArchitecture(selection));
     setIsOpen(false);
@@ -44,7 +44,7 @@ const ArchSelect = () => {
       options.push(
         <SelectOption key={arch} value={arch}>
           {arch}
-        </SelectOption>
+        </SelectOption>,
       );
     });
 

@@ -104,7 +104,7 @@ const readComposes = async (bpID: string) => {
     ['entries', 'mtime'],
     {
       superuser: 'try',
-    }
+    },
   );
   const bpEntries = Object.entries(bpInfo?.entries || {});
   for (const entry of bpEntries) {
@@ -130,7 +130,7 @@ const readComposes = async (bpID: string) => {
 const getCloudConfigs = async () => {
   try {
     const worker_config = cockpit.file(
-      '/etc/osbuild-worker/osbuild-worker.toml'
+      '/etc/osbuild-worker/osbuild-worker.toml',
     );
     const contents = await worker_config.read();
     const parsed = TOML.parse(contents);
@@ -143,7 +143,7 @@ const getCloudConfigs = async () => {
 const mapToOnpremRequest = (
   blueprint: Blueprint,
   distribution: string,
-  image_requests: CockpitImageRequest[]
+  image_requests: CockpitImageRequest[],
 ) => {
   return {
     blueprint,
@@ -252,7 +252,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             let blueprints: BlueprintItem[] = await Promise.all(
               entries.map(async ([filename]) => {
                 const file = cockpit.file(
-                  path.join(blueprintsDir, filename, `${filename}.json`)
+                  path.join(blueprintsDir, filename, `${filename}.json`),
                 );
                 const contents = await file.read();
                 const parsed = JSON.parse(contents);
@@ -262,7 +262,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                   version: 1,
                   last_modified_at: Date.now().toString(),
                 };
-              })
+              }),
             );
 
             blueprints = blueprints.filter((blueprint) => {
@@ -318,7 +318,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprintsDir = await getBlueprintsPath();
             await cockpit.spawn(
               ['mkdir', '-p', path.join(blueprintsDir, id)],
-              {}
+              {},
             );
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
@@ -390,7 +390,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ],
               {
                 superuser: 'try',
-              }
+              },
             )) as string;
 
             const profiles = result
@@ -428,7 +428,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ],
               {
                 superuser: 'try',
-              }
+              },
             )) as string;
 
             const parsed = TOML.parse(result);
@@ -444,7 +444,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ],
               {
                 superuser: 'try',
-              }
+              },
             )) as string;
 
             const descriptionLine = result
@@ -480,7 +480,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           try {
             const blueprintsDir = await getBlueprintsPath();
             const file = cockpit.file(
-              path.join(blueprintsDir, filename, `${filename}.json`)
+              path.join(blueprintsDir, filename, `${filename}.json`),
             );
             const contents = await file.read();
             const parsed = JSON.parse(contents);
@@ -512,8 +512,8 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                   mapToOnpremRequest(
                     mapHostedToOnPrem(blueprint as CreateBlueprintRequest),
                     crcComposeRequest.distribution,
-                    [ir]
-                  )
+                    [ir],
+                  ),
                 ),
                 headers: {
                   'content-type': 'application/json',
@@ -636,7 +636,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
 
             await cockpit.spawn(
               ['touch', '/etc/osbuild-worker/osbuild-worker.toml'],
-              { superuser: 'require' }
+              { superuser: 'require' },
             );
 
             const config = await cockpit
@@ -659,7 +659,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               '/etc/osbuild-worker/osbuild-worker.toml',
               {
                 superuser: 'required',
-              }
+              },
             );
 
             const contents = await workerConfig.modify((prev: string) => {
@@ -705,7 +705,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ],
               {
                 superuser: 'require',
-              }
+              },
             );
 
             await cockpit.spawn(
@@ -719,7 +719,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               ],
               {
                 superuser: 'require',
-              }
+              },
             );
 
             return { data: TOML.parse(contents) };

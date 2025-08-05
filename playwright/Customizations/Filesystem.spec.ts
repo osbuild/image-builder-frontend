@@ -158,8 +158,8 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('option', { name: '/usr' }).click();
     await expect(
       frame.getByText(
-        'Sub-directories for the /usr mount point are no longer supported'
-      )
+        'Sub-directories for the /usr mount point are no longer supported',
+      ),
     ).toBeVisible();
 
     await frame.getByRole('button', { name: '/usr' }).click();

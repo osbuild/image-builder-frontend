@@ -46,7 +46,7 @@ const getKeyForDistribution = (distribution: string): string =>
  * @returns The matching EPEL repository definition, or `undefined` if no match is found.
  */
 export const getEpelDefinitionForDistribution = (
-  distribution: string
+  distribution: string,
 ): EpelRepoDefinition | undefined =>
   epelMap.get(getKeyForDistribution(distribution));
 
@@ -57,7 +57,7 @@ export const getEpelDefinitionForDistribution = (
  * @returns The URL for the EPEL repository, or `undefined` if no match is found.
  */
 export const getEpelUrlForDistribution = (
-  distribution: string
+  distribution: string,
 ): string | undefined => getEpelDefinitionForDistribution(distribution)?.url;
 
 /**
@@ -67,7 +67,7 @@ export const getEpelUrlForDistribution = (
  * @returns The version number for the EPEL repository, or `undefined` if no match is found.
  */
 export const getEpelVersionForDistribution = (
-  distribution: string
+  distribution: string,
 ): string | undefined => {
   const split = getKeyForDistribution(distribution).split('-');
   return split.length > 1 ? split[1] : undefined;

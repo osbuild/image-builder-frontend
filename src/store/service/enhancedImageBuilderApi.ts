@@ -52,7 +52,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         queryFulfilled.then(() => {
           dispatch(
             // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            imageBuilderApi.util.invalidateTags(['Blueprints', 'Blueprint'])
+            imageBuilderApi.util.invalidateTags(['Blueprints', 'Blueprint']),
           );
         });
       },
@@ -72,7 +72,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
             imageBuilderApi.util.invalidateTags([
               // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
               { type: 'Clone', id: composeId },
-            ])
+            ]),
           );
         });
       },
@@ -85,7 +85,7 @@ const enhancedApi = imageBuilderApi.enhanceEndpoints({
         queryFulfilled.then(() => {
           dispatch(
             // @ts-expect-error Typescript is unaware of tag types being defined concurrently in enhanceEndpoints()
-            imageBuilderApi.util.invalidateTags(['Blueprints', 'Compose'])
+            imageBuilderApi.util.invalidateTags(['Blueprints', 'Compose']),
           );
         });
       },

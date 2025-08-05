@@ -7,7 +7,7 @@ import {
 
 // Utility function to convert from Content Sources to Image Builder custom repo API schema
 export const convertSchemaToIBCustomRepo = (
-  repo: ApiRepositoryResponseRead
+  repo: ApiRepositoryResponseRead,
 ) => {
   const imageBuilderRepo: CustomRepository = {
     id: repo.uuid!,
@@ -30,7 +30,7 @@ export const convertSchemaToIBCustomRepo = (
 
 // Utility function to convert from Content Sources to Image Builder payload repo API schema
 export const convertSchemaToIBPayloadRepo = (
-  repo: ApiRepositoryResponseRead
+  repo: ApiRepositoryResponseRead,
 ) => {
   const imageBuilderRepo: Repository = {
     id: repo.uuid!,

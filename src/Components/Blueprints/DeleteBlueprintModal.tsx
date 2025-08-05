@@ -67,7 +67,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
     selectFromResult: ({ data }) => ({
       blueprintName: data?.data.find(
         (blueprint: { id: string | undefined }) =>
-          blueprint.id === selectedBlueprintId
+          blueprint.id === selectedBlueprintId,
       )?.name,
     }),
   });

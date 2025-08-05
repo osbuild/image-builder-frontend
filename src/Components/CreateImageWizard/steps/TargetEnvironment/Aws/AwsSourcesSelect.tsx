@@ -39,7 +39,7 @@ export const AwsSourcesSelect = () => {
   const chosenSource = sources?.find((source) => source?.id === sourceId);
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    sources ? sources.map((source) => source?.name) : []
+    sources ? sources.map((source) => source?.name) : [],
   );
 
   useEffect(() => {
@@ -49,7 +49,7 @@ export const AwsSourcesSelect = () => {
       filteredSources = sources
         .map((source) => source?.name)
         .filter((source: string) =>
-          String(source).toLowerCase().includes(filterValue.toLowerCase())
+          String(source).toLowerCase().includes(filterValue.toLowerCase()),
         );
       if (!isOpen) {
         setIsOpen(true);
@@ -85,7 +85,7 @@ export const AwsSourcesSelect = () => {
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    value: string
+    value: string,
   ) => {
     const source = sources?.find((source) => source?.name === value);
     dispatch(changeAwsSourceId(source?.id));
@@ -114,15 +114,15 @@ export const AwsSourcesSelect = () => {
       selectOptionsElement.push(
         <SelectOption key={index} value={key}>
           {key}
-        </SelectOption>
-      )
+        </SelectOption>,
+      ),
     );
 
     if (isFetching) {
       selectOptionsElement.push(
         <SelectOption key="fetching" value="loader">
           <Spinner size="lg" />
-        </SelectOption>
+        </SelectOption>,
       );
     }
 
@@ -130,7 +130,7 @@ export const AwsSourcesSelect = () => {
       selectOptionsElement.push(
         <SelectOption key="no_results" value="no_results" isDisabled>
           No results found
-        </SelectOption>
+        </SelectOption>,
       );
     }
 

@@ -10,13 +10,13 @@ export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
 
 export const isAzureTenantGUIDValid = (azureTenantGUID: string) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    azureTenantGUID
+    azureTenantGUID,
   );
 };
 
 export const isAzureSubscriptionIdValid = (azureSubscriptionId: string) => {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    azureSubscriptionId
+    azureSubscriptionId,
   );
 };
 
@@ -57,7 +57,7 @@ export const isUserNameValid = (userName: string) => {
   const isLengthValid = userName.length <= 32;
   const isNotNumericOnly = !/^\d+$/.test(userName);
   const isPatternValid = /^[a-zA-Z0-9][a-zA-Z0-9_.-]*[a-zA-Z0-9_$]$/.test(
-    userName
+    userName,
   );
 
   return isLengthValid && isNotNumericOnly && isPatternValid;
@@ -78,7 +78,7 @@ export const isSshKeyValid = (sshKey: string) => {
   // 3. Optional comment at the end.
   const isPatternValid =
     /^(ssh-(rsa|dss|ed25519)|ecdsa-sha2-nistp(256|384|521))\s+[A-Za-z0-9+/=]+(\s+\S+)?$/.test(
-      sshKey
+      sshKey,
     );
   return isPatternValid;
 };
@@ -108,7 +108,7 @@ export const isHostnameValid = (hostname: string) => {
   return (
     hostname.length < 65 &&
     /^(([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9-]*[a-z0-9])$/.test(
-      hostname
+      hostname,
     )
   );
 };

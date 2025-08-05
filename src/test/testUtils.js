@@ -41,7 +41,7 @@ const cockpitRoutes = [
 export const renderCustomRoutesWithReduxRouter = async (
   route = '/',
   preloadedState = {},
-  routes = process.env.IS_ON_PREMISE ? cockpitRoutes : defaultRoutes
+  routes = process.env.IS_ON_PREMISE ? cockpitRoutes : defaultRoutes,
 ) => {
   const mw = process.env.IS_ON_PREMISE ? onPremMiddleware : middleware;
   const red = process.env.IS_ON_PREMISE ? onPremReducer : reducer;
@@ -58,7 +58,7 @@ export const renderCustomRoutesWithReduxRouter = async (
   render(
     <Provider store={store}>
       <RouterProvider router={router} />
-    </Provider>
+    </Provider>,
   );
 
   return { router, store };

@@ -117,7 +117,7 @@ const ProvisioningLink = ({
       scope: 'provisioning',
       module: './ProvisioningWizard',
     },
-    {}
+    {},
   );
 
   const { permissions, isLoading: isLoadingPermission } =
@@ -126,7 +126,7 @@ const ProvisioningLink = ({
   // Recomputing this value on every render made the modal crash. Using a state
   // helps avoiding this situation as the value is only set the first time.
   const [appendTo] = useState(
-    document.querySelector(MODAL_ANCHOR) as HTMLElement
+    document.querySelector(MODAL_ANCHOR) as HTMLElement,
   );
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
@@ -137,10 +137,10 @@ const ProvisioningLink = ({
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data.find(
-          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
+          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId,
         )?.version,
       }),
-    }
+    },
   );
 
   if (
@@ -270,7 +270,7 @@ export const OciInstance = ({ compose, isExpired }: OciInstancePropTypes) => {
 
   if (options && !isOciUploadStatus(options)) {
     throw TypeError(
-      `Error: options must be of type OciUploadStatus, not ${typeof options}.`
+      `Error: options must be of type OciUploadStatus, not ${typeof options}.`,
     );
   }
 
@@ -404,7 +404,7 @@ export const AwsS3Instance = ({
 
   if (options && !isAwss3UploadStatus(options)) {
     throw TypeError(
-      `Error: options must be of type Awss3UploadStatus, not ${typeof options}.`
+      `Error: options must be of type Awss3UploadStatus, not ${typeof options}.`,
     );
   }
 

@@ -18,7 +18,7 @@ type NewAlertPropTypes = {
 
 export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
   const isAlertDismissed = window.localStorage.getItem(
-    'imageBuilder.newFeatureNewCustomizationsAlertDismissed'
+    'imageBuilder.newFeatureNewCustomizationsAlertDismissed',
   );
   const [displayAlert, setDisplayAlert] = useState(!isAlertDismissed);
 
@@ -26,7 +26,7 @@ export const NewAlert = ({ setShowAlert }: NewAlertPropTypes) => {
     setDisplayAlert(false);
     window.localStorage.setItem(
       'imageBuilder.newFeatureNewCustomizationsAlertDismissed',
-      'true'
+      'true',
     );
   };
 

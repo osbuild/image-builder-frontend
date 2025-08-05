@@ -37,7 +37,7 @@ const parseLanguageOption = (language: string) => {
       type: 'language',
     }).of(languageCode);
     const countryName = new Intl.DisplayNames(['en'], { type: 'region' }).of(
-      countryCode
+      countryCode,
     );
 
     return `${languageName} - ${countryName} (${language})`;
@@ -72,7 +72,7 @@ const LanguagesDropDown = () => {
 
     if (filterValue) {
       filteredLanguages = filteredLanguages.filter(([, parsed]) =>
-        String(parsed).toLowerCase().includes(filterValue.toLowerCase())
+        String(parsed).toLowerCase().includes(filterValue.toLowerCase()),
       );
       if (!isOpen) {
         setIsOpen(true);
@@ -81,7 +81,7 @@ const LanguagesDropDown = () => {
     setSelectOptions(
       filteredLanguages
         .sort((a, b) => sortfn(a[1], b[1], filterValue))
-        .map(([raw]) => raw)
+        .map(([raw]) => raw),
     );
 
     // This useEffect hook should run *only* on when the filter value changes.
@@ -194,7 +194,7 @@ const LanguagesDropDown = () => {
           <HelperTextItem
             variant={'error'}
           >{`Unknown languages: ${unknownLanguages.join(
-            ', '
+            ', ',
           )}`}</HelperTextItem>
         </HelperText>
       )}

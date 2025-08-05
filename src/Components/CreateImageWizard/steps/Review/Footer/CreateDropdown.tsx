@@ -73,7 +73,7 @@ export const CreateSaveAndBuildBtn = ({
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
-        isBeta
+        isBeta,
       );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,
@@ -84,7 +84,7 @@ export const CreateSaveAndBuildBtn = ({
         module: AMPLITUDE_MODULE_NAME,
         trigger: 'blueprint_created',
         image_request_types: requestBody.image_requests.map(
-          (req) => req.image_type
+          (req) => req.image_type,
         ),
       });
     }
@@ -133,7 +133,7 @@ export const CreateSaveButton = ({
   const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState(false);
   const wasModalSeen = window.localStorage.getItem(
-    'imageBuilder.saveAndBuildModalSeen'
+    'imageBuilder.saveAndBuildModalSeen',
   );
 
   const SaveAndBuildImagesModal = () => {
@@ -180,7 +180,7 @@ export const CreateSaveButton = ({
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
-        isBeta
+        isBeta,
       );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Created`, {
         ...analyticsData,

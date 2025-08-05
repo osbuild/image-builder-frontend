@@ -23,13 +23,13 @@ describe('Landing Page', () => {
     server.use(
       http.get(`${IMAGE_BUILDER_API}/composes`, () => {
         return HttpResponse.json(mockComposesEmpty);
-      })
+      }),
     );
 
     renderCustomRoutesWithReduxRouter();
     // check table loads
     await screen.findByText(
-      /Image builder is a tool for creating deployment-ready customized system images/i
+      /Image builder is a tool for creating deployment-ready customized system images/i,
     );
   });
 });

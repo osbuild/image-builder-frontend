@@ -14,7 +14,7 @@ export const useUpdateBPWithNotification = (options?: HookOptions) => {
         success: () => 'Blueprint was updated',
         error: () => 'Blueprint could not be updated',
       },
-    }
+    },
   );
   return {
     trigger: updateBlueprint,

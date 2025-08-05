@@ -51,12 +51,12 @@ const Templates = () => {
       limit: perPage,
       offset: perPage * (page - 1),
     },
-    { refetchOnMountOrArgChange: 60 }
+    { refetchOnMountOrArgChange: 60 },
   );
 
   const handleRowSelect = (
     templateUuid: string | undefined,
-    templateName: string | undefined
+    templateName: string | undefined,
   ): void => {
     if (templateUuid) {
       dispatch(changeTemplate(templateUuid));
@@ -69,7 +69,7 @@ const Templates = () => {
   const handlePerPageSelect = (
     _: React.MouseEvent,
     newPerPage: number,
-    newPage: number
+    newPage: number,
   ) => {
     setPerPage(newPerPage);
     setPage(newPage);
