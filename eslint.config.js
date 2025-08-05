@@ -7,6 +7,7 @@ const pluginImport = require('eslint-plugin-import');
 const fecConfig = require('@redhat-cloud-services/eslint-config-redhat-cloud-services');
 const pluginJsxA11y = require('eslint-plugin-jsx-a11y');
 const disableAutofix = require('eslint-plugin-disable-autofix');
+const pluginPrettier = require('eslint-plugin-prettier');
 const jestDom = require('eslint-plugin-jest-dom');
 const pluginTestingLibrary = require('eslint-plugin-testing-library');
 const pluginPlaywright = require('eslint-plugin-playwright');
@@ -61,6 +62,7 @@ module.exports = defineConfig([
       import: pluginImport,
       jsxA11y: pluginJsxA11y,
       'disable-autofix': disableAutofix,
+      prettier: pluginPrettier,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -118,6 +120,17 @@ module.exports = defineConfig([
         },
       ],
       'jsx-a11y/no-autofocus': 'off',
+      'prettier/prettier': ['error', {
+        semi: true,
+        tabWidth: 2,
+        singleQuote: true,
+        jsxSingleQuote: false,
+        bracketSpacing: true,
+        tsxSingleQuote: true,
+        tsSingleQuote: true,
+        printWidth: 80,
+        trailingComma: 'es5',
+      }],
     },
     settings: {
       react: {
@@ -150,10 +163,10 @@ module.exports = defineConfig([
       ...pluginPlaywright.configs.recommended.rules,
       'playwright/no-conditional-in-test': 'off',
       'playwright/no-conditional-expect': 'off',
-      "playwright/no-skipped-test": [
-        "error",
+      'playwright/no-skipped-test': [
+        'error',
         {
-          "allowConditional": true
+          'allowConditional': true
         }
       ]
     },

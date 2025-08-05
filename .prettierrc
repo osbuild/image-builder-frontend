@@ -1,9 +1,0 @@
-{
-    "semi": true,
-    "tabWidth": 2,
-    "singleQuote": false,
-    "jsxSingleQuote": false,
-    "bracketSpacing": true,
-    "tsxSingleQuote": true,
-    "tsSingleQuote": true
-}
