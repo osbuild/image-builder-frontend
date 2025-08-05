@@ -34,7 +34,7 @@ const SatelliteRegistration = () => {
 
   const handleTextChange = (
     _event: React.ChangeEvent<HTMLTextAreaElement>,
-    value: string
+    value: string,
   ) => {
     dispatch(changeSatelliteCaCertificate(value));
   };

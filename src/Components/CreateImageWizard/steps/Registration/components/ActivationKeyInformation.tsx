@@ -27,7 +27,7 @@ const ActivationKeyInformation = (): JSX.Element => {
     { name: activationKey! },
     {
       skip: !activationKey,
-    }
+    },
   );
 
   return (
@@ -100,7 +100,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                               <Tr key={index}>
                                 <Td>{repo.repositoryLabel}</Td>
                               </Tr>
-                            )
+                            ),
                           )}
                         </Tbody>
                       </Table>

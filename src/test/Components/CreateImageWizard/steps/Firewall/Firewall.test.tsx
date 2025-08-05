@@ -120,12 +120,12 @@ describe('Step Firewall', () => {
     await goToFirewallStep();
     expect(
       screen.queryByText(
-        'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
-      )
+        'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
+      ),
     ).not.toBeInTheDocument();
     await addPort('00:wrongFormat');
     await screen.findByText(
-      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
     );
   });
 
@@ -133,11 +133,11 @@ describe('Step Firewall', () => {
     await renderCreateMode();
     await goToFirewallStep();
     expect(
-      screen.queryByText('Expected format: <service-name>. Example: sshd')
+      screen.queryByText('Expected format: <service-name>. Example: sshd'),
     ).not.toBeInTheDocument();
     await addPort('wrong--service');
     await screen.findByText(
-      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+      'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
     );
   });
 
@@ -246,7 +246,7 @@ describe('Firewall edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = firewallCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

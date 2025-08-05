@@ -65,19 +65,19 @@ test('Create a blueprint with Systemd customization', async ({
     await frame.getByPlaceholder('Add disabled service').fill('&&');
     await frame.getByRole('button', { name: 'Add disabled service' }).click();
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0)
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(0),
     ).toBeVisible();
 
     await frame.getByPlaceholder('Add enabled service').fill('áá');
     await frame.getByRole('button', { name: 'Add enabled service' }).click();
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1)
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(1),
     ).toBeVisible();
 
     await frame.getByPlaceholder('Add masked service').fill('78');
     await frame.getByRole('button', { name: 'Add masked service' }).click();
     await expect(
-      frame.getByText('Expected format: <service-name>. Example: sshd').nth(2)
+      frame.getByText('Expected format: <service-name>. Example: sshd').nth(2),
     ).toBeVisible();
   });
 

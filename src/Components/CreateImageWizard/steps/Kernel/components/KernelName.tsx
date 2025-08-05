@@ -44,7 +44,7 @@ const KernelName = () => {
 
     if (filterValue) {
       filteredKernelPkgs = kernelOptions.filter((kernel: string) =>
-        String(kernel).toLowerCase().includes(filterValue.toLowerCase())
+        String(kernel).toLowerCase().includes(filterValue.toLowerCase()),
       );
       if (!filteredKernelPkgs.some((kernel) => kernel === filterValue)) {
         filteredKernelPkgs = [

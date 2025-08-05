@@ -71,19 +71,19 @@ export const ImportBlueprintModal: React.FunctionComponent<
 
   const handleFileInputChange = (
     _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
-    file: File
+    file: File,
   ) => {
     setFileContent('');
     setFilename(file.name);
   };
 
   async function handleRepositoryImport(
-    blueprintExportedResponse: BlueprintExportResponse
+    blueprintExportedResponse: BlueprintExportResponse,
   ): Promise<CustomRepository[] | undefined> {
     if (isCheckedImportRepos && blueprintExportedResponse.content_sources) {
       const customRepositories: ApiRepositoryRequest[] =
         blueprintExportedResponse.content_sources.map(
-          (item) => item as ApiRepositoryRequest
+          (item) => item as ApiRepositoryRequest,
         );
 
       try {
@@ -98,7 +98,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
               repository as ApiRepositoryImportResponseRead;
             if (contentSourcesRepo.uuid) {
               newCustomRepos.push(
-                ...mapToCustomRepositories(contentSourcesRepo)
+                ...mapToCustomRepositories(contentSourcesRepo),
               );
             }
             if (repository.warnings?.length === 0 && repository.url) {
@@ -139,11 +139,11 @@ export const ImportBlueprintModal: React.FunctionComponent<
           if (isToml) {
             const tomlBlueprint = parse(fileContent);
             const blueprintFromFile = mapOnPremToHosted(
-              tomlBlueprint as BlueprintItem
+              tomlBlueprint as BlueprintItem,
             );
             const importBlueprintState = mapExportRequestToState(
               blueprintFromFile,
-              []
+              [],
             );
             setIsOnPrem(true);
             setImportedBlueprint(importBlueprintState);
@@ -174,7 +174,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 undefined;
               const importBlueprintState = mapExportRequestToState(
                 blueprintExportedResponse,
-                blueprintFromFile.image_requests || []
+                blueprintFromFile.image_requests || [],
               );
 
               setIsOnPrem(false);
@@ -184,7 +184,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 mapOnPremToHosted(blueprintFromFile);
               const importBlueprintState = mapExportRequestToState(
                 blueprintFromFileMapped,
-                []
+                [],
               );
               setIsOnPrem(true);
               setImportedBlueprint(importBlueprintState);

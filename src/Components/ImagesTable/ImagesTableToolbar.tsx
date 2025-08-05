@@ -57,7 +57,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
   const blueprintVersionFilterAPI = useAppSelector(
-    selectBlueprintVersionFilterAPI
+    selectBlueprintVersionFilterAPI,
   );
 
   const searchParams: GetBlueprintComposesApiArg = {
@@ -84,14 +84,14 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       {
         selectFromResult: ({ data }) => {
           const bp = data?.data.find(
-            (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
+            (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId,
           );
           return {
             selectedBlueprintName: bp?.name,
             selectedBlueprintVersion: bp?.version,
           };
         },
-      }
+      },
     );
 
   const latestImageVersion = blueprintsComposes?.data[0]?.blueprint_version;
@@ -125,7 +125,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
 
   const { data: blueprintDetails } = useGetBlueprintQuery(
     { id: selectedBlueprintId! },
-    { skip: !selectedBlueprintId }
+    { skip: !selectedBlueprintId },
   );
 
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();

@@ -101,7 +101,7 @@ export type SshKeyOnPrem = {
 };
 
 export const mapOnPremToHosted = (
-  blueprint: BlueprintOnPrem
+  blueprint: BlueprintOnPrem,
 ): BlueprintExportResponse => {
   const users = blueprint.customizations?.user?.map((u) => ({
     name: u.name,
@@ -132,7 +132,7 @@ export const mapOnPremToHosted = (
         ({ baseurls, ...fs }) => ({
           baseurl: baseurls,
           ...fs,
-        })
+        }),
       ),
       packages:
         packages !== undefined || groups !== undefined
@@ -147,7 +147,7 @@ export const mapOnPremToHosted = (
         ({ minsize, ...fs }) => ({
           min_size: minsize,
           ...fs,
-        })
+        }),
       ),
       fips:
         blueprint.customizations?.fips !== undefined
@@ -189,7 +189,7 @@ export const mapOnPremToHosted = (
 };
 
 export const mapHostedToOnPrem = (
-  blueprint: CreateBlueprintRequest
+  blueprint: CreateBlueprintRequest,
 ): CloudApiBlueprint => {
   const result: CloudApiBlueprint = {
     name: blueprint.name,
@@ -224,7 +224,7 @@ export const mapHostedToOnPrem = (
           mountpoint: fs.mountpoint,
           minsize: fs.min_size,
         };
-      }
+      },
     );
   }
 

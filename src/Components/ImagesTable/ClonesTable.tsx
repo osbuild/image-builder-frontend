@@ -81,7 +81,7 @@ const CloneRow = ({ clone }: CloneRowPropTypes) => {
     {
       id: clone.id,
     },
-    { pollingInterval: pollingInterval }
+    { pollingInterval: pollingInterval },
   );
 
   useEffect(() => {

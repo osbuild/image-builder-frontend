@@ -94,7 +94,7 @@ const ProfileSelector = () => {
       // @ts-ignore if openScapProfile is undefined the query is going to get skipped
       profile: profileID,
     },
-    { skip: !profileID }
+    { skip: !profileID },
   );
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
@@ -118,7 +118,7 @@ const ProfileSelector = () => {
       const promises = profiles.map(async (profileID) => {
         const response = await trigger(
           { distribution: release, profile: profileID },
-          true
+          true,
         ).unwrap();
 
         const oscap = response?.openscap;
@@ -153,7 +153,7 @@ const ProfileSelector = () => {
     }
     const trimmedFilter = filterValue.toLowerCase().trim();
     const filtered = profileDetails.filter(({ name }) =>
-      name?.toLowerCase().includes(trimmedFilter)
+      name?.toLowerCase().includes(trimmedFilter),
     );
 
     setSelectOptions(filtered);
@@ -175,7 +175,7 @@ const ProfileSelector = () => {
         profileID: undefined,
         policyID: undefined,
         policyTitle: undefined,
-      })
+      }),
     );
     clearCompliancePackages(currentProfileData?.packages || []);
     dispatch(changeFileSystemConfigurationType('automatic'));
@@ -203,7 +203,7 @@ const ProfileSelector = () => {
           profileID: undefined,
           policyID: undefined,
           policyTitle: undefined,
-        })
+        }),
       );
     }
   };
@@ -240,7 +240,7 @@ const ProfileSelector = () => {
           distribution: release,
           profile: selection.profileID as DistributionProfileItem,
         },
-        true // preferCacheValue
+        true, // preferCacheValue
       )
         .unwrap()
         .then((response) => {
@@ -250,7 +250,7 @@ const ProfileSelector = () => {
           handlePackages(
             oldOscapPackages,
             newOscapPackages,
-            'Required by chosen OpenSCAP profile'
+            'Required by chosen OpenSCAP profile',
           );
           handleServices(response.services);
           handleKernelAppend(response.kernel?.append);
@@ -259,7 +259,7 @@ const ProfileSelector = () => {
               profileID: selection.profileID,
               policyID: undefined,
               policyTitle: undefined,
-            })
+            }),
           );
         });
     }
@@ -267,7 +267,7 @@ const ProfileSelector = () => {
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string
+    selection: string,
   ) => {
     if (selection) {
       setInputValue(selection);
@@ -356,7 +356,7 @@ const ProfileSelector = () => {
                 >
                   {name}
                 </SelectOption>
-              ))
+              )),
             )}
           {isSuccess && selectOptions.length === 0 && (
             <SelectOption isDisabled>

@@ -129,7 +129,7 @@ module.exports = defineConfig([
         tsxSingleQuote: true,
         tsSingleQuote: true,
         printWidth: 80,
-        trailingComma: 'es5',
+        trailingComma: 'all',
       }],
     },
     settings: {

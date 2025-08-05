@@ -53,18 +53,18 @@ export const AzureSourcesSelect = () => {
     { id: parseInt(azureSource as string) },
     {
       skip: !azureSource,
-    }
+    },
   );
 
   const [selectOptions, setSelectOptions] = useState<(string | undefined)[]>(
-    rawSources?.data?.map((source) => source?.name) || []
+    rawSources?.data?.map((source) => source?.name) || [],
   );
 
   useEffect(() => {
     if (isFetchingDetails || !isSuccessDetails) return;
     dispatch(changeAzureTenantId(sourceDetails?.azure?.tenant_id || ''));
     dispatch(
-      changeAzureSubscriptionId(sourceDetails?.azure?.subscription_id || '')
+      changeAzureSubscriptionId(sourceDetails?.azure?.subscription_id || ''),
     );
   }, [
     isFetchingDetails,
@@ -81,7 +81,7 @@ export const AzureSourcesSelect = () => {
       filteredSources = rawSources?.data
         ?.map((source) => source?.name)
         .filter((source: string) =>
-          String(source).toLowerCase().includes(filterValue.toLowerCase())
+          String(source).toLowerCase().includes(filterValue.toLowerCase()),
         );
       if (!isOpen) {
         setIsOpen(true);
@@ -116,10 +116,10 @@ export const AzureSourcesSelect = () => {
 
   const handleSelect = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    sourceName: string
+    sourceName: string,
   ) => {
     const sourceId = rawSources?.data?.find(
-      (source) => source?.name === sourceName
+      (source) => source?.name === sourceName,
     )?.id;
     dispatch(changeAzureSource(sourceId || ''));
     dispatch(changeAzureResourceGroup(''));

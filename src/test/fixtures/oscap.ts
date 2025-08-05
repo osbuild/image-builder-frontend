@@ -16,7 +16,7 @@ export const distributionOscapProfiles = (): GetOscapProfilesApiResponse => {
 };
 
 export const oscapCustomizations = (
-  profile: string
+  profile: string,
 ): GetOscapCustomizationsApiResponse => {
   if (profile === 'xccdf_org.ssgproject.content_profile_cis_workstation_l1') {
     return {
@@ -117,13 +117,13 @@ export const oscapCustomizations = (
 };
 
 export const oscapCustomizationsPolicy = (
-  policy: string
+  policy: string,
 ): GetOscapCustomizationsApiResponse => {
   const policyData = mockPolicies.data.find((p) => p.id === policy);
   const customizations = oscapCustomizations(policyData!.ref_id);
   // filter out a single package to simulate the customizations being tailored
   customizations.packages = customizations.packages!.filter(
-    (p) => p !== 'aide'
+    (p) => p !== 'aide',
   );
   return customizations;
 };

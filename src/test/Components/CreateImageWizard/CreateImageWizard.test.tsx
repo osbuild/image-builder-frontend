@@ -14,18 +14,18 @@ const selectAllEnvironments = async () => {
   const user = userEvent.setup();
 
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Amazon Web Services/i }))
+    user.click(screen.getByRole('button', { name: /Amazon Web Services/i })),
   );
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Google Cloud Platform/i }))
+    user.click(screen.getByRole('button', { name: /Google Cloud Platform/i })),
   );
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Microsoft Azure/i }))
+    user.click(screen.getByRole('button', { name: /Microsoft Azure/i })),
   );
   await waitFor(() =>
     user.click(
-      screen.getByRole('checkbox', { name: /Virtualization guest image/i })
-    )
+      screen.getByRole('checkbox', { name: /Virtualization guest image/i }),
+    ),
   );
 };
 
@@ -112,8 +112,8 @@ describe('Keyboard accessibility', () => {
     await waitFor(async () =>
       user.type(
         await screen.findByRole('textbox', { name: /google principal/i }),
-        'test@test.com'
-      )
+        'test@test.com',
+      ),
     );
     await clickNext();
 
@@ -131,19 +131,19 @@ describe('Keyboard accessibility', () => {
     await waitFor(() => user.click(azureSource));
 
     const resourceGroupDropdown = await screen.findByPlaceholderText(
-      /select resource group/i
+      /select resource group/i,
     );
     await waitFor(() => user.click(resourceGroupDropdown));
     await waitFor(async () =>
       user.click(
-        await screen.findByLabelText('Resource group myResourceGroup1')
-      )
+        await screen.findByLabelText('Resource group myResourceGroup1'),
+      ),
     );
     await clickNext();
 
     // Registration
     await screen.findByText(
-      'Automatically register and enable advanced capabilities'
+      'Automatically register and enable advanced capabilities',
     );
     //const registrationCheckbox = await screen.findByRole('radio', {
     //  name: /Automatically register and enable advanced capabilities/i,
@@ -171,7 +171,7 @@ describe('Keyboard accessibility', () => {
   test('pressing Enter does not advance the wizard', async () => {
     await renderCreateMode();
     user.click(
-      await screen.findByRole('button', { name: /Amazon Web Services/i })
+      await screen.findByRole('button', { name: /Amazon Web Services/i }),
     );
     user.keyboard('{enter}');
     await screen.findByRole('heading', {
@@ -183,13 +183,13 @@ describe('Keyboard accessibility', () => {
     await renderCreateMode();
 
     await testTile(
-      await screen.findByRole('button', { name: /Amazon Web Services/i })
+      await screen.findByRole('button', { name: /Amazon Web Services/i }),
     );
     await testTile(
-      await screen.findByRole('button', { name: /Google Cloud Platform/i })
+      await screen.findByRole('button', { name: /Google Cloud Platform/i }),
     );
     await testTile(
-      await screen.findByRole('button', { name: /Microsoft Azure/i })
+      await screen.findByRole('button', { name: /Microsoft Azure/i }),
     );
   });
 });

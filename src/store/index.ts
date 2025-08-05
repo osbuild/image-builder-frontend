@@ -63,11 +63,11 @@ startAppListening({
         })(state as serviceState);
 
     const allowedImageTypes = architecturesResponse.data?.find(
-      (elem) => elem.arch === architecture
+      (elem) => elem.arch === architecture,
     )?.image_types;
 
     const filteredImageTypes = imageTypes.filter((imageType: string) =>
-      allowedImageTypes?.includes(imageType)
+      allowedImageTypes?.includes(imageType),
     );
 
     listenerApi.dispatch(changeImageTypes(filteredImageTypes));
@@ -93,11 +93,11 @@ startAppListening({
         })(state as serviceState);
 
     const allowedImageTypes = architecturesResponse?.data?.find(
-      (elem) => elem.arch === architecture
+      (elem) => elem.arch === architecture,
     )?.image_types;
 
     const filteredImageTypes = imageTypes.filter((imageType: string) =>
-      allowedImageTypes?.includes(imageType)
+      allowedImageTypes?.includes(imageType),
     );
 
     listenerApi.dispatch(changeImageTypes(filteredImageTypes));
@@ -116,7 +116,7 @@ export const serviceMiddleware = (getDefaultMiddleware: Function) =>
       imageBuilderApi.middleware,
       rhsmApi.middleware,
       provisioningApi.middleware,
-      complianceApi.middleware
+      complianceApi.middleware,
     );
 
 // Listener middleware must be prepended according to RTK docs:
@@ -132,7 +132,7 @@ export const onPremMiddleware = (getDefaultMiddleware: Function) =>
     provisioningApi.middleware,
     complianceApi.middleware,
     imageBuilderApi.middleware,
-    cockpitApi.middleware
+    cockpitApi.middleware,
   );
 
 export const onPremStore = configureStore({

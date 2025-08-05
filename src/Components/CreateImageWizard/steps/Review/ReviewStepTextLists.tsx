@@ -115,13 +115,13 @@ export const ImageOutputList = () => {
             {toMonthAndYear(
               distribution === RHEL_8
                 ? RHEL_8_FULL_SUPPORT[1]
-                : RHEL_9_FULL_SUPPORT[1]
+                : RHEL_9_FULL_SUPPORT[1],
             )}
             , with optional ELS support through{' '}
             {toMonthAndYear(
               distribution === RHEL_8
                 ? RHEL_8_MAINTENANCE_SUPPORT[1]
-                : RHEL_9_MAINTENANCE_SUPPORT[1]
+                : RHEL_9_MAINTENANCE_SUPPORT[1],
             )}
             . Consider building an image with {RELEASES.get(RHEL_10)} to extend
             the support period.
@@ -149,7 +149,7 @@ export const ImageOutputList = () => {
 };
 export const FSCList = () => {
   const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType
+    selectFileSystemConfigurationType,
   );
   const partitions = useAppSelector(selectPartitions);
 
@@ -235,7 +235,7 @@ export const TargetEnvAWSList = () => {
       selectFromResult: ({ data }) => ({
         source: data?.data?.find((source) => source?.id === sourceId),
       }),
-    }
+    },
   );
 
   return (
@@ -367,7 +367,7 @@ export const TargetEnvAzureList = () => {
             <Content component={ContentVariants.dd}>
               {
                 rawAzureSources?.data?.find(
-                  (source) => source?.id === azureSource
+                  (source) => source?.id === azureSource,
                 )?.name
               }
             </Content>
@@ -445,7 +445,7 @@ export const ContentList = () => {
         ...customRepositories.map(({ id }) => id),
         ...recommendedRepositories.map(({ uuid }) => uuid),
       ] as string[],
-    [customRepositories, recommendedRepositories]
+    [customRepositories, recommendedRepositories],
   );
 
   const [listSnapshotsByDate, { data, isSuccess, isLoading, isError }] =
@@ -470,7 +470,7 @@ export const ContentList = () => {
   ]);
 
   const duplicatePackages = packages.filter(
-    (item, index) => packages.indexOf(item) !== index
+    (item, index) => packages.indexOf(item) !== index,
   );
 
   const noRepositoriesSelected =
@@ -484,7 +484,7 @@ export const ContentList = () => {
       {
         uuid: template,
       },
-      { refetchOnMountOrArgChange: true, skip: template === '' }
+      { refetchOnMountOrArgChange: true, skip: template === '' },
     );
 
   const snapshottingText = useMemo(() => {
@@ -522,7 +522,7 @@ export const ContentList = () => {
                     : template
                       ? 'Use content from the content template'
                       : `Repositories as of ${yyyyMMddFormat(
-                          new Date(snapshotDate)
+                          new Date(snapshotDate),
                         )}`
                 }
                 hasAutoWidth
@@ -657,7 +657,7 @@ export const RegisterNowList = () => {
     { name: activationKey },
     {
       skip: !activationKey,
-    }
+    },
   );
   return (
     <>

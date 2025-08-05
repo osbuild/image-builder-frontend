@@ -180,7 +180,7 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
     setIsOpen(false);
     const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
     dispatch(
-      changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint })
+      changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint }),
     );
   };
 
@@ -241,7 +241,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
           changePartitionMountpoint({
             id: partition.id,
             mountpoint: mountpoint,
-          })
+          }),
         );
       }}
       aria-label="mountpoint suffix"
@@ -292,10 +292,10 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
             changePartitionMinSize({
               id: partition.id,
               min_size: minSize,
-            })
+            }),
           );
           dispatch(
-            changePartitionUnit({ id: partition.id, unit: partition.unit })
+            changePartitionUnit({ id: partition.id, unit: partition.unit }),
           );
         }
       }}
@@ -319,7 +319,7 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
         changePartitionMinSize({
           id: partition.id,
           min_size: initialValue.min_size,
-        })
+        }),
       );
     }
     dispatch(changePartitionUnit({ id: partition.id, unit: selection }));
@@ -364,7 +364,7 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 const FileSystemTable = () => {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [draggingToItemIndex, setDraggingToItemIndex] = useState<number | null>(
-    null
+    null,
   );
   const [isDragging, setIsDragging] = useState(false);
   const [tempItemOrder, setTempItemOrder] = useState<string[]>([]);
@@ -374,7 +374,7 @@ const FileSystemTable = () => {
   const itemOrder = partitions.map((partition) => partition.id);
   const dispatch = useAppDispatch();
   const isValidDrop = (
-    evt: React.DragEvent<HTMLTableSectionElement | HTMLTableRowElement>
+    evt: React.DragEvent<HTMLTableSectionElement | HTMLTableRowElement>,
   ) => {
     const ulRect = bodyRef.current?.getBoundingClientRect();
     if (!ulRect) return false;
@@ -439,13 +439,13 @@ const FileSystemTable = () => {
     }
     const dragId = curListItem.id;
     const newDraggingToItemIndex = Array.from(
-      bodyRef.current.children
+      bodyRef.current.children,
     ).findIndex((item) => item.id === dragId);
     if (newDraggingToItemIndex !== draggingToItemIndex && draggedItemId) {
       const tempItemOrder = moveItem(
         [...itemOrder],
         draggedItemId,
-        newDraggingToItemIndex
+        newDraggingToItemIndex,
       );
       move(tempItemOrder);
       setDraggingToItemIndex(newDraggingToItemIndex);

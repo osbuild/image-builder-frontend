@@ -58,10 +58,10 @@ const goToReview = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId(
-    'target-environments-expandable'
+    'target-environments-expandable',
   );
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-target-environments'
+    'revisit-target-environments',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -90,7 +90,7 @@ const deselectAwsAndSelectGuestImage = async () => {
 const chooseManualOption = async () => {
   const user = userEvent.setup();
   const manualOption = await screen.findByText(
-    /manually enter an account id\./i
+    /manually enter an account id\./i,
   );
   await waitFor(async () => user.click(manualOption));
 };
@@ -170,13 +170,13 @@ describe('Step Upload to AWS', () => {
     server.use(
       http.get(`${PROVISIONING_API}/sources`, () => {
         return new HttpResponse(null, { status: 500 });
-      })
+      }),
     );
     await renderCreateMode();
     await selectAwsTarget();
     await goToAwsStep();
     await screen.findByText(
-      /sources cannot be reached, try again later or enter an aws account id manually\./i
+      /sources cannot be reached, try again later or enter an aws account id manually\./i,
     );
   });
 
@@ -318,7 +318,7 @@ describe('AWS edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = awsCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

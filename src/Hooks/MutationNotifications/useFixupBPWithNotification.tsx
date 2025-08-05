@@ -14,7 +14,7 @@ export const useFixupBPWithNotification = (options?: HookOptions) => {
         success: () => 'Blueprint was fixed',
         error: () => 'Blueprint could not be fixed',
       },
-    }
+    },
   );
 
   return {

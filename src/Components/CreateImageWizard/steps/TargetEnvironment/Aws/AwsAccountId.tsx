@@ -23,7 +23,7 @@ export const AwsAccountId = () => {
     {
       id: parseInt(sourceId as string),
     },
-    { skip: sourceId === undefined || sourceId === '' }
+    { skip: sourceId === undefined || sourceId === '' },
   );
 
   useEffect(() => {

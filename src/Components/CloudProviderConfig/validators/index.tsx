@@ -21,7 +21,7 @@ export const isAwsCredsPathValid = (credsPath?: string): boolean => {
 };
 
 export const isAwsStepValid = (
-  config: AWSWorkerConfig | undefined
+  config: AWSWorkerConfig | undefined,
 ): boolean => {
   if (!config) {
     return true;

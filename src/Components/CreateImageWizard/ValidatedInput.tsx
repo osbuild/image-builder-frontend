@@ -31,7 +31,7 @@ type ValidationInputProp = TextInputProps &
     ariaLabel: string;
     onChange: (
       event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-      value: string
+      value: string,
     ) => void;
     isRequired?: boolean;
     warning?: string;
@@ -111,7 +111,7 @@ export const ValidatedInputAndTextArea = ({
 const getValidationState = (
   isPristine: boolean,
   errorMessage: string,
-  isRequired: boolean | undefined
+  isRequired: boolean | undefined,
 ): ValidationResult => {
   const validated = isPristine
     ? 'default'

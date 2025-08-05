@@ -8,19 +8,19 @@ const useProvisioningPermissions = () => {
     APP,
     [...GLOBAL_PERMISSIONS, 'provisioning:reservation.aws:write'],
     false,
-    true
+    true,
   );
   const { hasAccess: hasAzureAccess, isLoading: azureLoading } = usePermissions(
     APP,
     [...GLOBAL_PERMISSIONS, 'provisioning:reservation.azure:write'],
     false,
-    true
+    true,
   );
   const { hasAccess: hasGCPAccess, isLoading: gcpLoading } = usePermissions(
     APP,
     [...GLOBAL_PERMISSIONS, 'provisioning:reservation.gcp:write'],
     false,
-    true
+    true,
   );
   const isLoading = awsLoading || azureLoading || gcpLoading;
   return {

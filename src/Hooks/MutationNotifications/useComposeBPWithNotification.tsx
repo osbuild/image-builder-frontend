@@ -10,7 +10,7 @@ export const useComposeBPWithNotification = () => {
         success: () => 'Image is being built',
         error: () => 'Image could not be built',
       },
-    }
+    },
   );
 
   return {

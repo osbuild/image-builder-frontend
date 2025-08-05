@@ -14,7 +14,7 @@ export const useDeleteBPWithNotification = (options?: HookOptions) => {
         success: () => 'Blueprint was deleted',
         error: () => 'Blueprint could not be deleted',
       },
-    }
+    },
   );
 
   return {

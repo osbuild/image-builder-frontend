@@ -46,7 +46,7 @@ export const useCheckRepositoriesAvailability = () => {
     },
     {
       skip: skip,
-    }
+    },
   );
 
   const { data: freshRepos, isSuccess } = useMemo(() => {
@@ -64,7 +64,7 @@ export const useCheckRepositoriesAvailability = () => {
     // Transform the fresh repos array into a Set to access its elements in O(1)
     // complexity later in the for loop.
     const freshReposUrls = new Set(
-      freshRepos?.data?.map((freshRepo) => freshRepo.url)
+      freshRepos?.data?.map((freshRepo) => freshRepo.url),
     );
     for (const customRepo of customRepositories) {
       if (customRepo.baseurl && !freshReposUrls.has(customRepo.baseurl[0])) {

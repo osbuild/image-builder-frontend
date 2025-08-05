@@ -134,7 +134,7 @@ describe('Step Timezone', () => {
     await searchForUnknownTimezone();
     await screen.findByText(/no results found/i);
     expect(
-      await screen.findByRole('option', { name: /no results found/i })
+      await screen.findByRole('option', { name: /no results found/i }),
     ).toBeDisabled();
   });
 
@@ -142,14 +142,14 @@ describe('Step Timezone', () => {
     await renderCreateMode();
     await goToTimezoneStep();
     expect(
-      screen.queryByText('NTP server already exists.')
+      screen.queryByText('NTP server already exists.'),
     ).not.toBeInTheDocument();
     await addNtpServerViaKeyDown('0.nl.pool.ntp.org');
     await addNtpServerViaKeyDown('0.nl.pool.ntp.org');
     await screen.findByText('NTP server already exists.');
     await clearInput();
     expect(
-      screen.queryByText('NTP server already exists.')
+      screen.queryByText('NTP server already exists.'),
     ).not.toBeInTheDocument();
     await addNtpServerViaAddButton('0.nl.pool.ntp.org');
     await screen.findByText('NTP server already exists.');
@@ -160,12 +160,12 @@ describe('Step Timezone', () => {
     await goToTimezoneStep();
     expect(
       screen.queryByText(
-        'Expected format: <ntp-server>. Example: time.redhat.com'
-      )
+        'Expected format: <ntp-server>. Example: time.redhat.com',
+      ),
     ).not.toBeInTheDocument();
     await addNtpServerViaKeyDown('this is not NTP server');
     await screen.findByText(
-      'Expected format: <ntp-server>. Example: time.redhat.com'
+      'Expected format: <ntp-server>. Example: time.redhat.com',
     );
   });
 
@@ -262,7 +262,7 @@ describe('Timezone edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = timezoneCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

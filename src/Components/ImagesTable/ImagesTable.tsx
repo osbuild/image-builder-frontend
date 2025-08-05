@@ -98,7 +98,7 @@ const ImagesTable = () => {
     useAppSelector(selectBlueprintSearchInput) || SEARCH_INPUT;
   const blueprintVersionFilter = useAppSelector(selectBlueprintVersionFilter);
   const blueprintVersionFilterAPI = useAppSelector(
-    selectBlueprintVersionFilterAPI
+    selectBlueprintVersionFilterAPI,
   );
   const blueprintsOffset = useAppSelector(selectOffset) || PAGINATION_OFFSET;
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
@@ -129,10 +129,10 @@ const ImagesTable = () => {
     {
       selectFromResult: ({ data }) => ({
         selectedBlueprintVersion: data?.data.find(
-          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId
+          (blueprint: BlueprintItem) => blueprint.id === selectedBlueprintId,
         )?.version,
       }),
-    }
+    },
   );
   const onSetPage: OnSetPage = (_, page) => setPage(page);
 
@@ -177,7 +177,7 @@ const ImagesTable = () => {
         'edge-installer',
       ],
     },
-    { skip: !!selectedBlueprintId }
+    { skip: !!selectedBlueprintId },
   );
 
   const data = selectedBlueprintId ? blueprintsComposes : composesData;
@@ -310,14 +310,14 @@ type ImagesTableRowPropTypes = {
 
 const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
   const [pollingInterval, setPollingInterval] = useState(
-    STATUS_POLLING_INTERVAL
+    STATUS_POLLING_INTERVAL,
   );
 
   const { data: composeStatus } = useGetComposeStatusQuery(
     {
       composeId: compose.id,
     },
-    { pollingInterval: pollingInterval }
+    { pollingInterval: pollingInterval },
   );
 
   useEffect(() => {
@@ -404,7 +404,7 @@ type OciRowPropTypes = {
 
 const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
   const daysToExpiration = Math.floor(
-    computeHoursToExpiration(compose.created_at) / 24
+    computeHoursToExpiration(compose.created_at) / 24,
   );
   const isExpired = daysToExpiration >= OCI_STORAGE_EXPIRATION_TIME_IN_DAYS;
 
@@ -492,7 +492,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
         composeStatus,
         navigate,
         analytics,
-        userData?.identity.internal?.account_id
+        userData?.identity.internal?.account_id,
       )}
     />
   );
@@ -633,7 +633,7 @@ const Row = ({
               items={defaultActions(
                 compose,
                 analytics,
-                userData?.identity.internal?.account_id
+                userData?.identity.internal?.account_id,
               )}
             />
           )}
@@ -651,7 +651,7 @@ const Row = ({
 const defaultActions = (
   compose: ComposesResponseItem,
   analytics: Analytics,
-  account_id: string | undefined
+  account_id: string | undefined,
 ) => {
   const name = `request-${compose.id}.json`;
 
@@ -661,7 +661,7 @@ const defaultActions = (
         <a
           className="ib-subdued-link"
           href={`data:text/plain;charset=utf-8,${encodeURIComponent(
-            JSON.stringify(compose.request, null, '  ')
+            JSON.stringify(compose.request, null, '  '),
           )}`}
           download={name}
           onClick={() => {
@@ -685,7 +685,7 @@ const awsActions = (
   status: ComposeStatus | undefined,
   navigate: NavigateFunction,
   analytics: Analytics,
-  account_id: string | undefined
+  account_id: string | undefined,
 ) => {
   return [
     {

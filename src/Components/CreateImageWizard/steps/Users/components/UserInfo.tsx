@@ -84,7 +84,7 @@ const UserInfo = () => {
       const nextTabIndex = calculateNewIndex(
         tabIndex,
         activeTabKey,
-        users.length
+        users.length,
       );
       setActiveTabKey(nextTabIndex);
       setIndex(nextTabIndex);
@@ -97,31 +97,31 @@ const UserInfo = () => {
 
   const handleNameChange = (
     _e: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string
+    value: string,
   ) => {
     dispatch(setUserNameByIndex({ index: index, name: value }));
   };
 
   const handlePasswordChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     dispatch(setUserPasswordByIndex({ index: index, password: value }));
   };
 
   const handleSshKeyChange = (
     _event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>,
-    value: string
+    value: string,
   ) => {
     dispatch(setUserSshKeyByIndex({ index: index, sshKey: value }));
   };
 
   const handleCheckboxChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: boolean
+    value: boolean,
   ) => {
     dispatch(
-      setUserAdministratorByIndex({ index: index, isAdministrator: value })
+      setUserAdministratorByIndex({ index: index, isAdministrator: value }),
     );
   };
 
@@ -164,7 +164,7 @@ const UserInfo = () => {
                 {Object.entries(getValidationByIndex(index).errors).some(
                   ([field, error]) =>
                     Boolean(error) &&
-                    !(field === 'userName' && error === 'Required value')
+                    !(field === 'userName' && error === 'Required value'),
                 ) && (
                   <Icon status="danger">
                     <ExclamationCircleIcon title="Validation error" />

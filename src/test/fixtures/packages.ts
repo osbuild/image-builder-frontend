@@ -7,7 +7,7 @@ import { RecommendPackageApiResponse } from '../../store/imageBuilderApi';
 
 export const mockSourcesPackagesResults = (
   search: string,
-  urls: string[]
+  urls: string[],
 ): ApiSearchRpmResponse[] => {
   const isDistroPkgSearch =
     urls.filter((u) => u.includes('cdn.redhat.com')).length > 0;
@@ -96,7 +96,7 @@ export const mockSourcesPackagesResults = (
 
 export const mockSourcesGroupsResults = (
   search: string,
-  urls: string[]
+  urls: string[],
 ): ApiSearchPackageGroupResponse[] => {
   const isDistroPkgSearch =
     urls.filter((u) => u.includes('cdn.redhat.com')).length > 0;

@@ -137,7 +137,7 @@ const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('image-output-expandable');
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-image-output'
+    'revisit-image-output',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -259,8 +259,8 @@ describe('Step Image output', () => {
       expect(
         screen.queryByRole('region', {
           name: /hide information about release lifecycle/i,
-        })
-      ).not.toBeInTheDocument()
+        }),
+      ).not.toBeInTheDocument(),
     );
   });
 
@@ -268,7 +268,7 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectCentos9();
     await screen.findByText(
-      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.'
+      'CentOS Stream builds are intended for the development of future versions of RHEL and are not supported for production workloads or other use cases.',
     );
   });
 
@@ -318,7 +318,7 @@ describe('Step Image output', () => {
     server.use(
       http.get(`${IMAGE_BUILDER_API}/architectures/${RHEL_10}`, () => {
         return new HttpResponse(null, { status: 404 });
-      })
+      }),
     );
 
     await renderCreateMode();
@@ -404,11 +404,11 @@ describe('Check that the target filtering is in accordance to mock content', () 
       name: /Bare metal installer/i,
     });
     await screen.findByText(
-      /VMware vSphere - Open virtualization format \(\.ova\)/
+      /VMware vSphere - Open virtualization format \(\.ova\)/,
     );
     await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i),
     ).not.toBeInTheDocument();
   });
 
@@ -449,7 +449,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
       name: /Bare metal installer/i,
     });
     await screen.findByText(
-      /VMware vSphere - Open virtualization format \(\.ova\)/
+      /VMware vSphere - Open virtualization format \(\.ova\)/,
     );
     await screen.findByText(/VMware vSphere - Virtual disk \(\.vmdk\)/);
     await screen.findByText(/wsl - windows subsystem for linux \(\.wsl\)/i);
@@ -481,14 +481,14 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: /Google Cloud Platform/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('button', { name: /Google Cloud Platform/i }),
+      ).not.toBeInTheDocument(),
     );
     expect(
-      screen.queryByRole('button', { name: /Microsoft Azure/i })
+      screen.queryByRole('button', { name: /Microsoft Azure/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i })
+      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i }),
     ).not.toBeInTheDocument();
     await screen.findByRole('checkbox', {
       name: /Virtualization guest image/i,
@@ -498,14 +498,14 @@ describe('Check that the target filtering is in accordance to mock content', () 
     });
     expect(
       screen.queryByText(
-        /VMware vSphere - Open virtualization format \(\.ova\)/
-      )
+        /VMware vSphere - Open virtualization format \(\.ova\)/,
+      ),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i),
     ).not.toBeInTheDocument();
   });
 
@@ -536,14 +536,14 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: /Google Cloud Platform/i })
-      ).not.toBeInTheDocument()
+        screen.queryByRole('button', { name: /Google Cloud Platform/i }),
+      ).not.toBeInTheDocument(),
     );
     expect(
-      screen.queryByRole('button', { name: /Microsoft Azure/i })
+      screen.queryByRole('button', { name: /Microsoft Azure/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i })
+      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i }),
     ).not.toBeInTheDocument();
     await screen.findByRole('checkbox', {
       name: /Virtualization guest image/i,
@@ -553,14 +553,14 @@ describe('Check that the target filtering is in accordance to mock content', () 
     });
     expect(
       screen.queryByText(
-        /VMware vSphere - Open virtualization format \(\.ova\)/
-      )
+        /VMware vSphere - Open virtualization format \(\.ova\)/,
+      ),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i),
     ).not.toBeInTheDocument();
   });
 
@@ -590,13 +590,13 @@ describe('Check that the target filtering is in accordance to mock content', () 
     // make sure the UX conforms to the mocks
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     expect(
-      screen.queryByRole('button', { name: /Google Cloud Platform/i })
+      screen.queryByRole('button', { name: /Google Cloud Platform/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /Microsoft Azure/i })
+      screen.queryByRole('button', { name: /Microsoft Azure/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i })
+      screen.queryByRole('button', { name: /Oracle Cloud Infrastructure/i }),
     ).not.toBeInTheDocument();
     await screen.findByRole('checkbox', {
       name: /Virtualization guest image/i,
@@ -606,14 +606,14 @@ describe('Check that the target filtering is in accordance to mock content', () 
     });
     expect(
       screen.queryByText(
-        /VMware vSphere - Open virtualization format \(\.ova\)/
-      )
+        /VMware vSphere - Open virtualization format \(\.ova\)/,
+      ),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/)
+      screen.queryByText(/VMware vSphere - Virtual disk \(\.vmdk\)/),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i)
+      screen.queryByText(/wsl - windows subsystem for linux \(\.wsl\)/i),
     ).not.toBeInTheDocument();
   });
 });
@@ -729,13 +729,13 @@ describe('Set target using query parameter', () => {
     expect(
       await screen.findByRole('checkbox', {
         name: /Bare metal installer/i,
-      })
+      }),
     ).toBeChecked();
     await handleRegistration();
     await goToDetailsStep();
     await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
-      'target-environments-expandable'
+      'target-environments-expandable',
     );
     user.click(targetExpandable);
     await screen.findByText('Bare metal - Installer (.iso)');
@@ -746,13 +746,13 @@ describe('Set target using query parameter', () => {
     expect(
       await screen.findByRole('checkbox', {
         name: /Virtualization guest image/i,
-      })
+      }),
     ).toBeChecked();
     await handleRegistration();
     await goToDetailsStep();
     await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
-      'target-environments-expandable'
+      'target-environments-expandable',
     );
     user.click(targetExpandable);
     await screen.findByText('Virtualization - Guest image (.qcow2)');
@@ -874,7 +874,7 @@ describe('Image output edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = rhel9CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -886,7 +886,7 @@ describe('Image output edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = rhel8CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -898,7 +898,7 @@ describe('Image output edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = centos9CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -910,7 +910,7 @@ describe('Image output edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = x86_64CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
@@ -922,7 +922,7 @@ describe('Image output edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = aarch64CreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

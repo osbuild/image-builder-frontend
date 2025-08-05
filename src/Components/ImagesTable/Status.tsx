@@ -485,7 +485,7 @@ const ErrorStatus = ({ icon, text, error }: ErrorStatusPropTypes) => {
               variant="link"
               onClick={() =>
                 navigator.clipboard.writeText(
-                  reason + '\n\n' + detailsArray.join('\n')
+                  reason + '\n\n' + detailsArray.join('\n'),
                 )
               }
               className="pf-v6-u-pl-0 pf-v6-u-mt-md"

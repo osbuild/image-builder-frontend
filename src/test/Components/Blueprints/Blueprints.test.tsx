@@ -30,7 +30,7 @@ const selectBlueprintByNameAndId = async (name: string, bpId: string) => {
   await waitFor(() => user.clear(search));
   await waitFor(() => user.type(search, name));
   expect(screen.getByRole('textbox', { name: /search input/i })).toHaveValue(
-    name
+    name,
   );
 
   await screen.findByText('compliance');
@@ -62,7 +62,7 @@ describe('Blueprints', () => {
     server.use(
       http.get(`${IMAGE_BUILDER_API}/blueprints`, () => {
         return HttpResponse.json(emptyGetBlueprints);
-      })
+      }),
     );
 
     const view = renderCustomRoutesWithReduxRouter();
@@ -77,8 +77,8 @@ describe('Blueprints', () => {
     const { router } = await view;
     await waitFor(() =>
       expect(router.state.location.pathname).toBe(
-        '/insights/image-builder/imagewizard'
-      )
+        '/insights/image-builder/imagewizard',
+      ),
     );
   });
   test('renders blueprint composes', async () => {
@@ -163,14 +163,14 @@ describe('Blueprints', () => {
 
     await selectBlueprintById(blueprintIdOutOfSync);
     await screen.findByText(
-      'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.'
+      'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.',
     );
 
     await selectBlueprintById(blueprintIdWithComposes);
     expect(
       screen.queryByText(
-        'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.'
-      )
+        'The selected blueprint is at version 2, the latest images are at version 1. Build images to synchronize with the latest version.',
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -179,14 +179,14 @@ describe('Blueprints', () => {
 
     await selectBlueprintById(blueprintIdCentos8);
     await screen.findByText(
-      /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./
+      /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./,
     );
 
     await selectBlueprintById(blueprintIdWithComposes);
     expect(
       screen.queryByText(
-        /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./
-      )
+        /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./,
+      ),
     ).not.toBeInTheDocument();
   });
 
@@ -204,7 +204,7 @@ describe('Blueprints', () => {
     user.click(button);
     await waitFor(() => {
       expect(
-        screen.queryByText('The selected blueprint has errors.')
+        screen.queryByText('The selected blueprint has errors.'),
       ).not.toBeInTheDocument();
     });
   });
@@ -230,10 +230,10 @@ describe('Blueprints', () => {
       await renderCustomRoutesWithReduxRouter(
         'imagewizard/677b010b-e95e-4694-9813-d11d847f1bfc',
         {},
-        routes
+        routes,
       );
       const blueprintDetails = await screen.findByTestId(
-        'image-details-expandable'
+        'image-details-expandable',
       );
       user.click(blueprintDetails);
       await screen.findByText(editedBlueprintName);
@@ -242,12 +242,12 @@ describe('Blueprints', () => {
       server.use(
         http.get(`${IMAGE_BUILDER_API}/blueprints/invalid-compose-id`, () => {
           return new HttpResponse(null, { status: 404 });
-        })
+        }),
       );
       await renderCustomRoutesWithReduxRouter(
         'imagewizard/invalid-compose-id',
         {},
-        routes
+        routes,
       );
       await screen.findByRole('heading', { name: /Images/i, level: 1 });
     });
@@ -262,7 +262,7 @@ describe('Blueprints', () => {
       renderCustomRoutesWithReduxRouter();
 
       const searchInput = await screen.findByPlaceholderText(
-        'Search by name or description'
+        'Search by name or description',
       );
       searchInput.focus();
       user.keyboard('Milk');
@@ -271,12 +271,12 @@ describe('Blueprints', () => {
       await waitFor(
         () => {
           expect(
-            screen.getByTestId(blueprintIdEmptyComposes)
+            screen.getByTestId(blueprintIdEmptyComposes),
           ).toBeInTheDocument();
         },
         {
           timeout: 1500,
-        }
+        },
       );
     });
   });
@@ -334,7 +334,7 @@ describe('Blueprints', () => {
       });
 
       expect(
-        within(screen.getByTestId('images-table')).getAllByRole('row')
+        within(screen.getByTestId('images-table')).getAllByRole('row'),
       ).toHaveLength(4);
 
       user.click(composesVersionFilter);
@@ -342,8 +342,8 @@ describe('Blueprints', () => {
       user.click(option);
       await waitFor(() =>
         expect(
-          within(screen.getByTestId('images-table')).getAllByRole('row')
-        ).toHaveLength(2)
+          within(screen.getByTestId('images-table')).getAllByRole('row'),
+        ).toHaveLength(2),
       );
     });
   });

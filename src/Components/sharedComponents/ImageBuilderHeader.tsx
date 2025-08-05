@@ -75,7 +75,7 @@ export const ImageBuilderHeader = ({
   const prefetchTargets = useBackendPrefetch('getArchitectures');
 
   const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled'
+    'image-builder.import.enabled',
   );
   const [showImportModal, setShowImportModal] = useState(false);
   return (

@@ -60,36 +60,36 @@ test('Create a blueprint with OpenSCAP customization', async ({
           name: 'Draggable row draggable button /tmp xfs 1 GiB',
         })
         .getByRole('button')
-        .nth(3)
+        .nth(3),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame.getByRole('button', { name: 'Selected (8)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'chrony' })).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'firewalld' })
+      frame.getByRole('gridcell', { name: 'firewalld' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'libpwquality' })
+      frame.getByRole('gridcell', { name: 'libpwquality' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'libselinux' })
+      frame.getByRole('gridcell', { name: 'libselinux' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'nftables' })
+      frame.getByRole('gridcell', { name: 'nftables' }),
     ).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'sudo' })).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'systemd-journal-remote' })
+      frame.getByRole('gridcell', { name: 'systemd-journal-remote' }),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Systemd services' }).click();
     await expect(
-      frame.getByText('Required by OpenSCAPcrondfirewalldsystemd-journald')
+      frame.getByText('Required by OpenSCAPcrondfirewalldsystemd-journald'),
     ).toBeVisible();
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
-      frame.getByText('Masked service already exists')
+      frame.getByText('Masked service already exists'),
     ).toBeVisible();
     await expect(frame.getByText('Required by OpenSCAPcupsnfs-')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();
@@ -123,38 +123,38 @@ test('Create a blueprint with OpenSCAP customization', async ({
     await frame.getByRole('button', { name: 'Kernel' }).click();
 
     await expect(
-      frame.getByText('Required by OpenSCAPaudit_backlog_limit=8192audit=')
+      frame.getByText('Required by OpenSCAPaudit_backlog_limit=8192audit='),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
     await frame.getByRole('button', { name: 'Selected (10)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'audit-libs' })
+      frame.getByRole('gridcell', { name: 'audit-libs' }),
     ).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'chrony' })).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'firewalld' })
+      frame.getByRole('gridcell', { name: 'firewalld' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'libpwquality' })
+      frame.getByRole('gridcell', { name: 'libpwquality' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'libselinux' })
+      frame.getByRole('gridcell', { name: 'libselinux' }),
     ).toBeVisible();
     await expect(
-      frame.getByRole('gridcell', { name: 'nftables' })
+      frame.getByRole('gridcell', { name: 'nftables' }),
     ).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'sudo' })).toBeVisible();
     await frame.getByRole('button', { name: 'Systemd services' }).click();
     await expect(
       frame.getByText(
-        'Required by OpenSCAPauditdcrondfirewalldsystemd-journald'
-      )
+        'Required by OpenSCAPauditdcrondfirewalldsystemd-journald',
+      ),
     ).toBeVisible();
     await frame.getByPlaceholder('Add masked service').fill('nftables');
     await frame.getByPlaceholder('Add masked service').press('Enter');
     await expect(
-      frame.getByText('Masked service already exists')
+      frame.getByText('Masked service already exists'),
     ).toBeVisible();
     await expect(frame.getByText('Required by OpenSCAPcupsnfs-')).toBeVisible();
     await expect(frame.getByText('nfs-server')).toBeVisible();

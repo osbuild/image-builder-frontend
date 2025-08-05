@@ -73,7 +73,7 @@ export const computeHoursToExpiration = (imageCreatedAt: string) => {
     // between current date and the date of the image creation
     const msInHour = 1000 * 60 * 60;
     const timeUntilExpiration = Math.floor(
-      (currentTime - convertStringToDate(imageCreatedAt)) / msInHour
+      (currentTime - convertStringToDate(imageCreatedAt)) / msInHour,
     );
     return timeUntilExpiration;
   } else {

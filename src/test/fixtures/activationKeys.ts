@@ -19,7 +19,7 @@ export const mockActivationKeysResults = (): ListActivationKeysApiResponse => {
 };
 
 export const mockActivationKeyInformation = (
-  key: string
+  key: string,
 ): ShowActivationKeyApiResponse => {
   const mockKeys: { [key: string]: ShowActivationKeyApiResponse } = {
     name0: {

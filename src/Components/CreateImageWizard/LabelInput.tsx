@@ -58,7 +58,7 @@ const LabelInput = ({
 
   const onTextInputChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    value: string
+    value: string,
   ) => {
     setInputValue(value);
     setOnStepInputErrorText('');
@@ -74,27 +74,27 @@ const LabelInput = ({
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
-            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp'
+            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
           );
           break;
         case 'kernelAppend':
           setOnStepInputErrorText(
-            'Expected format: <kernel-argument>. Example: console=tty0'
+            'Expected format: <kernel-argument>. Example: console=tty0',
           );
           break;
         case 'kernelName':
           setOnStepInputErrorText(
-            'Expected format: <kernel-name>. Example: kernel-5.14.0-284.11.1.el9_2.x86_64'
+            'Expected format: <kernel-name>. Example: kernel-5.14.0-284.11.1.el9_2.x86_64',
           );
           break;
         case 'groups':
           setOnStepInputErrorText(
-            'Expected format: <group-name>. Example: admin'
+            'Expected format: <group-name>. Example: admin',
           );
           break;
         case 'ntpServers':
           setOnStepInputErrorText(
-            'Expected format: <ntp-server>. Example: time.redhat.com'
+            'Expected format: <ntp-server>. Example: time.redhat.com',
           );
           break;
         case 'enabledSystemdServices':
@@ -103,7 +103,7 @@ const LabelInput = ({
         case 'disabledServices':
         case 'enabledServices':
           setOnStepInputErrorText(
-            'Expected format: <service-name>. Example: sshd'
+            'Expected format: <service-name>. Example: sshd',
           );
           break;
         default:

@@ -180,13 +180,13 @@ const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-custom-repositories'
+    'revisit-custom-repositories',
   );
   await waitFor(() => user.click(revisitButton));
   await waitFor(() =>
     expect(
-      screen.queryByRole('button', { name: /Create blueprint/ })
-    ).not.toBeInTheDocument()
+      screen.queryByRole('button', { name: /Create blueprint/ }),
+    ).not.toBeInTheDocument(),
   );
 };
 
@@ -246,7 +246,7 @@ describe('Step Packages', () => {
     await renderCreateMode();
     await goToPackagesStep();
     await screen.findByText(
-      'Search above to add additionalpackages to your image.'
+      'Search above to add additionalpackages to your image.',
     );
   });
 
@@ -731,7 +731,7 @@ describe('Packages edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = packagesCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

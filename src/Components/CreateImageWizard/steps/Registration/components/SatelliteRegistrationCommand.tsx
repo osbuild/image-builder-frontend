@@ -21,7 +21,7 @@ import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 const SatelliteRegistrationCommand = () => {
   const dispatch = useAppDispatch();
   const registrationCommand = useAppSelector(
-    selectSatelliteRegistrationCommand
+    selectSatelliteRegistrationCommand,
   );
   const stepValidation = useRegistrationValidation();
   const registrationDocs =

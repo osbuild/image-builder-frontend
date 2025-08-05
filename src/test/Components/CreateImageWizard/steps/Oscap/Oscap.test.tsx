@@ -58,7 +58,7 @@ const selectProfile = async () => {
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
-    /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i
+    /cis red hat enterprise linux 8 benchmark for level 1 - workstation/i,
   );
   await waitFor(() => user.click(cis1Profile));
 };
@@ -69,7 +69,7 @@ const selectDifferentProfile = async () => {
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis2Profile = await screen.findByText(
-    /cis red hat enterprise linux 8 benchmark for level 2 - workstation/i
+    /cis red hat enterprise linux 8 benchmark for level 2 - workstation/i,
   );
   await waitFor(() => user.click(cis2Profile));
 };
@@ -128,7 +128,7 @@ describe('Step OpenSCAP', () => {
     expect(
       screen.queryByRole('cell', {
         name: /tmp/i,
-      })
+      }),
     ).not.toBeInTheDocument();
 
     await clickNext(); // skip Snapshots
@@ -140,7 +140,7 @@ describe('Step OpenSCAP', () => {
       name: /Additional packages/i,
     });
     await screen.findByText(
-      /Search above to add additionalpackages to your image/
+      /Search above to add additionalpackages to your image/,
     );
   });
 
@@ -159,7 +159,7 @@ describe('Step OpenSCAP', () => {
     await screen.findByText(/crond/i);
     await screen.findByText(/Disabled services/);
     await screen.findByText(
-      /rpcbind autofs nftables nfs-server emacs-service/i
+      /rpcbind autofs nftables nfs-server emacs-service/i,
     );
 
     // check that the FSC contains a /tmp partition
@@ -187,10 +187,10 @@ describe('Step OpenSCAP', () => {
     await selectWslTarget();
     await goToOscapStep();
     await screen.findByText(
-      /OpenSCAP profiles are not compatible with WSL images/i
+      /OpenSCAP profiles are not compatible with WSL images/i,
     );
     expect(await screen.findByTestId('profileSelect')).toHaveClass(
-      'pf-m-disabled'
+      'pf-m-disabled',
     );
   });
 
@@ -201,7 +201,7 @@ describe('Step OpenSCAP', () => {
     await selectWslTarget();
     await goToOscapStep();
     await screen.findByText(
-      /OpenSCAP profiles are not compatible with WSL images/i
+      /OpenSCAP profiles are not compatible with WSL images/i,
     );
     await waitFor(() => {
       expect(screen.getByPlaceholderText(/none/i)).toBeEnabled();
@@ -319,7 +319,7 @@ describe('OpenSCAP edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = oscapCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

@@ -100,11 +100,11 @@ const Registration = () => {
   const registrationType = useAppSelector(selectRegistrationType);
 
   const [showOptions, setShowOptions] = useState(
-    registrationType === 'register-later'
+    registrationType === 'register-later',
   );
 
   const isSatelliteRegistrationEnabled = useFlag(
-    'image-builder.satellite.enabled'
+    'image-builder.satellite.enabled',
   );
 
   return (

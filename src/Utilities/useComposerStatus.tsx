@@ -11,7 +11,7 @@ export const useGetComposerSocketStatus = () => {
       try {
         const result = await cockpit.spawn(
           ['systemctl', 'is-enabled', 'osbuild-composer.socket'],
-          { superuser: 'try' }
+          { superuser: 'try' },
         );
         setEnabled((result as string).trim() === 'enabled');
       } catch {
@@ -24,7 +24,7 @@ export const useGetComposerSocketStatus = () => {
       try {
         const result = await cockpit.spawn(
           ['systemctl', 'is-active', 'osbuild-composer.socket'],
-          { superuser: 'try' }
+          { superuser: 'try' },
         );
         setStarted((result as string).trim() === 'active');
       } catch {

@@ -14,7 +14,7 @@ export const useCreateBPWithNotification = (options?: HookOptions) => {
         success: () => 'Blueprint was created',
         error: () => 'Blueprint could not be created',
       },
-    }
+    },
   );
 
   return {

@@ -56,7 +56,7 @@ const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-custom-repositories'
+    'revisit-custom-repositories',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -161,7 +161,7 @@ describe('repository snapshot tab - ', () => {
     await selectUseSnapshot();
     await updateDatePickerWithValue('2024-00-00');
     expect(
-      await screen.findByRole('button', { name: /Review and finish/ })
+      await screen.findByRole('button', { name: /Review and finish/ }),
     ).toBeDisabled();
   });
 
@@ -340,7 +340,7 @@ describe('Snapshot edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = snapshotCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

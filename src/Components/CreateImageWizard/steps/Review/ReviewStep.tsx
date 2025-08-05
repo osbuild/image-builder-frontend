@@ -195,7 +195,7 @@ const Review = () => {
         toggleContent={composeExpandable(
           'Image output',
           'revisit-image-output',
-          'step-image-output'
+          'step-image-output',
         )}
         onToggle={(_event, isExpandedImageOutput) =>
           onToggleImageOutput(isExpandedImageOutput)
@@ -210,7 +210,7 @@ const Review = () => {
         toggleContent={composeExpandable(
           'Target environments',
           'revisit-target-environments',
-          'step-image-output'
+          'step-image-output',
         )}
         onToggle={(_event, isExpandedTargetEnvs) =>
           onToggleTargetEnvs(isExpandedTargetEnvs)
@@ -297,7 +297,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Registration',
             'revisit-registration',
-            'step-register'
+            'step-register',
           )}
           onToggle={(_event, isExpandedRegistration) =>
             onToggleRegistration(isExpandedRegistration)
@@ -318,7 +318,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'OpenSCAP',
             'revisit-openscap',
-            'step-oscap'
+            'step-oscap',
           )}
           onToggle={(_event, isExpandedOscapDetail) =>
             onToggleOscapDetails(isExpandedOscapDetail)
@@ -335,7 +335,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Compliance',
             'revisit-compliance',
-            'step-oscap'
+            'step-oscap',
           )}
           onToggle={(_event, isExpandedComplianceDetail) =>
             onToggleComplianceDetails(isExpandedComplianceDetail)
@@ -352,7 +352,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'File system configuration',
             'revisit-file-system',
-            'step-file-system'
+            'step-file-system',
           )}
           onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
           isExpanded={isExpandedFSC}
@@ -366,7 +366,7 @@ const Review = () => {
         toggleContent={composeExpandable(
           'Content',
           'revisit-custom-repositories',
-          'wizard-custom-repositories'
+          'wizard-custom-repositories',
         )}
         onToggle={(_event, isExpandedContent) =>
           onToggleContent(isExpandedContent)
@@ -382,7 +382,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Users',
             'revisit-users',
-            'wizard-users'
+            'wizard-users',
           )}
           onToggle={(_event, isExpandedUsers) => onToggleUsers(isExpandedUsers)}
           isExpanded={isExpandedUsers}
@@ -397,7 +397,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Timezone',
             'revisit-timezone',
-            'wizard-timezone'
+            'wizard-timezone',
           )}
           onToggle={(_event, isExpandedTimezone) =>
             onToggleTimezone(isExpandedTimezone)
@@ -415,7 +415,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Locale',
             'revisit-locale',
-            'wizard-locale'
+            'wizard-locale',
           )}
           onToggle={(_event, isExpandedLocale) =>
             onToggleLocale(isExpandedLocale)
@@ -432,7 +432,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Hostname',
             'revisit-hostname',
-            'wizard-hostname'
+            'wizard-hostname',
           )}
           onToggle={(_event, isExpandedHostname) =>
             onToggleHostname(isExpandedHostname)
@@ -449,7 +449,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Kernel',
             'revisit-kernel',
-            'wizard-kernel'
+            'wizard-kernel',
           )}
           onToggle={(_event, isExpandedKernel) =>
             onToggleKernel(isExpandedKernel)
@@ -468,7 +468,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Firewall',
             'revisit-firewall',
-            'wizard-firewall'
+            'wizard-firewall',
           )}
           onToggle={(_event, isExpandedFirewall) =>
             onToggleFirewall(isExpandedFirewall)
@@ -487,7 +487,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Systemd services',
             'revisit-services',
-            'wizard-services'
+            'wizard-services',
           )}
           onToggle={(_event, isExpandedServices) =>
             onToggleServices(isExpandedServices)
@@ -503,7 +503,7 @@ const Review = () => {
         toggleContent={composeExpandable(
           'First boot',
           'revisit-first-boot',
-          'wizard-first-boot'
+          'wizard-first-boot',
         )}
         onToggle={(_event, isExpandableFirstBoot) =>
           onToggleFirstBoot(isExpandableFirstBoot)
@@ -519,7 +519,7 @@ const Review = () => {
           toggleContent={composeExpandable(
             'Details',
             'revisit-details',
-            'step-details'
+            'step-details',
           )}
           onToggle={(_event, isExpandedImageDetail) =>
             onToggleImageDetail(isExpandedImageDetail)

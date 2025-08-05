@@ -65,7 +65,7 @@ export const EditSaveAndBuildBtn = ({
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
-        isBeta
+        isBeta,
       );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
         ...analyticsData,
@@ -76,7 +76,7 @@ export const EditSaveAndBuildBtn = ({
         module: AMPLITUDE_MODULE_NAME,
         trigger: 'blueprint_updated',
         image_request_types: requestBody.image_requests.map(
-          (req) => req.image_type
+          (req) => req.image_type,
         ),
       });
     }
@@ -131,7 +131,7 @@ export const EditSaveButton = ({
       const analyticsData = createAnalytics(
         requestBody as CreateBlueprintRequest,
         packages,
-        isBeta
+        isBeta,
       );
       analytics.track(`${AMPLITUDE_MODULE_NAME} - Blueprint Updated`, {
         ...analyticsData,

@@ -56,7 +56,7 @@ const OscapContent = () => {
       // @ts-ignore if openScapProfile is undefined the query is going to get skipped
       profile: profileID,
     },
-    { skip: !profileID }
+    { skip: !profileID },
   );
 
   useEffect(() => {
@@ -76,7 +76,7 @@ const OscapContent = () => {
         profileID: undefined,
         policyID: undefined,
         policyTitle: undefined,
-      })
+      }),
     );
     const pkgs = currentProfileData?.packages || [];
     for (const pkg of pkgs) {
@@ -102,7 +102,7 @@ const OscapContent = () => {
     },
     {
       skip: complianceType === 'openscap',
-    }
+    },
   );
 
   return (

@@ -33,7 +33,7 @@ const BlueprintVersionFilter: React.FC<blueprintVersionFilterProps> = ({
 
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: versionFilterType
+    value: versionFilterType,
   ) => {
     dispatch(setBlueprintVersionFilter(value));
     if (onFilterChange) onFilterChange();

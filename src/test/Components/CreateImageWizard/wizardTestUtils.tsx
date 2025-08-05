@@ -80,7 +80,7 @@ export const blueprintRequest: CreateBlueprintRequest = {
 function preparePathname(searchParams: { [key: string]: string } = {}): string {
   let pathName = process.env.IS_ON_PREMISE ? '/imageWizard' : 'imageWizard';
   const params = Object.entries(searchParams).map(
-    ([param, value]) => `${param}=${value}`
+    ([param, value]) => `${param}=${value}`,
   );
   if (params.length > 0) {
     pathName += `?${params.join('&')}`;
@@ -185,7 +185,7 @@ export const openAndDismissSaveAndBuildModal = async () => {
   });
   await waitFor(async () => user.click(createBlueprintBtn));
   const saveAndBuildModal = await screen.findByTestId(
-    'close-button-saveandbuild-modal'
+    'close-button-saveandbuild-modal',
   );
   await waitFor(() => user.click(saveAndBuildModal));
 };
@@ -207,7 +207,7 @@ export const interceptBlueprintRequest = async (requestPathname: string) => {
 };
 
 export const interceptEditBlueprintRequest = async (
-  requestPathname: string
+  requestPathname: string,
 ) => {
   const user = userEvent.setup();
   const receivedRequestPromise = spyOnRequest(requestPathname, 'PUT');

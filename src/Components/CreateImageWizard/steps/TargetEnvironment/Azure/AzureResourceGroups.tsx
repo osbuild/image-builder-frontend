@@ -42,7 +42,7 @@ export const AzureResourceGroups = () => {
     { id: parseInt(azureSource as string) },
     {
       skip: !azureSource,
-    }
+    },
   );
 
   // use a static empty array to avoid an infinite render loop in useEffect functions depending
@@ -54,7 +54,7 @@ export const AzureResourceGroups = () => {
 
     if (filterValue) {
       filteredGroups = resourceGroups.filter((group: string) =>
-        String(group).toLowerCase().includes(filterValue.toLowerCase())
+        String(group).toLowerCase().includes(filterValue.toLowerCase()),
       );
       if (!isOpen) {
         setIsOpen(true);
@@ -86,7 +86,7 @@ export const AzureResourceGroups = () => {
 
   const setResourceGroup = (
     _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string
+    selection: string,
   ) => {
     const resource =
       resourceGroups.find((resource) => resource === selection) || '';

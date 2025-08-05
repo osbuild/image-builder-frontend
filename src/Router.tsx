@@ -8,13 +8,13 @@ import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
-  () => import('./Components/CreateImageWizard/ImportImageWizard')
+  () => import('./Components/CreateImageWizard/ImportImageWizard'),
 );
 const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard'));
 
 export const Router = () => {
   const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled'
+    'image-builder.import.enabled',
   );
   return (
     <Routes>

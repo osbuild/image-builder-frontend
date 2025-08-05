@@ -12,7 +12,7 @@ import {
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType
+    selectFileSystemConfigurationType,
   );
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
 

@@ -4,7 +4,7 @@ import {
 } from '../../store/provisioningApi';
 
 export const mockSourcesByProvider = (
-  provider: string
+  provider: string,
 ): GetSourceListApiResponse => {
   const mockSources: { [key: string]: GetSourceListApiResponse } = {
     aws: {
@@ -38,7 +38,7 @@ export const mockSourcesByProvider = (
 };
 
 export const mockUploadInfo = (
-  sourceId: string
+  sourceId: string,
 ): GetSourceUploadInfoApiResponse => {
   const mockInfo: { [key: string]: GetSourceUploadInfoApiResponse } = {
     '666': {

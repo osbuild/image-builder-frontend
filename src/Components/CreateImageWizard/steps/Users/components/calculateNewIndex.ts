@@ -1,7 +1,7 @@
 function calculateNewIndex(
   tabIndex: number,
   activeTabKey: number,
-  usersLength: number
+  usersLength: number,
 ) {
   const tabIndexNum = tabIndex;
   let nextTabIndex = activeTabKey;

@@ -120,7 +120,7 @@ const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
 };
 
 const parseGcpSharedWith = (
-  sharedWith: GcpUploadRequestOptions['share_with_accounts']
+  sharedWith: GcpUploadRequestOptions['share_with_accounts'],
 ) => {
   if (sharedWith) {
     const splitGCPSharedWith = sharedWith[0].split(':');
@@ -150,7 +150,7 @@ export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
 
   if (!isAwsUploadRequestOptions(options)) {
     throw TypeError(
-      `Error: options must be of type AwsUploadRequestOptions, not ${typeof options}.`
+      `Error: options must be of type AwsUploadRequestOptions, not ${typeof options}.`,
     );
   }
 
@@ -254,7 +254,7 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
 
   if (!isAzureUploadRequestOptions(options)) {
     throw TypeError(
-      `Error: options must be of type AzureUploadRequestOptions, not ${typeof options}.`
+      `Error: options must be of type AzureUploadRequestOptions, not ${typeof options}.`,
     );
   }
 
@@ -265,7 +265,7 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
 
   if (uploadStatus && !isAzureUploadStatus(uploadStatus)) {
     throw TypeError(
-      `Error: uploadStatus must be of type AzureUploadStatus, not ${typeof uploadStatus}.`
+      `Error: uploadStatus must be of type AzureUploadStatus, not ${typeof uploadStatus}.`,
     );
   }
 
@@ -343,7 +343,7 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
 
   if (!isGcpUploadRequestOptions(options)) {
     throw TypeError(
-      `Error: options must be of type GcpUploadRequestOptions, not ${typeof options}.`
+      `Error: options must be of type GcpUploadRequestOptions, not ${typeof options}.`,
     );
   }
 
@@ -351,7 +351,7 @@ export const GcpDetails = ({ compose }: GcpDetailsPropTypes) => {
 
   if (uploadStatus && !isGcpUploadStatus(uploadStatus)) {
     throw TypeError(
-      `Error: uploadStatus must be of type GcpUploadStatus, not ${typeof uploadStatus}.`
+      `Error: uploadStatus must be of type GcpUploadStatus, not ${typeof uploadStatus}.`,
     );
   }
 
@@ -431,7 +431,7 @@ export const OciDetails = ({ compose }: OciDetailsPropTypes) => {
 
   if (options && !isOciUploadStatus(options)) {
     throw TypeError(
-      `Error: uploadStatus must be of type OciUploadStatus, not ${typeof options}.`
+      `Error: uploadStatus must be of type OciUploadStatus, not ${typeof options}.`,
     );
   }
 

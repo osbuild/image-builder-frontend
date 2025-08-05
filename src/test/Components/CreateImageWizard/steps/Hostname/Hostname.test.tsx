@@ -191,7 +191,7 @@ describe('Hostname edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = hostnameCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

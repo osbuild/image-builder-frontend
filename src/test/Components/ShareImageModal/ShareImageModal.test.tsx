@@ -54,7 +54,7 @@ describe('Create Share To Regions Modal', () => {
     await waitFor(() => expect(shareButton).toBeDisabled());
 
     const invalidAlert = await screen.findByText(
-      /select at least one region to share to\./i
+      /select at least one region to share to\./i,
     );
     expect(invalidAlert).toBeInTheDocument();
   });
@@ -63,7 +63,7 @@ describe('Create Share To Regions Modal', () => {
     const { router } = await renderCustomRoutesWithReduxRouter(
       `share/${composeId}`,
       {},
-      routes
+      routes,
     );
 
     const cancelButton = await screen.findByRole('button', { name: /cancel/i });
@@ -71,7 +71,7 @@ describe('Create Share To Regions Modal', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(router.state.location.pathname).toBe('/insights/image-builder')
+      expect(router.state.location.pathname).toBe('/insights/image-builder'),
     );
   });
 
@@ -79,7 +79,7 @@ describe('Create Share To Regions Modal', () => {
     const { router } = await renderCustomRoutesWithReduxRouter(
       `share/${composeId}`,
       {},
-      routes
+      routes,
     );
 
     const closeButton = await screen.findByRole('button', { name: /close/i });
@@ -87,7 +87,7 @@ describe('Create Share To Regions Modal', () => {
 
     // returns back to the landing page
     await waitFor(() =>
-      expect(router.state.location.pathname).toBe('/insights/image-builder')
+      expect(router.state.location.pathname).toBe('/insights/image-builder'),
     );
   });
 

@@ -36,7 +36,7 @@ const filterTemplates = (args: templateArgs): ApiTemplateResponse[] => {
 
   if (args.version) {
     templates = templates.filter(
-      (template) => template.version === args.version
+      (template) => template.version === args.version,
     );
   }
 
@@ -175,7 +175,7 @@ export const testingTemplates: ApiTemplateResponseRead[] = [
 const generateMeta = (
   limit: ApiResponseMetadata['limit'],
   offset: ApiResponseMetadata['offset'],
-  count: ApiResponseMetadata['count']
+  count: ApiResponseMetadata['count'],
 ): ApiResponseMetadata => {
   return {
     limit: limit,
@@ -186,7 +186,7 @@ const generateMeta = (
 
 const generateLinks = (
   limit: ApiResponseMetadata['limit'],
-  offset: ApiResponseMetadata['offset']
+  offset: ApiResponseMetadata['offset'],
 ): ApiLinks => {
   return {
     first: `/api/content-sources/v1/templates/?limit=${limit}&offset=${offset}`,

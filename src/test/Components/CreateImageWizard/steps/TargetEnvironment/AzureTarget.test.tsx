@@ -61,10 +61,10 @@ const goToReview = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId(
-    'target-environments-expandable'
+    'target-environments-expandable',
   );
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-target-environments'
+    'revisit-target-environments',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -104,7 +104,7 @@ const selectSource = async (sourceName: string) => {
 const selectResourceGroup = async () => {
   const user = userEvent.setup();
   const resourceGrpTextbox = await screen.findByPlaceholderText(
-    /select resource group/i
+    /select resource group/i,
   );
   await waitFor(async () => user.click(resourceGrpTextbox));
 
@@ -117,7 +117,7 @@ const selectResourceGroup = async () => {
 const selectManuallyEnterInformation = async () => {
   const user = userEvent.setup();
   const manualOption = await screen.findByText(
-    /manually enter the account information\./i
+    /manually enter the account information\./i,
   );
   await waitFor(async () => user.click(manualOption));
 };
@@ -141,7 +141,7 @@ const enterTenantGuid = async () => {
   const user = userEvent.setup();
   const tenantGuid = await getTenantGuidInput();
   await waitFor(() =>
-    user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2')
+    user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2'),
   );
 };
 
@@ -156,7 +156,7 @@ const enterSubscriptionId = async () => {
   const user = userEvent.setup();
   const subscriptionId = await getSubscriptionIdInput();
   await waitFor(() =>
-    user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711')
+    user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711'),
   );
 };
 
@@ -180,7 +180,7 @@ const getResourceGroupTextInput = async () => {
 
 const getResourceGroupSelect = async () => {
   const resourceGroupInput = await screen.findByPlaceholderText(
-    /select resource group/i
+    /select resource group/i,
   );
   return resourceGroupInput;
 };
@@ -282,14 +282,14 @@ describe('Step Upload to Azure', () => {
     await selectSource('azureSource1');
     await waitFor(async () => {
       expect(await getTenantGuidInput()).toHaveValue(
-        '2fd7c95c-0d63-4e81-b914-3fbd5288daf7'
+        '2fd7c95c-0d63-4e81-b914-3fbd5288daf7',
       );
     });
 
     await selectSource('azureSource2');
     await waitFor(async () => {
       expect(await getTenantGuidInput()).toHaveValue(
-        '73d5694c-7a28-417e-9fca-55840084f508'
+        '73d5694c-7a28-417e-9fca-55840084f508',
       );
     });
 
@@ -297,7 +297,7 @@ describe('Step Upload to Azure', () => {
     const groups = await screen.findByLabelText(/Resource group/);
     expect(groups).toBeInTheDocument();
     expect(
-      await screen.findByLabelText('Resource group theirGroup2')
+      await screen.findByLabelText('Resource group theirGroup2'),
     ).toBeVisible();
   });
 
@@ -305,13 +305,13 @@ describe('Step Upload to Azure', () => {
     server.use(
       http.get(`${PROVISIONING_API}/sources`, () => {
         return new HttpResponse(null, { status: 500 });
-      })
+      }),
     );
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
     await screen.findByText(
-      /Sources cannot be reached, try again later or enter an account info for upload manually\./i
+      /Sources cannot be reached, try again later or enter an account info for upload manually\./i,
     );
   });
 
@@ -460,7 +460,7 @@ describe('Azure edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = azureCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

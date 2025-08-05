@@ -5,7 +5,7 @@ import type { Headers, Method, Params } from './types.js';
 
 export const baseQuery =
   (
-    { baseUrl }: { baseUrl: string } = { baseUrl: '' }
+    { baseUrl }: { baseUrl: string } = { baseUrl: '' },
   ): BaseQueryFn<
     {
       url: string;
@@ -60,7 +60,7 @@ export const baseQuery =
                 body,
               });
             }
-          }
+          },
         );
     });
   };

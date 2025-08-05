@@ -519,7 +519,7 @@ export const wizardSlice = createSlice({
     },
     changeArchitecture: (
       state,
-      action: PayloadAction<ImageRequest['architecture']>
+      action: PayloadAction<ImageRequest['architecture']>,
     ) => {
       state.architecture = action.payload;
     },
@@ -529,13 +529,13 @@ export const wizardSlice = createSlice({
     addImageType: (state, action: PayloadAction<ImageTypes>) => {
       // Remove (if present) before adding to avoid duplicates
       state.imageTypes = state.imageTypes.filter(
-        (imageType) => imageType !== action.payload
+        (imageType) => imageType !== action.payload,
       );
       state.imageTypes.push(action.payload);
     },
     removeImageType: (state, action: PayloadAction<ImageTypes>) => {
       state.imageTypes = state.imageTypes.filter(
-        (imageType) => imageType !== action.payload
+        (imageType) => imageType !== action.payload,
       );
     },
     changeImageTypes: (state, action: PayloadAction<ImageTypes[]>) => {
@@ -564,7 +564,7 @@ export const wizardSlice = createSlice({
     },
     changeAzureShareMethod: (
       state,
-      action: PayloadAction<AzureShareMethod>
+      action: PayloadAction<AzureShareMethod>,
     ) => {
       state.azure.shareMethod = action.payload;
     },
@@ -579,7 +579,7 @@ export const wizardSlice = createSlice({
     },
     changeAzureHyperVGeneration: (
       state,
-      action: PayloadAction<'V1' | 'V2'>
+      action: PayloadAction<'V1' | 'V2'>,
     ) => {
       state.azure.hyperVGeneration = action.payload;
     },
@@ -614,13 +614,13 @@ export const wizardSlice = createSlice({
     },
     changeRegistrationType: (
       state,
-      action: PayloadAction<RegistrationType>
+      action: PayloadAction<RegistrationType>,
     ) => {
       state.registration.registrationType = action.payload;
     },
     changeSatelliteRegistrationCommand: (
       state,
-      action: PayloadAction<string>
+      action: PayloadAction<string>,
     ) => {
       state.registration.satelliteRegistration.command = action.payload;
     },
@@ -629,7 +629,7 @@ export const wizardSlice = createSlice({
     },
     changeActivationKey: (
       state,
-      action: PayloadAction<ActivationKeys['name']>
+      action: PayloadAction<ActivationKeys['name']>,
     ) => {
       state.registration.activationKey = action.payload;
     },
@@ -642,7 +642,7 @@ export const wizardSlice = createSlice({
         policyID: string | undefined;
         profileID: string | undefined;
         policyTitle: string | undefined;
-      }>
+      }>,
     ) => {
       state.compliance.policyID = action.payload.policyID;
       state.compliance.profileID = action.payload.profileID;
@@ -651,13 +651,13 @@ export const wizardSlice = createSlice({
 
     changeFileSystemConfiguration: (
       state,
-      action: PayloadAction<Partition[]>
+      action: PayloadAction<Partition[]>,
     ) => {
       state.fileSystem.partitions = action.payload;
     },
     changeFileSystemConfigurationType: (
       state,
-      action: PayloadAction<FileSystemConfigurationType>
+      action: PayloadAction<FileSystemConfigurationType>,
     ) => {
       const currentMode = state.fileSystem.mode;
 
@@ -700,7 +700,7 @@ export const wizardSlice = createSlice({
     },
     removePartition: (state, action: PayloadAction<Partition['id']>) => {
       const index = state.fileSystem.partitions.findIndex(
-        (partition) => partition.id === action.payload
+        (partition) => partition.id === action.payload,
       );
       if (index !== -1) {
         state.fileSystem.partitions.splice(index, 1);
@@ -708,10 +708,10 @@ export const wizardSlice = createSlice({
     },
     removePartitionByMountpoint: (
       state,
-      action: PayloadAction<Partition['mountpoint']>
+      action: PayloadAction<Partition['mountpoint']>,
     ) => {
       const index = state.fileSystem.partitions.findIndex(
-        (partition) => partition.mountpoint === action.payload
+        (partition) => partition.mountpoint === action.payload,
       );
       if (index !== -1) {
         state.fileSystem.partitions.splice(index, 1);
@@ -719,16 +719,16 @@ export const wizardSlice = createSlice({
     },
     changePartitionOrder: (state, action: PayloadAction<string[]>) => {
       state.fileSystem.partitions = state.fileSystem.partitions.sort(
-        (a, b) => action.payload.indexOf(a.id) - action.payload.indexOf(b.id)
+        (a, b) => action.payload.indexOf(a.id) - action.payload.indexOf(b.id),
       );
     },
     changePartitionMountpoint: (
       state,
-      action: PayloadAction<{ id: string; mountpoint: string }>
+      action: PayloadAction<{ id: string; mountpoint: string }>,
     ) => {
       const { id, mountpoint } = action.payload;
       const partitionIndex = state.fileSystem.partitions.findIndex(
-        (partition) => partition.id === id
+        (partition) => partition.id === id,
       );
       if (partitionIndex !== -1) {
         state.fileSystem.partitions[partitionIndex].mountpoint = mountpoint;
@@ -736,11 +736,11 @@ export const wizardSlice = createSlice({
     },
     changePartitionUnit: (
       state,
-      action: PayloadAction<{ id: string; unit: Units }>
+      action: PayloadAction<{ id: string; unit: Units }>,
     ) => {
       const { id, unit } = action.payload;
       const partitionIndex = state.fileSystem.partitions.findIndex(
-        (partition) => partition.id === id
+        (partition) => partition.id === id,
       );
       if (partitionIndex !== -1) {
         state.fileSystem.partitions[partitionIndex].unit = unit;
@@ -748,11 +748,11 @@ export const wizardSlice = createSlice({
     },
     changePartitionMinSize: (
       state,
-      action: PayloadAction<{ id: string; min_size: string }>
+      action: PayloadAction<{ id: string; min_size: string }>,
     ) => {
       const { id, min_size } = action.payload;
       const partitionIndex = state.fileSystem.partitions.findIndex(
-        (partition) => partition.id === id
+        (partition) => partition.id === id,
       );
       if (partitionIndex !== -1) {
         state.fileSystem.partitions[partitionIndex].min_size = min_size;
@@ -782,7 +782,7 @@ export const wizardSlice = createSlice({
     },
     importCustomRepositories: (
       state,
-      action: PayloadAction<CustomRepository[]>
+      action: PayloadAction<CustomRepository[]>,
     ) => {
       state.repositories.customRepositories = [
         ...state.repositories.customRepositories,
@@ -791,7 +791,7 @@ export const wizardSlice = createSlice({
     },
     changeCustomRepositories: (
       state,
-      action: PayloadAction<CustomRepository[]>
+      action: PayloadAction<CustomRepository[]>,
     ) => {
       state.repositories.customRepositories = action.payload;
     },
@@ -803,11 +803,11 @@ export const wizardSlice = createSlice({
     },
     addRecommendedRepository: (
       state,
-      action: PayloadAction<ApiRepositoryResponseRead>
+      action: PayloadAction<ApiRepositoryResponseRead>,
     ) => {
       if (
         !state.repositories.recommendedRepositories.some(
-          (repo) => repo.url === action.payload.url
+          (repo) => repo.url === action.payload.url,
         )
       ) {
         state.repositories.recommendedRepositories.push(action.payload);
@@ -815,16 +815,16 @@ export const wizardSlice = createSlice({
     },
     removeRecommendedRepository: (
       state,
-      action: PayloadAction<ApiRepositoryResponseRead>
+      action: PayloadAction<ApiRepositoryResponseRead>,
     ) => {
       state.repositories.recommendedRepositories =
         state.repositories.recommendedRepositories.filter(
-          (repo) => repo.url !== action.payload.url
+          (repo) => repo.url !== action.payload.url,
         );
     },
     addPackage: (state, action: PayloadAction<IBPackageWithRepositoryInfo>) => {
       const existingPackageIndex = state.packages.findIndex(
-        (pkg) => pkg.name === action.payload.name
+        (pkg) => pkg.name === action.payload.name,
       );
 
       if (existingPackageIndex !== -1) {
@@ -835,10 +835,10 @@ export const wizardSlice = createSlice({
     },
     removePackage: (
       state,
-      action: PayloadAction<IBPackageWithRepositoryInfo['name']>
+      action: PayloadAction<IBPackageWithRepositoryInfo['name']>,
     ) => {
       const index = state.packages.findIndex(
-        (pkg) => pkg.name === action.payload
+        (pkg) => pkg.name === action.payload,
       );
       if (index !== -1) {
         state.packages.splice(index, 1);
@@ -846,7 +846,7 @@ export const wizardSlice = createSlice({
     },
     addModule: (state, action: PayloadAction<Module>) => {
       const existingModuleIndex = state.enabled_modules.findIndex(
-        (module) => module.name === action.payload.name
+        (module) => module.name === action.payload.name,
       );
 
       if (existingModuleIndex !== -1) {
@@ -857,11 +857,11 @@ export const wizardSlice = createSlice({
     },
     removeModule: (state, action: PayloadAction<Module['name']>) => {
       const index = state.enabled_modules.findIndex(
-        (module) => module.name === action.payload
+        (module) => module.name === action.payload,
       );
       // count other packages from the same module
       const pkgCount = state.packages.filter(
-        (pkg) => pkg.module_name === action.payload
+        (pkg) => pkg.module_name === action.payload,
       );
       // if the module exists and it's not connected to any packages, remove it
       if (index !== -1 && pkgCount.length < 1) {
@@ -870,7 +870,7 @@ export const wizardSlice = createSlice({
     },
     addGroup: (state, action: PayloadAction<GroupWithRepositoryInfo>) => {
       const existingGrpIndex = state.groups.findIndex(
-        (grp) => grp.name === action.payload.name
+        (grp) => grp.name === action.payload.name,
       );
 
       if (existingGrpIndex !== -1) {
@@ -881,10 +881,10 @@ export const wizardSlice = createSlice({
     },
     removeGroup: (
       state,
-      action: PayloadAction<GroupWithRepositoryInfo['name']>
+      action: PayloadAction<GroupWithRepositoryInfo['name']>,
     ) => {
       const index = state.groups.findIndex(
-        (grp) => grp.name === action.payload
+        (grp) => grp.name === action.payload,
       );
       if (index !== -1) {
         state.groups.splice(index, 1);
@@ -901,7 +901,7 @@ export const wizardSlice = createSlice({
     removeLanguage: (state, action: PayloadAction<string>) => {
       if (state.locale.languages) {
         const index = state.locale.languages.findIndex(
-          (lang) => lang === action.payload
+          (lang) => lang === action.payload,
         );
         if (index !== -1) {
           state.locale.languages.splice(index, 1);
@@ -938,7 +938,7 @@ export const wizardSlice = createSlice({
     },
     removeEnabledService: (state, action: PayloadAction<string>) => {
       const index = state.services.enabled.findIndex(
-        (service) => service === action.payload
+        (service) => service === action.payload,
       );
       if (index !== -1) {
         state.services.enabled.splice(index, 1);
@@ -956,7 +956,7 @@ export const wizardSlice = createSlice({
     },
     removeMaskedService: (state, action: PayloadAction<string>) => {
       const index = state.services.masked.findIndex(
-        (service) => service === action.payload
+        (service) => service === action.payload,
       );
       if (index !== -1) {
         state.services.masked.splice(index, 1);
@@ -974,7 +974,7 @@ export const wizardSlice = createSlice({
     },
     removeDisabledService: (state, action: PayloadAction<string>) => {
       const index = state.services.disabled.findIndex(
-        (service) => service === action.payload
+        (service) => service === action.payload,
       );
       if (index !== -1) {
         state.services.disabled.splice(index, 1);
@@ -985,7 +985,7 @@ export const wizardSlice = createSlice({
     },
     addKernelArg: (state, action: PayloadAction<string>) => {
       const existingArgIndex = state.kernel.append.findIndex(
-        (arg) => arg === action.payload
+        (arg) => arg === action.payload,
       );
 
       if (existingArgIndex !== -1) {
@@ -997,7 +997,7 @@ export const wizardSlice = createSlice({
     removeKernelArg: (state, action: PayloadAction<string>) => {
       if (state.kernel.append.length > 0) {
         const index = state.kernel.append.findIndex(
-          (arg) => arg === action.payload
+          (arg) => arg === action.payload,
         );
         if (index !== -1) {
           state.kernel.append.splice(index, 1);
@@ -1010,7 +1010,7 @@ export const wizardSlice = createSlice({
     addEnabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
         !state.firewall.services.enabled.some(
-          (service) => service === action.payload
+          (service) => service === action.payload,
         )
       ) {
         state.firewall.services.enabled.push(action.payload);
@@ -1018,7 +1018,7 @@ export const wizardSlice = createSlice({
     },
     removeEnabledFirewallService: (state, action: PayloadAction<string>) => {
       const index = state.firewall.services.enabled.findIndex(
-        (service) => service === action.payload
+        (service) => service === action.payload,
       );
       if (index !== -1) {
         state.firewall.services.enabled.splice(index, 1);
@@ -1027,7 +1027,7 @@ export const wizardSlice = createSlice({
     addDisabledFirewallService: (state, action: PayloadAction<string>) => {
       if (
         !state.firewall.services.disabled.some(
-          (service) => service === action.payload
+          (service) => service === action.payload,
         )
       ) {
         state.firewall.services.disabled.push(action.payload);
@@ -1035,7 +1035,7 @@ export const wizardSlice = createSlice({
     },
     removeDisabledFirewallService: (state, action: PayloadAction<string>) => {
       const index = state.firewall.services.disabled.findIndex(
-        (service) => service === action.payload
+        (service) => service === action.payload,
       );
       if (index !== -1) {
         state.firewall.services.disabled.splice(index, 1);
@@ -1054,7 +1054,7 @@ export const wizardSlice = createSlice({
     removeNtpServer: (state, action: PayloadAction<string>) => {
       if (state.timezone.ntpservers) {
         const index = state.timezone.ntpservers.findIndex(
-          (server) => server === action.payload
+          (server) => server === action.payload,
         );
         if (index !== -1) {
           state.timezone.ntpservers.splice(index, 1);
@@ -1084,7 +1084,7 @@ export const wizardSlice = createSlice({
     },
     setUserPasswordByIndex: (
       state,
-      action: PayloadAction<UserPasswordPayload>
+      action: PayloadAction<UserPasswordPayload>,
     ) => {
       state.users[action.payload.index].password = action.payload.password;
     },
@@ -1098,7 +1098,7 @@ export const wizardSlice = createSlice({
     },
     removePort: (state, action: PayloadAction<string>) => {
       const index = state.firewall.ports.findIndex(
-        (port) => port === action.payload
+        (port) => port === action.payload,
       );
       if (index !== -1) {
         state.firewall.ports.splice(index, 1);
@@ -1106,7 +1106,7 @@ export const wizardSlice = createSlice({
     },
     setUserAdministratorByIndex: (
       state,
-      action: PayloadAction<UserAdministratorPayload>
+      action: PayloadAction<UserAdministratorPayload>,
     ) => {
       const { index, isAdministrator } = action.payload;
       const user = state.users[index];
@@ -1121,7 +1121,7 @@ export const wizardSlice = createSlice({
     addUserGroupByIndex: (state, action: PayloadAction<UserGroupPayload>) => {
       if (
         !state.users[action.payload.index].groups.some(
-          (group) => group === action.payload.group
+          (group) => group === action.payload.group,
         )
       ) {
         state.users[action.payload.index].groups.push(action.payload.group);
@@ -1129,10 +1129,10 @@ export const wizardSlice = createSlice({
     },
     removeUserGroupByIndex: (
       state,
-      action: PayloadAction<UserGroupPayload>
+      action: PayloadAction<UserGroupPayload>,
     ) => {
       const groupIndex = state.users[action.payload.index].groups.findIndex(
-        (group) => group === action.payload.group
+        (group) => group === action.payload.group,
       );
       if (groupIndex !== -1) {
         if (action.payload.group === 'wheel') {

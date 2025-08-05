@@ -83,7 +83,7 @@ const goToReviewStep = async () => {
 const addDisabledService = async (service: string) => {
   const user = userEvent.setup();
   const disabledServiceInput = await screen.findByPlaceholderText(
-    'Add disabled service'
+    'Add disabled service',
   );
   await waitFor(() => user.type(disabledServiceInput, service.concat(' ')));
 };
@@ -98,7 +98,7 @@ const addMaskedService = async (service: string) => {
 const addEnabledService = async (service: string) => {
   const user = userEvent.setup();
   const enabledServiceInput = await screen.findByPlaceholderText(
-    'Add enabled service'
+    'Add enabled service',
   );
   await waitFor(() => user.type(enabledServiceInput, service.concat(' ')));
 };
@@ -117,7 +117,7 @@ const selectProfile = async () => {
   await waitFor(() => user.click(selectProfileDropdown));
 
   const cis1Profile = await screen.findByText(
-    /CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation/i
+    /CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation/i,
   );
   await waitFor(() => user.click(cis1Profile));
 };
@@ -179,7 +179,7 @@ describe('Step Services', () => {
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addEnabledService('-------');
     expect(
-      await screen.findByText('Expected format: <service-name>. Example: sshd')
+      await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[0]));
 
@@ -187,7 +187,7 @@ describe('Step Services', () => {
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addDisabledService('-------');
     expect(
-      await screen.findByText('Expected format: <service-name>. Example: sshd')
+      await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[1]));
 
@@ -195,7 +195,7 @@ describe('Step Services', () => {
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addMaskedService('-------');
     expect(
-      await screen.findByText('Expected format: <service-name>. Example: sshd')
+      await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[2]));
 
@@ -203,7 +203,7 @@ describe('Step Services', () => {
     expect(screen.queryByText('Invalid format.')).not.toBeInTheDocument();
     await addEnabledService('-------');
     expect(
-      await screen.findByText('Expected format: <service-name>. Example: sshd')
+      await screen.findByText('Expected format: <service-name>. Example: sshd'),
     ).toBeInTheDocument();
     await waitFor(() => user.click(clearInputButtons[0]));
   });
@@ -219,19 +219,19 @@ describe('Step Services', () => {
     await screen.findByText('nfs-server');
     await screen.findByText('emacs-service');
     expect(
-      screen.queryByRole('button', { name: /close nfs-server/i })
+      screen.queryByRole('button', { name: /close nfs-server/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /close emacs-service/i })
+      screen.queryByRole('button', { name: /close emacs-service/i }),
     ).not.toBeInTheDocument();
     // enabled services
     await screen.findByText('crond');
     await screen.findByText('neovim-service');
     expect(
-      screen.queryByRole('button', { name: /close crond/i })
+      screen.queryByRole('button', { name: /close crond/i }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('button', { name: /close neovim-service/i })
+      screen.queryByRole('button', { name: /close neovim-service/i }),
     ).not.toBeInTheDocument();
   });
 
@@ -352,7 +352,7 @@ describe('Services edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = servicesCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

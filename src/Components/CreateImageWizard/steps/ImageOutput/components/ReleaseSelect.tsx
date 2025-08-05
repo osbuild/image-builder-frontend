@@ -100,7 +100,7 @@ const ReleaseSelect = () => {
           return true;
         }
         return isRhel(key);
-      })
+      }),
     );
 
     filteredRhel.forEach((value, key) => {
@@ -111,7 +111,7 @@ const ReleaseSelect = () => {
           description={setDescription(key as Distributions)}
         >
           {releases.get(key)}
-        </SelectOption>
+        </SelectOption>,
       );
     });
 

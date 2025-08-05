@@ -1,7 +1,7 @@
 const sortfn = (
   a: string | undefined,
   b: string | undefined,
-  searchTerm: string
+  searchTerm: string,
 ) => {
   if (!a) {
     return -1;

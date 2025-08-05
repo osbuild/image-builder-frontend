@@ -60,7 +60,7 @@ const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('content-expandable');
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-custom-repositories'
+    'revisit-custom-repositories',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -271,7 +271,7 @@ describe('Repositories request generated correctly', () => {
     const search = await screen.findByLabelText('Filter repositories');
     await waitFor(() => user.type(search, 'nginx stable repo'));
     await waitFor(
-      () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument
+      () => expect(screen.getByText('nginx stable repo')).toBeInTheDocument,
     );
     await selectFirstRepository();
   };
@@ -338,7 +338,7 @@ describe('Repositories request generated correctly', () => {
     await clickBulkSelect();
     await goToReviewStep();
     const receivedRequest = (await interceptBlueprintRequest(
-      CREATE_BLUEPRINT
+      CREATE_BLUEPRINT,
     )) as CreateBlueprintRequest;
     expect(receivedRequest.customizations.custom_repositories).toHaveLength(6);
     expect(receivedRequest.customizations.payload_repositories).toHaveLength(6);
@@ -358,7 +358,7 @@ describe('Repositories edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = repositoriesCreateBlueprintRequest;
     await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));
@@ -375,7 +375,7 @@ describe('Repositories edit mode', () => {
     user.click(customRepositories);
 
     await screen.findByText(
-      /Removing previously added repositories may lead to issues with selected packages/i
+      /Removing previously added repositories may lead to issues with selected packages/i,
     );
 
     await toggleSelected();
@@ -391,7 +391,7 @@ describe('Repositories edit mode', () => {
     user.click(removeAnywayBtn);
 
     await waitFor(() =>
-      expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument()
+      expect(screen.queryByText(/Are you sure?/)).not.toBeInTheDocument(),
     );
 
     await waitFor(() => expect(repoCheckbox).not.toBeChecked());

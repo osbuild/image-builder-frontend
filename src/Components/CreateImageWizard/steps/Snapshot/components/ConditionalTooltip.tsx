@@ -14,7 +14,7 @@ const ConditionalTooltip = ({ show, children, setDisabled, ...rest }: Props) =>
         {children &&
           cloneElement(
             children,
-            setDisabled ? { isDisabled: setDisabled } : undefined
+            setDisabled ? { isDisabled: setDisabled } : undefined,
           )}
       </div>
     </Tooltip>

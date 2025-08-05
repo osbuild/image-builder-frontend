@@ -53,9 +53,9 @@ export function useMutationWithNotification<
   },
 >(
   mutationHook: (
-    options?: HookOptions
+    options?: HookOptions,
   ) => readonly [TypedMutationTrigger<Result, Arg, BaseQueryFn>, State],
-  { options, messages }: MutationOptions<Arg>
+  { options, messages }: MutationOptions<Arg>,
 ) {
   const [trigger, state] = mutationHook(options);
   const addNotification = useAddNotification();

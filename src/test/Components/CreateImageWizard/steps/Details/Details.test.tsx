@@ -36,7 +36,7 @@ export const goToDetailsStep = async () => {
 };
 
 const enterBlueprintDescription = async (
-  description: string = 'Now with extra carmine!'
+  description: string = 'Now with extra carmine!',
 ) => {
   const user = userEvent.setup({ delay: null });
   const blueprintDescription = await screen.findByRole('textbox', {
@@ -193,7 +193,7 @@ describe('Details edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = detailsCreateBlueprintRequest;
     await waitFor(() => expect(receivedRequest).toEqual(expectedRequest));

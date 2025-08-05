@@ -120,10 +120,10 @@ const goToReviewStep = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId(
-    'file-system-configuration-expandable'
+    'file-system-configuration-expandable',
   );
   const revisitButton = await within(expandable).findByTestId(
-    'revisit-file-system'
+    'revisit-file-system',
   );
   await waitFor(() => user.click(revisitButton));
 };
@@ -157,7 +157,7 @@ describe('Step File system configuration', () => {
 
     await clickReviewAndFinish();
     expect(
-      await screen.findByRole('button', { name: /Review and finish/ })
+      await screen.findByRole('button', { name: /Review and finish/ }),
     ).toBeDisabled();
   });
 
@@ -198,7 +198,7 @@ describe('Step File system configuration', () => {
     await selectImageInstaller();
     await goToFileSystemConfigurationStep();
     expect(
-      screen.queryByText(/manually configure partitions/i)
+      screen.queryByText(/manually configure partitions/i),
     ).not.toBeInTheDocument();
   });
 
@@ -396,7 +396,7 @@ describe('File system configuration edit mode', () => {
 
     // starts on review step
     const receivedRequest = await interceptEditBlueprintRequest(
-      `${EDIT_BLUEPRINT}/${id}`
+      `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = fscCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);

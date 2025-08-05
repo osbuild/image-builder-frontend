@@ -51,26 +51,26 @@ test('Create a blueprint with Kernel customization', async ({
     await frame.getByRole('button', { name: 'Add kernel argument' }).click();
     await expect(
       frame.getByText(
-        'Expected format: <kernel-argument>. Example: console=tty0'
-      )
+        'Expected format: <kernel-argument>. Example: console=tty0',
+      ),
     ).toBeVisible();
     await frame.getByPlaceholder('Select kernel package').fill('new-package');
     await frame
       .getByRole('option', { name: 'Custom kernel package "new-' })
       .click();
     await expect(
-      frame.getByRole('heading', { name: 'Warning alert: Custom kernel' })
+      frame.getByRole('heading', { name: 'Warning alert: Custom kernel' }),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Clear input' }).first().click();
     await frame.getByRole('button', { name: 'Menu toggle' }).click();
     await expect(
-      frame.getByRole('option', { name: 'new-package' })
+      frame.getByRole('option', { name: 'new-package' }),
     ).toBeVisible();
     await frame.getByPlaceholder('Select kernel package').fill('f');
     await expect(
       frame.getByRole('option', {
         name: '"f" is not a valid kernel package name',
-      })
+      }),
     ).toBeVisible();
     await frame.getByPlaceholder('Add kernel argument').fill('console=tty0');
     await frame.getByRole('button', { name: 'Add kernel argument' }).click();
@@ -121,7 +121,7 @@ test('Create a blueprint with Kernel customization', async ({
     await fillInImageOutputGuest(frame);
     await frame.getByRole('button', { name: 'Kernel' }).click();
     await expect(frame.getByPlaceholder('Select kernel package')).toHaveValue(
-      'kernel'
+      'kernel',
     );
     await expect(frame.getByText('rootwait')).toBeVisible();
     await expect(frame.getByText('console=tty0')).toBeVisible();

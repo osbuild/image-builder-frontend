@@ -83,7 +83,7 @@ test('Create a blueprint with Hostname customization', async ({
     await fillInImageOutputGuest(page);
     await page.getByRole('button', { name: 'Hostname' }).click();
     await expect(
-      page.getByRole('textbox', { name: 'hostname input' })
+      page.getByRole('textbox', { name: 'hostname input' }),
     ).toHaveValue(hostname + 'edited');
     await page.getByRole('button', { name: 'Cancel' }).click();
   });
