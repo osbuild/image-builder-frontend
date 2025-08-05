@@ -130,7 +130,11 @@ export function useRegistrationValidation(): StepValidation {
       }
     );
 
-  if (registrationType !== 'register-later' && !activationKey) {
+  if (
+    registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
+    !activationKey
+  ) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -139,6 +143,7 @@ export function useRegistrationValidation(): StepValidation {
 
   if (
     registrationType !== 'register-later' &&
+    registrationType !== 'register-satellite' &&
     activationKey &&
     (isFetchingKeyInfo || isErrorKeyInfo)
   ) {
