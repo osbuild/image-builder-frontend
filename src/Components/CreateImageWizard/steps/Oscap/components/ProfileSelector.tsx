@@ -211,7 +211,7 @@ const ProfileSelector = () => {
   const onKeyDown = (event: React.KeyboardEvent) => {
     if (event.key === 'Enter') {
       event.preventDefault();
-      
+
       if (!isOpen) {
         setIsOpen(true);
       } else if (selectOptions.length === 1) {
@@ -220,7 +220,7 @@ const ProfileSelector = () => {
           profileID: singleProfile.id,
           toString: () => singleProfile.name || '',
         };
-        
+
         setInputValue(singleProfile.name || '');
         setFilterValue('');
         applyChanges(selection);

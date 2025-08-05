@@ -85,9 +85,8 @@ const selectPolicy = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('compliance-detail-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-compliance'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-compliance');
   await waitFor(() => user.click(revisitButton));
 };
 

@@ -64,7 +64,7 @@ const AWSRegion = ({ value, onChange }: FormGroupProps<string>) => {
 
   const onSelect = (
     _event: React.MouseEvent<Element, MouseEvent> | undefined,
-    value: string | number | undefined,
+    value: string | number | undefined
   ) => {
     onChange(value as string);
     setIsOpen(false);

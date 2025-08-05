@@ -442,10 +442,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                           !isAzureSubscriptionIdValid(azureSubscriptionId) ||
                           !isAzureResourceGroupValid(azureResourceGroup)
                         : azureShareMethod === 'sources'
-                        ? !isAzureTenantGUIDValid(azureTenantId) ||
-                          !isAzureSubscriptionIdValid(azureSubscriptionId) ||
-                          !isAzureResourceGroupValid(azureResourceGroup)
-                        : azureSource === undefined
+                          ? !isAzureTenantGUIDValid(azureTenantId) ||
+                            !isAzureSubscriptionIdValid(azureSubscriptionId) ||
+                            !isAzureResourceGroupValid(azureResourceGroup)
+                          : azureSource === undefined
                     }
                   />
                 }

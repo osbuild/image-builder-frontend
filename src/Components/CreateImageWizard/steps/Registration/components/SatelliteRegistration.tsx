@@ -26,8 +26,8 @@ const SatelliteRegistration = () => {
   const validated = stepValidation.errors['certificate']
     ? 'error'
     : stepValidation.errors['certificate'] === undefined && caCertificate
-    ? 'success'
-    : 'default';
+      ? 'success'
+      : 'default';
   const handleClear = () => {
     dispatch(changeSatelliteCaCertificate(''));
   };
@@ -79,17 +79,17 @@ const SatelliteRegistration = () => {
                 isRejected || validated === 'error'
                   ? 'error'
                   : validated === 'success'
-                  ? 'success'
-                  : 'default'
+                    ? 'success'
+                    : 'default'
               }
             >
               {isRejected
                 ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
                 : validated === 'error'
-                ? stepValidation.errors['certificate']
-                : validated === 'success'
-                ? 'Certificate was uploaded'
-                : 'Drag and drop a valid certificate file or upload one'}
+                  ? stepValidation.errors['certificate']
+                  : validated === 'success'
+                    ? 'Certificate was uploaded'
+                    : 'Drag and drop a valid certificate file or upload one'}
             </HelperTextItem>
             {(isRejected || validated !== 'success') && (
               <HelperTextItem>

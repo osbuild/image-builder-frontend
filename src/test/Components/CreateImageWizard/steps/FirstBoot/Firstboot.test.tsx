@@ -109,9 +109,8 @@ const goToReviewStep = async (): Promise<void> => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('firstboot-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-first-boot'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-first-boot');
   await waitFor(() => user.click(revisitButton));
 };
 

@@ -38,7 +38,7 @@ type ToggleGroupProps = Omit<FormGroupProps<boolean>, 'isDisabled'>;
 const AWSConfigToggle = ({ value, onChange }: ToggleGroupProps) => {
   const handleChange = (
     _event: React.FormEvent<HTMLInputElement>,
-    checked: boolean,
+    checked: boolean
   ) => {
     onChange(checked);
   };

@@ -1485,8 +1485,8 @@ const Packages = () => {
                     packages.length + groups.length === 0
                       ? ''
                       : packages.length + groups.length <= 100
-                      ? ` (${packages.length + groups.length})`
-                      : ' (100+)'
+                        ? ` (${packages.length + groups.length})`
+                        : ' (100+)'
                   }`}
                   buttonId="toggle-selected"
                   isSelected={toggleSelected === 'toggle-selected'}
@@ -1501,10 +1501,10 @@ const Packages = () => {
                   searchTerm === '' && toggleSelected === 'toggle-available'
                     ? 0
                     : showPackages && showGroups
-                    ? transformedPackages.length + transformedGroups.length
-                    : showPackages
-                    ? transformedPackages.length
-                    : transformedGroups.length
+                      ? transformedPackages.length + transformedGroups.length
+                      : showPackages
+                        ? transformedPackages.length
+                        : transformedGroups.length
                 }
                 perPage={perPage}
                 page={page}
@@ -1550,10 +1550,10 @@ const Packages = () => {
           searchTerm === '' && toggleSelected === 'toggle-available'
             ? 0
             : showPackages && showGroups
-            ? transformedPackages.length + transformedGroups.length
-            : showPackages
-            ? transformedPackages.length
-            : transformedGroups.length
+              ? transformedPackages.length + transformedGroups.length
+              : showPackages
+                ? transformedPackages.length
+                : transformedGroups.length
         }
         perPage={perPage}
         page={page}

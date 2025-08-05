@@ -52,9 +52,8 @@ const goToReviewStep = async () => {
 
 const selectTimezone = async () => {
   const user = userEvent.setup({ delay: null });
-  const timezoneDropdown = await screen.findByPlaceholderText(
-    /select a timezone/i
-  );
+  const timezoneDropdown =
+    await screen.findByPlaceholderText(/select a timezone/i);
   await waitFor(() => user.type(timezoneDropdown, 'Europe/Am'));
   const amsterdamTimezone = await screen.findByText('Europe/Amsterdam');
   await waitFor(() => user.click(amsterdamTimezone));
@@ -62,25 +61,22 @@ const selectTimezone = async () => {
 
 const searchForUnknownTimezone = async () => {
   const user = userEvent.setup();
-  const timezoneDropdown = await screen.findByPlaceholderText(
-    /select a timezone/i
-  );
+  const timezoneDropdown =
+    await screen.findByPlaceholderText(/select a timezone/i);
   await waitFor(() => user.type(timezoneDropdown, 'foo'));
 };
 
 const addNtpServerViaKeyDown = async (ntpServer: string) => {
   const user = userEvent.setup();
-  const ntpServersInput = await screen.findByPlaceholderText(
-    /add ntp servers/i
-  );
+  const ntpServersInput =
+    await screen.findByPlaceholderText(/add ntp servers/i);
   await waitFor(() => user.type(ntpServersInput, ntpServer.concat(' ')));
 };
 
 const addNtpServerViaAddButton = async (ntpServer: string) => {
   const user = userEvent.setup();
-  const ntpServersInput = await screen.findByPlaceholderText(
-    /add ntp servers/i
-  );
+  const ntpServersInput =
+    await screen.findByPlaceholderText(/add ntp servers/i);
   const addServerBtn = await screen.findByRole('button', {
     name: /add ntp server/i,
   });
@@ -99,9 +95,8 @@ const clearInput = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('timezone-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-timezone'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-timezone');
   await waitFor(() => user.click(revisitButton));
 };
 

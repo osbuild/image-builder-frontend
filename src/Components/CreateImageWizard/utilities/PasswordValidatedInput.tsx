@@ -51,14 +51,14 @@ export const PasswordValidatedInput = ({
 
   const PasswordToggleButton = () => {
     return (
-        <Button
-            variant="control"
-            onClick={togglePasswordVisibility}
-            aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-            isDisabled={isEditingWithoutValue}
-        >
-          {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
-        </Button>
+      <Button
+        variant="control"
+        onClick={togglePasswordVisibility}
+        aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
+        isDisabled={isEditingWithoutValue}
+      >
+        {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
+      </Button>
     );
   };
 
@@ -78,13 +78,13 @@ export const PasswordValidatedInput = ({
           </InputGroupItem>
           <InputGroupItem>
             {isEditingWithoutValue ? (
-                <Tooltip content="Passwords cannot be viewed when editing a blueprint for security reasons">
+              <Tooltip content="Passwords cannot be viewed when editing a blueprint for security reasons">
                 <span>
-                  <PasswordToggleButton/>
+                  <PasswordToggleButton />
                 </span>
-                </Tooltip>
+              </Tooltip>
             ) : (
-                <PasswordToggleButton/>
+              <PasswordToggleButton />
             )}
           </InputGroupItem>
         </InputGroup>

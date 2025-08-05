@@ -55,9 +55,8 @@ const goToReviewStep = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('image-details-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-details'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-details');
   await waitFor(() => user.click(revisitButton));
 };
 

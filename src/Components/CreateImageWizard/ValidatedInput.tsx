@@ -116,8 +116,8 @@ const getValidationState = (
   const validated = isPristine
     ? 'default'
     : (isRequired && errorMessage) || errorMessage
-    ? 'error'
-    : 'success';
+      ? 'error'
+      : 'success';
 
   return validated;
 };

@@ -165,12 +165,12 @@ const getLatestRelease = (distribution: Distributions) => {
   return distribution.startsWith('rhel-10')
     ? RHEL_10
     : distribution.startsWith('rhel-9')
-    ? RHEL_9
-    : distribution.startsWith('rhel-8')
-    ? RHEL_8
-    : distribution === ('centos-8' as Distributions)
-    ? CENTOS_9
-    : distribution;
+      ? RHEL_9
+      : distribution.startsWith('rhel-8')
+        ? RHEL_8
+        : distribution === ('centos-8' as Distributions)
+          ? CENTOS_9
+          : distribution;
 };
 
 function commonRequestToState(
@@ -256,13 +256,13 @@ function commonRequestToState(
             policyTitle: undefined,
           }
         : oscapProfile !== undefined
-        ? {
-            complianceType: 'openscap' as ComplianceType,
-            profileID: oscapProfile,
-            policyID: undefined,
-            policyTitle: undefined,
-          }
-        : initialState.compliance,
+          ? {
+              complianceType: 'openscap' as ComplianceType,
+              profileID: oscapProfile,
+              policyID: undefined,
+              policyTitle: undefined,
+            }
+          : initialState.compliance,
     firstBoot: request.customizations
       ? {
           script: getFirstBootScript(request.customizations.files),
@@ -393,8 +393,8 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
             ? 'register-now-rhc'
             : 'register-now-insights'
           : getSatelliteCommand(request.customizations.files)
-          ? 'register-satellite'
-          : 'register-later',
+            ? 'register-satellite'
+            : 'register-later',
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,

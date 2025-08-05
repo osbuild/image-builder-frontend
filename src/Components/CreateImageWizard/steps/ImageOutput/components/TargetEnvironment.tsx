@@ -142,8 +142,14 @@ const TargetEnvironment = () => {
   };
 
   if (isFetching) {
-    return <EmptyState titleText="Loading target environments" headingLevel="h6" icon={Spinner} />
-  };
+    return (
+      <EmptyState
+        titleText="Loading target environments"
+        headingLevel="h6"
+        icon={Spinner}
+      />
+    );
+  }
 
   if (isError) {
     return (
@@ -152,10 +158,11 @@ const TargetEnvironment = () => {
         variant="danger"
         isInline
       >
-        Target environments couldn&apos;t be loaded, please refresh the page or try again later.
+        Target environments couldn&apos;t be loaded, please refresh the page or
+        try again later.
       </Alert>
-    )
-  };
+    );
+  }
 
   return (
     <FormGroup

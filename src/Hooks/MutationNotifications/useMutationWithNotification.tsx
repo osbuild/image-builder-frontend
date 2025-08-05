@@ -50,7 +50,7 @@ export function useMutationWithNotification<
     isError: boolean;
     error?: unknown;
     reset: () => void;
-  }
+  },
 >(
   mutationHook: (
     options?: HookOptions

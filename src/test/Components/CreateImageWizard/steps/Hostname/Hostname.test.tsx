@@ -73,9 +73,8 @@ const clearHostname = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('hostname-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-hostname'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-hostname');
   await waitFor(() => user.click(revisitButton));
 };
 
