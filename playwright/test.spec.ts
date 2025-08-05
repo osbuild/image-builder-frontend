@@ -87,7 +87,7 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
     await expect(
-      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName),
+      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName)
     ).toBeVisible();
   });
 
@@ -205,7 +205,7 @@ test.describe.serial('test', () => {
     if (await switchInput.isChecked()) {
       await frame.getByRole('button', { name: 'Cancel' }).click();
       await expect(
-        frame.getByRole('heading', { name: 'All images' }),
+        frame.getByRole('heading', { name: 'All images' })
       ).toBeVisible();
     } else {
       const switchToggle = frame.locator('.pf-v6-c-switch');
@@ -219,7 +219,7 @@ test.describe.serial('test', () => {
       await frame.getByPlaceholder('Path to AWS credentials').fill(credentials);
       await frame.getByRole('button', { name: 'Submit' }).click();
       await expect(
-        frame.getByRole('heading', { name: 'All images' }),
+        frame.getByRole('heading', { name: 'All images' })
       ).toBeVisible();
     }
 
@@ -236,7 +236,7 @@ test.describe.serial('test', () => {
 
     await expect(frame.getByPlaceholder('AWS bucket')).toHaveValue(bucket);
     await expect(frame.getByPlaceholder('Path to AWS credentials')).toHaveValue(
-      credentials,
+      credentials
     );
     await frame.getByRole('button', { name: 'Cancel' }).click();
 
@@ -276,7 +276,7 @@ test.describe.serial('test', () => {
     frame.getByRole('heading', { name: 'Details' });
     await frame.getByTestId('blueprint').fill(cockpitBlueprintname);
     await expect(frame.getByTestId('blueprint')).toHaveValue(
-      cockpitBlueprintname,
+      cockpitBlueprintname
     );
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 

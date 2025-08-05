@@ -58,26 +58,23 @@ const addPort = async (port: string) => {
 
 const addEnabledFirewallService = async (service: string) => {
   const user = userEvent.setup();
-  const enabledServicesInput = await screen.findByPlaceholderText(
-    /add enabled service/i
-  );
+  const enabledServicesInput =
+    await screen.findByPlaceholderText(/add enabled service/i);
   await waitFor(() => user.type(enabledServicesInput, service.concat(' ')));
 };
 
 const addDisabledFirewallService = async (service: string) => {
   const user = userEvent.setup();
-  const disabledServiceInput = await screen.findByPlaceholderText(
-    /add disabled service/i
-  );
+  const disabledServiceInput =
+    await screen.findByPlaceholderText(/add disabled service/i);
   await waitFor(() => user.type(disabledServiceInput, service.concat(' ')));
 };
 
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('firewall-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-firewall'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-firewall');
   await waitFor(() => user.click(revisitButton));
 };
 

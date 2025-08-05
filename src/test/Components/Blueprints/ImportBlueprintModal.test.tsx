@@ -469,9 +469,8 @@ describe('Import modal', () => {
     // Timezone
     await clickNext();
     await screen.findByRole('heading', { name: /Timezone/ });
-    const timezoneDropDown = await screen.findByPlaceholderText(
-      /Select a timezone/i
-    );
+    const timezoneDropDown =
+      await screen.findByPlaceholderText(/Select a timezone/i);
     expect(timezoneDropDown).toHaveValue('US/Eastern');
     await screen.findByText(/0\.north-america\.pool\.ntp\.org/i);
     await screen.findByText(/1\.north-america\.pool\.ntp\.org/i);
@@ -481,9 +480,8 @@ describe('Import modal', () => {
     await screen.findByRole('heading', { name: /Locale/ });
     await screen.findByText('English - United States (en_US.UTF-8)');
     await screen.findByText('Japanese - Japan (ja_JP.UTF-8)');
-    const keyboardDropDown = await screen.findByPlaceholderText(
-      /Select a keyboard/i
-    );
+    const keyboardDropDown =
+      await screen.findByPlaceholderText(/Select a keyboard/i);
     expect(keyboardDropDown).toHaveValue('us');
 
     // Hostname
@@ -640,7 +638,9 @@ describe('Import modal', () => {
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close invalid\$kernel\$argument/i })
+        screen.getByRole('button', {
+          name: /close invalid\$kernel\$argument/i,
+        })
       )
     );
 

@@ -8,10 +8,12 @@ import 'vitest-canvas-mock';
 window.HTMLElement.prototype.scrollTo = function () {};
 
 // provide a fallback *only* when window.getComputedStyle is missing
-// eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
-window.getComputedStyle = window.getComputedStyle || (() => ({
-  getPropertyValue: () => '',
-}));
+window.getComputedStyle =
+  // eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
+  window.getComputedStyle ||
+  (() => ({
+    getPropertyValue: () => '',
+  }));
 
 // ResizeObserver is not defined and needs to be mocked and stubbed
 const MockResizeObserver = vi.fn(() => ({

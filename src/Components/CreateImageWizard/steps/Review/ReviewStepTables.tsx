@@ -140,8 +140,8 @@ export const SnapshotTable = ({
       snapshotForDate.length > 0
         ? snapshotForDate.map(({ repository_uuid }) => repository_uuid).join()
         : template && templateData && templateData.repository_uuids
-        ? templateData.repository_uuids.join(',')
-        : '',
+          ? templateData.repository_uuids.join(',')
+          : '',
     origin: ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM, // Make sure to show both redhat and external
   });
 

@@ -98,9 +98,8 @@ const selectActivationKey = async (key: string) => {
 
 const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
   const user = userEvent.setup({ delay: null });
-  const satelliteRegistrationCommand = await screen.findByPlaceholderText(
-    /registration command/i
-  );
+  const satelliteRegistrationCommand =
+    await screen.findByPlaceholderText(/registration command/i);
 
   await waitFor(() => user.clear(satelliteRegistrationCommand));
   await waitFor(() => user.type(satelliteRegistrationCommand, command));
@@ -108,7 +107,7 @@ const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
 };
 
 const uploadFile = async (scriptName: string): Promise<void> => {
-  const user = userEvent.setup({ delay: null});
+  const user = userEvent.setup({ delay: null });
   const fileInput: HTMLElement | null =
     // eslint-disable-next-line testing-library/no-node-access
     document.querySelector('input[type="file"]');

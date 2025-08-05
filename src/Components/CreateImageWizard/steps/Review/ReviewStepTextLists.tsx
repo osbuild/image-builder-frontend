@@ -313,10 +313,10 @@ export const TargetEnvGCPList = () => {
                 {accountType === 'group'
                   ? 'Google group'
                   : accountType === 'serviceAccount'
-                  ? 'Service account'
-                  : accountType === 'user'
-                  ? 'Google account'
-                  : 'Domain'}
+                    ? 'Service account'
+                    : accountType === 'user'
+                      ? 'Google account'
+                      : 'Domain'}
               </Content>
               <Content
                 component={ContentVariants.dt}
@@ -520,10 +520,10 @@ export const ContentList = () => {
                   useLatest
                     ? 'Use the latest repository content'
                     : template
-                    ? 'Use content from the content template'
-                    : `Repositories as of ${yyyyMMddFormat(
-                        new Date(snapshotDate)
-                      )}`
+                      ? 'Use content from the content template'
+                      : `Repositories as of ${yyyyMMddFormat(
+                          new Date(snapshotDate)
+                        )}`
                 }
                 hasAutoWidth
                 minWidth="60rem"

@@ -103,9 +103,8 @@ const goToReviewStep = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('oscap-detail-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-openscap'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-openscap');
   await waitFor(() => user.click(revisitButton));
 };
 

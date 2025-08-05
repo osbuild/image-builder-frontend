@@ -61,9 +61,8 @@ const addAzureTarget = async () => {
   );
   await clickNext();
 
-  const azureSourceDropdown = await screen.findByPlaceholderText(
-    /select source/i
-  );
+  const azureSourceDropdown =
+    await screen.findByPlaceholderText(/select source/i);
   await waitFor(() => user.click(azureSourceDropdown));
   const azureSource = await screen.findByRole('option', {
     name: /azureSource1/i,
@@ -182,9 +181,8 @@ const checkAdminCheckbox = async () => {
 
 const addUserGroupByUserIndex = async (group: string, index: number) => {
   const user = userEvent.setup();
-  const userGroupInputs = await screen.findAllByPlaceholderText(
-    'Add user group'
-  );
+  const userGroupInputs =
+    await screen.findAllByPlaceholderText('Add user group');
   await waitFor(() => user.click(userGroupInputs[index]));
   await waitFor(() => user.type(userGroupInputs[index], group));
   const addGroup = await screen.findByRole('button', {
@@ -512,24 +510,32 @@ describe('Users edit mode', () => {
     const id = mockBlueprintIds['users'];
     await renderEditMode(id);
 
-    const usersNavButtons = await screen.findAllByRole('button', { name: /Users/ });
+    const usersNavButtons = await screen.findAllByRole('button', {
+      name: /Users/,
+    });
     await waitFor(() => user.click(usersNavButtons[0]));
 
     const passwordToggleButton = await screen.findByRole('button', {
-      name: 'Show password'
+      name: 'Show password',
     });
 
     expect(passwordToggleButton).toBeDisabled();
 
     await waitFor(() => user.hover(passwordToggleButton));
 
-    const tooltip = await screen.findByText('Passwords cannot be viewed when editing a blueprint for security reasons');
+    const tooltip = await screen.findByText(
+      'Passwords cannot be viewed when editing a blueprint for security reasons'
+    );
     expect(tooltip).toBeInTheDocument();
 
     await waitFor(() => user.unhover(passwordToggleButton));
 
     await waitFor(() => {
-      expect(screen.queryByText('Passwords cannot be viewed when editing a blueprint for security reasons')).not.toBeInTheDocument();
+      expect(
+        screen.queryByText(
+          'Passwords cannot be viewed when editing a blueprint for security reasons'
+        )
+      ).not.toBeInTheDocument();
     });
   });
 });

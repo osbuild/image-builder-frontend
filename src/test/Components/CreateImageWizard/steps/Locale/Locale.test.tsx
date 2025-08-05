@@ -52,17 +52,15 @@ const goToReviewStep = async () => {
 
 const clearLanguageSearch = async () => {
   const user = userEvent.setup();
-  const languagesDropdown = await screen.findByPlaceholderText(
-    /select a language/i
-  );
+  const languagesDropdown =
+    await screen.findByPlaceholderText(/select a language/i);
   await waitFor(() => user.clear(languagesDropdown));
 };
 
 const searchForLanguage = async (search: string) => {
   const user = userEvent.setup();
-  const languagesDropdown = await screen.findByPlaceholderText(
-    /select a language/i
-  );
+  const languagesDropdown =
+    await screen.findByPlaceholderText(/select a language/i);
   await waitFor(() => user.type(languagesDropdown, search));
 };
 
@@ -83,9 +81,8 @@ const selectLanguages = async () => {
 
 const searchForKeyboard = async (keyboard: string) => {
   const user = userEvent.setup({ delay: null });
-  const keyboardDropdown = await screen.findByPlaceholderText(
-    /select a keyboard/i
-  );
+  const keyboardDropdown =
+    await screen.findByPlaceholderText(/select a keyboard/i);
   await waitFor(() => user.type(keyboardDropdown, keyboard));
 };
 

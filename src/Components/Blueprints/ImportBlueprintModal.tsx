@@ -155,9 +155,8 @@ export const ImportBlueprintModal: React.FunctionComponent<
                 blueprintFromFile.content_sources &&
                 blueprintFromFile.content_sources.length > 0
               ) {
-                const imported = await handleRepositoryImport(
-                  blueprintFromFile
-                );
+                const imported =
+                  await handleRepositoryImport(blueprintFromFile);
                 customRepos = imported ?? [];
               }
 
@@ -308,10 +307,10 @@ export const ImportBlueprintModal: React.FunctionComponent<
                   {isRejected
                     ? 'Must be a valid Blueprint JSON/TOML file no larger than 512 KB'
                     : isInvalidFormat
-                    ? 'Not compatible with the blueprints format.'
-                    : isOnPrem
-                    ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
-                    : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
+                      ? 'Not compatible with the blueprints format.'
+                      : isOnPrem
+                        ? 'Importing on-premises blueprints is currently in beta. Results may vary.'
+                        : 'Upload your blueprint file. Supported formats: JSON, TOML.'}
                 </HelperTextItem>
               </HelperText>
             </FormHelperText>

@@ -90,9 +90,8 @@ const addDisabledService = async (service: string) => {
 
 const addMaskedService = async (service: string) => {
   const user = userEvent.setup();
-  const maskedServiceInput = await screen.findByPlaceholderText(
-    'Add masked service'
-  );
+  const maskedServiceInput =
+    await screen.findByPlaceholderText('Add masked service');
   await waitFor(() => user.type(maskedServiceInput, service.concat(' ')));
 };
 
@@ -126,9 +125,8 @@ const selectProfile = async () => {
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('services-expandable');
-  const revisitButton = await within(expandable).findByTestId(
-    'revisit-services'
-  );
+  const revisitButton =
+    await within(expandable).findByTestId('revisit-services');
   await waitFor(() => user.click(revisitButton));
 };
 

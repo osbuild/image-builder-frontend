@@ -97,7 +97,7 @@ export const CloudProviderConfig = () => {
         dispatch(changeAWSCredsPath(credentials));
       }
     },
-    [dispatch, setEnabled],
+    [dispatch, setEnabled]
   );
 
   useEffect(() => {
