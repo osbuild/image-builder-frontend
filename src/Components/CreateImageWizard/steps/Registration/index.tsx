@@ -13,6 +13,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './components/ActivationKeyInformation';
 import ActivationKeysList from './components/ActivationKeysList';
+import RegisterLaterAlert from './components/RegisterLaterAlert';
 import Registration from './components/Registration';
 import SatelliteRegistration from './components/SatelliteRegistration';
 
@@ -62,8 +63,10 @@ const RegistrationStep = () => {
         </FormHelperText>
       </FormGroup>
       <Registration />
+      {registrationType === 'register-later' && <RegisterLaterAlert />}
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
       {!process.env.IS_ON_PREMISE &&
+        registrationType !== 'register-later' &&
         registrationType !== 'register-satellite' && <ActivationKeysList />}
       {!process.env.IS_ON_PREMISE &&
         activationKey &&
