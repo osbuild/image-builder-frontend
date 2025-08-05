@@ -79,14 +79,14 @@ export const OscapProfileInformation = ({
   return (
     <>
       {(isFetchingOscapProfileInfo || isFetchingPolicyInfo) && (
-        <Spinner size="lg" />
+        <Spinner size='lg' />
       )}
       {isSuccessOscapProfileInfo && (
         <>
-          <Content component={ContentVariants.dl} className="review-step-dl">
+          <Content component={ContentVariants.dl} className='review-step-dl'>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Profile description
             </Content>
@@ -95,19 +95,19 @@ export const OscapProfileInformation = ({
             </Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Reference ID
             </Content>
             <Content
-              data-testid="oscap-profile-info-ref-id"
+              data-testid='oscap-profile-info-ref-id'
               component={ContentVariants.dd}
             >
               {oscapProfile?.profile_id}
             </Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v6-u-min-width"
+              className='pf-v6-u-min-width'
             >
               Packages
             </Content>
@@ -120,7 +120,7 @@ export const OscapProfileInformation = ({
             </Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v5-u-min-width"
+              className='pf-v5-u-min-width'
             >
               Kernel arguments
             </Content>
@@ -133,7 +133,7 @@ export const OscapProfileInformation = ({
             </Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v5-u-min-width"
+              className='pf-v5-u-min-width'
             >
               Enabled services
             </Content>
@@ -146,7 +146,7 @@ export const OscapProfileInformation = ({
             </Content>
             <Content
               component={ContentVariants.dt}
-              className="pf-v5-u-min-width"
+              className='pf-v5-u-min-width'
             >
               Disabled services
             </Content>
@@ -165,10 +165,10 @@ export const OscapProfileInformation = ({
       {isSuccessPolicyInfo && (
         <>
           <Content>
-            <Content component={ContentVariants.dl} className="review-step-dl">
+            <Content component={ContentVariants.dl} className='review-step-dl'>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Policy description:
               </Content>
@@ -177,7 +177,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Business objective:
               </Content>
@@ -186,7 +186,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Policy type:
               </Content>
@@ -195,7 +195,7 @@ export const OscapProfileInformation = ({
               </Content>
               <Content
                 component={ContentVariants.dt}
-                className="pf-v6-u-min-width"
+                className='pf-v6-u-min-width'
               >
                 Reference ID:
               </Content>

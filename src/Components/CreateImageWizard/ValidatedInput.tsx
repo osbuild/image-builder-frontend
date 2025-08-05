@@ -98,7 +98,7 @@ export const ValidatedInputAndTextArea = ({
       )}
       {warning !== undefined && warning !== '' && (
         <HelperText>
-          <HelperTextItem variant="warning">{warning}</HelperTextItem>
+          <HelperTextItem variant='warning'>{warning}</HelperTextItem>
         </HelperText>
       )}
       {validated === 'error' && hasError && (
@@ -125,7 +125,7 @@ const getValidationState = (
 export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
   return (
     <HelperText>
-      <HelperTextItem variant="error">{errorMessage}</HelperTextItem>
+      <HelperTextItem variant='error'>{errorMessage}</HelperTextItem>
     </HelperText>
   );
 };
@@ -158,7 +158,7 @@ export const ValidatedInput = ({
       <TextInput
         value={value}
         data-testid={dataTestId}
-        type="text"
+        type='text'
         onChange={onChange!}
         validated={handleValidation()}
         aria-label={ariaLabel || ''}
@@ -167,7 +167,7 @@ export const ValidatedInput = ({
       />
       {!isPristine && !validator(value) && (
         <HelperText>
-          <HelperTextItem variant="error">{helperText}</HelperTextItem>
+          <HelperTextItem variant='error'>{helperText}</HelperTextItem>
         </HelperText>
       )}
     </>

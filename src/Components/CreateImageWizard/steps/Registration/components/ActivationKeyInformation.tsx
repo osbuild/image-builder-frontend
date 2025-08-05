@@ -32,7 +32,7 @@ const ActivationKeyInformation = (): JSX.Element => {
 
   return (
     <>
-      {isFetchingActivationKeyInfo && <Spinner size="lg" />}
+      {isFetchingActivationKeyInfo && <Spinner size='lg' />}
       {isSuccessActivationKeyInfo && (
         <Content>
           <Content component={ContentVariants.dl}>
@@ -65,29 +65,29 @@ const ActivationKeyInformation = (): JSX.Element => {
               >
                 <Button
                   icon={<HelpIcon />}
-                  variant="plain"
-                  aria-label="About additional repositories"
-                  className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
+                  variant='plain'
+                  aria-label='About additional repositories'
+                  className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
                 />
               </Popover>
             </Content>
             <Content
               component={ContentVariants.dd}
-              className="pf-v6-u-display-flex pf-v6-u-align-items-flex-end"
+              className='pf-v6-u-display-flex pf-v6-u-align-items-flex-end'
             >
               {activationKeyInfo?.body?.additionalRepositories &&
               activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
                 <Popover
-                  position="right"
-                  minWidth="30rem"
+                  position='right'
+                  minWidth='30rem'
                   bodyContent={
                     <Content>
                       <Content component={ContentVariants.h3}>
                         Additional repositories
                       </Content>
                       <Table
-                        aria-label="Additional repositories table"
-                        variant="compact"
+                        aria-label='Additional repositories table'
+                        variant='compact'
                       >
                         <Thead>
                           <Tr>
@@ -108,9 +108,9 @@ const ActivationKeyInformation = (): JSX.Element => {
                   }
                 >
                   <Button
-                    variant="link"
-                    aria-label="Show additional repositories"
-                    className="pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0"
+                    variant='link'
+                    aria-label='Show additional repositories'
+                    className='pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0'
                   >
                     {activationKeyInfo.body?.additionalRepositories?.length}{' '}
                     repositories
@@ -131,8 +131,8 @@ const ActivationKeyInformation = (): JSX.Element => {
           </Content>
           <br />
           <Alert
-            title="Information about the activation key unavailable"
-            variant="danger"
+            title='Information about the activation key unavailable'
+            variant='danger'
             isPlain
             isInline
           >

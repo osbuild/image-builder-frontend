@@ -63,28 +63,28 @@ export default function Snapshot() {
     <>
       <FormGroup>
         <Radio
-          id="use latest snapshot radio"
-          name="use-latest-snapshot"
-          label="Disable repeatable build"
-          description="Use the newest repository content available when building this image"
+          id='use latest snapshot radio'
+          name='use-latest-snapshot'
+          label='Disable repeatable build'
+          description='Use the newest repository content available when building this image'
           isChecked={selectedOption === 'latest'}
           onChange={() => handleOptionChange('latest')}
         />
         <Radio
-          id="use snapshot date radio"
-          name="use-snapshot-date"
-          label="Enable repeatable build"
-          description="Build this image with the repository content of a selected date"
+          id='use snapshot date radio'
+          name='use-snapshot-date'
+          label='Enable repeatable build'
+          description='Build this image with the repository content of a selected date'
           isChecked={selectedOption === 'snapshotDate'}
           onChange={() => handleOptionChange('snapshotDate')}
         />
         {isTemplatesEnabled ? (
           <Radio
-            id="use content template radio"
-            ouiaId="use-content-template-radio"
-            name="use-content-template"
-            label="Use a content template"
-            description="Select a content template and build this image with repository snapshots included in that template"
+            id='use content template radio'
+            ouiaId='use-content-template-radio'
+            name='use-content-template'
+            label='Use a content template'
+            description='Select a content template and build this image with repository snapshots included in that template'
             isChecked={selectedOption === 'template'}
             onChange={() => handleOptionChange('template')}
           />
@@ -95,7 +95,7 @@ export default function Snapshot() {
 
       {selectedOption === 'latest' ? (
         <>
-          <Title headingLevel="h1" size="xl">
+          <Title headingLevel='h1' size='xl'>
             Use latest content
           </Title>
           <Grid>
@@ -107,21 +107,21 @@ export default function Snapshot() {
         </>
       ) : selectedOption === 'snapshotDate' ? (
         <>
-          <Title headingLevel="h1" size="xl">
+          <Title headingLevel='h1' size='xl'>
             Use a snapshot
           </Title>
-          <FormGroup label="Select snapshot date" isRequired>
+          <FormGroup label='Select snapshot date' isRequired>
             <Flex
               direction={{ default: 'row' }}
               alignContent={{ default: 'alignContentCenter' }}
             >
               <DatePicker
-                id="snapshot-date-picker"
-                name="pick-snapshot-date"
+                id='snapshot-date-picker'
+                name='pick-snapshot-date'
                 value={snapshotDate ? snapshotDate.split('T')[0] : ''}
                 required
                 requiredDateOptions={{ isRequired: true }}
-                placeholder="YYYY-MM-DD"
+                placeholder='YYYY-MM-DD'
                 validators={[
                   (date: Date) => {
                     if (!isSnapshotDateValid(date)) {
@@ -134,7 +134,7 @@ export default function Snapshot() {
               />
 
               <Button
-                variant="link"
+                variant='link'
                 onClick={async () => {
                   //Patternfly DatePicker seems to only clear error text if value is reset to '',
                   // if you have an invalid date (2000-01-010000) and try to reset it, it must be set to '' first
@@ -154,7 +154,7 @@ export default function Snapshot() {
         </>
       ) : isTemplatesEnabled && selectedOption === 'template' ? (
         <>
-          <Title headingLevel="h1" size="xl">
+          <Title headingLevel='h1' size='xl'>
             Use a content template
           </Title>
           <Templates />

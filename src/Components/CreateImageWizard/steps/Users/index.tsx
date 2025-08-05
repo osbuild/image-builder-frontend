@@ -13,7 +13,7 @@ const UsersStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Users
       </Title>
       <Content>Add a user to your image.</Content>

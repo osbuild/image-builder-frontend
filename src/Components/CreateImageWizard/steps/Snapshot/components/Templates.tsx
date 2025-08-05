@@ -86,7 +86,7 @@ const Templates = () => {
       <Panel>
         {templateList.length > 0 ? (
           <Button
-            variant="primary"
+            variant='primary'
             isInline
             onClick={() => refresh()}
             isLoading={isFetching}
@@ -109,10 +109,10 @@ const Templates = () => {
                 onPerPageSelect={handlePerPageSelect}
                 isCompact
               />
-              <Table variant="compact">
+              <Table variant='compact'>
                 <Thead>
                   <Tr>
-                    <Th aria-label="Selected" />
+                    <Th aria-label='Selected' />
                     <Th width={15}>Name</Th>
                     <Th width={50}>Description</Th>
                     <Th width={15}>Snapshot date</Th>

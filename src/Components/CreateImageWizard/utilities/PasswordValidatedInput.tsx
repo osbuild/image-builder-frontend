@@ -52,7 +52,7 @@ export const PasswordValidatedInput = ({
   const PasswordToggleButton = () => {
     return (
       <Button
-        variant="control"
+        variant='control'
         onClick={togglePasswordVisibility}
         aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
         isDisabled={isEditingWithoutValue}
@@ -63,7 +63,7 @@ export const PasswordValidatedInput = ({
   };
 
   return (
-    <FormGroup label="Password" className="pf-v6-u-pb-md">
+    <FormGroup label='Password' className='pf-v6-u-pb-md'>
       <>
         <InputGroup>
           <InputGroupItem isFill>
@@ -78,7 +78,7 @@ export const PasswordValidatedInput = ({
           </InputGroupItem>
           <InputGroupItem>
             {isEditingWithoutValue ? (
-              <Tooltip content="Passwords cannot be viewed when editing a blueprint for security reasons">
+              <Tooltip content='Passwords cannot be viewed when editing a blueprint for security reasons'>
                 <span>
                   <PasswordToggleButton />
                 </span>
@@ -90,12 +90,12 @@ export const PasswordValidatedInput = ({
         </InputGroup>
       </>
       <FormHelperText>
-        <HelperText component="ul">
-          <HelperTextItem variant={ruleLength} component="li">
+        <HelperText component='ul'>
+          <HelperTextItem variant={ruleLength} component='li'>
             Password must be at least 6 characters long
           </HelperTextItem>
           {environments.includes('azure') && (
-            <HelperTextItem variant={ruleCharacters} component="li">
+            <HelperTextItem variant={ruleCharacters} component='li'>
               Must include at least 3 of the following: lowercase letters,
               uppercase letters, numbers, symbols
             </HelperTextItem>

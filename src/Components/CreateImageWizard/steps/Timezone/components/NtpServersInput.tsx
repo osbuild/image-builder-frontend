@@ -18,17 +18,17 @@ const NtpServersInput = () => {
   const stepValidation = useTimezoneValidation();
 
   return (
-    <FormGroup isRequired={false} label="NTP servers">
+    <FormGroup isRequired={false} label='NTP servers'>
       <LabelInput
-        ariaLabel="Add NTP server"
-        placeholder="Add NTP servers"
+        ariaLabel='Add NTP server'
+        placeholder='Add NTP servers'
         validator={isNtpServerValid}
         list={ntpServers}
-        item="NTP server"
+        item='NTP server'
         addAction={addNtpServer}
         removeAction={removeNtpServer}
         stepValidation={stepValidation}
-        fieldName="ntpServers"
+        fieldName='ntpServers'
       />
     </FormGroup>
   );

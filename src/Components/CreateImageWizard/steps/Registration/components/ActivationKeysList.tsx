@@ -207,15 +207,15 @@ const ActivationKeysList = () => {
 
     if (isFetchingActivationKeys) {
       selectOptionsElement.push(
-        <SelectOption key="Fetching" value="loader">
-          <Spinner size="md" />
+        <SelectOption key='Fetching' value='loader'>
+          <Spinner size='md' />
         </SelectOption>,
       );
     }
 
     if (isSuccessActivationKeys && selectOptions.length === 0) {
       selectOptionsElement.push(
-        <SelectOption key="no_results" value="no_results" isDisabled>
+        <SelectOption key='no_results' value='no_results' isDisabled>
           No results found
         </SelectOption>,
       );
@@ -227,11 +227,11 @@ const ActivationKeysList = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={handleToggle}
       onKeyDown={handleKeyDown}
       isExpanded={isOpen}
-      data-testid="activation-key-select"
+      data-testid='activation-key-select'
       isDisabled={
         !isSuccessActivationKeys ||
         registrationType === 'register-later' ||
@@ -250,8 +250,8 @@ const ActivationKeysList = () => {
           }
           onClick={handleToggle}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select activation key"
+          autoComplete='off'
+          placeholder='Select activation key'
           isExpanded={isOpen}
         />
       </TextInputGroup>
@@ -260,7 +260,7 @@ const ActivationKeysList = () => {
 
   return (
     <>
-      <FormGroup label="Activation key to use for this image">
+      <FormGroup label='Activation key to use for this image'>
         <Select
           isScrollable
           isOpen={isOpen}
@@ -283,8 +283,8 @@ const ActivationKeysList = () => {
       </FormGroup>
       {isErrorActivationKeys && (
         <Alert
-          title="Activation keys unavailable"
-          variant="danger"
+          title='Activation keys unavailable'
+          variant='danger'
           isPlain
           isInline
         >

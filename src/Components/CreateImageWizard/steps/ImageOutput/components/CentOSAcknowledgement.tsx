@@ -8,11 +8,11 @@ import { DEVELOPERS_URL } from '../../../../../constants';
 const DeveloperProgramButton = () => {
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
+      iconPosition='right'
       isInline
       href={DEVELOPERS_URL}
     >
@@ -24,7 +24,7 @@ const DeveloperProgramButton = () => {
 const CentOSAcknowledgement = () => {
   return (
     <Alert
-      variant="info"
+      variant='info'
       isPlain
       isInline
       title={

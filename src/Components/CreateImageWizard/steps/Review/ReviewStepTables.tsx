@@ -46,10 +46,10 @@ const RepoName = ({ repoUuid }: repoPropType) => {
   const errorLoading = () => {
     return (
       <Alert
-        variant="danger"
+        variant='danger'
         isInline
         isPlain
-        title="Error loading repository name"
+        title='Error loading repository name'
       />
     );
   };
@@ -67,7 +67,7 @@ const RepoName = ({ repoUuid }: repoPropType) => {
       */}
       {isSuccess && data?.data?.[0]?.name && <p>{data.data[0].name}</p>}
       {isSuccess && !data?.data?.[0]?.name && errorLoading()}
-      {isFetching && <Spinner size="md" />}
+      {isFetching && <Spinner size='md' />}
       {isError && errorLoading()}
     </>
   );
@@ -77,8 +77,8 @@ export const FSReviewTable = () => {
   const partitions = useAppSelector(selectPartitions);
   return (
     <Panel isScrollable>
-      <PanelMain maxHeight="30ch">
-        <Table aria-label="File system configuration table" variant="compact">
+      <PanelMain maxHeight='30ch'>
+        <Table aria-label='File system configuration table' variant='compact'>
           <Thead>
             <Tr>
               <Th>Mount point</Th>
@@ -89,9 +89,9 @@ export const FSReviewTable = () => {
           <Tbody>
             {partitions.map((partition, partitionIndex) => (
               <Tr key={partitionIndex}>
-                <Td className="pf-m-width-30">{partition.mountpoint}</Td>
-                <Td className="pf-m-width-30">xfs</Td>
-                <Td className="pf-m-width-30">
+                <Td className='pf-m-width-30'>{partition.mountpoint}</Td>
+                <Td className='pf-m-width-30'>xfs</Td>
+                <Td className='pf-m-width-30'>
                   {parseInt(partition.min_size).toString()} {partition.unit}
                 </Td>
               </Tr>
@@ -105,7 +105,7 @@ export const FSReviewTable = () => {
 
 const Error = () => {
   return (
-    <Alert title="Repositories unavailable" variant="danger" isPlain isInline>
+    <Alert title='Repositories unavailable' variant='danger' isPlain isInline>
       Repositories cannot be reached, try again later.
     </Alert>
   );
@@ -114,9 +114,9 @@ const Error = () => {
 const Loading = () => {
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       icon={Spinner}
-      titleText="Loading"
+      titleText='Loading'
     ></EmptyState>
   );
 };
@@ -164,8 +164,8 @@ export const SnapshotTable = ({
     (isLoading && <Loading />) ||
     (isSuccess && (
       <Panel isScrollable>
-        <PanelMain maxHeight="30ch">
-          <Table aria-label="Packages table" variant="compact">
+        <PanelMain maxHeight='30ch'>
+          <Table aria-label='Packages table' variant='compact'>
             <Thead>
               <Tr>
                 <Th>Name</Th>
@@ -184,7 +184,7 @@ export const SnapshotTable = ({
                             ? stringToDateToMMDDYYYY(last_snapshot.created_at)
                             : 'N/A'
                         }
-                        variant="warning"
+                        variant='warning'
                         isPlain
                         isInline
                       />
@@ -210,8 +210,8 @@ export const PackagesTable = () => {
 
   return (
     <Panel isScrollable>
-      <PanelMain maxHeight="30ch">
-        <Table aria-label="Packages table" variant="compact">
+      <PanelMain maxHeight='30ch'>
+        <Table aria-label='Packages table' variant='compact'>
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -248,8 +248,8 @@ export const RepositoriesTable = () => {
   );
   return (
     <Panel isScrollable>
-      <PanelMain maxHeight="30ch">
-        <Table aria-label="Custom repositories table" variant="compact">
+      <PanelMain maxHeight='30ch'>
+        <Table aria-label='Custom repositories table' variant='compact'>
           <Thead>
             <Tr>
               <Th>Name</Th>
@@ -258,14 +258,14 @@ export const RepositoriesTable = () => {
           <Tbody>
             {repositoriesList.map((repo, repoIndex) => (
               <Tr key={repoIndex + 1}>
-                <Td className="pf-m-width-60">
+                <Td className='pf-m-width-60'>
                   <RepoName repoUuid={repo.id} />
                 </Td>
               </Tr>
             ))}
             {recommendedRepositoriesList.length > 0 && (
               <Tr key={0}>
-                <Td className="pf-m-width-60">
+                <Td className='pf-m-width-60'>
                   EPEL {getEpelVersionForDistribution(distribution)} Everything
                   x86_64
                 </Td>

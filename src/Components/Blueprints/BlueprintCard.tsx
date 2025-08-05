@@ -52,7 +52,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
         >
           <CardTitle>
             {isLoading && blueprint.id === selectedBlueprintId && (
-              <Spinner size="md" />
+              <Spinner size='md' />
             )}
             {blueprint.name}
           </CardTitle>

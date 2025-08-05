@@ -7,7 +7,7 @@ import HostnameInput from './components/HostnameInput';
 const HostnameStep = () => {
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Hostname
       </Title>
       <Content>Select a hostname for your image.</Content>

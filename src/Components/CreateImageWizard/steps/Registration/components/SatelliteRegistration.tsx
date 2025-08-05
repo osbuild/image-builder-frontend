@@ -50,10 +50,10 @@ const SatelliteRegistration = () => {
   return (
     <>
       <SatelliteRegistrationCommand />
-      <FormGroup label="Certificate authority (CA) for Satellite">
+      <FormGroup label='Certificate authority (CA) for Satellite'>
         <FileUpload
-          id="text-file-with-restrictions-example"
-          type="text"
+          id='text-file-with-restrictions-example'
+          type='text'
           value={caCertificate || ''}
           filename={caCertificate ? 'CA detected' : ''}
           onDataChange={handleDataChange}
@@ -69,7 +69,7 @@ const SatelliteRegistration = () => {
             onDropRejected: handleFileRejected,
           }}
           validated={isRejected ? 'error' : validated}
-          browseButtonText="Upload"
+          browseButtonText='Upload'
           allowEditingUploadedText={true}
         />
         <FormHelperText>

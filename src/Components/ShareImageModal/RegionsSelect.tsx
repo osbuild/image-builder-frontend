@@ -154,7 +154,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
 
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      variant="typeahead"
+      variant='typeahead'
       onClick={handleToggle}
       innerRef={toggleRef}
       isExpanded={isOpen}
@@ -164,10 +164,10 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
           value={inputValue}
           onClick={handleToggle}
           onChange={onTextInputChange}
-          placeholder="Select region"
+          placeholder='Select region'
           isExpanded={isOpen}
         >
-          <LabelGroup aria-label="Selected regions">
+          <LabelGroup aria-label='Selected regions'>
             {selected.map((selection, index) => (
               <Label
                 key={index}
@@ -185,13 +185,13 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
           {selected.length > 0 && (
             <Button
               icon={<TimesIcon aria-hidden />}
-              variant="plain"
+              variant='plain'
               onClick={() => {
                 setInputValue('');
                 setSelected([]);
                 setValidated(ValidatedOptions.error);
               }}
-              aria-label="Clear input value"
+              aria-label='Clear input value'
             />
           )}
         </TextInputGroupUtilities>
@@ -201,11 +201,11 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
 
   return (
     <Form>
-      <span id="Clone this image" hidden>
+      <span id='Clone this image' hidden>
         Select a region
       </span>
       <FormGroup
-        label="Select region"
+        label='Select region'
         isRequired
         labelHelp={
           <Popover
@@ -221,9 +221,9 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
           >
             <Button
               icon={<HelpIcon />}
-              variant="plain"
-              aria-label="About regions"
-              className="pf-v6-u-pl-sm header-button"
+              variant='plain'
+              aria-label='About regions'
+              className='pf-v6-u-pl-sm header-button'
               isInline
             />
           </Popover>
@@ -266,14 +266,14 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
       <ActionGroup>
         <Button
           onClick={handleSubmit}
-          variant="primary"
-          key="share"
+          variant='primary'
+          key='share'
           isDisabled={selected.length === 0 || isSaving}
           isLoading={isSaving}
         >
           Share
         </Button>
-        <Button variant="link" onClick={handleClose} key="cancel">
+        <Button variant='link' onClick={handleClose} key='cancel'>
           Cancel
         </Button>
       </ActionGroup>

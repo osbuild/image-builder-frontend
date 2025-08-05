@@ -76,11 +76,11 @@ const TargetEnvironmentCard = ({
             // the logos don't display in cockpit,
             // so we can just hide them
             <FlexItem>
-              <img className="provider-icon" src={imageSrc} alt={imageAlt} />
+              <img className='provider-icon' src={imageSrc} alt={imageAlt} />
             </FlexItem>
           )}
           <FlexItem>
-            <Title headingLevel="h5" size="md">
+            <Title headingLevel='h5' size='md'>
               {title}
             </Title>
           </FlexItem>
@@ -144,8 +144,8 @@ const TargetEnvironment = () => {
   if (isFetching) {
     return (
       <EmptyState
-        titleText="Loading target environments"
-        headingLevel="h6"
+        titleText='Loading target environments'
+        headingLevel='h6'
         icon={Spinner}
       />
     );
@@ -155,7 +155,7 @@ const TargetEnvironment = () => {
     return (
       <Alert
         title="Couldn't fetch target environments"
-        variant="danger"
+        variant='danger'
         isInline
       >
         Target environments couldn&apos;t be loaded, please refresh the page or
@@ -167,17 +167,17 @@ const TargetEnvironment = () => {
   return (
     <FormGroup
       isRequired={true}
-      label="Select target environments"
-      data-testid="target-select"
+      label='Select target environments'
+      data-testid='target-select'
     >
       {publicCloudsSupported() && (
         <FormGroup label={<small>Public cloud</small>}>
           <Gallery hasGutter>
             {supportedEnvironments?.includes('aws') && (
               <TargetEnvironmentCard
-                title="Amazon Web Services"
+                title='Amazon Web Services'
                 imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
-                imageAlt="Amazon Web Services logo"
+                imageAlt='Amazon Web Services logo'
                 handleOnClick={() => handleToggleEnvironment('aws')}
                 onMouseEnter={() => prefetchSources({ provider: 'aws' })}
                 isClicked={environments.includes('aws')}
@@ -185,11 +185,11 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('gcp') && (
               <TargetEnvironmentCard
-                title="Google Cloud Platform"
+                title='Google Cloud Platform'
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
                 }
-                imageAlt="Google Cloud Platform logo"
+                imageAlt='Google Cloud Platform logo'
                 handleOnClick={() => handleToggleEnvironment('gcp')}
                 onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
                 isClicked={environments.includes('gcp')}
@@ -197,11 +197,11 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('azure') && (
               <TargetEnvironmentCard
-                title="Microsoft Azure"
+                title='Microsoft Azure'
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
                 }
-                imageAlt="Microsoft Azure logo"
+                imageAlt='Microsoft Azure logo'
                 handleOnClick={() => handleToggleEnvironment('azure')}
                 onMouseEnter={() => prefetchSources({ provider: 'azure' })}
                 isClicked={environments.includes('azure')}
@@ -209,11 +209,11 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('oci') && (
               <TargetEnvironmentCard
-                title="Oracle Cloud Infrastructure"
+                title='Oracle Cloud Infrastructure'
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/oracle-short.svg'
                 }
-                imageAlt="Oracle Cloud Infrastructure logo"
+                imageAlt='Oracle Cloud Infrastructure logo'
                 handleOnClick={() => handleToggleEnvironment('oci')}
                 isClicked={environments.includes('oci')}
               />
@@ -225,19 +225,19 @@ const TargetEnvironment = () => {
         supportedEnvironments?.includes('vsphere-ova')) && (
         <FormGroup
           label={<small>Private cloud</small>}
-          className="pf-v6-u-mt-sm"
+          className='pf-v6-u-mt-sm'
         >
           {supportedEnvironments.includes('vsphere-ova') && (
             <Checkbox
-              name="vsphere-checkbox-ova"
-              aria-label="VMware vSphere checkbox OVA"
-              id="vsphere-checkbox-ova"
+              name='vsphere-checkbox-ova'
+              aria-label='VMware vSphere checkbox OVA'
+              id='vsphere-checkbox-ova'
               label={
                 <>
                   VMware vSphere - Open virtualization format (.ova)
                   <Popover
-                    maxWidth="30rem"
-                    position="right"
+                    maxWidth='30rem'
+                    position='right'
                     bodyContent={
                       <Content>
                         <Content>
@@ -252,9 +252,9 @@ const TargetEnvironment = () => {
                   >
                     <Button
                       icon={<HelpIcon />}
-                      className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-                      variant="plain"
-                      aria-label="About OVA file"
+                      className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+                      variant='plain'
+                      aria-label='About OVA file'
                       isInline
                     />
                   </Popover>
@@ -268,16 +268,16 @@ const TargetEnvironment = () => {
           )}
           {supportedEnvironments.includes('vsphere') && (
             <Checkbox
-              className="pf-v6-u-mt-sm"
-              name="vsphere-checkbox-vmdk"
-              aria-label="VMware vSphere checkbox VMDK"
-              id="vsphere-checkbox-vmdk"
+              className='pf-v6-u-mt-sm'
+              name='vsphere-checkbox-vmdk'
+              aria-label='VMware vSphere checkbox VMDK'
+              id='vsphere-checkbox-vmdk'
               label={
                 <>
                   VMware vSphere - Virtual disk (.vmdk)
                   <Popover
-                    maxWidth="30rem"
-                    position="right"
+                    maxWidth='30rem'
+                    position='right'
                     bodyContent={
                       <Content>
                         <Content>
@@ -291,9 +291,9 @@ const TargetEnvironment = () => {
                   >
                     <Button
                       icon={<HelpIcon />}
-                      className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-                      variant="plain"
-                      aria-label="About VMDK file"
+                      className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+                      variant='plain'
+                      aria-label='About VMDK file'
                       isInline
                     />
                   </Popover>
@@ -310,26 +310,26 @@ const TargetEnvironment = () => {
       <FormGroup label={<small>Other</small>}>
         {supportedEnvironments?.includes('guest-image') && (
           <Checkbox
-            label="Virtualization - Guest image (.qcow2)"
+            label='Virtualization - Guest image (.qcow2)'
             isChecked={environments.includes('guest-image')}
             onChange={() => {
               handleToggleEnvironment('guest-image');
             }}
-            aria-label="Virtualization guest image checkbox"
-            id="checkbox-guest-image"
-            name="Virtualization guest image"
+            aria-label='Virtualization guest image checkbox'
+            id='checkbox-guest-image'
+            name='Virtualization guest image'
           />
         )}
         {supportedEnvironments?.includes('image-installer') && (
           <Checkbox
-            label="Bare metal - Installer (.iso)"
+            label='Bare metal - Installer (.iso)'
             isChecked={environments.includes('image-installer')}
             onChange={() => {
               handleToggleEnvironment('image-installer');
             }}
-            aria-label="Bare metal installer checkbox"
-            id="checkbox-image-installer"
-            name="Bare metal installer"
+            aria-label='Bare metal installer checkbox'
+            id='checkbox-image-installer'
+            name='Bare metal installer'
           />
         )}
         {supportedEnvironments?.includes('wsl') && (
@@ -338,8 +338,8 @@ const TargetEnvironment = () => {
               <>
                 WSL - Windows Subsystem for Linux (.wsl)
                 <Popover
-                  maxWidth="30rem"
-                  position="right"
+                  maxWidth='30rem'
+                  position='right'
                   headerContent={
                     <Content>
                       <Content>
@@ -360,13 +360,13 @@ const TargetEnvironment = () => {
                   }
                   footerContent={
                     <Button
-                      component="a"
-                      target="_blank"
-                      variant="link"
+                      component='a'
+                      target='_blank'
+                      variant='link'
                       icon={<ExternalLinkAltIcon />}
-                      iconPosition="right"
+                      iconPosition='right'
                       isInline
-                      href="https://access.redhat.com/articles/7115538"
+                      href='https://access.redhat.com/articles/7115538'
                     >
                       Learn more about Red Hat&apos;s WSL support
                     </Button>
@@ -374,9 +374,9 @@ const TargetEnvironment = () => {
                 >
                   <Button
                     icon={<HelpIcon />}
-                    className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
-                    variant="plain"
-                    aria-label="About WSL file"
+                    className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
+                    variant='plain'
+                    aria-label='About WSL file'
                     isInline
                   />
                 </Popover>
@@ -386,9 +386,9 @@ const TargetEnvironment = () => {
             onChange={() => {
               handleToggleEnvironment('wsl');
             }}
-            aria-label="windows subsystem for linux checkbox"
-            id="checkbox-wsl"
-            name="WSL"
+            aria-label='windows subsystem for linux checkbox'
+            id='checkbox-wsl'
+            name='WSL'
           />
         )}
       </FormGroup>

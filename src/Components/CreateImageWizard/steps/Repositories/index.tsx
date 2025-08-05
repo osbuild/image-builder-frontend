@@ -17,7 +17,7 @@ const RepositoriesStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Custom repositories
       </Title>
       <Content>
@@ -30,7 +30,7 @@ const RepositoriesStep = () => {
       {packages.length && recommendedRepos.length ? (
         <Alert
           title="Why can't I remove a selected repository?"
-          variant="info"
+          variant='info'
           isInline
         >
           EPEL repository cannot be removed, because packages from it were

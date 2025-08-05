@@ -150,12 +150,12 @@ const Review = () => {
     return (
       <Button
         icon={<ArrowRightIcon />}
-        variant="link"
+        variant='link'
         aria-label={ariaLabel}
         data-testid={testId}
-        component="span"
+        component='span'
         onClick={() => revisitStep(stepId)}
-        className="pf-v6-u-p-0 pf-v6-u-font-weight-bold"
+        className='pf-v6-u-p-0 pf-v6-u-font-weight-bold'
         isInline
       >
         Revisit step
@@ -172,9 +172,9 @@ const Review = () => {
       <Split hasGutter>
         <SplitItem
           isFilled
-          className="pf-v6-u-min-width pf-v6-u-text-align-start"
+          className='pf-v6-u-min-width pf-v6-u-text-align-start'
         >
-          <Button variant="link" component="span" isInline>
+          <Button variant='link' component='span' isInline>
             {label}
           </Button>
         </SplitItem>
@@ -202,7 +202,7 @@ const Review = () => {
         }
         isExpanded={isExpandedImageOutput}
         isIndented
-        data-testid="image-output-expandable"
+        data-testid='image-output-expandable'
       >
         <ImageOutputList />
       </ExpandableSection>
@@ -217,7 +217,7 @@ const Review = () => {
         }
         isExpanded={isExpandedTargetEnvs}
         isIndented
-        data-testid="target-environments-expandable"
+        data-testid='target-environments-expandable'
       >
         <Stack hasGutter>
           {environments.includes('aws') && (
@@ -304,7 +304,7 @@ const Review = () => {
           }
           isExpanded={isExpandedRegistration}
           isIndented
-          data-testid="registration-expandable"
+          data-testid='registration-expandable'
         >
           {registrationType === 'register-later' && <RegisterLaterList />}
           {registrationType === 'register-satellite' && (
@@ -325,7 +325,7 @@ const Review = () => {
           }
           isExpanded={isExpandedOscapDetail}
           isIndented
-          data-testid="oscap-detail-expandable"
+          data-testid='oscap-detail-expandable'
         >
           <OscapList />
         </ExpandableSection>
@@ -342,7 +342,7 @@ const Review = () => {
           }
           isExpanded={isExpandedComplianceDetail}
           isIndented
-          data-testid="compliance-detail-expandable"
+          data-testid='compliance-detail-expandable'
         >
           <OscapList />
         </ExpandableSection>
@@ -357,7 +357,7 @@ const Review = () => {
           onToggle={(_event, isExpandedFSC) => onToggleFSC(isExpandedFSC)}
           isExpanded={isExpandedFSC}
           isIndented
-          data-testid="file-system-configuration-expandable"
+          data-testid='file-system-configuration-expandable'
         >
           <FSCList />
         </ExpandableSection>
@@ -373,7 +373,7 @@ const Review = () => {
         }
         isExpanded={isExpandedContent}
         isIndented
-        data-testid="content-expandable"
+        data-testid='content-expandable'
       >
         <ContentList />
       </ExpandableSection>
@@ -387,7 +387,7 @@ const Review = () => {
           onToggle={(_event, isExpandedUsers) => onToggleUsers(isExpandedUsers)}
           isExpanded={isExpandedUsers}
           isIndented
-          data-testid="users-expandable"
+          data-testid='users-expandable'
         >
           <UsersList />
         </ExpandableSection>
@@ -404,7 +404,7 @@ const Review = () => {
           }
           isExpanded={isExpandedTimezone}
           isIndented
-          data-testid="timezone-expandable"
+          data-testid='timezone-expandable'
         >
           <TimezoneList />
         </ExpandableSection>
@@ -422,7 +422,7 @@ const Review = () => {
           }
           isExpanded={isExpandedLocale}
           isIndented
-          data-testid="locale-expandable"
+          data-testid='locale-expandable'
         >
           <LocaleList />
         </ExpandableSection>
@@ -439,7 +439,7 @@ const Review = () => {
           }
           isExpanded={isExpandedHostname}
           isIndented
-          data-testid="hostname-expandable"
+          data-testid='hostname-expandable'
         >
           <HostnameList />
         </ExpandableSection>
@@ -456,7 +456,7 @@ const Review = () => {
           }
           isExpanded={isExpandedKernel}
           isIndented
-          data-testid="kernel-expandable"
+          data-testid='kernel-expandable'
         >
           <KernelList />
         </ExpandableSection>
@@ -475,7 +475,7 @@ const Review = () => {
           }
           isExpanded={isExpandedFirewall}
           isIndented
-          data-testid="firewall-expandable"
+          data-testid='firewall-expandable'
         >
           <FirewallList />
         </ExpandableSection>
@@ -494,7 +494,7 @@ const Review = () => {
           }
           isExpanded={isExpandedServices}
           isIndented
-          data-testid="services-expandable"
+          data-testid='services-expandable'
         >
           <ServicesList />
         </ExpandableSection>
@@ -510,7 +510,7 @@ const Review = () => {
         }
         isExpanded={isExpandableFirstBoot}
         isIndented
-        data-testid="firstboot-expandable"
+        data-testid='firstboot-expandable'
       >
         <FirstBootList />
       </ExpandableSection>
@@ -526,7 +526,7 @@ const Review = () => {
           }
           isExpanded={isExpandedImageDetail}
           isIndented
-          data-testid="image-details-expandable"
+          data-testid='image-details-expandable'
         >
           <DetailsList />
         </ExpandableSection>

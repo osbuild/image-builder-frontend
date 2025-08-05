@@ -21,14 +21,14 @@ const HostnameInput = () => {
   };
 
   return (
-    <FormGroup label="Hostname">
+    <FormGroup label='Hostname'>
       <ValidatedInputAndTextArea
-        ariaLabel="hostname input"
+        ariaLabel='hostname input'
         value={hostname}
         onChange={handleChange}
-        placeholder="Add a hostname"
+        placeholder='Add a hostname'
         stepValidation={stepValidation}
-        fieldName="hostname"
+        fieldName='hostname'
       />
     </FormGroup>
   );

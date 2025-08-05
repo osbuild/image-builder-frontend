@@ -108,8 +108,8 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       page={page}
       onSetPage={(_, page) => setPage(page)}
       onPerPageSelect={onPerPageSelect}
-      widgetId="compose-pagination-top"
-      data-testid="images-pagination-top"
+      widgetId='compose-pagination-top'
+      data-testid='images-pagination-top'
       isCompact
     />
   );
@@ -152,7 +152,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
       )}
       <Toolbar>
         <ToolbarContent>
-          <Title headingLevel="h2">
+          <Title headingLevel='h2'>
             {selectedBlueprintName
               ? `${selectedBlueprintName} images`
               : 'All images'}
@@ -160,7 +160,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
         </ToolbarContent>
         {hasErrors && (
           <Alert
-            variant="warning"
+            variant='warning'
             style={{
               margin:
                 '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
@@ -172,7 +172,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 onClick={async () => {
                   await fixupBlueprint({ id: selectedBlueprintId! });
                 }}
-                id="blueprint_fix_errors_automatically"
+                id='blueprint_fix_errors_automatically'
               >
                 Fix errors automatically (updates the blueprint)
               </AlertActionLink>
@@ -204,7 +204,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
             actionLinks={
               <AlertActionLink
                 onClick={() => setShowDiffModal(true)}
-                id="blueprint_view_version_difference"
+                id='blueprint_view_version_difference'
               >
                 View the difference
               </AlertActionLink>
@@ -220,8 +220,8 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                   '0 var(--pf-v6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
               }}
               isInline
-              variant="warning"
-              title="CentOS Stream 8 is no longer supported, building images from this blueprint will fail. Edit blueprint to update the release to CentOS Stream 9."
+              variant='warning'
+              title='CentOS Stream 8 is no longer supported, building images from this blueprint will fail. Edit blueprint to update the release to CentOS Stream 9.'
             />
           )}
         <ToolbarContent>
@@ -241,7 +241,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               </ToolbarItem>
             </>
           )}
-          <ToolbarItem variant="pagination" align={{ default: 'alignEnd' }}>
+          <ToolbarItem variant='pagination' align={{ default: 'alignEnd' }}>
             {pagination}
           </ToolbarItem>
         </ToolbarContent>

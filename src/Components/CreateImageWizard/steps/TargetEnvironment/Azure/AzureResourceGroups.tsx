@@ -103,7 +103,7 @@ export const AzureResourceGroups = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
       isDisabled={!azureSource}
@@ -113,8 +113,8 @@ export const AzureResourceGroups = () => {
           value={azureResourceGroup ? azureResourceGroup : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select resource group"
+          autoComplete='off'
+          placeholder='Select resource group'
           isExpanded={isOpen}
         />
 
@@ -122,9 +122,9 @@ export const AzureResourceGroups = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={handleClear}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -146,8 +146,8 @@ export const AzureResourceGroups = () => {
       >
         <SelectList>
           {isFetching && (
-            <SelectOption value="loader">
-              <Spinner size="lg" />
+            <SelectOption value='loader'>
+              <Spinner size='lg' />
             </SelectOption>
           )}
           {selectOptions.length > 0 &&

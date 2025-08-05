@@ -72,13 +72,13 @@ const FileSystemConfiguration = () => {
           order to conform to best practices and ensure functionality.
           <br></br>
           <Button
-            component="a"
-            target="_blank"
-            variant="link"
+            component='a'
+            target='_blank'
+            variant='link'
             icon={<ExternalLinkAltIcon />}
-            iconPosition="right"
+            iconPosition='right'
             href={FILE_SYSTEM_CUSTOMIZATION_URL}
-            className="pf-v6-u-pl-0"
+            className='pf-v6-u-pl-0'
           >
             Read more about manual configuration here
           </Button>
@@ -87,7 +87,7 @@ const FileSystemConfiguration = () => {
       {(environments.includes('image-installer') ||
         environments.includes('wsl')) && (
         <Alert
-          variant="warning"
+          variant='warning'
           isInline
           title={`Filesystem customizations are not applied to ${filteredTargets.join(
             ' and ',
@@ -97,8 +97,8 @@ const FileSystemConfiguration = () => {
       <FileSystemTable />
       <Content>
         <Button
-          className="pf-v6-u-text-align-left"
-          variant="link"
+          className='pf-v6-u-text-align-left'
+          variant='link'
           icon={<PlusCircleIcon />}
           onClick={handleAddPartition}
         >

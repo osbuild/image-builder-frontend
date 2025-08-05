@@ -53,7 +53,7 @@ const FirstBootStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         First boot configuration
       </Title>
       <Content>
@@ -61,10 +61,10 @@ const FirstBootStep = () => {
         boot.
       </Content>
       <Alert
-        variant="warning"
+        variant='warning'
         isExpandable
         isInline
-        title="Important: please do not include sensitive information"
+        title='Important: please do not include sensitive information'
       >
         <Content>
           Please ensure that your script does not contain any secrets,
@@ -90,14 +90,14 @@ const FirstBootStep = () => {
             dispatch(setFirstBootScript(code.replace('\r\n', '\n')));
           }}
           code={selectedScript}
-          height="35vh"
-          emptyStateButton="Browse"
-          emptyStateLink="Start from scratch"
+          height='35vh'
+          emptyStateButton='Browse'
+          emptyStateLink='Start from scratch'
         />
         {errors.script && (
           <FormHelperText>
             <HelperText>
-              <HelperTextItem variant="error">{errors.script}</HelperTextItem>
+              <HelperTextItem variant='error'>{errors.script}</HelperTextItem>
             </HelperText>
           </FormHelperText>
         )}

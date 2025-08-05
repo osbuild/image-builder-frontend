@@ -117,7 +117,7 @@ export const chartMajorVersionCfg = {
 export const MajorReleasesLifecyclesChart = () => {
   return (
     <Panel>
-      <PanelMain maxHeight="10rem">
+      <PanelMain maxHeight='10rem'>
         <Bar
           options={chartMajorVersionCfg.options}
           data={chartMajorVersionCfg.data}
@@ -147,16 +147,16 @@ const ReleaseLifecycle = () => {
         isExpanded={isExpanded}
         isIndented
       >
-        <FormGroup label="Release lifecycle">
+        <FormGroup label='Release lifecycle'>
           <MajorReleasesLifecyclesChart />
         </FormGroup>
         <br />
         <Button
-          component="a"
-          target="_blank"
-          variant="link"
+          component='a'
+          target='_blank'
+          variant='link'
           icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
+          iconPosition='right'
           isInline
           href={RELEASE_LIFECYCLE_URL}
         >

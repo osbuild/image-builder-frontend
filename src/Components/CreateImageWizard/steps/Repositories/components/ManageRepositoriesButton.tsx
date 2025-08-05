@@ -8,10 +8,10 @@ import { CONTENT_URL } from '../../../../../constants';
 const ManageRepositoriesButton = () => {
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
-      iconPosition="right"
+      component='a'
+      target='_blank'
+      variant='link'
+      iconPosition='right'
       isInline
       icon={<ExternalLinkAltIcon />}
       href={CONTENT_URL}

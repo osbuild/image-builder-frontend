@@ -44,13 +44,13 @@ const AWSConfigToggle = ({ value, onChange }: ToggleGroupProps) => {
   };
 
   return (
-    <FormGroup label="Configure AWS Uploads">
+    <FormGroup label='Configure AWS Uploads'>
       <Switch
-        id="aws-config-switch"
-        ouiaId="aws-config-switch"
-        aria-label="aws-config-switch"
+        id='aws-config-switch'
+        ouiaId='aws-config-switch'
+        aria-label='aws-config-switch'
         // empty label so there is no icon
-        label=""
+        label=''
         isChecked={value}
         onChange={handleChange}
       />
@@ -79,19 +79,19 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
 
   if (isDisabled) {
     return (
-      <DisabledInputGroup label={label} value={value} ariaLabel="aws-bucket" />
+      <DisabledInputGroup label={label} value={value} ariaLabel='aws-bucket' />
     );
   }
 
   return (
     <FormGroup label={label}>
       <ValidatedInput
-        placeholder="AWS bucket"
-        ariaLabel="aws-bucket"
+        placeholder='AWS bucket'
+        ariaLabel='aws-bucket'
         value={value || ''}
         validator={isAwsBucketValid}
         onChange={(_event, value) => onChange(value)}
-        helperText="Invalid AWS bucket name"
+        helperText='Invalid AWS bucket name'
       />
     </FormGroup>
   );
@@ -100,7 +100,7 @@ const AWSBucket = ({ value, onChange, isDisabled }: FormGroupProps<string>) => {
 const CredsPathPopover = () => {
   return (
     <Popover
-      minWidth="35rem"
+      minWidth='35rem'
       headerContent={'What is the AWS Credentials Path?'}
       bodyContent={
         <Content>
@@ -115,9 +115,9 @@ const CredsPathPopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="Credentials Path Info"
-        className="pf-v6-u-pl-sm header-button"
+        variant='plain'
+        aria-label='Credentials Path Info'
+        className='pf-v6-u-pl-sm header-button'
       />
     </Popover>
   );
@@ -139,7 +139,7 @@ const AWSCredsPath = ({
       <DisabledInputGroup
         value={value}
         label={label}
-        ariaLabel="aws-creds-path"
+        ariaLabel='aws-creds-path'
       />
     );
   }
@@ -147,12 +147,12 @@ const AWSCredsPath = ({
   return (
     <FormGroup label={label}>
       <ValidatedInput
-        placeholder="Path to AWS credentials"
-        ariaLabel="aws-creds-path"
+        placeholder='Path to AWS credentials'
+        ariaLabel='aws-creds-path'
         value={value || ''}
         validator={isAwsCredsPathValid}
         onChange={(_event, value) => onChange(value)}
-        helperText="Invalid filepath for AWS credentials"
+        helperText='Invalid filepath for AWS credentials'
       />
     </FormGroup>
   );

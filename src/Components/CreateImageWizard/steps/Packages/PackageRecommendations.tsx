@@ -149,7 +149,7 @@ const PackageRecommendations = () => {
   };
 
   return (
-    <Panel variant="bordered" className="panel-border">
+    <Panel variant='bordered' className='panel-border'>
       <PanelMain>
         <PanelMainBody>
           <ExpandableSection
@@ -166,7 +166,7 @@ const PackageRecommendations = () => {
                     <Content component={ContentVariants.small}>
                       <em>Powered by RHEL Lightspeed</em>{' '}
                       <Popover
-                        maxWidth="30rem"
+                        maxWidth='30rem'
                         // overrides the expandable behaviour to allow placing
                         // a popover there
                         onShow={() => setIsExpanded(false)}
@@ -194,11 +194,11 @@ const PackageRecommendations = () => {
             {packages.length === 0 && (
               <>Select packages to generate recommendations.</>
             )}
-            {isLoading && <Spinner size="lg" />}
+            {isLoading && <Spinner size='lg' />}
             {isError && (
               <Alert
                 title="Recommendations couldn't be fetched"
-                variant="danger"
+                variant='danger'
                 isPlain
                 isInline
               >
@@ -219,15 +219,15 @@ const PackageRecommendations = () => {
                     blueprint.
                   </Content>
                 </Content>
-                <Table variant="compact">
+                <Table variant='compact'>
                   <Thead>
                     <Tr>
                       <Th width={35}>Package name</Th>
                       <Th width={45}>Description</Th>
                       <Th width={20}>
                         <Button
-                          variant="link"
-                          component="a"
+                          variant='link'
+                          component='a'
                           onClick={() => addAllPackages()}
                           isInline
                         >
@@ -242,7 +242,7 @@ const PackageRecommendations = () => {
                         <Td>{pkg}</Td>
                         {isLoadingDescriptions && (
                           <Td>
-                            <Spinner size="md" />
+                            <Spinner size='md' />
                           </Td>
                         )}
                         {isSuccessDescriptions && (
@@ -254,8 +254,8 @@ const PackageRecommendations = () => {
                         )}
                         <Td>
                           <Button
-                            variant="link"
-                            component="a"
+                            variant='link'
+                            component='a'
                             onClick={() => {
                               analytics.track(
                                 `${AMPLITUDE_MODULE_NAME} - Recommended Package Added`,

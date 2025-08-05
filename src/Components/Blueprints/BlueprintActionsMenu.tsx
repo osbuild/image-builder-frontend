@@ -58,10 +58,10 @@ export const BlueprintActionsMenu: React.FunctionComponent<
           ref={toggleRef}
           isExpanded={showBlueprintActionsMenu}
           onClick={() => setShowBlueprintActionsMenu(!showBlueprintActionsMenu)}
-          variant="plain"
-          aria-label="blueprint menu toggle"
+          variant='plain'
+          aria-label='blueprint menu toggle'
         >
-          <EllipsisVIcon aria-hidden="true" />
+          <EllipsisVIcon aria-hidden='true' />
         </MenuToggle>
       )}
     >

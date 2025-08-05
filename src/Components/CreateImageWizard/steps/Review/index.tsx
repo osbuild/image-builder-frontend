@@ -16,7 +16,7 @@ const ReviewStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Review {blueprintName} blueprint
       </Title>
       {blueprintDescription && <Content>{blueprintDescription}</Content>}

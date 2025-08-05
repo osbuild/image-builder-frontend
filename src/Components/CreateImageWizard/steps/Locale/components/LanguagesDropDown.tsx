@@ -130,7 +130,7 @@ const LanguagesDropDown = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
@@ -139,17 +139,17 @@ const LanguagesDropDown = () => {
           value={inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select a language"
+          autoComplete='off'
+          placeholder='Select a language'
           isExpanded={isOpen}
         />
         {inputValue && (
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={onClearButtonClick}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -158,7 +158,7 @@ const LanguagesDropDown = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label="Languages">
+    <FormGroup isRequired={false} label='Languages'>
       <Select
         isScrollable
         isOpen={isOpen}
@@ -198,7 +198,7 @@ const LanguagesDropDown = () => {
           )}`}</HelperTextItem>
         </HelperText>
       )}
-      <LabelGroup numLabels={5} className="pf-v6-u-mt-sm pf-v6-u-w-100">
+      <LabelGroup numLabels={5} className='pf-v6-u-mt-sm pf-v6-u-w-100'>
         {languages?.map((lang) => (
           <Label
             key={lang}

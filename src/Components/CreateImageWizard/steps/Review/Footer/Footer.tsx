@@ -71,7 +71,7 @@ const ReviewWizardFooter = () => {
           onOpenChange={(isOpen: boolean) => setIsOpen(isOpen)}
           toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
             <MenuToggle
-              variant="primary"
+              variant='primary'
               ref={toggleRef}
               onClick={onToggleClick}
               isExpanded={isOpen}
@@ -80,7 +80,7 @@ const ReviewWizardFooter = () => {
                 composeId
                   ? [
                       <EditSaveButton
-                        key="wizard-edit-save-btn"
+                        key='wizard-edit-save-btn'
                         getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         blueprintId={composeId}
@@ -89,7 +89,7 @@ const ReviewWizardFooter = () => {
                     ]
                   : [
                       <CreateSaveButton
-                        key="wizard-create-save-btn"
+                        key='wizard-create-save-btn'
                         getBlueprintPayload={getBlueprintPayload}
                         setIsOpen={setIsOpen}
                         isDisabled={!isValid}
@@ -115,10 +115,10 @@ const ReviewWizardFooter = () => {
             />
           )}
         </Dropdown>
-        <Button variant="secondary" onClick={goToPrevStep}>
+        <Button variant='secondary' onClick={goToPrevStep}>
           Back
         </Button>
-        <Button variant="link" onClick={close}>
+        <Button variant='link' onClick={close}>
           Cancel
         </Button>
       </Flex>

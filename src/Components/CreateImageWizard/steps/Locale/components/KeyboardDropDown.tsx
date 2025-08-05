@@ -98,7 +98,7 @@ const KeyboardDropDown = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
@@ -107,8 +107,8 @@ const KeyboardDropDown = () => {
           value={keyboard ? keyboard : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select a keyboard"
+          autoComplete='off'
+          placeholder='Select a keyboard'
           isExpanded={isOpen}
         />
 
@@ -116,9 +116,9 @@ const KeyboardDropDown = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={onClearButtonClick}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -127,7 +127,7 @@ const KeyboardDropDown = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label="Keyboard">
+    <FormGroup isRequired={false} label='Keyboard'>
       <Select
         isScrollable
         isOpen={isOpen}

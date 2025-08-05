@@ -26,15 +26,15 @@ export const LandingPage = () => {
     <>
       <PageSection hasBodyWrapper={false}>
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
-        <Sidebar hasBorder className="pf-v6-u-background-color-100">
+        <Sidebar hasBorder className='pf-v6-u-background-color-100'>
           <SidebarPanel
-            variant="sticky"
+            variant='sticky'
             width={{ default: 'width_25' }}
-            className="sidebar-panel"
+            className='sidebar-panel'
           >
             <Toolbar>
               <ToolbarContent>
-                <Title headingLevel="h2">{'Blueprints'}</Title>
+                <Title headingLevel='h2'>{'Blueprints'}</Title>
               </ToolbarContent>
             </Toolbar>
             <SidebarContent hasPadding>

@@ -39,19 +39,19 @@ const KernelArguments = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label="Append">
+    <FormGroup isRequired={false} label='Append'>
       <LabelInput
-        ariaLabel="Add kernel argument"
-        placeholder="Add kernel argument"
+        ariaLabel='Add kernel argument'
+        placeholder='Add kernel argument'
         validator={isKernelArgumentValid}
         list={kernelAppend.filter((arg) => !requiredByOpenSCAP.includes(arg))}
         requiredList={requiredByOpenSCAP}
-        requiredCategoryName="Required by OpenSCAP"
-        item="Kernel argument"
+        requiredCategoryName='Required by OpenSCAP'
+        item='Kernel argument'
         addAction={addKernelArg}
         removeAction={removeKernelArg}
         stepValidation={stepValidation}
-        fieldName="kernelAppend"
+        fieldName='kernelAppend'
       />
     </FormGroup>
   );

@@ -43,11 +43,11 @@ export type AzureShareMethod = 'manual' | 'sources';
 const SourcesButton = () => {
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
+      iconPosition='right'
       isInline
       href={'settings/sources'}
     >
@@ -65,7 +65,7 @@ const Azure = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Target environment - Microsoft Azure
       </Title>
       <Content>
@@ -81,11 +81,11 @@ const Azure = () => {
         defining target by Source selection.
         <br />
         <Button
-          component="a"
-          target="_blank"
-          variant="link"
+          component='a'
+          target='_blank'
+          variant='link'
           icon={<ExternalLinkAltIcon />}
-          iconPosition="right"
+          iconPosition='right'
           isInline
           href={AZURE_AUTH_URL}
         >
@@ -93,12 +93,12 @@ const Azure = () => {
         </Button>
       </Content>
       <AzureHyperVSelect />
-      <FormGroup label="Share method:">
+      <FormGroup label='Share method:'>
         <Radio
-          id="radio-with-description"
-          label="Use an account configured from Sources."
-          name="radio-7"
-          description="Use a configured source to launch environments directly from the console."
+          id='radio-with-description'
+          label='Use an account configured from Sources.'
+          name='radio-7'
+          description='Use a configured source to launch environments directly from the console.'
           isChecked={shareMethod === 'sources'}
           onChange={() => {
             dispatch(changeAzureSource(''));
@@ -110,9 +110,9 @@ const Azure = () => {
           autoFocus
         />
         <Radio
-          id="radio"
-          label="Manually enter the account information."
-          name="radio-8"
+          id='radio'
+          label='Manually enter the account information.'
+          name='radio-8'
           isChecked={shareMethod === 'manual'}
           onChange={() => {
             dispatch(changeAzureSource(''));
@@ -129,24 +129,24 @@ const Azure = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-              <FormGroup label="Azure tenant GUID" isRequired>
+              <FormGroup label='Azure tenant GUID' isRequired>
                 <TextInput
-                  aria-label="Azure tenant GUID"
-                  readOnlyVariant="default"
+                  aria-label='Azure tenant GUID'
+                  readOnlyVariant='default'
                   isRequired
-                  id="tenant id"
+                  id='tenant id'
                   value={tenantId}
                 />
               </FormGroup>
             </GalleryItem>
             <GalleryItem>
-              <FormGroup label="Subscription ID" isRequired>
+              <FormGroup label='Subscription ID' isRequired>
                 <TextInput
-                  aria-label="Subscription ID"
-                  label="Subscription ID"
-                  readOnlyVariant="default"
+                  aria-label='Subscription ID'
+                  label='Subscription ID'
+                  readOnlyVariant='default'
                   isRequired
-                  id="subscription id"
+                  id='subscription id'
                   value={subscriptionId}
                 />
               </FormGroup>
@@ -158,36 +158,36 @@ const Azure = () => {
       )}
       {shareMethod === 'manual' && (
         <>
-          <FormGroup label="Azure tenant GUID" isRequired>
+          <FormGroup label='Azure tenant GUID' isRequired>
             <ValidatedInput
-              ariaLabel="Azure tenant GUID"
+              ariaLabel='Azure tenant GUID'
               value={tenantId || ''}
               validator={isAzureTenantGUIDValid}
               onChange={(_event, value) => dispatch(changeAzureTenantId(value))}
-              helperText="Please enter a valid tenant ID"
+              helperText='Please enter a valid tenant ID'
             />
           </FormGroup>
           <AzureAuthButton />
-          <FormGroup label="Subscription ID" isRequired>
+          <FormGroup label='Subscription ID' isRequired>
             <ValidatedInput
-              ariaLabel="subscription id"
+              ariaLabel='subscription id'
               value={subscriptionId}
               validator={isAzureSubscriptionIdValid}
               onChange={(_event, value) =>
                 dispatch(changeAzureSubscriptionId(value))
               }
-              helperText="Please enter a valid subscription ID"
+              helperText='Please enter a valid subscription ID'
             />
           </FormGroup>
-          <FormGroup label="Resource group" isRequired>
+          <FormGroup label='Resource group' isRequired>
             <ValidatedInput
-              ariaLabel="resource group"
+              ariaLabel='resource group'
               value={resourceGroup}
               validator={isAzureResourceGroupValid}
               onChange={(_event, value) =>
                 dispatch(changeAzureResourceGroup(value))
               }
-              helperText="Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period"
+              helperText='Resource group names only allow alphanumeric characters, periods, underscores, hyphens, and parenthesis and cannot end in a period'
             />
           </FormGroup>
         </>

@@ -106,7 +106,7 @@ const TimezoneDropDown = () => {
   const toggle = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
       ref={toggleRef}
-      variant="typeahead"
+      variant='typeahead'
       onClick={onToggleClick}
       isExpanded={isOpen}
     >
@@ -115,8 +115,8 @@ const TimezoneDropDown = () => {
           value={timezone ? timezone : inputValue}
           onClick={onInputClick}
           onChange={onTextInputChange}
-          autoComplete="off"
-          placeholder="Select a timezone"
+          autoComplete='off'
+          placeholder='Select a timezone'
           isExpanded={isOpen}
         />
 
@@ -124,9 +124,9 @@ const TimezoneDropDown = () => {
           <TextInputGroupUtilities>
             <Button
               icon={<TimesIcon />}
-              variant="plain"
+              variant='plain'
               onClick={onClearButtonClick}
-              aria-label="Clear input"
+              aria-label='Clear input'
             />
           </TextInputGroupUtilities>
         )}
@@ -135,7 +135,7 @@ const TimezoneDropDown = () => {
   );
 
   return (
-    <FormGroup isRequired={false} label="Timezone">
+    <FormGroup isRequired={false} label='Timezone'>
       <Select
         isScrollable
         isOpen={isOpen}

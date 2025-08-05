@@ -20,12 +20,12 @@ const EmptyUserState = () => {
 
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       icon={UserIcon}
       variant={EmptyStateVariant.lg}
     >
       <EmptyStateFooter>
-        <Button variant="secondary" onClick={onAddUserClick}>
+        <Button variant='secondary' onClick={onAddUserClick}>
           Add a user
         </Button>
       </EmptyStateFooter>

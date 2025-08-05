@@ -32,17 +32,17 @@ export const AwsAccountId = () => {
 
   return (
     <>
-      <FormGroup label="Associated account ID" isRequired>
+      <FormGroup label='Associated account ID' isRequired>
         <TextInput
-          readOnlyVariant="default"
+          readOnlyVariant='default'
           isRequired
-          id="aws-account-id"
+          id='aws-account-id'
           value={sourceId && data ? (data.aws?.account_id ?? '') : ''}
-          aria-label="aws account id"
+          aria-label='aws account id'
         />
       </FormGroup>
       <HelperText>
-        <HelperTextItem component="div" variant="default">
+        <HelperTextItem component='div' variant='default'>
           This is the account associated with the source.
         </HelperTextItem>
       </HelperText>

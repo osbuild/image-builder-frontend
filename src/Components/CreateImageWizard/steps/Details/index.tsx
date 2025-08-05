@@ -45,7 +45,7 @@ const DetailsStep = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Details
       </Title>
       <Content>
@@ -53,15 +53,15 @@ const DetailsStep = () => {
         images created from this blueprint will use the name of the parent
         blueprint.
       </Content>
-      <FormGroup isRequired label="Blueprint name" fieldId="blueprint-name">
+      <FormGroup isRequired label='Blueprint name' fieldId='blueprint-name'>
         <ValidatedInputAndTextArea
-          ariaLabel="blueprint name"
-          dataTestId="blueprint"
+          ariaLabel='blueprint name'
+          dataTestId='blueprint'
           value={blueprintName}
           onChange={handleNameChange}
-          placeholder="Add blueprint name"
+          placeholder='Add blueprint name'
           stepValidation={stepValidation}
-          fieldName="name"
+          fieldName='name'
           isRequired={true}
         />
         <FormHelperText>
@@ -75,17 +75,17 @@ const DetailsStep = () => {
       </FormGroup>
 
       <FormGroup
-        label="Blueprint description"
-        fieldId="blueprint-description-name"
+        label='Blueprint description'
+        fieldId='blueprint-description-name'
       >
         <ValidatedInputAndTextArea
-          ariaLabel="blueprint description"
-          dataTestId="blueprint description"
+          ariaLabel='blueprint description'
+          dataTestId='blueprint description'
           value={blueprintDescription}
           onChange={handleDescriptionChange}
-          placeholder="Add description"
+          placeholder='Add description'
           stepValidation={stepValidation}
-          fieldName="description"
+          fieldName='description'
         />
       </FormGroup>
     </Form>

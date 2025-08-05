@@ -41,7 +41,7 @@ const Application = () => {
 };
 const ImageBuilder = () => (
   <Provider store={store}>
-    <Page className="no-masthead-sidebar" isContentFilled>
+    <Page className='no-masthead-sidebar' isContentFilled>
       <PageSection>
         <Application />
       </PageSection>

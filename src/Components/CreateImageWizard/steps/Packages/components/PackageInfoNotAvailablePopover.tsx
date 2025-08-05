@@ -6,7 +6,7 @@ import { HelpIcon } from '@patternfly/react-icons';
 const PackageInfoNotAvailablePopover = () => {
   return (
     <Popover
-      headerContent="Package description"
+      headerContent='Package description'
       bodyContent={
         <Content>
           <Content>
@@ -22,9 +22,9 @@ const PackageInfoNotAvailablePopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="Package description"
-        className="pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0"
+        variant='plain'
+        aria-label='Package description'
+        className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
       />
     </Popover>
   );

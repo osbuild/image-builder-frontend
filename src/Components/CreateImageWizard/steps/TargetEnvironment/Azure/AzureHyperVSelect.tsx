@@ -31,16 +31,16 @@ export const AzureHyperVSelect = () => {
 
   const selectOptions = [
     <SelectOption
-      key="V1"
-      value="V1"
-      description="Hyper V Generation 1 (BIOS)"
-      label="Hyper V Generation 1"
+      key='V1'
+      value='V1'
+      description='Hyper V Generation 1 (BIOS)'
+      label='Hyper V Generation 1'
     />,
     <SelectOption
-      key="V2"
-      value="V2"
-      description="Hyper V Generation 2 (UEFI)"
-      label="Hyper V Generation 2"
+      key='V2'
+      value='V2'
+      description='Hyper V Generation 2 (UEFI)'
+      label='Hyper V Generation 2'
     />,
   ];
 
@@ -56,7 +56,7 @@ export const AzureHyperVSelect = () => {
 
   return (
     <>
-      <FormGroup isRequired label="HyperV Generation">
+      <FormGroup isRequired label='HyperV Generation'>
         <Select
           isScrollable
           isOpen={isOpen}

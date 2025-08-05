@@ -18,17 +18,17 @@ const PortsInput = () => {
   const stepValidation = useFirewallValidation();
 
   return (
-    <FormGroup label="Ports">
+    <FormGroup label='Ports'>
       <LabelInput
-        ariaLabel="Add ports"
-        placeholder="Add ports"
+        ariaLabel='Add ports'
+        placeholder='Add ports'
         validator={isPortValid}
         list={ports}
-        item="Port"
+        item='Port'
         addAction={addPort}
         removeAction={removePort}
         stepValidation={stepValidation}
-        fieldName="ports"
+        fieldName='ports'
       />
     </FormGroup>
   );

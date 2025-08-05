@@ -22,30 +22,30 @@ const Services = () => {
 
   return (
     <>
-      <FormGroup label="Enabled services">
+      <FormGroup label='Enabled services'>
         <LabelInput
-          ariaLabel="Add enabled service"
-          placeholder="Add enabled service"
+          ariaLabel='Add enabled service'
+          placeholder='Add enabled service'
           validator={isServiceValid}
           list={enabledServices}
-          item="Enabled service"
+          item='Enabled service'
           addAction={addEnabledFirewallService}
           removeAction={removeEnabledFirewallService}
           stepValidation={stepValidation}
-          fieldName="enabledServices"
+          fieldName='enabledServices'
         />
       </FormGroup>
-      <FormGroup label="Disabled services">
+      <FormGroup label='Disabled services'>
         <LabelInput
-          ariaLabel="Add disabled service"
-          placeholder="Add disabled service"
+          ariaLabel='Add disabled service'
+          placeholder='Add disabled service'
           validator={isServiceValid}
           list={disabledServices}
-          item="Disabled service"
+          item='Disabled service'
           addAction={addDisabledFirewallService}
           removeAction={removeDisabledFirewallService}
           stepValidation={stepValidation}
-          fieldName="disabledServices"
+          fieldName='disabledServices'
         />
       </FormGroup>
     </>

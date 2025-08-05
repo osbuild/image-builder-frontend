@@ -198,7 +198,7 @@ const PolicySelector = () => {
 
     const res = [
       <SelectOption
-        key="compliance-none-option"
+        key='compliance-none-option'
         value={{ toString: () => 'None', compareTo: () => false }}
       >
         None
@@ -216,7 +216,7 @@ const PolicySelector = () => {
 
   const toggleCompliance = (toggleRef: React.Ref<MenuToggleElement>) => (
     <MenuToggle
-      ouiaId="compliancePolicySelect"
+      ouiaId='compliancePolicySelect'
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
@@ -232,7 +232,7 @@ const PolicySelector = () => {
   );
 
   return (
-    <FormGroup label="Policy">
+    <FormGroup label='Policy'>
       <Select
         isScrollable
         isOpen={isOpen}

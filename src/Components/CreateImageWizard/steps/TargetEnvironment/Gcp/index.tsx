@@ -38,18 +38,18 @@ const Gcp = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Target environment - Google Cloud Platform
       </Title>
       <Content>
         Select how to share your image. The image you create can be used to
         launch instances on GCP, regardless of which method you select.
       </Content>
-      <FormGroup label="Select image sharing" isRequired>
+      <FormGroup label='Select image sharing' isRequired>
         <Radio
-          id="share-with-google"
-          label="Share image with a Google account"
-          name="radio-1"
+          id='share-with-google'
+          label='Share image with a Google account'
+          name='radio-1'
           description={
             <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with the account you
@@ -65,9 +65,9 @@ const Gcp = () => {
           autoFocus
         />
         <Radio
-          id="share-with-insights"
-          label="Share image with Red Hat Insights only"
-          name="radio-2"
+          id='share-with-insights'
+          label='Share image with Red Hat Insights only'
+          name='radio-2'
           description={
             <Content component={ContentVariants.small}>
               Your image will be uploaded to GCP and shared with Red Hat
@@ -84,38 +84,38 @@ const Gcp = () => {
       </FormGroup>
       {shareMethod === 'withGoogle' && (
         <>
-          <FormGroup label="Account type" isRequired>
+          <FormGroup label='Account type' isRequired>
             <Radio
-              id="google-account"
-              label="Google account"
-              name="radio-3"
+              id='google-account'
+              label='Google account'
+              name='radio-3'
               isChecked={accountType === 'user'}
               onChange={() => {
                 dispatch(changeGcpAccountType('user'));
               }}
             />
             <Radio
-              id="service-account"
-              label="Service account"
-              name="radio-4"
+              id='service-account'
+              label='Service account'
+              name='radio-4'
               isChecked={accountType === 'serviceAccount'}
               onChange={() => {
                 dispatch(changeGcpAccountType('serviceAccount'));
               }}
             />
             <Radio
-              id="google-group"
-              label="Google group"
-              name="radio-5"
+              id='google-group'
+              label='Google group'
+              name='radio-5'
               isChecked={accountType === 'group'}
               onChange={() => {
                 dispatch(changeGcpAccountType('group'));
               }}
             />
             <Radio
-              id="google-domain"
-              label="Google Workspace domain or Cloud Identity domain"
-              name="radio-6"
+              id='google-domain'
+              label='Google Workspace domain or Cloud Identity domain'
+              name='radio-6'
               isChecked={accountType === 'domain'}
               onChange={() => {
                 dispatch(changeGcpAccountType('domain'));
@@ -131,12 +131,12 @@ const Gcp = () => {
             isRequired
           >
             <ValidatedInput
-              ariaLabel="google principal"
-              dataTestId="principal"
+              ariaLabel='google principal'
+              dataTestId='principal'
               value={gcpEmail || ''}
               validator={isGcpEmailValid}
               onChange={(_event, value) => dispatch(changeGcpEmail(value))}
-              helperText="Please enter a valid e-mail address."
+              helperText='Please enter a valid e-mail address.'
             />
           </FormGroup>
         </>

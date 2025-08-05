@@ -46,15 +46,15 @@ export function BulkSelect({
     <Dropdown
       toggle={(toggleRef: React.Ref<MenuToggleElement>) => (
         <MenuToggle
-          id="bulk-select-toggle"
-          data-testid="bulk-select-toggle"
+          id='bulk-select-toggle'
+          data-testid='bulk-select-toggle'
           ref={toggleRef}
           isDisabled={isDisabled}
           splitButtonItems={[
             <MenuToggleCheckbox
-              id="bulk-select-checkbox"
-              key="split-checkbox"
-              aria-label="Select all"
+              id='bulk-select-checkbox'
+              key='split-checkbox'
+              aria-label='Select all'
               isChecked={allChecked || someChecked ? null : false}
               onClick={handleSelectPage}
             />,
@@ -68,7 +68,7 @@ export function BulkSelect({
     >
       <DropdownList>
         <DropdownItem
-          key="none"
+          key='none'
           isDisabled={!selected.size}
           onClick={() => {
             deselectAll();
@@ -76,7 +76,7 @@ export function BulkSelect({
           }}
         >{`Clear all (${selected.size} items)`}</DropdownItem>
         <DropdownItem
-          key="page"
+          key='page'
           isDisabled={!contentList.length}
           onClick={() => {
             handleSelectPage();

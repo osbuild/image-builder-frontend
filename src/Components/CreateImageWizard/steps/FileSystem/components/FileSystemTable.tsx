@@ -43,7 +43,7 @@ export const FileSystemContext = React.createContext<boolean>(true);
 export const MinimumSizePopover = () => {
   return (
     <Popover
-      maxWidth="30rem"
+      maxWidth='30rem'
       bodyContent={
         <Content>
           <Content>
@@ -55,10 +55,10 @@ export const MinimumSizePopover = () => {
     >
       <Button
         icon={<HelpIcon />}
-        variant="plain"
-        aria-label="File system configuration info"
-        aria-describedby="file-system-configuration-info"
-        className="popover-button pf-v6-u-p-0"
+        variant='plain'
+        aria-label='File system configuration info'
+        aria-describedby='file-system-configuration-info'
+        className='popover-button pf-v6-u-p-0'
       />
     </Popover>
   );
@@ -112,11 +112,11 @@ const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
           id: `draggable-row-${partition.id}`,
         }}
       />
-      <Td className="pf-m-width-20">
+      <Td className='pf-m-width-20'>
         <MountpointPrefix partition={partition} />
         {!isPristine && stepValidation.errors[`mountpoint-${partition.id}`] && (
           <Alert
-            variant="danger"
+            variant='danger'
             isInline
             isPlain
             title={stepValidation.errors[`mountpoint-${partition.id}`]}
@@ -142,7 +142,7 @@ const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
       </Td>
       <Td width={10}>
         <Button
-          variant="link"
+          variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
           isDisabled={partition.mountpoint === '/'}
@@ -234,7 +234,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
   return (
     <TextInput
       value={suffix}
-      type="text"
+      type='text'
       onChange={(event: React.FormEvent, newValue) => {
         const mountpoint = prefix + normalizeSuffix(newValue);
         dispatch(
@@ -244,7 +244,7 @@ const MountpointSuffix = ({ partition }: MountpointSuffixPropTypes) => {
           }),
         );
       }}
-      aria-label="mountpoint suffix"
+      aria-label='mountpoint suffix'
     />
   );
 };
@@ -274,7 +274,7 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
 
   return (
     <ValidatedInputAndTextArea
-      ariaLabel="minimum partition size"
+      ariaLabel='minimum partition size'
       value={partition.min_size}
       isDisabled={partition.unit === 'B'}
       warning={
@@ -282,10 +282,10 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
           ? 'The Wizard only supports KiB, MiB, or GiB. Adjust or keep the current value.'
           : ''
       }
-      type="text"
+      type='text'
       stepValidation={stepValidation}
       fieldName={`min-size-${partition.id}`}
-      placeholder="File system"
+      placeholder='File system'
       onChange={(event, minSize) => {
         if (minSize === '' || /^\d+$/.test(minSize)) {
           dispatch(
@@ -497,20 +497,20 @@ const FileSystemTable = () => {
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
-      aria-label="File system table"
-      variant="compact"
+      aria-label='File system table'
+      variant='compact'
     >
       <Thead>
         <Tr>
-          <Th aria-label="Drag mount point" />
+          <Th aria-label='Drag mount point' />
           <Th>Mount point</Th>
-          <Th aria-label="Suffix">Suffix</Th>
+          <Th aria-label='Suffix'>Suffix</Th>
           <Th>Type</Th>
           <Th>
             Minimum size <MinimumSizePopover />
           </Th>
-          <Th aria-label="Unit">Unit</Th>
-          <Th aria-label="Remove mount point" />
+          <Th aria-label='Unit'>Unit</Th>
+          <Th aria-label='Remove mount point' />
         </Tr>
       </Thead>
 

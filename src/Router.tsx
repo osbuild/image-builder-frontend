@@ -19,19 +19,19 @@ export const Router = () => {
   return (
     <Routes>
       <Route
-        path="*"
+        path='*'
         element={
           <Suspense>
             <LandingPage />
           </Suspense>
         }
       >
-        <Route path="share/:composeId" element={<ShareImageModal />} />
+        <Route path='share/:composeId' element={<ShareImageModal />} />
       </Route>
 
       {importExportFlag && (
         <Route
-          path="imagewizard/import"
+          path='imagewizard/import'
           element={
             <Suspense>
               <ImportImageWizard />
@@ -40,7 +40,7 @@ export const Router = () => {
         />
       )}
       <Route
-        path="imagewizard/:composeId?"
+        path='imagewizard/:composeId?'
         element={
           <Suspense>
             <CreateImageWizard />

@@ -10,11 +10,11 @@ const DocumentationButton = () => {
 
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
+      iconPosition='right'
       isInline
       href={documentationURL}
     >

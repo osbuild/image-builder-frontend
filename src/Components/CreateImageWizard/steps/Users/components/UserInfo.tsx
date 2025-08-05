@@ -145,7 +145,7 @@ const UserInfo = () => {
         userName={users[index] ? users[index].name : ''}
       />
       <Tabs
-        aria-label="Users tabs"
+        aria-label='Users tabs'
         activeKey={activeTabKey}
         onSelect={onSelect}
         onAdd={onAdd}
@@ -166,72 +166,72 @@ const UserInfo = () => {
                     Boolean(error) &&
                     !(field === 'userName' && error === 'Required value'),
                 ) && (
-                  <Icon status="danger">
-                    <ExclamationCircleIcon title="Validation error" />
+                  <Icon status='danger'>
+                    <ExclamationCircleIcon title='Validation error' />
                   </Icon>
                 )}
               </TabTitleText>
             }
           >
-            <FormGroup isRequired label="Username" className="pf-v6-u-pb-md">
+            <FormGroup isRequired label='Username' className='pf-v6-u-pb-md'>
               <ValidatedInputAndTextArea
-                ariaLabel="blueprint user name"
+                ariaLabel='blueprint user name'
                 value={user.name || ''}
-                placeholder="Enter username"
+                placeholder='Enter username'
                 onChange={(_e, value) => handleNameChange(_e, value)}
                 stepValidation={getValidationByIndex(index)}
-                fieldName="userName"
+                fieldName='userName'
               />
             </FormGroup>
             <PasswordValidatedInput
               value={user.password || ''}
-              ariaLabel="blueprint user password"
-              placeholder="Enter password"
+              ariaLabel='blueprint user password'
+              placeholder='Enter password'
               onChange={(_e, value) => handlePasswordChange(_e, value)}
               hasPassword={user.hasPassword}
             />
-            <FormGroup label="SSH key" className="pf-v6-u-pb-md">
+            <FormGroup label='SSH key' className='pf-v6-u-pb-md'>
               <ValidatedInputAndTextArea
                 inputType={'textArea'}
-                ariaLabel="public SSH key"
+                ariaLabel='public SSH key'
                 value={user.ssh_key || ''}
                 type={'text'}
                 onChange={(_e, value) => handleSshKeyChange(_e, value)}
-                placeholder="Paste your public SSH key"
+                placeholder='Paste your public SSH key'
                 stepValidation={getValidationByIndex(index)}
-                fieldName="userSshKey"
+                fieldName='userSshKey'
               />
               <Button
-                component="a"
-                target="_blank"
-                variant="link"
+                component='a'
+                target='_blank'
+                variant='link'
                 icon={<ExternalLinkAltIcon />}
-                iconPosition="right"
+                iconPosition='right'
                 href={GENERATING_SSH_KEY_PAIRS_URL}
-                className="pf-v6-u-pl-0"
+                className='pf-v6-u-pl-0'
               >
                 Learn more about SSH keys
               </Button>
             </FormGroup>
-            <FormGroup className="pf-v6-u-pb-md">
+            <FormGroup className='pf-v6-u-pb-md'>
               <Checkbox
-                label="Administrator"
+                label='Administrator'
                 isChecked={
                   user.isAdministrator || user.groups.includes('wheel')
                 }
                 onChange={(_e, value) => handleCheckboxChange(_e, value)}
-                aria-label="Administrator"
+                aria-label='Administrator'
                 id={`${user.name}-${index}`}
-                name="user Administrator"
+                name='user Administrator'
               />
             </FormGroup>
-            <FormGroup label="Groups">
+            <FormGroup label='Groups'>
               <LabelInput
-                ariaLabel="Add user group"
-                placeholder="Add user group"
+                ariaLabel='Add user group'
+                placeholder='Add user group'
                 validator={isUserGroupValid}
                 list={user.groups}
-                item="Group"
+                item='Group'
                 addAction={(value) =>
                   addUserGroupByIndex({ index: index, group: value })
                 }
@@ -239,7 +239,7 @@ const UserInfo = () => {
                   removeUserGroupByIndex({ index: index, group: value })
                 }
                 stepValidation={getValidationByIndex(index)}
-                fieldName="groups"
+                fieldName='groups'
               />
             </FormGroup>
           </Tab>

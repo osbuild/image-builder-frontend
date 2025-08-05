@@ -41,11 +41,11 @@ export type AwsShareMethod = 'manual' | 'sources';
 const SourcesButton = () => {
   return (
     <Button
-      component="a"
-      target="_blank"
-      variant="link"
+      component='a'
+      target='_blank'
+      variant='link'
       icon={<ExternalLinkAltIcon />}
-      iconPosition="right"
+      iconPosition='right'
       isInline
       href={'settings/sources'}
     >
@@ -111,7 +111,7 @@ const Aws = () => {
 
   return (
     <Form>
-      <Title headingLevel="h1" size="xl">
+      <Title headingLevel='h1' size='xl'>
         Target environment - Amazon Web Services
       </Title>
       <Content>
@@ -125,12 +125,12 @@ const Aws = () => {
             access the image, copy the image, which will be shared to your
             account by Red Hat, to your own AWS account.
           </Content>
-          <FormGroup label="Share method:">
+          <FormGroup label='Share method:'>
             <Radio
-              id="radio-with-description"
-              label="Use an account configured from Sources."
-              name="radio-7"
-              description="Use a configured source to launch environments directly from the console."
+              id='radio-with-description'
+              label='Use an account configured from Sources.'
+              name='radio-7'
+              description='Use a configured source to launch environments directly from the console.'
               isChecked={shareMethod === 'sources'}
               onChange={() => {
                 dispatch(changeAwsSourceId(undefined));
@@ -140,9 +140,9 @@ const Aws = () => {
               autoFocus
             />
             <Radio
-              id="radio"
-              label="Manually enter an account ID."
-              name="radio-8"
+              id='radio'
+              label='Manually enter an account ID.'
+              name='radio-8'
               isChecked={shareMethod === 'manual'}
               onChange={() => {
                 dispatch(changeAwsSourceId(undefined));
@@ -160,16 +160,16 @@ const Aws = () => {
           <SourcesButton />
           <Gallery hasGutter>
             <GalleryItem>
-              <FormGroup label="Default region" isRequired>
+              <FormGroup label='Default region' isRequired>
                 <TextInput
-                  readOnlyVariant="default"
+                  readOnlyVariant='default'
                   isRequired
-                  id="someid"
-                  value="us-east-1"
+                  id='someid'
+                  value='us-east-1'
                 />
               </FormGroup>
               <HelperText>
-                <HelperTextItem component="div" variant="default">
+                <HelperTextItem component='div' variant='default'>
                   Images are built in the default region but can be copied to
                   other regions later.
                 </HelperTextItem>
@@ -184,25 +184,25 @@ const Aws = () => {
       {shareMethod === 'manual' && (
         <>
           {!process.env.IS_ON_PREMISE && (
-            <FormGroup label="AWS account ID" isRequired>
+            <FormGroup label='AWS account ID' isRequired>
               <ValidatedInput
-                ariaLabel="aws account id"
+                ariaLabel='aws account id'
                 value={shareWithAccount || ''}
                 validator={isAwsAccountIdValid}
                 onChange={(_event, value) =>
                   dispatch(changeAwsAccountId(value))
                 }
-                helperText="Should be 12 characters long."
+                helperText='Should be 12 characters long.'
               />
             </FormGroup>
           )}
-          <FormGroup label="Default region" isRequired>
+          <FormGroup label='Default region' isRequired>
             {!process.env.IS_ON_PREMISE && (
               <TextInput
                 value={'us-east-1'}
-                type="text"
-                aria-label="default region"
-                readOnlyVariant="default"
+                type='text'
+                aria-label='default region'
+                readOnlyVariant='default'
               />
             )}
             {process.env.IS_ON_PREMISE && (

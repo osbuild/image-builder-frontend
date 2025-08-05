@@ -10,9 +10,9 @@ import { LockIcon } from '@patternfly/react-icons';
 export const RequireAdmin = () => {
   return (
     <EmptyState
-      headingLevel="h4"
+      headingLevel='h4'
       icon={LockIcon}
-      titleText="Access is limited."
+      titleText='Access is limited.'
       variant={EmptyStateVariant.xl}
     >
       <EmptyStateBody>
