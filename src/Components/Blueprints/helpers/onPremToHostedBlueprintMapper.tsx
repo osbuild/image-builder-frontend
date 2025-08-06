@@ -107,7 +107,7 @@ export const mapOnPremToHosted = (
     name: u.name,
     ssh_key: u.key,
     groups: u.groups,
-    isAdministrator: u.groups?.includes('wheel') || false,
+    isAdministrator: u.groups.includes('wheel') || false,
   }));
   const user_keys = blueprint.customizations?.sshkey?.map((k) => ({
     name: k.user,
@@ -196,7 +196,7 @@ export const mapHostedToOnPrem = (
     customizations: {},
   };
 
-  if (blueprint.customizations?.packages) {
+  if (blueprint.customizations.packages) {
     result.packages = blueprint.customizations.packages.map((pkg) => {
       return {
         name: pkg,
@@ -205,19 +205,19 @@ export const mapHostedToOnPrem = (
     });
   }
 
-  if (blueprint.customizations?.containers) {
+  if (blueprint.customizations.containers) {
     result.containers = blueprint.customizations.containers;
   }
 
-  if (blueprint.customizations?.directories) {
+  if (blueprint.customizations.directories) {
     result.customizations!.directories = blueprint.customizations.directories;
   }
 
-  if (blueprint.customizations?.files) {
+  if (blueprint.customizations.files) {
     result.customizations!.files = blueprint.customizations.files;
   }
 
-  if (blueprint.customizations?.filesystem) {
+  if (blueprint.customizations.filesystem) {
     result.customizations!.filesystem = blueprint.customizations.filesystem.map(
       (fs) => {
         return {
@@ -228,7 +228,7 @@ export const mapHostedToOnPrem = (
     );
   }
 
-  if (blueprint.customizations?.users) {
+  if (blueprint.customizations.users) {
     result.customizations!.user = blueprint.customizations.users.map((u) => {
       return {
         name: u.name,
@@ -239,54 +239,54 @@ export const mapHostedToOnPrem = (
     });
   }
 
-  if (blueprint.customizations?.services) {
+  if (blueprint.customizations.services) {
     result.customizations!.services = blueprint.customizations.services;
   }
 
-  if (blueprint.customizations?.hostname) {
+  if (blueprint.customizations.hostname) {
     result.customizations!.hostname = blueprint.customizations.hostname;
   }
 
-  if (blueprint.customizations?.kernel) {
+  if (blueprint.customizations.kernel) {
     result.customizations!.kernel = blueprint.customizations.kernel;
   }
 
-  if (blueprint.customizations?.timezone) {
+  if (blueprint.customizations.timezone) {
     result.customizations!.timezone = blueprint.customizations.timezone;
   }
 
-  if (blueprint.customizations?.locale) {
+  if (blueprint.customizations.locale) {
     result.customizations!.locale = blueprint.customizations.locale;
   }
 
-  if (blueprint.customizations?.firewall) {
+  if (blueprint.customizations.firewall) {
     result.customizations!.firewall = blueprint.customizations.firewall;
   }
 
-  if (blueprint.customizations?.installation_device) {
+  if (blueprint.customizations.installation_device) {
     result.customizations!.installation_device =
       blueprint.customizations.installation_device;
   }
 
-  if (blueprint.customizations?.fdo) {
+  if (blueprint.customizations.fdo) {
     result.customizations!.fdo = blueprint.customizations.fdo;
   }
 
-  if (blueprint.customizations?.ignition) {
+  if (blueprint.customizations.ignition) {
     result.customizations!.ignition = blueprint.customizations.ignition;
   }
 
-  if (blueprint.customizations?.partitioning_mode) {
+  if (blueprint.customizations.partitioning_mode) {
     result.customizations!.partitioning_mode =
       blueprint.customizations.partitioning_mode;
   }
 
-  if (blueprint.customizations?.fips) {
+  if (blueprint.customizations.fips) {
     result.customizations!.fips =
-      blueprint.customizations.fips?.enabled || false;
+      blueprint.customizations.fips.enabled || false;
   }
 
-  if (blueprint.customizations?.installer) {
+  if (blueprint.customizations.installer) {
     result.customizations!.installer = blueprint.customizations.installer;
   }
 
