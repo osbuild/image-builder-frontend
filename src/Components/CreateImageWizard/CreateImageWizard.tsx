@@ -80,8 +80,6 @@ import {
   selectAwsShareMethod,
   selectAwsSourceId,
   selectAzureResourceGroup,
-  selectAzureShareMethod,
-  selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectDistribution,
@@ -263,11 +261,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const gcpShareMethod = useAppSelector(selectGcpShareMethod);
   const gcpEmail = useAppSelector(selectGcpEmail);
   // AZURE
-  const azureShareMethod = useAppSelector(selectAzureShareMethod);
   const azureTenantId = useAppSelector(selectAzureTenantId);
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
-  const azureSource = useAppSelector(selectAzureSource);
   // Registration
   const registrationValidation = useRegistrationValidation();
   // Snapshots
@@ -437,15 +433,9 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 footer={
                   <CustomWizardFooter
                     disableNext={
-                      azureShareMethod === 'manual'
-                        ? !isAzureTenantGUIDValid(azureTenantId) ||
-                          !isAzureSubscriptionIdValid(azureSubscriptionId) ||
-                          !isAzureResourceGroupValid(azureResourceGroup)
-                        : azureShareMethod === 'sources'
-                          ? !isAzureTenantGUIDValid(azureTenantId) ||
-                            !isAzureSubscriptionIdValid(azureSubscriptionId) ||
-                            !isAzureResourceGroupValid(azureResourceGroup)
-                          : azureSource === undefined
+                      !isAzureTenantGUIDValid(azureTenantId) ||
+                      !isAzureSubscriptionIdValid(azureSubscriptionId) ||
+                      !isAzureResourceGroupValid(azureResourceGroup)
                     }
                   />
                 }

@@ -86,7 +86,7 @@ export const isSshKeyValid = (sshKey: string) => {
 export const getDuplicateMountPoints = (partitions: Partition[]): string[] => {
   const mountPointSet: Set<string> = new Set();
   const duplicates: string[] = [];
-  if (!partitions) {
+  if (partitions.length < 2) {
     return [];
   }
   for (const partition of partitions) {
