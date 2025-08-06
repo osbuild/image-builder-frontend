@@ -15,7 +15,7 @@ const ImportImageWizard = () => {
   const location = useLocation();
   const addNotification = useAddNotification();
   const locationState = location.state as { blueprint?: wizardState };
-  const blueprint = locationState?.blueprint;
+  const blueprint = locationState.blueprint;
   useEffect(() => {
     if (blueprint) {
       dispatch(loadWizardState(blueprint));
