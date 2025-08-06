@@ -331,7 +331,7 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
     }
   }, [setPollingInterval, composeStatus]);
 
-  const type = compose.request?.image_requests[0]?.upload_request?.type;
+  const type = compose.request.image_requests[0]?.upload_request?.type;
 
   switch (type as string) {
     case 'aws':

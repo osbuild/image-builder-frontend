@@ -130,7 +130,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
 
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
   const hasErrors =
-    blueprintDetails?.lint?.errors && blueprintDetails?.lint?.errors.length > 0;
+    blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
   const [isLintExp, setIsLintExp] = React.useState(true);
   const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsLintExp(isExpanded);
@@ -184,7 +184,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               isExpanded={isLintExp}
             >
               <List isPlain>
-                {blueprintDetails?.lint?.errors?.map((err) => (
+                {blueprintDetails.lint.errors.map((err) => (
                   <ListItem key={err.description}>
                     {err.name}: {err.description}
                   </ListItem>

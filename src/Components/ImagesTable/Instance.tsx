@@ -461,7 +461,7 @@ export const LocalInstance = ({ compose }: LocalInstancePropTypes) => {
     return <></>;
   }
 
-  const parsedPath = path.parse(options?.artifact_path);
+  const parsedPath = path.parse(options.artifact_path);
   const href = '/files#/?path=' + encodeURIComponent(parsedPath.dir);
   return (
     <Button
