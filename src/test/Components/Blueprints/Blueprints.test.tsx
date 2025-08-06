@@ -183,11 +183,13 @@ describe('Blueprints', () => {
     );
 
     await selectBlueprintById(blueprintIdWithComposes);
-    expect(
-      screen.queryByText(
-        /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./,
-      ),
-    ).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByText(
+          /CentOS Stream 8 is no longer supported, building images from this blueprint will fail./,
+        ),
+      ).not.toBeInTheDocument();
+    });
   });
 
   test('blueprint linting and fixing', async () => {
