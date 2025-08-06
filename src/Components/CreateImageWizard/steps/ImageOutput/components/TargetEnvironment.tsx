@@ -176,7 +176,9 @@ const TargetEnvironment = () => {
             {supportedEnvironments?.includes('aws') && (
               <TargetEnvironmentCard
                 title='Amazon Web Services'
-                imageSrc={'/apps/frontend-assets/partners-icons/aws.svg'}
+                imageSrc={
+                  '/apps/frontend-assets/partners-icons/aws-logomark.svg'
+                }
                 imageAlt='Amazon Web Services logo'
                 handleOnClick={() => handleToggleEnvironment('aws')}
                 onMouseEnter={() => prefetchSources({ provider: 'aws' })}
@@ -187,7 +189,7 @@ const TargetEnvironment = () => {
               <TargetEnvironmentCard
                 title='Google Cloud Platform'
                 imageSrc={
-                  '/apps/frontend-assets/partners-icons/google-cloud-short.svg'
+                  '/apps/frontend-assets/partners-icons/google-cloud-logomark.svg'
                 }
                 imageAlt='Google Cloud Platform logo'
                 handleOnClick={() => handleToggleEnvironment('gcp')}
@@ -199,7 +201,7 @@ const TargetEnvironment = () => {
               <TargetEnvironmentCard
                 title='Microsoft Azure'
                 imageSrc={
-                  '/apps/frontend-assets/partners-icons/microsoft-azure-short.svg'
+                  '/apps/frontend-assets/partners-icons/microsoft-azure-logomark.svg'
                 }
                 imageAlt='Microsoft Azure logo'
                 handleOnClick={() => handleToggleEnvironment('azure')}
