@@ -84,7 +84,7 @@ const openActivationKeyDropdown = async () => {
   const activationKeyDropdown = await screen.findByPlaceholderText(
     'Select activation key',
   );
-  user.click(activationKeyDropdown);
+  await waitFor(() => user.click(activationKeyDropdown));
 };
 
 const selectActivationKey = async (key: string) => {
@@ -92,7 +92,7 @@ const selectActivationKey = async (key: string) => {
   const activationKey = await screen.findByRole('option', {
     name: key,
   });
-  user.click(activationKey);
+  await waitFor(() => user.click(activationKey));
   await screen.findByDisplayValue(key);
 };
 
