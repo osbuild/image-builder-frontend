@@ -126,7 +126,7 @@ const BlueprintsSidebar = () => {
   };
 
   if (!process.env.IS_ON_PREMISE) {
-    const orgId = userData?.identity?.internal?.org_id;
+    const orgId = userData?.identity.internal?.org_id;
 
     analytics.group(orgId, {
       imagebuilder_blueprint_count: blueprintsData?.meta.count,
