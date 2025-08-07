@@ -159,10 +159,12 @@ export const SnapshotTable = ({
       .padStart(2, '0')}/${date.getFullYear()}`;
   };
 
-  return (
-    (isError && <Error />) ||
-    (isLoading && <Loading />) ||
-    (isSuccess && (
+  if (isError) return <Error />;
+
+  if (isLoading) return <Loading />;
+
+  if (isSuccess) {
+    return (
       <Panel isScrollable>
         <PanelMain maxHeight='30ch'>
           <Table aria-label='Packages table' variant='compact'>
@@ -200,8 +202,8 @@ export const SnapshotTable = ({
           </Table>
         </PanelMain>
       </Panel>
-    ))
-  );
+    );
+  }
 };
 
 export const PackagesTable = () => {
