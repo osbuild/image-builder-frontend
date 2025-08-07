@@ -1,3 +1,5 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/RedHatInsights/frontend-components/refs/heads/master/packages/config-utils/src/feo/spec/frontend-crd.schema.json
+---
 apiVersion: v1
 kind: Template
 metadata:
@@ -8,6 +10,70 @@ objects:
     metadata:
       name: image-builder
     spec:
+      feoConfigEnabled: true
+      serviceTiles:
+        - id: imageBuilder
+          section: deploy
+          group: rhel
+          title: Images
+          href: /insights/image-builder
+          description: "Build and manage Red Hat Enterprise Linux images and environments."
+          icon: InsightsIcon
+        - id: imageBuilder
+          section: inventories
+          group: rhel
+          title: Images
+          href: /insights/image-builder
+          description: "Build and manage Red Hat Enterprise Linux images and environments."
+          icon: InsightsIcon
+      searchEntries:
+        - id: imageBuilder
+          title: "Images"
+          href: /insights/image-builder
+          description: "Build and manage Red Hat Enterprise Linux images and environments."
+          alt_title:
+            - Images
+            - image
+            - image builder
+            - my images
+            - gold image
+            - template image
+            - vm template
+            - image template
+            - blueprint
+            - image
+            - builder
+            - images
+            - build
+            - image-builder
+            - insights
+            - Build image
+            - image builder
+            - gold image
+            - blueprint
+            - template image
+            - vm template
+            - image template
+            - vmware template
+            - packer build
+            - packer template
+            - RHEL AMI
+            - RHEL machine image
+            - azure
+            - aws
+            - build
+            - assemble
+            - image-builder
+      bundleSegments:
+        - segmentId: imageBuilder
+          bundleId: insights
+          position: 300
+          navItems:
+            - id: imageBuilder
+              title: Image builder
+              href: /insights/image-builder
+              icon: InsightsIcon
+              product: Red Hat Insights
       envName: ${ENV_NAME}
       title: Image-builder
       deploymentRepo: https://github.com/RedHatInsights/image-builder-frontend
@@ -18,17 +84,18 @@ objects:
         paths:
           - /apps/image-builder
       image: ${IMAGE}:${IMAGE_TAG}
-      navItems:
-        - appId: "imageBuilder"
-          title: "Image builder"
-          href: "/insights/image-builder"
-          product: "Red Hat Insights"
       module:
-        manifestLocation: "/apps/image-builder/fed-mods.json"
-        moduleID: imageBuilder
+        manifestLocation: /apps/image-builder/fed-mods.json
+        analytics:
+            APIKey: BUodNImBEk7R2M3evAYs0v7i8d86Nhkm # prod
+            APIKeyDev: TwoYxKFzxr4fHN171gmcNoLnxXdzF8b6 # stage
+        config:
+          supportCaseData:
+              product: "Red Hat Insights"
+              version: "Image Builder"
         modules:
-          - id: "image-builder"
-            module: "./RootApp"
+          - id: image-builder
+            module: ./RootApp
             routes:
               - pathname: /insights/image-builder
 
