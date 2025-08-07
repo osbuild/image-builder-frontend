@@ -448,7 +448,7 @@ export const ContentList = () => {
     [customRepositories, recommendedRepositories],
   );
 
-  const [listSnapshotsByDate, { data, isSuccess, isLoading, isError }] =
+  const [listSnapshotsByDate, { data, isSuccess, isLoading }] =
     useListSnapshotsByDateMutation();
 
   useEffect(() => {
@@ -536,8 +536,7 @@ export const ContentList = () => {
                   isInline
                   aria-label='Snapshot method'
                   className='popover-button pf-v6-u-p-0'
-                  isDisabled={noRepositoriesSelected || isLoading || isError}
-                  isLoading={isLoading}
+                  isDisabled={noRepositoriesSelected}
                 >
                   {snapshottingText}
                 </Button>
@@ -558,7 +557,7 @@ export const ContentList = () => {
             Custom repositories
           </Content>
           <Content component={ContentVariants.dd}>
-            {customRepositories?.length + recommendedRepositories.length > 0 ? (
+            {customRepositories.length + recommendedRepositories.length > 0 ? (
               <Popover
                 position='bottom'
                 headerContent='Custom repositories'
@@ -571,8 +570,8 @@ export const ContentList = () => {
                   aria-label='About custom repositories'
                   className='popover-button pf-v6-u-p-0'
                 >
-                  {customRepositories?.length +
-                    recommendedRepositories.length || 0}
+                  {customRepositories.length + recommendedRepositories.length ||
+                    0}
                 </Button>
               </Popover>
             ) : (
@@ -583,7 +582,7 @@ export const ContentList = () => {
             Additional packages
           </Content>
           <Content component={ContentVariants.dd}>
-            {packages?.length > 0 || groups?.length > 0 ? (
+            {packages.length > 0 || groups.length > 0 ? (
               <Popover
                 position='bottom'
                 headerContent='Additional packages'
@@ -596,7 +595,7 @@ export const ContentList = () => {
                   aria-label='About packages'
                   className='popover-button pf-v6-u-p-0'
                 >
-                  {packages?.length + groups?.length}
+                  {packages.length + groups.length}
                 </Button>
               </Popover>
             ) : (
@@ -671,7 +670,7 @@ export const RegisterNowList = () => {
             data-testid='review-registration'
           >
             <Content component='ul' isPlainList>
-              {registrationType?.startsWith('register-now') && (
+              {registrationType.startsWith('register-now') && (
                 <Content component='li'>
                   Register with Red Hat Subscription Manager (RHSM)
                   <br />
