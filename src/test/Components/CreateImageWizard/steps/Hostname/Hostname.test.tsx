@@ -30,10 +30,8 @@ const goToHostnameStep = async () => {
   });
   await waitFor(() => user.click(guestImageCheckBox));
 
-  if (!process.env.IS_ON_PREMISE) {
-    await clickNext(); // Registration
-    await clickRegisterLater();
-  }
+  await clickNext(); // Registration
+  await clickRegisterLater();
   await goToStep(/Hostname/);
 };
 

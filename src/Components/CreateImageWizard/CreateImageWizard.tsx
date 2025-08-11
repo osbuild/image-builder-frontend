@@ -460,7 +460,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Register'
                 id='step-register'
                 key='step-register'
-                isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
+                isHidden={!isRhel(distribution)}
                 navItem={CustomStatusNavItem}
                 status={
                   wasRegisterVisited
