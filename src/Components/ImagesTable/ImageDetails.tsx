@@ -119,7 +119,7 @@ const AwsSourceName = ({ id }: AwsSourceNamePropTypes) => {
   return <SourceNotFoundPopover />;
 };
 
-const parseGcpSharedWith = (
+export const parseGcpSharedWith = (
   sharedWith: GcpUploadRequestOptions['share_with_accounts'],
 ) => {
   if (sharedWith) {
