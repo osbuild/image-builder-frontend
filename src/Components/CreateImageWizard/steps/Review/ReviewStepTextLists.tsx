@@ -506,78 +506,91 @@ export const ContentList = () => {
     <>
       <Content>
         <Content component={ContentVariants.dl} className='review-step-dl'>
-          <>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Repeatable build
-            </Content>
-            <Content component={ContentVariants.dd}>
-              <Popover
-                position='bottom'
-                headerContent={
-                  useLatest
-                    ? 'Use the latest repository content'
-                    : template
-                      ? 'Use content from the content template'
-                      : `Repositories as of ${yyyyMMddFormat(
-                          new Date(snapshotDate),
-                        )}`
-                }
-                hasAutoWidth
-                minWidth='60rem'
-                bodyContent={
-                  <SnapshotTable snapshotForDate={data?.data || []} />
-                }
+          {!process.env.IS_ON_PREMISE && (
+            <>
+              <Content
+                component={ContentVariants.dt}
+                className='pf-v6-u-min-width'
               >
-                <Button
-                  variant='link'
-                  isInline
-                  aria-label='Snapshot method'
-                  className='popover-button pf-v6-u-p-0'
-                  isDisabled={noRepositoriesSelected}
+                Repeatable build
+              </Content>
+              <Content component={ContentVariants.dd}>
+                <Popover
+                  position='bottom'
+                  headerContent={
+                    useLatest
+                      ? 'Use the latest repository content'
+                      : template
+                        ? 'Use content from the content template'
+                        : `Repositories as of ${yyyyMMddFormat(
+                            new Date(snapshotDate),
+                          )}`
+                  }
+                  hasAutoWidth
+                  minWidth='60rem'
+                  bodyContent={
+                    <SnapshotTable snapshotForDate={data?.data || []} />
+                  }
                 >
-                  {snapshottingText}
-                </Button>
-              </Popover>
-              {!useLatest && !isLoading && isSuccess && hasSnapshotDateAfter ? (
-                <Alert
-                  variant='warning'
-                  isInline
-                  isPlain
-                  title='A snapshot for this date is not available for some repositories.'
-                />
-              ) : (
-                ''
-              )}
-            </Content>
-          </>
-          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-            Custom repositories
-          </Content>
-          <Content component={ContentVariants.dd}>
-            {customRepositories.length + recommendedRepositories.length > 0 ? (
-              <Popover
-                position='bottom'
-                headerContent='Custom repositories'
-                hasAutoWidth
-                minWidth='30rem'
-                bodyContent={<RepositoriesTable />}
+                  <Button
+                    variant='link'
+                    isInline
+                    aria-label='Snapshot method'
+                    className='popover-button pf-v6-u-p-0'
+                    isDisabled={noRepositoriesSelected}
+                  >
+                    {snapshottingText}
+                  </Button>
+                </Popover>
+                {!useLatest &&
+                !isLoading &&
+                isSuccess &&
+                hasSnapshotDateAfter ? (
+                  <Alert
+                    variant='warning'
+                    isInline
+                    isPlain
+                    title='A snapshot for this date is not available for some repositories.'
+                  />
+                ) : (
+                  ''
+                )}
+              </Content>
+            </>
+          )}
+          {!process.env.IS_ON_PREMISE && (
+            <>
+              <Content
+                component={ContentVariants.dt}
+                className='pf-v6-u-min-width'
               >
-                <Button
-                  variant='link'
-                  aria-label='About custom repositories'
-                  className='popover-button pf-v6-u-p-0'
-                >
-                  {customRepositories.length + recommendedRepositories.length ||
-                    0}
-                </Button>
-              </Popover>
-            ) : (
-              0
-            )}
-          </Content>
+                Custom repositories
+              </Content>
+              <Content component={ContentVariants.dd}>
+                {customRepositories.length + recommendedRepositories.length >
+                0 ? (
+                  <Popover
+                    position='bottom'
+                    headerContent='Custom repositories'
+                    hasAutoWidth
+                    minWidth='30rem'
+                    bodyContent={<RepositoriesTable />}
+                  >
+                    <Button
+                      variant='link'
+                      aria-label='About custom repositories'
+                      className='popover-button pf-v6-u-p-0'
+                    >
+                      {customRepositories.length +
+                        recommendedRepositories.length || 0}
+                    </Button>
+                  </Popover>
+                ) : (
+                  0
+                )}
+              </Content>
+            </>
+          )}
           <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Additional packages
           </Content>
