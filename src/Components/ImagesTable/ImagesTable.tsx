@@ -88,6 +88,7 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
+import { AzureLaunchModal } from '../Launch/AzureLaunchModal';
 import { OciLaunchModal } from '../Launch/OciLaunchModal';
 
 const ImagesTable = () => {
@@ -384,8 +385,14 @@ type AzureRowPropTypes = {
 };
 
 const AzureRow = ({ compose, rowIndex }: AzureRowPropTypes) => {
+  const launchEofFlag = useFlag('image-builder.launcheof');
+
   const details = <AzureDetails compose={compose} />;
-  const instance = <CloudInstance compose={compose} />;
+  const instance = launchEofFlag ? (
+    <AzureLaunchModal compose={compose} />
+  ) : (
+    <CloudInstance compose={compose} />
+  );
   const status = <CloudStatus compose={compose} />;
 
   return (

@@ -2,8 +2,6 @@ import React, { Fragment, useState } from 'react';
 
 import {
   Button,
-  ClipboardCopy,
-  ClipboardCopyVariant,
   List,
   ListComponent,
   ListItem,
@@ -16,54 +14,36 @@ import {
   Skeleton,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useNavigate } from 'react-router-dom';
 
 import {
   ComposesResponseItem,
   useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
-import { isOciUploadStatus } from '../../store/typeGuards';
-import { resolveRelPath } from '../../Utilities/path';
+import { isAzureUploadStatus } from '../../store/typeGuards';
 
 type LaunchProps = {
-  isExpired: boolean;
   compose: ComposesResponseItem;
 };
 
-export const OciLaunchModal = ({ isExpired, compose }: LaunchProps) => {
+export const AzureLaunchModal = ({ compose }: LaunchProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
 
-  const navigate = useNavigate();
   if (!isSuccess) {
     return <Skeleton />;
   }
 
   const options = data?.image_status.upload_status?.options;
 
-  if (options && !isOciUploadStatus(options)) {
+  if (options && !isAzureUploadStatus(options)) {
     throw TypeError(
-      `Error: options must be of type OciUploadStatus, not ${typeof options}.`,
+      `Error: options must be of type AzureUploadStatus, not ${typeof options}.`,
     );
   }
 
-  if (isExpired) {
-    return (
-      <Button
-        component='a'
-        target='_blank'
-        variant='link'
-        onClick={() => navigate(resolveRelPath(`imagewizard/${compose.id}`))}
-        isInline
-      >
-        Recreate image
-      </Button>
-    );
-  }
-
-  const handleModalToggle = () => {
+  const handleModalToggle = (_event: KeyboardEvent | React.MouseEvent) => {
     setIsModalOpen(!isModalOpen);
   };
 
@@ -75,56 +55,53 @@ export const OciLaunchModal = ({ isExpired, compose }: LaunchProps) => {
         isDisabled={data?.image_status.status !== 'success'}
         onClick={handleModalToggle}
       >
-        Image link
+        Launch
       </Button>
+
       <Modal
         isOpen={isModalOpen}
         onClose={handleModalToggle}
         variant={ModalVariant.large}
-        aria-label='Open launch guide modal'
+        aria-label='Open launch guide wizard'
       >
         <ModalHeader
-          title={'Launch with Oracle Cloud Infrastructure'}
+          title={'Launch with Microsoft Azure'}
           labelId='modal-title'
           description={compose.image_name}
         />
         <ModalBody id='modal-box-body-basic'>
           <List component={ListComponent.ol} type={OrderType.number}>
             <ListItem>
-              Navigate to the{' '}
+              Locate{' '}
+              {!isFetching && (
+                <span className='pf-v6-u-font-weight-bold'>
+                  {options?.image_name}{' '}
+                </span>
+              )}
+              {isFetching && <Skeleton />}
+              in the{' '}
               <Button
                 component='a'
                 target='_blank'
                 variant='link'
                 icon={<ExternalLinkAltIcon />}
                 iconPosition='right'
-                href={`https://cloud.oracle.com/compute/images`}
+                href={`https://portal.azure.com/#view/Microsoft_Azure_ComputeHub/ComputeHubMenuBlade/~/imagesBrowse`}
                 className='pf-v6-u-pl-0'
               >
-                Oracle Cloud&apos;s Custom Images
-              </Button>{' '}
-              page.
+                Azure console
+              </Button>
+              .
             </ListItem>
             <ListItem>
-              Select{' '}
-              <span className='pf-v6-u-font-weight-bold'>Import image</span>,
-              and enter the Object Storage URL of the image.
-              {!isFetching && (
-                <ClipboardCopy
-                  isReadOnly
-                  isExpanded
-                  hoverTip='Copy'
-                  clickTip='Copied'
-                  variant={ClipboardCopyVariant.expansion}
-                >
-                  {options?.url || ''}
-                </ClipboardCopy>
-              )}
-              {isFetching && <Skeleton />}
-            </ListItem>
-            <ListItem>
-              After the image is available, click on{' '}
-              <span className='pf-v6-u-font-weight-bold'>Create instance</span>.
+              Create a Virtual Machine (VM) by using the image.
+              <br />
+              Note: Review the{' '}
+              <span className='pf-v6-u-font-weight-bold'>
+                Availability Zone
+              </span>{' '}
+              and the <span className='pf-v6-u-font-weight-bold'>Size</span> to
+              meet your requirements. Adjust these settings as needed.
             </ListItem>
           </List>
         </ModalBody>
