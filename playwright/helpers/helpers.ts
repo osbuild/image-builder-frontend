@@ -1,7 +1,7 @@
 import { execSync } from 'child_process';
 import { readFileSync } from 'node:fs';
 
-import { expect, type Page } from '@playwright/test';
+import { expect, FrameLocator, type Page } from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
@@ -84,4 +84,16 @@ export const getHostDistroName = (): string => {
 
 export const getHostArch = (): string => {
   return execSync('uname -m').toString('utf-8').replace(/\s/g, '');
+};
+
+export const isRhel = async (frame: Page | FrameLocator) => {
+  if (isHosted()) {
+    return true;
+  }
+
+  const registerHeading = frame.getByRole('heading', {
+    name: 'Register systems using this image',
+  });
+
+  return registerHeading.isVisible();
 };

@@ -20,6 +20,8 @@ import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
+import { useAppSelector } from '../../../../../store/hooks';
+import { selectOrgId } from '../../../../../store/wizardSlice';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
@@ -41,6 +43,7 @@ const ReviewWizardFooter = () => {
   };
   const navigate = useNavigate();
   const isValid = useIsBlueprintValid();
+  const orgId = useAppSelector(selectOrgId);
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -58,9 +61,7 @@ const ReviewWizardFooter = () => {
       return requestBody;
     }
 
-    // NOTE: This should be fine on-prem, we should
-    // be able to ignore the `org-id`
-    return mapRequestFromState(store, '');
+    return mapRequestFromState(store, orgId ?? '');
   };
 
   return (

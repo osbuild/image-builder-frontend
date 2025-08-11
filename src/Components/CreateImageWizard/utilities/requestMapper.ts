@@ -397,6 +397,9 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
       activationKey: isRhel(request.distribution)
         ? request.customizations.subscription?.['activation-key']
         : undefined,
+      orgId: isRhel(request.distribution)
+        ? request.customizations.subscription?.['organization']?.toString()
+        : undefined,
       satelliteRegistration: {
         command: getSatelliteCommand(request.customizations.files),
         caCert: request.customizations.cacerts?.pem_certs[0],
