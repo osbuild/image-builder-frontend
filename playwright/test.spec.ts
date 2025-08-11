@@ -121,6 +121,7 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
     frame.getByRole('gridcell', { name: 'osbuild-composer' });
+    await frame.getByRole('button', { name: 'Close', exact: true }).click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();
@@ -128,6 +129,7 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByRole('button', { name: 'About packages' }).click();
     frame.getByRole('gridcell', { name: 'osbuild-composer' });
+    await frame.getByRole('button', { name: 'Close', exact: true }).click();
     await frame.getByRole('button', { name: 'Cancel', exact: true }).click();
     frame.getByRole('heading', { name: 'All images' });
   });

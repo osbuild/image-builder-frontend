@@ -499,21 +499,23 @@ const Review = () => {
           <ServicesList />
         </ExpandableSection>
       )}
-      <ExpandableSection
-        toggleContent={composeExpandable(
-          'First boot',
-          'revisit-first-boot',
-          'wizard-first-boot',
-        )}
-        onToggle={(_event, isExpandableFirstBoot) =>
-          onToggleFirstBoot(isExpandableFirstBoot)
-        }
-        isExpanded={isExpandableFirstBoot}
-        isIndented
-        data-testid='firstboot-expandable'
-      >
-        <FirstBootList />
-      </ExpandableSection>
+      {!process.env.IS_ON_PREMISE && (
+        <ExpandableSection
+          toggleContent={composeExpandable(
+            'First boot',
+            'revisit-first-boot',
+            'wizard-first-boot',
+          )}
+          onToggle={(_event, isExpandableFirstBoot) =>
+            onToggleFirstBoot(isExpandableFirstBoot)
+          }
+          isExpanded={isExpandableFirstBoot}
+          isIndented
+          data-testid='firstboot-expandable'
+        >
+          <FirstBootList />
+        </ExpandableSection>
+      )}
       {(blueprintName || blueprintDescription) && (
         <ExpandableSection
           toggleContent={composeExpandable(
