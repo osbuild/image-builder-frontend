@@ -57,6 +57,7 @@ import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
 import { AWSLaunchModal } from '../Launch/AWSLaunchModal';
+import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
 
 type CloudInstancePropTypes = {
   compose: ComposesResponseItem;
@@ -218,6 +219,14 @@ const ProvisioningLink = ({
           : btn}
         {launchEofFlag && isModalOpen && provider === 'aws' && (
           <AWSLaunchModal
+            isOpen={isModalOpen}
+            handleModalToggle={handleModalToggle}
+            compose={compose}
+            composeStatus={composeStatus}
+          />
+        )}
+        {launchEofFlag && isModalOpen && provider === 'gcp' && (
+          <GcpLaunchModal
             isOpen={isModalOpen}
             handleModalToggle={handleModalToggle}
             compose={compose}
