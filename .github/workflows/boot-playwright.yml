@@ -1,0 +1,90 @@
+name: Playwright nightly boot tests
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+  workflow_dispatch:
+  merge_group:
+
+# this prevents multiple jobs from the same pr
+# running when new changes are pushed.
+concurrency:
+  group: ${{github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright-tests:
+    runs-on:
+      - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
+      - instance-size:large
+      - buildspec-override:true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Get current PR URL
+        id: get-pr-url
+        run: |
+          # Extract the pull request URL from the event payload
+          pr_url=$(jq -r '.pull_request.html_url' < "$GITHUB_EVENT_PATH")
+          echo "Pull Request URL: $pr_url"
+          # Set the PR URL as an output using the environment file
+          echo "pr_url=$pr_url" >> $GITHUB_ENV
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install front-end dependencies
+        run: npm ci
+
+      - name: Install playwright
+        run: npx playwright install --with-deps
+
+      # This prevents an error related to minimum watchers when running the front-end and playwright
+      - name: Increase file watchers limit
+        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+      - name: Update /etc/hosts
+        run: sudo npm run patch:hosts
+
+      - name: Start front-end server
+        run: |
+          npm run start:federated &
+          npx wait-on http://localhost:8003/apps/image-builder/
+
+      - name: Run testing proxy
+        run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name consoledot-testing-proxy quay.io/dvagner/consoledot-testing-proxy
+
+      - name: Run front-end Playwright tests
+        env:
+          BASE_URL: https://stage.foo.redhat.com:1337
+        run: |
+          export PLAYWRIGHT_USER=image-builder-playwright-$RANDOM
+          export PLAYWRIGHT_PASSWORD=image-builder-playwright-$(uuidgen)
+          # Step 1: Create a new empty account
+          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+          # Step 2: Attach subscriptions to the new account
+          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/attach \
+            -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\", \"sku\":[\"RH00003\"],\"quantity\": 1}"
+          # Step 3: Activate the new account by accepting Terms and Conditions
+          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/activate -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+          # Step 4: Refresh account to update subscription pools
+          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/refresh -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
+          # Step 5: View account to check account status
+          curl -k -X GET "https://account-manager-stage.app.eng.rdu2.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
+
+          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
+
+      - name: Store front-end Test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 10
