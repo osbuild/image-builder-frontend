@@ -14,7 +14,8 @@ export class OpenStackWrapper {
     private imageName: string;
     private diskFormat: string;
     private imageFilePath: string;
-    private keyName: string = 'image-builder-frontend-ci';
+    // Add an option to use environment variable for local debugging
+    private keyName: string = process.env.OS_SSH_KEY_NAME ?? 'image-builder-frontend-ci';
     private canConnect: boolean;
 
     public constructor(imageName: string, diskFormat: string, imageFilePath: string) {
