@@ -171,4 +171,14 @@ module.exports = defineConfig([
       ]
     },
   },
+
+  {
+    files: [
+      'playwright/BootTests/helpers/OpenStackWrapper.ts',
+      'playwright/BootTests/helpers/imageBuilding.ts',
+    ],
+    rules: {
+      'no-console': 'off',
+    },
+  },
 ]);
