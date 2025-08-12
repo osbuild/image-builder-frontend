@@ -9,20 +9,18 @@ export class OpenStackWrapper {
      * @param imageName - The name of the image to create. The same name is used for the instance name.
      * @param diskFormat - The disk format of the image.
      * @param imageFilePath - The path to the image file.
-     * @param keyName - The name of the key to use for the instance.
      */
     private ipAddress: string;
     private imageName: string;
     private diskFormat: string;
     private imageFilePath: string;
-    private keyName: string;
+    private keyName: string = 'image-builder-frontend-ci';
     private canConnect: boolean;
 
-    public constructor(imageName: string, diskFormat: string, imageFilePath: string, keyName: string) {
+    public constructor(imageName: string, diskFormat: string, imageFilePath: string) {
         this.imageName = imageName;
         this.diskFormat = diskFormat;
         this.imageFilePath = imageFilePath;
-        this.keyName = keyName;
         this.canConnect = false;
     }
 

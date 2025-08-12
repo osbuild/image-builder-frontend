@@ -75,7 +75,7 @@ test('Boot qcow2 image and test hostname', async ({
   });
 
   // Initialize Openstack wrapper
-  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath, 'tkosciel');
+  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
 
   await test.step('Prepare Openstack instance', async () => {
     await image.createImage();
