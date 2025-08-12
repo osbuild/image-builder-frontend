@@ -79,7 +79,7 @@ jobs:
           # Step 5: View account to check account status
           curl -k -X GET "https://account-manager-stage.app.eng.rdu2.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
 
-          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test
+          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/Customizations
 
       - name: Store front-end Test report
         uses: actions/upload-artifact@v4
