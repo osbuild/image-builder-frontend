@@ -8,10 +8,15 @@ phases:
       - echo Entered the install phase...
       - nohup /usr/local/bin/dockerd --host=unix:///var/run/docker.sock --host=tcp://127.0.0.1:2375 --storage-driver=overlay2 &
       - timeout 15 sh -c "until docker info; do echo .; sleep 1; done"
+      - apt-get install -y openssh-client python3
+      - pip install python-openstackclient
 
   pre_build:
     commands:
       - echo Entered the pre_build phase...
+      - echo Adding SSH key to the agent...
+      - eval "$(ssh-agent -s)"
+      - echo "$OS_SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - > /dev/null
 
   build:
     commands:
