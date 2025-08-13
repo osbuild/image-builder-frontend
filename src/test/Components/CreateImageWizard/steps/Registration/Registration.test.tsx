@@ -28,9 +28,9 @@ import {
   clickRegisterLater,
   clickRegisterSatellite,
   clickReviewAndFinish,
-  enterBlueprintName,
   getNextButton,
   goToRegistrationStep,
+  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -120,25 +120,6 @@ const uploadFile = async (scriptName: string): Promise<void> => {
   }
 };
 
-const goToReviewStep = async () => {
-  await clickNext(); // Registration
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
-};
-
 const clickRevisitButton = async () => {
   const user = userEvent.setup();
   const expandable = await screen.findByTestId('registration-expandable');
@@ -206,7 +187,7 @@ describe('Step Registration', () => {
     await goToRegistrationStep();
     await openActivationKeyDropdown();
     await selectActivationKey('name0');
-    await goToReviewStep();
+    await goToReview();
 
     const review = await screen.findByTestId('review-registration');
     expect(review).toHaveTextContent(
@@ -233,7 +214,7 @@ describe('Step Registration', () => {
         'pf-m-disabled',
       ),
     );
-    await goToReviewStep();
+    await goToReview();
     await screen.findByText('Register the system later');
   });
 
@@ -242,7 +223,7 @@ describe('Step Registration', () => {
     await goToRegistrationStep();
     await openActivationKeyDropdown();
     await selectActivationKey('name0');
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', {
       name: /Register systems using this image/,
@@ -275,7 +256,7 @@ describe('Registration request generated correctly', () => {
   test('register + insights + rhc', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -302,7 +283,7 @@ describe('Registration request generated correctly', () => {
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectEnableRemoteRemediations();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedSubscription = {
@@ -326,7 +307,7 @@ describe('Registration request generated correctly', () => {
     await goToRegistrationStep();
     await clickShowAdditionalConnectionOptions();
     await deselectPredictiveAnalytics();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -353,7 +334,7 @@ describe('Registration request generated correctly', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -371,7 +352,7 @@ describe('Registration request generated correctly', () => {
     await goToRegistrationStep();
 
     await screen.findByDisplayValue('name0');
-    await goToReviewStep();
+    await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedSubscription = {
@@ -398,7 +379,7 @@ describe('Registration request generated correctly', () => {
     await goToRegistrationStep();
 
     await screen.findByDisplayValue('name1');
-    await goToReviewStep();
+    await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedSubscription = {

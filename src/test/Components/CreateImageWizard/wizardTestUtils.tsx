@@ -255,6 +255,49 @@ export const getNextButton = async () => {
   return next;
 };
 
+export const goToReview = async (
+  blueprintName: string = 'Red Velvet',
+  maxSteps: number = 25,
+) => {
+  for (let stepIndex = 0; stepIndex < maxSteps; stepIndex++) {
+    const isOnReview = !!screen.queryByRole('heading', { name: /Review/ });
+    if (isOnReview) {
+      return;
+    }
+
+    const blueprintNameInput = screen.queryByRole('textbox', {
+      name: /blueprint name/i,
+    });
+    if (blueprintNameInput) {
+      await enterBlueprintName(blueprintName);
+    }
+
+    await clickNext();
+  }
+
+  throw new Error(
+    'goToReview exceeded maxSteps without reaching the Review step',
+  );
+};
+
+export const goToStep = async (
+  targetHeading: string | RegExp,
+  maxSteps: number = 25,
+) => {
+  for (let stepIndex = 0; stepIndex < maxSteps; stepIndex++) {
+    const isOnTarget = !!screen.queryByRole('heading', { name: targetHeading });
+    if (isOnTarget) {
+      return;
+    }
+
+    await clickNext();
+  }
+
+  throw new Error(
+    'goToStep exceeded maxSteps without reaching the target step',
+  );
+};
+
 export const verifyCancelButton = async (router: RemixRouter | undefined) => {
   await clickCancel();
   if (router) {

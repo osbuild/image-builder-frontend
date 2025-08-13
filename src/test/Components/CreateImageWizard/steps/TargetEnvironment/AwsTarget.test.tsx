@@ -20,8 +20,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -34,25 +34,10 @@ const goToAwsStep = async () => {
   await clickNext();
 };
 
-const goToReview = async () => {
+const goToReviewStep = async () => {
   await clickNext(); // Register
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system customization
-  await clickNext(); // Snapshot repositories
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // FirstBoot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToReview();
 };
 
 const clickRevisitButton = async () => {
@@ -208,7 +193,7 @@ describe('Step Upload to AWS', () => {
     await goToAwsStep();
     await getSourceDropdown();
     await selectSource();
-    await goToReview();
+    await goToReviewStep();
 
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -225,7 +210,7 @@ describe('Step Upload to AWS', () => {
     await goToAwsStep();
     await chooseManualOption();
     await enterAccountId();
-    await goToReview();
+    await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
   });
@@ -241,7 +226,7 @@ describe('AWS image type request generated correctly', () => {
     await selectAwsTarget();
     await goToAwsStep();
     await selectSource();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -269,7 +254,7 @@ describe('AWS image type request generated correctly', () => {
     await goToAwsStep();
     await chooseManualOption();
     await enterAccountId();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -298,7 +283,7 @@ describe('AWS image type request generated correctly', () => {
     await selectSource();
     await clickBack();
     await deselectAwsAndSelectGuestImage();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     await waitFor(() => {

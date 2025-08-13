@@ -10,7 +10,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -29,25 +30,7 @@ const goToTimezoneStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Timezone/);
 };
 
 const selectTimezone = async () => {
@@ -173,7 +156,7 @@ describe('Step Timezone', () => {
     await renderCreateMode();
     await goToTimezoneStep();
     await selectTimezone();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Timezone/ });
   });
@@ -184,7 +167,7 @@ describe('Timezone request generated correctly', () => {
     await renderCreateMode();
     await goToTimezoneStep();
     await selectTimezone();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -209,7 +192,7 @@ describe('Timezone request generated correctly', () => {
     await goToTimezoneStep();
     await addNtpServerViaKeyDown('0.nl.pool.ntp.org');
     await addNtpServerViaKeyDown('1.nl.pool.ntp.org');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -232,7 +215,7 @@ describe('Timezone request generated correctly', () => {
     await selectTimezone();
     await addNtpServerViaKeyDown('0.nl.pool.ntp.org');
     await addNtpServerViaKeyDown('1.nl.pool.ntp.org');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

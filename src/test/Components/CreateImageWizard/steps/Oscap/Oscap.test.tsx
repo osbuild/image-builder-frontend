@@ -16,8 +16,8 @@ import {
 import {
   clickNext,
   clickReviewAndFinish,
-  enterBlueprintName,
   goToOscapStep,
+  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -80,24 +80,6 @@ const selectNone = async () => {
   await waitFor(() => user.click(selectProfileDropdown));
 
   await waitFor(async () => user.click(await screen.findByText(/none/i)));
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshot repositories
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // FirstBoot
-  await clickNext(); // Details
-  await enterBlueprintName('Oscap test');
-  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {
@@ -231,7 +213,7 @@ describe('OpenSCAP request generated correctly', () => {
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
-    await goToReviewStep();
+    await goToReview('Oscap test');
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -254,7 +236,7 @@ describe('OpenSCAP request generated correctly', () => {
     await goToOscapStep();
     await selectProfile();
     await selectNone();
-    await goToReviewStep();
+    await goToReview('Oscap test');
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -274,7 +256,7 @@ describe('OpenSCAP request generated correctly', () => {
     await goToOscapStep();
     await selectProfile();
     await selectDifferentProfile();
-    await goToReviewStep();
+    await goToReview('Oscap test');
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -301,7 +283,7 @@ describe('OpenSCAP request generated correctly', () => {
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectProfile();
-    await goToReviewStep();
+    await goToReview('Oscap test');
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /OpenSCAP/ });
   });
