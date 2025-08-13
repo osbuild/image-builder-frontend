@@ -5,7 +5,11 @@ import {
 } from '@playwright/test';
 import 'dotenv/config';
 
-const reporters: ReporterDescription[] = [['html'], ['list']];
+const reporters: ReporterDescription[] = [['html']];
+
+if (!process.env.CI) {
+  reporters.push(['list']);
+}
 
 if (process.env.CURRENTS_PROJECT_ID && process.env.CURRENTS_RECORD_KEY) {
   reporters.push(['@currents/playwright']);
