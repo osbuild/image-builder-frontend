@@ -50,7 +50,6 @@ export type UploadTypes =
   | "azure"
   | "container"
   | "oci.objectstorage"
-  | "pulp.ostree"
   | "local";
 export type Awsec2UploadStatus = {
   ami: string;
