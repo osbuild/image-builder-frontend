@@ -17,6 +17,10 @@
     --pf-c-form__group-label--PaddingBottom: var(--pf-v6-global--spacer--xs);
 }
 
+.pf-v6-c-radio__body { // remove margin from radio button body block
+    margin: 0;
+}
+
 .provider-icon {
     width: 3.5em;
     height: 3.5em;
