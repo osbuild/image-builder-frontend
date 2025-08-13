@@ -22,7 +22,8 @@ import {
   clickNext,
   clickRegisterLater,
   clickReviewAndFinish,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -47,25 +48,7 @@ const goToPackagesStep = async () => {
   await selectGuestImageTarget();
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First Boot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Additional packages/);
 };
 
 const typeIntoSearchBox = async (searchTerm: string) => {
@@ -415,7 +398,7 @@ describe('Step Packages', () => {
     await goToPackagesStep();
     await typeIntoSearchBox('test');
     await clickFirstPackageCheckbox();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Custom repositories/ });
   });
@@ -544,7 +527,7 @@ describe('Packages request generated correctly', () => {
     await goToPackagesStep();
     await typeIntoSearchBox('test'); // search for 'test' package
     await clickFirstPackageCheckbox(); // select
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -566,7 +549,7 @@ describe('Packages request generated correctly', () => {
     await typeIntoSearchBox('test'); // search for 'test' package
     await clickFirstPackageCheckbox(); // select
     await clickFirstPackageCheckbox(); // deselect
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = blueprintRequest;
@@ -582,7 +565,7 @@ describe('Packages request generated correctly', () => {
       name: /select row 0/i,
     });
     await waitFor(() => user.click(moduleCheckbox));
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
@@ -606,7 +589,7 @@ describe('Packages request generated correctly', () => {
     await waitFor(() => user.click(moduleCheckbox)); // select
     await toggleSelected();
     await clickFirstPackageCheckbox(); // deselect
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = blueprintRequest;
@@ -619,7 +602,7 @@ describe('Packages request generated correctly', () => {
     await goToPackagesStep();
     await typeIntoSearchBox('@grouper'); // search for '@grouper' package group
     await clickFirstPackageCheckbox(); // select
-    await goToReviewStep();
+    await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -639,7 +622,7 @@ describe('Packages request generated correctly', () => {
     await clickFirstPackageCheckbox(); // select
     await toggleSelected();
     await clickFirstPackageCheckbox(); // deselect
-    await goToReviewStep();
+    await goToReview();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
     const expectedRequest = blueprintRequest;
@@ -658,7 +641,7 @@ describe('Packages request generated correctly', () => {
       await typeIntoSearchBox('test'); // search for 'test' package
       await clickFirstPackageCheckbox(); // select
       await addSingleRecommendation();
-      await goToReviewStep();
+      await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
       const expectedRequest: CreateBlueprintRequest = {
@@ -679,7 +662,7 @@ describe('Packages request generated correctly', () => {
       await typeIntoSearchBox('test'); // search for 'test' package
       await clickFirstPackageCheckbox(); // select
       await addAllRecommendations();
-      await goToReviewStep();
+      await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
       const expectedRequest: CreateBlueprintRequest = {
@@ -702,7 +685,7 @@ describe('Packages request generated correctly', () => {
       await addSingleRecommendation();
       await toggleSelected();
       await deselectRecommendation();
-      await goToReviewStep();
+      await goToReview();
       const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
       const expectedRequest: CreateBlueprintRequest = {

@@ -21,9 +21,10 @@ import {
   clickNext,
   clickRegisterLater,
   clickReviewAndFinish,
-  enterBlueprintName,
   getNextButton,
   goToOscapStep,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -41,19 +42,7 @@ const goToFirstBootStep = async (): Promise<void> => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First Boot
+  await goToStep(/First boot/);
 };
 
 const selectSimplifiedOscapProfile = async () => {
@@ -63,21 +52,6 @@ const selectSimplifiedOscapProfile = async () => {
 
   const simplifiedProfile = await screen.findByText(/Simplified profile/i);
   await waitFor(() => user.click(simplifiedProfile));
-};
-
-const goFromOscapToFirstBoot = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
 };
 
 const openCodeEditor = async (): Promise<void> => {
@@ -98,12 +72,6 @@ const uploadFile = async (scriptName: string): Promise<void> => {
     const file = new File([scriptName], 'script.sh', { type: 'text/x-sh' });
     await waitFor(() => user.upload(fileInput, file));
   }
-};
-
-const goToReviewStep = async (): Promise<void> => {
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {
@@ -149,7 +117,7 @@ describe('First Boot step', () => {
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await goToFirstBootStep();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /First boot/ });
   });
@@ -162,7 +130,7 @@ describe('First boot request generated correctly', () => {
     await goToFirstBootStep();
     await openCodeEditor();
     await uploadFile(SCRIPT);
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -188,10 +156,10 @@ describe('First boot request generated correctly', () => {
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
-    await goFromOscapToFirstBoot();
+    await goToStep(/First boot/);
     await openCodeEditor();
     await uploadFile(SCRIPT);
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     // request created with both OpenSCAP and first boot customization
@@ -220,10 +188,10 @@ describe('First boot request generated correctly', () => {
     await selectGuestImageTarget();
     await goToOscapStep();
     await selectSimplifiedOscapProfile();
-    await goFromOscapToFirstBoot();
+    await goToStep(/First boot/);
     await openCodeEditor();
     await uploadFile(SCRIPT_DOS);
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     // request created with both OpenSCAP and first boot customization
@@ -277,7 +245,7 @@ describe('First Boot edit mode', () => {
 
     // upload empty script file and go to Review
     await uploadFile(``);
-    await goToReviewStep();
+    await goToReview();
 
     const receivedRequest = await interceptEditBlueprintRequest(
       `${EDIT_BLUEPRINT}/${id}`,

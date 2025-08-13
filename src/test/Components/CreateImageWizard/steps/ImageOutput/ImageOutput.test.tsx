@@ -34,6 +34,7 @@ import {
   clickRegisterLater,
   enterBlueprintName,
   getNextButton,
+  goToStep,
   imageRequest,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
@@ -43,7 +44,6 @@ import {
   selectRhel9,
   verifyCancelButton,
 } from '../../wizardTestUtils';
-import { goToDetailsStep } from '../Details/Details.test';
 
 let router: RemixRouter | undefined = undefined;
 
@@ -276,7 +276,7 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
@@ -286,14 +286,14 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await clickNext(); // Review
     await clickRevisitButton();
     await selectRhel8();
     await selectAarch64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await clickNext(); // Review
     await verifyNameInReviewStep('rhel-8-aarch64');
   });
@@ -302,14 +302,14 @@ describe('Step Image output', () => {
     await renderCreateMode();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     await clickRevisitButton();
     await selectRhel8();
     await selectAarch64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await clickNext(); // Review
     await verifyNameInReviewStep('Red Velvet');
   });
@@ -732,7 +732,7 @@ describe('Set target using query parameter', () => {
       }),
     ).toBeChecked();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable',
@@ -749,7 +749,7 @@ describe('Set target using query parameter', () => {
       }),
     ).toBeChecked();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const targetExpandable = await screen.findByTestId(
       'target-environments-expandable',
@@ -769,7 +769,7 @@ describe('Distribution request generated correctly', () => {
     await selectRhel8();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -786,7 +786,7 @@ describe('Distribution request generated correctly', () => {
     await selectRhel9();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -802,7 +802,7 @@ describe('Distribution request generated correctly', () => {
     await renderCreateMode();
     await selectCentos9();
     await selectGuestImageTarget();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -825,7 +825,7 @@ describe('Architecture request generated correctly', () => {
     await selectX86_64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
@@ -846,7 +846,7 @@ describe('Architecture request generated correctly', () => {
     await selectAarch64();
     await selectGuestImageTarget();
     await handleRegistration();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterNameAndGoToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

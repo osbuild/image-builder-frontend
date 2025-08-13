@@ -15,8 +15,9 @@ import {
   clickNext,
   clickRegisterLater,
   clickReviewAndFinish,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -32,24 +33,7 @@ const goToSnapshotStep = async () => {
   await waitFor(async () => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File System
-  await clickNext(); // Repositories snapshot
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Repeatable build/);
 };
 
 const clickRevisitButton = async () => {
@@ -173,7 +157,7 @@ describe('repository snapshot tab - ', () => {
 
     await clickNext(); // To repositories step
     await selectFirstRepository();
-    await goToReviewStep();
+    await goToReview();
     await clickContentDropdown();
 
     const snapshotMethodElement = await getSnapshotMethodElement();
@@ -208,7 +192,7 @@ describe('repository snapshot tab - ', () => {
     await selectUseSnapshot();
     await updateDatePickerWithValue('2024-04-22');
     await clickNext(); // To repositories step
-    await goToReviewStep();
+    await goToReview();
     await clickContentDropdown();
 
     const snapshotMethodElement = await getSnapshotMethodElement();
@@ -282,7 +266,7 @@ describe('repository snapshot tab - ', () => {
     });
 
     await clickBulkSelect();
-    await goToReviewStep();
+    await goToReview();
 
     // Check the date was passed correctly to the blueprint
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -306,7 +290,7 @@ describe('repository snapshot tab - ', () => {
     await selectUseSnapshot();
     await updateDatePickerWithValue('2024-04-22');
     await clickNext();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Custom repositories/i });
   });
@@ -324,7 +308,7 @@ describe('repository snapshot tab - ', () => {
       expect(nextBtn).toBeEnabled();
     });
     await clickNext();
-    await goToReviewStep();
+    await goToReview();
     await screen.findByText(/Use a content template/);
   });
 });

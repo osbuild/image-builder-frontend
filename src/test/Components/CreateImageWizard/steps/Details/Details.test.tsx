@@ -6,34 +6,17 @@ import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { detailsCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
-  clickNext,
   clickRegisterLater,
   enterBlueprintName,
   getNextButton,
   goToRegistrationStep,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
 } from '../../wizardTestUtils';
-
-export const goToDetailsStep = async () => {
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-};
 
 const enterBlueprintDescription = async (
   description: string = 'Now with extra carmine!',
@@ -46,10 +29,6 @@ const enterBlueprintDescription = async (
   await waitFor(() => user.clear(blueprintDescription));
   await waitFor(() => expect(blueprintDescription).toHaveValue(''));
   await waitFor(() => user.type(blueprintDescription, description));
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {
@@ -69,7 +48,7 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     const nextButton = await getNextButton();
     expect(nextButton).toBeEnabled();
     await enterBlueprintName(' ');
@@ -80,7 +59,7 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterBlueprintName('🤣Red Velvet🤣');
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeEnabled());
@@ -90,7 +69,7 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterBlueprintName('Lemon Pie');
     const nextButton = await getNextButton();
     await waitFor(() => expect(nextButton).toBeDisabled());
@@ -100,7 +79,7 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
 
     // enter invalid image name
     const invalidName = 'a'.repeat(101);
@@ -116,7 +95,7 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
 
     // enter invalid image description
     const invalidDescription = 'a'.repeat(251);
@@ -132,8 +111,8 @@ describe('Step Details', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
-    await goToReviewStep();
+    await goToStep(/Details/);
+    await goToStep(/Review/);
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Details/ });
   });
@@ -148,9 +127,9 @@ describe('Details request generated correctly', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterBlueprintName();
-    await goToReviewStep();
+    await goToStep(/Review/);
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -165,10 +144,10 @@ describe('Details request generated correctly', () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
-    await goToDetailsStep();
+    await goToStep(/Details/);
     await enterBlueprintName();
     await enterBlueprintDescription();
-    await goToReviewStep();
+    await goToStep(/Review/);
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

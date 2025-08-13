@@ -14,7 +14,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -56,28 +57,11 @@ const goToOpenSCAPStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
+  await goToStep(/OpenSCAP/);
 };
 
 const goFromOpenSCAPToKernel = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Kernel/);
 };
 
 const getKernelNameOptions = async () => {
@@ -240,7 +224,7 @@ describe('Step Kernel', () => {
     await renderCreateMode();
     await goToKernelStep();
     await selectKernelName('kernel');
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Kernel/ });
   });
@@ -255,7 +239,7 @@ describe('Kernel request generated correctly', () => {
     await renderCreateMode();
     await goToKernelStep();
     await selectKernelName('kernel-debug');
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -280,7 +264,7 @@ describe('Kernel request generated correctly', () => {
     await goToKernelStep();
     await selectKernelName('kernel-debug');
     await clearKernelName();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -297,7 +281,7 @@ describe('Kernel request generated correctly', () => {
     await goToKernelStep();
     await addKernelAppend('nosmt=force');
     await removeKernelArg('nosmt=force');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -314,7 +298,7 @@ describe('Kernel request generated correctly', () => {
     await renderCreateMode();
     await goToKernelStep();
     await addKernelAppend('nosmt=force');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -337,7 +321,7 @@ describe('Kernel request generated correctly', () => {
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToKernel();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

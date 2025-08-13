@@ -6,6 +6,7 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
+  goToReview,
   renderCreateMode,
   verifyCancelButton,
 } from '../../wizardTestUtils';
@@ -48,24 +49,6 @@ const handleRegistration = async () => {
   await clickRegisterLater();
 };
 
-const goToReviewStep = async () => {
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-  await clickNext(); // Review
-};
-
 describe('Step Review', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -75,7 +58,7 @@ describe('Step Review', () => {
   test('has 3 buttons', async () => {
     await setupWithRhel();
     await handleRegistration();
-    await goToReviewStep();
+    await goToReview();
     await screen.findByRole('button', { name: /Create blueprint/ });
     await screen.findByRole('button', { name: /Back/ });
     await screen.findByRole('button', { name: /Cancel/ });
@@ -84,7 +67,7 @@ describe('Step Review', () => {
   test('clicking Back loads Image name', async () => {
     await setupWithRhel();
     await handleRegistration();
-    await goToReviewStep();
+    await goToReview();
     await clickBack();
     await screen.findByRole('heading', {
       name: 'Details',
@@ -94,14 +77,14 @@ describe('Step Review', () => {
   test('clicking Cancel loads landing page', async () => {
     await setupWithRhel();
     await handleRegistration();
-    await goToReviewStep();
+    await goToReview();
     await verifyCancelButton(router);
   });
 
   test('has Registration expandable section for rhel', async () => {
     await setupWithRhel();
     await handleRegistration();
-    await goToReviewStep();
+    await goToReview();
 
     await screen.findByRole('heading', { name: /Review/ });
     const registrationExpandable = await screen.findByTestId(
@@ -115,7 +98,7 @@ describe('Step Review', () => {
 
   test('has no Registration expandable for centos', async () => {
     await setupWithCentos();
-    await goToReviewStep();
+    await goToReview();
 
     await screen.findByRole('heading', { name: /Review/ });
     expect(

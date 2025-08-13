@@ -14,7 +14,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -34,18 +35,7 @@ const goToServicesStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
+  await goToStep(/Systemd services/i);
 };
 
 const goToOpenSCAPStep = async () => {
@@ -60,24 +50,7 @@ const goToOpenSCAPStep = async () => {
 };
 
 const goFromOpenSCAPToServices = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Systemd services/i);
 };
 
 const addDisabledService = async (service: string) => {
@@ -239,7 +212,7 @@ describe('Step Services', () => {
     await renderCreateMode();
     await goToServicesStep();
     await addDisabledService('telnet');
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Systemd services/ });
   });
@@ -256,7 +229,7 @@ describe('Services request generated correctly', () => {
     await addDisabledService('telnet');
     await addMaskedService('nfs-server');
     await addEnabledService('httpd');
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -287,7 +260,7 @@ describe('Services request generated correctly', () => {
     await removeService('telnet');
     await removeService('nfs-server');
     await removeService('httpd');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -305,7 +278,7 @@ describe('Services request generated correctly', () => {
     await goToOpenSCAPStep();
     await selectProfile();
     await goFromOpenSCAPToServices();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

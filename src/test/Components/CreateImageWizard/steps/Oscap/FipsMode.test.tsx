@@ -7,7 +7,7 @@ import { baseCreateBlueprintRequest } from '../../../../fixtures/editMode';
 import {
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
   interceptBlueprintRequest,
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
@@ -72,24 +72,6 @@ const toggleFipsCheckbox = async () => {
   return fipsCheckbox;
 };
 
-const goToReviewStep = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshot repositories
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // FirstBoot
-  await clickNext(); // Details
-  await enterBlueprintName('FIPS test');
-  await clickNext(); // Review
-};
-
 describe('FIPS Mode Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -129,7 +111,7 @@ describe('FIPS Mode Tests', () => {
     await goToComplianceStep();
 
     await toggleFipsCheckbox();
-    await goToReviewStep();
+    await goToReview('FIPS test');
     await openAndDismissSaveAndBuildModal();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);

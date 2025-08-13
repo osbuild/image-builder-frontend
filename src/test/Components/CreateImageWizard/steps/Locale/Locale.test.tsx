@@ -10,7 +10,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -29,25 +30,7 @@ const goToLocaleStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Locale/);
 };
 
 const clearLanguageSearch = async () => {
@@ -181,7 +164,7 @@ describe('Step Locale', () => {
     await goToLocaleStep();
     await searchForKeyboard('us');
     await selectKeyboard();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Locale/ });
   });
@@ -192,7 +175,7 @@ describe('Locale request generated correctly', () => {
     await renderCreateMode();
     await goToLocaleStep();
     await selectLanguages();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -217,7 +200,7 @@ describe('Locale request generated correctly', () => {
     await goToLocaleStep();
     await searchForKeyboard('us');
     await selectKeyboard();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -240,7 +223,7 @@ describe('Locale request generated correctly', () => {
     await selectLanguages();
     await searchForKeyboard('us');
     await selectKeyboard();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

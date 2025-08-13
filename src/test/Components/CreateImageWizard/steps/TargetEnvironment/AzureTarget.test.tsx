@@ -20,8 +20,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -37,25 +37,10 @@ const goToAzureStep = async () => {
   await clickNext();
 };
 
-const goToReview = async () => {
+const goToReviewStep = async () => {
   await clickNext(); // Register
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system customization
-  await clickNext(); // Snapshot repositories
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // FirstBoot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToReview();
 };
 
 const clickRevisitButton = async () => {
@@ -321,7 +306,7 @@ describe('Step Upload to Azure', () => {
     await goToAzureStep();
     await selectSource('azureSource1');
     await selectResourceGroup();
-    await goToReview();
+    await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
   });
@@ -338,7 +323,7 @@ describe('Azure image type request generated correctly', () => {
     await goToAzureStep();
     await selectSource('azureSource1');
     await selectResourceGroup();
-    await goToReview();
+    await goToReviewStep();
 
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
@@ -374,7 +359,7 @@ describe('Azure image type request generated correctly', () => {
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -408,7 +393,7 @@ describe('Azure image type request generated correctly', () => {
     await enterSubscriptionId();
     await enterResourceGroup();
     await selectV1();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedImageRequest: ImageRequest = {
@@ -440,7 +425,7 @@ describe('Azure image type request generated correctly', () => {
     await selectSource('azureSource1');
     await clickBack();
     await deselectAzureAndSelectGuestImage();
-    await goToReview();
+    await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     await waitFor(() => {

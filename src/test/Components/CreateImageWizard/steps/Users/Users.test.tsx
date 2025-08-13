@@ -10,8 +10,9 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -33,25 +34,7 @@ const chandlerPasswd = 'chandlerPass';
 const goToUsersStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First boot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Users/);
 };
 
 const addAzureTarget = async () => {
@@ -351,7 +334,7 @@ describe('Step Users', () => {
     await goToUsersStep();
     await clickAddUser();
     await addUserName(validUserName);
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Users/ });
   });
@@ -373,7 +356,7 @@ describe('User request generated correctly', () => {
     await checkAdminCheckbox();
     await addUserGroupByUserIndex('users', 0);
     await addUserGroupByUserIndex('widget', 0);
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -410,7 +393,7 @@ describe('User request generated correctly', () => {
     await addUserGroupByUserIndex('widget', 0);
     await closeNthTab(0);
     await screen.findByText(/add a user to your image/i);
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -430,7 +413,7 @@ describe('User request generated correctly', () => {
 
     await addAndFillThreeUsers();
 
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -474,7 +457,7 @@ describe('User request generated correctly', () => {
     await closeNthTab(1);
     await closeNthTab(0);
 
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

@@ -10,8 +10,9 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -33,29 +34,7 @@ const goToHostnameStep = async () => {
     await clickNext(); // Registration
     await clickRegisterLater();
   }
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  if (!process.env.IS_ON_PREMISE) {
-    await clickNext(); // Snapshots
-    await clickNext(); // Custom repositories
-  }
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  if (!process.env.IS_ON_PREMISE) {
-    await clickNext(); // First boot script
-  }
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Hostname/);
 };
 
 const enterHostname = async (hostname: string) => {
@@ -146,7 +125,7 @@ describe('Step Hostname', () => {
     await renderCreateMode();
     await goToHostnameStep();
     await enterHostname('hostname');
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Hostname/ });
   });
@@ -161,7 +140,7 @@ describe('Hostname request generated correctly', () => {
     await renderCreateMode();
     await goToHostnameStep();
     await enterHostname('hostname');
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();

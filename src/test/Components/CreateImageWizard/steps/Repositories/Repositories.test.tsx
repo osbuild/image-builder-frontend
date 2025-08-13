@@ -19,7 +19,8 @@ import {
   clickNext,
   clickRegisterLater,
   clickReviewAndFinish,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -35,25 +36,7 @@ const goToRepositoriesStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // First Boot
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Custom repositories/);
 };
 
 const clickRevisitButton = async () => {
@@ -234,7 +217,7 @@ describe('Step Custom repositories', () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     await selectFirstRepository();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Custom repositories/ });
   });
@@ -249,7 +232,7 @@ describe('Repositories request generated correctly', () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     await selectFirstRepository();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -303,7 +286,7 @@ describe('Repositories request generated correctly', () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     await selectNginxRepository();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest: CreateBlueprintRequest = {
@@ -322,7 +305,7 @@ describe('Repositories request generated correctly', () => {
     await goToRepositoriesStep();
     await selectFirstRepository();
     await deselectFirstRepository();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = blueprintRequest;
@@ -336,7 +319,7 @@ describe('Repositories request generated correctly', () => {
     await renderCreateMode();
     await goToRepositoriesStep();
     await clickBulkSelect();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = (await interceptBlueprintRequest(
       CREATE_BLUEPRINT,
     )) as CreateBlueprintRequest;

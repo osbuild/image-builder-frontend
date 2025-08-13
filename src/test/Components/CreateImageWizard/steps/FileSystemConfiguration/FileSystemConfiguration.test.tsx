@@ -15,8 +15,9 @@ import {
   clickNext,
   clickRegisterLater,
   clickReviewAndFinish,
-  enterBlueprintName,
   getNextButton,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -43,8 +44,7 @@ const selectImageInstaller = async () => {
 const goToFileSystemConfigurationStep = async () => {
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File System
+  await goToStep(/File system configuration/);
 };
 
 const clickManuallyConfigurePartitions = async () => {
@@ -98,23 +98,6 @@ const changePartitionUnitsToMiB = async () => {
   await waitFor(() => user.click(units));
   const mibOption = await screen.findByRole('option', { name: 'MiB' });
   await waitFor(() => user.click(mibOption));
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Repository snapshot/Repeatable builds
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Services
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
 };
 
 const clickRevisitButton = async () => {
@@ -216,7 +199,7 @@ describe('Step File system configuration', () => {
     await renderCreateMode();
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /File system configuration/ });
   });
@@ -232,7 +215,7 @@ describe('File system configuration request generated correctly', () => {
     await selectGuestImage();
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -259,7 +242,7 @@ describe('File system configuration request generated correctly', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionSize();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -283,7 +266,7 @@ describe('File system configuration request generated correctly', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToMiB();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -307,7 +290,7 @@ describe('File system configuration request generated correctly', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await changePartitionUnitsToKiB();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -331,7 +314,7 @@ describe('File system configuration request generated correctly', () => {
     await goToFileSystemConfigurationStep();
     await clickManuallyConfigurePartitions();
     await addPartition();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -360,7 +343,7 @@ describe('File system configuration request generated correctly', () => {
     await clickManuallyConfigurePartitions();
     await addPartition();
     await customizePartition();
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

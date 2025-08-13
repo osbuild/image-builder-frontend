@@ -10,7 +10,8 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
+  goToStep,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -29,25 +30,7 @@ const goToFirewallStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await clickNext(); // OpenSCAP
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-};
-
-const goToReviewStep = async () => {
-  await clickNext(); // Services
-  await clickNext(); // First boot script
-  await clickNext(); // Details
-  await enterBlueprintName();
-  await clickNext(); // Review
+  await goToStep(/Firewall/);
 };
 
 const addPort = async (port: string) => {
@@ -145,7 +128,7 @@ describe('Step Firewall', () => {
     await renderCreateMode();
     await goToFirewallStep();
     await addPort('22:tcp');
-    await goToReviewStep();
+    await goToReview();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Firewall/ });
   });
@@ -157,7 +140,7 @@ describe('Firewall request generated correctly', () => {
     await goToFirewallStep();
     await addPort('22:tcp');
     await addPort('imap:tcp');
-    await goToReviewStep();
+    await goToReview();
     // informational modal pops up in the first test only as it's tied
     // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
     await openAndDismissSaveAndBuildModal();
@@ -184,7 +167,7 @@ describe('Firewall request generated correctly', () => {
     await addEnabledFirewallService('ntp');
     await addEnabledFirewallService('dhcp');
     await addDisabledFirewallService('telnet');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {
@@ -213,7 +196,7 @@ describe('Firewall request generated correctly', () => {
     await addEnabledFirewallService('ntp');
     await addEnabledFirewallService('dhcp');
     await addDisabledFirewallService('telnet');
-    await goToReviewStep();
+    await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 
     const expectedRequest = {

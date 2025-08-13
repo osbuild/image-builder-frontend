@@ -8,7 +8,7 @@ import { complianceCreateBlueprintRequest } from '../../../../fixtures/editMode'
 import {
   clickNext,
   clickRegisterLater,
-  enterBlueprintName,
+  goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
   openAndDismissSaveAndBuildModal,
@@ -49,24 +49,6 @@ const goToComplianceStep = async () => {
   await screen.findByText('None');
 };
 
-const goToReviewStep = async () => {
-  await clickNext(); // File system configuration
-  await clickNext(); // Snapshots
-  await clickNext(); // Custom repositories
-  await clickNext(); // Additional packages
-  await clickNext(); // Users
-  await clickNext(); // Timezone
-  await clickNext(); // Locale
-  await clickNext(); // Hostname
-  await clickNext(); // Kernel
-  await clickNext(); // Firewall
-  await clickNext(); // Systemd services
-  await clickNext(); // First boot
-  await clickNext(); // Details
-  await enterBlueprintName('Compliance test');
-  await clickNext(); // Review
-};
-
 const selectPolicy = async () => {
   const user = userEvent.setup();
 
@@ -99,7 +81,7 @@ describe('Compliance', () => {
     await renderCreateMode();
     await goToComplianceStep();
     await selectPolicy();
-    await goToReviewStep();
+    await goToReview('Compliance test');
     await openAndDismissSaveAndBuildModal();
 
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -117,7 +99,7 @@ describe('Compliance', () => {
     await renderCreateMode();
     await goToComplianceStep();
     await selectPolicy();
-    await goToReviewStep();
+    await goToReview('Compliance test');
     await screen.findByRole('heading', { name: /Review/ });
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Compliance/ });
