@@ -124,9 +124,17 @@ export const oscapCustomizationsPolicy = (
 ): GetOscapCustomizationsApiResponse => {
   const policyData = mockPolicies.data.find((p) => p.id === policy);
   const customizations = oscapCustomizations(policyData!.ref_id);
-  // filter out a single package to simulate the customizations being tailored
-  customizations.packages = customizations.packages!.filter(
-    (p) => p !== 'aide',
-  );
+
+  // Simulate different levels of customization based on policy
+  if (policy === 'custom-policy-123') {
+    // This policy has user-customized rules - only neovim remains
+    customizations.packages = ['neovim']; // User removed aide package
+  } else {
+    // Other policies: filter out a single package to simulate basic customizations
+    customizations.packages = customizations.packages!.filter(
+      (p) => p !== 'aide',
+    );
+  }
+
   return customizations;
 };

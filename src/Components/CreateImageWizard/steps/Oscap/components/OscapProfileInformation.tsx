@@ -8,7 +8,10 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 
-import { useGetOscapCustomizationsQuery } from '../../../../../store/backendApi';
+import {
+  useGetComplianceCustomizationsQuery,
+  useGetOscapCustomizationsQuery,
+} from '../../../../../store/backendApi';
 import { PolicyRead, usePolicyQuery } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { OpenScapProfile } from '../../../../../store/imageBuilderApi';
@@ -16,6 +19,7 @@ import {
   changeCompliance,
   selectCompliancePolicyID,
   selectComplianceProfileID,
+  selectComplianceType,
   selectDistribution,
   selectFips,
 } from '../../../../../store/wizardSlice';
@@ -31,12 +35,29 @@ export const OscapProfileInformation = ({
   const release = useAppSelector(selectDistribution);
   const compliancePolicyID = useAppSelector(selectCompliancePolicyID);
   const complianceProfileID = useAppSelector(selectComplianceProfileID);
+  const complianceType = useAppSelector(selectComplianceType);
   const fips = useAppSelector(selectFips);
+
+  const {
+    data: oscapPolicyInfo,
+    isFetching: isFetchingOscapPolicyInfo,
+    isSuccess: isSuccessOscapPolicyInfo,
+    error: policyError,
+  } = useGetComplianceCustomizationsQuery(
+    {
+      distribution: release,
+      policy: compliancePolicyID!,
+    },
+    {
+      skip: !compliancePolicyID || !!process.env.IS_ON_PREMISE,
+    },
+  );
 
   const {
     data: oscapProfileInfo,
     isFetching: isFetchingOscapProfileInfo,
     isSuccess: isSuccessOscapProfileInfo,
+    error: profileError,
   } = useGetOscapCustomizationsQuery(
     {
       distribution: release,
@@ -47,6 +68,20 @@ export const OscapProfileInformation = ({
       skip: !complianceProfileID,
     },
   );
+
+  const customizationData =
+    compliancePolicyID && oscapPolicyInfo ? oscapPolicyInfo : oscapProfileInfo;
+  const profileMetadata = oscapProfileInfo;
+  const isPolicyDataLoading = compliancePolicyID
+    ? isFetchingOscapPolicyInfo
+    : false;
+  const isFetchingOscapData = isPolicyDataLoading || isFetchingOscapProfileInfo;
+  const isPolicyDataSuccess = compliancePolicyID
+    ? isSuccessOscapPolicyInfo
+    : true;
+  const isSuccessOscapData = isPolicyDataSuccess && isSuccessOscapProfileInfo;
+  const hasCriticalError = profileError || (compliancePolicyID && policyError);
+  const shouldShowData = isSuccessOscapData && !hasCriticalError;
 
   const {
     data: policyInfo,
@@ -74,23 +109,28 @@ export const OscapProfileInformation = ({
         policyTitle: pol.title,
       }),
     );
-  }, [isSuccessPolicyInfo]);
+  }, [isSuccessPolicyInfo, dispatch, policyInfo]);
 
-  const oscapProfile = oscapProfileInfo?.openscap as OpenScapProfile;
+  const oscapProfile = profileMetadata?.openscap as OpenScapProfile | undefined;
 
   return (
     <>
-      {(isFetchingOscapProfileInfo || isFetchingPolicyInfo) && (
-        <Spinner size='lg' />
+      {(isFetchingOscapData || isFetchingPolicyInfo) && <Spinner size='lg' />}
+      {hasCriticalError && (
+        <Content component={ContentVariants.p} className='pf-v6-u-color-200'>
+          Unable to load compliance information. Please try again.
+        </Content>
       )}
-      {isSuccessOscapProfileInfo && (
+      {shouldShowData && (
         <>
           <Content component={ContentVariants.dl} className='review-step-dl'>
             <Content
               component={ContentVariants.dt}
               className='pf-v6-u-min-width'
             >
-              Profile description
+              {complianceType === 'compliance'
+                ? 'Policy description'
+                : 'Profile description'}
             </Content>
             <Content component={ContentVariants.dd}>
               {oscapProfile?.profile_description}
@@ -116,7 +156,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dd}>
               <CodeBlock>
                 <CodeBlockCode>
-                  {(oscapProfileInfo?.packages ?? []).join(', ')}
+                  {(customizationData?.packages ?? []).join(', ')}
                 </CodeBlockCode>
               </CodeBlock>
             </Content>
@@ -129,7 +169,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dd}>
               <CodeBlock>
                 <CodeBlockCode>
-                  {oscapProfileInfo?.kernel?.append}
+                  {customizationData?.kernel?.append}
                 </CodeBlockCode>
               </CodeBlock>
             </Content>
@@ -142,7 +182,7 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dd}>
               <CodeBlock>
                 <CodeBlockCode>
-                  {(oscapProfileInfo?.services?.enabled ?? []).join(' ')}
+                  {(customizationData?.services?.enabled ?? []).join(' ')}
                 </CodeBlockCode>
               </CodeBlock>
             </Content>
@@ -155,8 +195,8 @@ export const OscapProfileInformation = ({
             <Content component={ContentVariants.dd}>
               <CodeBlock>
                 <CodeBlockCode>
-                  {(oscapProfileInfo?.services?.disabled ?? [])
-                    .concat(oscapProfileInfo?.services?.masked ?? [])
+                  {(customizationData?.services?.disabled ?? [])
+                    .concat(customizationData?.services?.masked ?? [])
                     .join(' ')}
                 </CodeBlockCode>
               </CodeBlock>

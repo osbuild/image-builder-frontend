@@ -11,14 +11,14 @@ import {
 import { useSelectorHandlers } from './useSelectorHandlers';
 
 import {
+  useGetComplianceCustomizationsQuery,
+  useLazyGetComplianceCustomizationsQuery,
+} from '../../../../../store/backendApi';
+import {
   PolicyRead,
   usePoliciesQuery,
 } from '../../../../../store/complianceApi';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  useGetOscapCustomizationsForPolicyQuery,
-  useLazyGetOscapCustomizationsForPolicyQuery,
-} from '../../../../../store/imageBuilderApi';
 import {
   changeCompliance,
   changeFileSystemConfigurationType,
@@ -97,7 +97,7 @@ const PolicySelector = () => {
     filter: `os_major_version=${majorVersion}`,
   });
 
-  const { data: currentProfileData } = useGetOscapCustomizationsForPolicyQuery(
+  const { data: currentProfileData } = useGetComplianceCustomizationsQuery(
     {
       distribution: release,
       policy: policyID!,
@@ -105,7 +105,7 @@ const PolicySelector = () => {
     { skip: !policyID },
   );
 
-  const [trigger] = useLazyGetOscapCustomizationsForPolicyQuery();
+  const [trigger] = useLazyGetComplianceCustomizationsQuery();
 
   useEffect(() => {
     if (!policies || policies.data === undefined) {
