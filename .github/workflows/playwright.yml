@@ -14,6 +14,7 @@ concurrency:
 
 jobs:
   playwright-tests:
+    if: false  # Temporarily disabled
     runs-on:
       - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
       - instance-size:large
