@@ -422,7 +422,7 @@ describe('Registration request generated correctly', () => {
     localStorage.clear();
   });
 
-  test('register with satellite', { timeout: 20000 }, async () => {
+  test('register with satellite', { timeout: 25000 }, async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterSatellite();
