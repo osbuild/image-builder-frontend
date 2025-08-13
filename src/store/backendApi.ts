@@ -43,6 +43,12 @@ export const useLazyGetOscapCustomizationsQuery = process.env.IS_ON_PREMISE
   ? cockpitQueries.useLazyGetOscapCustomizationsQuery
   : serviceQueries.useLazyGetOscapCustomizationsQuery;
 
+export const useGetComplianceCustomizationsQuery =
+  serviceQueries.useGetOscapCustomizationsForPolicyQuery;
+
+export const useLazyGetComplianceCustomizationsQuery =
+  serviceQueries.useLazyGetOscapCustomizationsForPolicyQuery;
+
 export const useComposeBlueprintMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useComposeBlueprintMutation
   : serviceQueries.useComposeBlueprintMutation;

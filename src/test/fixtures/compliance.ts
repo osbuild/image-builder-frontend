@@ -36,8 +36,20 @@ export const mockPolicies = {
       profile_title: 'DISA STIG with GUI for Red Hat Enterprise Linux 8',
       ref_id: 'xccdf_org.ssgproject.content_profile_stig_gui',
     },
+    {
+      id: 'custom-policy-123',
+      title: 'Custom CIS Policy (Partial Rules)',
+      description: 'A customized policy where user removed some rules',
+      compliance_threshold: 100,
+      total_system_count: 5,
+      type: 'policy',
+      os_major_version: 8,
+      profile_title:
+        'Custom CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation',
+      ref_id: 'xccdf_org.ssgproject.content_profile_cis_workstation_l1',
+    },
   ],
   meta: {
-    total: 3,
+    total: 4,
   },
 };

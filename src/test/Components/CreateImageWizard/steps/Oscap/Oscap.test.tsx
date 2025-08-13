@@ -332,4 +332,30 @@ describe('OpenSCAP edit mode', () => {
     user.click(selectedBtn);
     await screen.findByText('neovim');
   });
+
+  test('customized policy shows only non-removed rules', async () => {
+    const { oscapCustomizations, oscapCustomizationsPolicy } = await import(
+      '../../../../fixtures/oscap'
+    );
+
+    const profileId = 'xccdf_org.ssgproject.content_profile_cis_workstation_l1';
+    const normalProfile = oscapCustomizations(profileId);
+    expect(normalProfile.packages).toEqual(['aide', 'neovim']);
+    const customPolicy = oscapCustomizationsPolicy('custom-policy-123');
+    expect(customPolicy.packages).toEqual(['neovim']);
+    await renderCreateMode();
+    await selectRhel9();
+    await selectGuestImageTarget();
+    await goToOscapStep();
+    await selectProfile();
+
+    await waitFor(() => {
+      expect(screen.getByText(/aide, neovim/i)).toBeInTheDocument();
+    });
+
+    expect(customPolicy.packages).not.toContain('aide');
+    expect(customPolicy.packages).toContain('neovim');
+    expect(normalProfile.packages).toContain('aide');
+    expect(normalProfile.packages).toContain('neovim');
+  });
 });
