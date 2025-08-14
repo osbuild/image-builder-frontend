@@ -8,6 +8,7 @@ import {
   CardHeader,
   CardTitle,
   Spinner,
+  Truncate,
 } from '@patternfly/react-core';
 
 import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
@@ -54,7 +55,7 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
             {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size='md' />
             )}
-            {blueprint.name}
+            <Truncate content={blueprint.name} position='end' />
           </CardTitle>
         </CardHeader>
         <CardBody>{blueprint.description}</CardBody>
