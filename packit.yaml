@@ -16,6 +16,15 @@ srpm_build_deps:
   - npm
 
 jobs:
+  - job: tests
+    identifier: self
+    trigger: pull_request
+    tmt_plan: /plans/all/main
+    targets:
+      - centos-stream-10
+      - fedora-41
+      - fedora-42
+
   - job: copr_build
     trigger: pull_request
     targets: &build_targets
@@ -24,7 +33,6 @@ jobs:
       - centos-stream-10
       - centos-stream-10-aarch64
       - fedora-all
-      - fedora-all-aarch64
 
   - job: copr_build
     trigger: commit
