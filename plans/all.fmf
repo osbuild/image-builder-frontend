@@ -1,0 +1,14 @@
+summary: cockpit-image-builder playwright tests
+prepare:
+    how: install
+    package:
+    - cockpit-image-builder
+discover:
+    how: fmf
+execute:
+    how: tmt
+
+/main:
+    summary: playwright tests
+    discover+:
+        test: /schutzbot/playwright

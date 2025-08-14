@@ -1,0 +1,8 @@
+summary: run playwright tests
+test: ./playwright_tests.sh
+require:
+  - cockpit-image-builder
+  - podman
+  - nodejs
+  - nodejs-npm
+duration: 30m

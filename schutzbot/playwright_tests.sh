@@ -1,16 +1,16 @@
 #!/bin/bash
 set -euo pipefail
 
-# As playwright isn't supported on fedora/el, install dependencies
-# beforehand.
-sudo dnf install -y \
-     alsa-lib \
-     libXrandr-devel \
-     libXdamage-devel \
-     libXcomposite-devel \
-     at-spi2-atk-devel \
-     cups \
-     atk
+TMT_SOURCE_DIR=${TMT_SOURCE_DIR:-}
+if [ -n "$TMT_SOURCE_DIR" ]; then
+    # Move to the directory with sources
+    cd "${TMT_SOURCE_DIR}/cockpit-image-builder"
+    npm ci
+elif [ "${CI:-}" != "true" ]; then
+    # packit drops us into the schutzbot directory
+    cd ../
+    npm ci
+fi
 
 sudo systemctl enable --now cockpit.socket
 
@@ -19,10 +19,13 @@ sudo usermod -aG wheel admin
 echo "admin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/admin-nopasswd"
 
 function upload_artifacts {
-    mkdir -p /tmp/artifacts/extra-screenshots
-    USER="$(whoami)"
-    sudo chown -R "$USER:$USER" playwright-report
-    mv playwright-report /tmp/artifacts/
+    if [ -n "${TMT_TEST_DATA:-}" ]; then
+        mv playwright-report "$TMT_TEST_DATA"/playwright-report
+    else
+        USER="$(whoami)"
+        sudo chown -R "$USER:$USER" playwright-report
+        mv playwright-report /tmp/artifacts/
+    fi
 }
 trap upload_artifacts EXIT
 
@@ -73,8 +76,8 @@ sudo podman run \
      -e "CI=true" \
      -e "PLAYWRIGHT_USER=admin" \
      -e "PLAYWRIGHT_PASSWORD=foobar" \
-     -e "CURRENTS_PROJECT_ID=$CURRENTS_PROJECT_ID" \
-     -e "CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY" \
+     -e "CURRENTS_PROJECT_ID=${CURRENTS_PROJECT_ID:-}" \
+     -e "CURRENTS_RECORD_KEY=${CURRENTS_RECORD_KEY:-}" \
      --net=host \
      -v "$PWD:/tests" \
      -v '/etc:/etc' \
