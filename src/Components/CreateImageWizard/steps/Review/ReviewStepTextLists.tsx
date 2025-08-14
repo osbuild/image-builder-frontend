@@ -704,6 +704,7 @@ export const RegisterAapList = () => {
 };
 
 export const RegisterNowList = () => {
+  const orgId = useAppSelector(selectActivationKey);
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
 
@@ -711,7 +712,7 @@ export const RegisterNowList = () => {
     // @ts-ignore type of 'activationKey' might not be strictly compatible with the expected type for 'name'.
     { name: activationKey },
     {
-      skip: !activationKey,
+      skip: !activationKey || process.env.IS_ON_PREMISE,
     },
   );
   return (
@@ -753,6 +754,12 @@ export const RegisterNowList = () => {
           <Content component={ContentVariants.dd}>
             <ActivationKeyInformation />
           </Content>
+          {process.env.IS_ON_PREMISE && (
+            <>
+              <Content component={ContentVariants.dt}>Organization ID</Content>
+              <Content component={ContentVariants.dd}>{orgId}</Content>
+            </>
+          )}
         </Content>
       </Content>
       {isError && (

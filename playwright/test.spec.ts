@@ -4,7 +4,7 @@ import TOML from '@ltd/j-toml';
 import { expect, test } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { closePopupsIfExist, isHosted } from './helpers/helpers';
+import { closePopupsIfExist, isHosted, isRhel } from './helpers/helpers';
 import { ensureAuthenticated } from './helpers/login';
 import { ibFrame, navigateToLandingPage } from './helpers/navHelpers';
 
@@ -27,11 +27,22 @@ test.describe.serial('test', () => {
       .click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
 
-    if (isHosted()) {
-      frame.getByRole('heading', {
-        name: 'Register systems using this image',
-      });
+    const registrationHeading = frame.getByRole('heading', {
+      name: 'Register systems using this image',
+    });
+    const isRegistrationHeadingVisible = await registrationHeading.isVisible();
+    if (isHosted() && isRegistrationHeadingVisible) {
       await page.getByRole('radio', { name: /Register later/i }).click();
+      await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    }
+
+    if (!isHosted() && isRhel()) {
+      await frame
+        .getByRole('textbox', { name: 'Activation Key' })
+        .fill('activation-key');
+      await frame
+        .getByRole('textbox', { name: 'Organization ID' })
+        .fill('12341234');
       await frame.getByRole('button', { name: 'Next', exact: true }).click();
     }
 
@@ -276,6 +287,7 @@ test.describe.serial('test', () => {
     // the first card should be the AWS card
     await frame.locator('.pf-v6-c-card').first().click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
+    await page.getByRole('radio', { name: /Register later/i }).click();
     await frame.getByRole('button', { name: 'Next', exact: true }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
     await frame.getByRole('button', { name: 'Back', exact: true }).click();

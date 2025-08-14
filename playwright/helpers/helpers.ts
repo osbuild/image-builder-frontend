@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+
 import { expect, type Page } from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
@@ -41,4 +43,13 @@ export const closePopupsIfExist = async (page: Page) => {
       await locator.first().click({ timeout: 10_000, noWaitAfter: true }); // There can be multiple toast pop-ups
     });
   }
+};
+
+export const isRhel = () => {
+  if (isHosted()) {
+    return true;
+  }
+
+  const release = readFileSync('/etc/os-release');
+  return release.toString().split('/n')[0].toLowerCase().includes('fedora');
 };

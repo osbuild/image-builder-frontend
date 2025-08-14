@@ -28,6 +28,7 @@ import {
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
+  selectOrgId,
   selectPartitions,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -123,6 +124,7 @@ type ValidationState = {
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
+  const orgId = useAppSelector(selectOrgId);
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
   );
@@ -132,15 +134,29 @@ export function useRegistrationValidation(): StepValidation {
     useShowActivationKeyQuery(
       { name: activationKey! },
       {
-        skip: !activationKey,
+        skip: !activationKey || !!process.env.IS_ON_PREMISE,
       },
     );
 
-  if (
-    registrationType !== 'register-later' &&
-    registrationType !== 'register-satellite' &&
-    !activationKey
-  ) {
+  if (registrationType === 'register-later') {
+    return { errors: {}, disabledNext: false };
+  }
+
+  if (process.env.IS_ON_PREMISE && !activationKey) {
+    return {
+      errors: { activationKey: 'Activation Key not set' },
+      disabledNext: true,
+    };
+  }
+
+  if (process.env.IS_ON_PREMISE && !orgId) {
+    return {
+      errors: { activationKey: 'Organization ID not set' },
+      disabledNext: true,
+    };
+  }
+
+  if (registrationType !== 'register-satellite' && !activationKey) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -148,10 +164,10 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   if (
-    registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
     activationKey &&
-    (isFetchingKeyInfo || isErrorKeyInfo)
+    (isFetchingKeyInfo || isErrorKeyInfo) &&
+    !process.env.IS_ON_PREMISE
   ) {
     return {
       errors: { activationKey: 'Invalid activation key' },

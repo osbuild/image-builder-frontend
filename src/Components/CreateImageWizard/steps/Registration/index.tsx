@@ -13,6 +13,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import ActivationKeyInformation from './components/ActivationKeyInformation';
 import ActivationKeysList from './components/ActivationKeysList';
+import { ManualActivationKey } from './components/ManualActivationKey';
 import Registration from './components/Registration';
 import SatelliteRegistration from './components/SatelliteRegistration';
 
@@ -44,23 +45,25 @@ const RegistrationStep = () => {
       <Title headingLevel='h1' size='xl'>
         Register systems using this image
       </Title>
-      <FormGroup label='Organization ID'>
-        <ClipboardCopy
-          hoverTip='Copy to clipboard'
-          clickTip='Successfully copied to clipboard!'
-          variant='inline-compact'
-        >
-          {orgId || ''}
-        </ClipboardCopy>
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem>
-              If using an activation key with command line registration, you
-              must provide your organization&apos;s ID
-            </HelperTextItem>
-          </HelperText>
-        </FormHelperText>
-      </FormGroup>
+      {!process.env.IS_ON_PREMISE && (
+        <FormGroup label='Organization ID'>
+          <ClipboardCopy
+            hoverTip='Copy to clipboard'
+            clickTip='Successfully copied to clipboard!'
+            variant='inline-compact'
+          >
+            {orgId || ''}
+          </ClipboardCopy>
+          <FormHelperText>
+            <HelperText>
+              <HelperTextItem>
+                If using an activation key with command line registration, you
+                must provide your organization&apos;s ID
+              </HelperTextItem>
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+      )}
       <Registration />
       {registrationType === 'register-satellite' && <SatelliteRegistration />}
       {!process.env.IS_ON_PREMISE &&
@@ -76,6 +79,9 @@ const RegistrationStep = () => {
             <ActivationKeyInformation />
           </FormGroup>
         )}
+      {process.env.IS_ON_PREMISE && registrationType !== 'register-later' && (
+        <ManualActivationKey />
+      )}
     </Form>
   );
 };
