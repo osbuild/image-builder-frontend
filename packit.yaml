@@ -26,6 +26,12 @@ jobs:
       - fedora-all
       - fedora-all-aarch64
 
+  - job: tests
+    identifier: self
+    trigger: pull_request
+    tmt_plan: /plans/all/main
+    targets: *build_targets
+
   - job: copr_build
     trigger: commit
     branch: "^main$"
