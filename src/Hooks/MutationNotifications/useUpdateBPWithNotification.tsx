@@ -7,6 +7,7 @@ import { useUpdateBlueprintMutation } from '../../store/backendApi';
 
 export const useUpdateBPWithNotification = (options?: HookOptions) => {
   const { trigger: updateBlueprint, ...rest } = useMutationWithNotification(
+    // @ts-expect-error TODO: this will need to be revisited
     useUpdateBlueprintMutation,
     {
       options,

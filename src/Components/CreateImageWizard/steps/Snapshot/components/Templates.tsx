@@ -67,7 +67,10 @@ const Templates = () => {
   };
 
   const handlePerPageSelect = (
-    _: React.MouseEvent,
+    _:
+      | MouseEvent
+      | React.MouseEvent<Element, MouseEvent>
+      | React.KeyboardEvent<Element>,
     newPerPage: number,
     newPage: number,
   ) => {

@@ -35,6 +35,7 @@ import {
   CustomRepository,
 } from '../../store/imageBuilderApi';
 import { wizardState } from '../../store/wizardSlice';
+import { getErrorMessage } from '../../Utilities/getErrorMessage';
 import { resolveRelPath } from '../../Utilities/path';
 import {
   mapExportRequestToState,
@@ -69,10 +70,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
   const addNotification = useAddNotification();
   const [importRepositories] = useBulkImportRepositoriesMutation();
 
-  const handleFileInputChange = (
-    _event: React.ChangeEvent<HTMLInputElement> | React.DragEvent<HTMLElement>,
-    file: File,
-  ) => {
+  const handleFileInputChange = (_event: DropEvent, file: File) => {
     setFileContent('');
     setFilename(file.name);
   };
@@ -195,7 +193,7 @@ export const ImportBlueprintModal: React.FunctionComponent<
           addNotification({
             variant: 'warning',
             title: 'File is not a valid blueprint',
-            description: error?.data?.error?.message,
+            description: getErrorMessage(error),
           });
         }
       };

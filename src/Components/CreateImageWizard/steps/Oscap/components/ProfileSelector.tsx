@@ -269,15 +269,15 @@ const ProfileSelector = () => {
   };
 
   const handleSelect = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    selection?: string | number,
   ) => {
-    if (selection) {
-      setInputValue(selection);
-      setFilterValue('');
-      applyChanges(selection as unknown as OScapSelectOptionValueType);
-      setIsOpen(false);
-    }
+    if (selection === undefined) return;
+
+    setInputValue(selection as OScapSelectOptionValueType['profileID']);
+    setFilterValue('');
+    applyChanges(selection as unknown as OScapSelectOptionValueType);
+    setIsOpen(false);
   };
 
   const toggleOpenSCAP = (toggleRef: React.Ref<MenuToggleElement>) => (
