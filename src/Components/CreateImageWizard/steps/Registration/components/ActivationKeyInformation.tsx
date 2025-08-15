@@ -80,7 +80,7 @@ const ActivationKeyInformation = (): JSX.Element => {
               className='pf-v6-u-display-flex pf-v6-u-align-items-flex-end'
             >
               {activationKeyInfo?.body?.additionalRepositories &&
-              activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
+              activationKeyInfo.body.additionalRepositories.length > 0 ? (
                 <Popover
                   position='right'
                   minWidth='30rem'
@@ -99,7 +99,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {activationKeyInfo.body?.additionalRepositories?.map(
+                          {activationKeyInfo.body.additionalRepositories.map(
                             (repo, index) => (
                               <Tr key={index}>
                                 <Td>{repo.repositoryLabel}</Td>
@@ -116,7 +116,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                     aria-label='Show additional repositories'
                     className='pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0'
                   >
-                    {activationKeyInfo.body?.additionalRepositories?.length}{' '}
+                    {activationKeyInfo.body.additionalRepositories.length}{' '}
                     repositories
                   </Button>
                 </Popover>

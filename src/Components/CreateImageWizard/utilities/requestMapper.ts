@@ -211,13 +211,12 @@ function commonRequestToState(
     snapshot_date = '';
   }
 
-  // we need to check for the region for on-prem
-  const awsUploadOptions = aws?.upload_request
-    .options as AwsUploadRequestOptions & { region?: string | undefined };
-  const gcpUploadOptions = gcp?.upload_request
-    .options as GcpUploadRequestOptions;
-  const azureUploadOptions = azure?.upload_request
-    .options as AzureUploadRequestOptions;
+  const awsUploadOptions = (aws?.upload_request.options ||
+    {}) as AwsUploadRequestOptions & { region?: string | undefined };
+  const gcpUploadOptions = (gcp?.upload_request.options ||
+    {}) as GcpUploadRequestOptions;
+  const azureUploadOptions = (azure?.upload_request.options ||
+    {}) as AzureUploadRequestOptions;
 
   const arch =
     request.image_requests[0]?.architecture || initialState.architecture;
@@ -227,13 +226,13 @@ function commonRequestToState(
 
   let oscapProfile = undefined;
   let compliancePolicyID = undefined;
-  if (request.customizations?.openscap) {
-    const oscapAsProfile = request.customizations?.openscap as OpenScapProfile;
+  if (request.customizations.openscap) {
+    const oscapAsProfile = request.customizations.openscap as OpenScapProfile;
     if (oscapAsProfile.profile_id !== '') {
       oscapProfile = oscapAsProfile.profile_id as DistributionProfileItem;
     }
     const oscapAsCompliance = request.customizations
-      ?.openscap as OpenScapCompliance;
+      .openscap as OpenScapCompliance;
     if (oscapAsCompliance.policy_id !== '') {
       compliancePolicyID = oscapAsCompliance.policy_id;
     }
@@ -270,15 +269,15 @@ function commonRequestToState(
               policyTitle: undefined,
             }
           : initialState.compliance,
-    firstBoot: request.customizations
+    firstBoot: request.customizations.files
       ? {
           script: getFirstBootScript(request.customizations.files),
         }
       : initialState.firstBoot,
-    fileSystem: request.customizations?.filesystem
+    fileSystem: request.customizations.filesystem
       ? {
           mode: 'manual' as FileSystemConfigurationType,
-          partitions: request.customizations?.filesystem.map((fs) =>
+          partitions: request.customizations.filesystem.map((fs) =>
             convertFilesystemToPartition(fs),
           ),
         }
@@ -291,32 +290,32 @@ function commonRequestToState(
       getLatestRelease(request.distribution) || initialState.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
-      shareMethod: (azureUploadOptions?.source_id
+      shareMethod: (azureUploadOptions.source_id
         ? 'sources'
         : 'manual') as AzureShareMethod,
-      source: azureUploadOptions?.source_id || '',
-      tenantId: azureUploadOptions?.tenant_id || '',
-      subscriptionId: azureUploadOptions?.subscription_id || '',
-      resourceGroup: azureUploadOptions?.resource_group,
-      hyperVGeneration: azureUploadOptions?.hyper_v_generation || 'V1',
+      source: azureUploadOptions.source_id || '',
+      tenantId: azureUploadOptions.tenant_id || '',
+      subscriptionId: azureUploadOptions.subscription_id || '',
+      resourceGroup: azureUploadOptions.resource_group,
+      hyperVGeneration: azureUploadOptions.hyper_v_generation || 'V1',
     },
     gcp: {
-      shareMethod: (gcpUploadOptions?.share_with_accounts
+      shareMethod: (gcpUploadOptions.share_with_accounts
         ? 'withGoogle'
         : 'withInsights') as GcpShareMethod,
-      accountType: gcpUploadOptions?.share_with_accounts?.[0].split(
+      accountType: gcpUploadOptions.share_with_accounts?.[0].split(
         ':',
       )[0] as GcpAccountType,
-      email: gcpUploadOptions?.share_with_accounts?.[0].split(':')[1] || '',
+      email: gcpUploadOptions.share_with_accounts?.[0].split(':')[1] || '',
     },
     aws: {
-      accountId: awsUploadOptions?.share_with_accounts?.[0] || '',
-      shareMethod: (awsUploadOptions?.share_with_sources
+      accountId: awsUploadOptions.share_with_accounts?.[0] || '',
+      shareMethod: (awsUploadOptions.share_with_sources
         ? 'sources'
         : 'manual') as AwsShareMethod,
-      source: { id: awsUploadOptions?.share_with_sources?.[0] },
-      sourceId: awsUploadOptions?.share_with_sources?.[0],
-      region: awsUploadOptions?.region,
+      source: { id: awsUploadOptions.share_with_sources?.[0] },
+      sourceId: awsUploadOptions.share_with_sources?.[0],
+      region: awsUploadOptions.region,
     },
     snapshotting: {
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
@@ -325,13 +324,13 @@ function commonRequestToState(
       templateName: request.image_requests[0]?.content_template_name || '',
     },
     repositories: {
-      customRepositories: request.customizations?.custom_repositories || [],
-      payloadRepositories: request.customizations?.payload_repositories || [],
+      customRepositories: request.customizations.custom_repositories || [],
+      payloadRepositories: request.customizations.payload_repositories || [],
       recommendedRepositories: [],
       redHatRepositories: [],
     },
     packages:
-      request.customizations?.packages
+      request.customizations.packages
         ?.filter((pkg) => !pkg.startsWith('@'))
         .map((pkg) => ({
           name: pkg,
@@ -339,7 +338,7 @@ function commonRequestToState(
           repository: '' as PackageRepository,
         })) || [],
     groups:
-      request.customizations?.packages
+      request.customizations.packages
         ?.filter((grp) => grp.startsWith('@'))
         .map((grp) => ({
           name: grp.substr(1),
@@ -353,13 +352,13 @@ function commonRequestToState(
       keyboard: request.customizations.locale?.keyboard || '',
     },
     services: {
-      enabled: request.customizations?.services?.enabled || [],
-      masked: request.customizations?.services?.masked || [],
-      disabled: request.customizations?.services?.disabled || [],
+      enabled: request.customizations.services?.enabled || [],
+      masked: request.customizations.services?.masked || [],
+      disabled: request.customizations.services?.disabled || [],
     },
     kernel: {
       name: request.customizations.kernel?.name || '',
-      append: request.customizations?.kernel?.append?.split(' ') || [],
+      append: request.customizations.kernel?.append?.split(' ') || [],
     },
     timezone: {
       timezone: request.customizations.timezone?.timezone || '',
@@ -406,12 +405,12 @@ export const mapRequestToState = (request: BlueprintResponse): wizardState => {
     },
     aapRegistration: {
       callbackUrl:
-        request.customizations?.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+        request.customizations.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
-        request.customizations?.aap_registration?.tls_certificate_authority,
+        request.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
-        request.customizations?.aap_registration?.skip_tls_verification,
+        request.customizations.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(request),
   };
@@ -464,12 +463,12 @@ export const mapExportRequestToState = (
     registration: initialState.registration,
     aapRegistration: {
       callbackUrl:
-        request.customizations?.aap_registration?.ansible_callback_url,
-      hostConfigKey: request.customizations?.aap_registration?.host_config_key,
+        request.customizations.aap_registration?.ansible_callback_url,
+      hostConfigKey: request.customizations.aap_registration?.host_config_key,
       tlsCertificateAuthority:
-        request.customizations?.aap_registration?.tls_certificate_authority,
+        request.customizations.aap_registration?.tls_certificate_authority,
       skipTlsVerification:
-        request.customizations?.aap_registration?.skip_tls_verification,
+        request.customizations.aap_registration?.skip_tls_verification,
     },
     ...commonRequestToState(blueprintResponse),
   };
@@ -703,7 +702,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
 
 const getServices = (state: RootState): Services | undefined => {
   const services = selectServices(state);
-  const enabledSvcs = services.enabled || [];
+  const enabledSvcs = services.enabled;
   if (
     enabledSvcs.length === 0 &&
     services.masked.length === 0 &&

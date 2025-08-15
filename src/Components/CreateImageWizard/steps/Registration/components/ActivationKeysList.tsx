@@ -148,7 +148,7 @@ const ActivationKeysList = () => {
         activationKeys.body &&
         activationKeys.body.length > 0
       ) {
-        dispatch(changeActivationKey(activationKeys?.body[0].name));
+        dispatch(changeActivationKey(activationKeys.body[0].name));
       }
     }
   }, [isSuccessActivationKeys]);
