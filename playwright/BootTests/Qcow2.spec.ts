@@ -1,17 +1,18 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
-import { buildImage, constructFilePath, downloadImage } from './helpers/imageBuilding';
+import {
+  buildImage,
+  constructFilePath,
+  downloadImage,
+} from './helpers/imageBuilding';
 import { OpenStackWrapper } from './helpers/OpenStackWrapper';
 import { navigateToWizard, selectTarget } from './helpers/targetChooser';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
-import {
-  ibFrame,
-  navigateToLandingPage,
-} from '../helpers/navHelpers';
+import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
 import {
   createBlueprint,
   deleteBlueprint,
@@ -19,12 +20,7 @@ import {
   registerLater,
 } from '../helpers/wizardHelpers';
 
-
-
-test('Boot qcow2 image and test hostname', async ({
-  page,
-  cleanup,
-}) => {
+test('Boot qcow2 image and test hostname', async ({ page, cleanup }) => {
   test.setTimeout(120 * 60 * 1000); // 2 hours
   test.skip(!isHosted(), 'Boot test run only on the hosted service.');
   const blueprintName = 'boot-test-qcow-' + uuidv4();
@@ -64,7 +60,6 @@ test('Boot qcow2 image and test hostname', async ({
   await test.step('Create BP', async () => {
     await createBlueprint(frame, blueprintName);
   });
-
 
   await test.step('Build the image', async () => {
     await buildImage(page);
