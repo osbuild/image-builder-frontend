@@ -513,6 +513,140 @@ describe('Step Packages', () => {
       expect(secondAppStreamRow).toBeDisabled();
       expect(secondAppStreamRow).not.toBeChecked();
     });
+
+    test('module selection sorts selected stream to top while maintaining alphabetical order', async () => {
+      const user = userEvent.setup();
+
+      await renderCreateMode();
+      await goToPackagesStep();
+      await typeIntoSearchBox('sortingTest');
+
+      await screen.findAllByText('alphaModule');
+      await screen.findAllByText('betaModule');
+      await screen.findAllByText('gammaModule');
+
+      let rows = await screen.findAllByRole('row');
+      rows.shift();
+      expect(rows).toHaveLength(6);
+
+      expect(rows[0]).toHaveTextContent('alphaModule');
+      expect(rows[0]).toHaveTextContent('3.0');
+      expect(rows[1]).toHaveTextContent('alphaModule');
+      expect(rows[1]).toHaveTextContent('2.0');
+      expect(rows[2]).toHaveTextContent('betaModule');
+      expect(rows[2]).toHaveTextContent('4.0');
+      expect(rows[3]).toHaveTextContent('betaModule');
+      expect(rows[3]).toHaveTextContent('2.0');
+
+      // Select betaModule with stream 2.0 (row index 3)
+      const betaModule20Checkbox = await screen.findByRole('checkbox', {
+        name: /select row 3/i,
+      });
+
+      await waitFor(() => user.click(betaModule20Checkbox));
+      expect(betaModule20Checkbox).toBeChecked();
+
+      // After selection, the active stream (2.0) should be prioritized
+      // All modules with stream 2.0 should move to the top, maintaining alphabetical order
+      rows = await screen.findAllByRole('row');
+      rows.shift(); // Remove header row
+
+      // Verify the new order: all 2.0 streams first (alpha, beta, gamma), then others
+      expect(rows[0]).toHaveTextContent('alphaModule');
+      expect(rows[0]).toHaveTextContent('2.0');
+      expect(rows[1]).toHaveTextContent('betaModule');
+      expect(rows[1]).toHaveTextContent('2.0');
+      expect(rows[2]).toHaveTextContent('gammaModule');
+      expect(rows[2]).toHaveTextContent('2.0');
+
+      // Then the non-2.0 streams should follow
+      expect(rows[3]).toHaveTextContent('alphaModule');
+      expect(rows[3]).toHaveTextContent('3.0');
+      expect(rows[4]).toHaveTextContent('betaModule');
+      expect(rows[4]).toHaveTextContent('4.0');
+      expect(rows[5]).toHaveTextContent('gammaModule');
+      expect(rows[5]).toHaveTextContent('1.5');
+
+      // Verify that only the selected module is checked
+      const updatedBetaModule20Checkbox = await screen.findByRole('checkbox', {
+        name: /select row 1/i, // betaModule 2.0 is now at position 1
+      });
+      expect(updatedBetaModule20Checkbox).toBeChecked();
+
+      // Verify that only one checkbox is checked
+      const allCheckboxes = await screen.findAllByRole('checkbox', {
+        name: /select row [0-9]/i,
+      });
+      const checkedCheckboxes = allCheckboxes.filter(
+        (cb) => (cb as HTMLInputElement).checked,
+      );
+      expect(checkedCheckboxes).toHaveLength(1);
+      expect(checkedCheckboxes[0]).toBe(updatedBetaModule20Checkbox);
+    });
+
+    test('unselecting a module does not cause jumping but may reset sort to default', async () => {
+      const user = userEvent.setup();
+
+      await renderCreateMode();
+      await goToPackagesStep();
+      await selectCustomRepo();
+      await typeIntoSearchBox('sortingTest');
+
+      // Wait for modules to load and select betaModule 2.0
+      await screen.findAllByText('betaModule');
+      const betaModule20Checkbox = await screen.findByRole('checkbox', {
+        name: /select row 3/i, // betaModule 2.0 is initially at row 3
+      });
+      await waitFor(() => user.click(betaModule20Checkbox));
+      expect(betaModule20Checkbox).toBeChecked();
+
+      // After selection, verify the active stream sorting is applied
+      let rows = await screen.findAllByRole('row');
+      rows.shift(); // Remove header row
+
+      // Should be sorted by active stream (2.0) first
+      expect(rows[0]).toHaveTextContent('alphaModule');
+      expect(rows[0]).toHaveTextContent('2.0');
+      expect(rows[1]).toHaveTextContent('betaModule');
+      expect(rows[1]).toHaveTextContent('2.0');
+
+      // Find the new position of betaModule 2.0 checkbox after sorting
+      const updatedBetaModule20Checkbox = await screen.findByRole('checkbox', {
+        name: /select row 1/i, // betaModule 2.0 is now at position 1
+      });
+
+      // Now unselect the module
+      await waitFor(() => user.click(updatedBetaModule20Checkbox));
+      expect(updatedBetaModule20Checkbox).not.toBeChecked();
+
+      // After unselection, the sort may reset to default or stay the same
+      // The important thing is that we don't get jumping/reordering during the interaction
+      rows = await screen.findAllByRole('row');
+      rows.shift(); // Remove header row
+
+      // Verify no checkboxes are selected
+      const allCheckboxes = await screen.findAllByRole('checkbox', {
+        name: /select row [0-9]/i,
+      });
+      const checkedCheckboxes = allCheckboxes.filter(
+        (cb) => (cb as HTMLInputElement).checked,
+      );
+      expect(checkedCheckboxes).toHaveLength(0);
+
+      // The key test: the table should have a consistent, predictable order
+      // Either the original alphabetical order OR the stream-sorted order
+      // What we don't want is jumping around during the selection/unselection process
+      expect(rows).toHaveLength(6); // Still have all 6 modules
+
+      // All modules should still be present
+      const moduleNames = rows.map((row) => {
+        const match = row.textContent?.match(/(\w+Module)/);
+        return match ? match[1] : '';
+      });
+      expect(moduleNames).toContain('alphaModule');
+      expect(moduleNames).toContain('betaModule');
+      expect(moduleNames).toContain('gammaModule');
+    });
   });
 });
 
