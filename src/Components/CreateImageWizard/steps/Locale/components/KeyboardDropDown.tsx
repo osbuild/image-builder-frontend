@@ -65,8 +65,8 @@ const KeyboardDropDown = () => {
     }
   };
 
-  const onSelect = (_event: React.MouseEvent, value: string) => {
-    if (value) {
+  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
+    if (value && typeof value === 'string') {
       setInputValue(value);
       setFilterValue('');
       setErrorText('');

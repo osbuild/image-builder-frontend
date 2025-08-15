@@ -185,13 +185,13 @@ const PolicySelector = () => {
   };
 
   const handleSelect = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    selection?: string | number,
   ) => {
-    if (selection) {
-      applyChanges(selection as unknown as ComplianceSelectOptionValueType);
-      setIsOpen(false);
-    }
+    if (selection === undefined) return;
+
+    applyChanges(selection as unknown as ComplianceSelectOptionValueType);
+    setIsOpen(false);
   };
 
   const complianceOptions = () => {
