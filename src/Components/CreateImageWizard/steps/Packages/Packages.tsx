@@ -928,19 +928,34 @@ const Packages = () => {
     }
   };
 
-  const handleFilterToggleClick = (event: React.MouseEvent) => {
-    const id = event.currentTarget.id;
+  const handleFilterToggleClick = (
+    event:
+      | MouseEvent
+      | React.KeyboardEvent<Element>
+      | React.MouseEvent<HTMLElement, MouseEvent>,
+    _selected: boolean,
+  ) => {
+    const id = (event.currentTarget as HTMLElement).id ?? '';
     setCurrentlyRemovedPackages([]);
     setPage(1);
     setToggleSelected(id);
   };
 
-  const handleSetPage = (_: React.MouseEvent, newPage: number) => {
+  const handleSetPage = (
+    _:
+      | MouseEvent
+      | React.MouseEvent<Element, MouseEvent>
+      | React.KeyboardEvent<Element>,
+    newPage: number,
+  ) => {
     setPage(newPage);
   };
 
   const handlePerPageSelect = (
-    _: React.MouseEvent,
+    _:
+      | MouseEvent
+      | React.MouseEvent<Element, MouseEvent>
+      | React.KeyboardEvent<Element>,
     newPerPage: number,
     newPage: number,
   ) => {
@@ -986,11 +1001,15 @@ const Packages = () => {
     setIsRepoModalOpen(!isRepoModalOpen);
   };
 
-  const handleTabClick = (event: React.MouseEvent, tabIndex: Repos) => {
+  const handleTabClick = (
+    event?: React.MouseEvent,
+    tabIndex?: string | number,
+  ) => {
+    if (tabIndex === undefined) return;
     if (tabIndex !== activeTabKey) {
       setCurrentlyRemovedPackages([]);
       setPage(1);
-      setActiveTabKey(tabIndex);
+      setActiveTabKey(tabIndex as Repos);
     }
   };
 

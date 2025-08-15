@@ -80,7 +80,7 @@ export const AzureSourcesSelect = () => {
 
     if (filterValue) {
       filteredSources = rawSources?.data
-        ?.map((source) => source?.name)
+        ?.flatMap((source) => (source?.name ? [source.name] : []))
         .filter((source: string) =>
           String(source).toLowerCase().includes(filterValue.toLowerCase()),
         );
@@ -116,9 +116,10 @@ export const AzureSourcesSelect = () => {
   };
 
   const handleSelect = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    sourceName: string,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    sourceName?: string | number,
   ) => {
+    if (sourceName === undefined) return;
     const sourceId = rawSources?.data?.find(
       (source) => source?.name === sourceName,
     )?.id;

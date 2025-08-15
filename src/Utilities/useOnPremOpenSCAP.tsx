@@ -12,12 +12,14 @@ export const useOnPremOpenSCAPAvailable = () => {
     const checkPackages = () => {
       cockpit
         .spawn(['rpm', '-qa', 'openscap-scanner', 'scap-security-guide'], {})
-        .then((res: string) => {
-          setPackagesAvailable(
-            res.includes('openscap-scanner') &&
-              res.includes('scap-security-guide'),
-          );
-          setIsLoading(false);
+        .then((res: string | Uint8Array<ArrayBufferLike>) => {
+          if (typeof res === 'string') {
+            setPackagesAvailable(
+              res.includes('openscap-scanner') &&
+                res.includes('scap-security-guide'),
+            );
+            setIsLoading(false);
+          }
         })
         .catch(() => {
           setPackagesAvailable(false);

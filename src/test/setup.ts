@@ -74,8 +74,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
 
 // remove DOM dump from the testing-library output
 configure({
-  getElementError: (message: string) => {
-    const error = new Error(message);
+  getElementError: (message: string | null, _container: Element) => {
+    const error = new Error(message ?? '');
     error.name = 'TestingLibraryElementError';
     error.stack = '';
     return error;

@@ -85,9 +85,10 @@ export const AzureResourceGroups = () => {
   };
 
   const setResourceGroup = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    selection: string,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    selection?: string | number,
   ) => {
+    if (selection === undefined) return;
     const resource =
       resourceGroups.find((resource) => resource === selection) || '';
     setIsOpen(false);

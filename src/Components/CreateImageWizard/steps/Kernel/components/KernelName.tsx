@@ -73,8 +73,8 @@ const KernelName = () => {
     }
   };
 
-  const onSelect = (_event: React.MouseEvent, value: string) => {
-    if (value) {
+  const onSelect = (_event?: React.MouseEvent, value?: string | number) => {
+    if (value && typeof value === 'string') {
       if (/custom kernel package/i.test(value)) {
         if (!kernelOptions.some((kernel) => kernel === filterValue)) {
           kernelOptions = [...kernelOptions, filterValue];
