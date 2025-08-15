@@ -54,7 +54,9 @@ import {
   isOciUploadStatus,
 } from '../../store/typeGuards';
 import { resolveRelPath } from '../../Utilities/path';
+import { useFlag } from '../../Utilities/useGetEnvironment';
 import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
+import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
 
 type CloudInstancePropTypes = {
   compose: ComposesResponseItem;
@@ -97,6 +99,7 @@ const ProvisioningLink = ({
   compose,
   composeStatus,
 }: ProvisioningLinkPropTypes) => {
+  const launchEofFlag = useFlag('image-builder.launcheof');
   const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const { analytics, auth } = useChrome();
@@ -111,7 +114,7 @@ const ProvisioningLink = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const [wizardOpen, setWizardOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [exposedScalprumModule, error] = useLoadModule(
     {
       scope: 'provisioning',
@@ -182,7 +185,7 @@ const ProvisioningLink = ({
           account_id: userData?.identity.internal?.account_id || 'Not found',
         });
 
-        setWizardOpen(true);
+        setIsModalOpen(true);
       }}
     >
       Launch
@@ -202,6 +205,10 @@ const ProvisioningLink = ({
     </Popover>
   );
 
+  const handleModalToggle = (_event: KeyboardEvent | React.MouseEvent) => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
     <>
       <Suspense fallback='loading...'>
@@ -209,7 +216,15 @@ const ProvisioningLink = ({
         compose.blueprint_version !== selectedBlueprintVersion
           ? buttonWithTooltip
           : btn}
-        {wizardOpen && (
+        {launchEofFlag && isModalOpen && provider === 'gcp' && (
+          <GcpLaunchModal
+            isOpen={isModalOpen}
+            handleModalToggle={handleModalToggle}
+            compose={compose}
+            composeStatus={composeStatus}
+          />
+        )}
+        {!launchEofFlag && isModalOpen && (
           <Modal
             isOpen
             appendTo={appendTo}
@@ -218,7 +233,7 @@ const ProvisioningLink = ({
           >
             <ProvisioningWizard
               hasAccess={permissions[provider]}
-              onClose={() => setWizardOpen(false)}
+              onClose={() => setIsModalOpen(false)}
               image={{
                 name: compose.image_name || compose.id,
                 id: compose.id,
