@@ -49,3 +49,4 @@ rpmbuild
 /playwright/.cache/
 .env
 .auth
+/image-downloads/
