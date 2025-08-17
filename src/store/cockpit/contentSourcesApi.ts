@@ -2,6 +2,11 @@ import { emptyCockpitApi } from './emptyCockpitApi';
 import type { Package, SearchRpmApiArg } from './types';
 
 import type {
+  ApiRepositoryRequest,
+  CreateRepositoryApiArg,
+  CreateRepositoryApiResponse,
+  ListRepositoriesApiArg,
+  ListRepositoriesApiResponse,
   ListSnapshotsByDateApiArg,
   ListSnapshotsByDateApiResponse,
   SearchRpmApiResponse,
@@ -62,9 +67,60 @@ export const contentSourcesApi = emptyCockpitApi.injectEndpoints({
         },
       }),
     }),
+    listRepositories: builder.query<
+      ListRepositoriesApiResponse,
+      ListRepositoriesApiArg
+    >({
+      queryFn: async (queryArgs, _, __, baseQuery) => {
+        const result = await baseQuery({
+          url: '/repositories',
+          method: 'GET',
+          params: {
+            limit: queryArgs.limit,
+            offset: queryArgs.offset,
+            search: queryArgs.search,
+            origin: queryArgs.origin,
+            content_type: queryArgs.contentType,
+            available_for_arch: queryArgs.availableForArch,
+            available_for_version: queryArgs.availableForVersion,
+          },
+        });
+
+        if (result?.error) {
+          return { error: result.error };
+        }
+
+        return { data: result.data };
+      },
+    }),
+    createRepository: builder.mutation<
+      CreateRepositoryApiResponse,
+      CreateRepositoryApiArg
+    >({
+      queryFn: async (queryArgs, _, __, baseQuery) => {
+        const result = await baseQuery({
+          url: '/repositories',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(queryArgs.apiRepositoryRequest),
+        });
+
+        if (result?.error) {
+          return { error: result.error };
+        }
+
+        return { data: result.data };
+      },
+    }),
   }),
   overrideExisting: false,
 });
 
-export const { useSearchRpmMutation, useListSnapshotsByDateMutation } =
-  contentSourcesApi;
+export const {
+  useSearchRpmMutation,
+  useListSnapshotsByDateMutation,
+  useListRepositoriesQuery,
+  useCreateRepositoryMutation,
+} = contentSourcesApi;
