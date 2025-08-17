@@ -1,11 +1,35 @@
-import React from 'react';
+import { useState } from 'react';
 
 import { Button } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusIcon } from '@patternfly/react-icons';
+
+import ManageRepositoriesModal from './ManageRepositoriesModal';
 
 import { CONTENT_URL } from '../../../../../constants';
 
 const ManageRepositoriesButton = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  if (process.env.IS_ON_PREMISE) {
+    return (
+      <>
+        <Button
+          variant='link'
+          iconPosition='right'
+          isInline
+          icon={<PlusIcon />}
+          onClick={() => setIsModalOpen(true)}
+        >
+          Add custom repository
+        </Button>
+        <ManageRepositoriesModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      </>
+    );
+  }
+
   return (
     <Button
       component='a'
