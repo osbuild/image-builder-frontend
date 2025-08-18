@@ -17,7 +17,7 @@
     "@redhat-cloud-services/frontend-components-utilities": "7.0.3",
     "@reduxjs/toolkit": "2.8.2",
     "@scalprum/react-core": "0.9.5",
-    "@sentry/webpack-plugin": "4.1.0",
+    "@sentry/webpack-plugin": "4.1.1",
     "@unleash/proxy-client-react": "5.0.1",
     "classnames": "2.5.1",
     "jwt-decode": "4.0.0",
