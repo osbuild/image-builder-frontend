@@ -21,8 +21,6 @@ jobs:
     trigger: pull_request
     tmt_plan: /plans/all/main
     targets:
-      - centos-stream-9
-      - centos-stream-9-aarch64
       - centos-stream-10
       - centos-stream-10-aarch64
       - fedora-41
