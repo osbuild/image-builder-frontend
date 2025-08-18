@@ -23,6 +23,7 @@ import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
 
 import { BulkSelect } from './components/BulkSelect';
+import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
 import Empty from './components/Empty';
 import { Error } from './components/Error';
 import { Loading } from './components/Loading';
@@ -63,6 +64,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
 import useDebounce from '../../../../Utilities/useDebounce';
+import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Repositories = () => {
   const dispatch = useAppDispatch();
@@ -88,6 +90,14 @@ const Repositories = () => {
     'toggle-group-all' | 'toggle-group-selected'
   >('toggle-group-all');
   const [isTemplateSelected, setIsTemplateSelected] = useState(false);
+
+  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
+
+  const originParam = useMemo(() => {
+    const origins = [ContentOrigin.CUSTOM];
+    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    return origins.join(',');
+  }, [isSharedEPELEnabled]);
 
   const debouncedFilterValue = useDebounce(filterValue);
 
@@ -144,7 +154,7 @@ const Repositories = () => {
     {
       availableForArch: arch,
       availableForVersion: version,
-      origin: ContentOrigin.CUSTOM,
+      origin: originParam,
       limit: 999, // O.O Oh dear, if possible this whole call should be removed
       offset: 0,
       uuid: [...initialSelectedState].join(','),
@@ -173,7 +183,7 @@ const Repositories = () => {
       availableForArch: arch,
       availableForVersion: version,
       contentType: 'rpm',
-      origin: ContentOrigin.CUSTOM,
+      origin: originParam,
       limit: perPage,
       offset: perPage * (page - 1),
       search: debouncedFilterValue,
@@ -364,6 +374,17 @@ const Repositories = () => {
   ): [boolean, string] => {
     if (isFetching) {
       return [true, 'Repository data is still fetching, please wait.'];
+    }
+
+    const hasSelectedEPEL = contentList.some(
+      (r) =>
+        r.uuid !== repo.uuid &&
+        r.url?.includes('epel') &&
+        selected.has(r.uuid!),
+    );
+
+    if (repo.url?.includes('epel') && !isSelected && hasSelectedEPEL) {
+      return [true, 'Only one EPEL repository can be selected at a time.'];
     }
 
     if (
@@ -652,6 +673,22 @@ const Repositories = () => {
                           {name}
                           {origin === ContentOrigin.UPLOAD ? (
                             <UploadRepositoryLabel />
+                          ) : origin === ContentOrigin.COMMUNITY ? (
+                            <>
+                              <CommunityRepositoryLabel />
+                              <br />
+                              <Button
+                                component='a'
+                                target='_blank'
+                                variant='link'
+                                icon={<ExternalLinkAltIcon />}
+                                iconPosition='right'
+                                isInline
+                                href={url}
+                              >
+                                {url}
+                              </Button>
+                            </>
                           ) : (
                             <>
                               <br />
