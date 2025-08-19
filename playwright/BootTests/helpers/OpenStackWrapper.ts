@@ -98,10 +98,10 @@ export class OpenStackWrapper {
     const retries = 20; // 20 * 30 seconds = 10 minutes to launch the instance
     try {
       console.log(
-        `Launching instance ${this.instanceName} from image ${this.instanceName}`,
+        `Launching instance ${this.instanceName} from image ${this.imageName}`,
       );
       const output = await OpenStackWrapper.execCommand(
-        `openstack server create -f json --image="${this.instanceName}" --flavor="g.standard.small" --network="shared_net_1" --security-group="default" --key-name="${this.keyName}" ${this.instanceName}`,
+        `openstack server create -f json --image="${this.imageName}" --flavor="g.standard.small" --network="shared_net_1" --security-group="default" --key-name="${this.keyName}" ${this.instanceName}`,
       );
       const instance = JSON.parse(output);
       // Expect the instance started building
