@@ -32,8 +32,7 @@ test:
       - RUNNER:
           - aws/fedora-41-x86_64
           - aws/fedora-42-x86_64
-          - aws/rhel-9.6-nightly-x86_64
-          - aws/rhel-10.0-nightly-x86_64
+          - aws/rhel-10.1-nightly-x86_64
         INTERNAL_NETWORK: ["true"]
 
 finish:
