@@ -1,3 +1,6 @@
+import { execSync } from 'child_process';
+import { readFileSync } from 'node:fs';
+
 import { expect, type Page } from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
@@ -41,4 +44,44 @@ export const closePopupsIfExist = async (page: Page) => {
       await locator.first().click({ timeout: 10_000, noWaitAfter: true }); // There can be multiple toast pop-ups
     });
   }
+};
+
+// copied over from constants
+const ON_PREM_RELEASES = new Map([
+  ['centos-10', 'CentOS Stream 10'],
+  ['fedora-41', 'Fedora Linux 41'],
+  ['fedora-42', 'Fedora Linux 42'],
+  ['rhel-10', 'Red Hat Enterprise Linux (RHEL) 10'],
+]);
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export const getHostDistroName = (): string => {
+  const osRelData = readFileSync('/etc/os-release');
+  const lines = osRelData
+    .toString('utf-8')
+    .split('\n')
+    .filter((l) => l !== '');
+  const osRel = {};
+
+  for (const l of lines) {
+    const lineData = l.split('=');
+    (osRel as any)[lineData[0]] = lineData[1].replace(/"/g, '');
+  }
+
+  // strip minor version from rhel
+  const distro = ON_PREM_RELEASES.get(
+    `${(osRel as any)['ID']}-${(osRel as any)['VERSION_ID'].split('.')[0]}`,
+  );
+
+  if (distro === undefined) {
+    /* eslint-disable no-console */
+    console.error('getHostDistroName failed, os-release config:', osRel);
+    throw new Error('getHostDistroName failed, distro undefined');
+  }
+
+  return distro;
+};
+
+export const getHostArch = (): string => {
+  return execSync('uname -m').toString('utf-8').replace(/\s/g, '');
 };
