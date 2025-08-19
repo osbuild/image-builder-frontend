@@ -156,7 +156,7 @@ const RegionsSelect = ({ composeId, handleClose }: RegionsSelectPropTypes) => {
     <MenuToggle
       variant='typeahead'
       onClick={handleToggle}
-      innerRef={toggleRef}
+      ref={toggleRef}
       isExpanded={isOpen}
     >
       <TextInputGroup isPlain>
