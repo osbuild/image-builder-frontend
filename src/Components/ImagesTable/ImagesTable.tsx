@@ -25,7 +25,6 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { useFlag } from '@unleash/proxy-client-react';
 import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
@@ -59,6 +58,7 @@ import {
   SEARCH_INPUT,
   STATUS_POLLING_INTERVAL,
 } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import {
   useGetBlueprintComposesQuery,
   useGetBlueprintsQuery,
@@ -93,7 +93,6 @@ import { OciLaunchModal } from '../Launch/OciLaunchModal';
 const ImagesTable = () => {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput =
@@ -106,16 +105,7 @@ const ImagesTable = () => {
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
 
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const searchParamsGetBlueprints: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
@@ -474,18 +464,8 @@ type AwsRowPropTypes = {
 
 const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
   const navigate = useNavigate();
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const target = <AwsTarget compose={compose} />;
   const status = <CloudStatus compose={compose} />;
@@ -560,18 +540,8 @@ const Row = ({
   details,
   instance,
 }: RowPropTypes) => {
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const [isExpanded, setIsExpanded] = useState(false);
   const handleToggle = () => setIsExpanded(!isExpanded);

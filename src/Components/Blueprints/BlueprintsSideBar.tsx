@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 
 import {
   Bullseye,
@@ -17,7 +17,6 @@ import {
 import { PlusCircleIcon, SearchIcon } from '@patternfly/react-icons';
 import { SVGIconProps } from '@patternfly/react-icons/dist/esm/createIcon';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import debounce from 'lodash/debounce';
 import { Link } from 'react-router-dom';
 
@@ -29,6 +28,7 @@ import {
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
 } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -60,8 +60,8 @@ type emptyBlueprintStateProps = {
 };
 
 const BlueprintsSidebar = () => {
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
 
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
   const blueprintSearchInput = useAppSelector(selectBlueprintSearchInput);
@@ -72,16 +72,6 @@ const BlueprintsSidebar = () => {
     limit: blueprintsLimit,
     offset: blueprintsOffset,
   };
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   if (blueprintSearchInput) {
     searchParams.search = blueprintSearchInput;

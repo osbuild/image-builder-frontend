@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   Alert,
@@ -13,11 +13,11 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import ClonesTable from './ClonesTable';
 
 import { AMPLITUDE_MODULE_NAME } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { extractProvisioningList } from '../../store/helpers';
 import {
@@ -134,19 +134,9 @@ type AwsDetailsPropTypes = {
 
 export const AwsDetails = ({ compose }: AwsDetailsPropTypes) => {
   const options = compose.request.image_requests[0].upload_request.options;
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   if (!isAwsUploadRequestOptions(options)) {
     throw TypeError(

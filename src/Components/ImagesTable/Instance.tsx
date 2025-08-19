@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { Suspense, useState } from 'react';
 
 import path from 'path';
 
@@ -20,7 +20,6 @@ import {
 } from '@patternfly/react-core/dist/esm/components/List/List';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { useLoadModule, useScalprum } from '@scalprum/react-core';
 import cockpit from 'cockpit';
 import { useNavigate } from 'react-router-dom';
@@ -31,6 +30,7 @@ import {
   MODAL_ANCHOR,
   SEARCH_INPUT,
 } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import {
   useGetBlueprintsQuery,
   useGetComposeStatusQuery,
@@ -101,19 +101,9 @@ const ProvisioningLink = ({
   composeStatus,
 }: ProvisioningLinkPropTypes) => {
   const launchEofFlag = useFlag('image-builder.launcheof');
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
 
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [exposedScalprumModule, error] = useLoadModule(

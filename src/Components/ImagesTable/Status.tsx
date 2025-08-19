@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import './ImageBuildStatus.scss';
 import {
@@ -24,13 +24,13 @@ import {
   PendingIcon,
 } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import {
   AMPLITUDE_MODULE_NAME,
   AWS_S3_EXPIRATION_TIME_IN_HOURS,
   OCI_STORAGE_EXPIRATION_TIME_IN_DAYS,
 } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import { useGetComposeStatusQuery } from '../../store/backendApi';
 import { CockpitComposesResponseItem } from '../../store/cockpit/types';
 import {
@@ -122,18 +122,8 @@ export const CloudStatus = ({ compose }: CloudStatusPropTypes) => {
   const { data, isSuccess } = useGetComposeStatusQuery({
     composeId: compose.id,
   });
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
   const { analytics, auth } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   if (!isSuccess) {
     return <Skeleton />;

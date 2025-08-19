@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   ClipboardCopy,
@@ -16,6 +16,7 @@ import ActivationKeysList from './components/ActivationKeysList';
 import Registration from './components/Registration';
 import SatelliteRegistration from './components/SatelliteRegistration';
 
+import { useGetUser } from '../../../../Hooks';
 import { useAppSelector } from '../../../../store/hooks';
 import {
   selectActivationKey,
@@ -24,18 +25,7 @@ import {
 
 const RegistrationStep = () => {
   const { auth } = useChrome();
-  const [orgId, setOrgId] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    (async () => {
-      const userData = await auth.getUser();
-      const id = userData?.identity?.internal?.org_id;
-      setOrgId(id);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { orgId } = useGetUser(auth);
 
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);

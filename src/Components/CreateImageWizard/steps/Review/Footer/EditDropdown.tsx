@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   DropdownItem,
@@ -9,11 +9,11 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import {
   useComposeBPWithNotification as useComposeBlueprintMutation,
+  useGetUser,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { CockpitCreateBlueprintRequest } from '../../../../../store/cockpit/types';
@@ -37,19 +37,8 @@ export const EditSaveAndBuildBtn = ({
   blueprintId,
   isDisabled,
 }: EditDropdownProps) => {
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
-
   const { analytics, auth, isBeta } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const { trigger: buildBlueprint } = useComposeBlueprintMutation();
   const packages = useAppSelector(selectPackages);
@@ -105,19 +94,8 @@ export const EditSaveButton = ({
   blueprintId,
   isDisabled,
 }: EditDropdownProps) => {
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
-
   const { analytics, auth, isBeta } = useChrome();
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const packages = useAppSelector(selectPackages);
 

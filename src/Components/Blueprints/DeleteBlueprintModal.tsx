@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -9,14 +9,16 @@ import {
   ModalVariant,
 } from '@patternfly/react-core';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 
 import {
   AMPLITUDE_MODULE_NAME,
   PAGINATION_LIMIT,
   PAGINATION_OFFSET,
 } from '../../constants';
-import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
+import {
+  useDeleteBPWithNotification as useDeleteBlueprintMutation,
+  useGetUser,
+} from '../../Hooks';
 import { backendApi, useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -42,17 +44,7 @@ export const DeleteBlueprintModal: React.FunctionComponent<
   const blueprintsLimit = useAppSelector(selectLimit) || PAGINATION_LIMIT;
   const dispatch = useAppDispatch();
   const { analytics, auth } = useChrome();
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const searchParams: GetBlueprintsApiArg = {
     limit: blueprintsLimit,
