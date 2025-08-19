@@ -18,6 +18,7 @@ import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
+  useGetUser,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
 import { resolveRelPath } from '../../../../../Utilities/path';
@@ -33,6 +34,7 @@ const ReviewWizardFooter = () => {
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
+  const { orgId } = useGetUser(auth);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
@@ -52,14 +54,12 @@ const ReviewWizardFooter = () => {
 
   const getBlueprintPayload = async () => {
     if (!process.env.IS_ON_PREMISE) {
-      const userData = await auth.getUser();
-      const orgId = userData?.identity?.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);
       return requestBody;
     }
 
-    // NOTE: This should be fine on-prem, we should
-    // be able to ignore the `org-id`
+    // NOTE: This is fine for on prem because we save the org id
+    // to state through a form field in the registration step
     return mapRequestFromState(store, '');
   };
 

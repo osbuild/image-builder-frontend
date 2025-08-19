@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   Button,
@@ -16,11 +16,13 @@ import {
 } from '@patternfly/react-core';
 import { MenuToggleElement } from '@patternfly/react-core/dist/esm/components/MenuToggle/MenuToggle';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { ChromeUser } from '@redhat-cloud-services/types';
 import { skipToken } from '@reduxjs/toolkit/query';
 
 import { AMPLITUDE_MODULE_NAME, targetOptions } from '../../constants';
-import { useComposeBPWithNotification as useComposeBlueprintMutation } from '../../Hooks';
+import {
+  useComposeBPWithNotification as useComposeBlueprintMutation,
+  useGetUser,
+} from '../../Hooks';
 import { useGetBlueprintQuery } from '../../store/backendApi';
 import { selectSelectedBlueprintId } from '../../store/BlueprintSlice';
 import { useAppSelector } from '../../store/hooks';
@@ -37,18 +39,7 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const { trigger: buildBlueprint, isLoading: imageBuildLoading } =
     useComposeBlueprintMutation();
   const { analytics, auth } = useChrome();
-
-  const [userData, setUserData] = useState<ChromeUser | void>(undefined);
-
-  useEffect(() => {
-    (async () => {
-      const data = await auth.getUser();
-      setUserData(data);
-    })();
-    // This useEffect hook should run *only* on mount and therefore has an empty
-    // dependency array. eslint's exhaustive-deps rule does not support this use.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { userData } = useGetUser(auth);
 
   const onBuildHandler = async () => {
     if (selectedBlueprintId) {
