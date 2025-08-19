@@ -1,6 +1,6 @@
-import type { FrameLocator, Page } from '@playwright/test';
+import { expect, FrameLocator, Page } from '@playwright/test';
 
-import { isHosted } from './helpers';
+import { getHostArch, getHostDistroName, isHosted } from './helpers';
 
 /**
  * Opens the wizard, fills out the "Image Output" step, and navigates to the optional steps
@@ -8,6 +8,13 @@ import { isHosted } from './helpers';
  */
 export const navigateToOptionalSteps = async (page: Page | FrameLocator) => {
   await page.getByRole('button', { name: 'Create image blueprint' }).click();
+  if (!isHosted()) {
+    // wait until the distro and architecture aligns with the host
+    await expect(page.getByTestId('release_select')).toHaveText(
+      getHostDistroName(),
+    );
+    await expect(page.getByTestId('arch_select')).toHaveText(getHostArch());
+  }
   await page.getByRole('checkbox', { name: 'Virtualization' }).click();
   await page.getByRole('button', { name: 'Next' }).click();
 };

@@ -81,6 +81,7 @@ sudo podman run \
      --net=host \
      -v "$PWD:/tests" \
      -v '/etc:/etc' \
+     -v '/etc/os-release:/etc/os-release' \
      --privileged  \
      --rm \
      --init \
