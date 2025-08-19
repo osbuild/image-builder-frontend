@@ -22,7 +22,7 @@ import {
 
 test('Boot qcow2 image and test hostname', async ({ page, cleanup }) => {
   test.setTimeout(120 * 60 * 1000); // 2 hours
-  test.skip(!isHosted(), 'Boot test run only on the hosted service.');
+  test.skip(!isHosted(), 'Skipping test. Boot test run only on the hosted service.');
   const blueprintName = 'boot-test-qcow-' + uuidv4();
   const filePath = constructFilePath(blueprintName, 'qcow2');
 
