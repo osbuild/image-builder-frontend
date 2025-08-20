@@ -92,7 +92,12 @@ test.describe.serial('test', () => {
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
     await expect(
-      frame.locator('.pf-v6-c-card__title-text').getByText(blueprintName),
+      frame.locator('.pf-v6-c-card__title-text').getByText(
+        // if the name is too long, the blueprint card will have a truncated name.
+        blueprintName.length > 24
+          ? blueprintName.slice(0, 24) + '...'
+          : blueprintName,
+      ),
     ).toBeVisible();
   });
 
