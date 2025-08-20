@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
   Spinner,
-  Truncate,
 } from '@patternfly/react-core';
 
 import { useDeleteBPWithNotification as useDeleteBlueprintMutation } from '../../Hooks';
@@ -51,11 +50,21 @@ const BlueprintCard = ({ blueprint }: blueprintProps) => {
             onChange: () => dispatch(setBlueprintId(blueprint.id)),
           }}
         >
-          <CardTitle>
+          <CardTitle aria-label={blueprint.name}>
             {isLoading && blueprint.id === selectedBlueprintId && (
               <Spinner size='md' />
             )}
-            <Truncate content={blueprint.name} position='end' />
+            {
+              // NOTE: This might be an issue with the pf6 truncate component.
+              // Since we're not really using the popover, we can just
+              // use vanilla js to truncate the string rather than use the
+              // Truncate component. We can match the behaviour of the component
+              // by also splitting on 24 characters.
+              // https://github.com/patternfly/patternfly-react/issues/11964
+              blueprint.name && blueprint.name.length > 24
+                ? blueprint.name.slice(0, 24) + '...'
+                : blueprint.name
+            }
           </CardTitle>
         </CardHeader>
         <CardBody>{blueprint.description}</CardBody>
