@@ -12,6 +12,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { AzureAuthButton } from './AzureAuthButton';
 import { AzureHyperVSelect } from './AzureHyperVSelect';
@@ -63,6 +64,8 @@ const Azure = () => {
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
   const resourceGroup = useAppSelector(selectAzureResourceGroup);
 
+  const launchEofFlag = useFlag('image-builder.launcheof');
+
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
@@ -93,37 +96,39 @@ const Azure = () => {
         </Button>
       </Content>
       <AzureHyperVSelect />
-      <FormGroup label='Share method:'>
-        <Radio
-          id='radio-with-description'
-          label='Use an account configured from Sources.'
-          name='radio-7'
-          description='Use a configured source to launch environments directly from the console.'
-          isChecked={shareMethod === 'sources'}
-          onChange={() => {
-            dispatch(changeAzureSource(''));
-            dispatch(changeAzureTenantId(''));
-            dispatch(changeAzureSubscriptionId(''));
-            dispatch(changeAzureShareMethod('sources'));
-            dispatch(changeAzureResourceGroup(''));
-          }}
-          autoFocus
-        />
-        <Radio
-          id='radio'
-          label='Manually enter the account information.'
-          name='radio-8'
-          isChecked={shareMethod === 'manual'}
-          onChange={() => {
-            dispatch(changeAzureSource(''));
-            dispatch(changeAzureTenantId(''));
-            dispatch(changeAzureSubscriptionId(''));
-            dispatch(changeAzureShareMethod('manual'));
-            dispatch(changeAzureResourceGroup(''));
-          }}
-        />
-      </FormGroup>
-      {shareMethod === 'sources' && (
+      {!launchEofFlag && (
+        <FormGroup label='Share method:'>
+          <Radio
+            id='radio-with-description'
+            label='Use an account configured from Sources.'
+            name='radio-7'
+            description='Use a configured source to launch environments directly from the console.'
+            isChecked={shareMethod === 'sources'}
+            onChange={() => {
+              dispatch(changeAzureSource(''));
+              dispatch(changeAzureTenantId(''));
+              dispatch(changeAzureSubscriptionId(''));
+              dispatch(changeAzureShareMethod('sources'));
+              dispatch(changeAzureResourceGroup(''));
+            }}
+            autoFocus
+          />
+          <Radio
+            id='radio'
+            label='Manually enter the account information.'
+            name='radio-8'
+            isChecked={shareMethod === 'manual'}
+            onChange={() => {
+              dispatch(changeAzureSource(''));
+              dispatch(changeAzureTenantId(''));
+              dispatch(changeAzureSubscriptionId(''));
+              dispatch(changeAzureShareMethod('manual'));
+              dispatch(changeAzureResourceGroup(''));
+            }}
+          />
+        </FormGroup>
+      )}
+      {!launchEofFlag && shareMethod === 'sources' && (
         <>
           <AzureSourcesSelect />
           <SourcesButton />
@@ -156,7 +161,7 @@ const Azure = () => {
           <AzureResourceGroups />
         </>
       )}
-      {shareMethod === 'manual' && (
+      {(launchEofFlag || shareMethod === 'manual') && (
         <>
           <FormGroup label='Azure tenant GUID' isRequired>
             <ValidatedInput
