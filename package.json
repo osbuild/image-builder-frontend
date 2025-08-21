@@ -35,7 +35,7 @@
     "@babel/preset-env": "7.28.0",
     "@babel/preset-react": "7.27.1",
     "@babel/preset-typescript": "7.27.1",
-    "@currents/playwright": "1.15.3",
+    "@currents/playwright": "1.16.0",
     "@eslint/js": "9.32.0",
     "@patternfly/react-icons": "6.3.1",
     "@playwright/test": "1.51.1",
