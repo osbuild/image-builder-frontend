@@ -28,6 +28,7 @@ import {
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
+  selectOrgId,
   selectPartitions,
   selectRegistrationType,
   selectSatelliteCaCertificate,
@@ -123,6 +124,7 @@ type ValidationState = {
 export function useRegistrationValidation(): StepValidation {
   const registrationType = useAppSelector(selectRegistrationType);
   const activationKey = useAppSelector(selectActivationKey);
+  const orgId = useAppSelector(selectOrgId);
   const registrationCommand = useAppSelector(
     selectSatelliteRegistrationCommand,
   );
@@ -132,15 +134,37 @@ export function useRegistrationValidation(): StepValidation {
     useShowActivationKeyQuery(
       { name: activationKey! },
       {
-        skip: !activationKey,
+        skip: !activationKey || !!process.env.IS_ON_PREMISE,
       },
     );
 
-  if (
-    registrationType !== 'register-later' &&
-    registrationType !== 'register-satellite' &&
-    !activationKey
-  ) {
+  if (registrationType === 'register-later') {
+    return { errors: {}, disabledNext: false };
+  }
+
+  if (process.env.IS_ON_PREMISE) {
+    const errors: Record<string, string> = {};
+    let disabledNext = false;
+
+    if (!activationKey?.trim()) {
+      errors.activationKey = 'Activation Key not set';
+      disabledNext = true;
+    }
+
+    if (!orgId?.trim()) {
+      errors.orgId = 'Organization ID not set';
+      disabledNext = true;
+    } else if (!/^\d+$/.test(orgId.trim())) {
+      errors.orgId = 'Organization ID should be a numeric value';
+      disabledNext = true;
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return { errors, disabledNext };
+    }
+  }
+
+  if (registrationType !== 'register-satellite' && !activationKey) {
     return {
       errors: { activationKey: 'No activation key selected' },
       disabledNext: true,
@@ -148,10 +172,10 @@ export function useRegistrationValidation(): StepValidation {
   }
 
   if (
-    registrationType !== 'register-later' &&
     registrationType !== 'register-satellite' &&
     activationKey &&
-    (isFetchingKeyInfo || isErrorKeyInfo)
+    (isFetchingKeyInfo || isErrorKeyInfo) &&
+    !process.env.IS_ON_PREMISE
   ) {
     return {
       errors: { activationKey: 'Invalid activation key' },

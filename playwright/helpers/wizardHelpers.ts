@@ -1,6 +1,6 @@
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
-import { closePopupsIfExist, isHosted } from './helpers';
+import { closePopupsIfExist, isHosted, isRhel } from './helpers';
 import { ibFrame, navigateToLandingPage } from './navHelpers';
 
 /**
@@ -45,11 +45,12 @@ export const fillInDetails = async (
 
 /**
  * Select "Register later" option in the wizard
- * This function executes only on the hosted service
+ * This function executes only on if the registration
+ * step is visible (it won't be visible for Fedora)
  * @param page - the page object
  */
 export const registerLater = async (page: Page | FrameLocator) => {
-  if (isHosted()) {
+  if (await isRhel(page)) {
     await page.getByRole('button', { name: 'Register' }).click();
     await page.getByRole('radio', { name: 'Register later' }).click();
   }
