@@ -211,8 +211,9 @@ function commonRequestToState(
     snapshot_date = '';
   }
 
+  // we need to check for the region for on-prem
   const awsUploadOptions = aws?.upload_request
-    .options as AwsUploadRequestOptions;
+    .options as AwsUploadRequestOptions & { region?: string | undefined };
   const gcpUploadOptions = gcp?.upload_request
     .options as GcpUploadRequestOptions;
   const azureUploadOptions = azure?.upload_request
@@ -315,6 +316,7 @@ function commonRequestToState(
         : 'manual') as AwsShareMethod,
       source: { id: awsUploadOptions?.share_with_sources?.[0] },
       sourceId: awsUploadOptions?.share_with_sources?.[0],
+      region: awsUploadOptions?.region,
     },
     snapshotting: {
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
