@@ -38,6 +38,10 @@ const ActivationKeyInformation = (): JSX.Element => {
           <Content component={ContentVariants.dl}>
             <Content component={ContentVariants.dt}>Name:</Content>
             <Content component={ContentVariants.dd}>{activationKey}</Content>
+            <Content component={ContentVariants.dt}>Description:</Content>
+            <Content component={ContentVariants.dd}>
+              {activationKeyInfo?.body?.description || ''}
+            </Content>
             <Content component={ContentVariants.dt}>Role:</Content>
             <Content component={ContentVariants.dd}>
               {activationKeyInfo?.body?.role || 'Not defined'}
