@@ -45,8 +45,7 @@ export class OpenStackWrapper {
     return new Promise<string>((resolve, reject) => {
       exec(command, (error, stdout) => {
         if (error) {
-          // Reject the promise with an error that includes stderr
-          reject(new Error(`Command failed: ${error.message}`));
+          reject(error);
           return;
         }
         resolve(stdout);
