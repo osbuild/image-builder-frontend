@@ -5,9 +5,9 @@ import { Alert, Content, Form, Title } from '@patternfly/react-core';
 import PackageRecommendations from './PackageRecommendations';
 import Packages from './Packages';
 
-import { RHEL_8, RHEL_9 } from '../../../../constants';
 import { useAppSelector } from '../../../../store/hooks';
 import { selectDistribution } from '../../../../store/wizardSlice';
+import isRhel from '../../../../Utilities/isRhel';
 
 const PackagesStep = () => {
   const distribution = useAppSelector(selectDistribution);
@@ -33,9 +33,7 @@ const PackagesStep = () => {
         </Alert>
       )}
       <Packages />
-      {(distribution === RHEL_8 || distribution === RHEL_9) && (
-        <PackageRecommendations />
-      )}
+      {isRhel(distribution) && <PackageRecommendations />}
     </Form>
   );
 };
