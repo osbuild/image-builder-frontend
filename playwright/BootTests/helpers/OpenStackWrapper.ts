@@ -41,7 +41,8 @@ export class OpenStackWrapper {
   /**
    * Wrapper around exec so it can be simply called as await execCommand(...).
    * Executes a command and returns the output.
-   * @param command - The command to execute.
+   * @param executable - The executable to execute.
+   * @param args - The arguments to pass to the executable.
    * @throws Error if command fails
    * @returns stdout
    */
