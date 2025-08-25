@@ -42,7 +42,13 @@ interface imagesTableToolbarProps {
   perPage: number;
   page: number;
   setPage: (page: number) => void;
-  onPerPageSelect: (event: React.MouseEvent, perPage: number) => void;
+  onPerPageSelect: (
+    event:
+      | MouseEvent
+      | React.MouseEvent<Element, MouseEvent>
+      | React.KeyboardEvent<Element>,
+    perPage: number,
+  ) => void;
 }
 
 const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({

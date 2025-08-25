@@ -176,12 +176,14 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
   const prefix = getPrefix(partition.mountpoint);
   const suffix = getSuffix(partition.mountpoint);
 
-  const onSelect = (event: React.MouseEvent, selection: string) => {
-    setIsOpen(false);
-    const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
-    dispatch(
-      changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint }),
-    );
+  const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
+    if (selection && typeof selection === 'string') {
+      setIsOpen(false);
+      const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
+      dispatch(
+        changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint }),
+      );
+    }
   };
 
   const onToggleClick = () => {
@@ -313,8 +315,9 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
 
   const initialValue = useRef(partition).current;
 
-  const onSelect = (event: React.MouseEvent, selection: Units) => {
-    if (initialValue.unit === 'B' && selection === 'B') {
+  const onSelect = (event?: React.MouseEvent, selection?: string | number) => {
+    if (selection === undefined) return;
+    if (initialValue.unit === 'B' && selection === ('B' as Units)) {
       dispatch(
         changePartitionMinSize({
           id: partition.id,
@@ -322,7 +325,9 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
         }),
       );
     }
-    dispatch(changePartitionUnit({ id: partition.id, unit: selection }));
+    dispatch(
+      changePartitionUnit({ id: partition.id, unit: selection as Units }),
+    );
     setIsOpen(false);
   };
 

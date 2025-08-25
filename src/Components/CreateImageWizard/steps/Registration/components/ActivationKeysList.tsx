@@ -33,6 +33,7 @@ import {
   selectActivationKey,
   selectRegistrationType,
 } from '../../../../../store/wizardSlice';
+import { getErrorMessage } from '../../../../../Utilities/getErrorMessage';
 import sortfn from '../../../../../Utilities/sortfn';
 import { useGetEnvironment } from '../../../../../Utilities/useGetEnvironment';
 
@@ -84,7 +85,7 @@ const ActivationKeysList = () => {
 
     if (filterValue) {
       filteredKeys = activationKeys?.body
-        ?.map((key) => key.name)
+        ?.flatMap((key) => (key.name ? [key.name] : []))
         .filter((keyName: string) =>
           String(keyName).toLowerCase().includes(filterValue.toLowerCase()),
         );
@@ -128,7 +129,7 @@ const ActivationKeysList = () => {
         addNotification({
           variant: 'danger',
           title: 'Error creating activation key',
-          description: error?.data?.error?.message,
+          description: getErrorMessage(error),
         });
       }
     };
@@ -166,8 +167,12 @@ const ActivationKeysList = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleSelect = (_event: React.MouseEvent, selection: string) => {
-    setActivationKey(selection);
+  const handleSelect = (
+    _event?: React.MouseEvent,
+    selection?: string | number,
+  ) => {
+    if (selection === undefined) return;
+    if (typeof selection === 'string') setActivationKey(selection);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
