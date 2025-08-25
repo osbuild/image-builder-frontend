@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   Alert,
@@ -8,6 +8,7 @@ import {
   Spinner,
 } from '@patternfly/react-core';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { ContentOrigin } from '../../../../constants';
 import {
@@ -33,12 +34,20 @@ type repoPropType = {
 };
 
 const RepoName = ({ repoUuid }: repoPropType) => {
+  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
+
+  const originParam = useMemo(() => {
+    const origins = [ContentOrigin.ALL];
+    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    return origins.join(',');
+  }, [isSharedEPELEnabled]);
+
   const { data, isSuccess, isFetching, isError } = useListRepositoriesQuery(
     {
       // @ts-ignore if repoUrl is undefined the query is going to get skipped, so it's safe to ignore the linter here
       uuid: repoUuid ?? '',
       contentType: 'rpm',
-      origin: ContentOrigin.ALL,
+      origin: originParam,
     },
     { skip: !repoUuid },
   );
@@ -135,6 +144,14 @@ export const SnapshotTable = ({
     { refetchOnMountOrArgChange: true, skip: template === '' },
   );
 
+  const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
+
+  const originParam = useMemo(() => {
+    const origins = [ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM];
+    if (isSharedEPELEnabled) origins.push(ContentOrigin.COMMUNITY);
+    return origins.join(',');
+  }, [isSharedEPELEnabled]);
+
   const { data, isSuccess, isLoading, isError } = useListRepositoriesQuery({
     uuid:
       snapshotForDate.length > 0
@@ -142,7 +159,7 @@ export const SnapshotTable = ({
         : template && templateData && templateData.repository_uuids
           ? templateData.repository_uuids.join(',')
           : '',
-    origin: ContentOrigin.REDHAT + ',' + ContentOrigin.CUSTOM, // Make sure to show both redhat and external
+    origin: originParam, // Make sure to show redhat, external, and shared epel (if enabled)
   });
 
   const isAfterSet = new Set(

@@ -295,6 +295,7 @@ export enum ContentOrigin {
   'REDHAT' = 'red_hat',
   'EXTERNAL' = 'external', // custom only
   'UPLOAD' = 'upload', // custom upload repo
+  'COMMUNITY' = 'community', // shared epel repos
   'CUSTOM' = 'external,upload',
   'ALL' = 'red_hat,external,upload',
 }

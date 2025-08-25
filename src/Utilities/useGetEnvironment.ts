@@ -35,6 +35,7 @@ export const useFlagWithEphemDefault = (
 const onPremFlag = (flag: string): boolean => {
   switch (flag) {
     case 'image-builder.templates.enabled':
+    case 'image-builder.shared-epel.enabled':
       return true;
     default:
       return false;
