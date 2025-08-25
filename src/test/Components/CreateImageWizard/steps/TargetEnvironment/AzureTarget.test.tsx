@@ -99,6 +99,14 @@ const selectResourceGroup = async () => {
   await waitFor(async () => user.click(myResourceGroup1));
 };
 
+const clearSource = async () => {
+  const user = userEvent.setup();
+  const clearButton = await screen.findByRole('button', {
+    name: /clear input/i,
+  });
+  await waitFor(() => user.click(clearButton));
+};
+
 const selectManuallyEnterInformation = async () => {
   const user = userEvent.setup();
   const manualOption = await screen.findByText(
@@ -284,6 +292,37 @@ describe('Step Upload to Azure', () => {
     expect(
       await screen.findByLabelText('Resource group theirGroup2'),
     ).toBeVisible();
+  });
+
+  test('handles clearing source and selecting new one', async () => {
+    await renderCreateMode();
+    await selectAzureTarget();
+    await goToAzureStep();
+
+    // Select first source and verify fields are populated
+    await selectSource('azureSource1');
+    await waitFor(async () => {
+      expect(await getTenantGuidInput()).not.toHaveValue('');
+    });
+    await waitFor(async () => {
+      expect(await getSubscriptionIdInput()).not.toHaveValue('');
+    });
+
+    // Clear the source
+    await clearSource();
+
+    // Verify fields are cleared
+    expect(await getTenantGuidInput()).toHaveValue('');
+    expect(await getSubscriptionIdInput()).toHaveValue('');
+
+    // Select a different source and verify fields are populated correctly
+    await selectSource('azureSource2');
+    await waitFor(async () => {
+      expect(await getTenantGuidInput()).not.toHaveValue('');
+    });
+    await waitFor(async () => {
+      expect(await getSubscriptionIdInput()).not.toHaveValue('');
+    });
   });
 
   test('component renders error state correctly', async () => {
