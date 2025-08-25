@@ -3,6 +3,10 @@ import { execFile } from 'child_process';
 import { test } from '@playwright/test';
 
 export class OpenStackWrapper {
+  private static readonly SLEEP_TIME = 15000; // 15 seconds
+  private static readonly RETRY_CREATE_IMAGE = 40; // 40 * 15 seconds = 4 minutes for image to be in 'active' state
+  private static readonly RETRY_LAUNCH_INSTANCE = 20; // 20 * 30 seconds = 10 minutes to launch the instance
+  private static readonly RETRY_CHECK_CONNECTION = 4; // 4 * 15 seconds = 1 minute to wait if we can connect to the instance
   private ipAddress: string;
   private imageName: string;
   private instanceName: string;
@@ -60,8 +64,6 @@ export class OpenStackWrapper {
    * Upload an image to Openstack.
    */
   public async createImage(): Promise<void> {
-    const sleepTime = 10000; // 10 seconds
-    const retries = 40; // 40 * 10 seconds = 4 minutes for image to be in 'active' state
     try {
       console.log(`Uploading image ${this.imageName} to Openstack`);
       await OpenStackWrapper.execCommand('openstack', [
@@ -74,7 +76,7 @@ export class OpenStackWrapper {
         this.imageName,
       ]);
       // Wait until the image is in 'active' state
-      for (let i = 0; i < retries; i++) {
+      for (let i = 0; i < OpenStackWrapper.RETRY_CREATE_IMAGE; i++) {
         const output = await OpenStackWrapper.execCommand('openstack', [
           'image',
           'show',
@@ -90,11 +92,13 @@ export class OpenStackWrapper {
           return;
         }
         // Wait before checking again
-        await new Promise((resolve) => setTimeout(resolve, sleepTime));
+        await new Promise((resolve) =>
+          setTimeout(resolve, OpenStackWrapper.SLEEP_TIME),
+        );
       }
       // If the image is not ready after the retries, throw an error
       throw new OpenStackError(
-        `Instance ${this.imageName} didn't launch after 10 minutes.`,
+        `Image ${this.imageName} didn't become active after 4 minutes.`,
       );
     } catch (error) {
       console.error(`Error creating image: ${error}`);
@@ -106,8 +110,6 @@ export class OpenStackWrapper {
    * Launch an instance from the created image.
    */
   public async launchInstance(): Promise<void> {
-    const sleepTime = 30000; // 30 seconds
-    const retries = 20; // 20 * 30 seconds = 10 minutes to launch the instance
     try {
       console.log(
         `Launching instance ${this.instanceName} from image ${this.imageName}`,
@@ -132,7 +134,7 @@ export class OpenStackWrapper {
         );
       }
       // Wait until the instance is running (in active state)
-      for (let i = 0; i < retries; i++) {
+      for (let i = 0; i < OpenStackWrapper.RETRY_LAUNCH_INSTANCE; i++) {
         const output = await OpenStackWrapper.execCommand('openstack', [
           'server',
           'show',
@@ -148,7 +150,9 @@ export class OpenStackWrapper {
           return;
         }
         // Wait before checking again
-        await new Promise((resolve) => setTimeout(resolve, sleepTime));
+        await new Promise((resolve) =>
+          setTimeout(resolve, OpenStackWrapper.SLEEP_TIME),
+        );
       }
       // If the instance is not running after the retries, throw an error
       throw new OpenStackError(
@@ -166,9 +170,7 @@ export class OpenStackWrapper {
    */
   private async checkConnection(): Promise<void> {
     if (!this.canConnect) {
-      const sleepTime = 15000; // 15 seconds
-      const retries = 4; // 4 * 15 seconds = 1 minute to wait if we can connect to the instance
-      for (let i = 0; i < retries; i++) {
+      for (let i = 0; i < OpenStackWrapper.RETRY_CHECK_CONNECTION; i++) {
         try {
           const output = await OpenStackWrapper.execCommand('ssh', [
             '-o',
@@ -181,16 +183,18 @@ export class OpenStackWrapper {
             break;
           }
         } catch (error) {
-          if (i < retries - 1) {
-            await new Promise((resolve) => setTimeout(resolve, sleepTime));
+          if (i < OpenStackWrapper.RETRY_CHECK_CONNECTION - 1) {
+            await new Promise((resolve) =>
+              setTimeout(resolve, OpenStackWrapper.SLEEP_TIME),
+            );
           } else {
             throw new OpenStackError(
-              `Failed to connect to instance ${this.imageName} after ${retries} attempts. Reason: ${error}`,
+              `Failed to connect to instance ${this.instanceName} after ${i + 1} attempts. Reason: ${error}`,
             );
           }
         }
       }
-      console.log(`Instance ${this.imageName} is ready to connect`);
+      console.log(`Instance ${this.instanceName} is ready to connect`);
     }
   }
 
