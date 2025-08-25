@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 import {
   Button,
@@ -99,10 +99,6 @@ const Registration = () => {
   const dispatch = useAppDispatch();
   const registrationType = useAppSelector(selectRegistrationType);
 
-  const [showOptions, setShowOptions] = useState(
-    registrationType === 'register-later',
-  );
-
   const isSatelliteRegistrationEnabled = useFlag(
     'image-builder.satellite.enabled',
   );
@@ -124,63 +120,51 @@ const Registration = () => {
         id='register-system-now'
         name='register-system-now'
         autoFocus
-        description={
-          <Button
-            component='a'
-            variant='link'
-            isDisabled={!registrationType.startsWith('register-now')}
-            isInline
-            onClick={() => setShowOptions(!showOptions)}
-          >
-            {`${!showOptions ? 'Show' : 'Hide'} additional connection options`}
-          </Button>
-        }
+        className='pf-v6-u-pb-sm'
         body={
-          showOptions && (
-            <Checkbox
-              className='pf-v6-u-ml-lg'
-              label={
-                <>
-                  Enable predictive analytics and management capabilities
-                  <InsightsPopover />
-                </>
+          <Checkbox
+            label={
+              <>
+                Enable predictive analytics and management capabilities
+                <InsightsPopover />
+              </>
+            }
+            isChecked={
+              registrationType === 'register-now-insights' ||
+              registrationType === 'register-now-rhc'
+            }
+            onChange={(_event, checked) => {
+              if (checked) {
+                dispatch(changeRegistrationType('register-now-insights'));
+              } else {
+                dispatch(changeRegistrationType('register-now'));
               }
-              isChecked={
-                registrationType === 'register-now-insights' ||
-                registrationType === 'register-now-rhc'
-              }
-              onChange={(_event, checked) => {
-                if (checked) {
-                  dispatch(changeRegistrationType('register-now-insights'));
-                } else {
-                  dispatch(changeRegistrationType('register-now'));
+            }}
+            id='register-system-now-insights'
+            name='register-system-insights'
+            className='pf-v6-u-pt-0'
+            body={
+              <Checkbox
+                label={
+                  <>
+                    Enable remote remediations and system management with
+                    automation
+                    <RhcPopover />
+                  </>
                 }
-              }}
-              id='register-system-now-insights'
-              name='register-system-insights'
-              body={
-                <Checkbox
-                  label={
-                    <>
-                      Enable remote remediations and system management with
-                      automation
-                      <RhcPopover />
-                    </>
+                isChecked={registrationType === 'register-now-rhc'}
+                onChange={(_event, checked) => {
+                  if (checked) {
+                    dispatch(changeRegistrationType('register-now-rhc'));
+                  } else {
+                    dispatch(changeRegistrationType('register-now-insights'));
                   }
-                  isChecked={registrationType === 'register-now-rhc'}
-                  onChange={(_event, checked) => {
-                    if (checked) {
-                      dispatch(changeRegistrationType('register-now-rhc'));
-                    } else {
-                      dispatch(changeRegistrationType('register-now-insights'));
-                    }
-                  }}
-                  id='register-system-now-rhc'
-                  name='register-system-rhc'
-                />
-              }
-            />
-          )
+                }}
+                id='register-system-now-rhc'
+                name='register-system-rhc'
+              />
+            }
+          />
         }
       />
       <Radio
@@ -188,7 +172,6 @@ const Registration = () => {
         isChecked={registrationType === 'register-later'}
         onChange={() => {
           dispatch(changeRegistrationType('register-later'));
-          setShowOptions(false);
         }}
         id='register-later'
         name='register-later'
@@ -199,7 +182,6 @@ const Registration = () => {
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));
-            setShowOptions(false);
           }}
           id='register-satellite'
           name='register-satellite'
