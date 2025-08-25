@@ -150,6 +150,12 @@ describe('Hostname request generated correctly', () => {
       ...blueprintRequest,
       customizations: {
         hostname: 'hostname',
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
       },
     };
 
