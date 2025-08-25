@@ -255,7 +255,7 @@ test.describe.serial('test', () => {
     const config = readFileSync('/etc/osbuild-worker/osbuild-worker.toml');
     // this is for testing, the field `aws` should exist
     // eslint-disable-next-line
-    const parsed = TOML.parse(config) as any;
+    const parsed = TOML.parse(config.toString()) as any;
     expect(parsed.aws?.bucket).toBe(bucket);
     expect(parsed.aws?.credentials).toBe(credentials);
   });
