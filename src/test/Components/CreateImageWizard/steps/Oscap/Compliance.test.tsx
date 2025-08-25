@@ -17,21 +17,6 @@ import {
   selectRhel9,
 } from '../../wizardTestUtils';
 
-// Overwrite
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.compliance.enabled':
-        return true;
-      case 'image-builder.aap.enabled':
-        return true;
-      default:
-        return false;
-    }
-  }),
-}));
-
 const goToComplianceStep = async () => {
   const user = userEvent.setup();
   await selectRhel9(); // Compliance is not available for RHEL 10 yet

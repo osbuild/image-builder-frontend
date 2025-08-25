@@ -1,6 +1,7 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { useFlag } from '@unleash/proxy-client-react';
 import { http, HttpResponse } from 'msw';
 
 import {
@@ -32,6 +33,18 @@ import {
 
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
+
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.launcheof':
+        return true;
+      default:
+        return false;
+    }
+  }),
+}));
 
 const goToAzureStep = async () => {
   await clickNext();
@@ -181,6 +194,7 @@ describe('Step Upload to Azure', () => {
     vi.clearAllMocks();
     router = undefined;
   });
+  const launchEofFlag = useFlag('image-builder.launcheof');
 
   const user = userEvent.setup();
 
@@ -188,7 +202,9 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
+    if (!launchEofFlag) {
+      await selectManuallyEnterInformation();
+    }
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -217,7 +233,9 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
+    if (!launchEofFlag) {
+      await selectManuallyEnterInformation();
+    }
     const nextButton = await getNextButton();
     expect(nextButton).toBeDisabled();
 
@@ -237,30 +255,13 @@ describe('Step Upload to Azure', () => {
     await enterResourceGroup();
 
     expect(nextButton).toBeEnabled();
-
-    // switch to Sources
-    await selectSourcesOption();
-
-    // manual values should be cleared out
-    expect(await getTenantGuidInput()).toHaveValue('');
-    expect(await getSubscriptionIdInput()).toHaveValue('');
-    expect(await getResourceGroupSelect()).toHaveValue('');
-
-    expect(nextButton).toBeDisabled();
-
-    await selectSource('azureSource1');
-
-    // source information should be fetched
-    expect(await getTenantGuidInput()).not.toHaveValue('');
-    expect(await getSubscriptionIdInput()).not.toHaveValue('');
-    await selectResourceGroup();
-
-    await waitFor(() => {
-      expect(nextButton).toBeEnabled();
-    });
   });
 
   test('handles change of selected Source', async () => {
+    if (launchEofFlag) {
+      return;
+    }
+
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
@@ -287,6 +288,10 @@ describe('Step Upload to Azure', () => {
   });
 
   test('component renders error state correctly', async () => {
+    if (launchEofFlag) {
+      return;
+    }
+
     server.use(
       http.get(`${PROVISIONING_API}/sources`, () => {
         return new HttpResponse(null, { status: 500 });
@@ -301,6 +306,10 @@ describe('Step Upload to Azure', () => {
   });
 
   test('revisit step button on Review works', async () => {
+    if (launchEofFlag) {
+      // Revisit after launch EOF
+      return;
+    }
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
@@ -313,11 +322,15 @@ describe('Step Upload to Azure', () => {
 });
 
 describe('Azure image type request generated correctly', () => {
+  const launchEofFlag = useFlag('image-builder.launcheof');
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   test('using a source', async () => {
+    if (launchEofFlag) {
+      return;
+    }
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
@@ -355,7 +368,9 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
+    if (!launchEofFlag) {
+      await selectManuallyEnterInformation();
+    }
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -388,7 +403,9 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
+    if (!launchEofFlag) {
+      await selectManuallyEnterInformation();
+    }
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -422,7 +439,12 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectSource('azureSource1');
+    if (!launchEofFlag) {
+      await selectManuallyEnterInformation();
+    }
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
     await clickBack();
     await deselectAzureAndSelectGuestImage();
     await goToReviewStep();
