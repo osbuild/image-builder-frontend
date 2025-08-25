@@ -1,4 +1,4 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
 
 import { test } from '@playwright/test';
 
@@ -41,9 +41,12 @@ export class OpenStackWrapper {
    * @throws Error if command fails
    * @returns stdout
    */
-  private static async execCommand(command: string): Promise<string> {
+  private static async execCommand(
+    executable: string,
+    args: string[],
+  ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-      exec(command, (error, stdout) => {
+      execFile(executable, args, (error, stdout) => {
         if (error) {
           reject(error);
           return;
@@ -61,14 +64,24 @@ export class OpenStackWrapper {
     const retries = 40; // 40 * 10 seconds = 4 minutes for image to be in 'active' state
     try {
       console.log(`Uploading image ${this.imageName} to Openstack`);
-      await OpenStackWrapper.execCommand(
-        `openstack image create -f json --disk-format="${this.diskFormat}"  --file=${this.imageFilePath} ${this.imageName}`,
-      );
+      await OpenStackWrapper.execCommand('openstack', [
+        'image',
+        'create',
+        '-f',
+        'json',
+        `--disk-format=${this.diskFormat}`,
+        `--file=${this.imageFilePath}`,
+        this.imageName,
+      ]);
       // Wait until the image is in 'active' state
       for (let i = 0; i < retries; i++) {
-        const output = await OpenStackWrapper.execCommand(
-          `openstack image show -f json ${this.imageName}`,
-        );
+        const output = await OpenStackWrapper.execCommand('openstack', [
+          'image',
+          'show',
+          '-f',
+          'json',
+          this.imageName,
+        ]);
         const image = JSON.parse(output);
         if (image.status === 'active') {
           console.log(
@@ -99,9 +112,18 @@ export class OpenStackWrapper {
       console.log(
         `Launching instance ${this.instanceName} from image ${this.imageName}`,
       );
-      const output = await OpenStackWrapper.execCommand(
-        `openstack server create -f json --image="${this.imageName}" --flavor="g.standard.small" --network="shared_net_1" --security-group="default" --key-name="${this.keyName}" ${this.instanceName}`,
-      );
+      const output = await OpenStackWrapper.execCommand('openstack', [
+        'server',
+        'create',
+        '-f',
+        'json',
+        `--image=${this.imageName}`,
+        '--flavor=g.standard.small',
+        '--network=shared_net_1',
+        '--security-group=default',
+        `--key-name=${this.keyName}`,
+        this.instanceName,
+      ]);
       const instance = JSON.parse(output);
       // Expect the instance started building
       if (instance.status !== 'BUILD') {
@@ -111,9 +133,13 @@ export class OpenStackWrapper {
       }
       // Wait until the instance is running (in active state)
       for (let i = 0; i < retries; i++) {
-        const output = await OpenStackWrapper.execCommand(
-          `openstack server show -f json ${this.instanceName}`,
-        );
+        const output = await OpenStackWrapper.execCommand('openstack', [
+          'server',
+          'show',
+          '-f',
+          'json',
+          this.instanceName,
+        ]);
         const instance = JSON.parse(output);
         if (instance.status === 'ACTIVE') {
           // Instance is running
@@ -144,9 +170,12 @@ export class OpenStackWrapper {
       const retries = 4; // 4 * 15 seconds = 1 minute to wait if we can connect to the instance
       for (let i = 0; i < retries; i++) {
         try {
-          const output = await OpenStackWrapper.execCommand(
-            `ssh -o StrictHostKeyChecking=accept-new cloud-user@${this.ipAddress} "echo 'Hello'"`,
-          );
+          const output = await OpenStackWrapper.execCommand('ssh', [
+            '-o',
+            'StrictHostKeyChecking=accept-new',
+            `cloud-user@${this.ipAddress}`,
+            "echo 'Hello'",
+          ]);
           if (output.includes('Hello')) {
             this.canConnect = true;
             break;
@@ -174,11 +203,15 @@ export class OpenStackWrapper {
   public async exec(command: string, user?: string): Promise<[number, string]> {
     await this.checkConnection();
 
-    // Execute the SSH command using the private wrapper
+    const sshArgs = [
+      '-o',
+      'StrictHostKeyChecking=accept-new',
+      `${user ?? 'cloud-user'}@${this.ipAddress}`,
+      command,
+    ];
+
     try {
-      const output = await OpenStackWrapper.execCommand(
-        `ssh -o StrictHostKeyChecking=accept-new ${user ?? 'cloud-user'}@${this.ipAddress} ${command}`,
-      );
+      const output = await OpenStackWrapper.execCommand('ssh', sshArgs);
       return [0, output];
     } catch (error) {
       return [error.code, error.message];
@@ -195,7 +228,11 @@ export class OpenStackWrapper {
       'Delete the image on Openstack with name: ' + imageName,
       async () => {
         try {
-          await this.execCommand(`openstack image delete ${imageName}`);
+          await OpenStackWrapper.execCommand('openstack', [
+            'image',
+            'delete',
+            imageName,
+          ]);
           console.log(`Image ${imageName} deleted`);
         } catch (error) {
           if (!error.message.includes('Multi Backend support not enabled.')) {
@@ -219,7 +256,11 @@ export class OpenStackWrapper {
       'Delete the instance on Openstack with name: ' + instanceName,
       async () => {
         try {
-          await this.execCommand(`openstack server delete ${instanceName}`);
+          await OpenStackWrapper.execCommand('openstack', [
+            'server',
+            'delete',
+            instanceName,
+          ]);
           console.log(`Instance ${instanceName} deleted`);
         } catch (error) {
           if (!error.message.includes('No Server found')) {
