@@ -61,12 +61,13 @@ export const AzureSourcesSelect = () => {
   );
 
   useEffect(() => {
-    if (isFetchingDetails || !isSuccessDetails) return;
+    if (isFetchingDetails || !isSuccessDetails || !azureSource) return;
     dispatch(changeAzureTenantId(sourceDetails?.azure?.tenant_id || ''));
     dispatch(
       changeAzureSubscriptionId(sourceDetails?.azure?.subscription_id || ''),
     );
   }, [
+    azureSource,
     isFetchingDetails,
     isSuccessDetails,
     sourceDetails?.azure?.tenant_id,
