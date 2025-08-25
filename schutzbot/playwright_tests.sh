@@ -2,6 +2,7 @@
 set -euo pipefail
 
 TMT_SOURCE_DIR=${TMT_SOURCE_DIR:-}
+PW_WORKERS=4
 if [ -n "$TMT_SOURCE_DIR" ]; then
     # Move to the directory with sources
     cd "${TMT_SOURCE_DIR}/cockpit-image-builder"
@@ -10,6 +11,8 @@ elif [ "${CI:-}" != "true" ]; then
     # packit drops us into the schutzbot directory
     cd ../
     npm ci
+    # halve the workers on schutzbot to increase reliability
+    PW_WORKERS=2
 fi
 
 sudo systemctl enable --now cockpit.socket
@@ -86,4 +89,4 @@ sudo podman run \
      --rm \
      --init \
      mcr.microsoft.com/playwright:v1.51.1-noble \
-     /bin/sh -c "cd tests && npx -y playwright@1.51.1 test"
+     /bin/sh -c "cd tests && npx -y playwright@1.51.1 test --workers=${PW_WORKERS}"
