@@ -437,6 +437,13 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Azure'
                 id='wizard-target-azure'
                 key='wizard-target-azure'
+                status={
+                  !isAzureTenantGUIDValid(azureTenantId) ||
+                  !isAzureSubscriptionIdValid(azureSubscriptionId) ||
+                  !isAzureResourceGroupValid(azureResourceGroup)
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
                     disableNext={

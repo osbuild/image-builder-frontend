@@ -52,8 +52,6 @@ import {
   selectAwsShareMethod,
   selectAwsSourceId,
   selectAzureResourceGroup,
-  selectAzureShareMethod,
-  selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectBlueprintDescription,
@@ -340,11 +338,7 @@ export const TargetEnvGCPList = () => {
 };
 
 export const TargetEnvAzureList = () => {
-  const { data: rawAzureSources, isSuccess: isSuccessAzureSources } =
-    useGetSourceListQuery({ provider: 'azure' });
-  const shareMethod = useAppSelector(selectAzureShareMethod);
   const tenantId = useAppSelector(selectAzureTenantId);
-  const azureSource = useAppSelector(selectAzureSource);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
 
@@ -360,41 +354,16 @@ export const TargetEnvAzureList = () => {
           <br />
           <ExpirationWarning />
         </Content>
-        {shareMethod === 'sources' && isSuccessAzureSources && (
-          <>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Azure Source
-            </Content>
-            <Content component={ContentVariants.dd}>
-              {
-                rawAzureSources?.data?.find(
-                  (source) => source?.id === azureSource,
-                )?.name
-              }
-            </Content>
-          </>
-        )}
-        {shareMethod === 'manual' && (
-          <>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Azure tenant ID
-            </Content>
-            <Content component={ContentVariants.dd}>{tenantId}</Content>
-            <Content
-              component={ContentVariants.dt}
-              className='pf-v6-u-min-width'
-            >
-              Subscription ID
-            </Content>
-            <Content component={ContentVariants.dd}>{subscriptionId}</Content>
-          </>
-        )}
+        <>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Azure tenant ID
+          </Content>
+          <Content component={ContentVariants.dd}>{tenantId}</Content>
+          <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
+            Subscription ID
+          </Content>
+          <Content component={ContentVariants.dd}>{subscriptionId}</Content>
+        </>
         <Content component={ContentVariants.dt}>Resource group</Content>
         <Content component={ContentVariants.dd}>{azureResourceGroup}</Content>
       </Content>
