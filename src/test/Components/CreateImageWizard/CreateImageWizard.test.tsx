@@ -1,7 +1,13 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import { clickNext, renderCreateMode } from './wizardTestUtils';
+import {
+  clickNext,
+  enterResourceGroup,
+  enterSubscriptionId,
+  enterTenantGuid,
+  renderCreateMode,
+} from './wizardTestUtils';
 
 const getSourceDropdown = async () => {
   const sourceDropdown = await screen.findByPlaceholderText(/select source/i);
@@ -127,28 +133,9 @@ describe('Keyboard accessibility', () => {
     await clickNext();
 
     // Target environment azure
-    //expect(
-    //  await screen.findByRole('radio', {
-    //    name: /use an account configured from sources\./i,
-    //  })
-    //).toHaveFocus();
-    await selectSourcesOption();
-    const azureSourceDropdown = await getSourceDropdown();
-    await waitFor(() => user.click(azureSourceDropdown));
-    const azureSource = await screen.findByRole('option', {
-      name: /azureSource1/i,
-    });
-    await waitFor(() => user.click(azureSource));
-
-    const resourceGroupDropdown = await screen.findByPlaceholderText(
-      /select resource group/i,
-    );
-    await waitFor(() => user.click(resourceGroupDropdown));
-    await waitFor(async () =>
-      user.click(
-        await screen.findByLabelText('Resource group myResourceGroup1'),
-      ),
-    );
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
     await clickNext();
 
     // Registration

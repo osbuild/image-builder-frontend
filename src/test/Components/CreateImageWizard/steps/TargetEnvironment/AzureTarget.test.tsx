@@ -1,30 +1,29 @@
 import type { Router as RemixRouter } from '@remix-run/router';
 import { screen, waitFor, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
-import { http, HttpResponse } from 'msw';
 
-import {
-  CREATE_BLUEPRINT,
-  EDIT_BLUEPRINT,
-  PROVISIONING_API,
-} from '../../../../../constants';
+import { CREATE_BLUEPRINT, EDIT_BLUEPRINT } from '../../../../../constants';
 import {
   CreateBlueprintRequest,
   ImageRequest,
 } from '../../../../../store/imageBuilderApi';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
 import { azureCreateBlueprintRequest } from '../../../../fixtures/editMode';
-import { server } from '../../../../mocks/server';
 import {
   blueprintRequest,
   clickBack,
   clickNext,
   clickRegisterLater,
+  enterResourceGroup,
+  enterSubscriptionId,
+  enterTenantGuid,
   getNextButton,
+  getResourceGroupTextInput,
+  getSubscriptionIdInput,
+  getTenantGuidInput,
   goToReview,
   interceptBlueprintRequest,
   interceptEditBlueprintRequest,
-  openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
   verifyCancelButton,
@@ -87,84 +86,6 @@ const deselectAzureAndSelectGuestImage = async () => {
   await waitFor(async () => user.click(guestImageCheckbox));
 };
 
-const selectSource = async (sourceName: string) => {
-  const user = userEvent.setup();
-  const sourceTexbox = await screen.findByPlaceholderText(/select source/i);
-  await waitFor(async () => user.click(sourceTexbox));
-
-  const azureSource = await screen.findByRole('option', {
-    name: sourceName,
-  });
-  await waitFor(async () => user.click(azureSource));
-};
-
-const selectResourceGroup = async () => {
-  const user = userEvent.setup();
-  const resourceGrpTextbox = await screen.findByPlaceholderText(
-    /select resource group/i,
-  );
-  await waitFor(async () => user.click(resourceGrpTextbox));
-
-  const myResourceGroup1 = await screen.findByRole('option', {
-    name: /myResourceGroup1/i,
-  });
-  await waitFor(async () => user.click(myResourceGroup1));
-};
-
-const clearSource = async () => {
-  const user = userEvent.setup();
-  const clearButton = await screen.findByRole('button', {
-    name: /clear input/i,
-  });
-  await waitFor(() => user.click(clearButton));
-};
-
-const selectManuallyEnterInformation = async () => {
-  const user = userEvent.setup();
-  const manualOption = await screen.findByText(
-    /manually enter the account information\./i,
-  );
-  await waitFor(async () => user.click(manualOption));
-};
-
-const selectSourcesOption = async () => {
-  const user = userEvent.setup();
-  const sourcesOption = await screen.findByRole('radio', {
-    name: /use an account configured from sources\./i,
-  });
-  await waitFor(async () => user.click(sourcesOption));
-};
-
-const getTenantGuidInput = async () => {
-  const tenantGuidInput = await screen.findByRole('textbox', {
-    name: /azure tenant guid/i,
-  });
-  return tenantGuidInput;
-};
-
-const enterTenantGuid = async () => {
-  const user = userEvent.setup();
-  const tenantGuid = await getTenantGuidInput();
-  await waitFor(() =>
-    user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2'),
-  );
-};
-
-const getSubscriptionIdInput = async () => {
-  const subscriptionIdInput = await screen.findByRole('textbox', {
-    name: /subscription id/i,
-  });
-  return subscriptionIdInput;
-};
-
-const enterSubscriptionId = async () => {
-  const user = userEvent.setup();
-  const subscriptionId = await getSubscriptionIdInput();
-  await waitFor(() =>
-    user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711'),
-  );
-};
-
 const selectV1 = async () => {
   const user = userEvent.setup();
   const hypervMenu = screen.getByRole('button', { name: /Generation 2/i });
@@ -176,39 +97,16 @@ const selectV1 = async () => {
   await waitFor(() => user.click(v1));
 };
 
-const getResourceGroupTextInput = async () => {
-  const resourceGroupInput = await screen.findByRole('textbox', {
-    name: /resource group/i,
-  });
-  return resourceGroupInput;
-};
-
-const getResourceGroupSelect = async () => {
-  const resourceGroupInput = await screen.findByPlaceholderText(
-    /select resource group/i,
-  );
-  return resourceGroupInput;
-};
-
-const enterResourceGroup = async () => {
-  const user = userEvent.setup();
-  const resourceGroup = await getResourceGroupTextInput();
-  await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
-};
-
 describe('Step Upload to Azure', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     router = undefined;
   });
 
-  const user = userEvent.setup();
-
   test('clicking Next loads Registration', async () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -237,7 +135,6 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
     const nextButton = await getNextButton();
     expect(nextButton).toBeDisabled();
 
@@ -257,110 +154,15 @@ describe('Step Upload to Azure', () => {
     await enterResourceGroup();
 
     expect(nextButton).toBeEnabled();
-
-    // switch to Sources
-    await selectSourcesOption();
-
-    // manual values should be cleared out
-    expect(await getTenantGuidInput()).toHaveValue('');
-    expect(await getSubscriptionIdInput()).toHaveValue('');
-    expect(await getResourceGroupSelect()).toHaveValue('');
-
-    expect(nextButton).toBeDisabled();
-
-    await selectSource('azureSource1');
-
-    // source information should be fetched
-    expect(await getTenantGuidInput()).not.toHaveValue('');
-    expect(await getSubscriptionIdInput()).not.toHaveValue('');
-    await selectResourceGroup();
-
-    await waitFor(() => {
-      expect(nextButton).toBeEnabled();
-    });
-  });
-
-  test('handles change of selected Source', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await selectSourcesOption();
-    await selectSource('azureSource1');
-    await waitFor(async () => {
-      expect(await getTenantGuidInput()).toHaveValue(
-        '2fd7c95c-0d63-4e81-b914-3fbd5288daf7',
-      );
-    });
-
-    await selectSource('azureSource2');
-    await waitFor(async () => {
-      expect(await getTenantGuidInput()).toHaveValue(
-        '73d5694c-7a28-417e-9fca-55840084f508',
-      );
-    });
-
-    user.click(await getResourceGroupSelect());
-    const groups = await screen.findByLabelText(/Resource group/);
-    expect(groups).toBeInTheDocument();
-    expect(
-      await screen.findByLabelText('Resource group theirGroup2'),
-    ).toBeVisible();
-  });
-
-  test('handles clearing source and selecting new one', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-
-    // Select first source and verify fields are populated
-    await selectSourcesOption();
-    await selectSource('azureSource1');
-    await waitFor(async () => {
-      expect(await getTenantGuidInput()).not.toHaveValue('');
-    });
-    await waitFor(async () => {
-      expect(await getSubscriptionIdInput()).not.toHaveValue('');
-    });
-
-    // Clear the source
-    await clearSource();
-
-    // Verify fields are cleared
-    expect(await getTenantGuidInput()).toHaveValue('');
-    expect(await getSubscriptionIdInput()).toHaveValue('');
-
-    // Select a different source and verify fields are populated correctly
-    await selectSource('azureSource2');
-    await waitFor(async () => {
-      expect(await getTenantGuidInput()).not.toHaveValue('');
-    });
-    await waitFor(async () => {
-      expect(await getSubscriptionIdInput()).not.toHaveValue('');
-    });
-  });
-
-  test('component renders error state correctly', async () => {
-    server.use(
-      http.get(`${PROVISIONING_API}/sources`, () => {
-        return new HttpResponse(null, { status: 500 });
-      }),
-    );
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await selectSourcesOption();
-    await screen.findByText(
-      /Sources cannot be reached, try again later or enter an account info for upload manually\./i,
-    );
   });
 
   test('revisit step button on Review works', async () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectSourcesOption();
-    await selectSource('azureSource1');
-    await selectResourceGroup();
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
     await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
@@ -372,46 +174,10 @@ describe('Azure image type request generated correctly', () => {
     vi.clearAllMocks();
   });
 
-  test('using a source', async () => {
-    await renderCreateMode();
-    await selectAzureTarget();
-    await goToAzureStep();
-    await selectSourcesOption();
-    await selectSource('azureSource1');
-    await selectResourceGroup();
-    await goToReviewStep();
-
-    // informational modal pops up in the first test only as it's tied
-    // to a 'imageBuilder.saveAndBuildModalSeen' variable in localStorage
-    await openAndDismissSaveAndBuildModal();
-    const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
-
-    const expectedImageRequest: ImageRequest = {
-      architecture: 'x86_64',
-      image_type: 'azure',
-      upload_request: {
-        options: {
-          source_id: '666',
-          resource_group: 'myResourceGroup1',
-          hyper_v_generation: 'V2',
-        },
-        type: 'azure',
-      },
-    };
-
-    const expectedRequest: CreateBlueprintRequest = {
-      ...blueprintRequest,
-      image_requests: [expectedImageRequest],
-    };
-
-    expect(receivedRequest).toEqual(expectedRequest);
-  });
-
   test('manually entering info', async () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -444,7 +210,6 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectManuallyEnterInformation();
     await enterTenantGuid();
     await enterSubscriptionId();
     await enterResourceGroup();
@@ -478,8 +243,9 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
-    await selectSourcesOption();
-    await selectSource('azureSource1');
+    await enterTenantGuid();
+    await enterSubscriptionId();
+    await enterResourceGroup();
     await clickBack();
     await deselectAzureAndSelectGuestImage();
     await goToReviewStep();

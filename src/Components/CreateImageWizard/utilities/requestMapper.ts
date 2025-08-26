@@ -63,8 +63,6 @@ import {
   selectAwsSourceId,
   selectAzureHyperVGeneration,
   selectAzureResourceGroup,
-  selectAzureShareMethod,
-  selectAzureSource,
   selectAzureSubscriptionId,
   selectAzureTenantId,
   selectBaseUrl,
@@ -121,7 +119,6 @@ import {
   convertSchemaToIBPayloadRepo,
 } from '../steps/Repositories/components/Utilities';
 import { AwsShareMethod } from '../steps/TargetEnvironment/Aws';
-import { AzureShareMethod } from '../steps/TargetEnvironment/Azure';
 import { GcpAccountType, GcpShareMethod } from '../steps/TargetEnvironment/Gcp';
 
 /**
@@ -291,10 +288,6 @@ function commonRequestToState(
       getLatestRelease(request.distribution) || initialState.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),
     azure: {
-      shareMethod: (azureUploadOptions?.source_id
-        ? 'sources'
-        : 'manual') as AzureShareMethod,
-      source: azureUploadOptions?.source_id || '',
       tenantId: azureUploadOptions?.tenant_id || '',
       subscriptionId: azureUploadOptions?.subscription_id || '',
       resourceGroup: azureUploadOptions?.resource_group,
@@ -595,12 +588,6 @@ const getImageOptions = (
         region: selectAwsRegion(state),
       };
     case 'azure':
-      if (selectAzureShareMethod(state) === 'sources')
-        return {
-          source_id: selectAzureSource(state),
-          resource_group: selectAzureResourceGroup(state),
-          hyper_v_generation: selectAzureHyperVGeneration(state),
-        };
       return {
         tenant_id: selectAzureTenantId(state),
         subscription_id: selectAzureSubscriptionId(state),

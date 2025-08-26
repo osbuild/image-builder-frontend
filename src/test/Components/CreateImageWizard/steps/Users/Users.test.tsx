@@ -10,6 +10,9 @@ import {
   clickBack,
   clickNext,
   clickRegisterLater,
+  enterResourceGroup,
+  enterSubscriptionId,
+  enterTenantGuid,
   getNextButton,
   goToReview,
   goToStep,
@@ -55,26 +58,9 @@ const addAzureTarget = async () => {
     user.click(screen.getByRole('button', { name: /Microsoft Azure/i })),
   );
   await clickNext();
-
-  const sourcesOption = await screen.findByRole('radio', {
-    name: /use an account configured from sources\./i,
-  });
-  await waitFor(async () => user.click(sourcesOption));
-  const azureSourceDropdown =
-    await screen.findByPlaceholderText(/select source/i);
-  await waitFor(() => user.click(azureSourceDropdown));
-  const azureSource = await screen.findByRole('option', {
-    name: /azureSource1/i,
-  });
-  await waitFor(() => user.click(azureSource));
-
-  const resourceGroupDropdown = await screen.findByPlaceholderText(
-    /select resource group/i,
-  );
-  await waitFor(() => user.click(resourceGroupDropdown));
-  await waitFor(async () =>
-    user.click(await screen.findByLabelText('Resource group myResourceGroup1')),
-  );
+  await enterTenantGuid();
+  await enterSubscriptionId();
+  await enterResourceGroup();
 };
 
 const clickRevisitButton = async () => {
