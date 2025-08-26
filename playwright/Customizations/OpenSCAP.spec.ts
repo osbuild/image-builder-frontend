@@ -63,9 +63,10 @@ test('Create a blueprint with OpenSCAP customization', async ({
         .nth(3),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await frame.getByRole('button', { name: 'Selected (8)' }).click();
+    await frame.getByRole('button', { name: 'Selected (9)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'chrony' })).toBeVisible();
+    await expect(frame.getByRole('gridcell', { name: 'cronie' })).toBeVisible();
     await expect(
       frame.getByRole('gridcell', { name: 'firewalld' }),
     ).toBeVisible();
@@ -126,12 +127,13 @@ test('Create a blueprint with OpenSCAP customization', async ({
       frame.getByText('Required by OpenSCAPaudit_backlog_limit=8192audit='),
     ).toBeVisible();
     await frame.getByRole('button', { name: 'Additional packages' }).click();
-    await frame.getByRole('button', { name: 'Selected (10)' }).click();
+    await frame.getByRole('button', { name: 'Selected (11)' }).click();
     await expect(frame.getByRole('gridcell', { name: 'aide' })).toBeVisible();
     await expect(
       frame.getByRole('gridcell', { name: 'audit-libs' }),
     ).toBeVisible();
     await expect(frame.getByRole('gridcell', { name: 'chrony' })).toBeVisible();
+    await expect(frame.getByRole('gridcell', { name: 'cronie' })).toBeVisible();
     await expect(
       frame.getByRole('gridcell', { name: 'firewalld' }),
     ).toBeVisible();
