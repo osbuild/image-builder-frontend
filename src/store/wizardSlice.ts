@@ -25,7 +25,6 @@ import type {
   IBPackageWithRepositoryInfo,
 } from '../Components/CreateImageWizard/steps/Packages/Packages';
 import type { AwsShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Aws';
-import type { AzureShareMethod } from '../Components/CreateImageWizard/steps/TargetEnvironment/Azure';
 import type {
   GcpAccountType,
   GcpShareMethod,
@@ -104,10 +103,8 @@ export type wizardState = {
     region?: string | undefined;
   };
   azure: {
-    shareMethod: AzureShareMethod;
     tenantId: string;
     subscriptionId: string;
-    source: string;
     resourceGroup: string;
     hyperVGeneration: 'V1' | 'V2';
   };
@@ -209,10 +206,8 @@ export const initialState: wizardState = {
     region: 'us-east-1',
   },
   azure: {
-    shareMethod: 'manual',
     tenantId: '',
     subscriptionId: '',
-    source: '',
     resourceGroup: '',
     hyperVGeneration: 'V2',
   },
@@ -341,16 +336,8 @@ export const selectAzureTenantId = (state: RootState) => {
   return state.wizard.azure.tenantId;
 };
 
-export const selectAzureShareMethod = (state: RootState) => {
-  return state.wizard.azure.shareMethod;
-};
-
 export const selectAzureSubscriptionId = (state: RootState) => {
   return state.wizard.azure.subscriptionId;
-};
-
-export const selectAzureSource = (state: RootState) => {
-  return state.wizard.azure.source;
 };
 
 export const selectAzureResourceGroup = (state: RootState) => {
@@ -595,17 +582,8 @@ export const wizardSlice = createSlice({
     changeAzureTenantId: (state, action: PayloadAction<string>) => {
       state.azure.tenantId = action.payload;
     },
-    changeAzureShareMethod: (
-      state,
-      action: PayloadAction<AzureShareMethod>,
-    ) => {
-      state.azure.shareMethod = action.payload;
-    },
     changeAzureSubscriptionId: (state, action: PayloadAction<string>) => {
       state.azure.subscriptionId = action.payload;
-    },
-    changeAzureSource: (state, action: PayloadAction<string>) => {
-      state.azure.source = action.payload;
     },
     changeAzureResourceGroup: (state, action: PayloadAction<string>) => {
       state.azure.resourceGroup = action.payload;
@@ -617,10 +595,8 @@ export const wizardSlice = createSlice({
       state.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
-      state.azure.shareMethod = 'manual';
       state.azure.tenantId = '';
       state.azure.subscriptionId = '';
-      state.azure.source = '';
       state.azure.resourceGroup = '';
     },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
@@ -1211,9 +1187,7 @@ export const {
   changeAwsRegion,
   reinitializeAws,
   changeAzureTenantId,
-  changeAzureShareMethod,
   changeAzureSubscriptionId,
-  changeAzureSource,
   changeAzureResourceGroup,
   changeAzureHyperVGeneration,
   reinitializeAzure,

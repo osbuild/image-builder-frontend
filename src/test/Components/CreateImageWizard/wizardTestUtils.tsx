@@ -130,6 +130,49 @@ export const selectGuestImageTarget = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
 };
 
+export const getTenantGuidInput = async () => {
+  const tenantGuidInput = await screen.findByRole('textbox', {
+    name: /azure tenant guid/i,
+  });
+  return tenantGuidInput;
+};
+
+export const enterTenantGuid = async () => {
+  const user = userEvent.setup();
+  const tenantGuid = await getTenantGuidInput();
+  await waitFor(() =>
+    user.type(tenantGuid, 'b8f86d22-4371-46ce-95e7-65c415f3b1e2'),
+  );
+};
+
+export const getSubscriptionIdInput = async () => {
+  const subscriptionIdInput = await screen.findByRole('textbox', {
+    name: /subscription id/i,
+  });
+  return subscriptionIdInput;
+};
+
+export const enterSubscriptionId = async () => {
+  const user = userEvent.setup();
+  const subscriptionId = await getSubscriptionIdInput();
+  await waitFor(() =>
+    user.type(subscriptionId, '60631143-a7dc-4d15-988b-ba83f3c99711'),
+  );
+};
+
+export const getResourceGroupTextInput = async () => {
+  const resourceGroupInput = await screen.findByRole('textbox', {
+    name: /resource group/i,
+  });
+  return resourceGroupInput;
+};
+
+export const enterResourceGroup = async () => {
+  const user = userEvent.setup();
+  const resourceGroup = await getResourceGroupTextInput();
+  await waitFor(() => user.type(resourceGroup, 'testResourceGroup'));
+};
+
 export const goToRegistrationStep = async () => {
   await selectGuestImageTarget();
   await clickNext();

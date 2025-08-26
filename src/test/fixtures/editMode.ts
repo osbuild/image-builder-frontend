@@ -332,7 +332,8 @@ export const azureImageRequest: ImageRequest = {
   image_type: 'azure',
   upload_request: {
     options: {
-      source_id: '666',
+      subscription_id: '60631143-a7dc-4d15-988b-ba83f3c99711',
+      tenant_id: 'b8f86d22-4371-46ce-95e7-65c415f3b1e2',
       resource_group: 'myResourceGroup1',
       hyper_v_generation: 'V2',
     },
