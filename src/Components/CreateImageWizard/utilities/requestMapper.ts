@@ -75,6 +75,7 @@ import {
   selectComplianceType,
   selectCustomRepositories,
   selectDistribution,
+  selectFilesystemPartitions,
   selectFips,
   selectFirewall,
   selectFirstBootScript,
@@ -92,7 +93,6 @@ import {
   selectModules,
   selectNtpServers,
   selectPackages,
-  selectPartitions,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectRegistrationType,
@@ -767,7 +767,7 @@ const getFileSystem = (state: RootState): Filesystem[] | undefined => {
   };
 
   if (fscMode === 'basic') {
-    const partitions = selectPartitions(state);
+    const partitions = selectFilesystemPartitions(state);
     const fileSystem = partitions.map((partition) => {
       return {
         min_size: convertToBytes(

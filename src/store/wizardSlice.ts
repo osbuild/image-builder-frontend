@@ -430,7 +430,7 @@ export const selectFscMode = (state: RootState) => {
   return state.wizard.fscMode;
 };
 
-export const selectPartitions = (state: RootState) => {
+export const selectFilesystemPartitions = (state: RootState) => {
   return state.wizard.fileSystem.partitions;
 };
 
