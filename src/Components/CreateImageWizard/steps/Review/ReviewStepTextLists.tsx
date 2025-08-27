@@ -60,6 +60,7 @@ import {
   selectBlueprintName,
   selectCustomRepositories,
   selectDistribution,
+  selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
   selectFscMode,
@@ -73,7 +74,6 @@ import {
   selectLanguages,
   selectNtpServers,
   selectPackages,
-  selectPartitions,
   selectRecommendedRepositories,
   selectRedHatRepositories,
   selectRegistrationType,
@@ -153,7 +153,7 @@ export const ImageOutputList = () => {
 };
 export const FSCList = () => {
   const fscMode = useAppSelector(selectFscMode);
-  const partitions = useAppSelector(selectPartitions);
+  const partitions = useAppSelector(selectFilesystemPartitions);
 
   return (
     <Content>

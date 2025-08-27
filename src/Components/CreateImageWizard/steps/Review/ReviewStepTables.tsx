@@ -20,9 +20,9 @@ import { useAppSelector } from '../../../../store/hooks';
 import {
   selectCustomRepositories,
   selectDistribution,
+  selectFilesystemPartitions,
   selectGroups,
   selectPackages,
-  selectPartitions,
   selectRecommendedRepositories,
   selectTemplate,
 } from '../../../../store/wizardSlice';
@@ -83,7 +83,7 @@ const RepoName = ({ repoUuid }: repoPropType) => {
 };
 
 export const FSReviewTable = () => {
-  const partitions = useAppSelector(selectPartitions);
+  const partitions = useAppSelector(selectFilesystemPartitions);
   return (
     <Panel isScrollable>
       <PanelMain maxHeight='30ch'>
