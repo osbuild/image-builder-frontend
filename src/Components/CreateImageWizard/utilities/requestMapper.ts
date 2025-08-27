@@ -73,10 +73,10 @@ import {
   selectComplianceType,
   selectCustomRepositories,
   selectDistribution,
-  selectFileSystemConfigurationType,
   selectFips,
   selectFirewall,
   selectFirstBootScript,
+  selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
@@ -107,7 +107,7 @@ import {
   wizardState,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
-import { FileSystemConfigurationType } from '../steps/FileSystem';
+import { FscModeType } from '../steps/FileSystem';
 import {
   getConversionFactor,
   Partition,
@@ -301,15 +301,16 @@ function commonRequestToState(
           script: getFirstBootScript(request.customizations.files),
         }
       : initialState.firstBoot,
+    fscMode: request.customizations.filesystem
+      ? ('basic' as FscModeType)
+      : ('automatic' as FscModeType),
     fileSystem: request.customizations?.filesystem
       ? {
-          mode: 'manual' as FileSystemConfigurationType,
           partitions: request.customizations?.filesystem.map((fs) =>
             convertFilesystemToPartition(fs),
           ),
         }
       : {
-          mode: 'automatic' as FileSystemConfigurationType,
           partitions: [],
         },
     architecture: arch,
@@ -770,13 +771,13 @@ const getUsers = (state: RootState): User[] | undefined => {
 };
 
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
-  const mode = selectFileSystemConfigurationType(state);
+  const fscMode = selectFscMode(state);
 
   const convertToBytes = (minSize: string, conversionFactor: number) => {
     return minSize.length > 0 ? parseInt(minSize) * conversionFactor : 0;
   };
 
-  if (mode === 'manual') {
+  if (fscMode === 'basic') {
     const partitions = selectPartitions(state);
     const fileSystem = partitions.map((partition) => {
       return {

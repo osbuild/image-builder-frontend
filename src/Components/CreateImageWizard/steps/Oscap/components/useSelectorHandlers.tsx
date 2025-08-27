@@ -8,7 +8,7 @@ import {
   addPartition,
   changeDisabledServices,
   changeEnabledServices,
-  changeFileSystemConfigurationType,
+  changeFscMode,
   changeMaskedServices,
   clearKernelAppend,
   clearPartitions,
@@ -70,7 +70,7 @@ export const useSelectorHandlers = () => {
     });
 
     if (newPartitions.length > 0) {
-      dispatch(changeFileSystemConfigurationType('manual'));
+      dispatch(changeFscMode('basic'));
       for (const partition of newPartitions) {
         dispatch(addPartition(partition));
       }

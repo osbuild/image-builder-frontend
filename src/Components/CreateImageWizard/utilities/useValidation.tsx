@@ -22,9 +22,9 @@ import {
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintName,
-  selectFileSystemConfigurationType,
   selectFirewall,
   selectFirstBootScript,
+  selectFscMode,
   selectHostname,
   selectImageTypes,
   selectKernel,
@@ -276,12 +276,12 @@ export function useAAPValidation(): StepValidation {
 }
 
 export function useFilesystemValidation(): StepValidation {
-  const mode = useAppSelector(selectFileSystemConfigurationType);
+  const fscMode = useAppSelector(selectFscMode);
   const partitions = useAppSelector(selectPartitions);
   let disabledNext = false;
 
   const errors: { [key: string]: string } = {};
-  if (mode === 'automatic') {
+  if (fscMode === 'automatic') {
     return { errors, disabledNext: false };
   }
 
