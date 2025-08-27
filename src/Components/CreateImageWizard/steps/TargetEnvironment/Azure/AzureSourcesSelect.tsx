@@ -23,10 +23,8 @@ import {
 } from '../../../../../store/provisioningApi';
 import {
   changeAzureResourceGroup,
-  changeAzureSource,
   changeAzureSubscriptionId,
   changeAzureTenantId,
-  selectAzureSource,
 } from '../../../../../store/wizardSlice';
 
 export const AzureSourcesSelect = () => {
