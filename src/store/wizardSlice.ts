@@ -209,7 +209,7 @@ export const initialState: wizardState = {
     region: 'us-east-1',
   },
   azure: {
-    shareMethod: 'sources',
+    shareMethod: 'manual',
     tenantId: '',
     subscriptionId: '',
     source: '',
@@ -617,7 +617,7 @@ export const wizardSlice = createSlice({
       state.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
-      state.azure.shareMethod = 'sources';
+      state.azure.shareMethod = 'manual';
       state.azure.tenantId = '';
       state.azure.subscriptionId = '';
       state.azure.source = '';

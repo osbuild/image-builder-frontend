@@ -10,6 +10,14 @@ const getSourceDropdown = async () => {
   return sourceDropdown;
 };
 
+const selectSourcesOption = async () => {
+  const user = userEvent.setup();
+  const sourcesOption = await screen.findByRole('radio', {
+    name: /use an account configured from sources\./i,
+  });
+  await waitFor(async () => user.click(sourcesOption));
+};
+
 const selectAllEnvironments = async () => {
   const user = userEvent.setup();
 
@@ -94,6 +102,7 @@ describe('Keyboard accessibility', () => {
     //    name: /use an account configured from sources\./i,
     //  })
     //).toHaveFocus();
+    await selectSourcesOption();
     const awsSourceDropdown = await getSourceDropdown();
     await waitFor(() => user.click(awsSourceDropdown));
     const awsSource = await screen.findByRole('option', {
@@ -123,6 +132,7 @@ describe('Keyboard accessibility', () => {
     //    name: /use an account configured from sources\./i,
     //  })
     //).toHaveFocus();
+    await selectSourcesOption();
     const azureSourceDropdown = await getSourceDropdown();
     await waitFor(() => user.click(azureSourceDropdown));
     const azureSource = await screen.findByRole('option', {
