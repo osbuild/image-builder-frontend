@@ -31,6 +31,7 @@ import {
   CreateBlueprintRequest,
   Customizations,
   CustomRepository,
+  Disk,
   DistributionProfileItem,
   Distributions,
   File,
@@ -74,6 +75,9 @@ import {
   selectComplianceProfileID,
   selectComplianceType,
   selectCustomRepositories,
+  selectDiskMinsize,
+  selectDiskPartitions,
+  selectDiskType,
   selectDistribution,
   selectFilesystemPartitions,
   selectFips,
@@ -93,6 +97,7 @@ import {
   selectModules,
   selectNtpServers,
   selectPackages,
+  selectPartitioningMode,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectRegistrationType,
@@ -277,7 +282,19 @@ function commonRequestToState(
       : initialState.firstBoot,
     fscMode: request.customizations.filesystem
       ? ('basic' as FscModeType)
-      : ('automatic' as FscModeType),
+      : request.customizations.disk
+        ? ('advanced' as FscModeType)
+        : ('automatic' as FscModeType),
+    disk: request.customizations.disk
+      ? {
+          type: request.customizations.disk.type || undefined,
+          minsize: request.customizations.disk.minsize || '',
+          partitions: request.customizations.disk.partitions,
+        }
+      : {
+          minsize: '',
+          partitions: [],
+        },
     fileSystem: request.customizations?.filesystem
       ? {
           partitions: request.customizations?.filesystem.map((fs) =>
@@ -287,6 +304,7 @@ function commonRequestToState(
       : {
           partitions: [],
         },
+    partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
@@ -678,6 +696,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
+    disk: getDisk(state),
     filesystem: getFileSystem(state),
     users: getUsers(state),
     services: getServices(state),
@@ -690,7 +709,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
-    partitioning_mode: undefined,
+    partitioning_mode: selectPartitioningMode(state),
     fips: getFips(state),
     cacerts:
       satCert && selectRegistrationType(state) === 'register-satellite'
@@ -757,6 +776,20 @@ const getUsers = (state: RootState): User[] | undefined => {
     result.hasPassword = user.hasPassword || user.password !== '';
     return result as User;
   });
+};
+
+const getDisk = (state: RootState): Disk | undefined => {
+  const fscMode = selectFscMode(state);
+
+  if (fscMode === 'advanced') {
+    return {
+      type: selectDiskType(state),
+      minsize: selectDiskMinsize(state),
+      partitions: selectDiskPartitions(state),
+    };
+  }
+
+  return undefined;
 };
 
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
