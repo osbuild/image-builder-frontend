@@ -33,7 +33,7 @@ import {
   changePartitionOrder,
   changePartitionUnit,
   removePartition,
-  selectPartitions,
+  selectFilesystemPartitions,
 } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
@@ -375,7 +375,7 @@ const FileSystemTable = () => {
   const [tempItemOrder, setTempItemOrder] = useState<string[]>([]);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
-  const partitions = useAppSelector(selectPartitions);
+  const partitions = useAppSelector(selectFilesystemPartitions);
   const itemOrder = partitions.map((partition) => partition.id);
   const dispatch = useAppDispatch();
   const isValidDrop = (
