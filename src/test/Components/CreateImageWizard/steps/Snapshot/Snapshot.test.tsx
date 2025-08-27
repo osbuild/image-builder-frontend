@@ -178,6 +178,7 @@ describe('repository snapshot tab - ', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         custom_repositories: expectedCustomRepositories,
         payload_repositories: expectedPayloadRepositories,
       },
@@ -276,6 +277,7 @@ describe('repository snapshot tab - ', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         custom_repositories: expectedCustomRepositories,
         payload_repositories: expectedPayloadRepositories,
       },

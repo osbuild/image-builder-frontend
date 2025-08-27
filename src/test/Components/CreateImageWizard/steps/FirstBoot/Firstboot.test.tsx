@@ -140,6 +140,7 @@ describe('First boot request generated correctly', () => {
       ...blueprintRequest,
       distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
+        ...blueprintRequest.customizations,
         files: firstBootData,
         services: { enabled: [FIRST_BOOT_SERVICE] },
       },
@@ -167,6 +168,7 @@ describe('First boot request generated correctly', () => {
       ...blueprintRequest,
       distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
+        ...blueprintRequest.customizations,
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',
         },
@@ -199,6 +201,7 @@ describe('First boot request generated correctly', () => {
       ...blueprintRequest,
       distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
+        ...blueprintRequest.customizations,
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_standard',
         },

@@ -238,6 +238,7 @@ describe('Services request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         services: {
           disabled: ['telnet'],
           masked: ['nfs-server'],
@@ -285,6 +286,7 @@ describe('Services request generated correctly', () => {
       ...blueprintRequest,
       distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10737418240,

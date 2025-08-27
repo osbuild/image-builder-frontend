@@ -66,7 +66,14 @@ export const blueprintRequest: CreateBlueprintRequest = {
   description: '',
   distribution: RHEL_10,
   image_requests: [imageRequest],
-  customizations: {},
+  customizations: {
+    locale: {
+      languages: ['C.UTF-8'],
+    },
+    timezone: {
+      timezone: 'Etc/UTC',
+    },
+  },
 };
 
 /**
@@ -184,10 +191,12 @@ export const openAndDismissSaveAndBuildModal = async () => {
     name: 'Create blueprint',
   });
   await waitFor(async () => user.click(createBlueprintBtn));
-  const saveAndBuildModal = await screen.findByTestId(
+  const saveAndBuildModal = screen.queryByTestId(
     'close-button-saveandbuild-modal',
   );
-  await waitFor(() => user.click(saveAndBuildModal));
+  if (saveAndBuildModal) {
+    await waitFor(() => user.click(saveAndBuildModal));
+  }
 };
 
 export const interceptBlueprintRequest = async (requestPathname: string) => {
