@@ -15,7 +15,7 @@ import type {
 } from './imageBuilderApi';
 import type { ActivationKeys } from './rhsmApi';
 
-import type { FileSystemConfigurationType } from '../Components/CreateImageWizard/steps/FileSystem';
+import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
 import type {
   Partition,
   Units,
@@ -130,8 +130,9 @@ export type wizardState = {
     profileID: string | undefined;
     policyTitle: string | undefined;
   };
+
+  fscMode: FscModeType;
   fileSystem: {
-    mode: FileSystemConfigurationType;
     partitions: Partition[];
   };
   snapshotting: {
@@ -237,8 +238,8 @@ export const initialState: wizardState = {
     profileID: undefined,
     policyTitle: undefined,
   },
+  fscMode: 'automatic',
   fileSystem: {
-    mode: 'automatic',
     partitions: [],
   },
   snapshotting: {
@@ -425,8 +426,8 @@ export const selectComplianceType = (state: RootState) => {
   return state.wizard.compliance.complianceType;
 };
 
-export const selectFileSystemConfigurationType = (state: RootState) => {
-  return state.wizard.fileSystem.mode;
+export const selectFscMode = (state: RootState) => {
+  return state.wizard.fscMode;
 };
 
 export const selectPartitions = (state: RootState) => {
@@ -697,27 +698,23 @@ export const wizardSlice = createSlice({
       state.compliance.profileID = action.payload.profileID;
       state.compliance.policyTitle = action.payload.policyTitle;
     },
-
     changeFileSystemConfiguration: (
       state,
       action: PayloadAction<Partition[]>,
     ) => {
       state.fileSystem.partitions = action.payload;
     },
-    changeFileSystemConfigurationType: (
-      state,
-      action: PayloadAction<FileSystemConfigurationType>,
-    ) => {
-      const currentMode = state.fileSystem.mode;
+    changeFscMode: (state, action: PayloadAction<FscModeType>) => {
+      const currentMode = state.fscMode;
 
       // Only trigger if mode is being *changed*
       if (currentMode !== action.payload) {
-        state.fileSystem.mode = action.payload;
+        state.fscMode = action.payload;
         switch (action.payload) {
           case 'automatic':
             state.fileSystem.partitions = [];
             break;
-          case 'manual':
+          case 'basic':
             state.fileSystem.partitions = [
               {
                 id: uuidv4(),
@@ -730,9 +727,9 @@ export const wizardSlice = createSlice({
       }
     },
     clearPartitions: (state) => {
-      const currentMode = state.fileSystem.mode;
+      const currentMode = state.fscMode;
 
-      if (currentMode === 'manual') {
+      if (currentMode === 'basic') {
         state.fileSystem.partitions = [
           {
             id: uuidv4(),
@@ -1226,7 +1223,7 @@ export const {
   changeCompliance,
   changeComplianceType,
   changeFileSystemConfiguration,
-  changeFileSystemConfigurationType,
+  changeFscMode,
   clearPartitions,
   addPartition,
   removePartition,

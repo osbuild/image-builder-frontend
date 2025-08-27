@@ -21,8 +21,8 @@ import {
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeCompliance,
-  changeFileSystemConfigurationType,
   changeFips,
+  changeFscMode,
   clearKernelAppend,
   selectCompliancePolicyID,
   selectCompliancePolicyTitle,
@@ -141,7 +141,7 @@ const PolicySelector = () => {
       }),
     );
     clearCompliancePackages(currentProfileData?.packages || []);
-    dispatch(changeFileSystemConfigurationType('automatic'));
+    dispatch(changeFscMode('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
     dispatch(changeFips(false));

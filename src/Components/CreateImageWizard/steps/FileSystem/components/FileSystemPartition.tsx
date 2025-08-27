@@ -4,16 +4,14 @@ import { FormGroup, Label, Radio } from '@patternfly/react-core';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
-  changeFileSystemConfigurationType,
+  changeFscMode,
   selectComplianceProfileID,
-  selectFileSystemConfigurationType,
+  selectFscMode,
 } from '../../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
-  const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType,
-  );
+  const fscMode = useAppSelector(selectFscMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
 
   if (hasOscapProfile) {
@@ -34,9 +32,9 @@ const FileSystemPartition = () => {
         }
         name='sc-radio-automatic'
         description='Automatically partition your image to what is best, depending on the target environment(s)'
-        isChecked={fileSystemConfigurationType === 'automatic'}
+        isChecked={fscMode === 'automatic'}
         onChange={() => {
-          dispatch(changeFileSystemConfigurationType('automatic'));
+          dispatch(changeFscMode('automatic'));
         }}
       />
       <Radio
@@ -44,9 +42,9 @@ const FileSystemPartition = () => {
         label='Manually configure partitions'
         name='fsc-radio-manual'
         description='Manually configure the file system of your image by adding, removing, and editing partitions'
-        isChecked={fileSystemConfigurationType === 'manual'}
+        isChecked={fscMode === 'basic'}
         onChange={() => {
-          dispatch(changeFileSystemConfigurationType('manual'));
+          dispatch(changeFscMode('basic'));
         }}
       />
     </FormGroup>

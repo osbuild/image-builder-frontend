@@ -60,9 +60,9 @@ import {
   selectBlueprintName,
   selectCustomRepositories,
   selectDistribution,
-  selectFileSystemConfigurationType,
   selectFirewall,
   selectFirstBootScript,
+  selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
@@ -152,9 +152,7 @@ export const ImageOutputList = () => {
   );
 };
 export const FSCList = () => {
-  const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType,
-  );
+  const fscMode = useAppSelector(selectFscMode);
   const partitions = useAppSelector(selectPartitions);
 
   return (
@@ -164,8 +162,8 @@ export const FSCList = () => {
           Configuration type
         </Content>
         <Content component={ContentVariants.dd}>
-          {fileSystemConfigurationType === 'manual' ? 'Manual' : 'Automatic'}
-          {fileSystemConfigurationType === 'manual' && (
+          {fscMode === 'basic' ? 'Basic' : 'Automatic'}
+          {fscMode === 'basic' && (
             <>
               {' '}
               <Popover
@@ -187,7 +185,7 @@ export const FSCList = () => {
             </>
           )}
         </Content>
-        {fileSystemConfigurationType === 'manual' && (
+        {fscMode === 'basic' && (
           <>
             <Content component={ContentVariants.dt}>
               Image size (minimum) <MinimumSizePopover />
