@@ -248,6 +248,7 @@ describe('Kernel request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         kernel: {
           name: 'kernel-debug',
         },
@@ -286,7 +287,7 @@ describe('Kernel request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: {},
+      customizations: { ...blueprintRequest.customizations },
     };
 
     await waitFor(() => {
@@ -304,6 +305,7 @@ describe('Kernel request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         kernel: {
           append: 'nosmt=force',
         },
@@ -328,6 +330,7 @@ describe('Kernel request generated correctly', () => {
       ...blueprintRequest,
       distribution: RHEL_9, // overrides default RHEL 10 to make OpenSCAP available
       customizations: {
+        ...blueprintRequest.customizations,
         openscap: {
           profile_id: 'xccdf_org.ssgproject.content_profile_ccn_basic',
         },

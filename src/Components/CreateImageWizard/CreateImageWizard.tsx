@@ -314,16 +314,12 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       return;
     }
 
-    let defaultTimezone = '';
-    if (distribution === RHEL_10) {
-      defaultTimezone = 'Etc/UTC';
-    } else if (targetEnvironments.includes('azure')) {
-      defaultTimezone = 'Etc/UTC';
-    } else {
-      defaultTimezone = 'America/New_York';
-    }
+    const defaultTimezone =
+      distribution === RHEL_10 || targetEnvironments.includes('azure')
+        ? 'Etc/UTC'
+        : 'America/New_York';
 
-    if (!timezone && defaultTimezone) {
+    if (!timezone) {
       dispatch(changeTimezone(defaultTimezone));
     }
   }, [distribution, targetEnvironments, isEdit, dispatch]);

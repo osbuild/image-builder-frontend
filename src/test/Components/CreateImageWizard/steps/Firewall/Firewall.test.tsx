@@ -149,6 +149,7 @@ describe('Firewall request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         firewall: {
           ports: ['22:tcp', 'imap:tcp'],
         },
@@ -173,6 +174,7 @@ describe('Firewall request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         firewall: {
           services: {
             enabled: ['ftp', 'ntp', 'dhcp'],
@@ -202,6 +204,7 @@ describe('Firewall request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         firewall: {
           ports: ['22:tcp', 'imap:tcp'],
           services: {
