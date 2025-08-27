@@ -193,7 +193,6 @@ export const openAndDismissSaveAndBuildModal = async () => {
 export const interceptBlueprintRequest = async (requestPathname: string) => {
   const user = userEvent.setup();
   const receivedRequestPromise = spyOnRequest(requestPathname, 'POST');
-
   const saveButton = await screen.findByRole('button', {
     name: 'Create blueprint',
   });

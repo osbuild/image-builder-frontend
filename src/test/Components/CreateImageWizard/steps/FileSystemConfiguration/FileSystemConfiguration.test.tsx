@@ -9,7 +9,10 @@ import {
   UNIT_MIB,
 } from '../../../../../constants';
 import { mockBlueprintIds } from '../../../../fixtures/blueprints';
-import { fscCreateBlueprintRequest } from '../../../../fixtures/editMode';
+import {
+  diskCreateBlueprintRequest,
+  fscCreateBlueprintRequest,
+} from '../../../../fixtures/editMode';
 import {
   blueprintRequest,
   clickNext,
@@ -373,7 +376,7 @@ describe('File system configuration edit mode', () => {
     vi.clearAllMocks();
   });
 
-  test('edit mode works', async () => {
+  test('filesystem edit mode works', async () => {
     const id = mockBlueprintIds['fsc'];
     await renderEditMode(id);
 
@@ -382,6 +385,18 @@ describe('File system configuration edit mode', () => {
       `${EDIT_BLUEPRINT}/${id}`,
     );
     const expectedRequest = fscCreateBlueprintRequest;
+    expect(receivedRequest).toEqual(expectedRequest);
+  });
+
+  test('disk edit mode works', async () => {
+    const id = mockBlueprintIds['disk'];
+    await renderEditMode(id);
+
+    // starts on review step
+    const receivedRequest = await interceptEditBlueprintRequest(
+      `${EDIT_BLUEPRINT}/${id}`,
+    );
+    const expectedRequest = diskCreateBlueprintRequest;
     expect(receivedRequest).toEqual(expectedRequest);
   });
 });

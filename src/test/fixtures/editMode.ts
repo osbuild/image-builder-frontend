@@ -24,6 +24,7 @@ import {
   BlueprintResponse,
   CreateBlueprintRequest,
   CustomRepository,
+  Disk,
   File,
   ImageRequest,
   Module,
@@ -90,6 +91,48 @@ export const expectedFsc = [
   { min_size: 10 * UNIT_MIB, mountpoint: '/home' },
   { min_size: 10 * UNIT_KIB, mountpoint: '/app' },
 ];
+
+// Disk
+export const expectedDisk: Disk = {
+  minsize: '2 GiB',
+  partitions: [
+    {
+      fs_type: 'ext4',
+      label: 'string',
+      minsize: '2 GiB',
+      mountpoint: 'string',
+      part_type: 'string',
+      type: 'plain',
+    },
+    {
+      minsize: '2 GiB',
+      part_type: 'string',
+      subvolumes: [
+        {
+          mountpoint: 'string',
+          name: 'string',
+        },
+      ],
+      type: 'btrfs',
+    },
+    {
+      logical_volumes: [
+        {
+          fs_type: 'ext4',
+          label: 'string',
+          minsize: '2 GiB',
+          mountpoint: 'string',
+          name: 'string',
+        },
+      ],
+      minsize: '2 GiB',
+      name: 'string',
+      part_type: 'string',
+      type: 'lvm',
+    },
+  ],
+  type: 'gpt',
+};
 
 // Repositories
 export const expectedPayloadRepositories: Repository[] = [
@@ -414,6 +457,24 @@ export const fscBlueprintResponse: BlueprintResponse = {
   },
 };
 
+export const diskCreateBlueprintRequest: CreateBlueprintRequest = {
+  ...baseCreateBlueprintRequest,
+  name: mockBlueprintNames['disk'],
+  description: mockBlueprintDescriptions['disk'],
+  customizations: {
+    disk: expectedDisk,
+  },
+};
+
+export const diskBlueprintResponse: BlueprintResponse = {
+  ...diskCreateBlueprintRequest,
+  id: mockBlueprintIds['disk'],
+  description: mockBlueprintDescriptions['disk'],
+  lint: {
+    errors: [],
+  },
+};
+
 export const snapshotCreateBlueprintRequest: CreateBlueprintRequest = {
   ...baseCreateBlueprintRequest,
   name: mockBlueprintNames['snapshot'],
@@ -718,6 +779,8 @@ export const getMockBlueprintResponse = (id: string) => {
       return registrationBlueprintResponse;
     case mockBlueprintIds['fsc']:
       return fscBlueprintResponse;
+    case mockBlueprintIds['disk']:
+      return diskBlueprintResponse;
     case mockBlueprintIds['oscap']:
       return oscapBlueprintResponse;
     case mockBlueprintIds['snapshot']:
