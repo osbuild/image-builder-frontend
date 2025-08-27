@@ -653,6 +653,7 @@ describe('Packages request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         packages: expectedPackages,
       },
     };
@@ -688,6 +689,7 @@ describe('Packages request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         packages: ['testModule'],
         enabled_modules: [{ name: 'testModule', stream: '1.24' }],
       },
@@ -726,6 +728,7 @@ describe('Packages request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         packages: ['@grouper'],
       },
     };
@@ -765,6 +768,7 @@ describe('Packages request generated correctly', () => {
         ...blueprintRequest,
         distribution: RHEL_9,
         customizations: {
+          ...blueprintRequest.customizations,
           packages: expectedSinglePackageRecommendation,
         },
       };
@@ -786,6 +790,7 @@ describe('Packages request generated correctly', () => {
         ...blueprintRequest,
         distribution: RHEL_9,
         customizations: {
+          ...blueprintRequest.customizations,
           packages: expectedAllPackageRecommendations,
         },
       };
@@ -809,6 +814,7 @@ describe('Packages request generated correctly', () => {
         ...blueprintRequest,
         distribution: RHEL_9,
         customizations: {
+          ...blueprintRequest.customizations,
           packages: expectedPackagesWithoutRecommendations,
         },
       };

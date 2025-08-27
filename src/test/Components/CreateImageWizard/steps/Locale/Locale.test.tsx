@@ -184,8 +184,9 @@ describe('Locale request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         locale: {
-          languages: ['nl_NL.UTF-8', 'en_GB.UTF-8'],
+          languages: ['C.UTF-8', 'nl_NL.UTF-8', 'en_GB.UTF-8'],
         },
       },
     };
@@ -206,7 +207,9 @@ describe('Locale request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         locale: {
+          ...blueprintRequest.customizations.locale,
           keyboard: 'us',
         },
       },
@@ -229,8 +232,9 @@ describe('Locale request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         locale: {
-          languages: ['nl_NL.UTF-8', 'en_GB.UTF-8'],
+          languages: ['C.UTF-8', 'nl_NL.UTF-8', 'en_GB.UTF-8'],
           keyboard: 'us',
         },
       },

@@ -37,6 +37,17 @@ const selectTimezone = async () => {
   const user = userEvent.setup({ delay: null });
   const timezoneDropdown =
     await screen.findByPlaceholderText(/select a timezone/i);
+  await waitFor(() => user.click(timezoneDropdown));
+
+  const clearButtons = screen.queryAllByRole('button', {
+    name: /clear input/i,
+  });
+  if (clearButtons.length > 0) {
+    const clearBtn = clearButtons[0] as HTMLButtonElement;
+    if (!clearBtn.disabled) {
+      await waitFor(() => user.click(clearBtn));
+    }
+  }
   await waitFor(() => user.type(timezoneDropdown, 'Europe/Am'));
   const amsterdamTimezone = await screen.findByText('Europe/Amsterdam');
   await waitFor(() => user.click(amsterdamTimezone));
@@ -46,6 +57,7 @@ const searchForUnknownTimezone = async () => {
   const user = userEvent.setup();
   const timezoneDropdown =
     await screen.findByPlaceholderText(/select a timezone/i);
+  await waitFor(() => user.click(timezoneDropdown));
   await waitFor(() => user.type(timezoneDropdown, 'foo'));
 };
 
@@ -69,10 +81,10 @@ const addNtpServerViaAddButton = async (ntpServer: string) => {
 
 const clearInput = async () => {
   const user = userEvent.setup();
-  const clearInputBtn = await screen.findByRole('button', {
+  const clearInputBtns = await screen.findAllByRole('button', {
     name: /clear input/i,
   });
-  await waitFor(() => user.click(clearInputBtn));
+  await waitFor(() => user.click(clearInputBtns[clearInputBtns.length - 1]));
 };
 
 const clickRevisitButton = async () => {
@@ -176,6 +188,9 @@ describe('Timezone request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        locale: {
+          languages: ['C.UTF-8'],
+        },
         timezone: {
           timezone: 'Europe/Amsterdam',
         },
@@ -198,7 +213,9 @@ describe('Timezone request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         timezone: {
+          ...blueprintRequest.customizations.timezone,
           ntpservers: ['0.nl.pool.ntp.org', '1.nl.pool.ntp.org'],
         },
       },
@@ -221,6 +238,9 @@ describe('Timezone request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        locale: {
+          languages: ['C.UTF-8'],
+        },
         timezone: {
           timezone: 'Europe/Amsterdam',
           ntpservers: ['0.nl.pool.ntp.org', '1.nl.pool.ntp.org'],

@@ -250,7 +250,10 @@ describe('Registration request generated correctly', () => {
     description: '',
     distribution: RHEL_10,
     image_requests: [imageRequest],
-    customizations: {},
+    customizations: {
+      locale: { languages: ['C.UTF-8'] },
+      timezone: { timezone: 'Etc/UTC' },
+    },
   };
 
   test('register + insights + rhc', async () => {
@@ -272,7 +275,15 @@ describe('Registration request generated correctly', () => {
     };
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: { subscription: expectedSubscription },
+      customizations: {
+        subscription: expectedSubscription,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
@@ -296,7 +307,15 @@ describe('Registration request generated correctly', () => {
     };
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: { subscription: expectedSubscription },
+      customizations: {
+        subscription: expectedSubscription,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
     };
 
     expect(receivedRequest).toEqual(expectedRequest);
@@ -322,7 +341,15 @@ describe('Registration request generated correctly', () => {
     };
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: { subscription: expectedSubscription },
+      customizations: {
+        subscription: expectedSubscription,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
     };
 
     await waitFor(() => {
@@ -339,7 +366,7 @@ describe('Registration request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: {},
+      customizations: { ...blueprintRequest.customizations },
     };
 
     await waitFor(() => {
@@ -365,7 +392,15 @@ describe('Registration request generated correctly', () => {
     };
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: { subscription: expectedSubscription },
+      customizations: {
+        subscription: expectedSubscription,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
     };
 
     await waitFor(() => {
@@ -392,7 +427,15 @@ describe('Registration request generated correctly', () => {
     };
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: { subscription: expectedSubscription },
+      customizations: {
+        subscription: expectedSubscription,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
     };
 
     await waitFor(() => {

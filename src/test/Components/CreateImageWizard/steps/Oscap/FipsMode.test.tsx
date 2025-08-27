@@ -121,6 +121,12 @@ describe('FIPS Mode Tests', () => {
       name: 'FIPS test',
       customizations: {
         ...baseCreateBlueprintRequest.customizations,
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
         fips: {
           enabled: true,
         },

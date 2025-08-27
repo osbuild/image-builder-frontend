@@ -224,6 +224,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10 * UNIT_GIB,
@@ -248,6 +249,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 15 * UNIT_GIB,
@@ -272,6 +274,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10 * UNIT_MIB,
@@ -296,6 +299,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10 * UNIT_KIB,
@@ -320,6 +324,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10 * UNIT_GIB,
@@ -349,6 +354,7 @@ describe('File system configuration request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         filesystem: [
           {
             min_size: 10 * UNIT_GIB,
