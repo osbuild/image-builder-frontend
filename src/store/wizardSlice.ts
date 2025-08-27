@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import type { ApiRepositoryResponseRead } from './contentSourcesApi';
 import type {
   CustomRepository,
+  Disk,
   Distributions,
   ImageRequest,
   ImageTypes,
@@ -45,6 +46,8 @@ export type RegistrationType =
   | 'register-now-rhc'
   | 'register-satellite'
   | 'register-aap';
+
+export type PartitioningModeType = ('raw' | 'lvm' | 'auto-lvm') | undefined;
 
 export type ComplianceType = 'openscap' | 'compliance';
 
@@ -127,11 +130,12 @@ export type wizardState = {
     profileID: string | undefined;
     policyTitle: string | undefined;
   };
-
   fscMode: FscModeType;
+  disk: Disk;
   fileSystem: {
     partitions: Partition[];
   };
+  partitioning_mode: PartitioningModeType;
   snapshotting: {
     useLatest: boolean;
     snapshotDate: string;
@@ -234,9 +238,14 @@ export const initialState: wizardState = {
     policyTitle: undefined,
   },
   fscMode: 'automatic',
+  disk: {
+    minsize: '',
+    partitions: [],
+  },
   fileSystem: {
     partitions: [],
   },
+  partitioning_mode: undefined,
   snapshotting: {
     useLatest: true,
     snapshotDate: '',
@@ -417,8 +426,24 @@ export const selectFscMode = (state: RootState) => {
   return state.wizard.fscMode;
 };
 
+export const selectDiskType = (state: RootState) => {
+  return state.wizard.disk.type;
+};
+
+export const selectDiskMinsize = (state: RootState) => {
+  return state.wizard.disk.minsize;
+};
+
+export const selectDiskPartitions = (state: RootState) => {
+  return state.wizard.disk.partitions;
+};
+
 export const selectFilesystemPartitions = (state: RootState) => {
   return state.wizard.fileSystem.partitions;
+};
+
+export const selectPartitioningMode = (state: RootState) => {
+  return state.wizard.partitioning_mode;
 };
 
 export const selectUseLatest = (state: RootState) => {
