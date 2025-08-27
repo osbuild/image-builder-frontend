@@ -30,6 +30,18 @@ import {
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.launcheof':
+        return false;
+      default:
+        return false;
+    }
+  }),
+}));
+
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
@@ -272,6 +284,7 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
+    await selectSourcesOption();
     await selectSource('azureSource1');
     await waitFor(async () => {
       expect(await getTenantGuidInput()).toHaveValue(
@@ -300,6 +313,7 @@ describe('Step Upload to Azure', () => {
     await goToAzureStep();
 
     // Select first source and verify fields are populated
+    await selectSourcesOption();
     await selectSource('azureSource1');
     await waitFor(async () => {
       expect(await getTenantGuidInput()).not.toHaveValue('');
@@ -334,6 +348,7 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
+    await selectSourcesOption();
     await screen.findByText(
       /Sources cannot be reached, try again later or enter an account info for upload manually\./i,
     );
@@ -343,6 +358,7 @@ describe('Step Upload to Azure', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
+    await selectSourcesOption();
     await selectSource('azureSource1');
     await selectResourceGroup();
     await goToReviewStep();
@@ -360,6 +376,7 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
+    await selectSourcesOption();
     await selectSource('azureSource1');
     await selectResourceGroup();
     await goToReviewStep();
@@ -461,6 +478,7 @@ describe('Azure image type request generated correctly', () => {
     await renderCreateMode();
     await selectAzureTarget();
     await goToAzureStep();
+    await selectSourcesOption();
     await selectSource('azureSource1');
     await clickBack();
     await deselectAzureAndSelectGuestImage();

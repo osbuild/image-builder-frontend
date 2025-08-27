@@ -12,6 +12,7 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import { AzureAuthButton } from './AzureAuthButton';
 import { AzureHyperVSelect } from './AzureHyperVSelect';
@@ -62,6 +63,7 @@ const Azure = () => {
   const tenantId = useAppSelector(selectAzureTenantId);
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
   const resourceGroup = useAppSelector(selectAzureResourceGroup);
+  const launchEofFlag = useFlag('image-builder.launcheof');
 
   return (
     <Form>
@@ -77,8 +79,10 @@ const Azure = () => {
         To authorize Image Builder to push images to Microsoft Azure, the
         account owner must configure Image Builder as an authorized application
         for a specific tenant ID and give it the role of &quot;Contributor&quot;
-        for the resource group you want to upload to. This applies even when
-        defining target by Source selection.
+        for the resource group you want to upload to.{' '}
+        {!launchEofFlag
+          ? 'This applies even when defining target by Source selection.'
+          : ''}
         <br />
         <Button
           component='a'
@@ -93,37 +97,39 @@ const Azure = () => {
         </Button>
       </Content>
       <AzureHyperVSelect />
-      <FormGroup label='Share method:'>
-        <Radio
-          id='radio-with-description'
-          label='Use an account configured from Sources.'
-          name='radio-7'
-          description='Use a configured source to launch environments directly from the console.'
-          isChecked={shareMethod === 'sources'}
-          onChange={() => {
-            dispatch(changeAzureSource(''));
-            dispatch(changeAzureTenantId(''));
-            dispatch(changeAzureSubscriptionId(''));
-            dispatch(changeAzureShareMethod('sources'));
-            dispatch(changeAzureResourceGroup(''));
-          }}
-          autoFocus
-        />
-        <Radio
-          id='radio'
-          label='Manually enter the account information.'
-          name='radio-8'
-          isChecked={shareMethod === 'manual'}
-          onChange={() => {
-            dispatch(changeAzureSource(''));
-            dispatch(changeAzureTenantId(''));
-            dispatch(changeAzureSubscriptionId(''));
-            dispatch(changeAzureShareMethod('manual'));
-            dispatch(changeAzureResourceGroup(''));
-          }}
-        />
-      </FormGroup>
-      {shareMethod === 'sources' && (
+      {!launchEofFlag && (
+        <FormGroup label='Share method:'>
+          <Radio
+            id='radio-with-description'
+            label='Use an account configured from Sources.'
+            name='radio-7'
+            description='Use a configured source to launch environments directly from the console.'
+            isChecked={shareMethod === 'sources'}
+            onChange={() => {
+              dispatch(changeAzureSource(''));
+              dispatch(changeAzureTenantId(''));
+              dispatch(changeAzureSubscriptionId(''));
+              dispatch(changeAzureShareMethod('sources'));
+              dispatch(changeAzureResourceGroup(''));
+            }}
+            autoFocus
+          />
+          <Radio
+            id='radio'
+            label='Manually enter the account information.'
+            name='radio-8'
+            isChecked={shareMethod === 'manual'}
+            onChange={() => {
+              dispatch(changeAzureSource(''));
+              dispatch(changeAzureTenantId(''));
+              dispatch(changeAzureSubscriptionId(''));
+              dispatch(changeAzureShareMethod('manual'));
+              dispatch(changeAzureResourceGroup(''));
+            }}
+          />
+        </FormGroup>
+      )}
+      {!launchEofFlag && shareMethod === 'sources' && (
         <>
           <AzureSourcesSelect />
           <SourcesButton />
@@ -156,7 +162,7 @@ const Azure = () => {
           <AzureResourceGroups />
         </>
       )}
-      {shareMethod === 'manual' && (
+      {(launchEofFlag || shareMethod === 'manual') && (
         <>
           <FormGroup label='Azure tenant GUID' isRequired>
             <ValidatedInput

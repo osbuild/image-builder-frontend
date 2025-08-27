@@ -22,6 +22,18 @@ import {
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
+vi.mock('@unleash/proxy-client-react', () => ({
+  useUnleashContext: () => vi.fn(),
+  useFlag: vi.fn((flag) => {
+    switch (flag) {
+      case 'image-builder.launcheof':
+        return false;
+      default:
+        return false;
+    }
+  }),
+}));
+
 let router: RemixRouter | undefined = undefined;
 
 const validUserName = 'best';
@@ -44,6 +56,10 @@ const addAzureTarget = async () => {
   );
   await clickNext();
 
+  const sourcesOption = await screen.findByRole('radio', {
+    name: /use an account configured from sources\./i,
+  });
+  await waitFor(async () => user.click(sourcesOption));
   const azureSourceDropdown =
     await screen.findByPlaceholderText(/select source/i);
   await waitFor(() => user.click(azureSourceDropdown));
