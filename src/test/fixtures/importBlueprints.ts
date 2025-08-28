@@ -266,3 +266,131 @@ ports = ["invalid-port"]
 enabled = ["--invalid-enabled-service"]
 disabled = ["--invalid-disabled-service"]
 `;
+
+export const BLUEPRINT_WITH_FILESYSTEM_CUSTOMIZATION = `{
+  "customizations": {
+    "filesystem": [
+      {
+        "min_size": 2147483648,
+        "mountpoint": "/var"
+      }
+    ]
+  },
+  "description": "",
+  "distribution": "rhel-9",
+  "metadata": {
+    "exported_at": "2025-08-28 07:23:55.65012838 +0000 UTC",
+    "parent_id": "0ebb366f-d567-4580-83e4-45cf9e874aa8"
+  },
+  "name": "blueprint-with-filesystem"
+}`;
+
+export const BLUEPRINT_WITH_DISK_CUSTOMIZATION = `{
+  "customizations": {
+    "disk": {
+      "minsize": "2 GiB",
+      "partitions": [
+        {
+          "fs_type": "ext4",
+          "label": "string",
+          "minsize": "2 GiB",
+          "mountpoint": "string",
+          "part_type": "string",
+          "type": "plain"
+        },
+        {
+          "minsize": "2 GiB",
+          "part_type": "string",
+          "subvolumes": [
+            {
+              "mountpoint": "string",
+              "name": "string"
+            }
+          ],
+          "type": "btrfs"
+        },
+        {
+          "logical_volumes": [
+            {
+              "fs_type": "ext4",
+              "label": "string",
+              "minsize": "2 GiB",
+              "mountpoint": "string",
+              "name": "string"
+            }
+          ],
+          "minsize": "2 GiB",
+          "name": "string",
+          "part_type": "string",
+          "type": "lvm"
+        }
+      ],
+      "type": "gpt"
+    }
+  },
+  "description": "",
+  "distribution": "rhel-9",
+  "metadata": {
+    "exported_at": "2025-08-28 07:23:55.65012838 +0000 UTC",
+    "parent_id": "0ebb366f-d567-4580-83e4-45cf9e874aa8"
+  },
+  "name": "blueprint-with-disk"
+}`;
+
+export const INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK = `{
+  "customizations": {
+    "filesystem": [
+      {
+        "min_size": 2147483648,
+        "mountpoint": "/var"
+      }
+    ],
+    "disk": {
+      "minsize": "2 GiB",
+      "partitions": [
+        {
+          "fs_type": "ext4",
+          "label": "string",
+          "minsize": "2 GiB",
+          "mountpoint": "string",
+          "part_type": "string",
+          "type": "plain"
+        },
+        {
+          "minsize": "2 GiB",
+          "part_type": "string",
+          "subvolumes": [
+            {
+              "mountpoint": "string",
+              "name": "string"
+            }
+          ],
+          "type": "btrfs"
+        },
+        {
+          "logical_volumes": [
+            {
+              "fs_type": "ext4",
+              "label": "string",
+              "minsize": "2 GiB",
+              "mountpoint": "string",
+              "name": "string"
+            }
+          ],
+          "minsize": "2 GiB",
+          "name": "string",
+          "part_type": "string",
+          "type": "lvm"
+        }
+      ],
+      "type": "gpt"
+    }
+  },
+  "description": "",
+  "distribution": "rhel-9",
+  "metadata": {
+    "exported_at": "2025-08-28 07:23:55.65012838 +0000 UTC",
+    "parent_id": "0ebb366f-d567-4580-83e4-45cf9e874aa8"
+  },
+  "name": "blueprint-with-disk"
+}`;
