@@ -66,7 +66,7 @@ jobs:
           npx wait-on http://localhost:8003/apps/image-builder/
 
       - name: Run testing proxy
-        run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name consoledot-testing-proxy quay.io/dvagner/consoledot-testing-proxy
+        run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name frontend-development-proxy quay.io/redhat-user-workloads/hcc-platex-services-tenant/frontend-development-proxy
 
       - name: Run front-end Playwright tests
         id: playwright-tests
