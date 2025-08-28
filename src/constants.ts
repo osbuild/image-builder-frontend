@@ -15,6 +15,8 @@ export const TEMPLATES_URL = '/insights/content/templates';
 export const DEVELOPERS_URL = 'https://developers.redhat.com/about';
 export const FILE_SYSTEM_CUSTOMIZATION_URL =
   'https://docs.redhat.com/en/documentation/red_hat_insights/1-latest/html/deploying_and_managing_rhel_systems_in_hybrid_clouds/index#creating-a-blueprint_creating-blueprints-and-blueprint-images';
+export const PARTITIONING_URL =
+  'https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/9/html/using_image_mode_for_rhel_to_build_deploy_and_manage_operating_systems/customizing-disk-images-of-rhel-image-mode-with-advanced-partitioning_using-image-mode-for-rhel-to-build-deploy-and-manage-operating-systems';
 export const SUBSCRIPTION_MANAGEMENT_URL =
   'https://access.redhat.com/management/subscriptions';
 export const INSIGHTS_URL =

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
 import FileSystemPartition from './components/FileSystemPartition';
@@ -29,10 +30,15 @@ const FileSystemStep = () => {
           <FileSystemPartition />
           <FileSystemAutomaticPartition />
         </>
-      ) : (
+      ) : fscMode === 'basic' ? (
         <>
           <FileSystemPartition />
           <FileSystemConfiguration />
+        </>
+      ) : (
+        <>
+          <FileSystemPartition />
+          <AdvancedPartitioning />
         </>
       )}
     </Form>
