@@ -3,14 +3,30 @@ import userEvent from '@testing-library/user-event';
 
 import {
   BLUEPRINT_JSON,
+  BLUEPRINT_WITH_DISK_CUSTOMIZATION,
+  BLUEPRINT_WITH_FILESYSTEM_CUSTOMIZATION,
   IGNORE_SUBSCRIPTION_BLUEPRINT,
   INVALID_ARCHITECTURE_JSON,
+  INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK,
   INVALID_JSON,
   ONPREM_BLUEPRINT_TOML,
   ONPREM_BLUEPRINT_TOML_WITH_INVALID_VALUES,
 } from '../../fixtures/importBlueprints';
 import { renderCustomRoutesWithReduxRouter } from '../../testUtils';
-import { clickNext } from '../CreateImageWizard/wizardTestUtils';
+import { clickNext, goToStep } from '../CreateImageWizard/wizardTestUtils';
+
+const setUp = async () => {
+  const user = userEvent.setup();
+  renderCustomRoutesWithReduxRouter();
+  const importBlueprintBtn = await screen.findByRole('button', {
+    name: /Import/i,
+  });
+  await waitFor(() => user.click(importBlueprintBtn));
+  const reviewButton = await screen.findByRole('button', {
+    name: /review and finish/i,
+  });
+  await waitFor(() => expect(reviewButton).toBeDisabled());
+};
 
 const uploadFile = async (filename: string, content: string): Promise<void> => {
   const user = userEvent.setup();
@@ -36,18 +52,6 @@ describe('Import modal', () => {
     const importButton = await screen.findByRole('button', { name: /Import/i });
     await waitFor(() => expect(importButton).toBeInTheDocument());
   });
-
-  const setUp = async () => {
-    renderCustomRoutesWithReduxRouter();
-    const importBlueprintBtn = await screen.findByRole('button', {
-      name: /Import/i,
-    });
-    await waitFor(() => user.click(importBlueprintBtn));
-    const reviewButton = await screen.findByRole('button', {
-      name: /review and finish/i,
-    });
-    await waitFor(() => expect(reviewButton).toBeDisabled());
-  };
 
   test('should show alert on invalid blueprint', async () => {
     await setUp();
@@ -463,4 +467,82 @@ describe('Import modal', () => {
       await screen.findByRole('heading', { name: /First boot configuration/i }),
     ).toBeInTheDocument();
   }, 20000);
+});
+
+describe('Partitioning import', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  const user = userEvent.setup();
+
+  test('blueprint import with filesystem works', async () => {
+    await setUp();
+    await uploadFile(
+      `blueprints.json`,
+      BLUEPRINT_WITH_FILESYSTEM_CUSTOMIZATION,
+    );
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
+    await waitFor(() => expect(reviewButton).toBeEnabled());
+    user.click(reviewButton);
+
+    // Image output
+    const guestImageCheckBox = await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    });
+    await waitFor(() => user.click(guestImageCheckBox));
+
+    await goToStep('File system configuration');
+    expect(
+      await screen.findByRole('radio', {
+        name: /manually configure partitions/i,
+      }),
+    ).toBeChecked();
+    await screen.findByText('/var');
+    expect(
+      screen.queryByRole('radio', { name: /advanced disk partitioning/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  test('blueprint import with disk works', async () => {
+    await setUp();
+    await uploadFile(`blueprints.json`, BLUEPRINT_WITH_DISK_CUSTOMIZATION);
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
+    await waitFor(() => expect(reviewButton).toBeEnabled());
+    user.click(reviewButton);
+
+    // Image output
+    const guestImageCheckBox = await screen.findByRole('checkbox', {
+      name: /virtualization guest image checkbox/i,
+    });
+    await waitFor(() => user.click(guestImageCheckBox));
+
+    await goToStep('File system configuration');
+    expect(
+      await screen.findByRole('radio', { name: /advanced disk partitioning/i }),
+    ).toBeChecked();
+    await screen.findByText(
+      /minsize: 2 gib type: gpt diskpartitions: \[ \{ "fs_type": "ext4", "label":/i,
+    );
+  });
+
+  test('blueprint import with filesystem and disk fails', async () => {
+    await setUp();
+    await uploadFile(
+      `blueprints.json`,
+      INVALID_BLUEPRINT_WITH_FILESYSTEM_AND_DISK,
+    );
+    const reviewButton = screen.getByRole('button', {
+      name: /Review and finish/i,
+    });
+    expect(reviewButton).toBeDisabled();
+    const helperText = await screen.findByText(
+      /not compatible with the blueprints format\./i,
+    );
+    await waitFor(() => expect(helperText).toBeInTheDocument());
+  });
 });

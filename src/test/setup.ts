@@ -66,6 +66,8 @@ vi.mock('@unleash/proxy-client-react', () => ({
         return true;
       case 'image-builder.aap.enabled':
         return true;
+      case 'image-builder.advanced-partitioning.enabled':
+        return true;
       default:
         return false;
     }
