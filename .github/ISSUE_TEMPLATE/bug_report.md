@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Create a bug report to help us improve Image Builder
-title: "[BUG]"
-labels: ''
+title: "[BUG] "
+labels: ":lady_beetle:  bug"
 assignees: ''
 
 ---
