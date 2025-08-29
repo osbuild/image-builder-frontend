@@ -9,11 +9,17 @@ export const useListSnapshotsByDateMutation = process.env.IS_ON_PREMISE
   ? cockpitQueries.useListSnapshotsByDateMutation
   : serviceQueries.useListSnapshotsByDateMutation;
 
+export const useCreateRepositoryMutation = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useCreateRepositoryMutation
+  : serviceQueries.useCreateRepositoryMutation;
+
+export const useListRepositoriesQuery = process.env.IS_ON_PREMISE
+  ? cockpitQueries.useListRepositoriesQuery
+  : serviceQueries.useListRepositoriesQuery;
+
 export const {
   useListFeaturesQuery,
   useSearchPackageGroupMutation,
-  useListRepositoriesQuery,
-  useCreateRepositoryMutation,
   useBulkImportRepositoriesMutation,
   useListRepositoriesRpmsQuery,
   useListRepositoryParametersQuery,
