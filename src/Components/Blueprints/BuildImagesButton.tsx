@@ -72,17 +72,21 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   );
 
   const onSelect = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    itemId: number,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    itemId?: string | number,
   ) => {
-    const imageType = blueprintImageType?.[itemId];
+    if (itemId === undefined) return;
 
-    if (imageType && deselectedTargets.includes(imageType)) {
-      setDeselectedTargets(
-        deselectedTargets.filter((target) => target !== imageType),
-      );
-    } else if (imageType) {
-      setDeselectedTargets([...deselectedTargets, imageType]);
+    if (typeof itemId === 'number') {
+      const imageType = blueprintImageType?.[itemId];
+
+      if (imageType && deselectedTargets.includes(imageType)) {
+        setDeselectedTargets(
+          deselectedTargets.filter((target) => target !== imageType),
+        );
+      } else if (imageType) {
+        setDeselectedTargets([...deselectedTargets, imageType]);
+      }
     }
   };
 

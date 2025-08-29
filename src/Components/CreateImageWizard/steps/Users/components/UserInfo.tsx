@@ -51,9 +51,11 @@ const UserInfo = () => {
   const tabComponentRef = React.useRef<any>();
   const firstMount = React.useRef(true);
 
-  const onSelect = (event: React.MouseEvent, tabIndex: number) => {
-    setActiveTabKey(tabIndex);
-    setIndex(tabIndex);
+  const onSelect = (event?: React.MouseEvent, tabIndex?: string | number) => {
+    if (tabIndex && typeof tabIndex === 'number') {
+      setActiveTabKey(tabIndex);
+      setIndex(tabIndex);
+    }
   };
 
   const onAdd = () => {
@@ -75,23 +77,25 @@ const UserInfo = () => {
     }
   }, [users.length]);
 
-  const onClose = (_event: React.MouseEvent, tabIndex: number) => {
-    if (
-      users[tabIndex].name === '' &&
-      users[tabIndex].password === '' &&
-      users[tabIndex].ssh_key === ''
-    ) {
-      const nextTabIndex = calculateNewIndex(
-        tabIndex,
-        activeTabKey,
-        users.length,
-      );
-      setActiveTabKey(nextTabIndex);
-      setIndex(nextTabIndex);
-      dispatch(removeUser(tabIndex));
-    } else {
-      setShowRemoveUserModal(true);
-      setIndex(tabIndex);
+  const onClose = (_event: React.MouseEvent, tabIndex: string | number) => {
+    if (typeof tabIndex === 'number') {
+      if (
+        users[tabIndex].name === '' &&
+        users[tabIndex].password === '' &&
+        users[tabIndex].ssh_key === ''
+      ) {
+        const nextTabIndex = calculateNewIndex(
+          tabIndex,
+          activeTabKey,
+          users.length,
+        );
+        setActiveTabKey(nextTabIndex);
+        setIndex(nextTabIndex);
+        dispatch(removeUser(tabIndex));
+      } else {
+        setShowRemoveUserModal(true);
+        setIndex(tabIndex);
+      }
     }
   };
 

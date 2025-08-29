@@ -77,7 +77,7 @@ export function useMutationWithNotification<
           description,
         });
       }
-      return err;
+      throw err;
     }
   };
 

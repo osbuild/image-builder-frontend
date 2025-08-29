@@ -7,7 +7,7 @@ export class OpenStackWrapper {
   private static readonly RETRY_CREATE_IMAGE = 40; // 40 * 15 seconds = 4 minutes for image to be in 'active' state
   private static readonly RETRY_LAUNCH_INSTANCE = 20; // 20 * 30 seconds = 10 minutes to launch the instance
   private static readonly RETRY_CHECK_CONNECTION = 4; // 4 * 15 seconds = 1 minute to wait if we can connect to the instance
-  private ipAddress: string;
+  private ipAddress!: string;
   private imageName: string;
   private instanceName: string;
   private diskFormat: string;
@@ -219,6 +219,7 @@ export class OpenStackWrapper {
       const output = await OpenStackWrapper.execCommand('ssh', sshArgs);
       return [0, output];
     } catch (error) {
+      //@ts-ignore TODO revisit this
       return [error.code, error.message];
     }
   }
@@ -240,7 +241,10 @@ export class OpenStackWrapper {
           ]);
           console.log(`Image ${imageName} deleted`);
         } catch (error) {
-          if (!error.message.includes('Multi Backend support not enabled.')) {
+          if (
+            error instanceof Error &&
+            !error.message.includes('Multi Backend support not enabled.')
+          ) {
             throw new OpenStackError(
               `Image was found, but failed to delete. Reason: ${error.message}`,
             );
@@ -268,7 +272,10 @@ export class OpenStackWrapper {
           ]);
           console.log(`Instance ${instanceName} deleted`);
         } catch (error) {
-          if (!error.message.includes('No Server found')) {
+          if (
+            error instanceof Error &&
+            !error.message.includes('No Server found')
+          ) {
             throw new OpenStackError(
               `Instance was found, but failed to delete. Reason: ${error.message}`,
             );

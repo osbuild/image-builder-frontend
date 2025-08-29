@@ -47,7 +47,7 @@ export const AwsSourcesSelect = () => {
 
     if (sources && filterValue) {
       filteredSources = sources
-        .map((source) => source?.name)
+        .flatMap((source) => (source?.name ? [source.name] : []))
         .filter((source: string) =>
           String(source).toLowerCase().includes(filterValue.toLowerCase()),
         );
@@ -84,9 +84,10 @@ export const AwsSourcesSelect = () => {
   };
 
   const handleSelect = (
-    _event: React.MouseEvent<Element, MouseEvent>,
-    value: string,
+    _event?: React.MouseEvent<Element, MouseEvent>,
+    value?: string | number,
   ) => {
+    if (value === undefined) return;
     const source = sources?.find((source) => source?.name === value);
     dispatch(changeAwsSourceId(source?.id));
     setIsOpen(false);

@@ -20,8 +20,12 @@ export const AzureHyperVSelect = () => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (_event: React.MouseEvent, selection: 'V1' | 'V2') => {
-    dispatch(changeAzureHyperVGeneration(selection));
+  const handleSelect = (
+    _event?: React.MouseEvent,
+    selection?: string | number,
+  ) => {
+    if (selection === undefined) return;
+    dispatch(changeAzureHyperVGeneration(selection as 'V1' | 'V2'));
     setIsOpen(false);
   };
 

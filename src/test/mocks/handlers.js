@@ -249,7 +249,7 @@ export const handlers = [
     ({ params }) => {
       const id = params['id'];
       getMockBlueprintResponse(id).lint.errors = [];
-      return HttpResponse(null, { status: 200 });
+      return new HttpResponse(null, { status: 200 });
     },
   ),
   http.post(`${IMAGE_BUILDER_API}/experimental/recommendations`, () => {
