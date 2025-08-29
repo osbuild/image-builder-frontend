@@ -384,6 +384,12 @@ export const oscapCreateBlueprintRequest: CreateBlueprintRequest = {
     services: expectedServicesCisL1,
     kernel: expectedKernelCisL1,
     filesystem: expectedFilesystemCisL1,
+    locale: {
+      languages: ['C.UTF-8'],
+    },
+    timezone: {
+      timezone: 'Etc/UTC',
+    },
   },
 };
 
@@ -674,6 +680,12 @@ export const complianceCreateBlueprintRequest: CreateBlueprintRequest = {
     },
     services: expectedServicesCisL2,
     kernel: expectedKernelCisL2,
+    locale: {
+      languages: ['C.UTF-8'],
+    },
+    timezone: {
+      timezone: 'Etc/UTC',
+    },
     filesystem: expectedFilesystemCisL2,
   },
 };

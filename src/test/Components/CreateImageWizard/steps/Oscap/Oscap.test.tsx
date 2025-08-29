@@ -242,6 +242,14 @@ describe('OpenSCAP request generated correctly', () => {
 
     const expectedRequest: CreateBlueprintRequest = {
       ...baseCreateBlueprintRequest,
+      customizations: {
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
+      },
       name: 'Oscap test',
     };
     await waitFor(() => {
@@ -263,6 +271,12 @@ describe('OpenSCAP request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...baseCreateBlueprintRequest,
       customizations: {
+        locale: {
+          languages: ['C.UTF-8'],
+        },
+        timezone: {
+          timezone: 'Etc/UTC',
+        },
         packages: expectedPackagesCisL2,
         openscap: expectedOpenscapCisL2,
         services: expectedServicesCisL2,

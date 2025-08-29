@@ -266,7 +266,7 @@ export const initialState: wizardState = {
     append: [],
   },
   locale: {
-    languages: [],
+    languages: ['C.UTF-8'],
     keyboard: '',
   },
   details: {

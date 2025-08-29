@@ -381,6 +381,7 @@ describe('User request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         users: [
           {
             name: validUserName,
@@ -414,7 +415,7 @@ describe('User request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: {},
+      customizations: { ...blueprintRequest.customizations },
     };
 
     await waitFor(() => {
@@ -435,6 +436,7 @@ describe('User request generated correctly', () => {
     const expectedRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         users: [
           {
             name: 'rachel',
@@ -478,7 +480,7 @@ describe('User request generated correctly', () => {
 
     const expectedRequest = {
       ...blueprintRequest,
-      customizations: {},
+      customizations: { ...blueprintRequest.customizations },
     };
 
     await waitFor(() => {

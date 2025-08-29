@@ -77,6 +77,7 @@ import {
   changeArchitecture,
   changeAwsShareMethod,
   changeDistribution,
+  changeTimezone,
   initializeWizard,
   selectAwsAccountId,
   selectAwsShareMethod,
@@ -88,6 +89,7 @@ import {
   selectGcpEmail,
   selectGcpShareMethod,
   selectImageTypes,
+  selectTimezone,
 } from '../../store/wizardSlice';
 import isRhel from '../../Utilities/isRhel';
 import { resolveRelPath } from '../../Utilities/path';
@@ -253,6 +255,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
    *           */
 
   const distribution = useAppSelector(selectDistribution);
+  const timezone = useAppSelector(selectTimezone);
 
   // Image Output
   const targetEnvironments = useAppSelector(selectImageTypes);
@@ -305,6 +308,25 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
+
+  useEffect(() => {
+    if (isEdit) {
+      return;
+    }
+
+    let defaultTimezone = '';
+    if (distribution === RHEL_10) {
+      defaultTimezone = 'Etc/UTC';
+    } else if (targetEnvironments.includes('azure')) {
+      defaultTimezone = 'Etc/UTC';
+    } else {
+      defaultTimezone = 'America/New_York';
+    }
+
+    if (!timezone && defaultTimezone) {
+      dispatch(changeTimezone(defaultTimezone));
+    }
+  }, [distribution, targetEnvironments, isEdit, dispatch]);
 
   // Duplicating some of the logic from the Wizard component to allow for custom nav items status
   // for original code see https://github.com/patternfly/patternfly-react/blob/184c55f8d10e1d94ffd72e09212db56c15387c5e/packages/react-core/src/components/Wizard/WizardNavInternal.tsx#L128

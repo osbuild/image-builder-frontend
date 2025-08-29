@@ -241,6 +241,7 @@ describe('Repositories request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         custom_repositories: expectedCustomRepositories,
         payload_repositories: expectedPayloadRepositories,
       },
@@ -292,6 +293,7 @@ describe('Repositories request generated correctly', () => {
     const expectedRequest: CreateBlueprintRequest = {
       ...blueprintRequest,
       customizations: {
+        ...blueprintRequest.customizations,
         custom_repositories: [expectedNginxCustomRepository],
         payload_repositories: [expectedNginxRepository],
       },
