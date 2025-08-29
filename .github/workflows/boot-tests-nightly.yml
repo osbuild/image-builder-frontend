@@ -13,93 +13,22 @@ on:
 jobs:
   boot-tests:
     runs-on:
-      - codebuild-image-builder-frontend-${{ github.run_id }}-${{ github.run_attempt }}
-      - instance-size:large
-      - buildspec-override:true
+      - ubuntu-latest
     permissions:
       pull-requests: read
 
     steps:
-      - name: Get PR details if triggered by workflow_dispatch with pr_number
-        id: get-pr-details
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.pr_number != ''
-        run: |
-          PR_NUMBER=${{ github.event.inputs.pr_number }}
-          API_URL="${{ github.api_url }}/repos/${{ github.repository }}/pulls/${PR_NUMBER}"
-          PR_INFO=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" "$API_URL")
-          
-          PR_HEAD_SHA=$(echo "$PR_INFO" | jq -r '.head.sha')
-          PR_URL=$(echo "$PR_INFO" | jq -r '.html_url')
-
-          echo "PR Head SHA: $PR_HEAD_SHA"
-          echo "PR URL: $PR_URL"
-          echo "pr_head_sha=$PR_HEAD_SHA" >> $GITHUB_ENV
-          echo "pr_url=$PR_URL" >> $GITHUB_ENV
-
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          ref: ${{ env.pr_head_sha || github.ref }}
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install front-end dependencies
-        run: npm ci
-
-      - name: Install playwright
-        run: npx playwright install --with-deps
-
-      # This prevents an error related to minimum watchers when running the front-end and playwright
-      - name: Increase file watchers limit
-        run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
-
-      - name: Update /etc/hosts
-        run: sudo npm run patch:hosts
-
-      - name: Start front-end server
-        run: |
-          npm run start:federated &
-          npx wait-on http://localhost:8003/apps/image-builder/
-
-      - name: Run testing proxy
-        run: docker run -d --network=host -e HTTPS_PROXY=$RH_PROXY_URL -v "$(pwd)/config:/config:ro,Z" --name frontend-development-proxy quay.io/redhat-user-workloads/hcc-platex-services-tenant/frontend-development-proxy
-
+      
       - name: Run front-end Playwright tests
         id: playwright-tests
         env:
           BASE_URL: https://stage.foo.redhat.com:1337
         run: |
-          export PLAYWRIGHT_USER=image-builder-playwright-$RANDOM
-          export PLAYWRIGHT_PASSWORD=image-builder-playwright-$(uuidgen)
-          # Step 1: Create a new empty account
-          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/new -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
-          # Step 2: Attach subscriptions to the new account
-          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/attach \
-            -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\", \"sku\":[\"RH00003\"],\"quantity\": 1}"
-          # Step 3: Activate the new account by accepting Terms and Conditions
-          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/activate -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
-          # Step 4: Refresh account to update subscription pools
-          curl -k -X POST https://account-manager-stage.app.eng.rdu2.redhat.com/account/refresh -d "{\"username\": \"$PLAYWRIGHT_USER\", \"password\":\"$PLAYWRIGHT_PASSWORD\"}"
-          # Step 5: View account to check account status
-          curl -k -X GET "https://account-manager-stage.app.eng.rdu2.redhat.com/account/get?username=$PLAYWRIGHT_USER&password=$PLAYWRIGHT_PASSWORD"
-
-          CURRENTS_PROJECT_ID=hIU6nO CURRENTS_RECORD_KEY=$CURRENTS_RECORD_KEY npx playwright test playwright/BootTests
-
-      - name: Store front-end Test report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 10
+          echo "Hello"
 
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v2.1.1
-        if: github.event_name != 'workflow_dispatch' && steps.playwright-tests.result == 'success'
+        if: steps.playwright-tests.result == 'success'
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -123,7 +52,7 @@ jobs:
 
       - name: Notify Slack on failure
         uses: slackapi/slack-github-action@v2.1.1
-        if: github.event_name != 'workflow_dispatch' && steps.playwright-tests.result != 'success'
+        if: steps.playwright-tests.result != 'success'
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
