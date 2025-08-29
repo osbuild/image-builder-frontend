@@ -99,7 +99,7 @@ jobs:
 
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v2.1.1
-        if: github.event_name != 'workflow_dispatch' && steps.playwright-tests.result == 'success'
+        if: ${{ success() && github.event_name != 'workflow_dispatch' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -123,7 +123,7 @@ jobs:
 
       - name: Notify Slack on failure
         uses: slackapi/slack-github-action@v2.1.1
-        if: github.event_name != 'workflow_dispatch' && steps.playwright-tests.result != 'success'
+        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
