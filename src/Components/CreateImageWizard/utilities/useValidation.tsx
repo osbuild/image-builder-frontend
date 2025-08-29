@@ -19,16 +19,16 @@ import {
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintName,
-  selectFileSystemConfigurationType,
+  selectFilesystemPartitions,
   selectFirewall,
   selectFirstBootScript,
+  selectFscMode,
   selectHostname,
   selectImageTypes,
   selectKernel,
   selectKeyboard,
   selectLanguages,
   selectNtpServers,
-  selectPartitions,
   selectRegistrationType,
   selectSatelliteCaCertificate,
   selectSatelliteRegistrationCommand,
@@ -268,17 +268,17 @@ export function useAAPValidation(): StepValidation {
 }
 
 export function useFilesystemValidation(): StepValidation {
-  const mode = useAppSelector(selectFileSystemConfigurationType);
-  const partitions = useAppSelector(selectPartitions);
+  const fscMode = useAppSelector(selectFscMode);
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
   let disabledNext = false;
 
   const errors: { [key: string]: string } = {};
-  if (mode === 'automatic') {
+  if (fscMode === 'automatic') {
     return { errors, disabledNext: false };
   }
 
-  const duplicates = getDuplicateMountPoints(partitions);
-  for (const partition of partitions) {
+  const duplicates = getDuplicateMountPoints(filesystemPartitions);
+  for (const partition of filesystemPartitions) {
     if (partition.min_size === '') {
       errors[`min-size-${partition.id}`] = 'Partition size is required';
       disabledNext = true;

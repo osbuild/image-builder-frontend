@@ -32,8 +32,8 @@ import {
 } from '../../../../../store/imageBuilderApi';
 import {
   changeCompliance,
-  changeFileSystemConfigurationType,
   changeFips,
+  changeFscMode,
   clearKernelAppend,
   selectComplianceProfileID,
   selectComplianceType,
@@ -179,7 +179,7 @@ const ProfileSelector = () => {
       }),
     );
     clearCompliancePackages(currentProfileData?.packages || []);
-    dispatch(changeFileSystemConfigurationType('automatic'));
+    dispatch(changeFscMode('automatic'));
     handleServices(undefined);
     dispatch(clearKernelAppend());
     dispatch(changeFips(false));
