@@ -296,41 +296,6 @@ configure({
 ```
 If you'd like to see the stack printed out you can either temporarily disable the configuration or generate a [Testing Playground](https://testing-playground.com/) link by adding `screen.logTestingPlaygroundURL()` to your test.
 
-### ~~Using MSW data in development~~ - CURRENTLY NOT WORKING
-
-If you want to develop in environment with mocked data, run the command `npm run stage-beta:msw`.
-
-#### Enabling MSW
-In a case you're seeing `Error: [MSW] Failed to register the Service Worker` in console, you might also need to configure SSL certification on your computer.
-
-In order to do this install [mkcert](https://github.com/FiloSottile/mkcert)
-
-After the installation, go to the `/node_modules/.cache/webpack-dev-server` folder and run following commands:
-
-1. `mkcert -install`  to create a new certificate authority on your machine
-2. `mkcert prod.foo.redhat.com`  to create the actual signed certificate
-
-#### Mac Configuration
-Follow these steps to find and paste the certification file into the 'Keychain Access' application:
-
-1. Open the 'Keychain Access' application.
-
-2. Select 'login' on the left side.
-
-3. Navigate to the 'Certificates' tab.
-
-4. Drag the certification file (located at /image-builder-frontend/node_modules/.cache/webpack-dev-server/server.pem) to the certification list.
-
-5. Double-click on the added certificate (localhost certificate) to open the localhost window.
-
-6. Open the 'Trust' dropdown menu.
-
-7. Set all options to 'Always Trust'.
-
-8. Close the localhost screen.
-
-9. Run `npm run stage-beta:msw` and open the Firefox browser to verify that it is working as expected.
-
 ## Running hosted service Playwright tests
 
 1. Copy the [example env file](playwright_example.env) content and create a file named `.env` in the root directory of the project. Paste the example file content into it.
