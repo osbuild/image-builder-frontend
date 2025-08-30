@@ -430,7 +430,9 @@ export type Distributions =
   | "fedora-39"
   | "fedora-40"
   | "fedora-41"
-  | "fedora-42";
+  | "fedora-42"
+  | "fedora-43"
+  | "fedora-44";
 export type ListResponseMeta = {
   count: number;
 };
