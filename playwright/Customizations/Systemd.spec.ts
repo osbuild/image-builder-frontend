@@ -5,9 +5,9 @@ import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
+  fillInImageOutput,
   ibFrame,
   navigateToLandingPage,
-  navigateToOptionalSteps,
 } from '../helpers/navHelpers';
 import {
   createBlueprint,
@@ -35,7 +35,7 @@ test('Create a blueprint with Systemd customization', async ({
   const frame = await ibFrame(page);
 
   await test.step('Navigate to optional steps in Wizard', async () => {
-    await navigateToOptionalSteps(frame);
+    await fillInImageOutput(frame);
     await registerLater(frame);
   });
 

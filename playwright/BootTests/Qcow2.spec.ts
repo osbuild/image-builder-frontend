@@ -7,12 +7,16 @@ import {
   downloadImage,
 } from './helpers/imageBuilding';
 import { OpenStackWrapper } from './helpers/OpenStackWrapper';
-import { navigateToWizard, selectTarget } from './helpers/targetChooser';
+import { selectTarget } from './helpers/targetChooser';
 
 import { test } from '../fixtures/customizations';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
-import { ibFrame, navigateToLandingPage } from '../helpers/navHelpers';
+import {
+  fillInImageOutput,
+  ibFrame,
+  navigateToLandingPage,
+} from '../helpers/navHelpers';
 import {
   createBlueprint,
   deleteBlueprint,
@@ -40,7 +44,7 @@ test('Boot qcow2 image and test hostname', async ({ page, cleanup }) => {
   const frame = await ibFrame(page);
 
   await test.step('Select target', async () => {
-    await navigateToWizard(frame);
+    await fillInImageOutput(frame);
     await selectTarget(frame, 'qcow2');
   });
 
