@@ -15,7 +15,7 @@ import {
   removePackage,
 } from '../../../../../store/wizardSlice';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/components/FileSystemTable';
+import { Partition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
