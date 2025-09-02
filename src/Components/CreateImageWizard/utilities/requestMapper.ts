@@ -113,11 +113,8 @@ import {
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
-import {
-  getConversionFactor,
-  Partition,
-  Units,
-} from '../steps/FileSystem/components/FileSystemTable';
+import { Partition, Units } from '../steps/FileSystem/fscTypes';
+import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
   convertSchemaToIBCustomRepo,

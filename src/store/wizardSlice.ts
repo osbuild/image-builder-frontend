@@ -20,7 +20,7 @@ import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSyst
 import type {
   Partition,
   Units,
-} from '../Components/CreateImageWizard/steps/FileSystem/components/FileSystemTable';
+} from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import type {
   GroupWithRepositoryInfo,
   IBPackageWithRepositoryInfo,
