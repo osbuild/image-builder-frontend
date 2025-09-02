@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Alert,
@@ -305,6 +305,9 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
   const [pollingInterval, setPollingInterval] = useState(
     STATUS_POLLING_INTERVAL,
   );
+  const lastTrackedStatusRef = useRef<string | null>(null);
+  const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
 
   const { data: composeStatus } = useGetComposeStatusQuery(
     {
@@ -323,6 +326,49 @@ const ImagesTableRow = ({ compose, rowIndex }: ImagesTableRowPropTypes) => {
       setPollingInterval(STATUS_POLLING_INTERVAL);
     }
   }, [setPollingInterval, composeStatus]);
+
+  useEffect(() => {
+    const currentStatus = composeStatus?.image_status.status;
+    if (!process.env.IS_ON_PREMISE && currentStatus) {
+      if (lastTrackedStatusRef.current === null) {
+        lastTrackedStatusRef.current = currentStatus;
+        return;
+      }
+
+      const buildIsCompleted =
+        currentStatus === 'success' || currentStatus === 'failure';
+      const statusChanged = lastTrackedStatusRef.current !== currentStatus;
+
+      if (buildIsCompleted && statusChanged) {
+        lastTrackedStatusRef.current = currentStatus;
+        const imageType = compose.request.image_requests[0]?.image_type;
+        const uploadType =
+          compose.request.image_requests[0]?.upload_request?.type;
+        const isError = currentStatus === 'failure';
+        const error = composeStatus?.image_status.error;
+        analytics.track(
+          `${AMPLITUDE_MODULE_NAME} - Image Creation - ${isError ? 'Failure' : 'Success'}`,
+          {
+            module: AMPLITUDE_MODULE_NAME,
+            error: isError,
+            image_type: imageType,
+            upload_type: uploadType,
+            compose_id: compose.id,
+            ...(isError
+              ? {
+                  error_id: error?.id,
+                  error_details: error?.details,
+                  error_reason: error?.reason,
+                }
+              : {}),
+            account_id: userData?.identity.internal?.account_id || 'Not found',
+          },
+        );
+      } else if (statusChanged) {
+        lastTrackedStatusRef.current = currentStatus;
+      }
+    }
+  }, [analytics, userData, compose, composeStatus]);
 
   const type = compose.request.image_requests[0]?.upload_request?.type;
 
