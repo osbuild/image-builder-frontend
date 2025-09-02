@@ -83,11 +83,9 @@ import {
   selectUsers,
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
-import {
-  getConversionFactor,
-  MinimumSizePopover,
-  Partition,
-} from '../FileSystem/components/FileSystemTable';
+import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
+import { Partition } from '../FileSystem/fscTypes';
+import { getConversionFactor } from '../FileSystem/fscUtilities';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
 import ActivationKeyInformation from '../Registration/components/ActivationKeyInformation';
