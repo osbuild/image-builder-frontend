@@ -8,14 +8,27 @@ import { ibFrame } from './navHelpers';
 /**
  * Logs in to either Cockpit or Console, will distinguish between them based on the environment
  * @param page - the page object
+ * @param staticUser - if true, use the static user instead of dynamically created one
  */
-export const login = async (page: Page) => {
+export const login = async (page: Page, staticUser: boolean = false) => {
   if (!process.env.PLAYWRIGHT_USER || !process.env.PLAYWRIGHT_PASSWORD) {
     throw new Error('user or password not set in environment');
   }
+  let user = process.env.PLAYWRIGHT_USER;
+  let password = process.env.PLAYWRIGHT_PASSWORD;
 
-  const user = process.env.PLAYWRIGHT_USER;
-  const password = process.env.PLAYWRIGHT_PASSWORD;
+  if (staticUser) {
+    if (
+      !process.env.PLAYWRIGHT_STATIC_USER ||
+      !process.env.PLAYWRIGHT_STATIC_PASSWORD
+    ) {
+      throw new Error(
+        'Static user is required, but credentials are not set in environment',
+      );
+    }
+    user = process.env.PLAYWRIGHT_STATIC_USER;
+    password = process.env.PLAYWRIGHT_STATIC_PASSWORD;
+  }
 
   if (isHosted()) {
     return loginConsole(page, user, password);
