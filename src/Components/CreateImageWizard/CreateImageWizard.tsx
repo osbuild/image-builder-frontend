@@ -42,6 +42,7 @@ import { getHostArch, getHostDistro } from './utilities/getHostInfo';
 import { useHasSpecificTargetOnly } from './utilities/hasSpecificTargetOnly';
 import {
   useAAPValidation,
+  useAzureValidation,
   useDetailsValidation,
   useFilesystemValidation,
   useFirewallValidation,
@@ -55,13 +56,7 @@ import {
   useTimezoneValidation,
   useUsersValidation,
 } from './utilities/useValidation';
-import {
-  isAwsAccountIdValid,
-  isAzureResourceGroupValid,
-  isAzureSubscriptionIdValid,
-  isAzureTenantGUIDValid,
-  isGcpEmailValid,
-} from './validators';
+import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
 
 import {
   AARCH64,
@@ -270,6 +265,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const azureTenantId = useAppSelector(selectAzureTenantId);
   const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
   const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+  const azureValidation = useAzureValidation();
   // Registration
   const registrationValidation = useRegistrationValidation();
   // Snapshots
@@ -455,19 +451,14 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Azure'
                 id='wizard-target-azure'
                 key='wizard-target-azure'
-                status={
-                  !isAzureTenantGUIDValid(azureTenantId) ||
-                  !isAzureSubscriptionIdValid(azureSubscriptionId) ||
-                  !isAzureResourceGroupValid(azureResourceGroup)
-                    ? 'error'
-                    : 'default'
-                }
+                status={azureValidation.disabledNext ? 'error' : 'default'}
                 footer={
                   <CustomWizardFooter
                     disableNext={
-                      !isAzureTenantGUIDValid(azureTenantId) ||
-                      !isAzureSubscriptionIdValid(azureSubscriptionId) ||
-                      !isAzureResourceGroupValid(azureResourceGroup)
+                      azureResourceGroup === undefined ||
+                      azureSubscriptionId === undefined ||
+                      azureTenantId === undefined ||
+                      azureValidation.disabledNext
                     }
                   />
                 }

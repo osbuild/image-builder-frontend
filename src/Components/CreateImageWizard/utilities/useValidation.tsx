@@ -16,6 +16,9 @@ import {
   selectAapTlsCertificateAuthority,
   selectAapTlsConfirmation,
   selectActivationKey,
+  selectAzureResourceGroup,
+  selectAzureSubscriptionId,
+  selectAzureTenantId,
   selectBlueprintDescription,
   selectBlueprintId,
   selectBlueprintName,
@@ -46,6 +49,9 @@ import { HelperTextVariant } from '../steps/Packages/components/CustomHelperText
 import { timezones } from '../steps/Timezone/timezonesList';
 import {
   getDuplicateMountPoints,
+  isAzureResourceGroupValid,
+  isAzureSubscriptionIdValid,
+  isAzureTenantGUIDValid,
   isBlueprintNameValid,
   isHostnameValid,
   isKernelArgumentValid,
@@ -89,6 +95,7 @@ export function useIsBlueprintValid(): boolean {
   const firstBoot = useFirstBootValidation();
   const details = useDetailsValidation();
   const users = useUsersValidation();
+  const azureTarget = useAzureValidation();
   return (
     !registration.disabledNext &&
     !filesystem.disabledNext &&
@@ -101,7 +108,8 @@ export function useIsBlueprintValid(): boolean {
     !services.disabledNext &&
     !firstBoot.disabledNext &&
     !details.disabledNext &&
-    !users.disabledNext
+    !users.disabledNext &&
+    !azureTarget.disabledNext
   );
 }
 
@@ -841,4 +849,25 @@ export function useDetailsValidation(): StepValidation {
     // if uniqueName is null, we are still waiting for the API response
     disabledNext: !!nameError || !!descriptionError || uniqueName !== true,
   };
+}
+
+export function useAzureValidation(): StepValidation {
+  const errors: Record<string, string> = {};
+  const azureTenantId = useAppSelector(selectAzureTenantId);
+  const azureSubscriptionId = useAppSelector(selectAzureSubscriptionId);
+  const azureResourceGroup = useAppSelector(selectAzureResourceGroup);
+
+  if (!isAzureTenantGUIDValid(azureTenantId)) {
+    errors.tenandId = 'Invalid tenant id';
+  }
+
+  if (!isAzureSubscriptionIdValid(azureSubscriptionId)) {
+    errors.subscriptionId = 'Invalid subscription id';
+  }
+
+  if (!isAzureResourceGroupValid(azureResourceGroup)) {
+    errors.resourceGroup = 'Invalid resource group';
+  }
+
+  return { errors, disabledNext: Object.keys(errors).length > 0 };
 }

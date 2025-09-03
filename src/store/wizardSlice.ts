@@ -103,9 +103,9 @@ export type wizardState = {
     region?: string | undefined;
   };
   azure: {
-    tenantId: string;
-    subscriptionId: string;
-    resourceGroup: string;
+    tenantId: string | undefined;
+    subscriptionId: string | undefined;
+    resourceGroup: string | undefined;
     hyperVGeneration: 'V1' | 'V2';
   };
   gcp: {
@@ -206,9 +206,9 @@ export const initialState: wizardState = {
     region: 'us-east-1',
   },
   azure: {
-    tenantId: '',
-    subscriptionId: '',
-    resourceGroup: '',
+    tenantId: undefined,
+    subscriptionId: undefined,
+    resourceGroup: undefined,
     hyperVGeneration: 'V2',
   },
   gcp: {
@@ -595,9 +595,9 @@ export const wizardSlice = createSlice({
       state.azure.hyperVGeneration = action.payload;
     },
     reinitializeAzure: (state) => {
-      state.azure.tenantId = '';
-      state.azure.subscriptionId = '';
-      state.azure.resourceGroup = '';
+      state.azure.tenantId = undefined;
+      state.azure.subscriptionId = undefined;
+      state.azure.resourceGroup = undefined;
     },
     changeGcpShareMethod: (state, action: PayloadAction<GcpShareMethod>) => {
       switch (action.payload) {
