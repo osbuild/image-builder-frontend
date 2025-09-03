@@ -8,7 +8,6 @@ import {
   Title,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
-import { useFlag } from '@unleash/proxy-client-react';
 
 import { AzureAuthButton } from './AzureAuthButton';
 import { AzureHyperVSelect } from './AzureHyperVSelect';
@@ -35,7 +34,6 @@ const Azure = () => {
   const tenantId = useAppSelector(selectAzureTenantId);
   const subscriptionId = useAppSelector(selectAzureSubscriptionId);
   const resourceGroup = useAppSelector(selectAzureResourceGroup);
-  const launchEofFlag = useFlag('image-builder.launcheof');
 
   return (
     <Form>
@@ -80,7 +78,7 @@ const Azure = () => {
         <FormGroup label='Subscription ID' isRequired>
           <ValidatedInput
             ariaLabel='subscription id'
-            value={subscriptionId}
+            value={subscriptionId || ''}
             validator={isAzureSubscriptionIdValid}
             onChange={(_event, value) =>
               dispatch(changeAzureSubscriptionId(value))
@@ -91,7 +89,7 @@ const Azure = () => {
         <FormGroup label='Resource group' isRequired>
           <ValidatedInput
             ariaLabel='resource group'
-            value={resourceGroup}
+            value={resourceGroup || ''}
             validator={isAzureResourceGroupValid}
             onChange={(_event, value) =>
               dispatch(changeAzureResourceGroup(value))

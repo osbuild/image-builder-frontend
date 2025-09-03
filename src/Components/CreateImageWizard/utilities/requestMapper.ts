@@ -176,6 +176,35 @@ const getLatestRelease = (distribution: Distributions) => {
           : distribution;
 };
 
+const azureTargetOptions = (options: AzureUploadRequestOptions) => {
+  const resourceGroupIsDefined =
+    options?.resource_group && options.resource_group !== '';
+  const subscriptionIdIsDefined =
+    options?.subscription_id && options.subscription_id !== '';
+  const tenandIdIsDefined = options?.tenant_id && options.tenant_id !== '';
+
+  const isAnyDefined =
+    resourceGroupIsDefined || subscriptionIdIsDefined || tenandIdIsDefined;
+
+  if (isAnyDefined) {
+    // Edge case but if one field is selected, that means that azure was chosen at some point,
+    // and we should show an error for other missing fields
+    return {
+      tenantId: options?.tenant_id || '',
+      subscriptionId: options?.subscription_id || '',
+      resourceGroup: options?.resource_group || '',
+      hyperVGeneration: options?.hyper_v_generation || 'V1',
+    };
+  } else {
+    return {
+      tenantId: undefined,
+      subscriptionId: undefined,
+      resourceGroup: undefined,
+      hyperVGeneration: options?.hyper_v_generation || 'V1',
+    };
+  }
+};
+
 function commonRequestToState(
   request: BlueprintResponse | CreateBlueprintRequest,
 ) {
@@ -287,12 +316,7 @@ function commonRequestToState(
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
     imageTypes: request.image_requests.map((image) => image.image_type),
-    azure: {
-      tenantId: azureUploadOptions?.tenant_id || '',
-      subscriptionId: azureUploadOptions?.subscription_id || '',
-      resourceGroup: azureUploadOptions?.resource_group,
-      hyperVGeneration: azureUploadOptions?.hyper_v_generation || 'V1',
-    },
+    azure: azureTargetOptions(azureUploadOptions),
     gcp: {
       shareMethod: (gcpUploadOptions?.share_with_accounts
         ? 'withGoogle'
@@ -591,7 +615,7 @@ const getImageOptions = (
       return {
         tenant_id: selectAzureTenantId(state),
         subscription_id: selectAzureSubscriptionId(state),
-        resource_group: selectAzureResourceGroup(state),
+        resource_group: selectAzureResourceGroup(state) || '',
         hyper_v_generation: selectAzureHyperVGeneration(state),
       };
     case 'gcp': {

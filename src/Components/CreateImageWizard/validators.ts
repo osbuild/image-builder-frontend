@@ -10,7 +10,7 @@ export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
 
 export const isAzureTenantGUIDValid = (azureTenantGUID: string | undefined) => {
   return (
-    azureTenantGUID !== undefined &&
+    azureTenantGUID === undefined ||
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       azureTenantGUID,
     )
@@ -21,7 +21,7 @@ export const isAzureSubscriptionIdValid = (
   azureSubscriptionId: string | undefined,
 ) => {
   return (
-    azureSubscriptionId !== undefined &&
+    azureSubscriptionId === undefined ||
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       azureSubscriptionId,
     )
@@ -32,7 +32,7 @@ export const isAzureResourceGroupValid = (
   azureResourceGroup: string | undefined,
 ) => {
   return (
-    azureResourceGroup !== undefined &&
+    azureResourceGroup === undefined ||
     /^[-\w._()]+[-\w_()]$/.test(azureResourceGroup)
   );
 };

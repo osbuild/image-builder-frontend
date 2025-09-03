@@ -358,14 +358,18 @@ export const TargetEnvAzureList = () => {
           <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Azure tenant ID
           </Content>
-          <Content component={ContentVariants.dd}>{tenantId}</Content>
+          <Content component={ContentVariants.dd}>{tenantId || ''}</Content>
           <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Subscription ID
           </Content>
-          <Content component={ContentVariants.dd}>{subscriptionId}</Content>
+          <Content component={ContentVariants.dd}>
+            {subscriptionId || ''}
+          </Content>
         </>
         <Content component={ContentVariants.dt}>Resource group</Content>
-        <Content component={ContentVariants.dd}>{azureResourceGroup}</Content>
+        <Content component={ContentVariants.dd}>
+          {azureResourceGroup || ''}
+        </Content>
       </Content>
     </Content>
   );
