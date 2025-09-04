@@ -51,8 +51,11 @@ const LanguagesDropDown = () => {
   const dispatch = useAppDispatch();
 
   const stepValidation = useLocaleValidation();
-  const unknownLanguages = stepValidation.errors['languages']
-    ? stepValidation.errors['languages'].split(' ')
+  const unknownLanguages = stepValidation.errors['unknownLanguages']
+    ? stepValidation.errors['unknownLanguages'].split(' ')
+    : [];
+  const duplicateLanguages = stepValidation.errors['duplicateLanguages']
+    ? stepValidation.errors['duplicateLanguages'].split(' ')
     : [];
 
   const [isOpen, setIsOpen] = useState(false);
@@ -194,6 +197,15 @@ const LanguagesDropDown = () => {
           <HelperTextItem
             variant={'error'}
           >{`Unknown languages: ${unknownLanguages.join(
+            ', ',
+          )}`}</HelperTextItem>
+        </HelperText>
+      )}
+      {duplicateLanguages.length > 0 && (
+        <HelperText>
+          <HelperTextItem
+            variant={'error'}
+          >{`Duplicated languages: ${duplicateLanguages.join(
             ', ',
           )}`}</HelperTextItem>
         </HelperText>
