@@ -18,7 +18,8 @@ import OscapOnPremWarning from './components/OnPremWarning';
 import Oscap from './Oscap';
 import { removeBetaFromRelease } from './removeBetaFromRelease';
 
-import { COMPLIANCE_URL } from '../../../../constants';
+import { AMPLITUDE_MODULE_NAME, COMPLIANCE_URL } from '../../../../constants';
+import { useGetUser } from '../../../../Hooks';
 import {
   useBackendPrefetch,
   useGetOscapCustomizationsQuery,
@@ -46,7 +47,6 @@ import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenS
 
 const OscapContent = () => {
   const dispatch = useAppDispatch();
-  const { analytics } = useChrome();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
@@ -99,6 +99,8 @@ const OscapContent = () => {
     dispatch(changeFips(false));
   };
 
+  const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
   if (!process.env.IS_ON_PREMISE) {
     if (complianceEnabled) {
       analytics.screen('ib-createimagewizard-step-security-compliance');
@@ -163,7 +165,22 @@ const OscapContent = () => {
               policy or to create a new one, you must go through Insights
               Compliance.
             </p>
-            <AlertActionLink component='a' href={COMPLIANCE_URL}>
+            <AlertActionLink
+              component='a'
+              onClick={() => {
+                if (!process.env.IS_ON_PREMISE) {
+                  analytics.track(
+                    `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
+                    {
+                      step_id: 'step-oscap',
+                      account_id:
+                        userData?.identity.internal?.account_id || 'Not found',
+                    },
+                  );
+                }
+              }}
+              href={COMPLIANCE_URL}
+            >
               Save blueprint and navigate to Insights Compliance
             </AlertActionLink>
           </Alert>

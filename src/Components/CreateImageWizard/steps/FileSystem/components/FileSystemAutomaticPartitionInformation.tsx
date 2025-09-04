@@ -2,10 +2,17 @@ import React from 'react';
 
 import { Button, Content, ContentVariants } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import { FILE_SYSTEM_CUSTOMIZATION_URL } from '../../../../../constants';
+import {
+  AMPLITUDE_MODULE_NAME,
+  FILE_SYSTEM_CUSTOMIZATION_URL,
+} from '../../../../../constants';
+import { useGetUser } from '../../../../../Hooks';
 
 const FileSystemAutomaticPartition = () => {
+  const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
   return (
     <Content>
       <Content component={ContentVariants.h3}>Automatic partitioning</Content>
@@ -23,6 +30,18 @@ const FileSystemAutomaticPartition = () => {
           iconPosition='right'
           href={FILE_SYSTEM_CUSTOMIZATION_URL}
           className='pf-v6-u-pl-0'
+          onClick={() => {
+            if (!process.env.IS_ON_PREMISE) {
+              analytics.track(
+                `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
+                {
+                  account_id:
+                    userData?.identity.internal?.account_id || 'Not found',
+                  step_id: 'step-file-system',
+                },
+              );
+            }
+          }}
         >
           Customizing file systems during the image creation
         </Button>

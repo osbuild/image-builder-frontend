@@ -21,6 +21,7 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
+import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { BulkSelect } from './components/BulkSelect';
 import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
@@ -36,10 +37,12 @@ import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
 import {
+  AMPLITUDE_MODULE_NAME,
   ContentOrigin,
   PAGINATION_COUNT,
   TEMPLATES_URL,
 } from '../../../../constants';
+import { useGetUser } from '../../../../Hooks';
 import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
@@ -67,6 +70,8 @@ import useDebounce from '../../../../Utilities/useDebounce';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Repositories = () => {
+  const { analytics, auth } = useChrome();
+  const { userData } = useGetUser(auth);
   const dispatch = useAppDispatch();
   const wizardMode = useAppSelector(selectWizardMode);
   const arch = useAppSelector(selectArchitecture);
@@ -687,6 +692,19 @@ const Repositories = () => {
                                 icon={<ExternalLinkAltIcon />}
                                 iconPosition='right'
                                 isInline
+                                onClick={() => {
+                                  if (!process.env.IS_ON_PREMISE) {
+                                    analytics.track(
+                                      `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
+                                      {
+                                        step_id: 'step-repositories',
+                                        account_id:
+                                          userData?.identity.internal
+                                            ?.account_id || 'Not found',
+                                      },
+                                    );
+                                  }
+                                }}
                                 href={url}
                               >
                                 {url}
