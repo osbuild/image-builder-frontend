@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
   Button,
@@ -65,6 +65,7 @@ import {
   RHEL_8,
   RHEL_9,
 } from '../../constants';
+import { useGetUser } from '../../Hooks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import './CreateImageWizard.scss';
 import {
@@ -189,7 +190,8 @@ type CreateImageWizardProps = {
 };
 
 const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
-  const { analytics, isBeta } = useChrome();
+  const { analytics, auth, isBeta } = useChrome();
+  const { userData } = useGetUser(auth);
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [searchParams] = useSearchParams();
@@ -306,6 +308,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   }
 
   const [wasRegisterVisited, setWasRegisterVisited] = useState(false);
+  const lastTrackedStepIdRef = useRef<string | undefined>();
 
   useEffect(() => {
     if (isEdit) {
@@ -347,8 +350,25 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       (s) => s.index > step.index && s.isVisited,
     );
 
-    // Only this code is different from the original
     const status = (step.id !== activeStep.id && step.status) || 'default';
+
+    // Track step view when this step becomes active
+    useEffect(() => {
+      const currentStepId = activeStep.id as string | undefined;
+      if (
+        !process.env.IS_ON_PREMISE &&
+        currentStepId &&
+        step.id === currentStepId &&
+        lastTrackedStepIdRef.current !== currentStepId
+      ) {
+        analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
+          module: AMPLITUDE_MODULE_NAME,
+          step_id: currentStepId,
+          account_id: userData?.identity.internal?.account_id || 'Not found',
+        });
+        lastTrackedStepIdRef.current = currentStepId;
+      }
+    }, [activeStep.id, step.id]);
 
     return (
       <WizardNavItem
@@ -365,6 +385,15 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         isVisited={step.isVisited || false}
         stepIndex={step.index}
         onClick={() => {
+          if (!process.env.IS_ON_PREMISE) {
+            analytics.track(`${AMPLITUDE_MODULE_NAME} - Wizard Nav Clicked`, {
+              module: AMPLITUDE_MODULE_NAME,
+              from_step_id: activeStep.id,
+              to_step_id: step.id,
+              account_id:
+                userData?.identity.internal?.account_id || 'Not found',
+            });
+          }
           goToStepByIndex(step.index);
           if (isEdit && step.id === 'wizard-additional-packages') {
             analytics.track(
