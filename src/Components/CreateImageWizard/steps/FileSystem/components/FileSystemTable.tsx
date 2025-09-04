@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import styles from '@patternfly/react-styles/css/components/Table/table';
 import {
@@ -153,6 +153,10 @@ const FileSystemTable = () => {
     });
   };
 
+  const rootPartitionsCount = useMemo(
+    () => partitions.filter((p) => p.mountpoint === '/').length,
+    [partitions],
+  );
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
@@ -187,6 +191,9 @@ const FileSystemTable = () => {
               onDragStart={onDragStart}
               key={partition.id}
               partition={partition}
+              isRemovingDisabled={
+                rootPartitionsCount === 1 && partition.mountpoint === '/'
+              }
             />
           ))}
       </Tbody>
