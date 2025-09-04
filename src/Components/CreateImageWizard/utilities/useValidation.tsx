@@ -353,6 +353,8 @@ export function useTimezoneValidation(): StepValidation {
 }
 
 export function useLocaleValidation(): StepValidation {
+  const languagesSet: Set<string> = new Set();
+  const duplicates: string[] = [];
   const languages = useAppSelector(selectLanguages);
   const keyboard = useAppSelector(selectKeyboard);
 
@@ -364,16 +366,26 @@ export function useLocaleValidation(): StepValidation {
       if (!languagesList.includes(lang)) {
         unknownLanguages.push(lang);
       }
+      if (languagesSet.has(lang)) {
+        duplicates.push(lang);
+      } else {
+        languagesSet.add(lang);
+      }
     }
   }
 
   const languagesError =
     unknownLanguages.length > 0 ? unknownLanguages.join(' ') : '';
+  const duplicateLanguages = duplicates.length > 0 ? duplicates.join(' ') : '';
   const keyboardError =
     keyboard && !keyboardsList.includes(keyboard) ? 'Unknown keyboard' : '';
 
   return {
-    errors: { languages: languagesError, keyboard: keyboardError },
+    errors: {
+      unknownLanguages: languagesError,
+      duplicateLanguages: duplicateLanguages,
+      keyboard: keyboardError,
+    },
     disabledNext: unknownLanguages.length > 0 || 'keyboard' in errors,
   };
 }
