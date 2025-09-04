@@ -113,8 +113,6 @@ export const CustomWizardFooter = ({
   const { goToNextStep, goToPrevStep, goToStepById, close, activeStep } =
     useWizardContext();
   const { analytics } = useChrome();
-  const nextBtnID = 'wizard-next-btn';
-  const backBtnID = 'wizard-back-btn';
   const reviewAndFinishBtnID = 'wizard-review-and-finish-btn';
   const cancelBtnID = 'wizard-cancel-btn';
   return (
@@ -123,13 +121,6 @@ export const CustomWizardFooter = ({
         <Button
           variant='primary'
           onClick={() => {
-            if (!process.env.IS_ON_PREMISE) {
-              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-                module: AMPLITUDE_MODULE_NAME,
-                button_id: nextBtnID,
-                active_step_id: activeStep.id,
-              });
-            }
             if (!beforeNext || beforeNext()) goToNextStep();
           }}
           isDisabled={disableNext}
@@ -139,13 +130,6 @@ export const CustomWizardFooter = ({
         <Button
           variant='secondary'
           onClick={() => {
-            if (!process.env.IS_ON_PREMISE) {
-              analytics.track(`${AMPLITUDE_MODULE_NAME} - Button Clicked`, {
-                module: AMPLITUDE_MODULE_NAME,
-                button_id: backBtnID,
-                active_step_id: activeStep.id,
-              });
-            }
             goToPrevStep();
           }}
           isDisabled={disableBack || false}
@@ -354,23 +338,22 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
 
     const status = (step.id !== activeStep.id && step.status) || 'default';
 
-    // Track step view when this step becomes active
     useEffect(() => {
       const currentStepId = activeStep.id as string | undefined;
       if (
         !process.env.IS_ON_PREMISE &&
         currentStepId &&
-        step.id === currentStepId &&
         lastTrackedStepIdRef.current !== currentStepId
       ) {
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
           module: AMPLITUDE_MODULE_NAME,
           step_id: currentStepId,
           account_id: userData?.identity.internal?.account_id || 'Not found',
+          from_step_id: lastTrackedStepIdRef.current,
         });
         lastTrackedStepIdRef.current = currentStepId;
       }
-    }, [activeStep.id, step.id]);
+    }, [activeStep.id]);
 
     return (
       <WizardNavItem
@@ -387,15 +370,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         isVisited={step.isVisited || false}
         stepIndex={step.index}
         onClick={() => {
-          if (!process.env.IS_ON_PREMISE) {
-            analytics.track(`${AMPLITUDE_MODULE_NAME} - Wizard Nav Clicked`, {
-              module: AMPLITUDE_MODULE_NAME,
-              from_step_id: activeStep.id,
-              to_step_id: step.id,
-              account_id:
-                userData?.identity.internal?.account_id || 'Not found',
-            });
-          }
           goToStepByIndex(step.index);
           if (isEdit && step.id === 'wizard-additional-packages') {
             analytics.track(
