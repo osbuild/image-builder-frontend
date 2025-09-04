@@ -364,7 +364,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
         lastTrackedStepIdRef.current !== currentStepId
       ) {
         analytics.track(`${AMPLITUDE_MODULE_NAME} - Step Viewed`, {
-          module: AMPLITUDE_MODULE_NAME,
           step_id: currentStepId,
           account_id: userData?.identity.internal?.account_id || 'Not found',
         });
