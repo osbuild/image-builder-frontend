@@ -168,7 +168,7 @@ const OscapContent = () => {
             </AlertActionLink>
           </Alert>
         )}
-      <Oscap majorVersion={majorVersion} />
+      <Oscap />
     </Form>
   );
 };
