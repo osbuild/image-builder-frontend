@@ -57,12 +57,6 @@ Object.defineProperty(window, 'localStorage', {
 // Initiliaze the router
 const router: RemixRouter | undefined = undefined;
 
-const clickShowAdditionalConnectionOptions = async () => {
-  const user = userEvent.setup();
-  const link = await screen.findByText('Show additional connection options');
-  await waitFor(() => user.click(link));
-};
-
 const deselectEnableRemoteRemediations = async () => {
   const user = userEvent.setup();
   const checkBox = await screen.findByRole('checkbox', {
@@ -292,7 +286,6 @@ describe('Registration request generated correctly', () => {
   test('register + insights', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickShowAdditionalConnectionOptions();
     await deselectEnableRemoteRemediations();
     await goToReview();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
@@ -324,7 +317,6 @@ describe('Registration request generated correctly', () => {
   test('register now', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
-    await clickShowAdditionalConnectionOptions();
     await deselectPredictiveAnalytics();
     await goToReview();
     // informational modal pops up in the first test only as it's tied
