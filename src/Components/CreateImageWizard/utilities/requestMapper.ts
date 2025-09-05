@@ -31,6 +31,7 @@ import {
   CreateBlueprintRequest,
   Customizations,
   CustomRepository,
+  Disk,
   DistributionProfileItem,
   Distributions,
   File,
@@ -72,11 +73,15 @@ import {
   selectComplianceProfileID,
   selectComplianceType,
   selectCustomRepositories,
+  selectDiskMinsize,
+  selectDiskPartitions,
+  selectDiskType,
   selectDistribution,
-  selectFileSystemConfigurationType,
+  selectFilesystemPartitions,
   selectFips,
   selectFirewall,
   selectFirstBootScript,
+  selectFscMode,
   selectGcpAccountType,
   selectGcpEmail,
   selectGcpShareMethod,
@@ -90,7 +95,7 @@ import {
   selectModules,
   selectNtpServers,
   selectPackages,
-  selectPartitions,
+  selectPartitioningMode,
   selectPayloadRepositories,
   selectRecommendedRepositories,
   selectRegistrationType,
@@ -107,12 +112,9 @@ import {
   wizardState,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
-import { FileSystemConfigurationType } from '../steps/FileSystem';
-import {
-  getConversionFactor,
-  Partition,
-  Units,
-} from '../steps/FileSystem/components/FileSystemTable';
+import { FscModeType } from '../steps/FileSystem';
+import { Partition, Units } from '../steps/FileSystem/fscTypes';
+import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
   convertSchemaToIBCustomRepo,
@@ -301,17 +303,31 @@ function commonRequestToState(
           script: getFirstBootScript(request.customizations.files),
         }
       : initialState.firstBoot,
+    fscMode: request.customizations.filesystem
+      ? ('basic' as FscModeType)
+      : request.customizations.disk
+        ? ('advanced' as FscModeType)
+        : ('automatic' as FscModeType),
+    disk: request.customizations.disk
+      ? {
+          type: request.customizations.disk.type || undefined,
+          minsize: request.customizations.disk.minsize || '',
+          partitions: request.customizations.disk.partitions,
+        }
+      : {
+          minsize: '',
+          partitions: [],
+        },
     fileSystem: request.customizations?.filesystem
       ? {
-          mode: 'manual' as FileSystemConfigurationType,
           partitions: request.customizations?.filesystem.map((fs) =>
             convertFilesystemToPartition(fs),
           ),
         }
       : {
-          mode: 'automatic' as FileSystemConfigurationType,
           partitions: [],
         },
+    partitioning_mode: request.customizations.partitioning_mode,
     architecture: arch,
     distribution:
       getLatestRelease(request.distribution) || initialState.distribution,
@@ -688,6 +704,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     payload_repositories: getPayloadRepositories(state),
     custom_repositories: getCustomRepositories(state),
     openscap: getOpenscap(state),
+    disk: getDisk(state),
     filesystem: getFileSystem(state),
     users: getUsers(state),
     services: getServices(state),
@@ -700,7 +717,7 @@ const getCustomizations = (state: RootState, orgID: string): Customizations => {
     installation_device: undefined,
     fdo: undefined,
     ignition: undefined,
-    partitioning_mode: undefined,
+    partitioning_mode: selectPartitioningMode(state),
     fips: getFips(state),
     cacerts:
       satCert && selectRegistrationType(state) === 'register-satellite'
@@ -769,15 +786,29 @@ const getUsers = (state: RootState): User[] | undefined => {
   });
 };
 
+const getDisk = (state: RootState): Disk | undefined => {
+  const fscMode = selectFscMode(state);
+
+  if (fscMode === 'advanced') {
+    return {
+      type: selectDiskType(state),
+      minsize: selectDiskMinsize(state),
+      partitions: selectDiskPartitions(state),
+    };
+  }
+
+  return undefined;
+};
+
 const getFileSystem = (state: RootState): Filesystem[] | undefined => {
-  const mode = selectFileSystemConfigurationType(state);
+  const fscMode = selectFscMode(state);
 
   const convertToBytes = (minSize: string, conversionFactor: number) => {
     return minSize.length > 0 ? parseInt(minSize) * conversionFactor : 0;
   };
 
-  if (mode === 'manual') {
-    const partitions = selectPartitions(state);
+  if (fscMode === 'basic') {
+    const partitions = selectFilesystemPartitions(state);
     const fileSystem = partitions.map((partition) => {
       return {
         min_size: convertToBytes(

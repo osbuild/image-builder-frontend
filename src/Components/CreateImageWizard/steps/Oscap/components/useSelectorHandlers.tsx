@@ -8,14 +8,14 @@ import {
   addPartition,
   changeDisabledServices,
   changeEnabledServices,
-  changeFileSystemConfigurationType,
+  changeFscMode,
   changeMaskedServices,
   clearKernelAppend,
   clearPartitions,
   removePackage,
 } from '../../../../../store/wizardSlice';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/components/FileSystemTable';
+import { Partition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
@@ -70,7 +70,7 @@ export const useSelectorHandlers = () => {
     });
 
     if (newPartitions.length > 0) {
-      dispatch(changeFileSystemConfigurationType('manual'));
+      dispatch(changeFscMode('basic'));
       for (const partition of newPartitions) {
         dispatch(addPartition(partition));
       }

@@ -149,6 +149,16 @@ export const ImportBlueprintModal: React.FunctionComponent<
             const blueprintFromFile = JSON.parse(fileContent);
             let customRepos: CustomRepository[] = [];
             try {
+              // disk and filesystem are mutually exclusive
+              // using both is invalid
+              if (
+                blueprintFromFile.customizations?.disk &&
+                blueprintFromFile.customizations?.filesystem
+              ) {
+                setIsInvalidFormat(true);
+                return;
+              }
+
               if (
                 blueprintFromFile.content_sources &&
                 blueprintFromFile.content_sources.length > 0
