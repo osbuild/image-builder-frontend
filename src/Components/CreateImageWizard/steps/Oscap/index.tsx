@@ -30,8 +30,8 @@ import {
   changeComplianceType,
   changeDisabledServices,
   changeEnabledServices,
-  changeFileSystemConfigurationType,
   changeFips,
+  changeFscMode,
   changeMaskedServices,
   clearKernelAppend,
   ComplianceType,
@@ -91,7 +91,7 @@ const OscapContent = () => {
     for (const pkg of pkgs) {
       dispatch(removePackage(pkg));
     }
-    dispatch(changeFileSystemConfigurationType('automatic'));
+    dispatch(changeFscMode('automatic'));
     dispatch(changeEnabledServices([]));
     dispatch(changeMaskedServices([]));
     dispatch(changeDisabledServices([]));

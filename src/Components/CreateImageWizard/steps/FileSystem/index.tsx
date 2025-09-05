@@ -2,20 +2,19 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
+import AdvancedPartitioning from './components/AdvancedPartitioning';
 import FileSystemAutomaticPartition from './components/FileSystemAutomaticPartitionInformation';
 import FileSystemConfiguration from './components/FileSystemConfiguration';
 import FileSystemPartition from './components/FileSystemPartition';
 
 import { useAppSelector } from '../../../../store/hooks';
-import { selectFileSystemConfigurationType } from '../../../../store/wizardSlice';
+import { selectFscMode } from '../../../../store/wizardSlice';
 import { useHasSpecificTargetOnly } from '../../utilities/hasSpecificTargetOnly';
 
-export type FileSystemConfigurationType = 'automatic' | 'manual';
+export type FscModeType = 'automatic' | 'basic' | 'advanced';
 
 const FileSystemStep = () => {
-  const fileSystemConfigurationType = useAppSelector(
-    selectFileSystemConfigurationType,
-  );
+  const fscMode = useAppSelector(selectFscMode);
   const hasIsoTargetOnly = useHasSpecificTargetOnly('image-installer');
 
   return (
@@ -26,15 +25,20 @@ const FileSystemStep = () => {
       <Content>Define the partitioning of the image.</Content>
       {hasIsoTargetOnly ? (
         <FileSystemAutomaticPartition />
-      ) : fileSystemConfigurationType === 'automatic' ? (
+      ) : fscMode === 'automatic' ? (
         <>
           <FileSystemPartition />
           <FileSystemAutomaticPartition />
         </>
-      ) : (
+      ) : fscMode === 'basic' ? (
         <>
           <FileSystemPartition />
           <FileSystemConfiguration />
+        </>
+      ) : (
+        <>
+          <FileSystemPartition />
+          <AdvancedPartitioning />
         </>
       )}
     </Form>

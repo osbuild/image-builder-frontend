@@ -19,13 +19,13 @@ import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { ImageTypes } from '../../../../../store/imageBuilderApi';
 import {
   addPartition,
+  selectFilesystemPartitions,
   selectImageTypes,
-  selectPartitions,
 } from '../../../../../store/wizardSlice';
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
-  const partitions = useAppSelector(selectPartitions);
+  const partitions = useAppSelector(selectFilesystemPartitions);
   const environments = useAppSelector(selectImageTypes);
 
   const dispatch = useAppDispatch();
