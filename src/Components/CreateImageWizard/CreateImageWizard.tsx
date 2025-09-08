@@ -271,8 +271,10 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   // Snapshots
   const snapshotValidation = useSnapshotValidation();
   // Filesystem
-  const [filesystemPristine, setFilesystemPristine] = useState(true);
   const fileSystemValidation = useFilesystemValidation();
+  const [filesystemPristine, setFilesystemPristine] = useState(
+    fileSystemValidation.disabledNext,
+  );
   // Timezone
   const timezoneValidation = useTimezoneValidation();
   // Locale
@@ -511,6 +513,11 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 key='step-file-system'
                 navItem={CustomStatusNavItem}
                 isHidden={hasWslTargetOnly}
+                status={
+                  !filesystemPristine && fileSystemValidation.disabledNext
+                    ? 'error'
+                    : 'default'
+                }
                 footer={
                   <CustomWizardFooter
                     beforeNext={() => {
