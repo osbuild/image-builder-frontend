@@ -18,12 +18,19 @@ export const FileSystemContext = React.createContext<boolean>(true);
 
 type RowPropTypes = {
   partition: Partition;
+  isRemovingDisabled: boolean;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
-const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
+const Row = ({
+  partition,
+  isRemovingDisabled,
+  onDragEnd,
+  onDragStart,
+  onDrop,
+}: RowPropTypes) => {
   const dispatch = useAppDispatch();
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
@@ -77,7 +84,7 @@ const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
           variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={partition.mountpoint === '/'}
+          isDisabled={isRemovingDisabled}
         />
       </Td>
     </Tr>
