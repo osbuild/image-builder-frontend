@@ -386,7 +386,10 @@ export function useLocaleValidation(): StepValidation {
       duplicateLanguages: duplicateLanguages,
       keyboard: keyboardError,
     },
-    disabledNext: unknownLanguages.length > 0 || 'keyboard' in errors,
+    disabledNext:
+      unknownLanguages.length > 0 ||
+      duplicateLanguages.length > 0 ||
+      'keyboard' in errors,
   };
 }
 
