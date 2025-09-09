@@ -6,6 +6,7 @@ import {
   MenuToggleElement,
   Select,
   SelectOption,
+  Spinner,
 } from '@patternfly/react-core';
 
 import { useSelectorHandlers } from './useSelectorHandlers';
@@ -197,6 +198,14 @@ const PolicySelector = () => {
   const complianceOptions = () => {
     if (!policies || policies.data === undefined) {
       return [];
+    }
+
+    if (isFetchingPolicies) {
+      return [
+        <SelectOption key='compliance-loader' value='loader'>
+          <Spinner size='lg' />
+        </SelectOption>,
+      ];
     }
 
     const res = [
