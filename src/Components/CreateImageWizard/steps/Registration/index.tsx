@@ -2,6 +2,7 @@ import React from 'react';
 
 import {
   ClipboardCopy,
+  Content,
   Form,
   FormGroup,
   FormHelperText,
@@ -34,11 +35,15 @@ const RegistrationStep = () => {
       <Title headingLevel='h1' size='xl'>
         Register systems using this image
       </Title>
+      <Content>
+        Configure registration settings for systems that will use this image.
+      </Content>
       <FormGroup label='Organization ID'>
         <ClipboardCopy
           hoverTip='Copy to clipboard'
           clickTip='Successfully copied to clipboard!'
-          variant='inline-compact'
+          isReadOnly
+          className='pf-v6-u-w-25'
         >
           {orgId || ''}
         </ClipboardCopy>
