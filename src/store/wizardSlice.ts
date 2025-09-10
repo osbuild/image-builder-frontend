@@ -817,6 +817,12 @@ export const wizardSlice = createSlice({
         state.fileSystem.partitions[partitionIndex].min_size = min_size;
       }
     },
+    changePartitioningMode: (
+      state,
+      action: PayloadAction<PartitioningModeType>,
+    ) => {
+      state.partitioning_mode = action.payload;
+    },
     changeUseLatest: (state, action: PayloadAction<boolean>) => {
       if (!action.payload && state.snapshotting.snapshotDate === '') {
         state.snapshotting.snapshotDate = yyyyMMddFormat(new Date());
@@ -1249,6 +1255,7 @@ export const {
   changePartitionUnit,
   changePartitionMinSize,
   changePartitionOrder,
+  changePartitioningMode,
   changeUseLatest,
   changeSnapshotDate,
   changeTemplate,
