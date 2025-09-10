@@ -18,7 +18,7 @@ import type { ActivationKeys } from './rhsmApi';
 
 import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
 import type {
-  Partition,
+  FilesystemPartition,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import type {
@@ -134,7 +134,7 @@ export type wizardState = {
   fscMode: FscModeType;
   disk: Disk;
   fileSystem: {
-    partitions: Partition[];
+    partitions: FilesystemPartition[];
   };
   partitioning_mode: PartitioningModeType;
   snapshotting: {
@@ -710,7 +710,7 @@ export const wizardSlice = createSlice({
     },
     changeFileSystemConfiguration: (
       state,
-      action: PayloadAction<Partition[]>,
+      action: PayloadAction<FilesystemPartition[]>,
     ) => {
       state.fileSystem.partitions = action.payload;
     },
@@ -750,11 +750,14 @@ export const wizardSlice = createSlice({
         ];
       }
     },
-    addPartition: (state, action: PayloadAction<Partition>) => {
+    addPartition: (state, action: PayloadAction<FilesystemPartition>) => {
       // Duplicate partitions are allowed temporarily, the wizard is responsible for final validation
       state.fileSystem.partitions.push(action.payload);
     },
-    removePartition: (state, action: PayloadAction<Partition['id']>) => {
+    removePartition: (
+      state,
+      action: PayloadAction<FilesystemPartition['id']>,
+    ) => {
       const index = state.fileSystem.partitions.findIndex(
         (partition) => partition.id === action.payload,
       );
@@ -764,7 +767,7 @@ export const wizardSlice = createSlice({
     },
     removePartitionByMountpoint: (
       state,
-      action: PayloadAction<Partition['mountpoint']>,
+      action: PayloadAction<FilesystemPartition['mountpoint']>,
     ) => {
       const index = state.fileSystem.partitions.findIndex(
         (partition) => partition.mountpoint === action.payload,
