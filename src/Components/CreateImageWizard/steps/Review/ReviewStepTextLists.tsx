@@ -86,7 +86,7 @@ import {
 } from '../../../../store/wizardSlice';
 import { toMonthAndYear, yyyyMMddFormat } from '../../../../Utilities/time';
 import MinimumSizePopover from '../FileSystem/components/MinimumSizePopover';
-import { Partition } from '../FileSystem/fscTypes';
+import { FilesystemPartition } from '../FileSystem/fscTypes';
 import { getConversionFactor } from '../FileSystem/fscUtilities';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
@@ -196,7 +196,7 @@ export const FSCList = () => {
 };
 
 type MinSizeProps = {
-  partitions: Partition[];
+  partitions: FilesystemPartition[];
 };
 
 export const MinSize = ({ partitions }: MinSizeProps) => {
