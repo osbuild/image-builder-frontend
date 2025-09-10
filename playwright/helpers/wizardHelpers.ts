@@ -1,3 +1,6 @@
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { expect, FrameLocator, type Page, test } from '@playwright/test';
 
 import { closePopupsIfExist, isHosted } from './helpers';
@@ -142,4 +145,18 @@ export const importBlueprint = async (
     ).not.toBeEmpty();
     await page.getByRole('button', { name: 'Review and Finish' }).click();
   }
+};
+
+export const saveBlueprintFileWithContents = async (
+  blueprintName: string,
+  content: string,
+) => {
+  const fixturesDir = path.join(__dirname, '../../../..', 'downloads');
+  const tmpFilePath = path.join(fixturesDir, blueprintName + '.json');
+
+  if (!fs.existsSync(fixturesDir)) {
+    fs.mkdirSync(fixturesDir, { recursive: true });
+  }
+
+  fs.writeFileSync(tmpFilePath, content);
 };

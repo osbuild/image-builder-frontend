@@ -73,6 +73,7 @@ export type Partition = {
 
 type RowPropTypes = {
   partition: Partition;
+  isRemovingDisabled: boolean;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
@@ -91,7 +92,13 @@ const getSuffix = (mountpoint: string) => {
   return normalizeSuffix(mountpoint.substring(prefix.length));
 };
 
-const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
+const Row = ({
+  partition,
+  isRemovingDisabled,
+  onDragEnd,
+  onDragStart,
+  onDrop,
+}: RowPropTypes) => {
   const dispatch = useAppDispatch();
   const handleRemovePartition = (id: string) => {
     dispatch(removePartition(id));
@@ -145,7 +152,7 @@ const Row = ({ partition, onDragEnd, onDragStart, onDrop }: RowPropTypes) => {
           variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={partition.mountpoint === '/'}
+          isDisabled={isRemovingDisabled}
         />
       </Td>
     </Tr>
@@ -499,6 +506,10 @@ const FileSystemTable = () => {
     });
   };
 
+  const rootPartitionsCount = partitions.filter(
+    (p) => p.mountpoint === '/',
+  ).length;
+
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
@@ -533,6 +544,9 @@ const FileSystemTable = () => {
               onDragStart={onDragStart}
               key={partition.id}
               partition={partition}
+              isRemovingDisabled={
+                rootPartitionsCount === 1 && partition.mountpoint === '/'
+              }
             />
           ))}
       </Tbody>
