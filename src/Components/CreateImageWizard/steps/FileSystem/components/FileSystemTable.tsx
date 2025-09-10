@@ -14,13 +14,15 @@ import {
 import MinimumSizePopover from './MinimumSizePopover';
 import Row from './Row';
 
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import {
-  changePartitionOrder,
-  selectFilesystemPartitions,
-} from '../../../../../store/wizardSlice';
+import { useAppDispatch } from '../../../../../store/hooks';
+import { changePartitionOrder } from '../../../../../store/wizardSlice';
+import { FilesystemPartition } from '../fscTypes';
 
-const FileSystemTable = () => {
+type FileSystemTableTypes = {
+  partitions: FilesystemPartition[];
+};
+
+const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [draggingToItemIndex, setDraggingToItemIndex] = useState<number | null>(
     null,
@@ -29,7 +31,6 @@ const FileSystemTable = () => {
   const [tempItemOrder, setTempItemOrder] = useState<string[]>([]);
 
   const bodyRef = useRef<HTMLTableSectionElement>(null);
-  const partitions = useAppSelector(selectFilesystemPartitions);
   const itemOrder = partitions.map((partition) => partition.id);
   const dispatch = useAppDispatch();
   const isValidDrop = (
