@@ -25,8 +25,8 @@ import {
 import UsrSubDirectoriesDisabled from '../../../UsrSubDirectoriesDisabled';
 
 const FileSystemConfiguration = () => {
-  const partitions = useAppSelector(selectFilesystemPartitions);
   const environments = useAppSelector(selectImageTypes);
+  const filesystemPartitions = useAppSelector(selectFilesystemPartitions);
 
   const dispatch = useAppDispatch();
 
@@ -58,7 +58,7 @@ const FileSystemConfiguration = () => {
       <Content>
         <Content component={ContentVariants.h3}>Configure partitions</Content>
       </Content>
-      {partitions.find((partition) =>
+      {filesystemPartitions.find((partition) =>
         partition.mountpoint.includes('/usr'),
       ) && <UsrSubDirectoriesDisabled />}
       <Content>
@@ -94,7 +94,7 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
-      <FileSystemTable />
+      <FileSystemTable partitions={filesystemPartitions} />
       <Content>
         <Button
           className='pf-v6-u-text-align-left'
