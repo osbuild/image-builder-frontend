@@ -7,10 +7,10 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { Partition } from '../fscTypes';
+import { FilesystemPartition } from '../fscTypes';
 
 type MinimumSizePropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
 };
 
 const MinimumSize = ({ partition }: MinimumSizePropTypes) => {

@@ -17,7 +17,7 @@ import {
   selectServices,
 } from '../../../../../store/wizardSlice';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
-import { Partition, Units } from '../../FileSystem/fscTypes';
+import { FilesystemPartition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
@@ -63,7 +63,7 @@ export const useSelectorHandlers = () => {
 
     const newPartitions = oscapPartitions.map((filesystem) => {
       const [size, unit] = parseSizeUnit(filesystem.min_size);
-      const partition: Partition = {
+      const partition: FilesystemPartition = {
         mountpoint: filesystem.mountpoint,
         min_size: size.toString(),
         unit: unit as Units,

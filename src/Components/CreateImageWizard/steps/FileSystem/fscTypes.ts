@@ -1,4 +1,4 @@
-export type Partition = {
+export type FilesystemPartition = {
   id: string;
   mountpoint: string;
   min_size: string;
