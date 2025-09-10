@@ -13,12 +13,12 @@ import {
   changePartitionMinSize,
   changePartitionUnit,
 } from '../../../../../store/wizardSlice';
-import { Partition, Units } from '../fscTypes';
+import { FilesystemPartition, Units } from '../fscTypes';
 
 const units = ['GiB', 'MiB', 'KiB'];
 
 type SizeUnitPropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
 };
 
 const SizeUnit = ({ partition }: SizeUnitPropTypes) => {

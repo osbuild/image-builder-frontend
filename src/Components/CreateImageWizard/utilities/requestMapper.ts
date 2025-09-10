@@ -114,7 +114,7 @@ import {
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
-import { Partition, Units } from '../steps/FileSystem/fscTypes';
+import { FilesystemPartition, Units } from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
@@ -149,7 +149,9 @@ export const mapRequestFromState = (
   };
 };
 
-const convertFilesystemToPartition = (filesystem: Filesystem): Partition => {
+const convertFilesystemToPartition = (
+  filesystem: Filesystem,
+): FilesystemPartition => {
   const id = uuidv4();
   const [size, unit] = parseSizeUnit(filesystem.min_size);
   const partition = {

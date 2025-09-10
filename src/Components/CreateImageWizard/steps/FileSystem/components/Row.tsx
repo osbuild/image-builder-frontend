@@ -12,12 +12,12 @@ import SizeUnit from './SizeUnit';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { removePartition } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { Partition } from '../fscTypes';
+import { FilesystemPartition } from '../fscTypes';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
 type RowPropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
   isRemovingDisabled: boolean;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
