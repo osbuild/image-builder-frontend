@@ -1,6 +1,5 @@
 import path from 'path';
 
-import TOML from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 
@@ -106,17 +105,24 @@ export const readComposes = async (bpID: string) => {
   return composes;
 };
 
-export const getCloudConfigs = async () => {
-  try {
-    const worker_config = cockpit.file(
-      '/etc/osbuild-worker/osbuild-worker.toml',
-    );
-    const contents = await worker_config.read();
-    const parsed = TOML.parse(contents);
-    return Object.keys(parsed).filter((k) => k === 'aws');
-  } catch {
-    return [];
-  }
+export const imageTypeLookup = (imageType: string) => {
+  // Fedora image types have a `server-` prefix that
+  const image = imageType.startsWith('server-')
+    ? imageType.slice('server-'.length)
+    : imageType;
+
+  // this is a list of types that we know we need to translate
+  const lookup: Record<string, string> = {
+    qcow2: 'guest-image',
+    ami: 'aws',
+    gce: 'gcp',
+    vhd: 'azure',
+    vmdk: 'vshpere',
+    ova: 'vsphere-ova',
+  };
+
+  const result = lookup[image];
+  return result ? result : image;
 };
 
 export const paginate = <T extends { id: string }>(
