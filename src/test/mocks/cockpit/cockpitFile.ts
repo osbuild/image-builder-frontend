@@ -44,7 +44,7 @@ export const cockpitFile = (filepath: string, _options?: object) => {
       return readCompose(file.name);
     },
     close: () => {},
-    replace: (contents: string) => {
+    replace: async (contents: string) => {
       const file = path.parse(filepath);
       const dir = path.parse(file.dir);
       if (file.name === dir.name) {

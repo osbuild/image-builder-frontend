@@ -11,7 +11,6 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Blueprint } from './composerCloudApi';
 // We have to work around RTK query here, since it doesn't like splitting
 // out the same api into two separate apis. So, instead, we can just
 // inherit/import the `contentSourcesApi` and build on top of that.
@@ -19,10 +18,17 @@ import { Blueprint } from './composerCloudApi';
 // the same unix socket. This allows us to split out the code a little
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
+import {
+  datastreamDistroLookup,
+  getBlueprintsPath,
+  getCloudConfigs,
+  mapToOnpremRequest,
+  paginate,
+  readComposes,
+} from './helpers';
 import type {
   CockpitCreateBlueprintApiArg,
   CockpitCreateBlueprintRequest,
-  CockpitImageRequest,
   CockpitUpdateBlueprintApiArg,
   UpdateWorkerConfigApiArg,
   WorkerConfigFile,
@@ -33,7 +39,6 @@ import {
   mapHostedToOnPrem,
   mapOnPremToHosted,
 } from '../../Components/Blueprints/helpers/onPremToHostedBlueprintMapper';
-import { BLUEPRINTS_DIR } from '../../constants';
 import {
   BlueprintItem,
   ComposeBlueprintApiArg,
@@ -63,104 +68,6 @@ import {
   GetOscapProfilesApiResponse,
   UpdateBlueprintApiResponse,
 } from '../service/imageBuilderApi';
-
-const lookupDatastreamDistro = (distribution: string) => {
-  if (distribution.startsWith('fedora')) {
-    return 'fedora';
-  }
-
-  if (distribution === 'centos-9') {
-    return 'cs9';
-  }
-
-  if (distribution === 'centos-10') {
-    return 'cs10';
-  }
-
-  if (distribution === 'rhel-9') {
-    return 'rhel9';
-  }
-
-  if (distribution === 'rhel-10') {
-    return 'rhel10';
-  }
-
-  throw 'Unknown distribution';
-};
-
-const getBlueprintsPath = async () => {
-  const user = await cockpit.user();
-
-  // we will use the user's `.local` directory
-  // to save blueprints used for on-prem
-  return `${user.home}/${BLUEPRINTS_DIR}`;
-};
-
-const readComposes = async (bpID: string) => {
-  const blueprintsDir = await getBlueprintsPath();
-  let composes: ComposesResponseItem[] = [];
-  const bpInfo = await fsinfo(
-    path.join(blueprintsDir, bpID),
-    ['entries', 'mtime'],
-    {
-      superuser: 'try',
-    },
-  );
-  const bpEntries = Object.entries(bpInfo?.entries || {});
-  for (const entry of bpEntries) {
-    if (entry[0] === `${bpID}.json`) {
-      continue;
-    }
-    const composeReq = await cockpit
-      .file(path.join(blueprintsDir, bpID, entry[0]))
-      .read();
-    composes = [
-      ...composes,
-      {
-        id: entry[0],
-        request: JSON.parse(composeReq),
-        created_at: new Date(entry[1]!.mtime * 1000).toString(),
-        blueprint_id: bpID,
-      },
-    ];
-  }
-  return composes;
-};
-
-const getCloudConfigs = async () => {
-  try {
-    const worker_config = cockpit.file(
-      '/etc/osbuild-worker/osbuild-worker.toml',
-    );
-    const contents = await worker_config.read();
-    const parsed = TOML.parse(contents);
-    return Object.keys(parsed).filter((k) => k === 'aws');
-  } catch {
-    return [];
-  }
-};
-
-const mapToOnpremRequest = (
-  blueprint: Blueprint,
-  distribution: string,
-  image_requests: CockpitImageRequest[],
-) => {
-  return {
-    blueprint,
-    distribution,
-    image_requests: image_requests.map((ir) => ({
-      architecture: ir.architecture,
-      image_type: ir.image_type,
-      repositories: [],
-      upload_targets: [
-        {
-          type: ir.upload_request.type,
-          upload_options: ir.upload_request.options,
-        },
-      ],
-    })),
-  };
-};
 
 export const cockpitApi = contentSourcesApi.injectEndpoints({
   endpoints: (builder) => {
@@ -278,31 +185,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
               return true;
             });
 
-            let paginatedBlueprints = blueprints;
-            if (offset !== undefined && limit !== undefined) {
-              paginatedBlueprints = blueprints.slice(offset, offset + limit);
-            }
-
-            let first = '';
-            let last = '';
-
-            if (blueprints.length > 0) {
-              first = blueprints[0].id;
-              last = blueprints[blueprints.length - 1].id;
-            }
-
-            return {
-              data: {
-                meta: { count: blueprints.length },
-                links: {
-                  // These are kind of meaningless for the on-prem
-                  // version
-                  first: first,
-                  last: last,
-                },
-                data: paginatedBlueprints,
-              },
-            };
+            return paginate(blueprints, offset, limit);
           } catch (error) {
             return { error };
           }
@@ -380,7 +263,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
       >({
         queryFn: async ({ distribution }) => {
           try {
-            const dsDistro = lookupDatastreamDistro(distribution);
+            const dsDistro = datastreamDistroLookup(distribution);
             const result = (await cockpit.spawn(
               [
                 'oscap',
@@ -413,7 +296,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
       >({
         queryFn: async ({ distribution, profile }) => {
           try {
-            const dsDistro = lookupDatastreamDistro(distribution);
+            const dsDistro = datastreamDistroLookup(distribution);
             let result = (await cockpit.spawn(
               [
                 'oscap',
@@ -546,19 +429,8 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             for (const entry of entries) {
               composes = composes.concat(await readComposes(entry[0]));
             }
-            return {
-              data: {
-                meta: {
-                  count: composes.length,
-                },
-                links: {
-                  first: composes.length > 0 ? composes[0].id : '',
-                  last:
-                    composes.length > 0 ? composes[composes.length - 1].id : '',
-                },
-                data: composes,
-              },
-            };
+
+            return paginate(composes);
           } catch (error) {
             return { error };
           }
@@ -571,19 +443,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         queryFn: async (queryArgs) => {
           try {
             const composes = await readComposes(queryArgs.id);
-            return {
-              data: {
-                meta: {
-                  count: composes.length,
-                },
-                links: {
-                  first: composes.length > 0 ? composes[0].id : '',
-                  last:
-                    composes.length > 0 ? composes[composes.length - 1].id : '',
-                },
-                data: composes,
-              },
-            };
+            return paginate(composes);
           } catch (error) {
             return { error };
           }
