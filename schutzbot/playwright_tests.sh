@@ -21,6 +21,8 @@ sudo useradd admin -p "$(openssl passwd foobar)"
 sudo usermod -aG wheel admin
 echo "admin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/admin-nopasswd"
 
+sudo podman build --tag playwright -f $(pwd)/schutzbot/Containerfile-Playwright .
+
 function upload_artifacts {
     if [ -n "${TMT_TEST_DATA:-}" ]; then
         mv playwright-report "$TMT_TEST_DATA"/playwright-report
@@ -88,5 +90,5 @@ sudo podman run \
      --privileged  \
      --rm \
      --init \
-     mcr.microsoft.com/playwright:v1.51.1-noble \
+     localhost/playwright \
      /bin/sh -c "cd tests && npx -y playwright@1.51.1 test --workers=${PW_WORKERS}"

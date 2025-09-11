@@ -119,7 +119,8 @@ describe('Images Table', () => {
     expect(await screen.findByText(/ami-0e778053cd490ad21/i)).not.toBeVisible();
   });
 
-  test('check error details', async () => {
+  // NOTE: we don't have an easy way of surfacting build errors with ibcli
+  test.skipIf(process.env.IS_ON_PREMISE)('check error details', async () => {
     await renderCustomRoutesWithReduxRouter();
 
     let table = await screen.findByTestId('images-table');

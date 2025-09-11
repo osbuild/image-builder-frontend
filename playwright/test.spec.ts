@@ -1,4 +1,6 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 
 import TOML from '@ltd/j-toml';
 import { expect, test } from '@playwright/test';
@@ -7,6 +9,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { closePopupsIfExist, isHosted } from './helpers/helpers';
 import { ensureAuthenticated } from './helpers/login';
 import { ibFrame, navigateToLandingPage } from './helpers/navHelpers';
+
+const awsCredentials = `
+[default]
+aws_access_key_id = supersecret
+aws_secret_access_key = secretsquirrel
+`;
 
 test.describe.serial('test', () => {
   const blueprintName = uuidv4();
@@ -265,6 +273,13 @@ test.describe.serial('test', () => {
     if (isHosted()) {
       return;
     }
+
+    // this needs to be set so ibcli will list aws targets
+    // as an available image type
+    writeFileSync(
+      path.join(os.homedir(), '.aws', 'credentials'),
+      awsCredentials,
+    );
 
     await ensureAuthenticated(page);
     await closePopupsIfExist(page);

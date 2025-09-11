@@ -30,7 +30,7 @@ export const readComposes = async (bpID: string) => {
       continue;
     }
     const composeReq = await cockpit
-      .file(path.join(blueprintsDir, bpID, entry[0]))
+      .file(path.join(blueprintsDir, bpID, entry[0], 'request.json'))
       .read();
     composes = [
       ...composes,

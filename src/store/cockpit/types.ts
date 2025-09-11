@@ -1,10 +1,14 @@
+import { UploadStatus as CockpitUploadStatus } from './composerCloudApi';
+
 import {
   Awss3UploadRequestOptions,
   AwsUploadRequestOptions,
   ComposeRequest,
   ComposesResponseItem,
+  ComposeStatus,
   CreateBlueprintApiArg,
   CreateBlueprintRequest,
+  UploadStatus as IBUploadStatus,
   ImageRequest,
   UpdateBlueprintApiArg,
   UploadTypes,
@@ -103,4 +107,23 @@ export type CockpitComposesResponseItem = Omit<
   request: Omit<ComposeRequest, 'image_requests'> & {
     image_requests: CockpitImageRequest[];
   };
+};
+
+export type BuildStatus =
+  | 'success'
+  | 'failure'
+  | 'pending'
+  | 'building'
+  | 'uploading'
+  | 'registering';
+
+export type ImageStatus = Omit<IBUploadStatus, 'upload_status'> & {
+  upload_status?: CockpitUploadStatus;
+};
+
+export type GetCockpitComposeStatusApiResponse = Omit<
+  ComposeStatus,
+  'image_status'
+> & {
+  image_status?: ImageStatus | undefined;
 };

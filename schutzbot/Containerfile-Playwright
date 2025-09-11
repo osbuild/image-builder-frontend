@@ -1,0 +1,14 @@
+FROM ubuntu:latest AS builder
+RUN apt update
+RUN apt install -y git golang libgpgme-dev libbtrfs-dev libdevmapper-dev podman
+RUN git clone https://github.com/osbuild/image-builder-cli.git ibcli
+WORKDIR ibcli
+RUN ls -al
+RUN go mod tidy && go mod vendor
+RUN go build -o /opt ./cmd/image-builder/
+
+FROM mcr.microsoft.com/playwright:v1.51.1-noble
+RUN apt update
+# Needed for running image-builder
+RUN apt install -y libgpgme-dev libbtrfs-dev libdevmapper-dev
+COPY --from=builder /opt /usr/bin

@@ -18,7 +18,12 @@ const config = {
     },
     testTimeout: 10000,
     fileParallelism: false,
-    exclude: ['./pkg/lib/**', '**/node_modules/**', '**/dist/**', './playwright/**'],
+    exclude: [
+      './pkg/lib/**',
+      '**/node_modules/**',
+      '**/dist/**',
+      './playwright/**',
+    ],
     retry: 3,
   },
   reporters: ['default', 'junit'],
@@ -34,7 +39,11 @@ const config = {
       cockpit: path.resolve(__dirname, 'src/test/mocks/cockpit'),
       'cockpit/fsinfo': path.resolve(
         __dirname,
-        'src/test/mocks/cockpit/fsinfo'
+        'src/test/mocks/cockpit/fsinfo',
+      ),
+      'long-running-process': path.resolve(
+        __dirname,
+        'src/test/mocks/long-running-process',
       ),
       'os-release': path.resolve(__dirname, 'src/test/mocks/os-release'),
     },
