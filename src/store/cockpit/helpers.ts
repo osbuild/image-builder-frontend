@@ -4,9 +4,6 @@ import TOML from '@ltd/j-toml';
 import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 
-import { Blueprint } from './composerCloudApi';
-import { CockpitImageRequest } from './types';
-
 import { BLUEPRINTS_DIR } from '../../constants';
 import { ComposesResponseItem } from '../imageBuilderApi';
 
@@ -42,6 +39,42 @@ export const getBlueprintsPath = async () => {
   return `${user.home}/${BLUEPRINTS_DIR}`;
 };
 
+export const composeStatus = async (composeId: string, composeDir: string) => {
+  const files = await fsinfo(composeDir, ['entries', 'mtime'], {
+    superuser: 'try',
+  });
+
+  const fileEntries = Object.entries(files?.entries || {});
+  for await (const entry of fileEntries) {
+    if (entry[0] === 'result.bad') {
+      return {
+        status: 'failure',
+      };
+    }
+
+    if (entry[0] === 'result.good') {
+      return {
+        status: 'success',
+        upload_status: {
+          options: {
+            artifact_path: path.join(
+              '/var',
+              'lib',
+              'osbuild-composer',
+              'artifacts',
+              composeId,
+            ),
+          },
+        },
+      };
+    }
+  }
+
+  return {
+    status: 'building',
+  };
+};
+
 export const readComposes = async (bpID: string) => {
   const blueprintsDir = await getBlueprintsPath();
   let composes: ComposesResponseItem[] = [];
@@ -58,7 +91,7 @@ export const readComposes = async (bpID: string) => {
       continue;
     }
     const composeReq = await cockpit
-      .file(path.join(blueprintsDir, bpID, entry[0]))
+      .file(path.join(blueprintsDir, bpID, entry[0], 'request.json'))
       .read();
     composes = [
       ...composes,
@@ -84,28 +117,6 @@ export const getCloudConfigs = async () => {
   } catch {
     return [];
   }
-};
-
-export const mapToOnpremRequest = (
-  blueprint: Blueprint,
-  distribution: string,
-  image_requests: CockpitImageRequest[],
-) => {
-  return {
-    blueprint,
-    distribution,
-    image_requests: image_requests.map((ir) => ({
-      architecture: ir.architecture,
-      image_type: ir.image_type,
-      repositories: [],
-      upload_targets: [
-        {
-          type: ir.upload_request.type,
-          upload_options: ir.upload_request.options,
-        },
-      ],
-    })),
-  };
 };
 
 export const paginate = <T extends { id: string }>(

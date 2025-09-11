@@ -19,10 +19,10 @@ import { v4 as uuidv4 } from 'uuid';
 // bit so that the `cockpitApi` doesn't become a monolith.
 import { contentSourcesApi } from './contentSourcesApi';
 import {
+  composeStatus,
   getBlueprintsPath,
   getCloudConfigs,
   lookupDatastreamDistro,
-  mapToOnpremRequest,
   paginate,
   readComposes,
 } from './helpers';
@@ -359,7 +359,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         ComposeBlueprintApiResponse,
         ComposeBlueprintApiArg
       >({
-        queryFn: async ({ id: filename }, _, __, baseQuery) => {
+        queryFn: async ({ id: filename }) => {
           try {
             const blueprintsDir = await getBlueprintsPath();
             const file = cockpit.file(
@@ -386,27 +386,61 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 image_requests: [ir],
               };
 
-              const composeResp = await baseQuery({
-                url: '/compose',
-                method: 'POST',
-                body: JSON.stringify(
-                  // since this is the request that gets sent to the cloudapi
-                  // backend, we need to modify it slightly
-                  mapToOnpremRequest(
+              const uuid = uuidv4();
+              const composeDir = path.join(blueprintsDir, filename, uuid);
+              await cockpit.spawn(['mkdir', '-p', composeDir], {});
+
+              const ibBpPath = path.join(composeDir, 'bp.json');
+              await cockpit
+                .file(ibBpPath)
+                .replace(
+                  JSON.stringify(
                     mapHostedToOnPrem(blueprint as CreateBlueprintRequest),
-                    crcComposeRequest.distribution,
-                    [ir],
                   ),
-                ),
-                headers: {
-                  'content-type': 'application/json',
-                },
-              });
+                );
+
+              const outputDir = path.join(
+                '/var',
+                'lib',
+                'osbuild-composer',
+                'artifacts',
+                uuid,
+              );
+
+              // TODO: add repos
+              // TODO: add registrations
+              cockpit
+                .spawn(
+                  [
+                    'image-builder',
+                    'build',
+                    '--blueprint',
+                    ibBpPath,
+                    '--output-dir',
+                    outputDir,
+                    '--distro',
+                    crcComposeRequest.distribution,
+                    ir.image_type,
+                  ],
+                  {
+                    superuser: 'require',
+                  },
+                )
+                .then(async () => {
+                  await cockpit
+                    .file(path.join(composeDir, 'result.good'))
+                    .replace(JSON.stringify(crcComposeRequest));
+                })
+                .catch(async () => {
+                  await cockpit
+                    .file(path.join(composeDir, 'result.bad'))
+                    .replace(JSON.stringify(crcComposeRequest));
+                });
 
               await cockpit
-                .file(path.join(blueprintsDir, filename, composeResp.data?.id))
+                .file(path.join(composeDir, 'request.json'))
                 .replace(JSON.stringify(crcComposeRequest));
-              composes.push({ id: composeResp.data?.id });
+              composes.push({ id: uuid });
             }
 
             return {
@@ -453,12 +487,9 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
         GetComposeStatusApiResponse,
         GetComposeStatusApiArg
       >({
-        queryFn: async (queryArg, _, __, baseQuery) => {
+        // @ts-expect-error the upload_status is different to `ImageBuilderCRC`
+        queryFn: async (queryArg) => {
           try {
-            const resp = await baseQuery({
-              url: `/composes/${queryArg.composeId}`,
-              method: 'GET',
-            });
             const blueprintsDir = await getBlueprintsPath();
             const info = await fsinfo(blueprintsDir, ['entries'], {
               superuser: 'try',
@@ -466,18 +497,33 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const entries = Object.entries(info?.entries || {});
             for (const bpEntry of entries) {
               const request = await cockpit
-                .file(path.join(blueprintsDir, bpEntry[0], queryArg.composeId))
+                .file(
+                  path.join(
+                    blueprintsDir,
+                    bpEntry[0],
+                    queryArg.composeId,
+                    'request.json',
+                  ),
+                )
                 .read();
+
+              const status = await composeStatus(
+                queryArg.composeId,
+                path.join(blueprintsDir, bpEntry[0], queryArg.composeId),
+              );
+
               return {
                 data: {
-                  image_status: resp.data?.image_status,
+                  image_status: status,
                   request: JSON.parse(request),
                 },
               };
             }
             return {
               data: {
-                image_status: '',
+                image_status: {
+                  status: 'building',
+                },
                 request: {},
               },
             };
