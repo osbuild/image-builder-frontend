@@ -1,22 +1,6 @@
 # Configuration for dependency-review-action
 # Documentation: https://github.com/actions/dependency-review-action
 
-# Fail the action if vulnerabilities are found with these severities
-fail-on-severity: high
-
-# Allow or deny specific licenses (optional)
-# For the full list of licenses: https://docs.github.com/en/rest/licenses
-# allow-licenses:
-#   - MIT
-#   - Apache-2.0
-#   - BSD-3-Clause
-#   - ISC
-
-# Deny packages with these licenses
-# deny-licenses:
-#   - GPL-3.0
-#   - LGPL-2.0
-
 # List of packages that should never be allowed
 # These are packages from the npm supply chain attack (Sept 2025)
 # Source: https://socket.dev/blog/npm-author-qix-compromised-in-major-supply-chain-attack
@@ -40,9 +24,6 @@ deny-packages:
   - pkg:npm/supports-color@10.2.1
   - pkg:npm/proto-tinker-wc@1.8.7
   - pkg:npm/debug@4.4.2
-
-# Create a comment on the PR with the review summary
-comment-summary-in-pr: always
 
 # Additional settings for more strict checking
 warn-only: false
