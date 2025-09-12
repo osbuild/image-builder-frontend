@@ -1,0 +1,63 @@
+name: Dependency Review
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  merge_group:
+
+# Cancel in-progress jobs for the same workflow and ref
+concurrency:
+  group: ${{github.workflow}}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  # Required for dependency-review-action to post comments
+  pull-requests: write
+
+jobs:
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # GitHub's dependency-review-action checks for:
+      # - Known vulnerabilities in the GHSA database
+      # - License compliance issues
+      # - Introduces new dependencies
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          # Fail on vulnerabilities with severity critical or high
+          fail-on-severity: high
+          # Also check for vulnerable transitive dependencies
+          vulnerability-check: true
+          # Warn about licenses that might be problematic
+          license-check: true
+          # Deny specific licenses if needed (uncomment and modify as needed)
+          # deny-licenses: GPL-3.0, LGPL-2.0, BSD-2-Clause
+          # Comment on PR with results
+          comment-summary-in-pr: always
+          # Set a custom configuration file path
+          config-file: .github/dependency-review-config.yml
+
+  check-blocked-packages:
+    name: Check for Blocked Packages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check for compromised packages
+        run: npm run security:check
