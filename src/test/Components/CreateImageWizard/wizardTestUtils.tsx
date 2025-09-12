@@ -97,7 +97,9 @@ function preparePathname(searchParams: { [key: string]: string } = {}): string {
 
 export const renderCreateMode = async (searchParams = {}) => {
   const pathName = preparePathname(searchParams);
-  await renderCustomRoutesWithReduxRouter(pathName, {}, routes);
+  await waitFor(
+    async () => await renderCustomRoutesWithReduxRouter(pathName, {}, routes),
+  );
 };
 
 export const renderEditMode = async (id: string) => {
