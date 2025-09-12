@@ -31,15 +31,23 @@ export const baseQuery =
       const cloudApi = cockpit.http('/run/cloudapi/api.socket', {
         superuser: 'try',
       });
+
+      let body: string;
+      try {
+        body = JSON.stringify(options.body);
+      } catch {
+        body = '';
+      }
+
       return cloudApi
         .request({
           path: baseUrl + options.url,
-          body: options.body ?? '',
+          body: body ?? '',
           method: options.method ?? 'GET',
-          params: options.params,
-          headers: options.headers,
+          params: options.params ?? {},
+          headers: options.headers ?? {},
         })
-        .then((result) => {
+        .then((result: string) => {
           resolve({ data: JSON.parse(result) });
         })
         .catch(

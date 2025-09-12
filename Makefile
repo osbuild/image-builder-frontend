@@ -7,7 +7,7 @@ VERSION := $(shell (cd "$(SRCDIR)" && grep "^Version:" cockpit/$(PACKAGE_NAME).s
 COMMIT = $(shell (cd "$(SRCDIR)" && git rev-parse HEAD))
 
 # TODO: figure out a strategy for keeping this updated
-COCKPIT_REPO_COMMIT = a70142a7a6f9c4e78e71f3c4ec738b6db2fbb04f
+COCKPIT_REPO_COMMIT = 0ee23c07488e343e04ec766a891d1fceea781d10
 COCKPIT_REPO_URL = https://github.com/cockpit-project/cockpit.git
 COCKPIT_REPO_TREE = '$(strip $(COCKPIT_REPO_COMMIT))^{tree}'
 

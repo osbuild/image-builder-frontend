@@ -24,7 +24,7 @@
         // Needed so we can resolve `cockpit` & `cockpit/fsinfo`
         // types. We have stubbed those functions out for the
         // as this is the tsconfig file for the service.
-        "./src/test/mocks/*"
+        "./pkg/lib/*"
       ]
     }
   },
