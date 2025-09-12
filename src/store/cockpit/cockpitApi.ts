@@ -127,7 +127,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 ...parsed,
                 id,
                 version: version,
-                last_modified_at: new Date(bpInfo!.mtime * 1000).toString(),
+                last_modified_at: new Date(bpInfo!.mtime! * 1000).toString(),
                 // linting is not supported on prem
                 lint: {
                   errors: [],
@@ -517,37 +517,36 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
           try {
             const workerConfig = cockpit.file(
               '/etc/osbuild-worker/osbuild-worker.toml',
-              {
-                superuser: 'required',
-              },
             );
 
-            const contents = await workerConfig.modify((prev: string) => {
-              if (!updateWorkerConfigRequest) {
-                return prev;
-              }
-
-              const merged = {
-                ...TOML.parse(prev),
-                ...updateWorkerConfigRequest,
-              } as WorkerConfigFile;
-
-              const contents: WorkerConfigFile = {};
-              Object.keys(merged).forEach((key: string) => {
-                // this check helps prevent saving empty objects
-                // into the osbuild-worker.toml config file.
-                if (merged[key] !== undefined) {
-                  contents[key] = Section({
-                    ...merged[key],
-                  });
+            const contents = await workerConfig.modify(
+              (prev: string | null) => {
+                if (!updateWorkerConfigRequest) {
+                  return prev;
                 }
-              });
 
-              return TOML.stringify(contents, {
-                newline: '\n',
-                newlineAround: 'document',
-              });
-            });
+                const merged = {
+                  ...TOML.parse(prev ?? ''),
+                  ...updateWorkerConfigRequest,
+                } as WorkerConfigFile;
+
+                const contents: WorkerConfigFile = {};
+                Object.keys(merged).forEach((key: string) => {
+                  // this check helps prevent saving empty objects
+                  // into the osbuild-worker.toml config file.
+                  if (merged[key] !== undefined) {
+                    contents[key] = Section({
+                      ...merged[key],
+                    });
+                  }
+                });
+
+                return TOML.stringify(contents, {
+                  newline: '\n',
+                  newlineAround: 'document',
+                });
+              },
+            );
 
             const systemServices = [
               'osbuild-composer.socket',

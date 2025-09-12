@@ -65,7 +65,7 @@ export const readComposes = async (bpID: string) => {
       {
         id: entry[0],
         request: JSON.parse(composeReq),
-        created_at: new Date(entry[1]!.mtime * 1000).toString(),
+        created_at: new Date(entry[1]!.mtime! * 1000).toString(),
         blueprint_id: bpID,
       },
     ];

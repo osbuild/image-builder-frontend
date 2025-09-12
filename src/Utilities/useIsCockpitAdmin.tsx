@@ -6,6 +6,7 @@ export const useIsCockpitAdmin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
+    // @ts-expect-error cockpit hasn't created a type for this upstream
     const permission = cockpit.permission({ admin: true });
 
     const onChangeListener = () => {

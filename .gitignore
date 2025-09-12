@@ -38,7 +38,10 @@ cockpit/public/main*
 .sentryclirc
 
 # cockpit lib dir
-pkg/lib
+pkg/lib/*
+!pkg/lib/cockpit/
+!pkg/lib/cockpit.d.ts
+!pkg/lib/os-release.ts
 
 rpmbuild
 
