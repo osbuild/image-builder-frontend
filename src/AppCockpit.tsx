@@ -1,28 +1,35 @@
 import '@patternfly/react-core/dist/styles/base.css';
 import '@patternfly/patternfly/patternfly-addons.css';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import 'cockpit-dark-theme';
 import { Page, PageSection } from '@patternfly/react-core';
+import { Spinner } from '@redhat-cloud-services/frontend-components';
 import NotificationsProvider from '@redhat-cloud-services/frontend-components-notifications/NotificationsProvider';
+import cockpit from 'cockpit';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { HashRouter } from 'react-router-dom';
 
 import './AppCockpit.scss';
-import { NotReady, RequireAdmin } from './Components/Cockpit';
+import { RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
 import { onPremStore as store } from './store';
-import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
 import { useIsCockpitAdmin } from './Utilities/useIsCockpitAdmin';
 
 const Application = () => {
-  const { enabled, started } = useGetComposerSocketStatus();
   const isAdmin = useIsCockpitAdmin();
+  const [ready, setReady] = useState(false);
 
-  if (!started || !enabled) {
-    return <NotReady enabled={enabled} />;
+  useEffect(() => {
+    if (cockpit) {
+      setReady(true);
+    }
+  }, [cockpit, ready, setReady]);
+
+  if (!ready) {
+    return <Spinner centered />;
   }
 
   if (!isAdmin) {

@@ -2,7 +2,6 @@ import React, { lazy, Suspense } from 'react';
 
 import { Route, Routes } from 'react-router-dom';
 
-import { CloudProviderConfig } from './Components/CloudProviderConfig/CloudProviderConfig';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
 import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
@@ -47,16 +46,6 @@ export const Router = () => {
           </Suspense>
         }
       />
-      {process.env.IS_ON_PREMISE && (
-        <Route
-          path={'/cloud-provider-config'}
-          element={
-            <Suspense>
-              <CloudProviderConfig />
-            </Suspense>
-          }
-        />
-      )}
     </Routes>
   );
 };
