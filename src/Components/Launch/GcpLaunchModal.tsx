@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import {
   Button,
@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalVariant,
   OrderType,
+  Skeleton,
   TextInput,
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
@@ -21,7 +22,7 @@ import { generateDefaultName } from './useGenerateDefaultName';
 
 import {
   ComposesResponseItem,
-  ComposeStatus,
+  useGetComposeStatusQuery,
 } from '../../store/imageBuilderApi';
 import {
   isGcpUploadRequestOptions,
@@ -29,24 +30,21 @@ import {
 } from '../../store/typeGuards';
 import { parseGcpSharedWith } from '../ImagesTable/ImageDetails';
 
-type LaunchProps = {
-  isOpen: boolean;
-  handleModalToggle: (event: KeyboardEvent | React.MouseEvent) => void;
-  compose: ComposesResponseItem;
-  composeStatus: ComposeStatus | undefined;
-};
+type LaunchProps = { compose: ComposesResponseItem };
 
-export const GcpLaunchModal = ({
-  isOpen,
-  handleModalToggle,
-  compose,
-  composeStatus,
-}: LaunchProps) => {
+export const GcpLaunchModal = ({ compose }: LaunchProps) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [customerProjectId, setCustomerProjectId] = useState('');
+  const { data, isSuccess, isFetching } = useGetComposeStatusQuery({
+    composeId: compose.id,
+  });
 
-  const statusOptions = composeStatus?.image_status.upload_status?.options;
+  const statusOptions = data?.image_status.upload_status?.options;
   const composeOptions =
     compose.request.image_requests[0].upload_request.options;
+  if (!isSuccess) {
+    return <Skeleton />;
+  }
 
   if (
     (statusOptions && !isGcpUploadStatus(statusOptions)) ||
@@ -59,12 +57,7 @@ export const GcpLaunchModal = ({
 
   const imageName = statusOptions?.image_name;
   const projectId = statusOptions?.project_id;
-  if (!imageName || !projectId) {
-    throw TypeError(
-      `Error: Image name not found, unable to generate a command to copy ${typeof statusOptions}.`,
-    );
-  }
-  const uniqueImageName = generateDefaultName(imageName);
+  const uniqueImageName = generateDefaultName(imageName || '');
   const authorizeString =
     composeOptions.share_with_accounts &&
     composeOptions.share_with_accounts.length === 1
@@ -81,89 +74,117 @@ export const GcpLaunchModal = ({
   const createInstance = `gcloud compute instances create ${uniqueImageName} --image=${uniqueImageName} --project=${
     customerProjectId || '<your_project_id>'
   }`;
+
+  const handleModalToggle = (_event: KeyboardEvent | React.MouseEvent) => {
+    setIsModalOpen(!isModalOpen);
+  };
+
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleModalToggle}
-      variant={ModalVariant.large}
-      aria-label='Open launch guide modal'
-    >
-      <ModalHeader
-        title={'Launch with Google Cloud Platform'}
-        labelId='modal-title'
-        description={compose.image_name}
-      />
-      <ModalBody id='modal-box-body-basic'>
-        <List component={ListComponent.ol} type={OrderType.number}>
-          <ListItem>
-            Install the gcloud CLI. See the{' '}
-            <Button
-              component='a'
-              target='_blank'
-              variant='link'
-              icon={<ExternalLinkAltIcon />}
-              iconPosition='right'
-              href={`https://cloud.google.com/sdk/docs/install`}
-              className='pf-v6-u-pl-0'
-            >
-              Install gcloud CLI
-            </Button>
-            documentation.
-            <ClipboardCopy isReadOnly hoverTip='Copy' clickTip='Copied'>
-              {installationCommand}
-            </ClipboardCopy>
-          </ListItem>
-          <ListItem>{authorizeString}</ListItem>
-          <ListItem>
-            Enter your GCP project ID, and run the command to create the image
-            in your project.
-            <TextInput
-              className='pf-v6-u-mt-sm pf-v6-u-mb-md'
-              value={customerProjectId}
-              type='text'
-              onChange={(_event, value) => setCustomerProjectId(value)}
-              aria-label='Project ID input'
-              placeholder='Project ID'
-            />
-            <ClipboardCopy
-              isReadOnly
-              hoverTip='Copy'
-              clickTip='Copied'
-              variant={ClipboardCopyVariant.expansion}
-            >
-              {createImage}
-            </ClipboardCopy>
-          </ListItem>
-          <ListItem>
-            Create an instance of your image by either accessing the{' '}
-            <Button
-              component='a'
-              target='_blank'
-              variant='link'
-              icon={<ExternalLinkAltIcon />}
-              iconPosition='right'
-              href={`https://console.cloud.google.com/compute/images`}
-              className='pf-v6-u-pl-0'
-            >
-              GCP console
-            </Button>{' '}
-            or by running the following command:
-            <ClipboardCopy
-              isReadOnly
-              hoverTip='Copy'
-              clickTip='Copied'
-              variant={ClipboardCopyVariant.expansion}
-            >
-              {createInstance}
-            </ClipboardCopy>
-          </ListItem>
-        </List>
-      </ModalBody>
-      <ModalFooter>
-        <Button key='close' variant='primary' onClick={handleModalToggle}>
-          Close
-        </Button>
-      </ModalFooter>
-    </Modal>
+    <Fragment>
+      <Button
+        variant='link'
+        isInline
+        isDisabled={data?.image_status.status !== 'success'}
+        onClick={handleModalToggle}
+      >
+        Launch
+      </Button>
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleModalToggle}
+        variant={ModalVariant.large}
+        aria-label='Open launch guide modal'
+      >
+        <ModalHeader
+          title={'Launch with Google Cloud Platform'}
+          labelId='modal-title'
+          description={compose.image_name}
+        />
+        <ModalBody id='modal-box-body-basic'>
+          <List component={ListComponent.ol} type={OrderType.number}>
+            <ListItem>
+              Install the gcloud CLI. See the{' '}
+              <Button
+                component='a'
+                target='_blank'
+                variant='link'
+                icon={<ExternalLinkAltIcon />}
+                iconPosition='right'
+                href={`https://cloud.google.com/sdk/docs/install`}
+                className='pf-v6-u-pl-0'
+              >
+                Install gcloud CLI
+              </Button>
+              documentation.
+              {!isFetching && (
+                <ClipboardCopy isReadOnly hoverTip='Copy' clickTip='Copied'>
+                  {installationCommand}
+                </ClipboardCopy>
+              )}
+              {isFetching && <Skeleton />}
+            </ListItem>
+            <ListItem>{authorizeString}</ListItem>
+            <ListItem>
+              Enter your GCP project ID, and run the command to create the image
+              in your project.
+              {!isFetching && (
+                <TextInput
+                  className='pf-v6-u-mt-sm pf-v6-u-mb-md'
+                  value={customerProjectId}
+                  type='text'
+                  onChange={(_event, value) => setCustomerProjectId(value)}
+                  aria-label='Project ID input'
+                  placeholder='Project ID'
+                />
+              )}
+              {isFetching && <Skeleton />}
+              {!isFetching && (
+                <ClipboardCopy
+                  isReadOnly
+                  hoverTip='Copy'
+                  clickTip='Copied'
+                  variant={ClipboardCopyVariant.expansion}
+                >
+                  {createImage}
+                </ClipboardCopy>
+              )}
+              {isFetching && <Skeleton />}
+            </ListItem>
+            <ListItem>
+              Create an instance of your image by either accessing the{' '}
+              <Button
+                component='a'
+                target='_blank'
+                variant='link'
+                icon={<ExternalLinkAltIcon />}
+                iconPosition='right'
+                href={`https://console.cloud.google.com/compute/images`}
+                className='pf-v6-u-pl-0'
+              >
+                GCP console
+              </Button>{' '}
+              or by running the following command:
+              {!isFetching && (
+                <ClipboardCopy
+                  isReadOnly
+                  hoverTip='Copy'
+                  clickTip='Copied'
+                  variant={ClipboardCopyVariant.expansion}
+                >
+                  {createInstance}
+                </ClipboardCopy>
+              )}
+              {isFetching && <Skeleton />}
+            </ListItem>
+          </List>
+        </ModalBody>
+        <ModalFooter>
+          <Button key='close' variant='primary' onClick={handleModalToggle}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+    </Fragment>
   );
 };
