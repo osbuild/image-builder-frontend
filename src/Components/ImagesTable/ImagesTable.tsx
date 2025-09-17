@@ -39,12 +39,7 @@ import {
   OciDetails,
 } from './ImageDetails';
 import ImagesTableToolbar from './ImagesTableToolbar';
-import {
-  AwsS3Instance,
-  CloudInstance,
-  LocalInstance,
-  OciInstance,
-} from './Instance';
+import { AwsS3Instance, LocalInstance, OciInstance } from './Instance';
 import Release from './Release';
 import { CloudStatus, ExpiringStatus, LocalStatus } from './Status';
 import { AwsTarget, Target } from './Target';
@@ -423,14 +418,8 @@ type AzureRowPropTypes = {
 };
 
 const AzureRow = ({ compose, rowIndex }: AzureRowPropTypes) => {
-  const launchEofFlag = useFlag('image-builder.launcheof');
-
   const details = <AzureDetails compose={compose} />;
-  const instance = launchEofFlag ? (
-    <AzureLaunchModal compose={compose} />
-  ) : (
-    <CloudInstance compose={compose} />
-  );
+  const instance = <AzureLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;
 
   return (
