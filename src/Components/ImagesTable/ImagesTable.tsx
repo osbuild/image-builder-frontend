@@ -90,6 +90,7 @@ import {
 } from '../../Utilities/time';
 import { AWSLaunchModal } from '../Launch/AWSLaunchModal';
 import { AzureLaunchModal } from '../Launch/AzureLaunchModal';
+import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
 import { OciLaunchModal } from '../Launch/OciLaunchModal';
 
 const ImagesTable = () => {
@@ -402,7 +403,7 @@ type GcpRowPropTypes = {
 
 const GcpRow = ({ compose, rowIndex }: GcpRowPropTypes) => {
   const details = <GcpDetails compose={compose} />;
-  const instance = <CloudInstance compose={compose} />;
+  const instance = <GcpLaunchModal compose={compose} />;
   const status = <CloudStatus compose={compose} />;
 
   return (

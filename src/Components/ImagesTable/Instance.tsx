@@ -56,7 +56,6 @@ import {
 import { resolveRelPath } from '../../Utilities/path';
 import { useFlag } from '../../Utilities/useGetEnvironment';
 import useProvisioningPermissions from '../../Utilities/useProvisioningPermissions';
-import { GcpLaunchModal } from '../Launch/GcpLaunchModal';
 
 type CloudInstancePropTypes = {
   compose: ComposesResponseItem;
@@ -195,10 +194,6 @@ const ProvisioningLink = ({
     </Popover>
   );
 
-  const handleModalToggle = (_event: KeyboardEvent | React.MouseEvent) => {
-    setIsModalOpen(!isModalOpen);
-  };
-
   return (
     <>
       <Suspense fallback='loading...'>
@@ -206,14 +201,6 @@ const ProvisioningLink = ({
         compose.blueprint_version !== selectedBlueprintVersion
           ? buttonWithTooltip
           : btn}
-        {launchEofFlag && isModalOpen && provider === 'gcp' && (
-          <GcpLaunchModal
-            isOpen={isModalOpen}
-            handleModalToggle={handleModalToggle}
-            compose={compose}
-            composeStatus={composeStatus}
-          />
-        )}
         {!launchEofFlag && isModalOpen && (
           <Modal
             isOpen
