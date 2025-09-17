@@ -88,6 +88,7 @@ import {
   timestampToDisplayString,
   timestampToDisplayStringDetailed,
 } from '../../Utilities/time';
+import { AWSLaunchModal } from '../Launch/AWSLaunchModal';
 import { AzureLaunchModal } from '../Launch/AzureLaunchModal';
 import { OciLaunchModal } from '../Launch/OciLaunchModal';
 
@@ -522,7 +523,7 @@ const AwsRow = ({ compose, composeStatus, rowIndex }: AwsRowPropTypes) => {
 
   const target = <AwsTarget compose={compose} />;
   const status = <CloudStatus compose={compose} />;
-  const instance = <CloudInstance compose={compose} />;
+  const instance = <AWSLaunchModal compose={compose} />;
   const details = <AwsDetails compose={compose} />;
 
   const actions = (
