@@ -282,6 +282,41 @@ deny-packages:
   - pkg:npm/wdio-web-reporter@0.1.3
   - pkg:npm/yargs-help-output@5.0.3
   - pkg:npm/yoo-styles@6.0.326
+  # These are packages from the tinycolor supply chain attack (Sept 2025)
+  # Source: https://socket.dev/blog/tinycolor-supply-chain-attack-affects-40-packages
+  - pkg:npm/angulartics2@14.1.2
+  - pkg:npm/@ctrl/deluge@7.2.2
+  - pkg:npm/@ctrl/golang-template@1.4.3
+  - pkg:npm/@ctrl/magnet-link@4.0.4
+  - pkg:npm/@ctrl/ngx-codemirror@7.0.2
+  - pkg:npm/@ctrl/ngx-csv@6.0.2
+  - pkg:npm/@ctrl/ngx-emoji-mart@9.2.2
+  - pkg:npm/@ctrl/ngx-rightclick@4.0.2
+  - pkg:npm/@ctrl/qbittorrent@9.7.2
+  - pkg:npm/@ctrl/react-adsense@2.0.2
+  - pkg:npm/@ctrl/shared-torrent@6.3.2
+  - pkg:npm/@ctrl/tinycolor@4.1.1
+  - pkg:npm/@ctrl/tinycolor@4.1.2
+  - pkg:npm/@ctrl/torrent-file@4.1.2
+  - pkg:npm/@ctrl/transmission@7.3.1
+  - pkg:npm/@ctrl/ts-base32@4.0.2
+  - pkg:npm/encounter-playground@0.0.5
+  - pkg:npm/json-rules-engine-simplified@0.2.1
+  - pkg:npm/json-rules-engine-simplified@0.2.4
+  - pkg:npm/koa2-swagger-ui@5.11.1
+  - pkg:npm/koa2-swagger-ui@5.11.2
+  - pkg:npm/@nativescript-community/gesturehandler@2.0.35
+  - pkg:npm/@nativescript-community/sentry@4.6.43
+  - pkg:npm/@nativescript-community/text@1.6.13
+  - pkg:npm/@nativescript-community/ui-collectionview@6.0.6
+  - pkg:npm/@nativescript-community/ui-drawer@0.1.30
+  - pkg:npm/@nativescript-community/ui-image@4.5.6
+  - pkg:npm/@nativescript-community/ui-material-bottomsheet@7.2.72
+  - pkg:npm/@nativescript-community/ui-material-core@7.2.76
+  - pkg:npm/@nativescript-community/ui-material-core-tabs@7.2.76
+  - pkg:npm/react-complaint-image@0.0.35
+  - pkg:npm/react-jsonschema-form-conditionals@0.3.21
+  - pkg:npm/react-jsonschema-form-extras@1.0.4
 
 # Additional settings for more strict checking
 warn-only: false
