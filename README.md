@@ -21,9 +21,13 @@ Frontend code for Image Builder.
    1. [Frontend Development](#frontend-development)
    2. [Image builder as Cockpit plugin](#image-builder-as-cockpit-plugin)
    3. [Backend Development](#backend-development)
-2. [API](#api-endpoints)
+2. [API endpoints](#api-endpoints)
+   1. [Add a new API schema](#add-a-new-api-schema)
+   2. [Add a new endpoint](#add-a-new-endpoint)
 3. [Unleash feature flags](#unleash-feature-flags)
-4. [File structure](#file-structure)
+   1. [Mocking flags for tests](#mocking-flags-for-tests)
+   2. [Cleaning the flags](#cleaning-the-flags)
+4. [File Structure](#file-structure)
 5. [Style Guidelines](#style-guidelines)
 6. [Test Guidelines](#test-guidelines)
 7. [Running hosted service Playwright tests](#running-hosted-service-playwright-tests)
@@ -32,6 +36,9 @@ Frontend code for Image Builder.
 
 > [!IMPORTANT]
 > Running image-builder-frontend against [console.redhat.com](https://console.redhat.com/) requires connection to the Red Hat VPN, which is only available to Red Hat employees. External contributors can locally run [image builder as Cockpit plugin](#image-builder-as-cockpit-plugin).
+>
+> As you will see in the following sections we **always** prefer `npm clean-install` (aka `npm ci`) over `npm install` to install dependencies exactly as they are defined in the `package-lock.json` file.<br>
+> This is crucial to avoid any discrepancies between the dependencies installed locally and the dependencies installed in the CI as well as unintentionally installing compromised dependencies.
 
 ### Frontend Development
 
@@ -47,7 +54,7 @@ Make sure you have npm@10 and node 22+ installed. If you need multiple versions 
 
 #### Webpack proxy
 
-1. run `npm ci`
+1. run `npm clean-install`
 
 2. run `npm run start:prod`
 
@@ -61,7 +68,7 @@ echo "127.0.0.1 prod.foo.redhat.com" >> /etc/hosts
 
 #### Webpack proxy (staging) -- *Runs with image-builder's stage deployment*
 
-1. run `npm ci`
+1. run `npm clean-install`
 
 2. run `npm run start:stage`
 
@@ -306,7 +313,7 @@ If you'd like to see the stack printed out you can either temporarily disable th
 
 2. Make sure Playwright is installed as a dev dependency
    ```bash
-   npm ci
+   npm clean-install
    ```
 
 3. Download the Playwright browsers with
