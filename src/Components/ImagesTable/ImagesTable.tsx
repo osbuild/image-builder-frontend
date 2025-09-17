@@ -25,7 +25,6 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
-import { useFlag } from '@unleash/proxy-client-react';
 import { useDispatch } from 'react-redux';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
@@ -39,7 +38,7 @@ import {
   OciDetails,
 } from './ImageDetails';
 import ImagesTableToolbar from './ImagesTableToolbar';
-import { AwsS3Instance, LocalInstance, OciInstance } from './Instance';
+import { AwsS3Instance, LocalInstance } from './Instance';
 import Release from './Release';
 import { CloudStatus, ExpiringStatus, LocalStatus } from './Status';
 import { AwsTarget, Target } from './Target';
@@ -439,18 +438,13 @@ type OciRowPropTypes = {
 };
 
 const OciRow = ({ compose, rowIndex }: OciRowPropTypes) => {
-  const launchEofFlag = useFlag('image-builder.launcheof');
   const daysToExpiration = Math.floor(
     computeHoursToExpiration(compose.created_at) / 24,
   );
   const isExpired = daysToExpiration >= OCI_STORAGE_EXPIRATION_TIME_IN_DAYS;
 
   const details = <OciDetails compose={compose} />;
-  const instance = launchEofFlag ? (
-    <OciLaunchModal compose={compose} isExpired={isExpired} />
-  ) : (
-    <OciInstance compose={compose} isExpired={isExpired} />
-  );
+  const instance = <OciLaunchModal compose={compose} isExpired={isExpired} />;
   const status = (
     <ExpiringStatus
       compose={compose}
