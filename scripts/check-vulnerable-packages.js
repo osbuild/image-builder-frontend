@@ -62,6 +62,22 @@ function checkPackages() {
   const deniedPackages = loadDeniedPackages();
   const packageLock = JSON.parse(fs.readFileSync(packageLockPath, 'utf8'));
   const found = [];
+  const differentVersions = new Map(); // Map of package name to {installed: Set<string>, compromised[]}
+
+  // Build a map of package names to their compromised versions
+  const compromisedByName = new Map();
+  for (const purlString of deniedPackages) {
+    try {
+      const purl = PackageURL.fromString(purlString);
+      const fullName = purl.namespace ? `${purl.namespace}/${purl.name}` : purl.name;
+      if (!compromisedByName.has(fullName)) {
+        compromisedByName.set(fullName, []);
+      }
+      compromisedByName.get(fullName).push(purl.version);
+    } catch (error) {
+      continue;
+    }
+  }
 
   // Scan all packages
   function scan(packages) {
@@ -98,11 +114,23 @@ function checkPackages() {
 
         // Convert to string and check if it's in the denied list
         const purlString = purl.toString();
+        const fullName = namespace ? `${namespace}/${name}` : name;
+        const displayName = `${fullName}@${info.version}`;
+
         if (deniedPackages.has(purlString)) {
           found.push({
             purl: purlString,
-            displayName: `${namespace ? namespace + '/' : ''}${name}@${info.version}`
+            displayName: displayName
           });
+        } else if (compromisedByName.has(fullName)) {
+          // Package exists but at a different version
+          if (!differentVersions.has(fullName)) {
+            differentVersions.set(fullName, {
+              installed: new Set(),
+              compromised: compromisedByName.get(fullName)
+            });
+          }
+          differentVersions.get(fullName).installed.add(info.version);
         }
       } catch (error) {
         // Skip packages that can't be parsed as purl
@@ -122,6 +150,16 @@ function checkPackages() {
     process.exit(1);
   } else {
     console.log(`✅ No compromised packages detected (checked ${deniedPackages.size} packages)`);
+    
+    // Show packages with different versions if any
+    if (differentVersions.size > 0) {
+      console.log(`\nℹ️  Found ${differentVersions.size} package(s) at different (safe) versions:`);
+      for (const [pkgName, versions] of differentVersions.entries()) {
+        const installedList = Array.from(versions.installed).sort().join(', ');
+        const compromisedList = versions.compromised.join(', ');
+        console.log(`  - ${pkgName}@${installedList} ✓ (compromised: ${compromisedList})`);
+      }
+    }
   }
 }
 
