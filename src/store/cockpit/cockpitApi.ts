@@ -205,7 +205,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             );
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
-              .replace(JSON.stringify(blueprintReq));
+              .replace(JSON.stringify(blueprintReq, null, 2));
             return {
               data: {
                 id: id,
@@ -225,7 +225,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
             const blueprintsDir = await getBlueprintsPath();
             await cockpit
               .file(path.join(blueprintsDir, id, `${id}.json`))
-              .replace(JSON.stringify(blueprintReq));
+              .replace(JSON.stringify(blueprintReq, null, 2));
             return {
               data: {
                 id: id,
@@ -397,6 +397,8 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                     crcComposeRequest.distribution,
                     [ir],
                   ),
+                  null,
+                  2,
                 ),
                 headers: {
                   'content-type': 'application/json',
@@ -405,7 +407,7 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
 
               await cockpit
                 .file(path.join(blueprintsDir, filename, composeResp.data?.id))
-                .replace(JSON.stringify(crcComposeRequest));
+                .replace(JSON.stringify(crcComposeRequest, null, 2));
               composes.push({ id: composeResp.data?.id });
             }
 
