@@ -347,7 +347,9 @@ export type ApiRepositoryResponse = {
   last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string | undefined;
+  /** Latest Snapshot taken */
   last_snapshot?: ApiSnapshotResponse | undefined;
+  /** Last snapshot task response (contains last snapshot status) */
   last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string | undefined;
@@ -401,7 +403,9 @@ export type ApiRepositoryResponseRead = {
   last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string | undefined;
+  /** Latest Snapshot taken */
   last_snapshot?: ApiSnapshotResponse | undefined;
+  /** Last snapshot task response (contains last snapshot status) */
   last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string | undefined;
@@ -455,13 +459,17 @@ export type ApiResponseMetadata = {
 export type ApiRepositoryCollectionResponse = {
   /** Requested Data */
   data?: ApiRepositoryResponse[] | undefined;
+  /** Links to other pages of results */
   links?: ApiLinks | undefined;
+  /** Metadata about the request */
   meta?: ApiResponseMetadata | undefined;
 };
 export type ApiRepositoryCollectionResponseRead = {
   /** Requested Data */
   data?: ApiRepositoryResponseRead[] | undefined;
+  /** Links to other pages of results */
   links?: ApiLinks | undefined;
+  /** Metadata about the request */
   meta?: ApiResponseMetadata | undefined;
 };
 export type ApiRepositoryRequest = {
@@ -525,7 +533,9 @@ export type ApiRepositoryImportResponse = {
   last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string | undefined;
+  /** Latest Snapshot taken */
   last_snapshot?: ApiSnapshotResponse | undefined;
+  /** Last snapshot task response (contains last snapshot status) */
   last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string | undefined;
@@ -585,7 +595,9 @@ export type ApiRepositoryImportResponseRead = {
   last_introspection_status?: string | undefined;
   /** Timestamp of last attempted introspection */
   last_introspection_time?: string | undefined;
+  /** Latest Snapshot taken */
   last_snapshot?: ApiSnapshotResponse | undefined;
+  /** Last snapshot task response (contains last snapshot status) */
   last_snapshot_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last snapshot task */
   last_snapshot_task_uuid?: string | undefined;
@@ -645,7 +657,9 @@ export type ApiRepositoryRpm = {
 export type ApiRepositoryRpmCollectionResponse = {
   /** List of rpms */
   data?: ApiRepositoryRpm[] | undefined;
+  /** Links to other pages of results */
   links?: ApiLinks | undefined;
+  /** Metadata about the request */
   meta?: ApiResponseMetadata | undefined;
 };
 export type ConfigDistributionArch = {
@@ -697,6 +711,7 @@ export type ApiSearchRpmResponse = {
 export type ApiSnapshotForDate = {
   /** Is the snapshot after the specified date */
   is_after?: boolean | undefined;
+  /** This is the snapshot (if found) */
   match?: ApiSnapshotResponse | undefined;
   /** Repository uuid for associated snapshot */
   repository_uuid?: string | undefined;
@@ -724,6 +739,7 @@ export type ApiTemplateResponse = {
   description?: string | undefined;
   /** Error of last update_latest_snapshot task that updated the template */
   last_update_snapshot_error?: string | undefined;
+  /** Response of last update_template_content task that updated the template */
   last_update_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last update_template_content task that updated the template */
   last_update_task_uuid?: string | undefined;
@@ -757,6 +773,7 @@ export type ApiTemplateResponseRead = {
   description?: string | undefined;
   /** Error of last update_latest_snapshot task that updated the template */
   last_update_snapshot_error?: string | undefined;
+  /** Response of last update_template_content task that updated the template */
   last_update_task?: ApiTaskInfoResponse | undefined;
   /** UUID of the last update_template_content task that updated the template */
   last_update_task_uuid?: string | undefined;
@@ -787,13 +804,17 @@ export type ApiTemplateResponseRead = {
 export type ApiTemplateCollectionResponse = {
   /** Requested Data */
   data?: ApiTemplateResponse[] | undefined;
+  /** Links to other pages of results */
   links?: ApiLinks | undefined;
+  /** Metadata about the request */
   meta?: ApiResponseMetadata | undefined;
 };
 export type ApiTemplateCollectionResponseRead = {
   /** Requested Data */
   data?: ApiTemplateResponseRead[] | undefined;
+  /** Links to other pages of results */
   links?: ApiLinks | undefined;
+  /** Metadata about the request */
   meta?: ApiResponseMetadata | undefined;
 };
 export const {
