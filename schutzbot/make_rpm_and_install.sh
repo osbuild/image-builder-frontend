@@ -4,7 +4,7 @@ set -euo pipefail
 source /etc/os-release
 
 sudo dnf install -y \
-     libappstream-glib
+     libappstream-glib image-builder
 
 if [[ "$ID" == rhel && ${VERSION_ID%.*} == 10 ]]; then
     sudo dnf install -y nodejs-npm \

@@ -102,6 +102,14 @@ export const ON_PREM_RELEASES = new Map([
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
+export const ON_PREM_DISTRO_MAP = new Map([
+  [CENTOS_10, CENTOS_10],
+  [FEDORA_41, FEDORA_41],
+  [FEDORA_42, FEDORA_42],
+  [FEDORA_43, FEDORA_43],
+  [RHEL_10, 'rhel-10.0'],
+]);
+
 export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
 export const RHEL_9_FULL_SUPPORT = ['2022-05-18', '2027-05-31'];
 export const RHEL_8_FULL_SUPPORT = ['2019-05-07', '2024-05-31'];
@@ -313,3 +321,18 @@ export const SEARCH_INPUT = '';
 
 export const BLUEPRINTS_DIR = '.cache/cockpit-image-builder/';
 export const ARTIFACTS_DIR = '/var/lib/osbuild-composer/artifacts';
+
+export const ON_PREM_SUPPORTED_IMAGE_TYPES = [
+  'aws',
+  'guest-image',
+  'image-installer',
+  'vsphere',
+  'vsphere-ova',
+  'wsl',
+  'ami',
+  'vhd',
+  // TODO: add support for these incrementally
+  // 'azure',
+  // 'gcp',
+  // 'oci',
+];

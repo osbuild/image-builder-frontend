@@ -59,6 +59,7 @@ import {
   selectActivationKey,
   selectArchitecture,
   selectAwsAccountId,
+  selectAwsBucket,
   selectAwsRegion,
   selectAwsShareMethod,
   selectAwsSourceId,
@@ -241,7 +242,10 @@ function commonRequestToState(
 
   // we need to check for the region for on-prem
   const awsUploadOptions = aws?.upload_request
-    .options as AwsUploadRequestOptions & { region?: string | undefined };
+    .options as AwsUploadRequestOptions & {
+    region?: string | undefined;
+    bucket?: string | undefined;
+  };
   const gcpUploadOptions = gcp?.upload_request
     .options as GcpUploadRequestOptions;
   const azureUploadOptions = azure?.upload_request
@@ -350,6 +354,7 @@ function commonRequestToState(
       source: { id: awsUploadOptions?.share_with_sources?.[0] },
       sourceId: awsUploadOptions?.share_with_sources?.[0],
       region: awsUploadOptions?.region,
+      bucket: awsUploadOptions?.bucket,
     },
     snapshotting: {
       useLatest: !snapshot_date && !request.image_requests[0]?.content_template,
@@ -624,8 +629,8 @@ const getImageOptions = (
       // TODO: we might want to update the image-builder-crc api
       // to accept a region instead (with default us-east-1)
       return {
-        share_with_accounts: [selectAwsAccountId(state)],
         region: selectAwsRegion(state),
+        bucket: selectAwsBucket(state),
       };
     case 'azure':
       return {

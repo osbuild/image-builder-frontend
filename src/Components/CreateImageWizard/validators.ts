@@ -8,6 +8,15 @@ export const isAwsAccountIdValid = (awsAccountId: string | undefined) => {
   );
 };
 
+export const isAwsBucketValid = (bucket?: string): boolean => {
+  if (!bucket || bucket === '') {
+    return false;
+  }
+
+  const regex = /^[a-z0-9](?:[a-z0-9]|[-.](?=[a-z0-9])){1,61}[a-z0-9]$/;
+  return regex.test(bucket);
+};
+
 export const isAzureTenantGUIDValid = (azureTenantGUID: string | undefined) => {
   return (
     azureTenantGUID === undefined ||

@@ -48,6 +48,7 @@ import {
   selectActivationKey,
   selectArchitecture,
   selectAwsAccountId,
+  selectAwsBucket,
   selectAwsRegion,
   selectAwsShareMethod,
   selectAwsSourceId,
@@ -225,6 +226,7 @@ export const TargetEnvAWSList = () => {
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const sourceId = useAppSelector(selectAwsSourceId);
   const region = useAppSelector(selectAwsRegion);
+  const bucket = useAppSelector(selectAwsBucket);
   const { source } = useGetSourceListQuery(
     {
       provider: 'aws',
@@ -248,22 +250,43 @@ export const TargetEnvAWSList = () => {
           <br />
           <ExpirationWarning />
         </Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Shared to account
-        </Content>
-        <Content component={ContentVariants.dd}>{awsAccountId}</Content>
-        <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          {awsShareMethod === 'sources' ? 'Source' : null}
-        </Content>
+        {!process.env.IS_ON_PREMISE && (
+          <>
+            <Content
+              component={ContentVariants.dt}
+              className='pf-v6-u-min-width'
+            >
+              Shared to account
+            </Content>
+            <Content component={ContentVariants.dd}>{awsAccountId}</Content>
+            <Content
+              component={ContentVariants.dt}
+              className='pf-v6-u-min-width'
+            >
+              {awsShareMethod === 'sources' ? 'Source' : null}
+            </Content>
+          </>
+        )}
         <Content component={ContentVariants.dd}>
           {isSuccess && awsShareMethod === 'sources' ? source?.name : null}
         </Content>
         <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
-          Default region
+          {process.env.IS_ON_PREMISE ? 'Default region' : 'Region'}
         </Content>
         <Content component={ContentVariants.dd}>
           {region || 'us-east-1'}
         </Content>
+        {process.env.IS_ON_PREMISE && (
+          <>
+            <Content
+              component={ContentVariants.dt}
+              className='pf-v6-u-min-width'
+            >
+              Bucket
+            </Content>
+            <Content component={ContentVariants.dd}>{bucket}</Content>
+          </>
+        )}
       </Content>
     </Content>
   );

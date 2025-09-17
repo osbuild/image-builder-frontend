@@ -21,8 +21,6 @@ sudo useradd admin -p "$(openssl passwd foobar)"
 sudo usermod -aG wheel admin
 echo "admin ALL=(ALL:ALL) NOPASSWD: ALL" | sudo tee "/etc/sudoers.d/admin-nopasswd"
 
-sudo podman build --tag playwright -f $(pwd)/schutzbot/Containerfile-Playwright .
-
 function upload_artifacts {
     if [ -n "${TMT_TEST_DATA:-}" ]; then
         mv playwright-report "$TMT_TEST_DATA"/playwright-report
@@ -76,6 +74,13 @@ EOF
 sudo systemctl enable --now osbuild-composer.socket osbuild-local-worker.socket
 sudo systemctl start osbuild-worker@1
 
+sudo mkdir -p $HOME/.aws
+cat <<EOF | sudo tee -a $HOME/.aws/credentials
+[default]
+aws_access_key_id = supersecret
+aws_secret_access_key = secretsquirrel
+EOF
+
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
@@ -90,5 +95,5 @@ sudo podman run \
      --privileged  \
      --rm \
      --init \
-     localhost/playwright \
+     mcr.microsoft.com/playwright:v1.51.1-noble \
      /bin/sh -c "cd tests && npx -y playwright@1.51.1 test --workers=${PW_WORKERS}"

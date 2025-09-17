@@ -56,7 +56,11 @@ import {
   useTimezoneValidation,
   useUsersValidation,
 } from './utilities/useValidation';
-import { isAwsAccountIdValid, isGcpEmailValid } from './validators';
+import {
+  isAwsAccountIdValid,
+  isAwsBucketValid,
+  isGcpEmailValid,
+} from './validators';
 
 import {
   AARCH64,
@@ -76,6 +80,7 @@ import {
   changeTimezone,
   initializeWizard,
   selectAwsAccountId,
+  selectAwsBucket,
   selectAwsShareMethod,
   selectAwsSourceId,
   selectAzureResourceGroup,
@@ -244,6 +249,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const awsShareMethod = useAppSelector(selectAwsShareMethod);
   const awsAccountId = useAppSelector(selectAwsAccountId);
   const awsSourceId = useAppSelector(selectAwsSourceId);
+  const awsBucket = useAppSelector(selectAwsBucket);
   // GCP
   const gcpShareMethod = useAppSelector(selectGcpShareMethod);
   const gcpEmail = useAppSelector(selectGcpEmail);
@@ -422,10 +428,8 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 footer={
                   <CustomWizardFooter
                     disableNext={
-                      // we don't need the account id for
-                      // on-prem aws.
                       process.env.IS_ON_PREMISE
-                        ? false
+                        ? !isAwsBucketValid(awsBucket)
                         : awsShareMethod === 'manual'
                           ? !isAwsAccountIdValid(awsAccountId)
                           : awsSourceId === undefined

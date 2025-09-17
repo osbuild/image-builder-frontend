@@ -31,12 +31,6 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     getBlueprintComposes: {
       providesTags: [{ type: 'Composes' }],
     },
-    getWorkerConfig: {
-      providesTags: [{ type: 'WorkerConfig' }],
-    },
-    updateWorkerConfig: {
-      invalidatesTags: [{ type: 'WorkerConfig' }],
-    },
   },
 });
 
