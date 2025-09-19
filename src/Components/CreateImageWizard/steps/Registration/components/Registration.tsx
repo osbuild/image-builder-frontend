@@ -1,106 +1,15 @@
 import React from 'react';
 
-import {
-  Button,
-  Checkbox,
-  Content,
-  FormGroup,
-  Popover,
-  Radio,
-} from '@patternfly/react-core';
-import { ExternalLinkAltIcon, HelpIcon } from '@patternfly/react-icons';
+import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 import { useFlag } from '@unleash/proxy-client-react';
 
-import { INSIGHTS_URL, RHC_URL } from '../../../../../constants';
+import ActivationKeysList from './ActivationKeysList';
+
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeRegistrationType,
   selectRegistrationType,
 } from '../../../../../store/wizardSlice';
-
-const InsightsPopover = () => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
-
-  return (
-    <Popover
-      headerContent={`About ${lightspeedEnabled ? 'Red Hat Lightspeed' : 'Red Hat Insights'}`}
-      position='right'
-      minWidth='30rem'
-      bodyContent={
-        <Content>
-          <Content>
-            Red Hat {lightspeedEnabled ? 'Lightspeed' : 'Insights'} client
-            provides actionable intelligence about your Red Hat Enterprise Linux
-            environments, helping to identify and address operational and
-            vulnerability risks before an issue results in downtime.
-          </Content>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            isInline
-            href={INSIGHTS_URL}
-          >
-            Learn more about Red Hat{' '}
-            {lightspeedEnabled ? 'Lightspeed' : 'Insights'}
-          </Button>
-        </Content>
-      }
-    >
-      <Button
-        icon={<HelpIcon />}
-        variant='plain'
-        className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
-        aria-label='About remote host configuration (rhc)'
-        isInline
-      />
-    </Popover>
-  );
-};
-
-const RhcPopover = () => {
-  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
-
-  return (
-    <Popover
-      headerContent='About remote host configuration (rhc)'
-      position='right'
-      minWidth='30rem'
-      bodyContent={
-        <Content>
-          <Content>
-            Remote host configuration allows Red Hat Enterprise Linux hosts to
-            connect to Red Hat {lightspeedEnabled ? 'Lightspeed' : 'Insights'}.
-            Remote host configuration is required to use the Red Hat{' '}
-            {lightspeedEnabled ? 'Lightspeed' : 'Insights'} Remediations
-            service.
-          </Content>
-          <Button
-            component='a'
-            target='_blank'
-            variant='link'
-            icon={<ExternalLinkAltIcon />}
-            iconPosition='right'
-            isInline
-            href={RHC_URL}
-          >
-            Learn more about remote host configuration
-          </Button>
-        </Content>
-      }
-    >
-      <Button
-        icon={<HelpIcon />}
-        variant='plain'
-        className='pf-v6-u-pl-sm pf-v6-u-pt-0 pf-v6-u-pb-0'
-        aria-label='About remote host configuration (rhc)'
-        isInline
-      />
-    </Popover>
-  );
-};
 
 const Registration = () => {
   const dispatch = useAppDispatch();
@@ -113,7 +22,7 @@ const Registration = () => {
   return (
     <FormGroup label='Registration method'>
       <Radio
-        label='Automatically register and enable advanced capabilities'
+        label='Automatically register and enable advanced capabilities.'
         isChecked={
           registrationType === 'register-now' ||
           registrationType === 'register-now-insights' ||
@@ -129,36 +38,29 @@ const Registration = () => {
         autoFocus
         className='pf-v6-u-pb-sm'
         body={
-          <Checkbox
-            label={
-              <>
-                Enable predictive analytics and management capabilities
-                <InsightsPopover />
-              </>
-            }
-            isChecked={
-              registrationType === 'register-now-insights' ||
-              registrationType === 'register-now-rhc'
-            }
-            onChange={(_event, checked) => {
-              if (checked) {
-                dispatch(changeRegistrationType('register-now-insights'));
-              } else {
-                dispatch(changeRegistrationType('register-now'));
-              }
-            }}
-            id='register-system-now-insights'
-            name='register-system-insights'
-            className='pf-v6-u-pt-0'
-            body={
-              <Checkbox
-                label={
-                  <>
-                    Enable remote remediations and system management with
-                    automation
-                    <RhcPopover />
-                  </>
+          <>
+            <Content>
+              <Switch
+                label='Enable predictive analytics and management capabilities'
+                isChecked={
+                  registrationType === 'register-now-insights' ||
+                  registrationType === 'register-now-rhc'
                 }
+                onChange={(_event, checked) => {
+                  if (checked) {
+                    dispatch(changeRegistrationType('register-now-insights'));
+                  } else {
+                    dispatch(changeRegistrationType('register-now'));
+                  }
+                }}
+                id='register-system-now-insights'
+                name='register-system-insights'
+                hasCheckIcon
+              />
+            </Content>
+            <Content>
+              <Switch
+                label='Enable remote remediations and system management with automation'
                 isChecked={registrationType === 'register-now-rhc'}
                 onChange={(_event, checked) => {
                   if (checked) {
@@ -169,11 +71,14 @@ const Registration = () => {
                 }}
                 id='register-system-now-rhc'
                 name='register-system-rhc'
+                hasCheckIcon
               />
-            }
-          />
+            </Content>
+          </>
         }
       />
+      {!process.env.IS_ON_PREMISE &&
+        registrationType.startsWith('register-now') && <ActivationKeysList />}
       <Radio
         label='Register later'
         isChecked={registrationType === 'register-later'}

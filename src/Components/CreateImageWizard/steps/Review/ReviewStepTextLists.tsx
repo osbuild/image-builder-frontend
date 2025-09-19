@@ -89,7 +89,6 @@ import { Partition } from '../FileSystem/fscTypes';
 import { getConversionFactor } from '../FileSystem/fscUtilities';
 import { MajorReleasesLifecyclesChart } from '../ImageOutput/components/ReleaseLifecycle';
 import OscapProfileInformation from '../Oscap/components/OscapProfileInformation';
-import ActivationKeyInformation from '../Registration/components/ActivationKeyInformation';
 
 const ExpirationWarning = () => {
   return (
@@ -725,9 +724,7 @@ export const RegisterNowList = () => {
           <Content component={ContentVariants.dt} className='pf-v6-u-min-width'>
             Activation key
           </Content>
-          <Content component={ContentVariants.dd}>
-            <ActivationKeyInformation />
-          </Content>
+          <Content component={ContentVariants.dd}>{activationKey}</Content>
         </Content>
       </Content>
       {isError && (

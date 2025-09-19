@@ -59,18 +59,18 @@ const router: RemixRouter | undefined = undefined;
 
 const deselectEnableRemoteRemediations = async () => {
   const user = userEvent.setup();
-  const checkBox = await screen.findByRole('checkbox', {
-    name: 'Enable remote remediations and system management with automation',
+  const optionSwitch = await screen.findByRole('switch', {
+    name: /Enable remote remediations and system management with automation/,
   });
-  await waitFor(() => user.click(checkBox));
+  await waitFor(() => user.click(optionSwitch));
 };
 
 const deselectPredictiveAnalytics = async () => {
   const user = userEvent.setup();
-  const checkBox = await screen.findByRole('checkbox', {
-    name: 'Enable predictive analytics and management capabilities',
+  const optionSwitch = await screen.findByRole('switch', {
+    name: /Enable predictive analytics and management capabilities/,
   });
-  await waitFor(() => user.click(checkBox));
+  await waitFor(() => user.click(optionSwitch));
 };
 
 const openActivationKeyDropdown = async () => {
@@ -193,7 +193,7 @@ describe('Step Registration', () => {
     );
   });
 
-  test('should disable dropdown when clicking Register the system later', async () => {
+  test('should hide dropdown when clicking Register the system later', async () => {
     await renderCreateMode();
     await goToRegistrationStep();
     await clickRegisterLater();
@@ -204,9 +204,9 @@ describe('Step Registration', () => {
       ).not.toBeInTheDocument(),
     );
     await waitFor(async () =>
-      expect(await screen.findByTestId('activation-key-select')).toHaveClass(
-        'pf-m-disabled',
-      ),
+      expect(
+        screen.queryByTestId('activation-key-select'),
+      ).not.toBeInTheDocument(),
     );
     await goToReview();
     await screen.findByText('Register the system later');
