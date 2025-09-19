@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
+  Button,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
   MenuToggle,
   MenuToggleElement,
+  Popover,
   Select,
   SelectList,
   SelectOption,
@@ -15,9 +17,11 @@ import {
   TextInputGroup,
   TextInputGroupMain,
 } from '@patternfly/react-core';
+import { InfoCircleIcon } from '@patternfly/react-icons';
 import { useAddNotification } from '@redhat-cloud-services/frontend-components-notifications/hooks';
 import { v4 as uuidv4 } from 'uuid';
 
+import ActivationKeyInformation from './ActivationKeyInformation';
 import ManageKeysButton from './ManageKeysButton';
 
 import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
@@ -266,7 +270,7 @@ const ActivationKeysList = () => {
 
   return (
     <>
-      <FormGroup label='Activation key to use for this image'>
+      <FormGroup label='Activation key'>
         <Select
           isScrollable
           isOpen={isOpen}
@@ -277,7 +281,20 @@ const ActivationKeysList = () => {
           shouldFocusFirstItemOnOpen={false}
         >
           <SelectList>{prepareSelectOptions()}</SelectList>
-        </Select>
+        </Select>{' '}
+        <Popover
+          headerContent='Details'
+          bodyContent={<ActivationKeyInformation />}
+          minWidth='30'
+        >
+          <Button
+            variant='secondary'
+            icon={<InfoCircleIcon />}
+            iconPosition='left'
+          >
+            View details
+          </Button>
+        </Popover>
         <FormHelperText>
           <HelperText>
             <HelperTextItem>
