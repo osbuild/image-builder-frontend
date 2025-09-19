@@ -88,6 +88,14 @@ const enterAccountId = async () => {
   await waitFor(async () => user.type(awsAccountIdTextbox, '123123123123'));
 };
 
+const enterBucket = async () => {
+  const user = userEvent.setup();
+  const awsBucketTextbox = await screen.findByRole('textbox', {
+    name: 'aws-bucket',
+  });
+  await waitFor(async () => user.type(awsBucketTextbox, 'just-an-aws-bucket'));
+};
+
 const chooseSourcesOption = async () => {
   const user = userEvent.setup();
   const sourceRadio = await screen.findByRole('radio', {
@@ -129,7 +137,11 @@ describe('Step Upload to AWS', () => {
     await selectAwsTarget();
     await goToAwsStep();
     await chooseManualOption();
-    await enterAccountId();
+    if (!process.env.IS_ON_PREMISE) {
+      await enterAccountId();
+    } else {
+      await enterBucket();
+    }
     await clickNext();
     await screen.findByRole('heading', {
       name: 'Register systems using this image',
@@ -176,7 +188,11 @@ describe('Step Upload to AWS', () => {
     await chooseManualOption();
     expect(nextButton).toBeDisabled();
 
-    await enterAccountId();
+    if (!process.env.IS_ON_PREMISE) {
+      await enterAccountId();
+    } else {
+      await enterBucket();
+    }
     expect(nextButton).toBeEnabled();
 
     await chooseSourcesOption();
@@ -209,7 +225,11 @@ describe('Step Upload to AWS', () => {
     await selectAwsTarget();
     await goToAwsStep();
     await chooseManualOption();
-    await enterAccountId();
+    if (!process.env.IS_ON_PREMISE) {
+      await enterAccountId();
+    } else {
+      await enterBucket();
+    }
     await goToReviewStep();
     await clickRevisitButton();
     await screen.findByRole('heading', { name: /Image output/ });
@@ -253,7 +273,11 @@ describe('AWS image type request generated correctly', () => {
     await selectAwsTarget();
     await goToAwsStep();
     await chooseManualOption();
-    await enterAccountId();
+    if (!process.env.IS_ON_PREMISE) {
+      await enterAccountId();
+    } else {
+      await enterBucket();
+    }
     await goToReviewStep();
     const receivedRequest = await interceptBlueprintRequest(CREATE_BLUEPRINT);
 

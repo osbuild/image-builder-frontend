@@ -68,6 +68,7 @@ module.exports = {
       // to false
       cockpit: false,
       'cockpit/fsinfo': false,
+      'long-running-process': false,
       'os-release': false,
     },
   },

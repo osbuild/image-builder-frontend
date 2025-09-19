@@ -121,18 +121,6 @@ export const ImageBuilderHeader = ({
                       Import
                     </Button>
                   )}
-                  {process.env.IS_ON_PREMISE && (
-                    <Button
-                      variant='secondary'
-                      data-testid='cloud-env-configure-button'
-                      ouiaId='cloud-env-configure-button'
-                      onClick={() =>
-                        navigate(resolveRelPath('cloud-provider-config'))
-                      }
-                    >
-                      Configure Cloud Providers
-                    </Button>
-                  )}
                 </Flex>
               )}
             </>

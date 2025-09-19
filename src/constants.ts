@@ -59,6 +59,7 @@ export const CENTOS_9 = 'centos-9';
 export const CENTOS_10 = 'centos-10';
 export const FEDORA_41 = 'fedora-41';
 export const FEDORA_42 = 'fedora-42';
+export const FEDORA_43 = 'fedora-43';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
 
@@ -97,7 +98,16 @@ export const ON_PREM_RELEASES = new Map([
   [CENTOS_10, 'CentOS Stream 10'],
   [FEDORA_41, 'Fedora Linux 41'],
   [FEDORA_42, 'Fedora Linux 42'],
+  [FEDORA_43, 'Fedora Linux 43'],
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
+]);
+
+export const ON_PREM_DISTRO_MAP = new Map([
+  [CENTOS_10, CENTOS_10],
+  [FEDORA_41, FEDORA_41],
+  [FEDORA_42, FEDORA_42],
+  [FEDORA_43, FEDORA_43],
+  [RHEL_10, 'rhel-10.0'],
 ]);
 
 export const RHEL_10_FULL_SUPPORT = ['2025-05-13', '2030-05-31'];
@@ -310,3 +320,19 @@ export const PAGINATION_COUNT = 0;
 export const SEARCH_INPUT = '';
 
 export const BLUEPRINTS_DIR = '.cache/cockpit-image-builder/';
+export const ARTIFACTS_DIR = '/var/lib/osbuild-composer/artifacts';
+
+export const ON_PREM_SUPPORTED_IMAGE_TYPES = [
+  'aws',
+  'guest-image',
+  'image-installer',
+  'vsphere',
+  'vsphere-ova',
+  'wsl',
+  'ami',
+  'vhd',
+  // TODO: add support for these incrementally
+  // 'azure',
+  // 'gcp',
+  // 'oci',
+];
