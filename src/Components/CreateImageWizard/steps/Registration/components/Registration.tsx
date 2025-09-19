@@ -19,18 +19,20 @@ import {
 } from '../../../../../store/wizardSlice';
 
 const InsightsPopover = () => {
+  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+
   return (
     <Popover
-      headerContent='About Red Hat Insights'
+      headerContent={`About ${lightspeedEnabled ? 'Red Hat Lightspeed' : 'Red Hat Insights'}`}
       position='right'
       minWidth='30rem'
       bodyContent={
         <Content>
           <Content>
-            Red Hat Insights client provides actionable intelligence about your
-            Red Hat Enterprise Linux environments, helping to identify and
-            address operational and vulnerability risks before an issue results
-            in downtime.
+            Red Hat {lightspeedEnabled ? 'Lightspeed' : 'Insights'} client
+            provides actionable intelligence about your Red Hat Enterprise Linux
+            environments, helping to identify and address operational and
+            vulnerability risks before an issue results in downtime.
           </Content>
           <Button
             component='a'
@@ -41,7 +43,8 @@ const InsightsPopover = () => {
             isInline
             href={INSIGHTS_URL}
           >
-            Learn more about Red Hat Insights
+            Learn more about Red Hat{' '}
+            {lightspeedEnabled ? 'Lightspeed' : 'Insights'}
           </Button>
         </Content>
       }
@@ -58,6 +61,8 @@ const InsightsPopover = () => {
 };
 
 const RhcPopover = () => {
+  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+
   return (
     <Popover
       headerContent='About remote host configuration (rhc)'
@@ -67,8 +72,10 @@ const RhcPopover = () => {
         <Content>
           <Content>
             Remote host configuration allows Red Hat Enterprise Linux hosts to
-            connect to Red Hat Insights. Remote host configuration is required
-            to use the Red Hat Insights Remediations service.
+            connect to Red Hat {lightspeedEnabled ? 'Lightspeed' : 'Insights'}.
+            Remote host configuration is required to use the Red Hat{' '}
+            {lightspeedEnabled ? 'Lightspeed' : 'Insights'} Remediations
+            service.
           </Content>
           <Button
             component='a'
