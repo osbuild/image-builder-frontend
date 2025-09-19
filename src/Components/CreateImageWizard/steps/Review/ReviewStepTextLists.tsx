@@ -12,6 +12,7 @@ import {
   Popover,
 } from '@patternfly/react-core';
 import { ExclamationTriangleIcon } from '@patternfly/react-icons';
+import { useFlag } from '@unleash/proxy-client-react';
 
 import {
   FSReviewTable,
@@ -270,6 +271,8 @@ export const TargetEnvAWSList = () => {
 };
 
 export const TargetEnvGCPList = () => {
+  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+
   const accountType = useAppSelector(selectGcpAccountType);
   const sharedMethod = useAppSelector(selectGcpShareMethod);
   const email = useAppSelector(selectGcpEmail);
@@ -295,7 +298,7 @@ export const TargetEnvGCPList = () => {
                 Shared with
               </Content>
               <Content component={ContentVariants.dd}>
-                Red Hat Insights only
+                Red Hat {lightspeedEnabled ? 'Lightspeed' : 'Insights'} only
                 <br />
               </Content>
             </>
@@ -673,6 +676,8 @@ export const RegisterAapList = () => {
 };
 
 export const RegisterNowList = () => {
+  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
+
   const activationKey = useAppSelector(selectActivationKey);
   const registrationType = useAppSelector(selectRegistrationType);
 
@@ -704,7 +709,8 @@ export const RegisterNowList = () => {
               {(registrationType === 'register-now-insights' ||
                 registrationType === 'register-now-rhc') && (
                 <Content component='li'>
-                  Connect to Red Hat Insights
+                  Connect to Red Hat{' '}
+                  {lightspeedEnabled ? 'Lightspeed' : 'Insights'}
                   <br />
                 </Content>
               )}

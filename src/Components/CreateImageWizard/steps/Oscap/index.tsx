@@ -48,6 +48,7 @@ import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenS
 const OscapContent = () => {
   const dispatch = useAppDispatch();
   const complianceEnabled = useFlag('image-builder.compliance.enabled');
+  const lightspeedEnabled = useFlag('image-builder.lightspeed.enabled');
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const fips = useAppSelector(selectFips);
@@ -123,11 +124,14 @@ const OscapContent = () => {
         {complianceEnabled ? 'Compliance' : 'OpenSCAP profile'}
       </Title>
       <Content>
-        Below you can select which Insights compliance policy or OpenSCAP
-        profile your image will be compliant to. Insights compliance allows the
-        use of tailored policies, whereas OpenSCAP gives you the default
-        versions. This will automatically help monitor the adherence of your
-        registered RHEL systems to a selected policy or profile.
+        Below you can select which{' '}
+        {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} compliance
+        policy or OpenSCAP profile your image will be compliant to.{' '}
+        {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}
+        compliance allows the use of tailored policies, whereas OpenSCAP gives
+        you the default versions. This will automatically help monitor the
+        adherence of your registered RHEL systems to a selected policy or
+        profile.
       </Content>
       <FormGroup>
         <Checkbox
@@ -162,7 +166,8 @@ const OscapContent = () => {
               Currently there are no compliance policies in your environment. To
               help you get started, select one of the default policies below and
               we will create the policy for you. However, in order to modify the
-              policy or to create a new one, you must go through Insights
+              policy or to create a new one, you must go through{' '}
+              {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'}
               Compliance.
             </p>
             <AlertActionLink
@@ -181,7 +186,8 @@ const OscapContent = () => {
               }}
               href={COMPLIANCE_URL}
             >
-              Save blueprint and navigate to Insights Compliance
+              Save blueprint and navigate to{' '}
+              {lightspeedEnabled ? 'Red Hat Lightspeed' : 'Insights'} Compliance
             </AlertActionLink>
           </Alert>
         )}
