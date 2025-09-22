@@ -25,18 +25,6 @@ import {
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.launcheof':
-        return false;
-      default:
-        return false;
-    }
-  }),
-}));
-
 let router: RemixRouter | undefined = undefined;
 
 const validUserName = 'best';
