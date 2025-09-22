@@ -110,10 +110,6 @@ const Registration = () => {
     registrationType === 'register-later',
   );
 
-  const isSatelliteRegistrationEnabled = useFlag(
-    'image-builder.satellite.enabled',
-  );
-
   return (
     <FormGroup label='Registration method'>
       <Radio
@@ -200,18 +196,16 @@ const Registration = () => {
         id='register-later'
         name='register-later'
       />
-      {isSatelliteRegistrationEnabled && (
-        <Radio
-          label='Register with Satellite'
-          isChecked={registrationType === 'register-satellite'}
-          onChange={() => {
-            dispatch(changeRegistrationType('register-satellite'));
-            setShowOptions(false);
-          }}
-          id='register-satellite'
-          name='register-satellite'
-        />
-      )}
+      <Radio
+        label='Register with Satellite'
+        isChecked={registrationType === 'register-satellite'}
+        onChange={() => {
+          dispatch(changeRegistrationType('register-satellite'));
+          setShowOptions(false);
+        }}
+        id='register-satellite'
+        name='register-satellite'
+      />
     </FormGroup>
   );
 };
