@@ -29,18 +29,6 @@ import {
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
-vi.mock('@unleash/proxy-client-react', () => ({
-  useUnleashContext: () => vi.fn(),
-  useFlag: vi.fn((flag) => {
-    switch (flag) {
-      case 'image-builder.launcheof':
-        return false;
-      default:
-        return false;
-    }
-  }),
-}));
-
 // The router is just initiliazed here, it's assigned a value in the tests
 let router: RemixRouter | undefined = undefined;
 
