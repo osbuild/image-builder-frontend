@@ -22,7 +22,7 @@ import {
 //TODO where should this function live?
 const registerSatellite = async (page: Page | FrameLocator) => {
 
-const registrationCommand = "set -o pipefail && curl --silent --show-error   'https://satellite.redhat.com/register?activation_keys=my-key&download_utility=curl&location_id=2&organization_id=1&update_packages=false' --header 'Authorization: Bearer asdfkjl;' | bash" 
+const registrationCommand = "set -o pipefail && curl --silent --show-error   'https://satellite.redhat.com/register?activation_keys=my-key&download_utility=curl&location_id=2&organization_id=1&update_packages=false' --header 'Authorization: Bearer fake.eyJleHAiOjk5OTk5OTk5OTl9.fake' | bash"
 
 const certificate = '-----BEGIN CERTIFICATE-----asdfjkl;-----END CERTIFICATE-----'
 
