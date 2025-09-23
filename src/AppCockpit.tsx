@@ -13,7 +13,7 @@ import { HashRouter } from 'react-router-dom';
 import './AppCockpit.scss';
 import { NotReady, RequireAdmin } from './Components/Cockpit';
 import { Router } from './Router';
-import { onPremStore as store } from './store';
+import { store } from './store';
 import { useGetComposerSocketStatus } from './Utilities/useComposerStatus';
 import { useIsCockpitAdmin } from './Utilities/useIsCockpitAdmin';
 

@@ -1,15 +1,14 @@
 import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import promiseMiddleware from 'redux-promise-middleware';
 
+import { backendApi } from './backendApi';
 import { blueprintsSlice } from './BlueprintSlice';
-import { cloudProviderConfigSlice } from './cloudProviderConfigSlice';
-import { cockpitApi } from './cockpit/cockpitApi';
 import { complianceApi } from './complianceApi';
 import { contentSourcesApi } from './contentSourcesApi';
+import { ArchitectureItem } from './imageBuilderApi';
 import { listenerMiddleware, startAppListening } from './listenerMiddleware';
 import { provisioningApi } from './provisioningApi';
 import { rhsmApi } from './rhsmApi';
-import { imageBuilderApi } from './service/enhancedImageBuilderApi';
 import wizardSlice, {
   changeArchitecture,
   changeDistribution,
@@ -19,29 +18,14 @@ import wizardSlice, {
   selectImageTypes,
 } from './wizardSlice';
 
-export const serviceReducer = combineReducers({
+export const reducer = combineReducers({
   [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
-  [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
+  [backendApi.reducerPath]: backendApi.reducer,
   [rhsmApi.reducerPath]: rhsmApi.reducer,
   [provisioningApi.reducerPath]: provisioningApi.reducer,
   [complianceApi.reducerPath]: complianceApi.reducer,
   wizard: wizardSlice,
   blueprints: blueprintsSlice.reducer,
-  cloudConfig: cloudProviderConfigSlice.reducer,
-});
-
-export const onPremReducer = combineReducers({
-  [contentSourcesApi.reducerPath]: contentSourcesApi.reducer,
-  [rhsmApi.reducerPath]: rhsmApi.reducer,
-  [provisioningApi.reducerPath]: provisioningApi.reducer,
-  [complianceApi.reducerPath]: complianceApi.reducer,
-  [cockpitApi.reducerPath]: cockpitApi.reducer,
-  // TODO: add other endpoints so we can remove this.
-  // It's still needed to get things to work.
-  [imageBuilderApi.reducerPath]: imageBuilderApi.reducer,
-  wizard: wizardSlice,
-  blueprints: blueprintsSlice.reducer,
-  cloudConfig: cloudProviderConfigSlice.reducer,
 });
 
 startAppListening({
@@ -54,16 +38,13 @@ startAppListening({
     const architecture = action.payload;
 
     // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = process.env.IS_ON_PREMISE
-      ? cockpitApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as onPremState)
-      : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as serviceState);
+    const architecturesResponse = backendApi.endpoints.getArchitectures.select({
+      distribution: distribution,
+    });
 
+    // @ts-ignore not sure why this is causing an error now
     const allowedImageTypes = architecturesResponse.data?.find(
-      (elem) => elem.arch === architecture,
+      (elem: ArchitectureItem) => elem.arch === architecture,
     )?.image_types;
 
     const filteredImageTypes = imageTypes.filter((imageType: string) =>
@@ -84,16 +65,13 @@ startAppListening({
     const architecture = selectArchitecture(state);
 
     // The response from the RTKQ getArchitectures hook
-    const architecturesResponse = process.env.IS_ON_PREMISE
-      ? cockpitApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as onPremState)
-      : imageBuilderApi.endpoints.getArchitectures.select({
-          distribution: distribution,
-        })(state as serviceState);
+    const architecturesResponse = backendApi.endpoints.getArchitectures.select({
+      distribution: distribution,
+    });
 
+    // @ts-ignore not sure why this is causing an error now
     const allowedImageTypes = architecturesResponse?.data?.find(
-      (elem) => elem.arch === architecture,
+      (elem: ArchitectureItem) => elem.arch === architecture,
     )?.image_types;
 
     const filteredImageTypes = imageTypes.filter((imageType: string) =>
@@ -107,54 +85,28 @@ startAppListening({
 // Listener middleware must be prepended according to RTK docs:
 // https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
 // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const serviceMiddleware = (getDefaultMiddleware: Function) =>
+export const middleware = (getDefaultMiddleware: Function) =>
   getDefaultMiddleware()
     .prepend(listenerMiddleware.middleware)
     .concat(
       promiseMiddleware,
       contentSourcesApi.middleware,
-      imageBuilderApi.middleware,
+      backendApi.middleware,
       rhsmApi.middleware,
       provisioningApi.middleware,
       complianceApi.middleware,
     );
 
-// Listener middleware must be prepended according to RTK docs:
-// https://redux-toolkit.js.org/api/createListenerMiddleware#basic-usage
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export const onPremMiddleware = (getDefaultMiddleware: Function) =>
-  getDefaultMiddleware().prepend(listenerMiddleware.middleware).concat(
-    promiseMiddleware,
-    // TODO: add other endpoints so we can remove this.
-    // It's still needed to get things to work.
-    contentSourcesApi.middleware,
-    rhsmApi.middleware,
-    provisioningApi.middleware,
-    complianceApi.middleware,
-    imageBuilderApi.middleware,
-    cockpitApi.middleware,
-  );
-
-export const onPremStore = configureStore({
-  reducer: onPremReducer,
-  middleware: onPremMiddleware,
-});
-
-export const serviceStore = configureStore({
-  reducer: serviceReducer,
-  middleware: serviceMiddleware,
+export const store = configureStore({
+  reducer,
+  middleware,
 });
 
 // we don't need to export these for now, they are just helpers
 // for some of the functions in this file
-type onPremState = ReturnType<typeof onPremStore.getState>;
-type serviceState = ReturnType<typeof serviceStore.getState>;
-
-export const store = process.env.IS_ON_PREMISE ? onPremStore : serviceStore;
+type serviceState = ReturnType<typeof store.getState>;
 
 // Infer the `RootState` and `AppDispatch` types from the store itself
-export type RootState = onPremState | serviceState;
+export type RootState = serviceState;
 // Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
-export type AppDispatch =
-  | typeof onPremStore.dispatch
-  | typeof serviceStore.dispatch;
+export type AppDispatch = typeof store.dispatch;

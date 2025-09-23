@@ -1,1 +1,1 @@
-export * from './service/rhsmApi';
+export * from './apis/rhsmApi';

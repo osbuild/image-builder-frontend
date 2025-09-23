@@ -1,12 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
+import { baseQuery as decomposerBaseQuery } from './decomposerBaseQuery';
+
 import { IMAGE_BUILDER_API } from '../../constants';
+
+const baseQuery = process.env.IS_ON_PREMISE
+  ? decomposerBaseQuery
+  : fetchBaseQuery;
 
 // initialize an empty api service that we'll inject endpoints into later as needed
 export const emptyImageBuilderApi = createApi({
   reducerPath: 'imageBuilderApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: window.location.origin + IMAGE_BUILDER_API,
+  endpoints: () => ({}),
+  baseQuery: baseQuery({
+    baseUrl: process.env.IS_ON_PREMISE
+      ? '/api/image-builder-composer/v2'
+      : window.location.origin + IMAGE_BUILDER_API,
     prepareHeaders: (headers) => {
       // help the backend distinguish between requests from the UI and the API
       headers.set('X-ImageBuilder-ui', 'true');
@@ -39,5 +48,4 @@ export const emptyImageBuilderApi = createApi({
       return searchParams.toString();
     },
   }),
-  endpoints: () => ({}),
 });

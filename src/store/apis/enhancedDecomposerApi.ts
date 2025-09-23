@@ -1,6 +1,6 @@
-import { cockpitApi } from './cockpitApi';
+import { imageBuilderApi } from './imageBuilderApi';
 
-const enhancedApi = cockpitApi.enhanceEndpoints({
+const enhancedApi = imageBuilderApi.enhanceEndpoints({
   addTagTypes: ['Blueprint', 'Blueprints', 'Composes', 'WorkerConfig'],
   endpoints: {
     getBlueprint: {
@@ -31,13 +31,7 @@ const enhancedApi = cockpitApi.enhanceEndpoints({
     getBlueprintComposes: {
       providesTags: [{ type: 'Composes' }],
     },
-    getWorkerConfig: {
-      providesTags: [{ type: 'WorkerConfig' }],
-    },
-    updateWorkerConfig: {
-      invalidatesTags: [{ type: 'WorkerConfig' }],
-    },
   },
 });
 
-export { enhancedApi as cockpitApi };
+export { enhancedApi as decomposerApi };

@@ -9,10 +9,10 @@ import ImportImageWizard from '../Components/CreateImageWizard/ImportImageWizard
 import LandingPage from '../Components/LandingPage/LandingPage';
 import ShareImageModal from '../Components/ShareImageModal/ShareImageModal';
 import {
-  serviceMiddleware as middleware,
+  middleware as middleware,
   onPremMiddleware as onPremMiddleware,
   onPremReducer as onPremReducer,
-  serviceReducer as reducer,
+  reducer as reducer,
 } from '../store';
 import { resolveRelPath } from '../Utilities/path';
 

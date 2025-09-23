@@ -29,6 +29,7 @@ import {
   PAGINATION_OFFSET,
 } from '../../constants';
 import { useGetUser } from '../../Hooks';
+import { imageBuilderApi } from '../../store/apis/enhancedImageBuilderApi';
 import { useGetBlueprintsQuery } from '../../store/backendApi';
 import {
   selectBlueprintSearchInput,
@@ -44,7 +45,6 @@ import {
   BlueprintItem,
   GetBlueprintsApiArg,
 } from '../../store/imageBuilderApi';
-import { imageBuilderApi } from '../../store/service/enhancedImageBuilderApi';
 import { resolveRelPath } from '../../Utilities/path';
 
 type blueprintSearchProps = {

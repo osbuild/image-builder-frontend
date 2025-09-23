@@ -2,9 +2,9 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 
 const config: ConfigFile = {
   schemaFile: 'https://console.redhat.com/api/compliance/v2/openapi.json',
-  apiFile: '../../src/store/service/emptyComplianceApi.ts',
+  apiFile: '../../src/store/apis/emptyComplianceApi.ts',
   apiImport: 'emptyComplianceApi',
-  outputFile: '../../src/store/service/complianceApi.ts',
+  outputFile: '../../src/store/apis/complianceApi.ts',
   exportName: 'complianceApi',
   hooks: true,
   unionUndefined: true,

@@ -3,7 +3,7 @@ import { useMutationWithNotification } from './useMutationWithNotification';
 import {
   CloneComposeApiArg,
   useCloneComposeMutation,
-} from '../../store/service/imageBuilderApi';
+} from '../../store/backendApi';
 
 export const useCloneComposeWithNotification = () => {
   const { trigger: cloneCompose, ...rest } = useMutationWithNotification(

@@ -135,8 +135,8 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   );
 
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
-  const hasErrors =
-    blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
+  // const hasErrors =
+  // blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
   const [isLintExp, setIsLintExp] = React.useState(true);
   const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsLintExp(isExpanded);
@@ -164,7 +164,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
-        {hasErrors && (
+        {false && (
           <Alert
             variant='warning'
             style={{
@@ -189,13 +189,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               onToggle={onToggleLintExp}
               isExpanded={isLintExp}
             >
-              <List isPlain>
-                {blueprintDetails.lint.errors.map((err) => (
-                  <ListItem key={err.description}>
-                    {err.name}: {err.description}
-                  </ListItem>
-                ))}
-              </List>
+              <List isPlain></List>
             </ExpandableSection>
           </Alert>
         )}

@@ -1,1 +1,1 @@
-export * from './service/complianceApi';
+export * from './apis/complianceApi';
