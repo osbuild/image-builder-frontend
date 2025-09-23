@@ -73,29 +73,6 @@ const SourceNotFoundPopover = () => {
   );
 };
 
-type AzureSourceNamePropTypes = {
-  id: string;
-};
-
-const AzureSourceName = ({ id }: AzureSourceNamePropTypes) => {
-  const { data: rawSources, isSuccess } = useGetSourceListQuery({
-    provider: 'azure',
-  });
-
-  if (!isSuccess) {
-    return <Skeleton />;
-  }
-
-  const sources = extractProvisioningList(rawSources);
-
-  const sourcename = sources?.find((source) => source?.id === id);
-  if (sourcename) {
-    return <p>{sourcename.name}</p>;
-  }
-
-  return <SourceNotFoundPopover />;
-};
-
 type AwsSourceNamePropTypes = {
   id: string;
 };
@@ -248,7 +225,6 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
     );
   }
 
-  const sourceId = options.source_id;
   const resourceGroup = options.resource_group;
 
   const uploadStatus = composeStatus?.image_status.upload_status?.options;
@@ -281,14 +257,6 @@ export const AzureDetails = ({ compose }: AzureDetailsPropTypes) => {
             {compose.request.image_requests[0].architecture}
           </DescriptionListDescription>
         </DescriptionListGroup>
-        {sourceId && (
-          <DescriptionListGroup>
-            <DescriptionListTerm>Source</DescriptionListTerm>
-            <DescriptionListDescription>
-              <AzureSourceName id={sourceId} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-        )}
         <DescriptionListGroup>
           <DescriptionListTerm>Resource Group</DescriptionListTerm>
           <DescriptionListDescription>
