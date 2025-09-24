@@ -42,6 +42,8 @@ export const OSBUILD_SERVICE_ARCHITECTURE_URL =
   'https://osbuild.org/docs/service/architecture/';
 export const GENERATING_SSH_KEY_PAIRS_URL =
   'https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/assembly_using-secure-communications-between-two-systems-with-openssh_configuring-basic-system-settings#generating-ssh-key-pairs_assembly_using-secure-communications-between-two-systems-with-openssh';
+export const REGISTRATION_DOCS_URL =
+  'https://docs.redhat.com/en/documentation/red_hat_satellite/6.16/html-single/managing_hosts/index#Customizing_the_Registration_Templates_managing-hosts';
 
 export const FIRSTBOOT_PATH = '/usr/local/sbin/custom-first-boot';
 export const FIRSTBOOT_SERVICE_PATH =

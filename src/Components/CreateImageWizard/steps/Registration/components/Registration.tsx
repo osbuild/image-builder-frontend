@@ -3,6 +3,7 @@ import React from 'react';
 import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 
 import ActivationKeysList from './ActivationKeysList';
+import SatelliteRegistration from './SatelliteRegistration';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
@@ -31,7 +32,6 @@ const Registration = () => {
         id='register-system-now'
         name='register-system-now'
         autoFocus
-        className='pf-v6-u-pb-sm'
         body={
           <>
             <Content component='p'>
@@ -95,6 +95,9 @@ const Registration = () => {
         }}
         id='register-satellite'
         name='register-satellite'
+        body={
+          registrationType === 'register-satellite' && <SatelliteRegistration />
+        }
       />
     </FormGroup>
   );
