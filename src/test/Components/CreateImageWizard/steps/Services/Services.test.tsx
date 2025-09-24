@@ -58,14 +58,14 @@ const addDisabledService = async (service: string) => {
   const disabledServiceInput = await screen.findByPlaceholderText(
     'Add disabled service',
   );
-  await waitFor(() => user.type(disabledServiceInput, service.concat(' ')));
+  await waitFor(() => user.type(disabledServiceInput, service + '{enter}'));
 };
 
 const addMaskedService = async (service: string) => {
   const user = userEvent.setup();
   const maskedServiceInput =
     await screen.findByPlaceholderText('Add masked service');
-  await waitFor(() => user.type(maskedServiceInput, service.concat(' ')));
+  await waitFor(() => user.type(maskedServiceInput, service + '{enter}'));
 };
 
 const addEnabledService = async (service: string) => {
@@ -73,7 +73,7 @@ const addEnabledService = async (service: string) => {
   const enabledServiceInput = await screen.findByPlaceholderText(
     'Add enabled service',
   );
-  await waitFor(() => user.type(enabledServiceInput, service.concat(' ')));
+  await waitFor(() => user.type(enabledServiceInput, service + '{enter}'));
 };
 
 const removeService = async (service: string) => {
