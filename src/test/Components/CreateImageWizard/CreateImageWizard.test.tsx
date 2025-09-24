@@ -140,10 +140,10 @@ describe('Keyboard accessibility', () => {
 
     // Registration
     await screen.findByText(
-      'Automatically register and enable advanced capabilities.',
+      'Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities.',
     );
     //const registrationCheckbox = await screen.findByRole('radio', {
-    //  name: /Automatically register and enable advanced capabilities/i,
+    //  name: /Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities./i,
     //});
     //expect(registrationCheckbox).toHaveFocus();
     await screen.findByPlaceholderText('Select activation key');

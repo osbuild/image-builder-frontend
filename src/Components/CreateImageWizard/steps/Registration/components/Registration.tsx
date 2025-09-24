@@ -19,7 +19,7 @@ const Registration = () => {
     <FormGroup label='Registration method'>
       <Content className='pf-v6-u-pb-sm'>
         <Radio
-          label='Automatically register and enable advanced capabilities.'
+          label='Automatically register to Red Hat Hybrid Cloud Console and enable advanced capabilities.'
           isChecked={
             registrationType === 'register-now' ||
             registrationType === 'register-now-insights' ||
@@ -93,7 +93,7 @@ const Registration = () => {
       </Content>
       <Content className='pf-v6-u-pb-sm'>
         <Radio
-          label='Register with Satellite'
+          label='Register to a Satellite or Capsule'
           isChecked={registrationType === 'register-satellite'}
           onChange={() => {
             dispatch(changeRegistrationType('register-satellite'));
