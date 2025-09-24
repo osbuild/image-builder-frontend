@@ -44,12 +44,14 @@ const ActivationKeyInformation = (): JSX.Element => {
               {activationKey}
             </DescriptionListDescription>
           </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>Description</DescriptionListTerm>
-            <DescriptionListDescription>
-              {activationKeyInfo?.body?.description || ''}
-            </DescriptionListDescription>
-          </DescriptionListGroup>
+          {activationKeyInfo?.body?.description && (
+            <DescriptionListGroup>
+              <DescriptionListTerm>Description</DescriptionListTerm>
+              <DescriptionListDescription>
+                {activationKeyInfo.body.description}
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          )}
           <DescriptionListGroup>
             <DescriptionListTerm>Role</DescriptionListTerm>
             <DescriptionListDescription>
@@ -72,7 +74,7 @@ const ActivationKeyInformation = (): JSX.Element => {
             <DescriptionListTerm>Additional repositories</DescriptionListTerm>
             <DescriptionListDescription>
               {activationKeyInfo?.body?.additionalRepositories &&
-              activationKeyInfo?.body?.additionalRepositories?.length > 0 ? (
+              activationKeyInfo.body.additionalRepositories.length > 0 ? (
                 <Popover
                   position='right'
                   minWidth='30rem'
@@ -91,7 +93,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {activationKeyInfo.body?.additionalRepositories?.map(
+                          {activationKeyInfo.body.additionalRepositories.map(
                             (repo, index) => (
                               <Tr key={index}>
                                 <Td>{repo.repositoryLabel}</Td>
@@ -108,7 +110,7 @@ const ActivationKeyInformation = (): JSX.Element => {
                     aria-label='Show additional repositories'
                     className='pf-v6-u-pl-0 pf-v6-u-pt-0 pf-v6-u-pb-0'
                   >
-                    {activationKeyInfo.body?.additionalRepositories?.length}{' '}
+                    {activationKeyInfo.body.additionalRepositories.length}{' '}
                     repositories
                   </Button>
                 </Popover>

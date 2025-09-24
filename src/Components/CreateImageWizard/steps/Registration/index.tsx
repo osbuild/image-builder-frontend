@@ -13,17 +13,13 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import Registration from './components/Registration';
-import SatelliteRegistration from './components/SatelliteRegistration';
 
 import { useGetUser } from '../../../../Hooks';
-import { useAppSelector } from '../../../../store/hooks';
-import { selectRegistrationType } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
 
-  const registrationType = useAppSelector(selectRegistrationType);
   return (
     <Form>
       <Content>
@@ -54,7 +50,6 @@ const RegistrationStep = () => {
           </FormGroup>
         </Content>
         <Registration />
-        {registrationType === 'register-satellite' && <SatelliteRegistration />}
       </Content>
     </Form>
   );

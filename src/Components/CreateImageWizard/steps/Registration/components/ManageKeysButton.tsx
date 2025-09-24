@@ -31,7 +31,7 @@ const ManageKeysButton = () => {
       }}
       href={ACTIVATION_KEYS_URL}
     >
-      Manage Activation keys
+      Manage activation keys
     </Button>
   );
 };
