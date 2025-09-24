@@ -35,22 +35,29 @@ const goToFirewallStep = async () => {
 
 const addPort = async (port: string) => {
   const user = userEvent.setup();
-  const portsInput = await screen.findByPlaceholderText(/add port/i);
+  const portsInput = await screen.findByPlaceholderText(
+    /enter port \(e\.g\., 8080\/tcp, 443\/udp\)/i,
+  );
   await waitFor(() => user.type(portsInput, port.concat(' ')));
+  await waitFor(() => user.keyboard('{Enter}'));
 };
 
 const addEnabledFirewallService = async (service: string) => {
   const user = userEvent.setup();
-  const enabledServicesInput =
-    await screen.findByPlaceholderText(/add enabled service/i);
+  const enabledServicesInput = await screen.findByPlaceholderText(
+    /enter enabled service \(e\.g\., sshd\)/i,
+  );
   await waitFor(() => user.type(enabledServicesInput, service.concat(' ')));
+  await waitFor(() => user.keyboard('{Enter}'));
 };
 
 const addDisabledFirewallService = async (service: string) => {
   const user = userEvent.setup();
-  const disabledServiceInput =
-    await screen.findByPlaceholderText(/add disabled service/i);
+  const disabledServiceInput = await screen.findByPlaceholderText(
+    /enter disabled service \(e\.g\., avahi-daemon\)/i,
+  );
   await waitFor(() => user.type(disabledServiceInput, service.concat(' ')));
+  await waitFor(() => user.keyboard('{Enter}'));
 };
 
 const clickRevisitButton = async () => {

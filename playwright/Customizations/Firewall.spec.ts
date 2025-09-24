@@ -41,28 +41,36 @@ test('Create a blueprint with Firewall customization', async ({
 
   await test.step('Select and correctly fill the ports in Firewall step', async () => {
     await frame.getByRole('button', { name: 'Firewall' }).click();
-    await frame.getByPlaceholder('Add ports').fill('80:tcp');
-    await frame.getByRole('button', { name: 'Add ports' }).click();
+    await frame
+      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443/udp)')
+      .fill('80:tcp');
+    await page.keyboard.press('Enter');
     await expect(frame.getByText('80:tcp')).toBeVisible();
   });
 
   await test.step('Select and correctly fill the disabled services in Firewall step', async () => {
     await frame
-      .getByPlaceholder('Add disabled service')
+      .getByPlaceholder('Enter service name')
+      .nth(0)
       .fill('disabled_service');
-    await frame.getByRole('button', { name: 'Add disabled service' }).click();
+    await page.keyboard.press('Enter');
     await expect(frame.getByText('disabled_service')).toBeVisible();
   });
 
   await test.step('Select and correctly fill the enabled services in Firewall step', async () => {
-    await frame.getByPlaceholder('Add enabled service').fill('enabled_service');
-    await frame.getByRole('button', { name: 'Add enabled service' }).click();
+    await frame
+      .getByPlaceholder('Enter service name')
+      .nth(1)
+      .fill('enabled_service');
+    await page.keyboard.press('Enter');
     await expect(frame.getByText('enabled_service')).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the ports in Firewall step', async () => {
-    await frame.getByPlaceholder('Add ports').fill('x');
-    await frame.getByRole('button', { name: 'Add ports' }).click();
+    await frame
+      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443/udp)')
+      .fill('x');
+    await page.keyboard.press('Enter');
     await expect(
       frame
         .getByText(
@@ -73,16 +81,16 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Select and incorrectly fill the disabled services in Firewall step', async () => {
-    await frame.getByPlaceholder('Add disabled service').fill('1');
-    await frame.getByRole('button', { name: 'Add disabled service' }).click();
+    await frame.getByPlaceholder('Enter service name').nth(0).fill('1');
+    await page.keyboard.press('Enter');
     await expect(
       frame.getByText('Expected format: <service-name>. Example: sshd').nth(0),
     ).toBeVisible();
   });
 
   await test.step('Select and incorrectly fill the enabled services in Firewall step', async () => {
-    await frame.getByPlaceholder('Add enabled service').fill('ťčš');
-    await frame.getByRole('button', { name: 'Add enabled service' }).click();
+    await frame.getByPlaceholder('Enter service name').nth(1).fill('ťčš');
+    await page.keyboard.press('Enter');
     await expect(
       frame.getByText('Expected format: <service-name>. Example: sshd').nth(1),
     ).toBeVisible();
@@ -101,12 +109,14 @@ test('Create a blueprint with Firewall customization', async ({
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
     await frame.getByLabel('Revisit Firewall step').click();
 
-    await frame.getByPlaceholder('Add ports').fill('90:tcp');
-    await frame.getByRole('button', { name: 'Add ports' }).click();
-    await frame.getByPlaceholder('Add disabled service').fill('x');
-    await frame.getByRole('button', { name: 'Add disabled service' }).click();
-    await frame.getByPlaceholder('Add enabled service').fill('y');
-    await frame.getByRole('button', { name: 'Add enabled service' }).click();
+    await frame
+      .getByPlaceholder('Enter port (e.g., 8080/tcp, 443/udp)')
+      .fill('90:tcp');
+    await page.keyboard.press('Enter');
+    await frame.getByPlaceholder('Enter service name').nth(0).fill('x');
+    await page.keyboard.press('Enter');
+    await frame.getByPlaceholder('Enter service name').nth(1).fill('y');
+    await page.keyboard.press('Enter');
 
     await frame.getByRole('button', { name: 'Close 80:tcp' }).click();
     await frame.getByRole('button', { name: 'Close enabled_service' }).click();

@@ -30,6 +30,7 @@ type LabelInputProps = {
   removeAction: (value: string) => UnknownAction;
   stepValidation: StepValidation;
   fieldName: string;
+  hideUtilities?: boolean;
 };
 
 const LabelInput = ({
@@ -44,6 +45,7 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
+  hideUtilities,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -118,7 +120,7 @@ const LabelInput = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
-    if (e.key === ' ' || e.key === 'Enter') {
+    if (e.key === 'Enter') {
       e.preventDefault();
       addItem(value);
     }
@@ -151,26 +153,28 @@ const LabelInput = ({
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
         />
-        <TextInputGroupUtilities>
-          <Button
-            icon={
-              <Icon status='info'>
-                <PlusCircleIcon />
-              </Icon>
-            }
-            variant='plain'
-            onClick={(e) => handleAddItem(e, inputValue)}
-            isDisabled={!inputValue}
-            aria-label={ariaLabel}
-          />
-          <Button
-            icon={<TimesIcon />}
-            variant='plain'
-            onClick={handleClear}
-            isDisabled={!inputValue}
-            aria-label='Clear input'
-          />
-        </TextInputGroupUtilities>
+        {!hideUtilities && (
+          <TextInputGroupUtilities>
+            <Button
+              icon={
+                <Icon status='info'>
+                  <PlusCircleIcon />
+                </Icon>
+              }
+              variant='plain'
+              onClick={(e) => handleAddItem(e, inputValue)}
+              isDisabled={!inputValue}
+              aria-label={ariaLabel}
+            />
+            <Button
+              icon={<TimesIcon />}
+              variant='plain'
+              onClick={handleClear}
+              isDisabled={!inputValue}
+              aria-label='Clear input'
+            />
+          </TextInputGroupUtilities>
+        )}
       </TextInputGroup>
       {errors.length > 0 && (
         <HelperText>
