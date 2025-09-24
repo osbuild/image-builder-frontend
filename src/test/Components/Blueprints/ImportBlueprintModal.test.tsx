@@ -36,7 +36,7 @@ const uploadFile = async (filename: string, content: string): Promise<void> => {
 
   if (fileInput) {
     const file = new File([content], filename, { type: 'application/json' });
-    user.upload(fileInput, file);
+    await user.upload(fileInput, file);
   }
 };
 
@@ -203,8 +203,8 @@ describe('Import modal', () => {
     const timezoneDropDown =
       await screen.findByPlaceholderText(/Select a timezone/i);
     expect(timezoneDropDown).toHaveValue('US/Eastern');
-    await screen.findByText(/0\.north-america\.pool\.ntp\.org/i);
-    await screen.findByText(/1\.north-america\.pool\.ntp\.org/i);
+    await screen.findByText(/^0\.north-america\.pool/i);
+    await screen.findByText(/^1\.north-america\.pool/i);
 
     // Locale
     await clickNext();
@@ -346,7 +346,7 @@ describe('Import modal', () => {
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close invalid\$kernel\$argument/i,
+          name: /close invalid\$kernel\$argum.../i,
         }),
       ),
     );
@@ -358,12 +358,12 @@ describe('Import modal', () => {
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-service/,
+        /Invalid disabled services: --invalid-disabled-se.../,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-service/,
+        /Invalid enabled services: --invalid-enabled-se.../,
       ),
     ).toBeInTheDocument();
     await waitFor(() =>
@@ -372,14 +372,14 @@ describe('Import modal', () => {
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-disabled-service/i,
+          name: /close --invalid-disabled-s.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-enabled-service/i,
+          name: /close --invalid-enabled-se.../i,
         }),
       ),
     );
@@ -388,36 +388,36 @@ describe('Import modal', () => {
     await clickNext();
     expect(
       await screen.findByText(
-        /Invalid enabled services: --invalid-enabled-service/,
+        /Invalid enabled services: --invalid-enabled-se.../,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid disabled services: --invalid-disabled-service/,
+        /Invalid disabled services: --invalid-disabled-s.../,
       ),
     ).toBeInTheDocument();
     expect(
       await screen.findByText(
-        /Invalid masked services: --invalid-masked-service/,
+        /Invalid masked services: --invalid-masked-ser.../,
       ),
     ).toBeInTheDocument();
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-enabled-service/i,
+          name: /close --invalid-enabled-se.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
         screen.getByRole('button', {
-          name: /close --invalid-disabled-service/i,
+          name: /close --invalid-disabled-s.../i,
         }),
       ),
     );
     await waitFor(() =>
       user.click(
-        screen.getByRole('button', { name: /close --invalid-masked-service/i }),
+        screen.getByRole('button', { name: /close --invalid-masked-ser.../i }),
       ),
     );
 

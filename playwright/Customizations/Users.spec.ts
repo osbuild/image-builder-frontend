@@ -203,6 +203,7 @@ test('Create a blueprint with Users customization', async ({
     await expect(sshInput).toBeFocused();
 
     await sshInput.press('Tab');
+    await page.keyboard.press('Tab');
     await expect(groupInput).toBeFocused();
   });
 
