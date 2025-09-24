@@ -26,10 +26,10 @@ const RegistrationStep = () => {
         <Title headingLevel='h1' size='xl'>
           Register
         </Title>
-        <Content component='p'>
+        <Content className='pf-v6-u-pb-md'>
           Configure registration settings for systems that will use this image.
         </Content>
-        <Content component='p'>
+        <Content className='pf-v6-u-pb-md'>
           <FormGroup label='Organization ID'>
             <ClipboardCopy
               hoverTip='Copy to clipboard'
