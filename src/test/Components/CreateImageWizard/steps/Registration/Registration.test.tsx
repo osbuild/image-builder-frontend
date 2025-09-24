@@ -93,7 +93,7 @@ const selectActivationKey = async (key: string) => {
 const addSatelliteRegistrationCommandViaKeyDown = async (command: string) => {
   const user = userEvent.setup({ delay: null });
   const satelliteRegistrationCommand =
-    await screen.findByPlaceholderText(/registration command/i);
+    await screen.findByPlaceholderText(/input field/i);
 
   await waitFor(() => user.clear(satelliteRegistrationCommand));
   await waitFor(() => user.type(satelliteRegistrationCommand, command));
