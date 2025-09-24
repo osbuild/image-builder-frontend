@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+  Content,
   DropEvent,
   FileUpload,
   FileUploadHelperText,
@@ -52,65 +53,69 @@ const SatelliteRegistration = () => {
   };
 
   return (
-    <>
-      <SatelliteRegistrationCommand />
-      <FormGroup label='Certificate authority (CA) for Satellite'>
-        <FileUpload
-          id='text-file-with-restrictions-example'
-          type='text'
-          value={caCertificate || ''}
-          filename={caCertificate ? 'CA detected' : ''}
-          filenamePlaceholder='Drag and drop a file or upload'
-          onDataChange={handleDataChange}
-          onTextChange={handleTextChange}
-          onClearClick={handleClear}
-          dropzoneProps={{
-            accept: {
-              'application/x-pem-file': ['.pem'],
-              'application/x-x509-ca-cert': ['.cer', '.crt'],
-              'application/pkix-cert': ['.der'],
-            },
-            maxSize: 512000,
-            onDropRejected: handleFileRejected,
-          }}
-          validated={isRejected ? 'error' : validated}
-          browseButtonText='Upload'
-          allowEditingUploadedText={true}
-        >
-          <FileUploadHelperText>
+    <Content>
+      <Content className='pf-v6-u-pb-md'>
+        <SatelliteRegistrationCommand />
+      </Content>
+      <Content className='pf-v6-u-pb-md'>
+        <FormGroup label='Certificate authority (CA) for Satellite'>
+          <FileUpload
+            id='text-file-with-restrictions-example'
+            type='text'
+            value={caCertificate || ''}
+            filename={caCertificate ? 'CA detected' : ''}
+            filenamePlaceholder='Drag and drop a file or upload'
+            onDataChange={handleDataChange}
+            onTextChange={handleTextChange}
+            onClearClick={handleClear}
+            dropzoneProps={{
+              accept: {
+                'application/x-pem-file': ['.pem'],
+                'application/x-x509-ca-cert': ['.cer', '.crt'],
+                'application/pkix-cert': ['.der'],
+              },
+              maxSize: 512000,
+              onDropRejected: handleFileRejected,
+            }}
+            validated={isRejected ? 'error' : validated}
+            browseButtonText='Upload'
+            allowEditingUploadedText={true}
+          >
+            <FileUploadHelperText>
+              <HelperText>
+                <HelperTextItem
+                  variant={
+                    isRejected || validated === 'error'
+                      ? 'error'
+                      : validated === 'success'
+                        ? 'success'
+                        : 'default'
+                  }
+                >
+                  {isRejected
+                    ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
+                    : validated === 'error'
+                      ? stepValidation.errors['certificate']
+                      : validated === 'success'
+                        ? 'Certificate was uploaded'
+                        : 'Upload a certificate file'}
+                </HelperTextItem>
+              </HelperText>
+            </FileUploadHelperText>
+          </FileUpload>
+          <FormHelperText>
             <HelperText>
-              <HelperTextItem
-                variant={
-                  isRejected || validated === 'error'
-                    ? 'error'
-                    : validated === 'success'
-                      ? 'success'
-                      : 'default'
-                }
-              >
-                {isRejected
-                  ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
-                  : validated === 'error'
-                    ? stepValidation.errors['certificate']
-                    : validated === 'success'
-                      ? 'Certificate was uploaded'
-                      : 'Upload a certificate file'}
-              </HelperTextItem>
+              {(isRejected || validated !== 'success') && (
+                <HelperTextItem>
+                  To find the certificate follow this{' '}
+                  <SatelliteDocumentationButton />
+                </HelperTextItem>
+              )}
             </HelperText>
-          </FileUploadHelperText>
-        </FileUpload>
-        <FormHelperText>
-          <HelperText>
-            {(isRejected || validated !== 'success') && (
-              <HelperTextItem>
-                To find the certificate follow this{' '}
-                <SatelliteDocumentationButton />
-              </HelperTextItem>
-            )}
-          </HelperText>
-        </FormHelperText>
-      </FormGroup>
-    </>
+          </FormHelperText>
+        </FormGroup>
+      </Content>
+    </Content>
   );
 };
 
