@@ -30,6 +30,7 @@ type LabelInputProps = {
   removeAction: (value: string) => UnknownAction;
   stepValidation: StepValidation;
   fieldName: string;
+  hideUtilities?: boolean;
 };
 
 const LabelInput = ({
@@ -44,6 +45,7 @@ const LabelInput = ({
   removeAction,
   stepValidation,
   fieldName,
+  hideUtilities,
 }: LabelInputProps) => {
   const dispatch = useAppDispatch();
 
@@ -74,7 +76,7 @@ const LabelInput = ({
       switch (fieldName) {
         case 'ports':
           setOnStepInputErrorText(
-            'Expected format: <port/port-name>:<protocol>. Example: 8080:tcp, ssh:tcp',
+            'Expected format: <port/port-name>:<protocol> or <port/port-name>/<protocol>. Example: 8080:tcp, ssh:tcp, imap/tcp',
           );
           break;
         case 'kernelAppend':
@@ -118,7 +120,7 @@ const LabelInput = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent, value: string) => {
-    if (e.key === ' ' || e.key === 'Enter') {
+    if (e.key === 'Enter') {
       e.preventDefault();
       addItem(value);
     }
@@ -150,27 +152,43 @@ const LabelInput = ({
           onChange={onTextInputChange}
           value={inputValue}
           onKeyDown={(e) => handleKeyDown(e, inputValue)}
-        />
-        <TextInputGroupUtilities>
-          <Button
-            icon={
-              <Icon status='info'>
-                <PlusCircleIcon />
-              </Icon>
-            }
-            variant='plain'
-            onClick={(e) => handleAddItem(e, inputValue)}
-            isDisabled={!inputValue}
-            aria-label={ariaLabel}
-          />
-          <Button
-            icon={<TimesIcon />}
-            variant='plain'
-            onClick={handleClear}
-            isDisabled={!inputValue}
-            aria-label='Clear input'
-          />
-        </TextInputGroupUtilities>
+        >
+          {list && list.length > 0 && (
+            <LabelGroup numLabels={20} className='pf-v6-u-mr-sm'>
+              {list.map((item) => (
+                <Label
+                  key={item}
+                  color='blue'
+                  onClose={(e) => handleRemoveItem(e, item)}
+                >
+                  {item}
+                </Label>
+              ))}
+            </LabelGroup>
+          )}
+        </TextInputGroupMain>
+        {!hideUtilities && (
+          <TextInputGroupUtilities>
+            <Button
+              icon={
+                <Icon status='info'>
+                  <PlusCircleIcon />
+                </Icon>
+              }
+              variant='plain'
+              onClick={(e) => handleAddItem(e, inputValue)}
+              isDisabled={!inputValue}
+              aria-label={ariaLabel}
+            />
+            <Button
+              icon={<TimesIcon />}
+              variant='plain'
+              onClick={handleClear}
+              isDisabled={!inputValue}
+              aria-label='Clear input'
+            />
+          </TextInputGroupUtilities>
+        )}
       </TextInputGroup>
       {errors.length > 0 && (
         <HelperText>
@@ -194,17 +212,6 @@ const LabelInput = ({
           ))}
         </LabelGroup>
       )}
-      <LabelGroup numLabels={20} className='pf-v6-u-mt-sm pf-v6-u-w-100'>
-        {list?.map((item) => (
-          <Label
-            key={item}
-            isCompact
-            onClose={(e) => handleRemoveItem(e, item)}
-          >
-            {item}
-          </Label>
-        ))}
-      </LabelGroup>
     </>
   );
 };
