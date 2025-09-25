@@ -10,18 +10,18 @@ import { errorMessage } from '../../store/service/enhancedImageBuilderApi';
 const getErrorDescription = (err: any) => {
   if (process.env.IS_ON_PREMISE) {
     // If details are present, assume it's coming from composer
-    if (err.error?.body?.details) {
-      return `${err.error.message}: ${err.error.body.details}`;
+    if (err.body) {
+      return `${err.message}: ${err.body.details}`;
     }
 
     return JSON.stringify(err);
   }
 
-  if (err.error?.status) {
-    return `Status code ${err.error.status}: ${errorMessage(err)}`;
+  if (err.status) {
+    return `Status code ${err.status}: ${errorMessage(err)}`;
   }
 
-  return err as string;
+  return JSON.stringify(err);
 };
 
 type NotificationMessages<TArgs> = {
