@@ -13,27 +13,23 @@ import {
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import Registration from './components/Registration';
-import SatelliteRegistration from './components/SatelliteRegistration';
 
 import { useGetUser } from '../../../../Hooks';
-import { useAppSelector } from '../../../../store/hooks';
-import { selectRegistrationType } from '../../../../store/wizardSlice';
 
 const RegistrationStep = () => {
   const { auth } = useChrome();
   const { orgId } = useGetUser(auth);
 
-  const registrationType = useAppSelector(selectRegistrationType);
   return (
     <Form>
       <Content>
         <Title headingLevel='h1' size='xl'>
           Register
         </Title>
-        <Content component='p'>
+        <Content className='pf-v6-u-pb-md'>
           Configure registration settings for systems that will use this image.
         </Content>
-        <Content component='p'>
+        <Content className='pf-v6-u-pb-md'>
           <FormGroup label='Organization ID'>
             <ClipboardCopy
               hoverTip='Copy to clipboard'
@@ -54,7 +50,6 @@ const RegistrationStep = () => {
           </FormGroup>
         </Content>
         <Registration />
-        {registrationType === 'register-satellite' && <SatelliteRegistration />}
       </Content>
     </Form>
   );

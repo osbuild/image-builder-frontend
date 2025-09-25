@@ -1,14 +1,17 @@
 import React from 'react';
 
 import {
+  Content,
   DropEvent,
   FileUpload,
+  FileUploadHelperText,
   FormGroup,
   FormHelperText,
   HelperText,
   HelperTextItem,
 } from '@patternfly/react-core';
 
+import SatelliteDocumentationButton from './SatelliteDocumentationButton';
 import SatelliteRegistrationCommand from './SatelliteRegistrationCommand';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -28,6 +31,7 @@ const SatelliteRegistration = () => {
     : stepValidation.errors['certificate'] === undefined && caCertificate
       ? 'success'
       : 'default';
+
   const handleClear = () => {
     dispatch(changeSatelliteCaCertificate(''));
   };
@@ -47,60 +51,71 @@ const SatelliteRegistration = () => {
     dispatch(changeSatelliteCaCertificate(''));
     setIsRejected(true);
   };
+
   return (
-    <>
-      <SatelliteRegistrationCommand />
-      <FormGroup label='Certificate authority (CA) for Satellite'>
-        <FileUpload
-          id='text-file-with-restrictions-example'
-          type='text'
-          value={caCertificate || ''}
-          filename={caCertificate ? 'CA detected' : ''}
-          onDataChange={handleDataChange}
-          onTextChange={handleTextChange}
-          onClearClick={handleClear}
-          dropzoneProps={{
-            accept: {
-              'application/x-pem-file': ['.pem'],
-              'application/x-x509-ca-cert': ['.cer', '.crt'],
-              'application/pkix-cert': ['.der'],
-            },
-            maxSize: 512000,
-            onDropRejected: handleFileRejected,
-          }}
-          validated={isRejected ? 'error' : validated}
-          browseButtonText='Upload'
-          allowEditingUploadedText={true}
-        />
-        <FormHelperText>
-          <HelperText>
-            <HelperTextItem
-              variant={
-                isRejected || validated === 'error'
-                  ? 'error'
-                  : validated === 'success'
-                    ? 'success'
-                    : 'default'
-              }
-            >
-              {isRejected
-                ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
-                : validated === 'error'
-                  ? stepValidation.errors['certificate']
-                  : validated === 'success'
-                    ? 'Certificate was uploaded'
-                    : 'Drag and drop a valid certificate file or upload one'}
-            </HelperTextItem>
-            {(isRejected || validated !== 'success') && (
-              <HelperTextItem>
-                You can find this certificate at{' '}
-                <i>http://satellite.example.com</i>/pub/katello-server-ca.crt
-              </HelperTextItem>
-            )}
-          </HelperText>
-        </FormHelperText>
-      </FormGroup>
-    </>
+    <Content>
+      <Content className='pf-v6-u-pb-md'>
+        <SatelliteRegistrationCommand />
+      </Content>
+      <Content className='pf-v6-u-pb-md'>
+        <FormGroup label='Certificate authority (CA) for Satellite'>
+          <FileUpload
+            id='text-file-with-restrictions-example'
+            type='text'
+            value={caCertificate || ''}
+            filename={caCertificate ? 'CA detected' : ''}
+            filenamePlaceholder='Drag and drop a file or upload'
+            onDataChange={handleDataChange}
+            onTextChange={handleTextChange}
+            onClearClick={handleClear}
+            dropzoneProps={{
+              accept: {
+                'application/x-pem-file': ['.pem'],
+                'application/x-x509-ca-cert': ['.cer', '.crt'],
+                'application/pkix-cert': ['.der'],
+              },
+              maxSize: 512000,
+              onDropRejected: handleFileRejected,
+            }}
+            validated={isRejected ? 'error' : validated}
+            browseButtonText='Upload'
+            allowEditingUploadedText={true}
+          >
+            <FileUploadHelperText>
+              <HelperText>
+                <HelperTextItem
+                  variant={
+                    isRejected || validated === 'error'
+                      ? 'error'
+                      : validated === 'success'
+                        ? 'success'
+                        : 'default'
+                  }
+                >
+                  {isRejected
+                    ? 'Must be a .PEM/.CER/.CRT file no larger than 512 KB'
+                    : validated === 'error'
+                      ? stepValidation.errors['certificate']
+                      : validated === 'success'
+                        ? 'Certificate was uploaded'
+                        : 'Upload a certificate file'}
+                </HelperTextItem>
+              </HelperText>
+            </FileUploadHelperText>
+          </FileUpload>
+          <FormHelperText>
+            <HelperText>
+              {(isRejected || validated !== 'success') && (
+                <HelperTextItem>
+                  To find the certificate follow this{' '}
+                  <SatelliteDocumentationButton />
+                </HelperTextItem>
+              )}
+            </HelperText>
+          </FormHelperText>
+        </FormGroup>
+      </Content>
+    </Content>
   );
 };
 
