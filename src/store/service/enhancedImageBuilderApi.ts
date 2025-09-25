@@ -2,13 +2,13 @@ import { imageBuilderApi } from '../imageBuilderApi';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const errorMessage = (err: any) => {
-  let msg = err.error.statusText;
+  let msg = err.statusText;
   if (
-    err.error.data?.errors &&
-    err.error.data?.errors.length > 0 &&
-    err.error.data?.errors[0]?.detail
+    err.data?.errors &&
+    err.data?.errors.length > 0 &&
+    err.data?.errors[0]?.detail
   ) {
-    msg = err.error.data?.errors[0]?.detail;
+    msg = err.data?.errors[0]?.detail;
   }
   return msg;
 };
