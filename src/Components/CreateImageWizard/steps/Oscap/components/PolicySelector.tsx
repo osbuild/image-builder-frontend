@@ -97,6 +97,7 @@ const PolicySelector = () => {
   } = usePoliciesQuery({
     filter: `os_major_version=${majorVersion}`,
     limit: 50,
+    sortBy: ['title:asc'],
   });
 
   const { data: currentProfileData } = useGetComplianceCustomizationsQuery(
