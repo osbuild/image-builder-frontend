@@ -96,6 +96,7 @@ const PolicySelector = () => {
     isSuccess: isSuccessPolicies,
   } = usePoliciesQuery({
     filter: `os_major_version=${majorVersion}`,
+    limit: 50,
   });
 
   const { data: currentProfileData } = useGetComplianceCustomizationsQuery(
