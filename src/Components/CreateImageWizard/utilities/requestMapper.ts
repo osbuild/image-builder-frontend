@@ -16,12 +16,13 @@ import {
   SATELLITE_SERVICE_PATH,
 } from '../../../constants';
 import { RootState } from '../../../store';
+import { ApiRepositoryImportResponseRead } from '../../../store/apis/contentSourcesApi';
 import {
   CockpitAwsUploadRequestOptions,
   CockpitCreateBlueprintRequest,
   CockpitImageRequest,
   CockpitUploadTypes,
-} from '../../../store/cockpit/types';
+} from '../../../store/apis/decomposerTypes';
 import {
   AapRegistration,
   AwsUploadRequestOptions,
@@ -47,7 +48,6 @@ import {
   UploadTypes,
   User,
 } from '../../../store/imageBuilderApi';
-import { ApiRepositoryImportResponseRead } from '../../../store/service/contentSourcesApi';
 import {
   ComplianceType,
   initialState,

@@ -3,9 +3,9 @@ import type { ConfigFile } from '@rtk-query/codegen-openapi';
 const config: ConfigFile = {
   schemaFile:
     'https://raw.githubusercontent.com/osbuild/image-builder/main/internal/v1/api.yaml',
-  apiFile: '../../src/store/service/emptyImageBuilderApi.ts',
+  apiFile: '../../src/store/apis/emptyImageBuilderApi.ts',
   apiImport: 'emptyImageBuilderApi',
-  outputFile: '../../src/store/service/imageBuilderApi.ts',
+  outputFile: '../../src/store/apis/imageBuilderApi.ts',
   exportName: 'imageBuilderApi',
   hooks: { queries: true, lazyQueries: true, mutations: true },
   unionUndefined: true,

@@ -1,7 +1,7 @@
 {
   "dashboard": {
     "index": {
-      "label": "Image Builder",
+      "label": "Image Builder (shim)",
       "icon": "pficon-build",
       "docs": [
         {

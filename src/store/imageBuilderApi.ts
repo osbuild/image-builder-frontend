@@ -1,1 +1,1 @@
-export * from './service/imageBuilderApi';
+export * from './apis/imageBuilderApi';

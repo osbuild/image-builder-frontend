@@ -61,6 +61,7 @@ export const CENTOS_9 = 'centos-9';
 export const CENTOS_10 = 'centos-10';
 export const FEDORA_41 = 'fedora-41';
 export const FEDORA_42 = 'fedora-42';
+export const FEDORA_43 = 'fedora-43';
 export const X86_64 = 'x86_64';
 export const AARCH64 = 'aarch64';
 
@@ -99,6 +100,7 @@ export const ON_PREM_RELEASES = new Map([
   [CENTOS_10, 'CentOS Stream 10'],
   [FEDORA_41, 'Fedora Linux 41'],
   [FEDORA_42, 'Fedora Linux 42'],
+  [FEDORA_43, 'Fedora Linux 43'],
   [RHEL_10, 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 

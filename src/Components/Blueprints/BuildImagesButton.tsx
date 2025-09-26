@@ -67,6 +67,11 @@ export const BuildImagesButton = ({ children }: BuildImagesButtonPropTypes) => {
   const { data: blueprintDetails } = useGetBlueprintQuery(
     selectedBlueprintId ? { id: selectedBlueprintId } : skipToken,
   );
+
+  if (!blueprintDetails) {
+    return <></>;
+  }
+
   const blueprintImageType = blueprintDetails?.image_requests.map(
     (image) => image.image_type,
   );

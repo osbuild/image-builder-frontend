@@ -1,4 +1,4 @@
-import { imageBuilderApi } from '../imageBuilderApi';
+import { imageBuilderApi } from './imageBuilderApi';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const errorMessage = (err: any) => {

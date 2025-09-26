@@ -1,1 +1,1 @@
-export * from './service/provisioningApi';
+export * from './apis/provisioningApi';

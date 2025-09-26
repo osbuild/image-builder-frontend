@@ -8,7 +8,7 @@ import {
   ImageRequest,
   UpdateBlueprintApiArg,
   UploadTypes,
-} from '../imageBuilderApi';
+} from './imageBuilderApi';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Params = Record<string, any>;
@@ -29,35 +29,6 @@ export type Package = {
   summary: string;
   version: string;
   release: string;
-};
-
-export type AWSWorkerConfig = {
-  bucket?: string | undefined;
-  credentials?: string | undefined;
-};
-
-export type WorkerConfigResponse = {
-  aws?: AWSWorkerConfig;
-};
-
-export type WorkerConfigFile = {
-  // the worker file has a key value/pair for
-  // each section, which could be of any type.
-  // Disable the linter warning for this.
-  // eslint-disable-next-line
-  [key: string]: any;
-};
-
-export type CloudProviderConfigState = {
-  aws: AWSWorkerConfig;
-};
-
-export type WorkerConfigRequest = {
-  aws?: AWSWorkerConfig | undefined;
-};
-
-export type UpdateWorkerConfigApiArg = {
-  updateWorkerConfigRequest: WorkerConfigRequest | undefined;
 };
 
 export type CockpitUploadTypes = UploadTypes | 'local';

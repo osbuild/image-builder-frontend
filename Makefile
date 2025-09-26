@@ -1,4 +1,4 @@
-PACKAGE_NAME = cockpit-image-builder
+PACKAGE_NAME = cockpit-image-builder-shim
 INSTALL_DIR_BASE = /share/cockpit/
 INSTALL_DIR = $(INSTALL_DIR_BASE)$(PACKAGE_NAME)
 APPSTREAMFILE=org.image-builder.$(PACKAGE_NAME).metainfo.xml
@@ -57,7 +57,7 @@ cockpit/devel-install: PREFIX=~/.local
 cockpit/devel-install:
 	PREFIX="~/.local"
 	mkdir -p $(PREFIX)$(INSTALL_DIR_BASE)
-	ln -s $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
+	cp -r $(shell pwd)/cockpit/public $(PREFIX)$(INSTALL_DIR)
 
 .PHONY: cockpit/download
 cockpit/download: Makefile

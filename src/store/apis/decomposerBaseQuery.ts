@@ -1,7 +1,7 @@
 import { BaseQueryFn } from '@reduxjs/toolkit/query';
 import cockpit from 'cockpit';
 
-import type { Headers, Method, Params } from './types.js';
+import { Headers, Method, Params } from './decomposerTypes';
 
 export const baseQuery =
   (
@@ -24,22 +24,40 @@ export const baseQuery =
     unknown
   > =>
   async (options) => {
+    // Prepare the body for sending
+    const body =
+      typeof options.body === 'object' && options.body !== null
+        ? JSON.stringify(options.body)
+        : (options.body ?? '');
+
+    // TODO: maybe there is a cleaner way of doing this
+    const headers = ['POST', 'PUT'].includes(options.method!)
+      ? {
+          ...options.headers,
+          // we need this for post & put requests
+          // otherwise decomposer doesn't reqcognise
+          // the request body
+          'Content-Type': 'application/json',
+        }
+      : options.headers;
+
     // we need to wrap this call in a Promise rather than
     // async/await because cockpit rejects the http request
     // with two arguments (error & data/body)
     return new Promise((resolve, reject) => {
-      const cloudApi = cockpit.http('/run/cloudapi/api.socket', {
+      const cloudApi = cockpit.http('/tmp/decomposer-httpd.sock', {
         superuser: 'try',
       });
       return cloudApi
         .request({
           path: baseUrl + options.url,
-          body: options.body ?? '',
+          body: body,
           method: options.method ?? 'GET',
           params: options.params,
-          headers: options.headers,
+          headers: headers,
         })
         .then((result) => {
+          // Log the successful response
           resolve({ data: JSON.parse(result) });
         })
         .catch(

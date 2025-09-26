@@ -4,7 +4,7 @@ import {
   TypedMutationTrigger,
 } from '@reduxjs/toolkit/dist/query/react';
 
-import { errorMessage } from '../../store/service/enhancedImageBuilderApi';
+import { errorMessage } from '../../store/apis/enhancedImageBuilderApi';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getErrorDescription = (err: any) => {
