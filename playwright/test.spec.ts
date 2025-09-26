@@ -144,6 +144,39 @@ test.describe.serial('test', () => {
     frame.getByRole('heading', { name: 'All images' });
   });
 
+  test('build blueprint failure', async ({ page }) => {
+    test.skip(!isHosted(), 'Skip on prem, as there is no http compose request to intercept');
+
+    await page.route(/compose/, async (route, request) => {
+      const response = await route.fetch();
+      response.status = () => { return 500 };
+      const data = {
+        errors: [
+          {
+            "detail": "detailed error description for this compose failure",
+          },
+        ],
+      };
+      await route.fulfill({
+        response: response,
+        body: JSON.stringify(data),
+      });
+    });
+
+    await ensureAuthenticated(page);
+    await closePopupsIfExist(page);
+    // Navigate to IB landing page and get the frame
+    await navigateToLandingPage(page);
+    const frame = await ibFrame(page);
+    await frame
+      .getByRole('textbox', { name: 'Search input' })
+      .fill(blueprintName);
+
+    await frame.locator(`button[id="${blueprintName}"]`).click();
+    await frame.getByTestId('blueprint-build-image-menu-option').click();
+    await expect(frame.getByText('detailed error description for this compose failure')).toBeVisible();
+  });
+
   test('build blueprint', async ({ page }) => {
     await ensureAuthenticated(page);
     await closePopupsIfExist(page);
@@ -157,6 +190,7 @@ test.describe.serial('test', () => {
     // button's id instead
     await frame.locator(`button[id="${blueprintName}"]`).click();
     await frame.getByTestId('blueprint-build-image-menu-option').click();
+    await expect(frame.getByText('Image is being built')).toBeVisible();
 
     // make sure the image is present
     await frame
