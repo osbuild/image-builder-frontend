@@ -18,17 +18,14 @@ import {
   openAndDismissSaveAndBuildModal,
   renderCreateMode,
   renderEditMode,
+  selectGuestImageTarget,
   verifyCancelButton,
 } from '../../wizardTestUtils';
 
 let router: RemixRouter | undefined = undefined;
 
 const goToHostnameStep = async () => {
-  const user = userEvent.setup();
-  const guestImageCheckBox = await screen.findByRole('checkbox', {
-    name: /virtualization guest image checkbox/i,
-  });
-  await waitFor(() => user.click(guestImageCheckBox));
+  await selectGuestImageTarget();
 
   if (!process.env.IS_ON_PREMISE) {
     await clickNext(); // Registration

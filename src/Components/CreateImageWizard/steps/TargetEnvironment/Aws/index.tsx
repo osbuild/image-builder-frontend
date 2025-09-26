@@ -26,15 +26,17 @@ import { AWS_REGIONS } from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeAwsAccountId,
+  changeAwsBucket,
   changeAwsRegion,
   changeAwsShareMethod,
   changeAwsSourceId,
   selectAwsAccountId,
+  selectAwsBucket,
   selectAwsRegion,
   selectAwsShareMethod,
 } from '../../../../../store/wizardSlice';
 import { ValidatedInput } from '../../../ValidatedInput';
-import { isAwsAccountIdValid } from '../../../validators';
+import { isAwsAccountIdValid, isAwsBucketValid } from '../../../validators';
 
 export type AwsShareMethod = 'manual' | 'sources';
 
@@ -108,6 +110,7 @@ const Aws = () => {
   const shareMethod = useAppSelector(selectAwsShareMethod);
   const shareWithAccount = useAppSelector(selectAwsAccountId);
   const region = useAppSelector(selectAwsRegion);
+  const bucket = useAppSelector(selectAwsBucket);
 
   return (
     <Form>
@@ -212,6 +215,18 @@ const Aws = () => {
               />
             )}
           </FormGroup>
+          {process.env.IS_ON_PREMISE && (
+            <FormGroup label='Bucket name' isRequired>
+              <ValidatedInput
+                value={bucket || ''}
+                validator={isAwsBucketValid}
+                placeholder='AWS bucket'
+                ariaLabel='aws-bucket'
+                onChange={(_, v) => dispatch(changeAwsBucket(v))}
+                helperText='Invalid AWS bucket name'
+              />
+            </FormGroup>
+          )}
         </>
       )}
     </Form>

@@ -74,6 +74,13 @@ EOF
 sudo systemctl enable --now osbuild-composer.socket osbuild-local-worker.socket
 sudo systemctl start osbuild-worker@1
 
+sudo mkdir -p $HOME/.aws
+cat <<EOF | sudo tee -a $HOME/.aws/credentials
+[default]
+aws_access_key_id = supersecret
+aws_secret_access_key = secretsquirrel
+EOF
+
 sudo podman run \
      -e "PLAYWRIGHT_HTML_OPEN=never" \
      -e "CI=true" \
