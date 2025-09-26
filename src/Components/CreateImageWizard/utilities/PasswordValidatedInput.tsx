@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 import {
-  Button,
   FormGroup,
   FormHelperText,
   HelperText,
@@ -10,9 +9,7 @@ import {
   InputGroupItem,
   TextInput,
   TextInputProps,
-  Tooltip,
 } from '@patternfly/react-core';
-import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
 import { checkPasswordValidity } from './useValidation';
 
@@ -43,25 +40,6 @@ export const PasswordValidatedInput = ({
   );
   const { ruleLength, ruleCharacters } = validationState;
 
-  const togglePasswordVisibility = () => {
-    setIsPasswordVisible(!isPasswordVisible);
-  };
-
-  const isEditingWithoutValue = hasPassword && !value;
-
-  const PasswordToggleButton = () => {
-    return (
-      <Button
-        variant='control'
-        onClick={togglePasswordVisibility}
-        aria-label={isPasswordVisible ? 'Hide password' : 'Show password'}
-        isDisabled={isEditingWithoutValue}
-      >
-        {isPasswordVisible ? <EyeSlashIcon /> : <EyeIcon />}
-      </Button>
-    );
-  };
-
   return (
     <FormGroup label='Password' className='pf-v6-u-pb-md'>
       <>
@@ -70,22 +48,13 @@ export const PasswordValidatedInput = ({
             <TextInput
               isRequired
               type={isPasswordVisible ? 'text' : 'password'}
+              onFocus={() => setIsPasswordVisible(true)}
+              onBlur={() => setIsPasswordVisible(false)}
               value={value}
               onChange={onChange}
               aria-label={ariaLabel}
               placeholder={hasPassword ? '●'.repeat(8) : placeholder}
             />
-          </InputGroupItem>
-          <InputGroupItem>
-            {isEditingWithoutValue ? (
-              <Tooltip content='Passwords cannot be viewed when editing a blueprint for security reasons'>
-                <span>
-                  <PasswordToggleButton />
-                </span>
-              </Tooltip>
-            ) : (
-              <PasswordToggleButton />
-            )}
           </InputGroupItem>
         </InputGroup>
       </>
