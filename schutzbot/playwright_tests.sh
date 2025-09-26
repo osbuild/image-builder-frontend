@@ -79,8 +79,6 @@ sudo podman run \
      -e "CI=true" \
      -e "PLAYWRIGHT_USER=admin" \
      -e "PLAYWRIGHT_PASSWORD=foobar" \
-     -e "CURRENTS_PROJECT_ID=${CURRENTS_PROJECT_ID:-}" \
-     -e "CURRENTS_RECORD_KEY=${CURRENTS_RECORD_KEY:-}" \
      --net=host \
      -v "$PWD:/tests" \
      -v '/etc:/etc' \
