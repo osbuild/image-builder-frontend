@@ -36,7 +36,10 @@ export const test = oldTest.extend<WithCleanup>({
     await test.step(
       'Post-test cleanup',
       async () => {
-        await Promise.all(Array.from(cleanupFns).map(([, fn]) => fn()));
+        // Execute cleanup functions sequentially
+        for (const [, fn] of cleanupFns) {
+          await fn();
+        }
       },
       { box: true },
     );
