@@ -18,7 +18,11 @@ import OscapOnPremWarning from './components/OnPremWarning';
 import Oscap from './Oscap';
 import { removeBetaFromRelease } from './removeBetaFromRelease';
 
-import { AMPLITUDE_MODULE_NAME, COMPLIANCE_URL } from '../../../../constants';
+import {
+  AMPLITUDE_MODULE_NAME,
+  COMPLIANCE_URL,
+  FIRST_BOOT_SERVICE,
+} from '../../../../constants';
 import { useGetUser } from '../../../../Hooks';
 import {
   useBackendPrefetch,
@@ -41,6 +45,7 @@ import {
   selectComplianceType,
   selectDistribution,
   selectFips,
+  selectServices,
 } from '../../../../store/wizardSlice';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 import { useOnPremOpenSCAPAvailable } from '../../../../Utilities/useOnPremOpenSCAP';
@@ -52,6 +57,7 @@ const OscapContent = () => {
   const complianceType = useAppSelector(selectComplianceType);
   const profileID = useAppSelector(selectComplianceProfileID);
   const fips = useAppSelector(selectFips);
+  const services = useAppSelector(selectServices);
   const prefetchOscapProfile = useBackendPrefetch('getOscapProfiles', {});
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const majorVersion = release.split('-')[1];
@@ -92,8 +98,13 @@ const OscapContent = () => {
     for (const pkg of pkgs) {
       dispatch(removePackage(pkg));
     }
+
+    const enabledServices = services.enabled.includes(FIRST_BOOT_SERVICE)
+      ? [FIRST_BOOT_SERVICE]
+      : [];
+
     dispatch(changeFscMode('automatic'));
-    dispatch(changeEnabledServices([]));
+    dispatch(changeEnabledServices(enabledServices));
     dispatch(changeMaskedServices([]));
     dispatch(changeDisabledServices([]));
     dispatch(clearKernelAppend());

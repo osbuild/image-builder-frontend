@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
-import { useAppDispatch } from '../../../../../store/hooks';
+import { FIRST_BOOT_SERVICE } from '../../../../../constants';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import { Filesystem, Services } from '../../../../../store/imageBuilderApi';
 import {
   addKernelArg,
@@ -13,12 +14,14 @@ import {
   clearKernelAppend,
   clearPartitions,
   removePackage,
+  selectServices,
 } from '../../../../../store/wizardSlice';
 import { parseSizeUnit } from '../../../utilities/parseSizeUnit';
 import { Partition, Units } from '../../FileSystem/fscTypes';
 
 export const useSelectorHandlers = () => {
   const dispatch = useAppDispatch();
+  const existingServices = useAppSelector(selectServices);
 
   const clearCompliancePackages = (oscapPackages: string[]) => {
     for (const pkg of oscapPackages) {
@@ -78,7 +81,12 @@ export const useSelectorHandlers = () => {
   };
 
   const handleServices = (services: Services | undefined) => {
-    dispatch(changeEnabledServices(services?.enabled || []));
+    let enabled = services?.enabled || [];
+    if (existingServices.enabled.includes(FIRST_BOOT_SERVICE)) {
+      enabled = [...enabled, FIRST_BOOT_SERVICE];
+    }
+
+    dispatch(changeEnabledServices(enabled));
     dispatch(changeMaskedServices(services?.masked || []));
     dispatch(changeDisabledServices(services?.disabled || []));
   };
