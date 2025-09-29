@@ -2,22 +2,19 @@ import React from 'react';
 
 import { Content, Form, Title } from '@patternfly/react-core';
 
-import EmptyUserState from './components/EmptyUserState';
 import UserInfo from './components/UserInfo';
 
-import { useAppSelector } from '../../../../store/hooks';
-import { selectUsers } from '../../../../store/wizardSlice';
-
 const UsersStep = () => {
-  const users = useAppSelector(selectUsers);
-
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
         Users
       </Title>
-      <Content>Add a user to your image.</Content>
-      {users.length !== 0 ? <UserInfo /> : <EmptyUserState />}
+      <Content>
+        Create user accounts for systems that will use this image. Duplicate
+        usernames are not allowed.
+      </Content>
+      <UserInfo />
     </Form>
   );
 };
