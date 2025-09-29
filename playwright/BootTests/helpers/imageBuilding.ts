@@ -6,6 +6,9 @@ export const buildImage = async (page: Page) => {
    * @param page - the page object
    */
   await page.getByRole('button', { name: 'Build images' }).click();
+  // make sure the notification is visible
+  await expect(page.getByText('Image is being built')).toBeVisible();
+
   let timeSpentBuilding = 0;
   console.log('Starting the build');
   // eslint-disable-next-line disable-autofix/@typescript-eslint/no-unnecessary-condition
