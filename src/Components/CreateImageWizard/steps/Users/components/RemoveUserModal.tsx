@@ -8,47 +8,29 @@ import {
   ModalHeader,
 } from '@patternfly/react-core';
 
-import calculateNewIndex from './calculateNewIndex';
-
-import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
-import { removeUser, selectUsers } from '../../../../../store/wizardSlice';
+import { useAppDispatch } from '../../../../../store/hooks';
+import { removeUser } from '../../../../../store/wizardSlice';
 
 type RemoveUserModalProps = {
   setShowRemoveUserModal: React.Dispatch<React.SetStateAction<boolean>>;
-  activeTabKey: number;
-  setActiveTabKey: React.Dispatch<React.SetStateAction<number>>;
-  tabIndex: number;
-  setIndex: React.Dispatch<React.SetStateAction<number>>;
+  index: number;
   isOpen: boolean;
   userName: string;
 };
 
 const RemoveUserModal = ({
   setShowRemoveUserModal,
-  activeTabKey,
-  setActiveTabKey,
-  tabIndex,
-  setIndex,
+  index,
   isOpen,
   userName,
 }: RemoveUserModalProps) => {
   const dispatch = useAppDispatch();
-  const users = useAppSelector(selectUsers);
-
   const onClose = () => {
     setShowRemoveUserModal(!isOpen);
   };
 
   const onConfirm = () => {
-    const nextTabIndex = calculateNewIndex(
-      tabIndex,
-      activeTabKey,
-      users.length,
-    );
-
-    setActiveTabKey(nextTabIndex);
-    setIndex(nextTabIndex);
-    dispatch(removeUser(tabIndex));
+    dispatch(removeUser(index));
     setShowRemoveUserModal(!isOpen);
   };
 
