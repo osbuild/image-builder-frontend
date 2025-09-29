@@ -197,7 +197,7 @@ export const clickRegisterSatellite = async () => {
     name: /Register/,
   });
   const registerLaterRadio = await screen.findByRole('radio', {
-    name: /register with satellite/i,
+    name: /Register to a Satellite or Capsule/i,
   });
   await waitFor(() => user.click(registerLaterRadio));
 };
