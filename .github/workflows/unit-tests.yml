@@ -38,6 +38,8 @@ jobs:
   cockpit-unit-tests:
     name: Cockpit Tests
     runs-on: ubuntu-latest
+    container:
+      image: registry.fedoraproject.org/fedora:42
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js 22
@@ -45,6 +47,8 @@ jobs:
       with:
         node-version: 22
         cache: 'npm'
+    - name: 'Install image builder'
+      run: 'dnf install -y image-builder'
     - name: Install dependencies
       run: npm ci
     - name: Run unit tests with cockpit
