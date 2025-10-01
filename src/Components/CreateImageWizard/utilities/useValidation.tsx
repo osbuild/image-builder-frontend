@@ -695,16 +695,32 @@ export function useUsersValidation(): UsersStepValidation {
   }
 
   for (let index = 0; index < users.length; index++) {
-    const invalidGroups = [];
-    const userNameError = validateUserName(users, users[index].name, index);
-    const sshKeyError = validateSshKey(users[index].ssh_key);
+    const userErrors: { [key: string]: string } = {};
+    const isUserDefined =
+      !!users[index].password ||
+      !!users[index].ssh_key ||
+      users[index].groups.length > 0;
+    if (users[index].name || isUserDefined) {
+      const userNameError = validateUserName(users, users[index].name, index);
+      if (userNameError) {
+        userErrors.userName = userNameError;
+      }
+    }
+
     const isPasswordValid = checkPasswordValidity(
       users[index].password,
       environments.includes('azure'),
     ).isValid;
-    const passwordError =
-      users[index].password && !isPasswordValid ? 'Invalid password' : '';
+    if (users[index].password && !isPasswordValid) {
+      userErrors.userPassword = 'Invalid password';
+    }
 
+    const sshKeyError = validateSshKey(users[index].ssh_key);
+    if (sshKeyError) {
+      userErrors.userSshKey = sshKeyError;
+    }
+
+    const invalidGroups = [];
     if (users[index].groups.length > 0) {
       for (const g of users[index].groups) {
         if (!isUserGroupValid(g)) {
@@ -714,27 +730,21 @@ export function useUsersValidation(): UsersStepValidation {
     }
 
     const duplicateGroups = getListOfDuplicates(users[index].groups);
+    if (invalidGroups.length > 0 || duplicateGroups.length > 0) {
+      const groupsErrors = [];
+      if (invalidGroups.length > 0) {
+        groupsErrors.push(`Invalid user groups: ${invalidGroups.join(', ')}`);
+      }
+      if (duplicateGroups.length > 0) {
+        groupsErrors.push(
+          `Includes duplicate groups: ${duplicateGroups.join(', ')}`,
+        );
+      }
+      userErrors.groups = groupsErrors.join(' | ');
+    }
 
-    const invalidError =
-      invalidGroups.length > 0 ? `Invalid user groups: ${invalidGroups}` : '';
-    const duplicateError =
-      duplicateGroups.length > 0
-        ? `Includes duplicate groups: ${duplicateGroups.join(', ')}`
-        : '';
-
-    if (
-      userNameError ||
-      sshKeyError ||
-      (users[index].password && !isPasswordValid) ||
-      invalidError ||
-      duplicateError
-    ) {
-      errors[index] = {
-        userName: userNameError,
-        userSshKey: sshKeyError,
-        userPassword: passwordError,
-        groups: invalidError + '|' + duplicateError,
-      };
+    if (Object.keys(userErrors).length > 0) {
+      errors[index] = userErrors;
     }
   }
 
