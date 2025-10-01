@@ -18,9 +18,10 @@ import { EditSaveAndBuildBtn, EditSaveButton } from './EditDropdown';
 
 import {
   useCreateBPWithNotification as useCreateBlueprintMutation,
-  useGetUser,
   useUpdateBPWithNotification as useUpdateBlueprintMutation,
 } from '../../../../../Hooks';
+import { useAppSelector } from '../../../../../store/hooks';
+import { selectOrgId } from '../../../../../store/wizardSlice';
 import { resolveRelPath } from '../../../../../Utilities/path';
 import { mapRequestFromState } from '../../../utilities/requestMapper';
 import { useIsBlueprintValid } from '../../../utilities/useValidation';
@@ -34,7 +35,6 @@ const ReviewWizardFooter = () => {
   const { isSuccess: isUpdateSuccess, reset: resetUpdate } =
     useUpdateBlueprintMutation({ fixedCacheKey: 'updateBlueprintKey' });
   const { auth } = useChrome();
-  const { orgId } = useGetUser(auth);
   const { composeId } = useParams();
   const [isOpen, setIsOpen] = useState(false);
   const store = useStore();
@@ -43,6 +43,7 @@ const ReviewWizardFooter = () => {
   };
   const navigate = useNavigate();
   const isValid = useIsBlueprintValid();
+  const orgId = useAppSelector(selectOrgId);
 
   useEffect(() => {
     if (isUpdateSuccess || isCreateSuccess) {
@@ -54,13 +55,13 @@ const ReviewWizardFooter = () => {
 
   const getBlueprintPayload = async () => {
     if (!process.env.IS_ON_PREMISE) {
+      const userData = await auth.getUser();
+      const orgId = userData?.identity?.internal?.org_id;
       const requestBody = orgId && mapRequestFromState(store, orgId);
       return requestBody;
     }
 
-    // NOTE: This is fine for on prem because we save the org id
-    // to state through a form field in the registration step
-    return mapRequestFromState(store, '');
+    return mapRequestFromState(store, orgId ?? '');
   };
 
   return (
