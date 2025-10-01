@@ -109,6 +109,7 @@ import {
   selectTimezone,
   selectUseLatest,
   selectUsers,
+  UserWithAdditionalInfo,
   wizardState,
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
@@ -771,22 +772,29 @@ const getUsers = (state: RootState): User[] | undefined => {
     return undefined;
   }
 
-  return users.map((user) => {
-    const result: User = {
-      name: user.name,
-    };
-    if (user.password !== '') {
-      result.password = user.password;
-    }
-    if (user.ssh_key !== '') {
-      result.ssh_key = user.ssh_key;
-    }
-    if (user.groups.length > 0) {
-      result.groups = user.groups;
-    }
-    result.hasPassword = user.hasPassword || user.password !== '';
-    return result as User;
-  });
+  const arrayUsers = users
+    .filter(
+      (user: UserWithAdditionalInfo) =>
+        user.name || user.password || user.ssh_key || user.groups.length > 0,
+    )
+    .map((user: UserWithAdditionalInfo) => {
+      const result: User = {
+        name: user.name,
+      };
+      if (user.password !== '') {
+        result.password = user.password;
+      }
+      if (user.ssh_key !== '') {
+        result.ssh_key = user.ssh_key;
+      }
+      if (user.groups.length > 0) {
+        result.groups = user.groups;
+      }
+      result.hasPassword = user.hasPassword || user.password !== '';
+      return result as User;
+    });
+
+  return arrayUsers.length > 0 ? arrayUsers : undefined;
 };
 
 const getDisk = (state: RootState): Disk | undefined => {
