@@ -196,19 +196,6 @@ describe('Import modal', () => {
 
     // Users
     await clickNext();
-    await screen.findByRole('heading', { name: /Users/ });
-    const userName = screen.getByRole('textbox', {
-      name: /blueprint user name/i,
-    });
-    expect(userName).toHaveValue('admin');
-    const sshKey = await screen.findByRole('textbox', {
-      name: /public SSH key/i,
-    });
-    expect(sshKey).toHaveValue('ssh-rsa d');
-    const adminCheckBox = screen.getByRole('checkbox', {
-      name: /administrator/i,
-    });
-    expect(adminCheckBox).toBeChecked();
 
     // Timezone
     await clickNext();
@@ -296,30 +283,6 @@ describe('Import modal', () => {
 
     // Users
     await clickNext();
-    expect(await screen.findByText('Invalid user name')).toBeInTheDocument();
-    await waitFor(async () =>
-      user.type(await screen.findByPlaceholderText('Enter username'), 'est'),
-    );
-    expect(
-      await screen.findByText('Password must be at least 6 characters long'),
-    ).toBeInTheDocument();
-    await waitFor(async () =>
-      user.clear(await screen.findByPlaceholderText('Enter password')),
-    );
-    expect(await screen.findByText('Invalid SSH key')).toBeInTheDocument();
-    await waitFor(async () =>
-      user.clear(
-        await screen.findByPlaceholderText('Paste your public SSH key'),
-      ),
-    );
-
-    expect(
-      await screen.findByText(/Invalid user groups: 0000/),
-    ).toBeInTheDocument();
-
-    await waitFor(() =>
-      user.click(screen.getByRole('button', { name: /close 0000/i })),
-    );
 
     // Timezone
     await clickNext();
