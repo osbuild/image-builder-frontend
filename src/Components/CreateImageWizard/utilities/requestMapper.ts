@@ -216,10 +216,17 @@ const convertDiskToFscDisk = (
 
 const convertLogicalVolume = (volume: LogicalVolume) => {
   const id = uuidv4();
+  let size;
+  let unit;
+
+  if (volume.minsize) {
+    [size, unit] = volume.minsize && volume.minsize.split(' ');
+  }
 
   return {
     id: id,
-    minsize: volume.minsize,
+    min_size: size,
+    unit: unit,
     name: volume.name,
     fs_type: volume.fs_type,
     mountpoint: volume.mountpoint,

@@ -19,11 +19,17 @@ import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionOrder } from '../../../../../store/wizardSlice';
 import { FilesystemPartition, FscDiskPartition } from '../fscTypes';
 
-type FileSystemTableTypes = {
-  partitions: (FilesystemPartition | FscDiskPartition)[];
-};
+type FileSystemTableTypes =
+  | {
+      partitions: FilesystemPartition[];
+      mode: 'filesystem';
+    }
+  | {
+      partitions: FscDiskPartition[];
+      mode: 'disk';
+    };
 
-const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
+const FileSystemTable = ({ partitions, mode }: FileSystemTableTypes) => {
   const [draggedItemId, setDraggedItemId] = useState<string | null>(null);
   const [draggingToItemIndex, setDraggingToItemIndex] = useState<number | null>(
     null,
@@ -176,6 +182,7 @@ const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
       <Thead>
         <Tr>
           <Th aria-label='Drag mount point' />
+          {mode === 'disk' && <Th>Name</Th>}
           <Th>Mount point</Th>
           <Th aria-label='Suffix'>Suffix</Th>
           <Th>Type</Th>
@@ -193,29 +200,28 @@ const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
         onDragLeave={onDragLeave}
         ref={bodyRef}
       >
-        {partitions.length > 0 &&
-          partitions.map((partition) =>
-            isFilesystemPartition(partition) ? (
+        {partitions.length > 0 && mode === 'filesystem'
+          ? partitions.map((partition) => (
               <Row
                 onDrop={onDrop}
                 onDragEnd={onDragEnd}
                 onDragStart={onDragStart}
                 key={partition.id}
-                partition={partition}
+                partition={partition as FilesystemPartition}
                 isRemovingDisabled={
                   rootPartitionsCount === 1 && partition.mountpoint === '/'
                 }
               />
-            ) : (
+            ))
+          : partitions.map((partition) => (
               <DiskRow
                 onDrop={onDrop}
                 onDragEnd={onDragEnd}
                 onDragStart={onDragStart}
                 key={partition.id}
-                partition={partition}
+                partition={partition as FscDiskPartition}
               />
-            ),
-          )}
+            ))}
       </Tbody>
     </Table>
   );

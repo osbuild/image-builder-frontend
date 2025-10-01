@@ -94,7 +94,7 @@ const FileSystemConfiguration = () => {
           )} images`}
         />
       )}
-      <FileSystemTable partitions={filesystemPartitions} />
+      <FileSystemTable partitions={filesystemPartitions} mode='filesystem' />
       <Content>
         <Button
           className='pf-v6-u-text-align-left'

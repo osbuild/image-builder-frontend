@@ -5,15 +5,19 @@ import {
   Card,
   CardBody,
   CardFooter,
-  CodeBlock,
+  Content,
   FormGroup,
   TextInput,
 } from '@patternfly/react-core';
-import { TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { v4 as uuidv4 } from 'uuid';
+
+import FileSystemTable from './FileSystemTable';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { VolumeGroup } from '../../../../../store/imageBuilderApi';
 import {
+  addLogicalVolumeToVolumeGroup,
   changeDiskPartitionMinsize,
   changeDiskPartitionName,
   removeDiskPartition,
@@ -26,6 +30,23 @@ type VolumeGroupsType = {
 
 const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
   const dispatch = useAppDispatch();
+
+  const handleAddLogicalVolume = (vgId: string) => {
+    const id = uuidv4();
+    dispatch(
+      addLogicalVolumeToVolumeGroup({
+        vgId: vgId,
+        logicalVolume: {
+          id,
+          name: '',
+          mountpoint: '/home',
+          min_size: '1',
+          unit: 'GiB',
+          fs_type: 'ext4',
+        },
+      }),
+    );
+  };
 
   return volumeGroups.map((vg) => (
     <Card key={vg.id}>
@@ -56,9 +77,19 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
             className='pf-v6-u-w-25'
           />
         </FormGroup>
-        <CodeBlock readOnly>
-          <pre>{JSON.stringify(vg.logical_volumes, null, 2)}</pre>
-        </CodeBlock>
+        {vg.logical_volumes.length > 0 && (
+          <FileSystemTable partitions={vg.logical_volumes} mode='disk' />
+        )}
+        <Content>
+          <Button
+            className='pf-v6-u-text-align-left'
+            variant='link'
+            icon={<PlusCircleIcon />}
+            onClick={() => handleAddLogicalVolume(vg.id)}
+          >
+            Add logical volume
+          </Button>
+        </Content>
       </CardBody>
       <CardFooter>
         <Button

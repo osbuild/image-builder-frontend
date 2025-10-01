@@ -99,6 +99,7 @@ const AdvancedPartitioning = () => {
       </FormGroup>
       <FileSystemTable
         partitions={diskPartitions.filter((p) => p.type === 'plain')}
+        mode='disk'
       />
       <Content>
         <Button

@@ -58,6 +58,7 @@ const DiskRow = ({
           />
         )}
       </Td>
+      <Td width={20}>{partition.name || ''}</Td>
       <Td width={20}></Td>
       <Td width={20}>{partition.fs_type}</Td>
       <Td width={20}>{partition.min_size}</Td>

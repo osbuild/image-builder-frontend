@@ -8,6 +8,7 @@ import type {
   ImageRequest,
   ImageTypes,
   Locale,
+  LogicalVolume,
   Module,
   Repository,
   Timezone,
@@ -20,6 +21,7 @@ import type {
   FilesystemPartition,
   FscDisk,
   FscDiskPartition,
+  FscDiskPartitionBase,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import type {
@@ -831,6 +833,20 @@ export const wizardSlice = createSlice({
       );
       if (index !== -1) {
         state.disk.partitions.splice(index, 1);
+        return;
+      }
+
+      for (const partition of state.disk.partitions) {
+        if (partition.type === 'lvm') {
+          const logicalVolumeIndex = partition.logical_volumes.findIndex(
+            (lv) => lv.id === action.payload,
+          );
+
+          if (logicalVolumeIndex !== -1) {
+            partition.logical_volumes.splice(logicalVolumeIndex, 1);
+            return;
+          }
+        }
       }
     },
     changeDiskPartitionMinsize: (
@@ -858,6 +874,26 @@ export const wizardSlice = createSlice({
         'name' in state.disk.partitions[partitionIndex]
       ) {
         state.disk.partitions[partitionIndex].name = name;
+      }
+    },
+    addLogicalVolumeToVolumeGroup: (
+      state,
+      action: PayloadAction<{
+        vgId: string;
+        logicalVolume: LogicalVolume & FscDiskPartitionBase;
+      }>,
+    ) => {
+      const { vgId, logicalVolume } = action.payload;
+      const partitionIndex = state.disk.partitions.findIndex(
+        (partition) => partition.id === vgId,
+      );
+      if (
+        partitionIndex !== -1 &&
+        'logical_volumes' in state.disk.partitions[partitionIndex]
+      ) {
+        state.disk.partitions[partitionIndex].logical_volumes.push(
+          logicalVolume,
+        );
       }
     },
     changePartitioningMode: (
@@ -1298,6 +1334,7 @@ export const {
   removeDiskPartition,
   changeDiskPartitionMinsize,
   changeDiskPartitionName,
+  addLogicalVolumeToVolumeGroup,
   changePartitioningMode,
   changeUseLatest,
   changeSnapshotDate,
