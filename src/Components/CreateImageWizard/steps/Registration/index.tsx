@@ -30,24 +30,26 @@ const RegistrationStep = () => {
           Configure registration settings for systems that will use this image.
         </Content>
         <Content className='pf-v6-u-pb-md'>
-          <FormGroup label='Organization ID'>
-            <ClipboardCopy
-              hoverTip='Copy to clipboard'
-              clickTip='Successfully copied to clipboard!'
-              isReadOnly
-              className='pf-v6-u-w-25'
-            >
-              {orgId || ''}
-            </ClipboardCopy>
-            <FormHelperText>
-              <HelperText>
-                <HelperTextItem>
-                  If you&apos;re using an activation key with command line
-                  registration, you must provide your organization&apos;s ID.
-                </HelperTextItem>
-              </HelperText>
-            </FormHelperText>
-          </FormGroup>
+          {!process.env.IS_ON_PREMISE && (
+            <FormGroup label='Organization ID'>
+              <ClipboardCopy
+                hoverTip='Copy to clipboard'
+                clickTip='Successfully copied to clipboard!'
+                isReadOnly
+                className='pf-v6-u-w-25'
+              >
+                {orgId || ''}
+              </ClipboardCopy>
+              <FormHelperText>
+                <HelperText>
+                  <HelperTextItem>
+                    If you&apos;re using an activation key with command line
+                    registration, you must provide your organization&apos;s ID.
+                  </HelperTextItem>
+                </HelperText>
+              </FormHelperText>
+            </FormGroup>
+          )}
         </Content>
         <Registration />
       </Content>
