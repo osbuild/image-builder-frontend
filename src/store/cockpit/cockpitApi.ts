@@ -11,7 +11,7 @@ import cockpit from 'cockpit';
 import { fsinfo } from 'cockpit/fsinfo';
 import { v4 as uuidv4 } from 'uuid';
 
-import { Blueprint } from './composerCloudApi';
+import { Customizations } from './composerCloudApi';
 // We have to work around RTK query here, since it doesn't like splitting
 // out the same api into two separate apis. So, instead, we can just
 // inherit/import the `contentSourcesApi` and build on top of that.
@@ -140,14 +140,34 @@ const getCloudConfigs = async () => {
   }
 };
 
-const mapToOnpremRequest = (
-  blueprint: Blueprint,
+const toCloudAPIComposeRequest = (
+  blueprint: CockpitCreateBlueprintRequest,
   distribution: string,
   image_requests: CockpitImageRequest[],
 ) => {
+  // we need a customizations object rather than a blueprint
+  // since we need to set the `subscription` options for
+  // registering an image. This is not available with blueprint
+  // customizations
+  const customizations = mapHostedToOnPrem(blueprint as CreateBlueprintRequest)
+    .customizations as Customizations;
+
+  if (blueprint.customizations?.subscription) {
+    const { subscription } = blueprint.customizations;
+    customizations!.subscription = {
+      organization: subscription.organization.toString(),
+      activation_key: subscription['activation-key'],
+      server_url: subscription['server-url'],
+      base_url: subscription['base-url'],
+      rhc: subscription.rhc,
+      insights: subscription.insights,
+      insights_client_proxy: subscription.insights_client_proxy,
+    };
+  }
+
   return {
-    blueprint,
     distribution,
+    customizations,
     image_requests: image_requests.map((ir) => ({
       architecture: ir.architecture,
       image_type: ir.image_type,
@@ -509,8 +529,8 @@ export const cockpitApi = contentSourcesApi.injectEndpoints({
                 body: JSON.stringify(
                   // since this is the request that gets sent to the cloudapi
                   // backend, we need to modify it slightly
-                  mapToOnpremRequest(
-                    mapHostedToOnPrem(blueprint as CreateBlueprintRequest),
+                  toCloudAPIComposeRequest(
+                    blueprint,
                     crcComposeRequest.distribution,
                     [ir],
                   ),
