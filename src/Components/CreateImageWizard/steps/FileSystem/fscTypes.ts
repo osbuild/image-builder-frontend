@@ -1,7 +1,8 @@
 import {
   BtrfsVolume,
   FilesystemTyped,
-  VolumeGroup,
+  LogicalVolume,
+  Minsize,
 } from '../../../../store/imageBuilderApi';
 
 export type FilesystemPartition = {
@@ -22,10 +23,20 @@ export type FscDisk = {
 export type FscDiskPartitionBase = {
   id: string;
   min_size: string | undefined;
-  unit: Units;
+  unit: Units | undefined;
+};
+
+export type LogicalVolumeWithBase = LogicalVolume & FscDiskPartitionBase;
+
+export type VolumeGroupWithExtendedLV = {
+  type: 'lvm';
+  part_type?: string | undefined;
+  name?: string | undefined;
+  minsize?: Minsize | undefined;
+  logical_volumes: LogicalVolumeWithBase[];
 };
 
 export type FscDiskPartition =
   | (FilesystemTyped & FscDiskPartitionBase)
-  | (VolumeGroup & FscDiskPartitionBase)
+  | (VolumeGroupWithExtendedLV & FscDiskPartitionBase)
   | (BtrfsVolume & FscDiskPartitionBase);

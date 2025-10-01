@@ -226,7 +226,7 @@ const convertLogicalVolume = (volume: LogicalVolume) => {
   return {
     id: id,
     min_size: size,
-    unit: unit,
+    unit: unit as Units,
     name: volume.name,
     fs_type: volume.fs_type,
     mountpoint: volume.mountpoint,
