@@ -1175,12 +1175,17 @@ export const wizardSlice = createSlice({
       }
     },
     addUserGroupByIndex: (state, action: PayloadAction<UserGroupPayload>) => {
+      const { index, group } = action.payload;
       if (
-        !state.users[action.payload.index].groups.some(
-          (group) => group === action.payload.group,
+        !state.users[index].groups.some(
+          (existingGroup) => existingGroup === group,
         )
       ) {
-        state.users[action.payload.index].groups.push(action.payload.group);
+        state.users[index].groups.push(group);
+
+        if (group === 'wheel') {
+          state.users[index].isAdministrator = true;
+        }
       }
     },
     removeUserGroupByIndex: (
