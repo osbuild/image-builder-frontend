@@ -29,9 +29,13 @@ const ActivationKeyInformation = (): JSX.Element => {
   } = useShowActivationKeyQuery(
     { name: activationKey! },
     {
-      skip: !activationKey,
+      skip: !activationKey || !!process.env.IS_ON_PREMISE,
     },
   );
+
+  if (process.env.IS_ON_PREMISE) {
+    return <Content component={ContentVariants.dd}>{activationKey}</Content>;
+  }
 
   return (
     <>
