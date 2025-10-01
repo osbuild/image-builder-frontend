@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import type { ApiRepositoryResponseRead } from './contentSourcesApi';
 import type {
   CustomRepository,
-  Disk,
   Distributions,
   ImageRequest,
   ImageTypes,
@@ -19,6 +18,8 @@ import type { ActivationKeys } from './rhsmApi';
 import type { FscModeType } from '../Components/CreateImageWizard/steps/FileSystem';
 import type {
   FilesystemPartition,
+  FscDisk,
+  FscDiskPartition,
   Units,
 } from '../Components/CreateImageWizard/steps/FileSystem/fscTypes';
 import type {
@@ -131,7 +132,7 @@ export type wizardState = {
     policyTitle: string | undefined;
   };
   fscMode: FscModeType;
-  disk: Disk;
+  disk: FscDisk;
   fileSystem: {
     partitions: FilesystemPartition[];
   };
@@ -241,6 +242,7 @@ export const initialState: wizardState = {
   disk: {
     minsize: '',
     partitions: [],
+    type: undefined,
   },
   fileSystem: {
     partitions: [],
@@ -808,6 +810,56 @@ export const wizardSlice = createSlice({
         state.fileSystem.partitions[partitionIndex].min_size = min_size;
       }
     },
+    changeDiskMinsize: (state, action: PayloadAction<string>) => {
+      state.disk.minsize = action.payload;
+    },
+    changeDiskType: (
+      state,
+      action: PayloadAction<'gpt' | 'dos' | undefined>,
+    ) => {
+      state.disk.type = action.payload;
+    },
+    addDiskPartition: (state, action: PayloadAction<FscDiskPartition>) => {
+      state.disk.partitions.push(action.payload);
+    },
+    removeDiskPartition: (
+      state,
+      action: PayloadAction<FscDiskPartition['id']>,
+    ) => {
+      const index = state.disk.partitions.findIndex(
+        (partition) => partition.id === action.payload,
+      );
+      if (index !== -1) {
+        state.disk.partitions.splice(index, 1);
+      }
+    },
+    changeDiskPartitionMinsize: (
+      state,
+      action: PayloadAction<{ id: string; min_size: string }>,
+    ) => {
+      const { id, min_size } = action.payload;
+      const partitionIndex = state.disk.partitions.findIndex(
+        (partition) => partition.id === id,
+      );
+      if (partitionIndex !== -1) {
+        state.disk.partitions[partitionIndex].min_size = min_size;
+      }
+    },
+    changeDiskPartitionName: (
+      state,
+      action: PayloadAction<{ id: string; name: string }>,
+    ) => {
+      const { id, name } = action.payload;
+      const partitionIndex = state.disk.partitions.findIndex(
+        (partition) => partition.id === id,
+      );
+      if (
+        partitionIndex !== -1 &&
+        'name' in state.disk.partitions[partitionIndex]
+      ) {
+        state.disk.partitions[partitionIndex].name = name;
+      }
+    },
     changePartitioningMode: (
       state,
       action: PayloadAction<PartitioningModeType>,
@@ -1240,6 +1292,12 @@ export const {
   changePartitionUnit,
   changePartitionMinSize,
   changePartitionOrder,
+  changeDiskMinsize,
+  changeDiskType,
+  addDiskPartition,
+  removeDiskPartition,
+  changeDiskPartitionMinsize,
+  changeDiskPartitionName,
   changePartitioningMode,
   changeUseLatest,
   changeSnapshotDate,

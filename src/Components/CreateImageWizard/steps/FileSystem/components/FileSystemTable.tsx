@@ -11,15 +11,16 @@ import {
   TrProps,
 } from '@patternfly/react-table';
 
+import DiskRow from './DiskRow';
 import MinimumSizePopover from './MinimumSizePopover';
 import Row from './Row';
 
 import { useAppDispatch } from '../../../../../store/hooks';
 import { changePartitionOrder } from '../../../../../store/wizardSlice';
-import { FilesystemPartition } from '../fscTypes';
+import { FilesystemPartition, FscDiskPartition } from '../fscTypes';
 
 type FileSystemTableTypes = {
-  partitions: FilesystemPartition[];
+  partitions: (FilesystemPartition | FscDiskPartition)[];
 };
 
 const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
@@ -154,10 +155,18 @@ const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
     });
   };
 
+  const isFilesystemPartition = (
+    p: FilesystemPartition | FscDiskPartition,
+  ): p is FilesystemPartition => !('type' in p);
+
   const rootPartitionsCount = useMemo(
-    () => partitions.filter((p) => p.mountpoint === '/').length,
+    () =>
+      partitions
+        .filter(isFilesystemPartition)
+        .filter((p) => p.mountpoint === '/').length,
     [partitions],
   );
+
   return (
     <Table
       className={isDragging ? styles.modifiers.dragOver : ''}
@@ -185,18 +194,28 @@ const FileSystemTable = ({ partitions }: FileSystemTableTypes) => {
         ref={bodyRef}
       >
         {partitions.length > 0 &&
-          partitions.map((partition) => (
-            <Row
-              onDrop={onDrop}
-              onDragEnd={onDragEnd}
-              onDragStart={onDragStart}
-              key={partition.id}
-              partition={partition}
-              isRemovingDisabled={
-                rootPartitionsCount === 1 && partition.mountpoint === '/'
-              }
-            />
-          ))}
+          partitions.map((partition) =>
+            isFilesystemPartition(partition) ? (
+              <Row
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+                onDragStart={onDragStart}
+                key={partition.id}
+                partition={partition}
+                isRemovingDisabled={
+                  rootPartitionsCount === 1 && partition.mountpoint === '/'
+                }
+              />
+            ) : (
+              <DiskRow
+                onDrop={onDrop}
+                onDragEnd={onDragEnd}
+                onDragStart={onDragStart}
+                key={partition.id}
+                partition={partition}
+              />
+            ),
+          )}
       </Tbody>
     </Table>
   );

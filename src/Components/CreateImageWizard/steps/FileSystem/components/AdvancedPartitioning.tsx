@@ -3,24 +3,61 @@ import React from 'react';
 import {
   Alert,
   Button,
-  CodeBlock,
   Content,
   ContentVariants,
+  FormGroup,
+  TextInput,
 } from '@patternfly/react-core';
-import { ExternalLinkAltIcon } from '@patternfly/react-icons';
+import { ExternalLinkAltIcon, PlusCircleIcon } from '@patternfly/react-icons';
+import { v4 as uuidv4 } from 'uuid';
+
+import FileSystemTable from './FileSystemTable';
+import VolumeGroups from './VolumeGroups';
 
 import { PARTITIONING_URL } from '../../../../../constants';
-import { useAppSelector } from '../../../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
+  addDiskPartition,
+  changeDiskMinsize,
   selectDiskMinsize,
   selectDiskPartitions,
-  selectDiskType,
 } from '../../../../../store/wizardSlice';
 
 const AdvancedPartitioning = () => {
+  const dispatch = useAppDispatch();
   const minsize = useAppSelector(selectDiskMinsize);
-  const type = useAppSelector(selectDiskType);
   const diskPartitions = useAppSelector(selectDiskPartitions);
+
+  const handleAddPartition = () => {
+    const id = uuidv4();
+    dispatch(
+      addDiskPartition({
+        id,
+        fs_type: 'ext4',
+        min_size: '1',
+        unit: 'GiB',
+        type: 'plain',
+      }),
+    );
+  };
+
+  const handleAddVolumeGroup = () => {
+    const id = uuidv4();
+    dispatch(
+      addDiskPartition({
+        id,
+        name: '',
+        min_size: '1',
+        unit: 'GiB',
+        type: 'lvm',
+        logical_volumes: [],
+      }),
+    );
+  };
+
+  const handleDiskMinsizeChange = (e: React.FormEvent, value: string) => {
+    dispatch(changeDiskMinsize(value));
+  };
 
   return (
     <>
@@ -50,11 +87,42 @@ const AdvancedPartitioning = () => {
           </Button>
         </Content>
       </Content>
-      <CodeBlock readOnly>
-        <pre>{`minsize: ${minsize}
-type: ${type}
-diskPartitions: ${JSON.stringify(diskPartitions, null, 2)}`}</pre>
-      </CodeBlock>
+      <FormGroup label='Minimum disk size'>
+        <TextInput
+          aria-label='Minimum disk size input'
+          value={minsize}
+          type='text'
+          onChange={handleDiskMinsizeChange}
+          placeholder='Define minimum disk size'
+          className='pf-v6-u-w-25'
+        />
+      </FormGroup>
+      <FileSystemTable
+        partitions={diskPartitions.filter((p) => p.type === 'plain')}
+      />
+      <Content>
+        <Button
+          className='pf-v6-u-text-align-left'
+          variant='link'
+          icon={<PlusCircleIcon />}
+          onClick={handleAddPartition}
+        >
+          Add partition
+        </Button>
+      </Content>
+      <VolumeGroups
+        volumeGroups={diskPartitions.filter((p) => p.type === 'lvm')}
+      />
+      <Content>
+        <Button
+          className='pf-v6-u-text-align-left'
+          variant='link'
+          icon={<PlusCircleIcon />}
+          onClick={handleAddVolumeGroup}
+        >
+          Add volume group
+        </Button>
+      </Content>
     </>
   );
 };
