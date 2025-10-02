@@ -15,7 +15,6 @@ import {
   BlueprintExportResponse,
   useLazyExportBlueprintQuery,
 } from '../../store/imageBuilderApi';
-import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 
 interface BlueprintActionsMenuProps {
   setShowDeleteModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,9 +28,6 @@ export const BlueprintActionsMenu: React.FunctionComponent<
   const onSelect = () => {
     setShowBlueprintActionsMenu(!showBlueprintActionsMenu);
   };
-  const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled',
-  );
 
   const [trigger] = useLazyExportBlueprintQuery();
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
@@ -66,11 +62,9 @@ export const BlueprintActionsMenu: React.FunctionComponent<
       )}
     >
       <DropdownList>
-        {importExportFlag && (
-          <DropdownItem onClick={handleClick}>
-            Download blueprint (.json)
-          </DropdownItem>
-        )}
+        <DropdownItem onClick={handleClick}>
+          Download blueprint (.json)
+        </DropdownItem>
         <DropdownItem onClick={() => setShowDeleteModal(true)}>
           Delete blueprint
         </DropdownItem>
