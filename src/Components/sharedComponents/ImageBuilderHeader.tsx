@@ -18,7 +18,6 @@ import { useAppSelector } from '../../store/hooks';
 import { selectDistribution } from '../../store/wizardSlice';
 import { resolveRelPath } from '../../Utilities/path';
 import './ImageBuilderHeader.scss';
-import { useFlagWithEphemDefault } from '../../Utilities/useGetEnvironment';
 import { ImportBlueprintModal } from '../Blueprints/ImportBlueprintModal';
 
 type ImageBuilderHeaderPropTypes = {
@@ -74,18 +73,13 @@ export const ImageBuilderHeader = ({
   const distribution = useAppSelector(selectDistribution);
   const prefetchTargets = useBackendPrefetch('getArchitectures');
 
-  const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled',
-  );
   const [showImportModal, setShowImportModal] = useState(false);
   return (
     <>
-      {importExportFlag && (
-        <ImportBlueprintModal
-          setShowImportModal={setShowImportModal}
-          isOpen={showImportModal}
-        />
-      )}
+      <ImportBlueprintModal
+        setShowImportModal={setShowImportModal}
+        isOpen={showImportModal}
+      />
       <PageHeader className='pf-m-sticky-top'>
         <PageHeaderTitle
           className='title'
@@ -113,14 +107,12 @@ export const ImageBuilderHeader = ({
                   >
                     Create image blueprint
                   </Button>
-                  {importExportFlag && (
-                    <Button
-                      variant='secondary'
-                      onClick={() => setShowImportModal(true)}
-                    >
-                      Import
-                    </Button>
-                  )}
+                  <Button
+                    variant='secondary'
+                    onClick={() => setShowImportModal(true)}
+                  >
+                    Import
+                  </Button>
                   {process.env.IS_ON_PREMISE && (
                     <Button
                       variant='secondary'

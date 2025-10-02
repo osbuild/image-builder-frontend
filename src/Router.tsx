@@ -4,7 +4,6 @@ import { Route, Routes } from 'react-router-dom';
 
 import { CloudProviderConfig } from './Components/CloudProviderConfig/CloudProviderConfig';
 import ShareImageModal from './Components/ShareImageModal/ShareImageModal';
-import { useFlagWithEphemDefault } from './Utilities/useGetEnvironment';
 
 const LandingPage = lazy(() => import('./Components/LandingPage/LandingPage'));
 const ImportImageWizard = lazy(
@@ -13,9 +12,6 @@ const ImportImageWizard = lazy(
 const CreateImageWizard = lazy(() => import('./Components/CreateImageWizard'));
 
 export const Router = () => {
-  const importExportFlag = useFlagWithEphemDefault(
-    'image-builder.import.enabled',
-  );
   return (
     <Routes>
       <Route
@@ -28,17 +24,14 @@ export const Router = () => {
       >
         <Route path='share/:composeId' element={<ShareImageModal />} />
       </Route>
-
-      {importExportFlag && (
-        <Route
-          path='imagewizard/import'
-          element={
-            <Suspense>
-              <ImportImageWizard />
-            </Suspense>
-          }
-        />
-      )}
+      <Route
+        path='imagewizard/import'
+        element={
+          <Suspense>
+            <ImportImageWizard />
+          </Suspense>
+        }
+      />
       <Route
         path='imagewizard/:composeId?'
         element={
