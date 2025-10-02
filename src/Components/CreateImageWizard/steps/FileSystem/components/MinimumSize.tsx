@@ -7,20 +7,21 @@ import {
 } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
-import { FilesystemPartition } from '../fscTypes';
+import { FilesystemPartition, LogicalVolumeWithBase } from '../fscTypes';
 
 type MinimumSizePropTypes = {
-  partition: FilesystemPartition;
+  partition: FilesystemPartition | LogicalVolumeWithBase;
+  customization: 'disk' | 'fileSystem';
 };
 
-const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
+const MinimumSize = ({ partition, customization }: MinimumSizePropTypes) => {
   const dispatch = useAppDispatch();
   const stepValidation = useFilesystemValidation();
 
   return (
     <ValidatedInputAndTextArea
       ariaLabel='minimum partition size'
-      value={partition.min_size}
+      value={partition.min_size || ''}
       isDisabled={partition.unit === 'B'}
       warning={
         partition.unit === 'B'
@@ -30,17 +31,21 @@ const MinimumSize = ({ partition }: MinimumSizePropTypes) => {
       type='text'
       stepValidation={stepValidation}
       fieldName={`min-size-${partition.id}`}
-      placeholder='File system'
       onChange={(event, minSize) => {
         if (minSize === '' || /^\d+$/.test(minSize)) {
           dispatch(
             changePartitionMinSize({
               id: partition.id,
               min_size: minSize,
+              customization: customization,
             }),
           );
           dispatch(
-            changePartitionUnit({ id: partition.id, unit: partition.unit }),
+            changePartitionUnit({
+              id: partition.id,
+              unit: partition.unit || 'GiB',
+              customization: customization,
+            }),
           );
         }
       }}

@@ -1,12 +1,16 @@
 import React from 'react';
 
-import { Alert, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
+import MinimumSize from './MinimumSize';
+import PartitionName from './PartitionName';
+import PartitionType from './PartitionType';
+import SizeUnit from './SizeUnit';
+
 import { useAppDispatch } from '../../../../../store/hooks';
 import { removeDiskPartition } from '../../../../../store/wizardSlice';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
 import { FscDiskPartition } from '../fscTypes';
 
 export const FileSystemContext = React.createContext<boolean>(true);
@@ -25,11 +29,12 @@ const DiskRow = ({
   onDrop,
 }: DiskRowPropTypes) => {
   const dispatch = useAppDispatch();
+
+  const customization = 'disk';
+
   const handleRemovePartition = (id: string) => {
     dispatch(removeDiskPartition(id));
   };
-  const stepValidation = useFilesystemValidation();
-  const isPristine = React.useContext(FileSystemContext);
 
   if (partition.type === 'lvm' || partition.type === 'btrfs') {
     return;
@@ -49,20 +54,19 @@ const DiskRow = ({
         }}
       />
       <Td className='pf-m-width-20'>
-        {!isPristine && stepValidation.errors[`mountpoint-${partition.id}`] && (
-          <Alert
-            variant='danger'
-            isInline
-            isPlain
-            title={stepValidation.errors[`mountpoint-${partition.id}`]}
-          />
-        )}
+        <PartitionName partition={partition} customization={customization} />
       </Td>
-      <Td width={20}>{partition.name || ''}</Td>
+      <Td width={20}>{partition.mountpoint}</Td>
       <Td width={20}></Td>
-      <Td width={20}>{partition.fs_type}</Td>
-      <Td width={20}>{partition.min_size}</Td>
-      <Td width={10}>{partition.unit}</Td>
+      <Td width={20}>
+        <PartitionType partition={partition} customization={customization} />
+      </Td>
+      <Td width={20}>
+        <MinimumSize partition={partition} customization={customization} />
+      </Td>
+      <Td width={10}>
+        <SizeUnit partition={partition} customization={customization} />
+      </Td>
       <Td width={10}>
         <Button
           variant='link'

@@ -74,10 +74,10 @@ const Row = ({
 
       <Td width={20}>xfs</Td>
       <Td width={20}>
-        <MinimumSize partition={partition} />
+        <MinimumSize partition={partition} customization='fileSystem' />
       </Td>
       <Td width={10}>
-        <SizeUnit partition={partition} />
+        <SizeUnit partition={partition} customization='fileSystem' />
       </Td>
       <Td width={10}>
         <Button

@@ -4,12 +4,12 @@ import {
   Button,
   Card,
   CardBody,
-  CardFooter,
+  CardHeader,
   Content,
   FormGroup,
   TextInput,
 } from '@patternfly/react-core';
-import { PlusCircleIcon, TrashIcon } from '@patternfly/react-icons';
+import { PlusCircleIcon, TimesIcon } from '@patternfly/react-icons';
 import { v4 as uuidv4 } from 'uuid';
 
 import FileSystemTable from './FileSystemTable';
@@ -50,6 +50,18 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
 
   return volumeGroups.map((vg) => (
     <Card key={vg.id}>
+      <CardHeader
+        actions={{
+          actions: (
+            <Button
+              variant='plain'
+              aria-label='Remove volume group button'
+              icon={<TimesIcon />}
+              onClick={() => dispatch(removeDiskPartition(vg.id))}
+            />
+          ),
+        }}
+      />
       <CardBody>
         <FormGroup label='Volume group name'>
           <TextInput
@@ -91,14 +103,6 @@ const VolumeGroups = ({ volumeGroups }: VolumeGroupsType) => {
           </Button>
         </Content>
       </CardBody>
-      <CardFooter>
-        <Button
-          variant='plain'
-          aria-label='Remove volume group button'
-          icon={<TrashIcon />}
-          onClick={() => dispatch(removeDiskPartition(vg.id))}
-        />
-      </CardFooter>
     </Card>
   ));
 };

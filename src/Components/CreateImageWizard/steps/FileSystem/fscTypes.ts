@@ -14,6 +14,8 @@ export type FilesystemPartition = {
 
 export type Units = 'B' | 'KiB' | 'MiB' | 'GiB';
 
+export type FSType = 'ext4' | 'xfs' | 'vfat' | 'swap';
+
 export type FscDisk = {
   minsize: string;
   partitions: FscDiskPartition[];
