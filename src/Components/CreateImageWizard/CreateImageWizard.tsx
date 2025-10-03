@@ -321,7 +321,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
       'parentId' in step && step.parentId === 'step-optional-steps';
 
     useEffect(() => {
-      if (process.env.IS_ON_PREMISE) {
+      if (!isRhel(distribution)) {
         if (step.id === 'step-oscap' && step.isVisited) {
           setWasRegisterVisited(true);
         }
@@ -481,7 +481,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 name='Register'
                 id='step-register'
                 key='step-register'
-                isHidden={!!process.env.IS_ON_PREMISE || !isRhel(distribution)}
+                isHidden={!isRhel(distribution)}
                 navItem={CustomStatusNavItem}
                 status={
                   wasRegisterVisited

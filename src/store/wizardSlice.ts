@@ -119,6 +119,7 @@ export type wizardState = {
   registration: {
     registrationType: RegistrationType;
     activationKey: ActivationKeys['name'];
+    orgId: string | undefined;
     satelliteRegistration: {
       command: string | undefined;
       caCert: string | undefined;
@@ -226,6 +227,7 @@ export const initialState: wizardState = {
       ? 'register-later'
       : 'register-now-rhc',
     activationKey: undefined,
+    orgId: undefined,
     satelliteRegistration: {
       command: undefined,
       caCert: undefined,
@@ -376,6 +378,10 @@ export const selectRegistrationType = (state: RootState) => {
 
 export const selectActivationKey = (state: RootState) => {
   return state.wizard.registration.activationKey;
+};
+
+export const selectOrgId = (state: RootState) => {
+  return state.wizard.registration.orgId;
 };
 
 export const selectSatelliteRegistrationCommand = (state: RootState) => {
@@ -683,6 +689,9 @@ export const wizardSlice = createSlice({
       action: PayloadAction<ActivationKeys['name']>,
     ) => {
       state.registration.activationKey = action.payload;
+    },
+    changeOrgId: (state, action: PayloadAction<string>) => {
+      state.registration.orgId = action.payload;
     },
     changeComplianceType: (state, action: PayloadAction<ComplianceType>) => {
       state.compliance.complianceType = action.payload;
@@ -1219,6 +1228,7 @@ export const {
   reinitializeGcp,
   changeRegistrationType,
   changeActivationKey,
+  changeOrgId,
   changeCompliance,
   changeComplianceType,
   changeFileSystemConfiguration,

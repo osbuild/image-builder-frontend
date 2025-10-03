@@ -3,6 +3,7 @@ import React from 'react';
 import { Content, FormGroup, Radio, Switch } from '@patternfly/react-core';
 
 import ActivationKeysList from './ActivationKeysList';
+import { ManualActivationKey } from './ManualActivationKey';
 import SatelliteRegistration from './SatelliteRegistration';
 
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
@@ -76,6 +77,11 @@ const Registration = () => {
                     <ActivationKeysList />
                   </Content>
                 )}
+              {process.env.IS_ON_PREMISE && (
+                <Content className='pf-v6-u-pb-sm'>
+                  <ManualActivationKey />
+                </Content>
+              )}
             </>
           }
         />
