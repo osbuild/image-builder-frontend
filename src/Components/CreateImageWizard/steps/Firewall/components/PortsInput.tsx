@@ -21,7 +21,7 @@ const PortsInput = () => {
     <FormGroup label='Ports'>
       <LabelInput
         ariaLabel='Add ports'
-        placeholder='Add ports'
+        placeholder='Enter port (e.g., 8080/tcp, 443:udp)'
         validator={isPortValid}
         list={ports}
         item='Port'
@@ -29,6 +29,7 @@ const PortsInput = () => {
         removeAction={removePort}
         stepValidation={stepValidation}
         fieldName='ports'
+        hideUtilities
       />
     </FormGroup>
   );
