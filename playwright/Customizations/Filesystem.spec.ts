@@ -112,7 +112,11 @@ test('Create a blueprint with Filesystem customization', async ({
   });
 
   await test.step('Fill the BP details', async () => {
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
     await fillInDetails(frame, blueprintName);
   });
 
@@ -165,14 +169,20 @@ test('Create a blueprint with Filesystem customization', async ({
     await frame.getByRole('button', { name: '/usr' }).click();
     await frame.getByRole('option', { name: '/srv' }).click();
 
-    await frame
-      .getByRole('textbox', { name: 'mountpoint suffix' })
-      .fill('/data');
+    const suffixInput = frame.getByRole('textbox', {
+      name: 'mountpoint suffix',
+    });
+    await suffixInput.waitFor({ state: 'visible' });
+    await suffixInput.fill('/data');
 
     await frame.getByRole('button', { name: 'KiB' }).click();
     await frame.getByRole('option', { name: 'MiB' }).click();
 
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();

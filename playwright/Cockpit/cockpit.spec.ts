@@ -105,9 +105,10 @@ test('Cockpit AWS cloud upload', async ({ page, cleanup }) => {
     await frame.getByTestId('close-button-saveandbuild-modal').click();
     await frame.getByRole('button', { name: 'Create blueprint' }).click();
 
-    await frame
-      .getByRole('textbox', { name: 'Search input' })
-      .fill(blueprintName);
+    const searchInput = frame.getByRole('textbox', { name: 'Search input' });
+    await searchInput.waitFor({ state: 'visible' });
+    await searchInput.fill(blueprintName);
+
     // the clickable blueprint cards are a bit awkward, so use the
     // button's id instead
     await frame.locator(`button[id="${blueprintName}"]`).click();

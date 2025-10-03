@@ -103,9 +103,12 @@ test('Create a blueprint with Systemd customization', async ({
     await frame.getByPlaceholder('Add masked service').fill('masked-service');
     await frame.getByRole('button', { name: 'Add masked service' }).click();
 
-    await frame
-      .getByRole('button', { name: 'Close systemd-m.service' })
-      .click();
+    const closeSystemdMButton = frame.getByRole('button', {
+      name: 'Close systemd-m.service',
+    });
+    await expect(closeSystemdMButton).toBeVisible();
+    await closeSystemdMButton.click();
+
     await frame
       .getByRole('button', { name: 'Close systemd-en.service' })
       .click();
@@ -121,7 +124,12 @@ test('Create a blueprint with Systemd customization', async ({
     await expect(frame.getByText('systemd-dis.service')).toBeHidden();
     await expect(frame.getByText('systemd-m.service')).toBeHidden();
 
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
+
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();

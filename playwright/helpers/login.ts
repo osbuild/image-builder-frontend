@@ -71,9 +71,18 @@ export const ensureAuthenticated = async (page: Page) => {
 const loginCockpit = async (page: Page, user: string, password: string) => {
   await page.goto('/cockpit-image-builder');
 
-  await page.getByRole('textbox', { name: 'User name' }).fill(user);
-  await page.getByRole('textbox', { name: 'Password' }).fill(password);
-  await page.getByRole('button', { name: 'Log in' }).click();
+  const usernameInput = page.getByRole('textbox', { name: 'User name' });
+  const passwordInput = page.getByRole('textbox', { name: 'Password' });
+  const loginButton = page.getByRole('button', { name: 'Log in' });
+
+  await expect(usernameInput).toBeVisible();
+  await usernameInput.fill(user);
+
+  await expect(passwordInput).toBeVisible();
+  await passwordInput.fill(password);
+
+  await expect(loginButton).toBeEnabled();
+  await loginButton.click();
 
   // image-builder lives inside an iframe
   const frame = ibFrame(page);

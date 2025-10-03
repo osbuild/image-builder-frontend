@@ -21,7 +21,12 @@ export const fillInImageOutput = async (
   distro?: 'rhel10' | 'rhel9' | 'rhel8',
   arch?: 'x86_64' | 'aarch64',
 ) => {
-  await page.getByRole('button', { name: 'Create image blueprint' }).click();
+  const createBlueprintButton = page.getByRole('button', {
+    name: 'Create image blueprint',
+  });
+  await expect(createBlueprintButton).toBeVisible();
+  await createBlueprintButton.click();
+
   if (!isHosted()) {
     // wait until the distro and architecture aligns with the host
     await expect(page.getByTestId('release_select')).toHaveText(

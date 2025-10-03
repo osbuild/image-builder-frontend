@@ -70,7 +70,11 @@ test('Create a blueprint with Timezone customization', async ({
       .getByRole('button', { name: 'Close 0.cz.pool.ntp.org' })
       .click();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeHidden();
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
   });
 
   await test.step('Fill the BP details', async () => {
@@ -96,7 +100,11 @@ test('Create a blueprint with Timezone customization', async ({
     await expect(frame.getByText('0.nl.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.de.pool.ntp.org')).toBeVisible();
     await expect(frame.getByText('0.cz.pool.ntp.org')).toBeHidden();
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();

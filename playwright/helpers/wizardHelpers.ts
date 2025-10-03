@@ -36,14 +36,27 @@ export const fillInDetails = async (
   page: Page | FrameLocator,
   blueprintName: string,
 ) => {
-  await page.getByRole('listitem').filter({ hasText: 'Details' }).click();
-  await page
-    .getByRole('textbox', { name: 'Blueprint name' })
-    .fill(blueprintName);
-  await page
-    .getByRole('textbox', { name: 'Blueprint description' })
-    .fill('Testing blueprint');
-  await page.getByRole('button', { name: 'Next' }).click();
+  const detailsListItem = page
+    .getByRole('listitem')
+    .filter({ hasText: 'Details' });
+  await expect(detailsListItem).toBeVisible();
+  await detailsListItem.click();
+
+  const blueprintNameInput = page.getByRole('textbox', {
+    name: 'Blueprint name',
+  });
+  await expect(blueprintNameInput).toBeVisible();
+  await blueprintNameInput.fill(blueprintName);
+
+  const blueprintDescInput = page.getByRole('textbox', {
+    name: 'Blueprint description',
+  });
+  await expect(blueprintDescInput).toBeVisible();
+  await blueprintDescInput.fill('Testing blueprint');
+
+  const nextButton = page.getByRole('button', { name: 'Next' });
+  await expect(nextButton).toBeEnabled();
+  await nextButton.click();
 };
 
 /**
@@ -83,14 +96,14 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       // Locate back to the Image Builder page every time because the test can fail at any stage
       await navigateToLandingPage(page);
       const frame = await ibFrame(page);
-      await frame
-        .getByRole('textbox', { name: 'Search input' })
-        .fill(blueprintName);
+      const searchInput = frame.getByRole('textbox', { name: 'Search input' });
+      await searchInput.waitFor({ state: 'visible' });
+      await searchInput.fill(blueprintName);
       // Check if no blueprints found -> that means no blueprint was created -> fail gracefully and do not raise error
       try {
         await expect(
           frame.getByRole('heading', { name: 'No blueprints found' }),
-        ).toBeVisible({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
+        ).toBeVisible({ timeout: 10_000 }); // Shorter timeout to avoid hanging uncessarily
         return; // Fail gracefully, no blueprint to delete
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
@@ -102,7 +115,9 @@ export const deleteBlueprint = async (page: Page, blueprintName: string) => {
       await frame.locator(`button[id="${blueprintName}"]`).click();
       await frame.getByRole('button', { name: 'Menu toggle' }).click();
       await frame.getByRole('menuitem', { name: 'Delete blueprint' }).click();
-      await frame.getByRole('button', { name: 'Delete' }).click();
+      const button = frame.getByRole('button', { name: 'Delete' });
+      await expect(button).toBeVisible();
+      await button.click();
     },
     { box: true },
   );

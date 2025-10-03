@@ -89,7 +89,11 @@ test('Create a blueprint with Firewall customization', async ({
   });
 
   await test.step('Fill the BP details', async () => {
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
     await fillInDetails(frame, blueprintName);
   });
 
@@ -120,7 +124,11 @@ test('Create a blueprint with Firewall customization', async ({
     await expect(frame.getByText('disabled_service')).toBeHidden();
     await expect(frame.getByText('enabled_service')).toBeHidden();
 
-    await frame.getByRole('button', { name: 'Review and finish' }).click();
+    const reviewButton = frame.getByRole('button', {
+      name: 'Review and finish',
+    });
+    await expect(reviewButton).toBeVisible();
+    await reviewButton.click();
     await frame
       .getByRole('button', { name: 'Save changes to blueprint' })
       .click();
