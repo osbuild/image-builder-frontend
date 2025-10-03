@@ -143,12 +143,6 @@ fips = true
 user = "root"
 key = "ssh-rsa d"
 
-[[customizations.user]]
-name = "admin"
-password = "$6$CHO2$3rN8eviE2t50lmVyBYihTgVRHcaecmeCk31L..."
-key = "ssh-rsa d"
-groups = ["widget", "users", "wheel"]
-
 [customizations.services]
 enabled = ["sshd", "cockpit.socket", "httpd"]
 disabled = ["postfix", "telnetd"]
@@ -214,12 +208,6 @@ name = "anaconda-tools"
 [customizations]
 hostname = "--invalid-hostname--"
 fips = true
-
-[[customizations.user]]
-name = "t"
-password = "00"
-key = "KEY"
-groups = ["0000"]
 
 [customizations.services]
 enabled = ["--invalid-enabled-service"]
