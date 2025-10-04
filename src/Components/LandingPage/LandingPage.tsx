@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   PageSection,
@@ -9,18 +9,29 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
-import { Outlet } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Outlet, useSearchParams } from 'react-router-dom';
 
 import './LandingPage.scss';
 
 import { NewAlert } from './NewAlert';
 
+import { setBlueprintId } from '../../store/BlueprintSlice';
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import ImagesTable from '../ImagesTable/ImagesTable';
 import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
   const [showAlert, setShowAlert] = useState(true);
+  const [searchParams] = useSearchParams();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const blueprintId = searchParams.get('blueprint');
+    if (blueprintId) {
+      dispatch(setBlueprintId(blueprintId));
+    }
+  }, [searchParams, dispatch]);
 
   const imageList = (
     <>
