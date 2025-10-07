@@ -17,7 +17,7 @@ export const login = async (page: Page, staticUser: boolean = false) => {
   let user = process.env.PLAYWRIGHT_USER;
   let password = process.env.PLAYWRIGHT_PASSWORD;
 
-  if (staticUser) {
+  if (staticUser || process.env.DYNAMIC_USER === 'false') {
     if (
       !process.env.PLAYWRIGHT_STATIC_USER ||
       !process.env.PLAYWRIGHT_STATIC_PASSWORD
