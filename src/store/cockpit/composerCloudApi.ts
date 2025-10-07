@@ -151,6 +151,7 @@ export type ImageTypes =
   | "live-installer"
   | "minimal-raw"
   | "oci"
+  | "pxe-tar-xz"
   | "vsphere"
   | "vsphere-ova"
   | "wsl";
