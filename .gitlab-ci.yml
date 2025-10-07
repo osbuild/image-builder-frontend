@@ -30,9 +30,9 @@ test:
   parallel:
     matrix:
       - RUNNER:
-          - aws/fedora-41-x86_64
-          - aws/fedora-42-x86_64
-          - aws/rhel-10.1-nightly-x86_64
+          - rhos-01/fedora-41-x86_64-large
+          - rhos-01/fedora-42-x86_64-large
+          - rhos-01/rhel-10.1-nightly-x86_64-large
         INTERNAL_NETWORK: ["true"]
 
 finish:
