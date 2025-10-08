@@ -131,6 +131,7 @@ const UserRow = ({
               onChange={(_e, value) => handleNameChange(_e, value)}
               stepValidation={getValidationByIndex(index)}
               fieldName='userName'
+              forceErrorDisplay={true}
             />
             {index === userCount - 1 && (
               <Button

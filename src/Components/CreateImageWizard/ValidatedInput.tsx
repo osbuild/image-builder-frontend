@@ -35,6 +35,7 @@ type ValidationInputProp = TextInputProps &
     ) => void;
     isRequired?: boolean;
     warning?: string;
+    forceErrorDisplay?: boolean;
   };
 
 type ErrorMessageProps = {
@@ -54,12 +55,18 @@ export const ValidatedInputAndTextArea = ({
   inputType = 'textInput',
   isRequired,
   warning = undefined,
+  forceErrorDisplay = false,
 }: ValidationInputProp) => {
   const errorMessage = stepValidation.errors[fieldName] || '';
   const hasError = errorMessage !== '';
 
   const [isPristine, setIsPristine] = useState(!value);
-  const validated = getValidationState(isPristine, errorMessage, isRequired);
+  const validated = getValidationState(
+    isPristine,
+    errorMessage,
+    isRequired,
+    forceErrorDisplay,
+  );
 
   const handleBlur = () => {
     if (value) {
@@ -114,7 +121,12 @@ const getValidationState = (
   isPristine: boolean,
   errorMessage: string,
   isRequired: boolean | undefined,
+  forceErrorDisplay: boolean,
 ): ValidationResult => {
+  if (forceErrorDisplay && errorMessage) {
+    return 'error';
+  }
+
   const validated = isPristine
     ? 'default'
     : (isRequired && errorMessage) || errorMessage
