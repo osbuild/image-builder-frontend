@@ -12,12 +12,12 @@ import SizeUnit from './SizeUnit';
 import { useAppDispatch } from '../../../../../store/hooks';
 import { removePartition } from '../../../../../store/wizardSlice';
 import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { Partition } from '../fscTypes';
+import { FilesystemPartition } from '../fscTypes';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
 type RowPropTypes = {
-  partition: Partition;
+  partition: FilesystemPartition;
   isRemovingDisabled: boolean;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
@@ -74,10 +74,10 @@ const Row = ({
 
       <Td width={20}>xfs</Td>
       <Td width={20}>
-        <MinimumSize partition={partition} />
+        <MinimumSize partition={partition} customization='fileSystem' />
       </Td>
       <Td width={10}>
-        <SizeUnit partition={partition} />
+        <SizeUnit partition={partition} customization='fileSystem' />
       </Td>
       <Td width={10}>
         <Button
