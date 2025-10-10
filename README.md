@@ -40,7 +40,7 @@ Frontend code for Image Builder.
 > [!IMPORTANT]
 > Running image-builder-frontend against [console.redhat.com](https://console.redhat.com/) requires connection to the Red Hat VPN, which is only available to Red Hat employees. External contributors can locally run [image builder as Cockpit plugin](#image-builder-as-cockpit-plugin).
 >
-> As you will see in the following sections we **always** prefer `npm clean-install` (aka `npm ci`) over `npm install` to install dependencies exactly as they are defined in the `package-lock.json` file.<br>
+> As you will see in the following sections we **always** prefer `npm clean-install` (aka `npm ci`) over `npm install` to install dependencies exactly as they are defined in the `package-lock.json` file.<br/>
 > This is crucial to avoid any discrepancies between the dependencies installed locally and the dependencies installed in the CI as well as unintentionally installing compromised dependencies.
 
 ### Frontend Development
