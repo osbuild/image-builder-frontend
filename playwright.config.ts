@@ -22,7 +22,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: reporters,
-  globalTimeout: 29.5 * 60 * 1000, // 29.5m, Set because of codebuild, we want PW to timeout before CB to get the results.
+  globalTimeout: 89.5 * 60 * 1000, // 1h29.5m, Set because of codebuild, we want PW to timeout before CB to get the results.
   timeout: 3 * 60 * 1000, // 3m
   expect: { timeout: 50_000 }, // 50s
   use: {
@@ -38,14 +38,25 @@ export default defineConfig({
     ignoreHTTPSErrors: true,
   },
   projects: [
-    { name: 'setup', testMatch: /.*\.setup\.ts/ },
+    { name: 'Setup', testMatch: /.*\.setup\.ts/ },
     {
-      name: 'chromium',
+      name: 'UI tests',
+      timeout: 29.5 * 60 * 1000, // 29.5m
       use: {
         ...devices['Desktop Chrome'],
         storageState: '.auth/user.json',
       },
-      dependencies: ['setup'],
+      dependencies: ['Setup'],
     },
+    {
+      name: 'Boot tests',
+      testMatch: /.*\.boot\.ts/, 
+      timeout: 89.5 * 60 * 1000, // 1h29.5m
+      use: {
+        ...devices['Desktop Chrome'],
+        storageState: '.auth/user.json',
+      },
+      dependencies: ['Setup'],
+    }
   ],
 });
