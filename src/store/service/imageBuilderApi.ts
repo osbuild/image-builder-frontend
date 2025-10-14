@@ -466,6 +466,7 @@ export type ImageTypes =
   | "guest-image"
   | "image-installer"
   | "oci"
+  | "pxe-tar-xz"
   | "vsphere"
   | "vsphere-ova"
   | "wsl"
