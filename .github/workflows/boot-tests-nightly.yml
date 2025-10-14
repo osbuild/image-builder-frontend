@@ -10,7 +10,7 @@ on:
         required: false
         type: number
   pull_request:
-    types: [opened, reopened, synchronize, labeled, unlabeled]
+    types: [opened, reopened, synchronize]
     paths:
       - 'playwright/BootTests/**' # Only run on PRs that change a file in BootTests directory
   merge_group:
