@@ -2,7 +2,7 @@ name: Hosted playwright tests
 
 on:
   pull_request:
-    types: [opened, reopened, synchronize, labeled, unlabeled]
+    types: [opened, reopened, synchronize]
   workflow_dispatch:
   merge_group:
 
