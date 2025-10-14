@@ -9,6 +9,11 @@ on:
         description: 'Pull Request number to run tests against'
         required: false
         type: number
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+    paths:
+      - 'playwright/BootTests/**' # Only run on PRs that change a file in BootTests directory
+  merge_group:
 
 jobs:
   boot-tests:
@@ -105,7 +110,7 @@ jobs:
 
       - name: Notify Slack on success
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ success() && github.event_name != 'workflow_dispatch' }}
+        if: ${{ success() && github.event_name == 'schedule' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
@@ -129,7 +134,7 @@ jobs:
 
       - name: Notify Slack on failure
         uses: slackapi/slack-github-action@v2.1.1
-        if: ${{ failure() && github.event_name != 'workflow_dispatch' }}
+        if: ${{ failure() && github.event_name == 'schedule' }}
         with:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
