@@ -308,6 +308,9 @@ If you'd like to see the stack printed out you can either temporarily disable th
 
 ## Running hosted service Playwright tests
 
+Hosted service Playwright tests provide test coverage of UI components in our service hosted at [console.redhat.com](https://console.redhat.com/) (currently only in stage environment). We mainly use them to test the Wizard and other parts of the UI.
+The tests are located in the [playwright/](playwright/) directory and are identified by the `*.spec.ts` file extension.
+
 ### Running tests
 
 1. Copy the [example env file](playwright_example.env) content and create a file named `.env` in the root directory of the project. Paste the example file content into it.
@@ -346,7 +349,7 @@ For local development purposes, you can use the same credentials as for `PLAYWRI
 This section describes what Playwright Boot tests are, how they work and how to run them locally.
 
 Boot tests provide end to end coverage for Image Builder and they are used to test mainly integrations with other services. Their main advantage is that they build an image, upload it and **launch it on RHOSP** (RedHat OpenStack Platform). This way we can test images and their customizations through remotely executed commands on an actual running VM booted from the image.
-Boot tests are located in the [playwright/BootTests](playwright/BootTests) directory.
+Boot tests are located in the [playwright/BootTests](playwright/BootTests) directory and are identified by the `*.boot.ts` file extension.
 
 ### Local development setup
 In order to run the Boot tests locally, we need to set up few things first on top of what we did in the [Running hosted service Playwright tests](#running-hosted-service-playwright-tests) section.
@@ -365,6 +368,8 @@ By filling out these variables you should be able to run the Boot test locally s
 
 ### CI setup
 Boot tests run as a scheduled nightly Github Action with a custom runner in AWS Codebuild, but there is an option to run them manually on a PR as well.
+#### Automated run
+Boot tests run automatically on PRs when they contain changes inside the [playwright/BootTests](playwright/BootTests) directory.
 #### Manual run
 In order to run the Boot tests on a PR, you can open the `Boot tests` workflow in Github Actions and type in the number of PR into a `Pull Request number to run tests against` field. The action will then pull the code from a PR of that number and execute as usual.
 
