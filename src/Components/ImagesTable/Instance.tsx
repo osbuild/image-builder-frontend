@@ -47,6 +47,7 @@ export const AwsS3Instance = ({
     'rhel-edge-installer': '',
     vhd: '',
     oci: '',
+    'pxe-tar-xz': '',
   };
 
   const status = composeStatus?.image_status.status;

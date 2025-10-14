@@ -82,6 +82,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   'rhel-edge-installer': 'RHEL Edge Installer',
   vhd: '',
   oci: 'Oracle Cloud Infrastructure',
+  'pxe-tar-xz': '',
 };
 
 export const UNIT_KIB = 1024 ** 1;
