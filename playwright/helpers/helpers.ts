@@ -1,7 +1,8 @@
 import { execSync } from 'child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync, unlinkSync, writeFileSync } from 'node:fs';
+import path from 'path';
 
-import { expect, type Page } from '@playwright/test';
+import { expect, type Locator, type Page } from '@playwright/test';
 
 export const togglePreview = async (page: Page) => {
   const toggleSwitch = page.locator('#preview-toggle');
@@ -86,4 +87,34 @@ export const getHostDistroName = (): string => {
 
 export const getHostArch = (): string => {
   return execSync('uname -m').toString('utf-8').replace(/\s/g, '');
+};
+
+export const uploadCertificateFile = async (
+  uploadButton: Locator,
+  certificateContent: string,
+  fileName: string = 'certificate.pem',
+): Promise<void> => {
+  // Create a temporary certificate file with the provided content
+  const tempCertPath = path.join(__dirname, `temp_${fileName}`);
+
+  try {
+    // Write certificate content to temporary file
+    writeFileSync(tempCertPath, certificateContent);
+
+    // Find the file input element (usually hidden, so we need to locate it)
+    const fileInput = uploadButton.page().locator('input[type="file"]');
+
+    // Set the file directly on the input element
+    await fileInput.setInputFiles(tempCertPath);
+
+    // Verify the certificate was uploaded successfully
+    await expect(
+      uploadButton.page().getByText('Certificate was uploaded:'),
+    ).toBeVisible();
+  } finally {
+    // Clean up temporary file
+    if (existsSync(tempCertPath)) {
+      unlinkSync(tempCertPath);
+    }
+  }
 };
