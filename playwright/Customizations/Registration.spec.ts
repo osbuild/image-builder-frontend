@@ -1,8 +1,13 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import isRhel from '../../src/Utilities/isRhel';
 import { test } from '../fixtures/customizations';
-import { isHosted, uploadCertificateFile } from '../helpers/helpers';
+import {
+  getHostDistroName,
+  isHosted,
+  uploadCertificateFile,
+} from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
 import {
   fillInImageOutput,
@@ -60,9 +65,41 @@ const registrationModes = [
       await expect(
         frame.getByRole('radio', { name: 'Automatically register to Red Hat' }),
       ).toBeChecked();
-      // Select an activation key
-      await frame.getByRole('button', { name: 'Menu toggle' }).click();
-      await frame.getByRole('option', { name: 'activation-key-' }).click();
+
+      // Conditional setup based on hosted vs on-premise
+      if (isHosted()) {
+        // Hosted: Select an activation key from dropdown
+        await frame.getByRole('button', { name: 'Menu toggle' }).click();
+        await frame.getByRole('option', { name: 'activation-key-' }).click();
+      } else if (isRhel(getHostDistroName())) {
+        // On-premise RHEL: Fill activation key and organization ID input fields
+        await frame.getByRole('textbox', { name: 'activation key' }).fill(' ');
+        await expect(
+          frame.getByText('The activation key cannot be empty'),
+        ).toBeVisible();
+        await frame
+          .getByRole('textbox', { name: 'activation key' })
+          .fill('test-activation-key');
+        await expect(frame.getByText('12345')).toBeVisible(); // organization id
+        await expect(
+          frame.getByText('The activation key cannot be empty'),
+        ).toBeHidden();
+        await frame
+          .getByRole('textbox', { name: 'organization id' })
+          .fill('abcdefghijkl');
+        await expect(
+          frame.getByText('Please enter a valid Organization ID'),
+        ).toBeVisible();
+        await frame
+          .getByRole('textbox', { name: 'organization id' })
+          .fill('12345');
+      } else {
+        // On-premise non-RHEL: Skip automatic registration test
+        test.skip(
+          true,
+          'Automatic registration is only available for RHEL distributions',
+        );
+      }
     },
     expectedReviewText: 'Register with Red Hat',
     expectedHiddenText: 'Register the system later',
@@ -100,6 +137,13 @@ registrationModes.forEach(
       page,
       cleanup,
     }) => {
+      if (!isHosted() && !isRhel(getHostDistroName())) {
+        test.skip(
+          true,
+          'Registration is only available for RHEL distributions on-premise',
+        );
+      }
+
       const blueprintName = `test-${name}-${uuidv4()}`;
 
       // Delete the blueprint after the run fixture
@@ -155,7 +199,13 @@ registrationModes.forEach(
             frame.getByText('Register the system later'),
           ).toBeHidden();
           await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          await expect(frame.getByText('activation-key-')).toBeVisible();
+          // Check activation key display based on environment
+          if (isHosted()) {
+            await expect(frame.getByText('activation-key-')).toBeVisible();
+          } else if (isRhel(getHostDistroName())) {
+            await expect(frame.getByText('test-activation-key')).toBeVisible();
+            await expect(frame.getByText('12345')).toBeVisible(); // organization id
+          }
           await expect(insightsReviewStep).toBeVisible();
           await expect(rhcReviewStep).toBeHidden();
           await frame.getByRole('button', { name: 'Register' }).click();
@@ -175,7 +225,12 @@ registrationModes.forEach(
             frame.getByText('Register the system later'),
           ).toBeHidden();
           await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          await expect(frame.getByText('activation-key-')).toBeVisible();
+          // Check activation key display based on environment
+          if (isHosted()) {
+            await expect(frame.getByText('activation-key-')).toBeVisible();
+          } else {
+            await expect(frame.getByText('test-activation-key')).toBeVisible();
+          }
           await expect(insightsReviewStep).toBeHidden();
           await expect(rhcReviewStep).toBeHidden();
           await frame.getByRole('button', { name: 'Register' }).click();
@@ -194,7 +249,13 @@ registrationModes.forEach(
             frame.getByText('Register the system later'),
           ).toBeHidden();
           await expect(frame.getByText('Register with Red Hat')).toBeVisible();
-          await expect(frame.getByText('activation-key-')).toBeVisible();
+          // Check activation key display based on environment
+          if (isHosted()) {
+            await expect(frame.getByText('activation-key-')).toBeVisible();
+          } else if (isRhel(getHostDistroName())) {
+            await expect(frame.getByText('test-activation-key')).toBeVisible();
+            await expect(frame.getByText('12345')).toBeVisible(); // organization id
+          }
           await expect(insightsReviewStep).toBeVisible();
           await expect(rhcReviewStep).toBeVisible();
           await frame.getByRole('button', { name: 'Register' }).click();
