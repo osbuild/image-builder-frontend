@@ -77,11 +77,12 @@ const Registration = () => {
                     <ActivationKeysList />
                   </Content>
                 )}
-              {process.env.IS_ON_PREMISE && (
-                <Content className='pf-v6-u-pb-sm'>
-                  <ManualActivationKey />
-                </Content>
-              )}
+              {process.env.IS_ON_PREMISE &&
+                registrationType.startsWith('register-now') && (
+                  <Content className='pf-v6-u-pb-sm'>
+                    <ManualActivationKey />
+                  </Content>
+                )}
             </>
           }
         />
