@@ -27,7 +27,6 @@ import { OpenStackWrapper } from '../helpers/OpenStackWrapper';
 test.use({ storageState: { cookies: [], origins: [] } });
 
 test('Compliance step integration test - CIS', async ({ page, cleanup }) => {
-  test.setTimeout(120 * 60 * 1000); // 2 hours
   test.skip(
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',

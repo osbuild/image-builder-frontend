@@ -61,7 +61,6 @@ KVuPT3baU0/iZg==
 -----END CERTIFICATE-----`;
 
 test('AAP registration boot integration test', async ({ page, cleanup }) => {
-  test.setTimeout(120 * 60 * 1000); // 2 hours
   test.skip(
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
