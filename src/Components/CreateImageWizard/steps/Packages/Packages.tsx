@@ -1255,12 +1255,12 @@ const Packages = () => {
                     bodyContent={
                       <div
                         style={
-                          grp.package_list.length > 0
+                          grp.package_list?.length > 0
                             ? { height: '40em', overflow: 'scroll' }
                             : {}
                         }
                       >
-                        {grp.package_list.length > 0 ? (
+                        {grp.package_list?.length > 0 ? (
                           <Table
                             variant='compact'
                             data-testid='group-included-packages-table'
