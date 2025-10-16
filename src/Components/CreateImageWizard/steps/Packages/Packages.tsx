@@ -93,6 +93,7 @@ import {
   selectModules,
   selectPackages,
   selectRecommendedRepositories,
+  selectSnapshotDate,
   selectTemplate,
 } from '../../../../store/wizardSlice';
 import {
@@ -100,6 +101,7 @@ import {
   getEpelUrlForDistribution,
   getEpelVersionForDistribution,
 } from '../../../../Utilities/epel';
+import { convertStringToDate } from '../../../../Utilities/time';
 import useDebounce from '../../../../Utilities/useDebounce';
 
 export type PackageRepository = 'distro' | 'custom' | 'recommended' | '';
@@ -144,6 +146,7 @@ const Packages = () => {
   const groups = useAppSelector(selectGroups);
   const modules = useAppSelector(selectModules);
   const template = useAppSelector(selectTemplate);
+  const snapshotDate = useAppSelector(selectSnapshotDate);
 
   const { data: templateData } = useGetTemplateQuery({
     uuid: template,
@@ -298,6 +301,9 @@ const Packages = () => {
                     ),
             limit: 500,
             include_package_sources: true,
+            date: snapshotDate
+              ? new Date(convertStringToDate(snapshotDate)).toISOString()
+              : undefined,
           },
         });
       }
@@ -312,6 +318,9 @@ const Packages = () => {
             }),
             limit: 500,
             include_package_sources: true,
+            date: snapshotDate
+              ? new Date(convertStringToDate(snapshotDate)).toISOString()
+              : undefined,
           },
         });
       } else {
@@ -319,6 +328,9 @@ const Packages = () => {
           apiContentUnitSearchRequest: {
             search: debouncedSearchTerm,
             urls: [epelRepoUrlByDistribution],
+            date: snapshotDate
+              ? new Date(convertStringToDate(snapshotDate)).toISOString()
+              : undefined,
           },
         });
       }
@@ -337,6 +349,7 @@ const Packages = () => {
     template,
     distribution,
     debouncedSearchTermIsGroup,
+    snapshotDate,
   ]);
 
   useEffect(() => {
@@ -346,7 +359,7 @@ const Packages = () => {
     if (isSuccessDistroRepositories) {
       searchDistroGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substr(1),
+          search: debouncedSearchTerm.substring(1),
           urls: distroRepositories
             ?.filter((archItem) => {
               return archItem.arch === arch;
@@ -357,23 +370,32 @@ const Packages = () => {
               }
               return repo.baseurl;
             }),
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
         },
       });
     }
     if (activeTabKey === Repos.INCLUDED && customRepositories.length > 0) {
       searchCustomGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substr(1),
+          search: debouncedSearchTerm.substring(1),
           uuids: customRepositories.flatMap((repo) => {
             return repo.id;
           }),
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
         },
       });
     } else if (activeTabKey === Repos.OTHER && isSuccessEpelRepo) {
       searchRecommendedGroups({
         apiContentUnitSearchRequest: {
-          search: debouncedSearchTerm.substr(1),
+          search: debouncedSearchTerm.substring(1),
           urls: [epelRepoUrlByDistribution],
+          date: snapshotDate
+            ? new Date(convertStringToDate(snapshotDate)).toISOString()
+            : undefined,
         },
       });
     }
@@ -390,6 +412,7 @@ const Packages = () => {
     distroRepositories,
     isSuccessDistroRepositories,
     isSuccessEpelRepo,
+    snapshotDate,
   ]);
 
   const EmptySearch = () => {
@@ -1438,6 +1461,7 @@ const Packages = () => {
     toggleSelected,
     activeTabKey,
     transformedPackages,
+    transformedGroups,
     isSelectingPackage,
     recommendedRepositories,
     transformedPackages.length,
