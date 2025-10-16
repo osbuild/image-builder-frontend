@@ -13,6 +13,7 @@ import {
   Panel,
   PanelMain,
   SearchInput,
+  Spinner,
   ToggleGroup,
   ToggleGroupItem,
   Toolbar,
@@ -21,7 +22,6 @@ import {
 } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import { Table, Tbody, Td, Th, Thead, Tr } from '@patternfly/react-table';
-import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { BulkSelect } from './components/BulkSelect';
 import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
@@ -38,17 +38,17 @@ import RepositoriesStatus from './RepositoriesStatus';
 import RepositoryUnavailable from './RepositoryUnavailable';
 
 import {
-  AMPLITUDE_MODULE_NAME,
+  CONTENT_URL,
   ContentOrigin,
   PAGINATION_COUNT,
   TEMPLATES_URL,
 } from '../../../../constants';
-import { useGetUser } from '../../../../Hooks';
 import {
   ApiRepositoryResponseRead,
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
+  useListSnapshotsByDateMutation,
 } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -62,17 +62,20 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
+  selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
+import {
+  convertStringToDate,
+  timestampToDisplayStringDetailed,
+} from '../../../../Utilities/time';
 import useDebounce from '../../../../Utilities/useDebounce';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
 const Repositories = () => {
-  const { analytics, auth } = useChrome();
-  const { userData } = useGetUser(auth);
   const dispatch = useAppDispatch();
   const wizardMode = useAppSelector(selectWizardMode);
   const arch = useAppSelector(selectArchitecture);
@@ -82,6 +85,7 @@ const Repositories = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
   const useLatestContent = useAppSelector(selectUseLatest);
+  const snapshotDate = useAppSelector(selectSnapshotDate);
 
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
@@ -503,6 +507,7 @@ const Repositories = () => {
     } = {},
     isError: isReposInTemplateError,
     isLoading: isReposInTemplateLoading,
+    isFetching: isReposInTemplateFetching,
   } = useListRepositoriesQuery(
     {
       contentType: 'rpm',
@@ -515,6 +520,42 @@ const Repositories = () => {
     },
     { refetchOnMountOrArgChange: true, skip: !isTemplateSelected },
   );
+
+  const [
+    listSnapshotsByDate,
+    {
+      data: snapshotsByDate,
+      isError: isSnapshotsError,
+      isLoading: isSnapshotsLoading,
+      isUninitialized: isSnapshotsUninitilized,
+    },
+  ] = useListSnapshotsByDateMutation();
+
+  useEffect(() => {
+    if (
+      !snapshotDate ||
+      useLatestContent ||
+      isTemplateSelected ||
+      !contentList.length
+    ) {
+      return;
+    }
+
+    listSnapshotsByDate({
+      apiListSnapshotByDateRequest: {
+        repository_uuids: contentList
+          .filter((c) => !!c.uuid)
+          .map((c) => c.uuid!),
+        date: new Date(convertStringToDate(snapshotDate)).toISOString(),
+      },
+    });
+  }, [
+    contentList,
+    listSnapshotsByDate,
+    snapshotDate,
+    useLatestContent,
+    isTemplateSelected,
+  ]);
 
   useEffect(() => {
     if (isTemplateSelected && reposInTemplate.length > 0) {
@@ -551,9 +592,24 @@ const Repositories = () => {
     }
   }, [templateUuid, reposInTemplate]);
 
-  if (isError || isTemplateError || isReposInTemplateError) return <Error />;
-  if (isLoading || isTemplateLoading || isReposInTemplateLoading)
+  if (
+    isError ||
+    isTemplateError ||
+    isReposInTemplateError ||
+    isSnapshotsError
+  ) {
+    return <Error />;
+  }
+  if (
+    isLoading ||
+    isTemplateLoading ||
+    isReposInTemplateLoading ||
+    isReposInTemplateFetching ||
+    (isSnapshotsLoading && isSnapshotsUninitilized)
+  ) {
     return <Loading />;
+  }
+
   if (!isTemplateSelected) {
     return (
       <Grid>
@@ -662,10 +718,19 @@ const Repositories = () => {
                   <Tr>
                     <Th aria-label='Selected' />
                     <Th width={45}>Name</Th>
-                    <Th width={15}>Architecture</Th>
-                    <Th>Version</Th>
-                    <Th width={10}>Packages</Th>
-                    <Th>Status</Th>
+                    {!snapshotDate ? (
+                      <>
+                        <Th width={15}>Architecture</Th>
+                        <Th>Version</Th>
+                        <Th width={10}>Packages</Th>
+                        <Th>Status</Th>
+                      </>
+                    ) : (
+                      <>
+                        <Th width={30}>Snapshot date</Th>
+                        <Th>Packages</Th>
+                      </>
+                    )}
                   </Tr>
                 </Thead>
                 <Tbody>
@@ -688,6 +753,12 @@ const Repositories = () => {
                       selected.has(uuid),
                     );
 
+                    const snapshot = snapshotsByDate?.data?.find(
+                      (s) => s.repository_uuid === uuid,
+                    );
+                    const packages =
+                      snapshot?.match?.content_counts?.['rpm.package'];
+
                     return (
                       <Tr key={`${uuid}-${rowIndex}`}>
                         <Td
@@ -705,81 +776,67 @@ const Repositories = () => {
                           {origin === ContentOrigin.UPLOAD ? (
                             <UploadRepositoryLabel />
                           ) : origin === ContentOrigin.COMMUNITY ? (
-                            <>
-                              <CommunityRepositoryLabel />
-                              <br />
-                              <Button
-                                component='a'
-                                target='_blank'
-                                variant='link'
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition='right'
-                                isInline
-                                onClick={() => {
-                                  if (!process.env.IS_ON_PREMISE) {
-                                    analytics.track(
-                                      `${AMPLITUDE_MODULE_NAME} - Outside link clicked`,
-                                      {
-                                        step_id: 'step-repositories',
-                                        account_id:
-                                          userData?.identity.internal
-                                            ?.account_id || 'Not found',
-                                      },
-                                    );
-                                  }
-                                }}
-                                href={url}
-                              >
-                                {url}
-                              </Button>
-                            </>
-                          ) : isSharedEPELEnabled && isEPELUrl(url) ? (
-                            <>
-                              <CustomEpelWarning />
-                              <Button
-                                component='a'
-                                target='_blank'
-                                variant='link'
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition='right'
-                                isInline
-                                href={url}
-                              >
-                                {url}
-                              </Button>
-                            </>
+                            <CommunityRepositoryLabel />
                           ) : (
-                            <>
-                              <br />
-                              <Button
-                                component='a'
-                                target='_blank'
-                                variant='link'
-                                icon={<ExternalLinkAltIcon />}
-                                iconPosition='right'
-                                isInline
-                                href={url}
-                              >
-                                {url}
-                              </Button>
-                            </>
+                            isSharedEPELEnabled &&
+                            isEPELUrl(url) && <CustomEpelWarning />
                           )}
                         </Td>
-                        <Td dataLabel={'Architecture'}>
-                          {getReadableArchitecture(distribution_arch)}
-                        </Td>
-                        <Td dataLabel={'Version'}>
-                          {getReadableVersions(distribution_versions)}
-                        </Td>
-                        <Td dataLabel={'Packages'}>{package_count || '-'}</Td>
-                        <Td dataLabel={'Status'}>
-                          <RepositoriesStatus
-                            repoStatus={status || 'Unavailable'}
-                            repoUrl={url}
-                            repoIntrospections={last_introspection_time}
-                            repoFailCount={failed_introspections_count}
-                          />
-                        </Td>
+                        {!snapshotDate ? (
+                          <>
+                            <Td dataLabel={'Architecture'}>
+                              {getReadableArchitecture(distribution_arch)}
+                            </Td>
+                            <Td dataLabel={'Version'}>
+                              {getReadableVersions(distribution_versions)}
+                            </Td>
+                            <Td dataLabel={'Packages'}>
+                              {package_count || '-'}
+                            </Td>
+                            <Td dataLabel={'Status'}>
+                              <RepositoriesStatus
+                                repoStatus={status || 'Unavailable'}
+                                repoUrl={url}
+                                repoIntrospections={last_introspection_time}
+                                repoFailCount={failed_introspections_count}
+                              />
+                            </Td>
+                          </>
+                        ) : (
+                          <>
+                            <Td dataLabel={'Snapshot date'}>
+                              {!isSnapshotsLoading ? (
+                                timestampToDisplayStringDetailed(
+                                  snapshot?.match?.created_at ?? '',
+                                  'UTC',
+                                ) || '-'
+                              ) : (
+                                <Spinner size='sm' />
+                              )}
+                            </Td>
+                            <Td dataLabel={'Packages'}>
+                              {!isSnapshotsLoading ? (
+                                packages && snapshot?.match?.uuid ? (
+                                  <Button
+                                    component='a'
+                                    target='_blank'
+                                    variant='link'
+                                    icon={<ExternalLinkAltIcon />}
+                                    iconPosition='right'
+                                    isInline
+                                    href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
+                                  >
+                                    {packages}
+                                  </Button>
+                                ) : (
+                                  '-'
+                                )
+                              ) : (
+                                <Spinner size='sm' />
+                              )}
+                            </Td>
+                          </>
+                        )}
                       </Tr>
                     );
                   })}
