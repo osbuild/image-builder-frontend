@@ -71,7 +71,7 @@ export const targetOptions: { [key in ImageTypes]: string } = {
   azure: 'Microsoft Azure',
   'edge-commit': 'Edge Commit',
   'edge-installer': 'Edge Installer',
-  gcp: 'Google Cloud Platform',
+  gcp: 'Google Cloud',
   'guest-image': 'Virtualization - Guest image',
   'image-installer': 'Bare metal - Installer',
   vsphere: 'VMware vSphere',

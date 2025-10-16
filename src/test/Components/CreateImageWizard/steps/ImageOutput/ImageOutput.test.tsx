@@ -188,7 +188,7 @@ describe('Step Image output', () => {
     await waitFor(() => expect(nextButton).toBeDisabled());
 
     const googleTile = await screen.findByRole('button', {
-      name: /Google Cloud Platform/i,
+      name: /Google Cloud/i,
     });
     user.click(googleTile); // select
     await waitFor(() => expect(nextButton).toBeEnabled());
@@ -353,7 +353,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
     // make sure the UX conforms to the mocks
     await screen.findByRole('button', { name: /Amazon Web Services/i });
-    await screen.findByRole('button', { name: /Google Cloud Platform/i });
+    await screen.findByRole('button', { name: /Google Cloud/i });
     await screen.findByRole('button', { name: /Microsoft Azure/i });
     await screen.findByRole('button', {
       name: /Oracle Cloud Infrastructure/i,
@@ -392,7 +392,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
     // make sure the UX conforms to the mocks
     await screen.findByRole('button', { name: /Amazon Web Services/i });
-    await screen.findByRole('button', { name: /Google Cloud Platform/i });
+    await screen.findByRole('button', { name: /Google Cloud/i });
     await screen.findByRole('button', { name: /Microsoft Azure/i });
     await screen.findByRole('button', {
       name: /Oracle Cloud Infrastructure/i,
@@ -437,7 +437,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
 
     // make sure the UX conforms to the mocks
     await screen.findByRole('button', { name: /Amazon Web Services/i });
-    await screen.findByRole('button', { name: /Google Cloud Platform/i });
+    await screen.findByRole('button', { name: /Google Cloud/i });
     await screen.findByRole('button', { name: /Microsoft Azure/i });
     await screen.findByRole('button', {
       name: /Oracle Cloud Infrastructure/i,
@@ -481,7 +481,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: /Google Cloud Platform/i }),
+        screen.queryByRole('button', { name: /Google Cloud/i }),
       ).not.toBeInTheDocument(),
     );
     expect(
@@ -536,7 +536,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     await waitFor(() =>
       expect(
-        screen.queryByRole('button', { name: /Google Cloud Platform/i }),
+        screen.queryByRole('button', { name: /Google Cloud/i }),
       ).not.toBeInTheDocument(),
     );
     expect(
@@ -590,7 +590,7 @@ describe('Check that the target filtering is in accordance to mock content', () 
     // make sure the UX conforms to the mocks
     await screen.findByRole('button', { name: /Amazon Web Services/i });
     expect(
-      screen.queryByRole('button', { name: /Google Cloud Platform/i }),
+      screen.queryByRole('button', { name: /Google Cloud/i }),
     ).not.toBeInTheDocument();
     expect(
       screen.queryByRole('button', { name: /Microsoft Azure/i }),
@@ -632,7 +632,7 @@ describe('Check step consistency', () => {
 
     // select GCP, it's available for x86_64
     const uploadGcpBtn = await screen.findByRole('button', {
-      name: /Google Cloud Platform/i,
+      name: /Google Cloud/i,
     });
     user.click(uploadGcpBtn);
     await waitFor(() => expect(next).toBeEnabled());

@@ -437,7 +437,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <Aws />
               </WizardStep>,
               <WizardStep
-                name='Google Cloud Platform'
+                name='Google Cloud'
                 id='wizard-target-gcp'
                 key='wizard-target-gcp'
                 footer={

@@ -63,7 +63,7 @@ const createGCPCloudImage = (
 const clickGCPTarget = async () => {
   const user = userEvent.setup();
   const googleOption = await screen.findByRole('button', {
-    name: /Google Cloud Platform/i,
+    name: /Google Cloud/i,
   });
   await waitFor(() => user.click(googleOption));
   await clickNext();
@@ -72,7 +72,7 @@ const clickGCPTarget = async () => {
 const deselectGcpAndSelectGuestImage = async () => {
   const user = userEvent.setup();
   const googleCard = await screen.findAllByRole('button', {
-    name: /Google Cloud Platform/i,
+    name: /Google Cloud/i,
   });
   await waitFor(() => user.click(googleCard[1]));
   const guestImageCheckbox = await screen.findByRole('checkbox', {
