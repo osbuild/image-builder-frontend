@@ -31,7 +31,7 @@ const selectAllEnvironments = async () => {
     user.click(screen.getByRole('button', { name: /Amazon Web Services/i })),
   );
   await waitFor(() =>
-    user.click(screen.getByRole('button', { name: /Google Cloud Platform/i })),
+    user.click(screen.getByRole('button', { name: /Google Cloud/i })),
   );
   await waitFor(() =>
     user.click(screen.getByRole('button', { name: /Microsoft Azure/i })),
@@ -183,7 +183,7 @@ describe('Keyboard accessibility', () => {
       await screen.findByRole('button', { name: /Amazon Web Services/i }),
     );
     await testTile(
-      await screen.findByRole('button', { name: /Google Cloud Platform/i }),
+      await screen.findByRole('button', { name: /Google Cloud/i }),
     );
     await testTile(
       await screen.findByRole('button', { name: /Microsoft Azure/i }),

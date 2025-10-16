@@ -187,11 +187,11 @@ const TargetEnvironment = () => {
             )}
             {supportedEnvironments?.includes('gcp') && (
               <TargetEnvironmentCard
-                title='Google Cloud Platform'
+                title='Google Cloud'
                 imageSrc={
                   '/apps/frontend-assets/partners-icons/google-cloud-logomark.svg'
                 }
-                imageAlt='Google Cloud Platform logo'
+                imageAlt='Google Cloud logo'
                 handleOnClick={() => handleToggleEnvironment('gcp')}
                 onMouseEnter={() => prefetchSources({ provider: 'gcp' })}
                 isClicked={environments.includes('gcp')}

@@ -42,7 +42,7 @@ const Gcp = () => {
   return (
     <Form>
       <Title headingLevel='h1' size='xl'>
-        Target environment - Google Cloud Platform
+        Target environment - Google Cloud
       </Title>
       <Content>
         Select how to share your image. The image you create can be used to

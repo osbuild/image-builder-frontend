@@ -97,7 +97,7 @@ export const GcpLaunchModal = ({ compose }: LaunchProps) => {
         aria-label='Open launch guide modal'
       >
         <ModalHeader
-          title={'Launch with Google Cloud Platform'}
+          title={'Launch with Google Cloud'}
           labelId='modal-title'
           description={compose.image_name}
         />
