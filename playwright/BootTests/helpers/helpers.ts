@@ -39,3 +39,34 @@ export const deleteCompliancePolicy = async (
     { box: true },
   );
 };
+
+/**
+ * Delete the repository with the given name
+ * @param page - the page object
+ * @param repositoryName - the name of the repository to delete
+ */
+export const deleteRepository = async (page: Page, repositoryName: string) => {
+  await closePopupsIfExist(page);
+  await test.step(
+    'Delete the repository with name: ' + repositoryName,
+    async () => {
+      // Check if no repository found -> that means no repository was created -> fail gracefully and do not raise error
+      try {
+        await page.goto('/insights/content/repositories');
+        await page
+          .getByRole('textbox', { name: 'Name/URL filter' })
+          .fill(repositoryName);
+        await page
+          .getByRole('button', { name: 'Kebab toggle' })
+          .click({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
+      } catch {
+        // No repository of given name was found -> fail gracefully and do not raise error
+        return;
+      }
+
+      await page.getByRole('menuitem', { name: 'Delete' }).click();
+      await page.getByRole('button', { name: 'Delete' }).click();
+    },
+    { box: true },
+  );
+};

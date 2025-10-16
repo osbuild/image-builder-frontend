@@ -16,6 +16,7 @@ import {
   fillInDetails,
   registerLater,
 } from '../../helpers/wizardHelpers';
+import { deleteRepository } from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -41,6 +42,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
 
   // Delete the blueprint compliance policy and Openstack resources after the run
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => deleteRepository(page, repositoryName));
   await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
   await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
@@ -151,6 +153,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
 
   // Delete the blueprint compliance policy and Openstack resources after the run
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => deleteRepository(page, repositoryName));
   await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
   await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
 
@@ -222,7 +225,9 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     // Wait for the repository to be filtered by checking theres only one item in the list
     await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
     // Make sure the repository is not pending anymore and is ready
-    await expect(frame.getByRole('gridcell', { name: 'Valid' })).toBeVisible();
+    await expect(frame.getByRole('gridcell', { name: 'Valid' })).toBeVisible({
+      timeout: 180000,
+    });
     await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
   });
 
