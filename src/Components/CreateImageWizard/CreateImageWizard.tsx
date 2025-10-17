@@ -181,7 +181,6 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
   const [searchParams] = useSearchParams();
 
   // Feature flags
-  const complianceEnabled = useFlag('image-builder.compliance.enabled');
   const isAAPRegistrationEnabled = useFlag('image-builder.aap.enabled');
 
   // IMPORTANT: Ensure the wizard starts with a fresh initial state
@@ -500,7 +499,7 @@ const CreateImageWizard = ({ isEdit }: CreateImageWizardProps) => {
                 <RegistrationStep />
               </WizardStep>,
               <WizardStep
-                name={complianceEnabled ? 'Compliance' : 'OpenSCAP'}
+                name='Security'
                 id='step-oscap'
                 key='step-oscap'
                 navItem={CustomStatusNavItem}
