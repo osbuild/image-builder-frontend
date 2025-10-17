@@ -22,6 +22,10 @@ export const deleteCompliancePolicy = async (
       // Check if no policies found -> that means no policy was created -> fail gracefully and do not raise error
       try {
         await page
+          .getByRole('textbox', { name: 'text input' })
+          .fill(policyName);
+        await expect(page.getByRole('row', { name: policyName })).toBeVisible();
+        await page
           .getByRole('row', { name: policyName })
           .getByLabel('Kebab toggle')
           .click({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
