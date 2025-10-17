@@ -70,3 +70,33 @@ export const deleteRepository = async (page: Page, repositoryName: string) => {
     { box: true },
   );
 };
+
+/**
+ * Navigate to the repositories page
+ * @param page - the page object
+ */
+export const navigateToRepositories = async (page: Page) => {
+  await page.goto('/insights/content/repositories', { timeout: 20000 });
+
+  const zeroState = page.getByText('Start using Content management now');
+
+  const repositoriesListPage = page.getByText(
+    'View all repositories within your organization.',
+  );
+
+  // Wait for either list page or zerostate
+  try {
+    await Promise.race([
+      repositoriesListPage.waitFor({ state: 'visible', timeout: 30000 }),
+      zeroState.waitFor({ state: 'visible', timeout: 30000 }),
+    ]);
+  } catch (error) {
+    throw new Error(
+      `Neither repositories list nor zero state appeared: ${(error as Error)?.message}`,
+    );
+  }
+
+  if (await zeroState.isVisible()) {
+    await page.getByRole('button', { name: 'Add repositories now' }).click();
+  }
+};
