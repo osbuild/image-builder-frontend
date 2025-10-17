@@ -28,7 +28,6 @@ test('Content integration test - Non repeatable build - URL source', async ({
   page,
   cleanup,
 }) => {
-  test.setTimeout(120 * 60 * 1000); //TODO: Deletee
   test.skip(
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
@@ -131,9 +130,9 @@ test('Content integration test - Non repeatable build - URL source', async ({
   });
 
   await test.step('Test package was installed', async () => {
-    const [exitCode, output] = await image.exec('rpm -q cockateel');
+    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
     expect(exitCode).toBe(0);
-    expect(output).toContain('cockateel');
+    expect(output).toContain(packageName);
   });
 });
 
@@ -141,7 +140,6 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   page,
   cleanup,
 }) => {
-  test.setTimeout(120 * 60 * 1000); //TODO: Deletee
   test.skip(
     !isHosted(),
     'Skipping test. Boot test run only on the hosted service.',
@@ -273,8 +271,102 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   });
 
   await test.step('Test package was installed', async () => {
-    const [exitCode, output] = await image.exec('rpm -q cockateel');
+    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
     expect(exitCode).toBe(0);
-    expect(output).toContain('cockateel');
+    expect(output).toContain(packageName);
+  });
+});
+
+test('Content integration test - Non repeatable build - Community repository', async ({
+  page,
+  cleanup,
+}) => {
+  test.skip(
+    !isHosted(),
+    'Skipping test. Boot test run only on the hosted service.',
+  );
+  const blueprintName = 'content-non-repeatable-test-' + uuidv4();
+  const filePath = constructFilePath(blueprintName, 'qcow2');
+  const repositoryName = 'EPEL 10 Everything x86_64';
+  const packageName = 'aha';
+
+  // Delete the blueprint compliance policy and Openstack resources after the run
+  await cleanup.add(() => deleteBlueprint(page, blueprintName));
+  await cleanup.add(() => OpenStackWrapper.deleteImage(blueprintName));
+  await cleanup.add(() => OpenStackWrapper.deleteInstance(blueprintName));
+
+  await ensureAuthenticated(page);
+
+  // Navigate to IB landing page and get the frame
+  await navigateToLandingPage(page);
+  const frame = await ibFrame(page);
+
+  await test.step('Navigate to optional steps in Wizard', async () => {
+    await fillInImageOutput(frame, 'qcow2', 'rhel10', 'x86_64');
+    await registerLater(frame);
+  });
+
+  await test.step('Disable repeatable build', async () => {
+    await frame.getByRole('button', { name: 'Repeatable build' }).click();
+    await frame
+      .getByRole('radio', { name: 'Disable repeatable build' })
+      .click();
+  });
+
+  await test.step('Select the repository', async () => {
+    await frame.getByRole('button', { name: 'Custom repositories' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Filter repositories' })
+      .fill(repositoryName);
+    // Wait for the repository to be filtered by checking theres only one item in the list
+    await expect(frame.getByRole('button', { name: '- 1 of 1' })).toBeVisible();
+    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+  });
+
+  await test.step('Select the package', async () => {
+    await frame.getByRole('button', { name: 'Additional packages' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Search packages' })
+      .fill(packageName);
+    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame.getByRole('button', { name: 'Review and finish' }).click();
+  });
+
+  await test.step('Fill the BP details', async () => {
+    await fillInDetails(frame, blueprintName);
+  });
+
+  await test.step('Create BP', async () => {
+    await createBlueprint(frame, blueprintName);
+  });
+
+  await test.step('Build the image', async () => {
+    await buildImage(page);
+  });
+
+  await test.step('Download the image', async () => {
+    await downloadImage(page, filePath);
+  });
+
+  // Initialize Openstack wrapper
+  const image = new OpenStackWrapper(blueprintName, 'qcow2', filePath);
+
+  await test.step('Prepare Openstack instance', async () => {
+    await image.createImage();
+    await image.launchInstance();
+  });
+
+  await test.step('Test repository is on the system', async () => {
+    const [exitCode, output] = await image.exec(
+      `dnf repolist | grep ${repositoryName}`,
+    );
+    expect(exitCode).toBe(0);
+    expect(output).toContain(repositoryName);
+  });
+
+  await test.step('Test package was installed', async () => {
+    const [exitCode, output] = await image.exec(`rpm -q ${packageName}`);
+    expect(exitCode).toBe(0);
+    expect(output).toContain(packageName);
   });
 });
