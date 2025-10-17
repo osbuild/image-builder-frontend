@@ -24,9 +24,13 @@ import { useAddNotification } from '@redhat-cloud-services/frontend-components-n
 import { v4 as uuidv4 } from 'uuid';
 
 import ActivationKeyInformation from './ActivationKeyInformation';
-import ManageKeysButton from './ManageKeysButton';
+import ManageButton from './ManageButton';
 
-import { CDN_PROD_URL, CDN_STAGE_URL } from '../../../../../constants';
+import {
+  ACTIVATION_KEYS_URL,
+  CDN_PROD_URL,
+  CDN_STAGE_URL,
+} from '../../../../../constants';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   useCreateActivationKeysMutation,
@@ -308,7 +312,13 @@ const ActivationKeysList = () => {
           <HelperText>
             <HelperTextItem>
               Image Builder provides and defaults to a no-cost activation key if
-              none exist. <ManageKeysButton />
+              none exist.{' '}
+              <ManageButton
+                url={ACTIVATION_KEYS_URL}
+                analyticsStepId='step-registration'
+              >
+                Manage activation keys
+              </ManageButton>
             </HelperTextItem>
           </HelperText>
         </FormHelperText>
