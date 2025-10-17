@@ -6,14 +6,17 @@ import { useFlag } from '@unleash/proxy-client-react';
 import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
 import {
   changeFscMode,
+  changePartitioningMode,
   selectComplianceProfileID,
   selectDiskPartitions,
   selectFscMode,
+  selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
 
 const FileSystemPartition = () => {
   const dispatch = useAppDispatch();
   const fscMode = useAppSelector(selectFscMode);
+  const partitioningMode = useAppSelector(selectPartitioningMode);
   const hasOscapProfile = useAppSelector(selectComplianceProfileID);
 
   const isAdvancedPartitioningEnabled = useFlag(
@@ -68,6 +71,32 @@ const FileSystemPartition = () => {
           onChange={() => {
             dispatch(changeFscMode('advanced'));
           }}
+          body={
+            fscMode === 'advanced' && (
+              <>
+                <Radio
+                  id='raw-partitioning-mode-radio'
+                  label='Raw partitioning'
+                  name='raw-partitioning-mode-radio'
+                  description='Will not convert any partition to LVM or Btrfs'
+                  isChecked={partitioningMode === 'raw'}
+                  onChange={() => {
+                    dispatch(changePartitioningMode('raw'));
+                  }}
+                />
+                <Radio
+                  id='lvm-partitioning-mode-radio'
+                  label='LVM partitioning'
+                  name='lvm-partitioning-mode-radio'
+                  description='Converts the partition that contains the root mountpoint / to an LVM Volume Group and creates a root Logical Volume. Any extra mountpoints, except /boot, will be added to the Volume Group as new Logical Volumes'
+                  isChecked={partitioningMode === 'lvm'}
+                  onChange={() => {
+                    dispatch(changePartitioningMode('lvm'));
+                  }}
+                />
+              </>
+            )
+          }
         />
       )}
     </FormGroup>
