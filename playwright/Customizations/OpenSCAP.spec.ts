@@ -19,8 +19,9 @@ test('Create a blueprint with OpenSCAP customization', async ({
   page,
   cleanup,
 }) => {
+  test.skip(!isHosted(), 'OpenSCAP is not available in the plugin');
+
   const blueprintName = 'test-' + uuidv4();
-  test.skip(!isHosted(), 'Exporting is not available in the plugin');
   // Delete the blueprint after the run fixture
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
 
