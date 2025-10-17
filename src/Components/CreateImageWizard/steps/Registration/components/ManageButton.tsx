@@ -4,19 +4,27 @@ import { Button } from '@patternfly/react-core';
 import { ExternalLinkAltIcon } from '@patternfly/react-icons';
 import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
-import {
-  ACTIVATION_KEYS_URL,
-  AMPLITUDE_MODULE_NAME,
-} from '../../../../../constants';
+import { AMPLITUDE_MODULE_NAME } from '../../../../../constants';
 import { useGetUser } from '../../../../../Hooks';
 
-const ManageKeysButton = () => {
+type ManageButtonProps = {
+  url: string;
+  children?: React.ReactNode;
+  analyticsStepId?: string;
+};
+
+const ManageButton = ({
+  url,
+  children,
+  analyticsStepId,
+}: ManageButtonProps) => {
   const { analytics, auth } = useChrome();
   const { userData } = useGetUser(auth);
   return (
     <Button
       component='a'
       target='_blank'
+      rel='noreferrer'
       variant='link'
       icon={<ExternalLinkAltIcon />}
       iconPosition='right'
@@ -24,16 +32,16 @@ const ManageKeysButton = () => {
       onClick={() => {
         if (!process.env.IS_ON_PREMISE) {
           analytics.track(`${AMPLITUDE_MODULE_NAME} - Outside link clicked`, {
-            step_id: 'step-registration',
+            step_id: analyticsStepId,
             account_id: userData?.identity.internal?.account_id || 'Not found',
           });
         }
       }}
-      href={ACTIVATION_KEYS_URL}
+      href={url}
     >
-      Manage activation keys
+      {children}
     </Button>
   );
 };
 
-export default ManageKeysButton;
+export default ManageButton;

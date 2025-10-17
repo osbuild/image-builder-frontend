@@ -43,11 +43,15 @@ import { useHasSpecificTargetOnly } from '../../../utilities/hasSpecificTargetOn
 import { removeBetaFromRelease } from '../removeBetaFromRelease';
 
 type OScapSelectOptionValueType = {
-  profileID: DistributionProfileItem;
+  profileID?: DistributionProfileItem;
   toString: () => string;
 };
 
-const ProfileSelector = () => {
+type ProfileSelectorProps = {
+  isDisabled?: boolean;
+};
+
+const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
@@ -59,14 +63,12 @@ const ProfileSelector = () => {
     {
       id: DistributionProfileItem;
       name: string | undefined;
-      description?: string | undefined;
     }[]
   >([]);
   const [profileDetails, setProfileDetails] = useState<
     {
       id: DistributionProfileItem;
       name: string | undefined;
-      description?: string | undefined;
     }[]
   >([]);
   const complianceType = useAppSelector(selectComplianceType);
@@ -100,6 +102,14 @@ const ProfileSelector = () => {
 
   const [trigger] = useLazyGetOscapCustomizationsQuery();
 
+  useEffect(() => {
+    if (!profileID) {
+      setInputValue('');
+      setFilterValue('');
+      setIsOpen(false);
+    }
+  }, [profileID]);
+
   // prefetch the profiles customizations for on-prem
   // and save the results to the cache, since the request
   // is quite slow
@@ -122,20 +132,16 @@ const ProfileSelector = () => {
           true,
         ).unwrap();
 
-        const oscap = response?.openscap;
+        const oscap = response.openscap;
         const isProfile = (oscap: OpenScap): oscap is OpenScapProfile =>
           'profile_name' in oscap;
 
         const profile_name =
           oscap && isProfile(oscap) ? oscap.profile_name : profileID;
 
-        const profile_description =
-          oscap && isProfile(oscap) ? oscap.profile_description : '';
-
         return {
           id: profileID,
           name: profile_name,
-          description: profile_description,
         };
       });
 
@@ -263,7 +269,7 @@ const ProfileSelector = () => {
               policyTitle: undefined,
             }),
           );
-          dispatch(changeFips(response?.fips?.enabled || false));
+          dispatch(changeFips(response.fips?.enabled || false));
         });
     }
   };
@@ -274,7 +280,7 @@ const ProfileSelector = () => {
   ) => {
     if (selection === undefined) return;
 
-    setInputValue(selection as OScapSelectOptionValueType['profileID']);
+    setInputValue((selection as OScapSelectOptionValueType['profileID']) || '');
     setFilterValue('');
     applyChanges(selection as unknown as OScapSelectOptionValueType);
     setIsOpen(false);
@@ -287,16 +293,17 @@ const ProfileSelector = () => {
       variant='typeahead'
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={!isSuccess || hasWslTargetOnly}
-      style={
-        {
-          width: '100%',
-        } as React.CSSProperties
-      }
+      isDisabled={isDisabled || !isSuccess || hasWslTargetOnly}
+      isFullWidth
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
-          value={profileID ? profileID : inputValue}
+          value={
+            profileID
+              ? profileDetails.find(({ id }) => id === profileID)?.name ||
+                profileID
+              : inputValue
+          }
           onClick={onInputClick}
           onChange={onTextInputChange}
           onKeyDown={onKeyDown}
@@ -320,7 +327,7 @@ const ProfileSelector = () => {
   );
 
   return (
-    <FormGroup label='Profile'>
+    <FormGroup>
       <Select
         isScrollable
         isOpen={isOpen}
@@ -348,14 +355,13 @@ const ProfileSelector = () => {
                 None
               </SelectOption>,
             ].concat(
-              selectOptions.map(({ id, name, description }) => (
+              selectOptions.map(({ id, name }) => (
                 <SelectOption
                   key={id}
                   value={{
                     profileID: id,
                     toString: () => name,
                   }}
-                  description={description}
                 >
                   {name}
                 </SelectOption>

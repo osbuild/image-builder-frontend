@@ -5,6 +5,7 @@ import {
   MenuToggle,
   MenuToggleElement,
   Select,
+  SelectList,
   SelectOption,
   Spinner,
 } from '@patternfly/react-core';
@@ -55,26 +56,21 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
     toString: () => title || 'None',
   });
 
-  const descr = (
-    <>
-      Threshold: {policy.compliance_threshold}
-      <br />
-      Active systems: {policy.total_system_count}
-    </>
-  );
-
   return (
     <SelectOption
       key={policy.id}
       value={selectObj(policy.id!, policy.ref_id!, policy.title!)}
-      description={descr}
     >
       {policy.title}
     </SelectOption>
   );
 };
 
-const PolicySelector = () => {
+type PolicySelectorProps = {
+  isDisabled?: boolean;
+};
+
+const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
   const policyID = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
@@ -234,19 +230,16 @@ const PolicySelector = () => {
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={isFetchingPolicies || hasWslTargetOnly}
-      style={
-        {
-          width: '100%',
-        } as React.CSSProperties
-      }
+      isDisabled={isDisabled || isFetchingPolicies || hasWslTargetOnly}
+      isFullWidth
+      style={{ maxWidth: 'none' }}
     >
       {policyTitle || 'None'}
     </MenuToggle>
   );
 
   return (
-    <FormGroup label='Policy'>
+    <FormGroup>
       <Select
         isScrollable
         isOpen={isOpen}
@@ -256,7 +249,7 @@ const PolicySelector = () => {
         toggle={toggleCompliance}
         shouldFocusFirstItemOnOpen={false}
       >
-        {complianceOptions()}
+        <SelectList>{complianceOptions()}</SelectList>
       </Select>
     </FormGroup>
   );

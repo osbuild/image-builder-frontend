@@ -322,7 +322,7 @@ const Review = () => {
       {complianceProfile && complianceType === 'openscap' && (
         <ExpandableSection
           toggleContent={composeExpandable(
-            'OpenSCAP',
+            'Security',
             'revisit-openscap',
             'step-oscap',
           )}
@@ -339,7 +339,7 @@ const Review = () => {
       {compliancePolicy && complianceType === 'compliance' && (
         <ExpandableSection
           toggleContent={composeExpandable(
-            'Compliance',
+            'Security',
             'revisit-compliance',
             'step-oscap',
           )}
