@@ -358,7 +358,7 @@ test('Content integration test - Non repeatable build - Community repository', a
 
   await test.step('Test repository is on the system', async () => {
     const [exitCode, output] = await image.exec(
-      `dnf repolist | grep ${repositoryName}`,
+      `dnf repolist | grep "${repositoryName}"`,
     );
     expect(exitCode).toBe(0);
     expect(output).toContain(repositoryName);
