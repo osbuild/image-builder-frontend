@@ -74,7 +74,11 @@ const ComplianceSelectOption = ({ policy }: ComplianceSelectOptionPropType) => {
   );
 };
 
-const PolicySelector = () => {
+type PolicySelectorProps = {
+  isDisabled?: boolean;
+};
+
+const PolicySelector = ({ isDisabled = false }: PolicySelectorProps) => {
   const policyID = useAppSelector(selectCompliancePolicyID);
   const policyTitle = useAppSelector(selectCompliancePolicyTitle);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
@@ -234,7 +238,7 @@ const PolicySelector = () => {
       ref={toggleRef}
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={isFetchingPolicies || hasWslTargetOnly}
+      isDisabled={isDisabled || isFetchingPolicies || hasWslTargetOnly}
       style={
         {
           width: '100%',
@@ -246,7 +250,7 @@ const PolicySelector = () => {
   );
 
   return (
-    <FormGroup label='Policy'>
+    <FormGroup>
       <Select
         isScrollable
         isOpen={isOpen}

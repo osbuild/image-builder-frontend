@@ -47,7 +47,11 @@ type OScapSelectOptionValueType = {
   toString: () => string;
 };
 
-const ProfileSelector = () => {
+type ProfileSelectorProps = {
+  isDisabled?: boolean;
+};
+
+const ProfileSelector = ({ isDisabled = false }: ProfileSelectorProps) => {
   const profileID = useAppSelector(selectComplianceProfileID);
   const release = removeBetaFromRelease(useAppSelector(selectDistribution));
   const hasWslTargetOnly = useHasSpecificTargetOnly('wsl');
@@ -287,16 +291,21 @@ const ProfileSelector = () => {
       variant='typeahead'
       onClick={() => setIsOpen(!isOpen)}
       isExpanded={isOpen}
-      isDisabled={!isSuccess || hasWslTargetOnly}
+      isDisabled={isDisabled || !isSuccess || hasWslTargetOnly}
       style={
         {
-          width: '100%',
+          width: '50%',
         } as React.CSSProperties
       }
     >
       <TextInputGroup isPlain>
         <TextInputGroupMain
-          value={profileID ? profileID : inputValue}
+          value={
+            profileID
+              ? profileDetails.find(({ id }) => id === profileID)?.name ||
+                profileID
+              : inputValue
+          }
           onClick={onInputClick}
           onChange={onTextInputChange}
           onKeyDown={onKeyDown}
@@ -320,7 +329,7 @@ const ProfileSelector = () => {
   );
 
   return (
-    <FormGroup label='Profile'>
+    <FormGroup>
       <Select
         isScrollable
         isOpen={isOpen}
