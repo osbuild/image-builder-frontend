@@ -16,7 +16,7 @@ import {
   fillInDetails,
   registerLater,
 } from '../../helpers/wizardHelpers';
-import { deleteRepository } from '../helpers/helpers';
+import { deleteRepository, navigateToRepositories } from '../helpers/helpers';
 import {
   buildImage,
   constructFilePath,
@@ -48,7 +48,7 @@ test('Content integration test - Non repeatable build - URL source', async ({
   await ensureAuthenticated(page);
 
   await test.step('Create a custom repository', async () => {
-    await page.goto('/insights/content/repositories');
+    await navigateToRepositories(page);
     await page.getByRole('button', { name: 'Add repositories' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill(repositoryName);
     await page.getByRole('radio', { name: 'Introspect only' }).click();
@@ -158,7 +158,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   await ensureAuthenticated(page);
 
   await test.step('Create a custom repository', async () => {
-    await page.goto('/insights/content/repositories');
+    await navigateToRepositories(page);
     await page.getByRole('button', { name: 'Add repositories' }).click();
     await page.getByRole('textbox', { name: 'Name' }).fill(repositoryName);
     await page.getByRole('radio', { name: 'Upload' }).first().click();
