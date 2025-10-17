@@ -52,10 +52,13 @@ export const deleteRepository = async (page: Page, repositoryName: string) => {
     async () => {
       // Check if no repository found -> that means no repository was created -> fail gracefully and do not raise error
       try {
-        await page.goto('/insights/content/repositories');
+        await navigateToRepositories(page);
         await page
           .getByRole('textbox', { name: 'Name/URL filter' })
           .fill(repositoryName);
+        await expect(
+          page.getByRole('gridcell', { name: repositoryName }),
+        ).toBeVisible();
         await page
           .getByRole('button', { name: 'Kebab toggle' })
           .click({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
@@ -76,7 +79,7 @@ export const deleteRepository = async (page: Page, repositoryName: string) => {
  * @param page - the page object
  */
 export const navigateToRepositories = async (page: Page) => {
-  await page.goto('/insights/content/repositories', { timeout: 20000 });
+  await page.goto('/insights/content/repositories');
 
   const zeroState = page.getByText('Start using Content management now');
 
