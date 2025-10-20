@@ -9,11 +9,13 @@ import {
   Toolbar,
   ToolbarContent,
 } from '@patternfly/react-core';
+import { useFlag } from '@unleash/proxy-client-react';
 import { Outlet } from 'react-router-dom';
 
 import './LandingPage.scss';
 
 import { NewAlert } from './NewAlert';
+import ServiceUnavailableAlert from './ServiceUnavailableAlert';
 
 import BlueprintsSidebar from '../Blueprints/BlueprintsSideBar';
 import ImagesTable from '../ImagesTable/ImagesTable';
@@ -21,10 +23,12 @@ import { ImageBuilderHeader } from '../sharedComponents/ImageBuilderHeader';
 
 export const LandingPage = () => {
   const [showAlert, setShowAlert] = useState(true);
+  const serviceUnavailable = useFlag('image-builder.service-unavailable');
 
   const imageList = (
     <>
       <PageSection hasBodyWrapper={false}>
+        {serviceUnavailable && <ServiceUnavailableAlert />}
         {showAlert && <NewAlert setShowAlert={setShowAlert} />}
         <Sidebar hasBorder className='pf-v6-u-background-color-100'>
           <SidebarPanel
