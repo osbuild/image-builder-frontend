@@ -14,6 +14,7 @@ import {
 } from '@patternfly/react-core';
 
 import { useFixupBPWithNotification as useFixupBlueprintMutation } from '../../Hooks';
+import { useWarningsManager } from '../../Hooks/useWarningsManager';
 import {
   useGetBlueprintQuery,
   useGetBlueprintsQuery,
@@ -37,7 +38,7 @@ import { BuildImagesButton } from '../Blueprints/BuildImagesButton';
 import { DeleteBlueprintModal } from '../Blueprints/DeleteBlueprintModal';
 import { EditBlueprintButton } from '../Blueprints/EditBlueprintButton';
 
-interface imagesTableToolbarProps {
+interface ImagesTableToolbarProps {
   itemCount: number;
   perPage: number;
   page: number;
@@ -51,13 +52,13 @@ interface imagesTableToolbarProps {
   ) => void;
 }
 
-const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
+const ImagesTableToolbar: React.FC<ImagesTableToolbarProps> = ({
   itemCount,
   perPage,
   page,
   setPage,
   onPerPageSelect,
-}: imagesTableToolbarProps) => {
+}: ImagesTableToolbarProps) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showDiffModal, setShowDiffModal] = useState(false);
   const selectedBlueprintId = useAppSelector(selectSelectedBlueprintId);
@@ -135,11 +136,22 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   );
 
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
-  const hasErrors =
-    blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
   const [isLintExp, setIsLintExp] = React.useState(true);
+  const [showWarnings, setShowWarnings] = React.useState(true);
+
   const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsLintExp(isExpanded);
+  };
+
+  const hasWarnings = (blueprintDetails?.lint?.errors?.length || 0) > 0;
+  const { shouldShowWarnings, ignoreWarnings } = useWarningsManager(
+    selectedBlueprintId,
+    hasWarnings,
+  );
+
+  const handleIgnoreWarningsWithState = () => {
+    ignoreWarnings();
+    setShowWarnings(false);
   };
 
   return (
@@ -164,7 +176,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
-        {hasErrors && (
+        {shouldShowWarnings && showWarnings && (
           <Alert
             variant='warning'
             style={{
@@ -172,17 +184,25 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
             }}
             isInline
-            title={`The selected blueprint has errors.`}
-            actionLinks={
+            title={`The selected blueprint has warnings.`}
+            actionLinks={[
               <AlertActionLink
+                key='fix'
                 onClick={async () => {
                   await fixupBlueprint({ id: selectedBlueprintId! });
                 }}
-                id='blueprint_fix_errors_automatically'
+                id='blueprint_fix_warnings_automatically'
               >
-                Fix errors automatically (updates the blueprint)
-              </AlertActionLink>
-            }
+                Fix warnings automatically (updates the blueprint)
+              </AlertActionLink>,
+              <AlertActionLink
+                key='ignore'
+                onClick={handleIgnoreWarningsWithState}
+                id='blueprint_ignore_warnings'
+              >
+                Ignore all warnings
+              </AlertActionLink>,
+            ]}
           >
             <ExpandableSection
               toggleText={isLintExp ? 'Show less' : 'Show more'}
@@ -190,9 +210,9 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               isExpanded={isLintExp}
             >
               <List isPlain>
-                {blueprintDetails.lint.errors.map((err) => (
-                  <ListItem key={err.description}>
-                    {err.name}: {err.description}
+                {blueprintDetails?.lint?.errors?.map((error, index) => (
+                  <ListItem key={index}>
+                    {error.name}: {error.description}
                   </ListItem>
                 ))}
               </List>
