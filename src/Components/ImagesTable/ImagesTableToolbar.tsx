@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   Alert,
@@ -135,11 +135,97 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
   );
 
   const { trigger: fixupBlueprint } = useFixupBlueprintMutation();
-  const hasErrors =
-    blueprintDetails?.lint.errors && blueprintDetails.lint.errors.length > 0;
   const [isLintExp, setIsLintExp] = React.useState(true);
+  const [showWarnings, setShowWarnings] = React.useState(true);
+
   const onToggleLintExp = (_event: React.MouseEvent, isExpanded: boolean) => {
     setIsLintExp(isExpanded);
+  };
+
+  const [warningsToShow, setWarningsToShow] = useState<
+    { name: string; description: string }[]
+  >([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  // Update warnings when blueprint changes or warnings are ignored
+  useEffect(() => {
+    // Get list of warnings that were ignored
+    const getIgnoredWarnings = () => {
+      if (!selectedBlueprintId) return [];
+
+      const ignoreKey = `blueprint-warnings-ignored-${selectedBlueprintId}`;
+      const ignored = localStorage.getItem(ignoreKey);
+
+      if (!ignored) return [];
+
+      try {
+        const { ignoredWarnings } = JSON.parse(ignored);
+        return ignoredWarnings || [];
+      } catch {
+        return [];
+      }
+    };
+
+    // Get warnings that should be shown (not ignored)
+    const getWarningsToShow = () => {
+      if (!blueprintDetails?.lint.errors.length) return [];
+
+      const ignoredWarnings = getIgnoredWarnings();
+
+      return blueprintDetails.lint.errors.filter(
+        (error) =>
+          !ignoredWarnings.some(
+            (ignored: { name: string; description: string }) =>
+              ignored.name === error.name &&
+              ignored.description === error.description,
+          ),
+      );
+    };
+
+    setWarningsToShow(getWarningsToShow());
+  }, [blueprintDetails?.lint.errors, selectedBlueprintId, refreshTrigger]);
+
+  const shouldShowWarnings = warningsToShow.length > 0;
+  const hasErrors = shouldShowWarnings;
+
+  // Handle ignoring current visible warnings
+  const handleIgnoreWarnings = () => {
+    if (!selectedBlueprintId || !warningsToShow.length) return;
+
+    const ignoreKey = `blueprint-warnings-ignored-${selectedBlueprintId}`;
+
+    // Get existing ignored warnings
+    const ignored = localStorage.getItem(ignoreKey);
+    let existingIgnored = [];
+    if (ignored) {
+      try {
+        const { ignoredWarnings } = JSON.parse(ignored);
+        existingIgnored = ignoredWarnings || [];
+      } catch {
+        // ignore parsing errors
+      }
+    }
+
+    // Add current visible warnings to ignored list
+    const newIgnoredWarnings = [
+      ...existingIgnored,
+      ...warningsToShow.map((warning) => ({
+        name: warning.name,
+        description: warning.description,
+      })),
+    ];
+
+    localStorage.setItem(
+      ignoreKey,
+      JSON.stringify({
+        timestamp: Date.now(),
+        ignoredWarnings: newIgnoredWarnings,
+      }),
+    );
+
+    // Trigger useEffect to re-calculate warnings
+    setRefreshTrigger((prev) => prev + 1);
+    setShowWarnings(false);
   };
 
   return (
@@ -164,7 +250,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               : 'All images'}
           </Title>
         </ToolbarContent>
-        {hasErrors && (
+        {hasErrors && shouldShowWarnings && showWarnings && (
           <Alert
             variant='warning'
             style={{
@@ -172,17 +258,25 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
                 '0 var(--pf6-c-toolbar__content--PaddingRight) 0 var(--pf-v6-c-toolbar__content--PaddingLeft)',
             }}
             isInline
-            title={`The selected blueprint has errors.`}
-            actionLinks={
+            title={`The selected blueprint has warnings.`}
+            actionLinks={[
               <AlertActionLink
+                key='fix'
                 onClick={async () => {
                   await fixupBlueprint({ id: selectedBlueprintId! });
                 }}
-                id='blueprint_fix_errors_automatically'
+                id='blueprint_fix_warnings_automatically'
               >
-                Fix errors automatically (updates the blueprint)
-              </AlertActionLink>
-            }
+                Fix warnings automatically (updates the blueprint)
+              </AlertActionLink>,
+              <AlertActionLink
+                key='ignore'
+                onClick={handleIgnoreWarnings}
+                id='blueprint_ignore_warnings'
+              >
+                Ignore all warnings
+              </AlertActionLink>,
+            ]}
           >
             <ExpandableSection
               toggleText={isLintExp ? 'Show less' : 'Show more'}
@@ -190,7 +284,7 @@ const ImagesTableToolbar: React.FC<imagesTableToolbarProps> = ({
               isExpanded={isLintExp}
             >
               <List isPlain>
-                {blueprintDetails.lint.errors.map((err) => (
+                {warningsToShow.map((err) => (
                   <ListItem key={err.description}>
                     {err.name}: {err.description}
                   </ListItem>
