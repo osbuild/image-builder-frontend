@@ -37,7 +37,7 @@
     "@babel/preset-typescript": "7.27.1",
     "@currents/playwright": "1.16.0",
     "@eslint/js": "9.36.0",
-    "@patternfly/react-icons": "6.3.1",
+    "@patternfly/react-icons": "6.4.0",
     "@playwright/test": "1.51.1",
     "@redhat-cloud-services/eslint-config-redhat-cloud-services": "3.0.0",
     "@redhat-cloud-services/frontend-components-config": "6.7.4",
