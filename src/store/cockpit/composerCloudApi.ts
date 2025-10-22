@@ -593,6 +593,14 @@ export type Disk = {
   minsize?: Minsize | undefined;
   partitions: Partition[];
 };
+export type DnfConfig = {
+  /** Set the releasever DNF variable, tying the system to a specific release of RHEL
+   */
+  set_releasever?: boolean | undefined;
+};
+export type Dnf = {
+  config?: DnfConfig | undefined;
+};
 export type Customizations = {
   containers?: Container[] | undefined;
   directories?: Directory[] | undefined;
@@ -642,6 +650,7 @@ export type Customizations = {
   rhsm?: RhsmCustomization | undefined;
   cacerts?: CaCertsCustomization | undefined;
   disk?: Disk | undefined;
+  dnf?: Dnf | undefined;
 };
 export type Koji = {
   server: string;
@@ -766,6 +775,7 @@ export type BlueprintCustomizations = {
   /** List of filesystem mountpoints to create */
   filesystem?: BlueprintFilesystem[] | undefined;
   disk?: Disk | undefined;
+  dnf?: Dnf | undefined;
   /** Name of the installation device, currently only useful for the edge-simplified-installer type
    */
   installation_device?: string | undefined;
