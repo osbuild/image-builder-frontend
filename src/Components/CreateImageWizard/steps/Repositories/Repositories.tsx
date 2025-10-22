@@ -95,6 +95,7 @@ const Repositories = () => {
     'toggle-group-all' | 'toggle-group-selected'
   >('toggle-group-all');
   const [isTemplateSelected, setIsTemplateSelected] = useState(false);
+  const [isStatusPollingEnabled, setIsStatusPollingEnabled] = useState(false);
 
   const isSharedEPELEnabled = useFlag('image-builder.shared-epel.enabled');
 
@@ -197,8 +198,20 @@ const Repositories = () => {
           ? [...selected].join(',')
           : '',
     },
-    { refetchOnMountOrArgChange: 60, skip: isTemplateSelected },
+    {
+      refetchOnMountOrArgChange: 60,
+      skip: isTemplateSelected,
+      pollingInterval: isStatusPollingEnabled ? 8000 : 0,
+    },
   );
+
+  useEffect(() => {
+    if (contentList.some((repo) => repo.status === 'Pending')) {
+      setIsStatusPollingEnabled(true);
+    } else {
+      setIsStatusPollingEnabled(false);
+    }
+  }, [contentList]);
 
   const refresh = () => {
     // In case the user deletes an intially selected repository.
@@ -595,9 +608,11 @@ const Repositories = () => {
                 variant='primary'
                 isInline
                 onClick={() => refresh()}
-                isLoading={isFetching}
+                isLoading={isFetching && !isStatusPollingEnabled}
               >
-                {isFetching ? 'Refreshing' : 'Refresh'}
+                {isFetching && !isStatusPollingEnabled
+                  ? 'Refreshing'
+                  : 'Refresh'}
               </Button>
             </ToolbarItem>
             <ToolbarItem>
