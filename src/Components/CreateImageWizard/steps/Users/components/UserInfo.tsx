@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import {
   Button,
@@ -32,14 +32,14 @@ import {
 } from '../../../../../store/wizardSlice';
 import LabelInput from '../../../LabelInput';
 import { PasswordValidatedInput } from '../../../utilities/PasswordValidatedInput';
-import { useUsersValidation } from '../../../utilities/useValidation';
+import { useUsersSchemaValidation } from '../../../utilities/useValidation';
 import { ValidatedInputAndTextArea } from '../../../ValidatedInput';
 import { isUserGroupValid } from '../../../validators';
 
 const UserInfo = () => {
   const dispatch = useAppDispatch();
   const users = useAppSelector(selectUsers);
-  const stepValidation = useUsersValidation();
+  const stepValidation = useUsersSchemaValidation();
 
   const [index, setIndex] = useState(0);
   const [activeTabKey, setActiveTabKey] = useState(0);
@@ -51,7 +51,7 @@ const UserInfo = () => {
   const tabComponentRef = React.useRef<any>();
   const firstMount = React.useRef(true);
 
-  const onSelect = (event?: React.MouseEvent, tabIndex?: string | number) => {
+  const onSelect = (_: React.MouseEvent, tabIndex?: string | number) => {
     if (tabIndex && typeof tabIndex === 'number') {
       setActiveTabKey(tabIndex);
       setIndex(tabIndex);
@@ -165,11 +165,7 @@ const UserInfo = () => {
             title={
               <TabTitleText>
                 {user.name || 'New user'}{' '}
-                {Object.entries(getValidationByIndex(index).errors).some(
-                  ([field, error]) =>
-                    Boolean(error) &&
-                    !(field === 'userName' && error === 'Required value'),
-                ) && (
+                {stepValidation.disabledNext && (
                   <Icon status='danger'>
                     <ExclamationCircleIcon title='Validation error' />
                   </Icon>
@@ -183,8 +179,9 @@ const UserInfo = () => {
                 value={user.name || ''}
                 placeholder='Enter username'
                 onChange={(_e, value) => handleNameChange(_e, value)}
+                // @ts-expect-error
                 stepValidation={getValidationByIndex(index)}
-                fieldName='userName'
+                fieldName='name'
               />
             </FormGroup>
             <PasswordValidatedInput
@@ -202,8 +199,9 @@ const UserInfo = () => {
                 type={'text'}
                 onChange={(_e, value) => handleSshKeyChange(_e, value)}
                 placeholder='Paste your public SSH key'
+                // @ts-expect-error
                 stepValidation={getValidationByIndex(index)}
-                fieldName='userSshKey'
+                fieldName='ssh_key'
               />
               <Button
                 component='a'
@@ -233,6 +231,7 @@ const UserInfo = () => {
               <LabelInput
                 ariaLabel='Add user group'
                 placeholder='Add user group'
+                // TODO: this is a slightly more complicated usecase
                 validator={isUserGroupValid}
                 list={user.groups}
                 item='Group'
@@ -242,6 +241,7 @@ const UserInfo = () => {
                 removeAction={(value) =>
                   removeUserGroupByIndex({ index: index, group: value })
                 }
+                // @ts-expect-error
                 stepValidation={getValidationByIndex(index)}
                 fieldName='groups'
               />

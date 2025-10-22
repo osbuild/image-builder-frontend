@@ -14,10 +14,9 @@ import {
 } from '@patternfly/react-core';
 import { EyeIcon, EyeSlashIcon } from '@patternfly/react-icons';
 
-import { checkPasswordValidity } from './useValidation';
-
 import { useAppSelector } from '../../../store/hooks';
 import { selectImageTypes } from '../../../store/wizardSlice';
+import { validatePassword } from '../../../Schemas/User/Password';
 
 type ValidatedPasswordInput = TextInputProps & {
   value: string;
@@ -34,14 +33,9 @@ export const PasswordValidatedInput = ({
   onChange,
   hasPassword,
 }: ValidatedPasswordInput) => {
-  const environments = useAppSelector(selectImageTypes);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
-  const { validationState } = checkPasswordValidity(
-    value,
-    environments.includes('azure'),
-  );
-  const { ruleLength, ruleCharacters } = validationState;
+  const validationState = validatePassword(value);
 
   const togglePasswordVisibility = () => {
     setIsPasswordVisible(!isPasswordVisible);
@@ -91,15 +85,16 @@ export const PasswordValidatedInput = ({
       </>
       <FormHelperText>
         <HelperText component='ul'>
-          <HelperTextItem variant={ruleLength} component='li'>
-            Password must be at least 6 characters long
-          </HelperTextItem>
-          {environments.includes('azure') && (
-            <HelperTextItem variant={ruleCharacters} component='li'>
-              Must include at least 3 of the following: lowercase letters,
-              uppercase letters, numbers, symbols
+          {false && (
+            <HelperTextItem variant={'indeterminate'} component='li'>
+              Password must be at least 6 characters long
             </HelperTextItem>
           )}
+          {validationState.map((error) => (
+            <HelperTextItem variant={'error'} component='li'>
+              {error}
+            </HelperTextItem>
+          ))}
         </HelperText>
       </FormHelperText>
     </FormGroup>

@@ -38,7 +38,7 @@ type ValidationInputProp = TextInputProps &
   };
 
 type ErrorMessageProps = {
-  errorMessage: string;
+  errorMessages: string[];
 };
 
 type ValidationResult = 'default' | 'success' | 'error';
@@ -52,14 +52,21 @@ export const ValidatedInputAndTextArea = ({
   onChange,
   ariaLabel,
   inputType = 'textInput',
-  isRequired,
   warning = undefined,
 }: ValidationInputProp) => {
-  const errorMessage = stepValidation.errors[fieldName] || '';
-  const hasError = errorMessage !== '';
+  const errorMessages = stepValidation.errors[fieldName] || [];
+  const hasError = errorMessages.length > 0;
 
   const [isPristine, setIsPristine] = useState(!value);
-  const validated = getValidationState(isPristine, errorMessage, isRequired);
+  const validated = getValidationState(isPristine, errorMessages);
+
+  if (fieldName === 'name') {
+    console.log('Debug');
+    console.log(errorMessages);
+    console.log(stepValidation.errors);
+    console.log(hasError);
+    console.log(validated);
+  }
 
   const handleBlur = () => {
     if (value) {
@@ -102,7 +109,7 @@ export const ValidatedInputAndTextArea = ({
         </HelperText>
       )}
       {validated === 'error' && hasError && (
-        <ErrorMessage errorMessage={errorMessage} />
+        <ErrorMessages errorMessages={errorMessages} />
       )}
     </>
   );
@@ -110,22 +117,25 @@ export const ValidatedInputAndTextArea = ({
 
 const getValidationState = (
   isPristine: boolean,
-  errorMessage: string,
-  isRequired: boolean | undefined,
+  errorMessages: string[],
 ): ValidationResult => {
-  const validated = isPristine
-    ? 'default'
-    : (isRequired && errorMessage) || errorMessage
-      ? 'error'
-      : 'success';
+  if (isPristine) {
+    return 'default';
+  }
 
-  return validated;
+  if (errorMessages.length > 0) {
+    return 'error';
+  }
+
+  return 'success';
 };
 
-export const ErrorMessage = ({ errorMessage }: ErrorMessageProps) => {
+export const ErrorMessages = ({ errorMessages }: ErrorMessageProps) => {
   return (
-    <HelperText>
-      <HelperTextItem variant='error'>{errorMessage}</HelperTextItem>
+    <HelperText component='ul'>
+      {errorMessages.map((msg: string) => (
+        <HelperTextItem variant='error'>{msg}</HelperTextItem>
+      ))}
     </HelperText>
   );
 };

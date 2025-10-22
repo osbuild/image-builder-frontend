@@ -67,10 +67,11 @@ import {
   isValidUrl,
   validateMultipleCertificates,
 } from '../validators';
+import { validateUsers } from '../../../Schemas/User';
 
 export type StepValidation = {
   errors: {
-    [key: string]: string;
+    [key: string]: string[];
   };
   disabledNext: boolean;
 };
@@ -656,6 +657,11 @@ const validateSshKey = (userSshKey: string): string => {
     return 'Invalid SSH key';
   }
   return '';
+};
+
+export const useUsersSchemaValidation = () => {
+  const users = useAppSelector(selectUsers);
+  return validateUsers(users);
 };
 
 export function useUsersValidation(): UsersStepValidation {
