@@ -1,6 +1,6 @@
 import { z } from 'zod/v4';
 
-import { unique } from '../helpers';
+import { unique, validateField } from '../helpers';
 
 // see `man groupadd` for the exact specification
 export const GroupsSchema = z
@@ -16,3 +16,9 @@ export const GroupsSchema = z
   // function in order to validate item uniqueness
   .superRefine(unique('group'))
   .optional();
+
+type Groups = z.infer<typeof GroupsSchema>;
+
+export const validateGroups = (groups: Groups) => {
+  return validateField<Groups>(groups, GroupsSchema);
+};

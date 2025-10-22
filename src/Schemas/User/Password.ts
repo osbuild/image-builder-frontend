@@ -1,5 +1,6 @@
 import { z } from 'zod/v4';
 
+import { validateField } from '../helpers';
 
 export const PasswordSchema = z.preprocess(
   // we want to ignore empty strings
@@ -35,3 +36,9 @@ export const PasswordSchema = z.preprocess(
     })
     .optional(),
 );
+
+type Password = z.infer<typeof PasswordSchema>;
+
+export const validatePassword = (password: Password) => {
+  return validateField<Password>(password, PasswordSchema);
+};

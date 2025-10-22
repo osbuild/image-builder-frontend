@@ -1,5 +1,7 @@
 import { z } from 'zod/v4';
 
+import { validateField } from '../helpers';
+
 export const SSHKeySchema = z.preprocess(
   // we want to ignore empty strings
   (value) => (value === '' ? undefined : value),
@@ -19,3 +21,9 @@ export const SSHKeySchema = z.preprocess(
     )
     .optional(),
 );
+
+type SSHKey = z.infer<typeof SSHKeySchema>;
+
+export const validateSSHKey = (key: SSHKey) => {
+  return validateField<SSHKey>(key, SSHKeySchema);
+};
