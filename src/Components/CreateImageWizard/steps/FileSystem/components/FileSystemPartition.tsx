@@ -8,7 +8,6 @@ import {
   changeFscMode,
   changePartitioningMode,
   selectComplianceProfileID,
-  selectDiskPartitions,
   selectFscMode,
   selectPartitioningMode,
 } from '../../../../../store/wizardSlice';
@@ -49,7 +48,7 @@ const FileSystemPartition = () => {
       <Radio
         id='basic-partitioning-radio'
         label={
-          isAdvancedPartitioningEnabled
+          process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled
             ? 'Basic filesystem partitioning'
             : 'Manually configure partitions'
         }
@@ -60,7 +59,7 @@ const FileSystemPartition = () => {
           dispatch(changeFscMode('basic'));
         }}
       />
-      {isAdvancedPartitioningEnabled && (
+      {(process.env.IS_ON_PREMISE || isAdvancedPartitioningEnabled) && (
         <Radio
           id='advanced-partitioning-radio'
           label='Advanced disk partitioning'
