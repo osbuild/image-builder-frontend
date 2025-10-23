@@ -460,13 +460,10 @@ describe('Partitioning import', () => {
     await goToStep('File system configuration');
     expect(
       await screen.findByRole('radio', {
-        name: /manually configure partitions/i,
+        name: /Basic filesystem partitioning/i,
       }),
     ).toBeChecked();
     await screen.findByText('/var');
-    expect(
-      screen.queryByRole('radio', { name: /advanced disk partitioning/i }),
-    ).not.toBeInTheDocument();
   });
 
   test('blueprint import with disk works', async () => {
@@ -488,9 +485,16 @@ describe('Partitioning import', () => {
     expect(
       await screen.findByRole('radio', { name: /advanced disk partitioning/i }),
     ).toBeChecked();
-    await screen.findByText(
-      /minsize: 2 gib type: gpt diskpartitions: \[ \{ "fs_type": "ext4", "label":/i,
-    );
+    const minSizeInput = await screen.findByRole('textbox', {
+      name: /minimum disk size input/i,
+    });
+
+    expect(minSizeInput).toHaveValue('2 GiB');
+
+    const vgNameInput = await screen.findByRole('textbox', {
+      name: /volume group name input/i,
+    });
+    expect(vgNameInput).toHaveValue('mainvg');
   });
 
   test('blueprint import with filesystem and disk fails', async () => {

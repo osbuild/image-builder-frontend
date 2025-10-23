@@ -13,15 +13,24 @@ import {
   changePartitionMinSize,
   changePartitionUnit,
 } from '../../../../../store/wizardSlice';
-import { FilesystemPartition, Units } from '../fscTypes';
+import {
+  FilesystemPartition,
+  LogicalVolumeWithBase,
+  Units,
+  VolumeGroupWithExtendedLV,
+} from '../fscTypes';
 
 const units = ['GiB', 'MiB', 'KiB'];
 
 type SizeUnitPropTypes = {
-  partition: FilesystemPartition;
+  partition:
+    | FilesystemPartition
+    | LogicalVolumeWithBase
+    | VolumeGroupWithExtendedLV;
+  customization: 'disk' | 'fileSystem';
 };
 
-const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
+const SizeUnit = ({ partition, customization }: SizeUnitPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -33,12 +42,17 @@ const SizeUnit = ({ partition }: SizeUnitPropTypes) => {
       dispatch(
         changePartitionMinSize({
           id: partition.id,
-          min_size: initialValue.min_size,
+          min_size: initialValue.min_size || '0',
+          customization: customization,
         }),
       );
     }
     dispatch(
-      changePartitionUnit({ id: partition.id, unit: selection as Units }),
+      changePartitionUnit({
+        id: partition.id,
+        unit: selection as Units,
+        customization: customization,
+      }),
     );
     setIsOpen(false);
   };

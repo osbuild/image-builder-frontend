@@ -28,6 +28,7 @@ import {
   AzureUploadRequestOptions,
   BlueprintExportResponse,
   BlueprintResponse,
+  BtrfsVolume,
   CreateBlueprintRequest,
   Customizations,
   CustomRepository,
@@ -36,9 +37,11 @@ import {
   Distributions,
   File,
   Filesystem,
+  FilesystemTyped,
   GcpUploadRequestOptions,
   ImageRequest,
   ImageTypes,
+  LogicalVolume,
   OpenScap,
   OpenScapCompliance,
   OpenScapProfile,
@@ -46,6 +49,7 @@ import {
   Subscription,
   UploadTypes,
   User,
+  VolumeGroup,
 } from '../../../store/imageBuilderApi';
 import { ApiRepositoryImportResponseRead } from '../../../store/service/contentSourcesApi';
 import {
@@ -114,7 +118,11 @@ import {
 } from '../../../store/wizardSlice';
 import isRhel from '../../../Utilities/isRhel';
 import { FscModeType } from '../steps/FileSystem';
-import { FilesystemPartition, Units } from '../steps/FileSystem/fscTypes';
+import {
+  FilesystemPartition,
+  FscDiskPartition,
+  Units,
+} from '../steps/FileSystem/fscTypes';
 import { getConversionFactor } from '../steps/FileSystem/fscUtilities';
 import { PackageRepository } from '../steps/Packages/Packages';
 import {
@@ -161,6 +169,69 @@ const convertFilesystemToPartition = (
     unit: unit as Units,
   };
   return partition;
+};
+
+const convertDiskToFscDisk = (
+  disk: FilesystemTyped | VolumeGroup | BtrfsVolume,
+): FscDiskPartition => {
+  const id = uuidv4();
+  let size;
+  let unit;
+
+  if (disk.minsize) {
+    [size, unit] = disk.minsize && disk.minsize.split(' ');
+  }
+
+  if ('logical_volumes' in disk) {
+    return {
+      id: id,
+      min_size: disk.minsize,
+      unit: unit as Units,
+      name: disk.name,
+      type: disk.type,
+      logical_volumes: disk.logical_volumes.map((lv) =>
+        convertLogicalVolume(lv),
+      ),
+    };
+  }
+
+  if ('subvolumes' in disk) {
+    return {
+      id: id,
+      min_size: disk.minsize,
+      unit: unit as Units,
+      type: disk.type,
+      subvolumes: disk.subvolumes,
+    };
+  }
+
+  return {
+    id: id,
+    fs_type: disk.fs_type,
+    mountpoint: disk.mountpoint,
+    min_size: size,
+    unit: unit as Units,
+    type: disk.type,
+  };
+};
+
+const convertLogicalVolume = (volume: LogicalVolume) => {
+  const id = uuidv4();
+  let size;
+  let unit;
+
+  if (volume.minsize) {
+    [size, unit] = volume.minsize && volume.minsize.split(' ');
+  }
+
+  return {
+    id: id,
+    min_size: size,
+    unit: unit as Units,
+    name: volume.name,
+    fs_type: volume.fs_type,
+    mountpoint: volume.mountpoint,
+  };
 };
 
 /**
@@ -315,11 +386,14 @@ function commonRequestToState(
       ? {
           type: request.customizations.disk.type || undefined,
           minsize: request.customizations.disk.minsize || '',
-          partitions: request.customizations.disk.partitions,
+          partitions: request.customizations.disk.partitions.map((d) =>
+            convertDiskToFscDisk(d),
+          ),
         }
       : {
           minsize: '',
           partitions: [],
+          type: undefined,
         },
     fileSystem: request.customizations?.filesystem
       ? {
@@ -801,12 +875,46 @@ const getUsers = (state: RootState): User[] | undefined => {
 
 const getDisk = (state: RootState): Disk | undefined => {
   const fscMode = selectFscMode(state);
+  const minsize = selectDiskMinsize(state);
+  const partitions = selectDiskPartitions(state);
+  const diskPartitions = partitions.map((partition) => {
+    if (partition.type === 'lvm') {
+      return {
+        minsize: partition.min_size ? partition.min_size : undefined,
+        name: partition.name,
+        type: partition.type,
+        logical_volumes: partition.logical_volumes.map((lv) => {
+          return {
+            minsize: lv.min_size + ' ' + lv.unit,
+            name: lv.name,
+            fs_type: lv.fs_type,
+            mountpoint: lv.mountpoint,
+          };
+        }),
+      };
+    }
+
+    if (partition.type === 'btrfs') {
+      return {
+        minsize: partition.min_size,
+        type: partition.type,
+        subvolumes: partition.subvolumes,
+      };
+    }
+
+    return {
+      minsize: partition.min_size + ' ' + partition.unit,
+      fs_type: partition.fs_type,
+      mountpoint: partition.mountpoint,
+      type: partition.type,
+    };
+  });
 
   if (fscMode === 'advanced') {
     return {
       type: selectDiskType(state),
-      minsize: selectDiskMinsize(state),
-      partitions: selectDiskPartitions(state),
+      minsize: minsize ? minsize : undefined,
+      partitions: diskPartitions,
     };
   }
 
