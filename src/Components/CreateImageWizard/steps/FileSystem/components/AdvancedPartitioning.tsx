@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {
-  Alert,
   Button,
   CodeBlock,
   Content,
@@ -27,10 +26,6 @@ const AdvancedPartitioning = () => {
       <Content>
         <Content component={ContentVariants.h3}>Configure disk layout</Content>
       </Content>
-      <Alert
-        variant='info'
-        title='Disk can be currently only edited directly in the blueprint'
-      />
       <Content>
         <Content>Define complete partition table for your image.</Content>
         <Content>
