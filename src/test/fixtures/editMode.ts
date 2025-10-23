@@ -98,15 +98,12 @@ export const expectedDisk: Disk = {
   partitions: [
     {
       fs_type: 'ext4',
-      label: 'string',
       minsize: '2 GiB',
       mountpoint: 'string',
-      part_type: 'string',
       type: 'plain',
     },
     {
       minsize: '2 GiB',
-      part_type: 'string',
       subvolumes: [
         {
           mountpoint: 'string',
@@ -119,7 +116,6 @@ export const expectedDisk: Disk = {
       logical_volumes: [
         {
           fs_type: 'ext4',
-          label: 'string',
           minsize: '2 GiB',
           mountpoint: 'string',
           name: 'string',
@@ -127,7 +123,6 @@ export const expectedDisk: Disk = {
       ],
       minsize: '2 GiB',
       name: 'string',
-      part_type: 'string',
       type: 'lvm',
     },
   ],

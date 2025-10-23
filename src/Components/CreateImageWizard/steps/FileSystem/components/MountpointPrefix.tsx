@@ -27,9 +27,13 @@ export const mountpointPrefixes = [
 
 type MountpointPrefixPropTypes = {
   partition: FilesystemPartition;
+  customization: 'disk' | 'fileSystem';
 };
 
-const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
+const MountpointPrefix = ({
+  partition,
+  customization,
+}: MountpointPrefixPropTypes) => {
   const dispatch = useAppDispatch();
   const [isOpen, setIsOpen] = useState(false);
   const prefix = getPrefix(partition.mountpoint);
@@ -40,7 +44,11 @@ const MountpointPrefix = ({ partition }: MountpointPrefixPropTypes) => {
       setIsOpen(false);
       const mountpoint = selection + (suffix.length > 0 ? '/' + suffix : '');
       dispatch(
-        changePartitionMountpoint({ id: partition.id, mountpoint: mountpoint }),
+        changePartitionMountpoint({
+          id: partition.id,
+          mountpoint: mountpoint,
+          customization: customization,
+        }),
       );
     }
   };
