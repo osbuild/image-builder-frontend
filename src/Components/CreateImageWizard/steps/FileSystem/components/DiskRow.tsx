@@ -1,44 +1,50 @@
 import React from 'react';
 
-import { Alert, Button } from '@patternfly/react-core';
+import { Button } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import { Td, Tr } from '@patternfly/react-table';
 
 import MinimumSize from './MinimumSize';
 import MountpointPrefix from './MountpointPrefix';
 import MountpointSuffix from './MountpointSuffix';
+import PartitionName from './PartitionName';
+import PartitionType from './PartitionType';
 import SizeUnit from './SizeUnit';
 
-import { useAppDispatch } from '../../../../../store/hooks';
-import { removePartition } from '../../../../../store/wizardSlice';
-import { useFilesystemValidation } from '../../../utilities/useValidation';
-import { FilesystemPartition } from '../fscTypes';
+import { useAppDispatch, useAppSelector } from '../../../../../store/hooks';
+import {
+  removeDiskPartition,
+  selectDiskPartitions,
+} from '../../../../../store/wizardSlice';
+import { FilesystemPartition, FscDiskPartition } from '../fscTypes';
 
 export const FileSystemContext = React.createContext<boolean>(true);
 
-type RowPropTypes = {
-  partition: FilesystemPartition;
-  isRemovingDisabled: boolean;
+type DiskRowPropTypes = {
+  partition: FscDiskPartition;
   onDrop?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragEnd?: (event: React.DragEvent<HTMLTableRowElement>) => void;
   onDragStart?: (event: React.DragEvent<HTMLTableRowElement>) => void;
 };
 
-const Row = ({
+const DiskRow = ({
   partition,
-  isRemovingDisabled,
   onDragEnd,
   onDragStart,
   onDrop,
-}: RowPropTypes) => {
+}: DiskRowPropTypes) => {
   const dispatch = useAppDispatch();
-  const handleRemovePartition = (id: string) => {
-    dispatch(removePartition(id));
-  };
-  const stepValidation = useFilesystemValidation();
-  const isPristine = React.useContext(FileSystemContext);
+  const partitions = useAppSelector(selectDiskPartitions);
 
-  const customization = 'fileSystem';
+  const customization = 'disk';
+
+  const handleRemovePartition = (id: string) => {
+    dispatch(removeDiskPartition(id));
+  };
+
+  if (partition.type === 'lvm' || partition.type === 'btrfs') {
+    return;
+  }
 
   return (
     <Tr
@@ -53,31 +59,32 @@ const Row = ({
           id: `draggable-row-${partition.id}`,
         }}
       />
-      <Td className='pf-m-width-20'>
-        <MountpointPrefix partition={partition} customization={customization} />
-        {!isPristine && stepValidation.errors[`mountpoint-${partition.id}`] && (
-          <Alert
-            variant='danger'
-            isInline
-            isPlain
-            title={stepValidation.errors[`mountpoint-${partition.id}`]}
-          />
-        )}
+      {partition.type !== 'plain' && (
+        <Td className='pf-m-width-20'>
+          <PartitionName partition={partition} customization={customization} />
+        </Td>
+      )}
+      <Td width={20}>
+        <MountpointPrefix
+          partition={partition as FilesystemPartition}
+          customization={customization}
+        />
       </Td>
       {partition.mountpoint !== '/' &&
-      !partition.mountpoint.startsWith('/boot') &&
-      !partition.mountpoint.startsWith('/usr') ? (
+      !partition.mountpoint?.startsWith('/boot') &&
+      !partition.mountpoint?.startsWith('/usr') ? (
         <Td width={20}>
           <MountpointSuffix
-            partition={partition}
+            partition={partition as FilesystemPartition}
             customization={customization}
           />
         </Td>
       ) : (
         <Td width={20} />
       )}
-
-      <Td width={20}>xfs</Td>
+      <Td width={20}>
+        <PartitionType partition={partition} customization={customization} />
+      </Td>
       <Td width={20}>
         <MinimumSize partition={partition} customization={customization} />
       </Td>
@@ -89,11 +96,14 @@ const Row = ({
           variant='link'
           icon={<MinusCircleIcon />}
           onClick={() => handleRemovePartition(partition.id)}
-          isDisabled={isRemovingDisabled}
+          isDisabled={
+            partition.mountpoint === '/' &&
+            partitions.filter((p) => p.type === 'plain').length > 1
+          }
         />
       </Td>
     </Tr>
   );
 };
 
-export default Row;
+export default DiskRow;
