@@ -22,7 +22,6 @@ const FileSystemPartition = () => {
   const isAdvancedPartitioningEnabled = useFlag(
     'image-builder.advanced-partitioning.enabled',
   );
-  const hasDiskCustomization = useAppSelector(selectDiskPartitions).length > 0;
 
   if (hasOscapProfile) {
     return undefined;
@@ -50,7 +49,7 @@ const FileSystemPartition = () => {
       <Radio
         id='basic-partitioning-radio'
         label={
-          isAdvancedPartitioningEnabled && hasDiskCustomization
+          isAdvancedPartitioningEnabled
             ? 'Basic filesystem partitioning'
             : 'Manually configure partitions'
         }
@@ -61,7 +60,7 @@ const FileSystemPartition = () => {
           dispatch(changeFscMode('basic'));
         }}
       />
-      {isAdvancedPartitioningEnabled && hasDiskCustomization && (
+      {isAdvancedPartitioningEnabled && (
         <Radio
           id='advanced-partitioning-radio'
           label='Advanced disk partitioning'
