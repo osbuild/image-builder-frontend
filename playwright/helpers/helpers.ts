@@ -54,6 +54,8 @@ const ON_PREM_RELEASES = new Map([
   ['centos-10', 'CentOS Stream 10'],
   ['fedora-41', 'Fedora Linux 41'],
   ['fedora-42', 'Fedora Linux 42'],
+  ['fedora-43', 'Fedora Linux 43'],
+  ['fedora-44', 'Fedora Linux 44'],
   ['rhel-10', 'Red Hat Enterprise Linux (RHEL) 10'],
 ]);
 
