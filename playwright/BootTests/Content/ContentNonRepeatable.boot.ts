@@ -148,6 +148,7 @@ test('Content integration test - Non repeatable build - Upload source', async ({
   const filePath = constructFilePath(blueprintName, 'qcow2');
   const repositoryName = 'content-non-repeatable-test-' + uuidv4().slice(0, 8);
   const packageName = 'cockateel';
+  const dependencyPackageName = 'wolf';
 
   // Delete the blueprint compliance policy and Openstack resources after the run
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
@@ -186,7 +187,10 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     await page
       .locator('#pf-modal-part-1  > div')
       .locator('input[type=file]')
-      .setInputFiles('./playwright/fixtures/data/cockateel-3.1-1.noarch.rpm');
+      .setInputFiles([
+        './playwright/fixtures/data/cockateel-3.1-1.noarch.rpm',
+        './playwright/fixtures/data/wolf-9.4-2.noarch.rpm',
+      ]);
     await page.waitForTimeout(3000);
     await expect(page.getByText('All uploads completed!')).toBeVisible();
     await page.waitForTimeout(3000);
@@ -234,6 +238,16 @@ test('Content integration test - Non repeatable build - Upload source', async ({
     await frame
       .getByRole('textbox', { name: 'Search packages' })
       .fill(packageName);
+    await expect(
+      frame.getByRole('gridcell', { name: packageName }),
+    ).toBeVisible();
+    await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
+    await frame
+      .getByRole('textbox', { name: 'Search packages' })
+      .fill(dependencyPackageName);
+    await expect(
+      frame.getByRole('gridcell', { name: dependencyPackageName }),
+    ).toBeVisible();
     await frame.getByRole('checkbox', { name: 'Select row 0' }).click();
     await frame.getByRole('button', { name: 'Review and finish' }).click();
   });
