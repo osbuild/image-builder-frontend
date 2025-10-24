@@ -52,7 +52,7 @@ const goToFileSystemConfigurationStep = async () => {
 
 const clickManuallyConfigurePartitions = async () => {
   const user = userEvent.setup();
-  const button = await screen.findByText(/manually configure partitions/i);
+  const button = await screen.findByText(/Basic filesystem partitioning/i);
   await waitFor(() => user.click(button));
 };
 
@@ -184,7 +184,7 @@ describe('Step File system configuration', () => {
     await selectImageInstaller();
     await goToFileSystemConfigurationStep();
     expect(
-      screen.queryByText(/manually configure partitions/i),
+      screen.queryByText(/Basic filesystem partitioning/i),
     ).not.toBeInTheDocument();
   });
 
