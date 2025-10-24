@@ -34,22 +34,22 @@ describe('EditImageWizard', () => {
       name: /register/i,
     });
     const scapNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /security/i,
     });
     const fscNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /file system configuration/i,
     });
     const snapshotsNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /repeatable build/i,
     });
     const repositoriesNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /custom repositories/i,
     });
     const packagesNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /additional packages/i,
     });
     const firstbootNavItem = within(navigation).getByRole('button', {
-      name: /openscap/i,
+      name: /first boot script configuration/i,
     });
     const detailsNavItem = within(navigation).getByRole('button', {
       name: /details/i,

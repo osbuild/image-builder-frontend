@@ -86,12 +86,19 @@ const removeService = async (service: string) => {
 
 const selectProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
-  await waitFor(() => user.click(selectProfileDropdown));
+  const openscapRadio = await screen.findByRole('radio', {
+    name: /use a default openscap profile/i,
+  });
+  await user.click(openscapRadio);
+  const typeahead = await screen.findByRole('textbox', {
+    name: /type to filter/i,
+  });
+  await waitFor(() => user.click(typeahead));
+  await waitFor(() => user.type(typeahead, 'cis'));
 
-  const cis1Profile = await screen.findByText(
-    /CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation/i,
-  );
+  const cis1Profile = await screen.findByRole('option', {
+    name: /CIS Red Hat Enterprise Linux 8 Benchmark for Level 1 - Workstation/i,
+  });
   await waitFor(() => user.click(cis1Profile));
 };
 
