@@ -1,4 +1,4 @@
-import { Page, test } from '@playwright/test';
+import { expect, Page, test } from '@playwright/test';
 
 import { closePopupsIfExist } from '../../helpers/helpers';
 
@@ -47,31 +47,35 @@ export const deleteCompliancePolicy = async (
 /**
  * Delete the repository with the given name
  * @param page - the page object
- * @param repositoryName - the name of the repository to delete
+ * @param repositoryName - the name/URL of the repository to delete
  */
-export const deleteRepository = async (page: Page, repositoryName: string) => {
+export const deleteRepository = async (
+  page: Page,
+  repositoryNameOrUrl: string,
+) => {
   await closePopupsIfExist(page);
   await test.step(
-    'Delete the repository with name: ' + repositoryName,
+    'Delete the repository with name: ' + repositoryNameOrUrl,
     async () => {
-      // Check if no repository found -> that means no repository was created -> fail gracefully and do not raise error
       try {
         await navigateToRepositories(page);
         await page
           .getByRole('textbox', { name: 'Name/URL filter' })
-          .fill(repositoryName);
+          .fill(repositoryNameOrUrl);
+        // Wait for the repository to be filtered by checking theres only one item in the list
+        // We check for list size due to the need of deleting by the name OR url and there is no better selector for that
         await expect(
-          page.getByRole('gridcell', { name: repositoryName }),
+          page.getByRole('button', { name: '- 1 of 1' }).first(),
         ).toBeVisible();
-        await page
-          .getByRole('button', { name: 'Kebab toggle' })
-          .click({ timeout: 5_000 }); // Shorter timeout to avoid hanging uncessarily
       } catch {
         // No repository of given name was found -> fail gracefully and do not raise error
         return;
       }
 
+      await page.getByRole('button', { name: 'Kebab toggle' }).click();
       await page.getByRole('menuitem', { name: 'Delete' }).click();
+      // Wait until the repo is loaded in the delete modal
+      await expect(page.getByRole('gridcell').first()).not.toBeEmpty();
       await page.getByRole('button', { name: 'Delete' }).click();
     },
     { box: true },
