@@ -31,6 +31,14 @@ export default {
       resolve('');
     });
   },
+  script: (script: string): Promise<string | Uint8Array> => {
+    return new Promise((resolve) => {
+      if (script === 'echo -n $XDG_STATE_HOME') {
+        resolve('/default/.local/state');
+      }
+      resolve('');
+    });
+  },
   http: cockpitHTTP,
   permission: cockpitPermission,
 };

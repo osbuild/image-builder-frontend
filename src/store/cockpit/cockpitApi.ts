@@ -88,12 +88,25 @@ const lookupDatastreamDistro = (distribution: string) => {
   throw 'Unknown distribution';
 };
 
+// Gets the user's $XDG_STATE_HOME directory to save blueprints in. Uses $HOME/.local/state as a fallback.
 const getBlueprintsPath = async () => {
+  let stateDir = (await cockpit.script('echo -n $XDG_STATE_HOME')) as string;
   const user = await cockpit.user();
+  if (stateDir === '') {
+    stateDir = `${user.home}/.local/state`;
+  }
+  const blueprintsDir = path.join(stateDir, BLUEPRINTS_DIR);
 
-  // we will use the user's `.local` directory
-  // to save blueprints used for on-prem
-  return `${user.home}/${BLUEPRINTS_DIR}`;
+  // Backwards compatibility, drop after rhel 10.2.
+  await cockpit.script(`
+if [ ! -e "${blueprintsDir}" ] && [ -d "${user.home}/.cache/cockpit-image-builder" ] ; then
+  cp -a "${user.home}/.cache/cockpit-image-builder" ${blueprintsDir}
+fi
+`);
+
+  // make sure the directory exists
+  await cockpit.spawn(['mkdir', '-p', blueprintsDir], {});
+  return blueprintsDir;
 };
 
 const readComposes = async (bpID: string) => {
