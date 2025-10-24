@@ -39,6 +39,9 @@ test('Content integration test - Non repeatable build - URL source', async ({
     'https://jlsherrill.fedorapeople.org/fake-repos/needed-errata/';
   const packageName = 'cockateel';
 
+  // Here we want to be sure that the repository is deleted due to URL exclusivity per repository
+  await deleteRepository(page, repositoryUrl);
+
   // Delete the blueprint compliance policy and Openstack resources after the run
   await cleanup.add(() => deleteBlueprint(page, blueprintName));
   await cleanup.add(() => deleteRepository(page, repositoryName));
