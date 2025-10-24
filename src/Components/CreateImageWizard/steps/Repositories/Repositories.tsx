@@ -25,6 +25,7 @@ import useChrome from '@redhat-cloud-services/frontend-components/useChrome';
 
 import { BulkSelect } from './components/BulkSelect';
 import CommunityRepositoryLabel from './components/CommunityRepositoryLabel';
+import CustomEpelWarning from './components/CustomEpelWarning';
 import Empty from './components/Empty';
 import { Error } from './components/Error';
 import { Loading } from './components/Loading';
@@ -386,6 +387,16 @@ const Repositories = () => {
     setToggleSelected(toggleType);
   };
 
+  const isEPELUrl = (repoUrl: string) => {
+    const epelUrls = [
+      'https://dl.fedoraproject.org/pub/epel/10/Everything/x86_64/',
+      'https://dl.fedoraproject.org/pub/epel/9/Everything/x86_64/',
+      'https://dl.fedoraproject.org/pub/epel/8/Everything/x86_64/',
+    ];
+
+    return epelUrls.includes(repoUrl);
+  };
+
   const isRepoDisabled = (
     repo: ApiRepositoryResponseRead,
     isSelected: boolean,
@@ -395,13 +406,10 @@ const Repositories = () => {
     }
 
     const hasSelectedEPEL = contentList.some(
-      (r) =>
-        r.uuid !== repo.uuid &&
-        r.url?.includes('epel') &&
-        selected.has(r.uuid!),
+      (r) => r.uuid !== repo.uuid && isEPELUrl(r.url!) && selected.has(r.uuid!),
     );
 
-    if (repo.url?.includes('epel') && !isSelected && hasSelectedEPEL) {
+    if (isEPELUrl(repo.url!) && !isSelected && hasSelectedEPEL) {
       return [true, 'Only one EPEL repository can be selected at a time.'];
     }
 
@@ -720,6 +728,21 @@ const Repositories = () => {
                                     );
                                   }
                                 }}
+                                href={url}
+                              >
+                                {url}
+                              </Button>
+                            </>
+                          ) : isSharedEPELEnabled && isEPELUrl(url) ? (
+                            <>
+                              <CustomEpelWarning />
+                              <Button
+                                component='a'
+                                target='_blank'
+                                variant='link'
+                                icon={<ExternalLinkAltIcon />}
+                                iconPosition='right'
+                                isInline
                                 href={url}
                               >
                                 {url}
