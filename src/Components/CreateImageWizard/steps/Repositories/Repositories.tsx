@@ -38,6 +38,7 @@ import RepositoryUnavailable from './RepositoryUnavailable';
 
 import {
   AMPLITUDE_MODULE_NAME,
+  CONTENT_URL,
   ContentOrigin,
   PAGINATION_COUNT,
   TEMPLATES_URL,
@@ -48,6 +49,7 @@ import {
   useGetTemplateQuery,
   useListRepositoriesQuery,
   useListRepositoryParametersQuery,
+  useListSnapshotsByDateMutation,
 } from '../../../../store/contentSourcesApi';
 import { useAppDispatch, useAppSelector } from '../../../../store/hooks';
 import {
@@ -61,11 +63,13 @@ import {
   selectPackages,
   selectPayloadRepositories,
   selectRecommendedRepositories,
+  selectSnapshotDate,
   selectTemplate,
   selectUseLatest,
   selectWizardMode,
 } from '../../../../store/wizardSlice';
 import { releaseToVersion } from '../../../../Utilities/releaseToVersion';
+import { convertStringToDate, timestampToDisplayStringDetailed } from '../../../../Utilities/time';
 import useDebounce from '../../../../Utilities/useDebounce';
 import { useFlag } from '../../../../Utilities/useGetEnvironment';
 
@@ -81,6 +85,7 @@ const Repositories = () => {
   const packages = useAppSelector(selectPackages);
   const groups = useAppSelector(selectGroups);
   const useLatestContent = useAppSelector(selectUseLatest);
+  const snapshotDate = useAppSelector(selectSnapshotDate);
 
   const payloadRepositories = useAppSelector(selectPayloadRepositories);
   const recommendedRepos = useAppSelector(selectRecommendedRepositories);
@@ -508,6 +513,41 @@ const Repositories = () => {
     { refetchOnMountOrArgChange: true, skip: !isTemplateSelected },
   );
 
+  const [
+    listSnapshotsByDate,
+    {
+      data: snapshotsByDate,
+      isError: isSnapshotsError,
+      isLoading: isSnapshotsLoading,
+    },
+  ] = useListSnapshotsByDateMutation();
+
+  useEffect(() => {
+    if (
+      !snapshotDate ||
+      useLatestContent ||
+      isTemplateSelected ||
+      !contentList.length
+    ) {
+      return;
+    }
+
+    listSnapshotsByDate({
+      apiListSnapshotByDateRequest: {
+        repository_uuids: contentList
+          .filter((c) => !!c.uuid)
+          .map((c) => c.uuid!),
+        date: new Date(convertStringToDate(snapshotDate)).toISOString(),
+      },
+    });
+  }, [
+    contentList,
+    listSnapshotsByDate,
+    snapshotDate,
+    useLatestContent,
+    isTemplateSelected,
+  ]);
+
   useEffect(() => {
     if (isTemplateSelected && reposInTemplate.length > 0) {
       const customReposInTemplate = reposInTemplate.filter(
@@ -543,10 +583,24 @@ const Repositories = () => {
     }
   }, [templateUuid, reposInTemplate]);
 
-  if (isError || isTemplateError || isReposInTemplateError) return <Error />;
-  if (isLoading || isTemplateLoading || isReposInTemplateLoading)
+  if (
+    isError ||
+    isTemplateError ||
+    isReposInTemplateError ||
+    isSnapshotsError
+  ) {
+    return <Error />;
+  }
+  if (
+    isLoading ||
+    isTemplateLoading ||
+    isReposInTemplateLoading ||
+    isSnapshotsLoading
+  ) {
     return <Loading />;
-  if (!isTemplateSelected) {
+  }
+
+  if (!isTemplateSelected && !snapshotDate) {
     return (
       <Grid>
         <Modal isOpen={modalOpen} onClose={onClose} variant='small'>
@@ -756,6 +810,194 @@ const Repositories = () => {
                             repoIntrospections={last_introspection_time}
                             repoFailCount={failed_introspections_count}
                           />
+                        </Td>
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </Table>
+            )}
+          </PanelMain>
+        </Panel>
+        <Pagination
+          itemCount={count ?? PAGINATION_COUNT}
+          perPage={perPage}
+          page={page}
+          onSetPage={(_, newPage) => setPage(newPage)}
+          onPerPageSelect={handlePerPageSelect}
+          variant={PaginationVariant.bottom}
+        />
+      </Grid>
+    );
+  } else if (!isTemplateSelected && snapshotDate) {
+    return (
+      <Grid>
+        <Modal isOpen={modalOpen} onClose={onClose} variant='small'>
+          <ModalHeader title='Are you sure?' titleIconVariant='warning' />
+          <ModalBody>
+            You are removing a previously added repository.
+            <br />
+            We do not recommend removing repositories if you have added packages
+            from them.
+          </ModalBody>
+          <ModalFooter>
+            <Button key='remove' variant='primary' onClick={handleRemoveAnyway}>
+              Remove anyway
+            </Button>
+            <Button key='back' variant='link' onClick={onClose}>
+              Back
+            </Button>
+          </ModalFooter>
+        </Modal>
+        {wizardMode === 'edit' && (
+          <Alert
+            title='Removing previously added repositories may lead to issues with selected packages'
+            variant='warning'
+            isPlain
+            isInline
+          />
+        )}
+        <Toolbar>
+          <ToolbarContent>
+            <ToolbarItem>
+              <BulkSelect
+                selected={selected}
+                contentList={contentList}
+                deselectAll={clearSelected}
+                perPage={perPage}
+                handleAddRemove={handleAddRemove}
+                isDisabled={
+                  isFetching ||
+                  (!selected.size && !contentList.length) ||
+                  contentList.every(
+                    (repo) =>
+                      repo.uuid &&
+                      isRepoDisabled(repo, selected.has(repo.uuid))[0],
+                  )
+                }
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <SearchInput
+                placeholder='Filter repositories'
+                aria-label='Filter repositories'
+                onChange={handleFilterRepositories}
+                value={filterValue}
+                onClear={() => setFilterValue('')}
+              />
+            </ToolbarItem>
+            <ToolbarItem>
+              <Button
+                variant='primary'
+                isInline
+                onClick={() => refresh()}
+                isLoading={isFetching}
+              >
+                {isFetching ? 'Refreshing' : 'Refresh'}
+              </Button>
+            </ToolbarItem>
+            <ToolbarItem>
+              <ToggleGroup aria-label='Filter repositories list'>
+                <ToggleGroupItem
+                  text='All'
+                  aria-label='All repositories'
+                  buttonId='toggle-group-all'
+                  isSelected={toggleSelected === 'toggle-group-all'}
+                  onChange={() => handleToggleClick('toggle-group-all')}
+                />
+                <ToggleGroupItem
+                  text='Selected'
+                  isDisabled={!selected.size}
+                  aria-label='Selected repositories'
+                  buttonId='toggle-group-selected'
+                  isSelected={toggleSelected === 'toggle-group-selected'}
+                  onChange={() => handleToggleClick('toggle-group-selected')}
+                />
+              </ToggleGroup>
+            </ToolbarItem>
+          </ToolbarContent>
+        </Toolbar>
+        <Panel>
+          <PanelMain>
+            {previousReposNowUnavailable ? (
+              <RepositoryUnavailable quantity={previousReposNowUnavailable} />
+            ) : (
+              ''
+            )}
+            {contentList.length === 0 ? (
+              <Empty
+                hasFilterValue={!!debouncedFilterValue}
+                refetch={refresh}
+              />
+            ) : (
+              <Table variant='compact'>
+                <Thead>
+                  <Tr>
+                    <Th aria-label='Selected' />
+                    <Th width={45}>Name</Th>
+                    <Th width={30}>Snapshot date</Th>
+                    <Th>Packages</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {contentList.map((repo, rowIndex) => {
+                    const { uuid = '', origin = '', name } = repo;
+
+                    const [isDisabled, disabledReason] = isRepoDisabled(
+                      repo,
+                      selected.has(uuid),
+                    );
+
+                    const snapshot = snapshotsByDate?.data?.find(
+                      (s) => s.repository_uuid === uuid,
+                    );
+                    const packages =
+                      snapshot?.match?.content_counts?.['rpm.package'];
+
+                    return (
+                      <Tr key={`${uuid}-${rowIndex}`}>
+                        <Td
+                          select={{
+                            isSelected: selected.has(uuid),
+                            rowIndex: rowIndex,
+                            onSelect: (_, isSelecting) =>
+                              handleAddRemove(repo, isSelecting),
+                            isDisabled: isDisabled,
+                          }}
+                          title={disabledReason}
+                        />
+                        <Td dataLabel={'Name'}>
+                          {name}
+                          {origin === ContentOrigin.UPLOAD ? (
+                            <UploadRepositoryLabel />
+                          ) : origin === ContentOrigin.COMMUNITY ? (
+                            <CommunityRepositoryLabel />
+                          ) : (
+                            <></>
+                          )}
+                        </Td>
+                        <Td dataLabel={'Snapshot date'}>
+                          {timestampToDisplayStringDetailed(
+                            snapshot?.match?.created_at ?? '',
+                            'UTC',
+                          ) || '-'}
+                        </Td>
+                        <Td dataLabel={'Packages'}>
+                          {packages && snapshot.match?.uuid ? (
+                            <Button
+                              component='a'
+                              target='_blank'
+                              variant='link'
+                              icon={<ExternalLinkAltIcon />}
+                              iconPosition='right'
+                              isInline
+                              href={`${CONTENT_URL}/${uuid}/snapshots/${snapshot.match.uuid}`}
+                            >
+                              {packages}
+                            </Button>
+                          ) : (
+                            '-'
+                          )}
                         </Td>
                       </Tr>
                     );
