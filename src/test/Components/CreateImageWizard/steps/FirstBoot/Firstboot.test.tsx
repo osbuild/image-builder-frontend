@@ -47,10 +47,19 @@ const goToFirstBootStep = async (): Promise<void> => {
 
 const selectSimplifiedOscapProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
-  await waitFor(() => user.click(selectProfileDropdown));
+  const openscapRadio = await screen.findByRole('radio', {
+    name: /use a default openscap profile/i,
+  });
+  await user.click(openscapRadio);
+  const typeahead = await screen.findByRole('textbox', {
+    name: /type to filter/i,
+  });
+  await waitFor(() => user.click(typeahead));
+  await waitFor(() => user.type(typeahead, 'simplified'));
 
-  const simplifiedProfile = await screen.findByText(/Simplified profile/i);
+  const simplifiedProfile = await screen.findByRole('option', {
+    name: /simplified profile/i,
+  });
   await waitFor(() => user.click(simplifiedProfile));
 };
 

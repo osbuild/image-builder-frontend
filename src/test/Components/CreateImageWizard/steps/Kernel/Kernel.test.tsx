@@ -57,7 +57,7 @@ const goToOpenSCAPStep = async () => {
   await waitFor(() => user.click(guestImageCheckBox));
   await clickNext(); // Registration
   await clickRegisterLater();
-  await goToStep(/OpenSCAP/);
+  await goToStep(/Security/);
 };
 
 const goFromOpenSCAPToKernel = async () => {
@@ -124,11 +124,21 @@ const removeKernelArg = async (kernelArg: string) => {
 
 const selectProfile = async () => {
   const user = userEvent.setup();
-  const selectProfileDropdown = await screen.findByPlaceholderText(/none/i);
-  await waitFor(() => user.click(selectProfileDropdown));
+  const openscapRadio = await screen.findByRole('radio', {
+    name: /use a default openscap profile/i,
+  });
+  await user.click(openscapRadio);
 
-  const cis1Profile = await screen.findByText(/Kernel append only profile/i);
-  await waitFor(() => user.click(cis1Profile));
+  const typeahead = await screen.findByRole('textbox', {
+    name: /type to filter/i,
+  });
+  await waitFor(() => user.click(typeahead));
+  await waitFor(() => user.type(typeahead, 'kernel'));
+
+  const profileOption = await screen.findByRole('option', {
+    name: /Kernel append only profile/i,
+  });
+  await waitFor(() => user.click(profileOption));
 };
 
 const clickRevisitButton = async () => {

@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
 import { v4 as uuidv4 } from 'uuid';
 
+import { selectDistro } from '../BootTests/helpers/targetChooser';
 import { test } from '../fixtures/cleanup';
 import { isHosted } from '../helpers/helpers';
 import { ensureAuthenticated } from '../helpers/login';
@@ -31,25 +32,74 @@ test('Create a blueprint with OpenSCAP customization', async ({
   await navigateToLandingPage(page);
   const frame = await ibFrame(page);
 
-  await test.step('Select RHEL 9 and go to optional steps in Wizard', async () => {
+  await test.step('WSL only disables selector', async () => {
     await frame.getByRole('button', { name: 'Create image blueprint' }).click();
-    await frame.getByTestId('release_select').click();
+    await selectDistro(frame, 'rhel9');
     await frame
-      .getByRole('option', {
-        name: 'Red Hat Enterprise Linux (RHEL) 9 Full support ends: May 2027 | Maintenance',
-      })
+      .getByRole('checkbox', { name: 'Windows Subsystem for Linux' })
       .click();
-    await frame.getByRole('checkbox', { name: 'Virtualization' }).click();
     await frame.getByRole('button', { name: 'Next' }).click();
     await registerLater(frame);
+
+    await frame.getByRole('button', { name: 'Security' }).nth(1).click();
+    await expect(
+      frame.getByText('OpenSCAP profiles are not compatible with WSL images.'),
+    ).toBeVisible();
+    await expect(frame.getByRole('button', { name: 'None' })).toBeDisabled();
   });
 
-  await test.step('Select only OpenSCAP, and check if dependencies are preselected', async () => {
-    await frame.getByRole('button', { name: 'Compliance' }).click();
+  await test.step('WSL + Installer shows alert but keeps selector enabled', async () => {
+    // Back to Image output and add Installer
+    await frame.getByRole('button', { name: 'Image output' }).click();
+    await selectDistro(frame, 'rhel9');
+    await frame.getByRole('checkbox', { name: 'Bare metal installer' }).click();
+    await frame.getByRole('button', { name: 'Next' }).click();
+    await registerLater(frame);
+
+    await frame.getByRole('button', { name: 'Security' }).nth(1).click();
+    await expect(
+      frame.getByText('OpenSCAP profiles are not compatible with WSL images.'),
+    ).toBeVisible();
+    await expect(
+      frame.getByRole('textbox', { name: 'Type to filter' }),
+    ).toBeEnabled();
+  });
+
+  await test.step('Select a CIS profile then switch to None', async () => {
+    await frame
+      .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
+      .check();
     await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
     await frame
       .getByRole('option', {
-        name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server This profile',
+        name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
+      })
+      .click();
+
+    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
+    await frame.getByRole('option', { name: /^None$/ }).click();
+  });
+
+  await test.step('Verify FSC and Packages show no OpenSCAP additions', async () => {
+    await frame
+      .getByRole('button', { name: 'File system configuration' })
+      .click();
+    await expect(frame.getByText('/tmp')).toHaveCount(0);
+
+    await frame.getByRole('button', { name: 'Additional packages' }).click();
+    await expect(frame.getByRole('button', { name: /Selected/ })).toBeVisible();
+  });
+
+  await test.step('Select OpenSCAP profile, and check if dependencies are preselected', async () => {
+    await frame.getByRole('button', { name: 'Security' }).nth(1).click();
+    await frame
+      .getByRole('radio', { name: 'Use a default OpenSCAP profile' })
+      .check();
+
+    await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
+    await frame
+      .getByRole('option', {
+        name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
       })
       .click();
     await frame
@@ -113,12 +163,18 @@ test('Create a blueprint with OpenSCAP customization', async ({
 
   await test.step('Edit BP', async () => {
     await frame.getByRole('button', { name: 'Edit blueprint' }).click();
-    await frame.getByRole('button', { name: 'Compliance' }).click();
-    await expect(frame.getByText('Level 1 - Server')).toBeVisible();
+    await frame.getByRole('button', { name: 'Security' }).nth(1).click();
+    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
+    await expect(
+      frame.getByText(
+        'CIS Red Hat Enterprise Linux 9 Benchmark for Level 1 - Server',
+      ),
+    ).toBeVisible();
+    await frame.getByRole('textbox', { name: 'Type to filter' }).clear();
     await frame.getByRole('textbox', { name: 'Type to filter' }).fill('cis');
     await frame
       .getByRole('option', {
-        name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server This profile',
+        name: 'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server',
       })
       .click();
 
@@ -183,9 +239,13 @@ test('Create a blueprint with OpenSCAP customization', async ({
 
   await test.step('Review imported BP', async () => {
     await fillInImageOutputGuest(page);
-    await page.getByRole('button', { name: 'Compliance' }).click();
-
-    await expect(frame.getByText('Level 2 - Server')).toBeVisible();
+    await page.getByRole('button', { name: 'Security' }).nth(1).click();
+    await frame.getByRole('textbox', { name: 'Type to filter' }).click();
+    await expect(
+      frame.getByText(
+        'CIS Red Hat Enterprise Linux 9 Benchmark for Level 2 - Server',
+      ),
+    ).toBeVisible();
 
     await page.getByRole('button', { name: 'Cancel' }).click();
   });

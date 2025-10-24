@@ -78,7 +78,7 @@ describe('Create Image Wizard', () => {
     await screen.findByRole('button', { name: 'Review' });
     if (!process.env.IS_ON_PREMISE) {
       await screen.findByRole('button', { name: /Register/ });
-      await screen.findByRole('button', { name: 'OpenSCAP' });
+      await screen.findByRole('button', { name: 'Security' });
       await screen.findByRole('button', { name: 'Repeatable build' });
       await screen.findByRole('button', { name: 'Custom repositories' });
       await screen.findByRole('button', {
@@ -149,7 +149,7 @@ describe('Keyboard accessibility', () => {
     await screen.findByPlaceholderText('Select activation key');
     await clickNext();
 
-    // TODO: Focus on textbox on OpenSCAP step
+    // TODO: Focus on textbox on Security step
     await clickNext();
 
     //File system configuration
