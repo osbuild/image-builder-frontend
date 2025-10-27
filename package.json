@@ -31,10 +31,10 @@
     "redux-promise-middleware": "6.2.0"
   },
   "devDependencies": {
-    "@babel/core": "7.28.4",
-    "@babel/preset-env": "7.28.3",
-    "@babel/preset-react": "7.27.1",
-    "@babel/preset-typescript": "7.27.1",
+    "@babel/core": "7.28.5",
+    "@babel/preset-env": "7.28.5",
+    "@babel/preset-react": "7.28.5",
+    "@babel/preset-typescript": "7.28.5",
     "@currents/playwright": "1.16.0",
     "@eslint/js": "9.38.0",
     "@patternfly/react-icons": "6.4.0",
