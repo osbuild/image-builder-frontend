@@ -88,7 +88,7 @@
     "react-chartjs-2": "5.3.0",
     "redux-mock-store": "1.5.5",
     "sass": "1.93.2",
-    "sass-loader": "16.0.5",
+    "sass-loader": "16.0.6",
     "stylelint": "16.25.0",
     "stylelint-config-recommended-scss": "16.0.2",
     "ts-node": "10.9.2",
